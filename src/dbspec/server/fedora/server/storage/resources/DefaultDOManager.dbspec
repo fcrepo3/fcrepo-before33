@@ -260,7 +260,7 @@
 			<comment>A dc:date that was successfully parsed as a date.</comment>
 		</column>
 	</table>
-    <table name="format">
+    <table name="format" primaryKey="formatDbID">
         <comment>
             A mapping between formatURIs and formatDbIDs.
         </comment>
@@ -276,7 +276,7 @@
             </comment>
         </column>
     </table>
-    <table name="oItem">
+    <table name="oItem" primaryKey="itemDbID">
         <comment>
 Information about all Items that ever existed in the repository.
 Every Fedora object has a row.  Rows are never deleted, but may
