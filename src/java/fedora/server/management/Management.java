@@ -6,6 +6,7 @@ import java.util.Calendar;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBindingMap;
 
 /**
@@ -86,11 +87,11 @@ public interface Management {
 
 //    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) throws ServerException;
 
-//    public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) throws ServerException;
+    public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) throws ServerException;
 
-//    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime) throws ServerException;
+    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime, String state) throws ServerException;
 
-//    public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) throws ServerException;
+    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorId) throws ServerException;
 
     public String putTempStream(InputStream in) throws ServerException;
 

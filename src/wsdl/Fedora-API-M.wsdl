@@ -358,51 +358,55 @@
       earliest first.</documentation>
     </part>
   </message>
-  <message name="getDisseminatorRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="disseminatorID" type="xsd:string">
-      <documentation>the ID of the disseminator.</documentation>
-    </part>
-    <part name="asOfDateTime" type="xsd:dateTime">
-      <documentation>the date/time stamp specifying the desired view of the 
-      object.  If null, the current view of the object (the most recent time) 
-      is assumed.</documentation>
-    </part>
-  </message>
-  <message name="getDisseminatorResponse">
-    <part name="response" type="fedora-types:Disseminator"/>
-  </message>
-  <message name="getDisseminatorsRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="asOfDateTime" type="xsd:dateTime">
-      <documentation>the date/time stamp specifying the desired view of the 
-      object.  If null, the current view of the object (the most recent time) 
-      is assumed.</documentation>
-    </part>
-  </message>
-  <message name="getDisseminatorsResponse">
-    <part name="response" type="fedora-types:ArrayOfDisseminator">
-      <documentation>the disseminators.</documentation>
-    </part>
-  </message>
-  <message name="getDisseminatorHistoryRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="disseminatorID" type="xsd:string">
-      <documentation>the ID of the disseminator.</documentation>
-    </part>
-  </message>
-  <message name="getDisseminatorHistoryResponse">
-    <part name="response" type="fedora-types:ArrayOfDateTime">
-      <documentation>creation dates for each version of the disseminator.</documentation>
-    </part>
-  </message>
 -->
+
+	<message name="getDisseminatorRequest">
+    		<part name="PID" type="xsd:string">
+		      <documentation>the PID of the object.</documentation>
+	    </part>
+	    <part name="disseminatorID" type="xsd:string">
+     		 <documentation>the ID of the disseminator.</documentation>
+	    </part>
+    		<part name="asOfDateTime" type="xsd:dateTime">
+		      <documentation>the date/time stamp specifying the desired view of the 
+			      object.  If null, the current view of the object (the most recent time) 
+			      is assumed.</documentation>
+	    </part>
+	  </message>
+	  <message name="getDisseminatorResponse">
+	  		<part name="response" type="fedora-types:Disseminator"/>
+	  </message>
+	  <message name="getDisseminatorsRequest">
+			<part name="PID" type="xsd:string">
+	     		<documentation>the PID of the object.</documentation>
+	    </part>
+	    <part name="asOfDateTime" type="xsd:dateTime">
+	     		<documentation>the date/time stamp specifying the desired view of the 
+				      object.  If null, the current view of the object (the most recent time) 
+			     	 is assumed.</documentation>
+	    </part>
+		<part name="state" type="xsd:string">
+			<documentation>the state of the disseminatorss to get, null for all states.</documentation>
+		</part>    
+	</message>
+	<message name="getDisseminatorsResponse">
+		<part name="response" type="fedora-types:ArrayOfDisseminator">
+			<documentation>the disseminators.</documentation>
+		</part>
+	</message>
+	<message name="getDisseminatorHistoryRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="disseminatorID" type="xsd:string">
+	      	<documentation>the ID of the disseminator.</documentation>
+	    </part>
+	</message>
+	<message name="getDisseminatorHistoryResponse">
+		<part name="response" type="fedora-types:ArrayOfDisseminator">
+	  		<documentation>creation dates for each version of the disseminator.</documentation>
+	  	</part>
+	</message>  
 	<portType name="Fedora-API-M">
 		<documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
@@ -549,7 +553,7 @@
 			<input message="fedora-api:getDatastreamHistoryRequest"/>
 			<output message="fedora-api:getDatastreamHistoryResponse"/>
 		</operation>
-		<!--
+		
     <operation name="getDisseminator">
       <documentation>Gets a disseminator in an object.</documentation>
       <input message="fedora-api:getDisseminatorRequest"/>
@@ -565,7 +569,6 @@
       <input message="fedora-api:getDisseminatorHistoryRequest"/>
       <output message="fedora-api:getDisseminatorHistoryResponse"/>
     </operation>
--->
 	</portType>
 	<binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -707,7 +710,7 @@
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
-		</operation>				
+		</operation>
 		<operation name="purgeDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
 			<input>
@@ -782,6 +785,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+    -->
     <operation name="getDisseminator">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDisseminator"/>
@@ -824,7 +828,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
--->
 	</binding>
 	<service name="Fedora-API-M-Service">
 		<port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">

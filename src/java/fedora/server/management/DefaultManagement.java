@@ -445,7 +445,7 @@ public class DefaultManagement
                 newds.DSState=dsState;
                 //newds.DSState=orig.DSState;
                 if (dsLocation==null || dsLocation.equals("")) {
-                    // if location unspecified for referenced or external, 
+                    // if location unspecified for referenced or external,
                     // just use the old location
                     newds.DSLocation=orig.DSLocation;
                 } else {
@@ -612,7 +612,7 @@ public class DefaultManagement
                 // if deleting would result in no versions remaining,
                 // only continue if there are no disseminators that use
                 // this datastream.
-                // to do this, we must look through all versions of every 
+                // to do this, we must look through all versions of every
                 // disseminator, regardless of state
                 SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
                 ArrayList usedList=new ArrayList();
@@ -778,11 +778,64 @@ public class DefaultManagement
     public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { }
 
     public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) { return null; }
+*/
 
-    public Disseminator getDisseminator(Context context, String pid, String disseminatorId, Calendar asOfDateTime) { return null; }
 
-    public Disseminator[] getDisseminators(Context context, String pid, Calendar asOfDateTime) { return null; }
+    public Disseminator getDisseminator(Context context, String pid,
+            String disseminatorId, Calendar asOfDateTime)
+            throws ServerException {
+        m_ipRestriction.enforce(context);
+        DOReader r=m_manager.getReader(context, pid);
+        Date d=null;
+        if (asOfDateTime!=null) {
+            d=asOfDateTime.getTime();
+        }
+        return r.GetDisseminator(disseminatorId, d);
+    }
 
+    public Disseminator[] getDisseminators(Context context, String pid,
+        Calendar asOfDateTime, String dissState)
+            throws ServerException {
+        DOReader r=m_manager.getReader(context, pid);
+        Date d=null;
+        if (asOfDateTime!=null) {
+            d=asOfDateTime.getTime();
+        }
+        return r.GetDisseminators(d, dissState);
+    }
+
+    public Disseminator[] getDisseminatorHistory(Context context, String pid, String disseminatorID)
+            throws ServerException {
+        m_ipRestriction.enforce(context);
+        DOReader r=m_manager.getReader(context, pid);
+        Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
+        Disseminator[] versions=new Disseminator[versionDates.length];
+        for (int i=0; i<versionDates.length; i++) {
+            versions[i]=r.GetDisseminator(disseminatorID, versionDates[i]);
+        }
+        // sort, ascending
+        Arrays.sort(versions, new DisseminatorDateComparator());
+        // reverse it (make it descend, so most recent date is element 0)
+        Disseminator[] out=new Disseminator[versions.length];
+        for (int i=0; i<versions.length; i++) {
+            out[i]=versions[versions.length-1-i];
+        }
+        return out;
+    }
+
+    public class DisseminatorDateComparator
+            implements Comparator {
+
+        public int compare(Object o1, Object o2) {
+            long ms1=((Disseminator) o1).dissCreateDT.getTime();
+            long ms2=((Disseminator) o1).dissCreateDT.getTime();
+            if (ms1<ms2) return -1;
+            if (ms1>ms2) return 1;
+            return 0;
+        }
+    }
+
+/*
     public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
  */
 

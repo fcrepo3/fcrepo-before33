@@ -906,6 +906,170 @@ public abstract class TypeUtility
     return genProperty;
   }
 
+  public static fedora.server.types.gen.Disseminator
+          convertDisseminatorToGenDisseminator(
+          fedora.server.storage.types.Disseminator in) {
+      fedora.server.types.gen.Disseminator out=
+              new fedora.server.types.gen.Disseminator();
+      //String group=in.DSControlGrp;
+      //out.setControlGroup(fedora.server.types.gen.DatastreamControlGroup.fromValue(group));
+      //        if (group.equals("R") || group.equals("E")) {
+                  // only given location if it's a redirect or external datastream
+      //    out.setLocation(in.DSLocation);
+      //        }
+      java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+      cal.setTime(in.dissCreateDT);
+      out.setBDefLabel(in.bDefLabel);
+      out.setBDefPID(in.bDefID);
+      out.setBMechLabel(in.bMechLabel);
+      out.setBMechPID(in.bMechID);
+      out.setDissCreateDT(cal);
+      out.setDissID(in.dissID);
+      out.setDissLabel(in.dissLabel);
+      out.setDissState(in.dissState);
+      out.setDissVersionID(in.dissVersionID);
+      out.setDsBindMap(convertDSBindingMapToGenDatastreamBindingMap(in.dsBindMap));
+      out.setDsBindMapID(in.dsBindMapID);
+      out.setParentPID(in.parentPID);
+      return out;
+    }
+
+    public static fedora.server.storage.types.Disseminator
+        convertGenDisseminatorToDisseminator(
+        fedora.server.types.gen.Disseminator genDisseminator)
+    {
+      fedora.server.storage.types.Disseminator diss =
+            new fedora.server.storage.types.Disseminator();
+      if (genDisseminator != null)
+      {
+        diss.bDefLabel = genDisseminator.getBDefLabel();
+        diss.bDefID = genDisseminator.getBDefPID();
+        diss.bMechLabel = genDisseminator.getBMechLabel();
+        diss.bMechID = genDisseminator.getBMechPID();
+        diss.dissCreateDT = genDisseminator.getDissCreateDT().getTime();
+        diss.dissID = genDisseminator.getDissID();
+        diss.dissLabel = genDisseminator.getDissLabel();
+        diss.dissState = genDisseminator.getDissState();
+        diss.dissVersionID = genDisseminator.getDissVersionID();
+        diss.dsBindMap = convertGenDatastreamBindingMapToDSBindingMap(genDisseminator.getDsBindMap());
+        diss.dsBindMapID = genDisseminator.getDsBindMapID();
+        diss.parentPID = genDisseminator.getParentPID();
+      }
+      return diss;
+  }
+
+    public static fedora.server.types.gen.DatastreamBindingMap
+            convertDSBindingMapToGenDatastreamBindingMap(
+            fedora.server.storage.types.DSBindingMap in) {
+        fedora.server.types.gen.DatastreamBindingMap out=
+                new fedora.server.types.gen.DatastreamBindingMap();
+        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+        fedora.server.types.gen.DatastreamBinding datastreamBinding =
+            new fedora.server.types.gen.DatastreamBinding();
+        out.setDsBindings(convertDSBindingArrayToGenDatastreamBindingArray(in.dsBindings));
+        out.setDsBindMapID(in.dsBindMapID);
+        out.setDsBindMapLabel(in.dsBindMapLabel);
+        out.setDsBindMechanismPID(in.dsBindMechanismPID);
+        out.setState(in.state);
+
+        return out;
+    }
+
+    public static fedora.server.storage.types.DSBindingMap
+        convertGenDatastreamBindingMapToDSBindingMap(
+        fedora.server.types.gen.DatastreamBindingMap genDatastreamBindingMap)
+    {
+      fedora.server.storage.types.DSBindingMap dsBindingMap =
+            new fedora.server.storage.types.DSBindingMap();
+      if (genDatastreamBindingMap != null)
+      {
+        dsBindingMap.dsBindings = convertGenDatastreamBindingArrayToDSBindingArray(genDatastreamBindingMap.getDsBindings());
+        dsBindingMap.dsBindMapID = genDatastreamBindingMap.getDsBindMapID();
+        dsBindingMap.dsBindMapLabel = genDatastreamBindingMap.getDsBindMapLabel();
+        dsBindingMap.dsBindMechanismPID = genDatastreamBindingMap.getDsBindMechanismPID();
+        dsBindingMap.state = genDatastreamBindingMap.getState();
+      }
+      return dsBindingMap;
+  }
+
+    public static fedora.server.types.gen.DatastreamBinding
+            convertDSBindingToGenDatastreamBinding(
+            fedora.server.storage.types.DSBinding in) {
+        fedora.server.types.gen.DatastreamBinding out=
+                new fedora.server.types.gen.DatastreamBinding();
+        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+        out.setBindKeyName(in.bindKeyName);
+        out.setBindLabel(in.bindLabel);
+        out.setDatastreamID(in.datastreamID);
+        out.setSeqNo(in.seqNo);
+        return out;
+    }
+
+    public static fedora.server.storage.types.DSBinding
+        convertGenDatastreamBindingToDSBinding(
+        fedora.server.types.gen.DatastreamBinding genDatastreamBinding)
+    {
+      fedora.server.storage.types.DSBinding dsBinding =
+            new fedora.server.storage.types.DSBinding();
+      if (genDatastreamBinding != null)
+      {
+        dsBinding.bindKeyName = genDatastreamBinding.getBindKeyName();
+        dsBinding.bindLabel = genDatastreamBinding.getBindLabel();
+        dsBinding.datastreamID = genDatastreamBinding.getDatastreamID();
+        dsBinding.seqNo = genDatastreamBinding.getSeqNo();
+      }
+      return dsBinding;
+  }
+
+    public static fedora.server.types.gen.DatastreamBinding[]
+        convertDSBindingArrayToGenDatastreamBindingArray(
+        fedora.server.storage.types.DSBinding[] dsBindings)
+    {
+      if (dsBindings != null && dsBindings.length > 0)
+      {
+        fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings =
+            new fedora.server.types.gen.DatastreamBinding[dsBindings.length];
+        for (int i=0; i<genDatastreamBindings.length; i++)
+        {
+          fedora.server.types.gen.DatastreamBinding genDatastreamBinding =
+                   new fedora.server.types.gen.DatastreamBinding();
+          genDatastreamBindings[i] =
+              convertDSBindingToGenDatastreamBinding(dsBindings[i]);
+        }
+        return genDatastreamBindings;
+
+      } else
+      {
+        return null;
+      }
+  }
+
+  public static fedora.server.storage.types.DSBinding[]
+      convertGenDatastreamBindingArrayToDSBindingArray(
+      fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings)
+  {
+
+    if (genDatastreamBindings != null && genDatastreamBindings.length > 0)
+    {
+      fedora.server.storage.types.DSBinding[] dsBindings =
+          new fedora.server.storage.types.DSBinding[genDatastreamBindings.length];
+      for (int i=0; i<genDatastreamBindings.length; i++)
+      {
+        fedora.server.storage.types.DSBinding dsBinding =
+                 new fedora.server.storage.types.DSBinding();
+        dsBinding =
+            convertGenDatastreamBindingToDSBinding(genDatastreamBindings[i]);
+        dsBindings[i] = dsBinding;
+      }
+      return dsBindings;
+
+    } else
+    {
+      return null;
+    }
+  }
+
+
   public static void main(String[] args)
   {
     try{

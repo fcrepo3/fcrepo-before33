@@ -365,14 +365,25 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return genDatastreams;
     }
 
+    private fedora.server.types.gen.Disseminator[] getGenDisseminators(
+            fedora.server.storage.types.Disseminator[] intDisseminators) {
+        fedora.server.types.gen.Disseminator[] genDisseminators=
+                new fedora.server.types.gen.Disseminator[intDisseminators.length];
+            for (int i=0; i<intDisseminators.length; i++) {
+                genDisseminators[i]=TypeUtility.convertDisseminatorToGenDisseminator(
+                           intDisseminators[i]);
+                }
+        return genDisseminators;
+    }
+
     public fedora.server.types.gen.Datastream[] getDatastreamHistory(String PID, String datastreamID)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
             fedora.server.storage.types.Datastream[] intDatastreams=
                     s_management.getDatastreamHistory(
-                            getContext(), 
-                            PID, 
+                            getContext(),
+                            PID,
                             datastreamID);
             return getGenDatastreams(intDatastreams);
         } catch (ServerException se) {
@@ -397,22 +408,51 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
+*/
+
+    public fedora.server.types.gen.Disseminator[] getDisseminatorHistory(String PID, String disseminatorID) throws java.rmi.RemoteException {
+      assertInitialized();
+      try {
+          fedora.server.storage.types.Disseminator[] intDisseminators=
+                  s_management.getDisseminatorHistory(
+                          getContext(),
+                          PID,
+                          disseminatorID);
+          return getGenDisseminators(intDisseminators);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+    }
 
     public fedora.server.types.gen.Disseminator getDisseminator(String PID, String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
+      assertInitialized();
+      try {
+          fedora.server.storage.types.Disseminator diss=s_management.getDisseminator(getContext(), PID, disseminatorID, asOfDateTime);
+          return TypeUtility.convertDisseminatorToGenDisseminator(diss);
+      } catch (ServerException se) {
+          logStackTrace(se);
+          throw AxisUtility.getFault(se);
+      } catch (Exception e) {
+          throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 
-    public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
+    public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, java.util.Calendar asOfDateTime, String dissState) throws java.rmi.RemoteException {
+      assertInitialized();
+          try {
+              fedora.server.storage.types.Disseminator[] intDisseminators=s_management.getDisseminators(getContext(), PID, asOfDateTime, dissState);
+              return getGenDisseminators(intDisseminators);
+          } catch (ServerException se) {
+              logStackTrace(se);
+              throw AxisUtility.getFault(se);
+          } catch (Exception e) {
+              throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 
-    public fedora.server.types.gen.ComponentInfo[] getDisseminatorHistory(String PID, String disseminatorID) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-*/
     private void assertInitialized()
             throws java.rmi.RemoteException {
         if (!s_initialized) {
