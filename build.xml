@@ -80,6 +80,8 @@
 		<copy todir="dist/server" file="COPYRIGHT.TXT"/>
 		<copy todir="dist/server" file="license.html"/>
 		<copy todir="dist/server" file="copyright.html"/>
+		<copy todir="dist/userdocs/distribution" file="license.html"/>
+		<copy todir="dist/userdocs/distribution" file="copyright.html"/>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="license.html"/>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/distribution" file="copyright.html"/>
 		<copy todir="dist/client" file="LICENSE.TXT"/>
@@ -942,6 +944,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.136  2003/05/17 03:19:21  rlw
+  copied license/copyright to dist/userdocs/distribution
+
   Revision 1.135  2003/05/17 02:49:05  rlw
   adds transform for builder.dbx
   removes transform for known-issues.dbx
