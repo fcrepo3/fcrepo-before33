@@ -9,8 +9,8 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.translation.DOTranslatorImpl;
-import fedora.server.storage.translation.METSDODeserializer;
-import fedora.server.storage.translation.METSDOSerializer;
+import fedora.server.storage.translation.METSLikeDODeserializer;
+import fedora.server.storage.translation.METSLikeDOSerializer;
 
 /**
  * Tests the implementation of the RepositoryReader interface, 
@@ -33,9 +33,9 @@ public class RepositoryReaderTest
         try {
             String mets="mets11fedora1";
             HashMap sers=new HashMap();
-            sers.put(mets, new METSDOSerializer());
+            sers.put(mets, new METSLikeDOSerializer());
             HashMap desers=new HashMap();
-            desers.put(mets, new METSDODeserializer());
+            desers.put(mets, new METSLikeDODeserializer());
             DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
             m_repoReader=new DirectoryBasedRepositoryReader(m_repoDir, translator,
                     mets, mets, mets, "UTF-8", null);
