@@ -338,8 +338,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-            + "GetBehaviorDefinitions: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //    + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_BEHAVIOR_METHODS))
       {
@@ -430,8 +430,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-            + "GetBehaviorDefinitions: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //    + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       }
       else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
@@ -498,8 +498,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-            + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //    + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_DISSEMINATION))
       {
@@ -593,8 +593,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-            + "GetDissemination: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //    + "GetDissemination: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_OBJECT_METHODS))
       {
@@ -684,8 +684,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-          + "GetObjectMethods: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //  + "GetObjectMethods: " + interval + " milliseconds.");
       }
       else if (action.equals(GET_OBJECT_PROFILE))
       {
@@ -775,8 +775,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSoapServlet] Roundtrip "
-          + "GetObjectProfile: " + interval + " milliseconds.");
+        //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
+        //  + "GetObjectProfile: " + interval + " milliseconds.");
         // end Object Profile processing
       }
       else
