@@ -56,7 +56,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 	
 
-	
+	/*
 	private final URI ACTION_NEW_STATE_URI;
 	private final URI ACTION_DATASTREAM_NEW_STATE_URI;
 	private final URI ACTION_DISSEMINATOR_NEW_STATE_URI;
@@ -102,6 +102,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final URI ENVIRONMENT_SERVER_IP_URI;	
 	private final URI ENVIRONMENT_SERVER_PORT_URI;		
 	//private final URI RESOURCE_STATE_URI; 
+	 */
 	
 	private String repositoryPoliciesDirectory = ""; //"/fedora-repository-policies";
 	private String objectPoliciesDirectory = ""; //"/fedora-object-policies";
@@ -129,6 +130,7 @@ public class DefaultAuthorization extends Module implements Authorization {
           throws ModuleInitializationException
   {
     super(moduleParameters, server, role);
+    System.err.println("log4j.configuration=" + System.getProperty("log4j.configuration"));
 	String serverHome = null;
     try {
 		serverHome = server.getHomeDir().getCanonicalPath() + File.separator;
@@ -154,7 +156,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ENFORCE_MODE)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE);
     }
- 
+ /*
 	try {
 		ACTION_NEW_STATE_URI = new URI(ACTION_NEW_STATE_URI_STRING);		
 		ACTION_DATASTREAM_NEW_STATE_URI = new URI(ACTION_DATASTREAM_NEW_STATE_URI_STRING);		
@@ -212,6 +214,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     	System.err.println("ERROR ON MAKING URIs");
 		throw new ModuleInitializationException("couldn't make URIs", getRole(), e);
 	}
+	*/
   }
 
   
@@ -237,49 +240,8 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
   }
 
-  /*
-  public XACMLPep getPep() throws ServerException {
-  	return xacmlPep;
-  }
-  */
- 
 	//private static final boolean enforceResourceIndexList = true;
   	//private static final boolean enforceSearchList = true;
-
-  /*
-	private static final String[] parseRole (String role) {
-		//System.out.println("parseRole() "+role);
-		String[] parts = null;
-		if ((role == null) || (role.length() == 0)) {
-			//System.out.println("(role == null) || (role.length() == 0)");
-		} else {
-			int i = role.indexOf('=');
-			if (i == 0) {
-				//System.out.println("i==0");
-			} else {
-				parts = new String[2];	
-				if (i < 0) {
-					parts[0] = role;
-					parts[1] = "";			
-				} else {
-					parts[0] = role.substring(0,i);
-					//System.out.println("parts[0]="+parts[0]);
-					if (i == (role.length()-1)) {
-						parts[1] = "";
-						//System.out.println("parts[1] set to \"\"");
-					} else {
-						parts[1] = role.substring(i+1);
-						//System.out.println("parts[1]="+parts[1]);
-					}
-				}
-				//System.out.println("parts[0]="+parts[0]+"parts[1]="+parts[1]);
-			}
-		}
-		return parts; 
-	}
-	
-	private static final String[] NO_ROLES = new String[0];
-	*/
   
 	private final String extractNamespace(String pid) {
 		String namespace = "";
@@ -296,123 +258,111 @@ public class DefaultAuthorization extends Module implements Authorization {
 	
 	public final void enforceAddDatastream(Context context, String pid, String dsId, String dsLocation, String controlGroup, String dsState) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.ADD_DATASTREAM.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, dsId);
-			resourceAttributes.set(RESOURCE_DATASTREAM_LOCATION_URI_STRING, dsLocation);
-			resourceAttributes.set(RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING, controlGroup);
-			resourceAttributes.set(Constants.MODEL.DATASTREAM_STATE.uri, dsState);
+			name = resourceAttributes.setReturn(Constants.MODEL.DATASTREAM_STATE.uri, dsState);
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, dsId);
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_LOCATION.uri, dsLocation);
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.CONTROL_GROUP.uri, controlGroup);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.ADD_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceAddDisseminator(Context context, String pid) 
 	throws NotAuthorizedException { 
+		String target = Constants.POLICY_ACTION.ADD_DISSEMINATOR.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.ADD_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 		
 	public final void enforceExportObject(Context context, String pid) 
 	throws NotAuthorizedException { 
+		String target = Constants.POLICY_ACTION.EXPORT_OBJECT.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.EXPORT_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}			
 	
 	
 	public final void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorId) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_DISSEMINATOR_HISTORY.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorId);	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING, extractNamespace(disseminatorId));	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_PID.uri, disseminatorId);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_NAMESPACE.uri, extractNamespace(disseminatorId));	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATOR_HISTORY.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceGetNextPid(Context context, String namespace, int nNewPids) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_NEXT_PID.uri;	
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, namespace);	
+		String name = "";
+		try {
 			String nNewPidsAsString = Integer.toString(nNewPids);
-			resourceAttributes.set(RESOURCE_N_NEW_PIDS_URI_STRING, nNewPidsAsString);		
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.N_NEW_PIDS.uri, nNewPidsAsString);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_NEXT_PID.uri, Constants.POLICY_ACTION.APIM.uri, "", namespace, context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, "", namespace, context);
 	}	
 
 	public final void enforceGetDatastream(Context context, String pid, String datastreamId) 
 	throws NotAuthorizedException { 
+		String target = Constants.POLICY_ACTION.GET_DATASTREAM.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);		
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_DATASTREAM_HISTORY.uri;		
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);		
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM_HISTORY.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	private final String ensureDate (Date date, Context context) throws AuthzOperationalException {
@@ -430,436 +380,394 @@ public class DefaultAuthorization extends Module implements Authorization {
 	
 	public final void enforceGetDatastreams(Context context, String pid, Date asOfDate, String datastreamState) 
 	throws NotAuthorizedException { 
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_DATASTREAMS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+        System.err.println("in enforceGetDatastreams");
+		String name = ""; 
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.MODEL.DATASTREAM_STATE.uri, datastreamState);	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+	        System.err.println("in enforceGetDatastreams, before setting datastreamState=" + datastreamState);
+	        name = resourceAttributes.setReturn(Constants.MODEL.DATASTREAM_STATE.uri, datastreamState);	
+	        System.err.println("in enforceGetDatastreams, before setting asOfDateAsString");
+	        name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.AS_OF_DATE.uri, ensureDate(asOfDate, context));
+		    System.err.println("in enforceGetDatastreams, after setting asOfDateAsString");
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
+        System.err.println("in enforceGetDatastreams, before setting resourceAttributes");
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAMS.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+        System.err.println("in enforceGetDatastreams, after setting resourceAttributes");
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+        System.err.println("in enforceGetDatastreams, after calling global enforce");
 	}	
 
-	public final void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDate) 
+	public final void enforceGetDisseminator(Context context, String pid, String disseminatorPid, Date asOfDate) 
 	throws NotAuthorizedException { 
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_DISSEMINATOR.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorId);	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING, extractNamespace(disseminatorId));
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorPid);	
+			name = resourceAttributes.setReturn(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING, extractNamespace(disseminatorPid));
+			name = resourceAttributes.setReturn(RESOURCE_AS_OF_DATE_URI_STRING, ensureDate(asOfDate, context));	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);		
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
 	throws NotAuthorizedException { 
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_DISSEMINATORS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_STATE_URI_STRING, disseminatorState);	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_STATE.uri, disseminatorState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.AS_OF_DATE.uri, ensureDate(asOfDate, context));	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATORS.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceGetObjectProperties(Context context, String pid) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_OBJECT_PROPERTIES.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_PROPERTIES.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforceGetObjectXML(Context context, String pid) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_OBJECT_XML.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_XML.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}		
 	
 	public final void enforceIngestObject(Context context, String pid) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.INGEST_OBJECT.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.INGEST_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceListObjectInFieldSearchResults(Context context, String pid) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri;
+		log("enforcing " + target);
 		if (enforceListObjectInFieldSearchResults) {
 			context.setActionAttributes(null);
 			context.setResourceAttributes(null);
-			/*
-			MultiValueMap resourceAttributes = new MultiValueMap();
-			try {
-				resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-				resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			} catch (Exception e) {
-				context.setResourceAttributes(null);		
-				throw new AuthzOperationalException("enforceX could not complete", e);	
-			}
-			context.setResourceAttributes(resourceAttributes);
-			*/
-			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
 	}	
 	
 	public final void enforceListObjectInResourceIndexResults(Context context, String pid) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri;
+		log("enforcing " + target);
 		if (enforceListObjectInResourceIndexResults) {
 			context.setActionAttributes(null);
 			context.setResourceAttributes(null);
-			/*
-			MultiValueMap resourceAttributes = new MultiValueMap();
-			try {
-				resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-				resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			} catch (Exception e) {
-				context.setResourceAttributes(null);		
-				throw new AuthzOperationalException("enforceX could not complete", e);	
-			}
-			context.setResourceAttributes(resourceAttributes);
-			*/
-			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
 	}
 
-	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String datastreamLocation, String datastreamState) 
-	throws NotAuthorizedException { 
+	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String datastreamNewLocation, String datastreamNewState) 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
-			resourceAttributes.set(RESOURCE_DATASTREAM_LOCATION_URI_STRING, datastreamLocation);			
-			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DATASTREAM_NEW_LOCATION.uri, datastreamNewLocation);			
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
-	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String datastreamState) 
+	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String newDatastreamState) 
 	throws NotAuthorizedException { 
+		String target = Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_VALUE.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
-			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DATASTREAM_NEW_STATE.uri, newDatastreamState);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_VALUE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
-	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String bmechPid, String disseminatorState) 
-	throws NotAuthorizedException { 
+	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorPid, String bmechNewPid, String disseminatorNewState) 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.MODIFY_DISSEMINATOR.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorId);
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING, extractNamespace(disseminatorId));
-			resourceAttributes.set(RESOURCE_BMECH_PID_URI_STRING, bmechPid);	
-			resourceAttributes.set(RESOURCE_BMECH_NAMESPACE_URI_STRING, extractNamespace(bmechPid));		
-			resourceAttributes.set(ACTION_DISSEMINATOR_NEW_STATE_URI_STRING, extractNamespace(disseminatorState));		
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_PID.uri, disseminatorPid);
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_NAMESPACE.uri, extractNamespace(disseminatorPid));
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.BMECH_NEW_PID.uri, bmechNewPid);	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.BMECH_NEW_NAMESPACE.uri, extractNamespace(bmechNewPid));		
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DISSEMINATOR_NEW_STATE.uri, extractNamespace(disseminatorNewState));		
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
-	public final void enforceModifyObject(Context context, String pid, String newObjectState) 
-	throws NotAuthorizedException { 
+	public final void enforceModifyObject(Context context, String pid, String objectNewState) 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.MODIFY_OBJECT.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_ACTION.NEW_OBJECT_STATE.uri, newObjectState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.OBJECT_NEW_STATE.uri, objectNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
 	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.PURGE_DATASTREAM.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
 	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.PURGE_DISSEMINATOR.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorId);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_ID.uri, disseminatorId);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforcePurgeObject(Context context, String pid) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.PURGE_OBJECT.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.SET_DATASTREAM_STATE.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
-			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamNewState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.SET_DATASTREAM_STATE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-	throws NotAuthorizedException { 
+	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.SET_DISSEMINATOR_STATE.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_PID_URI_STRING, disseminatorId);	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING, extractNamespace(disseminatorId));			
-			resourceAttributes.set(ACTION_DISSEMINATOR_NEW_STATE_URI_STRING, disseminatorNewState);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_ID.uri, disseminatorId);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DISSEMINATOR_NAMESPACE.uri, extractNamespace(disseminatorId));			
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DISSEMINATOR_NEW_STATE.uri, disseminatorNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.SET_DISSEMINATOR_STATE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public void enforceDescribeRepository(Context context) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.DESCRIBE_REPOSITORY.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.DESCRIBE_REPOSITORY.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 
 	public void enforceFindObjects(Context context) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.FIND_OBJECTS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		System.err.println("enforceFindObjects, subject (from context)=" + context.getSubjectValue(SUBJECT_ID_URI_STRING));
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.FIND_OBJECTS.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 	
 	public void enforceRIFindObjects(Context context) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.RI_FIND_OBJECTS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.FIND_OBJECTS.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
 	throws NotAuthorizedException {
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_DATASTREAM_DISSEMINATION.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
+			name = resourceAttributes.setReturn(RESOURCE_AS_OF_DATE_URI_STRING, ensureDate(asOfDate, context));	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);			
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM_DISSEMINATION.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 	
-	public void enforceGetDissemination(Context context, String pid, String bDefPID, String methodName, Date asOfDate) 
+	public void enforceGetDissemination(Context context, String pid, String bDefPid, String methodName, Date asOfDate) 
 	throws NotAuthorizedException {
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_DISSEMINATION.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_BDEF_PID_URI_STRING, bDefPID);	
-			resourceAttributes.set(RESOURCE_BDEF_NAMESPACE_URI_STRING, extractNamespace(bDefPID));	
-			resourceAttributes.set(RESOURCE_DISSEMINATOR_METHOD_URI_STRING, methodName);
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.BDEF_PID.uri, bDefPid);	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.BDEF_NAMESPACE.uri, extractNamespace(bDefPid));	
+			name = resourceAttributes.setReturn(Constants.POLICY_ACTION.DISSEMINATOR_METHOD.uri, methodName);
+			name = resourceAttributes.setReturn(RESOURCE_AS_OF_DATE_URI_STRING, ensureDate(asOfDate, context));	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);			
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATION.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceGetObjectHistory(Context context, String pid) 
 	throws NotAuthorizedException {
+		String target = Constants.POLICY_ACTION.GET_OBJECT_HISTORY.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		/*
-		MultiValueMap resourceAttributes = new MultiValueMap();
-		try {
-			resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-		} catch (Exception e) {
-			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
-		}
-		context.setResourceAttributes(resourceAttributes);
-		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_HISTORY.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceGetObjectProfile(Context context, String pid, Date asOfDate) 
 	throws NotAuthorizedException {
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.GET_OBJECT_PROFILE.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(Constants.POLICY_RESOURCE.AS_OF_DATE.uri, ensureDate(asOfDate, context));
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_PROFILE.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceListDatastreams(Context context, String pid, Date asOfDate) 
 	throws NotAuthorizedException {
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.LIST_DATASTREAMS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(RESOURCE_AS_OF_DATE_URI_STRING, ensureDate(asOfDate, context));				
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_DATASTREAMS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceListMethods(Context context, String pid, Date asOfDate) 
 	throws NotAuthorizedException {
-		String asOfDateAsString = ensureDate(asOfDate, context);
+		String target = Constants.POLICY_ACTION.LIST_METHODS.uri;
+		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
 		try {
-			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
-			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
+			name = resourceAttributes.setReturn(RESOURCE_AS_OF_DATE_URI_STRING, ensureDate(asOfDate, context));				
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
-			throw new AuthzOperationalException("enforceX could not complete", e);	
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_METHODS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), target, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	  private static final String pad(int n, int length) throws Exception {
@@ -900,6 +808,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  
 	  private static final void putAsOfDate (Hashtable resourceAttributes, Date asOfDate) throws Exception {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
+	  }
+	  
+	  private final void log(String msg) {
+	  	System.err.println(msg);
+	  }
+
+	  private final String logged(String msg) {
+	  	log(msg);
+	  	return msg;
 	  }
 
 	
