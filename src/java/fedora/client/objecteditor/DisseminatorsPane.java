@@ -46,6 +46,7 @@ public class DisseminatorsPane
     private ObjectEditorFrame m_owner;
     private DisseminatorPane[] m_disseminatorPanes;
     private Map m_currentVersionMap;
+	public Map allBDefLabels;
 
     /**
      * Build the pane.
@@ -56,6 +57,8 @@ public class DisseminatorsPane
         m_owner=owner;
         m_currentVersionMap=new HashMap();
         m_tabbedPane=new JTabbedPane(SwingConstants.LEFT);
+		allBDefLabels=Util.getBDefLabelMap();
+		
         Disseminator[] currentVersions=Administrator.APIM.
                     getDisseminators(pid, null, null);
         m_disseminatorPanes=new DisseminatorPane[currentVersions.length];
@@ -273,9 +276,6 @@ public class DisseminatorsPane
             // build dropdown of possible behaviors
             //
             boolean noDisseminators=(m_currentVersionMap.keySet().size()==0);
-            // get the full list of bDefs from the server
-            Map allBDefLabels=Util.getBDefLabelMap();
-            // then narrow it down to the unused ones
             Map bDefLabels=new HashMap();
             Iterator iter=allBDefLabels.keySet().iterator();
             while (iter.hasNext()) {
@@ -333,7 +333,7 @@ public class DisseminatorsPane
             BorderLayout bDefSelectionRowLayout=new BorderLayout();
             bDefSelectionRowLayout.setHgap(4);
             JPanel bDefSelectionRow=new JPanel(bDefSelectionRowLayout);
-            JTextArea definedBy=new JTextArea("is defined by...");
+            JTextArea definedBy=new JTextArea("defined by...");
             definedBy.setLineWrap(false);
             definedBy.setEditable(false);
             definedBy.setBackground(Administrator.BACKGROUND_COLOR);
@@ -383,7 +383,6 @@ public class DisseminatorsPane
                         String bDefPID=mechInputPanel.getBDefPID();
                         String bMechPID=mechInputPanel.getBMechPID();
                         String label=m_labelTextField.getText();
-                        String bMechLabel=mechInputPanel.getBMechLabel();
     
                         DatastreamBindingMap bindingMap=new DatastreamBindingMap();
                         bindingMap.setDsBindMapID("set by server!"); // unnecessary
@@ -399,8 +398,6 @@ public class DisseminatorsPane
                                                                    bDefPID,
                                                                    bMechPID,
                                                                    label,
-                                                                   m_bDefLabel,
-                                                                   bMechLabel,
                                                                    bindingMap,
                                                                    state,
                                                                    "DisseminatorsPane generated this logMessage.");

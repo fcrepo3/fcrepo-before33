@@ -84,11 +84,11 @@ public class BehaviorDescriptionPanel
     private JPanel makePanel(String bDefPID) 
             throws IOException {
 
-        JTextArea supportsMethodsTextArea=new JTextArea("   ...defines");
+        JTextArea supportsMethodsTextArea=new JTextArea("   defines method");
         supportsMethodsTextArea.setLineWrap(false);
         supportsMethodsTextArea.setEditable(false);
         supportsMethodsTextArea.setBackground(Administrator.BACKGROUND_COLOR);
-        JTextArea methodParametersTextArea=new JTextArea("      ...accepts");
+        JTextArea methodParametersTextArea=new JTextArea("   with parm(s)");
         methodParametersTextArea.setLineWrap(false);
         methodParametersTextArea.setEditable(false);
         methodParametersTextArea.setBackground(Administrator.BACKGROUND_COLOR);

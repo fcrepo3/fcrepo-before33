@@ -55,7 +55,7 @@ public class DisseminatorPane
     private CardLayout m_methodCardLayout;
     private JPanel m_methodDescCard;
     private CardLayout m_methodDescCardLayout;
-    private JTextField m_bDefLabelTextField;
+    //private JTextField m_bDefLabelTextField;
     private Dimension m_labelDims;
     private ObjectEditorFrame m_gramps;
     private boolean m_didSlider;
@@ -63,6 +63,7 @@ public class DisseminatorPane
     private DisseminatorPane m_editingPane; // me
     private JTextArea m_dtLabel;
     private JPanel m_dateLabelAndValue;
+    protected Map m_bMechLabelMap;
 
     public DisseminatorPane(ObjectEditorFrame gramps, String pid,
             Disseminator[] versions, DisseminatorsPane owner)
@@ -74,6 +75,11 @@ public class DisseminatorPane
         m_owner=owner;
         m_versions=versions;
         m_mostRecent=versions[0];
+
+		// get a map of all bmech labels by looking at bmech objects.
+		// Since bdefPID will be the same for all versions of the disseminator,
+		// we do this lookup by bdefPID once right here on the most recent version.
+		m_bMechLabelMap=Util.getBMechLabelMap(m_mostRecent.getBDefPID());      
 
         // set up the common pane
         // first get width and height we'll use for the labels on the left
@@ -121,21 +127,13 @@ public class DisseminatorPane
         });
 
         JPanel bDefInfo=new JPanel(new BorderLayout());
-
-        m_bDefLabelTextField=new JTextField(m_mostRecent.getBDefLabel());
-        m_bDefLabelTextField.getDocument().addDocumentListener(dataChangeListener);
-        if (m_mostRecent.getState().equals("D")) {
-            m_bDefLabelTextField.setEnabled(false);
-        }
-        Administrator.constrainHeight(m_bDefLabelTextField);
-        JPanel bDefLabelPanel=new JPanel(new BorderLayout());
-        bDefLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
-        bDefLabelPanel.add(m_bDefLabelTextField, BorderLayout.CENTER);
-        JTextArea definedBy=new JTextArea("is defined by " + m_mostRecent.getBDefPID());
+        JTextArea definedBy=new JTextArea("defined by  " + m_mostRecent.getBDefPID() 
+        	+ " (" 
+        	+ owner.allBDefLabels.get(m_mostRecent.getBDefPID())
+        	+ ")");
         definedBy.setBackground(Administrator.BACKGROUND_COLOR);
         definedBy.setEditable(false);
         bDefInfo.add(definedBy, BorderLayout.WEST);
-        bDefInfo.add(bDefLabelPanel, BorderLayout.CENTER);
         Administrator.constrainHeight(bDefButton);
         bDefInfo.add(bDefButton, BorderLayout.EAST);
         JPanel bDefAll=new JPanel(new BorderLayout());
@@ -218,14 +216,6 @@ public class DisseminatorPane
            m_dtLabel.setText(m_versions[source.getValue()].getCreateDate() + " ");
            // and that the selected version is shown
            m_versionCardLayout.show(m_valuePane, "" + source.getValue());
-           // set the new text of m_bDefLabelTextField
-           m_bDefLabelTextField.setText(m_versions[source.getValue()].getBDefLabel());
-           // and disable or enable it as necessary
-           if (source.getValue()==0) {
-               m_bDefLabelTextField.setEditable(true);
-           } else {
-               m_bDefLabelTextField.setEditable(false);
-           }
        }
     }
 
@@ -296,8 +286,9 @@ public class DisseminatorPane
         private JPanel m_stackedBindingPane;
         private Disseminator m_diss;
         private JTextField m_labelTextField;
-        private JTextField m_bMechLabelTextField;
-        private Map m_bMechLabels;
+        //private JTextField m_bMechLabelTextField;
+		private JTextArea m_bMechLabel;
+        private Map m_bMechLabelMap;
         private Map m_inputSpecs;
         private Map m_bindingPanes;
         private String m_lastSelectedBMech;
@@ -307,10 +298,11 @@ public class DisseminatorPane
 
             m_bindingPanes=new HashMap();
 
-            // prepare by getting bmech labels and binding specs
-            m_bMechLabels=Util.getBMechLabelMap(m_diss.getBDefPID());
-            m_bMechLabels.put(m_diss.getBMechPID(), m_diss.getBMechLabel());
-            m_inputSpecs=Util.getInputSpecMap(m_bMechLabels.keySet());
+            // prepare by looking at applicable bmech objects
+            // and get bmech binding specs
+            String bdefPID = m_diss.getBDefPID();
+            m_bMechLabelMap=Util.getBMechLabelMap(bdefPID);
+            m_inputSpecs=Util.getInputSpecMap(m_bMechLabelMap.keySet());
 
             // top panel is for labels and such
             JLabel label1=new JLabel("Label");
@@ -333,8 +325,8 @@ public class DisseminatorPane
             // make the list of bmech pids for the dropdown,
             // ensuring that the first one listed is the one that
             // the disseminator currently uses.
-            String[] bMechPIDs=new String[m_bMechLabels.keySet().size()];
-            Iterator bMechIter=m_bMechLabels.keySet().iterator();
+            String[] bMechPIDs=new String[m_bMechLabelMap.keySet().size()];
+            Iterator bMechIter=m_bMechLabelMap.keySet().iterator();
             int bMechNum=0;
             bMechPIDs[bMechNum]=m_diss.getBMechPID();
             while (bMechIter.hasNext()) {
@@ -350,12 +342,14 @@ public class DisseminatorPane
             m_bMechComboBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
                     // put the currently-entered label into m_bMechLabels,
-                    m_bMechLabels.put(m_lastSelectedBMech, m_bMechLabelTextField.getText());
+                    //m_bMechLabels.put(m_lastSelectedBMech, m_bMechLabelTextField.getText());
                     // then switch to the appropriate panel and set the
                     // label text
+                    
                     String bMechPID=(String) m_bMechComboBox.getSelectedItem();
                     m_bindingsCard.show(m_stackedBindingPane, bMechPID);
-                    m_bMechLabelTextField.setText((String) m_bMechLabels.get(bMechPID));
+                    //m_bMechLabelTextField.setText((String) m_bMechLabels.get(bMechPID));
+                    m_bMechLabel.setText((String)m_bMechLabelMap.get(bMechPID));
                     // tell it to update the buttons appropriately
                     DatastreamBindingPane pane=(DatastreamBindingPane) m_bindingPanes.get(bMechPID);
                     pane.fireDataChanged();
@@ -372,16 +366,16 @@ public class DisseminatorPane
                 }
             });
 
-            m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
-            m_bMechLabelTextField.getDocument().addDocumentListener(dataChangeListener);
-            m_bMechLabelTextField.setEditable(true);
-            m_bMechLabelTextField.setEnabled(!m_diss.getState().equals("D"));
-
+			m_bMechLabel=new JTextArea(" (" 
+				+ m_bMechLabelMap.get(m_diss.getBMechPID())
+				+ ")");
+			m_bMechLabel.setBackground(Administrator.BACKGROUND_COLOR);
+			m_bMechLabel.setEditable(false);
             JPanel bMechInfo=new JPanel(new BorderLayout());
             bMechInfo.add(m_bMechComboBox, BorderLayout.WEST);
             JPanel bMechLabelPanel=new JPanel(new BorderLayout());
             bMechLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
-            bMechLabelPanel.add(m_bMechLabelTextField, BorderLayout.CENTER);
+            bMechLabelPanel.add(m_bMechLabel, BorderLayout.CENTER);
             bMechInfo.add(bMechLabelPanel, BorderLayout.CENTER);
             bMechInfo.add(bMechButton, BorderLayout.EAST);
 
@@ -455,33 +449,9 @@ public class DisseminatorPane
 
         public boolean isDirty() {
 			
-			// if repo returns null bDef or bMech label, set label to empty string
-			// so comparision to swing text field does not fail in case where text
-			// field is empty string.
-			// is empty too.
-			String bDefLabel=m_diss.getBDefLabel();
-			if (bDefLabel==null){
-				bDefLabel="";
-			}
-			String bMechLabel=m_diss.getBMechLabel();
-			if (bMechLabel==null){
-				bMechLabel="";
-			}
-			// now test for changes...
-            if ((m_versionSlider==null || m_versionSlider.getValue()==0) 
-            	&& !m_bDefLabelTextField.getText().equals(bDefLabel)) {
-                return true;
-            }
             if (!m_labelTextField.getText().equals(m_diss.getLabel())) {
                 return true;
             }
-            if (!m_bDefLabelTextField.getText().equals(bDefLabel)) {
-                return true;
-            }
-
-			if (!m_bMechLabelTextField.getText().equals(bMechLabel)) {
-				return true;
-			}
             // is the bmech the same?
             String currentBMech=(String) m_bMechComboBox.getSelectedItem();
             if (currentBMech.equals(m_diss.getBMechPID())) {
@@ -514,8 +484,6 @@ public class DisseminatorPane
                     m_diss.getID(),
                     bMechPID,
                     m_labelTextField.getText(),
-                    m_bDefLabelTextField.getText(),
-                    m_bMechLabelTextField.getText(),
                     bindingMap,
                     state,
                     logMessage,
@@ -524,8 +492,6 @@ public class DisseminatorPane
 
         public void undoChanges() {
             m_labelTextField.setText(m_diss.getLabel());
-            m_bDefLabelTextField.setText(m_diss.getBDefLabel());
-            m_bMechLabelTextField.setText(m_diss.getBMechLabel());
             // switch to the original bmech and reset its binding values
             m_bMechComboBox.setSelectedItem(m_diss.getBMechPID());
             m_bindingsCard.show(m_stackedBindingPane, m_diss.getBMechPID());
@@ -547,7 +513,6 @@ public class DisseminatorPane
         private Disseminator m_diss;
 
         private JTextField m_labelTextField;
-        private JTextField m_bMechLabelTextField;
 
         public PriorVersionPane(Disseminator diss) {
             m_diss=diss;
@@ -567,13 +532,16 @@ public class DisseminatorPane
                     new ViewObject(m_diss.getBMechPID()).launch();
                 }
             });
-            m_bMechLabelTextField=new JTextField(m_diss.getBMechLabel());
-            m_bMechLabelTextField.setEditable(false);
+			JTextArea bMechLabel=new JTextArea(" (" 
+				+ m_bMechLabelMap.get(m_diss.getBMechPID())
+				+ ")");
+			bMechLabel.setBackground(Administrator.BACKGROUND_COLOR);
+			bMechLabel.setEditable(false);
             JPanel bMechInfo=new JPanel(new BorderLayout());
             bMechInfo.add(new JLabel(m_diss.getBMechPID()), BorderLayout.WEST);
             JPanel bMechLabelPanel=new JPanel(new BorderLayout());
             bMechLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
-            bMechLabelPanel.add(m_bMechLabelTextField, BorderLayout.CENTER);
+            bMechLabelPanel.add(bMechLabel, BorderLayout.CENTER);
             bMechInfo.add(bMechLabelPanel, BorderLayout.CENTER);
             bMechInfo.add(bMechButton, BorderLayout.EAST);
             JComponent[] right=new JComponent[] {m_labelTextField, bMechInfo};
