@@ -54,6 +54,7 @@ public class GeneralPane extends JPanel
     protected DefaultTableModel dcTableModel;
 	protected DCElementDialog dcDialog;
 	private boolean editDCMode = false;
+	protected String[] bDefOptions = new String[0];
 
     public GeneralPane(BMechBuilder parent)
     {
@@ -163,7 +164,7 @@ public class GeneralPane extends JPanel
 				bDefLabels.put(pid, (String) allBDefLabels.get(pid));
 		}
 		// set up the combobox 
-		String[] bDefOptions=new String[bDefLabels.keySet().size() + 1];
+		bDefOptions=new String[bDefLabels.keySet().size() + 1];
 		if (bDefOptions.length==1) {
 			bDefOptions[0]="No behavior definitions in repository!";
 		} else {
@@ -199,6 +200,13 @@ public class GeneralPane extends JPanel
 							e.getMessage(), 
 							"Error getting behavior definition",
 							JOptionPane.ERROR_MESSAGE);
+				}
+				//if (!(bDefPID.equals(null)))
+				if (bDefPID != null)
+				{
+				  MethodsPane mp =
+					(MethodsPane)((BMechBuilder)parent).tabpane.getComponentAt(2);
+				  mp.renderContractMethods(bDefPID);
 				}
 			}
 		});	
