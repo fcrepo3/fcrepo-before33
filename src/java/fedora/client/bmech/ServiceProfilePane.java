@@ -88,7 +88,7 @@ public class ServiceProfilePane
         textPane2.add(outputMIMETypes = new JTextField());
 
 		// Service Dependencies Input Table Panel
-		dependencyTable = new JTable(6,5);
+		dependencyTable = new JTable(20,5);
 		dependencyTable.setColumnSelectionAllowed(false);
 		dependencyTable.setRowSelectionAllowed(true);
 		dependencyTable.setRowHeight(18);
