@@ -1,46 +1,30 @@
 #!/bin/sh
+# ----------------------------------------------------------------------
+# Fedora Server ingest-demos script
+# ----------------------------------------------------------------------
 
-if [ "$FEDORA_HOME" = "" ]; then
-  echo "ERROR: Environment variable, FEDORA_HOME must be set."
-  exit 1
+# Cannot proceed if FEDORA_HOME is not set
+if [ -z "$FEDORA_HOME" ]; then
+	echo "ERROR: The FEDORA_HOME environment variable is not defined."
+	exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/client/client.jar" ]; then
-  echo "ERROR: FEDORA_HOME does not appear correctly set."
-  echo "Client cannot be found at $FEDORA_HOME/client/client.jar"
-  exit 1
-fi
-
-if [ "$FEDORA_JAVA_HOME" = "" ]; then
-
-
-  if [ "$JAVA_HOME" = "" ]; then
-    echo "ERROR: FEDORA_JAVA_HOME was not defined, nor was (the fallback) JAVA_HOME."
-    exit 1
-  else
-    THIS_JAVA_HOME=$JAVA_HOME
-  fi
+if [ -r "$FEDORA_HOME"/server/bin/set-env.sh ]; then
+  	. "$FEDORA_HOME"/server/bin/set-env.sh
 else
-  THIS_JAVA_HOME=$FEDORA_JAVA_HOME
+	echo "ERROR: $FEDORA_HOME/server/bin/set-env.sh was not found."
+	exit 1
 fi
 
-if [ ! -f "$THIS_JAVA_HOME/bin/java" ]; then
-  echo "ERROR: java was not found in $THIS_JAVA_HOME"
-  echo "Make sure FEDORA_JAVA_HOME or JAVA_HOME is set correctly."
-  exit 1
-fi
-
-if [ ! -f "$THIS_JAVA_HOME/bin/orbd" ]; then 
-  echo "ERROR: java was found in $THIS_JAVA_HOME, but it was not version 1.4"
-  echo "Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base."
-  exit 1
+# Validate number of arguments
+if [ $# -lt 4 ]; then
+	echo "Usage: fedora-ingest-demos <hostname> <port> <username> <password>"
+	echo "Use the values in fedora.fcfg, e.g.:"
+	echo "    fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
+	exit 1
 fi
 
 echo "Starting Fedora DemoIngester..."
-
-OLD_JAVA_HOME=$JAVA_HOME
-JAVA_HOME=$THIS_JAVA_HOME
-export JAVA_HOME
 
 echo "Ingesting Demonstration Objects..."
 
