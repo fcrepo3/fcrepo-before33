@@ -735,7 +735,7 @@ public class DefaultDOReplicator
                                 // (disseminator(s) still exist in the database)
                                 results=logAndExecuteQuery(st, "SELECT dsBindMapDbID, dsBindMapID"
                                     + " FROM dsBindMap,bMech,diss"
-                                    + " WHERE dsBindMap.bmechDbID=bMech.bmechDbID AND bMech.bmechPID='" + dissArray[j].bMechID + "' "
+                                    + " WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='" + dissArray[j].bMechID + "' "
                                     + " AND diss.dissID='" + dissArray[j].dissID + "' AND dsBindMapID='" + dissArray[j].dsBindMapID + "'");
 
                                 if (!results.next()) {
