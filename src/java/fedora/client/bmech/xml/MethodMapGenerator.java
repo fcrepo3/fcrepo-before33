@@ -65,7 +65,7 @@ public class MethodMapGenerator
       String mname = (methods[i].methodName == null) ? "" : methods[i].methodName;
       method.setAttribute("operationName", mname.trim());
       method.setAttribute("wsdlMsgName", (mname.trim() + "Request"));
-      method.setAttribute("wsdlMsgOutput", "dissem_response");
+      method.setAttribute("wsdlMsgOutput", "dissemResponse");
       root.appendChild(method);
 
       // Append Method Parm elements
@@ -110,7 +110,7 @@ public class MethodMapGenerator
         sb.append(mimeTypes[k].toString() + " ");
       }
       Element methodReturn = document.createElementNS(FMM, "fmm:MethodReturnType");
-      methodReturn.setAttribute("wsdlMsgName", "dissem_response");
+      methodReturn.setAttribute("wsdlMsgName", "dissemResponse");
       methodReturn.setAttribute("wsdlMsgTOMIME", sb.toString().trim());
       method.appendChild(methodReturn);
     }
