@@ -141,7 +141,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 	<!-- >>>>>>>>>>> needs testing and replication for ORGANIZATION|OTHER x note <<<<<<<<<<< -->
 
 
-	<!-- target substitutions @title and @href in /METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat -->
+	<!-- target substitutions @title and @xlink:href in /METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat -->
  	<xsl:template match="/METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:variable name="datastream" select="../../@ID" />
 		<xsl:copy>
@@ -158,9 +158,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 					<xsl:value-of select="$substitutions/input/datastreams/datastream[@id=$datastream]/@title" />
 				</xsl:attribute>
 			</xsl:if>
-			<xsl:if test="$substitutions/input/datastreams/datastream[@id=$datastream]/@href" >
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:href" >
 				<xsl:attribute name="xlink:href">
-					<xsl:value-of select="$substitutions/input/datastreams/datastream[@id=$datastream]/@href" />
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:href" />
 				</xsl:attribute>
 			</xsl:if>
 			<!-- processing terminals here, so no need to xsl:apply-templates select="node()" -->
@@ -219,7 +219,32 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>	
 
-		
+	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="">
+		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata">
+			<METS:xmlData />
+		</METS:mdWrap>
+	</METS:dmdSec>		
+	 <!-- target substitution (per-object metadata) -->
+	<xsl:template match="/METS:mets/METS:dmdSec/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="metadataID" select="../../@ID" /><!-- e.g., DESC1.0, from dmdSec element -->
+			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />
+				</xsl:attribute>
+			</xsl:if>			
+			<xsl:choose>
+				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
+					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="node()"/>
+				</xsl:otherwise>
+			</xsl:choose>		
+    		</xsl:copy>
+	</xsl:template>
+
 	 <!-- target substitution (per-datastream metadata) -->
 	<xsl:template match="/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
@@ -231,8 +256,8 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 				</xsl:attribute>
 			</xsl:if>			
 			<xsl:choose>
-				<xsl:when test="$substitutions/input/metadata/metadata[@id=$metadataID]">
-					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@id=$metadataID]/*" />
+				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
+					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="node()"/>
@@ -241,6 +266,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 
+	
 	 <!-- >>>>>>>>>>>>>> target substitution (per-datastream DESC metadata) <<<<<<<<<<<< -->
 
 	
