@@ -418,11 +418,16 @@ public class DefaultDOManager
                       getExternalContent(dmc.DSLocation.toString());
                   logInfo("Retrieving ManagedContent datastream from remote "
                       + "location: " + dmc.DSLocation);
-                  ByteArrayInputStream bais =
-                      new ByteArrayInputStream(mimeTypedStream.stream);
+                  // RLW: change required by conversion fom byte[] to InputStream
+                  //ByteArrayInputStream bais =
+                  //    new ByteArrayInputStream(mimeTypedStream.stream);
+                  // RLW: change required by conversion fom byte[] to InputStream
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                             + dmc.DSVersionID;
-                  getDatastreamStore().add(id, bais);
+                  // RLW: change required by conversion fom byte[] to InputStream
+                  getDatastreamStore().add(id, mimeTypedStream.getStream());
+                  //getDatastreamStore().add(id, bais);
+                  // RLW: change required by conversion fom byte[] to InputStream
 
                   // Make new audit record.
                   a = new AuditRecord();
@@ -441,7 +446,7 @@ public class DefaultDOManager
                   dmc.DSLocation = id;
                   logInfo("Replacing ManagedContent datastream with "
                       + "internal id: " + id);
-                  bais = null;
+                  //bais = null;
                 }
               }
             }

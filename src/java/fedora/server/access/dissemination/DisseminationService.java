@@ -1,6 +1,7 @@
 package fedora.server.access.dissemination;
 
 import java.io.File;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Timestamp;
@@ -346,7 +347,12 @@ public class DisseminationService
           // special fedora-specific MIME type to identify the stream as
           // a MIMETypedStream whose contents contain a URL to which the client
           // should be redirected.
-          dissemination = new MIMETypedStream("application/fedora-redirect",dissURL.getBytes());
+
+          // RLW: change required by conversion fom byte[] to InputStream
+          InputStream is = new ByteArrayInputStream(dissURL.getBytes());
+          //dissemination = new MIMETypedStream("application/fedora-redirect",dissURL.getBytes());
+          dissemination = new MIMETypedStream("application/fedora-redirect",is);
+          // RLW: change required by conversion fom byte[] to InputStream
         } else
         {
           // For all non-redirected disseminations, Fedora captures and returns

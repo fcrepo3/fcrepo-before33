@@ -2,7 +2,9 @@ package fedora.server.access;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.PipedReader;
@@ -32,6 +34,7 @@ import com.icl.saxon.expr.StringValue;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
+import fedora.server.utilities.TypeUtility;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
@@ -527,26 +530,38 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // not proxy the stream, but instead perform a simple redirect to
         // the URL contained within the body of the MIMETypedStream. This
         // special MIME type is used primarily for streaming media.
+
+        // RLW: change required by conversion fom byte[] to InputStream
         BufferedReader br = new BufferedReader(
-            new InputStreamReader(
-            new ByteArrayInputStream(dissemination.stream)));
+            new InputStreamReader(dissemination.getStream()));
+        //BufferedReader br = new BufferedReader(
+        //    new InputStreamReader(
+        //        new ByteArrayInputStream(dissemination.stream)));
+
+        // RLW: change required by conversion fom byte[] to InputStream
         StringBuffer sb = new StringBuffer();
         String line = null;
         while ((line = br.readLine()) != null)
         {
           sb.append(line);
         }
+
         response.sendRedirect(sb.toString());
       } else
       {
         response.setContentType(dissemination.MIMEType);
+        System.out.println("mime2: "+dissemination.MIMEType);
         int byteStream = 0;
-        ByteArrayInputStream dissemResult =
-            new ByteArrayInputStream(dissemination.stream);
-        while ((byteStream = dissemResult.read()) >= 0)
+        // RLW: change required by conversion fom byte[] to InputStream
+        //ByteArrayInputStream dissemResult =
+        //    new ByteArrayInputStream(dissemination.stream);
+        InputStream dissemResult = dissemination.getStream();
+        // RLW: change required by conversion fom byte[] to InputStream
+        while ((byteStream = dissemResult.read()) != -1)
         {
           out.write(byteStream);
         }
+        dissemResult.close();
         dissemResult = null;
       }
     } else
@@ -653,7 +668,11 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     }
     MIMETypedStream disseminationResult = null;
     // See if dissemination request is in local cache
-    disseminationResult = (MIMETypedStream)disseminationCache.get(requestURI);
+    // RLW: change required by conversion fom byte[] to InputStream
+    //dissemination Result = disseminationCache.get(requestURI);
+    disseminationResult = TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
+        (fedora.server.types.gen.MIMETypedStream) disseminationCache.get(requestURI));
+    // RLW: change required by conversion fom byte[] to InputStream
     if (disseminationResult == null)
     {
       // Dissemination request NOT in local cache.
@@ -666,7 +685,12 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // Dissemination request succeeded, so add to local cache
         // FIXME!! This is a crude cache. More robust caching will be needed
         // to achieve optimum performance as the number of requests gets large.
-        disseminationCache.put(requestURI, disseminationResult);
+
+        // RLW: change required by conversion fom byte[] to InputStream
+        fedora.server.types.gen.MIMETypedStream stream =
+            TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(disseminationResult);
+        // RLW: change required by conversion fom byte[] to InputStream
+        disseminationCache.put(requestURI, stream);
         logFinest("ADDED to CACHE: "+requestURI);
       }
       logFinest("CACHE SIZE: "+disseminationCache.size());

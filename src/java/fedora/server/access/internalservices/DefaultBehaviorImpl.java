@@ -80,8 +80,12 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getObjectProfile() throws ServerException
   {
-    return new MIMETypedStream("text/xml",
-      new ObjectInfoAsXML().getObjectProfile(reposBaseURL, reader).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
+    InputStream is = new ByteArrayInputStream((new ObjectInfoAsXML().getObjectProfile(reposBaseURL, reader).getBytes()));
+    return new MIMETypedStream("text/xml", is);
+    //return new MIMETypedStream("text/xml",
+    //  new ObjectInfoAsXML().getObjectProfile(reposBaseURL, reader).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
@@ -94,7 +98,10 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     // DO XSLT transform on object info;
     try
     {
-      ByteArrayInputStream in = new ByteArrayInputStream(getObjectProfile().stream);
+      // RLW: change required by conversion fom byte[] to InputStream
+      //ByteArrayInputStream in = new ByteArrayInputStream(getObjectProfile().stream);
+      InputStream in = getObjectProfile().getStream();
+      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/viewObjectProfile.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -102,7 +109,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      return new MIMETypedStream("text/html", out.toByteArray());
+      // RLW: change required by conversion fom byte[] to InputStream
+      in = new ByteArrayInputStream(out.toByteArray());
+      return new MIMETypedStream("text/html", in);
+      //return new MIMETypedStream("text/html", out.toByteArray());
+      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -131,8 +142,12 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     //return new MIMETypedStream("text/xml",
     //  new DatastreamsAsXML().getDatastreamList(reader, null).getBytes());
 
-    return new MIMETypedStream("text/xml",
-      new DatastreamsAsXML().getItemList(reposBaseURL, reader, null).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
+    InputStream is = new ByteArrayInputStream(new DatastreamsAsXML().getItemList(reposBaseURL, reader, null).getBytes());
+    return new MIMETypedStream("text/xml", is);
+    //return new MIMETypedStream("text/xml",
+    //  new DatastreamsAsXML().getItemList(reposBaseURL, reader, null).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
@@ -148,7 +163,10 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     /// Transform results into an html table
     try
     {
-      ByteArrayInputStream in = new ByteArrayInputStream(getItemList().stream);
+      // RLW: change required by conversion fom byte[] to InputStream
+      //ByteArrayInputStream in = new ByteArrayInputStream(getItemList().stream);
+      InputStream in = getItemList().getStream();
+      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       File xslFile = new File(reposHomeDir, "access/viewItemList.xslt");
       TransformerFactory factory = TransformerFactory.newInstance();
@@ -156,7 +174,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       Transformer transformer = template.newTransformer();
       Properties details = template.getOutputProperties();
       transformer.transform(new StreamSource(in), new StreamResult(out));
-      return new MIMETypedStream("text/html", out.toByteArray());
+      // RLW: change required by conversion fom byte[] to InputStream
+      in = new ByteArrayInputStream(out.toByteArray());
+      return new MIMETypedStream("text/html", in);
+      //return new MIMETypedStream("text/html", out.toByteArray());
+      // RLW: change required by conversion fom byte[] to InputStream
     } catch (TransformerException e)
     {
       throw new DisseminationException("[DefaultBehaviorImpl] had an error "
@@ -207,7 +229,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
           + "Underlying exception was: "
           + ioe.getMessage());
     }
-    return new MIMETypedStream(ds.DSMIME, out.toByteArray());
+    // RLW: change required by conversion fom byte[] to InputStream
+    InputStream is = new ByteArrayInputStream(out.toByteArray());
+    return new MIMETypedStream(ds.DSMIME, is);
+    //return new MIMETypedStream(ds.DSMIME, out.toByteArray());
+    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
@@ -217,8 +243,12 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getDublinCore() throws ServerException
   {
-    return new MIMETypedStream("text/xml",
-      new ObjectInfoAsXML().getOAIDublinCore(reader).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
+    InputStream is = new ByteArrayInputStream(new ObjectInfoAsXML().getOAIDublinCore(reader).getBytes());
+    return new MIMETypedStream("text/xml", is);
+    //return new MIMETypedStream("text/xml",
+    //  new ObjectInfoAsXML().getOAIDublinCore(reader).getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   /**
@@ -230,7 +260,11 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
   {
     String temp = new String("<html><head><title>FedoraServlet</title></head>" +
       " <body><br></br>DefaultBehaviorImpl: HTML Presentation COMING SOON!</body></html>");
-    return new MIMETypedStream("text/html", temp.getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
+    InputStream is = new ByteArrayInputStream(temp.getBytes());
+    return new MIMETypedStream("text/html", is);
+    //return new MIMETypedStream("text/html", temp.getBytes());
+    // RLW: change required by conversion fom byte[] to InputStream
   }
 
   public static MethodDef[] reflectMethods()

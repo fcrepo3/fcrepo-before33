@@ -216,16 +216,20 @@ public class DefaultAccess extends Module implements Access
       DOReader reader =
           m_manager.getReader(context, PID);
       methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
-      int byteStream = 0;
+      /*int byteStream = 0;
       while ((byteStream = methodResults.read()) >= 0)
       {
         baos.write(byteStream);
       }
-      methodResults.close();
+      methodResults.close();*/
       if (methodResults != null)
       {
+        // RLW: change required by conversion fom byte[] to InputStream
+        //MIMETypedStream methodDefs =
+        //    new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
         MIMETypedStream methodDefs =
-            new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
+            new MIMETypedStream(CONTENT_TYPE_XML, methodResults);
+        // RLW: change required by conversion fom byte[] to InputStream
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         System.out.println("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
@@ -234,13 +238,13 @@ public class DefaultAccess extends Module implements Access
               + interval + " milliseconds.");
         return methodDefs;
       }
-    } catch (IOException ioe)
+    } catch (Throwable th)
     {
-      getServer().logWarning(ioe.getMessage());
+      getServer().logWarning(th.getMessage());
       throw new GeneralException("DefaultAccess returned error. The "
                                  + "underlying error was a "
-                                 + ioe.getClass().getName() + "The message "
-                                 + "was \"" + ioe.getMessage() + "\"");
+                                 + th.getClass().getName() + "The message "
+                                 + "was \"" + th.getMessage() + "\"");
     }
     return null;
   }
@@ -265,9 +269,10 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
-    long startTime = new Date().getTime();
+    long initStartTime = new Date().getTime();
     m_ipRestriction.enforce(context);
 
+    long startTime = new Date().getTime();
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
     // perform the dissemination via the DynamicAccess module.
     if (m_dynamicAccess.isDynamicBehaviorDefinition(context, PID, bDefPID))
@@ -276,6 +281,12 @@ public class DefaultAccess extends Module implements Access
         m_dynamicAccess.getDissemination(context, PID, bDefPID, methodName,
           userParms, asOfDateTime);
     }
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip DynamicDisseminator: "
+        + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip DynamicDisseminator: "
+        + interval + " milliseconds.");
 
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     Hashtable h_userParms = new Hashtable();
@@ -288,6 +299,7 @@ public class DefaultAccess extends Module implements Access
     // a mechanism.
     BMechReader bmechreader = null;
     Disseminator[] dissSet = reader.GetDisseminators(versDateTime);
+    startTime = new Date().getTime();
     for (int i=0; i<dissSet.length; i++)
     {
       if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
@@ -296,6 +308,12 @@ public class DefaultAccess extends Module implements Access
         break;
       }
     }
+    stopTime = new Date().getTime();
+    interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip Looping Diss: "
+              + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip Looping Diss: "
+              + interval + " milliseconds.");
 
     // Put any user-supplied method parameters into hash table
     if (userParms != null)
@@ -330,8 +348,8 @@ public class DefaultAccess extends Module implements Access
     DisseminationService dissService = new DisseminationService();
     dissemination =
         dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
-    long stopTime = new Date().getTime();
-    long interval = stopTime - startTime;
+    stopTime = new Date().getTime();
+    interval = stopTime - initStartTime;
     System.out.println("[DefaultAccess] Roundtrip GetDissemination: "
               + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip GetDissemination: "

@@ -103,15 +103,20 @@ public class DefaultExternalContentManager extends Module
       connection.setInstanceFollowRedirects(true);
       String contentType = connection.getContentType();
       inStream = connection.getInputStream();
-      int byteStream = 0;
-      while((byteStream = inStream.read()) >=0 )
-      {
-        baos.write(byteStream);
-      }
+      // RLW: change required by conversion fom byte[] to InputStream
+      //int byteStream = 0;
+      //while((byteStream = inStream.read()) >=0 )
+      //{
+      //  baos.write(byteStream);
+      //}
+      // RLW: change required by conversion fom byte[] to InputStream
       if(contentType == null) contentType =
           connection.guessContentTypeFromStream(connection.getInputStream());
-      httpContent = new MIMETypedStream(contentType, baos.toByteArray());
-      baos = null;
+      // RLW: change required by conversion fom byte[] to InputStream
+      httpContent = new MIMETypedStream(contentType, inStream);
+      //httpContent = new MIMETypedStream(contentType, baos.toByteArray());
+      //baos = null;
+      // RLW: change required by conversion fom byte[] to InputStream
       return(httpContent);
 
     } catch (Throwable th)
@@ -120,7 +125,7 @@ public class DefaultExternalContentManager extends Module
           + "returned an error.  The underlying error was a "
           + th.getClass().getName() + "  The message "
           + "was  \"" + th.getMessage() + "\"  .  ");
-    } finally
+    } /*finally
     {
       try
       {
@@ -132,6 +137,6 @@ public class DefaultExternalContentManager extends Module
             + ioe.getClass().getName() + "  The message "
           + "was  \"" + ioe.getMessage() + "\"  .  ");
       }
-    }
+    }*/
   }
 }

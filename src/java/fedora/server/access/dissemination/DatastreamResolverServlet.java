@@ -199,7 +199,14 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
             externalContentManager.getExternalContent(dsPhysicalLocation);
         outStream = response.getOutputStream();
         response.setContentType(mimeTypedStream.MIMEType);
-        outStream.write(mimeTypedStream.stream);
+        int byteStream = 0;
+        // RLW: chnage required by conversion fom byte[] to InputStream
+        while ( (byteStream = mimeTypedStream.getStream().read()) != -1)
+        {
+          outStream.write(byteStream);
+        }
+        //outStream.write(mimeTypedStream.stream);
+        // RLW: change required by conversion fom byte[] to InputStream
       } else if (dsControlGroupType.equalsIgnoreCase("M") ||
                  dsControlGroupType.equalsIgnoreCase("X"))
       {

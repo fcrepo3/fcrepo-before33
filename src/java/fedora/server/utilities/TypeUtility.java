@@ -2,6 +2,8 @@ package fedora.server.utilities;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
 
 /**
  *
@@ -404,7 +406,24 @@ public abstract class TypeUtility
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           new fedora.server.types.gen.MIMETypedStream();
       genMIMETypedStream.setMIMEType(mimeTypedStream.MIMEType);
-      genMIMETypedStream.setStream(mimeTypedStream.stream);
+      // RLW: change required by conversion fom byte[] to InputStream
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
+      InputStream is = mimeTypedStream.getStream();
+      int byteStream = 0;
+      try
+      {
+      while ((byteStream = is.read()) != -1)
+      {
+        baos.write(byteStream);
+      }
+      } catch (IOException ioe)
+      {
+        System.out.println(ioe.getMessage());
+      }
+      genMIMETypedStream.setStream(baos.toByteArray());
+      mimeTypedStream.setStream(new ByteArrayInputStream(baos.toByteArray()));
+      //genMIMETypedStream.setStream(mimeTypedStream.stream);
+      // RLW: change required by conversion fom byte[] to InputStream
       return genMIMETypedStream;
 
     } else
@@ -427,9 +446,15 @@ public abstract class TypeUtility
   {
     if (genMIMETypedStream != null)
     {
+      // RLW: change required by conversion fom byte[] to InputStream
+      InputStream is = new ByteArrayInputStream(genMIMETypedStream.getStream());
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          new fedora.server.storage.types.MIMETypedStream(
-          genMIMETypedStream.getMIMEType(), genMIMETypedStream.getStream());
+              new fedora.server.storage.types.MIMETypedStream(
+          genMIMETypedStream.getMIMEType(), is);
+      //fedora.server.storage.types.MIMETypedStream mimeTypedStream =
+      //    new fedora.server.storage.types.MIMETypedStream(
+      //    genMIMETypedStream.getMIMEType(), genMIMETypedStream.getStream());
+      // RLW: change required by conversion fom byte[] to InputStream
       return mimeTypedStream;
 
     } else
@@ -709,6 +734,7 @@ public abstract class TypeUtility
 
   public static void main(String[] args)
   {
+    try{
     fedora.server.storage.types.MethodParmDef methodParmDef1 =
         new fedora.server.storage.types.MethodParmDef();
     methodParmDef1.parmName = "parm_name1";
@@ -860,13 +886,16 @@ public abstract class TypeUtility
     pw.println(text);
     pw.close();
     byte[] stream = baos.toByteArray();
+    InputStream is = new ByteArrayInputStream(stream);
     fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-        new fedora.server.storage.types.MIMETypedStream("text/plain", stream);
+        //new fedora.server.storage.types.MIMETypedStream("text/plain", stream);
+        new fedora.server.storage.types.MIMETypedStream("text/plain", is);
     System.out.println("MIMEType: " + mimeTypedStream.MIMEType);
-    ByteArrayInputStream bais =
-        new ByteArrayInputStream(mimeTypedStream.stream);
+    //ByteArrayInputStream bais =
+    //    new ByteArrayInputStream(mimeTypedStream.stream);
     int byteStream = 0;
-    while ((byteStream = bais.read()) >= 0)
+    //while ((byteStream = bais.read()) >= 0)
+    while ((byteStream = is.read()) >= 0)
     {
       System.out.write(byteStream);
     }
@@ -876,6 +905,7 @@ public abstract class TypeUtility
         TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
         mimeTypedStream);
     System.out.println("MIMEType: " + genMIMETypedStream.getMIMEType());
+    ByteArrayInputStream bais = null;
     bais = new ByteArrayInputStream(genMIMETypedStream.getStream());
     byteStream = 0;
     while ((byteStream = bais.read()) >= 0)
@@ -888,9 +918,11 @@ public abstract class TypeUtility
         TypeUtility.convertGenMIMETypedStreamToMIMETypedStream(
         genMIMETypedStream);
     System.out.println("MIMEType: " + mimeTypedStream.MIMEType);
-    bais = new ByteArrayInputStream(mimeTypedStream.stream);
+    is = mimeTypedStream.getStream();
+    //bais = new ByteArrayInputStream(mimeTypedStream.stream);
     byteStream = 0;
-    while ((byteStream = bais.read()) >= 0)
+    //while ((byteStream = bais.read()) >= 0)
+    while ((byteStream = is.read()) >= -1)
     {
       System.out.write(byteStream);
     }
@@ -937,6 +969,10 @@ public abstract class TypeUtility
     {
       System.out.println("Prop[" + i + "]: " + "\nname = "
       + properties[i].name+"\nvalue = " + properties[i].value);
+    }
+    } catch (Exception e)
+    {
+      System.out.println(e.getMessage());
     }
 
   }
