@@ -79,13 +79,13 @@ start() {
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deployAPI-A.wsdd 15 "" $4 $5)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15)
+	            fedora.server.utilities.AxisUtility deploy "$FEDORA_HOME"/server/config/deploy.wsdd 15 "" $4 $5)
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
