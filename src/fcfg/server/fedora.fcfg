@@ -40,7 +40,7 @@
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
 		<param name="defaultPoolName" value="poolOne"/>
-		<param name="poolNames" value="poolOne"/>
+		<param name="poolNames" value="poolOne,poolTwo"/>
 	</module>
 	<datastore id="poolOne">
 		<comment>Config parameters for ConnectionPool number one</comment>
@@ -55,8 +55,7 @@
 		<comment>Config parameters for ConnectionPool number two</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<!--<param name="jdbcURL" value="jdbc:mysql://169.254.137.133:3306/FedoraObjects"/>-->
-		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/Fedora"/>		
+		<param name="jdbcURL" value="jdbc:mysql://localhost/FedoraObjects"/>
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
