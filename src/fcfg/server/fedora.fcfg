@@ -433,7 +433,7 @@
         <param name="bufferFlushBatchSize" value="20000"/>
         <param name="autoCreate" value="true"/>
         <param name="bufferSafeCapacity" value="40000"/>
-        <param name="autoFlushDormantSeconds" value="15"/>
+        <param name="autoFlushDormantSeconds" value="5"/>
         <param name="poolInitialSize" value="3"/>
         <param name="serverName" value="fedora"/>
         <param name="readOnly" value="false"/>
