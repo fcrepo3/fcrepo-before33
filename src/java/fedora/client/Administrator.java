@@ -35,10 +35,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 
-import edu.cornell.dlrg.swing.jhelp.SimpleHelpBroker;
-import edu.cornell.dlrg.swing.jhelp.SimpleContentViewerUI;
-import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
-import edu.cornell.dlrg.swing.mdi.WindowMenu;
+import fedora.swing.jhelp.SimpleHelpBroker;
+import fedora.swing.jhelp.SimpleContentViewerUI;
+import fedora.swing.mdi.MDIDesktopPane;
+import fedora.swing.mdi.WindowMenu;
 
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;

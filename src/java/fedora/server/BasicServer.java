@@ -5,8 +5,8 @@ import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 
-import edu.cornell.dlrg.logging.DatingFileHandler;
-import edu.cornell.dlrg.logging.SimpleXMLFormatter;
+import fedora.logging.DatingFileHandler;
+import fedora.logging.SimpleXMLFormatter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.File;

@@ -38,8 +38,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import edu.cornell.dlrg.swing.jtable.DefaultSortTableModel;
-import edu.cornell.dlrg.swing.jtable.JSortTable;
+import fedora.swing.jtable.DefaultSortTableModel;
+import fedora.swing.jtable.JSortTable;
 import fedora.client.Administrator;
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
