@@ -2,6 +2,9 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 
+import org.trippi.TripleMaker;
+import org.jrdf.graph.URIReference;
+
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -10,6 +13,7 @@ import fedora.server.storage.types.DigitalObject;
 public class TestResourceIndexLevels extends TestResourceIndex {
     private int m_level;
     private DigitalObject bdef, bmech, dataobject;
+    private URIReference disseminates, dependsOn;
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -20,6 +24,9 @@ public class TestResourceIndexLevels extends TestResourceIndex {
                 + "/bmechs/demo_ri9.xml"));
         dataobject = getFoxmlObject(new File(
                 DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_ri10.xml"));
+        
+        disseminates = TripleMaker.createResource("info:fedora/fedora-system:def/view#disseminates");
+        dependsOn = TripleMaker.createResource("info:fedora/fedora-system:def/model#dependsOn");
     }
     
     public void testLevelOff() throws Exception {
@@ -50,23 +57,37 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_ON, m_conn, m_cPool, null, null);
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(17, m_ri.countTriples(null, null, null, 0));
+        assertEquals(23, m_ri.countTriples(null, null, null, 0));
+        assertEquals(3, m_ri.countTriples(null, disseminates, null, 0));
+        assertEquals(0, m_ri.countTriples(null, dependsOn, null, 0));
+        
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(39, m_ri.countTriples(null, null, null, 0));
+        assertEquals(57, m_ri.countTriples(null, null, null, 0));
+        assertEquals(9, m_ri.countTriples(null, disseminates, null, 0));
+        assertEquals(0, m_ri.countTriples(null, dependsOn, null, 9));
+        
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(87, m_ri.countTriples(null, null, null, 0));
+        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
+        assertEquals(2, m_ri.countTriples(null, dependsOn, null, 9));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(87, m_ri.countTriples(null, null, null, 0));
+        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
+        
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(87, m_ri.countTriples(null, null, null, 0));
+        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
+        
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(87, m_ri.countTriples(null, null, null, 0));
+        export("/tmp/rdf/c.rdf");
+        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
     }
     
     public void testLevelWithPermutations() throws Exception {
@@ -74,22 +95,22 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(17, m_ri.countTriples(null, null, null, 0));
+        assertEquals(23, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(39, m_ri.countTriples(null, null, null, 0));
+        assertEquals(57, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(112, m_ri.countTriples(null, null, null, 0));
+        assertEquals(163, m_ri.countTriples(null, null, null, 0));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(112, m_ri.countTriples(null, null, null, 0));
+        assertEquals(163, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(112, m_ri.countTriples(null, null, null, 0));
+        assertEquals(163, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(112, m_ri.countTriples(null, null, null, 0));
+        assertEquals(163, m_ri.countTriples(null, null, null, 0));
     }
 }
