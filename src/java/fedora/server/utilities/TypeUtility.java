@@ -891,9 +891,7 @@ public abstract class TypeUtility
       fedora.server.types.gen.Disseminator out=
               new fedora.server.types.gen.Disseminator();
       out.setCreateDate(DateUtility.convertDateToString(in.dissCreateDT));
-      out.setBDefLabel(in.bDefLabel);
       out.setBDefPID(in.bDefID);
-      out.setBMechLabel(in.bMechLabel);
       out.setBMechPID(in.bMechID);
       out.setID(in.dissID);
       out.setLabel(in.dissLabel);

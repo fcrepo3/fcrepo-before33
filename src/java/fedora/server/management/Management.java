@@ -134,8 +134,6 @@ public interface Management {
 								  String bDefPID,
 								  String bMechPid,
 								  String dissLabel,
-								  String bDefLabel,
-								  String bMechLabel,
 								  DSBindingMap bindingMap,
 								  String dissState,
 								  String logMessage) throws ServerException;
@@ -145,8 +143,6 @@ public interface Management {
                                    String disseminatorID, 
                                    String bMechPid, 
                                    String dissLabel, 
-                                   String bDefLabel, 
-                                   String bMechLabel, 
                                    DSBindingMap bindingMap, 
                                    String dissState,
                                    String logMessage,

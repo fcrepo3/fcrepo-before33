@@ -468,45 +468,47 @@ public class BatchModifyParser extends DefaultHandler
                 // flag as an error in directives file.
                 if (dsOrig.getControlGroup().getValue().equalsIgnoreCase(m_ds.dsControlGrp)) {
 
-                    // Check for optional atributes. Missing or empty optional
-                    // attributes indicate that those fields remain unchanged so
-                    // get values from original datastream.
-                    if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equals("")) {
+                    // Check for optional atributes. Missing attributes (null) indicate
+                    // that no change is to occur to that attribute and that the original
+                    // value of that datastream attribute is to be retained. Attributes that
+                    // contain the empty string indicate that the datastream attribute value
+                    // is to be set to the empty string.
+                    if (attrs.getValue("dsLabel") != null) {
                         m_ds.dsLabel = attrs.getValue("dsLabel");
                     } else {
                         m_ds.dsLabel = dsOrig.getLabel();
                     }
-                    if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equals("")) {
+                    if ( attrs.getValue("dsState") != null) {
                         m_ds.dsState = attrs.getValue("dsState");
                     } else {
                         m_ds.dsState = dsOrig.getState();
                     }
-                    if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equals("")) {
+                    if ( attrs.getValue("dsLocation") != null) {
                         m_ds.dsLocation = attrs.getValue("dsLocation");
                     } else {
                         m_ds.dsLocation = dsOrig.getLocation();
                     }
-                    if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equals("")) {
+                    if ( attrs.getValue("dsMIME") != null) {
                         m_ds.dsMIME = attrs.getValue("dsMIME");
                     } else {
                         m_ds.dsMIME = dsOrig.getMIMEType();
                     }
-                    if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
+                    if ( attrs.getValue("force") != null) {
                         m_ds.force = new Boolean(attrs.getValue("force")).booleanValue();
                     } else {
                         m_ds.force = false;
                     }                    
-                    if ( attrs.getValue("versionable") != null && !attrs.getValue("versionable").equals("")) {
+                    if ( attrs.getValue("versionable") != null) {
                         m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
                     } else {
                         m_ds.versionable = dsOrig.isVersionable();
                     }     
-                    if ( attrs.getValue("altIDs") != null && !attrs.getValue("altIDs").equals("")) {
+                    if ( attrs.getValue("altIDs") != null) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
                         m_ds.altIDs = dsOrig.getAltIDs();
                     }
-                    if ( attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equals("")) {
+                    if ( attrs.getValue("formatURI") != null) {
                         m_ds.formatURI = attrs.getValue("formatURI");
                     } else {
                         m_ds.formatURI = dsOrig.getFormatURI();
@@ -690,16 +692,6 @@ public class BatchModifyParser extends DefaultHandler
                 } else {
                     m_diss.dissState = "A";
                 }
-                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equals("")) {
-                    m_diss.bDefLabel = attrs.getValue("bDefLabel");
-                } else {
-                    m_diss.bDefLabel =  (String) m_bDefLabels.get(m_diss.bDefID);
-                }
-                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equals("")) {
-                    m_diss.bMechLabel = attrs.getValue("bMechLabel");
-                } else {
-                    m_diss.bMechLabel =  (String) m_bMechLabels.get(m_diss.bMechID);
-                }
 
                 addDisseminator = true;
 
@@ -743,27 +735,17 @@ public class BatchModifyParser extends DefaultHandler
                 // Get optional attributes. Missing or empty attributes indicate
                 // that these values are to remain unchanged so retrieve original
                 // values from disseminator.
-                if (attrs.getValue("dissLabel") != null && !attrs.getValue("dissLabel").equals("")) {
+                if (attrs.getValue("dissLabel") != null) {
                     m_diss.dissLabel = attrs.getValue("dissLabel");
                 } else {
                     m_diss.dissLabel = origDiss.getLabel();
                 }
-                if ( attrs.getValue("dissState") != null && !attrs.getValue("dissState").equals("")) {
+                if ( attrs.getValue("dissState") != null) {
                     m_diss.dissState = attrs.getValue("dissState");
                 } else {
                     m_diss.dissState = origDiss.getState();
                 }
-                if ( attrs.getValue("bDefLabel") != null && !attrs.getValue("bDefLabel").equals("")) {
-                    m_diss.bDefLabel = attrs.getValue("bDefLabel");
-                } else {
-                    m_diss.bDefLabel =  origDiss.getBDefLabel();
-                }
-                if ( attrs.getValue("bMechLabel") != null && !attrs.getValue("bMechLabel").equals("")) {
-                    m_diss.bMechLabel = attrs.getValue("bMechLabel");
-                } else {
-                    m_diss.bMechLabel =  origDiss.getBMechLabel();
-                }
-                if ( attrs.getValue("force") != null && !attrs.getValue("force").equals("")) {
+                if ( attrs.getValue("force") != null) {
                     m_diss.force = new Boolean(attrs.getValue("force")).booleanValue();
                 } else {
                     m_diss.force = false;
@@ -1196,8 +1178,8 @@ public class BatchModifyParser extends DefaultHandler
                     m_dsBindingMap.setState("A");  // unnecessary...
                     m_dsBindingMap.setDsBindings(bindings);
                     dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID,
-                            m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
-                            m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState,
+                            m_diss.bMechID, m_diss.dissLabel,
+                            m_dsBindingMap, m_diss.dissState,
                             m_diss.logMessage);
                     if (dissID!=null) {
                         succeededCount++;
@@ -1241,8 +1223,7 @@ public class BatchModifyParser extends DefaultHandler
                     m_dsBindingMap.setState("A");  // unnecessary...
                     m_dsBindingMap.setDsBindings(bindings);
                     APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID,
-                            m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
-                            m_diss.bMechLabel, m_dsBindingMap,
+                            m_diss.bMechID, m_diss.dissLabel, m_dsBindingMap,
                             m_diss.dissState, "ModifyDisseminator", m_diss.force);
                     succeededCount++;
                     logSucceededDirective(m_diss.parentPID, localName,

@@ -48,10 +48,6 @@ public class Disseminator
 
   public String bMechID;
 
-  public String bDefLabel;
-
-  public String bMechLabel;
-
   public String dsBindMapID;
 
   public fedora.server.storage.types.DSBindingMap dsBindMap;

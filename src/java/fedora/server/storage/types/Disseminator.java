@@ -46,10 +46,6 @@ public class Disseminator
 
   public String bMechID;
 
-  public String bDefLabel;
-
-  public String bMechLabel;
-
   public String dsBindMapID;
 
   public DSBindingMap dsBindMap;

@@ -429,8 +429,6 @@ public class DefaultManagement
 									String bDefPid,
 									String bMechPid,
 									String dissLabel,
-									String bDefLabel,
-									String bMechLabel,
 									DSBindingMap bindingMap,
 									String dissState,
 									String logMessage) throws ServerException {
@@ -452,8 +450,6 @@ public class DefaultManagement
 				diss.dissLabel = dissLabel;
 				diss.bMechID = bMechPid;
 				diss.bDefID = bDefPid;
-				diss.bDefLabel = bDefLabel;
-				diss.bMechLabel = bMechLabel;
 				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
 				diss.dissCreateDT=nowUTC;
 				diss.dissID = w.newDisseminatorID();
@@ -788,8 +784,6 @@ public class DefaultManagement
                                    String disseminatorId, 
                                    String bMechPid, 
                                    String dissLabel,
-                                   String bDefLabel, 
-                                   String bMechLabel, 
                                    DSBindingMap dsBindingMap,
                                    String dissState,
                                    String logMessage,
@@ -842,24 +836,12 @@ public class DefaultManagement
             // NULL INPUT PARMS MEANS NO CHANGE in these cases:
             // set any diss attributes whose input parms value
             // is NULL to the original attribute value on the disseminator
-			if (dissLabel==null) {
+            if (dissLabel==null) {
             //if (dissLabel==null || dissLabel.equals("")) {
               newdiss.dissLabel=orig.dissLabel;
             } else {
               newdiss.dissLabel=dissLabel;
             }
-            //if (bDefLabel==null || bDefLabel.equals("")) {
-			if (bDefLabel==null) {
-              newdiss.bDefLabel=orig.bDefLabel;
-            } else {
-              newdiss.bDefLabel=bDefLabel;
-            }
-			//if (bMechLabel==null || bMechLabel.equals("")) {
-			if (bMechLabel==null) {
-			  newdiss.bMechLabel=orig.bMechLabel;
-			} else {
-			  newdiss.bMechLabel=bMechLabel;
-			}
             
             // NULL OR "" INPUT PARM MEANS NO CHANGE:
             // for diss attributes whose values MUST NOT be empty,
