@@ -38,69 +38,88 @@ public class WSDLToFedora
    * Fedora structure for set of abstract method definitions that
    * will be populated as a result of the SAX parse.
    */
-  protected MethodDef[] methodDefs;
+  protected MethodDef[] fedoraMethodDefSet = new MethodDef[0];
 
   /**
    * Fedora structure for set of method bindings that
    * will be populated as a result of the SAX parse.
    */
-  protected MethodDefOperationBind[] methodDefBind;
+  private MethodDefOperationBind[] fedoraMethodDefBindings = new MethodDefOperationBind[0];
 
   private WSDLParser wsdlHandler;
-  //private MethodMapParser methodmapHandler;
+  private MmapParser methodMapHandler;
+  private InputSource wsdlSource;
+  private InputSource mmapSource;
 
-    public static void main(String[] args)
+  public static void main(String[] args)
+  {
+    if (args.length < 2)
     {
-      if (args.length < 2)
-      {
-        System.err.println("usage: java WSDLToFedora wsdlLocation methodMapLocation " + "\n" +
-          "  wsdlLocation: the file path of the wsdl to be parsed" + "\n" +
-          "  methodMapLocation: the file path of the method map to be parsed.");
-        System.exit(1);
-      }
-
-      try
-      {
-        File wsdlFile = new File((String)args[0]);
-        File mmapFile = new File((String)args[1]);
-        WSDLToFedora wtof =
-          new WSDLToFedora(
-            new InputSource(new FileInputStream(wsdlFile)),
-            new InputSource(new FileInputStream(mmapFile)));
-      }
-      catch (ServerException e)
-      {
-        System.out.println("WSDLToFedora caught ServerException.");
-        System.out.println("Suppressing message since not attached to Server.");
-      }
-      catch (Throwable th)
-      {
-        System.out.println("WSDLToFedora returned error in main(). "
-                  + "The underlying error was a " + th.getClass().getName() + ".  "
-                  + "The message was "  + "\"" + th.getMessage() + "\"");
-      }
+      System.err.println("usage: java WSDLToFedora wsdlLocation methodMapLocation " + "\n" +
+        "  wsdlLocation: the file path of the wsdl to be parsed" + "\n" +
+        "  methodMapLocation: the file path of the method map to be parsed.");
       System.exit(1);
-
     }
+
+    try
+    {
+      File wsdlFile = new File((String)args[0]);
+      File mmapFile = new File((String)args[1]);
+      WSDLToFedora wtof =
+        new WSDLToFedora(
+          new InputSource(new FileInputStream(wsdlFile)),
+          new InputSource(new FileInputStream(mmapFile)));
+      MethodDef[] methods = wtof.getMethodDefs();
+      MethodDefOperationBind[] methodBindings = wtof.getMethodDefBindings();
+      System.out.println("END TEST VIA MAIN()");
+    }
+    catch (ServerException e)
+    {
+      System.out.println("WSDLToFedora caught ServerException.");
+      System.out.println("Suppressing message since not attached to Server.");
+    }
+    catch (Throwable th)
+    {
+      System.out.println("WSDLToFedora returned error in main(). "
+                + "The underlying error was a " + th.getClass().getName() + ".  "
+                + "The message was "  + "\"" + th.getMessage() + "\"");
+    }
+    System.exit(1);
+
+  }
 
   public WSDLToFedora(InputSource wsdlXML, InputSource methodMapXML) throws ServerException
   {
-    parseWSDL(wsdlXML);
-    //parseMethodMap(methodMapXML);
-    //merge(wsdlHandler, methodMapHandler);
+    wsdlSource = wsdlXML;
+    mmapSource = methodMapXML;
+    System.out.println("Will do late bind for parsing....");
   }
 
   public MethodDef[] getMethodDefs()
+    throws ObjectValidityException, GeneralException
   {
-    return null;
+    if (fedoraMethodDefSet.length == 0)
+    {
+      methodMapHandler = (MmapParser)parse(mmapSource, new MmapParser());
+      fedoraMethodDefSet = methodMapHandler.getMethodMap().fedoraMethodDefs;
+    }
+    return fedoraMethodDefSet;
   }
 
   public MethodDefOperationBind[] getMethodDefBindings()
+    throws ObjectValidityException, GeneralException
   {
-    return null;
+    if (fedoraMethodDefBindings.length == 0)
+    {
+      getMethodDefs();
+      wsdlHandler = (WSDLParser)parse(wsdlSource, new WSDLParser());
+      merge();
+    }
+    return fedoraMethodDefBindings;
   }
 
-  private void parseWSDL(InputSource wsdlXML) throws ObjectValidityException, GeneralException
+  private DefaultHandler parse(InputSource xml, DefaultHandler eventHandler)
+    throws ObjectValidityException, GeneralException
   {
     try
     {
@@ -109,21 +128,16 @@ public class WSDLToFedora
       spf.setNamespaceAware(true);
       spf.setValidating(false);
       SAXParser sp = spf.newSAXParser();
-      //sp.setProperty(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-
-      // JAXP property for schema location
-      //sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaURI.toString());
-      //sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaFile);
-
-      wsdlHandler = new WSDLParser();
+      DefaultHandler handler = eventHandler;
       XMLReader xmlreader = sp.getXMLReader();
-      xmlreader.setContentHandler(wsdlHandler);
+      xmlreader.setContentHandler(handler);
       //xmlreader.setErrorHandler(new DOValidatorXMLErrorHandler());
-      xmlreader.parse(wsdlXML);
+      xmlreader.parse(xml);
+      return handler;
       }
       catch (ParserConfigurationException e)
       {
-        String msg = "WSDLParser returned parser error. "
+        String msg = "Parser returned parser error. "
                   + "The underlying exception was a " + e.getClass().getName() + ".  "
                   + "The message was "  + "\"" + e.getMessage() + "\"";
         System.out.println(msg);
@@ -145,6 +159,77 @@ public class WSDLToFedora
         System.out.println(msg);
         throw new GeneralException(msg);
       }
+  }
+
+  private void merge() throws GeneralException
+  {
+    Service service = wsdlHandler.getService();
+    Mmap methodMap = methodMapHandler.getMethodMap();
+    Port port = null;
+    Binding binding = null;
+
+    // If the WSDL Service defines multiple Ports (with Binding) for the abstract operations
+    // we must CHOOSE ONE binding for Fedora to work with.
+    if (service.ports.length > 1)
+    {
+      port = choosePort(service);
+      binding = port.binding;
+    }
+
+    // Reflect on the type of binding we are dealing with, then Fedora-ize things.
+    if (binding.getClass().getName().equalsIgnoreCase("fedora.server.storage.service.HTTPBinding"))
+    {
+      // Initialize the array to hold the Fedora-ized operation bindings.
+      fedoraMethodDefBindings = new MethodDefOperationBind[((HTTPBinding)binding).operations.length];
+
+      for (int i = 0; i < ((HTTPBinding)binding).operations.length; i++)
+      {
+        // From methodMap which was previously created by parsing Fedora method map metadata
+        // which provides a Fedora overlay on the service WSDL.
+        MethodDef methodDef = (MethodDef)
+          methodMap.wsdlOperationToMethodDef.get(((HTTPBinding)binding).operations[i].operationName);
+        fedoraMethodDefBindings[i] = new MethodDefOperationBind();
+        fedoraMethodDefBindings[i].methodName = methodDef.methodName;
+        fedoraMethodDefBindings[i].methodLabel = methodDef.methodLabel;
+        fedoraMethodDefBindings[i].methodParms = methodDef.methodParms;
+        fedoraMethodDefBindings[i].wsdlMessageName = methodDef.wsdlMessageName;
+        fedoraMethodDefBindings[i].wsdlMsgParts = methodDef.wsdlMsgParts;
+        fedoraMethodDefBindings[i].wsdlOutputMessageName = methodDef.wsdlOutputMessageName;
+
+        // From WSDL Port found in Service object
+        fedoraMethodDefBindings[i].serviceBindingAddress = port.portBaseURL;
+
+        // From WSDL Binding found in Service object
+        fedoraMethodDefBindings[i].protocolType = MethodDefOperationBind.HTTP_MESSAGE_PROTOCOL;
+        fedoraMethodDefBindings[i].operationLocation = ((HTTPBinding)binding).operations[i].operationLocation;
+        fedoraMethodDefBindings[i].operationURL =
+          fedoraMethodDefBindings[i].serviceBindingAddress.concat(fedoraMethodDefBindings[i].operationLocation);
+
+        // FIXIT!  from ds binding spec which are did not parse in this class!
+        fedoraMethodDefBindings[i].dsBindingKeys = null;
+      }
+    }
+    else if (binding.getClass().getName().equalsIgnoreCase("fedora.server.storage.service.SOAPBinding"))
+    {
+
+    }
+  }
+
+  private Port choosePort(Service service)
+  {
+    // If there is an HTTP binding, this will be preferred.
+    for (int i = 0; i < service.ports.length; i++)
+    {
+      Binding binding = service.ports[i].binding;
+      if (binding.getClass().getName().equalsIgnoreCase("fedora.server.storage.service.HTTPBinding"))
+      {
+        return service.ports[i];
+      }
+    }
+
+    // Otherwise, just return the first binding
+    return service.ports[0];
+
   }
   // OLD METHODS NEED TO BE REWORKED TO JOIN INFO FROM WSDL AND METHODMAP
   /*
