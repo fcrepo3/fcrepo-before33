@@ -65,6 +65,11 @@ which isn't always expressive enough, hence the need for Condition.  And, since 
 apply to the Policy in whole, if Target cannot express a Policy-wide constraint, 
 the Condition expresses this must be repeated under each Rule.
 
+Another issue is that, with no short-circuiting in expressions and with no explicit way to test 
+if an attribute is available, absence of an attribute causing an Indeterminate (error) result
+is a practical impediment to writing effective policies.  [Hence, Fedora's attribute finders 
+(callbacks for the sunxacml engine to use) return a dummy value if the attribute is not available.]  
+
 sunxacml has a relaxed parsing of policies; e.g., we have encountered schema violation 
 (e.g., Action omitted between Actions and ActionMatch) which resulted only in the policy not being
 evaluated correctly, as opposed to failing parse.  How widespread this is, we don't know.
@@ -187,3 +192,14 @@ e.g., an Indeterminate into a Deny.
 To protect against a bug in sunxacml code, Fedora's policy evaluation point (PEP) 
 software additionally enforces the 5 items above.  If all are satisfied, operation proceeds
 normally; if any are not, an Authorization fault is thrown.
+
+Fedora's PEP builds a minimal request, which includes an index to an enhanced Fedora Context object.
+There are 2 attribute finder modules provided as callbacks to the sunxacml engine.  The 
+ResourceAttributeFinderModule provides only resource attribute values, only those it is coded explicitly 
+to provide, and only those derived from actual objects in the repository.  The ContextAttributeFinderModule
+provides any of the attribute types (subject, action, resource, or environment), as these have been
+stored in an enhanced Fedora Context object.  It will honor a callback, even for an attribute which 
+hasn't been explicitly coded, so can provide arbitrary attributes, e.g., from ldap lookup in a JAAS
+login module.  [There are a few attributes which it explicitly doesn't serve, to prevent stack overflow
+on improper recursion, or because the attributes are known to be provided in the xacml request itself.]
+ 
