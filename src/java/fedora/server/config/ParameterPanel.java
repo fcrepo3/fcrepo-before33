@@ -9,13 +9,13 @@ import javax.swing.event.*;
 public class ParameterPanel extends JPanel implements ListSelectionListener, ActionListener {
 
     private JList m_paramList;
-    private ParameterListModel m_model;
+    private ItemListModel m_model;
     private JPanel m_paramValuePanel;
     private boolean m_ignoreValueChanged;
 
     public ParameterPanel(java.util.List parameterList) {
         super(new BorderLayout());
-        m_model = new ParameterListModel(parameterList);
+        m_model = new ItemListModel(parameterList);
 
         //
         // WEST: Parameter chooser with add/delete buttons
@@ -28,9 +28,9 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         m_paramList.addListSelectionListener(this);
         paramChoice.add(new JScrollPane(m_paramList), BorderLayout.CENTER);
         JPanel paramButtonPanel = new JPanel(new BorderLayout());
-        JButton addButton = new JButton("Add");
+        JButton addButton = new JButton("Add Parameter...");
         addButton.addActionListener(this);
-        JButton deleteButton = new JButton("Delete");
+        JButton deleteButton = new JButton("Delete Parameter...");
         deleteButton.addActionListener(this);
         paramButtonPanel.add(addButton, BorderLayout.NORTH);
         paramButtonPanel.add(deleteButton, BorderLayout.SOUTH);
@@ -78,12 +78,19 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
      * Get the values from the UI into a List of Parameter objects.
      */
     public java.util.List getParameters() {
-        // FIXME: implement this, getting each Parameter from the ParamValueCard
-        return null;
+        ArrayList out = new ArrayList();
+        Component[] components = m_paramValuePanel.getComponents();
+        for (int i = 0; i < components.length; i++) {
+            if (components[i] instanceof ParamValueCard) {
+                ParamValueCard card = (ParamValueCard) components[i];
+                out.add(card.getParameter());
+            }
+        }
+        return out;
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Add")) {
+        if (e.getActionCommand().startsWith("Add")) {
             String paramName = JOptionPane.showInputDialog("Enter the name of the new parameter.");
             if (paramName != null) {
                 // first, check if one of that name is in m_model (if so we'll just switch to it)
@@ -101,7 +108,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
                 // switch to the new (or already existing) parameter
                 m_paramList.setSelectedValue(param, true);
             }
-        } else if (e.getActionCommand().equals("Delete")) {
+        } else if (e.getActionCommand().startsWith("Delete")) {
             // delete the currently selected item from m_model
             javax.swing.SwingUtilities.invokeLater(new Runnable() {
                 public void run() {
@@ -133,8 +140,6 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
         private JTextArea m_descArea;
         private JComboBox m_profileList;
         private JTextField m_valueText;
-        private JButton m_addButton;
-        private JButton m_deleteButton;
         private String m_name;
 
         public String getName() {
@@ -162,16 +167,10 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             }
             // l1
             JLabel descriptionLabel = new JLabel("Description:");
-            // l2
-            JLabel valueLabel = new JLabel("Value:");
             // d1
-            m_profileList = new JComboBox(new String[] { "<no profile>", "profile1", "profile2", "Add Profile...", "Delete Profile..." });
-            // t1
+            m_profileList = new JComboBox(new String[] { "Primary value", "'mckoi' value", "'oracle' value", "Add Profile...", "Delete Profile..." });
+            // each value gets it's own card
             m_valueText = new JTextField(param.getValue());
-            // b1
-            m_addButton = new JButton("Add");
-            // b2
-            m_deleteButton = new JButton("Delete");
 
             //
             // Then, lay them out with a bunch of crazy JPanels
@@ -183,8 +182,6 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
 
             JPanel s1 = new JPanel(new BorderLayout());
             add(s1, BorderLayout.SOUTH);
-            JPanel w2 = new JPanel(new BorderLayout());
-            w2.add(valueLabel, BorderLayout.NORTH); 
             JPanel c2 = new JPanel(new BorderLayout());
             JPanel w3 = new JPanel(new BorderLayout());
             w3.add(m_profileList, BorderLayout.NORTH);
@@ -195,12 +192,13 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
             c2.add(c3, BorderLayout.CENTER);
             c2.add(w3, BorderLayout.WEST);
             s1.add(c2, BorderLayout.CENTER);
-            s1.add(w2, BorderLayout.WEST);
             add(s1, BorderLayout.SOUTH);
         }
 
         public Parameter getParameter() {
-            return null;  // TODO: Construct a Parameter object from the widget values
+            String comment = m_descArea.getText();
+            return null;           
+//            return new Parameter(m_name, comment, value, profileValues);
         }
     
     }
