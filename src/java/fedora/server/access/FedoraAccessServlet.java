@@ -14,6 +14,7 @@ import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DefinitiveBDefReader;
 import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.FastDOReader;
+import fedora.server.storage.types.MIMETypedStream;
 
 // Java imports
 import java.io.ByteArrayInputStream;
@@ -50,6 +51,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   private static final String GET_BEHAVIOR_METHODS = "GetBehaviorMethods";
   private static final String GET_DISSEMINATION = "GetDissemination";
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
+  private static final String YES = "yes";
   private static final int DISS_CACHE_SIZE = 100;
   private static final SimpleDateFormat formatter =
       new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss");
@@ -685,7 +687,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   {
     // Clear cache if size gets larger than DISS_CACHE_SIZE
     if (disseminationCache.size() > DISS_CACHE_SIZE ||
-        clearCache.equalsIgnoreCase("yes"))
+        clearCache.equalsIgnoreCase(YES))
     {
       clearDisseminationCache();
     }
