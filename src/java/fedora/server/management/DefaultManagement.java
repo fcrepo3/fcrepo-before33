@@ -559,8 +559,9 @@ public class DefaultManagement
 
     public void deleteDatastream(Context context, String pid, String datastreamID) { }
 
-    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
 */
+    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
+
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime)
             throws ServerException {
         m_ipRestriction.enforce(context);

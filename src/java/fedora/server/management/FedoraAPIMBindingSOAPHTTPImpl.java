@@ -358,11 +358,19 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
     }
 
+*/
     public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
-        return null;
+        try {
+            return s_management.purgeDatastream(getContext(), PID, datastreamID, startDT, endDT);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
-*/
+
     public fedora.server.types.gen.Datastream getDatastream(String PID, String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         try {

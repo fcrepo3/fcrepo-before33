@@ -84,7 +84,7 @@ public interface Management {
 
     public void deleteDatastream(Context context, String pid, String datastreamId, String logMessage) throws ServerException;
 
-//    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) throws ServerException;
+    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) throws ServerException;
 
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) throws ServerException;
 

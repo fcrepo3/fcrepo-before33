@@ -284,29 +284,28 @@
 			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
-	<!--<message name="purgeDatastreamRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="datastreamID" type="xsd:string">
-      <documentation>the ID of the datastream.</documentation>
-    </part>
-    <part name="startDT" type="xsd:dateTime">
-      <documentation>the (inclusive) starting date-time stamp of the range. If 
-      null, this is taken to be the smallest possible value.</documentation>
-    </part>
-    <part name="endDT" type="xsd:dateTime">
-      <documentation>the (inclusive) ending date-time stamp of the range. If 
-      null, this is taken to be the greatest possible value.</documentation>
-    </part>
-  </message>
-  <message name="purgeDatastreamResponse">
-    <part name="response" type="fedora-types:ArrayOfDateTime">
-      <documentation>the creation date/time of each deleted datastream.
-      </documentation>
-    </part>
-  </message>
--->
+	<message name="purgeDatastreamRequest">
+        <part name="PID" type="xsd:string">
+          <documentation>the PID of the object.</documentation>
+        </part>
+        <part name="datastreamID" type="xsd:string">
+          <documentation>the ID of the datastream.</documentation>
+        </part>
+        <part name="startDT" type="xsd:dateTime">
+          <documentation>the (inclusive) starting date-time stamp of the range. If 
+          null, this is taken to be the smallest possible value.</documentation>
+        </part>
+        <part name="endDT" type="xsd:dateTime">
+          <documentation>the (inclusive) ending date-time stamp of the range. If 
+          null, this is taken to be the greatest possible value.</documentation>
+        </part>
+    </message>
+    <message name="purgeDatastreamResponse">
+      <part name="response" type="fedora-types:ArrayOfDateTime">
+        <documentation>the creation date/time of each deleted datastream.
+        </documentation>
+      </part>
+    </message>
 	<message name="getDatastreamRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -659,13 +658,13 @@
       cleanup process.</documentation>
 			<input message="fedora-api:deleteDatastreamRequest"/>
 		</operation>
-		<!--
     <operation name="purgeDatastream">
       <documentation>Permanently removes one or more versions of a datastream 
       from an object.</documentation>
       <input message="fedora-api:purgeDatastreamRequest"/>
       <output message="fedora-api:purgeDatastreamResponse"/>
     </operation>
+<!--
     <operation name="withdrawDisseminator">
       <documentation>Changes a disseminator's state to W, making it inaccessible 
       from API-A.</documentation>
@@ -935,7 +934,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
 		</operation>
-		<!--
     		<operation name="purgeDatastream">
       		<soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
@@ -950,7 +948,6 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       		</output>
     		</operation>
-		-->
 		<operation name="getDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
 			<input>
