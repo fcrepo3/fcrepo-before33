@@ -82,8 +82,25 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return s_management.createObject(s_context);
         } catch (ServerException se) {
+            logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
+    }
+    
+    private void logStackTrace(Exception e) {
+        StackTraceElement[] els=e.getStackTrace();
+        StringBuffer lines=new StringBuffer();
+        boolean skip=false;
+        for (int i=0; i<els.length; i++) {
+            if (els[i].toString().indexOf("FedoraAPIMBindingSOAPHTTPSkeleton")!=-1) {
+                skip=true;
+            }
+            if (!skip) {
+                lines.append(els[i].toString());
+                lines.append("\n");
+            }
+        }
+        s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
     }
 
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
@@ -92,6 +109,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             return s_management.ingestObject(s_context, 
                     new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", false); // <-- only for lv0 test, normally true
         } catch (ServerException se) {
+            logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
 /*        try {
@@ -164,8 +182,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             pipeStream(in, out);
             return out.toByteArray();
         } catch (ServerException se) {
+            logStackTrace(se);
             AxisUtility.throwFault(se);
         } catch (Exception e) {
+            logStackTrace(e);
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
         return null;
@@ -189,6 +209,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             ByteArrayInputStream testInputStream=new ByteArrayInputStream(PID.getBytes());
             s_st.add(PID, testInputStream);
         } catch (ServerException se) {
+            logStackTrace(se);
             AxisUtility.throwFault(se);
         }
     }
@@ -202,8 +223,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 w.commit(logMessage);
             }
         } catch (ServerException se) {
+            logStackTrace(se);
             AxisUtility.throwFault(se);
         } catch (Exception e) {
+            logStackTrace(e);
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
@@ -249,6 +272,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return s_management.listObjectPIDs(s_context, state);
         } catch (ServerException se) {
+            logStackTrace(se);
             throw AxisUtility.getFault(se);
         }
     }
@@ -312,8 +336,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return w.ListDatastreamIDs(state);
         } catch (ServerException se) {
+            logStackTrace(se);
             AxisUtility.throwFault(se);
         } catch (Exception e) {
+            logStackTrace(e);
             AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
         return null;
