@@ -25,7 +25,7 @@ import java.io.InputStream;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MIMETypedStream
 {

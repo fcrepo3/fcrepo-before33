@@ -26,7 +26,7 @@ import java.util.Map;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class Pluggable
         extends Parameterized {

@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ValidationException
         extends ObjectIntegrityException {

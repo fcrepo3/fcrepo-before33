@@ -76,7 +76,7 @@ import fedora.server.types.gen.ObjectInfo;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class RepositoryBrowser
         extends JInternalFrame {

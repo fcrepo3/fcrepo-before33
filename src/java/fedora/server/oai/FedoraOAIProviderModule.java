@@ -40,7 +40,7 @@ import fedora.server.search.FieldSearch;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class FedoraOAIProviderModule
         extends Module

@@ -49,7 +49,7 @@ import org.xml.sax.InputSource;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SimpleBMechReader
         extends SimpleServiceAwareReader

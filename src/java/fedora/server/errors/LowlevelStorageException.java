@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class LowlevelStorageException extends StorageException {
 	public LowlevelStorageException(boolean serverCaused, String bundleName, String code, String[] values,

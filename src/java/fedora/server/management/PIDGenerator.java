@@ -25,7 +25,7 @@ import java.io.*;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton
- * @version 1.0
+ * @version $Id$
  */
 public interface PIDGenerator {
         public String generatePID(String NamespaceID) throws IOException;

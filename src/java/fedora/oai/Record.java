@@ -28,7 +28,7 @@ import java.util.Set;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  * @see <a href="http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm#Record">
  *      http://www.openarchives.org/OAI/2.0/openarchivesprotocol.htm#Record</a>
  */

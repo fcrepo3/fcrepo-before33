@@ -54,7 +54,7 @@ import org.apache.axis.transport.http.HTTPConstants;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class FedoraAPIMBindingSOAPHTTPImpl
         implements FedoraAPIM {
@@ -328,7 +328,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
-    
+
 /*
     public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();

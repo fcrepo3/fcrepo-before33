@@ -23,7 +23,7 @@ package fedora.oai;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  * @see <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats">
  *      http://www.openarchives.org/OAI/openarchivesprotocol.html#ListMetadataFormats</a>
  */

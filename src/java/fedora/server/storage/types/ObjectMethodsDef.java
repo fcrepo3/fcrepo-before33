@@ -27,7 +27,7 @@ import fedora.server.storage.types.MethodDef;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ObjectMethodsDef
 {

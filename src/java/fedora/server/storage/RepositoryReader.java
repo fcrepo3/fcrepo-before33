@@ -28,7 +28,7 @@ import fedora.server.Context;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public interface RepositoryReader {
 

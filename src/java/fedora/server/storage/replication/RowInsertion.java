@@ -29,7 +29,7 @@ import fedora.server.utilities.SQLUtility;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class RowInsertion {
 
@@ -319,4 +319,4 @@ public class RowInsertion {
 		rowCount = statement.executeUpdate(insertionStatement);
 		statement.close();
 	}
-}   
+}

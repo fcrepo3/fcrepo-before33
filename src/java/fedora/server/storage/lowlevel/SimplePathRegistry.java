@@ -30,7 +30,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 	private Hashtable hashtable = null;

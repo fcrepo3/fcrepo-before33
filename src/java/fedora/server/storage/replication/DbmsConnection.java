@@ -32,7 +32,7 @@ import fedora.server.errors.InitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton
- * @version 1.0
+ * @version $Id$
  */
 public class DbmsConnection {
         private static ConnectionPool connectionPool = null;

@@ -40,7 +40,7 @@ import java.util.Properties;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MethodParameterResolverServlet extends HttpServlet
 {

@@ -57,7 +57,7 @@ import fedora.server.storage.types.Disseminator;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SimpleDOWriter
         extends SimpleDOReader

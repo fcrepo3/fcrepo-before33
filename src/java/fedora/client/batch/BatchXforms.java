@@ -52,7 +52,7 @@ import java.util.Vector;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class BatchXforms {
 	/** Constants used for JAXP 1.2 */

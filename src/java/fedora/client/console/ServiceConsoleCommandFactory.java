@@ -26,7 +26,7 @@ import javax.wsdl.PortType;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ServiceConsoleCommandFactory {
 

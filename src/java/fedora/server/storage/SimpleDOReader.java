@@ -56,7 +56,7 @@ import java.text.SimpleDateFormat;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SimpleDOReader
         extends StdoutLogging

@@ -51,7 +51,7 @@ import fedora.server.storage.translation.DOTranslator;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DirectoryBasedRepositoryReader
         extends StdoutLogging

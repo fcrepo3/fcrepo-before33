@@ -38,7 +38,7 @@ import fedora.server.errors.ServerException;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DOValidatorXMLSchema
 {

@@ -50,7 +50,7 @@ import fedora.server.utilities.StreamUtility;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DefaultManagement
         extends Module implements Management {
@@ -306,7 +306,7 @@ public class DefaultManagement
                 audit.date=nowUTC;
                 audit.justification=logMessage;
                 w.getAuditRecords().add(audit);
-                newds.auditRecordIdList().add(audit.id);            
+                newds.auditRecordIdList().add(audit.id);
             }
             // if all went ok, commit
             w.commit(logMessage);
@@ -363,7 +363,7 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            newds.auditRecordIdList().add(audit.id);                
+            newds.auditRecordIdList().add(audit.id);
             // if all went ok, commit
             w.commit(logMessage);
         } finally {
@@ -372,7 +372,7 @@ public class DefaultManagement
             }
         }
     }
-    
+
 /*
     public void withdrawDatastream(Context context, String pid,
             String datastreamId) throws ServerException {
@@ -385,8 +385,8 @@ public class DefaultManagement
 
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
 */
-    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) 
-            throws ServerException { 
+    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
         Date d=null;
@@ -398,8 +398,8 @@ public class DefaultManagement
 /*
     public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) { return null; }
 */
-    public String[] listDatastreamIDs(Context context, String pid, String state) 
-            throws ServerException { 
+    public String[] listDatastreamIDs(Context context, String pid, String state)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOReader r=m_manager.getReader(context, pid);
         return r.ListDatastreamIDs(state);

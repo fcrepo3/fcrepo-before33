@@ -29,7 +29,7 @@ import java.text.*;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton
- * @version 1.0
+ * @version $Id$
  */
 public class PIDGeneration implements PIDGenerator {
         private Class classRef;

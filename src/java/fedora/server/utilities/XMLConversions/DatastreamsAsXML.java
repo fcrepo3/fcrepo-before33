@@ -36,7 +36,7 @@ import fedora.server.utilities.DateUtility;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatastreamsAsXML
 {

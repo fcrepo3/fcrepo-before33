@@ -76,7 +76,7 @@ import com.icl.saxon.expr.StringValue;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DefaultBehaviorImpl extends InternalService implements DefaultBehavior
 {

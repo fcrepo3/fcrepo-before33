@@ -47,7 +47,7 @@ import fedora.server.utilities.StreamUtility;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class AutoExporter {
 

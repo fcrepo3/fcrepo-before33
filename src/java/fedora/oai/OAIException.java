@@ -24,7 +24,7 @@ package fedora.oai;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class OAIException
         extends Exception {

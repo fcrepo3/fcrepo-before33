@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BatchOutput extends JInternalFrame {
 	JTextArea jTextArea = null;

@@ -26,7 +26,7 @@ import javax.swing.JCheckBox;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BooleanInputPanel
         extends InputPanel {

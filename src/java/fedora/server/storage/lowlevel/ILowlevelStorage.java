@@ -27,7 +27,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public interface ILowlevelStorage {
 	public void add(String pid, InputStream content) throws LowlevelStorageException, ObjectAlreadyInLowlevelStorageException;

@@ -34,7 +34,7 @@ import javax.swing.table.TableCellRenderer;
    * -----------------------------------------------------------------------------
    *
    * @author payette@cs.cornell.edu
-   * @version 1.0
+   * @version $Id$
    */
   public class ComboBoxRenderer extends JComboBox
             implements TableCellRenderer {

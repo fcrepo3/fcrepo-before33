@@ -63,7 +63,7 @@ import fedora.client.bmech.data.*;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MethodPropertiesDialog extends JDialog
 {

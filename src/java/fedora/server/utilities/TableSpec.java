@@ -40,7 +40,7 @@ import fedora.server.errors.InconsistentTableSpecException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class TableSpec {
 

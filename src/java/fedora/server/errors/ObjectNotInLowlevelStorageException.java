@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ObjectNotInLowlevelStorageException extends LowlevelStorageException {
 	public ObjectNotInLowlevelStorageException(String message, Throwable cause) {

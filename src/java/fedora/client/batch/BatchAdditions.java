@@ -31,7 +31,7 @@ import java.util.Properties;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class BatchAdditions {
 	static final String FS = File.separator;

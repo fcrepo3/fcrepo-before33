@@ -62,7 +62,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DOValidatorSchematron
 {

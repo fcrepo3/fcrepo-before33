@@ -44,6 +44,7 @@ import java.nio.charset.Charset;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
+ * @version $id$
  */
 public class SimpleXMLFormatter
         extends Formatter {

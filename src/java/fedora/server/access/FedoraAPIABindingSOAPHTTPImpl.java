@@ -44,7 +44,7 @@ import fedora.server.utilities.TypeUtility;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.access.FedoraAPIA

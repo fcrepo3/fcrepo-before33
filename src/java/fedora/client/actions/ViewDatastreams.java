@@ -33,7 +33,7 @@ import fedora.client.datastream.DatastreamViewer;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ViewDatastreams
         extends AbstractAction {

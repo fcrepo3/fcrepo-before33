@@ -28,7 +28,7 @@ import fedora.server.errors.InitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 abstract class PathAlgorithm implements IPathAlgorithm {
 

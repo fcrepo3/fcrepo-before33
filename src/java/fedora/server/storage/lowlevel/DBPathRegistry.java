@@ -40,7 +40,7 @@ import fedora.server.utilities.SQLUtility;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();

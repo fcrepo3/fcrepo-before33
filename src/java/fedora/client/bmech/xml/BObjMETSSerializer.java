@@ -53,7 +53,7 @@ import fedora.client.bmech.BMechBuilderException;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 
 public abstract class BObjMETSSerializer

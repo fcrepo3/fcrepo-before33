@@ -44,7 +44,7 @@ import org.apache.avalon.framework.logger.Logger;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class FOPServlet extends HttpServlet {
 

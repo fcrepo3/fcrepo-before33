@@ -35,7 +35,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatastreamManagedContent
         extends DatastreamContent {

@@ -39,7 +39,7 @@ import fedora.server.errors.StreamIOException;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DefaultExternalContentManager extends Module
     implements ExternalContentManager

@@ -28,7 +28,7 @@ import fedora.server.storage.ConnectionPool;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public interface ConnectionPoolManager
 {

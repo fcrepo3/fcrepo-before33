@@ -42,7 +42,7 @@ import fedora.server.errors.ModuleInitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton, cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DefaultDOReplicator
         extends Module
@@ -167,7 +167,7 @@ public class DefaultDOReplicator
         }
         return true;
     }
-    
+
     /**
      * If the object has already been replicated, update the components
      * and return true.  Otherwise, return false.
@@ -1149,7 +1149,7 @@ public class DefaultDOReplicator
             logFinest("Exiting DefaultDOReplicator.delete");
         }
     }
-    
+
         /**
         *
         * Inserts a Behavior Definition row.
@@ -1163,7 +1163,7 @@ public class DefaultDOReplicator
 	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel) throws SQLException {
 
 		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + SQLUtility.aposEscape(bDefLabel) + "')";
-       
+
 		insertGen(connection, insertionStatement);
 	}
 
@@ -1435,7 +1435,7 @@ public class DefaultDOReplicator
 		rowCount = statement.executeUpdate(insertionStatement);
 		statement.close();
 	}
-   
+
         /**
         *
         * Looks up a BehaviorDefinition DBID.

@@ -34,7 +34,7 @@ import java.util.List;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatastreamContent
         extends Datastream {

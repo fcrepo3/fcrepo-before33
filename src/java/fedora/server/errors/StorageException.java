@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class StorageException
         extends ServerException {

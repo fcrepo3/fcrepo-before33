@@ -67,7 +67,7 @@ import java.net.UnknownHostException;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DynamicAccessModule extends Module implements Access
 {

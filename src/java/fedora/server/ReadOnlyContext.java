@@ -27,7 +27,7 @@ import java.util.Map;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ReadOnlyContext
         extends Parameterized implements Context {

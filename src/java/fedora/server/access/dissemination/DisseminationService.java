@@ -49,7 +49,7 @@ import fedora.server.storage.types.MIMETypedStream;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DisseminationService
 {
@@ -68,7 +68,7 @@ public class DisseminationService
    * fedora.fcfg config file.
    */
   private static String fedoraServerPort = null;
-  
+
   /** Hostname of the Fedora server determined from
    * fedora.fcfg config file, or (fallback) by hostIP.getHostName()
    */
@@ -230,7 +230,7 @@ public class DisseminationService
         // datastream's URL is dependent on user parameters, such
         // as when the datastream is actually a dissemination that
         // takes parameters.
-        if (dissBindInfo.dsLocation!=null 
+        if (dissBindInfo.dsLocation!=null
                 && dissBindInfo.dsLocation.startsWith("http://")) {
             String[] parts=dissBindInfo.dsLocation.split("=\\("); // regex for =(
             if (parts.length>1) {

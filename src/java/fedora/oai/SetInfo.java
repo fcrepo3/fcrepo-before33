@@ -25,7 +25,7 @@ import java.util.Set;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  * @see <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#ListSets">
  *      http://www.openarchives.org/OAI/openarchivesprotocol.html#ListSets</a>
  */

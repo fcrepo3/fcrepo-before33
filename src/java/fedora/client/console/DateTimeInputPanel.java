@@ -44,7 +44,7 @@ import fedora.server.utilities.DateUtility;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DateTimeInputPanel
         extends InputPanel {

@@ -27,7 +27,7 @@ import com.twmacinta.util.MD5InputStream;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class MD5Utility {
 

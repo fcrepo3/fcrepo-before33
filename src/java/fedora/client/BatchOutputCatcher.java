@@ -26,7 +26,7 @@ import javax.swing.JTextArea;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BatchOutputCatcher extends OutputStream {
 

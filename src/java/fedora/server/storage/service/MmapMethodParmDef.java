@@ -25,7 +25,7 @@ import fedora.server.storage.types.MethodParmDef;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MmapMethodParmDef extends MethodParmDef
 {

@@ -25,7 +25,7 @@ import java.util.Hashtable;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MethodDef
 {

@@ -35,7 +35,7 @@ import fedora.server.errors.ModuleInitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BasicPIDGenerator
         extends Module implements PIDGenerator {

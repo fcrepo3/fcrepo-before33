@@ -27,7 +27,7 @@ import fedora.server.storage.types.ObjectMethodsDef;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class RepositoryInfo
 {

@@ -35,7 +35,7 @@ import org.apache.axis.client.Call;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version $Revision$
+ * @version $Id$
  */
 public class TestClientAPIA
 {

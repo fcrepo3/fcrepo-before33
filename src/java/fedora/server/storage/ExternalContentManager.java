@@ -29,7 +29,7 @@ import fedora.server.storage.types.MIMETypedStream;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public interface ExternalContentManager
 {

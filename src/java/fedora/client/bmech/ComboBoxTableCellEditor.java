@@ -30,7 +30,7 @@ import javax.swing.table.TableCellEditor;
      * -----------------------------------------------------------------------------
      *
      * @author payette@cs.cornell.edu
-     * @version 1.0
+     * @version $Id$
      */
     public class ComboBoxTableCellEditor extends AbstractCellEditor implements TableCellEditor {
         // This is the component that will handle the editing of the

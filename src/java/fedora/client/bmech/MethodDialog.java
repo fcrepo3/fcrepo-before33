@@ -36,7 +36,7 @@ import java.awt.event.ActionEvent;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MethodDialog extends JDialog {
 

@@ -164,7 +164,7 @@ import org.w3c.dom.NodeList;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class Server
         extends Pluggable

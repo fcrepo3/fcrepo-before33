@@ -39,7 +39,7 @@ import fedora.server.types.gen.Datastream;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatastreamConduit {
 

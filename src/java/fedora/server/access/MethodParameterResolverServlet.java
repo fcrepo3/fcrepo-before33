@@ -44,7 +44,7 @@ import fedora.server.errors.InitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MethodParameterResolverServlet
     extends HttpServlet implements Logging

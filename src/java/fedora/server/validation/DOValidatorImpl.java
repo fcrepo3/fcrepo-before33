@@ -49,7 +49,7 @@ package fedora.server.validation;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 // Fedora imports
 import fedora.server.errors.ServerException;

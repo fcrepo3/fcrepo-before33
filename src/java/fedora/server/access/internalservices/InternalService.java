@@ -27,7 +27,7 @@ import fedora.server.storage.types.MethodDef;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class InternalService
 {

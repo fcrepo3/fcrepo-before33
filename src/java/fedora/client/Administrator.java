@@ -83,7 +83,7 @@ import fedora.client.BatchIngestGUI;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class Administrator extends JFrame {
 
@@ -138,7 +138,7 @@ public class Administrator extends JFrame {
                 + "May 16, 2003<p>"
                 + "See http://www.fedora.info/ for "
                 + "more information.");
-                
+
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
         splashPicAndText.setLayout(new BorderLayout());
@@ -354,7 +354,7 @@ public class Administrator extends JFrame {
         if (getPort()!=80) portPart=":" + getPort();
         String documentationURL="http://" + getHost() + portPart + "/userdocs/";
         helpContents.setToolTipText("See " + documentationURL);
-        
+
         helpContents.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
               String portPart="";
@@ -390,7 +390,7 @@ public class Administrator extends JFrame {
    } catch (Exception ee) {
       System.out.println("Help could not be loaded:" + ee.getClass().getName() + ":" + ee.getMessage());
    }
-*/   
+*/
 
         JFrame dummy=new JFrame();
         dummy.setIconImage(new ImageIcon(cl.getResource("images/standard/general/About16.gif")).getImage());

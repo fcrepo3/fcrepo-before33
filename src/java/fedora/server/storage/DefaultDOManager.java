@@ -88,7 +88,7 @@ import fedora.server.validation.DOValidator;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DefaultDOManager
         extends Module implements DOManager {
@@ -672,7 +672,7 @@ public class DefaultDOManager
             }
         }
     }
-    
+
     private void logStackTrace(Throwable th) {
         StackTraceElement[] els=th.getStackTrace();
         StringBuffer lines=new StringBuffer();

@@ -51,7 +51,7 @@ import fedora.client.ingest.AutoIngestor;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BMechBuilder extends JInternalFrame
 {

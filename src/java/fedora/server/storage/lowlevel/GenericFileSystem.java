@@ -36,7 +36,7 @@ import fedora.server.errors.LowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class GenericFileSystem implements IFileSystem {
 	private static int delay = 0;

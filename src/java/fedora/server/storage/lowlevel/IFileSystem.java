@@ -28,7 +28,7 @@ import fedora.server.errors.LowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 interface IFileSystem {
 	public void write(File file, InputStream content) throws LowlevelStorageException;

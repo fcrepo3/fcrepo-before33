@@ -38,7 +38,7 @@ import fedora.server.errors.ModuleShutdownException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class Module
         extends Pluggable

@@ -33,7 +33,7 @@ import fedora.oai.sample.RandomDCMetadataFactory;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class MassIngest {
 

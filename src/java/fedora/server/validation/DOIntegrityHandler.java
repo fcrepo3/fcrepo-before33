@@ -34,7 +34,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 class DOIntegrityHandler extends DefaultHandler
 {

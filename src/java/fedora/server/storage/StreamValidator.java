@@ -29,7 +29,7 @@ import java.io.IOException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public interface StreamValidator {
 

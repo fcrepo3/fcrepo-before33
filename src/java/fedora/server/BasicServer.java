@@ -44,7 +44,7 @@ import org.w3c.dom.Node;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BasicServer
         extends Server {

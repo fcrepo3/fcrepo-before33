@@ -28,7 +28,7 @@ import fedora.client.batch.BatchTool;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class BatchThread extends Thread {
 	private String leadText = "";

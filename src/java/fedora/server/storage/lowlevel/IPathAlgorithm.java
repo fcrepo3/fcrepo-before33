@@ -24,7 +24,7 @@ import fedora.server.errors.LowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 interface IPathAlgorithm {
 	public String get (String pid) throws LowlevelStorageException;

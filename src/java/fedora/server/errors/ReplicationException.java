@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton
- * @version 1.0
+ * @version $Id$
  */
 public class ReplicationException extends ServerException
 {

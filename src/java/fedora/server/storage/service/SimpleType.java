@@ -26,7 +26,7 @@ import java.util.Vector;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SimpleType extends Type
 {

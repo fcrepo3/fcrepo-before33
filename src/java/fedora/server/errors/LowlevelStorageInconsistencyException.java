@@ -23,7 +23,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class LowlevelStorageInconsistencyException extends LowlevelStorageException {
 	public LowlevelStorageInconsistencyException(String message, Throwable cause) {

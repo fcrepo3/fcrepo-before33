@@ -36,7 +36,7 @@ import fedora.server.storage.translation.METSLikeDOSerializer;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class RepositoryReaderTest
         extends TestCase {

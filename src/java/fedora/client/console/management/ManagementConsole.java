@@ -56,7 +56,7 @@ import fedora.server.management.FedoraAPIM;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ManagementConsole
         extends JInternalFrame

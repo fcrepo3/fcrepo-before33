@@ -39,7 +39,7 @@ import fedora.server.utilities.DDLConverter;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ConnectionPoolManagerImpl extends Module
     implements ConnectionPoolManager

@@ -25,7 +25,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 interface IPathRegistry {
 	public String get (String pid) throws LowlevelStorageException, ObjectNotInLowlevelStorageException;

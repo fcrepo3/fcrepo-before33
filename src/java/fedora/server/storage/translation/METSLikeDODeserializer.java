@@ -58,7 +58,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class METSLikeDODeserializer
         extends DefaultHandler

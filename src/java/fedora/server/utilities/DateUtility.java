@@ -31,7 +31,7 @@ import java.util.TimeZone;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public abstract class DateUtility
 {

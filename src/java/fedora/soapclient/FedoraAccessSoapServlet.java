@@ -109,7 +109,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class FedoraAccessSoapServlet extends HttpServlet
 {

@@ -41,7 +41,7 @@ import fedora.oai.SimpleSetInfo;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SampleOAIProvider
         implements OAIProvider {

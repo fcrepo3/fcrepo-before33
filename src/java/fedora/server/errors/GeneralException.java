@@ -27,7 +27,7 @@ package fedora.server.errors;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public final class GeneralException
         extends ServerException {

@@ -27,7 +27,7 @@ import org.apache.axis.client.Call;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class TestClient {
 

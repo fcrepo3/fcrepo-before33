@@ -29,7 +29,7 @@ import fedora.server.storage.replication.*;
  * -----------------------------------------------------------------------------
  *
  * @author Paul Charlton
- * @version 1.0
+ * @version $Id$
  */
 public class RowDeletion {
 

@@ -26,7 +26,7 @@ import fedora.server.storage.types.MethodParmDef;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DisseminationBindingInfo
 {

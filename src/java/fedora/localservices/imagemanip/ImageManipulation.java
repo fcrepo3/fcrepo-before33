@@ -41,7 +41,7 @@
  *  fine Java utilities: http://www.acme.com/java/
  *
  */
- 
+
 package fedora.localservices.imagemanip;
 
 import java.io.*;
@@ -79,7 +79,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
  *    browser or an HTML img tag.
  *
  *    @author Theodore Serbinski, tss24@cornell.edu
- *    @version 1.0
+ *    @version $Id$
  *    @created April 2003
  */
 public class ImageManipulation extends HttpServlet {
@@ -97,7 +97,7 @@ public class ImageManipulation extends HttpServlet {
      *    @throws    IOException    If an input or output exception occurred
      *                    ServletException    If a servlet exception occurred
      */
-    public void doGet(HttpServletRequest req, HttpServletResponse res) 
+    public void doGet(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
 
         // collect all possible parameters for servlet
@@ -118,7 +118,7 @@ public class ImageManipulation extends HttpServlet {
             String outputMimeType;
             // get the image via url and put it into the ImagePlus processor.
             BufferedImage img=getImage(url);
-            // do watermarking stuff 
+            // do watermarking stuff
             if (op.equals("watermark")) {
 	        if (wmText==null) {
 		    throw new ServletException("Must specify wmText.");
@@ -130,9 +130,9 @@ public class ImageManipulation extends HttpServlet {
 		FontMetrics fm=g.getFontMetrics();
                 int stringWidth=(int) fm.getStringBounds(wmText, g).getWidth();
 		int x=img.getWidth()/2 - stringWidth/2;
-                int y=img.getHeight() - fm.getHeight(); 
+                int y=img.getHeight() - fm.getHeight();
                 g.setColor(new Color(180, 180, 180));
-                g.fill3DRect(x-10, y-fm.getHeight()-4, stringWidth+20, 
+                g.fill3DRect(x-10, y-fm.getHeight()-4, stringWidth+20,
                         fm.getHeight()+12, true);
                 g.setColor(new Color(100, 100, 100));
                 g.drawString(wmText, x+2, y+2);
@@ -205,7 +205,7 @@ public class ImageManipulation extends HttpServlet {
      * @return Image The image object, if successful.
      * @throws Exception If any of the aforementioned problems occurs.
      */
-    private BufferedImage getImage(String url) 
+    private BufferedImage getImage(String url)
             throws Exception {
         GetMethod get=null;
         try {
@@ -215,7 +215,7 @@ public class ImageManipulation extends HttpServlet {
             get.setFollowRedirects(true);
             int resultCode=client.executeMethod(get);
             if (resultCode!=200) {
-                throw new ServletException("Could not load image: " + url 
+                throw new ServletException("Could not load image: " + url
                         + ".  Errorcode " + resultCode + " from remote server.");
             }
             inputMimeType=get.getResponseHeader("Content-Type").getValue();
@@ -242,10 +242,10 @@ public class ImageManipulation extends HttpServlet {
         } finally {
             if (get!=null) get.releaseConnection();
         }
-        
+
     }
-    
-    private void outputImage(ImageProcessor ip, OutputStream out, 
+
+    private void outputImage(ImageProcessor ip, OutputStream out,
             String outputMimeType)
             throws Exception {
         if (outputMimeType.equals("image/gif")) {
@@ -258,7 +258,7 @@ public class ImageManipulation extends HttpServlet {
             FileInfo fi=imp.getFileInfo();
             byte pixels[]=(byte[])imp.getProcessor().getPixels();
             GifEncoder ge=new GifEncoder(fi.width,fi.height,pixels,fi.reds,fi.greens,fi.blues);
-            ge.write(out);  
+            ge.write(out);
         } else {
             ImageEncodeParam param=null;
             String format=null;
@@ -279,7 +279,7 @@ public class ImageManipulation extends HttpServlet {
                     JAI.create("AWTImage", ip.createImage()));
         }
     }
-    
+
     /**
      *    Resizes an image to the supplied new width in pixels. The height is
      *    reduced proportionally to the new width.

@@ -26,7 +26,7 @@ import java.io.File;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class XMLFileChooserFilter extends FileFilter
 {

@@ -24,7 +24,7 @@ package fedora.server.search;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class Operator {
 

@@ -34,7 +34,7 @@ import java.util.logging.StreamHandler;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatingFileHandler
         extends StreamHandler {

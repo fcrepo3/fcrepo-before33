@@ -24,7 +24,7 @@ package fedora.server.storage.types;
  * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 public class Property
 {

@@ -29,7 +29,7 @@ import fedora.oai.RepositoryException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class SampleOAIProviderServlet
         extends OAIProviderServlet {

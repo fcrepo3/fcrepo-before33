@@ -26,7 +26,7 @@ import java.util.Date;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  * @see <a href="http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl">
  *      http://www.openarchives.org/OAI/openarchivesprotocol.html#FlowControl</a>
  */

@@ -33,7 +33,7 @@ import fedora.client.ingest.AutoIngestor;
  * -----------------------------------------------------------------------------
  *
  * @author wdn5e@virginia.edu
- * @version 1.0
+ * @version $Id$
  */
 class BatchIngest {
 

@@ -31,7 +31,7 @@ import java.net.HttpURLConnection;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DatastreamReferencedContent
         extends DatastreamContent {

@@ -28,7 +28,7 @@ import org.xml.sax.SAXParseException;;
  * -----------------------------------------------------------------------------
  *
  * @author payette@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class DOValidatorXMLErrorHandler implements ErrorHandler
 {

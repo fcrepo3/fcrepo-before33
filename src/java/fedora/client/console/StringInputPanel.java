@@ -30,7 +30,7 @@ import javax.swing.JTextField;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class StringInputPanel
         extends InputPanel {

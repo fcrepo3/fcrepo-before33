@@ -29,7 +29,7 @@ import fedora.server.errors.ModuleInitializationException;
  * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
- * @version 1.0
+ * @version $Id$
  */
 public class ThreadMonitorModule
         extends Module
