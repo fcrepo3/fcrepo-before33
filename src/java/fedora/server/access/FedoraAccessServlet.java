@@ -657,7 +657,7 @@ public class FedoraAccessServlet extends HttpServlet
     {
 
         // testing to see what's in request header that might be of interest
-        for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
+        /*for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
             String name = (String)e.nextElement();
             Enumeration headerValues =  request.getHeaders(name);
             StringBuffer sb = new StringBuffer();
@@ -667,7 +667,7 @@ public class FedoraAccessServlet extends HttpServlet
             String value = sb.toString();
             if (fedora.server.Debug.DEBUG) System.out.println("FEDORASERVLET REQUEST HEADER CONTAINED: "+name+" : "+value);
             response.setHeader(name,value);
-        }
+        }*/
 
       // Dissemination was successful;
       // Return MIMETypedStream back to browser client
@@ -697,7 +697,7 @@ public class FedoraAccessServlet extends HttpServlet
       {
 
         response.setContentType(dissemination.MIMEType);
-        Property[] headerArray = dissemination.header;
+        /*Property[] headerArray = dissemination.header;
         if(headerArray != null) {
             for(int i=0; i<headerArray.length; i++) {
                 if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
@@ -705,7 +705,7 @@ public class FedoraAccessServlet extends HttpServlet
                     if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
                 }
             }
-        }
+        }*/
         long startTime = new Date().getTime();
         int byteStream = 0;
         InputStream dissemResult = dissemination.getStream();
