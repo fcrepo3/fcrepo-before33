@@ -1013,11 +1013,14 @@ public class DefaultDOManager
                 // RELS-EXT System Reserved Datastream... validation
 				RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
 				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
-				InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
-				logFinest("Validating RELS-EXT datastream...");
-				deser.deserialize(in2, "info:fedora/" + obj.getPid());
-				if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
-				logFinest("RELS-EXT datastream passed validation.");
+				if (relsext!=null) {
+					InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
+					logFinest("Validating RELS-EXT datastream...");
+					deser.deserialize(in2, "info:fedora/" + obj.getPid());
+					if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
+					logFinest("RELS-EXT datastream passed validation.");
+				}
+
 
                 // at this point all is good...
                 // so make a record of it in the registry
