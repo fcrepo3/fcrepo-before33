@@ -9,6 +9,9 @@
 	<property name="java.src.dir" location="${src.dir}/java"/>
 	<property name="test.src.dir" location="${src.dir}/test"/>
 	<property name="junit.src.dir" location="${test.src.dir}/junit"/>
+    <property name="doc.dir" location="${src.dir}/doc"/>
+    <property name="dev.doc.dir" location="${doc.dir}/devdocs"/>
+    <property name="user.doc.dir" location="${doc.dir}/userdocs"/>
 	<property name="build.dir" location="build"/>
 	<property name="test.build.dir" location="${build.dir}"/>
 	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
@@ -434,286 +437,20 @@
 		<mkdir dir="dist/devdocs"/>
 		<echo message="Copying docs that don't need translation"/>
 		<copy todir="dist/devdocs">
-			<fileset dir="src/txt/devdocs"/>
-			<fileset dir="src/doc/devdocs"/>
-			<fileset dir="src/sdr/devdocs"/>
-			<fileset dir="src/pdf/devdocs"/>
-			<fileset dir="src/gif/devdocs"/>
+			<fileset dir="${dev.doc.dir}"/>
 		</copy>
-		<!--    <mkdir dir="dist/devdocs/devguide"/> -->
-		<echo message="Translating devguide.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/devdocs/devguide.html"/>
-			<arg path="src/dbx/devdocs/devguide.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-			<!--     <arg value="saxon.extensions=true"/>
-      		<arg value="chunk.section.depth=1"/> -->
-		</exec>
-		<echo message="Translating namespaces.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/devdocs/namespaces.html"/>
-			<arg path="src/dbx/devdocs/namespaces.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
 	</target>
 	<target name="userdocs" depends="prep" description="Assemble user documentation into dist/userdocs">
 		<mkdir dir="${dist.dir}/userdocs"/>
+	     <copy todir="${dist.dir}/userdocs">
+	         <fileset dir="${user.doc.dir}"/>
+	     </copy>
 <!--  Temporarily turned off pending userdoc changes		
-		<echo message="Translating docs..."/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/cmd-line/index.html"/>
-			<arg path="src/dbx/userdocs/client-cmdline.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/release-notes.html"/>
-			<arg path="src/dbx/userdocs/release-notes.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/demos.html"/>
-			<arg path="src/dbx/userdocs/demos.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/installation.html"/>
-			<arg path="src/dbx/userdocs/installation.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/migration.html"/>
-			<arg path="src/dbx/userdocs/migration.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/browser/apialite/index.html"/>
-			<arg path="src/dbx/userdocs/apialite.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/browser/apimlite/index.html"/>
-			<arg path="src/dbx/userdocs/apimlite.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/admin-gui/index.html"/>
-			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/versioning.html"/>
-			<arg path="src/dbx/userdocs/versioning.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<copy todir="dist/userdocs/client/admin-gui/images">
-			<fileset dir="src/jpg/client/file"/>
-		</copy>
-		<copy todir="dist/userdocs/client/admin-gui/images">
-			<fileset dir="src/jpg/client/tools"/>
-		</copy>
-		<copy todir="dist/userdocs/client/admin-gui/images">
-			<fileset dir="src/jpg/client/help"/>
-		</copy>
-		<copy todir="dist/userdocs/client/admin-gui/images">
-			<fileset dir="src/jpg/client/window"/>
-		</copy>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/index.html"/>
-			<arg path="src/dbx/userdocs/documentation.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/browser/oai/index.html"/>
-			<arg path="src/dbx/userdocs/oaiprovider.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/browser/search/index.html"/>
-			<arg path="src/dbx/userdocs/search.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
 		<copy todir="dist/userdocs/client/browser/search/images">
 			<fileset dir="src/jpg/search"/>
 		</copy>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/index.html"/>
-			<arg path="src/dbx/userdocs/server.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/localservices/saxon/index.html"/>
-			<arg path="src/dbx/userdocs/saxon.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<copy file="dist/userdocs/server/localservices/saxon/index.html" todir="${tomcat.deploy.dir}/saxon/"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/localservices/fop/index.html"/>
-			<arg path="src/dbx/userdocs/fop.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<copy file="dist/userdocs/server/localservices/fop/index.html" todir="${tomcat.deploy.dir}/fop/"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/localservices/imagemanip/index.html"/>
-			<arg path="src/dbx/userdocs/imagemanip.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<copy file="dist/userdocs/server/localservices/imagemanip/index.html" todir="${tomcat.deploy.dir}/imagemanip/"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/localservices/index.html"/>
-			<arg path="src/dbx/userdocs/localservices.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/client/servlet/soapclient/index.html"/>
-			<arg path="src/dbx/userdocs/soap.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<copy file="dist/userdocs/client/servlet/soapclient/index.html" todir="${tomcat.deploy.dir}/soapclient/"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/diststruct.html"/>
-			<arg path="src/dbx/userdocs/diststruct.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/introduction.html"/>
-			<arg path="src/dbx/userdocs/introduction.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/features.html"/>
-			<arg path="src/dbx/userdocs/features.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/do-const.html"/>
-			<arg path="src/dbx/userdocs/do-const.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saxon};${lib.docbook-xsl-saxon}"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/server/webexp.html"/>
-			<arg path="src/dbx/userdocs/webexp.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
-		<echo message="Finished doc translations"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/cmd-line/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apimlite/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/search/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/soapclient/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/distribution/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/images/"/>
-		<copy file="src/jpg/server/version1.jpg" todir="dist/userdocs/server/images/"/>
-		<copy file="src/jpg/server/version2.jpg" todir="dist/userdocs/server/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/fop/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/imagemanip/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/saxon/images/"/>
+		
+
 		<copy todir="${tomcat.deploy.dir}/userdocs">
 			<fileset dir="dist/userdocs"/>
 		</copy>
