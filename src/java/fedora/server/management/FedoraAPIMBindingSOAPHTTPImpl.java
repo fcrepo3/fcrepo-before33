@@ -138,19 +138,19 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             
     }
 
-    public byte[] getObjectXML(String PID) throws java.rmi.RemoteException {
-        assertInitialized(); /**
+    public byte[] getObjectXML(String PID) 
+            throws RemoteException {
+        assertInitialized();
         try {
-            InputStream in=w.GetObjectXML();
+            InputStream in=s_management.getObjectXML(s_context, PID, "mets11fedora1", "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
         } catch (ServerException se) {
-            AxisUtility.throwFault(se);
+            throw AxisUtility.getFault(se);
         } catch (Exception e) {
-            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        } */
-        return null;
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 
     // temporarily here

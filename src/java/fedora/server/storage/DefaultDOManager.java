@@ -432,10 +432,15 @@ public class DefaultDOManager
             // at time of ingest, then again, here, at time of storage.
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-            ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-            m_validator.validate(inV, 0, "store");
+            
+            // FIXME: Uncomment the following to validate on the serialized obj.
+            // This is currently bypassed in favor of the exact copy of the ingested object
+            // due to METSDOSerializer's malfunctioning
+            //ByteArrayOutputStream out = new ByteArrayOutputStream();
+            //m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+            //ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+            //m_validator.validate(inV, 0, "store");
+            m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
             
             // validation worked... so write to perm storage, then update the 
             // lockinguser (set to NULL) and systemVersion (add one)

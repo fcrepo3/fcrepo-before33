@@ -94,7 +94,13 @@ public class DefaultManagement
         return pid;
     }
 
-    public InputStream getObjectXML(Context context, String pid, String format, String encoding) { return null; }
+    public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException { 
+        logFinest("Entered DefaultManagement.getObjectXML");
+        DOReader reader=m_manager.getReader(context, pid);
+        InputStream instream=reader.GetObjectXML(); 
+        logFinest("Exiting DefaultManagement.getObjectXML");
+        return instream;
+    }
 
     public InputStream exportObject(Context context, String pid, String format, String encoding) { return null; }
 
