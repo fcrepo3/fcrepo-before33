@@ -52,7 +52,7 @@ public static FedoraAPIM getStub(String host, int port, String username, String 
         nurl.append('#');
         nurl.append(ourl.getRef());
     }
-    return locator.getFedoraAPIMPortSOAPHTTP(new URL(nurl.toString()));
+    return new APIMStubWrapper(locator.getFedoraAPIMPortSOAPHTTP(new URL(nurl.toString())));
 }
 
 }

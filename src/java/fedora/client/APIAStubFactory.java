@@ -52,7 +52,7 @@ public static FedoraAPIA getStub(String host, int port, String username, String 
         nurl.append('#');
         nurl.append(ourl.getRef());
     }
-    return locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString()));
+    return new APIAStubWrapper(locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString())));
 }
 
 }

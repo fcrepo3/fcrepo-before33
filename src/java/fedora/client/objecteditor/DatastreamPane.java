@@ -122,11 +122,9 @@ public class DatastreamPane
                 // retrieve and add in descending order, by date
                 Arrays.sort(dates, new CalendarComparator());
                 versions[0]=mostRecent;
-                System.out.println("Already had first version: " + versions[0].getVersionID());
                 for (int i=1; i<dates.length; i++) {
                     versions[i]=Administrator.APIM.getDatastream(pid,
                             mostRecent.getID(), dates[dates.length-i-1]);
-                    System.out.println("Got version from server: " + versions[i].getVersionID());
                 }
                 if (versions.length>1) {
                     m_versionSlider=new JSlider(JSlider.HORIZONTAL,

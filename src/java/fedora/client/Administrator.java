@@ -18,6 +18,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.JTextComponent;
@@ -41,6 +42,7 @@ import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
 
 import fedora.client.actions.ExportObject;
+import fedora.client.actions.Login;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.actions.ViewDatastreams;
@@ -106,30 +108,23 @@ public class Administrator extends JFrame {
     private static String s_user;
     private static String s_pass;
 
-    public static FedoraAPIA APIA;
-    public static FedoraAPIM APIM;
+    public static JProgressBar PROGRESS;
 
-    public Administrator(String host, int port, String user, String pass) {
-        super("Fedora Administrator - " + user + " using server at " + host + ":" + port);
+    public static FedoraAPIA APIA=null;
+    public static FedoraAPIM APIM=null;
+    public static File BASE_DIR;
+    public static Administrator INSTANCE;
+
+    public Administrator() {
+        super("Fedora Administrator");
+        INSTANCE=this;
         if (System.getProperty("fedora.home")!=null) {
             File f=new File(System.getProperty("fedora.home"));
             if (f.exists() && f.isDirectory()) {
-                s_lastDir=f;
+                BASE_DIR=new File(f, "client");
+                s_lastDir=BASE_DIR;
             }
         }
-        try {
-        APIA=APIAStubFactory.getStub(host, port, user, pass);
-        APIM=APIMStubFactory.getStub(host, port, user, pass);
-        } catch (Exception e) {
-            System.err.println("FATAL ERROR: " + e.getMessage());
-            System.exit(0);
-        }
-
-        s_host=host;
-        s_port=port;
-        s_user=user;
-        s_pass=pass;
-
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
@@ -172,6 +167,12 @@ public class Administrator extends JFrame {
         s_desktop=new MDIDesktopPane();
         s_desktop.setVisible(true);
         mainPanel.add(new JScrollPane(s_desktop), BorderLayout.CENTER);
+        PROGRESS=new JProgressBar(0, 2000);
+        PROGRESS.setValue(0);
+        PROGRESS.setStringPainted(true);
+        PROGRESS.setString("");
+
+        mainPanel.add(PROGRESS, BorderLayout.SOUTH);
 
         getContentPane().add(mainPanel);
         setJMenuBar(createMenuBar());
@@ -189,10 +190,39 @@ public class Administrator extends JFrame {
 
         splashScreen.setVisible(false);
         s_instance=this;
+
+
+        int xs=820;
+        int ys=620;
+        Dimension sz=this.getToolkit().getScreenSize();
+        int xl=(sz.width/2) - (xs/2);
+        int yl=(sz.height/2) - (ys/2);
+        setBounds(xl, yl, xs, ys);
+        setVisible(true);
+
+        if (APIA==null || APIM==null) {
+            new LoginDialog(); // first thing to do... launch login dialog
+        }
+        if (APIA==null || APIM==null) {
+            dispose();
+            System.exit(0);
+        }
     }
 
     public static JDesktopPane getDesktop() {
         return s_desktop;
+    }
+
+    public void setLoginInfo(String host, int port, String user, String pass) {
+        s_host=host;
+        s_port=port;
+        s_user=user;
+        s_pass=pass;
+        doTitle();
+    }
+
+    public void doTitle() {
+        setTitle("Fedora Administrator - " + s_user + "@" + s_host + ":" + s_port);
     }
 
     public static Administrator getInstance() {
@@ -205,6 +235,11 @@ public class Administrator extends JFrame {
         JMenu fileMenu=new JMenu("File");
         fileMenu.setMnemonic(KeyEvent.VK_F);
         fileMenu.setToolTipText("Contains commands for creating, opening, closing, and saving Digital Objects");
+
+        JMenuItem fileLogin=new JMenuItem(new Login());
+        fileLogin.setMnemonic(KeyEvent.VK_L);
+        fileLogin.setToolTipText("Logs into a repository.");
+        fileLogin.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ActionEvent.CTRL_MASK));
 
         JMenuItem fileViewObject=new JMenuItem(new ViewObject());
         fileViewObject.setMnemonic(KeyEvent.VK_O);
@@ -250,8 +285,6 @@ public class Administrator extends JFrame {
                 ActionEvent.CTRL_MASK));
         JMenuItem fileSaveTo=new JMenuItem("Save To...",KeyEvent.VK_T);
         fileSaveTo.setToolTipText("Saves the current Digital Object to a Repository other than the one it was opened from");
-        JMenuItem fileSaveAll=new JMenuItem("Save All",KeyEvent.VK_L);
-        fileSaveAll.setToolTipText("Saves all opened Digital Objects to the Repository(s) they were opened from");
         JMenuItem fileExit=new JMenuItem("Exit",KeyEvent.VK_X);
         fileExit.setToolTipText("Quits the FEDORA Administrator application");
 
@@ -262,6 +295,7 @@ public class Administrator extends JFrame {
             }
         });
 
+        fileMenu.add(fileLogin);
         fileMenu.add(fileViewObject);
         fileMenu.add(fileView);
         fileMenu.add(fileViewDatastreams);
@@ -654,36 +688,9 @@ public class Administrator extends JFrame {
 
         // turn off obnoxious Axis stdout/err messages
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
-        String host="localhost";
-        int port=8080;
-        String user="fedoraAdmin";
-        String pass="fedoraAdmin";
-        if (args.length>0) {
-            host=args[0];
-            if (args.length>1) {
-                try {
-                    port=Integer.parseInt(args[1]);
-                } catch (NumberFormatException nfe) {
-                    System.out.println("Warning: " + args[1] + " is not a valid port number.  Using default.");
-                }
-                if (args.length>2) {
-                    user=args[2];
-                    if (args.length>3) {
-                        pass=args[3];
-                    }
-                }
-            }
-        }
-        System.out.println("Using Fedora server at " + host + ":" + port + " with userId=" + user + " and password=[not displayed].");
-        Administrator administrator=new Administrator(host, port, user, pass);
 
-        int xSize=820;
-        int ySize=620;
-        Dimension screenSize=administrator.getToolkit().getScreenSize();
-        int xLoc=(screenSize.width/2) - (xSize/2);
-        int yLoc=(screenSize.height/2) - (ySize/2);
-        administrator.setBounds(xLoc, yLoc, xSize, ySize);
-        administrator.setVisible(true);
+        Administrator administrator=new Administrator();
+
     }
 }
 
