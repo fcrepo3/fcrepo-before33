@@ -59,6 +59,7 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
@@ -597,22 +598,23 @@ public class DefaultDOManager
                   }
                 }
 
-                // save to definitive store, validating beforehand
+                // STORAGE: save to definitive store, validating beforehand
                 // update the system version (add one)
 
-                // Validation:
-                // Perform FINAL validation before saving the object to persistent storage.
-                // For now, we'll request all levels of validation (level=0), but we can
-                // consider whether there is too much redundancy in requesting full validation
-                // at time of ingest, then again, here, at time of storage.
-                // We'll just be conservative for now and call all levels both times.
-                // First, serialize the digital object into an Inputstream to be passed to validator.
-
-                // set last mod date, in UTC
+                // set object last modified date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
-                logFinest("Serializing for validation...");
-                    m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding, false);
+                    
+				// FINAL VALIDATION:
+				// Perform FINAL validation before saving the object to persistent storage.
+				// For now, we'll request all levels of validation (level=0), but we can
+				// consider whether there is too much redundancy in requesting full validation
+				// at time of ingest, then again, here, at time of storage.
+				// We'll just be conservative for now and call all levels both times.
+				// First, serialize the digital object into an Inputstream to be passed to validator.                    
+                logFinest("Serializing for storage validation...");
+                    m_translator.serialize(obj, out, m_defaultStorageFormat, 
+                    	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                 logFinest("Validating (storage phase)...");
                     m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
@@ -790,7 +792,8 @@ public class DefaultDOManager
 
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
-                    m_defaultStorageFormat, m_storageCharacterEncoding);
+                    m_defaultStorageFormat, m_storageCharacterEncoding, 
+                    DOTranslationUtility.DESERIALIZE_INSTANCE);
             DOWriter w=new SimpleDOWriter(context, this, m_translator,
                     m_defaultStorageFormat,
                     m_storageCharacterEncoding, obj, this);
@@ -829,33 +832,36 @@ public class DefaultDOManager
             	// Get the current time to use for created dates on object
             	// and object components (if they are not already there).
 				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                // write it to temp, as "tempHandle"
+				
+                // write ingest input stream to temp, as "tempHandle"
                 logFinest("Adding and retrieving from temp store...");
                 getTempStore().add(tempHandle, in);
                 wroteTempIngest=true;
                 InputStream in2=getTempStore().retrieve(tempHandle);
 
-                // perform initial validation of the ingest submission format
+                // VALIDATION: perform initial validation of the ingest submission file
                 logFinest("Getting another handle from temp store for validation...");
                 InputStream inV=getTempStore().retrieve(tempHandle);
                 logFinest("Validating (ingest phase)...");
 				m_validator.validate(inV, format, 0, "ingest");
 
-                // deserialize it first
+                // deserialize the ingest input stream into a digital object
                 BasicDigitalObject obj=new BasicDigitalObject();
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
-				// deserialize the input stream, specifying its client-supplied format
-				System.out.println("LOOK! just about to deserialize format of: " + format);
+				obj.setNew(true);
+				System.out.println("LOOK! Deserializing from format: " + format);
                 logFinest("Deserializing from format: " + format);
-                m_translator.deserialize(in2, obj, format, encoding);
-                // then, before doing anything, set object and component states
-                // to "A" if they're unspecified
+                m_translator.deserialize(in2, obj, format, encoding, 
+                	DOTranslationUtility.DESERIALIZE_INSTANCE);
+                	
+                // set state...
+                // set object and component states to "A" (Active) unspecified
                 logFinest("Setting object/component states to A if unset...");
 				if (obj.getState()==null || obj.getState().equals("")) {
                     obj.setState("A");
 				}
-                // datastreams,
+                // datastreams...
                 Iterator dsIter=obj.datastreamIdIterator();
                 while (dsIter.hasNext()) {
                     List dsList=(List) obj.datastreams((String) dsIter.next());
@@ -870,7 +876,7 @@ public class DefaultDOManager
 						}
                     }
                 }
-                // ...finally, disseminators
+                // finally, disseminators...
                 Iterator dissIter=obj.disseminatorIdIterator();
                 while (dissIter.hasNext()) {
                     List dissList=(List) obj.disseminators((String) dissIter.next());
@@ -881,7 +887,7 @@ public class DefaultDOManager
 						}
                     }
                 }
-                // do we need to generate a pid?
+                // generate PID if needed...
                 if ( ( obj.getPid()!=null )
                         && ( obj.getPid().indexOf(":")!=-1 )
                         && ( ( m_retainPIDs==null )
@@ -911,13 +917,12 @@ public class DefaultDOManager
                         getServer().logFinest("Ingesting client wants to use existing PID.");
                     }
                 }
-                // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
-
-
+                
+                // validate PID...
+                // it must be a valid format and it can't already exist
+                
                 // FIXME: need to take out urn: assumption from following func and re-calc length limits.
                 // assertValidPid(obj.getPid());
-
-                // make sure the pid isn't already used by a registered object
                 if (objectExists(obj.getPid())) {
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
@@ -935,14 +940,15 @@ public class DefaultDOManager
                 logFinest("Retrieving temporary copy from permanent store to add to temp store with real PID...");
                 InputStream in4=getTempStore().retrieve(tempHandle);
 
-                // now add it to the working area with the *known* pid
+                // now add it to the temporary working area with the *known* pid
                 getTempStore().add(obj.getPid(), in4);
                 inTempStore=true; // signifies successful perm store addition
 
                 // signify that the object is new,
-				obj.setNew(true);
+                // sdp: moved to above deserialization where it belongs.
+				//obj.setNew(true);
 
-                // then get a digital object writer configured with
+                // get a digital object writer configured with
                 // the DEFAULT export format.
 				System.out.println("LOOK! get new writer with default export format: " + m_defaultExportFormat);
                 logFinest("Instantiating a SimpleDOWriter...");
@@ -950,13 +956,12 @@ public class DefaultDOManager
                         m_defaultExportFormat,
                         m_storageCharacterEncoding, obj, this);
 
-                //Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                // ...set the create and last modified dates as the current
-                // server date/time... in UTC (considering the local timezone
+                // set dates...
+                // set the create and last modified dates as the current
+                // server date/time in UTC (considering the local timezone
                 // and whether it's in daylight savings)
                 obj.setCreateDate(nowUTC);
                 obj.setLastModDate(nowUTC);
-
 
                 logFinest("Adding/Checking initial DC record...");
                 // if there's no DC record, add one using PID for identifier.
