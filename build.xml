@@ -932,6 +932,7 @@
 		       classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar;lib/common/xerces2-2.0.2.jar" 
 		       includes="fedora/server/**,fedora/logging/**,fedora/oai/**" 
 		       optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+	<jar jarfile="lib/server/fedorawsdlgen.jar" basedir="temp/server/classes"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -970,5 +971,6 @@
 	<target name="clean" description="Clean up all targets and temp files">
 		<delete dir="temp"/>
 		<delete dir="dist"/>
+		<delete file="lib/server/fedorawsdlgen.jar"/>
 	</target>
 </project>
