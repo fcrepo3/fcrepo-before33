@@ -18,6 +18,8 @@
 	<param name="connect_string" value="jdbc://db.somecollege.edu/here"/>
 	<param name="pool_max" value="100"/>
 	<param name="pool_min" value="20"/>
+	<param name="disseminationCacheSize" value="100"/>
+	<param name="debug" value="true"/>	
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>This one comes with Fedora.  It's best not to change
         these values unless you know what you're doing.</comment>
@@ -54,15 +56,14 @@
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
-	<!--
 	<datastore id="poolTwo">
 		<comment>Config parameters for ConnectionPool number two</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://169.254.137.133:3306/FedoraObjects"/>
+		<!--<param name="jdbcURL" value="jdbc:mysql://169.254.137.133:3306/FedoraObjects"/>-->
+		<param name="jdbcURL" value="jdbc:mysql://icarus.lib.virginia.edu:3306/Fedora"/>		
 		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
-	-->
 </server>
