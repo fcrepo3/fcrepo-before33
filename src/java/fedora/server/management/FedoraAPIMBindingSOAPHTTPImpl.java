@@ -128,7 +128,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
           // always gens pid, unless pid in stream starts with "test: or demo:"
             return s_management.ingestObject(getContext(),
-                    new ByteArrayInputStream(METSXML), logMessage, "metslikefedora1", "UTF-8", true);
+                    new ByteArrayInputStream(METSXML), logMessage, "metsf1.0", "UTF-8", true);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -201,7 +201,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            InputStream in=s_management.exportObject(getContext(), PID, "metslikefedora1export", "UTF-8");
+            //InputStream in=s_management.exportObject(getContext(), PID, "metsf1.0export", "UTF-8");
+			InputStream in=s_management.exportObject(getContext(), PID, null, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
