@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:58Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEI_TO_PDFDOC"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core for the Document object">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core for the Document object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Pipeline Tranformation Demo two</dc:title>
@@ -24,13 +24,13 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="FOPDISSEM" CONTROL_GROUP="R" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="FOPRENDITION" LABEL="FOP Dissemination as Datastream">
+	<foxml:datastream ID="FOPDISSEM" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="FOPRENDITION" MIMETYPE="text/xml" LABEL="FOP Dissemination as Datastream">
 			<foxml:contentLocation REF="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="TEISOURCE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="TEISOURCE1.0" LABEL="TEI Source">
+	<foxml:datastream ID="TEISOURCE" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="TEISOURCE1.0" MIMETYPE="text/xml" LABEL="TEI Source">
 			<foxml:xmlContent>
 				<TEI.2>
 					<teiHeader>
@@ -65,15 +65,15 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator  ID="DISS1" BDEF_CONTRACT_PID="demo:19" STATE="A">
-		<foxml:disseminatorVersion  ID="DISS1.0" BMECH_SERVICE_PID="demo:20" LABEL="PDF Disseminator">
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:19" STATE="A">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:20" LABEL="PDF Disseminator">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="FOPDISSEM" KEY="XML_SOURCE" LABEL="FOP Source file to be transformed"/>
 			</foxml:serviceInputMap>
 		</foxml:disseminatorVersion>
 	</foxml:disseminator>
 	<foxml:disseminator ID="DISS2" BDEF_CONTRACT_PID="demo:22" STATE="A">
-		<foxml:disseminatorVersion  ID="DISS2.0" BMECH_SERVICE_PID="demo:25" LABEL="FO Disseminator">
+		<foxml:disseminatorVersion ID="DISS2.0" BMECH_SERVICE_PID="demo:25" LABEL="FO Disseminator">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="TEISOURCE" KEY="TEI_SOURCE" LABEL="TEI Source file to be transformed to FO"/>
 			</foxml:serviceInputMap>

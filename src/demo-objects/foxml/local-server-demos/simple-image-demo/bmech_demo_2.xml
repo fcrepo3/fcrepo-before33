@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:56Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Behavior Mechanism Object implementing the UVA Simple Image BDEF contract using the Fedora HTTP Image Getter Service.</dc:title>
@@ -18,8 +18,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="WSDL" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="WSDL1.0" LABEL="WSDL definition for Fedora HTTP Image Getter">
+	<foxml:datastream ID="WSDL" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="WSDL1.0" MIMETYPE="text/xml" LABEL="WSDL definition for Fedora HTTP Image Getter">
 			<foxml:xmlContent>
 				<wsdl:definitions name="Fedora HTTP Image Getter Service" targetNamespace="imgget" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="imgget" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
 					<wsdl:types>
@@ -110,8 +110,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="SERVICE-PROFILE" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" LABEL="Service Profile - Technical description of the service">
+	<foxml:datastream ID="SERVICE-PROFILE" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="SERVICE-PROFILE1.0" MIMETYPE="text/xml" LABEL="Service Profile - Technical description of the service">
 			<foxml:xmlContent>
 				<fsvp:serviceProfile bDefPID="demo:1" name="Fedora HTTP Service" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
 					<fsvp:serviceDescription>Fedora internal HTTP resolver used to perform simple HTTP GET requests on jpeg images</fsvp:serviceDescription>
@@ -132,8 +132,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DSINPUTSPEC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" LABEL="Datastream Input Specification for Fedora HTTP Image Getter service">
+	<foxml:datastream ID="DSINPUTSPEC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DSINPUTSPEC1.0" MIMETYPE="text/xml" LABEL="Datastream Input Specification for Fedora HTTP Image Getter service">
 			<foxml:xmlContent>
 				<fbs:DSInputSpec bDefPID="demo:1" label="Datastream Input Specification" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
 					<fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="THUMBRES_IMG">
@@ -160,8 +160,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
 			<foxml:xmlContent>
 				<fmm:MethodMap bDefPID="demo:1" name="MethodMap - Fedora HTTP Image Getter BMech for UVA Simple Image BDEF" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 					<fmm:Method operationName="getThumbnail" wsdlMsgName="getThumbRequest" wsdlMsgOutput="image_response">
@@ -184,13 +184,13 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="Programmer documentation">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/html" LABEL="Programmer documentation">
 			<foxml:contentLocation REF=" http://uva.lib.edu/mech/stdImage/doc/stdimage.html" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion  ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="SERVICE-PROFILE" KEY="SERVICE-PROFILE" LABEL="Service profile metadata"/>
 				<foxml:datastreamBinding DATASTREAM_ID="DSINPUTSPEC" KEY="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service"/>

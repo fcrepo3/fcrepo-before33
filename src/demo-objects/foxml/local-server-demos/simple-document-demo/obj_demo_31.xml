@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:57Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="SIMPLE_DOC"/>
 	</foxml:objectProperties>
-	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Record">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Record">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Apache Batik 1.5 Demo Directory</dc:title>
@@ -28,18 +28,18 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS1" CONTROL_GROUP="E" MIMETYPE="image/svg+xml" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="Local copy of batikBatik.svg">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/svg+xml" LABEL="Local copy of batikBatik.svg">
 			<foxml:contentLocation REF="http://www.fedora.info/demo/misc/batikBatik.svg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS2" CONTROL_GROUP="E" MIMETYPE="image/svg+xml" STATE="A">
-		<foxml:datastreamVersion CREATED="2004-12-10T00:21:57Z" ID="DS2.0" LABEL="Local copy of sizeOfSun.svg">
+	<foxml:datastream ID="DS2" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="image/svg+xml" LABEL="Local copy of sizeOfSun.svg">
 			<foxml:contentLocation REF="http://www.fedora.info/demo/misc/sizeOfSun.svg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS3" CONTROL_GROUP="R" MIMETYPE="text/html" STATE="A">
-		<foxml:datastreamVersion ID="DS3.0" LABEL="Homepage for Batik, the software that the demos came with.">
+	<foxml:datastream ID="DS3" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="text/html" LABEL="Homepage for Batik, the software that the demos came with.">
 			<foxml:contentLocation REF="http://xml.apache.org/batik/" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>

@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:31Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_MRSID_IMAGE"/>
 	</foxml:objectProperties>
-	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="DC record for Pavillion III image object">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC record for Pavillion III image object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Pavilion III, University of Virginia</dc:title>
@@ -28,12 +28,12 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="image/x-mrsid-image" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="Pavilion III, University of Virginia">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/x-mrsid-image" LABEL="Pavilion III, University of Virginia">
 			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator  ID="DISS1" BDEF_CONTRACT_PID="demo:1" STATE="A">
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:1" STATE="A">
 		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:4" LABEL="UVA Simple Image Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="MRSID" LABEL="Binding for MrSID file from which different image resolutions will be derived"/>

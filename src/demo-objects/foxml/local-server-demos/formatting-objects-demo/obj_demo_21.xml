@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:22:00Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="FO_TO_PDFDOC"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core for the Document object">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core for the Document object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Advanced FO Sample from Apache FOP Distribution</dc:title>
@@ -25,8 +25,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream CONTROL_GROUP="X" ID="FOPSAMPLE" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="FOPSAMPLE1.0" LABEL="FOP Sample">
+	<foxml:datastream CONTROL_GROUP="X" ID="FOPSAMPLE" STATE="A">
+		<foxml:datastreamVersion ID="FOPSAMPLE1.0" MIMETYPE="text/xml" LABEL="FOP Sample">
 			<foxml:xmlContent>
 				<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xml.apache.org/fop/extensions">
 					<fo:layout-master-set>

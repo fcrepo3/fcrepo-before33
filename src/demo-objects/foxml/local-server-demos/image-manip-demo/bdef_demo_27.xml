@@ -7,8 +7,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:52Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Behavior Definition Object for Image Manipulation Servlet</dc:title>
@@ -17,8 +17,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Method Map for Fedora Behavior Definition for Image Manipulation Servlet">
+	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Method Map for Fedora Behavior Definition for Image Manipulation Servlet">
 			<foxml:xmlContent>
 				<fmm:MethodMap bDefPID="demo:27" name="Fedora MethodMap for Image Manipulation Servlet" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 					<fmm:Method operationName="resizeImage">
@@ -56,7 +56,7 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="fedora-system:1" STATE="A">
-		<foxml:disseminatorVersion  ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="fedora-system:2" LABEL="Bootstrap Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="METHODMAP" KEY="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format"/>
 			</foxml:serviceInputMap>

@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-10T00:21:54Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Behavior Definition Object for PDFs</dc:title>
@@ -18,8 +18,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="METHODMAP1.0" LABEL="Method Map for Fedora Behavior Definition for PDFs">
+	<foxml:datastream ID="METHODMAP" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Method Map for Fedora Behavior Definition for PDFs">
 			<foxml:xmlContent>
 				<fmm:MethodMap name="Fedora MethodMap for PDFs" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
 					<fmm:Method operationName="getPDF"/>
@@ -27,8 +27,8 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/html" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="PDF Behavior Def Documentation">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/html" LABEL="PDF Behavior Def Documentation">
 			<foxml:contentLocation REF="http://myserver.edu/mydir/somefile.html" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>

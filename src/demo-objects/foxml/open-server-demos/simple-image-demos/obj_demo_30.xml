@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:33Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
 	</foxml:objectProperties>
-	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="DC Record for Pavillion III Architectural image object">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Pavillion III Architectural image object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>Architectural Image of Drawing of Pavilion III, University of Virginia</dc:title>
@@ -28,28 +28,28 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS1" CONTROL_GROUP="R" MIMETYPE="image/jpeg" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="Architectural Drawing Pavilion III (thumbnail res)">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (thumbnail res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-thumb.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream  ID="DS2" CONTROL_GROUP="R" MIMETYPE="image/jpeg" STATE="A">
-		<foxml:datastreamVersion ID="DS2.0" LABEL="Architectural Drawing Pavilion III (medium res)">
+	<foxml:datastream ID="DS2" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (medium res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-medium1.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS3" CONTROL_GROUP="R" MIMETYPE="image/jpeg" STATE="A">
-		<foxml:datastreamVersion ID="DS3.0" LABEL="Architectural Drawing Pavilion III (high res)">
+	<foxml:datastream ID="DS3" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (high res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-medium2.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS4" CONTROL_GROUP="R" MIMETYPE="image/jpeg" STATE="A">
-		<foxml:datastreamVersion ID="DS4.0" LABEL="Architectural Drawing Pavilion III (veryhigh res)">
+	<foxml:datastream ID="DS4" CONTROL_GROUP="R" STATE="A">
+		<foxml:datastreamVersion ID="DS4.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)">
 			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/restricted/archerd01-high.jpg" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:1" STATE="A">
-		<foxml:disseminatorVersion  ID="DISS1.0" BMECH_SERVICE_PID="demo:2" LABEL="UVA Simple Image Behaviors">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:2" LABEL="UVA Simple Image Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="Binding to thumbnail resolution image of Pavillion III architectural drawing"/>
 				<foxml:datastreamBinding DATASTREAM_ID="DS2" KEY="MEDRES_IMG" LABEL="Binding to medium resolution image of Pavillion III architectural drawing"/>

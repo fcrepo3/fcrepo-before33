@@ -8,8 +8,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2004-12-16T14:32:32Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_EAD_FINDING_AID"/>
 	</foxml:objectProperties>
-	<foxml:datastream  ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DC1.0" LABEL="DC Record for Rita Mae Brown EAD-encoded Finding Aid object">
+	<foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="DC Record for Rita Mae Brown EAD-encoded Finding Aid object">
 			<foxml:xmlContent>
 				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<dc:title>A Guide to the Papers of Rita Mae Brown, 1929-2001</dc:title>
@@ -31,12 +31,12 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="DS1" CONTROL_GROUP="E" MIMETYPE="text/xml" STATE="A">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="EAD-encoded Finding Aid: Rita Mae Brown Papers">
+	<foxml:datastream ID="DS1" CONTROL_GROUP="E" STATE="A">
+		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/xml" LABEL="EAD-encoded Finding Aid: Rita Mae Brown Papers">
 			<foxml:contentLocation REF="http://dl.lib.virginia.edu/data/xmltext/ead/viu03270" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:disseminator  ID="DISS1" BDEF_CONTRACT_PID="demo:15" STATE="A">
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:15" STATE="A">
 		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:16" LABEL="UVA EAD-encoded Finding Aid Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="XML_SOURCE" LABEL="EAD xml source"/>
