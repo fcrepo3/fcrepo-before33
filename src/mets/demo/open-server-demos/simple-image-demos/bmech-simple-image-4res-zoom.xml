@@ -27,27 +27,26 @@
 	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
 	<!--********************************************************************************************-->
 	<METS:amdSec ID="SERVICE-PROFILE">
-		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+		<METS:techMD CREATED="2003-12-03T13:40:12" ID="SERVICE-PROFILE1.0" STATUS="A">
+			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<fsvp:serviceProfile bDefPID="demo:1" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<fsvp:serviceName>UVA ImageZoomer Service (wraps image in Zoomable Applet)</fsvp:serviceName>
-						<fsvp:serviceLabel/>
+					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:1" name="UVA ImageZoomer Service">
+						<fsvp:serviceDescription>UVA ImageZoomer Service wraps image in Zoomable Java Applet embedded in html page.</fsvp:serviceDescription>
 						<fsvp:serviceImplementation>
-							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
-							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceLiveTestURL>http://icarus.lib.virginia.edu/servlet/ImageSizer?image=http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg</fsvp:serviceLiveTestURL>
+							<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
 							<fsvp:serviceInputFormats>
-								<fsvp:MIMEType>image/gif image/jpeg</fsvp:MIMEType>
+								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
+								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
 							</fsvp:serviceInputFormats>
 							<fsvp:serviceOutputFormats>
 								<fsvp:MIMEType>text/html</fsvp:MIMEType>
+								<fsvp:MIMEType>application/java</fsvp:MIMEType>
 							</fsvp:serviceOutputFormats>
 							<fsvp:serviceImplDependencies>
-								<fsvp:tool name="java" version="1.3" type="programming language"/>
-								<fsvp:tool name="tomcat" version="4.1" type="java servlet engine"/>
+								<fsvp:software license="Sun_Community_Source_License" name="java" opensource="true" type="Programming_Language" version="1.3"/>
+								<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
 							</fsvp:serviceImplDependencies>
-							<fsvp:serviceLiveTestURL/>
 						</fsvp:serviceImplementation>
 					</fsvp:serviceProfile>
 				</METS:xmlData>

@@ -26,16 +26,14 @@
 	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
 	<!--********************************************************************************************-->
 	<METS:amdSec ID="SERVICE-PROFILE">
-		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+		<METS:techMD CREATED="2003-12-03T13:40:12" ID="SERVICE-PROFILE1.0" STATUS="A">
+			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<fsvp:serviceProfile bDefPID="demo:22" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<fsvp:serviceName>Saxon Service for TEI-to-FO</fsvp:serviceName>
-						<fsvp:serviceLabel>Saxon Service using TEI-FO Stylesheet</fsvp:serviceLabel>
+					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:22" name="Saxon Service for TEI-to-FO">
+						<fsvp:serviceDescription>Saxon Service using TEI-FO Stylesheet</fsvp:serviceDescription>
 						<fsvp:serviceImplementation>
-							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
-							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
+							<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
 							<fsvp:serviceInputFormats>
 								<fsvp:MIMEType>text/xml</fsvp:MIMEType>
 							</fsvp:serviceInputFormats>
@@ -43,11 +41,10 @@
 								<fsvp:MIMEType>text/xml</fsvp:MIMEType>
 							</fsvp:serviceOutputFormats>
 							<fsvp:serviceImplDependencies>
-								<fsvp:tool name="saxon" version="6.5" type="software application"/>
-								<fsvp:tool name="tomcat" version="4.1" type="software application"/>
-								<fsvp:tool name="fedora" version="0.9" type="software application"/>
+								<fsvp:software license="Mozilla_Public_License" name="saxon" opensource="true" type="Utility_Application" version="6.5"/>
+								<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
+								<fsvp:software license="Mozilla_Public_License" name="fedora" opensource="true" type="Server_Application" version="1.2"/>
 							</fsvp:serviceImplDependencies>
-							<fsvp:serviceLiveTestURL>http://localhost:8080/saxon/</fsvp:serviceLiveTestURL>
 						</fsvp:serviceImplementation>
 					</fsvp:serviceProfile>
 				</METS:xmlData>

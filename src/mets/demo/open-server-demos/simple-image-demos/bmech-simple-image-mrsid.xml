@@ -26,29 +26,28 @@
 	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
 	<!--********************************************************************************************-->
 	<METS:amdSec ID="SERVICE-PROFILE">
-		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+		<METS:techMD CREATED="2003-12-03T13:40:12" ID="SERVICE-PROFILE1.0" STATUS="A">
+			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<fsvp:serviceProfile bDefPID="demo:1" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<fsvp:serviceName>MrSID</fsvp:serviceName>
-						<fsvp:serviceLabel>MrSID service for providing different image resolutions from a wavelet encoded file</fsvp:serviceLabel>
+					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:1" name="MrSID Service">
+						<fsvp:serviceDescription>MrSID service for providing different image resolutions from a wavelet encoded file.  The cgi portion of this service interacts with the MrSID image server software which returns image formats.  The cgi layer can return the image or return it wrapped in a java applet on a html page.</fsvp:serviceDescription>
 						<fsvp:serviceImplementation>
-							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
-							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceLiveTestURL>http://iris.lib.virginia.edu/mrsid</fsvp:serviceLiveTestURL>
+							<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
 							<fsvp:serviceInputFormats>
 								<fsvp:MIMEType>image/x-mrsid-image</fsvp:MIMEType>
 							</fsvp:serviceInputFormats>
 							<fsvp:serviceOutputFormats>
+								<fsvp:MIMEType>text/html</fsvp:MIMEType>
 								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
 								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
 								<fsvp:MIMEType>application/java</fsvp:MIMEType>
 							</fsvp:serviceOutputFormats>
 							<fsvp:serviceImplDependencies>
-								<fsvp:tool name="perl" version="5.x" type="programming language"/>
-								<fsvp:tool name="MrSID Image Server" version="2.2" type="software application"/>
+								<fsvp:software license="GNU_GPL" name="perl" opensource="true" type="Programming_Language" version="5.x"/>
+								<fsvp:software license="Commercial" name="MrSID Image Server" opensource="false" type="Server_Application" version="2.2"/>
+								<fsvp:software license="Apache_Software_License" name="Apache Web Server" opensource="true" type="Server_Application" version="x.x"/>
 							</fsvp:serviceImplDependencies>
-							<fsvp:serviceLiveTestURL>http://iris.lib.virginia.edu/mrsid</fsvp:serviceLiveTestURL>
 						</fsvp:serviceImplementation>
 					</fsvp:serviceProfile>
 				</METS:xmlData>

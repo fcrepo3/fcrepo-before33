@@ -26,25 +26,21 @@
 	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
 	<!--********************************************************************************************-->
 	<METS:amdSec ID="SERVICE-PROFILE">
-		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
+		<METS:techMD CREATED="2003-12-03T13:40:12" ID="SERVICE-PROFILE1.0" STATUS="A">
+			<METS:mdWrap LABEL="Service Profile - Technical description of the service" MDTYPE="OTHER" MIMETYPE="text/xml">
 				<METS:xmlData>
-					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
-					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
-					<fsvp:serviceProfile bDefPID="image:1" bMechPID="image:2" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
-						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
-						<fsvp:serviceNamespaceURI>image:2</fsvp:serviceNamespaceURI>
-						<fsvp:serviceName>ImageManipulation</fsvp:serviceName>
-						<fsvp:serviceLabel>ImageManipulatoin service for providing different functions for manipulation images.</fsvp:serviceLabel>
+					<fsvp:serviceProfile xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile" bDefPID="demo:27" name="ImageManipulation Service">
+						<fsvp:serviceDescription>ImageManipulatoin servlet for providing different functions for manipulation images.</fsvp:serviceDescription>
 						<fsvp:serviceImplementation>
-							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
-							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceLiveTestURL>http://localhost:8080/imagemanip/</fsvp:serviceLiveTestURL>
+							<fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
 							<fsvp:serviceInputFormats>
 								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
 								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
 								<fsvp:MIMEType>image/tiff</fsvp:MIMEType>
 								<fsvp:MIMEType>image/png</fsvp:MIMEType>
-								<fsvp:MIMEType>image/bmp</fsvp:MIMEType>							</fsvp:serviceInputFormats>
+								<fsvp:MIMEType>image/bmp</fsvp:MIMEType>
+							</fsvp:serviceInputFormats>
 							<fsvp:serviceOutputFormats>
 								<fsvp:MIMEType>image/gif</fsvp:MIMEType>
 								<fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
@@ -53,12 +49,10 @@
 								<fsvp:MIMEType>image/bmp</fsvp:MIMEType>
 							</fsvp:serviceOutputFormats>
 							<fsvp:serviceImplDependencies>
-								<fsvp:tool name="Java" version="1.4.1" type="programming language"/>
-								<!-- ImageJ can be downloaded here http://rsb.info.nih.gov/ij/ -->
-								<fsvp:tool name="ImageJ" version="1.29" type="imaging api"/>
-								<fsvp:tool name="ImageManipulation Servlet" version="1.0" type="web service"/>
+								<fsvp:software license="Sun_Community_Source_License" name="java" opensource="true" type="Programming_Language" version="1.4.1"/>
+								<fsvp:software license="Public_Domain" name="ImageJ" opensource="true" type="Utility_Application" version="1.29"/>
+								<fsvp:software license="Apache_Software_License" name="tomcat" opensource="true" type="Server_Application" version="4.1"/>
 							</fsvp:serviceImplDependencies>
-							<fsvp:serviceLiveTestURL></fsvp:serviceLiveTestURL>
 						</fsvp:serviceImplementation>
 					</fsvp:serviceProfile>
 				</METS:xmlData>
@@ -106,50 +100,48 @@
 						<fmm:Method operationName="resizeImage" wsdlMsgName="resizeImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="width" required="true" defaultValue="150" passBy="VALUE"/>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							
 							<!-- BUT THE MIME TYPE WILL CHANGE DEPENDING ON WHAT IS INPUT THROUGH THE URL, HOW IS THIS COMPENSATED FOR? -->
-							
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
 						<fmm:Method operationName="zoomImage" wsdlMsgName="zoomImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="zoom" required="true" defaultValue="3" passBy="VALUE"/>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
-						<fmm:Method operationName="brightImage"  wsdlMsgName="brightImageRequest" wsdlMsgOutput="image_response">
+						<fmm:Method operationName="brightImage" wsdlMsgName="brightImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="bright" required="true" defaultValue="3.5" passBy="VALUE"/>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
-						<fmm:Method operationName="watermarkImage"  wsdlMsgName="watermarkImageRequest" wsdlMsgOutput="image_response">
+						<fmm:Method operationName="watermarkImage" wsdlMsgName="watermarkImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="watermark" required="true" defaultValue="Watermarked 2003" passBy="VALUE"/>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
-						<fmm:Method operationName="grayscaleImage"  wsdlMsgName="grayscaleImageRequest" wsdlMsgOutput="image_response">
+						<fmm:Method operationName="grayscaleImage" wsdlMsgName="grayscaleImageRequest" wsdlMsgOutput="image_response">
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
-						<fmm:Method operationName="cropImage"  wsdlMsgName="cropImageRequest" wsdlMsgOutput="image_response">
+						<fmm:Method operationName="cropImage" wsdlMsgName="cropImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="x" required="true" defaultValue="30" passBy="VALUE"/>
 							<fmm:UserInputParm parmName="y" required="true" defaultValue="100" passBy="VALUE"/>
 							<fmm:UserInputParm parmName="width" required="false" defaultValue="" passBy="VALUE"/>
 							<fmm:UserInputParm parmName="height" required="false" defaultValue="" passBy="VALUE"/>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
-						<fmm:Method operationName="convertImage"  wsdlMsgName="convertImageRequest" wsdlMsgOutput="image_response">
+						<fmm:Method operationName="convertImage" wsdlMsgName="convertImageRequest" wsdlMsgOutput="image_response">
 							<fmm:UserInputParm parmName="convertTo" required="true" defaultValue="gif" passBy="VALUE">
 								<fmm:ValidParmValues>
 									<fmm:ValidParm value="gif"/>
 									<fmm:ValidParm value="jpg"/>
 									<fmm:ValidParm value="tiff"/>
 									<fmm:ValidParm value="png"/>
-									<fmm:ValidParm value="bmp"/>                                                        
+									<fmm:ValidParm value="bmp"/>
 								</fmm:ValidParmValues>
 							</fmm:UserInputParm>
 							<fmm:DatastreamInputParm parmName="url" passBy="URL_REF"/>
-							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif" />
+							<fmm:MethodReturnType wsdlMsgName="image_response" wsdlMsgTOMIME="image/gif"/>
 						</fmm:Method>
 					</fmm:MethodMap>
 				</METS:xmlData>
@@ -450,4 +442,3 @@
 		</METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
-
