@@ -217,6 +217,10 @@ public abstract class Server
     public static String CONFIG_ATTRIBUTE_VALUE=
             s_const.getString("config.attribute.value");
 
+    /** The configuration file datastore element's id attribute. */
+    public static String CONFIG_ATTRIBUTE_ID=
+            s_const.getString("config.attribute.id");
+
     /** The required server constructor's first parameter's class. */
     public static String SERVER_CONSTRUCTOR_PARAM1_CLASS=
             s_const.getString("server.constructor.param1.class");
@@ -377,8 +381,17 @@ public abstract class Server
                     serverParams.put(nameNode.getNodeValue(), 
                             valueNode.getNodeValue());
                 } else if (n.getLocalName().equals(CONFIG_ELEMENT_DATASTORE)) {
-                    // instantiate the datasource
+                    NamedNodeMap attrs=n.getAttributes();
+                    Node idNode=attrs.getNamedItemNS(CONFIG_NAMESPACE, CONFIG_ATTRIBUTE_ID);
+                    if (idNode==null) {
+                        idNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_ID);
+                    }
+                    if (idNode==null) {
+                        throw new ServerInitializationException("todo");
+                    }
+                    // read the params and instantiate the datasource
                 } else if (n.getLocalName().equals(CONFIG_ELEMENT_MODULE)) {
+                    // read the params and instantiate the class
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
                     // warning, unrec element, ignored
                 }
@@ -390,7 +403,7 @@ public abstract class Server
         setParameters(serverParams);
         
         
-        // print em
+        // print em..to test
         Iterator i=parameterNames();
         while (i.hasNext()) {
             String n=(String) i.next();
