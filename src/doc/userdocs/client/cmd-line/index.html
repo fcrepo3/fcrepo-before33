@@ -1,322 +1,429 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
   <title>Fedora Client Command-Line Utilities</title>
-  <meta name="robots" content="all"/>
-  <link href="../../docstyle.css" rel="stylesheet" type="text/css"/>
-  <script language="Javascript">
-    
-  </script>
+  <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
 </head>
 
 <body>
   <div id="header">
     <a href="../index.html" id="logo"></a>
+
     <div id="title">
       <h1>Fedora Client Command-Line Utilities</h1>
 
       <h2>Fedora Release 2.0</h2>
     </div>
   </div>
- <div class="toc">
+
+  <div class="toc">
     <h2>Table of Contents</h2>
+
     <div class="tocbox">
       <ol>
-        <li> <a href="#d0e48">Introduction</a></li>
-        <li> <a href="#d0e55">fedora-dsinfo</a></li>
-        <li> <a href="#d0e89">fedora-export</a></li>
-        <li> <a href="#d0e131">fedora-find</a></li>
-		<li> <a href="#d0e164">fedora-ingest</a></li>
-		<li> <a href="#d0e221">fedora-ingest-demos</a></li>
-		<li> <a href="#d0e252">fedora-convert-demos</a></li>
-		<li> <a href="#d0e291">fedora-purge</a></li>
-		<li> <a href="#fedmod">fedora-modify</a></li>
+        <li><a href="#d0e48">Introduction</a></li>
+
+        <li><a href="#d0e55">fedora-dsinfo</a></li>
+
+        <li><a href="#d0e89">fedora-export</a></li>
+
+        <li><a href="#d0e131">fedora-find</a></li>
+
+        <li><a href="#d0e164">fedora-ingest</a></li>
+
+        <li><a href="#d0e221">fedora-ingest-demos</a></li>
+
+        <li><a href="#d0e252">fedora-convert-demos</a></li>
+
+        <li><a href="#d0e291">fedora-purge</a></li>
+
+        <li><a href="#fedmod">fedora-modify</a></li>
       </ol>
     </div>
   </div>
- <div class="sec1"> 
-  <div> 
-    <h2><a name=d0e48></a>Introduction</h2>
+
+  <div class="sec1">
+    <div>
+      <h2><a name="d0e48" id="d0e48"></a>Introduction</h2>
+    </div>
+
+    <p>The Fedora client distribution comes with several
+    command-line utilities that can be used to run some common
+    operations without bringing up the GUI or writing your own SOAP
+    client. A description and usage instructions for each
+    follows.</p>
+
+    <p>This guide assumes you have correctly installed the Fedora
+    client distribution as per the install guide, including having
+    set up your PATH and FEDORA_HOME appropriately. The
+    command-line scripts are located in FEDORA_HOME/client/bin/. In
+    Windows, these commands resolve to batch files (.bat); in
+    <span class="GramE">Unix</span>, they resolve to shell scripts
+    (.sh).</p>
   </div>
-  <p>The Fedora client distribution comes with several command-line utilities 
-    that can be used to run some common operations without bringing up the GUI 
-    or writing your own SOAP client. A description and usage instructions for 
-    each follows.</p>
-  <p>This guide assumes you have correctly installed the Fedora client distribution 
-    as per the install guide, including having set up your PATH and FEDORA_HOME 
-    appropriately. The command-line scripts are located in FEDORA_HOME/client/bin/. 
-    In Windows, these commands resolve to batch files (.bat); in <span class=GramE>Unix</span>, 
-    they resolve to shell scripts (.sh).</p>
- </div>
- <div class="sec1"> 
-    <h2><a name=d0e55></a>fedora-dsinfo</h2>
- 
-  <blockquote> 
-    <p><b>fedora-dsinfo</b> 
-      [hostname] [port-number] [user] [pass] [<span class=SpellE>pid</span>]</p>
-  </blockquote>
-  <p>Where:</p>
 
-<ul>
-  <li> 
-    <b> [hostname]</b> - The hostname of the Fedora server; default is localhost.
-      </li>
-  <li> 
-    <b> [port-number]</b> - The port number on which the Fedora server is 
-      running; default is 8080.
-  </li>
-  <li>
-    <b> [user]</b> - The Fedora user (e.g. fedoraAdmin).
-  </li>
-  <li>
-    <b>[pass] </b>- The Fedora user's password.
-  </li>
-  <li>
-   <b> [pid]</b> - The pid of the object whose datastream 
-      information should be shown.
-  </li>
-</ul>
-Example:
+  <div class="sec1">
+    <h2><a name="d0e55" id="d0e55"></a>fedora-dsinfo</h2>
 
-  <blockquote> 
-    <p>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5</p>
-  </blockquote>
-  <p>Displays key information about each of an object's datastreams. </p>
-</div> 
-<div class="sec1">   
- <h2><a name=d0e89>fedora-export</a></h2>
-  
+    <blockquote>
+      <p><b>fedora-dsinfo</b> [hostname] [port-number] [user]
+      [pass] [<span class="SpellE">pid</span>]</p>
+    </blockquote>
 
-    <p><b>fedora-export</b> HST:PRT 
-      USR PSS PID|FTYPS PATH</p>
- 
-  <p>Where:</p>
-<ul>
-  <li><b>HST </b>- The repository's hostname. </li>
-  <li><b>PRT</b> - The repository's port number.</li>
-  <li><b>USR</b> - The id of the repository user.</li>
-  <li><b>PSS</b> - The password of the repository user.</li>
-  <li><b>PID</b> - The id of the object to export from the repository.</li>
-  <li><b>FTYPS</b> - Any combination of the characters O, D, and M, specifying 
-    which Fedora object type(s) should be exported. O=regular objects, D=behavior 
-    definitions, M=behavior mechanisms.</li>
-  <li><b> PATH</b> - The directory to export to. </li>
-</ul>
-<div> 
-  <p>Examples:</p>
-  <blockquote> 
-    <p>fedora-export example.com:80 fedoraAdmin 
-      fedoraAdmin changeme:1 .</p>
-    <p>fedora-export example.com:80 fedoraAdmin 
-      fedoraAdmin DMO /tmp/fedoradump</p>
-  </blockquote>
-  <p>Exports one or more objects from a Fedora repository.
-  </p>
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[hostname]</b> - The hostname of the Fedora server;
+      default is localhost.</li>
+
+      <li><b>[port-number]</b> - The port number on which the
+      Fedora server is running; default is 8080.</li>
+
+      <li><b>[user]</b> - The Fedora user (e.g. fedoraAdmin).</li>
+
+      <li><b>[pass]</b> - The Fedora user's password.</li>
+
+      <li><b>[pid]</b> - The pid of the object whose datastream
+      information should be shown.</li>
+    </ul>Example:
+
+    <blockquote>
+      <p>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin
+      demo:5</p>
+    </blockquote>
+
+    <p>Displays key information about each of an object's
+    datastreams.</p>
   </div>
-  <div class="sec1"> 
-    <h2><a name=d0e131></a>fedora-find</h2>
-  
-  <blockquote> 
-    <p><b>fedora-find</b> [hostname] 
-      [port-number] [fieldList] [searchString]</p>
-  </blockquote>
-  <p>Where:</p>
-</div>
-<ul>
-  <li><b> [hostname]</b> - The hostname of the Fedora server; default is localhost.</li>
-  <li><b> [port-number]</b> - The port number on which the Fedora server is running; 
-    default is 8080.</li>
-  <li><b> [fieldList]</b> - A space-delimited list of fields. These are the fields 
-    that will be displayed for each object that matches the searchString. See 
-    http://host:port/fedora/search for a complete list of displayable fields and 
-    descriptions of each.</li>
-  <li><b> [searchString]</b> - A simple text string to search all fields for. 
-    This may include wildcard characters and is case-insensitive.</li>
-</ul>
- 
-  <p>Example:</p>
-  <blockquote> 
-    <p>fedora-find localhost 
-      8080 &quot;pid fType
-      title description&quot; &quot;fedora&quot;</p>
-    <p>(shows the pid, Fedora 
-      object type, title, and description fields of each object that has the word 
-      fedora somewhere in it's indexed fields.)</p>
-  </blockquote>
-  <p>A simple way to search a repository's indexed fields. More advanced searches 
-    can be done with the web-based search interface at http://host:port/fedora/search, 
-    or the Admin GUI's search interface. </p>
- </div> 
-  
-  <div class="sec1"> 
-    <h2><a name=d0e164></a>fedora-ingest</h2>
-  
-  <blockquote> 
-    <p><b>fedora-ingest</b> f[ile] PATH THST:TPRT 
-      TUSR TPSS [LOG]</p>
-    <p><b>fedora-ingest</b> d[ir] PATH FTYPS THST:TPRT 
-      TUSR TPSS [LOG]</p>
-    <p><b>fedora-ingest</b> r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT 
-      TUSR TPSS [LOG]</p>
-  </blockquote>
-  <p>Where:</p>
 
-<ul>
-  <li><b> PATH </b>- the local file or directory name.</li>
-  <li><b> FTYPS</b> - any combination of the characters O, D, and M, specifying 
-    which Fedora object type(s) should be ingested. O=regular objects, D=behavior 
-    definitions, and M=behavior mechanisms.</li>
-  <li><b> PID</b> - the id of the object to ingest from the source repository.</li>
-  <li> <b>SHST/THST</b> - the source or target repository's hostname.</li>
-  <li> <b> SPRT/TPRT</b> - the source or target repository's port number.</li>
-  <li> <b>SUSR/TUSR</b> - the id of the source or target repository user.</li>
-  <li> <b>SPSS/TPSS</b> - the password of the source or target repository user.</li>
-  <li><b> LOG</b> - the optional log message. If unspecified, the log message 
-    will indicate the source of the object(s).</li>
-</ul>
- 
-  <p>Examples:</p>
-  <blockquote> 
-    <p>fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin</p>
-    <p>fedora-ingest dir c:\archive M example.com:80 fedoraAdmin 
-      fedoraAdmin &quot;&quot;</p>
-    <p>fedora-ingest dir c:\archive ODM example.com:80 fedoraAdmin 
-      fedoraAdmin &quot;&quot;</p>
-  </blockquote>
-  <p>Ingests one or more objects into the repository, either 
-    from disk or from another Fedora repository. </p>
-</div>
-<div class="sec1"> 
-    <h2><a name=d0e221></a>fedora-ingest-demos</h2>
+  <div class="sec1">
+    <h2><a name="d0e89" id="d0e89">fedora-export</a></h2>
 
-  <blockquote> 
-    <p><b>fedora-ingest-demos</b> 
-      [hostname] [port-number] [user] [pass]</p>
-  </blockquote>
-  <p>Where:</p>
+    <p><b>fedora-export</b> HST:PRT USR PSS PID|FTYPS PATH</p>
 
-<ul>
-  <li><b> [hostname]</b> - The hostname of the Fedora server; default is localhost.</li>
-  <li><b>[port-number]</b> - The port number on which the Fedora server is running; 
-    default is 8080.</li>
-  <li><b>[user] </b>- The Fedora user (e.g. fedoraAdmin).</li>
-  <li><b>[pass]</b> - The Fedora user's password.</li>
-</ul>
- 
-  <p>Example:</p>
-  <blockquote> 
-    <p>fedora-ingest-demos localhost 
-      8080 fedoraAdmin fedoraAdmin</p>
-  </blockquote>
-  <p>A convenient script to ingest all included demo objects for a new Fedora 
-    installation. See the Demo guide for descriptions of these objects. Note: 
-    This script should not be run until you have ensured that the hostname and 
-    port numbers in the demo objects have been corrected (with the fedora-convert-demos 
-    script) to use the actual hostname and port of your Fedora server. </p>
-</div>
-<div class="sec1"> 
-    <h2><a name=d0e252></a>fedora-convert-demos</h2>
- 
-  <blockquote> 
-    <p><b>fedora-convert-demos</b> 
-      [fromHostName] [fromPortNum] 
-      [toHostName] [toHostNum] 
-      [fedoraHomeDir]</p>
-  </blockquote>
-  <p>Where:</p>
+    <p>Where:</p>
 
-<ul>
-  <li><b>[fromHostName]</b> - The hostname currently being used in the demo object 
-    files.</li>
-  <li><b> [fromPortNum]</b> - The port number currently being used in the demo 
-    object files.</li>
-  <li><b>[ptoHostNamep]</b> - The hostname of the repository.</li>
-  <li><b>[toPortNum] </b>- The port number of the repository.</li>
-  <li><b> [fedoraHomeDir] </b>- Fedora's install base directory. This is the directory 
-    that contains the client directory.</li>
-</ul>
- 
-  <p>Example:</p>
-  <blockquote> 
-    <p>fedora-convert-demos localhost 
-      8080 www.fedora.info 80 c:\fedora-1.2.1</p>
-  </blockquote>
-  <p>Converts URLs in the demo objects from one host/port combination 
-    to another. After running this script with your repository's hostname, 
-    the demo objects can successfully be ingested. </p>
-  <p><em>Background:</em> The demo objects that come with the Fedora client have 
-    embedded URLs inside them that assume the server is running on a machine called 
-    localhost on port number 8080. Those URLs must be 
-    changed to reflect the actual host and port the server is running on. Rather 
-    than search through all the demo files and change the references by hand, 
-    you can just run this script. It is not necessary to run this script if you 
-    have already run fedora-ingest-demos succcessfully 
-    and wish to change the hostname and port of the Fedora server, as the demo 
-    objects are already in the repository and the references inside them will 
-    automatically be corrected by the server. </p>
- </div>
-<div class="sec1"> 
-    <h2><a name=d0e291></a>fedora-purge</h2>
+    <ul>
+      <li><b>HST</b> - The repository's hostname.</li>
 
-  <blockquote> 
-    <p><b>fedora-purge</b> [hostname] 
-      [port-number] [user] [pass] [pid] [logMessage]</p>
-  </blockquote>
-  <p>Where:</p>
+      <li><b>PRT</b> - The repository's port number.</li>
 
-<ul>
-  <li><b> [hostname] </b>- The hostname of the Fedora server; default is localhost.</li>
-  <li><b> [port-number]</b> - The port number on which the Fedora server is running; 
-    default is 8080.</li>
-  <li><b>[user] </b>- The Fedora user (e.g. fedoraAdmin).</li>
-  <li><b>[pass]</b> - The Fedora user's password.</li>
-  <li><b> [pid]</b> - The PID of the object to permanently remove.</li>
-  <li><b>[logMessage]</b> - A log message explaining the removal.</li>
-</ul>
+      <li><b>USR</b> - The id of the repository user.</li>
 
-  <p>Example:</p>
-  <blockquote> 
-    <p>fedora-purge localhost 
-      8080 fedoraAdmin fedoraAdmin 
-      demo:6 &quot;It was just a test object&quot;</p>
-  </blockquote>
-  <p>Permanently removes an object from the repository. Note: Behavior Definition 
-    objects (BDefs) cannot be removed if there are objects 
-    that depend on them. When removing a BDef from the 
-    repository, first the dependent object(s) should be removed, then the implementing 
-    Behavior Mechanism(s), then the BDef itself. </p>
-</div>
-<div class="sec1">
-  <h2><a name="fedmod"></a>fedora-modify</h2>
+      <li><b>PSS</b> - The password of the repository user.</li>
 
-<blockquote> 
-  <p><b>fedora-modify</b> 
-    [hostname:port]? [user]? [password]? [directives-filepath] [log-filepath]?[validate-only-option]*</p>
-</blockquote>
- 
-  <p>Where:</p>
+      <li><b>PID</b> - The id of the object to export from the
+      repository.</li>
 
-<ul>
-  <li><b> [host:port]</b> - The hostname and port of the target Fedora server.</li>
-  <li><b> [user]</b> - The Fedora administrator username (e.g., fedoraAdmin)</li>
-  <li><b> [password]</b> - The password for the Fedora administrator user.</li>
-  <li><b> [directives-filepath] </b>- The full path to the file containing the 
-    batch modify directives.</li>
-  <li><b> [log-filepath]</b> - The full path to the file where logs will be written.</li>
-  <li><b>[validate-only-option]</b> - An optional parameter indicating whether 
-    to only validate the directives file or to immediately process the file. The 
-    parameter can have any non-blank value. If present, the directives file will 
-    be validated only. If omitted, the directives file will be immediately processed.</li>
-</ul>
+      <li><b>FTYPS</b> - Any combination of the characters O, D,
+      and M, specifying which Fedora object type(s) should be
+      exported. O=regular objects, D=behavior definitions,
+      M=behavior mechanisms.</li>
 
-  <p>The fedora-modify command line utility enables the running of the batch modify 
-    utility of the Administrator GUI client from the command line.</p>
-</div>
- <div id="footer">
+      <li><b>PATH</b> - The directory to export to.</li>
+    </ul>
+
+    <div>
+      <p>Examples:</p>
+
+      <blockquote>
+        <p>fedora-export example.com:80 fedoraAdmin fedoraAdmin
+        changeme:1 .</p>
+
+        <p>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO
+        /tmp/fedoradump</p>
+      </blockquote>
+
+      <p>Exports one or more objects from a Fedora repository.</p>
+    </div>
+
+    <div class="sec1">
+      <h2><a name="d0e131" id="d0e131"></a>fedora-find</h2>
+
+      <blockquote>
+        <p><b>fedora-find</b> [hostname] [port-number] [fieldList]
+        [searchString]</p>
+      </blockquote>
+
+      <p>Where:</p>
+    </div>
+
+    <ul>
+      <li><b>[hostname]</b> - The hostname of the Fedora server;
+      default is localhost.</li>
+
+      <li><b>[port-number]</b> - The port number on which the
+      Fedora server is running; default is 8080.</li>
+
+      <li><b>[fieldList]</b> - A space-delimited list of fields.
+      These are the fields that will be displayed for each object
+      that matches the searchString. See
+      http://host:port/fedora/search for a complete list of
+      displayable fields and descriptions of each.</li>
+
+      <li><b>[searchString]</b> - A simple text string to search
+      all fields for. This may include wildcard characters and is
+      case-insensitive.</li>
+    </ul>
+
+    <p>Example:</p>
+
+    <blockquote>
+      <p>fedora-find localhost 8080 "pid fType title description"
+      "fedora"</p>
+
+      <p>(shows the pid, Fedora object type, title, and description
+      fields of each object that has the word fedora somewhere in
+      it's indexed fields.)</p>
+    </blockquote>
+
+    <p>A simple way to search a repository's indexed fields. More
+    advanced searches can be done with the web-based search
+    interface at http://host:port/fedora/search, or the Admin GUI's
+    search interface.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="d0e164" id="d0e164"></a>fedora-ingest</h2>
+
+    <blockquote>
+      <p><b>fedora-ingest</b> f[ile] PATH THST:TPRT TUSR TPSS
+      [LOG]</p>
+
+      <p><b>fedora-ingest</b> d[ir] PATH FTYPS THST:TPRT TUSR TPSS
+      [LOG]</p>
+
+      <p><b>fedora-ingest</b> r[epos] SHST:SPRT SUSR SPSS PID|FTYPS
+      THST:TPRT TUSR TPSS [LOG]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>PATH</b> - the local file or directory name.</li>
+
+      <li><b>FTYPS</b> - any combination of the characters O, D,
+      and M, specifying which Fedora object type(s) should be
+      ingested. O=regular objects, D=behavior definitions, and
+      M=behavior mechanisms.</li>
+
+      <li><b>PID</b> - the id of the object to ingest from the
+      source repository.</li>
+
+      <li><b>SHST/THST</b> - the source or target repository's
+      hostname.</li>
+
+      <li><b>SPRT/TPRT</b> - the source or target repository's port
+      number.</li>
+
+      <li><b>SUSR/TUSR</b> - the id of the source or target
+      repository user.</li>
+
+      <li><b>SPSS/TPSS</b> - the password of the source or target
+      repository user.</li>
+
+      <li><b>LOG</b> - the optional log message. If unspecified,
+      the log message will indicate the source of the
+      object(s).</li>
+    </ul>
+
+    <p>Examples:</p>
+
+    <blockquote>
+      <p>fedora-ingest file obj1.xml example.com:80 fedoraAdmin
+      fedoraAdmin</p>
+
+      <p>fedora-ingest dir c:\archive M example.com:80 fedoraAdmin
+      fedoraAdmin ""</p>
+
+      <p>fedora-ingest dir c:\archive ODM example.com:80
+      fedoraAdmin fedoraAdmin ""</p>
+    </blockquote>
+
+    <p>Ingests one or more objects into the repository, either from
+    disk or from another Fedora repository.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="d0e221" id="d0e221"></a>fedora-ingest-demos</h2>
+
+    <blockquote>
+      <p><b>fedora-ingest-demos</b> [hostname] [port-number] [user]
+      [pass]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[hostname]</b> - The hostname of the Fedora server;
+      default is localhost.</li>
+
+      <li><b>[port-number]</b> - The port number on which the
+      Fedora server is running; default is 8080.</li>
+
+      <li><b>[user]</b> - The Fedora user (e.g. fedoraAdmin).</li>
+
+      <li><b>[pass]</b> - The Fedora user's password.</li>
+    </ul>
+
+    <p>Example:</p>
+
+    <blockquote>
+      <p>fedora-ingest-demos localhost 8080 fedoraAdmin
+      fedoraAdmin</p>
+    </blockquote>
+
+    <p>A convenient script to ingest all included demo objects for
+    a new Fedora installation. See the Demo guide for descriptions
+    of these objects. Note: This script should not be run until you
+    have ensured that the hostname and port numbers in the demo
+    objects have been corrected (with the fedora-convert-demos
+    script) to use the actual hostname and port of your Fedora
+    server.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="d0e252" id="d0e252"></a>fedora-convert-demos</h2>
+
+    <blockquote>
+      <p><b>fedora-convert-demos</b> [fromHostName] [fromPortNum]
+      [toHostName] [toHostNum] [fedoraHomeDir]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[fromHostName]</b> - The hostname currently being used
+      in the demo object files.</li>
+
+      <li><b>[fromPortNum]</b> - The port number currently being
+      used in the demo object files.</li>
+
+      <li><b>[ptoHostNamep]</b> - The hostname of the
+      repository.</li>
+
+      <li><b>[toPortNum]</b> - The port number of the
+      repository.</li>
+
+      <li><b>[fedoraHomeDir]</b> - Fedora's install base directory.
+      This is the directory that contains the client
+      directory.</li>
+    </ul>
+
+    <p>Example:</p>
+
+    <blockquote>
+      <p>fedora-convert-demos localhost 8080 www.fedora.info 80
+      c:\fedora-1.2.1</p>
+    </blockquote>
+
+    <p>Converts URLs in the demo objects from one host/port
+    combination to another. After running this script with your
+    repository's hostname, the demo objects can successfully be
+    ingested.</p>
+
+    <p><em>Background:</em> The demo objects that come with the
+    Fedora client have embedded URLs inside them that assume the
+    server is running on a machine called localhost on port number
+    8080. Those URLs must be changed to reflect the actual host and
+    port the server is running on. Rather than search through all
+    the demo files and change the references by hand, you can just
+    run this script. It is not necessary to run this script if you
+    have already run fedora-ingest-demos succcessfully and wish to
+    change the hostname and port of the Fedora server, as the demo
+    objects are already in the repository and the references inside
+    them will automatically be corrected by the server.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="d0e291" id="d0e291"></a>fedora-purge</h2>
+
+    <blockquote>
+      <p><b>fedora-purge</b> [hostname] [port-number] [user] [pass]
+      [pid] [logMessage]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[hostname]</b> - The hostname of the Fedora server;
+      default is localhost.</li>
+
+      <li><b>[port-number]</b> - The port number on which the
+      Fedora server is running; default is 8080.</li>
+
+      <li><b>[user]</b> - The Fedora user (e.g. fedoraAdmin).</li>
+
+      <li><b>[pass]</b> - The Fedora user's password.</li>
+
+      <li><b>[pid]</b> - The PID of the object to permanently
+      remove.</li>
+
+      <li><b>[logMessage]</b> - A log message explaining the
+      removal.</li>
+    </ul>
+
+    <p>Example:</p>
+
+    <blockquote>
+      <p>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6
+      "It was just a test object"</p>
+    </blockquote>
+
+    <p>Permanently removes an object from the repository. Note:
+    Behavior Definition objects (BDefs) cannot be removed if there
+    are objects that depend on them. When removing a BDef from the
+    repository, first the dependent object(s) should be removed,
+    then the implementing Behavior Mechanism(s), then the BDef
+    itself.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="fedmod" id="fedmod"></a>fedora-modify</h2>
+
+    <blockquote>
+      <p><b>fedora-modify</b> [hostname:port]? [user]? [password]?
+      [directives-filepath]
+      [log-filepath]?[validate-only-option]*</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[host:port]</b> - The hostname and port of the target
+      Fedora server.</li>
+
+      <li><b>[user]</b> - The Fedora administrator username (e.g.,
+      fedoraAdmin)</li>
+
+      <li><b>[password]</b> - The password for the Fedora
+      administrator user.</li>
+
+      <li><b>[directives-filepath]</b> - The full path to the file
+      containing the batch modify directives.</li>
+
+      <li><b>[log-filepath]</b> - The full path to the file where
+      logs will be written.</li>
+
+      <li><b>[validate-only-option]</b> - An optional parameter
+      indicating whether to only validate the directives file or to
+      immediately process the file. The parameter can have any
+      non-blank value. If present, the directives file will be
+      validated only. If omitted, the directives file will be
+      immediately processed.</li>
+    </ul>
+
+    <p>The fedora-modify command line utility enables the running
+    of the batch modify utility of the Administrator GUI client
+    from the command line.</p>
+  </div>
+
+  <div id="footer">
     <div id="copyright">
-      Copyright &copy; 2005 Fedora Project
+      Copyright &#xA9; 2005 Fedora Project
     </div>
 
     <div id="lastModified">
