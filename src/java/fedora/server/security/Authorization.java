@@ -180,4 +180,6 @@ public interface Authorization {
 	public void enforceServerStatus(Context context)
 	throws NotAuthorizedException;
 
+	public void enforceOAIRespond(Context context)
+	throws NotAuthorizedException;	
 }

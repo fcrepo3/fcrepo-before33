@@ -17,6 +17,7 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName BDEF_PID;
 	public final XacmlName BDEF_NAMESPACE;
 	public final XacmlName DISSEMINATOR_METHOD;
+	public final XacmlName USER_REPRESENTED;
 
     // Values of API
 	public final XacmlName APIM;
@@ -58,35 +59,36 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName LIST_OBJECT_IN_FIELD_SEARCH_RESULTS;
 	public final XacmlName LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS;
 	public final XacmlName SURROGATE_PING;
-	public final XacmlName USER_REPRESENTED;
 	public final XacmlName SERVER_SHUTDOWN;
 	public final XacmlName SERVER_STATUS;
+	public final XacmlName OAI;	
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
         //this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "action:";
 
         // Properties
-    	this.ID = addName(new XacmlName(this, "id"));
-    	this.API = addName(new XacmlName(this, "api"));
-    	this.CONTEXT_ID = addName(new XacmlName(this, "context-id"));
-    	this.OBJECT_NEW_STATE = addName(new XacmlName(this, "objectNewState"));
-    	this.DATASTREAM_CONTROL_GROUP = addName(new XacmlName(this, "datastreamControlGroup"));
-    	this.DATASTREAM_NEW_STATE = addName(new XacmlName(this, "datastreamNewState"));
-    	this.DATASTREAM_NEW_LOCATION = addName(new XacmlName(this, "datastreamNewLocation"));
-       	this.DISSEMINATOR_NEW_STATE = addName(new XacmlName(this, "disseminatorNewState"));    	
-    	this.BMECH_NEW_PID = addName(new XacmlName(this, "bmechNewPid"));
-    	this.BMECH_NEW_NAMESPACE = addName(new XacmlName(this, "bmechNewNamespace"));
-    	this.N_NEW_PIDS = addName(new XacmlName(this, "nNewPids"));
-    	this.BDEF_PID = addName(new XacmlName(this, "bdefPid"));
-    	this.BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace"));
-    	this.DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod"));    	
+    	ID = addName(new XacmlName(this, "id"));
+    	API = addName(new XacmlName(this, "api"));
+    	CONTEXT_ID = addName(new XacmlName(this, "context-id"));
+    	OBJECT_NEW_STATE = addName(new XacmlName(this, "objectNewState"));
+    	DATASTREAM_CONTROL_GROUP = addName(new XacmlName(this, "datastreamControlGroup"));
+    	DATASTREAM_NEW_STATE = addName(new XacmlName(this, "datastreamNewState"));
+    	DATASTREAM_NEW_LOCATION = addName(new XacmlName(this, "datastreamNewLocation"));
+       	DISSEMINATOR_NEW_STATE = addName(new XacmlName(this, "disseminatorNewState"));    	
+    	BMECH_NEW_PID = addName(new XacmlName(this, "bmechNewPid"));
+    	BMECH_NEW_NAMESPACE = addName(new XacmlName(this, "bmechNewNamespace"));
+    	N_NEW_PIDS = addName(new XacmlName(this, "nNewPids"));
+    	BDEF_PID = addName(new XacmlName(this, "bdefPid"));
+    	BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace"));
+    	DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod"));    	
+    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
     	
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	
         // Values of API
-    	this.APIM               = addName(new XacmlName(this, "apim"));
-    	this.APIA               = addName(new XacmlName(this, "apia"));
+    	APIM               = addName(new XacmlName(this, "apim"));
+    	APIA               = addName(new XacmlName(this, "apia"));
 
         // Values of urn:oasis:names:tc:xacml:1.0:action:action-id    
     	// derived from respective Java methods in Access.java or Management.java
@@ -126,9 +128,9 @@ public class ActionNamespace extends XacmlNamespace {
     	LIST_OBJECT_IN_FIELD_SEARCH_RESULTS               = addName(new XacmlName(this, "listObjectInFieldSearchResults"));
     	LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS               = addName(new XacmlName(this, "listObjectInResourceIndexResults"));
     	SURROGATE_PING = addName(new XacmlName(this, "actAsSurrogateFor"));
-    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
     	SERVER_SHUTDOWN = addName(new XacmlName(this, "serverShutdown")); 
-    	SERVER_STATUS = addName(new XacmlName(this, "serverStatus"));       	
+    	SERVER_STATUS = addName(new XacmlName(this, "serverStatus"));    
+    	OAI = addName(new XacmlName(this, "oai"));     	
     }
 
 	public static ActionNamespace onlyInstance = new ActionNamespace(Release2_1Namespace.getInstance(), "action");

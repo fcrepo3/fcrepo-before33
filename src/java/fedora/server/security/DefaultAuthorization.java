@@ -803,7 +803,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
 	}	
 
-	
+	public void enforceOAIRespond(Context context)
+	throws NotAuthorizedException {
+		String target = Constants.ACTION.OAI.uri;
+		log("enforcing " + target);
+		context.setActionAttributes(null);
+		context.setResourceAttributes(null);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+	}	
+
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);
 	  	if (asString.length() > length) {

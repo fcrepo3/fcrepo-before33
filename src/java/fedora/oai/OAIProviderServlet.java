@@ -8,10 +8,15 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 
+import fedora.common.Constants;
 import fedora.oai.OAIResponder;
 import fedora.oai.RepositoryException;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
+import fedora.server.errors.NotAuthorizedException;
 
 /**
  *
@@ -56,7 +61,12 @@ public abstract class OAIProviderServlet
                 params.put(name, request.getParameter(name));
             }
             ByteArrayOutputStream out=new ByteArrayOutputStream();
-            getResponder().respond(params, out);
+            Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
+            try {
+            	getResponder().respond(context, params, out);
+            } catch (NotAuthorizedException e) {
+            	request.getRequestDispatcher("/403.jsp").forward(request, response);
+            }
             try {
                 response.setContentType("text/xml; charset=UTF-8");
                 response.getWriter().print(new String(out.toByteArray(), "UTF-8"));
@@ -93,7 +103,12 @@ public abstract class OAIProviderServlet
     public void test(String[] args)
             throws OAIException, RepositoryException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
-        getResponder().respond(getAsParameterMap(args), out);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, null, false);
+        try {
+			getResponder().respond(context,getAsParameterMap(args), out);
+		} catch (NotAuthorizedException e) {
+	        System.out.println("403");
+		}
         System.out.println(new String(out.toByteArray()));
     }
 

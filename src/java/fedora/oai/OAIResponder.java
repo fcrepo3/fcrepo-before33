@@ -1,6 +1,7 @@
 package fedora.oai;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -14,6 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+
+import fedora.server.Context;
+import fedora.server.Server;
+import fedora.server.errors.AuthzOperationalException;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.NotAuthorizedException;
+import fedora.server.errors.ServerInitializationException;
+import fedora.server.security.Authorization;
 
 
 /**
@@ -45,13 +54,24 @@ public class OAIResponder {
 
     private OAIProvider m_provider;
     private DateGranularitySupport m_granularity;
+    private Authorization m_authorization;
 
     public OAIResponder(OAIProvider provider) {
         m_provider=provider;
     }
 
-    public void respond(Map args, OutputStream outStream)
-            throws RepositoryException {
+    public void respond(Context context, Map args, OutputStream outStream)
+            throws RepositoryException, NotAuthorizedException {
+    	if (m_authorization == null) {
+            Server server;
+			try {
+				server = Server.getInstance(new File(System.getProperty("fedora.home")));
+			} catch (Throwable e) {
+				throw new AuthzOperationalException("couldn't attempt authz", e);
+			}
+			m_authorization = (Authorization) server.getModule("fedora.server.security.Authorization");
+    	}
+        m_authorization.enforceOAIRespond(context);
         m_granularity=m_provider.getDateGranularitySupport();
         PrintWriter out=null;
         try {
