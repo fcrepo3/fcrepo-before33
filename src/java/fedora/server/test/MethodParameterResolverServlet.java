@@ -57,19 +57,15 @@ public class MethodParameterResolverServlet extends HttpServlet
       if (name.equals("PID"))
       {
         PID = (String)request.getParameter(name);
-        System.out.println("PID: "+PID);
       } else if (name.equals("bDefPID"))
       {
         bDefPID = (String)request.getParameter(name);
-        System.out.println("bDefPID: "+bDefPID);
       } else if (name.equals("methodName"))
       {
         methodName = (String)request.getParameter(name);
-        System.out.println("methodName: "+methodName);
       } else if (name.equals("serverURI"))
       {
         serverURI = (String)request.getParameter(name);
-        System.out.println("serverURI: "+serverURI);
       } else if (name.equals("Submit")) {
         // Submit parameter is ignored.
       } else
@@ -105,7 +101,6 @@ public class MethodParameterResolverServlet extends HttpServlet
       // remove any dangling ampersands and redirect request.
       url.replace(url.lastIndexOf("&"),url.lastIndexOf("&")+1,"");
       response.sendRedirect(url.toString());
-      System.out.println("WebFormTranslatedURL: \n" + url.toString());
     }
   }
 
