@@ -9,7 +9,7 @@ package fedora.server.storage;
  * @version 1.0
  */
 
-import fedora.server.storage.abstraction.*;
+import fedora.server.storage.types.*;
 import java.util.Date;
 import java.util.Vector;
 import java.util.StringTokenizer;
@@ -40,6 +40,7 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     // FOR TESTING...
     DefinitiveBMechReader doReader = new DefinitiveBMechReader(args[1]);
     doReader.GetObjectPID();
+    doReader.GetObjectLabel();
     doReader.ListDatastreamIDs("A");
     doReader.ListDisseminatorIDs("A");
     doReader.GetDatastreams(null);
@@ -50,6 +51,9 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     doReader.GetBehaviorMethods(null);
     doReader.GetBehaviorMethodsWSDL(null);
     doReader.GetDSBindingSpec(null);
+    Disseminator d = doReader.GetDisseminator("DISS1", null);
+    doReader.GetBMechMethods(d.bDefID, null);
+    doReader.GetDSBindingMaps(null);
   }
 
   public DefinitiveBMechReader(String objectPID)
@@ -76,7 +80,9 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
         {
           System.out.println("GetBehaviorMethods: ");
           System.out.println("  method[" + i + "]=" + behaviorBindings[i].methodName);
-          System.out.println("  binding location[" + i + "]=" + behaviorBindings[i].httpBindingURL);
+          System.out.println("  http binding URL[" + i + "]=" + behaviorBindings[i].httpBindingURL);
+          System.out.println("  http binding address[" + i + "]=" + behaviorBindings[i].httpBindingAddress);
+          System.out.println("  http binding operation loc[" + i + "]=" + behaviorBindings[i].httpBindingOperationLocation);
         }
       }
     }
@@ -194,20 +200,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
         h_nameWSDL = attrs.getValue("name");
         if (debug) System.out.println("wsdl name= " + h_nameWSDL);
       }
-  /*
-      else if (qName.equalsIgnoreCase("wsdl:portType"))
-      {
-        inPortType = true;
-        h_portType = attrs.getValue("name");
-        if (debug) System.out.println("portType name = " + h_portType);
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inPortType)
-      {
-        inOperation = true;
-        h_methodDef = new MethodDef();
-        h_methodDef.methodName = attrs.getValue("name");
-      }
-*/
       else if (qName.equalsIgnoreCase("wsdl:service"))
       {
         inService = true;
@@ -225,13 +217,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       {
         inBinding = true;
       }
-/*
-      else if (qName.equalsIgnoreCase("http:binding"))
-      {
-        inHTTPBinding = true;
-        doGET = true;
-      }
-*/
       else if (qName.equalsIgnoreCase("wsdl:operation") && inBinding)
       {
         inBindOperation = true;
@@ -242,6 +227,8 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       {
         inHTTPOperation = true;
         h_methodBind.httpBindingURL = h_httpAddress.concat(attrs.getValue("location"));
+        h_methodBind.httpBindingAddress = h_httpAddress;
+        h_methodBind.httpBindingOperationLocation = attrs.getValue("location");
       }
     }
 
@@ -251,18 +238,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       {
         inDefinitions = false;
       }
-/*
-      else if (qName.equalsIgnoreCase("wsdl:portType") && inPortType)
-      {
-        inPortType = false;
-      }
-      else if (qName.equalsIgnoreCase("wsdl:operation") && inOperation && inPortType)
-      {
-        inOperation = false;
-        h_vOperations.addElement(h_methodDef);
-        h_methodDef = null;
-      }
-*/
       else if (qName.equalsIgnoreCase("wsdl:service") && inService)
       {
         inService = false;
@@ -279,12 +254,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       {
         inBinding = false;
       }
-/*
-      else if (qName.equalsIgnoreCase("http:binding") && inHTTPBinding)
-      {
-        inHTTPBinding = false;
-      }
-*/
       else if (qName.equalsIgnoreCase("wsdl:operation") && inBindOperation)
       {
         inBindOperation = false;
