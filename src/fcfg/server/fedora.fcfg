@@ -369,14 +369,15 @@
                 </comment>
 	</module>
 	<module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
-		<comment>Prints basic information about the running threads to the 
+		<comment>Prints basic information about the system memory and running threads to the 
             log periodically for diagnostic purposes.
-
             Parameters:
              - active (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=no): whether to activate this module.  "yes" or "true" activates it.
+             - onlyMemory (optional, default=false) - only logs free memory, not thread details.
              - pollInterval (optional...to make unspecified, comment out or delete the whole param line as opposed to using an empty string, default=10000): how many milliseconds to wait between each polling.
             </comment>
 		<param name="active" value="false"/>
+		<param name="onlyMemory" value="false"/>
 		<param name="pollInterval" value="5000"/>
 	</module>
 	<datastore id="localMySQLPool">

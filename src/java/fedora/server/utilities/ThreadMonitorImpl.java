@@ -33,10 +33,14 @@ public class ThreadMonitorImpl
         implements ThreadMonitor {
 
     private boolean m_stopRequested;
+    private boolean m_onlyMemory;
     private int m_pollInterval;
 
-    public ThreadMonitorImpl(int pollInterval, Logging logTarget) {
+    public ThreadMonitorImpl(int pollInterval, 
+                             boolean onlyMemory, 
+                             Logging logTarget) {
         super(logTarget);
+        m_onlyMemory=onlyMemory;
         if (pollInterval>=0) {
             m_pollInterval=pollInterval;
             Thread t=new Thread(this, "ThreadMonitor");
@@ -49,7 +53,10 @@ public class ThreadMonitorImpl
             try {
                 Thread.sleep(m_pollInterval);
             } catch (InterruptedException ie) { }
-            logFiner(getThreadTree());
+            logFiner("Available Memory: " + Runtime.getRuntime().freeMemory());
+            if (!m_onlyMemory) {
+                logFiner(getThreadTree());
+            }
         }
     }
 
@@ -97,7 +104,7 @@ public class ThreadMonitorImpl
     }
 
     public static void main(String[] args) {
-        ThreadMonitorImpl tm=new ThreadMonitorImpl(2000, null);
+        ThreadMonitorImpl tm=new ThreadMonitorImpl(2000, false, null);
         try {
             Thread.sleep(10000);
         } catch (InterruptedException ie) {
