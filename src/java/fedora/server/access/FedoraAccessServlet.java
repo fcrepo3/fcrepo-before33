@@ -1,55 +1,8 @@
 package fedora.server.access;
 
-/**
- * <p>Title: FedoraAccessServlet.java</p>
- * <p>Description: Implements Fedora Access interface via a java Servlet
- * front end. Input parameters for the servlet include:
- * <ul>
- * <li>action_ name of Fedora service which must be one of the following:
- * <ol>
- * <li>GetBehaviorDefinitions - Gets list of Behavior Defintions</li>
- * <li>GetBehaviorMethods - Gets list of Behavior Methods</li>
- * <li>GetBehaviorMethodsAsWSDL - Gets Behavior Methods as XML</li>
- * <li>GetDissemination - Gets a dissemination result</li>
- * </ol>
- * <li>PID_ - persistent identifier of the digital object</li>
- * <li>bDefPID_ - persistent identifier of the Behavior Definiiton object</li>
- * <li>methodName_ - name of the method</li>
- * <li>asOfDate_ - versioning datetime stamp</li>
- * <li>clearCache_ - signal to flush the dissemination cache; value of "yes"
- * will clear the cache.
- * <li>methodParms - some methods require or provide optional parameters that
- * may be provided by the user; these parameters are entered as name/value
- * pairs like the other serlvet parameters. (optional)
- * </ul>
- * </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
- * @version 1.0
- */
-
-// Fedora imports
-import fedora.server.access.localservices.HttpService;
-import fedora.server.errors.HttpServiceNotFoundException;
-import fedora.server.errors.ObjectNotFoundException;
-import fedora.server.errors.MethodNotFoundException;
-import fedora.server.errors.MethodParmNotFoundException;
-import fedora.server.storage.DefinitiveBMechReader;
-import fedora.server.storage.DefinitiveDOReader;
-import fedora.server.storage.FastDOReader;
-import fedora.server.storage.FastDOReader;
-import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.types.Property;
-import fedora.server.storage.types.MethodParmDef;
-import fedora.server.storage.types.MethodDef;
-import fedora.server.storage.types.ObjectMethodsDef;
-import fedora.server.utilities.DateUtility;
-
-// Java imports
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -67,13 +20,69 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Vector;
 
+import fedora.server.access.localservices.HttpService;
+import fedora.server.errors.HttpServiceNotFoundException;
+import fedora.server.errors.InitializationException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.MethodNotFoundException;
+import fedora.server.errors.MethodParmNotFoundException;
+import fedora.server.Server;
+import fedora.server.storage.DefinitiveBMechReader;
+import fedora.server.storage.DefinitiveDOReader;
+import fedora.server.storage.FastDOReader;
+import fedora.server.storage.FastDOReader;
+import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.types.Property;
+import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.utilities.DateUtility;
+
+/**
+ * <p>Title: FedoraAccessServlet.java</p>
+ * <p>Description: Implements Fedora Access interface via a java Servlet
+ * front end. Input parameters for the servlet include:
+ * <ul>
+ * <li>action_ name of Fedora service which must be one of the following:
+ * <ol>
+ * <li>GetBehaviorDefinitions - Gets list of Behavior Defintions</li>
+ * <li>GetBehaviorMethods - Gets list of Behavior Methods</li>
+ * <li>GetBehaviorMethodsAsWSDL - Gets Behavior Method Definitions as XML</li>
+ * <li>GetDissemination - Gets a dissemination result</li>
+ * </ol>
+ * <li>PID_ - persistent identifier of the digital object</li>
+ * <li>bDefPID_ - persistent identifier of the Behavior Definiiton object</li>
+ * <li>methodName_ - name of the method</li>
+ * <li>asOfDate_ - versioning datetime stamp</li>
+ * <li>clearCache_ - signal to flush the dissemination cache; value of "yes"
+ * will clear the cache.
+ * <li>methodParms - some methods require or provide optional parameters that
+ * may be provided by the user; these parameters are entered as name/value
+ * pairs like the other serlvet parameters. (optional)
+ * </ul>
+ * <i><b>Note that all servlet parameter names that are implementation specific
+ * end with the underscore character ("_"). This is done to avoid possible
+ * name clashes with user-supplied method parameter names. As a general rule,
+ * user-supplied parameters should never contain names that end with the
+ * underscore character to prevent possible name conflicts.</b></i>
+ * <p>If a dissemination request is successful, it is placed into the
+ * dissemination cache which has a default size of 100. This default can be
+ * changed by setting the <code>disseminationCacheSize</code> parameter in
+ * the <code>fedora.fcfg</code> configuration file. If this parameter is not
+ * present or cannot be parsed, the cache size will default to 100.</p>
+ * </p>
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Ross Wayland
+ * @version 1.0
+ */
 public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
 {
 
-  private Hashtable disseminationCache = new Hashtable();
-  private HttpSession session = null;
+  private static boolean debug = false;
   private static final String CONTENT_TYPE_HTML = "text/html";
-  private static final String CONTENT_TYPE_XML = "text/xml";
+  private static final String CONTENT_TYPE_XML  = "text/xml";
   private static final String GET_BEHAVIOR_DEFINITIONS =
       "GetBehaviorDefinitions";
   private static final String GET_BEHAVIOR_METHODS =
@@ -85,20 +94,42 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
+  private static Server s_server = null;
   private static final String YES = "yes";
-  private static final int DISS_CACHE_SIZE = 100;
+  private static int DISS_CACHE_SIZE = 100;
+
+  private Hashtable disseminationCache = new Hashtable();
+  private HttpSession session = null;
   private Hashtable h_userParms = new Hashtable();
   private String requestURL = null;
   private String requestURI = null;
 
-  // For Testing
-  private static final boolean debug = true;
-
+  static
+  {
+    try
+    {
+      //FIXME!! - need to think about most appropriate place for dissemination
+      // cache size parameter in config file; for now, put at top level.
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      Integer I1 = new Integer(s_server.getParameter("disseminationCacheSize"));
+      System.out.println("I1: "+I1+"i1: "+I1.intValue());
+      DISS_CACHE_SIZE = I1.intValue();
+      Boolean B1 = new Boolean(s_server.getParameter("debug"));
+      debug = B1.booleanValue();
+    } catch (InitializationException ie)
+    {
+      System.err.println(ie.getMessage());
+    } catch (NumberFormatException nfe)
+    {
+      System.err.println("disseminationCacheSize parameter not found. Cache" +
+                         "size set to 100." + nfe.getMessage());
+    }
+  }
 
   /**
-   * Initialize servlet
+   * <p>Initialize servlet.</p>
    *
-   * @throws ServletException
+   * @throws ServletException If the servet cannot be initialized.
    */
   public void init() throws ServletException
   {}
@@ -106,10 +137,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   /**
    * <p>For now, treat a HTTP POST request just like a GET request.</p>
    *
-   * @param request
-   * @param response
-   * @throws ServletException
-   * @throws IOException
+   * @param request The servet request.
+   * @param response The servlet response.
+   * @throws ServletException If thrown by <code>doGet</code>.
+   * @throws IOException If thrown by <code>doGet</code>.
    */
   public void doPost(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
@@ -119,24 +150,27 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   }
 
   /**
-   * <p>Process Fedora Access Request.</p>
+   * <p>Process Fedora Access Request. Parse and validate the servlet input
+   * parameters and then execute the specified request.</p>
    *
-   * @param request  servlet request
-   * @param response servlet response
-   * @throws ServletException
-   * @throws IOException
+   * @param request  The servlet request.
+   * @param response servlet The servlet response.
+   * @throws ServletException If an error occurs that effects the servlet's
+   * basic operation.
+   * @throws IOException If an error occurrs with an input or output operation.
    */
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    String action = null;
-    String PID = null;
-    String bDefPID = null;
-    String methodName = null;
     Calendar asOfDate = null;
     Date versDateTime = null;
+    String action = null;
+    String bDefPID = null;
     String clearCache = null;
+    String methodName = null;
+    String PID = null;
     Property[] userParms = null;
+
     // FIXME!! getRequestURL() not available in all releases of servlet API
     //requestURL = request.getRequestURL().toString()+"?";
     requestURL = "http://"+request.getServerName()+":"+request.getServerPort()+
@@ -147,6 +181,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     if (debug) System.out.println("RequestURL: "+requestURL+
                                   "RequestURI: "+requestURI+
                                   "Session: "+session);
+
     // Get servlet input parameters
     Enumeration URLParms = request.getParameterNames();
     while ( URLParms.hasMoreElements())
@@ -173,11 +208,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         clearCache = request.getParameter(parm);
       } else
       {
-        // Any remaining parameters are assumed to be user-supplied parameters.
-        // Place user-supplied parameters in hashtable for easy access.
+        // Any remaining parameters are assumed to be user-supplied method
+        // parameters. Place user-supplied parameters in hashtable for easy
+        // access.
         h_userParms.put(parm, request.getParameter(parm));
       }
     }
+
     // API-A interface requires user-supplied paramters to be of type
     // Property[] so create Property[] from hashtable of user parameters.
     int userParmCounter = 0;
@@ -193,9 +230,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
 
     // Validate servlet URL parameters to verify that all parameters required
     // by the servlet implementation of API-A are present and to verify
-    // that any other user-supplied parameters are valid for the request.
+    // that any other user-supplied method parameters are valid for the request.
     if (isValidURLParms(action, PID, bDefPID, methodName, versDateTime,
-                      h_userParms, clearCache, response))
+                        h_userParms, clearCache, response))
     {
       // FIXME!! May need to deal with session management in the future
 
@@ -222,18 +259,16 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             }
         } else
         {
-          // Dissemination request failed
+          // Dissemination request failed; echo back request parameters
           // FIXME!! need to decide on exception handling
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                       clearCache, response);
           System.out.println("Dissemination Result: NULL");
-          this.getServletContext().log("Dissemination Result: NULL");
         }
         // FIXME!! Decide on exception handling
         } catch (Exception e)
         {
           System.out.println(e.getMessage());
-          this.getServletContext().log(e.getMessage(), e.getCause());
         }
       } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
@@ -241,6 +276,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         {
           response.setContentType(CONTENT_TYPE_HTML);
           String[] bDefs = GetBehaviorDefinitions(PID, asOfDate);
+
           // Return HTML table containing results; include links to digital
           // object PID to further explore object.
           out.println("<html>");
@@ -256,6 +292,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           out.println("<td><b><font size='+2'>Behavior Definitions</font>"+
                       "</b></td");
           out.println("</tr>");
+
           // Format table such that repeating fields display only once
           int rows = bDefs.length - 1;
           for (int i=0; i<bDefs.length; i++)
@@ -288,6 +325,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           out.println("<br></br>");
           out.println("</body>");
           out.println("</html>");
+
         // FIXME!! Decide on Exception handling
         } catch (Exception e)
         {
@@ -350,6 +388,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("<td><b><font size='+2'> Method Name" +
                         " </font></b></td>");
             out.println("</tr>");
+
             // Format table such that repeating fields display only once
             int rows = bDefMethods.length - 1;
             for (int i=0; i<bDefMethods.length; i++)
@@ -394,11 +433,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("</body>");
             out.println("</html>");
           }
+
         // FIXME!! Need to decide on Exception handling
         } catch (Exception e)
         {
           System.out.println(e.getMessage());
-          this.getServletContext().log(e.getMessage(), e.getCause());
         }
       } else if (action.equals(GET_OBJECT_METHODS))
       {
@@ -435,6 +474,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
             out.println("<td><b><font size='+2'> Method Name"+
                                     " </font></b></td>");
             out.println("</tr>");
+
             // Format table such that repeating fields only display once
             int rows = objMethDefArray.length-1;
             for (int i=0; i<objMethDefArray.length; i++)
@@ -456,7 +496,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                             objMethDefArray[i].bDefPID + "&methodName_=" +
                             objMethDefArray[i].methodName + "\"> " +
                             objMethDefArray[i].methodName + " </a></td>");
-                //out.flush();
               } else if (i == 1)
               {
                 out.println("<td colspan='2' rowspan='" + rows + "'></td>");
@@ -492,17 +531,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         {
           // FIXME!! Need to decide on Exception handling
           System.out.println(e.getMessage());
-          this.getServletContext().log(e.getMessage(), e.getCause());
     }
       }
     } else
     {
-      // URL parameters failed validation check
-      // Output from showURLParms method should provide enough information
-      // to discern the cause of the failure.
+      // URL parameters failed validation check.
       System.out.println("URLParametersInvalid");
-      //showURLParms(action, PID, bDefPID, methodName,asOfDate, userParms,
-      //             clearCache, response);
     }
   }
 
@@ -511,9 +545,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * list of Behavior Definition object PIDs for the specified digital object.
    * </p>
    *
-   * @param PID persistent identifier of the digital object
-   * @param asOfDate versioning datetime stamp
-   * @return String[] containing Behavior Definitions
+   * @param PID The persistent identifier of the digital object.
+   * @param asOfDate The versioning datetime stamp.
+   * @return An array of Behavior Definition PIDs.
    */
   public String[] GetBehaviorDefinitions(String PID, Calendar asOfDate)
   {
@@ -535,10 +569,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * Gets a list of Behavior Methods associated with the specified
    * Behavior Mechanism object.</p>
    *
-   * @param PID persistent identifier of Digital Object
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param asOfDate versioning datetime stamp
-   * @return MethodDef[] containing method definitions
+   * @param PID The persistent identifier of Digital Object.
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param asOfDate The versioning datetime stamp.
+   * @return An array of method definitions.
    */
   public MethodDef[] GetBehaviorMethods(String PID, String bDefPID,
       Calendar asOfDate)
@@ -555,6 +589,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       // FIXME!! - need to decide on exception handling
       System.out.println("GetBehaviorMethods: Object Not Found");
+      System.out.println(onfe.getMessage());
+      System.out.flush();
       return null;
     }
     return methodDefs;
@@ -565,10 +601,11 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * Gets a bytestream containing the WSDL that defines the Behavior Methods
    * of the associated Behavior Mechanism object.
    *
-   * @param PID persistent identifier of Digital Object
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param asOfDate versioning datetime stamp
-   * @return MIMETypedStream containing WSDL method definitions
+   * @param PID The persistent identifier of digital object.
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param asOfDate The versioning datetime stamp.
+   * @return MIME-typed stream containing XML-encoded method definitions
+   * from WSDL.
    */
   public MIMETypedStream GetBehaviorMethodsAsWSDL(String PID, String bDefPID,
       Calendar asOfDate)
@@ -605,12 +642,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * <p>Implements GetDissemination in the Fedora Access interface.
    * Gets a MIME-typed bytestream containing the result of a dissemination.
    *
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName name of the method
-   * @param asOfDate version datetime stamp of the digital object
-   * @param userParms array of user-supplied method parameters and values
-   * @return MIMETypedStream containing the dissemination result
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param asOfDate The version datetime stamp of the digital object.
+   * @param userParms An array of user-supplied method parameters and values.
+   * @return A MIME-typed stream containing the dissemination result.
    */
   public MIMETypedStream GetDissemination(String PID, String bDefPID,
        String methodName, Property[] userParms, Calendar asOfDate)
@@ -629,9 +666,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
        dissResults = fastReader.getDissemination(PID, bDefPID, methodName,
            versDateTime);
        String replaceString = null;
-       //DissResultSet results = new DissResultSet();
-
        int numElements = dissResults.length;
+
        // Get row(s) of WSDL results and perform string substitution
        // on DSBindingKey and method parameter values in WSDL
        // Note: In case where more than one datastream matches the
@@ -641,6 +677,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
        for (int i=0; i<dissResults.length; i++)
        {
          dissResult = dissResults[i];
+
          // If AddressLocation has a value of "LOCAL", this is a flag to
          // indicate the associated OperationLocation requires no
          // AddressLocation. i.e., the OperationLocation contains all
@@ -649,6 +686,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          {
            dissResult.AddressLocation = "";
          }
+
          // Match DSBindingKey pattern in WSDL
          String bindingKeyPattern = "\\("+dissResult.DSBindKey+"\\)";
          if (i == 0)
@@ -668,6 +706,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
            nextKey = dissResults[i+1].DSBindKey;
            if (debug) System.out.println("' nextKey: '"+nextKey+"'");
          }
+
          // In most cases, there is only a single datastream that matches a
          // given DSBindingKey so the substitution process is to just replace
          // the occurence of (BINDING_KEY) with the value of the datastream
@@ -765,9 +804,9 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     * <p>Implements GetObjectMethods in the Fedora Access Interface.
     * Gets a list of all method definitions for the specified object.</p>
     *
-    * @param PID persistent identifier for the digital object
-    * @param asOfDate versioning datetime stamp
-    * @return ObjectMethodsDef array of object method definitions
+    * @param PID The persistent identifier for the digital object.
+    * @param asOfDate The versioning datetime stamp.
+    * @return An array of object method definitions.
     */
   public ObjectMethodsDef[] GetObjectMethods(String PID, Calendar asOfDate)
   {
@@ -792,10 +831,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * All matching occurrences of the pattern string will be replaced in the
    * input string by the replacement string.
    *
-   * @param inputString source string
-   * @param patternString regular expression pattern
-   * @param replaceString replacement string
-   * @return String source string with substitutions
+   * @param inputString The source string.
+   * @param patternString The regular expression pattern.
+   * @param replaceString The replacement string.
+   * @return The source string with substitutions.
    */
   private String substituteString(String inputString, String patternString,
                                  String replaceString)
@@ -817,12 +856,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * <li> Required name - each required method parameter name must be present
    * </ol>
    *
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName name of the method
-   * @param h_userParms hashtable of user-supplied method parameter name/value
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param A hashtable of user-supplied method parameter name/value.
    *                      pairs
-   * @return boolean true if method parameters are valid; false otherwise
+   * @return True if method parameters are valid; false otherwise.
    *
    */
   private boolean isValidUserParms(String PID, String bDefPID,
@@ -840,6 +879,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       fdor = new FastDOReader(PID);
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
+
       // FIXME!! Decide on Exception handling
     } catch(MethodNotFoundException mpnfe)
     {
@@ -850,6 +890,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       System.out.println(onfe.getMessage());
       this.getServletContext().log(onfe.getMessage(), onfe.getCause());
     }
+
     // Put valid method parameters and their attributes into hashtable
     Hashtable v_validParms = new Hashtable();
     if (methodParms != null)
@@ -860,6 +901,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         v_validParms.put(methodParm.parmName,methodParm);
       }
     }
+
     // check if no user supplied parameters
     if (!h_userParms.isEmpty())
     {
@@ -893,6 +935,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                   methodParm.parmName);
             }
           }
+
           // Method parameter is not required
           // Check for default value if user-supplied value is null or empty
           String value = (String)h_userParms.get(methodParm.parmName);
@@ -970,15 +1013,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * from this method can be used to help verify the URL parameters
    * sent to the servlet</p>
    *
-   * @param action Fedora service requested
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName name of the method
-   * @param asOfDate version datetime stamp of the digital object
-   * @param userParms array of user-supplied method parameters and values
-   * @param clearCache dissemination cache flag
-   * @param response servlet response
-   * @throws IOException if unable to create <code>PrintWriter</code>
+   * @param action The Fedora service requested.
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName the name of the method.
+   * @param asOfDate The version datetime stamp of the digital object.
+   * @param userParms An array of user-supplied method parameters and values.
+   * @param clearCache The dissemination cache flag.
+   * @param response The servlet response.
+   * @throws IOException If an error occurrs with an input or output operation.
    */
   private void showURLParms(String action, String PID, String bDefPID,
                            String methodName, Calendar asOfDate,
@@ -991,6 +1034,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     if (debug) System.out.println("versdate: "+versDate);
     PrintWriter out = response.getWriter();
     response.setContentType(CONTENT_TYPE_HTML);
+
     // Display servlet input parameters
     out.println("<html>");
     out.println("<head>");
@@ -1038,17 +1082,15 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     out.println("</tr>");
     out.println("<tr>");
     out.println("</tr>");
-    //if (userParms != null)
-    //{
-      // List user-supplied parameters if any
-      for (int i=0; i<userParms.length; i++)
-      {
-        out.println("<tr>");
-        out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
-        out.println("<td> = </td>");
-        out.println("<td>"+userParms[i].Value+"</td>");
+
+    // List user-supplied parameters if any
+    for (int i=0; i<userParms.length; i++)
+    {
+      out.println("<tr>");
+      out.println("<td><font color='red'>"+userParms[i].Name+"</font></td>");
+      out.println("<td> = </td>");
+      out.println("<td>"+userParms[i].Value+"</td>");
         out.println("</tr>");
-     // }
     }
     out.println("</table></center></font>");
     out.println("</body></html>");
@@ -1073,16 +1115,16 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * <p>Validates required servlet URL parameters. Different parameters
    * are required based on the requested action.</p>
    *
-   * @param action servlet action to be executed
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName method name
-   * @param versDate version datetime stamp of the digital object
-   * @param userParms user-supplied method parameters
-   * @param clearCache boolean to clear dissemination cache
-   * @param response Servlet http response
-   * @return boolean true if required parameters are valid; false otherwise
-   * @throws IOException
+   * @param action The Fedora service to be executed
+   * @param PID The persistent identifier of the Digital Object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The method name.
+   * @param versDate The version datetime stamp of the digital object.
+   * @param userParms An array of user-supplied method parameters.
+   * @param clearCache A boolean flag to clear dissemination cache.
+   * @param response The servlet response.
+   * @return True if required parameters are valid; false otherwise.
+   * @throws IOException If an error occurrs with an input or output operation.
    */
   private boolean isValidURLParms(String action, String PID, String bDefPID,
                           String methodName, Date versDateTime,
@@ -1090,7 +1132,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
                           HttpServletResponse response)
       throws IOException
   {
-    // check for missing parameters required by the interface definition
     boolean checkOK = true;
     PrintWriter out = response.getWriter();
     String versDate = DateUtility.convertDateToString(versDateTime);
@@ -1425,13 +1466,13 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    * of "yes". The cache is also flushed when it reaches the limit
    * specified by <code>DISS_CACHE_SIZE</code>.</p>
    *
-   * @param dissRequestID originating URI request used as hash key
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName method name
-   * @param userParms user-supplied method parameters
-   * @param asOfDate version datetime stamp of the digital object
-   * @return MIMETypedStream containing dissemination result
+   * @param dissRequestID The originating URI request used as hash key.
+   * @param PID The persistent identifier of the Digital Object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The method name.
+   * @param userParms An array of user-supplied method parameters.
+   * @param asOfDate The version datetime stamp of the digital object.
+   * @return The MIME-typed stream containing dissemination result.
    */
   private synchronized MIMETypedStream getDisseminationFromCache(String action,
       String PID, String bDefPID, String methodName,
