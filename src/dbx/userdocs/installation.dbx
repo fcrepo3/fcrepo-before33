@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+ <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
 <?xml-stylesheet type="text/xsl" 
-    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> -->
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?> 
 <article>
 	<articleinfo>
 		<graphic fileref="images/newlogo2.jpg"/>
@@ -389,28 +389,42 @@
 			</section>
 			<section>
 				<title>Datastream Mediation</title>
-					<para>Datastream Mediation is an optional feature of the Fedora repository system that offers a higher level of access restriction for the physical location of datastreams in Fedora objects. It is controlled through the boolean parameter named doMediateDatastreams in the fedora.fcfg configuration file. By default, the value of the doMediateDatastreams parameter is set to false which disables datastream mediation. The following section describes the advantages and disadvantages of using Datastream Mediation.</para>
-					<para>Content is stored in Fedora digital objects as one or more datastreams. Each datastream contains a pointer to the physical location of its content. For Referenced External Content and Redirected datastreams, this is a pointer to remote content that is managed outside the custodianship of the repository. For Managed Content and XML Metadata datastreams, this is a pointer to internal content that is managed by the repository.</para>
-					<para>An object’s content is accessed through its disseminators that interact with external mechanisms associated through the disseminator’s behavior mechanism object. In order for the external mechanisms to function, they must have access to the datastream locations. With Datastream Mediation disabled, Fedora passes the actual physical location of datastreams to external mechanisms as part of the dissemination process. If the external mechanisms are trusted, the risk of exposing the actual datastream locations to these mechanisms may be negligible. However, if the mechanisms are not trusted or reside completely outside the control of the repository administrator, the risk of exposure may be higher. The worst-case scenario would be where an untrusted mechanism captures the actual datastream locations and then accesses the datastreams directly rather than going through the Fedora repository.</para>
-					<para>The DatastreamMediation option was added to give Fedora repository administrators more control over how datastream locations are exposed. Using Datastream Mediation does affect the functioning of the repository so the administrator needs to weigh the advantages and disadvantages to determine which option best suits their needs.</para>
-					<para>When Datastream Mediation is enabled, it essentially activates an additional layer of proxying within the repository. When dissemination requests are processed, the repository will proxy all datastream requests to the external mechanisms providing an internal reference in place of the actual datastream locations. The external mechanisms then must communicate with the Fedora repository to resolve the proxy requests and receive the contents of the datastream in the form of a bytestream. This additional layer of proxying effectively hides the actual datastream locations from the external mechanisms and insures that Managed Content and XML Metadata datastreams can only be directly accessed through the Fedora repository. Datastream Mediation will also proxy Referenced External Content datastreams, but since these types of datastreams by definition are remotely available on the internet , Fedora cannot guarantee that their actual locations cannot be discovered by other means. Redirected datastreams are never proxied.</para>
-			<para>Advantages</para>
-			<itemizedlist>
-				<listitem><para>Security – Datastream Mediation insures that Managed Content and XML Metadata datastreams can only be directly accessed through the Fedora repository. It provides an extra layer of security if you have external mechanisms that may not be trusted or desire to maintain tighter control over the exposure of datastream locations.</para></listitem>
-			</itemizedlist>
-			<para>Disadvantages</para>
-			<itemizedlist>
-				<listitem><para>Performance – Datastream Mediation adds an additional layer of proxying. It does degrade performance slightly since it adds one more network hop necessary to resolve a datastream location by the external mechanism.</para></listitem>
-				<listitem><para>Firewall Issues – If your Fedora repository is installed behind a network security firewall, Datastream Mediation will not function unless you have configured the firewall to allow access to the Fedora repository port number (default is port 8080).  This is because external mechanisms must make HTTP read requests to the Fedora repository over the server’s port number to resolve the datastream locations. If you have ready access to the firewall’s configuration, this may be an easy task to accomplish. If your firewall is provided by a 3rd party, then accomplishing the necessary configuration may be more difficult or may even not be possible. </para></listitem>
-			</itemizedlist>
-			<para>Ultimately, it is up to the Fedora repository administrator to decide if Datastream Mediation should be used. Here are some sample scenarios to provide some additional guidance. </para>	
-			<itemizedlist>
-				<listitem><para>Scenario 1 – Consider a Fedora repository where all objects use Managed Content datastreams and the administrator has no control over external mechanisms. The administrator also wants to insure that the only access to Fedora datastreams is through the repository. In this scenario, the Fedora administrator will want to enable Datastream Mediation since the repository manages all the datastreams and also wants tight control over how datastreams may potentially be accessed.</para></listitem>
-				<listitem><para>Scenario 2 – Consider a Fedora repository where all objects use Referenced External Content datastreams and some mechanisms may be untrusted. Since all datastreams are Referenced External Content, their actual locations could be discovered through alternate means on the web. In this scenario, the administrator may want to disable Datastream Mediation since it does not offer a significant improvement in controlling datastream location exposure since all of the datastreams in the repository are remote content.</para></listitem>
-				<listitem><para>Scenario 3 – Consider a Fedora repository where objects use a mix of datastreams and all external mechanisms are untrusted. In this scenario, the administrator might decide to enable or disable Datastream Mediation depending on the percentage of remote datastreams versus Managed Content datastreams and on the importantance controlling datastream exposure.</para></listitem>
-				<listitem><para>Scenario 4 – Consider a Fedora repository where all objects use Managed Content datastrams and the administrator has no control over external mechanisms. The Fedora repository is also behind a firewall and the administrator cannot alter the firewall configuration. The administrator has no choice in this scenario and must disable Datastream Mediation for the repository to function.</para></listitem>
-			</itemizedlist>					
-			</section>	
+				<para>Datastream Mediation is an optional feature of the Fedora repository system that offers a higher level of access restriction for the physical location of datastreams in Fedora objects. It is controlled through the boolean parameter named doMediateDatastreams in the fedora.fcfg configuration file. By default, the value of the doMediateDatastreams parameter is set to false which disables datastream mediation. The following section describes the advantages and disadvantages of using Datastream Mediation.</para>
+				<para>Content is stored in Fedora digital objects as one or more datastreams. Each datastream contains a pointer to the physical location of its content. For Referenced External Content and Redirected datastreams, this is a pointer to remote content that is managed outside the custodianship of the repository. For Managed Content and XML Metadata datastreams, this is a pointer to internal content that is managed by the repository.</para>
+				<para>An object’s content is accessed through its disseminators that interact with external mechanisms associated through the disseminator’s behavior mechanism object. In order for the external mechanisms to function, they must have access to the datastream locations. With Datastream Mediation disabled, Fedora passes the actual physical location of datastreams to external mechanisms as part of the dissemination process. If the external mechanisms are trusted, the risk of exposing the actual datastream locations to these mechanisms may be negligible. However, if the mechanisms are not trusted or reside completely outside the control of the repository administrator, the risk of exposure may be higher. The worst-case scenario would be where an untrusted mechanism captures the actual datastream locations and then accesses the datastreams directly rather than going through the Fedora repository.</para>
+				<para>The DatastreamMediation option was added to give Fedora repository administrators more control over how datastream locations are exposed. Using Datastream Mediation does affect the functioning of the repository so the administrator needs to weigh the advantages and disadvantages to determine which option best suits their needs.</para>
+				<para>When Datastream Mediation is enabled, it essentially activates an additional layer of proxying within the repository. When dissemination requests are processed, the repository will proxy all datastream requests to the external mechanisms providing an internal reference in place of the actual datastream locations. The external mechanisms then must communicate with the Fedora repository to resolve the proxy requests and receive the contents of the datastream in the form of a bytestream. This additional layer of proxying effectively hides the actual datastream locations from the external mechanisms and insures that Managed Content and XML Metadata datastreams can only be directly accessed through the Fedora repository. Datastream Mediation will also proxy Referenced External Content datastreams, but since these types of datastreams by definition are remotely available on the internet , Fedora cannot guarantee that their actual locations cannot be discovered by other means. Redirected datastreams are never proxied.</para>
+				<para>Advantages</para>
+				<itemizedlist>
+					<listitem>
+						<para>Security – Datastream Mediation insures that Managed Content and XML Metadata datastreams can only be directly accessed through the Fedora repository. It provides an extra layer of security if you have external mechanisms that may not be trusted or desire to maintain tighter control over the exposure of datastream locations.</para>
+					</listitem>
+				</itemizedlist>
+				<para>Disadvantages</para>
+				<itemizedlist>
+					<listitem>
+						<para>Performance – Datastream Mediation adds an additional layer of proxying. It does degrade performance slightly since it adds one more network hop necessary to resolve a datastream location by the external mechanism.</para>
+					</listitem>
+					<listitem>
+						<para>Firewall Issues – If your Fedora repository is installed behind a network security firewall, Datastream Mediation will not function unless you have configured the firewall to allow access to the Fedora repository port number (default is port 8080).  This is because external mechanisms must make HTTP read requests to the Fedora repository over the server’s port number to resolve the datastream locations. If you have ready access to the firewall’s configuration, this may be an easy task to accomplish. If your firewall is provided by a 3rd party, then accomplishing the necessary configuration may be more difficult or may even not be possible. </para>
+					</listitem>
+				</itemizedlist>
+				<para>Ultimately, it is up to the Fedora repository administrator to decide if Datastream Mediation should be used. Here are some sample scenarios to provide some additional guidance. </para>
+				<itemizedlist>
+					<listitem>
+						<para>Scenario 1 – Consider a Fedora repository where all objects use Managed Content datastreams and the administrator has no control over external mechanisms. The administrator also wants to insure that the only access to Fedora datastreams is through the repository. In this scenario, the Fedora administrator will want to enable Datastream Mediation since the repository manages all the datastreams and also wants tight control over how datastreams may potentially be accessed.</para>
+					</listitem>
+					<listitem>
+						<para>Scenario 2 – Consider a Fedora repository where all objects use Referenced External Content datastreams and some mechanisms may be untrusted. Since all datastreams are Referenced External Content, their actual locations could be discovered through alternate means on the web. In this scenario, the administrator may want to disable Datastream Mediation since it does not offer a significant improvement in controlling datastream location exposure since all of the datastreams in the repository are remote content.</para>
+					</listitem>
+					<listitem>
+						<para>Scenario 3 – Consider a Fedora repository where objects use a mix of datastreams and all external mechanisms are untrusted. In this scenario, the administrator might decide to enable or disable Datastream Mediation depending on the percentage of remote datastreams versus Managed Content datastreams and on the importantance controlling datastream exposure.</para>
+					</listitem>
+					<listitem>
+						<para>Scenario 4 – Consider a Fedora repository where all objects use Managed Content datastrams and the administrator has no control over external mechanisms. The Fedora repository is also behind a firewall and the administrator cannot alter the firewall configuration. The administrator has no choice in this scenario and must disable Datastream Mediation for the repository to function.</para>
+					</listitem>
+				</itemizedlist>
+			</section>
 			<section>
 				<title>Other Settings</title>
 				<para>There are many other parameters you can configure with Fedora.  See the fedora.fcfg file for documentation on all the parameters.</para>
@@ -424,50 +438,70 @@
 			<para>If the database isn't already started, start it now.</para>
 			<para>If you've chosen to use the included mckoi database, 
             you can simply type "mckoi-start" and the database will start</para>
-        </section>
+		</section>
 		<section>
 			<title>Start The Server!</title>
 			<para>Fedora is normally started with the command:</para>
-			<para><emphasis>fedora-start</emphasis></para>
-            <para>The configuration file, fedora.fcfg, can be written so that
+			<para>
+				<emphasis>fedora-start</emphasis>
+			</para>
+			
+			<para>The configuration file, fedora.fcfg, can be written so that
             it takes a parameter which has the effect of using an alternate
             value for some of the &lt;param...&gt; elements, if an alternate parameter exists.
             The default fedora.fcfg assumes that you're using MySQL, but
             has been written to use the mckoi database if you start it with:</para>
-            <para><emphasis>fedora-start mckoi</emphasis></para>
-            <para>...so if you're using mckoi, start it with the above command
+			<para>
+				<emphasis>fedora-start mckoi</emphasis>
+			</para>
+			<para>...so if you're using mckoi, start it with the above command
             instead.</para>
-            <para>Read the fedora.fcfg file and look for the attributes
+			<para>Read the fedora.fcfg file and look for the attributes
             named "mckoivalue" to see how this is done, if you're curious
             or would like to define your own parameter.  You can also change
             the fedora.fcfg so that it doesn't have to take the "mckoi" parameter
             in order to run with mckoi (simply set the <emphasis>value</emphasis> of
             the parameters to that of the <emphasis>mckoivalue</emphasis> attributes
             so that these values are taken by default.</para>
-        </section>
-        <section>
-            <title>Stopping the Server</title>
-            <para>You can stop the Fedora server with the command:</para>
-            <para><emphasis>fedora-stop</emphasis></para>
-            <para>The database should be shut down only <emphasis>after</emphasis>
+            <para>Note for Unix users: The commands <emphasis>fedora-start</emphasis> and <emphasis>fedora-start mckoi</emphasis> do <emphasis role="bold">not</emphasis> have to be run by root.</para>
+		</section>
+		<section>
+			<title>Stopping the Server</title>
+			<para>You can stop the Fedora server with the command:</para>
+			<para>
+				<emphasis>fedora-stop</emphasis>
+			</para>
+			<para>The database should be shut down only <emphasis>after</emphasis>
                the Fedora server has been stopped.  If you're using mckoi,
                you can stop it with the command:</para>
-            <para><emphasis>mckoi-stop [dbUser] [dbPassword]</emphasis></para>
-            <para>Other databases will have their own shutdown scripts or commands.</para>
-        </section>
-    </section>
-    <section>
-        <title>Server logs</title>
-        <para>While the server is running, it writes logs to FEDORA_HOME/server/logs.
+			<para>
+				<emphasis>mckoi-stop [dbUser] [dbPassword]</emphasis>
+			</para>
+			<para>Other databases will have their own shutdown scripts or commands.</para>
+		</section>
+	</section>
+	<section>
+		<title>Server logs</title>
+		<para>While the server is running, it writes logs to FEDORA_HOME/server/logs.
         These are timestamped files, written in a simple XML format.  You can
         use these logs to get more extensive information about what the server
         is doing or to diagnose problems.</para>
-    </section>
-    <section>
-        <title>Where From Here?</title>
-        <para>If you've just got your Fedora server up and running, it's a
+	</section>
+	<section>
+		<title>Where From Here?</title>
+		<para>If you've just got your Fedora server up and running, it's a
         good idea to check out the demonstration objects to get an idea of
-        how Fedora works.  See <ulink url="demos.html">the Demo Manual</ulink> for
+        how Fedora works.  See <ulink url="demos.html">the Demo Manual</ulink> for complete 
         instructions on ingesting and using the demos.</para>
-    </section>
+        <para>The demos may be ingested via the Fedora Admin GUI tool or from the command line.</para> 
+		<para>To access the Admin GUI use the command:</para>
+        <para>
+        	<emphasis>fedora-admin</emphasis>
+        </para>
+        <para>To ingest the demos from the command line, use the command:</para>
+        <para>
+        	<emphasis>fedora-ingest-demos[hostname] [port] [username] [password]</emphasis>
+        </para>
+        <para>Please note that the demo objects must be ingested before they can be discovered using the default search interface.</para>
+   </section>
 </article>
