@@ -348,7 +348,7 @@ public class FedoraAccessServlet extends HttpServlet
           currentBdef = objMethDefArray[i].bDefPID;
           if (!currentBdef.equalsIgnoreCase(nextBdef))
           {
-            if (i != 0) out.println("</bdef>");
+            if (i != 0) pw.write("</bdef>");
             pw.write("<bdef pid=\"" + objMethDefArray[i].bDefPID + "\" >");
           }
           pw.write("<method name=\"" + objMethDefArray[i].methodName + "\" >");
