@@ -140,29 +140,35 @@
 	<!-- mechanism include: THUMBRES_IMAG, MEDRES_IMG, HIGHRES_IMG, and                           -->
 	<!-- VERYHIGHRES_IMG.                                                                                                                           -->
 	<!-- ************************************************************************************************************ -->
+	<!--
 	<fbm:addDisseminator pid="demo:32" bDefPid="demo:1" bMechPid="demo:2" bDefLabel="" bMechLabel="" dissLabel="HTTP Getter Image Disseminator" dissState="A">
 		<fbm:addDatastreamBinding dsBindKeyName="THUMBRES_IMG" dsID="DS1" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="MEDRES_IMG" dsID="DS2" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS3" dsBindLabel=""/>
 		<fbm:addDatastreamBinding dsBindKeyName="VERYHIGHRES_IMG" dsID="DS4" dsBindLabel=""/>
 	</fbm:addDisseminator>
+	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Add a second disseminator to the object demo:32 using the Image Manipulation Behavior         -->
 	<!-- Definition (demo:27) and the Image Manipulation service (demo:28). The mechanism                -->
 	<!-- specifies a sinlge Binding Key name of url.                                                                                         -->
 	<!-- ************************************************************************************************************ -->
+	<!--
 	<fbm:addDisseminator pid="demo:32" bDefPid="demo:27" bMechPid="demo:28" bDefLabel="" bMechLabel="" dissLabel="Image Manipulation Disseminator" dissState="A">
 		<fbm:addDatastreamBinding dsBindKeyName="url" dsID="DS5" dsBindLabel=""/>
 	</fbm:addDisseminator>
+	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify the first disseminator by changing its label and also the label for its associated behavior -->
 	<!-- definition label.  Also remove the datastream binding for DS3 and replace it with a new binding -->
 	<!-- that maps to DS5 for the high resolution image.                                                                                  -->
 	<!-- ************************************************************************************************************ -->
+	<!--
 	<fbm:modifyDisseminator pid="demo:32" dissID="DISS1" bMechPid="demo:2" dissLabel="changed DISS label" bDefLabel="new label for dDef" bMechLabel="" dissState="A">
 		<fbm:removeDatastreamBinding dsID="DS3"/>
-		<fbm:addDatastreamBinding dsBindKeyName="THUMBRES_IMG" dsID="DS5" dsBindLabel="Label for New Binding"/>
+		<fbm:addDatastreamBinding dsBindKeyName="HIGHRES_IMG" dsID="DS5" dsBindLabel="Label for New Binding"/>
 	</fbm:modifyDisseminator>
+	-->
 	<!-- ************************************************************************************************************ -->
 	<!-- Modify the second disseminator by changing the label of its associated behavior mechanism.  -->
 	<!-- Also remove the datastream binding for DS5. Note that since no new binding was added to     -->
@@ -170,7 +176,9 @@
 	<!-- datastreams are bound to the disseminator any longer. This can be remedied by adding back -->
 	<!-- the necessary binding using the batch modify utility or using the admin GUI client.                        -->
 	<!-- ************************************************************************************************************ -->
+	<!--
 	<fbm:modifyDisseminator pid="demo:32" dissID="DISS2" bMechPid="demo:28" dissLabel="" bDefLabel="" bMechLabel="new label for bmech" dissState="A">
 		<fbm:removeDatastreamBinding dsID="DS5"/>
 	</fbm:modifyDisseminator>
+	-->
 </fbm:batchModify>
