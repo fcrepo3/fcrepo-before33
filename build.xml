@@ -233,6 +233,8 @@
     <copy todir="dist/server">
       <fileset dir="inc/server"/>
     </copy>
+    <copy file="src/xsd/fedora-types.xsd" todir="dist/server/schemas"/>
+    <copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/schemas"/>
     <copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
     <copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
       <fileset dir="temp/server/classes"/>
@@ -268,6 +270,9 @@
 
 <!--
   $Log$
+  Revision 1.12  2002/07/23 15:42:26  cwilper
+  added fedora-types and fedora-auditing schema copy actions to the server dist
+
   Revision 1.11  2002/07/18 14:22:44  cwilper
   added wsdl2java target, even though it doesn't work yet
 
