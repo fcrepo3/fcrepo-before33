@@ -43,6 +43,11 @@ import fedora.server.errors.StreamIOException;
 public class DCFields
         extends DefaultHandler {
 
+	public static final String OAIDC_PREFIX="oai_dc";
+	public static final String OAIDC_NS="http://www.openarchives.org/OAI/2.0/oai_dc/";
+	public static final String DC_PREFIX="dc";
+	public static final String DC_NS="http://purl.org/dc/elements/1.1/";
+			
     private ArrayList m_titles=new ArrayList();
     private ArrayList m_creators=new ArrayList();
     private ArrayList m_subjects=new ArrayList();
@@ -195,7 +200,9 @@ public class DCFields
      */
     public String getAsXML() {
         StringBuffer out=new StringBuffer();
-        out.append("<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n");
+		out.append("<" + OAIDC_PREFIX + ":dc"
+			+ " xmlns:"	+ OAIDC_PREFIX + "=\"" + OAIDC_NS + "\""
+			+ " xmlns:"	+ DC_PREFIX + "=\"" + DC_NS + "\">\n");
         appendXML(titles(), "title", out);
         appendXML(creators(), "creator", out);
         appendXML(subjects(), "subject", out);
