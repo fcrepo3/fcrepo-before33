@@ -99,10 +99,10 @@ public class TestClientAPIA
         }
       }
 
-      // Test GetBehaviormethodsAsWSDL
+      // Test GetBehaviormethodsXML
        bDefPID = "uva-bdef-image-w:101";
        call.setOperationName(new javax.xml.namespace.QName(qName1,
-           "GetBehaviorMethodsAsWSDL") );
+           "GetBehaviorMethodsXML") );
        qn = new QName("http://www.fedora.info/definitions/1/0/types/",
                              "MIMETypedStream");
        call.registerTypeMapping(fedora.server.types.gen.MIMETypedStream.class,
@@ -111,14 +111,14 @@ public class TestClientAPIA
            fedora.server.types.gen.MIMETypedStream.class, qn),
            new org.apache.axis.encoding.ser.BeanDeserializerFactory(
            fedora.server.types.gen.MIMETypedStream.class, qn));
-       fedora.server.types.gen.MIMETypedStream methodWSDL =
+       fedora.server.types.gen.MIMETypedStream methodXML =
            (fedora.server.types.gen.MIMETypedStream)
            call.invoke( new Object[] { PID, bDefPID, asOfDate} );
-       String mime = methodWSDL.getMIMEType();
+       String mime = methodXML.getMIMEType();
        System.out.println("\n\n*****GETBEHAVIORMETHODS RESULTS*****\nMIME: "+
                           mime);
        ByteArrayInputStream bais =
-           new ByteArrayInputStream(methodWSDL.getStream());
+           new ByteArrayInputStream(methodXML.getStream());
        int c = 0;
        while ((c = bais.read()) > 0)
        {

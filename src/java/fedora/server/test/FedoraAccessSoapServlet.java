@@ -45,7 +45,7 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <ol>
  * <li>GetBehaviorDefinitions - Gets list of Behavior Defintions</li>
  * <li>GetBehaviorMethods - Gets list of Behavior Methods</li>
- * <li>GetBehaviorMethodsAsWSDL - Gets Behavior Methods as XML</li>
+ * <li>GetBehaviorMethodsXML - Gets Behavior Methods as XML</li>
  * <li>GetDissemination - Gets a dissemination result</li>
  * <li>GetObjectmethods - Gets a list of all Behavior Methods of an object.</li>
  * </ol>
@@ -111,9 +111,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_BEHAVIOR_METHODS =
       "GetBehaviorMethods";
 
-  /** GetBehaviorMethodsAsWSDL service name. */
-  private static final String GET_BEHAVIOR_METHODS_AS_WSDL =
-      "GetBehaviorMethodsAsWSDL";
+  /** GetBehaviorMethodsXML service name. */
+  private static final String GET_BEHAVIOR_METHODS_XML =
+      "GetBehaviorMethodsXML";
 
   /** GetDissemination service name. */
   private static final String GET_DISSEMINATION =
@@ -439,14 +439,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, clearCache, response, message);
         }
-      } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_AS_WSDL))
+      } else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
         try
         {
           // Call Fedora Access SOAP service to request Method Definitions
-          // in WSDL form.
-          methodDefs = getBehaviorMethodsAsWSDL(PID, bDefPID, asOfDateTime);
+          // in XML form.
+          methodDefs = getBehaviorMethodsXML(PID, bDefPID, asOfDateTime);
           if (methodDefs != null)
           {
             // Method Definitions found; output resutls as XML.
@@ -479,9 +479,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
             out.println("</definitions>");
           } else
           {
-            // Method Definition request in WSDL form returned nothing.
+            // Method Definition request in XML form returned nothing.
             String message = "FedoraSoapServlet: No Behavior Methods returned "
-                + "as WSDL.";
+                + "as XML.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, clearCache, response, message);
@@ -490,7 +490,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         {
           // FIXME!! Needs more refined Exception handling.
           String message = "FedoraSoapServlet: No Behavior Methods returned "
-                         + "as WSDL. <br> Exception: " + e.getClass().getName()
+                         + "as XML. <br> Exception: " + e.getClass().getName()
                          + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
@@ -778,26 +778,25 @@ public class FedoraAccessSoapServlet extends HttpServlet
   }
 
   /**
-   * <p>Gets a bytestream containing the WSDL that defines the Behavior Methods
+   * <p>Gets a bytestream containing the XML that defines the Behavior Methods
    * of the associated Behavior Mechanism object by invoking the appropriate
    * Fedora Access SOAP service.
    *
    * @param PID The persistent identifier of digital object.
    * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param asOfDateTime The versioning datetime stamp.
-   * @return MIME-typed stream containing XML-encoded method definitions
-   *         from WSDL.
+   * @return MIME-typed stream containing XML-encoded method definitions.
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
    */
-  public MIMETypedStream getBehaviorMethodsAsWSDL(
+  public MIMETypedStream getBehaviorMethodsXML(
       String PID, String bDefPID, Calendar asOfDateTime) throws Exception
   {
     MIMETypedStream methodDefs = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
     call.setOperationName(new QName(FEDORA_API_URI,
-                                    GET_BEHAVIOR_METHODS_AS_WSDL) );
+                                    GET_BEHAVIOR_METHODS_XML) );
     QName qn = new QName(FEDORA_TYPE_URI, "MIMETypedStream");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
 
@@ -1132,11 +1131,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
       }
     } else if (action != null &&
                (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS) ||
-               action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_AS_WSDL)))
+               action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML)))
     {
       if (PID == null || bDefPID == null)
       {
-        // GetBehaviorMethods and GetBehaviorMethodsAsWSDL require PID, bDefPID;
+        // GetBehaviorMethods and GetBehaviorMethodsXML require PID, bDefPID;
         // asOfDateTime is optional.
         response.setContentType(CONTENT_TYPE_HTML);
         out.println("<html>");
