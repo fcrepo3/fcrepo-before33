@@ -319,26 +319,6 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         toolsMenu.add(toolsSearch);
 
-        JMenu toolsAdvanced=new JMenu("Advanced");
-
-
-        JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
-        toolsManagement.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createManagementConsole();
-            }
-        });
-        toolsAdvanced.add(toolsManagement);
-
-        JMenuItem toolsAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
-        toolsAccess.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                createAccessConsole();
-            }
-        });
-        toolsAdvanced.add(toolsAccess);
-        toolsMenu.add(toolsAdvanced);
-
 	//wdn >
         //JMenu toolsBatchSubMenu=new JMenu("Batch", KeyEvent.VK_B);
         JMenu toolsBatchSubMenu=new JMenu("Batch");
@@ -367,8 +347,25 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         });
         toolsBatchSubMenu.add(toolsBatchIngest);
         toolsMenu.add(toolsBatchSubMenu);
-
         // < wdn
+
+        JMenu toolsAdvanced=new JMenu("Advanced");
+        JMenuItem toolsManagement=new JMenuItem("Management Console",KeyEvent.VK_M);
+        toolsManagement.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createManagementConsole();
+            }
+        });
+        toolsAdvanced.add(toolsManagement);
+
+        JMenuItem toolsAccess=new JMenuItem("Access Console",KeyEvent.VK_A);
+        toolsAccess.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createAccessConsole();
+            }
+        });
+        toolsAdvanced.add(toolsAccess);
+        toolsMenu.add(toolsAdvanced);
 
         menuBar.add(toolsMenu);
 
