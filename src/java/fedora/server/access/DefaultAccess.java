@@ -1,6 +1,8 @@
 package fedora.server.access;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -30,6 +32,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOManager;
+import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamDef;
 import fedora.server.storage.types.DatastreamReferencedContent;
@@ -86,6 +89,8 @@ public class DefaultAccess extends Module implements Access
   // FIXIT!! is this the right way to associate the dynamic access module???
   private DynamicAccessModule m_dynamicAccess;
 
+  private ExternalContentManager m_externalContentManager;
+  
   private String fedoraServerHost = null;
 
   private String fedoraServerPort = null;
@@ -146,6 +151,11 @@ public class DefaultAccess extends Module implements Access
       // get ref to DynamicAccess module
       m_dynamicAccess = (DynamicAccessModule) getServer().
               getModule("fedora.server.access.DynamicAccess");
+      
+      // get ref to ExternalContentManager
+      m_externalContentManager = (ExternalContentManager) getServer().
+      getModule("fedora.server.storage.ExternalContentManager");      
+      
     // get ref to OAIProvider, for repositoryDomainName param for oai info
     Module oaiProvider=(Module) getServer().getModule("fedora.oai.OAIProvider");
     if (oaiProvider==null) {
@@ -822,13 +832,13 @@ public class DefaultAccess extends Module implements Access
           String dsID, Date asOfDateTime) throws ServerException {
       PID = Server.getPID(PID).toString();
       m_ipRestriction.enforce(context);
+      MIMETypedStream mimeTypedStream = null;
       long startTime = new Date().getTime();
       DOReader reader = m_manager.getReader(context, PID);
 
       // Check data object state
       checkState(context, "Data", reader.GetObjectState(), PID);
       Datastream ds = (Datastream) reader.GetDatastream(dsID, asOfDateTime);
-      InputStream inStream = null;
       if (ds == null) {
           String message = "[DefaulAccess] No datastream could be returned. "
               + "Either there is no datastream for the digital "
@@ -838,20 +848,45 @@ public class DefaultAccess extends Module implements Access
               + " \"  .";
           throw new DatastreamNotFoundException(message);
       }
-      if (ds.DSControlGrp.equalsIgnoreCase("E") || ds.DSControlGrp.equalsIgnoreCase("R")) {
+      
+      if (ds.DSControlGrp.equalsIgnoreCase("E")) {
           DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = drc.getContentStream();
+          mimeTypedStream = m_externalContentManager.getExternalContent(drc.DSLocation);
       } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
           DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = dmc.getContentStream();
+          mimeTypedStream = new MIMETypedStream(ds.DSMIME, dmc.getContentStream(), null);
       } else if(ds.DSControlGrp.equalsIgnoreCase("X")) {
           DatastreamXMLMetadata dxm =  (DatastreamXMLMetadata) reader.GetDatastream(dsID, asOfDateTime);
-          inStream = dxm.getContentStream();
+          mimeTypedStream = new MIMETypedStream(ds.DSMIME, dxm.getContentStream(), null);
+      } else if(ds.DSControlGrp.equalsIgnoreCase("R")){
+          DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
+          // The dsControlGroupType of Redirect("R") is a special control type
+          // used primarily for streaming media. Datastreams of this type are
+          // not mediated (proxied by Fedora) and their physical dsLocation is
+          // simply redirected back to the client. Therefore, the contents
+          // of the MIMETypedStream returned for dissemination requests will
+          // contain the raw URL of the dsLocation and will be assigned a
+          // special fedora-specific MIME type to identify the stream as
+          // a MIMETypedStream whose contents contain a URL to which the client
+          // should be redirected.
+          try
+          {
+            InputStream inStream = new ByteArrayInputStream(drc.DSLocation.getBytes("UTF-8"));
+            mimeTypedStream = new MIMETypedStream("application/fedora-redirect", inStream, null);
+          } catch (UnsupportedEncodingException uee)
+          {
+            String message = "[DefaultAccess] An error has occurred. "
+                + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+                + "Reason was \"" + uee.getMessage() + "\"  . String value: "
+                + drc.DSLocation + "  . ";
+            logFinest(message);
+            throw new GeneralException(message);
+          }          
       }
       long stopTime = new Date().getTime();
       long interval = stopTime - startTime;
       logFiner("[DefaultAccess] Roundtrip getDatastreamDissemination: "
               + interval + " milliseconds.");      
-      return new MIMETypedStream(ds.DSMIME, inStream, null);
+      return mimeTypedStream;
   }
 }

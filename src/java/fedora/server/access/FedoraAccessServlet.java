@@ -570,28 +570,59 @@ public class FedoraAccessServlet extends HttpServlet
 
         // Dissemination was successful;
         // Return MIMETypedStream back to browser client
-        response.setContentType(dissemination.MIMEType);
-        Property[] headerArray = dissemination.header;
-        if(headerArray != null) {
-            for(int i=0; i<headerArray.length; i++) {
-                if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
-                    response.addHeader(headerArray[i].name, headerArray[i].value);
-                    if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
-                }
-            }
-        }
-        out = response.getOutputStream();
-        int byteStream = 0;
-        InputStream dissemResult = dissemination.getStream();
-        byte[] buffer = new byte[255];
-        while ((byteStream = dissemResult.read(buffer)) != -1)
+        if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect"))
         {
-          out.write(buffer, 0, byteStream);
-        }
-        buffer = null;
-        dissemResult.close();
-        dissemResult = null;
+          // A MIME type of application/fedora-redirect signals that the
+          // MIMETypedStream returned from the dissemination is a special
+          // Fedora-specific MIME type. In this case, the Fedora server will
+          // not proxy the datastream, but instead perform a simple redirect to
+          // the URL contained within the body of the MIMETypedStream. This
+          // special MIME type is used primarily for streaming media where it
+          // is more efficient to stream the data directly between the streaming
+          // server and the browser client rather than proxy it through the
+          // Fedora server.
 
+          BufferedReader br = new BufferedReader(
+              new InputStreamReader(dissemination.getStream()));
+          StringBuffer sb = new StringBuffer();
+          String line = null;
+          while ((line = br.readLine()) != null)
+          {
+            sb.append(line);
+          }
+
+          response.sendRedirect(sb.toString());
+        } else
+        {
+
+          response.setContentType(dissemination.MIMEType);
+          Property[] headerArray = dissemination.header;
+          if(headerArray != null) {
+              for(int i=0; i<headerArray.length; i++) {
+                  if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                      response.addHeader(headerArray[i].name, headerArray[i].value);
+                      if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                  }
+              }
+          }        
+          long startTime = new Date().getTime();
+          out = response.getOutputStream();
+          int byteStream = 0;
+          InputStream dissemResult = dissemination.getStream();
+          byte[] buffer = new byte[255];
+          while ((byteStream = dissemResult.read(buffer)) != -1)
+          {
+            out.write(buffer, 0, byteStream);
+          }
+          buffer = null;
+          dissemResult.close();
+          dissemResult = null;
+          long stopTime = new Date().getTime();
+          long interval = stopTime - startTime;
+          logger.logFiner("[FedoraAccessServlet] Read InputStream "
+              + interval + " milliseconds.");
+        }        
+        
     } else
     {
       // Dissemination request failed; echo back request parameter.
@@ -671,6 +702,15 @@ public class FedoraAccessServlet extends HttpServlet
       {
 
         response.setContentType(dissemination.MIMEType);
+        Property[] headerArray = dissemination.header;
+        if(headerArray != null) {
+            for(int i=0; i<headerArray.length; i++) {
+                if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
+                    response.addHeader(headerArray[i].name, headerArray[i].value);
+                    if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                }
+            }
+        }        
         long startTime = new Date().getTime();
         int byteStream = 0;
         InputStream dissemResult = dissemination.getStream();
