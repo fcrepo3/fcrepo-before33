@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:DualResImageCollection" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="info:fedora/fedora-system:def/fType" VALUE="FedoraBMechObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/state" VALUE="A"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/label" VALUE="Collection of DualResImage Objects"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/cDate" VALUE="2004-12-13T01:06:42Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/mDate" VALUE="2004-12-13T01:06:43Z"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="fedora:BMECH"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="X" ID="WSDL" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="WSDL1.0" LABEL="WSDL definition of service" SIZE="4104">
+      <foxml:xmlContent>
+        <wsdl:definitions name="Collection of DualResImage Objects" targetNamespace="bmech"
+          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap"
+          xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="bmech"
+          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <wsdl:types>
+            <xsd:schema targetNamespace="bmech">
+              <xsd:simpleType name="IMAGE_LISTType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="VIEW_STYLEType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="PIDType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+            </xsd:schema>
+          </wsdl:types>
+          <wsdl:message name="viewRequest">
+            <wsdl:part name="IMAGE_LIST" type="this:IMAGE_LISTType"/>
+            <wsdl:part name="VIEW_STYLE" type="this:VIEW_STYLEType"/>
+          </wsdl:message>
+          <wsdl:message name="listRequest">
+            <wsdl:part name="PID" type="this:PIDType"/>
+          </wsdl:message>
+          <wsdl:message name="dissemResponse">
+            <wsdl:part name="dissem" type="xsd:base64Binary"/>
+          </wsdl:message>
+          <wsdl:portType name="DualResImageCollectionPortType">
+            <wsdl:operation name="view">
+              <wsdl:input message="this:viewRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+            <wsdl:operation name="list">
+              <wsdl:input message="this:listRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+          </wsdl:portType>
+          <wsdl:service name="DualResImageCollection">
+            <wsdl:port binding="this:DualResImageCollection_http" name="DualResImageCollection_port">
+              <http:address location="http://local.fedora.server/"/>
+            </wsdl:port>
+          </wsdl:service>
+          <wsdl:binding name="DualResImageCollection_http" type="this:DualResImageCollectionPortType">
+            <http:binding verb="GET"/>
+            <wsdl:operation name="view">
+              <http:operation location="saxon/SaxonServlet?style=(VIEW_STYLE)&amp;source=(IMAGE_LIST)&amp;clear-stylesheet-cache=yes"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="text/html"/>
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="list">
+              <http:operation location="fedora/risearch?type=tuples&amp;lang=itql&amp;format=Dawg&amp;query=select+%24ct+%24cd+%24m+%24mt+%24md+from+%3C%23resourceIndex%3E+where+%3Cinfo%3Afedora%2F(PID)%3E+%3Cdc%3Atitle%3E+%24ct+and+%3Cinfo%3Afedora%2F(PID)%3E+%3Cdc%3Adescription%3E+%24cd+and+%24m+%3Crels%3AisMemberOf%3E+%3Cinfo%3Afedora%2F(PID)%3E+and+%24m+%3Cdc%3Atitle%3E+%24mt+and+%24m+%3Cdc%3Adescription%3E+%24md"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="text/xml"/>
+              </wsdl:output>
+            </wsdl:operation>
+          </wsdl:binding>
+        </wsdl:definitions>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="SERVICE-PROFILE" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="SERVICE-PROFILE1.0"
+      LABEL="Service Profile - Technical description of the service" SIZE="895">
+      <foxml:xmlContent>
+        <fsvp:serviceProfile bDefPID="demo:Collection" name="" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+          <fsvp:serviceDescription/>
+          <fsvp:serviceImplementation>
+            <fsvp:serviceLiveTestURL/>
+            <fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+            <fsvp:serviceInputFormats/>
+            <fsvp:serviceOutputFormats>
+              <fsvp:MIMEType>text/xml</fsvp:MIMEType>
+              <fsvp:MIMEType>text/html</fsvp:MIMEType>
+            </fsvp:serviceOutputFormats>
+            <fsvp:serviceImplDependencies/>
+          </fsvp:serviceImplementation>
+        </fsvp:serviceProfile>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DC" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="DC1.0" LABEL="Dublin Core Metadata for Service" SIZE="260">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Collection of DualResImage Objects</dc:title>
+          <dc:identifier>demo:DualResImageCollection</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="DSINPUTSPEC1.0"
+      LABEL="Datastream Input Specification for Service" SIZE="578">
+      <foxml:xmlContent>
+        <fbs:DSInputSpec bDefPID="demo:Collection" label="Datastream Input Specification for Collection of DualResImage Objects" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="IMAGE_LIST">
+            <fbs:DSInputLabel>IMAGE_LIST Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>text/xml</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="VIEW_STYLE">
+            <fbs:DSInputLabel>VIEW_STYLE Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>text/xml</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+        </fbs:DSInputSpec>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP" MIMETYPE="text/xml" STATE="A" VERSIONABLE="true">
+    <foxml:datastreamVersion CREATED="2004-12-13T01:06:42Z" ID="METHODMAP1.0" LABEL="Mapping of WSDL to Fedora notion of Method Definitions" SIZE="1219">
+      <foxml:xmlContent>
+        <fmm:MethodMap bDefPID="demo:Collection" name="MethodMap - Collection of DualResImage Objects" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+          <fmm:Method operationLabel="An html representation of the collection" operationName="view"
+            wsdlMsgName="viewRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DatastreamInputParm defaultValue="" label="A datastream fronting the list dissemination"
+              parmName="IMAGE_LIST" passBy="URL_REF" required="true"/>
+            <fmm:DatastreamInputParm defaultValue="" label="An xml stylesheet to generate html from the list"
+              parmName="VIEW_STYLE" passBy="URL_REF" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="text/html"/>
+          </fmm:Method>
+          <fmm:Method operationLabel="An xml list of members in the collection" operationName="list"
+            wsdlMsgName="listRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DefaultInputParm defaultValue="$PID" label="The PID of the data object" parmName="PID" passBy="VALUE" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="text/xml"/>
+          </fmm:Method>
+        </fmm:MethodMap>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+</foxml:digitalObject>
