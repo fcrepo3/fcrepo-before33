@@ -12,7 +12,6 @@ if [ ! -f "$FEDORA_HOME/config/fedora.fcfg" ]; then
 fi
 
 if [ "$FEDORA_JAVA_HOME" = "" ]; then
-  echo "Warning: FEDORA_JAVA_HOME not set, falling back to JAVA_HOME"
   if [ "$JAVA_HOME" = "" ]; then
     echo "ERROR: FEDORA_JAVA_HOME was not defined, nor was (the fallback) JAVA_HOME."
     exit 1
@@ -35,13 +34,6 @@ if [ ! -f "$THIS_JAVA_HOME/bin/orbd" ]; then
   exit 1
 fi
 
-if [ $# -lt 1 ]; then
-  echo "ERROR: You must provide the shutdown password as a parameter."
-  exit 1
-fi
-
-echo "Stopping Fedora server..."
-
 TC=$FEDORA_HOME/tomcat41
 export TC
 OLD_JAVA_HOME=$JAVA_HOME
@@ -51,7 +43,10 @@ export JAVA_HOME
 C=$TC/common/lib
 CP=$C/saaj.jar:$C/commons-discovery.jar:$C/axis.jar:$C/commons-logging.jar:$C/jaxrpc.jar:$C/wsdl4j.jar:$C/tt-bytecode.jar
 
-echo "Shutting down Tomcat..."
+echo "Shutting down Fedora Server and Modules..."
+(exec $JAVA_HOME/bin/java -cp $TC/webapps/fedora/WEB-INF/classes:$TC/common/lib/servlet.jar -Dfedora.home=$FEDORA_HOME fedora.server.ServerController shutdown)
+
+echo "Shutting down Fedora Service..."
 
 (exec $JAVA_HOME/bin/java -cp $TC/bin/bootstrap.jar -Dfedora.home=$FEDORA_HOME -Dclasspath=$TC/bin/bootstrap.jar -Djava.endorsed.dirs=$TC/bin -Djava.security.manager -Djava.security.policy=$TC/conf/catalina.policy -Dcatalina.base=$TC -Dcatalina.home=$TC -Djava.io.tmpdir=$TC/temp org.apache.catalina.startup.Bootstrap stop)
 
