@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.StdoutLogging;
-import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.QueryParseException;
@@ -126,14 +125,14 @@ public class FieldSearchResultSQLImpl
         m_conn=m_cPool.getConnection();
         try {
             m_statement=m_conn.createStatement();
-            m_resultSet=m_statement.executeQuery(logAndGetQueryText(query));
+            m_resultSet=m_statement.executeQuery(logAndGetQueryText(query, m_resultFields)); //2004.05.02 wdn5e
         } catch (SQLException sqle) {
             // if there's any kind of problem getting the resultSet,
             // give the connection back to the pool
             try {
                 if (m_resultSet != null) m_resultSet.close();
                 if (m_statement != null) m_statement.close();
-                if (m_conn!=null) m_cPool.free(m_conn);
+                if (m_conn!=null) m_cPool.free(m_conn);                               
                 throw sqle;
             } catch (SQLException sqle2) {
                 throw sqle2;
@@ -144,16 +143,29 @@ public class FieldSearchResultSQLImpl
         }
     }
 
-    private String logAndGetQueryText(FieldSearchQuery query)
+	//2004.05.02 wdn5e -- sort on selected fields
+    private String logAndGetQueryText(FieldSearchQuery query, String[] resultFields) //2004.05.02 wdn5e
             throws SQLException, QueryParseException {
-        StringBuffer queryText=new StringBuffer();
-        queryText.append("SELECT doFields.pid FROM doFields");
+        StringBuffer queryText=new StringBuffer("SELECT");
         if (query.getType()==FieldSearchQuery.TERMS_TYPE) {
-            queryText.append(getWhereClause(query.getTerms()));
+            queryText.append(" doFields.pid FROM doFields" + getWhereClause(query.getTerms()));
         } else {
+        	StringBuffer resultFieldsString = new StringBuffer();
+			if (resultFields.length > 0) {
+				String delimiter = " ";
+				for (int i=0; i < resultFields.length; i++) {
+					String dbColumn = dcFixup(resultFields[i]);
+					resultFieldsString.append(delimiter + dbColumn);
+					delimiter = ", ";
+				}
+			}
+			queryText.append(resultFieldsString);
+			queryText.append(" FROM doFields");
             queryText.append(getWhereClause(query.getConditions()));
+			queryText.append(" ORDER BY");
+			queryText.append(resultFieldsString);
+
         }
-        logFinest("Doing field search query: " + queryText.toString());
         return queryText.toString();
     }
 
@@ -654,15 +666,26 @@ public class FieldSearchResultSQLImpl
      * @param the field
      * @return whether it's a dublin core field
      */
-    private boolean isDCProp(String in) {
+    private static final boolean isDCProp(String in) {//2004.05.18 wdn5e wasn't static final
         for (int i=0; i<FieldSearchSQLImpl.DB_COLUMN_NAMES.length; i++) {
-            String n=FieldSearchSQLImpl.DB_COLUMN_NAMES[i];
-            if ( (n.startsWith("dc"))
-                    && (n.toLowerCase().indexOf(in.toLowerCase())!=-1) ) {
+            String n=FieldSearchSQLImpl.DB_COLUMN_NAMES[i];       
+			if ( (n.startsWith("dc"))            
+                    && (n.toLowerCase().indexOf(in.toLowerCase()) == 2) ) { //2004.05.18 wdn5e (was -1)
                 return true;
             }
         }
         return false;
+    }
+    
+	//2004.05.18 wdn5e --  logic now needed > 1 places
+    private static final String dcFixup (String st) {
+    	String dcFixed;
+		if (isDCProp(st)) {
+			dcFixed = "dc" + st.substring(0,1).toUpperCase() + st.substring(1);
+		} else {
+			dcFixed = st;
+		}
+    	return dcFixed;
     }
 
 }
