@@ -94,13 +94,19 @@ class BatchTool {
 	static final String SERVERPORT = "server-port";	
 	private static final String EAT = "ingest";
 	static final String PIDSPATH = "ingested-pids";
+	static final String PIDSFORMAT = "pids-format";	
 
 	static final boolean argOK(String value) {
 		return (value != null) && ! value.equals("");
 	}	
 
 	public static final void main(String[] args) throws Exception {
-		Properties miscProperties = new Properties();
+		Properties defaults = new Properties();
+		String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
+System.err.println("defaultsPath=[" + defaultsPath + "]");		
+		defaults.load(new FileInputStream(defaultsPath)); //"dist/batch/default.properties"));	
+System.err.println("after loading defaults");		
+		Properties miscProperties = new Properties(defaults);
 		Properties datastreamProperties = new Properties();
 		Properties metadataProperties = new Properties();
 		

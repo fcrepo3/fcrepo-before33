@@ -12,7 +12,8 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerConfigurationException;
 //import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.TransformerFactory; // RunXSLT works with this
+//import javax.xml.transform.sax.SAXTransformerFactory; // was with error
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -21,8 +22,18 @@ import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 
+import java.io.Reader;
+import java.io.BufferedReader;
+
 
 class BatchXforms {
+	/** Constants used for JAXP 1.2 */
+    private static final String JAXP_SCHEMA_LANGUAGE =
+        "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    private static final String W3C_XML_SCHEMA =
+        "http://www.w3.org/2001/XMLSchema";
+    private static final String JAXP_SCHEMA_SOURCE =
+        "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
 
       private String additionsPath = null;
@@ -71,28 +82,50 @@ class BatchXforms {
 	
 	final void process() throws TransformerConfigurationException, Exception {
     		//System.err.println("before TransformerFactory.newInstance()"); //<<==		
-    		//System.err.println("xformPath =" + xformPath); //<<==		
-		SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();		
+    		System.err.println("xformPath=[" + xformPath + "]"); //<<==		
+		//SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();		
+		TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT		
+    		System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==		
 		if (good2go) {
 			int count = 0;
 			try {
 				File[] files = null; {
-//System.err.println("additions path " + additionsPath);
+System.err.println("additions path " + additionsPath);
 					File additionsDirectory = new File(additionsPath);
 					files = additionsDirectory.listFiles();
 				}			
 				int badFileCount = 0;
 				for (int i = 0; i < files.length; i++) {
-//System.err.println("another it");
+System.err.println("another it");
 					if (! files[i].isFile()) {
 						badFileCount++;
 						System.err.println("additions directory contains unexpected directory or file: " + files[i].getName());
 					} else {
-						
-//    		System.err.println("before tfactory.newTransformer()"); //<<==
-		transformer = tfactory.newTransformer(new StreamSource(xformPath));
-//		System.err.println("after tfactory.newTransformer()");	
-						
+
+    		System.err.println("before tfactory.newTransformer()"); //<<==
+
+		File f = new File(xformPath);
+		System.err.println("File " + xformPath + " exists=[" + (f.exists()) + "]");	
+		
+		StreamSource ss = new StreamSource(f);
+		System.err.println("ss null=[" + (ss == null) + "]");
+/*
+		Reader r = ss.getReader();
+		System.err.println("r null=[" + (r == null) + "]");
+		BufferedReader br = new BufferedReader(r);
+		System.err.println("br null=[" + (br == null) + "]");
+		String st = br.readLine();
+		System.err.println("st null=[" + (st == null) + "]");		
+		System.err.println("first line[" +  st + "]");
+    		System.err.println("after dummy SS"); //<<==	
+    		System.err.println("support?=[" + tfactory.getFeature(StreamSource.FEATURE) + "]"); //<<==
+		*/
+		
+	
+		transformer = tfactory.newTransformer(ss); //xformPath
+		
+		System.err.println("after tfactory.newTransformer(); is transformer null? " + (transformer == null));	
+	
 						GregorianCalendar calendar = new GregorianCalendar();
 						String year = Integer.toString(calendar.get(Calendar.YEAR)); 
 						String month = leftPadded(1+ calendar.get(Calendar.MONTH),2); 
@@ -117,8 +150,11 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 */
 //System.err.println("File.separator " + File.separator);
 //System.err.println("files[i].getName() " + files[i].getName());
+		System.err.println("before calling xform");	
 
-						transformer.setParameter("subfilepath",files[i].getPath());
+						String temp = "file:///" + files[i].getPath(); //(files[i].getPath()).replaceFirst("C:", "file:///C:");
+				System.err.println("path is [" + temp); //files[i].getPath());							
+						transformer.setParameter("subfilepath",temp); //files[i].getPath());
 						//transform(new FileInputStream(files[i]), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
 						transform(new FileInputStream(modelPath), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
 						

@@ -13,10 +13,12 @@ class BatchIngest {
 	//set by arguments to constructor 
 	String objectsPath = null;
 	String pidsPath = null;
+	String pidsFormat = null;	
 	
 	BatchIngest(Properties optValues) throws Exception {
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		pidsPath = optValues.getProperty(BatchTool.PIDSPATH);
+		pidsFormat = optValues.getProperty(BatchTool.PIDSFORMAT);		
 		host = optValues.getProperty(BatchTool.SERVERFQDN);
 		String serverPortAsString = optValues.getProperty(BatchTool.SERVERPORT);
 		if (! BatchTool.argOK(objectsPath)) {
@@ -26,7 +28,11 @@ class BatchIngest {
 		if (! BatchTool.argOK(pidsPath)) {
 			System.err.println("pidsPath required");			
 			throw new Exception();
-		}		
+		}	
+		if (! BatchTool.argOK(pidsFormat)) {
+			System.err.println("pids-format required");			
+			throw new Exception();
+		}	
 		if (! BatchTool.argOK(host)) {
 			System.err.println("server-fqdn required");			
 			throw new Exception();
@@ -55,32 +61,48 @@ class BatchIngest {
 			files = batchDirectory.listFiles();
 		}
 
-		PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err; 
-	
-		int badFileCount = 0;
-		int succeededIngestCount = 0;
-		int failedIngestCount = 0;
-		String logMessage = "another fedora object";
-		for (int i = 0; i < files.length; i++) {
-			if (! files[i].isFile()) {
-				badFileCount++;
-				System.err.println("batch directory contains unexpected directory or file: " + files[i].getName());
-			} else {
-				String pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), logMessage);
-				if ((pid == null) || (pid.equals (""))) {
-					failedIngestCount++;
-					System.err.println("ingest failed for file: " + files[i].getName());
+		
+		if (! (pidsFormat.equals("xml") || pidsFormat.equals("text")) ) {
+			System.err.println("bad pidsFormat");
+		} else {
+			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err; 
+			int badFileCount = 0;
+			int succeededIngestCount = 0;
+			int failedIngestCount = 0;
+			String logMessage = "another fedora object";
+			if (pidsFormat.equals("xml")) {
+				out.println("<map-inputids-to-pids>");
+			}
+			for (int i = 0; i < files.length; i++) {
+				if (! files[i].isFile()) {
+					badFileCount++;
+					System.err.println("batch directory contains unexpected directory or file: " + files[i].getName());
 				} else {
-					succeededIngestCount++;
-					out.println(files[i].getName() + "\t" + pid);
+					String pid = autoIngestor.ingestAndCommit(new FileInputStream(files[i]), logMessage);
+					if ((pid == null) || (pid.equals (""))) {
+						failedIngestCount++;
+						System.err.println("ingest failed for file: " + files[i].getName());
+					} else {
+						succeededIngestCount++;
+						if (pidsFormat.equals("xml")) {
+							out.println("\t<map inputid=\"" + files[i].getName() + "\" pid=\"" + pid + "\" />");
+						} else if (pidsFormat.equals("text")) {
+							out.println(files[i].getName() + "\t" + pid);
+						} else {
+							System.err.println("bad pidsFormat");
+						}
+					}
 				}
 			}
-		}
-		out.close();
-		System.err.println("\n" + (succeededIngestCount + failedIngestCount + badFileCount) + " files processed in this batch");
-		System.err.println("\t" + succeededIngestCount + " objects successfully ingested into Fedora");
-		System.err.println("\t" + failedIngestCount + " objects unsuccessfully ingest into Fedora");
-		System.err.println("\t" + badFileCount + " unexpected files in batch directory");		
+			if (pidsFormat.equals("xml")) {
+				out.println("</map-inputids-to-pids>");
+			}
+			out.close();
+			System.err.println("\n" + (succeededIngestCount + failedIngestCount + badFileCount) + " files processed in this batch");
+			System.err.println("\t" + succeededIngestCount + " objects successfully ingested into Fedora");
+			System.err.println("\t" + failedIngestCount + " objects unsuccessfully ingest into Fedora");
+			System.err.println("\t" + badFileCount + " unexpected files in batch directory");		
+		}		
 	}
 	
 	public static final void main(String[] args) {
