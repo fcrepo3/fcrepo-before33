@@ -88,7 +88,7 @@
 		<copy todir="dist/client" file="COPYRIGHT.TXT"/>
 		<copy todir="dist/client" file="license.html"/>
 		<copy todir="dist/client" file="copyright.html"/>
-            <mkdir dir="dist/server/userdocs"/>
+		<mkdir dir="dist/server/userdocs"/>
 		<copy todir="dist/server/userdocs">
 			<fileset dir="dist/userdocs"/>
 		</copy>
@@ -520,7 +520,7 @@
 			<arg path="dist/userdocs/client/admin-gui/builder/builder.html"/>
 			<arg path="src/dbx/userdocs/builder.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
+		</exec>
 		<echo message="Translating webexp.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -733,8 +733,8 @@
 		<mkdir dir="dist/server"/>
 		<copy todir="dist/server">
 			<fileset dir="inc/server">
-                      <exclude name="**/exist09/**"/>
-                  </fileset>
+				<exclude name="**/exist09/**"/>
+			</fileset>
 		</copy>
 		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
@@ -802,6 +802,8 @@
 		<copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
 		<!--DublinCore xsl stylesheet used by Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
+		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
+		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
@@ -840,6 +842,7 @@
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/viewRepositoryInfo.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/tomcat41/webapps/userdocs/WEB-INF"/>
@@ -950,6 +953,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.139  2003/06/25 19:02:35  payette
+  new copies for viewRepositoryInfo stylesheets for API-A and API-A-Lite
+
   Revision 1.138  2003/05/17 07:31:47  cwilper
   oops..re-fixed the javadoc prob
 
