@@ -64,8 +64,7 @@ import fedora.server.storage.types.MethodParmDef;
  * from the Definitive storage area using the appropriate definitive reader.
  * When the object exists in both storage areas, preference is given to the
  * Fast storage area since this reader is designed to read primarily from the
- * Fast Storage area. <code>DefinitiveDOReader</code>,
- * <code>DefinitveBMechReader</code>, or <code>DefinitiveBDefReader</code>
+ * Fast Storage area. <code>SimpleDODOReader</code>
  * should always be used to read the authoritative version of an object.</p>
  * <i><b>Note that versioning is not implemented in Phase 1. Methods in
  * <code>FastDOReader</code> that contain arguments related to versioning date
@@ -79,38 +78,33 @@ import fedora.server.storage.types.MethodParmDef;
  */
 public class FastDOReader implements DOReader
 {
-  /** Debug toggle for testing */
-  private static boolean debug;
 
   /** Database ConnectionPool instance */
-  private static ConnectionPool connectionPool = null;
+  protected static ConnectionPool connectionPool = null;
 
   /** Fedora server instance */
-  private static Server s_server = null;
+  protected static Server s_server = null;
 
   /** Current Fedora server DOManager instance */
-  private static DOManager m_manager = null;
+  protected static DOManager m_manager = null;
 
   /** Signals object found in fast storage area */
-  private boolean isFoundInFastStore = false;
+  protected boolean isFoundInFastStore = false;
 
   /** signals object found in definitive storage area */
-  private boolean isFoundInDefinitiveStore = false;
+  protected boolean isFoundInDefinitiveStore = false;
 
   /** Label of the digital object. */
-  private String doLabel = null;
+  protected String doLabel = null;
 
   /** Persistent identifier of the digital object. */
-  private String PID = null;
+  protected String PID = null;
 
   /** Instance of DOReader... used to get definitive readers. */
-  private DOReader doReader = null;
-
-  /** Context for cached objects. */
-  private Context s_context = null;
+  protected DOReader doReader = null;
 
   /** Context for uncached objects. */
-  private static Context m_context = null;
+  protected static Context m_context = null;
 
   /** Make sure we have a server instance. */
   static
@@ -119,8 +113,6 @@ public class FastDOReader implements DOReader
     {
       s_server =
           Server.getInstance(new File(System.getProperty("fedora.home")));
-      Boolean B1 = new Boolean(s_server.getParameter("debug"));
-      debug = B1.booleanValue();
       m_manager = (DOManager) s_server.getModule(
           "fedora.server.storage.DOManager");
       HashMap h = new HashMap();
@@ -139,7 +131,7 @@ public class FastDOReader implements DOReader
    * object. It initializes the database connection for JDBC access to the
    * relational database and verifies existence of the specified object. If
    * the object is found, this constructor initializes the class variables for
-   * <code>PID</code>, <code>doLabel</code>, and <code>s_context</code>.
+   * <code>PID</code> and <code>doLabel</code>.
    *
    * @param context The context of this request.
    * @param objectPID The persistent identifier of the digital object.
@@ -158,17 +150,15 @@ public class FastDOReader implements DOReader
       // Attempt to find object in either Fast or Definitive store
       this.doLabel = locatePID(objectPID);
       this.PID = objectPID;
-      this.s_context = context;
-      s_server.logFinest("instantiated FastDOReader: context:" + s_context);
     } catch (ServerException se)
     {
       throw se;
     } catch (Throwable th)
     {
-      s_server.logWarning("Unable to construct FastDOReader");
-      throw new GeneralException("Fast reader returned error: ("
-                                 + th.getClass().getName() + ") - "
-                                 + th.getMessage());
+      s_server.logWarning("[FastDOReader] Unable to construct FastDOReader");
+      throw new GeneralException("[FastDOReader] An error has occurred. The "
+          + "error was a  \"" + th.getClass().getName() + "\"  . Reason:  \""
+          + th.getMessage() + "\"  .");
     }
   }
 
@@ -195,10 +185,9 @@ public class FastDOReader implements DOReader
       return(doReader.ExportObject());
     } catch (Throwable th)
     {
-      throw new GeneralException("Definitive reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     }
 
   }
@@ -266,7 +255,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetBehaviorDefsQuery: " + query);
+      s_server.logFinest("[FastDOReader] GetBehaviorDefsQuery: " + query);
       String results = null;
       try
       {
@@ -293,10 +282,9 @@ public class FastDOReader implements DOReader
 
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -309,7 +297,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -327,10 +315,9 @@ public class FastDOReader implements DOReader
         behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return behaviorDefs;
@@ -386,11 +373,11 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID='" + bDefPID + "' AND "
           + "method.methodName='"  + methodName + "' ";
 
-      if(debug) s_server.logFinest("GetBMechMethodParmQuery=" + query);
+      s_server.logFinest("GetBMechMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        if(debug) s_server.logFinest("connectionPool = " + connectionPool);
+        s_server.logFinest("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -432,10 +419,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -448,7 +434,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -467,10 +453,9 @@ public class FastDOReader implements DOReader
             versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return methodParms;
@@ -530,11 +515,11 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID='" + bDefPID + "' AND "
           + "method.methodName='"  + methodName + "' ";
 
-      if(debug) s_server.logFinest("GetBMechDefaultMethodParmQuery=" + query);
+      s_server.logFinest("GetBMechDefaultMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        if(debug) s_server.logFinest("connectionPool = " + connectionPool);
+        s_server.logFinest("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -577,10 +562,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -593,7 +577,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -681,7 +665,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID = \'" + bDefPID + "\' AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
+      s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -707,11 +691,9 @@ public class FastDOReader implements DOReader
           } catch (Throwable th)
           {
             // Failed to get method paramters
-            throw new GeneralException("Fast reader returned error. The "
-                                       + "underlying error was a "
-                                       + th.getClass().getName()
-                                       + "The message was \""
-                                       + th.getMessage() + "\"");
+            throw new GeneralException("[FastDOReader] An error has occured. The "
+                + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
           }
           queryResults.add(methodDef);
         }
@@ -724,10 +706,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -740,7 +721,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -758,10 +739,9 @@ public class FastDOReader implements DOReader
         methodDefs = doReader.getObjectMethods(bDefPID, versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return methodDefs;
@@ -799,10 +779,9 @@ public class FastDOReader implements DOReader
 
     } catch (Throwable th)
     {
-      throw new GeneralException("Definitive reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     }
   }
 
@@ -841,7 +820,7 @@ public class FastDOReader implements DOReader
           + "dsBind.dsID=\'" + datastreamID +"\' AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetDatastreamQuery: " + query);
+      s_server.logFinest("GetDatastreamQuery: " + query);
       String[] results = null;
       try
       {
@@ -873,10 +852,9 @@ public class FastDOReader implements DOReader
       } catch (Throwable th)
       {
         // Problem with the relational database or query
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -889,7 +867,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -907,10 +885,9 @@ public class FastDOReader implements DOReader
         datastream = doReader.GetDatastream(datastreamID, versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return datastream;
@@ -949,7 +926,7 @@ public class FastDOReader implements DOReader
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetDatastreamsQuery: " + query);
+      s_server.logFinest("GetDatastreamsQuery: " + query);
       String[] results = null;
       try
       {
@@ -980,10 +957,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -996,7 +972,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1014,10 +990,9 @@ public class FastDOReader implements DOReader
         datastreamArray = doReader.GetDatastreams(versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return datastreamArray;
@@ -1080,13 +1055,13 @@ public class FastDOReader implements DOReader
           + " method.methodName=\'"  + methodName + "\' "
           + " ORDER BY dsBindSpec.dsBindSpecName";
 
-      if(debug) s_server.logFinest("GetDisseminationQuery=" + query);
+      s_server.logFinest("GetDisseminationQuery=" + query);
 
       try
       {
         // execute database query and retrieve results
         connection = connectionPool.getConnection();
-        if(debug) s_server.logFinest("DisseminationConnectionPool: "+
+        s_server.logFinest("DisseminationConnectionPool: "+
                                      connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
@@ -1133,10 +1108,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -1149,7 +1123,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1169,10 +1143,9 @@ public class FastDOReader implements DOReader
         // XML objects NOT implemented in Phase 1.
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return dissBindInfoArray;
@@ -1220,7 +1193,7 @@ public class FastDOReader implements DOReader
           + "diss.dissID=\'" + disseminatorID + "\' AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetDisseminatorQuery: " + query);
+      s_server.logFinest("GetDisseminatorQuery: " + query);
       String[] results = null;
       try
       {
@@ -1244,10 +1217,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -1260,7 +1232,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1278,10 +1250,9 @@ public class FastDOReader implements DOReader
         disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return disseminator;
@@ -1329,7 +1300,7 @@ public class FastDOReader implements DOReader
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("GetDisseminatorsQuery: " + query);
+      s_server.logFinest("GetDisseminatorsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1361,10 +1332,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -1377,7 +1347,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1395,10 +1365,9 @@ public class FastDOReader implements DOReader
         disseminatorArray = doReader.GetDisseminators(versDateTime);
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return disseminatorArray;
@@ -1424,10 +1393,9 @@ public class FastDOReader implements DOReader
       return doReader.GetDSBindingMaps(versDateTime);
     } catch (Throwable th)
     {
-      throw new GeneralException("Definitive reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     }
   }
 
@@ -1440,7 +1408,7 @@ public class FastDOReader implements DOReader
    */
   public String GetObjectLabel() throws GeneralException
   {
-    if (debug) s_server.logFinest("GetObjectLabel = " + doLabel);
+    s_server.logFinest("GetObjectLabel = " + doLabel);
     return doLabel;
   }
 
@@ -1495,7 +1463,7 @@ public class FastDOReader implements DOReader
           + "do.doPID=\'" + GetObjectPID() + "\' "
           + "ORDER BY bDef.bDefPID, method.methodName;";
 
-      if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
+      s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1529,10 +1497,9 @@ public class FastDOReader implements DOReader
         }
      } catch (Throwable th)
      {
-       throw new GeneralException("Fast reader returned error. The "
-                                  + "underlying error was a "
-                                  + th.getClass().getName() + "The message "
-                                  + "was \"" + th.getMessage() + "\"");
+       throw new GeneralException("[FastDOReader] An error has occured. The "
+           + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
      } finally
       {
         if (connection != null)
@@ -1545,7 +1512,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1574,7 +1541,8 @@ public class FastDOReader implements DOReader
           // here.
           if(methodDefs == null)
           {
-            throw new GeneralException("The object: " + GetObjectPID() + " is not a "
+            throw new GeneralException("[FastDOReader] The object: "
+                + GetObjectPID() + " is not a "
                 + "data object. Behavior Definition and Behavior Mechanism "
                 + "objects cannot be disseminated in the current release.");
           }
@@ -1602,10 +1570,9 @@ public class FastDOReader implements DOReader
       } catch (Throwable th)
       {
         th.printStackTrace();
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return objectMethodsDefArray;
@@ -1620,7 +1587,7 @@ public class FastDOReader implements DOReader
    */
   public String GetObjectPID() throws GeneralException
   {
-    if (debug) s_server.logFinest("GetObjectPID = " + PID);
+    s_server.logFinest("GetObjectPID = " + PID);
     return this.PID;
   }
 
@@ -1642,10 +1609,9 @@ public class FastDOReader implements DOReader
       return doReader.GetObjectState();
     } catch (Throwable th)
     {
-      throw new GeneralException("Definitive reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     }
   }
 
@@ -1682,10 +1648,9 @@ public class FastDOReader implements DOReader
       return(doReader.GetObjectXML());
     } catch (Throwable th)
     {
-      throw new GeneralException("Definitive reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     }
   }
 
@@ -1724,7 +1689,7 @@ public class FastDOReader implements DOReader
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("ListDatastreamIDsQuery: " + query);
+      s_server.logFinest("ListDatastreamIDsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1753,10 +1718,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -1787,10 +1751,9 @@ public class FastDOReader implements DOReader
         datastreamIDs = doReader.ListDatastreamIDs("");
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return datastreamIDs;
@@ -1832,7 +1795,7 @@ public class FastDOReader implements DOReader
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "do.doPID=\'" + PID + "\';";
 
-      if (debug) s_server.logFinest("ListDisseminatorIDsQuery: " + query);
+      s_server.logFinest("ListDisseminatorIDsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1862,10 +1825,9 @@ public class FastDOReader implements DOReader
         }
       } catch (Throwable th)
       {
-        throw new GeneralException("Fast reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] An error has occured. The "
+            + "underlying error was a  \"" + th.getClass().getName()
+            + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       } finally
       {
         if (connection != null)
@@ -1878,7 +1840,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1896,10 +1858,9 @@ public class FastDOReader implements DOReader
         disseminatorIDs = doReader.ListDisseminatorIDs("A");
       } catch (Throwable th)
       {
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     }
     return disseminatorIDs;
@@ -1932,12 +1893,12 @@ public class FastDOReader implements DOReader
         + "do "
         + "WHERE "
         + "do.doPID=\'" + PID + "\';";
-    if (debug) s_server.logFinest("LocatPIDQuery: " + query);
+    s_server.logFinest("LocatPIDQuery: " + query);
 
     try
     {
       connection = connectionPool.getConnection();
-      if(debug) s_server.logFinest("LocatePIDConnectionPool: "
+      s_server.logFinest("LocatePIDConnectionPool: "
                                    + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
@@ -1947,10 +1908,9 @@ public class FastDOReader implements DOReader
       }
     } catch (Throwable th)
     {
-      throw new GeneralException("Fast reader returned error. The "
-                                 + "underlying error was a "
-                                 + th.getClass().getName() + "The message "
-                                 + "was \"" + th.getMessage() + "\"");
+      throw new GeneralException("[FastDOReader] An error has occured. The "
+          + "underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
     } finally
       {
         if (connection != null)
@@ -1963,7 +1923,7 @@ public class FastDOReader implements DOReader
             connection.close();
           } catch (SQLException sqle)
           {
-            throw new GeneralException("Unexpected error from SQL "
+            throw new GeneralException("[FastDOReader] Unexpected error from SQL "
                 + "database. The error was: " + sqle.getMessage());
           }
         }
@@ -1990,10 +1950,9 @@ public class FastDOReader implements DOReader
       } catch (Throwable th)
       {
         s_server.logWarning("OBJECT NOT FOUND IN DEFINITIVE STORE: " + PID);
-        throw new GeneralException("Definitive reader returned error. The "
-                                   + "underlying error was a "
-                                   + th.getClass().getName() + "The message "
-                                   + "was \"" + th.getMessage() + "\"");
+        throw new GeneralException("[FastDOReader] Definitive doReader returned "
+            + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
       }
     } else
     {
