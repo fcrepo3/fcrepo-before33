@@ -159,6 +159,7 @@ public class Administrator extends JFrame {
         JPanel mainPanel=new JPanel();
         mainPanel.setLayout(new BorderLayout());
         s_desktop=new MDIDesktopPane();
+        //s_desktop.setBackground(ACTIVE_COLOR);
         s_desktop.setVisible(true);
         mainPanel.add(new JScrollPane(s_desktop), BorderLayout.CENTER);
         PROGRESS=new JProgressBar(0, 2000);

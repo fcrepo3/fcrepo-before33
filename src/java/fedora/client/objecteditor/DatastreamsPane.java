@@ -79,7 +79,9 @@ public class DatastreamsPane
                 tabLabel.append(currentVersions[i].getState());
                 tabLabel.append(")"); */
                 m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
-                m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getLabel());
+                m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getMIMEType() 
+                        + " - " + currentVersions[i].getLabel() + " (" 
+                        + currentVersions[i].getControlGroup().toString() + ")");
                 colorTabForState(currentVersions[i].getID(), currentVersions[i].getState());
             }
             m_tabbedPane.add("New...", new JPanel());
@@ -142,8 +144,12 @@ public class DatastreamsPane
         int i=getTabIndex(dsID);
         try {
             Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
-            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_owner, m_pid, versions, this));
-            m_tabbedPane.setToolTipTextAt(i, versions[0].getLabel());
+            DatastreamPane replacement=new DatastreamPane(m_owner, m_pid, versions, this);
+            m_datastreamPanes[i]=replacement;
+            m_tabbedPane.setComponentAt(i, replacement);
+            m_tabbedPane.setToolTipTextAt(i, versions[0].getMIMEType() 
+                    + " - " + versions[0].getLabel() + " (" 
+                    + versions[0].getControlGroup().toString() + ")");
             colorTabForState(dsID, versions[0].getState());
             setDirty(dsID, false);
         } catch (Exception e) {

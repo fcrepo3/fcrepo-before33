@@ -40,18 +40,18 @@ public class ViewObject
     private boolean m_prompt;
 
     public ViewObject() {
-        super("View/Edit Object...");
+        super("Open Object...");
         m_prompt=true;
     }
 
     public ViewObject(String pid) {
-        super("View/Edit Objects");
+        super("Open Object");
         m_pids=new HashSet();
         m_pids.add(pid);
     }
 
     public ViewObject(Set pids) {
-        super("View/Edit Objects");
+        super("Open Objects");
         m_pids=pids;
     }
 
@@ -62,7 +62,7 @@ public class ViewObject
     public void launch() {
         boolean failed=false;
         if (m_prompt) {
-            String pid=JOptionPane.showInputDialog("Enter the PID.");
+            String pid=JOptionPane.showInputDialog("Enter the PID of the object to open.");
             if (pid==null) {
                 return;
             }
@@ -80,7 +80,7 @@ public class ViewObject
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(Administrator.getDesktop(),
                         e.getClass().getName() + ": " + e.getMessage(),
-                        "Object View/Edit Error",
+                        "Error Opening Object",
                         JOptionPane.ERROR_MESSAGE);
             }
         }
