@@ -218,9 +218,9 @@
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
 	</target>
-	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A and API-M wsdl in temp/debug/">
+	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
-		<echo message="Producing html reports on the validity of API-A and API-M..."/>
+		<echo message="Producing html reports on the validity of API-A, API-A-LITE and API-M..."/>
 		<echo message="Doing API-A..."/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -229,6 +229,16 @@
 			<arg value="-o"/>
 			<arg path="temp/debug/Fedora-API-A.html"/>
 			<arg path="src/wsdl/Fedora-API-A.wsdl"/>
+			<arg path="res/wsdl-validator/validate.xsl"/>
+		</exec>
+		<echo message="Doing API-A-LITE..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/debug/Fedora-API-A-LITE.html"/>
+			<arg path="src/wsdl/Fedora-API-A-LITE.wsdl"/>
 			<arg path="res/wsdl-validator/validate.xsl"/>
 		</exec>
 		<echo message="Doing API-M..."/>
@@ -242,10 +252,10 @@
 			<arg path="res/wsdl-validator/validate.xsl"/>
 		</exec>
 	</target>
-	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A and API-M wsdl in dist/wsdldoc/">
+	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A, API-A-LITE, and API-M wsdl in dist/wsdldoc/">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/wsdldoc"/>
-		<echo message="Producing html reports on the validity of API-A and API-M..."/>
+		<echo message="Producing html reports on the validity of API-A, API-A-LITE and API-M..."/>
 		<echo message="Doing API-A..."/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -254,6 +264,16 @@
 			<arg value="-o"/>
 			<arg path="dist/wsdldoc/Fedora-API-A.html"/>
 			<arg path="src/wsdl/Fedora-API-A.wsdl"/>
+			<arg path="res/wsdl-documentor/document.xsl"/>
+		</exec>
+		<echo message="Doing API-A-LITE..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/wsdldoc/Fedora-API-A-LITE.html"/>
+			<arg path="src/wsdl/Fedora-API-A-LITE.wsdl"/>
 			<arg path="res/wsdl-documentor/document.xsl"/>
 		</exec>
 		<echo message="Doing API-M..."/>
@@ -502,6 +522,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.83  2003/03/03 23:00:24  payette
+  Added wsdl documentation generation for API-A-LITE
+
   Revision 1.82  2003/02/26 20:51:35  rlw
   saxon6.5.jar libraries are needed by saxon local service.
   I've copied the saxon6.5.jar separately to the lib directory under the saxon webapp so it's always present when running the saxon service
