@@ -43,7 +43,7 @@ public interface Management {
                                String encoding, 
                                boolean newPid) throws ServerException;
 
-    public void modifyObject(Context context, 
+    public Date modifyObject(Context context, 
                              String pid, 
                              String state,
                              String label, 
@@ -58,7 +58,7 @@ public interface Management {
                                     String format, 
                                     String encoding) throws ServerException;
 
-    public void purgeObject(Context context, 
+    public Date purgeObject(Context context, 
                             String pid, 
                             String logMessage) throws ServerException;
 
@@ -83,7 +83,7 @@ public interface Management {
                                    String controlGroup,
                                    String dsState) throws ServerException;
 
-    public void modifyDatastreamByReference(Context context, 
+    public Date modifyDatastreamByReference(Context context, 
                                             String pid, 
                                             String datastreamID, 
                                             String dsLabel, 
@@ -91,7 +91,7 @@ public interface Management {
                                             String dsLocation, 
                                             String dsState) throws ServerException;
 
-    public void modifyDatastreamByValue(Context context, 
+    public Date modifyDatastreamByValue(Context context, 
                                         String pid, 
                                         String datastreamID, 
                                         String dsLabel, 
@@ -128,7 +128,7 @@ public interface Management {
 								  DSBindingMap bindingMap,
 								  String dissState) throws ServerException;
 
-    public void modifyDisseminator(Context context, 
+    public Date modifyDisseminator(Context context, 
                                    String pid, 
                                    String disseminatorID, 
                                    String bMechPid, 
@@ -162,13 +162,13 @@ public interface Management {
 
     public InputStream getTempStream(String id) throws ServerException;
 
-    public void setDatastreamState(Context context, 
+    public Date setDatastreamState(Context context, 
                                    String pid, 
                                    String dsID, 
                                    String dsState, 
                                    String logMessage) throws ServerException;
 
-    public void setDisseminatorState(Context context, 
+    public Date setDisseminatorState(Context context, 
                                      String pid, 
                                      String dsID, 
                                      String dsState, 

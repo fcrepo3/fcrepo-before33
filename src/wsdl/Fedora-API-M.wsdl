@@ -55,6 +55,11 @@
 			<documentation>a log message.</documentation>
 		</part>
 	</message>
+    <message name="modifyObjectResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="getObjectXMLRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -93,6 +98,11 @@
 			<documentation>an explanation of the purge.</documentation>
 		</part>
 	</message>
+    <message name="purgeObjectResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<!--
   <message name="getObjectAuditTrailRequest">
     <part name="pid" type="xsd:string">
@@ -233,6 +243,11 @@
 			<documentation>the state of the datastream.</documentation>
 		</part>
 	</message>
+    <message name="modifyDatastreamByReferenceResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="modifyDatastreamByValueRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -253,6 +268,11 @@
 			<documentation>the state of the datastream.</documentation>
 		</part>
 	</message>
+    <message name="modifyDatastreamByValueResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="modifyDisseminatorRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -282,6 +302,11 @@
 			<documentation>the state of the disseminator.</documentation>
 		</part>
 	</message>
+    <message name="modifyDisseminatorResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="setDatastreamStateRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -296,6 +321,11 @@
 			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
+    <message name="setDatastreamStateResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="setDisseminatorStateRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -310,6 +340,11 @@
 			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
+    <message name="setDisseminatorStateResponse">
+        <part name="response" type="xsd:string">
+            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+        </part>
+    </message>
 	<message name="getDatastreamRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -507,6 +542,7 @@
 		<operation name="modifyObject">
 			<documentation>Changes the state and/or label of the object.</documentation>
 			<input message="fedora-api:modifyObjectRequest"/>
+			<output message="fedora-api:modifyObjectResponse"/>
 		</operation>
 		<operation name="getObjectXML">
 			<documentation>Gets the XML portion of the entire METS-encoded 
@@ -539,6 +575,7 @@
 			<documentation>Permanently removes an object from the repository.
       </documentation>
 			<input message="fedora-api:purgeObjectRequest"/>
+			<output message="fedora-api:purgeObjectResponse"/>
 		</operation>
 		<!--
     <operation name="getObjectAuditTrail">
@@ -567,22 +604,27 @@
 			<documentation>Modifies an existing datastream in an object, by reference.
 			</documentation>
 			<input message="fedora-api:modifyDatastreamByReferenceRequest"/>
+			<output message="fedora-api:modifyDatastreamByReferenceResponse"/>
 		</operation>
 		<operation name="modifyDatastreamByValue">
 			<documentation>Modifies an existing datastream in an object, by value.</documentation>
 			<input message="fedora-api:modifyDatastreamByValueRequest"/>
+			<output message="fedora-api:modifyDatastreamByValueResponse"/>
 		</operation>
 		<operation name="modifyDisseminator">
 			<documentation>Modifies a disseminator in the object.</documentation>
 			<input message="fedora-api:modifyDisseminatorRequest"/>
+			<output message="fedora-api:modifyDisseminatorResponse"/>
 		</operation>
 		<operation name="setDatastreamState">
 			<documentation>Sets the state of a datastream to the specified state value.</documentation>
 			<input message="fedora-api:setDatastreamStateRequest"/>
+			<output message="fedora-api:setDatastreamStateResponse"/>
 		</operation>
 		<operation name="setDisseminatorState">
 			<documentation>Sets the state of a disseminator to the specified value.</documentation>
 			<input message="fedora-api:setDisseminatorStateRequest"/>
+			<output message="fedora-api:setDisseminatorStateResponse"/>
 		</operation>
 		<operation name="getDatastream">
 			<documentation>Gets a datastream in an object.</documentation>
@@ -664,6 +706,9 @@
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="getObjectXML">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
@@ -697,6 +742,9 @@
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<!--
     <operation name="getObjectAuditTrail">
@@ -746,30 +794,45 @@
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="modifyDatastreamByValue">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByValue"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="modifyDisseminator">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDisseminator"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="setDatastreamState">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="setDisseminatorState">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDisseminatorState"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
 		</operation>
 		<operation name="getDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>

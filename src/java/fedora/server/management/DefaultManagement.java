@@ -211,7 +211,7 @@ public class DefaultManagement
         }
     }
 
-    public void modifyObject(Context context, 
+    public Date modifyObject(Context context, 
                              String pid, 
                              String state,
                              String label, 
@@ -227,6 +227,7 @@ public class DefaultManagement
             if (label!=null)
                 w.setLabel(label);
             w.commit(logMessage);
+            return w.getLastModDate();
         } finally {
             if (w != null) {
                 m_manager.releaseWriter(w);
@@ -268,7 +269,7 @@ public class DefaultManagement
         }
     }
 
-    public void purgeObject(Context context, 
+    public Date purgeObject(Context context, 
                             String pid, 
                             String logMessage)
             throws ServerException {
@@ -279,6 +280,7 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             w.remove();
             w.commit(logMessage);
+            return DateUtility.convertLocalDateToUTCDate(new Date());
         } finally {
             if (w != null) m_manager.releaseWriter(w);
             logFinest("Exiting DefaultManagement.purgeObject");
@@ -560,7 +562,7 @@ public class DefaultManagement
 			}
 		}
 
-    public void modifyDatastreamByReference(Context context, 
+    public Date modifyDatastreamByReference(Context context, 
                                             String pid,
                                             String datastreamId, 
                                             String dsLabel, 
@@ -577,6 +579,7 @@ public class DefaultManagement
             if (orig.DSState.equals("D")) {
                 throw new GeneralException("Can only change state on deleted datastreams.");
             }
+            Date nowUTC;  // datastream modified date
             if (orig.DSControlGrp.equals("M")) {
                     // copy the original datastream, replacing its DSLocation with
                     // the new location (or the old datastream's default dissemination location, if empty or null),
@@ -589,7 +592,7 @@ public class DefaultManagement
                     newds.DSVersionID=w.newDatastreamID(datastreamId);
                     newds.DSLabel=dsLabel;
                     newds.DSMIME=orig.DSMIME;
-                    Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                    nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                     newds.DSCreateDT=nowUTC;
                     //newds.DSSize will be computed later
                     newds.DSControlGrp="M";
@@ -632,7 +635,7 @@ public class DefaultManagement
                 newds.DSVersionID=w.newDatastreamID(datastreamId);
                 newds.DSLabel=dsLabel;
                 newds.DSMIME=orig.DSMIME;
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 newds.DSCreateDT=nowUTC;
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
@@ -665,6 +668,7 @@ public class DefaultManagement
             }
             // if all went ok, commit
             w.commit(logMessage);
+            return nowUTC;
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
@@ -673,7 +677,7 @@ public class DefaultManagement
         }
     }
 
-    public void modifyDatastreamByValue(Context context, 
+    public Date modifyDatastreamByValue(Context context, 
                                         String pid,
                                         String datastreamId, 
                                         String dsLabel, 
@@ -743,6 +747,7 @@ public class DefaultManagement
             newds.auditRecordIdList().add(audit.id);
             // if all went ok, commit
             w.commit(logMessage);
+            return nowUTC;
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
@@ -752,7 +757,7 @@ public class DefaultManagement
     }
 
 
-    public void modifyDisseminator(Context context, 
+    public Date modifyDisseminator(Context context, 
                                    String pid,
                                    String disseminatorId, 
                                    String bMechPid, 
@@ -772,70 +777,71 @@ public class DefaultManagement
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
             r=m_manager.getReader(context,pid);
             Date[] d=r.getDisseminatorVersions(disseminatorId);
-                    // copy the original disseminator, replacing any modified fiELDS
-                    Disseminator newdiss=new Disseminator();
-                    newdiss.dissID=orig.dissID;
-                    // make sure disseminator has a different id
-                    newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
-                    // for testing; null indicates a new (uninitialized) instance
-                    // of dsBindingMap was passed in which is what you get if
-                    // you pass null in for dsBindingMap using MangementConsole
-                    if (dsBindingMap.dsBindMapID!=null) {
-                      newdiss.dsBindMap=dsBindingMap;
-                    } else {
-                      newdiss.dsBindMap=orig.dsBindMap;
-                    }
-                    // make sure dsBindMapID has a different id
-                    newdiss.dsBindMapID=w.newDatastreamBindingMapID();
-                    newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
-                    Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
-                    newdiss.dissCreateDT=nowUTC;
-                    // changing bDefID and ParentPid not permitted; use original values
-                    newdiss.bDefID=orig.bDefID;
-                    newdiss.parentPID=orig.parentPID;
-                    // set any fields that were specified; null/empty indicates
-                    // leave original value unchanged
-                    if (dissLabel==null || dissLabel.equals("")) {
-                      newdiss.dissLabel=orig.dissLabel;
-                    } else {
-                      newdiss.dissLabel=dissLabel;
-                    }
-                    if (bDefLabel==null || bDefLabel.equals("")) {
-                      newdiss.bDefLabel=orig.bDefLabel;
-                    } else {
-                      newdiss.bDefLabel=bDefLabel;
-                    }
-                    if (bMechPid==null || bMechPid.equals("")) {
-                      newdiss.bMechID=orig.bMechID;
-                    } else {
-                      newdiss.bMechID=bMechPid;
-                    }
-                    if (bMechLabel==null || bMechLabel.equals("")) {
-                      newdiss.bMechLabel=orig.bMechLabel;
-                    } else {
-                      newdiss.bMechLabel=bMechLabel;
-                    }
-                    if (dissState==null || dissState.equals("")) {
-                      newdiss.dissState=orig.dissState;
-                    } else {
-                      newdiss.dissState=dissState;
-                    }
-                    newdiss.auditRecordIdList().addAll(orig.auditRecordIdList());
-                    // just add the disseminator
-                    w.addDisseminator(newdiss);
-                    // add the audit record
-                    fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                    audit.id=w.newAuditRecordID();
-                    audit.processType="Fedora API-M";
-                    audit.action="modifyDisseminator";
-                    audit.componentID=newdiss.dissID;
-                    audit.responsibility=context.get("userId");
-                    audit.date=nowUTC;
-                    audit.justification=logMessage;
-                    w.getAuditRecords().add(audit);
-                    newdiss.auditRecordIdList().add(audit.id);
+            // copy the original disseminator, replacing any modified fiELDS
+            Disseminator newdiss=new Disseminator();
+            newdiss.dissID=orig.dissID;
+            // make sure disseminator has a different id
+            newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
+            // for testing; null indicates a new (uninitialized) instance
+            // of dsBindingMap was passed in which is what you get if
+            // you pass null in for dsBindingMap using MangementConsole
+            if (dsBindingMap.dsBindMapID!=null) {
+              newdiss.dsBindMap=dsBindingMap;
+            } else {
+              newdiss.dsBindMap=orig.dsBindMap;
+            }
+            // make sure dsBindMapID has a different id
+            newdiss.dsBindMapID=w.newDatastreamBindingMapID();
+            newdiss.dsBindMap.dsBindMapID=w.newDatastreamBindingMapID();
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            newdiss.dissCreateDT=nowUTC;
+            // changing bDefID and ParentPid not permitted; use original values
+            newdiss.bDefID=orig.bDefID;
+            newdiss.parentPID=orig.parentPID;
+            // set any fields that were specified; null/empty indicates
+            // leave original value unchanged
+            if (dissLabel==null || dissLabel.equals("")) {
+              newdiss.dissLabel=orig.dissLabel;
+            } else {
+              newdiss.dissLabel=dissLabel;
+            }
+            if (bDefLabel==null || bDefLabel.equals("")) {
+              newdiss.bDefLabel=orig.bDefLabel;
+            } else {
+              newdiss.bDefLabel=bDefLabel;
+            }
+            if (bMechPid==null || bMechPid.equals("")) {
+              newdiss.bMechID=orig.bMechID;
+            } else {
+              newdiss.bMechID=bMechPid;
+            }
+            if (bMechLabel==null || bMechLabel.equals("")) {
+              newdiss.bMechLabel=orig.bMechLabel;
+            } else {
+              newdiss.bMechLabel=bMechLabel;
+            }
+            if (dissState==null || dissState.equals("")) {
+              newdiss.dissState=orig.dissState;
+            } else {
+              newdiss.dissState=dissState;
+            }
+            newdiss.auditRecordIdList().addAll(orig.auditRecordIdList());
+            // just add the disseminator
+            w.addDisseminator(newdiss);
+            // add the audit record
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="modifyDisseminator";
+            audit.componentID=newdiss.dissID;
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            w.getAuditRecords().add(audit);
+            newdiss.auditRecordIdList().add(audit.id);
             // if all went ok, commit
             w.commit(logMessage);
+            return nowUTC;
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
@@ -1221,7 +1227,7 @@ public class DefaultManagement
 		}
 	}
 
-    public void setDatastreamState(Context context, 
+    public Date setDatastreamState(Context context, 
                                    String pid, 
                                    String datastreamID, 
                                    String dsState, 
@@ -1250,6 +1256,7 @@ public class DefaultManagement
 
           // if all went ok, commit
           w.commit(logMessage);
+          return nowUTC;
       } finally {
           if (w!=null) {
               m_manager.releaseWriter(w);
@@ -1258,7 +1265,7 @@ public class DefaultManagement
         }
     }
 
-    public void setDisseminatorState(Context context, 
+    public Date setDisseminatorState(Context context, 
                                      String pid, 
                                      String disseminatorID, 
                                      String dissState, 
@@ -1287,6 +1294,7 @@ public class DefaultManagement
 
           // if all went ok, commit
           w.commit(logMessage);
+          return nowUTC;
       } finally {
           if (w!=null) {
               m_manager.releaseWriter(w);
