@@ -45,6 +45,8 @@ public class DefaultExternalContentManager extends Module
     implements ExternalContentManager
 {
 
+  private String m_userAgent;
+
   /**
    * <p> Creates a new DefaultExternalContentManager.</p>
    *
@@ -76,9 +78,10 @@ public class DefaultExternalContentManager extends Module
     {
       Server s_server = this.getServer();
       s_server.logInfo("DefaultExternalContentManager initialized");
-
-      // Currently there are no parameters for this module.
-      // This is where any future parameters in the config file would be read.
+      m_userAgent=getParameter("userAgent");
+      if (m_userAgent==null) {
+        m_userAgent="Fedora";
+      }
 
     } catch (Throwable th)
     {
@@ -110,6 +113,7 @@ public class DefaultExternalContentManager extends Module
       //URL url = new URL(java.net.URLDecoder.decode(URL, "utf-8"));
       URL url = new URL(URL);
       HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+      connection.setRequestProperty("User-Agent", m_userAgent);
       if (connection.getResponseCode()!=HttpURLConnection.HTTP_OK)
       {
           throw new StreamIOException(

@@ -329,7 +329,14 @@
 		<param name="schematronSchema" value="schematron/fedoraRulesExt.xml"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
-		<comment>This module facilitates obtaining external content via HTTP</comment>
+		<comment>This module facilitates obtaining external content via HTTP
+                Parameters:
+                - userAgent (optional, default=Fedora): How to identify the
+                  Fedora server in HTTP requests.  This defaults to something
+                  reasonable, but if you want to provide more information
+                  (such as an admin email address) in the User-Agent HTTP
+                  request header, put it here.
+                </comment>
 	</module>
 	<module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
 		<comment>Prints basic information about the running threads to the 
