@@ -51,7 +51,7 @@ public class DisseminatorsPane
     }
 
     public boolean isDirty() {
-        return true; // just kidding
+        return false;
     }
 
 }

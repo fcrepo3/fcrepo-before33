@@ -66,11 +66,19 @@ public abstract class EditingPane
      */
     public JPanel mainPane;
 
+    private TabDrawer m_td;
+    private String m_itemId;
+    private ObjectEditorFrame m_owner;
+
     /**
      * Build the pane.
      */
-    public EditingPane()
+    public EditingPane(ObjectEditorFrame owner, TabDrawer td, String itemId)
             throws Exception {
+
+        m_owner=owner;
+        m_td=td;
+        m_itemId=itemId;
 
         dataChangeListener=new DataChangeListener(this);
 
@@ -141,9 +149,13 @@ public abstract class EditingPane
         if (isDirty()) {
             m_saveButton.setEnabled(true);
             m_undoButton.setEnabled(true);
+            if (m_td!=null) m_td.setDirty(m_itemId, true);
+            m_owner.indicateDirtiness();
         } else {
             m_saveButton.setEnabled(false);
             m_undoButton.setEnabled(false);
+            if (m_td!=null) m_td.setDirty(m_itemId, false);
+            m_owner.indicateDirtiness();
         }
     }
 

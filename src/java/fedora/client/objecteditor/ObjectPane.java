@@ -1,20 +1,10 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.awt.*;
+import java.awt.event.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
 
 import fedora.client.Administrator;
 import fedora.client.actions.ExportObject;
@@ -60,9 +50,10 @@ public class ObjectPane
     /**
      * Build the pane.
      */
-    public ObjectPane(String pid, String state, String label, String cModel,
+    public ObjectPane(ObjectEditorFrame owner, String pid, String state, String label, String cModel,
             Calendar cDate, Calendar mDate, String ownerId)
             throws Exception {
+        super(owner, null, null);
         m_pid=pid;
         m_state=state;
         m_label=label;
@@ -89,12 +80,26 @@ public class ObjectPane
                     m_stateComboBox=new JComboBox(comboBoxStrings);
                     if (state.equals("A")) {
                         m_stateComboBox.setSelectedIndex(0);
+                        m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
                     } else if (state.equals("I")) {
                         m_stateComboBox.setSelectedIndex(1);
+                        m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
                     } else {
                         m_stateComboBox.setSelectedIndex(2);
+                        m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
                     }
                     m_stateComboBox.addActionListener(dataChangeListener);
+                    m_stateComboBox.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            if (m_stateComboBox.getSelectedIndex()==0) {
+                                m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+                            } else if (m_stateComboBox.getSelectedIndex()==1) {
+                                m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
+                            } else {
+                                m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+                            }
+                        }
+                    });
                     m_labelTextField=new JTextField(label);
                     m_labelTextField.getDocument().addDocumentListener(
                             dataChangeListener);
@@ -178,12 +183,16 @@ public class ObjectPane
     }
 
     public void undoChanges() {
-        if (m_state.equals("A"))
+        if (m_state.equals("A")) {
             m_stateComboBox.setSelectedIndex(0);
-        if (m_state.equals("I"))
+            m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+        } else if (m_state.equals("I")) {
             m_stateComboBox.setSelectedIndex(1);
-        if (m_state.equals("D"))
+            m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
+        } else if (m_state.equals("D")) {
             m_stateComboBox.setSelectedIndex(2);
+            m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+        }
         m_labelTextField.setText(m_label);
     }
 

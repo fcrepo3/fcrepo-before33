@@ -1,17 +1,10 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.io.IOException;
-import java.util.Calendar;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.event.InternalFrameAdapter;
-import javax.swing.event.InternalFrameEvent;
+import java.awt.*;
+import java.io.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import org.apache.axis.types.NonNegativeInteger;
 
@@ -55,6 +48,13 @@ public class ObjectEditorFrame
     private ObjectPane m_objectPane;
     private DatastreamsPane m_datastreamsPane;
     private DisseminatorsPane m_disseminatorsPane;
+    private JTabbedPane m_tabbedPane;
+    private String m_pid;
+    private String m_fType;
+
+    static ImageIcon objIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/Information16.gif"));
+    static ImageIcon dsIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/Copy16.gif"));
+    static ImageIcon dissIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/Refresh16.gif"));
 
     /**
      * Constructor.  Queries the server for the object, builds the object
@@ -63,7 +63,7 @@ public class ObjectEditorFrame
     public ObjectEditorFrame(String pid, int startTab) 
             throws Exception {
         super(pid, true, true, true, true);
-
+        m_pid=pid;
         // query the server for key object fields
         ObjectFields o=getObjectFields(pid);
         String state=o.getState();
@@ -73,15 +73,9 @@ public class ObjectEditorFrame
         Calendar mDate=o.getMDate();
         String ownerId=o.getOwnerId();
         String fType=o.getFType();
+        m_fType=fType;
 
-        // set the title bar based on fType
-        if (fType.equals("D")) {
-            setTitle("Behavior Definition - " + pid);
-        } else if (fType.equals("M")) {
-            setTitle("Behavior Mechanism - " + pid);
-        } else {
-            setTitle("Object - " + pid);
-        }
+        doTitle(false);
 
         // set up dirtiness check on close
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -90,21 +84,27 @@ public class ObjectEditorFrame
         // outerPane(tabbedPane)
 
             // tabbedPane(ObjectPane, DatastreamsPane, DisseminatorsPane)
-            m_objectPane=new ObjectPane(pid, state, label, cModel, cDate,
+            m_objectPane=new ObjectPane(this, pid, state, label, cModel, cDate,
                     mDate, ownerId);
-            m_datastreamsPane=new DatastreamsPane(pid);
+            m_datastreamsPane=new DatastreamsPane(this, pid);
             m_disseminatorsPane=new DisseminatorsPane(pid);
         
-            JTabbedPane tabbedPane=new JTabbedPane();
-            tabbedPane.addTab("Object", m_objectPane);
-            tabbedPane.addTab("Datastreams", m_datastreamsPane);
-            tabbedPane.addTab("Disseminators", m_disseminatorsPane);
-            tabbedPane.setSelectedIndex(startTab);
+            m_tabbedPane=new JTabbedPane();
+            m_tabbedPane.addTab("Properties", m_objectPane);
+            m_tabbedPane.setBackgroundAt(0, Administrator.DEFAULT_COLOR);
+            m_tabbedPane.setIconAt(0, objIcon);
+            m_tabbedPane.addTab("Datastreams", m_datastreamsPane);
+            m_tabbedPane.setBackgroundAt(1, Administrator.DEFAULT_COLOR);
+            m_tabbedPane.setIconAt(1, dsIcon);
+            m_tabbedPane.addTab("Disseminators", m_disseminatorsPane);
+            m_tabbedPane.setBackgroundAt(2, Administrator.DEFAULT_COLOR);
+            m_tabbedPane.setIconAt(2, dissIcon);
+            m_tabbedPane.setSelectedIndex(startTab);
 
         JPanel outerPane=new JPanel();        
         outerPane.setLayout(new BorderLayout());
         outerPane.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
-        outerPane.add(tabbedPane, BorderLayout.CENTER);
+        outerPane.add(m_tabbedPane, BorderLayout.CENTER);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(outerPane, BorderLayout.CENTER);
@@ -124,9 +124,48 @@ public class ObjectEditorFrame
         show();
     }
 
+    private void doTitle(boolean dirty) {
+        String d="";
+        if (dirty) d="*";
+        if (m_fType.equals("D")) {
+            setTitle("Behavior Definition - " + m_pid + d);
+        } else if (m_fType.equals("M")) {
+            setTitle("Behavior Mechanism - " + m_pid + d);
+        } else {
+            setTitle("Object - " + m_pid + d);
+        }
+    }
+
     public boolean isDirty() {
         return ( m_objectPane.isDirty() || m_datastreamsPane.isDirty()
                 || m_disseminatorsPane.isDirty() );
+    }
+
+    public void indicateDirtiness() {
+        int dirtyCount=0;
+        if (m_objectPane.isDirty()) {
+            dirtyCount++;
+            m_tabbedPane.setTitleAt(0, "Properties*");
+        } else {
+            m_tabbedPane.setTitleAt(0, "Properties");
+        }
+        if (m_datastreamsPane.isDirty()) {
+            dirtyCount++;
+            m_tabbedPane.setTitleAt(1, "Datastreams*");
+        } else {
+            m_tabbedPane.setTitleAt(1, "Datastreams");
+        }
+        if (m_disseminatorsPane.isDirty()) {
+            dirtyCount++;
+            m_tabbedPane.setTitleAt(2, "Disseminators*");
+        } else {
+            m_tabbedPane.setTitleAt(2, "Disseminators");
+        }
+        if (dirtyCount>0) {
+            doTitle(true);
+        } else {
+            doTitle(false);
+        }
     }
 
     private ObjectFields getObjectFields(String pid)

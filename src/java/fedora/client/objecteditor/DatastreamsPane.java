@@ -1,32 +1,9 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import javax.swing.*;
 
 import fedora.client.Administrator;
 
@@ -58,24 +35,28 @@ import fedora.server.types.gen.Datastream;
  */
 public class DatastreamsPane
         extends JPanel
-        implements PotentiallyDirty {
+        implements PotentiallyDirty, TabDrawer {
 
     private String m_pid;
     private JTabbedPane m_tabbedPane;
     private DatastreamPane[] m_datastreamPanes;
+    private ObjectEditorFrame m_owner;
 
     public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml", "text/xml",
             "text/plain", "text/html", "text/html+xml", "text/svg+xml",
             "image/jpeg", "image/gif", "image/bmp", "application/postscript",
             "application/ms-word", "application/pdf", "application/zip"};
 
+    static ImageIcon newIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/New16.gif"));
+
+
     /**
      * Build the pane.
      */
-    public DatastreamsPane(String pid)
+    public DatastreamsPane(ObjectEditorFrame owner, String pid)
             throws Exception {
         m_pid=pid;
-
+        m_owner=owner;
         // this(m_tabbedPane)
 
             // m_tabbedPane(DatastreamPane[])
@@ -86,12 +67,20 @@ public class DatastreamsPane
             m_datastreamPanes=new DatastreamPane[currentVersions.length];
             for (int i=0; i<currentVersions.length; i++) {
                 m_datastreamPanes[i]=new DatastreamPane(
+                        owner,
                         pid, 
                         Administrator.APIM.getDatastreamHistory(
                                 pid,
                                 currentVersions[i].getID()),
                         this);
-                m_tabbedPane.add(currentVersions[i].getID(), m_datastreamPanes[i]);
+                StringBuffer tabLabel=new StringBuffer();
+                tabLabel.append(currentVersions[i].getID());
+    /*            tabLabel.append(" (");
+                tabLabel.append(currentVersions[i].getState());
+                tabLabel.append(")"); */
+                m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
+                m_tabbedPane.setToolTipTextAt(i, currentVersions[i].getLabel());
+                colorTabForState(currentVersions[i].getID(), currentVersions[i].getState());
             }
             m_tabbedPane.add("New...", new JPanel());
 
@@ -102,15 +91,46 @@ public class DatastreamsPane
         doNew(ALL_KNOWN_MIMETYPES, false);
     }
 
+    public void colorTabForState(String id, String s) {
+        int i=getTabIndex(id);
+        if (s.equals("I")) {
+            m_tabbedPane.setBackgroundAt(i, Administrator.INACTIVE_COLOR);
+        } else if (s.equals("D")) {
+            m_tabbedPane.setBackgroundAt(i, Administrator.DELETED_COLOR);
+        } else {
+            m_tabbedPane.setBackgroundAt(i, Administrator.ACTIVE_COLOR);
+        }
+    }
+
     /**
      * Set the content of the "New..." JPanel to a fresh new datastream
      * entry panel, and switch to it, if needed.
      */
     public void doNew(String[] dropdownMimeTypes, boolean makeSelected) {
-        int i=m_tabbedPane.indexOfTab("New...");
+        int i=getTabIndex("New...");
         m_tabbedPane.setComponentAt(i, new NewDatastreamPane(dropdownMimeTypes));
+        m_tabbedPane.setToolTipTextAt(i, "Add a new datastream to this object");
+        m_tabbedPane.setIconAt(i, newIcon);
+        m_tabbedPane.setBackgroundAt(i, Administrator.DEFAULT_COLOR);
         if (makeSelected) {
             m_tabbedPane.setSelectedIndex(i);
+        }
+    }
+
+    private int getTabIndex(String id) {
+        int i=m_tabbedPane.indexOfTab(id);
+        if (i!=-1) return i;
+        return m_tabbedPane.indexOfTab(id+"*");
+    }
+
+    public void setDirty(String id, boolean isDirty) {
+        int i=getTabIndex(id);
+        if (isDirty) {
+            System.out.println("Setting " + id + " tab to '" + id + "*'");
+            m_tabbedPane.setTitleAt(i, id + "*");
+        } else {
+            System.out.println("Setting " + id + " tab to '" + id + "'");
+            m_tabbedPane.setTitleAt(i, id);
         }
     }
 
@@ -119,10 +139,13 @@ public class DatastreamsPane
      * latest information from the server.
      */
     protected void refresh(String dsID) {
-        int i=m_tabbedPane.indexOfTab(dsID);
+        int i=getTabIndex(dsID);
         try {
             Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
-            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_pid, versions, this));
+            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_owner, m_pid, versions, this));
+            m_tabbedPane.setToolTipTextAt(i, versions[0].getLabel());
+            colorTabForState(dsID, versions[0].getState());
+            setDirty(dsID, false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getMessage() + "\nTry re-opening the object viewer.", 
@@ -139,13 +162,13 @@ public class DatastreamsPane
         for (int i=0; i<m_datastreamPanes.length; i++) {
             newArray[i]=m_datastreamPanes[i];
         }
-        newArray[m_datastreamPanes.length]=new DatastreamPane(
+        newArray[m_datastreamPanes.length]=new DatastreamPane(m_owner,
                         m_pid, 
                         Administrator.APIM.getDatastreamHistory(m_pid, dsID),
                         this);
         // swap the arrays
         m_datastreamPanes=newArray;
-        int newIndex=m_tabbedPane.indexOfTab("New...");
+        int newIndex=getTabIndex("New...");
         m_tabbedPane.add(m_datastreamPanes[m_datastreamPanes.length-1], newIndex);
         m_tabbedPane.setTitleAt(newIndex, dsID);
         m_tabbedPane.setSelectedIndex(newIndex);
@@ -153,7 +176,7 @@ public class DatastreamsPane
     }
 
     protected void remove(String dsID) {
-        int i=m_tabbedPane.indexOfTab(dsID);
+        int i=getTabIndex(dsID);
         m_tabbedPane.remove(i);
     }
 
@@ -204,6 +227,7 @@ public class DatastreamsPane
         TextContentEditor m_mEditor=null;
         JPanel m_erPane;
         JButton m_erViewButton;
+        ContentViewer m_erViewer;
 
         String m_controlGroup;
         String m_lastSelectedMimeType;
@@ -291,12 +315,14 @@ public class DatastreamsPane
                 public void actionPerformed(ActionEvent evt) {
                     String cur=(String) m_mimeComboBox.getSelectedItem();
                     if (!cur.equals(m_lastSelectedMimeType)) {
-                        System.out.println("Changed mime type from " + m_lastSelectedMimeType + " to " + cur);
-                        // X: remove the xml parsing restriction
+                        // X: remove the xml parsing restriction if needed
                         m_xEditor.setXML(cur.endsWith("+xml") || cur.endsWith("/xml"));
                         // E/R: in any case, remove the prior viewer
-                        m_erPane.add(new JLabel(), BorderLayout.CENTER);
-                        m_erPane.validate();
+                        if (m_erViewer!=null) {
+                            m_erPane.remove(m_erViewer.getComponent());
+                            m_erPane.add(new JLabel(), BorderLayout.CENTER);
+                            m_erPane.validate();
+                        }
                         if (ContentHandlerFactory.hasViewer(cur)) {
                             m_erViewButton.setEnabled(true);
                         } else {
@@ -315,7 +341,7 @@ public class DatastreamsPane
             try {
                 m_xEditor=new TextContentEditor();
                 m_xEditor.init("text/plain", new ByteArrayInputStream(
-                        new String("Enter XML here, or click \"Import\" below.").
+                        new String("Enter content here, or click \"Import\" below.").
                         getBytes("UTF-8")), false);
                 m_xEditor.setXML(true); // inline xml is always going to be xml,
                                         // initted as text/plain because empty!=valid xml
@@ -366,11 +392,11 @@ public class DatastreamsPane
                     // the case
                     try {
                         String mimeType=(String) m_mimeComboBox.getSelectedItem();
-                        ContentViewer v=ContentHandlerFactory.getViewer(
+                        m_erViewer=ContentHandlerFactory.getViewer(
                                 mimeType,
                                 Administrator.DOWNLOADER.
                                         get(m_referenceTextField.getText()));
-                        m_erPane.add(v.getComponent(), BorderLayout.CENTER);
+                        m_erPane.add(m_erViewer.getComponent(), BorderLayout.CENTER);
                         m_erPane.validate();
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -448,8 +474,10 @@ public class DatastreamsPane
                         mdType=(String) m_mdTypeComboBox.getSelectedItem();
                         // m_xEditor
                         location=Administrator.UPLOADER.upload(m_xEditor.getContent());
-                    } else {
-                        throw new IOException("Not implemented for this control group");
+                    } else if (m_controlGroup.equals("M")) {
+                        throw new IOException("Not implemented for M");
+                    } else { // must be E/R
+                        location=m_referenceTextField.getText();
                     }
                     String newID=Administrator.APIM.addDatastream(pid, label, 
                             mimeType, location, m_controlGroup, mdClass, mdType);

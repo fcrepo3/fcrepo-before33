@@ -69,7 +69,7 @@ public class Administrator extends JFrame {
     private static File s_lastDir;
     /*package*/ static File batchtoolLastDir;
 
-    ClassLoader cl;
+    public static ClassLoader cl;
 
     public static JTextArea WATCH_AREA;
 
@@ -84,6 +84,11 @@ public class Administrator extends JFrame {
     public static JProgressBar PROGRESS;
     public static Downloader DOWNLOADER;
     public static Uploader UPLOADER;
+
+    public static Color ACTIVE_COLOR=new Color(180, 210, 180);
+    public static Color INACTIVE_COLOR=new Color(210, 210, 180);
+    public static Color DELETED_COLOR=new Color(210, 180, 180);
+    public static Color DEFAULT_COLOR=new Color(185, 185, 185);
 
     public static FedoraAPIA APIA=null;
     public static FedoraAPIM APIM=null;
@@ -673,8 +678,6 @@ public class Administrator extends JFrame {
     }
 
     public static void main(String[] args) {
-
-
 
         WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
         PrintStream sysOut=System.out;

@@ -1,39 +1,12 @@
 package fedora.client.objecteditor;
 
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Hashtable;
-import java.util.HashMap;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import java.awt.*;
+import java.awt.event.*;
+import java.io.*;
+import java.text.*;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.event.*;
 
 import fedora.client.Administrator;
 
@@ -83,12 +56,14 @@ public class DatastreamPane
     private CurrentVersionPane m_currentVersionPane;
     private DatastreamsPane m_owner;
     private PurgeButtonListener m_purgeButtonListener;
+    private boolean m_done;
 
     /**
      * Build the pane.
      */
-    public DatastreamPane(String pid, Datastream[] versions, DatastreamsPane owner)
+    public DatastreamPane(ObjectEditorFrame gramps, String pid, Datastream[] versions, DatastreamsPane owner)
             throws Exception {
+        super(gramps, owner, versions[0].getID());
 		m_pid=pid;
         Datastream mostRecent=versions[0];
         m_mostRecent=mostRecent;
@@ -114,12 +89,31 @@ public class DatastreamPane
                     m_stateComboBox=new JComboBox(comboBoxStrings);
                     if (mostRecent.getState().equals("A")) {
                         m_stateComboBox.setSelectedIndex(0);
+                        m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
                     } else if (mostRecent.getState().equals("I")) {
                         m_stateComboBox.setSelectedIndex(1);
+                        m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
                     } else {
                         m_stateComboBox.setSelectedIndex(2);
+                        m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
                     }
                     m_stateComboBox.addActionListener(dataChangeListener);
+                    m_stateComboBox.addActionListener(new ActionListener() {
+                        public void actionPerformed(ActionEvent evt) {
+                            String curState;
+                            if (m_stateComboBox.getSelectedIndex()==1) {
+                                curState="I";
+                                m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
+                            } else if (m_stateComboBox.getSelectedIndex()==2) {
+                                curState="D";
+                                m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+                            } else {
+                                curState="A";
+                                m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+                            }
+                            m_owner.colorTabForState(m_mostRecent.getID(), curState);
+                        }
+                    });
                     JLabel mimeTypeValueLabel=new JLabel(mostRecent.getMIMEType());
                     JLabel controlGroupValueLabel=new JLabel(
                             getControlGroupString(
@@ -224,6 +218,7 @@ public class DatastreamPane
     }
 
     public boolean isDirty() {
+        if (m_done) return false;
         int stateIndex=0;
         if (m_mostRecent.getState().equals("I")) {
             stateIndex=1;
@@ -274,15 +269,21 @@ public class DatastreamPane
 
     public void changesSaved() {
         m_owner.refresh(m_mostRecent.getID());
+        m_done=true; 
     }
 
     public void undoChanges() {
-        if (m_mostRecent.getState().equals("A"))
+        if (m_mostRecent.getState().equals("A")) {
             m_stateComboBox.setSelectedIndex(0);
-        if (m_mostRecent.getState().equals("I"))
+            m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+        } else if (m_mostRecent.getState().equals("I")) {
             m_stateComboBox.setSelectedIndex(1);
-        if (m_mostRecent.getState().equals("D"))
+            m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
+        } else if (m_mostRecent.getState().equals("D")) {
             m_stateComboBox.setSelectedIndex(2);
+            m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+        }
+        m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
     }
 
