@@ -430,7 +430,7 @@ public class DefaultDOManager
               Datastream dStream=(Datastream) obj.datastreams(dsID).get(0);
               String controlGroupType = dStream.DSControlGrp;
               if ( controlGroupType.equalsIgnoreCase("M") &&
-                   (dStream.DSLocation.indexOf("//")!=-1) ) 
+                   (dStream.DSLocation.indexOf("//")!=-1) )
                    // if it's managed, and a url, means we need to grab content
               {
                 List allVersions = obj.datastreams(dsID);
@@ -462,13 +462,15 @@ public class DefaultDOManager
                   // RLW: change required by conversion fom byte[] to InputStream
 
                   // Make new audit record.
+
                   /*
                   // SDP: commented out since audit record id is not yet
                   // auto-incremented and we get XML validation error when
                   // there are multiple managed content datastreams (we get
                   // duplicate ID elements in the XML)
                   a = new AuditRecord();
-                  a.id = "REC1025";  // FIXME: id should be auto-gen'd somehow
+                  int numAuditRecs = obj.getAuditRecords().size() + 1;
+                  a.id = "REC-" + numAuditRecs;
                   a.processType = "API-M";
                   a.action = "Added a ManagedContent datastream for the first "
                       + "time. Copied remote content stored at \""
@@ -536,7 +538,7 @@ public class DefaultDOManager
                 ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                 m_validator.validate(inV, 0, "store");
                 // if ok, write change to perm store here...right before db stuff
-                getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
             } else {
                 m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
             }
@@ -729,8 +731,8 @@ public class DefaultDOManager
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
-            DOWriter w=new SimpleDOWriter(context, this, m_translator,  
-                    m_storageFormat, m_storageFormat, 
+            DOWriter w=new SimpleDOWriter(context, this, m_translator,
+                    m_storageFormat, m_storageFormat,
                     m_storageCharacterEncoding, obj, this);
             // add to internal list...somehow..think...
             System.gc();
@@ -831,8 +833,8 @@ public class DefaultDOManager
                 // hurt here for now... if it's decided that this isn't necessary,
                 // and this is removed, be sure to change the .replace(...) call
                 // to .add(...) in doCommit()
-                InputStream in3=getTempStore().retrieve("temp-ingest");
-                getObjectStore().add(obj.getPid(), in3);
+                //InputStream in3=getTempStore().retrieve("temp-ingest");
+                //getObjectStore().add(obj.getPid(), in3);
 
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
@@ -843,8 +845,8 @@ public class DefaultDOManager
                 inTempStore=true; // signifies successful perm store addition
 
                 // then get the writer
-                DOWriter w=new SimpleDOWriter(context, this, m_translator,  
-                        m_storageFormat, m_storageFormat, 
+                DOWriter w=new SimpleDOWriter(context, this, m_translator,
+                        m_storageFormat, m_storageFormat,
                         m_storageCharacterEncoding, obj, this);
 
                 // ...set the create and last modified dates as the current
