@@ -165,7 +165,7 @@
 		</sect2>
 		<sect2>
 			<title>5.  Shutdown Old Repository. </title>
-			<para>To complete the migration task, you should shut down your old Fedora repository. </para>
+			<para>To complete the migration task, you should shut down your old Fedora repository.  If you plan to permanently disable the old repository, you can drop the SQL database for the old repository, and delete the directories that store the XML files for the old repository (the paths are defined in the variables object_store_base, datastreams_store_base, and temp_store_base in the Fedora server configuration file for the old repository). </para>
 		</sect2>
 		<sect2>
 			<title>6.  Update Host and Port of New Repository.</title>
