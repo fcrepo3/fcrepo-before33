@@ -27,6 +27,8 @@ import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.Map;
 
+import edu.cornell.dlrg.swing.jtable.DefaultSortTableModel;
+import edu.cornell.dlrg.swing.jtable.JSortTable;
 import fedora.client.Administrator;
 import fedora.client.console.Console;
 import fedora.client.console.ConsoleSendButtonListener;
@@ -64,7 +66,7 @@ public class RepositoryBrowser
         AutoLister a=new AutoLister(mainFrame.getHost(), mainFrame.getPort());
         Map m=a.list(null);
         Object[][] data=new Object[m.size()][8];
-        Iterator pidIter=m.keySet().iterator();
+        Iterator pidIter=m.keySet().iterator();   
         int i=0;
         SimpleDateFormat df=new SimpleDateFormat();
         while (pidIter.hasNext()) {
@@ -81,7 +83,7 @@ public class RepositoryBrowser
             i++;
         }
 
-        JTable table=new JTable(data, columnNames);
+        JSortTable table=new JSortTable(new DefaultSortTableModel(data, columnNames));
         table.setPreferredScrollableViewportSize(new Dimension(400, 400));
 
         JScrollPane browsePanel = new JScrollPane(table);
