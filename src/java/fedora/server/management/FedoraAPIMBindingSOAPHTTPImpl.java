@@ -328,10 +328,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
 */
-    public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
+    public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.purgeDatastream(getContext(), PID, datastreamID, startDT, endDT);
+            return s_management.purgeDatastream(getContext(), PID, datastreamID, endDT);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

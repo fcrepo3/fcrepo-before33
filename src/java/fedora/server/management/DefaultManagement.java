@@ -545,16 +545,13 @@ public class DefaultManagement
 
 */
     public Calendar[] purgeDatastream(Context context, String pid,
-            String datastreamID, Calendar startDT, Calendar endDT)
+            String datastreamID, Calendar endDT)
             throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
             w=m_manager.getWriter(context, pid);
             Date start=null;
-            if (startDT!=null) {
-                start=startDT.getTime();
-            }
             Date end=null;
             if (endDT!=null) {
                 end=endDT.getTime();
@@ -564,7 +561,11 @@ public class DefaultManagement
             if (w.GetDatastream(datastreamID, null)==null) {
                 // Deleting all versions of a datastream is currently unsupported
                 // FIXME: In the future, this exception should be replaced with an
-                // integrity check.
+                // integrity check.  If the datastream binding info for any version
+				// of a disseminator that uses this would leave a dangling REQUIRED
+				// reference, don't allow it.  If it would leave a dangling UNREQUIRED
+				// reference (in the case of a bucket binding map where the # of datastreams
+				// would still be ok), [[DO WHAT? Undecided]]
                 throw new GeneralException("Purge was aborted because it would"
                         + " result in the permanent deletion of ALL versions "
                         + "of the datastream.");

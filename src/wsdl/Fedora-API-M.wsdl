@@ -240,13 +240,10 @@
 		<part name="datastreamID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
-		<part name="startDT" type="xsd:dateTime">
-			<documentation>the (inclusive) starting date-time stamp of the range. If 
-          null, this is taken to be the smallest possible value.</documentation>
-		</part>
 		<part name="endDT" type="xsd:dateTime">
 			<documentation>the (inclusive) ending date-time stamp of the range. If 
-          null, this is taken to be the greatest possible value.</documentation>
+          null, this is taken to be the greatest possible value, and thus,
+          the entire version history of the datastream will be purged.</documentation>
 		</part>
 	</message>
 	<message name="purgeDatastreamResponse">
