@@ -51,6 +51,7 @@ public class XMLWriter
     Properties transProps = new Properties();
     transProps.put("method", "xml");
     transProps.put("indent", "yes");
+    transProps.put("omit-xml-declaration", "yes");
     transformer.setOutputProperties(transProps);
     transformer.transform(new DOMSource(rootElement), new StreamResult(out));
     out.close();
