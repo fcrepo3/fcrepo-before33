@@ -15,9 +15,11 @@ fi
 
 TOMCAT_DIR=@tomcat.basename@
 WEBAPP_DIR="$FEDORA_HOME/server/$TOMCAT_DIR/webapps/fedora/WEB-INF"
+TC_COMMON="$FEDORA_HOME/server/$TOMCAT_DIR/common"
 
 (exec "$JAVA" -Dfedora.home="$FEDORA_HOME" \
-        -cp "$WEBAPP_DIR/classes" \
+        -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
+        -cp "$WEBAPP_DIR/classes:$TC_COMMON/lib/xercesImpl.jar" \
         fedora.server.config.ConfigApp $1)
 
 restoreJavaHome

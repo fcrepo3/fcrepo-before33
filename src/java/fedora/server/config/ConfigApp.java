@@ -1,6 +1,7 @@
 package fedora.server.config;
 
 import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import javax.swing.*;
 
@@ -11,7 +12,8 @@ public class ConfigApp {
 
     public ConfigApp(File configFile) throws Exception {
         m_configFile = configFile;
-        ServerConfiguration m_configuration = new ServerConfigurationParser(new FileInputStream(configFile)).parse();
+        m_configuration = new ServerConfigurationParser(new FileInputStream(configFile)).parse();
+        //m_configuration.serialize(System.out);
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 initGUI();
@@ -19,12 +21,24 @@ public class ConfigApp {
         });
     }
 
+    public JPanel makeServerPanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        // NORTH: Server Class: ______________
+        JPanel classPanel = new JPanel();
+        classPanel.add(new JLabel("Server Class:"));
+        classPanel.add(new JTextField(m_configuration.getClassName()));
+        panel.add(classPanel, BorderLayout.NORTH);
+        // CENTER: parameterPanel
+        ParameterPanel serverParamPanel = new ParameterPanel(m_configuration.getParameters());
+        panel.add(serverParamPanel, BorderLayout.CENTER);
+        return panel;
+    }
+
     private void initGUI() {
         JFrame frame = new JFrame("Fedora Server Configuration - " + m_configFile.getPath());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel serverPanel = new JPanel();
-        serverPanel.add(new JLabel("This is the panel where you configure the server."));
+        JPanel serverPanel = makeServerPanel();
         JPanel modulesPanel = new JPanel();
         modulesPanel.add(new JLabel("This is the panel where you configure modules."));
         JPanel datastoresPanel = new JPanel();
@@ -45,7 +59,8 @@ public class ConfigApp {
         frame.getContentPane().add(mainPanel);
 
         // Display the window, centered.
-        frame.pack();
+        //frame.pack();
+        frame.setSize(640, 480);
         Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation((d.width-frame.getWidth())/2, 
                           (d.height-frame.getHeight())/2);

@@ -13,6 +13,10 @@ public class Parameter {
                      String value,
                      String comment,
                      Map profileValues) {
+        m_name = name;
+        m_value = value;
+        m_comment = comment;
+        m_profileValues = profileValues;
     }
 
     public String getName() {
@@ -33,6 +37,10 @@ public class Parameter {
 
     public void setComment(String comment) {
         m_comment = comment;
+    }
+
+    public String toString() {
+        return m_name;
     }
 
 }

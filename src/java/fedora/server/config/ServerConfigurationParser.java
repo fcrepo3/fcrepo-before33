@@ -13,12 +13,17 @@ public class ServerConfigurationParser
     private SAXParser m_parser;
     private InputStream m_xmlStream;
 
+    private String m_serverClassName;
     private List m_serverParameters;
     private List m_moduleConfigurations;
     private List m_datastoreConfigurations;
 
     private Parameter m_lastParam;
     private String m_moduleOrDatastoreComment;
+
+    private String m_role;
+    private String m_class;
+    private String m_id;
 
     private String m_paramName;
     private String m_paramValue;
@@ -48,7 +53,8 @@ public class ServerConfigurationParser
         m_datastoreConfigurations = new ArrayList();
         try {
             m_parser.parse(m_xmlStream, this);
-            return new ServerConfiguration(m_serverParameters, 
+            return new ServerConfiguration(m_serverClassName,
+                                           m_serverParameters, 
                                            m_moduleConfigurations, 
                                            m_datastoreConfigurations);
         } catch (Exception e) {
@@ -61,14 +67,17 @@ public class ServerConfigurationParser
                              String localName, 
                              String qName,
                              Attributes a) throws SAXException {
-        if (localName.equals("module")) {
+        if (localName.equals("server")) {
+            m_serverClassName = a.getValue("class");
+        } else if (localName.equals("module")) {
             m_inModuleOrDatastore = true;
             m_moduleOrDatastoreParameters = new ArrayList();
-            String moduleRole = a.getValue("role");
-            System.out.println(moduleRole);
+            m_role = a.getValue("role");
+            m_class = a.getValue("class");
         } else if (localName.equals("datastore")) {
             m_inModuleOrDatastore = true;
             m_moduleOrDatastoreParameters = new ArrayList();
+            m_id = a.getValue("id");
         } else if (localName.equals("comment")) {
             m_commentBuffer = new StringBuffer();
         } else if (localName.equals("param")) {
@@ -91,9 +100,16 @@ public class ServerConfigurationParser
         if (localName.equals("module")) {
             // add a new ModuleConfiguration to m_moduleConfigurations
             m_inModuleOrDatastore = false;
+            m_moduleConfigurations.add(new ModuleConfiguration(m_moduleOrDatastoreParameters,
+                                                               m_role,
+                                                               m_class,
+                                                               m_moduleOrDatastoreComment));
         } else if (localName.equals("datastore")) {
             // add a new DatastoreConfiguration to m_datastoreConfigurations
             m_inModuleOrDatastore = false;
+            m_datastoreConfigurations.add(new DatastoreConfiguration(m_moduleOrDatastoreParameters,
+                                                                     m_id,
+                                                                     m_moduleOrDatastoreComment));
         } else if (localName.equals("comment")) {
             // figure out what kind of thing this is a comment for
             // if we're in a param, it's for the param.
