@@ -181,10 +181,8 @@ public class OAIResponder {
                         } else if (name.equals("set")) {
                             set=(String) args.get(name);
                         } else if (name.equals("from")) {
-                          System.out.println("FROM: "+(String) args.get(name));
                             from=getUTCDate((String) args.get(name), false);
                         } else if (name.equals("until")) {
-                          System.out.println("UNTIL: "+(String) args.get(name));
                             until=getUTCDate((String) args.get(name), true);
                         } else if (!name.equals("verb")) {
                             badParam=true;
@@ -206,9 +204,7 @@ public class OAIResponder {
                 }
                 ResumptionToken resumptionToken=null;
                 if (m_provider.getMaxRecords()>0) {
-System.out.println("GetRecords got " + records.size() + " items in the result list.");
                     if (records.size()>m_provider.getMaxRecords()) {
-System.out.println("GetRecords: will use resumptionToken");
                         resumptionToken=(ResumptionToken)
                                 records.get(records.size()-1);
                         records=records.subList(0, records.size()-1);
@@ -481,7 +477,6 @@ System.out.println("GetRecords: will use resumptionToken");
         if (formattedDate==null) {
             return null;
         }
-        System.out.println("FORMATTEDDATE: "+formattedDate);
         try {
             if (formattedDate.endsWith("Z")) {
                 if (m_granularity==DateGranularitySupport.SECONDS) {
@@ -494,11 +489,7 @@ System.out.println("GetRecords: will use resumptionToken");
                 SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd");
                 if(isUntil) {
                   SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-                  Date d = formatter.parse(formattedDate);
-                  String s = formatter.format(d)+"T23:59:59Z";
-                  System.out.println("SSSSSS: "+s);
                   return sdf.parse(formatter.format(formatter.parse(formattedDate))+"T23:59:59Z");
-                  //return sdf.parse(formattedDate+"T23:59:59");
                 } else {
                   return formatter.parse(formattedDate);
                 }
