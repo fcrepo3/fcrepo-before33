@@ -8,7 +8,7 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
 
-echo Ingesting Demonstration Objects (18 total)...
+echo Ingesting Demonstration Objects (26 total)...
 
 echo Ingesting local-server simple image demo (1 bdef, 1 bmech, 1 object)...
 %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\simple-image-demo\bdef-simple-image.xml "Created by fedora-ingest-demos script"
@@ -22,6 +22,16 @@ echo Ingesting local-server document transform demo (1 bdef, 1 bmech, 1 object).
 %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\document-transform-demo\bdef-document-trans.xml "Created by fedora-ingest-demos script"
 %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\document-transform-demo\bmech-document-trans-saxon.xml "Created by fedora-ingest-demos script"
 %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\document-transform-demo\obj-document-fedoraAPIA.xml "Created by fedora-ingest-demos script"
+
+echo Ingesting local-server formatting objects demo (2 bdefs, 3 bmechs, 3 objects)...
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\bdef-fo.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\bdef-pdf.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\bmech-dbx-to-fo.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\bmech-fop.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\bmech-tei-to-fo.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\obj-dbx-to-pdf.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\obj-fop-to-pdf.xml "Created by fedora-ingest-demos script"
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\local-server-demos\formatting-objects-demo\obj-tei-to-pdf.xml "Created by fedora-ingest-demos script"
 
 echo Ingesting open-server simple image demos (2 bmechs, 2 objects)...
 %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% fedora.client.ingest.AutoIngestor %1 %2 %3 %4 %FEDORA_HOME%\demo\open-server-demos\simple-image-demos\bmech-simple-image-4res-zoom.xml "Created by fedora-ingest-demos script"
