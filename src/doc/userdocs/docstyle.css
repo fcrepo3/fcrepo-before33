@@ -82,10 +82,17 @@ body {
 /* FIXME: Make these sort of match the Category4 stuff,
           but still be appropriate for documentation */
 
-h1, h2, h3, h4, h5 {
+h1, h2, h3 {
     color: #4C7C8E;
     margin-top: 4px;
     margin-bottom: 4px;
+}
+
+h4, h5 {
+  color: #4C7C8E;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  text-decoration: underline;
 }
 
 h1 {
