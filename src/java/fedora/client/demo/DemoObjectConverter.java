@@ -1,7 +1,12 @@
-package fedora.server.utilities;
+package fedora.client.demo;
 
-import java.io.*;
-
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 /**
  *
@@ -36,21 +41,28 @@ import java.io.*;
 public class DemoObjectConverter
 {
   private static String fedoraHome = "";
-  private static String host = "localhost";
-  private static int port = 8080;
+  private static String fromHostName = "localhost";
+  private static String fromPortNum = "8080";
+  private static String toHostName = "localhost";
+  private static String toPortNum = "8080";
 
   /**
    * <p> Constructor for DemoObjectConverter. Initializes class variables for
    * hostname, port number and fedoraHome.</p>
    *
-   * @param host The name of the Fedora host.
-   * @param port The port number on which the Fedora server runs.
+   * @param fromHostName The host name to be changed from.
+   * @param fromPortNum The port number to be changed from.
+   * @param toHostName The host name to be changed to.
+   * @param toPortNum The port number ot be changed to.
    * @param fedoraHome The installation directory for Fedora.
    */
-  public DemoObjectConverter(String host, int port, String fedoraHome)
+  public DemoObjectConverter(String fromHostName, String fromPortNum,
+      String toHostName, String toPortNum, String fedoraHome)
   {
-    this.host = host;
-    this.port = port;
+    this.toHostName = toHostName;
+    this.toPortNum = toPortNum;
+    this.fromHostName = fromHostName;
+    this.fromPortNum = fromPortNum;
     this.fedoraHome = fedoraHome;
   }
 
@@ -62,7 +74,8 @@ public class DemoObjectConverter
   public static void showUsage(String errMessage) {
       System.out.println("Error: " + errMessage);
       System.out.println("");
-      System.out.println("Usage: DemoObjectConverter host port fedoraHome");
+      System.out.println("Usage: DemoObjectConverter fromHostName fromPortNum "
+          + "toHostName toPortNum fedoraHome");
   }
 
   /**
@@ -135,7 +148,8 @@ public class DemoObjectConverter
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-           nextLine = nextLine.replaceAll("localhost:8080", "local.fedora.server");
+           nextLine = nextLine.replaceAll(fromHostName+":", toHostName+":");
+           nextLine = nextLine.replaceAll(":"+fromPortNum, ":"+toPortNum);
            out.write(nextLine+"\n");
         }
       }
@@ -168,15 +182,17 @@ public class DemoObjectConverter
   {
     try
     {
-      if (args.length!=3)
+      if (args.length!=5)
       {
-        DemoObjectConverter.showUsage("You must provide three arguments.");
+        DemoObjectConverter.showUsage("You must provide five arguments.");
       } else
       {
-        String hostName=args[0];
-        int portNum=Integer.parseInt(args[1]);
-        String fedoraHome=args[2];
-        DemoObjectConverter doc=new DemoObjectConverter(hostName, portNum, fedoraHome);
+        String fromHostName=args[0];
+        String fromPortNum=args[1];
+        String toHostName=args[2];
+        String toPortNum=args[3];
+        String fedoraHome=args[4];
+        DemoObjectConverter doc=new DemoObjectConverter(fromHostName, fromPortNum, toHostName, toPortNum, fedoraHome);
         doc.convert(fedoraHome);
       }
     } catch (Exception e)
