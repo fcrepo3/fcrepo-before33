@@ -674,6 +674,9 @@
 			<arg line="-s fedora-start.sh fedora-start"/>
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-debug.sh fedora-debug"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-stop.sh fedora-stop"/>
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
