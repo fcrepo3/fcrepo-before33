@@ -299,14 +299,17 @@ public class DatastreamPane
         }
         buf.append("/fedora/get/");
         buf.append(m_pid);
-        buf.append("/fedora-system:3/getItem");
+        buf.append('/');
         if (withDate) {
+            buf.append("fedora-system:3/getItem");
             buf.append('/');
             SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             buf.append(formatter.format(ds.getCreateDate().getTime()));
+            buf.append("?itemID=");
+            buf.append(ds.getID());
+        } else {
+            buf.append(ds.getID());
         }
-        buf.append("?itemID=");
-        buf.append(ds.getID());
         return buf.toString();
     }
 
