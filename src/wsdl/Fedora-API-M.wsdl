@@ -42,6 +42,11 @@
           url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
     </documentation>
   </types>
+  <message name="CreateObjectRequest">
+    <part name="nothing" type="xsd:string">
+      <documentation>an empty string.  This is necessary because axis doesn't support notification-style operations.</documentation>
+    </part>
+  </message>
   <message name="CreateObjectResponse">
     <part name="response" type="xsd:string">
       <documentation>the PID of the newly created object.</documentation>
@@ -526,6 +531,7 @@
       object's initial state will be N.  The repository will generate and return 
       a new PID for the object resulting from this request.  The PID will have 
       the namespace of the repository.</documentation>
+      <input message="CreateObjectRequest"/>
       <output message="CreateObjectResponse"/>
     </operation>
     <operation name="IngestObject">
@@ -1042,7 +1048,7 @@
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="IngestObject">
@@ -1051,12 +1057,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetObjectXML">
@@ -1065,12 +1071,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ExportObject">
@@ -1079,12 +1085,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="WithdrawObject">
@@ -1093,7 +1099,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="DeleteObject">
@@ -1102,7 +1108,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="PurgeObject">
@@ -1111,7 +1117,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="ObtainLock">
@@ -1120,7 +1126,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="ReleaseLock">
@@ -1129,7 +1135,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="GetLockingUser">
@@ -1138,12 +1144,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetObjectState">
@@ -1152,12 +1158,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetObjectCreateDate">
@@ -1166,12 +1172,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetObjectLastModDate">
@@ -1180,12 +1186,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetObjectAuditTrail">
@@ -1194,12 +1200,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ListObjectPIDs">
@@ -1208,12 +1214,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="AddDatastreamExternal">
@@ -1222,12 +1228,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="AddDatastreamManagedContent">
@@ -1236,12 +1242,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="AddDatastreamXMLMetadata">
@@ -1250,12 +1256,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ModifyDatastreamExternal">
@@ -1264,7 +1270,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="ModifyDatastreamManagedContent">
@@ -1273,7 +1279,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="ModifyDatastreamXMLMetadata">
@@ -1282,7 +1288,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="WithdrawDatastream">
@@ -1291,7 +1297,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="DeleteDatastream">
@@ -1300,7 +1306,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="PurgeDatastream">
@@ -1309,12 +1315,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDatastream">
@@ -1323,12 +1329,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDatastreams">
@@ -1337,12 +1343,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ListDatastreamIDs">
@@ -1351,12 +1357,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDatastreamHistory">
@@ -1365,12 +1371,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="AddDisseminator">
@@ -1379,12 +1385,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ModifyDisseminator">
@@ -1393,7 +1399,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="DeleteDisseminator">
@@ -1402,7 +1408,7 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
     <operation name="PurgeDisseminator">
@@ -1411,12 +1417,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDisseminator">
@@ -1425,12 +1431,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDisseminators">
@@ -1439,12 +1445,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="ListDisseminatorIDs">
@@ -1453,12 +1459,12 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
     <operation name="GetDisseminatorHistory">
@@ -1467,21 +1473,21 @@
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/types/"/>
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
   </binding>
   <service name="Fedora-API-M-Service">
     <port name="Fedora-API-M-Port-HTTPGET" binding="fedora-api:Fedora-API-M-Binding-HTTPGET">
-      <http:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
+      <http:address location="http://www.hostname.com:8088/fedora/management/"/>
     </port>
     <port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
-      <soap:address location="http://$$HOSTNAME$$:$$PORT$$/$$MOUNTPOINT$$management/"/>
+      <soap:address location="http://www.hostname.com:8088/fedora/management/"/>
     </port>
   </service>
 </definitions>
