@@ -66,6 +66,18 @@ public class PID {
     }
 
     /**
+     * Alternate constructor that throws an unchecked exception
+     * if it's not well-formed.
+     */
+    public static PID getInstance(String pidString) {
+        try {
+            return new PID(pidString);
+        } catch (MalformedPIDException e) {
+            throw new RuntimeException("Malformed PID: " + e.getMessage(), e);
+        }
+    }
+
+    /**
      * Construct a PID given a filename of the form produced by toFilename(), 
      * throwing a MalformedPIDException if it's not well-formed.
      */
