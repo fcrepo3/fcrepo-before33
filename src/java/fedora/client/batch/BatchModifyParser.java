@@ -1,34 +1,52 @@
 package fedora.client.batch;
 
-import fedora.client.APIMStubFactory;
+//import fedora.client.APIMStubFactory;
+//import fedora.client.Administrator;
+import fedora.client.Uploader;
+import fedora.client.batch.types.Datastream;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
+//import fedora.server.storage.types.DatastreamManagedContent;
+//import fedora.server.storage.types.DatastreamReferencedContent;
+//import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.utilities.StreamUtility;
 
-import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Hashtable;
+//import java.util.Date;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.text.SimpleDateFormat;
+
+//import javax.xml.parsers.FactoryConfigurationError;
+//import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.xml.sax.*;
+import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 
 /**
  *
  * <p><b>Title:</b> BatchModifyParser.java</p>
- * <p><b>Description:</b> A class for parsing the special XML format in Batch
- * Modify.
+ * <p><b>Description:</b> A class for parsing the xml modify directives in the
+ * Batch Modify input file. The parsing is configured to parse directives in the
+ * file sequentially. Logs are written for each successful and failed directive
+ * that is processed. Recoverable(non-fatal) errors are written to the log file
+ * and processing continues. Catastrophic errors will cause parsing to halt and
+ * set the count of failed directives to -1 indicating that parsing was halted
+ * prior to the end of the file. In this case the logs will contain all directives
+ * processed up to the point of failure.</p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -50,22 +68,30 @@ import org.xml.sax.helpers.DefaultHandler;
  * @author rlw@virginia.edu
  * @version $Id $
  */
-class BatchModifyParser extends DefaultHandler
+public class BatchModifyParser extends DefaultHandler
 {
 
-  private String host;
-  private int port;
-  private String user;
-  private String pass;
-  private String objectPID;
-  private String dsControlGroupType;
-  private String datastreamID;
-  private String dsState;
+  /** Instance of Uploader */
+  private static Uploader UPLOADER;
 
-  private FedoraAPIM APIM;
+  /** Instance of FedoraAPIM */
+  private static FedoraAPIM APIM;
+
+  /** Log file print stream. */
+  private static PrintStream out;
 
   /** The namespaces we know we will encounter */
-  private final static String BMFF = "http://www.fedora.info/batch/modify";
+  private final static String BMFF = "http://www.fedora.info/definitions/";
+
+  /** Date formatter. */
+  private static SimpleDateFormat s_formatter=
+      new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
+
+  /** Count of directives that succeeded. */
+  private int succeededCount = 0;
+
+  /** Count of directives that failed. */
+  private int failedCount = 0;
 
   /**
    * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
@@ -73,65 +99,107 @@ class BatchModifyParser extends DefaultHandler
   private HashMap nsPrefixMap;
   private HashMap m_prefixUris;
 
-  private Datastream datastream;
-  private DatastreamManagedContent dmc;
-  private DatastreamReferencedContent drc;
-  private DatastreamXMLMetadata dxm;
-  private DatastreamManagedContent origdmc;
-  private DatastreamReferencedContent origdrc;
-  private DatastreamXMLMetadata origdxm;
-
-  // Variables for keeping state during SAX parse.
-
+  /** Variables for keeping state during SAX parse. */
   private StringBuffer m_dsXMLBuffer;
   private StringBuffer m_dsFirstElementBuffer;
   private ArrayList m_dsPrefixes;
   private int m_xmlDataLevel;
   private boolean m_inXMLMetadata;
   private boolean m_firstInlineXMLElement;
-  private boolean isStateChanged;
+  private boolean addDatastream = false;
+  private boolean modifyDatastream = false;
+  private boolean purgeDatastream = false;
+  private boolean setDatastreamState = false;
+  private boolean setDatastreamHarvestable = false;
+  //private boolean addDisseminator = false;
+  //private boolean purgeDisseminator = false;
+  //private boolean modifyDisseminator = false;
+  //private boolean setDisseminatorState = false;
+  private Datastream ds;
 
   /**
-   *   Constructor allows this class to initiate the parsing
+   * <p>Constructor allows this class to initiate the parsing.</p>
+   *
+   * @param UPLOADER - An instance of Uploader.
+   * @param APIM - An instance of FedoraAPIM.
+   * @param in - An input stream containing the xml to be parsed.
+   * @param out - A print stream used for writing log info.
+   * @throws RepositoryConfigurationException - If an error occurs in configuring
+   *                                            the SAX parser.
    */
-  public BatchModifyParser(String host, int port, String user, String pass, InputStream in)
-    throws RepositoryConfigurationException, GeneralException
+  public BatchModifyParser(Uploader UPLOADER, FedoraAPIM APIM, InputStream in, PrintStream out)
   {
-    this.host = host;
-    this.port = port;
-    this.user = user;
-    this.pass = pass;
+    this.out = out;
+    this.APIM = APIM;
+    this.UPLOADER = UPLOADER;
     XMLReader xmlReader = null;
 
+    // Configure the SAX parser.
     try
     {
       SAXParserFactory saxfactory=SAXParserFactory.newInstance();
-      saxfactory.setValidating(false);
+      saxfactory.setValidating(true);
       SAXParser parser=saxfactory.newSAXParser();
       xmlReader=parser.getXMLReader();
       xmlReader.setContentHandler(this);
       xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
       xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-      APIM = APIMStubFactory.getStub(host, port, user, pass);
+      xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
+      xmlReader.setErrorHandler(new BatchModifyXMLErrorHandler());
     }
     catch (Exception e)
     {
+      // An Exception indicates a fatal error and parsing was halted. Set
+      // failedCount to -1 to indicate to the calling class that parsing failed.
+      // Throwing an Exception would make class variables for succeededCount
+      // and failedCount unavailable.
+      logParserError(e, null);
+      failedCount = -1;
       //e.printStackTrace();
-      throw new RepositoryConfigurationException("Internal SAX error while "
-          + "preparing for Batch Modify Input File parsing: "
-          + e.getMessage());
     }
+
+    // Parse the file.
     try
     {
       xmlReader.parse(new InputSource(in));
     }
     catch (Exception e)
     {
-      e.printStackTrace();
-      throw new GeneralException("Error parsing Batch Modify Input File" +
-          e.getClass().getName() + ": " + e.getMessage());
+      // An Exception indicates a fatal error and parsing was halted. Set
+      // failedCount to -1 to indicate to the calling class that parsing failed.
+      // Throwing an Exception would make class variables for succeededCount
+      // and failedCount unavailable.
+      logParserError(e, null);
+      failedCount = -1;
+      //e.printStackTrace();
     }
   }
+
+  /**
+   * <p>Get the count of failed directives. Note that a failed count value of
+   * -1 indicates that a fatal parsing error occurred before all directives
+   * could be parsed and the number of unprocessed directives is indeterminate.
+   * The log file will contain details on how many directives were successfully
+   * processed before the fatal error was encountered.</p>
+   *
+   * @return The count of failed directives.
+   */
+  public int getFailedCount()
+  {
+    return failedCount;
+  }
+
+
+  /**
+   * <p>Get the count of successful directives.</p>
+   *
+   * @return The count of successful directives.
+   */
+  public int getSucceededCount()
+  {
+    return succeededCount;
+  }
+
 
   public void startDocument() throws SAXException
   {
@@ -139,11 +207,13 @@ class BatchModifyParser extends DefaultHandler
     m_prefixUris = new HashMap();
   }
 
+
   public void endDocument() throws SAXException
   {
     nsPrefixMap = null;
     m_prefixUris = null;
   }
+
 
   public void startPrefixMapping(String prefix, String uri) throws SAXException
   {
@@ -165,6 +235,7 @@ class BatchModifyParser extends DefaultHandler
     }
   }
 
+
   public void skippedEntity(String name) throws SAXException
   {
     StringBuffer sb = new StringBuffer();
@@ -175,6 +246,7 @@ class BatchModifyParser extends DefaultHandler
     sb.getChars(0, sb.length(), text, 0);
     this.characters(text, 0, text.length);
   }
+
 
   public void characters(char ch[], int start, int length)  throws SAXException
   {
@@ -187,200 +259,133 @@ class BatchModifyParser extends DefaultHandler
     }
   }
 
+
   public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
     throws SAXException
   {
+    if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("addDatastream"))
+    {
+      addDatastream = true;
+      ds = new Datastream();
 
-    if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("modifyDatastream"))
+      ds.objectPID = attrs.getValue("pid");
+      ds.DSControlGrp = attrs.getValue("dsControlGroupType");
+      ds.DatastreamID = attrs.getValue("datstreamID");
+      if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase(""))
+      {
+        ds.DSLabel = attrs.getValue("dsLabel");
+      }
+      if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase(""))
+      {
+        ds.DSState = attrs.getValue("dsState");
+      }
+      if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
+      {
+        ds.DSLocation = attrs.getValue("dsLocation");
+      }
+      if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase(""))
+      {
+        ds.DSMIME = attrs.getValue("dsMIME");
+      }
+
+      if (attrs.getValue("dsMdClass") != null && !attrs.getValue("dsMdClass").equalsIgnoreCase(""))
+      {
+        ds.mdClass = attrs.getValue("dsMdClass");
+      }
+      if (attrs.getValue("dsMdType") != null && !attrs.getValue("dsMdType").equalsIgnoreCase(""))
+      {
+        ds.mdType = attrs.getValue("dsMdType");
+      }
+      if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase(""))
+      {
+        ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
+      }
+      if (attrs.getValue("formatURI") != null && !attrs.getValue("formatURI").equalsIgnoreCase(""))
+      {
+        ds.DSFormatURI = attrs.getValue("formatURI");
+      }
+      } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("purgeDatastream"))
+      {
+        ds = new Datastream();
+        ds.objectPID = attrs.getValue("pid");
+        ds.DatastreamID = attrs.getValue("dsID");
+        purgeDatastream = true;
+        try
+        {
+        if (attrs.getValue("asOfDate")!=null && !attrs.getValue("asOfDate").equalsIgnoreCase(""))
+        {
+          ds.asOfDate = fedora.server.utilities.DateUtility.convertStringToCalendar(attrs.getValue("asOfDate"));
+        }
+        } catch (Exception e)
+        {
+          failedCount++;
+          purgeDatastream = false;
+          logFailedDirective(ds.objectPID, localName, e, "");
+        }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("modifyDatastream"))
     {
 
-      fedora.server.types.gen.Datastream ds = null;
-      isStateChanged = false;
+      fedora.server.types.gen.Datastream dsOrig = null;
+      ds = new Datastream();
 
-      // eventually use validating schema to enforce this
-      if ( attrs.getValue("pid") != null && attrs.getValue("dsID") != null &&
-           attrs.getValue("dsControlGroupType") != null &&
-           !attrs.getValue("pid").equalsIgnoreCase("") &&
-           !attrs.getValue("dsID").equalsIgnoreCase("") &&
-           !attrs.getValue("dsControlGroupType").equalsIgnoreCase("") )
-      {
-        objectPID = attrs.getValue("pid");
-        datastreamID = attrs.getValue("dsID");
-        dsControlGroupType = attrs.getValue("dsControlGroupType");
-      } else
-      {
-        throw new SAXException("modifyDatastream requires attributes for PID: "
-                   + attrs.getValue("pid") + " datastreamID: "
-                   + attrs.getValue("dsID") + " dsControlGroupType"
-            + attrs.getValue("dsControlGroupType"));
-      }
+      ds.objectPID = attrs.getValue("pid");
+      ds.DatastreamID = attrs.getValue("dsID");
+      ds.DSControlGrp = attrs.getValue("dsControlGroupType");
+      modifyDatastream = true;
 
       try {
-        ds = (fedora.server.types.gen.Datastream) APIM.getDatastream(objectPID, datastreamID, null);
+        dsOrig = APIM.getDatastream(ds.objectPID, ds.DatastreamID, null);
       } catch (Exception e)
       {
-        throw new SAXException("Error in retrieving original datastream via APIM");
+        failedCount++;
+        logFailedDirective(ds.objectPID, localName, e, "");
+        modifyDatastream = false;
+        throw new SAXException("Unable to get list of existing datastreams");
       }
 
-      if (dsControlGroupType.equalsIgnoreCase("X"))
+      if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase(""))
       {
-        dxm = new DatastreamXMLMetadata();
-        dxm.DatastreamID = datastreamID;
-        dxm.DSControlGrp = dsControlGroupType;
-        if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase(""))
-        {
-          dxm.DSLabel = attrs.getValue("dsLabel");
-        } else
-        {
-          dxm.DSLabel = ds.getLabel();
-        }
-        if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase(""))
-        {
-          dxm.DSState = attrs.getValue("dsState");
-          isStateChanged = true;
-        } else
-        {
-          dsState = ds.getState();
-        }
-        if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
-        {
-          dxm.DSLocation = attrs.getValue("dsLocation");
-        } else
-        {
-          dxm.DSLocation = ds.getLocation();
-        }
-        if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase(""))
-        {
-          dxm.DSMIME = attrs.getValue("dsMIME");
-        } else
-        {
-          dxm.DSMIME = ds.getMIMEType();
-        }
-
-        if (attrs.getValue("dsSize") != null && !attrs.getValue("dsSize").equalsIgnoreCase(""))
-        {
-          dxm.DSSize = new Integer(attrs.getValue("dsSize")).intValue();
-        } else
-        {
-          dxm.DSSize = ds.getSize();
-        }
-        if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase(""))
-        {
-          dxm.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-        } else
-        {
-          dxm.isHarvestable = ds.isHarvestable();
-        }
-        System.out.println("modify XMLMetadata Datastream -- SUCCEEDED");
-      } else if (dsControlGroupType.equalsIgnoreCase("E") ||
-          dsControlGroupType.equalsIgnoreCase("R"))
-      {
-        drc = new DatastreamReferencedContent();
-        objectPID = attrs.getValue("pid");
-        drc.DatastreamID = attrs.getValue("dsID");
-        drc.DSControlGrp = dsControlGroupType;
-        if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase(""))
-        {
-          drc.DSLabel = attrs.getValue("dsLabel");
-        } else
-        {
-          drc.DSLabel = ds.getLabel();
-        }
-        if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase(""))
-        {
-          drc.DSState = attrs.getValue("dsState");
-          isStateChanged = true;
-        } else
-        {
-          dsState = ds.getState();
-        }
-        if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
-        {
-          drc.DSLocation = attrs.getValue("dsLocation");
-        } else
-        {
-          drc.DSLocation = ds.getLocation();
-        }
-        if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase(""))
-        {
-          drc.DSMIME = attrs.getValue("dsMIME");
-        } else
-        {
-          drc.DSMIME = ds.getMIMEType();
-        }
-
-        if (attrs.getValue("dsSize") != null && !attrs.getValue("dsSize").equalsIgnoreCase(""))
-        {
-          drc.DSSize = new Integer(attrs.getValue("dsSize")).intValue();
-        } else
-        {
-          drc.DSSize = ds.getSize();
-        }
-        if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase(""))
-        {
-          drc.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-        } else
-        {
-          drc.isHarvestable = ds.isHarvestable();
-        }
-        System.out.println("modify Referenced Content Datastream -- SUCCEEDED");
-      } else if (dsControlGroupType.equalsIgnoreCase("M"))
-      {
-        dmc = new DatastreamManagedContent();
-        objectPID = attrs.getValue("pid");
-        dmc.DatastreamID = attrs.getValue("dsID");
-        dmc.DSControlGrp = dsControlGroupType;
-        if (attrs.getValue("dsLabel") != null && !attrs.getValue("dsLabel").equalsIgnoreCase(""))
-        {
-          dmc.DSLabel = attrs.getValue("dsLabel");
-        } else
-        {
-          dmc.DSLabel = ds.getLabel();
-        }
-        if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase(""))
-        {
-          dmc.DSState = attrs.getValue("dsState");
-          isStateChanged = true;
-        } else
-        {
-          dsState = ds.getState();
-        }
-        if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
-        {
-          dmc.DSLocation = attrs.getValue("dsLocation");
-        } else
-        {
-          dmc.DSLocation = ds.getLocation();
-        }
-        if ( attrs.getValue("dsMIME") != null && !attrs.getValue("dsMIME").equalsIgnoreCase(""))
-        {
-          dmc.DSMIME = attrs.getValue("dsMIME");
-        } else
-        {
-          dmc.DSMIME = ds.getMIMEType();
-        }
-
-        if (attrs.getValue("dsSize") != null && !attrs.getValue("dsSize").equalsIgnoreCase(""))
-        {
-          dmc.DSSize = new Integer(attrs.getValue("dsSize")).intValue();
-        } else
-        {
-          dmc.DSSize = ds.getSize();
-        }
-        if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase(""))
-        {
-          dmc.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
-        } else
-        {
-          dmc.isHarvestable = ds.isHarvestable();
-        }
-        System.out.println("modify Managed Content Datastream -- SUCCEEDED");
+        ds.DSLabel = attrs.getValue("dsLabel");
       } else
       {
-        throw new SAXException("Invalid Datastream Control Group Type: "+dsControlGroupType);
+        ds.DSLabel = dsOrig.getLabel();
       }
+      if ( attrs.getValue("dsState") != null && !attrs.getValue("dsState").equalsIgnoreCase(""))
+      {
+        ds.DSState = attrs.getValue("dsState");
+      } else
+      {
+        ds.DSState = dsOrig.getState();
+      }
+      if ( attrs.getValue("dsLocation") != null && !attrs.getValue("dsLocation").equalsIgnoreCase(""))
+      {
+        ds.DSLocation = attrs.getValue("dsLocation");
+      } else
+      {
+        ds.DSLocation = dsOrig.getLocation();
+      }
+      if (attrs.getValue("harvestable") != null && !attrs.getValue("harvestable").equalsIgnoreCase(""))
+      {
+        ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
+      } else
+      {
+        ds.isHarvestable = dsOrig.isHarvestable();
+      }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("setDatastreamState"))
+    {
+      ds = new Datastream();
+      ds.objectPID = attrs.getValue("pid");
+      ds.DatastreamID = attrs.getValue("dsID");
+      ds.DSState = attrs.getValue("dsState");
 
-    } else if (localName.equalsIgnoreCase("xmlData"))
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("setDatastreamHarvestable"))
+    {
+      ds = new Datastream();
+      ds.objectPID = attrs.getValue("pid");
+      ds.DatastreamID = attrs.getValue("dsID");
+      ds.isHarvestable = new Boolean(attrs.getValue("harvestable")).booleanValue();
+
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("xmlData"))
     {
       m_inXMLMetadata = true;
       m_dsXMLBuffer=new StringBuffer();
@@ -456,11 +461,12 @@ class BatchModifyParser extends DefaultHandler
     }
   }
 
+
   public void endElement(String namespaceURI, String localName, String qName) throws SAXException
   {
     if (m_inXMLMetadata)
     {
-      if (localName.equals("xmlData"))
+      if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equals("xmlData"))
       {
         // finished all xml metadata for this datastream
         // create the right kind of datastream and add it to m_obj
@@ -489,9 +495,12 @@ class BatchModifyParser extends DefaultHandler
         //datastream..dsXMLBuffer.append(combined);
         try
         {
-          dxm.xmlContent = combined.getBytes("UTF-8");
+          if(ds!=null && combined !=null)
+            ds.xmlContent = combined.getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee)
-        {}
+        {
+          uee.printStackTrace();
+        }
 
       } else
       {
@@ -508,53 +517,188 @@ class BatchModifyParser extends DefaultHandler
         m_dsXMLBuffer.append(localName);
         m_dsXMLBuffer.append(">");
       }
-    }
-    else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("modifyDatastream"))
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("addDatastream"))
     {
       try
       {
-        if (dsControlGroupType.equalsIgnoreCase("X"))
+        String datastreamID = null;
+        if (ds.DSControlGrp.equalsIgnoreCase("X"))
         {
-          APIM.modifyDatastreamByValue(objectPID, dxm.DatastreamID, dxm.DSLabel,
-              "ModifyDatastreamByValue", dxm.xmlContent, dsState, dxm.isHarvestable);
-          if(isStateChanged)
-          {
-            APIM.setDatastreamState(objectPID, datastreamID, dxm.DSState, "ModifiedState");
-            System.out.println("ModifyState -- SUCCEEDED");
-          }
-        } else if (dsControlGroupType.equalsIgnoreCase("M"))
+          InputStream xmlMetadata = new ByteArrayInputStream(ds.xmlContent);
+          ds.DSLocation=UPLOADER.upload(xmlMetadata);
+          datastreamID = APIM.addDatastream(ds.objectPID, ds.DSLabel, ds.DSMIME, ds.DSFormatURI,
+              ds.DSLocation, ds.DSControlGrp, ds.mdClass, ds.mdType, ds.DSState,
+              ds.isHarvestable);
+        } else if (ds.DSControlGrp.equalsIgnoreCase("M"))
         {
-          APIM.modifyDatastreamByReference(objectPID, dmc.DatastreamID, dmc.DSLabel,
-              "ModifyDatastreamByReference", dmc.DSLocation, dsState, dmc.isHarvestable);
-          if(isStateChanged)
-          {
-            APIM.setDatastreamState(objectPID, datastreamID, dmc.DSState, "ModifiedState");
-            System.out.println("ModifyState -- SUCCEEDED");
-          }
-        } else if (dsControlGroupType.equalsIgnoreCase("E") ||
-                   dsControlGroupType.equalsIgnoreCase("R"))
+          datastreamID = APIM.addDatastream(ds.objectPID, ds.DSLabel, ds.DSMIME, ds.DSFormatURI,
+              ds.DSLocation, ds.DSControlGrp, ds.mdClass, ds.mdType, ds.DSState,
+              ds.isHarvestable);
+        } else if (ds.DSControlGrp.equalsIgnoreCase("E") ||
+                   ds.DSControlGrp.equalsIgnoreCase("R"))
         {
-          APIM.modifyDatastreamByReference(objectPID, drc.DatastreamID, drc.DSLabel,
-              "ModifyDatastreamByReference", drc.DSLocation, dsState, drc.isHarvestable);
-          if(isStateChanged)
-          {
-            APIM.setDatastreamState(objectPID, datastreamID, drc.DSState, "ModifiedState");
-            System.out.println("ModifyState -- SUCCEEDED");
-          }
+          datastreamID = APIM.addDatastream(ds.objectPID, ds.DSLabel, ds.DSMIME, ds.DSFormatURI,
+              ds.DSLocation, ds.DSControlGrp, ds.mdClass, ds.mdType, ds.DSState,
+              ds.isHarvestable);
+        }
+        if (datastreamID!=null)
+        {
+            succeededCount++;
+            logSucceededDirective(ds.objectPID, localName,"datastreamID: "+datastreamID+" added");
         } else
         {
-          throw new SAXException("ERROR: Invalid datastream Control Group Type "
-              + "encounterd while parsing Batch Modify Input File: "
-              + dsControlGroupType);
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName, null, "Unable to add datastream");
         }
-        isStateChanged = false;
       } catch (Exception e)
       {
         e.printStackTrace();
-        throw new SAXException("Error while communicating with API-M");
+        if(!addDatastream)
+        {
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName, e, "");
+        }
+      }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("purgeDatastream"))
+    {
+      try
+      {
+        Calendar[] versionsPurged = null;
+        versionsPurged = APIM.purgeDatastream(ds.objectPID, ds.DatastreamID, ds.asOfDate);
+        if (versionsPurged.length > 0)
+        {
+          succeededCount++;
+          logSucceededDirective(ds.objectPID, localName, "datastreamID: "+ds.DatastreamID+" Versions purged: "+versionsPurged.length);
+        } else
+        {
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName,null, "Unable to purge datastream; verify datastream ID and/or asOfDate");
+        }
+      } catch (Exception e)
+      {
+        if(!purgeDatastream)
+        {
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName, e, "");
+        }
+      }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("modifyDatastream"))
+    {
+      try
+      {
+        if (ds.DSControlGrp.equalsIgnoreCase("X"))
+        {
+          APIM.modifyDatastreamByValue(ds.objectPID, ds.DatastreamID, ds.DSLabel,
+              "ModifyDatastreamByValue", ds.xmlContent, ds.DSState, ds.isHarvestable);
+        } else if (ds.DSControlGrp.equalsIgnoreCase("M"))
+        {
+          APIM.modifyDatastreamByReference(ds.objectPID, ds.DatastreamID, ds.DSLabel,
+              "ModifyDatastreamByReference", ds.DSLocation, ds.DSState, ds.isHarvestable);
+        } else if (ds.DSControlGrp.equalsIgnoreCase("E") ||
+                   ds.DSControlGrp.equalsIgnoreCase("R"))
+        {
+          APIM.modifyDatastreamByReference(ds.objectPID, ds.DatastreamID, ds.DSLabel,
+              "ModifyDatastreamByReference", ds.DSLocation, ds.DSState, ds.isHarvestable);
+        }
+        succeededCount++;
+        logSucceededDirective(ds.objectPID, localName, "DatastreamID: "+ds.DatastreamID+" modified");
+      } catch (Exception e)
+      {
+        if(!modifyDatastream)
+        {
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName, e, null);
+        }
+      }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("setDatastreamState"))
+    {
+      try
+      {
+        APIM.setDatastreamState(ds.objectPID, ds.DatastreamID, ds.DSState, "ModifyDatastreamByReference");
+        succeededCount++;
+        logSucceededDirective(ds.objectPID, localName, "datastream: "+ds.DatastreamID+" Set dsState: "+ds.DSState);
+      } catch (Exception e)
+      {
+        if (!setDatastreamState)
+        {
+          failedCount++;
+          logFailedDirective(ds.objectPID, localName, e, null);
+        }
+      }
+    } else if (namespaceURI.equalsIgnoreCase(BMFF) && localName.equalsIgnoreCase("setDatastreamHarvestable"))
+    {
+      try
+      {
+        APIM.setDatastreamHarvestable(ds.objectPID, ds.DatastreamID, ds.isHarvestable, "ModifyDatastreamByReference");
+        succeededCount++;
+        logSucceededDirective(ds.objectPID, localName, "datastream: "+ds.DatastreamID+" Set isHarvestable: "+ds.isHarvestable);
+      } catch (Exception e)
+      {
+        failedCount++;
+        logFailedDirective(ds.objectPID, localName, e, null);
       }
     }
   }
+
+  /**
+   * <p>Write a log of what happened when a directive fails.<p>
+   *
+   * @param sourcePID - The PID of the object being processed.
+   * @param directive - The name of the directive being processed.
+   * @param e - The Exception that was thrown.
+   * @param msg - A message providing additional info if no Exception was thrown.
+   */
+  private static void logFailedDirective(String sourcePID, String directive,
+      Exception e, String msg)
+  {
+    out.println("  <failed directive=\"" + directive + "\" sourcePID=\"" + sourcePID + "\">");
+    if (e!=null)
+    {
+      String message=e.getMessage();
+      if (message==null)
+        message=e.getClass().getName();
+      out.println("    " + StreamUtility.enc(message));
+    } else
+    {
+      out.println("    " + StreamUtility.enc(msg));
+    }
+    out.println("  </failed>");
+  }
+
+  /**
+   * <p>Write a log of what happened when there is a parsing error.</p>
+   *
+   * @param e - The Exception that was thrown.
+   * @param msg - A message indicating additional info if no Exception was thrown.
+   */
+  private static void logParserError( Exception e, String msg)
+  {
+    out.println("  <parserError>");
+    if (e!=null)
+    {
+      String message=e.getMessage();
+      if (message==null)
+        message=e.getClass().getName();
+      out.println("    " + StreamUtility.enc(message));
+    } else
+    {
+      out.println("    " + StreamUtility.enc(msg));
+    }
+    out.println("  </parserError>");
+  }
+
+  /**
+   * <p>Write a log when a directive is successfully processed.</p>
+   *
+   * @param sourcePID - The PID of the object processed.
+   * @param directive - The name of the directive processed.
+   * @param msg - A message.
+   */
+  private static void logSucceededDirective(String sourcePID, String directive, String msg) {
+        out.println("  <succeeded directive=\"" + directive + "\" sourcePID=\"" + sourcePID + "\">");
+        out.println("    " + StreamUtility.enc(msg));
+        out.println("  </succeeded>");
+    }
 
   public static void main(String[] args)
   {
@@ -562,15 +706,24 @@ class BatchModifyParser extends DefaultHandler
     int port = 8080;
     String user = "fedoraAdmin";
     String pass = "fedoraAdmin";
+    PrintStream logFile;
+    FedoraAPIM APIM;
+
     try
     {
-      FileInputStream file = new FileInputStream("c:\\batch3.xml");
-      BatchModifyParser bmifp = new BatchModifyParser(host, port, user, pass, file);
+      UPLOADER=new Uploader(host, port, user, pass);
+      logFile = new PrintStream(new FileOutputStream("C:\\batchModifyLog.txt"));
+      APIM = fedora.client.APIMStubFactory.getStub(host, port, user, pass);
+      InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\local-server-demos\\simple-image-demo\\batch3.xml");
+      BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, file, logFile);
       file.close();
+      logFile.close();
     } catch (Exception e)
     {
-      System.out.println("ERROR: "+e.getMessage());
-      //e.printStackTrace();
+      System.out.println("ERROR: "+e.getClass().getName()
+                + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
+      e.printStackTrace();
     }
   }
+
 }
