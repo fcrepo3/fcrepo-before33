@@ -29,6 +29,7 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.security.Authorization;
 import fedora.server.utilities.Logger;
 
 /**
@@ -120,13 +121,6 @@ public class GetObjectHistoryServlet extends HttpServlet
     String PID = null;
     boolean xml = false;
 
-    HashMap h=new HashMap();
-    h.put("application", "apia");
-    h.put("useCachedObject", "true");
-    h.put("userId", "fedoraAdmin");
-    h.put("host", request.getRemoteAddr());
-    ReadOnlyContext context = new ReadOnlyContext(h);
-
     // Parse servlet URL.
     String[] URIArray = request.getRequestURL().toString().split("/");
     if (URIArray.length != 6 || !URIArray[4].equals("getObjectHistory"))
@@ -154,8 +148,8 @@ public class GetObjectHistoryServlet extends HttpServlet
         h_userParms.put(name,value);
     }
 
-    try
-    {
+    Context context = ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_REST, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    try {
         getObjectHistory(context, PID, xml, response);
     } catch (Throwable th)
       {
