@@ -39,6 +39,9 @@
 			<listitem>
 				<para>Get ObjectProfile - gets the Object Profile of the specified object</para>
 			</listitem>
+			<listitem>
+				<para>Describe  - provides information about the Fedora repository server, including name, version, base URL</para>
+			</listitem>
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
   located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink>
@@ -127,6 +130,36 @@
 			</itemizedlist>
 		</blockquote>
 		<variablelist>
+			<title>Describe syntax:</title>
+			<varlistentry>
+				<term>http://hostname:port/fedora/describe<emphasis role="bold">[?xml=BOOLEAN]</emphasis>
+				</term>
+				<listitem>
+					<para>This syntax requests information about a Fedora repository, including repository name, version, base URL, PID syntax, OAI identifier syntax, admin emails, and sample request URLs.   The xml parameter determines the type of output returned. If the parameter is omitted or has a value of &quot;false&quot;, a MIME-typed stream consisting of an html table is returned providing a browser-savvy means of viewing the object profile. If the value specified is &quot;true&quot;, then a MIME-typed stream consisting of XML is returned.</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>describe - a required parameter specifying the Fedora servlet path for the describe request.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">xml</emphasis> - an optional parameter indicating the requested output format. A value of &quot;true&quot; indicates a return type of text/xml; the absence of the xml parameter or a value of &quot;false&quot; indicates format is to be text/html.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
+		<variablelist>
 			<title>Examples</title>
 			<varlistentry>
 				<term>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1 and methodName of getThumbnail</term>
@@ -144,6 +177,12 @@
 				<term>Get the ObjectProfile for a data object with a PID of demo:5 as XML:</term>
 				<listitem>
 					<para>http://localhost:8080/fedora/get/demo:5?xml=true</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Get respository information using the describe request as XML:</term>
+				<listitem>
+					<para>http://localhost:8080/fedora/describe?xml=true</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
