@@ -21,7 +21,10 @@ public class DatastreamContent
     public DatastreamContent() {
         m_metadataIdList=new ArrayList();
     }
-    
+
+    /**
+     * These reference a datastream series, not an individual version id.
+     */
     public List metadataIdList() {
         return m_metadataIdList;
     }
