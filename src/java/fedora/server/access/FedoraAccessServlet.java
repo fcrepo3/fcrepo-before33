@@ -14,7 +14,7 @@ import javax.servlet.ServletException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
-//import java.util.HashMap;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,9 +28,12 @@ import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ServerException;
 //import fedora.server.errors.MethodParmNotFoundException;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 //import fedora.server.storage.DefinitiveBMechReader;
 import fedora.server.storage.DefinitiveDOReader;
+import fedora.server.storage.DOManager;
 //import fedora.server.storage.FastDOReader;
 import fedora.server.storage.FastDOReader;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -99,6 +102,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
   private static Server s_server = null;
   private static final String YES = "yes";
   private static int DISS_CACHE_SIZE = 100;
+  private static DOManager m_manager = null;
+  private static Context s_context = null;
 
   private Hashtable disseminationCache = new Hashtable();
   private HttpSession session = null;
@@ -114,10 +119,17 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       // cache size parameter in config file; for now, put at top level.
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
       Integer I1 = new Integer(s_server.getParameter("disseminationCacheSize"));
-      System.out.println("I1: "+I1+"i1: "+I1.intValue());
       DISS_CACHE_SIZE = I1.intValue();
+      s_server.logInfo("Dissemination cache size: " + DISS_CACHE_SIZE);
       Boolean B1 = new Boolean(s_server.getParameter("debug"));
       debug = B1.booleanValue();
+      m_manager=(DOManager) s_server.getModule(
+              "fedora.server.storage.DOManager");
+      HashMap h = new HashMap();
+      h.put("application", "apia");
+      h.put("useCachedObject", "false");
+      h.put("userId", "fedoraAdmin");
+      s_context = new ReadOnlyContext(h);
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
@@ -570,7 +582,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     String[] behaviorDefs = null;
     try
     {
-      FastDOReader fastReader = new FastDOReader(PID);
+      FastDOReader fastReader = new FastDOReader(s_context, PID);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDate);
       behaviorDefs = fastReader.GetBehaviorDefs(versDateTime);
       return behaviorDefs;
@@ -602,7 +614,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     MethodDef[] methodDefs = null;
     try
     {
-      FastDOReader fastReader = new FastDOReader(PID);
+      FastDOReader fastReader = new FastDOReader(s_context, PID);
       methodDefs = fastReader.GetBMechMethods(bDefPID, versDateTime);
     } catch (Exception e)
     {
@@ -670,6 +682,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
    */
   public MIMETypedStream GetDissemination(String PID, String bDefPID,
        String methodName, Property[] userParms, Calendar asOfDate)
+      throws ServerException
    {
      String protocolType = null;
      DisseminationBindingInfo[] dissResults = null;
@@ -681,12 +694,12 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
      FastDOReader fastReader = null;
      try
      {
-       fastReader = new FastDOReader(PID);
+       fastReader = new FastDOReader(s_context, PID);
        dissResults = fastReader.getDissemination(PID, bDefPID, methodName,
            versDateTime);
-       //DisseminationService dissService = new DisseminationService();
-       //dissemination = dissService.getDissemination(PID, bDefPID, methodName,
-       //userParms, asOfDate, dissResults);
+       DisseminationService dissService = new DisseminationService();
+       dissemination = dissService.assembleDissemination(userParms, dissResults);
+       /*
        String replaceString = null;
        int numElements = dissResults.length;
 
@@ -811,14 +824,10 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          System.out.println("Unknown protocol type: "+protocolType);
          dissemination = null;
        }
-     } catch (Exception e)
+       */
+     } catch (ServerException se)
      {
-       // FIXME!! Decide on Exception handling
-       // Object was not found in SQL database or in XML storage area
-       System.out.println("GetDissemination: Object Not Found");
-       System.err.println("GetDissemination: "+e.getMessage());
-       //this.getServletContext().log(onfe.getMessage(), onfe.getCause());
-       return dissemination;
+       throw se;
      }
      return dissemination;
    }
@@ -838,7 +847,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     ObjectMethodsDef[] objMethDefArray = null;
     try
     {
-      fastReader = new FastDOReader(PID);
+      fastReader = new FastDOReader(s_context, PID);
       objMethDefArray = fastReader.getObjectMethods(PID, versDateTime);
     } catch (Exception e)
     {
@@ -908,8 +917,22 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       // Dissemination request NOT in local cache.
       // Try reading from relational database
+      try {
       disseminationResult = GetDissemination(PID, bDefPID, methodName,
           userParms, asOfDate);
+      } catch (ServerException se)
+      {
+        try{
+        response.setStatus(404);
+          response.sendError(404, "Dissemination Error: "+
+                             se.getMessage());
+          //response.sendError(404, this.requestURL);
+          PrintWriter out = response.getWriter();
+          out.println(se.getMessage());
+          se.printStackTrace(out);
+        } catch (IOException ioe)
+        {}
+      }
       if (disseminationResult != null)
       {
         // Dissemination request succeeded, so add to local cache
@@ -1311,7 +1334,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
 
     try
     {
-      fdor = new FastDOReader(PID);
+      fdor = new FastDOReader(s_context, PID);
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
 
       // FIXME!! Decide on Exception handling
@@ -1520,6 +1543,8 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     out.println("</tr>");
 
     // List user-supplied parameters if any
+    if (userParms != null)
+    {
     for (int i=0; i<userParms.length; i++)
     {
       out.println("<tr>");
@@ -1527,6 +1552,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       out.println("<td> = </td>");
       out.println("<td>"+userParms[i].value+"</td>");
         out.println("</tr>");
+    }
     }
     out.println("</table></center></font>");
     out.println("</body></html>");
