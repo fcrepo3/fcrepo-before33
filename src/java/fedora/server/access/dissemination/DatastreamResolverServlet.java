@@ -201,7 +201,7 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
         response.setContentType(mimeTypedStream.MIMEType);
         int byteStream = 0;
         // RLW: chnage required by conversion fom byte[] to InputStream
-        byte[] buffer = new byte[256];
+        byte[] buffer = new byte[255];
         while ( (byteStream = mimeTypedStream.getStream().read(buffer)) != -1)
         {
           outStream.write(buffer, 0, byteStream);
@@ -242,10 +242,12 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
         int bytestream = 0;
         response.setContentType(d.DSMIME);
         outStream = response.getOutputStream();
-        while ((bytestream = is.read()) != -1)
+        byte[] buffer = new byte[255];
+        while ((bytestream = is.read(buffer)) != -1)
         {
-          outStream.write(bytestream);
+          outStream.write(buffer, 0, bytestream);
         }
+        buffer = null;
         is.close();
       } else
       {

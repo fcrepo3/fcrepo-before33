@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.xml.namespace.QName;
 import java.util.Calendar;
 import java.util.Date;
@@ -186,7 +187,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     //                        + request.getRequestURI() + "?");
     requestURL = request.getRequestURL().toString()+"?";
     requestURI = new String(requestURL + request.getQueryString());
-    PrintWriter out = response.getWriter();
+    //PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
 
     // Get servlet input parameters.
     Enumeration URLParms = request.getParameterNames();
@@ -482,10 +484,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" "+
                 "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\">");
             int byteStream = 0;
-            while ((byteStream = methodResults.read()) >= 0)
+            byte[] buffer = new byte[255];
+            while ((byteStream = methodResults.read(buffer)) >= 0)
             {
-              out.write(byteStream);
+              out.write(buffer, 0, byteStream);
             }
+            buffer = null;
             out.println("</definitions>");
           } else
           {
@@ -554,10 +558,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 int byteStream = 0;
                 ByteArrayInputStream dissemResult =
                     new ByteArrayInputStream(dissemination.getStream());
-                while ((byteStream = dissemResult.read()) >= 0)
+                byte[] buffer = new byte[255];
+                while ((byteStream = dissemResult.read(buffer)) >= 0)
                 {
-                  out.write(byteStream);
+                  out.write(buffer, 0, byteStream);
                 }
+                buffer = null;
                 dissemResult.close();
               }
             } else
@@ -594,7 +600,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
         try
         {
-          out = response.getWriter();
+          //out = response.getWriter();
+          out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
           objMethDefArray = getObjectMethods(PID, asOfDateTime);
@@ -1340,7 +1347,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     // Check for missing parameters required either by the servlet or the
     // requested Fedora Access SOAP service.
     boolean isValid = true;
-    PrintWriter out = response.getWriter();
+    //PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
     String versDate = DateUtility.convertDateToString(versDateTime);
     StringBuffer html = new StringBuffer();
     if (action != null && action.equals(GET_DISSEMINATION))
@@ -1669,7 +1677,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
     if (debug) System.err.println("versdate: "+versDate);
-    PrintWriter out = response.getWriter();
+    //PrintWriter out = response.getWriter();
+    ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
 
     // Display servlet input parameters

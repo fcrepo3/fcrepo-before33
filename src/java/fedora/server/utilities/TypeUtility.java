@@ -412,9 +412,10 @@ public abstract class TypeUtility
       int byteStream = 0;
       try
       {
-      while ((byteStream = is.read()) != -1)
+        byte[] buffer = new byte[255];
+      while ((byteStream = is.read(buffer)) != -1)
       {
-        baos.write(byteStream);
+        baos.write(buffer, 0, byteStream);
       }
       } catch (IOException ioe)
       {
@@ -895,9 +896,10 @@ public abstract class TypeUtility
     //    new ByteArrayInputStream(mimeTypedStream.stream);
     int byteStream = 0;
     //while ((byteStream = bais.read()) >= 0)
+    byte[] buffer = new byte[255];
     while ((byteStream = is.read()) >= 0)
     {
-      System.out.write(byteStream);
+      System.out.write(buffer, 0, byteStream);
     }
     System.out.println("\n----- Converting GenMIMETypedStream to "+
                        " MIMETypedStream");
@@ -908,9 +910,9 @@ public abstract class TypeUtility
     ByteArrayInputStream bais = null;
     bais = new ByteArrayInputStream(genMIMETypedStream.getStream());
     byteStream = 0;
-    while ((byteStream = bais.read()) >= 0)
+    while ((byteStream = bais.read(buffer)) >= 0)
     {
-      System.out.write(byteStream);
+      System.out.write(buffer, 0, byteStream);
     }
     System.out.println("\n----- Converting MIMETypedStream to "+
                        " GenMIMETypedStream");
@@ -922,9 +924,9 @@ public abstract class TypeUtility
     //bais = new ByteArrayInputStream(mimeTypedStream.stream);
     byteStream = 0;
     //while ((byteStream = bais.read()) >= 0)
-    while ((byteStream = is.read()) >= -1)
+    while ((byteStream = is.read(buffer)) >= -1)
     {
-      System.out.write(byteStream);
+      System.out.write(buffer, 0, byteStream);
     }
 
     System.out.println("\n----- Converting ObjectMethodsDefArray to "

@@ -217,10 +217,12 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     int byteStream = 0;
     try
     {
-    while ((byteStream = in.read()) >= 0)
+    byte[] buffer = new byte[255];
+    while ((byteStream = in.read(buffer)) >= 0)
     {
-      out.write(byteStream);
+      out.write(buffer, 0, byteStream);
     }
+    buffer = null;
     in.close();
     } catch (IOException ioe)
     {
