@@ -2,7 +2,8 @@
 <input OBJID="test:3010" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 	<comment>***testing:  comment for american academy***</comment>
 	<metadata>
-		<metadata ID="DESC1" LABEL="***testing:  substituted label for DESC1***">
+		<metadata ID="DESC1">
+				<!-- *** TESTING:  SUBSTITUTING METADATA FOR DESC1 *** -->		
 				<uvalibdesc:desc>
 					<uvalibdesc:time>
 						<uvalibdesc:date type="created" certainty="ca." era="bc">13th century</uvalibdesc:date>
@@ -39,6 +40,7 @@
 				</uvalibdesc:desc>
 		</metadata>
 		<metadata ID="RIGHTS1">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS1 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:adminrights>
    <uvalibadmin:policy>
@@ -48,7 +50,8 @@
 </uvalibadmin:adminrights>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="TECH2"  LABEL="***testing:  substituted label for TECH2***">
+		<metadata ID="TECH2">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH2 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:technical>
    <uvalibadmin:images>
@@ -58,6 +61,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="TECH1">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH1 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:technical>
    <uvalibadmin:images>
@@ -66,7 +70,8 @@
 </uvalibadmin:technical>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="SOURCE4">
+		<metadata ID="SOURCE4" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE4 ***">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE4 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:source>
    <uvalibadmin:identifier></uvalibadmin:identifier>
@@ -74,7 +79,8 @@
 </uvalibadmin:source>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="SOURCE3">
+		<metadata ID="SOURCE3" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE3 ***">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE3 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:source>
    <uvalibadmin:identifier></uvalibadmin:identifier>
@@ -82,7 +88,8 @@
 </uvalibadmin:source>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="SOURCE2">
+		<metadata ID="SOURCE2"  LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE2 ***">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE2 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:source>
    <uvalibadmin:identifier></uvalibadmin:identifier>
@@ -91,6 +98,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="DIGIPROV4">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV4 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:digiprov>
    <uvalibadmin:date>20010901</uvalibadmin:date>
@@ -99,7 +107,8 @@
 </uvalibadmin:digiprov>
 </uvalibadmin:admin>
 		</metadata>
-		<metadata ID="SOURCE1">
+		<metadata ID="SOURCE1" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE1 ***">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE1 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:source>
    <uvalibadmin:identifier></uvalibadmin:identifier>
@@ -108,6 +117,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="DIGIPROV3">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV3 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:digiprov>
    <uvalibadmin:date>20010901</uvalibadmin:date>
@@ -117,6 +127,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="RIGHTS4">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS4 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:adminrights>
    <uvalibadmin:policy>
@@ -127,6 +138,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="DIGIPROV2">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV2 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:digiprov>
    <uvalibadmin:date>20010901</uvalibadmin:date>
@@ -136,6 +148,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="RIGHTS3">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS3 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:adminrights>
    <uvalibadmin:policy>
@@ -146,6 +159,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="TECH4">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH4 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:technical>
    <uvalibadmin:images>
@@ -155,6 +169,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="RIGHTS2">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS2 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:adminrights>
    <uvalibadmin:policy>
@@ -165,6 +180,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="DIGIPROV1">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV1 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:digiprov>
    <uvalibadmin:date>20010901</uvalibadmin:date>
@@ -174,6 +190,7 @@
 </uvalibadmin:admin>
 		</metadata>
 		<metadata ID="TECH3">
+<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH3 *** -->
 <uvalibadmin:admin>
 <uvalibadmin:technical>
    <uvalibadmin:images>
@@ -184,10 +201,10 @@
 		</metadata>
 	</metadata>
 	<datastreams>
-		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/americanacademy.jpg"  LABEL="***testing:  substituted general label for DS1***"/>
-		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo/medium/americanacademy.jpg"  xlink:title="***testing:  substituted title for DS2***"/>
+		<datastream ID="DS1" xlink:href="http://localhost:8080/beta1-demo/thumb/americanacademy.jpg"  LABEL="*** TESTING:  SUBSTITUTING LABEL FOR DS1 ***"/>
+		<datastream ID="DS2" xlink:href="http://localhost:8080/beta1-demo/medium/americanacademy.jpg"  xlink:title="*** TESTING:  SUBSTITUTING XLINK:TITLE FOR DS2 ***"/>
 		<datastream ID="DS3" xlink:href="http://localhost:8080/beta1-demo/high/americanacademy.jpg">
-			<disseminator ID="S1" LABEL="*** testing:  substituted specific label for DS3 in S1 ***"/>
+			<disseminator ID="S1" LABEL="*** TESTING:  SUBSTITUTING DISSEMINATOR-SPECIFIC (S1) LABEL FOR DS3 ***"/>
 		</datastream>
 		<datastream ID="DS4" xlink:href="http://localhost:8080/beta1-demo/very-high/americanacademy.jpg"/>
 	</datastreams>
