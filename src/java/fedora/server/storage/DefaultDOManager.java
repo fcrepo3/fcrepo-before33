@@ -98,7 +98,7 @@ public class DefaultDOManager
     private String m_pidNamespace;
     private String m_storagePool;
     private String m_storageFormat;
-    private String m_exportFormat;
+    private String m_defaultExportFormat;
     private String m_storageCharacterEncoding;
     private PIDGenerator m_pidGenerator;
     private DOTranslator m_translator;
@@ -174,9 +174,9 @@ public class DefaultDOManager
             throw new ModuleInitializationException("Parameter storageFormat "
                 + "not given, but it's required.", getRole());
         }
-        // exportFormat (required)
-        m_exportFormat=getParameter("exportFormat");
-        if (m_exportFormat==null) {
+        // default exportFormat (required)
+        m_defaultExportFormat=getParameter("exportFormat");
+        if (m_defaultExportFormat==null) {
             throw new ModuleInitializationException("Parameter exportFormat "
                 + "not given, but it's required.", getRole());
         }
@@ -329,8 +329,8 @@ public class DefaultDOManager
         return m_storageFormat;
     }
 
-    public String getExportFormat() {
-        return m_exportFormat;
+    public String getDefaultExportFormat() {
+        return m_defaultExportFormat;
     }
 
     public String getStorageCharacterEncoding() {
@@ -359,7 +359,7 @@ public class DefaultDOManager
             return new FastDOReader(context, pid);
         } else {
             return new SimpleDOReader(context, this, m_translator,
-                    m_storageFormat, m_exportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -372,7 +372,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
             return new SimpleBMechReader(context, this, m_translator,
-                    m_storageFormat, m_exportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -385,7 +385,7 @@ public class DefaultDOManager
             //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
             return new SimpleBDefReader(context, this, m_translator,
-                    m_storageFormat, m_exportFormat, m_storageFormat,
+                    m_defaultExportFormat, m_storageFormat,
                     m_storageCharacterEncoding,
                     getObjectStore().retrieve(pid), this);
         }
@@ -788,7 +788,7 @@ public class DefaultDOManager
             m_translator.deserialize(getObjectStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
             DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                    m_storageFormat, m_storageFormat,
+                    m_storageFormat,
                     m_storageCharacterEncoding, obj, this);
             // add to internal list...somehow..think...
             System.gc();
@@ -807,9 +807,9 @@ public class DefaultDOManager
      * the PID in the stream has a namespace-id part of "test"... in which
      * cast the PID from the stream will be used
      */
-    public synchronized DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
+    public synchronized DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
-        getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
+        getServer().logFinest("Entered DefaultDOManager.getIngestWriter(Context, InputStream, String, String, boolean)");
         // temporary, unique handle for file storage of inputstream
         String tempHandle="temp-ingest-" + in.hashCode();
         getServer().logFinest("Using temporary handle: " + tempHandle);
@@ -835,6 +835,7 @@ public class DefaultDOManager
                 BasicDigitalObject obj=new BasicDigitalObject();
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
+				// deserialize the input stream, specifying its client-supplied format
                 m_translator.deserialize(in2, obj, format, encoding);
                 // then, before doing anything, set object and component states
                 // to "A" if they're unspecified
@@ -923,9 +924,10 @@ public class DefaultDOManager
                 // signify that the object is new,
 				obj.setNew(true);
 
-                // then get the writer
+                // then get a digital object writing configured with
+                // the DEFAULT export format.
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
-                        m_storageFormat, m_exportFormat,
+                        m_defaultExportFormat,
                         m_storageCharacterEncoding, obj, this);
 
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -1004,9 +1006,9 @@ public class DefaultDOManager
     /**
      * Gets a writer on a new, empty object.
      */
-    public synchronized DOWriter newWriter(Context context)
+    public synchronized DOWriter getIngestWriter(Context context)
             throws ServerException {
-        getServer().logFinest("Entered DefaultDOManager.newWriter(Context)");
+        getServer().logFinest("Entered DefaultDOManager.getIngestWriter(Context)");
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
