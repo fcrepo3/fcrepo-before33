@@ -931,8 +931,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectMethods "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
             //pw.write("<objectMethods "
@@ -946,8 +946,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectMethods "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
@@ -1060,8 +1060,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
                 + " pid=\"" + PID + "\" >");
             //pw.write("<objectProfile "
@@ -1075,8 +1075,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
@@ -1168,8 +1168,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
           pw.write("<fedoraRepository "
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+              + " http://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraRepository.xsd\">");
           //pw.write("<fedoraRepository "
           //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
@@ -1270,8 +1270,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectMethods "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID + "\" >");
             //pw.write("<objectMethods "
@@ -1285,8 +1285,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<objectMethods "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectMethods.xsd\""
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
@@ -1399,8 +1399,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<behaviorDefs "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/behaviorDefs.xsd\""
                 + " pid=\"" + PID + "\" >");
             //pw.write("<behaviorDefs "
@@ -1414,8 +1414,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             pw.write("<behaviorDefs "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
+                + " http://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/behaviorDefs.xsd\""
                 + " pid=\"" + PID
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)

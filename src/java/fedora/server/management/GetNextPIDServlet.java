@@ -104,6 +104,9 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
+  private static String s_serverHost = null;
+  private static String s_serverPort = null;
+
   /**
    * <p>Process the Fedora API-M-LITE request to generate a list of next
    * available PIDs. Parse and validate the servlet input parameters and then
@@ -287,11 +290,11 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
         {
           pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
           pw.write("<pidList "
-              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/management/\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + ">\n");
-          pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/management/\""
-              + " location=\"getNextPIDInfo.xsd\"/>\n");
+              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/"
+              + " http://" + s_serverHost + ":" + s_serverPort
+              + "/ getNextPIDInfo.xsd\">\n");
 
           // PID array serialization
           for (int i=0; i<pidList.length; i++) {
@@ -341,6 +344,8 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
       s_management = (Management) s_server.getModule("fedora.server.management.Management");
+      s_serverHost = s_server.getParameter("fedoraServerHost");
+      s_serverPort = s_server.getParameter("fedoraServerPort");
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance."
