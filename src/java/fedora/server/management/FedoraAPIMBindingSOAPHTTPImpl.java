@@ -239,7 +239,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String[] listObjectPIDs(String state) throws java.rmi.RemoteException {
         assertInitialized();
-        return null;
+        try {
+            return s_management.listObjectPIDs(s_context, state);
+        } catch (ServerException se) {
+            throw AxisUtility.getFault(se);
+        }
     }
 
     public String addDatastreamExternal(String PID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {

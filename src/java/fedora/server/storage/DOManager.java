@@ -2,6 +2,7 @@ package fedora.server.storage;
 
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.Context;
 import fedora.server.Module;
@@ -113,5 +114,18 @@ public abstract class DOManager
     protected abstract DOWriter getWriterForContext(String pid, ReadOnlyContext context)
             throws StorageException, 
                    ObjectNotFoundException;
-        
+                   
+    public final String[] getObjectPIDs(String state) 
+            throws ServerException {
+        return getObjectPIDs(state, null);
+    }
+    
+    public final String[] getObjectPIDs(String state, Context context)
+            throws ServerException {
+        return getObjectPIDsForContext(state, ReadOnlyContext.getUnion(m_defaultContext, context));
+    }
+    
+    protected abstract String[] getObjectPIDsForContext(String state, 
+            ReadOnlyContext context) 
+            throws ServerException;
 }

@@ -90,7 +90,10 @@ public class DefaultManagement
 
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
 
-    public String[] listObjectPIDs(Context context, String state) { return null; }
+    public String[] listObjectPIDs(Context context, String state) 
+            throws ServerException { 
+        return m_manager.getObjectPIDs(state, context);
+    }
 
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
 
