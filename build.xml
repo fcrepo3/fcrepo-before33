@@ -405,9 +405,17 @@
 			<arg path="src/dbx/userdocs/batchclient.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<!-- temp fix until directory structure gets cleaned up
 		<copy todir="dist/userdocs/client/admin-gui/batch/images">
 			<fileset dir="src/jpg/client/batch"/>
 		</copy>
+		-->
+		<copy file="src/jpg/client/tools/build.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
+		<copy file="src/jpg/client/tools/build-ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
+		<copy file="src/jpg/client/tools/build-ingest-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
+		<copy file="src/jpg/client/tools/build-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
+		<copy file="src/jpg/client/tools/ingest.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
+		<copy file="src/jpg/client/tools/ingest-output.jpg" todir="dist/userdocs/client/admin-gui/batch/images"/>
 		<echo message="Translating documentation.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
