@@ -1,204 +1,204 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+<schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema">
 	<!--	  <import namespace="http://schemas.xmlsoap.org/wsdl/" schemaLocation="http://schemas.xmlsoap.org/wsdl/wsdl.xsd"/>
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/" schemaLocation="http://schemas.xmlsoap.org/soap/encoding/"/>
   <import namespace="http://www/fedora/info/definitions/1/0/types" schemaLocation="fedora-types.xsd"/> -->
-	<xsd:complexType name="ArrayOfAuditRecord">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of AuditRecords</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:AuditRecord[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfCondition">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Conditions for searching, with the implied AND boolean operator.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Condition[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDatastream">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Datastreams</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Datastream[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDatastreamBinding">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Datastream Bindings</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:DatastreamBinding[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDatastreamBindingMap">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Datastream Binding Maps</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:DatastreamBindingMap[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDateTime">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of dateTimes</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="dateTime[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfDisseminator">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Disseminators</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Disseminator[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfMethodDef">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Method Definitions</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:MethodDef[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfMethodParmDef">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Method Parameter Definitions</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:MethodParmDef[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfObjectMethodsDef">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Object Method Definitions</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ObjectMethodsDef[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfObjectFields">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of ObjectFields records.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ObjectFields[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfProperty">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Properties.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Property[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="ArrayOfString">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of Strings.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
-	<xsd:complexType name="AuditRecord">
-		<xsd:annotation>
-			<xsd:documentation>Audit information for a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="id" type="string"/>
-			<xsd:element name="processType" type="string"/>
-			<xsd:element name="action" type="string"/>
-			<xsd:element name="responsibility" type="string"/>
-			<xsd:element name="date" type="dateTime"/>
-			<xsd:element name="justification" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:simpleType name="ComparisonOperator">
-		<xsd:annotation>
-			<xsd:documentation>An operator for comparing a property to a value.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="has"/>
-			<xsd:enumeration value="eq"/>
-			<xsd:enumeration value="lt"/>
-			<xsd:enumeration value="le"/>
-			<xsd:enumeration value="gt"/>
-			<xsd:enumeration value="ge"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:complexType name="Condition">
-		<xsd:annotation>
-			<xsd:documentation>A property,operator,value expression that evaluates to true or false.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="property" type="string"/>
-			<xsd:element name="operator" type="fedora-types:ComparisonOperator"/>
-			<xsd:element name="value" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="Datastream">
-		<xsd:annotation>
-			<xsd:documentation>content stream of a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="controlGroup" type="fedora-types:DatastreamControlGroup"/>
-			<xsd:element name="ID" type="string"/>
-			<xsd:element name="versionID" type="string"/>
-			<xsd:element name="label" type="string"/>
-			<xsd:element name="MIMEType" type="string"/>
-			<xsd:element name="createDate" type="dateTime"/>
-			<xsd:element name="size" type="long"/>
-			<xsd:element name="infoType" type="string">
-				<xsd:annotation>
-					<xsd:documentation>If inline xml, may be any string.
+	<complexType name="ArrayOfAuditRecord">
+		<annotation>
+			<documentation>an ordered list of AuditRecords</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:AuditRecord[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfCondition">
+		<annotation>
+			<documentation>an ordered list of Conditions for searching, with the implied AND boolean operator.</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Condition[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfDatastream">
+		<annotation>
+			<documentation>an ordered list of Datastreams</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Datastream[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfDatastreamBinding">
+		<annotation>
+			<documentation>an ordered list of Datastream Bindings</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:DatastreamBinding[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfDatastreamBindingMap">
+		<annotation>
+			<documentation>an ordered list of Datastream Binding Maps</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:DatastreamBindingMap[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfDateTime">
+		<annotation>
+			<documentation>an ordered list of dateTimes</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="dateTime[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfDisseminator">
+		<annotation>
+			<documentation>an ordered list of Disseminators</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Disseminator[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfMethodDef">
+		<annotation>
+			<documentation>an ordered list of Method Definitions</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:MethodDef[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfMethodParmDef">
+		<annotation>
+			<documentation>an ordered list of Method Parameter Definitions</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:MethodParmDef[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfObjectMethodsDef">
+		<annotation>
+			<documentation>an ordered list of Object Method Definitions</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ObjectMethodsDef[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfObjectFields">
+		<annotation>
+			<documentation>an ordered list of ObjectFields records.</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ObjectFields[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfProperty">
+		<annotation>
+			<documentation>an ordered list of Properties.</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Property[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="ArrayOfString">
+		<annotation>
+			<documentation>an ordered list of Strings.</documentation>
+		</annotation>
+		<complexContent>
+			<restriction base="soapenc:Array">
+				<attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
+			</restriction>
+		</complexContent>
+	</complexType>
+	<complexType name="AuditRecord">
+		<annotation>
+			<documentation>Audit information for a digital object</documentation>
+		</annotation>
+		<sequence>
+			<element name="id" type="string"/>
+			<element name="processType" type="string"/>
+			<element name="action" type="string"/>
+			<element name="responsibility" type="string"/>
+			<element name="date" type="dateTime"/>
+			<element name="justification" type="string"/>
+		</sequence>
+	</complexType>
+	<simpleType name="ComparisonOperator">
+		<annotation>
+			<documentation>An operator for comparing a property to a value.</documentation>
+		</annotation>
+		<restriction base="xsd:string">
+			<enumeration value="has"/>
+			<enumeration value="eq"/>
+			<enumeration value="lt"/>
+			<enumeration value="le"/>
+			<enumeration value="gt"/>
+			<enumeration value="ge"/>
+		</restriction>
+	</simpleType>
+	<complexType name="Condition">
+		<annotation>
+			<documentation>A property,operator,value expression that evaluates to true or false.</documentation>
+		</annotation>
+		<sequence>
+			<element name="property" type="string"/>
+			<element name="operator" type="fedora-types:ComparisonOperator"/>
+			<element name="value" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="Datastream">
+		<annotation>
+			<documentation>content stream of a digital object</documentation>
+		</annotation>
+		<sequence>
+			<element name="controlGroup" type="fedora-types:DatastreamControlGroup"/>
+			<element name="ID" type="string"/>
+			<element name="versionID" type="string"/>
+			<element name="label" type="string"/>
+			<element name="MIMEType" type="string"/>
+			<element name="createDate" type="dateTime"/>
+			<element name="size" type="long"/>
+			<element name="infoType" type="string">
+				<annotation>
+					<documentation>If inline xml, may be any string.
                    this is intended to identify the schema to which the
                    datastream conforms, by label.  It's based on
                    the mets "mdType" attribute.
-                   </xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="class" type="string">
-				<xsd:annotation>
-					<xsd:documentation>if inline xml, digiprov, rights, technical, 
-                   source, or descriptive.  else unspecified.</xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="role" type="fedora-types:DatastreamRole" minOccurs="0">
-				<xsd:annotation>
-					<xsd:documentation>A string indicating, for an inline technical 
+                   </documentation>
+				</annotation>
+			</element>
+			<element name="class" type="string">
+				<annotation>
+					<documentation>if inline xml, digiprov, rights, technical, 
+                   source, or descriptive.  else unspecified.</documentation>
+				</annotation>
+			</element>
+			<element name="role" type="fedora-types:DatastreamRole" minOccurs="0">
+				<annotation>
+					<documentation>A string indicating, for an inline technical 
                    xml metatdata datastream inside a behavior definition or
                    mechanism object, what role it plays.  Valid roles are
                    "METHOD_DEFINITIONS" (for a behavior definition object), 
@@ -221,39 +221,39 @@
                            or unspecified.
                            b) When the class is not "technical": 
                            must not be specified
-                 </xsd:documentation>
-				</xsd:annotation>
-			</xsd:element>
-			<xsd:element name="state" type="string"/>
-			<xsd:element name="location" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="DatastreamBinding">
-		<xsd:annotation>
-			<xsd:documentation>content stream of a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="bindKeyName" type="string"/>
-			<xsd:element name="bindLabel" type="string"/>
-			<xsd:element name="datastreamID" type="string"/>
-			<xsd:element name="seqNo" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="DatastreamBindingMap">
-		<xsd:annotation>
-			<xsd:documentation>ordered list of datastream binding maps</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="dsBindMapID" type="string"/>
-			<xsd:element name="dsBindMechanismPID" type="string"/>
-			<xsd:element name="dsBindMapLabel" type="string"/>
-			<xsd:element name="state" type="string"/>
-			<xsd:element name="dsBindings" type="fedora-types:ArrayOfDatastreamBinding"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:simpleType name="DatastreamControlGroup">
-		<xsd:annotation>
-			<xsd:documentation>Control group indicating the nature of the repository's control of the datastream content:
+                 </documentation>
+				</annotation>
+			</element>
+			<element name="state" type="string"/>
+			<element name="location" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="DatastreamBinding">
+		<annotation>
+			<documentation>content stream of a digital object</documentation>
+		</annotation>
+		<sequence>
+			<element name="bindKeyName" type="string"/>
+			<element name="bindLabel" type="string"/>
+			<element name="datastreamID" type="string"/>
+			<element name="seqNo" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="DatastreamBindingMap">
+		<annotation>
+			<documentation>ordered list of datastream binding maps</documentation>
+		</annotation>
+		<sequence>
+			<element name="dsBindMapID" type="string"/>
+			<element name="dsBindMechanismPID" type="string"/>
+			<element name="dsBindMapLabel" type="string"/>
+			<element name="state" type="string"/>
+			<element name="dsBindings" type="fedora-types:ArrayOfDatastreamBinding"/>
+		</sequence>
+	</complexType>
+	<simpleType name="DatastreamControlGroup">
+		<annotation>
+			<documentation>Control group indicating the nature of the repository's control of the datastream content:
 			   P : Protected-External-Ref.  The datastream content is external to the repository and 
 			   referenced by a URL.  The content is not under the direct custodianship of the repository.  
 			   However,  the datastream content is protected by the repository.  The repository will not 
@@ -270,233 +270,233 @@
 			   X : Inline-XML-User-Metadata.  The datastream content is user-defined  XML metadata that
 			    is stored within the digital object XML file itself.   As such, it is intrinsically bound to the 
 			    digital object, and by  implication, it is stored and managed by the repository.  The content
-			    considered under the custodianship of the repository.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="E"/>
-			<xsd:enumeration value="M"/>
-			<xsd:enumeration value="X"/>
-			<xsd:enumeration value="R"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="DatastreamRole">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="METHOD_DEFINITIONS"/>
-			<xsd:enumeration value="DATASTREAM_BINDING_SPEC"/>
-			<xsd:enumeration value="SERVICE_BINDING"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:complexType name="Disseminator">
-		<xsd:annotation>
-			<xsd:documentation>content stream of a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="bDefPID" type="string"/>
-			<xsd:element name="bMechPID" type="string"/>
-			<xsd:element name="dissCreateDT" type="dateTime"/>
-			<xsd:element name="DissID" type="string"/>
-			<xsd:element name="DissLabel" type="string"/>
-			<xsd:element name="dissVersionID" type="string"/>
-			<xsd:element name="dsBindMap" type="string"/>
-			<xsd:element name="dsBindMapID" type="string"/>
-			<xsd:element name="parentPID" type="string"/>
-			<xsd:element name="dissState" type="string"/>
-			<xsd:element name="bDefLabel" type="string"/>
-			<xsd:element name="bMechLabel" type="string"/>
+			    considered under the custodianship of the repository.</documentation>
+		</annotation>
+		<restriction base="xsd:string">
+			<enumeration value="E"/>
+			<enumeration value="M"/>
+			<enumeration value="X"/>
+			<enumeration value="R"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="DatastreamRole">
+		<restriction base="xsd:string">
+			<enumeration value="METHOD_DEFINITIONS"/>
+			<enumeration value="DATASTREAM_BINDING_SPEC"/>
+			<enumeration value="SERVICE_BINDING"/>
+		</restriction>
+	</simpleType>
+	<complexType name="Disseminator">
+		<annotation>
+			<documentation>content stream of a digital object</documentation>
+		</annotation>
+		<sequence>
+			<element name="bDefPID" type="string"/>
+			<element name="bMechPID" type="string"/>
+			<element name="dissCreateDT" type="dateTime"/>
+			<element name="DissID" type="string"/>
+			<element name="DissLabel" type="string"/>
+			<element name="dissVersionID" type="string"/>
+			<element name="dsBindMap" type="fedora-types:DatastreamBindingMap"/>
+			<element name="dsBindMapID" type="string"/>
+			<element name="parentPID" type="string"/>
+			<element name="dissState" type="string"/>
+			<element name="bDefLabel" type="string"/>
+			<element name="bMechLabel" type="string"/>
 			<!-- missing bDefLabel and bMechLabel-->
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="FieldSearchQuery">
-		<xsd:annotation>
-			<xsd:documentation>a full text or field-based query</xsd:documentation>
-		</xsd:annotation>
-		<xsd:choice>
-			<xsd:element name="conditions" type="fedora-types:ArrayOfCondition"/>
-			<xsd:element name="terms" type="string"/>
-		</xsd:choice>
-	</xsd:complexType>
-	<xsd:complexType name="FieldSearchResult">
-		<xsd:annotation>
-			<xsd:documentation>the result of a single field search request.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
-			<xsd:element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:element name="result" type="fedora-types:FieldSearchResult"/>
-	<xsd:complexType name="MethodDef">
-		<xsd:annotation>
-			<xsd:documentation>method definitions</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="methodLabel" type="string"/>
-			<xsd:element name="methodName" type="string"/>
-			<xsd:element name="methodParms" type="fedora-types:ArrayOfMethodParmDef"/>
+		</sequence>
+	</complexType>
+	<complexType name="FieldSearchQuery">
+		<annotation>
+			<documentation>a full text or field-based query</documentation>
+		</annotation>
+		<choice>
+			<element name="conditions" type="fedora-types:ArrayOfCondition"/>
+			<element name="terms" type="string"/>
+		</choice>
+	</complexType>
+	<complexType name="FieldSearchResult">
+		<annotation>
+			<documentation>the result of a single field search request.</documentation>
+		</annotation>
+		<sequence>
+			<element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
+			<element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
+		</sequence>
+	</complexType>
+	<element name="result" type="fedora-types:FieldSearchResult"/>
+	<complexType name="MethodDef">
+		<annotation>
+			<documentation>method definitions</documentation>
+		</annotation>
+		<sequence>
+			<element name="methodLabel" type="string"/>
+			<element name="methodName" type="string"/>
+			<element name="methodParms" type="fedora-types:ArrayOfMethodParmDef"/>
 			<!--		
 			<xsd:element name="httpBindingAddress" type="string"/>
 			<xsd:element name="httpBindingOperationLocation" type="string"/>
 			<xsd:element name="httpBindingURL" type="string"/>
 			-->
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:simpleType name="passByRef">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="URL_REF"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="passByValue">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="VALUE"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="datastreamInputType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="fedora:datastreamInputType"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="userInputType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="fedora:userInputType"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="defaultInputType">
-		<xsd:restriction base="xsd:string">
-			<xsd:enumeration value="fedora:defaultInputType"/>
-		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:complexType name="MethodParmDef">
-		<xsd:annotation>
-			<xsd:documentation>a Fedora data structure containing method parameter definition information
-            a dissemination</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="parmName" type="string"/>
-			<xsd:element name="parmType" type="string"/>
-			<xsd:element name="parmDefaultValue" type="string"/>
-			<xsd:element name="parmDomainValues" type="fedora-types:ArrayOfString"/>
-			<xsd:element name="parmRequired" type="boolean"/>
-			<xsd:element name="parmLabel" type="string"/>
-			<xsd:element name="parmPassBy" type="string"/>
-			<xsd:element name="PASS_BY_REF" type="fedora-types:passByRef"/>
-			<xsd:element name="PASS_BY_VALUE" type="fedora-types:passByValue"/>
-			<xsd:element name="DATASTREAM_INPUT" type="fedora-types:datastreamInputType"/>
-			<xsd:element name="USER_INPUT" type="fedora-types:userInputType"/>
-			<xsd:element name="DEFAULT_INPUT" type="fedora-types:defaultInputType"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="MIMETypedStream">
-		<xsd:annotation>
-			<xsd:documentation>a base-64 encoded stream of data with an associated MIME-type</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="MIMEType" type="string"/>
-			<xsd:element name="stream" type="base64Binary"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="ObjectFields">
-		<xsd:annotation>
-			<xsd:documentation>a summary of a digital object that includes
+		</sequence>
+	</complexType>
+	<simpleType name="passByRef">
+		<restriction base="xsd:string">
+			<enumeration value="URL_REF"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="passByValue">
+		<restriction base="xsd:string">
+			<enumeration value="VALUE"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="datastreamInputType">
+		<restriction base="xsd:string">
+			<enumeration value="fedora:datastreamInputType"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="userInputType">
+		<restriction base="xsd:string">
+			<enumeration value="fedora:userInputType"/>
+		</restriction>
+	</simpleType>
+	<simpleType name="defaultInputType">
+		<restriction base="xsd:string">
+			<enumeration value="fedora:defaultInputType"/>
+		</restriction>
+	</simpleType>
+	<complexType name="MethodParmDef">
+		<annotation>
+			<documentation>a Fedora data structure containing method parameter definition information
+            a dissemination</documentation>
+		</annotation>
+		<sequence>
+			<element name="parmName" type="string"/>
+			<element name="parmType" type="string"/>
+			<element name="parmDefaultValue" type="string"/>
+			<element name="parmDomainValues" type="fedora-types:ArrayOfString"/>
+			<element name="parmRequired" type="boolean"/>
+			<element name="parmLabel" type="string"/>
+			<element name="parmPassBy" type="string"/>
+			<element name="PASS_BY_REF" type="fedora-types:passByRef"/>
+			<element name="PASS_BY_VALUE" type="fedora-types:passByValue"/>
+			<element name="DATASTREAM_INPUT" type="fedora-types:datastreamInputType"/>
+			<element name="USER_INPUT" type="fedora-types:userInputType"/>
+			<element name="DEFAULT_INPUT" type="fedora-types:defaultInputType"/>
+		</sequence>
+	</complexType>
+	<complexType name="MIMETypedStream">
+		<annotation>
+			<documentation>a base-64 encoded stream of data with an associated MIME-type</documentation>
+		</annotation>
+		<sequence>
+			<element name="MIMEType" type="string"/>
+			<element name="stream" type="base64Binary"/>
+		</sequence>
+	</complexType>
+	<complexType name="ObjectFields">
+		<annotation>
+			<documentation>a summary of a digital object that includes
             zero or one of each of the repository key metadata fields, 
-            and any number of each of the 15 dublin core elements.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="pid" type="string" minOccurs="0"/>
-			<xsd:element name="label" type="string" minOccurs="0"/>
-			<xsd:element name="fType" type="string" minOccurs="0"/>
-			<xsd:element name="cModel" type="string" minOccurs="0"/>
-			<xsd:element name="state" type="string" minOccurs="0"/>
-			<xsd:element name="ownerId" type="string" minOccurs="0"/>
-			<xsd:element name="cDate" type="dateTime" minOccurs="0"/>
-			<xsd:element name="mDate" type="dateTime" minOccurs="0"/>
-			<xsd:element name="dcmDate" type="dateTime" minOccurs="0"/>
-			<xsd:element name="bDef" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="bMech" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="creator" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="subject" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="description" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="publisher" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="contributor" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="date" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="type" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="format" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="identifier" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="source" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="language" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="relation" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="coverage" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<xsd:element name="rights" type="string" minOccurs="0" maxOccurs="unbounded"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="ObjectMethodsDef">
-		<xsd:annotation>
-			<xsd:documentation>a Fedora data structure containing all method definitions for a digital object</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="PID" type="string"/>
-			<xsd:element name="bDefPID" type="string"/>
-			<xsd:element name="methodName" type="string"/>
-			<xsd:element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
-			<xsd:element name="asOfDate" type="dateTime"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="ObjectProfile">
-		<xsd:annotation>
-			<xsd:documentation>a Fedora data structure containing key information about a digital object
-			and URLs for the Dissemination Index and Item Index of the object.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="pid" type="string"/>
-			<xsd:element name="objLabel" type="string"/>
-			<xsd:element name="objContentModel" type="string"/>
-			<xsd:element name="objType" type="string"/>
-			<xsd:element name="objCreateDate" type="dateTime"/>
-			<xsd:element name="objLastModDate" type="dateTime"/>
-			<xsd:element name="objDissIndexViewURL" type="string"/>
-			<xsd:element name="objItemIndexViewURL" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="RepositoryInfo">
-		<xsd:annotation>
-			<xsd:documentation>a Fedora data structure containing key information about a Fedora
-			repository server.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="repositoryName" type="string"/>
-			<xsd:element name="repositoryVersion" type="string"/>
-			<xsd:element name="repositoryBaseURL" type="string"/>
-			<xsd:element name="repositoryPIDNamespace" type="string"/>
-			<xsd:element name="OAINamespace" type="string"/>
-			<xsd:element name="adminEmailList"  type="fedora-types:ArrayOfString"/>
-			<xsd:element name="samplePID" type="string"/>
-			<xsd:element name="sampleOAIIdentifier" type="string"/>
-			<xsd:element name="sampleSearchURL" type="string"/>
-			<xsd:element name="sampleAccessURL" type="string"/>
-			<xsd:element name="sampleOAIURL" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="Property">
-		<xsd:annotation>
-			<xsd:documentation>a name-value pair.</xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="name" type="string"/>
-			<xsd:element name="value" type="string"/>
-		</xsd:sequence>
-	</xsd:complexType>
-	<xsd:complexType name="ListSession">
-		<xsd:annotation>
-			<xsd:documentation>
+            and any number of each of the 15 dublin core elements.</documentation>
+		</annotation>
+		<sequence>
+			<element name="pid" type="string" minOccurs="0"/>
+			<element name="label" type="string" minOccurs="0"/>
+			<element name="fType" type="string" minOccurs="0"/>
+			<element name="cModel" type="string" minOccurs="0"/>
+			<element name="state" type="string" minOccurs="0"/>
+			<element name="ownerId" type="string" minOccurs="0"/>
+			<element name="cDate" type="dateTime" minOccurs="0"/>
+			<element name="mDate" type="dateTime" minOccurs="0"/>
+			<element name="dcmDate" type="dateTime" minOccurs="0"/>
+			<element name="bDef" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="bMech" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="creator" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="subject" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="description" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="publisher" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="contributor" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="date" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="type" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="format" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="identifier" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="source" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="language" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="relation" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="coverage" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="rights" type="string" minOccurs="0" maxOccurs="unbounded"/>
+		</sequence>
+	</complexType>
+	<complexType name="ObjectMethodsDef">
+		<annotation>
+			<documentation>a Fedora data structure containing all method definitions for a digital object</documentation>
+		</annotation>
+		<sequence>
+			<element name="PID" type="string"/>
+			<element name="bDefPID" type="string"/>
+			<element name="methodName" type="string"/>
+			<element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
+			<element name="asOfDate" type="dateTime"/>
+		</sequence>
+	</complexType>
+	<complexType name="ObjectProfile">
+		<annotation>
+			<documentation>a Fedora data structure containing key information about a digital object
+			and URLs for the Dissemination Index and Item Index of the object.</documentation>
+		</annotation>
+		<sequence>
+			<element name="pid" type="string"/>
+			<element name="objLabel" type="string"/>
+			<element name="objContentModel" type="string"/>
+			<element name="objType" type="string"/>
+			<element name="objCreateDate" type="dateTime"/>
+			<element name="objLastModDate" type="dateTime"/>
+			<element name="objDissIndexViewURL" type="string"/>
+			<element name="objItemIndexViewURL" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="RepositoryInfo">
+		<annotation>
+			<documentation>a Fedora data structure containing key information about a Fedora
+			repository server.</documentation>
+		</annotation>
+		<sequence>
+			<element name="repositoryName" type="string"/>
+			<element name="repositoryVersion" type="string"/>
+			<element name="repositoryBaseURL" type="string"/>
+			<element name="repositoryPIDNamespace" type="string"/>
+			<element name="OAINamespace" type="string"/>
+			<element name="adminEmailList" type="fedora-types:ArrayOfString"/>
+			<element name="samplePID" type="string"/>
+			<element name="sampleOAIIdentifier" type="string"/>
+			<element name="sampleSearchURL" type="string"/>
+			<element name="sampleAccessURL" type="string"/>
+			<element name="sampleOAIURL" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="Property">
+		<annotation>
+			<documentation>a name-value pair.</documentation>
+		</annotation>
+		<sequence>
+			<element name="name" type="string"/>
+			<element name="value" type="string"/>
+		</sequence>
+	</complexType>
+	<complexType name="ListSession">
+		<annotation>
+			<documentation>
                a temporary session, used when client-server communication 
                involves multiple steps while retrieving a list.
-           </xsd:documentation>
-		</xsd:annotation>
-		<xsd:sequence>
-			<xsd:element name="token" type="string"/>
-			<xsd:element name="cursor" type="nonNegativeInteger" minOccurs="0"/>
-			<xsd:element name="completeListSize" type="nonNegativeInteger" minOccurs="0"/>
-			<xsd:element name="expirationDate" type="dateTime" minOccurs="0"/>
-		</xsd:sequence>
-	</xsd:complexType>
-</xsd:schema>
+           </documentation>
+		</annotation>
+		<sequence>
+			<element name="token" type="string"/>
+			<element name="cursor" type="nonNegativeInteger" minOccurs="0"/>
+			<element name="completeListSize" type="nonNegativeInteger" minOccurs="0"/>
+			<element name="expirationDate" type="dateTime" minOccurs="0"/>
+		</sequence>
+	</complexType>
+</schema>
