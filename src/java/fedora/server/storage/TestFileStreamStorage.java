@@ -1,5 +1,9 @@
 package fedora.server.storage;
 
+import fedora.server.errors.ObjectExistsException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.StorageDeviceException;
+
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.File;
@@ -16,58 +20,98 @@ public class TestFileStreamStorage
     
     private int m_bufSize;
 
-    public TestFileStreamStorage(File baseDir, int bufSize) {
+    /** Creates if dir doesn't exist, one level only. */
+    public TestFileStreamStorage(File baseDir, int bufSize) 
+            throws StorageDeviceException {
         m_baseDir=baseDir;
         m_bufSize=bufSize;
+        if (!baseDir.exists()) {
+            if (!baseDir.mkdir()) {
+                throw new StorageDeviceException("Could not create directory '"
+                        + baseDir + "'.");
+            }
+        }
     }
 
     public void add(String id, InputStream in) 
-            throws IOException {
-        pipeStream(in, new FileOutputStream(getFile(id, false)));
+            throws ObjectExistsException, StorageDeviceException {
+        try {
+            pipeStream(in, new FileOutputStream(getNewFile(id)));
+        } catch (IOException ioe) {
+            throw new StorageDeviceException("Could not create "
+                    + "FileOutputStream for '" + id + "'.");
+        }
     }
 
     public void replace(String id, InputStream in) 
-            throws IOException {
-        pipeStream(in, new FileOutputStream(getFile(id, true)));
+            throws ObjectNotFoundException, StorageDeviceException {
+        try {
+            pipeStream(in, new FileOutputStream(getExistingFile(id)));
+        } catch (IOException ioe) {
+            throw new StorageDeviceException("Could not create "
+                    + "FileOutputStream for '" + id + "'.");
+        }
     }
 
     public InputStream retrieve(String id)
-            throws IOException {
-        return new FileInputStream(getFile(id, true));
-    }
-
-    public boolean delete(String id)
-            throws IOException {
-        return getFile(id, true).delete();
-    }
-
-    private File getFile(String id, boolean shouldExist) 
-            throws IOException {
-        File f=new File(m_baseDir, id.replace(':', '_'));
-        boolean exists=f.exists();
-        if (shouldExist && !exists) {
-            throw new IOException(f + " doesn't exist.");
+            throws ObjectNotFoundException, StorageDeviceException {
+        try {
+            return new FileInputStream(getExistingFile(id));
+        } catch (IOException ioe) {
+            throw new StorageDeviceException("Could get a "
+                    + "FileInputStream for '" + id + "'.");
         }
-        if (!shouldExist && exists) {
-            throw new IOException(f + " already exists.");
+    }
+
+    public void delete(String id)
+            throws ObjectNotFoundException, StorageDeviceException {
+        if (!getExistingFile(id).delete()) {
+            throw new StorageDeviceException("Unable to delete object '" + id + "'.");
+        }
+    }
+
+    private File getExistingFile(String id) 
+            throws ObjectNotFoundException {
+        File f=new File(m_baseDir, id.replace(':', '_'));
+        if (!f.exists()) {
+            throw new ObjectNotFoundException("Object '" + id + "' was not found.");
+        }
+        return f;
+    }
+    
+    private File getNewFile(String id) 
+            throws ObjectExistsException {
+        File f=new File(m_baseDir, id.replace(':', '_'));
+        if (f.exists()) {
+            throw new ObjectExistsException("Object '" + id + "' already exists.");
         }
         return f;
     }
 
     private void pipeStream(InputStream in, OutputStream out) 
-            throws IOException {
-        byte[] buf = new byte[m_bufSize];
-        int len;
-        while ( ( len = in.read( buf ) ) != -1 ) {
-            out.write( buf, 0, len );
+            throws StorageDeviceException {
+        try {
+            byte[] buf = new byte[m_bufSize];
+            int len;
+            while ( ( len = in.read( buf ) ) != -1 ) {
+                out.write( buf, 0, len );
+            }
+        } catch (IOException ioe) {
+            // a better impl would clean up after itself if it fails to write
+            throw new StorageDeviceException("Error writing to stream");
+        } finally {
+            try {
+                out.close();
+                in.close();
+            } catch (IOException closeProb) {
+              // ignore problems while closing
+            }
         }
-        out.close();
-        in.close();
     }
     
     public static void main(String[] args) {
-        TestFileStreamStorage storage=new TestFileStreamStorage(new File("."), 4096);
         try {
+            TestFileStreamStorage storage=new TestFileStreamStorage(new File("."), 4096);
             storage.add("myns:0", new ByteArrayInputStream(new String("one").getBytes()));
             storage.add("myns:1", new ByteArrayInputStream(new String("two").getBytes()));
             storage.add("myns:2", new ByteArrayInputStream(new String("three").getBytes()));
@@ -82,8 +126,8 @@ public class TestFileStreamStorage
             in.close();
             System.out.println("myns:1 contained '" + out.toString() + "'");
             
-        } catch (IOException ioe) {
-            System.out.println(ioe.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
