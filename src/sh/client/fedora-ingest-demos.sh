@@ -20,7 +20,7 @@ fi
 if [ $# -lt 4 ]; then
 	echo "Usage: fedora-ingest-demos <hostname> <port> <username> <password>"
 	echo "Use the values in fedora.fcfg, e.g.:"
-	echo "    fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin
+	echo "    fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin"
 	exit 1
 fi
 
