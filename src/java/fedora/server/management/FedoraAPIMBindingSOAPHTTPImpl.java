@@ -66,7 +66,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 h.put("application", "apim");
                 s_context=new ReadOnlyContext(h);
             }
-            s_st=FileSystemLowlevelStorage.getInstance();  // FIXME: Move this
+            s_st=FileSystemLowlevelStorage.getPermanentStore();  // FIXME: Move this
         } catch (InitializationException ie) {
             System.err.println(ie.getMessage());
             s_initialized=false;
@@ -86,6 +86,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
+        try {
+            return s_management.ingestObject(s_context, 
+                    new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", true); // <-- false for test
+        } catch (ServerException se) {
+            throw AxisUtility.getFault(se);
+        }
 /*        try {
             String pid="1234";
             TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
@@ -110,7 +116,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             StreamIOException, StreamReadException {        
         */    
             
-        return null;
     }
 
     public byte[] getObjectXML(String PID) throws java.rmi.RemoteException {
