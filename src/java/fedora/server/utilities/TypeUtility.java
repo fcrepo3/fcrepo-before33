@@ -495,7 +495,6 @@ public abstract class TypeUtility
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           new fedora.server.types.gen.MIMETypedStream();
       genMIMETypedStream.setMIMEType(mimeTypedStream.MIMEType);
-      // RLW: change required by conversion fom byte[] to InputStream
       ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
       InputStream is = mimeTypedStream.getStream();
       int byteStream = 0;
@@ -512,8 +511,6 @@ public abstract class TypeUtility
       }
       genMIMETypedStream.setStream(baos.toByteArray());
       mimeTypedStream.setStream(new ByteArrayInputStream(baos.toByteArray()));
-      //genMIMETypedStream.setStream(mimeTypedStream.stream);
-      // RLW: change required by conversion fom byte[] to InputStream
       return genMIMETypedStream;
 
     } else
@@ -536,15 +533,10 @@ public abstract class TypeUtility
   {
     if (genMIMETypedStream != null)
     {
-      // RLW: change required by conversion fom byte[] to InputStream
       InputStream is = new ByteArrayInputStream(genMIMETypedStream.getStream());
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
               new fedora.server.storage.types.MIMETypedStream(
           genMIMETypedStream.getMIMEType(), is);
-      //fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-      //    new fedora.server.storage.types.MIMETypedStream(
-      //    genMIMETypedStream.getMIMEType(), genMIMETypedStream.getStream());
-      // RLW: change required by conversion fom byte[] to InputStream
       return mimeTypedStream;
 
     } else

@@ -465,7 +465,6 @@ public class DisseminationService
           // a MIMETypedStream whose contents contain a URL to which the client
           // should be redirected.
 
-          // RLW: change required by conversion fom byte[] to InputStream
           InputStream is = null;
           try
           {
@@ -479,9 +478,7 @@ public class DisseminationService
             s_server.logFinest(message);
             throw new GeneralException(message);
           }
-          //dissemination = new MIMETypedStream("application/fedora-redirect",dissURL.getBytes());
           dissemination = new MIMETypedStream("application/fedora-redirect",is);
-          // RLW: change required by conversion fom byte[] to InputStream
         } else
         {
           // For all non-redirected disseminations, Fedora captures and returns

@@ -1,6 +1,5 @@
 package fedora.server.access;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -249,26 +248,15 @@ public class DefaultAccess extends Module implements Access
     m_ipRestriction.enforce(context);
     try
     {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
       Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
       InputStream methodResults = null;
       DOReader reader =
           m_manager.getReader(context, PID);
       methodResults = reader.getObjectMethodsXML(bDefPID, versDateTime);
-      /*int byteStream = 0;
-      while ((byteStream = methodResults.read()) >= 0)
-      {
-        baos.write(byteStream);
-      }
-      methodResults.close();*/
       if (methodResults != null)
       {
-        // RLW: change required by conversion fom byte[] to InputStream
-        //MIMETypedStream methodDefs =
-        //    new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
         MIMETypedStream methodDefs =
             new MIMETypedStream(CONTENT_TYPE_XML, methodResults);
-        // RLW: change required by conversion fom byte[] to InputStream
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         logFiner("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "

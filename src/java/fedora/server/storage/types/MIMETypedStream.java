@@ -30,7 +30,6 @@ import java.io.InputStream;
 public class MIMETypedStream
 {
     public String MIMEType;
-    // RLW: change required by conversion fom byte[] to InputStream
     private InputStream stream;
 
     /**
@@ -45,7 +44,6 @@ public class MIMETypedStream
         this.setStream(stream);
     }
 
-    // RLW: change required by conversion fom byte[] to InputStream
     public InputStream getStream()
     {
       return stream;
@@ -55,5 +53,4 @@ public class MIMETypedStream
     {
       this.stream = stream;
     }
-    // RLW: change required by conversion fom byte[] to InputStream
 }

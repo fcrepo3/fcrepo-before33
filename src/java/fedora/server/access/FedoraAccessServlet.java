@@ -166,7 +166,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
   /**
    * Tell whether the password is the user's password.
-   * 
+   *
    * @param user the userId.
    * @param user the possible password.
    * @return true if the password is correct, false otherwise.
@@ -210,7 +210,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         h.put("userId", authenticatedUser);
 		// add permissions to context, based on userId.
 		// FIXME:
-		// For now, fedoraAdmin has all important permissions.  How to do this 
+		// For now, fedoraAdmin has all important permissions.  How to do this
 		// eventually is to-be-decided, but for now it's hardcoded.
 		if (authenticatedUser.equals("fedoraAdmin")) {
     		h.put("canUseInactiveDatastream", "true");
@@ -498,13 +498,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         // server and the browser client rather than proxy it through the
         // Fedora server.
 
-        // RLW: change required by conversion fom byte[] to InputStream
         BufferedReader br = new BufferedReader(
             new InputStreamReader(dissemination.getStream()));
-        //BufferedReader br = new BufferedReader(
-        //    new InputStreamReader(
-        //        new ByteArrayInputStream(dissemination.stream)));
-        // RLW: change required by conversion fom byte[] to InputStream
         StringBuffer sb = new StringBuffer();
         String line = null;
         while ((line = br.readLine()) != null)
@@ -519,15 +514,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         out = response.getOutputStream();
         long startTime = new Date().getTime();
         int byteStream = 0;
-        // RLW: change required by conversion fom byte[] to InputStream
-        //ByteArrayInputStream dissemResult =
-        //    new ByteArrayInputStream(dissemination.stream);
         InputStream dissemResult = dissemination.getStream();
-        // RLW: change required by conversion fom byte[] to InputStream
-        /*while ((byteStream = dissemResult.read()) != -1)
-        {
-          out.write(byteStream);
-        }*/
         byte[] buffer = new byte[255];
         while ((byteStream = dissemResult.read(buffer)) != -1)
         {

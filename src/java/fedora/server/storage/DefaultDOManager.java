@@ -538,13 +538,8 @@ public class DefaultDOManager
                             logInfo("Retrieving ManagedContent datastream from remote "
                                 + "location: " + dmc.DSLocation);
 						}
-                        // RLW: change required by conversion fom byte[] to InputStream
-                        //ByteArrayInputStream bais =
-                        //    new ByteArrayInputStream(mimeTypedStream.stream);
-                        // RLW: change required by conversion fom byte[] to InputStream
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                                   + dmc.DSVersionID;
-                        // RLW: change required by conversion fom byte[] to InputStream
                         if (obj.isNew()) {
                             getDatastreamStore().add(id, mimeTypedStream.getStream());
                         } else {
@@ -556,8 +551,6 @@ public class DefaultDOManager
                                 getDatastreamStore().replace(id, mimeTypedStream.getStream());
                             }
                         }
-                        //getDatastreamStore().add(id, bais);
-                        // RLW: change required by conversion fom byte[] to InputStream
 
                         // Make new audit record.
 
