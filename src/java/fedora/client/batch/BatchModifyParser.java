@@ -874,7 +874,7 @@ public class BatchModifyParser extends DefaultHandler
             try {
 
                 if(addObject) {
-                    // now that things look ok, give it a try
+                    // Replace with block below when FOXML ready
                     StringBuffer xml=new StringBuffer();
                     xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                     xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -890,6 +890,25 @@ public class BatchModifyParser extends DefaultHandler
                     String objXML=xml.toString();
                     System.out.println("Ingesting new object:");
                     System.out.println(objXML);
+
+                    /*  uncomment when FOXML ready
+                    StringBuffer xml=new StringBuffer();
+                    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+                    xml.append("           xmlns:foxml=\"info:fedora/def:foxml1.0\"\n");
+                    xml.append("           xsi:schemaLocation=\"info:fedora/def:foxml1.0 http://www.fedora.info/definitions/1/0/foxml1.0.xsd\"\n");
+                    xml.append("           PID=\"" + StreamUtility.enc(m_obj.pid) + "\">\n");
+                    xml.append("  <foxml:objectProperties>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:type\">FedoraObject</foxml:property>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:label\">" + m_obj.label + "</foxml:property>\n");
+                    xml.append("    <foxml:property NAME=\"info:fedora/def:dobj:cmodel\">" + m_obj.contentModel + "</foxml:property>\n");
+                    xml.append("  </foxml:objectProperties>\n");
+                    xml.append("</foxml:digitalObject>");
+                    String objXML=xml.toString();
+                    System.out.println("Ingesting new object:");
+	            System.out.println(objXML);
+                    */
+
                     ByteArrayInputStream in=new ByteArrayInputStream(
                             objXML.getBytes("UTF-8"));
                     String newPID=AutoIngestor.ingestAndCommit(
