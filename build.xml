@@ -218,18 +218,18 @@
 		</copy>
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
-		<copy todir="dist/server" file="LICENSE.TXT"/>
-		<copy todir="dist/server" file="COPYRIGHT.TXT"/>
-		<copy todir="dist/server" file="license.html"/>
-		<copy todir="dist/server" file="copyright.html"/>
-		<copy todir="dist/userdocs/distribution" file="license.html"/>
-		<copy todir="dist/userdocs/distribution" file="copyright.html"/>
-		<copy todir="${tomcat.deploy.dir}/userdocs/distribution" file="license.html"/>
-		<copy todir="${tomcat.deploy.dir}/userdocs/distribution" file="copyright.html"/>
-		<copy todir="dist/client" file="LICENSE.TXT"/>
-		<copy todir="dist/client" file="COPYRIGHT.TXT"/>
-		<copy todir="dist/client" file="license.html"/>
-		<copy todir="dist/client" file="copyright.html"/>
+		<copy todir="dist/server">
+            <fileset dir="license"/>
+        </copy>      
+		<copy todir="dist/userdocs/distribution">
+            <fileset dir="license"/>
+        </copy>  
+		<copy todir="${tomcat.deploy.dir}/userdocs/distribution">
+            <fileset dir="license"/>
+        </copy>  
+		<copy todir="dist/client">
+            <fileset dir="license"/>
+        </copy>  
 		<mkdir dir="dist/server/userdocs"/>
 		<copy todir="dist/server/userdocs">
 			<fileset dir="dist/userdocs"/>
