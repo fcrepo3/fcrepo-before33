@@ -84,9 +84,7 @@ public class DefaultDOReplicator
             bDefLabel = bDefReader.GetObjectLabel();
             m_ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
             // Insert Method rows
-            System.out.println("ABOUT TO INSERT METHOD ROWS");
             bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
-            System.out.println("bDefDBID: "+bDefDBID);
             if (bDefDBID == null) {
                 throw new ReplicationException(
                     "BehaviorDefinition row doesn't exist for PID: "
@@ -94,22 +92,17 @@ public class DefaultDOReplicator
             }
             behaviorDefs = bDefReader.GetBehaviorMethods(null);
             for (int i=0; i<behaviorDefs.length; ++i) {
-              System.out.println("methName: "+behaviorDefs[i].methodName);
                 m_ri.insertMethodRow(connection, bDefDBID,
                         behaviorDefs[i].methodName,
                         behaviorDefs[i].methodLabel);
-                System.out.println("ABOUT TO INSERT METHOD PARAMETER ROWS");
                 // Insert Method Parameter rows
                 methDBID =  m_dl.lookupMethodDBID(connection, bDefDBID,
                     behaviorDefs[i].methodName);
-                System.out.println("methDBID: "+methDBID);
-                System.out.println("methodParmSize: "+behaviorDefs[i].methodParms.length);
                 for (int j=0; j<behaviorDefs[i].methodParms.length; j++)
                 {
                   MethodParmDef[] methodParmDefs =
                       new MethodParmDef[behaviorDefs[i].methodParms.length];
                   methodParmDefs = behaviorDefs[i].methodParms;
-                  System.out.println("MethodParmDefSize: " + methodParmDefs.length);
                   for (int k=0; k<methodParmDefs.length; k++)
                   {
                     parmRequired =
@@ -126,9 +119,6 @@ public class DefaultDOReplicator
                         sb.append(parmDomainValues[m]);
                       }
                     }
-                    System.out.println("parmName: "+methodParmDefs[k].parmName);
-                    System.out.println("parmdefault: "+methodParmDefs[k].parmDefaultValue);
-                    System.out.println("parmType: "+methodParmDefs[k].parmType);
                     m_ri.insertMethodParmRow(connection, methDBID, bDefDBID,
                             methodParmDefs[k].parmName,
                             methodParmDefs[k].parmDefaultValue,
@@ -251,7 +241,6 @@ public class DefaultDOReplicator
                     // For the time being, ignore bindings other than HTTP.
                     continue;
                 }
-                System.out.println("ABOUT TO INSERT METHOD PARAMETER ROWS");
                 // Insert MechDefaultParameter rows
                 methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID,
                         behaviorBindingsEntry.methodName);
@@ -260,14 +249,11 @@ public class DefaultDOReplicator
                            + "exist for method name: "
                            + behaviorBindingsEntry.methodName);
                 }
-                System.out.println("methDBID: "+methodDBID);
-                System.out.println("methodParmSize: "+behaviorBindings[i].methodParms.length);
                 for (int j=0; j<behaviorBindings[i].methodParms.length; j++)
                 {
                   MethodParmDef[] methodParmDefs =
                       new MethodParmDef[behaviorBindings[i].methodParms.length];
                   methodParmDefs = behaviorBindings[i].methodParms;
-                  System.out.println("MethodParmDefSize: " + methodParmDefs.length);
                   for (int k=0; k<methodParmDefs.length; k++)
                   {
                     if (methodParmDefs[k].parmType.equalsIgnoreCase("fedora:defaultInputType"))
@@ -286,9 +272,6 @@ public class DefaultDOReplicator
                         sb.append(parmDomainValues[m]);
                       }
                     }
-                    System.out.println("parmName: "+methodParmDefs[k].parmName);
-                    System.out.println("parmdefault: "+methodParmDefs[k].parmDefaultValue);
-                    System.out.println("parmType: "+methodParmDefs[k].parmType);
                     m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
                             methodParmDefs[k].parmName,
                             methodParmDefs[k].parmDefaultValue,
@@ -319,9 +302,6 @@ public class DefaultDOReplicator
                       // a single method may have multiple binding keys,
                       // multiple rows are added for each different
                       // BindingKeyName for that method.
-                      System.out.println("dsbehaviorBindingKeys["+k+"]: "+behaviorBindingsEntry.dsBindingKeys[k]);
-                      System.out.println("dsBindRulesKey["+j+"]: "+dsBindSpec.dsBindRules[j].bindingKeyName);
-                      System.out.flush();
                       if (behaviorBindingsEntry.dsBindingKeys[k].
                           equalsIgnoreCase(
                           dsBindSpec.dsBindRules[j].bindingKeyName))
@@ -380,7 +360,6 @@ public class DefaultDOReplicator
             connection.setAutoCommit(false);
 
             // Insert Digital Object row
-            System.out.println("ABOUT TO INSERT DO ROW");
             doPID = doReader.GetObjectPID();
             doLabel = doReader.GetObjectLabel();
 
@@ -426,15 +405,12 @@ public class DefaultDOReplicator
                 }
 
                 // Insert DigitalObjectDissAssoc row
-                System.out.println("ABOUT TO INSERT DODISSASSOC ROW");
                 m_ri.insertDigitalObjectDissAssocRow(connection, doDBID,
                         dissDBID);
             }
-System.out.println("GETBINDINGMAPS");
             allBindingMaps = doReader.GetDSBindingMaps(null);
 
             for (int i=0; i<allBindingMaps.length; ++i) {
-              System.out.println("DSbIMDmECHid: "+allBindingMaps[i].dsBindMechanismPID);
                 bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,
                         allBindingMaps[i].dsBindMechanismPID);
                 if (bMechDBID == null) {
@@ -444,7 +420,6 @@ System.out.println("GETBINDINGMAPS");
                 }
 
                 // Insert DataStreamBindingMap row if it doesn't exist.
-                System.out.println("ABOUT TO INSERT DSBINDINGMAP ROW");
                 bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection,
                         bMechDBID, allBindingMaps[i].dsBindMapID);
                 if (bindingMapDBID == null) {
@@ -478,9 +453,6 @@ System.out.println("GETBINDINGMAPS");
                                 + " j=" + j);
                     }
                     // Insert DataStreamBinding row
-                    System.out.println("ABOUT TO INSERT DSBINDING ROW");
-                    System.out.println("DSControlGroup: "+allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp);
-                    System.out.println("DSVersionID: "+allBindingMaps[i].dsBindingsAugmented[j].DSVersionID);
                     m_ri.insertDataStreamBindingRow(connection, doDBID,
                             dsBindingKeyDBID,
                             bindingMapDBID,

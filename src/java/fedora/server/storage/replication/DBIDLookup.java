@@ -180,14 +180,12 @@ public class DBIDLookup {
 
 		// Debug statement
 		// System.out.println("lookupDBID1, query = " + query);
-                System.out.println("DBID1: "+query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query);
 
 		while (rs.next())
 			ID = rs.getString(1);
-                System.out.println("bmechdbID: "+ID);
 		statement.close();
 		rs.close();
 
@@ -247,14 +245,12 @@ public class DBIDLookup {
 
 		// Debug statement
 		// System.out.println("lookupDBID2FirstNum, query = " + query);
-                System.out.println("DBID2FirstNumQuery: "+query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query);
 
 		while (rs.next())
 			ID = rs.getString(1);
-                System.out.println("ID: "+ID);
 		statement.close();
 		rs.close();
 

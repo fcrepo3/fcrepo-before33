@@ -165,7 +165,6 @@ public class RowInsertion {
 	public void insertDigitalObjectDissAssocRow(Connection connection, String do_dbid, String diss_dbid) throws SQLException {
 
 		String insertionStatement = "INSERT INTO DigitalObjectDissAssoc (DO_DBID, DISS_DBID) VALUES ('" + do_dbid + "', '" + diss_dbid + "');";
-System.out.println("DISSAssocInsert: "+insertionStatement);
 		insertGen(connection, insertionStatement);
 	}
 
@@ -256,7 +255,6 @@ System.out.println("DISSAssocInsert: "+insertionStatement);
                 + parmDomainValues + "', '"
                 + parmRequiredFlag + "', '" + parmLabel + "', '"
                 + parmType + "');";
-                System.out.println("InsertMethodParmQuery: "+insertionStatement);
                 insertGen(connection, insertionStatement);
 	}
 
@@ -287,7 +285,6 @@ System.out.println("DISSAssocInsert: "+insertionStatement);
                  + parmDomainValues + "', '"
                  + parmRequiredFlag + "', '" + parmLabel + "', '"
                  + parmType + "');";
-                 System.out.println("InsertMethodParmQuery: "+insertionStatement);
                  insertGen(connection, insertionStatement);
 	}
 

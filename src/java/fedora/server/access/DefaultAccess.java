@@ -218,8 +218,8 @@ public class DefaultAccess extends Module implements Access
         methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
-      System.out.println("addedName: "+defaultMethodParms[i].parmName);
-      System.out.println("addedValue: "+defaultMethodParms[i].parmDefaultValue);
+      System.out.println("addedDefaultName: "+defaultMethodParms[i].parmName);
+      System.out.println("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
       h_userParms.put(defaultMethodParms[i].parmName,
                       defaultMethodParms[i].parmDefaultValue);
     }
@@ -305,13 +305,13 @@ public class DefaultAccess extends Module implements Access
         methodParm = methodParms[i];
         h_validParms.put(methodParm.parmName,methodParm);
         System.out.println("methodParms[" + i + "]: " + methodParms[i].parmName
-            + "label: " + methodParms[i].parmLabel
-            + "default: " + methodParms[i].parmDefaultValue
-            + "required: " + methodParms[i].parmRequired
-            + "type: " + methodParms[i].parmType);
+            + "\nlabel: " + methodParms[i].parmLabel
+            + "\ndefault: " + methodParms[i].parmDefaultValue
+            + "\nrequired: " + methodParms[i].parmRequired
+            + "\ntype: " + methodParms[i].parmType);
         for (int j=0; j<methodParms[i].parmDomainValues.length; j++)
         {
-          System.out.println("domain: " + methodParms[i].parmDomainValues[j]);
+          System.out.println("domainValues: " + methodParms[i].parmDomainValues[j]);
         }
       }
     }
@@ -365,8 +365,6 @@ public class DefaultAccess extends Module implements Access
               // Default value is specified for this parameter.
               // Substitute default value.
               h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
-              System.out.println("SET DEFAULT VALUE: "+
-                                 methodParm.parmDefaultValue);
             } else
             {
               // This is a non-fatal error. There is no default specified
@@ -389,10 +387,8 @@ public class DefaultAccess extends Module implements Access
             {
               boolean isValidValue = false;
               String userValue = (String)h_userParms.get(methodParm.parmName);
-              System.out.println("userValue: "+userValue);
               for (int i=0; i<parmDomainValues.length; i++)
               {
-                System.out.println("parmDomain: "+parmDomainValues[i]);
                 if (userValue.equalsIgnoreCase(parmDomainValues[i]))
                 {
                   isValidValue = true;
@@ -403,12 +399,24 @@ public class DefaultAccess extends Module implements Access
                 // This is a fatal error. The value supplied for this method
                 // parameter does not match any of the values specified by
                 // this method.
+                StringBuffer values = new StringBuffer();
+                for (int i=0; i<parmDomainValues.length; i++)
+                {
+                  if (i == parmDomainValues.length-1)
+                  {
+                    sb.append(parmDomainValues[i]);
+                  } else
+                  {
+                    sb.append(parmDomainValues[i]+", ");
+                  }
+                }
                 sb.append("The method parameter \""
                           + methodParm.parmName
                           + "\" with a value of \""
                           + (String)h_userParms.get(methodParm.parmName)
                           + "\" is not allowed for the method \""
-                          + methodName + "\".");
+                          + methodName + "\". Allowed values for this "
+                          + "method include \"" + sb.toString() + "\".");
                 isValid = false;
               }
             }
