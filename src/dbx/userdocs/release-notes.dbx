@@ -161,6 +161,31 @@
 				<title>8.	Possible Database Corruption as Result of Purging Objects.</title>
 				<para>Due to the way the relational database for the object cache was normalized, there was the potential for database corruption to occur in certain cases of purging objects.  During purge, rows in the datastream binding map table could be inadvertently deleted during a purge object operation when there were still other objects depending on those rows.   New referential integrity checks have been put into the database replication module to ensure that this will not occur. </para>
 			</sect3>
+			<sect3>
+				<title>9.  DateTimeStamp Using 12 Hour Clock Schema.</title>
+				<para>The format being used to initialize the DateTimeStamp was using the 12-hour clock setting instead of the 24-hour clock setting. This is fixed now and all DateTimeStamp values use the 24-hour clock format.
+</para>
+			</sect3>
+			<sect3>
+				<title>10.  API-A Not Functional With Example Soap Client When Running On Different Host (12/2)</title>
+				<para>If the example soap client was installed on a different host than the Fedora server, API-A requests would fail to display the transformed xml-to-html results. This was caused by a typographical error in the name of the stylesheet parameter in soapclient properties file that conveyed the Fedora server hostname. This is fixed now and example soap client can be run on any host.</para>
+			</sect3>
+			<sect3>
+				<title>11.  Mckoi-stop.sh Ignoring FEDORA_JAVA_HOME</title>
+				<para>Mckoi-stop.sh script was ignoring environment variable for FEDORA_JAVA_HOME. This is fixed now.</para>
+			</sect3>
+			<sect3>
+				<title>12.  FedoraAccessSOAPClient Returns ServletException When Disseminating Datastreams of Type "Redirected"</title>
+				<para>Attempts to disseminate datastreams that are of type "R' caused the soap client servlet to throw ServletException. This was caused by a ServletOutputStream being closed prematurely in FedoraAccessSOAPServlet. This is fixed now and Redirected datastreams can be disseminated using the soap client.</para>
+			</sect3>
+			<sect3>
+				<title>13.  Minor Bug Fixes to BDef/BMech Builder</title>
+				<para> Reworked bmech builder class action listeners to keep bmech template object update in memory for every change to tabpane. This fixes bug where ds binding keys don't stay updated properly in pre-load of dsinput pane. Also, various other improvements in validation. Fixed bug where methodURL fields for the method being created did not property clean out when change among radio buttons occured (to change the URL from service base, to local service, to multiserver). Previously if you started things off with a service baseURL, then entered the baseURL, then changed to a LOCAL service or multi-server, the baseURL would still be hanging out in the method URL fields.</para>
+			</sect3>
+			<sect3>
+				<title>14.  ListDatastreamIDs in FastDOReader returns ClassCastException</title>
+				<para>A Datastream data type was being erroneously cast as a String which caused the Exception. This has now been fixed so that ListDatastreamIDs returns the appropriate list of datastream IDs.</para>
+			</sect3>
 		</sect2>
 		<sect2>
 			<title>KNOWN ISSUES (and ways to avoid them):</title>
@@ -170,7 +195,8 @@
 			</sect3>
 			<sect3>
 				<title>2.	Bug in MySQL v4.0.12 on Linux causes database corruption.</title>
-				<para>The problem shows up only in Linux when running MySQL v4.0.12.  Specifically, if a purgeDisseminator operation is run in the Fedora repository the problem is provoked.  Normally, the  purgeDisseminator operation removes a disseminator from a Fedora object XML store, and also initiates a replication process to make sure the disseminator is removed from the relational database object cache.  Internal to the Fedora code, an SQL delete query is run via JDBC.  The bug occurred when a the delete query was run.  The query uses a where clause that should dependably evaluate to FALSE (i.e., “WHERE 1=2”), but in this particular version of MySQL under Linux, the query curiously and erroneously evaluates to TRUE.  This particular query is intended to prevent certain rows from being deleted from the database.  Instead rows are deleted resulting in referential integrity problems in the database.  <emphasis>The solution to this problem is to upgrade to MySQL v4.0.14 or higher which does not have this bug!</emphasis></para>
+				<para>The problem shows up only in Linux when running MySQL v4.0.12.  Specifically, if a purgeDisseminator operation is run in the Fedora repository the problem is provoked.  Normally, the  purgeDisseminator operation removes a disseminator from a Fedora object XML store, and also initiates a replication process to make sure the disseminator is removed from the relational database object cache.  Internal to the Fedora code, an SQL delete query is run via JDBC.  The bug occurred when a the delete query was run.  The query uses a where clause that should dependably evaluate to FALSE (i.e., “WHERE 1=2”), but in this particular version of MySQL under Linux, the query curiously and erroneously evaluates to TRUE.  This particular query is intended to prevent certain rows from being deleted from the database.  Instead rows are deleted resulting in referential integrity problems in the database.  <emphasis>The solution to this problem is to upgrade to MySQL v4.0.14 or higher which does not have this bug!</emphasis>
+				</para>
 			</sect3>
 			<sect3>
 				<title>3.	Field Search via API-A (SOAP binding) not backwards compatible.</title>
