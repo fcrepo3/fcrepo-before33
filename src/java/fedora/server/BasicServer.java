@@ -220,9 +220,11 @@ public class BasicServer
                     if (nextLine!=null) {
                         if (nextLine.indexOf("#1")>0) {
                             nextLine = nextLine.replaceAll("#1",fedoraServerPort);
-                        } else if (nextLine.indexOf("#2")>0) {
+                        }
+                        if (nextLine.indexOf("#2")>0) {
                             nextLine = nextLine.replaceAll("#2",fedoraShutdownPort);
-                        } else if (nextLine.indexOf("#3")>0) {
+                        }
+                        if (nextLine.indexOf("#3")>0) {
                             nextLine = nextLine.replaceAll("#3",fedoraRedirectPort);
                         }
                         out.write(nextLine+"\n");
