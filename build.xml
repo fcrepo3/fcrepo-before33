@@ -1002,6 +1002,7 @@
         <copy file="${lib.wsdl4j}" todir="${tomcat.dir}/common/lib"/>   
         <copy file="${lib.tt-bytecode}" todir="${tomcat.dir}/common/lib"/>   
         <copy file="${lib.mckoi-jdbc}" todir="${tomcat.dir}/common/lib"/>   
+        <copy file="${lib.mysql-connector}" todir="${tomcat.dir}/common/lib"/>  
             
         <copy file="${lib.avalon-framework}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
         <copy file="${lib.batik}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
