@@ -244,6 +244,12 @@ public class DefaultManagement
 
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
 */
+
+    private String getNextID(String id) {
+        // naive impl... just add "1" to the string
+        return id + "1";
+    }
+
     public void modifyDatastreamByReference(Context context, String pid,
             String datastreamId, String dsLabel, String logMessage,
             String dsLocation)
@@ -260,7 +266,8 @@ public class DefaultManagement
                     DatastreamManagedContent newds=new DatastreamManagedContent();
                     newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                     newds.DatastreamID=orig.DatastreamID;
-                    newds.DSVersionID=orig.DSVersionID;
+                    // make sure it has a different id
+                    newds.DSVersionID=getNextID(orig.DSVersionID);
                     newds.DSLabel=dsLabel;
                     newds.DSMIME=orig.DSMIME;
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -271,8 +278,7 @@ public class DefaultManagement
                     newds.DSState=orig.DSState;
                     newds.DSLocation=dsLocation;
                     newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                    // remove, then add the datastream
-                    w.removeDatastream(datastreamId, null, null);
+                    // just add the datastream
                     w.addDatastream(newds);
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -287,12 +293,13 @@ public class DefaultManagement
             } else {
                 // Deal with other kinds, except xml (that must be passed in by value).
                 if (orig.DSControlGrp.equals("X")) {
-                    throw new GeneralException("Inline XML datastreams must be replaced by value, not by reference.");
+                    throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
                 }
                 DatastreamReferencedContent newds=new DatastreamReferencedContent();
                 newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                 newds.DatastreamID=orig.DatastreamID;
-                newds.DSVersionID=orig.DSVersionID;
+                // make sure it has a different id
+                newds.DSVersionID=getNextID(orig.DSVersionID);
                 newds.DSLabel=dsLabel;
                 newds.DSMIME=orig.DSMIME;
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -302,8 +309,7 @@ public class DefaultManagement
                 newds.DSState=orig.DSState;
                 newds.DSLocation=dsLocation;
                 newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-                // remove, then add the datastream
-                w.removeDatastream(datastreamId, null, null);
+                // just add the datastream
                 w.addDatastream(newds);
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -496,7 +502,7 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (!orig.DSControlGrp.equals("X")) {
-                throw new GeneralException("Only inline XML datastreams may be replaced by value.");
+                throw new GeneralException("Only inline XML datastreams may be modified by value.");
             }
             if (orig.DatastreamID.equals("METHODMAP")
                     || orig.DatastreamID.equals("DSINPUTSPEC")
@@ -512,7 +518,8 @@ public class DefaultManagement
             }
             newds.xmlContent=bytes.toByteArray();
             newds.DatastreamID=orig.DatastreamID;
-            newds.DSVersionID=orig.DSVersionID;
+            // make sure it has a different id
+            newds.DSVersionID=getNextID(orig.DSVersionID);
             newds.DSLabel=dsLabel;
             newds.DSMIME=orig.DSMIME;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -521,8 +528,7 @@ public class DefaultManagement
             newds.DSInfoType=orig.DSInfoType;
             newds.DSState=orig.DSState;
             newds.auditRecordIdList().addAll(orig.auditRecordIdList());
-            // remove, then add the datastream
-            w.removeDatastream(datastreamId, null, null);
+            // just add the datastream
             w.addDatastream(newds);
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
