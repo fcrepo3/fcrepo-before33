@@ -50,6 +50,10 @@
             
             <pathelement location="${lib.jena}"/>
             <pathelement location="${lib.kowari-driver}"/>
+            <pathelement location="${lib.trippi}"/>
+            <pathelement location="${lib.rio}"/>
+            <pathelement location="${lib.xmlpull}"/>
+            <pathelement location="${lib.xpp3}"/>
             <pathelement location="${lib.activation}"/>
             <pathelement location="${lib.castor}"/>
             <pathelement location="${lib.lucene}"/>
@@ -102,6 +106,10 @@
         <pathelement location="${lib.jena}"/>
         <pathelement location="${lib.junit}"/>
         <pathelement location="${lib.kowari-driver}"/>
+        <pathelement location="${lib.trippi}"/>
+        <pathelement location="${lib.rio}"/>
+        <pathelement location="${lib.xmlpull}"/>
+        <pathelement location="${lib.xpp3}"/>
         <pathelement location="${lib.md5}"/>
         <pathelement location="${lib.saxon}"/>
         <pathelement location="${lib.servlet}"/>
