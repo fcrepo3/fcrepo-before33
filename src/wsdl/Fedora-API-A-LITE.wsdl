@@ -345,8 +345,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 		<http:binding verb="GET"/>
 		<operation name="describeRepository">
 			<http:operation location="describe[?xml=(ENCODE_XML)]"/>
-			<input>
-				<urlReplacement/>
+			<input>			
 				<documentation>  This URL replacement syntax is used to request a description
 					of the Fedora repository server.  The request will return key metadata elements
 					about the repository server including repository name, version, baseURL,
@@ -361,6 +360,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
 					 	  format is to be text/html.
 				</documentation>
+				<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
@@ -370,7 +370,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
 		<operation name="getObjectProfile">
 			<http:operation location="get/(PID)[/(DATETIME)][?xml=(ENCODE_XML)]"/>
 			<input>
-				<urlReplacement/>
 				<documentation>  This URL replacement syntax is used to request the object profile.
 					When putting together a proper URL, the client should replace parenthesized
 					parts of the operation location URL with actual values.  For example, "(PID)" 
@@ -387,6 +386,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
 					 	  format is to be text/html.
 				</documentation>
+				<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
@@ -396,7 +396,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
 		<operation name="getDissemination">
 			<http:operation location="get/(PID)/(BDEF_PID)/(METHODNAME)[/(DATETIME)][?(PARMS)]"/>
 			<input>
-				<urlReplacement/>
 				<documentation>  This URL replacement syntax is used to request a dissemination of the object.
 					When putting together a proper URL, the client should replace parenthesized
 					parts of the operation location URL with actual values.  For example, "(PID)" 
@@ -418,6 +417,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 						  Each name and value is connected by an equal sign. This is in accordance with normal
 						  URL syntax for encoding parameters.
 				</documentation>
+				<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="*/*"/>
@@ -426,13 +426,13 @@ It asks for up to 50 results at a time from the server, and requests that the re
 		<operation name="findObjects">
 			<http:operation location="search?{terms=(terms)|query=(query)}[&amp;maxResults=(maxResults)][&amp;xml=(xml)][&amp;pid=(pid)][&amp;label=(label)][&amp;fType=(fType)][&amp;cModel=(cModel)][&amp;state=(state)][&amp;ownerId=(ownerId)][&amp;cDate=(cDate)][&amp;mDate=(mDate)][&amp;dcmDate=(dcmDate)][&amp;bDef=(bDef)][&amp;bMech=(bMech)][&amp;title=(title)][&amp;creator=(creator)][&amp;subject=(subject)][&amp;description=(description)][&amp;publisher=(publisher)][&amp;contributor=(contributor)][&amp;date=(date)][&amp;type=(type)][&amp;format=(format)][&amp;identifier=(identifier)][&amp;source=(source)][&amp;language=(language)][&amp;relation=(relation)][&amp;coverage=(coverage)][&amp;rights=(rights)]"/>
 			<input>
-				<urlReplacement/>
 				<documentation>This URL replacement syntax is used to perform a search on the objects in the repository.
                The brace ({ and }) characters are used to denote a choice between items separated by the pipe (|) character.
                Parentheses around a string indicate that the value of that part of the url should be replaced with the
                value of the named parameter.  Square brackets indicate optional text.
                Descriptions of each named parameter can be found in the appropriate message part documentation above.
 			</documentation>
+			<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
@@ -442,10 +442,10 @@ It asks for up to 50 results at a time from the server, and requests that the re
 		<operation name="resumeFindObjects">
 			<http:operation location="search?sessionToken=(sessionToken)[&amp;xml=(xml)]"/>
 			<input>
-				<urlReplacement/>
 				<documentation>This operation is used to resume a findObjects operation.  
-               The sessionToken value comes from the previous response.  The URL replacement 
-               uses the same syntax conventions as the findObjects operation.</documentation>
+               	The sessionToken value comes from the previous response.  The URL replacement 
+               	uses the same syntax conventions as the findObjects operation.</documentation>			
+				<http:urlReplacement/>			
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
