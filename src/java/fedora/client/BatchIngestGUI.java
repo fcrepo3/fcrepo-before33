@@ -25,6 +25,7 @@ import javax.swing.Box;
 import javax.swing.JFrame;
 import java.awt.Component;
 import javax.swing.JComponent;
+import fedora.swing.mdi.MDIDesktopPane;
 
 public class BatchIngestGUI
         extends JInternalFrame {
@@ -43,13 +44,18 @@ public class BatchIngestGUI
 	private Dimension okPref = null;
 	private Dimension okMax = null;	
 	
-    
-    public BatchIngestGUI(JFrame parent) {
+	private MDIDesktopPane mdiDesktopPane = null;
+	BatchOutput batchOutput = new BatchOutput("Batch Ingest Output");	
+	
+    public BatchIngestGUI(JFrame parent, MDIDesktopPane mdiDesktopPane) {
         super("Batch Ingest",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
+
+	      	this.mdiDesktopPane = mdiDesktopPane;
+	      
         JButton btn=new JButton("Ingest this batch");
         btn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -139,8 +145,8 @@ public class BatchIngestGUI
 	return sized (jc, min, pref, max, false);
     }         
 
-    
     private static final Properties nullProperties = new Properties();
+    
     public void ingestBatch() {
 	try {
         if (!m_objectsField.getText().equals("*")
@@ -156,23 +162,32 @@ public class BatchIngestGUI
 	    properties.setProperty("ingest","yes");
 	    properties.setProperty("objects",m_objectsField.getText());
 	    properties.setProperty("ingested-pids",m_pidsField.getText());
-	 
-	    BatchTool batchTool = new BatchTool(properties,nullProperties,nullProperties);
-	    batchTool.prep();
-	    batchTool.process();	    
-        }
-	} catch (Exception e) {
-	}
-	/*
-        RepositoryBrowser frame=new RepositoryBrowser(pidPattern, foType, 
-                lockedByPattern, state, labelPattern, contentModelIdPattern, 
-                createDateMin, createDateMax, lastModDateMin, lastModDateMax);
-        frame.setVisible(true);
-        Administrator.getDesktop().add(frame);
+
+	    try {
+		    mdiDesktopPane.add(batchOutput);
+	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
+		    mdiDesktopPane.add(batchOutput);
+	    }		
+	
         try {
-            frame.setSelected(true);
-        } catch (java.beans.PropertyVetoException e) {}
-	*/
+            batchOutput.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {
+		System.err.println("BatchIngestGUI" + " frame select vetoed " + e.getMessage());		
+	}
+	    
+		BatchThread batchThread = null;
+		try {
+			batchThread = new BatchThread(batchOutput, batchOutput.getJTextArea(), "Ingesting Batch . . .");
+		} catch (Exception e) {
+			System.err.println("BatchIngestGUI" + " couldn't instantiate BatchThread " + e.getMessage());
+		}
+	    batchThread.setProperties(properties);
+	    batchThread.start();
+        }
+
+	} catch (Exception e) {
+		System.err.println("BatchIngestGUI" + " general error " + e.getMessage());		
+	}
     }
     
     protected File selectFile (File lastDir, boolean directoriesOnly) throws Exception {

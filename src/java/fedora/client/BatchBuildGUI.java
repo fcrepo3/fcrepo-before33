@@ -15,7 +15,6 @@ import java.util.Calendar;
 import fedora.client.Administrator;
 import java.io.File;
 import javax.swing.JFileChooser;
-import fedora.client.batch.BatchTool;
 import java.util.Properties;
 import java.io.FileInputStream;
 import java.awt.Dimension;
@@ -25,6 +24,8 @@ import javax.swing.Box;
 import javax.swing.JFrame;
 import java.awt.Component;
 import javax.swing.JComponent;
+import fedora.swing.mdi.MDIDesktopPane;
+import fedora.client.batch.BatchTool;
 
 public class BatchBuildGUI
         extends JInternalFrame {
@@ -46,12 +47,17 @@ public class BatchBuildGUI
 	private Dimension okPref = null;
 	private Dimension okMax = null;	
 	
-    public BatchBuildGUI(JFrame parent) {
+	private MDIDesktopPane mdiDesktopPane = null;
+	BatchOutput batchOutput = new BatchOutput("Batch Build Output");
+	
+    public BatchBuildGUI(JFrame parent, MDIDesktopPane mdiDesktopPane) {
         super("Batch Build",
               true, //resizable
               true, //closable
               true, //maximizable
               true);//iconifiable
+	      
+	this.mdiDesktopPane = mdiDesktopPane;
 
         JButton btn=new JButton("Build this batch");
         btn.addActionListener(new ActionListener() {
@@ -131,10 +137,10 @@ public class BatchBuildGUI
 	
         setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/New16.gif")));
 
-        setSize(400,400); 
-
+        setSize(400,400);
+	
     }
-
+    
     private final void sizeIt (JComponent jc, Dimension min, Dimension pref, Dimension max) {
 	jc.setMinimumSize(min);
 	jc.setPreferredSize(pref);
@@ -157,11 +163,10 @@ public class BatchBuildGUI
 	return sized (jc, min, pref, max, false);
     }         
     
-    
     private static final Properties nullProperties = new Properties();
+    
     public void buildBatch() {
 	try {
-        //String templatePattern=null;
         if (!m_templateField.getText().equals("*")
 		&& !m_specsField.getText().equals("*")
 		&& !m_objectsField.getText().equals("*")		
@@ -176,13 +181,28 @@ public class BatchBuildGUI
 	    properties.setProperty("merge-objects","yes");
 	    properties.setProperty("template",m_templateField.getText());
 	    properties.setProperty("specifics",m_specsField.getText());
-	    properties.setProperty("objects",m_objectsField.getText());	    
-	 
-	    BatchTool batchTool = new BatchTool(properties,nullProperties,nullProperties);
-	    batchTool.prep();
-	    batchTool.process();	    
+	    properties.setProperty("objects",m_objectsField.getText());
+	    try {
+		    mdiDesktopPane.add(batchOutput);
+	    } catch (Exception eee) {  //illegal component position occurs ~ every other time ?!?
+		    mdiDesktopPane.add(batchOutput);
+	    }		    
+        	try {
+			batchOutput.setSelected(true);
+		} catch (java.beans.PropertyVetoException e) {
+			System.err.println("BatchBuildGUI" + " frame select vetoed " + e.getMessage());
+		}
+		BatchThread batchThread = null;
+		try {
+			batchThread = new BatchThread(batchOutput, batchOutput.getJTextArea(), "Building Batch . . .");
+		} catch (Exception e) {
+			System.err.println("BatchBuildGUI" + " couldn't instantiate BatchThread " + e.getMessage());
+		}
+	    batchThread.setProperties(properties);
+	    batchThread.start();
         }
 	} catch (Exception e) {
+		System.err.println("BatchBuildGUI" + " general error " + e.getMessage());
 	}
     }
     
@@ -234,6 +254,5 @@ public class BatchBuildGUI
 	} catch (Exception e) {
 			   m_objectsField.setText("");
 	}
-    }             
-
+    }
 }
