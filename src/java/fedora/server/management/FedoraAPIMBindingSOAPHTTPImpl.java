@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.Date;
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -88,15 +87,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     private Context getContext() {
-        HashMap h=new HashMap();
-        h.put("application", "apim");
-        h.put("useCachedObject", "false");
-        h.put("userId", "fedoraAdmin");
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        h.put("host", req.getRemoteAddr());
-        return new ReadOnlyContext(h);
+        return ReadOnlyContext.getContext("soap", req, false);
     }
 
     private void logStackTrace(Exception e) {

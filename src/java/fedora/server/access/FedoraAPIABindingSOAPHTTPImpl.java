@@ -2,7 +2,6 @@ package fedora.server.access;
 
 import java.io.File;
 import java.rmi.RemoteException;
-import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -14,6 +13,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.security.Authorization;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.utilities.AxisUtility;
@@ -94,27 +94,17 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   }
 
   private Context getCachedContext() {
-      HashMap h=new HashMap();
-      h.put("application", "apia");
-      h.put("useCachedObject", "true");
-      h.put("userId", "fedoraAdmin");
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      h.put("host", req.getRemoteAddr());
-      return new ReadOnlyContext(h);
+    return ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_SOAP, req, true);
   }
 
   private Context getUncachedContext() {
-      HashMap h=new HashMap();
-      h.put("application", "apia");
-      h.put("useCachedObject", "false");
-      h.put("userId", "fedoraAdmin");
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      h.put("host", req.getRemoteAddr());
-      return new ReadOnlyContext(h);
+      return ReadOnlyContext.getContext(Authorization.ENVIRONMENT_REQUEST_SOAP_OR_REST_SOAP, req, false);
   }
 
   public java.lang.String[] getObjectHistory(java.lang.String PID)
