@@ -399,6 +399,8 @@
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE: local copy packaged with repository distribution -->
 		<mkdir dir="dist/server/access"/>
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
+		<!-- the next copy is temporary and may change -->
+		<copy file="src/xsl/access/objectmethods2.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
@@ -492,6 +494,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.75  2003/02/14 21:27:53  rlw
+  added temp. copy for new stylesheet used with FedoraAccessSOAPServlet
+
   Revision 1.74  2003/02/13 22:32:20  rlw
   moved server web.xml to web-app/fedora/server
 
