@@ -590,7 +590,7 @@
 			<fileset dir="dist/userdocs"/>
 		</copy>
 	</target>
-	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
+	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, API-M, and API-M-LITE wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
 		<echo message="Producing html reports on the validity of API-A, API-A-LITE and API-M..."/>
 		<echo message="Doing API-A..."/>
@@ -623,11 +623,21 @@
 			<arg path="src/wsdl/Fedora-API-M.wsdl"/>
 			<arg path="res/wsdl-validator/validate.xsl"/>
 		</exec>
+		<echo message="Doing API-M-LITE..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="temp/debug/Fedora-API-M-LITE.html"/>
+			<arg path="src/wsdl/Fedora-API-M-LITE.wsdl"/>
+			<arg path="res/wsdl-validator/validate.xsl"/>
+		</exec>		
 	</target>
-	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A, API-A-LITE, and API-M wsdl in dist/wsdldoc/">
+	<target name="document-wsdl" depends="prep" description="Produce html documentation of the API-A, API-A-LITE, API-M, and API-M-LITE wsdl in dist/wsdldoc/">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/wsdldoc"/>
-		<echo message="Producing html reports on the validity of API-A, API-A-LITE and API-M..."/>
+		<echo message="Producing html reports on the validity of API-A, API-A-LITE, API-M, and API-M-LITE..."/>
 		<echo message="Doing API-A..."/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -658,6 +668,16 @@
 			<arg path="src/wsdl/Fedora-API-M.wsdl"/>
 			<arg path="res/wsdl-documentor/document.xsl"/>
 		</exec>
+		<echo message="Doing API-M-LITE..."/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/wsdldoc/Fedora-API-M-LITE.html"/>
+			<arg path="src/wsdl/Fedora-API-M-LITE.wsdl"/>
+			<arg path="res/wsdl-documentor/document.xsl"/>
+		</exec>		
 	</target>
 	<target name="wsdl2java" depends="prep" description="Generate java classes for API-M and API-A in temp/server/java">
 		<echo message="Generating java classes for API-M and API-A in temp/server/java"/>
@@ -843,6 +863,9 @@
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
+		<mkdir dir="dist/server/management"/>
+		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
+		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>		
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
 		<!-- saxon service -->
