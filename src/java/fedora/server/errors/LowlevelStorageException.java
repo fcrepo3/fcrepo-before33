@@ -18,12 +18,10 @@ public class LowlevelStorageException extends /* Storage*/ Exception {
 	
 	public String getMessage() {
 		Throwable e = getCause();
-		String temp = "+++++++++++";
-		temp += ("\t" + super.getMessage());
+		String temp = super.getMessage();
 		if (e != null) {
 			temp += ("\t" + e.getMessage());
 		}
-		temp += "+++++++++++";
 		return temp;
 	}
 
