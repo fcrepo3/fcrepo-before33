@@ -435,7 +435,7 @@ public class METSDOSerializer
                                 throw new ObjectIntegrityException("Externally referenced content (ID=" + dsc.DSVersionID + ") must have a URL defined.");
                             }
                             buf.append(dsec.DSLocation.toString());
-                            buf.append("\">\n");
+                            buf.append("\"/>\n");
                         } else {
                             // FContent=base64 encoded
                         }
