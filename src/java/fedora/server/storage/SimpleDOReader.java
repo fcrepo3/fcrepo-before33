@@ -20,6 +20,7 @@ import fedora.server.storage.types.DSBindingAugmented;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBindingMapAugmented;
 import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
 
@@ -516,12 +517,92 @@ public class SimpleDOReader
     }
 
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
-          String methodName, Date versDateTime) {
-        return null;
+          String methodName, Date versDateTime) 
+          throws ServerException {
+        // Results will be returned in this array, one item per datastream
+        DisseminationBindingInfo[] bindingInfo;
+        // The disseminator provides the datastream bindings and the bmech pid,
+        // which we need in order to construct the bindingInfo array.
+        Disseminator diss=GetDisseminator(bDefPID, versDateTime);
+        if (diss==null) {
+            throw new DisseminatorNotFoundException("Cannot get binding info "
+                    + "for disseminator " + bDefPID + " because the disseminator"
+                    + " was not found in this object.");
+        }
+        DSBinding[] dsBindings=diss.dsBindMap.dsBindings;
+        int dsCount=dsBindings.length;
+        bindingInfo=new DisseminationBindingInfo[dsCount];
+        // The bmech reader provides information about the service and params.
+        BMechReader mech=m_repoReader.getBMechReader(m_context, diss.bMechID);
+        MethodParmDef[] methodParms=mech.getServiceMethodParms(methodName, versDateTime); 
+        // Find the operation bindings for the method in question
+        MethodDefOperationBind[] opBindings=mech.getServiceMethodBindings(versDateTime);
+        String addressLocation=null;
+        String operationLocation=null;
+        String protocolType=null;
+        boolean foundMethod=false;
+        for (int i=0; i<opBindings.length; i++) {
+            if (opBindings[i].methodName.equals(methodName)) {
+                addressLocation=opBindings[i].serviceBindingAddress;
+                operationLocation=opBindings[i].operationLocation;
+                protocolType=opBindings[i].protocolType;
+            }
+        }
+        if (!foundMethod) {
+            throw new MethodNotFoundException("Method " + methodName 
+                    + " was not found in " + diss.bMechID + "'s operation "
+                    + " binding.");
+        }
+        // For each datastream referenced by the disseminator's ds bindings, 
+        // add an element to the output array which includes key information 
+        // on the operation and the datastream.
+        for (int i=0; i<dsCount; i++) {
+            String dsID=dsBindings[i].datastreamID;
+            bindingInfo[i]=new DisseminationBindingInfo();
+            bindingInfo[i].DSBindKey=dsBindings[i].bindKeyName;
+            // get key info about the datastream and put it here
+            Datastream ds=GetDatastream(dsID, versDateTime);
+            bindingInfo[i].dsLocation=ds.DSLocation;
+            bindingInfo[i].dsControlGroupType=ds.DSControlGrp;
+            bindingInfo[i].dsID=dsID;
+            // these will be the same for all elements of the array
+            bindingInfo[i].methodParms=methodParms;
+            bindingInfo[i].AddressLocation=addressLocation;
+            bindingInfo[i].OperationLocation=operationLocation;
+            bindingInfo[i].ProtocolType=protocolType;
+        }
+        return bindingInfo;         
     }
 
-    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) {
-        return null;
+    public ObjectMethodsDef[] getObjectMethods(Date versDateTime) 
+            throws ServerException {
+        String[] ids=ListDisseminatorIDs("A");
+        ArrayList methodList=new ArrayList();
+        ArrayList bDefIDList=new ArrayList();
+        for (int i=0; i<ids.length; i++) {
+            Disseminator diss=GetDisseminator(ids[i], versDateTime);
+            if (diss!=null) {
+                MethodDef[] methods=getObjectMethods(diss.bDefID, 
+                        versDateTime);
+                if (methods!=null) {
+                    for (int j=0; j<methods.length; j++) {
+                        methodList.add(methods[i]);
+                        bDefIDList.add(diss.bDefID);
+                    }
+                }
+            }
+        }
+        ObjectMethodsDef[] ret=new ObjectMethodsDef[methodList.size()];
+        for (int i=0; i<methodList.size(); i++) {
+            MethodDef def=(MethodDef) methodList.get(i);
+            ret[i]=new ObjectMethodsDef();
+            ret[i].PID=GetObjectPID();
+            ret[i].bDefPID=(String) bDefIDList.get(i);
+            ret[i].methodName=def.methodName;
+            ret[i].methodParmDefs=def.methodParms;
+            ret[i].asOfDate=versDateTime;
+        }
+        return ret;
     }
 
 }

@@ -973,9 +973,8 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, GetObjectPID());
         }
-
-        // FIXME!! - code to perform disseminations directly from the
-        // XML objects NOT implemented in Phase 1.
+        dissBindInfoArray=doReader.getDisseminationBindingInfo(bDefPID, 
+                methodName, versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1350,46 +1349,7 @@ public class FastDOReader implements DOReader
         {
           doReader = m_manager.getReader(m_context, GetObjectPID());
         }
-        String[] behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
-        Vector results = new Vector();
-        for (int i=0; i<behaviorDefs.length; i++)
-        {
-          MethodDef[] methodDefs = doReader.getObjectMethods(behaviorDefs[i],
-                                   versDateTime);
-          // FIXME!! Behavior Mechanism and Behavior Definition
-          // objects cannot currently be disseminated because the code
-          // to implement this in the definitive readers has not been
-          // implemented. Method getObjectMethods returns null for Behavior
-          // Mechanism and Behavior Definition objects which gets trapped
-          // here.
-          if(methodDefs == null)
-          {
-            throw new GeneralException("[FastDOReader] The object: "
-                + GetObjectPID() + " is not a "
-                + "data object. Behavior Definition and Behavior Mechanism "
-                + "objects cannot be disseminated in the current release.");
-          }
-          for (int j=0; j<methodDefs.length; j++)
-          {
-            objectMethodsDef = new ObjectMethodsDef();
-            objectMethodsDef.PID = GetObjectPID();
-            objectMethodsDef.bDefPID = behaviorDefs[i];
-            objectMethodsDef.methodName = methodDefs[j].methodName;
-            System.out.println("methodName: "+methodDefs[j].methodName);
-            System.out.println("CALL: bdef: "+behaviorDefs[i]+"methodefs: "+methodDefs[i].methodName);
-            objectMethodsDef.methodParmDefs = doReader.getObjectMethodParms(behaviorDefs[i], methodDefs[i].methodName, versDateTime);
-            objectMethodsDef.asOfDate = versDateTime;
-            results.addElement(objectMethodsDef);
-          }
-        }
-        int rowCount = 0;
-        objectMethodsDefArray = new ObjectMethodsDef[results.size()];
-        for (Enumeration e = results.elements(); e.hasMoreElements();)
-        {
-          objectMethodsDefArray[rowCount] = (ObjectMethodsDef)e.nextElement();
-          rowCount++;
-        }
-        return objectMethodsDefArray;
+        objectMethodsDefArray=doReader.getObjectMethods(versDateTime);
       } catch (Throwable th)
       {
         th.printStackTrace();

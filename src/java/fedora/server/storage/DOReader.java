@@ -198,7 +198,6 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    //public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
     public MethodDef[] getObjectMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
@@ -213,7 +212,6 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    //public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime)
     public ObjectMethodsDef[] getObjectMethods(Date versDateTime)
           throws ServerException;
 
@@ -229,7 +227,6 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    //public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
     public InputStream getObjectMethodsXML(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
@@ -249,13 +246,28 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    //public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
     public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName,
         Date versDateTime) throws ServerException;
 
+    /**
+     * Gets datastream binding map.
+     *
+     * @param versDateTime versioning datetime stamp
+     * @return DSBindingMapAugmented[] array of datastream binding maps
+     * @throws ServerException If anything went wrong
+     */
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ServerException;
 
+    /**
+     * Gets the dissemination binding info necessary to perform a particular
+     * dissemination.
+     *
+     * @param bDefPID the behavior definition pid
+     * @param methodName the method name
+     * @param versDateTime versioning datetime stamp
+     * @throws ServerException If anything went wrong
+     */
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime) throws ServerException;
 
