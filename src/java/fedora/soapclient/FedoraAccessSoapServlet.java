@@ -33,7 +33,7 @@ import com.icl.saxon.expr.StringValue;
 
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
-import fedora.server.types.gen.MethodDef;
+//import fedora.server.types.gen.MethodDef;
 import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.ObjectMethodsDef;
@@ -266,7 +266,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                       h_userParms, response))
     {
       // Have valid request.
-      if (action.equals(GET_BEHAVIOR_DEFINITIONS))
+      /*if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
         String[] behaviorDefs = null;
         ObjectProfile objProfile = null;
@@ -450,7 +450,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
         //    + "GetBehaviorDefinitions: " + interval + " milliseconds.");
       }
-      else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
+      /*else if (action.equalsIgnoreCase(GET_BEHAVIOR_METHODS_XML))
       {
         MIMETypedStream methodDefs = null;
         ByteArrayInputStream methodResults = null;
@@ -539,7 +539,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
         //System.out.println("[FedoraAccessSoapServlet] Roundtrip "
         //    + "GetBehaviorMethodsAsWSDL: " + interval + " milliseconds.");
       }
-      else if (action.equals(GET_DISSEMINATION))
+      else if (action.equals(GET_DISSEMINATION))*/
+      if (action.equals(GET_DISSEMINATION))
       {
         ServletOutputStream out = response.getOutputStream();
         ByteArrayInputStream dissemResult = null;
@@ -1331,13 +1332,14 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
    *
    */
-  public class BehaviorMethodsSerializerThread extends Thread
+/*  public class BehaviorMethodsSerializerThread extends Thread
   {
     private PipedWriter pw = null;
     private String PID = null;
     private String bDefPID = null;
     private MethodDef[] methodDefArray = new MethodDef[0];
     private Date versDateTime = null;
+    */
 
     /**
      * <p> Constructor for SerializeThread.</p>
@@ -1348,7 +1350,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public BehaviorMethodsSerializerThread(String PID, String bDefPID, MethodDef[] methodDefArray,
+    /*public BehaviorMethodsSerializerThread(String PID, String bDefPID, MethodDef[] methodDefArray,
                         Date versDateTime, PipedWriter pw)
     {
       this.pw = pw;
@@ -1356,12 +1358,12 @@ public class FedoraAccessSoapServlet extends HttpServlet
       this.bDefPID = bDefPID;
       this.methodDefArray = methodDefArray;
       this.versDateTime = versDateTime;
-    }
+    }*/
 
     /**
      * <p> This method executes the thread.</p>
      */
-    public void run()
+    /*public void run()
     {
       if (pw != null)
       {
@@ -1443,18 +1445,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
       }
     }
-  }
+  }*/
 
   /**
    * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
    *
    */
-  public class BehaviorDefinitionsSerializerThread extends Thread
+  /*public class BehaviorDefinitionsSerializerThread extends Thread
   {
     private PipedWriter pw = null;
     private String PID = null;
     private String[] behaviorDefArray = new String[0];
     private Date versDateTime = null;
+    */
 
     /**
      * <p> Constructor for SerializeThread.</p>
@@ -1464,19 +1467,19 @@ public class FedoraAccessSoapServlet extends HttpServlet
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public BehaviorDefinitionsSerializerThread(String PID, String[] behaviorDefArray,
+    /*public BehaviorDefinitionsSerializerThread(String PID, String[] behaviorDefArray,
                         Date versDateTime, PipedWriter pw)
     {
       this.pw = pw;
       this.PID = PID;
       this.behaviorDefArray = behaviorDefArray;
       this.versDateTime = versDateTime;
-    }
+    }*/
 
     /**
      * <p> This method executes the thread.</p>
      */
-    public void run()
+    /*public void run()
     {
       if (pw != null)
       {
@@ -1536,7 +1539,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         }
       }
     }
-  }
+  }*/
 
   /**
    * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
@@ -1630,7 +1633,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
    */
-  public String[] getBehaviorDefinitions(String PID, Date asOfDateTime)
+  /*public String[] getBehaviorDefinitions(String PID, Date asOfDateTime)
       throws Exception
   {
     Date versDateTime = asOfDateTime;
@@ -1641,7 +1644,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String[] behaviorDefs = (String[]) call.invoke(new Object[] { PID,
           versDateTime });
     return behaviorDefs;
-  }
+  }*/
 
   /**
    * <p>Gets a list of Behavior Definition object PIDs for the specified
@@ -1675,7 +1678,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
    */
-  public MethodDef[] getBehaviorMethods(String PID,
+  /*public MethodDef[] getBehaviorMethods(String PID,
       String bDefPID, Date asOfDateTime) throws Exception
   {
     MethodDef[] methodDefs = null;
@@ -1698,7 +1701,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     methodDefs = (MethodDef[]) call.invoke( new Object[] { PID,
           bDefPID, DateUtility.convertDateToString(asOfDateTime)} );
     return methodDefs;
-  }
+  }*/
 
   /**
    * <p>Gets a bytestream containing the XML that defines the Behavior Methods
@@ -1712,7 +1715,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
    * @throws Exception If an error occurs in communicating with the Fedora
    *         Access SOAP service.
    */
-  public MIMETypedStream getBehaviorMethodsXML(
+  /*public MIMETypedStream getBehaviorMethodsXML(
       String PID, String bDefPID, Date asOfDateTime) throws Exception
   {
     MIMETypedStream methodDefs = null;
@@ -1732,7 +1735,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     methodDefs = (MIMETypedStream)
                  call.invoke( new Object[] { PID, bDefPID, DateUtility.convertDateToString(asOfDateTime)} );
     return methodDefs;
-  }
+  }*/
 
   /**
    * <p>Gets a MIME-typed bytestream containing the result of a dissemination
@@ -1773,6 +1776,28 @@ public class FedoraAccessSoapServlet extends HttpServlet
     dissemination = (MIMETypedStream) call.invoke( new Object[] { PID, bDefPID,
         methodName, userParms, DateUtility.convertDateToString(asOfDateTime)} );
     return dissemination;
+   }
+
+   public MIMETypedStream getDatastreamDissemination(String PID, String dsID,
+       Date asOfDateTime) throws Exception
+    {
+     // Generate a call to the Fedora SOAP service requesting the
+     // GetDissemination method
+     MIMETypedStream dsDissemination = null;
+     Service service = new Service();
+     Call call = (Call) service.createCall();
+     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+     call.setOperationName(new QName(FEDORA_API_URI, GET_DISSEMINATION) );
+     QName qn =  new QName(FEDORA_TYPE_URI, "MIMETypedStream");
+
+     // Any Fedora-defined types required by the SOAP service must be registered
+     // prior to invocation so the SOAP service knows the appropriate
+     // serializer/deserializer to use for these types.
+     call.registerTypeMapping(MIMETypedStream.class, qn,
+         new BeanSerializerFactory(MIMETypedStream.class, qn),
+         new BeanDeserializerFactory(MIMETypedStream.class, qn));
+     dsDissemination = (MIMETypedStream) call.invoke( new Object[] { PID, dsID, DateUtility.convertDateToString(asOfDateTime)} );
+     return dsDissemination;
    }
 
    /**
