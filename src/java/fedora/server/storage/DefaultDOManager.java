@@ -948,6 +948,15 @@ public class DefaultDOManager
     private void registerObject(String pid, int fedoraObjectType, String userId,
             String label, String contentModelId, Date createDate, Date lastModDate)
             throws StorageDeviceException {
+        // label or contentModelId may be null...set to blank if so
+        String theLabel=label;
+        if (theLabel==null) {
+            theLabel="";
+        }
+        String theContentModelId=contentModelId;
+        if (theContentModelId==null) {
+            theContentModelId="";
+        }
         Connection conn=null;
         Statement st=null;
         String foType="O";
@@ -965,8 +974,8 @@ public class DefaultDOManager
                                                    + "ContentModelId, CreateDate, "
                                                    + "LastModifiedDate) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
-                                     + userId +"', '" + label + "', '" 
-                                     + contentModelId + "', '" 
+                                     + userId +"', '" + theLabel + "', '" 
+                                     + theContentModelId + "', '" 
                                      + formattedCreateDate + "', '"
                                      + formattedLastModDate + "')";
             conn=m_connectionPool.getConnection();
