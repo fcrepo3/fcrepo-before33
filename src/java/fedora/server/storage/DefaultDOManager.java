@@ -81,24 +81,24 @@ public class DefaultDOManager
         extends Module implements DOManager {
 
     private String m_pidNamespace;
-    private String m_storagePool;
+    protected String m_storagePool;
     private String m_defaultStorageFormat;
     private String m_defaultExportFormat;
     private String m_storageCharacterEncoding;
-    private PIDGenerator m_pidGenerator;
-    private DOTranslator m_translator;
+    protected PIDGenerator m_pidGenerator;
+    protected DOTranslator m_translator;
     private ILowlevelStorage m_permanentStore;
     private ILowlevelStorage m_tempStore;
-    private DOReplicator m_replicator;
-    private DOValidator m_validator;
-    private FieldSearch m_fieldSearch;
-    private ExternalContentManager m_contentManager;
-    private Management m_management;
-    private HashSet m_retainPIDs;
-    private ResourceIndex m_resourceIndex;
+    protected DOReplicator m_replicator;
+    protected DOValidator m_validator;
+    protected FieldSearch m_fieldSearch;
+    protected ExternalContentManager m_contentManager;
+    protected Management m_management;
+    protected HashSet m_retainPIDs;
+    protected ResourceIndex m_resourceIndex;
 
-    private ConnectionPool m_connectionPool;
-    private Connection m_connection;
+    protected ConnectionPool m_connectionPool;
+    protected Connection m_connection;
 
     public static String DEFAULT_STATE="L";
 
@@ -173,6 +173,11 @@ public class DefaultDOManager
                 + "not given, using UTF-8");
             m_storageCharacterEncoding="UTF-8";
         }
+        initRetainPID();
+    }
+    
+    protected void initRetainPID()
+    {
         // retainPIDs (optional, default=demo,test)
         String retainPIDs=null;
         retainPIDs=getParameter("retainPIDs");
@@ -196,7 +201,7 @@ public class DefaultDOManager
             }
         }
     }
-
+    
     public void postInitModule()
             throws ModuleInitializationException {
 		// get ref to management module
@@ -902,7 +907,7 @@ public class DefaultDOManager
 				}                     	
                     
                 // RESOURCE INDEX:
-                if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
+                if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                     logFinest("COMMIT: Adding to ResourceIndex...");
                     if (obj.isNew()) {
                         m_resourceIndex.addDigitalObject(obj);
