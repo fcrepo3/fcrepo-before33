@@ -167,4 +167,12 @@ public interface DOWriter
             
     public boolean save()
             throws ServerException;
+            
+    public void cancel()
+            throws ServerException;
+
+    /**
+     * Marks this DOWriter handle invalid (unusable).
+     */
+    public void invalidate();
 }
