@@ -27,6 +27,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.utilities.MD5Utility;
 
 /**
  * A FieldSearch implementation that uses an eXist XML Database backend, v0.9.
@@ -45,8 +46,12 @@ public class FieldSearchExistImpl
         extends StdoutLogging
         implements FieldSearch {
         
-    Collection m_coll;
-    XPathQueryService m_queryService;
+    private Collection m_coll;
+    private CollectionManagementService m_mgt;
+    private XPathQueryService m_queryService;
+    
+    private static boolean s_splitCollections=true;
+    private static long s_maxResults=200;
         
     // logTarget=null if stdout
     public FieldSearchExistImpl(String existHome, Logging logTarget) 
@@ -58,15 +63,14 @@ public class FieldSearchExistImpl
         Database database = (Database) new DatabaseImpl();
         database.setProperty("create-database", "true");
         DatabaseManager.registerDatabase(database);
+        Collection root=DatabaseManager.getCollection("xmldb:exist:///db");
+        m_mgt=(CollectionManagementService) 
+                root.getService("CollectionManagementService", "1.0");
         logFinest("Getting fieldsearch collection");
         m_coll=DatabaseManager.getCollection("xmldb:exist:///db/fieldsearch");
         if (m_coll == null) {
             logFinest("fieldsearch collection did not exist; creating it");
-            Collection root=DatabaseManager.getCollection("xmldb:exist:///db");
-            CollectionManagementService mgtService = 
-                    (CollectionManagementService)
-                    root.getService("CollectionManagementService", "1.0");
-            m_coll=mgtService.createCollection("fieldsearch");
+            m_coll=m_mgt.createCollection("fieldsearch");
         }
         logFiner("The fieldsearch collection has " + m_coll.getResourceCount() 
                 + " items.");
@@ -88,15 +92,16 @@ public class FieldSearchExistImpl
         logFinest("Entering update(DOReader)");
         String pid=reader.GetObjectPID();
         try {
-            XMLResource resource=(XMLResource) m_coll.getResource(pid);
+            Collection coll=getCollection(pid);
+            XMLResource resource=(XMLResource) coll.getResource(pid);
             if (resource==null) {
                 logFiner("Object " + pid + " not in XML db yet, will write content for the first time.");
-                resource=(XMLResource) m_coll.createResource(pid, "XMLResource");
+                resource=(XMLResource) coll.createResource(pid, "XMLResource");
             } else {
                 logFiner("Object " + pid + " found in XML db, will overwrite content.");
             }
             resource.setContent(getXMLString(reader));
-            m_coll.storeResource(resource);
+            coll.storeResource(resource);
         } catch (XMLDBException xmldbe) {
             throw new StorageDeviceException("Error attempting update of " 
                     + "object with pid '" + pid + "': "
@@ -104,6 +109,22 @@ public class FieldSearchExistImpl
         }
         logFinest("Exiting update(DOReader)");
     }                                       
+    
+    private Collection getCollection(String pid) 
+            throws XMLDBException {
+        if (!s_splitCollections) {
+            return m_coll;
+        }
+        String collName=MD5Utility.getBase16Hash(pid).substring(0, 2);
+        Collection coll=DatabaseManager.getCollection("xmldb:exist:///db/fieldsearch/" + collName);
+        if (coll==null) {
+            long st=new Date().getTime();
+            coll=m_mgt.createCollection("fieldsearch/" + collName);
+            long tt=new Date().getTime() - st;
+            logFine("Took " + tt + "ms to create collection: fieldsearch/" + collName);
+        }
+        return coll;
+    }
     
     private String getXMLString(DOReader reader) 
             throws ServerException {
@@ -233,14 +254,15 @@ public class FieldSearchExistImpl
             throws ServerException {
         logFinest("Entering delete(String)");
         try {
-            XMLResource resource=(XMLResource) m_coll.getResource(pid);
+            Collection coll=getCollection(pid);
+            XMLResource resource=(XMLResource) coll.getResource(pid);
             if (resource==null) {
                 logFinest("Did not find resource with pid '" + pid + "'. Returning false.");
                 logFinest("Exiting delete(String)");
                 return false;
             }
             logFinest("Found resource with pid '" + pid + "'.  Deleting and returning true.");
-            m_coll.removeResource(resource);
+            coll.removeResource(resource);
         } catch (XMLDBException xmldbe) {
             throw new StorageDeviceException("Error attempting delete of " 
                     + "object with pid '" + pid + "': "
@@ -376,7 +398,11 @@ public class FieldSearchExistImpl
             throws XMLDBException, ServerException {
         logFinest("Entering getObjectFields(ResourceSet, String[])");
         ArrayList ret=new ArrayList();
-        for (long i=0; i<resources.getSize(); i++) {
+        long numResults=resources.getSize();
+        if (s_maxResults<resources.getSize()) {
+            numResults=s_maxResults;
+        }
+        for (long i=0; i<numResults; i++) {
             ObjectFields f=new ObjectFields(fields);
             XMLResource res=(XMLResource) resources.getResource(i);
             res.getContentAsSAX(f);
