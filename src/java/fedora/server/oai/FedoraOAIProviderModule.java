@@ -96,7 +96,7 @@ public class FedoraOAIProviderModule
         if (getParameter("friends")!=null) {
             String f=getParameter("friends");
             if (f.indexOf(" ")==-1) {
-                adminEmails.add(f);
+                friends.add(f);
             } else {
                 String[] fs=f.split(" ");
                 for (int i=0; i<fs.length; i++) {
