@@ -3,15 +3,18 @@ package fedora.client.batch;
 import fedora.client.Administrator;
 import fedora.client.Uploader;
 import fedora.client.batch.types.Datastream;
+import fedora.client.batch.types.DigitalObject;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
 import fedora.client.batch.types.Disseminator;
 import fedora.client.objecteditor.Util;
+import fedora.client.ingest.AutoIngestor;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.utilities.DateUtility;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -121,6 +124,7 @@ public class BatchModifyParser extends DefaultHandler
     private int m_dsBindingCount;
     private boolean m_inXMLMetadata;
     private boolean m_firstInlineXMLElement;
+    private boolean addObject = true;
     private boolean addDatastream = false;
     private boolean modifyDatastream = false;
     private boolean purgeDatastream = false;
@@ -132,9 +136,10 @@ public class BatchModifyParser extends DefaultHandler
     private boolean setDisseminatorState = false;
     private Datastream m_ds;
     private Disseminator m_diss;
+    private DigitalObject m_obj;
     private DatastreamBindingMap m_dsBindingMap;
     private DatastreamBinding m_dsBinding;
-    private DatastreamBinding[] m_origBinding = null;
+    private DatastreamBinding[] m_origBinding;
     private HashMap m_dsBindings;
 
     /**
@@ -159,13 +164,13 @@ public class BatchModifyParser extends DefaultHandler
         try
         {
             SAXParserFactory saxfactory=SAXParserFactory.newInstance();
-            saxfactory.setValidating(true);
+            //saxfactory.setValidating(true);
             SAXParser parser=saxfactory.newSAXParser();
             xmlReader=parser.getXMLReader();
             xmlReader.setContentHandler(this);
             xmlReader.setFeature("http://xml.org/sax/features/namespaces", true);
             xmlReader.setFeature("http://xml.org/sax/features/namespace-prefixes", true);
-            xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
+            //xmlReader.setFeature("http://apache.org/xml/features/validation/schema", true);
             xmlReader.setErrorHandler(new BatchModifyXMLErrorHandler());
         }
         catch (Exception e)
@@ -284,7 +289,40 @@ public class BatchModifyParser extends DefaultHandler
     public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
             throws SAXException {
 
-        if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
+        if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
+
+            m_obj = new DigitalObject();
+
+            // Get required attributes
+            m_obj.pid = attrs.getValue("pid");
+            m_obj.label = attrs.getValue("label");
+            m_obj.contentModel = attrs.getValue("contentModel");
+
+            try {
+                boolean ok=true;
+                if ( m_obj.label.equals("") ) {
+                    failedCount++;
+                    logFailedDirective(m_obj.pid, localName, null,
+                        "Object Label must be non-empty.");
+                    addObject = false;
+                    return;
+                }
+                if ( !m_obj.pid.equalsIgnoreCase("") ) {
+                    if (m_obj.pid.indexOf(":")<1) {
+                        failedCount++;
+                        addObject = false;
+                        logFailedDirective(m_obj.pid, localName, null,
+                             "Custom PID should be of the form \"namespace:1234\"");
+                        return;
+                    }
+                }
+
+            } catch (Exception e) {
+                failedCount++;
+                addObject = false;
+                logFailedDirective(m_obj.pid, localName, e, "");
+            }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
 
             try {
                 m_ds = new Datastream();
@@ -518,14 +556,48 @@ public class BatchModifyParser extends DefaultHandler
                     m_dsBinding.setSeqNo("0");
                 }
 
+                if(!addDisseminator) {
+
+                // Check that specified binding key name matches that in original disseminator
+                boolean bindKeyExists = false;
+                for (int i=0; i<m_origBinding.length; i++) {
+                    if (m_origBinding[i].getBindKeyName().equalsIgnoreCase(m_dsBinding.getBindKeyName())) {
+                        bindKeyExists = true;
+                    }
+                }
                 // Add datastream binding to hash of bindings
-                m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                if (bindKeyExists) {
+                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                } else {
+                    failedCount++;
+                    if(addDisseminator) {
+                        addDisseminator = false;
+                        logFailedDirective(m_diss.parentPID, "addDisseminator",
+                            null, "Specified datastream Binding Key Name: "
+                            + m_dsBinding.getBindKeyName()
+                            +" does not exist in disseminator: "+m_diss.dissID
+                            +"/n    Unable to add datastream binding for datastream: "
+                            +m_dsBinding.getDatastreamID()+" .");
+                    }
+                    if(modifyDisseminator) {
+                        modifyDisseminator = false;
+                        logFailedDirective(m_diss.parentPID, "modifyDisseminator",
+                                null, "Specified datastream Binding Key Name: "
+                                + m_dsBinding.getBindKeyName()
+                                +" does not exist in disseminator: "+m_diss.dissID
+                                +"/n    Unable to add datastream binding for datastream: "
+                            +m_dsBinding.getDatastreamID()+" .");
+                    }
+                }
+                } else {
+                    m_dsBindings.put(m_dsBinding.getDatastreamID(), m_dsBinding);
+                }
 
             } catch (Exception e) {
                 failedCount++;
                 if(addDisseminator) {
-                addDisseminator = false;
-                logFailedDirective(m_diss.parentPID, "addDisseminator", e, "");
+                    addDisseminator = false;
+                    logFailedDirective(m_diss.parentPID, "addDisseminator", e, "");
                 }
                 if(modifyDisseminator) {
                     modifyDisseminator = false;
@@ -549,9 +621,9 @@ public class BatchModifyParser extends DefaultHandler
                     failedCount++;
                     modifyDisseminator = false;
                     logFailedDirective(m_diss.parentPID, "modifyDisseminator", null, "No binding found "
-                                       + "for datastreamID: "+m_dsBinding.getDatastreamID()
-                                       +" .\n    Datastream "
-                                       + "binding left unchanged.");
+                        + "for datastreamID: "+m_dsBinding.getDatastreamID()
+                        +" .\n    Datastream "
+                        + "binding left unchanged.");
                 }
             } catch (Exception e) {
                 failedCount++;
@@ -766,6 +838,7 @@ public class BatchModifyParser extends DefaultHandler
 
 
     public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
+
         if (m_inXMLMetadata) {
             if (namespaceURI.equalsIgnoreCase(FBM) && localName.equals("xmlData")) {
                 // finished all xml metadata for this datastream
@@ -812,6 +885,43 @@ public class BatchModifyParser extends DefaultHandler
                 m_dsXMLBuffer.append(localName);
                 m_dsXMLBuffer.append(">");
             }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addObject")) {
+
+            try {
+
+                if(addObject) {
+                    // now that things look ok, give it a try
+                    StringBuffer xml=new StringBuffer();
+                    xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+                    xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+                    xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
+                    xml.append("           xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\"\n");
+                    xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
+                    xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
+                    xml.append("           TYPE=\"FedoraObject\"\n");
+                    xml.append("           OBJID=\"" + StreamUtility.enc(m_obj.pid) + "\"\n");
+                    xml.append("           LABEL=\"" + StreamUtility.enc(m_obj.label) + "\"\n");
+                    xml.append("           PROFILE=\"" + StreamUtility.enc(m_obj.contentModel) + "\">\n");
+                    xml.append("</METS:mets>");
+                    String objXML=xml.toString();
+                    System.out.println("Ingesting new object:");
+                    System.out.println(objXML);
+                    ByteArrayInputStream in=new ByteArrayInputStream(
+                            objXML.getBytes("UTF-8"));
+                    String newPID=AutoIngestor.ingestAndCommit(
+                            Administrator.APIM,
+                            in,
+                            "Created with Admin GUI \"New Object\" command");
+                    succeededCount++;
+                    logSucceededDirective(newPID, localName,
+                            " Added new object with PID: "+newPID);
+                }
+            } catch (Exception e) {
+                if (addObject) {
+                    failedCount++;
+                    logFailedDirective(m_obj.pid, localName, e, "");
+                }
+            }
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastream")) {
 
             try {
@@ -840,11 +950,13 @@ public class BatchModifyParser extends DefaultHandler
                         }
                         if (datastreamID!=null) {
                             succeededCount++;
-                            logSucceededDirective(m_ds.objectPID, localName,"datastreamID: "+datastreamID+" added");
+                            logSucceededDirective(m_ds.objectPID, localName,
+                                "datastreamID: " + datastreamID + " added");
                         } else {
                             failedCount++;
                             addDatastream = false;
-                            logFailedDirective(m_ds.objectPID, localName, null, "Unable to add datastream");
+                            logFailedDirective(m_ds.objectPID, localName, null,
+                                "Unable to add datastream");
                         }
                 }
             } catch (Exception e) {
@@ -861,14 +973,29 @@ public class BatchModifyParser extends DefaultHandler
                 // Process purgeDatastream only if no previous errors encountered
                 if (purgeDatastream) {
                     Calendar[] versionsPurged = null;
-                    versionsPurged = APIM.purgeDatastream(m_ds.objectPID, m_ds.DatastreamID, m_ds.asOfDate);
+                    versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
+                        m_ds.DatastreamID, m_ds.asOfDate);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
-                        logSucceededDirective(m_ds.objectPID, localName, "datastreamID: "+m_ds.DatastreamID+" Versions purged: "+versionsPurged.length);
+                        if (m_ds.asOfDate!=null) {
+                            logSucceededDirective(m_ds.objectPID,
+                                localName,
+                                "datastreamID: " + m_ds.DatastreamID
+                                    + "\n    Purged all versions prior to: "
+                                    + DateUtility.convertCalendarToString(m_ds.asOfDate)
+                                    + "\n    Versions purged: "+versionsPurged.length);
+                        } else {
+                            logSucceededDirective(m_ds.objectPID,
+                                localName,
+                                "datastreamID: " + m_ds.DatastreamID
+                                    + "\n    Purged all versions. "
+                                    + "\n    Versions purged: "+versionsPurged.length);
+                        }
                     } else {
                         failedCount++;
                         purgeDatastream = false;
-                        logFailedDirective(m_ds.objectPID, localName,null, "Unable to purge datastream; verify datastream ID and/or asOfDate");
+                        logFailedDirective(m_ds.objectPID, localName, null,
+                            "Unable to purge datastream; verify datastream ID and/or asOfDate");
                     }
                 }
             } catch (Exception e) {
@@ -895,7 +1022,8 @@ public class BatchModifyParser extends DefaultHandler
                                 "ModifyDatastreamByReference", m_ds.DSLocation, m_ds.DSState, m_ds.isHarvestable);
                     }
                     succeededCount++;
-                    logSucceededDirective(m_ds.objectPID, localName, "DatastreamID: "+m_ds.DatastreamID+" modified");
+                    logSucceededDirective(m_ds.objectPID, localName,
+                        "DatastreamID: " + m_ds.DatastreamID + " modified");
                 }
 
             } catch (Exception e) {
@@ -910,9 +1038,12 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process setDatastreamState only if no previous errors encountered
                 if(setDatastreamState) {
-                    APIM.setDatastreamState(m_ds.objectPID, m_ds.DatastreamID, m_ds.DSState, "SetDatastreamState");
+                    APIM.setDatastreamState(m_ds.objectPID, m_ds.DatastreamID,
+                        m_ds.DSState, "SetDatastreamState");
                     succeededCount++;
-                    logSucceededDirective(m_ds.objectPID, localName, "datastream: "+m_ds.DatastreamID+" Set dsState: "+m_ds.DSState);
+                    logSucceededDirective(m_ds.objectPID, localName,
+                        "datastream: " + m_ds.DatastreamID
+                            + "\n    Set dsState: " + m_ds.DSState);
                 }
 
             } catch (Exception e) {
@@ -927,9 +1058,12 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process setDatastreamHarvestable only if no previous errors encountered
                 if(setDatastreamHarvestable) {
-                    APIM.setDatastreamHarvestable(m_ds.objectPID, m_ds.DatastreamID, m_ds.isHarvestable, "SetDatastreamHarvestable");
+                    APIM.setDatastreamHarvestable(m_ds.objectPID, m_ds.DatastreamID,
+                        m_ds.isHarvestable, "SetDatastreamHarvestable");
                     succeededCount++;
-                    logSucceededDirective(m_ds.objectPID, localName, "datastream: "+m_ds.DatastreamID+" Set isHarvestable: "+m_ds.isHarvestable);
+                    logSucceededDirective(m_ds.objectPID, localName,
+                        "datastream: " + m_ds.DatastreamID
+                            + "\n    Set isHarvestable: " + m_ds.isHarvestable);
                 }
 
             } catch (Exception e) {
@@ -963,15 +1097,18 @@ public class BatchModifyParser extends DefaultHandler
                             + m_diss.bMechID);
                     m_dsBindingMap.setState("A");  // unnecessary...
                     m_dsBindingMap.setDsBindings(bindings);
-                    dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID, m_diss.bMechID,
-                            m_diss.dissLabel, m_diss.bDefLabel, m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState);
+                    dissID = APIM.addDisseminator(m_diss.parentPID, m_diss.bDefID,
+                            m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
+                            m_diss.bMechLabel, m_dsBindingMap, m_diss.dissState);
                     if (dissID!=null) {
                         succeededCount++;
-                        logSucceededDirective(m_diss.parentPID, localName, "disseminatorID: "+dissID+" Created.");
+                        logSucceededDirective(m_diss.parentPID, localName,
+                            "disseminatorID: " + dissID + " Created.");
                     } else {
                         failedCount++;
                         addDisseminator = false;
-                        logFailedDirective(m_diss.parentPID, localName, null, "Unable to create disseminator...");
+                        logFailedDirective(m_diss.parentPID, localName, null,
+                            "Unable to create disseminator...");
                     }
                 }
 
@@ -1003,10 +1140,13 @@ public class BatchModifyParser extends DefaultHandler
                             + m_diss.bMechID);
                     m_dsBindingMap.setState("A");  // unnecessary...
                     m_dsBindingMap.setDsBindings(bindings);
-                    APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID, m_diss.bMechID,
-                            m_diss.dissLabel, m_diss.bDefLabel, m_diss.bMechLabel, m_dsBindingMap, "ModifyDisseminator", m_diss.dissState);
+                    APIM.modifyDisseminator(m_diss.parentPID, m_diss.dissID,
+                            m_diss.bMechID, m_diss.dissLabel, m_diss.bDefLabel,
+                            m_diss.bMechLabel, m_dsBindingMap,
+                            "ModifyDisseminator", m_diss.dissState);
                     succeededCount++;
-                    logSucceededDirective(m_diss.parentPID, localName, "disseminatorID: "+m_diss.dissID+" Modified.");
+                    logSucceededDirective(m_diss.parentPID, localName,
+                        "disseminatorID: " + m_diss.dissID + " Modified.");
                 }
 
             } catch (Exception e)
@@ -1024,14 +1164,27 @@ public class BatchModifyParser extends DefaultHandler
                 // Process purgeDisseminator only if no previous errors encountered
                 if (purgeDisseminator) {
                     Calendar[] versionsPurged = null;
-                    versionsPurged = APIM.purgeDisseminator(m_diss.parentPID, m_diss.dissID, m_diss.asOfDate);
+                    versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
+                        m_diss.dissID, m_diss.asOfDate);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
-                        logSucceededDirective(m_diss.parentPID, localName, "disseminatorID: "+m_diss.dissID+" Versions purged: "+versionsPurged.length);
+                        if (m_diss.asOfDate!= null) {
+                            logSucceededDirective(m_diss.parentPID, localName,
+                                "disseminatorID: " + m_diss.dissID
+                                    + "\n    Purged all versions prior to: "
+                                    + DateUtility.convertCalendarToString(m_diss.asOfDate)
+                                    +"\n    Versions purged: " + versionsPurged.length);
+                        } else {
+                            logSucceededDirective(m_diss.parentPID, localName,
+                                "disseminatorID: " + m_diss.dissID
+                                    + "\n    Purged all versions. "
+                                    +"\n    Versions purged: " + versionsPurged.length);
+                        }
                     } else {
                         failedCount++;
                         purgeDisseminator = false;
-                        logFailedDirective(m_diss.parentPID, localName, null, "Unable to purge disseminator; verify disseminator ID and/or asOfDate");
+                        logFailedDirective(m_diss.parentPID, localName, null,
+                            "Unable to purge disseminator; verify disseminator ID and/or asOfDate");
                     }
                 }
 
@@ -1047,9 +1200,12 @@ public class BatchModifyParser extends DefaultHandler
 
                 // Process setDisseminatorState only if no previous errors encountered
                 if (setDisseminatorState) {
-                    APIM.setDisseminatorState(m_diss.parentPID, m_diss.dissID, m_diss.dissState, "SetDisseminatorState");
+                    APIM.setDisseminatorState(m_diss.parentPID, m_diss.dissID,
+                        m_diss.dissState, "SetDisseminatorState");
                     succeededCount++;
-                    logSucceededDirective(m_diss.parentPID, localName, "disseminator: "+m_diss.dissID+" Set dissState: "+m_diss.dissState);
+                    logSucceededDirective(m_diss.parentPID, localName,
+                        "disseminator: " + m_diss.dissID
+                            + "\n    Set dissState: " + m_diss.dissState);
                 }
 
             } catch (Exception e) {
@@ -1204,7 +1360,7 @@ public class BatchModifyParser extends DefaultHandler
             logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
             APIM = fedora.client.APIMStubFactory.getStub(host, port, user, pass);
             APIA = fedora.client.APIAStubFactory.getStub(host, port, user, pass);
-            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives.xml");
+            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
             BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
             file.close();
             logFile.close();

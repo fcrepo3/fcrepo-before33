@@ -3,6 +3,7 @@
 	<xsd:element name="batchModify">
 		<xsd:complexType>
 			<xsd:sequence>
+				<xsd:element ref="addObject" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="addDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="modifyDatastream" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="purgeDatastream" minOccurs="0" maxOccurs="unbounded"/>
@@ -13,6 +14,13 @@
 				<xsd:element ref="purgeDisseminator" minOccurs="0" maxOccurs="unbounded"/>
 				<xsd:element ref="setDisseminatorState" minOccurs="0" maxOccurs="unbounded"/>
 			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="addObject">
+			<xsd:complexType>			
+				<xsd:attribute name="pid" type="xsd:string" use="required"/>
+				<xsd:attribute name="label" type="xsd:string" use="required"/>		
+				<xsd:attribute name="contentModel" type="xsd:string" use="required"/>
 		</xsd:complexType>
 	</xsd:element>
 	<xsd:element name="addDatastream">
