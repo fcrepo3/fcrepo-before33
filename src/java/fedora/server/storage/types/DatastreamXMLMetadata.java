@@ -49,10 +49,10 @@ public class DatastreamXMLMetadata extends Datastream
   public final static int RIGHTS=3;
 
   /** Digital provenance XML metadata */
-  public final static int DIGIPROV=3;
+  public final static int DIGIPROV=4;
 
-  /** Digital provenance XML metadata */
-  public final static int DESCRIPTIVE=4;
+  /** Descriptive XML metadata */
+  public final static int DESCRIPTIVE=5;
 
   // FIXME:xml datastream contents are held in memory...this could be expensive.
   public byte[] xmlContent;
