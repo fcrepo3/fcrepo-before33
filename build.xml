@@ -108,6 +108,9 @@
 			<arg line="-s fedora-purge.sh fedora-purge"/>
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
+			<arg line="-s fedora-dsinfo.sh fedora-dsinfo"/>
+		</exec>
+		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-massingest.sh fedora-massingest"/>
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
@@ -908,6 +911,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.131  2003/05/16 20:51:32  cwilper
+  added unix version of fedora-dsinfo...forgot it before
+
   Revision 1.130  2003/05/16 20:16:15  cwilper
   added and linked to client command-line utility reference
 
