@@ -15,9 +15,9 @@
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
- 		<copy todir="dist/server">
- 			<fileset dir="dist/client"/>
- 		</copy>
+		<copy todir="dist/server">
+			<fileset dir="dist/client"/>
+		</copy>
 	</target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
@@ -49,46 +49,35 @@
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
-    
-    	<!-- begin additions -->
+		<!-- begin additions -->
 		<mkdir dir="dist/batch"/>
-		<copy file="src/doc/batch/batchtool-beta1.doc" todir="dist/batch"/>		
+		<copy file="src/doc/batch/batchtool-beta1.doc" todir="dist/batch"/>
 		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
 		<copy file="src/xsl/batch/merge.xsl" todir="dist/batch"/>
-		
 		<mkdir dir="dist/batch/bin"/>
-		<copy file="src/bat/batch/fedora-batch.bat" todir="dist/batch/bin"/>		
-
+		<copy file="src/bat/batch/fedora-batch.bat" todir="dist/batch/bin"/>
 		<mkdir dir="dist/batch/beta1-demo1"/>
 		<copy file="src/mets/batch/beta1-demo1/beta1-demo1.xml" todir="dist/batch/beta1-demo1"/>
-
 		<mkdir dir="dist/batch/beta1-demo2"/>
 		<copy file="src/mets/batch/beta1-demo2/beta1-demo2.xml" todir="dist/batch/beta1-demo2"/>
-		
 		<copy todir="dist/batch/beta1-demo1">
 			<fileset dir="src/properties/batch/beta1-demo1"/>
 		</copy>
-		
 		<copy todir="dist/batch/beta1-demo2">
 			<fileset dir="src/properties/batch/beta1-demo2"/>
 		</copy>
-
 		<copy todir="dist/batch/beta1-demo1/objects">
 			<fileset dir="src/mets/batch/beta1-demo1/objects"/>
 		</copy>
-		
 		<copy todir="dist/batch/beta1-demo2/object-specifics">
 			<fileset dir="src/xml/batch/beta1-demo2/object-specifics"/>
 		</copy>
 		<mkdir dir="dist/batch/beta1-demo2/objects"/>
-		
 		<copy todir="dist/server/tomcat41/webapps/ROOT/beta1-demo">
 			<fileset dir="src/jpg/batch/beta1-demo"/>
 		</copy>
-
 		<!-- data demos => dist -->
-	<!-- end additions -->
-    
+		<!-- end additions -->
 		<echo message="Finished building client distribution in dist/client/client"/>
 	</target>
 	<target name="runclient" depends="client" description="run the client">
@@ -96,7 +85,6 @@
 			<arg line="-jar client.jar"/>
 		</exec>
 	</target>
-	
 	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
 	</target>
@@ -352,6 +340,8 @@
 		<!-- Fedora extension of the METS XML Schema:  local copy packaged with the repository distribution -->
 		<copy file="src/xsd/mets-fedora.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/xlink.xsd" todir="dist/server/xsd"/>
+		<!-- ObjectMethods Schema used by API-A-LITE: local copy packaged with the repository distribution -->
+		<copy file="src/xsd/objectmethods.xsd" todir="dist/server/xsd"/>
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/fedoraRules.xml" todir="dist/server/schematron"/>
@@ -388,6 +378,9 @@
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<!-- Saxon for use with Schematron validation -->
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
+		<!-- ObjectMethods xsl stylesheet used by API-A-LITE: local copy packaged with repository distribution -->
+		<mkdir dir="dist/server/access"/>
+		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
@@ -410,7 +403,7 @@
 			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/ojdbc14.jar;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar"/>
 			<arg value="fedora.server.search.FieldSearchDBImpl"/>
 		</exec>
-        </target>
+	</target>
 	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml... print re-serialized version, then do level 1 and level 2 validation.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
@@ -449,7 +442,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar" includes="fedora/server/**,edu/cornell/dlrg/logging/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;res/saxon-6.5/saxon.jar" includes="fedora/server/**,edu/cornell/dlrg/logging/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -461,6 +454,13 @@
 </project>
 <!--
   $Log$
+  Revision 1.60  2003/01/15 13:57:33  rlw
+  changes related to API-A-LITE
+
+  1) copies objectmethods.xslt to dist/server/access
+  2) copies objectmethods.xsd to dist/server/xsd
+  3) adds saxon.jar to classpath in serverclasses target (needed by FedoraAccessServlet)
+
   Revision 1.59  2003/01/14 14:58:29  cwilper
   added tester for fieldsearch
 
