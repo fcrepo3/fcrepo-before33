@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
+import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
@@ -20,6 +21,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.service.ServiceMapper;
 import org.xml.sax.InputSource;
@@ -48,6 +50,12 @@ public class SimpleBMechReader
         return serviceMapper.getMethodDefs(
           new InputSource(new ByteArrayInputStream(
               getMethodMapDatastream(versDateTime).xmlContent)));
+    }
+
+    public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime)
+            throws MethodNotFoundException, ServerException {
+        MethodDef[] methods=getServiceMethods(versDateTime);
+        return getParms(methods, methodName);
     }
 
     public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
