@@ -20,6 +20,7 @@
 	<param name="datastreamExpirationLimit" value="300"/>
 	<param name="datastreamMediationLimit" value="5000"/>
 	<param name="fedoraServerPort" value="8080"/>
+	<param name="fedoraServerHost" value="www.fedora.info"/>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
         Description:
