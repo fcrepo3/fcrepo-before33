@@ -174,7 +174,7 @@
 		<column name="pid" type="varchar(32)" notNull="true">
 			<comment>The PID of the object</comment>
 		</column>
-		<column name="label" type="varchar(255)" notNull="true">
+		<column name="label" type="varchar(255)" notNull="false">
 			<comment>The label of the object</comment>
 		</column>
 		<column name="foType" type="char(1)" notNull="true" default="O">
@@ -183,7 +183,7 @@
                (D), or behavior mechanism object (M).
 		    </comment>
         </column>
-		<column name="cModel" type="varchar(255)" notNull="true" default="">
+		<column name="cModel" type="varchar(255)" notNull="false" default="">
 			<comment>The content model of the object. 
 			</comment>
         </column>
