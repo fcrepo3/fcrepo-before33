@@ -254,11 +254,18 @@ public class LoginDialog
             Administrator.APIA=APIAStubFactory.getStub(host, port, user, pass);
             Administrator.APIM=APIMStubFactory.getStub(host, port, user, pass);
             RepositoryInfo info=Administrator.APIA.describeRepository();
-            if (!info.getRepositoryVersion().equals("1.2.1")) {
+            if (!info.getRepositoryVersion().equals("2.0")) {
                 throw new IOException("Server is version "
                         + info.getRepositoryVersion() + ", but this"
-                        + " client only works with version 1.2.1");
+                        + " client only works with version 2.0");
             }
+/*
+			if (!info.getRepositoryVersion().equals("1.2.1")) {
+				throw new IOException("Server is version "
+						+ info.getRepositoryVersion() + ", but this"
+						+ " client only works with version 1.2.1");
+			}
+*/
             // do a simple API-M call, and if it doesn't come back
             // unauthorized, assume all is ok.
             try {
