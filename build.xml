@@ -750,7 +750,6 @@
 		<copy file="src/xsd/objectmethods.xsd" todir="dist/server/xsd"/>
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
-		<copy file="src/xml/schematron/fedoraRules.xml" todir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/fedoraRulesExt.xml" todir="dist/server/schematron"/>
 		<copy file="src/xsl/schematron/preprocessor.xslt" todir="dist/server/schematron"/>
 		<mkdir dir="dist/server/config"/>
@@ -956,6 +955,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.141  2003/07/17 19:39:49  payette
+  removed reference to old schematron file fedoraRules.xml
+
   Revision 1.140  2003/07/16 18:28:45  cwilper
   added symlinking of new .sh for mckoi-admin
 
