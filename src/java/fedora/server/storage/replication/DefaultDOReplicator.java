@@ -164,7 +164,7 @@ public class DefaultDOReplicator
             String objState = reader.GetObjectState();
             if (!doState.equalsIgnoreCase(objState)) {
               updates.add("UPDATE do SET doState='"+objState+"' WHERE doDbID=" + doDbID);
-              updates.add("UPDATE doRegistry SET objectState='"+objState+"', modifiedFlag='Y' WHERE doPID='" + reader.GetObjectPID() + "'");
+              updates.add("UPDATE doRegistry SET objectState='"+objState+"' WHERE doPID='" + reader.GetObjectPID() + "'");
             }
 
             // check if any mods to datastreams for this digital object
