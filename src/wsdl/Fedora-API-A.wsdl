@@ -181,6 +181,16 @@
                 results can be found.</documentation>
 		</part>
 	</message>
+	<message name="getObjectHistoryRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+	</message>	
+	<message name="getObjectHistoryResponse">
+		<part name="response" type="fedora-types:ArrayOfString">
+			<documentation>a list of timestamps indicating when components in the object were created or modified.</documentation>
+		</part>
+	</message>	
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
 		    accessing digital objects.  The access operations include methods to do
@@ -273,6 +283,12 @@
 			<input message="fedora-api:resumeFindObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
+		<operation name="getObjectHistory">
+			<documentation>Gets a list of timestamps indicating when components changed in an object.  This is a set of timestamps indicating when a datastream or disseminator was created or modified in the object. These timestamps can be used to request a timestamped dissemination request to view the object as it appeared at a specific point in time.
+			</documentation>
+			<input message="fedora-api:getObjectHistoryRequest"/>
+			<output message="fedora-api:getObjectHistoryResponse"/>
+		</operation>		
 	</portType>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -357,6 +373,15 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
+		<operation name="getObjectHistory">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectHistory"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>		
 	</binding>
 	<service name="Fedora-API-A-Service">
 		<port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">

@@ -19,8 +19,8 @@
 	<message name="describeRepositoryRequest">
 		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="ENCODE_XML" type="xsd:string">
-			<documentation>a string value of "yes" or "no" indicating that the repository info should be XML encoded. 
-				Fedora will assume a default of "no" if the ENCODE_XML part is not specified.
+			<documentation>a string value of "true" or "false" indicating that the repository info should be XML encoded. 
+				Fedora will assume a default of "false" if the ENCODE_XML part is not specified.
 			</documentation>
 		</part>
 	</message>
@@ -44,8 +44,8 @@
 			</documentation>
 		</part>
 		<part name="ENCODE_XML" type="xsd:string">
-			<documentation>a string value of "yes" or "no" indicating that the list of object methods should be XML encoded. 
-				Fedora will assume a default of "no" if the ENCODE_XML part is not specified.
+			<documentation>a string value of "true" or "false" indicating that the list of object methods should be XML encoded. 
+				Fedora will assume a default of "false" if the ENCODE_XML part is not specified.
 			</documentation>
 		</part>
 	</message>
@@ -220,6 +220,21 @@
            provided in a simple html document.</documentation>
 		</part>
 	</message>
+	<message name="getObjectHistoryRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the persistent identifier of the object.</documentation>
+		</part>
+		<part name="ENCODE_XML" type="xsd:string">
+			<documentation>a string value of "true" or "false" indicating that the list of timestamps should be XML encoded. Fedora will assume a default of "false" if the ENCODE_XML part is not specified.
+			</documentation>
+		</part>
+	</message>
+	<message name="getObjectHistoryResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation> Provides a list of timestamps indicating when a component of the object was created or modified.  These timestamps can be used to request timestamped disseminations of the object to view the object as it appeared on a specific date and to indicate the change history of the object.The list of timestamps will be returned as either XML or HTML.
+			</documentation>
+		</part>
+	</message>	
 	<portType name="Fedora-API-A-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Access service 
 			of a Fedora repository.  It is intended to support a REST-like style of access to the 
@@ -244,7 +259,7 @@
 				</p>
 				<p> A complete example URL conforming to this syntax is:</p>
 				<p>
-					<i>http://localhost:8080/fedora/describe?xml=yes</i>
+					<i>http://localhost:8080/fedora/describe?xml=true</i>
 				</p>
 			</documentation>
 			<input message="fedora-api:describeRepositoryRequest"/>
@@ -360,6 +375,12 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			<input message="fedora-api:resumeFindObjectsRequest"/>
 			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
+		<operation name="getObjectHistory">
+			<documentation> Provides a list of timestamps indicating when a component of the object was created or modified.  These timestamps can be used to request timestamped disseminations providing views of the object on a specific date. The list of timestamps can be returned as XML data or as an HTML presentation.
+			</documentation>
+			<input message="fedora-api:getObjectHistoryRequest"/>
+			<output message="fedora-api:getObjectHistoryResponse"/>
+		</operation>		
 	</portType>
 	<service name="Fedora-API-A-LITE">
 		<port name="Fedora-API-A-LITE-Port" binding="fedora-api:Fedora-API-A-LITE-Binding">
@@ -376,13 +397,13 @@ It asks for up to 50 results at a time from the server, and requests that the re
 					about the repository server including repository name, version, baseURL,
 					PID namespace, and sample request URLs.  When putting together a proper URL, 
 					the client should replace parenthesized parts of the operation location URL with actual values.  
-					For example, "(ENCODE_XML)" 	should be replaced with a "yes" or "no" to indicate
+					For example, "(ENCODE_XML)" 	should be replaced with a "true" or "false" to indicate
 					whether the repository information should be returned as XML (alternative is HTML).
 					Parts of the operation location URL that are surrounded by brackets ("[ ]") are optional.  
 					To construct a proper URL the client must replace the following variables with real information:
 					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
-					 	  the operation be HTML or XML.   A value of "yes" indicates a return type of 
-					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "false" indicates 
 					 	  format is to be text/html.
 				</documentation>
 				<http:urlReplacement/>
@@ -407,8 +428,8 @@ It asks for up to 50 results at a time from the server, and requests that the re
 					 	  indicating that the client wants the object profile to reflect how the object looked 
 					 	  as of a particular date and time.   (NOT implemented in release 1.0.)
 					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
-					 	  the operation be HTML or XML.   A value of "yes" indicates a return type of 
-					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "false" indicates 
 					 	  format is to be text/html.
 				</documentation>
 				<http:urlReplacement/>
@@ -490,5 +511,28 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/html"/>
 			</output>
 		</operation>
+		<operation name="getObjectHistory">
+			<http:operation location="getObjectHistory/(PID)[?xml=(ENCODE_XML)]"/>
+			<input>
+				<documentation>  This URL replacement syntax is used to request the object change history request.
+					When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(PID)" 
+					should be replaced with an actual PID of an object for which the client wants 
+					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
+					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
+					client must replace the following variables with real information:
+						- PID : a required parameter. Client must provide the persistent identifier of the object.
+					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "true" indicates a return type of 
+					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "false" indicates 
+					 	  format is to be text/html.
+				</documentation>
+				<http:urlReplacement/>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>		
 	</binding>
 </definitions>
