@@ -151,12 +151,12 @@
 		  to enforce the Fedora Schematron Schema.  The validating stylesheet is created every time the server starts up to prevent
 		  having to create it anew each time a digital object is validated.
         </comment>
-		<param name="tempDir" value="\work"/>
+		<param name="tempDir" value="/work"/>
 		<param name="xmlSchemaURL" value="http://localhost:8080/mets-fedora.xsd"/>
-		<param name="xmlSchemaLocalPath" value="\xsd\mets-fedora.xsd"/>
-		<param name="schematronPreprocessor" value="\schematron\preprocessor.xslt"/>
-		<param name="schematronSchema" value="\schematron\fedoraRules.xml"/>
-		<param name="schematronValidatingXsl" value="\schematron\fedoraValidator.xslt"/>
+		<param name="xmlSchemaLocalPath" value="/xsd/mets-fedora.xsd"/>
+		<param name="schematronPreprocessor" value="/schematron/preprocessor.xslt"/>
+		<param name="schematronSchema" value="/schematron/fedoraRules.xml"/>
+		<param name="schematronValidatingXsl" value="/schematron/fedoraValidator.xslt"/>
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
