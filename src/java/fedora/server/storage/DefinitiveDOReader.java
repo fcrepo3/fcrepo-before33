@@ -825,6 +825,9 @@ public class DefinitiveDOReader implements DOReader
       private DSBindingMap h_dsBindMap;
       private String h_xmlData;
       private StringWriter h_xmlstream;
+      //rlw
+      boolean isRootXMLDatastreamElement;
+      Hashtable h_namespaceTbl;
 
       private final Pattern ampRegexp = Pattern.compile("&");
       private final Pattern ltRegexp = Pattern.compile("<");
@@ -839,6 +842,9 @@ public class DefinitiveDOReader implements DOReader
         h_vDatastream = new Vector();
         h_vDisseminator = new Vector();
         h_dsBindMapTbl = new Hashtable();
+        //rlw
+        h_namespaceTbl = new Hashtable();
+        isRootXMLDatastreamElement = true;
       }
 
       public void endDocument() throws SAXException
@@ -876,6 +882,8 @@ public class DefinitiveDOReader implements DOReader
           h_vDatastream = null;
           h_vDisseminator = null;
           h_dsBindMapTbl = null;
+          //rlw
+          h_namespaceTbl = null;
       }
 
       public void characters(char ch[], int start, int length) throws SAXException
@@ -908,6 +916,16 @@ public class DefinitiveDOReader implements DOReader
         this.characters(text, 0, text.length);
       }
 
+      public void startPrefixMapping(String prefix, String uri)
+      {
+        System.out.println("Mapping prefix: "+prefix+" mapping URI: "+uri);
+        h_namespaceTbl.put(prefix,uri);
+      }
+
+      public void endPrefixMapping(String prefix, String uri)
+      {
+      }
+
       public void startElement(String namespaceURI, String localName, String qName, Attributes attrs)
         throws SAXException
       {
@@ -922,7 +940,24 @@ public class DefinitiveDOReader implements DOReader
 
         if (isXMLDatastream && getAsStream)
         {
-          h_xmlstream.write("<" + qName);
+          //rlw - insert xml declaration and namespace info only for root element
+          if(isRootXMLDatastreamElement)
+          {
+            System.out.println("namespace: "+namespaceURI);
+            System.out.println("qName: "+qName);
+            String prefix = qName.substring(0,qName.indexOf(":"));
+            System.out.println("prefix: "+prefix);
+            String uri = (String)h_namespaceTbl.get(prefix);
+            System.out.println("uri: "+uri);
+            String ns = "<"+qName+" xmlns:"+prefix+"=\""+uri+"\" ";
+            System.out.println("ns: "+ns);
+            h_xmlstream.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            h_xmlstream.write(ns);
+            isRootXMLDatastreamElement = false;
+          } else
+          {
+            h_xmlstream.write("<" + qName);
+          }
 
           // Do the string replace thing on the attribute values
           int attrCount = attrs.getLength();
@@ -977,7 +1012,7 @@ public class DefinitiveDOReader implements DOReader
           h_datastream.DSVersionID = attrs.getValue("GROUPID");
           h_datastream.DSLocation = h_PID + "+" + attrs.getValue("ID")
               + "+" + attrs.getValue("GROUPID");
-          if (debug) System.out.println("ControlGroupType: X dsLocation: "
+          System.out.println("ControlGroupType: X dsLocation: "
               + h_datastream.DSLocation);
         }
         else if (qName.equalsIgnoreCase("METS:amdSec"))
@@ -1014,7 +1049,7 @@ public class DefinitiveDOReader implements DOReader
             // added for inlineXMLMetadata
             h_datastream.DSLocation = h_PID + "+" + h_datastream.DatastreamID
                 + "+" + h_datastream.DSVersionID;
-            if (debug) System.out.println("ControlGroupType: X dsLocation: "
+            System.out.println("ControlGroupType: X dsLocation: "
               + h_datastream.DSLocation);
           }
         }
@@ -1196,12 +1231,14 @@ public class DefinitiveDOReader implements DOReader
           inDMDSec = false;
           if (isXMLDatastream)
             isXMLDatastream = false;
+            isRootXMLDatastreamElement = true;
         }
         else if (qName.equalsIgnoreCase("METS:amdSec") && inAMDSec)
         {
           inAMDSec = false;
           if (isXMLDatastream)
             isXMLDatastream = false;
+            isRootXMLDatastreamElement = true;
         }
         else if (qName.equalsIgnoreCase("METS:techMD") ||
                  qName.equalsIgnoreCase("METS:rightsMD") ||
