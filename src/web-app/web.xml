@@ -42,6 +42,13 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<display-name>Fedora OAI Provider Servlet</display-name>
+		<servlet-class>
+			fedora.server.oai.FedoraOAIProviderServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>FedoraAccessServlet</servlet-name>
 		<display-name>Fedora Access Servlet</display-name>
 		<servlet-class>
@@ -86,6 +93,10 @@
 	<servlet-mapping>
 		<servlet-name>FedoraFieldSearchServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<url-pattern>/oai</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>FedoraAccessServlet</servlet-name>
