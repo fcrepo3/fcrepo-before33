@@ -315,6 +315,7 @@ public class DefaultAccess extends Module implements Access
     logFiner("[DefaultAccess] Roundtrip Looping Diss: "
               + interval + " milliseconds.");
 
+    startTime = new Date().getTime();
     // Put any user-supplied method parameters into hash table
     if (userParms != null)
     {
@@ -328,6 +329,14 @@ public class DefaultAccess extends Module implements Access
     validateUserParms(context, PID, bDefPID, methodName,
                       h_userParms, versDateTime);
 
+    stopTime = new Date().getTime();
+    interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip Get/Validate User Parms: "
+        + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip Get/Validate User Parms: "
+        + interval + " milliseconds.");
+
+    startTime = new Date().getTime();
     // SDP: GET INFO FROM BMECH READER:
     // Add any default method parameters to validated user parm list
     //defaultMethodParms = reader.GetBMechDefaultMethodParms(bDefPID,
@@ -340,6 +349,14 @@ public class DefaultAccess extends Module implements Access
                       defaultMethodParms[i].parmDefaultValue);
     }
 
+    stopTime = new Date().getTime();
+    interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip Get BMech Parms: "
+        + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip Get BMech Parms: "
+        + interval + " milliseconds.");
+
+    startTime = new Date().getTime();
     // Get dissemination binding info.
     DisseminationBindingInfo[] dissBindInfo =
         reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
@@ -348,6 +365,14 @@ public class DefaultAccess extends Module implements Access
     DisseminationService dissService = new DisseminationService();
     dissemination =
         dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
+
+    stopTime = new Date().getTime();
+    interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip Assemble Dissemination: "
+        + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip Assemble Dissemination: "
+        + interval + " milliseconds.");
+
     stopTime = new Date().getTime();
     interval = stopTime - initStartTime;
     System.out.println("[DefaultAccess] Roundtrip GetDissemination: "
