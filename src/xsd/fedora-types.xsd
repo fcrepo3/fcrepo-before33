@@ -294,7 +294,7 @@
 			<enumeration value="E"/>
 			<enumeration value="M"/>
 			<enumeration value="X"/>
-			<enumeration value="R"/>"
+			<enumeration value="R"/>
 		</restriction>
 	</simpleType>
 	<simpleType name="DatastreamRole">
@@ -324,24 +324,24 @@
 			<!-- missing bDefLabel and bMechLabel-->
 		</sequence>
 	</complexType>
-   <complexType name="FieldSearchQuery">
-       <annotation>
-           <documentation>a full text or field-based query</documentation>
-       </annotation>
-       <choice>
-           <element name="conditions" type="fedora-types:ArrayOfCondition"/>
-           <element name="terms" type="string"/>
-       </choice>
-   </complexType>
-   <complexType name="FieldSearchResult">
-       <annotation>
-           <documentation>the result of a single field search request.</documentation>
-       </annotation>
-       <sequence>
-           <element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
-           <element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
-       </sequence>
-   </complexType>
+	<complexType name="FieldSearchQuery">
+		<annotation>
+			<documentation>a full text or field-based query</documentation>
+		</annotation>
+		<choice>
+			<element name="conditions" type="fedora-types:ArrayOfCondition"/>
+			<element name="terms" type="string"/>
+		</choice>
+	</complexType>
+	<complexType name="FieldSearchResult">
+		<annotation>
+			<documentation>the result of a single field search request.</documentation>
+		</annotation>
+		<sequence>
+			<element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
+			<element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
+		</sequence>
+	</complexType>
 	<complexType name="MethodDef">
 		<annotation>
 			<documentation>method definitions</documentation>
@@ -469,6 +469,22 @@
 			<element name="asOfDate" type="dateTime"/>
 		</sequence>
 	</complexType>
+	<xsd:complexType name="ObjectProfile">
+		<xsd:annotation>
+			<xsd:documentation>a Fedora data structure containing key information about a digital object
+			and URLs for the Dissemination Index and Item Index of the object.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="pid" type="string"/>
+			<xsd:element name="objLabel" type="string"/>
+			<xsd:element name="objContentModel" type="string"/>
+			<xsd:element name="objType" type="string"/>
+			<xsd:element name="objCreateDate" type="dateTime"/>
+			<xsd:element name="objLastModDate" type="dateTime"/>
+			<xsd:element name="objDissIndexViewURL" type="string"/>
+			<xsd:element name="objItemIndexViewURL" type="string"/>
+		</xsd:sequence>
+	</xsd:complexType>
 	<complexType name="Property">
 		<annotation>
 			<documentation>a name-value pair.</documentation>
