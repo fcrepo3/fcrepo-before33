@@ -310,8 +310,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       HttpServletResponse response) throws ServerException
   {
 
-    ServletOutputStream out = null;
-    //OutputStreamWriter out = null;
+    //ServletOutputStream out = null;
+    OutputStreamWriter out = null;
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     ObjectProfile objProfile = null;
     PipedWriter pw = null;
@@ -331,30 +331,30 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
-          out = response.getOutputStream();
+          //out = response.getOutputStream();
 
           // Insures stream read from PipedReader correctly translates utf-8
           // encoded characters to OutputStreamWriter.
-          //out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
-          //int bufSize = 4096;
-          //char[] buf=new char[bufSize];
-          //int len=0;
-          //while ( (len = pr.read(buf, 0, bufSize)) != -1) {
-          //    out.write(buf, 0, len);
-          //}
-          //out.flush();
-          int bytestream = 0;
-          while ( (bytestream = pr.read()) >= 0)
-          {
-            out.write(bytestream);
+          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+          int bufSize = 4096;
+          char[] buf=new char[bufSize];
+          int len=0;
+          while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+              out.write(buf, 0, len);
           }
           out.flush();
+          //int bytestream = 0;
+          //while ( (bytestream = pr.read()) >= 0)
+          //{
+          //  out.write(bytestream);
+          //}
+          //out.flush();
         } else
         {
           // Transform results into an html table
           response.setContentType(CONTENT_TYPE_HTML);
-          out = response.getOutputStream();
-          //out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
+          //out = response.getOutputStream();
+          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
           File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
           TransformerFactory factory = TransformerFactory.newInstance();
           Templates template = factory.newTemplates(new StreamSource(xslFile));
