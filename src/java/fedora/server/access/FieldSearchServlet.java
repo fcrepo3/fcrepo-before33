@@ -104,12 +104,12 @@ public class FieldSearchServlet
                 html.append("<input type=\"submit\" value=\"Search\"><p> ");
                 html.append("<font size=-1>Choose the fields you want returned by checking the appropriate boxes.");
                 html.append(" For simple queries, fill in the Simple Query box and press Search.  ");
-                html.append("A simple query consists of one or more keywords, where keywords can contain the * and ? wildcards.");
+                html.append("A simple query consists of one or more words comprising a phrase, where keywords can contain the * and ? wildcards.");
                 html.append("For advanced queries, fill in the Advanced Query box and press Search.");
                 html.append(" An advanced query is a space-delimited set of conditions.  A condition is of the form <i>propertyOPERATORvalue</i>.");
                 html.append("Valid operators are =, ~ (meaning 'contains' -- this can take wildcards), <, <=, >, or >=.  Conditions may not contain spaces, ");
-                html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use any operator, but if you use the ");
-                html.append("<, <=, >, or >= operators, you must format your date like: <i>yyyy-DD-MMTHH:MM:SS</i>.  Note that the ");
+                html.append("unless the value is enclosed in single quotes.  For date-based fields, you may use the ");
+                html.append("<, <=, >, or >= operators, and you must format your date like: <i>yyyy-DD-MM[THH:MM:SS[Z]]</i>, where square brackets indicate optional parts.  Note that the ");
                 html.append("letter T acts as a delimiter between the date and time parts of the string.</font>");
                 html.append("</td></tr></table></center>");
                 html.append("</form>");
