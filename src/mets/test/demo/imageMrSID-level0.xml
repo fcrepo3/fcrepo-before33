@@ -6,11 +6,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:METS="http://www.loc.gov/METS/" 
 	xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
-	xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" 
-	xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" 
-	xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" 
-	xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" 
-	xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" 
+	xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" 
+	xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/" 
 	xmlns:xlink="http://www.w3.org/TR/xlink" 
 	xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" 
 	OBJID="uva-lib:3" TYPE="FedoraObject" LABEL="IVA Image Collection - University of Virginia" PROFILE="UVA_MRSID_IMAGE">
@@ -37,22 +34,22 @@
 	<METS:dmdSec ID="DESC1.0" CREATED="2002-05-20T06:32:00" GROUPID="DESC1" STATUS="">
 		<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA descriptive metadata for MRSID image">
 			<METS:xmlData>
-				<uvadesc:desc>
-					<uvadesc:identifier scheme="URN">uva-lib:3</uvadesc:identifier>
-					<uvadesc:rights type="use">unrestricted</uvadesc:rights>
-					<uvadesc:subject scheme="other" othertype="keyword">Pavillion III</uvadesc:subject>
-					<uvadesc:subject scheme="other" othertype="keyword">lawn</uvadesc:subject>
-					<uvadesc:subject scheme="other" othertype="keyword">University of Virginia</uvadesc:subject>
-					<uvadesc:subject scheme="other" othertype="keyword">Jefferson</uvadesc:subject>
-					<uvadesc:subject scheme="other" othertype="keyword">Jeffersonian architecture</uvadesc:subject>
-					<uvadesc:title type="main">Pavillion III, University of Virginia</uvadesc:title>
-               <uvadesc:form>architecture</uvadesc:form>
-               <uvadesc:mediatype type="image"><uvadesc:form>digital</uvadesc:form></uvadesc:mediatype>
-					<uvadesc:agent type="corpname" role="publisher">IVA</uvadesc:agent>
-					<uvadesc:agent type="persname" role="architect">Thomas Jefferson</uvadesc:agent>
-					<uvadesc:culture>Early American</uvadesc:culture>
-					<uvadesc:place type="original"><uvadesc:geogname>Charlottesville, Virginia USA</uvadesc:geogname></uvadesc:place>
-				</uvadesc:desc>
+				<uvalibdesc:desc>
+					<uvalibdesc:identifier scheme="URN">uva-lib:3</uvalibdesc:identifier>
+					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
+					<uvalibdesc:subject scheme="other" othertype="keyword">Pavillion III</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" othertype="keyword">lawn</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" othertype="keyword">University of Virginia</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" othertype="keyword">Jefferson</uvalibdesc:subject>
+					<uvalibdesc:subject scheme="other" othertype="keyword">Jeffersonian architecture</uvalibdesc:subject>
+					<uvalibdesc:title type="main">Pavillion III, University of Virginia</uvalibdesc:title>
+               <uvalibdesc:form>architecture</uvalibdesc:form>
+               <uvalibdesc:mediatype type="image"><uvalibdesc:form>digital</uvalibdesc:form></uvalibdesc:mediatype>
+					<uvalibdesc:agent type="corpname" role="publisher">IVA</uvalibdesc:agent>
+					<uvalibdesc:agent type="persname" role="architect">Thomas Jefferson</uvalibdesc:agent>
+					<uvalibdesc:culture>Early American</uvalibdesc:culture>
+					<uvalibdesc:place type="original"><uvalibdesc:geogname>Charlottesville, Virginia USA</uvalibdesc:geogname></uvalibdesc:place>
+				</uvalibdesc:desc>
 			</METS:xmlData>
 		</METS:mdWrap>
 	</METS:dmdSec>	
@@ -60,14 +57,16 @@
 		<METS:techMD ID="TECH1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA technical metadata for MRSID image">
 				<METS:xmlData>
-					<uvatech:tech>
-						<uvatech:format>image/x-mrsid-image</uvatech:format>
-						<uvatech:compression>wavelet</uvatech:compression>
-						<uvatech:bitDepth BITS=""/>
-						<uvatech:colorSpace/>
-						<uvatech:colorProfile CPLOCAT="" CPFILE=""/>
-						<uvatech:resolution/>
-					</uvatech:tech>
+					<uvalibadmin:admin>
+						<uvalibadmin:technical>
+							<uvalibadmin:format>image/x-mrsid-image</uvalibadmin:format>
+							<uvalibadmin:compression>wavelet</uvalibadmin:compression>
+							<uvalibadmin:bitDepth BITS=""/>
+							<uvalibadmin:colorSpace/>
+							<uvalibadmin:colorProfile CPLOCAT="" CPFILE=""/>
+							<uvalibadmin:resolution/>
+						</uvalibadmin:technical>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -76,12 +75,14 @@
 		<METS:techMD ID="SOURCE1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA source metadata for MRSID image">
 				<METS:xmlData>	
-					<uvasource:source>
-					   <uvasource:identifier>IVA-4</uvasource:identifier>
-						<uvasource:mediatype type="image">
-							<uvasource:form>slide</uvasource:form>
-						</uvasource:mediatype>
-					</uvasource:source>
+					<uvalibadmin:admin>
+						<uvalibadmin:source>
+						   <uvalibadmin:identifier>IVA-4</uvalibadmin:identifier>
+							<uvalibadmin:mediatype type="image">
+								<uvalibadmin:form>slide</uvalibadmin:form>
+							</uvalibadmin:mediatype>
+						</uvalibadmin:source>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -90,11 +91,13 @@
 		<METS:techMD ID="DIGIPROV1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA digiprov metadata for MRSID image">
 				<METS:xmlData>	
-					<uvadigiprov:digiprov>
-						<uvadigiprov:date>2001-09-01:06:32:00</uvadigiprov:date>
-						<uvadigiprov:agent type="corpname">IVA</uvadigiprov:agent>
-						<uvadigiprov:description>creation</uvadigiprov:description>
-					</uvadigiprov:digiprov>					
+					<uvalibadmin:admin>
+						<uvalibadmin:digiprov>
+							<uvalibadmin:date>2001-09-01:06:32:00</uvalibadmin:date>
+							<uvalibadmin:agent type="corpname">IVA</uvalibadmin:agent>
+							<uvalibadmin:description>creation</uvalibadmin:description>
+						</uvalibadmin:digiprov>		
+					</uvalibadmin:admin>			
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -103,12 +106,14 @@
 		<METS:rightsMD ID="RIGHTS1.0" CREATED="2002-05-20T06:32:00" STATUS="">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="UVA access rights/policy metadata for MRSID  image">
 				<METS:xmlData>
-					<uvarights:adminrights>
-					   <uvarights:policy>
-					      <uvarights:access>unrestricted</uvarights:access>
-					      <uvarights:use>educational</uvarights:use>
-					   </uvarights:policy>
-					</uvarights:adminrights>
+					<uvalibadmin:admin>
+						<uvalibadmin:adminrights>
+						   <uvalibadmin:policy>
+						      <uvalibadmin:access>unrestricted</uvalibadmin:access>
+						      <uvalibadmin:use>educational</uvalibadmin:use>
+						   </uvalibadmin:policy>
+						</uvalibadmin:adminrights>
+					</uvalibadmin:admin>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:rightsMD>
