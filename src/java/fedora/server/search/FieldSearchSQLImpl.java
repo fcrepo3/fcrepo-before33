@@ -65,6 +65,17 @@ public class FieldSearchSQLImpl
         logFinest("Exiting constructor");
     }
     
+    private boolean isDCProp(String in) {
+        for (int i=0; i<s_dbColumnNames.length; i++) {
+            String n=s_dbColumnNames[i];
+            if ( (n.startsWith("dc"))
+                    && (n.toLowerCase().indexOf(in.toLowerCase())!=-1) ) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public void update(DOReader reader) 
             throws ServerException {
         logFinest("Entering update(DOReader)");
@@ -200,7 +211,15 @@ public class FieldSearchSQLImpl
             logFinest("Exiting delete(String)");
         }
     }
-    
+   
+/**
+ * = for dates and non-repeating fields
+
+~ for all fields, excluding cDate mDate dcDate
+
+>, <, >=, <= for dates
+
+*/
     public List search(String[] resultFields, String terms) 
             throws StorageDeviceException, QueryParseException, ServerException {
         Connection conn=null;
@@ -242,7 +261,7 @@ public class FieldSearchSQLImpl
                     whereClause.append(" {escape '/'}");
                 }
             }
-            logFinest("Doing search using whereClause: '" 
+            logFinest("Doing word search using whereClause: '" 
                     + whereClause.toString() + "'");
             conn=m_cPool.getConnection();
             List ret=getObjectFields(conn, "SELECT pid FROM doFields" 
@@ -261,12 +280,77 @@ public class FieldSearchSQLImpl
 
     public List search(String[] resultFields, List conditions) 
             throws ServerException {
+        Connection conn=null;
         try {
             logFinest("Entering search(String[], List)");
-            return null;
+            StringBuffer whereClause=new StringBuffer();
+            if (conditions.size()>0) {
+                boolean needsEscape=false;
+                whereClause.append(" WHERE");
+                for (int i=0; i<conditions.size(); i++) {
+                    Condition cond=(Condition) conditions.get(i);
+                    if (i>0) {
+                        whereClause.append(" AND");
+                    }
+                    whereClause.append(' ');
+                    String op=cond.getOperator().getSymbol();
+                    String prop=cond.getProperty();
+                    if (prop.endsWith("date")) {
+                        // deal with dates ... cDate mDate dcDate date
+                        if (op.equals("~")) {
+                            if (prop.equals("date")) {
+                                // toSql dcDate
+                            } else {
+                                throw new QueryParseException("The ~ operator "
+                                        + "cannot be used with cDate, mDate, "
+                                        + "or dcmDate because they are not "
+                                        + "string-valued fields.");
+                            }
+                        } else { // =, <, <=, >, >=
+                            // property must be parsable as a date... if ok,
+                            // do (cDate, mDate, dcmDate) 
+                            // or (dcDate) <- dcDates table
+                        }
+                    } else {
+                        if (op.equals("=")) {
+                            if (isDCProp(prop)) {
+                                throw new QueryParseException("The = operator "
+                                        + "can only be used with dates and "
+                                        + "non-repeating fields.");
+                            } else {
+                                // do a real equals check... do a toSql but
+                                // reject it if it starts with "LIKE" or " LIKE"
+                            }
+                        } else if (op.equals("~")) {
+                            if (isDCProp(prop)) {
+                                // prepend dc and caps the first char, then toSql it
+                            } else {
+                                // tosql it
+                            }
+                        }
+                    }
+                }
+                if (needsEscape) {
+                    whereClause.append(" {escape '/'}");
+                }
+            }
+            logFinest("Doing field search using whereClause: '" 
+                    + whereClause.toString() + "'");
+            conn=m_cPool.getConnection();
+            List ret=getObjectFields(conn, "SELECT pid FROM doFields" 
+                    + whereClause.toString(), resultFields);
+            return ret;
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Error attempting field search: "
+                    + sqle.getMessage());
         } finally {
+            if (conn!=null) {
+                m_cPool.free(conn);
+            }
             logFinest("Exiting search(String[], List)");
         }
+    }
+    
             /*
             StringBuffer queryPart=new StringBuffer();
             for (int i=0; i<conditions.size(); i++) {
@@ -290,7 +374,6 @@ public class FieldSearchSQLImpl
         }
              */
                                     
-    }
 
     /**
      * Get the string that should be inserted for a dublin core column,
