@@ -1,11 +1,15 @@
 package fedora.server.access;
 
 import java.io.*;
+import java.util.*;
 import javax.servlet.http.*;
 import javax.servlet.*;
 
-import fedora.server.*;         // Server
-import fedora.server.errors.*;  // ServerException
+import com.hp.hpl.jena.rdql.Value;
+
+import fedora.server.*;
+import fedora.server.errors.*;
+import fedora.server.resourceIndex.*;
 
 /**
  *
@@ -36,39 +40,149 @@ public class RISearchServlet
         implements Logging {
 
     /** Instance of the Server */
-    private static Server s_server=null;
+    private static Server s_server;
 
     /** Instance of the resource index */
-    //private static Access s_access=null;
+    private static ResourceIndex s_ri;
+
 
     public void doGet(HttpServletRequest request, 
-                      HttpServletResponse response)
-            throws ServletException, 
-                   IOException {
+                      HttpServletResponse response) 
+              throws ServletException {
+        PrintWriter out = null;
+        RIResultIterator results = null;
         try {
-            String terms=request.getParameter("terms");
-            String query=request.getParameter("query");
+            // Get parameters
+            String query = request.getParameter("query");
+            String lang = request.getParameter("lang");
+            if (lang == null || lang == "") {
+                lang = "rdql";
+            }
 
-            String xmlOutput=request.getParameter("xml");
-            StringBuffer html=new StringBuffer();
-
-                response.setContentType("text/xml; charset=UTF-8");
-                PrintWriter out=new PrintWriter(
-                        new OutputStreamWriter(
+            // Respond depending on whether they passed a query
+            if (query == null || query.equals("")) {
+                // No query entered, so prompt for one.
+                response.setContentType("text/html; charset=UTF-8");
+                out = new PrintWriter(new OutputStreamWriter(
                         response.getOutputStream(), "UTF-8"));
-                out.flush();
-                out.close();
+                out.println("<html><body>");
+                out.println("<h2>Resource Index Query</h2>\n");
+                out.println("<form method=\"GET\">\n");
+                out.println("Query language: <select name=\"lang\"><option value=\"itql\">itql</option><option value=\"rdql\">rdql</option></select><br>\n");
+                out.println("<textarea rows=\"8\" cols=\"60\" name=\"query\">Enter query here</textarea><br>\n");
+                out.println("<input type=\"submit\"/>\n");
+                out.println("</form>\n");
+                out.println("</body></html>");
+            } else {
+                // Query entered, stream entire response as xml
+                response.setContentType("text/xml; charset=UTF-8");
+                long startMillis = System.currentTimeMillis();
+                boolean queryOk = true;
+                try {
+                    // Execute the query
+                    RIQuery riQuery;
+                    if (lang.equals("rdql")) {
+                        riQuery = new RDQLQuery(query);
+                    } else {
+                        riQuery = new ITQLQuery(query);
+                    }
+                    results = s_ri.executeQuery(riQuery);
+                    queryOk = true;
+                } catch (Exception e) {
+                    // Error while querying: send HTTP500+xml and log it
+                    StringBuffer msg = new StringBuffer();
+                    msg.append("Error while querying: ");
+                    msg.append(e.getClass().getName());
+                    if (e.getMessage() != null) msg.append(": " + e.getMessage());
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    out = new PrintWriter(
+                            new OutputStreamWriter(
+                            response.getOutputStream(), "UTF-8"));
+                    startXML(out, true, query, lang);
+                    out.println("<error>" + enc(msg.toString()) + "</error>");
+                    out.println("</response>");
+                    logFine(msg.toString());
+                    e.printStackTrace();
+                    queryOk = false;
+                }
+                if ( queryOk ) {
+                    // Query seems ok... stream the response
+                    out = new PrintWriter(
+                            new OutputStreamWriter(
+                            response.getOutputStream(), "UTF-8"));
+                    startXML(out, false, query, lang);
+                    // put the binding names into an array (faster than List)
+                    String[] names = new String[results.names().size()];
+                    Iterator iter = results.names().iterator();
+                    int i = 0;
+                    while (iter.hasNext()) {
+                        names[i] = (String) iter.next();
+                        i++;
+                    }
+                    // output each result
+                    long firstMillis = System.currentTimeMillis();
+                    int count = 0;
+                    while (results.hasNext()) {
+                        count++;
+                        Map map = results.next();
+                        out.println("<result>");
+                        // output each value
+                        for (i = 0; i < names.length; i++) {
+                            out.print("<" + names[i]);
+                            Value value = (Value) map.get(names[i]);
+                            if ( value == null ) {
+                                out.println(" null=\"true\"/>");
+                            } else {
+                                if (value.isRDFLiteral()) {
+                                    out.print(" literal=\"true\">");
+                                    out.print(enc(value.getRDFLiteral().getLexicalForm()));
+                                } else {
+                                    out.print(">" + enc(value.getRDFResource().getURI()));
+                                }
+                                out.println("</" + names[i] + ">");
+                            }
+                        }
+                        out.println("</result>");
+                    }
+                    long lastMillis = System.currentTimeMillis();
+                    // .. then a summary
+                    long latency = firstMillis - startMillis;
+                    long total = lastMillis - startMillis;
+                    out.println("<summary results=\"" + count 
+                                    + "\" latency=\"" + latency
+                                    + "\" total=\"" + total + "\"/>");
+                    out.println("</response>");
+                }
+            }
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("text/html");
-            PrintWriter out=response.getWriter();
-            out.print("<html><head><title>Fedora Error</title></head>");
-            out.print("<body><h2>Fedora Error</h2>");
-            out.print("<i>");
-            out.print(e.getClass().getName());
-            out.print("</i>: ");
-            out.print(e.getMessage());
-            out.print("</body>");
+            // Unexpected error, print trace, log, and throw ServletException
+            StringBuffer msg = new StringBuffer();
+            msg.append("Unexpected error: ");
+            msg.append(e.getClass().getName());
+            if (e.getMessage() != null) msg.append(": " + e.getMessage());
+            e.printStackTrace();
+            logWarning(msg.toString());
+            throw new ServletException(msg.toString(), e);
+        } finally {
+            if (results != null) {
+                try {
+                    results.close();
+                } catch (Exception e) {
+                    logWarning("Error closing result iterator: " 
+                            + e.getClass().getName() + ":" + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+            if (out != null) {
+                try {
+                    out.flush();
+                    out.close();
+                } catch (Exception e) {
+                    logWarning("Error flushing/closing output stream: " 
+                            + e.getClass().getName() + ":" + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -78,18 +192,61 @@ public class RISearchServlet
         doGet(request, response);
     }
 
-    /** Gets the Fedora Server instance. */
+    private static void startXML(PrintWriter out,
+                                 boolean error,
+                                 String query,
+                                 String lang) throws IOException {
+        String status;
+        if (error) {
+            status = "error";
+        } else {
+            status = "ok";
+        }
+        out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        out.println("<response status=\"" + status + "\">");
+        out.println("<query lang=\"" + lang + "\">" + enc(query) + "</query>");
+    }
+
+    private static String enc(String in) {
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == '>') {
+                out.append("&gt;");
+            } else if (c == '<') {
+                out.append("&lt;");
+            } else if (c == '&') {
+                out.append("&amp;");
+            } else if (c == '\'') {
+                out.append("&apos;");
+            } else if (c == '"') {
+                out.append("&quot;");
+            } else {
+                out.append(c);
+            }
+        }
+        return out.toString();
+    }
+
+    /** 
+     * Init this servlet by getting Fedora server and resource index module 
+     * instances. 
+     */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-     //       s_access=(Access) s_server.getModule("fedora.server.access.Access");
-        } catch (InitializationException ie) {
-            throw new ServletException("Error getting Fedora Server instance: "
-                    + ie.getMessage());
+            s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
+            s_ri = (ResourceIndex) s_server.getModule("fedora.server.resourceIndex.ResourceIndex");
+        } catch (Exception e) {
+            throw new ServletException("Error during initialization: " 
+                                       + e.getClass().getName() + ":"
+                                       + e.getMessage());
+        }
+        if (s_ri == null) {
+            throw new ServletException("Resource index module not loaded.");
         }
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////
 
     /**
      * Logs a SEVERE message, indicating that the server is inoperable or
