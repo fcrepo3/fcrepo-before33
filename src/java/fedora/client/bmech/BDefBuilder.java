@@ -442,6 +442,7 @@ public class BDefBuilder extends JInternalFrame
       }
       else
       {
+		/*
         Method[] methods = mp.getMethods();
         for (int i=0; i<methods.length; i++)
         {
@@ -452,6 +453,7 @@ public class BDefBuilder extends JInternalFrame
             return false;
           }
         }
+        */
         return true;
       }
     }

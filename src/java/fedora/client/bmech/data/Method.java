@@ -32,7 +32,7 @@ public class Method
 
   public String methodName = null;
   public String methodLabel = null;
-  public MethodProperties methodProperties = null;
+  public MethodProperties methodProperties = new MethodProperties();
 
   public Method()
   {
