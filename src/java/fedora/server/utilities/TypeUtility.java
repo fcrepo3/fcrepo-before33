@@ -176,7 +176,7 @@ public abstract class TypeUtility
    * @param methodDefs An array of fedora.server.storage.types.MethodDef.
    * @return An array of fedora.server.types.gen.MethodDef.
    */
-  public static fedora.server.types.gen.MethodDef[]
+ /* public static fedora.server.types.gen.MethodDef[]
       convertMethodDefArrayToGenMethodDefArray(
       fedora.server.storage.types.MethodDef[] methodDefs)
   {
@@ -212,7 +212,7 @@ public abstract class TypeUtility
     {
       return null;
     }
-  }
+  }*/
 
   /**
    * <p>Converts an instance of fedora.server.storage.types.MethodDef into an
@@ -221,7 +221,7 @@ public abstract class TypeUtility
    * @param methodDef An instance of fedora.server.storage.types.MethodDef.
    * @return An instance of fedora.server.types.gen.MethodDef.
    */
-  public static fedora.server.types.gen.MethodDef
+/*  public static fedora.server.types.gen.MethodDef
       convertMethodDefToGenMethodDef(
       fedora.server.storage.types.MethodDef methodDef)
   {
@@ -255,7 +255,7 @@ public abstract class TypeUtility
     {
       return null;
     }
-  }
+  }*/
 
   /**
    * <p>Converts an array of fedora.server.types.gen.MethodDef into an
@@ -264,7 +264,7 @@ public abstract class TypeUtility
    * @param genMethodDefs An array of fedora.server.types.gen.MethodDef.
    * @return An array of fedora.server.storage.types.MethodDef.
    */
-  public static fedora.server.storage.types.MethodDef[]
+/*  public static fedora.server.storage.types.MethodDef[]
       convertGenMethodDefArrayToMethodDefArray(
       fedora.server.types.gen.MethodDef[] genMethodDefs)
   {
@@ -301,7 +301,7 @@ public abstract class TypeUtility
     {
       return null;
     }
-  }
+  }*/
 
   /**
    * <p>Converts an instance of fedora.server.types.gen.MethodDef into an
@@ -310,7 +310,7 @@ public abstract class TypeUtility
    * @param genMethodDef An instance of fedora.server.types.gen.MethodDef.
    * @return An instance of fedora.server.storage.types.MethodDef.
    */
-  public static fedora.server.storage.types.MethodDef
+/*  public static fedora.server.storage.types.MethodDef
       convertGenMethodDefToMethodDef(
       fedora.server.types.gen.MethodDef genMethodDef)
   {
@@ -335,7 +335,7 @@ public abstract class TypeUtility
     {
       return null;
     }
-  }
+  }*/
 
   /**
    * <p>Converts an array of fedora.server.storage.types.MethodParmDef into
@@ -901,27 +901,34 @@ public abstract class TypeUtility
       return out;
     }
 
-    public static fedora.server.storage.types.Disseminator
-        convertGenDisseminatorToDisseminator(
-        fedora.server.types.gen.Disseminator genDisseminator)
+    public static fedora.server.types.gen.DatastreamDef
+            convertDatastreamDefToGenDatastreamDef(
+            fedora.server.storage.types.DatastreamDef in)
+    {
+        fedora.server.types.gen.DatastreamDef out=
+                new fedora.server.types.gen.DatastreamDef();
+        out.setID(in.dsID);
+        out.setLabel(in.dsLabel);
+        out.setMIMEType(in.dsMIME);
+
+        return out;
+    }
+
+    public static fedora.server.storage.types.DatastreamDef
+        convertGenDatastreamDefToDatastreamDef(
+        fedora.server.types.gen.DatastreamDef genDatastreamDef)
     {
 
-      fedora.server.storage.types.Disseminator diss =
-            new fedora.server.storage.types.Disseminator();
-      if (genDisseminator != null)
+      fedora.server.storage.types.DatastreamDef datastreamDef =
+            new fedora.server.storage.types.DatastreamDef();
+      if (genDatastreamDef != null)
       {
-        diss.bDefLabel = genDisseminator.getBDefLabel();
-        diss.bDefID = genDisseminator.getBDefPID();
-        diss.bMechLabel = genDisseminator.getBMechLabel();
-        diss.bMechID = genDisseminator.getBMechPID();
-        diss.dissCreateDT = DateUtility.convertStringToDate(genDisseminator.getCreateDate());
-        diss.dissID = genDisseminator.getID();
-        diss.dissLabel = genDisseminator.getLabel();
-        diss.dissState = genDisseminator.getState();
-        diss.dissVersionID = genDisseminator.getVersionID();
-        diss.dsBindMap = convertGenDatastreamBindingMapToDSBindingMap(genDisseminator.getDsBindMap());
+        datastreamDef.dsID = genDatastreamDef.getID();
+        datastreamDef.dsLabel = genDatastreamDef.getLabel();
+        datastreamDef.dsMIME = genDatastreamDef.getMIMEType();
+
       }
-      return diss;
+      return datastreamDef;
   }
 
     public static fedora.server.types.gen.DatastreamBindingMap
@@ -1012,6 +1019,30 @@ public abstract class TypeUtility
       }
   }
 
+  public static fedora.server.types.gen.DatastreamDef[]
+      convertDatastreamDefArrayToGenDatastreamDefArray(
+      fedora.server.storage.types.DatastreamDef[] dsDefs)
+  {
+
+    if (dsDefs != null)
+    {
+      fedora.server.types.gen.DatastreamDef[] genDatastreamDefs =
+          new fedora.server.types.gen.DatastreamDef[dsDefs.length];
+      for (int i=0; i<genDatastreamDefs.length; i++)
+      {
+        fedora.server.types.gen.DatastreamDef genDatastreamDef =
+                 new fedora.server.types.gen.DatastreamDef();
+        genDatastreamDefs[i] =
+            convertDatastreamDefToGenDatastreamDef(dsDefs[i]);
+      }
+      return genDatastreamDefs;
+
+    } else
+    {
+      return null;
+    }
+  }
+
   public static fedora.server.storage.types.DSBinding[]
       convertGenDatastreamBindingArrayToDSBindingArray(
       fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings)
@@ -1030,6 +1061,31 @@ public abstract class TypeUtility
         dsBindings[i] = dsBinding;
       }
       return dsBindings;
+
+    } else
+    {
+      return null;
+    }
+  }
+
+  public static fedora.server.storage.types.DatastreamDef[]
+      convertGenDatastreamDefArrayToDatastreamDefArray(
+      fedora.server.types.gen.DatastreamDef[] genDatastreamDefs)
+  {
+
+    if (genDatastreamDefs != null)
+    {
+      fedora.server.storage.types.DatastreamDef[] dsDefs =
+          new fedora.server.storage.types.DatastreamDef[genDatastreamDefs.length];
+      for (int i=0; i<genDatastreamDefs.length; i++)
+      {
+        fedora.server.storage.types.DatastreamDef dsDef =
+                 new fedora.server.storage.types.DatastreamDef();
+        dsDef =
+            convertGenDatastreamDefToDatastreamDef(genDatastreamDefs[i]);
+        dsDefs[i] = dsDef;
+      }
+      return dsDefs;
 
     } else
     {
@@ -1136,7 +1192,7 @@ public abstract class TypeUtility
       + properties[i].name+"\nvalue = " + properties[i].value);
     }
 
-    System.out.println("\n----- Converting MethodDefArray to "
+/*    System.out.println("\n----- Converting MethodDefArray to "
                        + "GenMethodDefArray");
     fedora.server.types.gen.MethodDef[] genMethodDef =
         TypeUtility.convertMethodDefArrayToGenMethodDefArray(methodDef);
@@ -1183,7 +1239,7 @@ public abstract class TypeUtility
           "\nparmrequired: "+methodParmDef[j].parmRequired);
         }
       }
-    }
+    }*/
 
     System.out.println("\n----- Starting with MIMETypedStream of:");
     String text = "this is some text for the bytestream";
