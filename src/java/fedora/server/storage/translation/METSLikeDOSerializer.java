@@ -1,5 +1,6 @@
 package fedora.server.storage.translation;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import fedora.server.Server;
+import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
@@ -66,7 +69,37 @@ public class METSLikeDOSerializer
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
 
+    private static String s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
+    private static String s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
+
     public METSLikeDOSerializer() {
+        // get the host info in a static var so search/replaces are quicker later
+        if (s_localServerUrlStartWithPort==null) {
+            String fedoraHome=System.getProperty("fedora.home");
+            String fedoraServerHost=null;
+            String fedoraServerPort=null;
+            if (fedoraHome==null || fedoraHome.equals("")) {
+                // if fedora.home is undefined or empty, assume we're testing,
+                // in which case the host and port will be taken from system
+                // properties
+                fedoraServerHost=System.getProperty("fedoraServerHost");
+                fedoraServerPort=System.getProperty("fedoraServerPort");
+            } else {
+                try {
+                    Server s=Server.getInstance(new File(fedoraHome));
+                    fedoraServerHost=s.getParameter("fedoraServerHost");
+                    fedoraServerPort=s.getParameter("fedoraServerPort");
+                } catch (InitializationException ie) {
+                    // can only possibly happen during failed testing, in which 
+                    // case it's ok to do a System.exit
+                    System.err.println("STARTUP ERROR: " + ie.getMessage());
+                    System.exit(1);
+                }
+            }
+            s_localServerUrlStartWithPort="http://" + fedoraServerHost + ":" 
+                    + fedoraServerPort + "/";
+            s_localServerUrlStartWithoutPort="http://" + fedoraServerHost + "/"; 
+        }
     }
 
     public DOSerializer getInstance() {
@@ -248,7 +281,22 @@ public class METSLikeDOSerializer
                     + "\" MDTYPE=\"" + mdType + "\"" + otherString
                     + labelString + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
-            appendStream(ds.getContentStream(), buf, encoding);
+            if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
+                    && ds.DatastreamID.equals("SERVICE-PROFILE")) {
+                // If it's the WSDL datastream in a bMech and it contains a 
+                // service URL that's local, replace it with a machine-neutral 
+                // host identifier.
+                try {
+                    String xml=new String(ds.xmlContent, "UTF-8");
+                    xml.replaceAll(s_localServerUrlStartWithPort, "http://local.fedora.server/");
+                    xml.replaceAll(s_localServerUrlStartWithoutPort, "http://local.fedora.server/");
+                    buf.append(xml);
+                } catch (UnsupportedEncodingException uee) {
+                    // wont happen, java always supports UTF-8
+                }
+            } else {
+                appendStream(ds.getContentStream(), buf, encoding);
+            }
             buf.append("        </" + METS_PREFIX + ":xmlData>");
             buf.append("      </" + METS_PREFIX + ":mdWrap>\n");
             buf.append("    </" + METS_PREFIX + ":" + innerName + ">\n");
@@ -340,6 +388,10 @@ public class METSLikeDOSerializer
         }
     }
 
+    // append the admin md, while replacing occurances of 
+    // s_localServerUrlStartWithPort and s_localServerUrlStartWithoutPort
+    // with "http://local.fedora.server/" in the SERVICE-PROFILE id'd wsdl of 
+    // bMech objects.
     private void appendOtherAdminMD(DigitalObject obj, StringBuffer buf,
             String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
@@ -410,6 +462,10 @@ public class METSLikeDOSerializer
                     if (dsc.DSLocation==null || dsc.DSLocation.equals("")) {
                         throw new ObjectIntegrityException("Object's content datastream must have a location.");
                     }
+                    // replace any local machine+port-specific urls to
+                    // machine-neutral ones
+                    dsc.DSLocation.replaceAll(s_localServerUrlStartWithPort, "http://local.fedora.server/");
+                    dsc.DSLocation.replaceAll(s_localServerUrlStartWithoutPort, "http://local.fedora.server/");
                     String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
                     String admIDString=getIdString(obj, dsc, true);
                     String dmdIDString=getIdString(obj, dsc, false);
