@@ -6,7 +6,6 @@ import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JOptionPane;
 import javax.swing.JFileChooser;
@@ -54,8 +53,9 @@ import fedora.client.ingest.AutoIngestor;
 public class BMechBuilder extends JInternalFrame
 {
 
-    private JTabbedPane tabpane;
+    protected JTabbedPane tabpane;
     protected BMechTemplate newBMech;
+    private boolean contractMethodsLoaded = false;
     private int selectedTabPane;
     private String s_host = null;
     private int s_port = 0;
@@ -99,28 +99,11 @@ public class BMechBuilder extends JInternalFrame
         tabpane = new JTabbedPane();
         tabpane.setBackground(Color.GRAY);
         tabpane.addTab("General", createGeneralPane());
+		tabpane.addTab("Service Profile", createProfilePane());
         tabpane.addTab("Service Methods", createMethodsPane());
         tabpane.addTab("Datastream Input", createDSInputPane());
         tabpane.addTab("Documentation", createDocPane());
-        tabpane.addTab("Service Profile", createProfilePane());
 
-/*
-        // set up listener for JTabbedPane object
-        tabpane.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e) {
-				// everytime a tab changes, update the bmech template object in memory
-				updateBMechTemplate();
-                currentTabIndex = tabpane.getSelectedIndex();
-                currentTabName = tabpane.getTitleAt(currentTabIndex);
-                if (currentTabIndex == 2)
-                {
-                  DatastreamInputPane dsip =
-                    (DatastreamInputPane)tabpane.getComponentAt(2);
-                  dsip.renderDSBindingKeys(newBMech.getDSBindingKeys());
-                }
-            }
-        });
-*/
         // General Buttons Panel
         JButton save = new JButton("Save");
         save.addActionListener(new ActionListener() {
@@ -172,13 +155,26 @@ public class BMechBuilder extends JInternalFrame
 				currentTabName = tabpane.getTitleAt(currentTabIndex);
 				if (currentTabIndex == 2)
 				{
+				  String bDefPID = newBMech.getbDefContractPID();
+				  if (!(bDefPID.equals(null)) && 
+				      !(bDefPID.equalsIgnoreCase("")) &&
+				      !contractMethodsLoaded)
+				  {
+					MethodsPane mp =
+					  (MethodsPane)tabpane.getComponentAt(2);
+					mp.renderContractMethods(bDefPID);
+					contractMethodsLoaded = true;
+				  }
+
+				}
+				if (currentTabIndex == 3)
+				{
 				  DatastreamInputPane dsip =
-					(DatastreamInputPane)tabpane.getComponentAt(2);
+					(DatastreamInputPane)tabpane.getComponentAt(3);
 				  dsip.renderDSBindingKeys(newBMech.getDSBindingKeys());
 				}
 			}
-		});
-		
+		});		
 	}
 	
     public BMechTemplate getBMechTemplate()
@@ -264,19 +260,19 @@ public class BMechBuilder extends JInternalFrame
       }
       else if (currentTabIndex == 1)
       {
-        showMethodsHelp();
+		showProfileHelp();
       }
       else if (currentTabIndex == 2)
       {
-        showDatastreamsHelp();
+		showMethodsHelp();
       }
       else if (currentTabIndex == 3)
       {
-        showDocumentsHelp();
+		showDatastreamsHelp();
       }
       else if (currentTabIndex == 4)
       {
-        showProfileHelp();
+		showDocumentsHelp();
       }
     }
 
@@ -293,8 +289,9 @@ public class BMechBuilder extends JInternalFrame
 		{
 		  if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
 		  {
+		  	  System.out.println("updateBMechTemplate: GeneralTab");
 			  GeneralPane gp = (GeneralPane)tabs[i];
-			  if (gp.rb_chosen.equalsIgnoreCase("testPID"))
+			  if (gp.rb_chosen.equalsIgnoreCase("retainPID"))
 			  {
 				newBMech.setbObjPID(gp.getBObjectPID());
 			  }
@@ -307,8 +304,16 @@ public class BMechBuilder extends JInternalFrame
 			  newBMech.setbObjName(gp.getBObjectName());
 			  newBMech.setDCRecord(gp.getDCElements());
 		  }
+		  else if (tabs[i].getName().equalsIgnoreCase("ProfileTab"))
+		  {
+			System.out.println("updateBMechTemplate: ProfileTab");
+			  // set the datastream input rules
+			  ServiceProfilePane spp = (ServiceProfilePane)tabs[i];
+			  newBMech.setServiceProfile(spp.getServiceProfile());
+		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
 		  {
+			System.out.println("updateBMechTemplate: MethodsTab");
 			  MethodsPane mp = (MethodsPane)tabs[i];
 			  newBMech.setHasBaseURL(mp.hasBaseURL());
 			  if (mp.hasBaseURL())
@@ -327,41 +332,40 @@ public class BMechBuilder extends JInternalFrame
 			  {
 				newBMech.setServiceBaseURL("LOCAL");
 			  }
-			  newBMech.setMethodsHashMap(mp.getMethodMap());
-			  newBMech.setMethods(mp.getMethods());
+			  HashMap mmap = mp.getMethodMap();
+			  Method[] methods = mp.getMethods();
+			  newBMech.setMethodsHashMap(mmap);
+			  newBMech.setMethods(methods);
 			  
 			  // we need to update the BMechTemplate object with the latest
 			  // datastream binding keys that are defined as method parms
 			  Vector dsBindingKeys = new Vector();
-			  Method[] methods = newBMech.getMethods();
 			  for (int m=0; m<methods.length; m++)
 			  {
 			  	MethodProperties props = methods[m].methodProperties;
-				for (int j=0; j<methods[m].methodProperties.dsBindingKeys.length; j++)
-				{
-				  dsBindingKeys.add(methods[m].methodProperties.dsBindingKeys[j]);
-				}
+			  	if (props != null)
+			  	{
+					for (int j=0; j<props.dsBindingKeys.length; j++)
+					{
+					  if (!dsBindingKeys.contains(props.dsBindingKeys[j]))
+					  {
+						dsBindingKeys.add(props.dsBindingKeys[j]);
+					  }
+					}
+			  	}
 			  }
 			  newBMech.setDSBindingKeys(dsBindingKeys);
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
 		  {
+			System.out.println("updateBMechTemplate: DSInputTab");
 			  // set the datastream input rules
 			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
 			  newBMech.setDSInputSpec(dsp.getDSInputRules());
-/*			  
-			  // set the datastream binding keys
-			  Vector dsBindingKeys = new Vector();
-			  DSInputRule[] dsrules = newBMech.getDSInputSpec();
-			  for (int j=0; j<dsrules.length; j++)
-			  {
-				dsBindingKeys.add(dsrules[j].bindingKeyName);
-			  }
-			  newBMech.setDSBindingKeys(dsBindingKeys);
-*/
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
 		  {
+			System.out.println("updateBMechTemplate: DocumentsTab");
 			  DocumentsPane docp = (DocumentsPane)tabs[i];
 			  newBMech.setDocDatastreams(docp.getDocDatastreams());
 		  }
@@ -378,6 +382,13 @@ public class BMechBuilder extends JInternalFrame
 			if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
 			{
 				if (!validGeneralTab((GeneralPane)tabs[i]))
+				{
+					return false;
+				}
+			}
+			else if (tabs[i].getName().equalsIgnoreCase("ProfileTab"))
+			{
+				if (!validProfileTab((ServiceProfilePane)tabs[i]))
 				{
 					return false;
 				}
@@ -406,108 +417,10 @@ public class BMechBuilder extends JInternalFrame
 		}
 		return true;
 	}
-/*	
-	protected boolean xvalidateBMechTemplate()
-	{
-		boolean validBMech = false;
-		Component[] tabs = tabpane.getComponents();
-		//System.out.println("tabs count: " + tabs.length);
-		for (int i=0; i < tabs.length; i++)
-		{
-		  //System.out.println("tab name: " + tabs[i].getName());
-		  if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
-		  {
-			if (validGeneralTab((GeneralPane)tabs[i]))
-			{
-			  GeneralPane gp = (GeneralPane)tabs[i];
-			  if (gp.rb_chosen.equalsIgnoreCase("testPID"))
-			  {
-				newBMech.setbObjPID(gp.getBObjectPID());
-			  }
-			  else
-			  {
-				newBMech.setbObjPID(null);
-			  }
-			  newBMech.setbDefContractPID(gp.getBDefContractPID());
-			  newBMech.setbObjLabel(gp.getBObjectLabel());
-			  newBMech.setbObjName(gp.getBObjectName());
-			  newBMech.setDCRecord(gp.getDCElements());
-			}
-			else
-			{
-			  return false;
-			}
-		  }
-		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
-		  {
-			if (validMethodsTab((MethodsPane)tabs[i]))
-			{
-			  MethodsPane mp = (MethodsPane)tabs[i];
-			  newBMech.setHasBaseURL(mp.hasBaseURL());
-			  if (mp.hasBaseURL())
-			  {
-				String baseURL = mp.getBaseURL();
-				if (baseURL.endsWith("/"))
-				{
-				  newBMech.setServiceBaseURL(baseURL);
-				}
-				else
-				{
-				  newBMech.setServiceBaseURL(baseURL + "/");
-				}
-			  }
-			  else
-			  {
-				newBMech.setServiceBaseURL("LOCAL");
-			  }
-			  newBMech.setMethodsHashMap(mp.getMethodMap());
-			  newBMech.setMethods(mp.getMethods());
-			}
-			else
-			{
-			  return false;
-			}
-		  }
-		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
-		  {
-			if (validDSInputTab((DatastreamInputPane)tabs[i]))
-			{
-			  // set the datastream input rules
-			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
-			  newBMech.setDSInputSpec(dsp.getDSInputRules());
-			  
-			  // set the datastream binding keys
-			  Vector dsBindingKeys = new Vector();
-			  DSInputRule[] dsrules = newBMech.getDSInputSpec();
-			  for (int j=0; j<dsrules.length; j++)
-			  {
-				dsBindingKeys.add(dsrules[j].bindingKeyName);
-			  }
-			  newBMech.setDSBindingKeys(dsBindingKeys);
-			}
-			else
-			{
-			  return false;
-			}
-		  }
-		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
-		  {
-			if (validDocsTab((DocumentsPane)tabs[i]))
-			{
-			  DocumentsPane docp = (DocumentsPane)tabs[i];
-			  newBMech.setDocDatastreams(docp.getDocDatastreams());
-			}
-			else
-			{
-			  return false;
-			}
-		  }
-		}
-		return true;
-	}
-*/	
+	
     public BMechMETSSerializer savePanelInfo()
     {
+	  updateBMechTemplate();
 	  BMechMETSSerializer mets = null;
 	  if (validateBMechTemplate())
 	  {
@@ -516,6 +429,7 @@ public class BMechBuilder extends JInternalFrame
 	      DSInputSpecGenerator dsg = null;
 	      MethodMapGenerator mmg = null;
 	      WSDLGenerator wsdlg = null;
+	      ServiceProfileSerializer spg = null;
 	      try
 	      {
 	        dcg = new DCGenerator(newBMech);
@@ -524,8 +438,17 @@ public class BMechBuilder extends JInternalFrame
 	      catch (Exception e)
 	      {
 	        e.printStackTrace();
-	        assertTabPaneMsg("BMechBuilder: error generating dc record", null);
+	        assertTabPaneMsg("BMechBuilder: error serializing dc record", null);
 	      }
+		  try
+		  {
+			spg = new ServiceProfileSerializer(newBMech);
+		  }
+		  catch (Exception e)
+		  {
+		    e.printStackTrace();
+		    assertTabPaneMsg("BMechBuilder: error serializing service profile", null);
+		  }
 	      try
 	      {
 	        dsg = new DSInputSpecGenerator(newBMech);
@@ -534,7 +457,7 @@ public class BMechBuilder extends JInternalFrame
 	      catch (Exception e)
 	      {
 	        e.printStackTrace();
-	        assertTabPaneMsg("BMechBuilder: error generating ds input spec", null);
+	        assertTabPaneMsg("BMechBuilder: error serializing ds input spec", null);
 	      }
 	      try
 	      {
@@ -544,7 +467,7 @@ public class BMechBuilder extends JInternalFrame
 	      catch (Exception e)
 	      {
 	        e.printStackTrace();
-	        assertTabPaneMsg("BMechBuilder: error generating method map", null);
+	        assertTabPaneMsg("BMechBuilder: error serializing method map", null);
 	      }
 	      try
 	      {
@@ -554,12 +477,12 @@ public class BMechBuilder extends JInternalFrame
 	      catch (Exception e)
 	      {
 	        e.printStackTrace();
-	        assertTabPaneMsg("BMechBuilder: error generating wsdl", null);
+	        assertTabPaneMsg("BMechBuilder: error serializing wsdl", null);
 	      }
 	
 	      try
 	      {
-	        mets = new BMechMETSSerializer(newBMech, dcg.getRootElement(),
+	        mets = new BMechMETSSerializer(newBMech, dcg.getRootElement(), spg.getRootElement(),
 	          dsg.getRootElement(), mmg.getRootElement(), wsdlg.getRootElement());
 	      }
 	      catch (Exception e)
@@ -581,6 +504,13 @@ public class BMechBuilder extends JInternalFrame
       //return new JLabel("Insert general stuff here.");
     }
 
+	private JComponent createProfilePane()
+	{
+	  ServiceProfilePane profpane = new ServiceProfilePane(this);
+	  profpane.setName("ProfileTab");
+	  return profpane;
+	}
+	
     private JComponent createMethodsPane()
     {
       MethodsPane mpane = new MethodsPane(this);
@@ -595,13 +525,6 @@ public class BMechBuilder extends JInternalFrame
       return dspane;
     }
 
-    private JComponent createProfilePane()
-    {
-      JLabel jl = new JLabel("Insert Service Profile stuff here.");
-      jl.setName("ProfileTab");
-      return jl;
-    }
-
     private JComponent createDocPane()
     {
       DocumentsPane docpane = new DocumentsPane();
@@ -609,63 +532,9 @@ public class BMechBuilder extends JInternalFrame
       return docpane;
     }
 
-    private void printBMech()
-    {
-      System.out.println("FROM GENERAL TAB===============================");
-      System.out.println("bDefPID: " + newBMech.getbDefContractPID());
-      System.out.println("bMechLabel: " + newBMech.getbObjLabel());
-      System.out.println("DCRecord: ");
-      DCElement[] dcrecord = newBMech.getDCRecord();
-      for (int i=0; i<dcrecord.length; i++)
-      {
-        System.out.println(">>> " + dcrecord[i].elementName + "="
-          + dcrecord[i].elementValue);
-      }
-      System.out.println("FROM METHODS TAB===============================");
-      System.out.println("hasBaseURL: "  + newBMech.getHasBaseURL());
-      System.out.println("serviceBaseURL: " + newBMech.getServiceBaseURL());
-      System.out.println("methods: ");
-      HashMap m2 = newBMech.getMethodsHashMap();
-      Collection methods = m2.values();
-      Iterator it_methods = methods.iterator();
-      while (it_methods.hasNext())
-      {
-        Method method = (Method)it_methods.next();
-        System.out.println("  method name: " + method.methodName + "\n"
-          + "  method desc: " + method.methodLabel + "\n"
-          + "  method URL: " + method.methodProperties.methodFullURL + "\n"
-          + "  method protocol" + method.methodProperties.protocolType + "\n");
-        System.out.println("  method parms:");
-        int parmcnt = method.methodProperties.methodParms.length;
-        for (int i=0; i<parmcnt; i++)
-        {
-          MethodParm mp = method.methodProperties.methodParms[i];
-          System.out.println(">>>parmName: " + mp.parmName + "\n"
-            + ">>>parmType: " + mp.parmType + "\n"
-            + ">>>parmLabel: " + mp.parmLabel + "\n"
-            + ">>>parmDefaultValue: " + mp.parmDefaultValue + "\n"
-            + ">>>parmPassBy: " + mp.parmPassBy + "\n"
-            + ">>>parmRequired: " + mp.parmRequired + "\n"
-            + ">>>parmDomainValues: " + mp.parmDomainValues + "\n");
-        }
-      }
-      System.out.println("FROM DSINPUT TAB===============================");
-      DSInputRule[] rules = newBMech.getDSInputSpec();
-      for (int i=0; i<rules.length; i++)
-      {
-        System.out.println(">>>name= " + rules[i].bindingKeyName + "\n"
-          + ">>>mime= " + rules[i].bindingMIMEType + "\n"
-          + ">>>min= " + rules[i].minNumBindings + "\n"
-          + ">>>max= " + rules[i].maxNumBindings + "\n"
-          + ">>>order= " + rules[i].ordinality + "\n"
-          + ">>>label= " + rules[i].bindingLabel + "\n"
-          + ">>>instruct= " + rules[i].bindingInstruction + "\n");
-      }
-    }
-
     private boolean validGeneralTab(GeneralPane gp)
     {
-      if (gp.rb_chosen.equalsIgnoreCase("testPID") &&
+      if (gp.rb_chosen.equalsIgnoreCase("retainPID") &&
          (gp.getBObjectPID() == null || gp.getBObjectPID().trim().equals("")))
       {
         assertTabPaneMsg("The test PID value is missing on General Tab.", gp.getName());
@@ -693,7 +562,31 @@ public class BMechBuilder extends JInternalFrame
       }
       return true;
     }
-
+    
+	private boolean validProfileTab(ServiceProfilePane spp)
+	{
+		if (spp.getServiceName() == null)
+		{
+		  assertTabPaneMsg(new String("You must enter a Service name"
+			+ " in the Service Profile Tab"),
+			spp.getName());
+		  return false;
+		}
+		else if (spp.getMsgProtocol() == null)
+		{
+		  assertTabPaneMsg(new String("You must enter the messaging protocol for"
+			+ " this service in the Service Profile Tab"), spp.getName());
+		  return false;
+		}
+		else if (spp.getOutputMIMETypes().length == 0)
+		{
+		  assertTabPaneMsg(new String("You must enter at least one output MIME type"
+			+ " for this service in the Service Profile Tab"), spp.getName());
+		  return false;
+		}
+	  return true;
+	}
+	
     private boolean validMethodsTab(MethodsPane mp)
     {
       if (mp.hasBaseURL() && (mp.getBaseURL() == null || mp.getBaseURL().trim().equals("")))
@@ -703,7 +596,7 @@ public class BMechBuilder extends JInternalFrame
       }
       else if (mp.getMethods().length <=0)
       {
-        assertTabPaneMsg("You must enter at least one method definition on Service Methods Tab.", mp.getName());
+        assertTabPaneMsg("You must enter at least one method definition in Service Methods Tab.", mp.getName());
         return false;
       }
       else
@@ -713,10 +606,16 @@ public class BMechBuilder extends JInternalFrame
         {
           if (methods[i].methodProperties == null)
           {
-            assertTabPaneMsg(new String("You must enter properties for method: "
-              + methods[i].methodName), mp.getName());
+            assertTabPaneMsg(new String("You must enter properties for the method "
+              + methods[i].methodName) + " in the Service Methods Tab", mp.getName());
             return false;
           }
+          else if (!methods[i].methodProperties.wasValidated)
+		  {
+			assertTabPaneMsg(new String("You must enter valid properties for the method "
+			  + methods[i].methodName + " in the Service Methods Tab"), mp.getName());
+			return false;
+		  }
         }
         return true;
       }
@@ -725,19 +624,30 @@ public class BMechBuilder extends JInternalFrame
     private boolean validDSInputTab(DatastreamInputPane dsp)
     {
       DSInputRule[] rules = dsp.getDSInputRules();
+	  Vector bindkeys = newBMech.getDSBindingKeys();
+	  if (bindkeys.size() != rules.length)
+	  {
+		assertTabPaneMsg(new String("You have not completed entry of the Datastream"
+		  + " input binding rules"
+		  + " in the Datastream Input Tab"),
+		  dsp.getName());
+		return false;	  
+	  }
       for (int i=0; i<rules.length; i++)
       {
         if (rules[i].bindingKeyName == null)
         {
           assertTabPaneMsg(new String("A Datastream parm name is missing"
-            + " from column 1 of the table on the Datastream Input Tab"),
+            + " from column 1 of the table in the Datastream Input Tab"),
             dsp.getName());
           return false;
         }
-        else if (rules[i].bindingMIMEType == null)
+        else if (rules[i].bindingMIMEType == null ||
+        		 rules[i].bindingMIMEType.trim().equalsIgnoreCase(""))
         {
           assertTabPaneMsg(new String("You must enter MIMEType for"
-            + " datastream input parm " + rules[i].bindingKeyName), dsp.getName());
+            + " datastream input parm " + rules[i].bindingKeyName
+            + " in the Datastream Input Tab"), dsp.getName());
           return false;
         }
         else if (rules[i].minNumBindings == null)
@@ -768,15 +678,6 @@ public class BMechBuilder extends JInternalFrame
             + " on Datastream Input Tab."), dsp.getName());
           return false;
         }
-        /*
-        else if (rules[i].bindingInstruction == null)
-        {
-          assertTabPaneMsg(new String("You must enter Binding Instruction for"
-            + " datastream input parm " + rules[i].bindingKeyName
-            + " on Datastream Input Tab."), dsp.getName());
-          return false;
-        }
-        */
       }
       return true;
     }
@@ -846,23 +747,34 @@ public class BMechBuilder extends JInternalFrame
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
         helptxt.setBounds(0,0,550,20);
-        helptxt.append("There are three types of service bindings that can"
-          + " be set up in a Behavior Mechanism:\n\n"
-          + " 1. Service with a Base URL: there is one base URL that all of"
-          + " the methods of the service are relative to.\n\n"
-          + " 2. Multi-Server Service: there is not a single base URL that"
-          + " all of the methods are relative to.  Different methods may run"
-          + " off different servers.  However from the Fedora perspective"
-          + " several methods may be aggregated together in one Behavior"
-          + " Mechanism object to fulfill a behavior contract of a"
-          + " Behavior Definition Object.\n\n"
-          + " 2. Fedora LOCAL HTTP Resolver:  there is no independent service"
-          + " that Fedora calls upon to run a behavior method.  Instead,"
-          + " Fedora will just resolve the URL of a datastream in a Data"
-          + " object that uses this Behavior Mechanism.  This is kind of like"
-          + " a 'non-service' since the Fedora repository system will know"
-          + " what how to just return the datastreams when the behavior"
-          + " method is called at runtime.");
+        helptxt.append("Service Address:\n There are three types of service bindings that can"
+          + " be set up in a Behavior Mechanism object:\n\n"
+          + " 1. Base URL (Service with a Base URL): You are mapping the"
+          + " Behavior Mechanism object to a service that has a"
+          + " single base URL that all of the service methods are relative to."
+          + " The service will be used to transform or refactor Datastream content.\n\n"
+          + " 2. No Base URL (Multi-Server Service): You are mapping the"
+          + " Behavior Mechanism object to a service whose methods do not have a"
+          + " common base URL.  Instead, different methods may run on different"
+          + " servers.  However, from the Fedora perspective these methods"
+          + " may be aggregated together in a single Behavior Mechanism object" 
+          + " to fulfill a behavior contract. The service methods will be used to"
+          + " transform or refactor Datastream content.\n\n"
+          + " 2. Fedora Built-in Datastream Resolver: You are NOT mapping the"
+          + " Behavior Mechanism object to a service. Instead, this Behavior Mechanism"
+          + " object will partake of default capabilities of the Fedora repository"
+          + " server.  You can use this option if you simply want to make an association"
+          + " between methods of a behavor contract and Datastreams in the object."
+          + " So, for example, you want the behavior contract methods to just return"
+          + " specific Datastreams in the object without transforming or refactoring"
+          + " those datastreams via a service.  This option is really just specifying"
+          + " a MethodName-to-Datastream binding relationship.\n\n\n"
+          + " Service Method Definitions:\n Here are the definitions of the specific methods"
+          + " that are runnable by the service.  A list of methods are automatically "
+          + " listed in the table.  These were obtained by looking up the abstract methods"
+          + " defined by the Behavior Definition Contract that you specified in the 'General Tab.'" 
+          + " Use the 'Properties' button to the right of the table to enter specific service"
+          + " binding information for each method.");
 
         JOptionPane.showMessageDialog(
           this, helptxt, "Help for Service Methods Tab",
@@ -905,8 +817,8 @@ public class BMechBuilder extends JInternalFrame
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
         helptxt.setBounds(0,0,550,20);
-        helptxt.append("The Service Profile data entry form will be available"
-        + " in the next release of Fedora.\n\n");
+        helptxt.append("Use the Service Profile to enter technical information about"
+        + " the service being mapped to this Behavior Mechanism object.\n\n");
 
         JOptionPane.showMessageDialog(
           this, helptxt, "Help for Service Profile Tab",
@@ -919,4 +831,81 @@ public class BMechBuilder extends JInternalFrame
         this, new String(msg), new String(tabpane + " Message"),
         JOptionPane.INFORMATION_MESSAGE);
     }
+    
+	private void printBMech()
+	{
+	  System.out.println("FROM GENERAL TAB===============================");
+	  System.out.println("bDefPID: " + newBMech.getbDefContractPID());
+	  System.out.println("bMechLabel: " + newBMech.getbObjLabel());
+	  System.out.println("DCRecord: ");
+	  DCElement[] dcrecord = newBMech.getDCRecord();
+	  for (int i=0; i<dcrecord.length; i++)
+	  {
+		System.out.println(">>> " + dcrecord[i].elementName + "="
+		  + dcrecord[i].elementValue);
+	  }
+	  System.out.println("FROM PROFILE TAB===============================");
+	  System.out.println("serviceName: " + newBMech.getServiceProfile().serviceName);
+	  System.out.println("serviceLabel: " + newBMech.getServiceProfile().serviceLabel);
+	  System.out.println("serviceTestURL: " + newBMech.getServiceProfile().serviceTestURL);
+	  System.out.println("Input MIME: ");
+	  String[] inputMIME = newBMech.getServiceProfile().inputMIMETypes;
+	  for (int i=0; i<inputMIME.length; i++)
+	  {
+		System.out.println(">>> " + inputMIME[i]);
+	  }
+	  System.out.println("Input MIME: ");
+	  String[] outputMIME = newBMech.getServiceProfile().outputMIMETypes;
+	  for (int i=0; i<outputMIME.length; i++)
+	  {
+		System.out.println(">>> " + outputMIME[i]);
+	  }
+	  System.out.println("SW Depend: ");
+	  ServiceSoftware[] sw = newBMech.getServiceProfile().software;
+	  for (int i=0; i<sw.length; i++)
+	  {
+		System.out.println(">>> " + sw[i].swName + "," + sw[i].swType + "," + sw[i].swVersion
+		+ "," + sw[i].swLicenceType + ",");
+	  }
+	  System.out.println("FROM METHODS TAB===============================");
+	  System.out.println("hasBaseURL: "  + newBMech.getHasBaseURL());
+	  System.out.println("serviceBaseURL: " + newBMech.getServiceBaseURL());
+	  System.out.println("methods: ");
+	  HashMap m2 = newBMech.getMethodsHashMap();
+	  Collection methods = m2.values();
+	  Iterator it_methods = methods.iterator();
+	  while (it_methods.hasNext())
+	  {
+		Method method = (Method)it_methods.next();
+		System.out.println("  method name: " + method.methodName + "\n"
+		  + "  method desc: " + method.methodLabel + "\n"
+		  + "  method URL: " + method.methodProperties.methodFullURL + "\n"
+		  + "  method protocol" + method.methodProperties.protocolType + "\n");
+		System.out.println("  method parms:");
+		int parmcnt = method.methodProperties.methodParms.length;
+		for (int i=0; i<parmcnt; i++)
+		{
+		  MethodParm mp = method.methodProperties.methodParms[i];
+		  System.out.println(">>>parmName: " + mp.parmName + "\n"
+			+ ">>>parmType: " + mp.parmType + "\n"
+			+ ">>>parmLabel: " + mp.parmLabel + "\n"
+			+ ">>>parmDefaultValue: " + mp.parmDefaultValue + "\n"
+			+ ">>>parmPassBy: " + mp.parmPassBy + "\n"
+			+ ">>>parmRequired: " + mp.parmRequired + "\n"
+			+ ">>>parmDomainValues: " + mp.parmDomainValues + "\n");
+		}
+	  }
+	  System.out.println("FROM DSINPUT TAB===============================");
+	  DSInputRule[] rules = newBMech.getDSInputSpec();
+	  for (int i=0; i<rules.length; i++)
+	  {
+		System.out.println(">>>name= " + rules[i].bindingKeyName + "\n"
+		  + ">>>mime= " + rules[i].bindingMIMEType + "\n"
+		  + ">>>min= " + rules[i].minNumBindings + "\n"
+		  + ">>>max= " + rules[i].maxNumBindings + "\n"
+		  + ">>>order= " + rules[i].ordinality + "\n"
+		  + ">>>label= " + rules[i].bindingLabel + "\n"
+		  + ">>>instruct= " + rules[i].bindingInstruction + "\n");
+	  }
+	}
   }
