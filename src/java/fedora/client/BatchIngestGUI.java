@@ -61,6 +61,10 @@ public class BatchIngestGUI
 	private JRadioButton m_xmlMap = new JRadioButton("xml");
 	private JRadioButton m_textMap = new JRadioButton("text");
 	private ButtonGroup buttonGroup = new ButtonGroup();
+	
+	private JRadioButton m_foxmlMap = new JRadioButton("foxml");
+	private JRadioButton m_metsMap = new JRadioButton("mets");
+	private ButtonGroup templateButtonGroup = new ButtonGroup();	
 
 	private Dimension unitDimension = null;
 	private Dimension browseMin = null;
@@ -131,8 +135,18 @@ public class BatchIngestGUI
 	okMax = new Dimension((new Float(1.5 * okMin.width)).intValue() , (new Float(1.5 * okMin.height)).intValue());
 	okPref = okMax;
 
+	templateButtonGroup.add(m_foxmlMap);
+	m_foxmlMap.setSelected(true);
+	templateButtonGroup.add(m_metsMap);
+	JPanel templatePanel = new JPanel();
+	
+	templatePanel.setLayout(new BorderLayout());
+	templatePanel.add(m_foxmlMap, BorderLayout.WEST);
+	templatePanel.add(new JLabel("Fedora objects (input directory)"), BorderLayout.NORTH);
+	templatePanel.add(m_metsMap, BorderLayout.CENTER);	
+	labelPanel.add(sized (templatePanel, browseMin, browsePref, browseMax));
 
-        labelPanel.add(new JLabel("Fedora objects (input directory)"));
+        //labelPanel.add(new JLabel("Fedora objects (input directory)"));
 	labelPanel.add(sized (m_objectsField, textMin, textPref, textMax));
         JButton objectsBtn=new JButton("browse...");
         objectsBtn.addActionListener(new ActionListener() {
@@ -212,6 +226,7 @@ public class BatchIngestGUI
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
+	    properties.setProperty("template-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    
 	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
 	    
