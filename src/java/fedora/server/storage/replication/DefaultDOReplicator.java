@@ -148,7 +148,7 @@ public class DefaultDOReplicator
             st=connection.createStatement();
 
             // get db ID for the digital object
-            results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
+            results=logAndExecuteQuery(st, "SELECT doDbID,doState FROM do WHERE "
                     + "doPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
                 logFinest("DefaultDOReplication.updateComponents: Object is "
@@ -156,13 +156,20 @@ public class DefaultDOReplicator
                 return false;
             }
             int doDbID=results.getInt("doDbID");
+            String doState=results.getString("doState");
             results.close();
+            ArrayList updates=new ArrayList();
 
+            // check if state has changed for the digital object
+            String objState = reader.GetObjectState();
+            if (!doState.equalsIgnoreCase(objState)) {
+              updates.add("UPDATE do SET doState='"+objState+"' WHERE doDbID=" + doDbID);
+              updates.add("UPDATE doRegistry SET objectState='"+objState+"', modifiedFlag='Y' WHERE doPID='" + reader.GetObjectPID() + "'");
+            }
 
             // check if any mods to datastreams for this digital object
             results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
-            ArrayList updates=new ArrayList();
             while (results.next()) {
                 String dsID=results.getString("dsID");
                 String dsLabel=results.getString("dsLabel");
