@@ -24,7 +24,7 @@
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-        <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#client-ip" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        <EnvironmentAttributeDesignator AttributeId="info:fedora/fedora-system:def/policy-environment#request-client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127.0.0.1</AttributeValue>
         </Apply>
