@@ -77,7 +77,12 @@ public class AutoFinder {
             throws RemoteException {
         return skeleton.resumeFindObjects(sessionToken);
     }
-
+/*
+    public static String[] getPIDs(String host, int port, String fieldQuery)
+            throws RemoteException {
+        String firstPart="http://" + host + ":" + port + "/fedora/search";
+    }
+*/
     public static void showUsage(String message) {
         System.err.println(message);
         System.err.println("Usage: fedora-find host port fields phrase");

@@ -112,7 +112,7 @@ public class FedoraOAIProvider
                 "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));
         m_setInfos=new ArrayList();
-        m_setInfos.add(new SimpleSetInfo("Regular Digital Objects", "objects", s_emptySet));
+        m_setInfos.add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects", "bmechs", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects", "bdefs", s_emptySet));
     }

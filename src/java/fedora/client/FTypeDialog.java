@@ -11,7 +11,7 @@ import fedora.client.Administrator;
 
 /**
  * Launch a dialog for selecting which object type(s) the user is interested in:
- * bdefs, bmechs, regular objects (any combination).  Result will come
+ * bdefs, bmechs, data objects (any combination).  Result will come
  * back as string consisting of combination of "D", "M", and "O" characters,
  * respectively, if selected.
  *
@@ -62,7 +62,7 @@ public class FTypeDialog
         dButton.setMnemonic(KeyEvent.VK_D);
         mButton=new JCheckBox("Behavior Mechanisms");
         mButton.setMnemonic(KeyEvent.VK_M);
-        oButton=new JCheckBox("Regular Objects");
+        oButton=new JCheckBox("Data Objects");
         oButton.setMnemonic(KeyEvent.VK_O);
         oButton.setSelected(true);
         inputPane.add(dButton);

@@ -342,7 +342,7 @@ public class Search
                     formatBox=new JCheckBox("format", fieldList.contains("format"));
                     formatBox.setToolTipText("a list of dc:format values, indicating physical or digital forms");
                     fTypeBox=new JCheckBox("fType", fieldList.contains("fType"));
-                    fTypeBox.setToolTipText("the object type (D=Behavior Def, M=Behavior Mech, O=Regular)");
+                    fTypeBox.setToolTipText("the object type (D=Behavior Def, M=Behavior Mech, O=Data Object)");
                     titleBox=new JCheckBox("title", fieldList.contains("title"));
                     titleBox.setToolTipText("a list of dc:title values (names)");
                     identifierBox=new JCheckBox("identifier", fieldList.contains("identifier"));

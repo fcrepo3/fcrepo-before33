@@ -124,7 +124,7 @@ public class Export {
         }
         if (tps.indexOf("O")!=-1) {
             toExport=getPIDs(apia, "O");
-            System.out.println("Found " + toExport.size() + " regular objects.");
+            System.out.println("Found " + toExport.size() + " data objects.");
             pidSet.addAll(toExport);
         }
         Iterator iter=pidSet.iterator();
@@ -195,7 +195,7 @@ public class Export {
         System.err.println("  PSS    is the password of repository user.");
         System.err.println("  PID    is the id of the object to export from the source repository.");
         System.err.println("  FTYPS  is any combination of the characters O, D, and M, specifying");
-        System.err.println("         which Fedora object type(s) should be exported. O=regular objects,");
+        System.err.println("         which Fedora object type(s) should be exported. O=data objects,");
         System.err.println("         D=behavior definitions, and M=behavior mechanisms.");
         System.err.println("  PATH   is the directory to export to.");
         System.err.println();

@@ -1448,7 +1448,7 @@ public class DefaultDOReplicator
 
     /**
      * Deletes all rows pertinent to the given digital object (treated as a
-     * regular data object) if they exist.
+     * data object) if they exist.
      * <p></p>
      * Pseudocode:
      * <ul><pre>
@@ -1625,8 +1625,8 @@ public class DefaultDOReplicator
      * Removes a digital object from the dissemination database.
      * <p></p>
      * If the object is a behavior definition or mechanism, it's deleted
-     * as such, and then an attempt is made to delete it as a regular
-     * digital object as well.
+     * as such, and then an attempt is made to delete it as a data object
+     * as well.
      * <p></p>
      * Note that this does not do cascading check object dependencies at
      * all.  It is expected at this point that when this is called, any

@@ -163,7 +163,7 @@ public class Ingest {
         }
         if (tps.indexOf("O")!=-1) {
             toIngest=getFiles(dir, "FedoraObject");
-            System.out.println("Found " + toIngest.size() + " regular objects.");
+            System.out.println("Found " + toIngest.size() + " data objects.");
             pidSet.addAll(ingestAll(toIngest, targetRepository, logMessage)); 
         }
         Iterator iter=pidSet.iterator();
@@ -334,7 +334,7 @@ public class Ingest {
                 exhausted=true;
             }
         }
-        String friendlyName="regular objects";
+        String friendlyName="data objects";
         if (fType.equals("D"))
             friendlyName="behavior definitions";
         if (fType.equals("M"))
@@ -375,7 +375,7 @@ public class Ingest {
         System.err.println("Where:");
         System.err.println("  PATH       is the local file or directory name.");
         System.err.println("  FTYPS      is any combination of the characters O, D, and M, specifying");
-        System.err.println("             which Fedora object type(s) should be ingested. O=regular objects,");
+        System.err.println("             which Fedora object type(s) should be ingested. O=data objects,");
         System.err.println("             D=behavior definitions, and M=behavior mechanisms.");
         System.err.println("  PID        is the id of the object to ingest from the source repository.");
         System.err.println("  SHST/THST  is the source or target repository's hostname.");
@@ -399,7 +399,7 @@ public class Ingest {
         System.err.println();
         System.err.println("fedora-ingest dir c:\\archive ODM example.com:80 fedoraAdmin fedoraAdmin \"\"");
         System.err.println();
-        System.err.println("  Same as above, but ingests all regular and behavior definition objects, too.");
+        System.err.println("  Same as above, but ingests all data and behavior definition objects, too.");
         System.err.println();
         System.exit(1);
     }

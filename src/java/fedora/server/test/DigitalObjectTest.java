@@ -59,7 +59,7 @@ public class DigitalObjectTest
         m_namespaceURI="http://www.namespaceuri.com/path/";
         HashMap nsMap=new HashMap();
         nsMap.put(m_namespacePrefix, m_namespaceURI);
-        // init regular object
+        // init data object
         m_obj=new BasicDigitalObject();
         m_obj.setContentModelId("cModel1");
         m_obj.setCreateDate(m_startTime);
