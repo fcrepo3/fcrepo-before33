@@ -162,7 +162,7 @@ public class DSInputSpecParser extends DefaultHandler
     {
       StringTokenizer st = new StringTokenizer(new String(ch, start, length), " ");
       String[] MIMETypes = new String[st.countTokens()];
-      for (int i = 0; i < st.countTokens(); i++)
+      for (int i = 0; i<MIMETypes.length; i++)
       {
         MIMETypes[i] = st.nextToken();
       }
