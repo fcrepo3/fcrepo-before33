@@ -40,6 +40,7 @@ import edu.cornell.dlrg.swing.jhelp.SimpleContentViewerUI;
 import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
 import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
+import fedora.client.actions.ExportObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
@@ -56,7 +57,7 @@ public class Administrator extends JFrame {
     private ID m_homeID;
     private SimpleHelpBroker m_helpBroker;
     
-    private File s_lastDir;
+    private static File s_lastDir;
    
     ClassLoader cl;
     
@@ -193,15 +194,11 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
 //                ActionEvent.CTRL_MASK));
                 
 //        ImageIcon BLANK_16x16_ICON=new ImageIcon("blank16x16.gif");
-        JMenuItem fileExport=new JMenuItem("Export...",KeyEvent.VK_E);
+        JMenuItem fileExport=new JMenuItem(new ExportObject());
+        fileExport.setMnemonic(KeyEvent.VK_E);
         fileExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 ActionEvent.CTRL_MASK));
         fileExport.setToolTipText("Exports a serialized Digitial Object to disk.");
-        fileExport.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                fileExportAction();
-            }
-        });
         JMenuItem filePurge=new JMenuItem("Purge...",KeyEvent.VK_P);
         filePurge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 ActionEvent.CTRL_MASK));
@@ -383,6 +380,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
         */
+    }
+    
+    public static File getLastDir() {
+        return s_lastDir;
+    }
+    
+    public static void setLastDir(File f) {
+        s_lastDir=f;
     }
     
     protected void fileIngestAction() {
