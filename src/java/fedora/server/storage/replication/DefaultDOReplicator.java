@@ -640,7 +640,7 @@ public class DefaultDOReplicator
                         HashMap dsPaths = new HashMap();
                         results=logAndExecuteQuery(st,"SELECT token FROM "
                             + "datastreamPaths WHERE token LIKE '"
-                            + doPID+"%'");
+                            + doPID + "+%'");
                         boolean isDeleted = false;
                         while (results.next())
                         {
