@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Sandy Payette (Cornell University) -->
+<!---*******************************************************************************************************************************************-->
+<!-- THIS FOXML TEST OBJECT:  Test for missing object type -->
+<!---*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:111" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---*******************************************************************************************************************************************-->
+	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
+	</foxml:objectProperties>
+</foxml:digitalObject>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---*******************************************************************************************************************************************-->
+<!-- THIS FOXML TEST OBJECT:  Test for bad inline XML datastream (malformed)-->
+<!---*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:107" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---*******************************************************************************************************************************************-->
+	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
+	</foxml:objectProperties>
+		<foxml:datastream ID="UVATECH" STATE="A" MIMETYPE="text/xml" CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="UVATECH.0" LABEL="UVA Technical Metadata Record">
+			<foxml:xmlContent>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
+					<uvalibadmin:technical BAD
+						<uvalibadmin:format>image/jpeg</uvalibadmin:format>
+						<uvalibadmin:compression>LZW</uvalibadmin:compression>
+						<uvalibadmin:bitDepth BITS=""/>
+						<uvalibadmin:colorSpace/>
+						<uvalibadmin:colorProfile CPLOCAT="" CPFILE=""/>
+						<uvalibadmin:resolution>600</uvalibadmin:resolution>
+					</uvalibadmin:technical>
+				</uvalibadmin:admin>
+			</foxml:xmlContent>
+			<foxml:contentDigest TYPE="MD5" DIGEST="00663c8dcc076adb97706e0cad9891bb"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:datastream CONTROL_GROUP="E" ID="DS1" MIMETYPE="image/x-mrsid-image" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Pavilion III, University of Virginia">
+			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:8" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:9" LABEL="Dynamic Image Sizing via MrSID Service">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="MRSID" LABEL="MRSID wavelet-encoded image binding"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+	</foxml:disseminator>
+</foxml:digitalObject>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---*******************************************************************************************************************************************-->
+<!-- THIS FOXML TEST OBJECT:  Test for bad PID-->
+<!---*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="te&st:101" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---*******************************************************************************************************************************************-->
+	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
+	</foxml:objectProperties>
+</foxml:digitalObject>
