@@ -93,6 +93,7 @@ public class Datastream
   public Date DSCreateDT;
   public long DSSize;
   public String DSLocation;
+  public String DSLocationType;
 
 
   public Datastream() {
