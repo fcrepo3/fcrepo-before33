@@ -1,10 +1,10 @@
 package fedora.server.storage.replication;
 
 /**
- * <p>Title: DOReplicator.java</p>
- * <p>Description: Replicates Fedora object data. 
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
+ * Title: DOReplicator.java
+ * Description: Replicates Fedora object data. 
+ * Copyright: Copyright (c) 2002
+ * Company: 
  * @author Paul Charlton
  * @version 1.0
  */
@@ -19,9 +19,9 @@ import fedora.server.storage.types.*;
 import fedora.server.storage.replication.*;
 
 /**
-* <p>
+* 
 * Description: Converts data read from the object reader interfaces and creates 
-* the corresponding database rows./p>
+* the corresponding database rows.
 *
 * @version 1.0
 *
@@ -29,7 +29,7 @@ import fedora.server.storage.replication.*;
 public class DOReplicator { 
 
     /**
-    * <p>
+    * 
     * Replicates a Fedora behavior definition object.
     *
     * @param bDefReader behavior definition reader
@@ -37,8 +37,10 @@ public class DOReplicator {
     * @exception ReplicationException replication processing error
     * @exception ClassNotFoundException JDBC driver error
     * @exception SQLException JDBC, SQL error
+    * @exception Exception General exeception (DBMS init code)
     */
-    public void replicateBehaviorDefinitionObject(DefinitiveBDefReader bDefReader) throws ReplicationException, ClassNotFoundException, SQLException {
+    public void replicateBehaviorDefinitionObject(DefinitiveBDefReader bDefReader) throws ReplicationException, ClassNotFoundException, SQLException, Exception {
+	Connection connection;
 	DbmsConnection db;
 	DBIDLookup dl;
 	MethodDef behaviorDefs[];
@@ -48,28 +50,30 @@ public class DOReplicator {
 	String bDefLabel;
 
 	db = new DbmsConnection();
-	db.connectDatabase();
+	connection = db.getConnection();
 
 	// Insert Behavior Definition row
 	bDefPID = bDefReader.GetObjectPID();
 	bDefLabel = bDefReader.GetObjectLabel();
 	ri = new RowInsertion();
-    	ri.insertBehaviorDefinitionRow(db, bDefPID, bDefLabel);
+    	ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
 
 	// Insert Method rows
 	dl = new DBIDLookup();
-	bDefDBID = dl.lookupBehaviorDefinitionDBID(db, bDefPID);
+	bDefDBID = dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
 	if (bDefDBID == null)
 		throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + bDefPID);
 
 	behaviorDefs = bDefReader.GetBehaviorMethods(null);
   	for (int i=0; i<behaviorDefs.length; ++i) {
-		ri.insertMethodRow(db, bDefDBID, behaviorDefs[i].methodName, behaviorDefs[i].methodLabel);
+		ri.insertMethodRow(connection, bDefDBID, behaviorDefs[i].methodName, behaviorDefs[i].methodLabel);
         }
+
+	db.freeConnection(connection);
     }
 
     /**
-    * <p>
+    * 
     * Replicates a Fedora behavior mechanism object.
     *
     * @param bMechReader behavior mechanism reader
@@ -77,12 +81,15 @@ public class DOReplicator {
     * @exception ReplicationException replication processing error
     * @exception ClassNotFoundException JDBC driver error
     * @exception SQLException JDBC, SQL error
+    * @exception Exception General exeception (DBMS init code)
     */
-    public void replicateBehaviorMechanismObject(DefinitiveBMechReader bMechReader) throws ReplicationException, ClassNotFoundException, SQLException {
+    public void replicateBehaviorMechanismObject(DefinitiveBMechReader bMechReader) throws ReplicationException, ClassNotFoundException, SQLException, Exception {
 	BMechDSBindSpec dsBindSpec;
+	Connection connection;
 	DbmsConnection db;
 	DBIDLookup dl;
 	MethodDef behaviorBindings[];
+	MethodDefOperationBind behaviorBindingsEntry;
 	RowInsertion ri;
 	String bDefDBID;
 	String bDefPID;
@@ -95,14 +102,14 @@ public class DOReplicator {
 	String cardinality;
 
 	db = new DbmsConnection();
-	db.connectDatabase();
+	connection = db.getConnection();
 
 	// Insert Behavior Mechanism row
 	dsBindSpec = bMechReader.GetDSBindingSpec(null);
 	bDefPID = dsBindSpec.bDefPID;
 
 	dl = new DBIDLookup();
-	bDefDBID = dl.lookupBehaviorDefinitionDBID(db, bDefPID);
+	bDefDBID = dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
 	if (bDefDBID == null)
 		throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + bDefPID);
 
@@ -110,73 +117,92 @@ public class DOReplicator {
 	bMechLabel = bMechReader.GetObjectLabel();
 
 	ri = new RowInsertion();
-    	ri.insertBehaviorMechanismRow(db, bDefDBID, bMechPID, bMechLabel);
+    	ri.insertBehaviorMechanismRow(connection, bDefDBID, bMechPID, bMechLabel);
 
 	// Insert DataStreamBindingSpec rows
-	bMechDBID = dl.lookupBehaviorMechanismDBID(db, bMechPID);
+	bMechDBID = dl.lookupBehaviorMechanismDBID(connection, bMechPID);
 	if (bMechDBID == null)
 		throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + bDefPID);
 
 	for (int i=0; i<dsBindSpec.dsBindRules.length; ++i) {
+
 		// Convert from type boolean to type String
-		ordinality_flag = dsBindSpec.dsBindRules[i].ordinality ? "Y" : "N";
+		ordinality_flag = dsBindSpec.dsBindRules[i].ordinality ? "true" : "false";
 		// Convert from type int to type String
 		cardinality = Integer.toString(dsBindSpec.dsBindRules[i].maxNumBindings);
 
-		ri.insertDataStreamBindingSpecRow(db, 
+		ri.insertDataStreamBindingSpecRow(connection, 
 			bMechDBID, 
 			dsBindSpec.dsBindRules[i].bindingKeyName, 
 			ordinality_flag, 
 			cardinality, 
-			// For the time being, the first array element will
-			// be used here.  This may be changed in a later release.
-			dsBindSpec.dsBindRules[i].bindingMIMETypes[0], 
 			dsBindSpec.dsBindRules[i].bindingLabel);
+
+		// Insert DataStreamMIME rows
+		dsBindingKeyDBID = 
+			dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, 
+				dsBindSpec.dsBindRules[i].bindingKeyName);
+		if (dsBindingKeyDBID == null)
+			throw new ReplicationException(
+			"DataStreamBindingSpec row doesn't exist for bMechDBID: "
+ 				+ bMechDBID + ", binding key name: " + 
+				dsBindSpec.dsBindRules[i].bindingKeyName);
+
+		for (int j=0; j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length; ++j) {
+			ri.insertDataStreamMIMERow(connection, 
+				dsBindingKeyDBID,
+				dsBindSpec.dsBindRules[i].bindingMIMETypes[j]);
+		}
 	}
 
 	behaviorBindings = bMechReader.GetBehaviorMethods(null);
 
+
 	// Insert MechanismImpl rows
 
-// Bug in GetBehaviorMethods? Waiting on Sandy's response.
-// Will probably change for loop to the following line then.
-//         for (int i=0; i<behaviorBindings.length; ++i) {
-for (int i=0; i<1; ++i) {
+        for (int i=0; i<behaviorBindings.length; ++i) {
+		behaviorBindingsEntry = (MethodDefOperationBind)behaviorBindings[i];
 
-		methodDBID = dl.lookupMethodDBID(db, bDefDBID, behaviorBindings[i].methodName);
+		if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
+
+System.out.println("Ignoring non HTTP protocol: " + behaviorBindingsEntry.protocolType
+	+ "i=" + i);
+			// For the time being, ignore bindings other than HTTP.
+			continue;
+		}
+
+		methodDBID = dl.lookupMethodDBID(connection, bDefDBID, behaviorBindingsEntry.methodName);
 		if (methodDBID == null)
-			throw new ReplicationException("Method row doesn't exist for method name: " + behaviorBindings[i].methodName);
+			throw new ReplicationException("Method row doesn't exist for method name: " + behaviorBindingsEntry.methodName);
 
 		for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
 
 			dsBindingKeyDBID = 
-				dl.lookupDataStreamBindingSpecDBID(db, bMechDBID, 
+				dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, 
 				dsBindSpec.dsBindRules[j].bindingKeyName);
 			if (dsBindingKeyDBID == null)
 				throw new ReplicationException(
 				"DataStreamBindingSpec row doesn't exist for bMechDBID: " 				+ bMechDBID + ", binding key name: " + 
 				dsBindSpec.dsBindRules[j].bindingKeyName);
 
-			ri.insertMechanismImplRow(db, 
+			ri.insertMechanismImplRow(connection, 
 				bMechDBID, 
 				bDefDBID, 
 				methodDBID, 
 				dsBindingKeyDBID,
 				"http", 
 				"text/html", 
-"","",   
-// fedora.server.storage.types.MethodDef has the below two public fields
-// commented out, so for now we put empty strings for these so it compiles.
-//				behaviorBindings[i].httpBindingAddress, 
-//				behaviorBindings[i].httpBindingOperationLocation, 
+				behaviorBindingsEntry.serviceBindingAddress, 
+				behaviorBindingsEntry.operationLocation, 
 				"1");
 		}
 	}	
 
+	db.freeConnection(connection);
     }
 
     /**
-    * <p>
+    * 
     * Replicates a Fedora data object.
     *
     * @param doReader data object reader
@@ -184,9 +210,11 @@ for (int i=0; i<1; ++i) {
     * @exception ReplicationException replication processing error
     * @exception ClassNotFoundException JDBC driver error
     * @exception SQLException JDBC, SQL error
+    * @exception Exception General exeception (DBMS init code)
     */
-    public void replicateDO(DefinitiveDOReader doReader) throws ReplicationException, ClassNotFoundException, SQLException {
+    public void replicateDO(DefinitiveDOReader doReader) throws ReplicationException, ClassNotFoundException, SQLException, Exception {
 	DSBindingMapAugmented[] allBindingMaps;
+	Connection connection;
 	DbmsConnection db;
 	Disseminator disseminators[]; 
 	DBIDLookup dl;
@@ -204,74 +232,74 @@ for (int i=0; i<1; ++i) {
     	doPID = doReader.GetObjectPID();
 
 	db = new DbmsConnection();
-	db.connectDatabase();
+	connection = db.getConnection();
 
 	// Insert Digital Object row
     	doPID = doReader.GetObjectPID();
 	doLabel = doReader.GetObjectLabel();
 
 	ri = new RowInsertion();
-    	ri.insertDigitalObjectRow(db, doPID, doLabel);
+    	ri.insertDigitalObjectRow(connection, doPID, doLabel);
 
 	dl = new DBIDLookup();
-	doDBID = dl.lookupDigitalObjectDBID(db, doPID);
+	doDBID = dl.lookupDigitalObjectDBID(connection, doPID);
 	if (doDBID == null)
 		throw new ReplicationException("DigitalObject row doesn't exist for PID: " + doPID);
 
 	disseminators = doReader.GetDisseminators(null);
 	for (int i=0; i<disseminators.length; ++i) {
-		bDefDBID = dl.lookupBehaviorDefinitionDBID(db, disseminators[i].bDefID);
+		bDefDBID = dl.lookupBehaviorDefinitionDBID(connection, disseminators[i].bDefID);
 		if (bDefDBID == null)
 			throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + disseminators[i].bDefID);
 
-		bMechDBID = dl.lookupBehaviorMechanismDBID(db,  disseminators[i].bMechID);
+		bMechDBID = dl.lookupBehaviorMechanismDBID(connection,  disseminators[i].bMechID);
 		if (bMechDBID == null)
 			throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + disseminators[i].bMechID);
 
 
 		// Insert Disseminator row if it doesn't exist.
-		dissDBID = dl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
+		dissDBID = dl.lookupDisseminatorDBID(connection, bDefDBID, bMechDBID, disseminators[i].dissID);
 		if (dissDBID == null) {
 			// Disseminator row doesn't exist, add it.
-    			ri.insertDisseminatorRow(db, bDefDBID, bMechDBID, 
+    			ri.insertDisseminatorRow(connection, bDefDBID, bMechDBID, 
 				disseminators[i].dissID, disseminators[i].dissLabel);
-			dissDBID = dl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
+			dissDBID = dl.lookupDisseminatorDBID(connection, bDefDBID, bMechDBID, disseminators[i].dissID);
 			if (dissDBID == null) 
 				throw new ReplicationException("Disseminator row doesn't exist for PID: " + disseminators[i].dissID);
 		}
 
 		// Insert DigitalObjectDissAssoc row
-    		ri.insertDigitalObjectDissAssocRow(db, doDBID, dissDBID);
+    		ri.insertDigitalObjectDissAssocRow(connection, doDBID, dissDBID);
 	}
 
 	allBindingMaps = doReader.GetDSBindingMaps(null);
 	for (int i=0; i<allBindingMaps.length; ++i) {
 
-		bMechDBID = dl.lookupBehaviorMechanismDBID(db,  allBindingMaps[i].dsBindMechanismPID);
+		bMechDBID = dl.lookupBehaviorMechanismDBID(connection,  allBindingMaps[i].dsBindMechanismPID);
 		if (bMechDBID == null)
 			throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + allBindingMaps[i].dsBindMechanismPID);
 
 		// Insert DataStreamBindingMap row if it doesn't exist.
-		bindingMapDBID = dl.lookupDataStreamBindingMapDBID(db, bMechDBID, 
+		bindingMapDBID = dl.lookupDataStreamBindingMapDBID(connection, bMechDBID, 
 			allBindingMaps[i].dsBindMapID);
 		if (bindingMapDBID == null) {
 			// DataStreamBinding row doesn't exist, add it.
-    			ri.insertDataStreamBindingMapRow(db, bMechDBID, 
+    			ri.insertDataStreamBindingMapRow(connection, bMechDBID, 
 				allBindingMaps[i].dsBindMapID, 
 				allBindingMaps[i].dsBindMapLabel);
 
-			bindingMapDBID = dl.lookupDataStreamBindingMapDBID(db, bMechDBID, allBindingMaps[i].dsBindMapID);
+			bindingMapDBID = dl.lookupDataStreamBindingMapDBID(connection, bMechDBID, allBindingMaps[i].dsBindMapID);
 			if (bindingMapDBID == null) 
 				throw new ReplicationException("lookupDataStreamBindingMapDBID row doesn't exist for bMechDBID: " + bMechDBID + ", dsBindingMapID: " + allBindingMaps[i].dsBindMapID);
 		}
 
 		for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length; ++j) {
-			dsBindingKeyDBID = dl.lookupDataStreamBindingSpecDBID(db, bMechDBID, allBindingMaps[i].dsBindingsAugmented[j].bindKeyName);
+			dsBindingKeyDBID = dl.lookupDataStreamBindingSpecDBID(connection, bMechDBID, allBindingMaps[i].dsBindingsAugmented[j].bindKeyName);
 			if (dsBindingKeyDBID == null) 
 				throw new ReplicationException("lookupDataStreamBindingDBID row doesn't exist for bMechDBID: " + bMechDBID + ", bindKeyName: " + allBindingMaps[i].dsBindingsAugmented[j].bindKeyName + "i=" + i + " j=" + j);
 
 			// Insert DataStreamBinding row
-    			ri.insertDataStreamBindingRow(db, 
+    			ri.insertDataStreamBindingRow(connection, 
 				doDBID, 
 				dsBindingKeyDBID, 
 				bindingMapDBID, 
@@ -285,10 +313,11 @@ for (int i=0; i<1; ++i) {
 		}
 	}
 
+	db.freeConnection(connection);
     }
 
     /**
-    * <p>
+    * 
     * Used for unit testing and demonstration purposes.
     *
     * @param args program arguments
