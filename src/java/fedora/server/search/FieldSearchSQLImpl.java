@@ -563,7 +563,7 @@ public class FieldSearchSQLImpl
      */
     public static String toSql(String name, String in) {
         in=in.toLowerCase();
-        if (name.startsWith("dc")) {
+        if (name.startsWith("dc") || (name.startsWith("doFields.dc"))) {
             StringBuffer newIn=new StringBuffer();
             if (!in.startsWith("*")) {
                 newIn.append("* ");
