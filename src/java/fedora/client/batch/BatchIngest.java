@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Properties;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import fedora.client.ingest.AutoIngestor;
 class BatchIngest {
@@ -65,9 +67,22 @@ class BatchIngest {
 	final void prep() throws Exception {		
 		good2go = true;
 	}
+	
+	private Hashtable pidMaps = null;
+	private Vector keys = null;
 		
+	/* package */ Hashtable getPidMaps() {
+		return pidMaps;
+	}
+	
+	/* package */ Vector getKeys() {
+		return keys;
+	}
+	
 	final void process() throws Exception {
-    		//System.err.println("in BatchIngest.process()");			
+    		//System.err.println("in BatchIngest.process()");		
+		pidMaps = new Hashtable();
+		keys = new Vector();
 		AutoIngestor autoIngestor = new AutoIngestor(host, port, username, password);
 
 		//get files from batchDirectory
@@ -80,14 +95,10 @@ class BatchIngest {
 		if (! (pidsFormat.equals("xml") || pidsFormat.equals("text")) ) {
 			System.err.println("bad pidsFormat");
 		} else {
-			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err; 
 			int badFileCount = 0;
 			int succeededIngestCount = 0;
 			int failedIngestCount = 0;
 			String logMessage = "another fedora object";
-			if (pidsFormat.equals("xml")) {
-				out.println("<map-inputids-to-pids>");
-			}
 			for (int i = 0; i < files.length; i++) {
 				if (! files[i].isFile()) {
 					badFileCount++;
@@ -110,28 +121,19 @@ class BatchIngest {
 						System.err.println("ingest failed for: " + files[i].getName());
 					} else {
 						succeededIngestCount++;
-						System.out.println("ingest succeeded for: " + files[i].getName());						
-						if (pidsFormat.equals("xml")) {
-							out.println("\t<map inputid=\"" + files[i].getName() + "\" pid=\"" + pid + "\" />");
-						} else if (pidsFormat.equals("text")) {
-							out.println(files[i].getName() + "\t" + pid);
-						} else {
-							System.err.println("bad pidsFormat");
-						}
+						System.out.println("ingest succeeded for: " + files[i].getName());
+						keys.add(files[i].getName());
+						pidMaps.put(files[i].getName(),pid);						
 					}
 				}
 			}
-			if (pidsFormat.equals("xml")) {
-				out.println("</map-inputids-to-pids>");
-			}
-			out.close();
 			System.err.println("\n" + "Batch Ingest Summary");			
 			System.err.println("\n" + (succeededIngestCount + failedIngestCount + badFileCount) + " files processed in this batch");
 			System.err.println("\t" + succeededIngestCount + " objects successfully ingested into Fedora");
 			System.err.println("\t" + failedIngestCount + " objects failed");
 			System.err.println("\t" + badFileCount + " unexpected files in directory");
 			System.err.println("\t" + (files.length - (succeededIngestCount + failedIngestCount + badFileCount)) + " files ignored after error");			
-		}		
+		}	
 	}
 	
 	public static final void main(String[] args) {

@@ -27,6 +27,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.BufferedReader;
 
+import java.util.Vector;
+
 
 class BatchXforms {
 	/** Constants used for JAXP 1.2 */
@@ -82,12 +84,19 @@ class BatchXforms {
 		good2go = true;
 	}
 	
+	private Vector keys = null;
+		
+	/* package */ Vector getKeys() {
+		return keys;
+	}	
+	
 	final void process() throws TransformerConfigurationException, Exception {
     		//System.err.println("before TransformerFactory.newInstance()"); //<<==		
     		//System.err.println("xformPath=[" + xformPath + "]"); //<<==		
 		//SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();		
 		TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT		
-    		//System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==		
+    		//System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==
+		keys = new Vector();		
 		if (good2go) {
 			int count = 0;
 			File file4catch = null;
@@ -110,7 +119,6 @@ class BatchXforms {
 						badFileCount++;
 						System.err.println("additions directory contains unexpected directory or file: " + files[i].getName());
 					} else {
-
     		//System.err.println("before tfactory.newTransformer()"); //<<==
 
 		File f = new File(xformPath);
@@ -164,16 +172,37 @@ for (int bb=0; bb<objectsPath.length(); bb++) {
 						String temp = "file:///" + files[i].getPath(); //(files[i].getPath()).replaceFirst("C:", "file:///C:");
 				//System.err.println("path is [" + temp); //files[i].getPath());							
 						transformer.setParameter("subfilepath",temp); //files[i].getPath());
-						//transform(new FileInputStream(files[i]), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
-						transform(new FileInputStream(modelPath), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
-						System.out.println("Fedora METS XML created at " + files[i].getName());
-						succeededBuildCount++;						
+						
+//System.out.println("fis");
+						FileInputStream fis = new FileInputStream(modelPath);
+//System.out.println("fos");
+						FileOutputStream fos = new FileOutputStream(objectsPath + File.separator + files[i].getName());
+//System.out.println("fos");						
+						try {
+							//transform(new FileInputStream(files[i]), new FileOutputStream (objectsPath + File.separator + files[i].getName()));
+							transform(fis, fos);
+//System.out.println("Fedora METS XML created at " + files[i].getName());
+							succeededBuildCount++;	
+//System.out.println("before keys.add()");
+							keys.add(files[i].getName());
+//System.out.println("after keys.add()");
+						} catch (Exception e) {
+							//for now, follow processing as-is and throw out rest of batch
+							throw e;
+						} finally { // so that files are available to outside editor during batchtool client use
+//System.out.println("before fis.close");
+							fis.close();
+//System.out.println("before fos.close");
+							fos.close();
+//System.out.println("after fos.close()");
+						}
 					}
 				}
 			} catch (Exception e) {
 				System.err.println("Fedora METS XML failed for " + file4catch.getName());
 				System.err.println("exception: " + e.getMessage() + " , class is " + e.getClass());
 				failedBuildCount++;
+			} finally {
 			}
 			System.err.println("\n" + "Batch Build Summary");		
 			System.err.println("\n" + (succeededBuildCount + failedBuildCount + badFileCount) + " files processed in this batch");

@@ -6,7 +6,10 @@ import com.icl.saxon.StyleSheet;
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 import java.util.Properties;
+import java.io.File;
 import java.io.FileInputStream;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class BatchTool {
 	private final Properties miscProperties;
@@ -65,15 +68,101 @@ public class BatchTool {
 			if ( (miscProperties.getProperty(AGGREGATE) != null) && miscProperties.getProperty(AGGREGATE).equals("yes") ) {
 				batchAdditions.process();
 			}
-			if ( (miscProperties.getProperty(DISCRETE) != null) && miscProperties.getProperty(DISCRETE).equals("yes") ) {
+			
+			Vector buildKeys = null;			
+			if ( (miscProperties.getProperty(DISCRETE) == null) || ! miscProperties.getProperty(DISCRETE).equals("yes") ) {
+				buildKeys = new Vector();				
+			} else {
 				batchXforms.process();
+				buildKeys = batchXforms.getKeys();				
 			}
-			if ( (miscProperties.getProperty(EAT) != null) && miscProperties.getProperty(EAT).equals("yes") ) {
-				batchIngest.process();				
+			
+			Hashtable ingestMaps = null;
+			Vector ingestKeys = null;
+			if ( (miscProperties.getProperty(EAT) == null) || ! miscProperties.getProperty(EAT).equals("yes") ) {
+				ingestMaps = new Hashtable();
+				ingestKeys = new Vector();
+			} else {
+				batchIngest.process();
+				ingestMaps = batchIngest.getPidMaps();
+				ingestKeys = batchIngest.getKeys();
 			}
+
+			String buildPath2directory = batchXformsValues.getProperty(BatchTool.ADDITIONSPATH);
+			String ingestPath2directory = batchIngestValues.getProperty(BatchTool.OBJECTSPATH);			
+			String pidsPath = batchIngestValues.getProperty(BatchTool.PIDSPATH);
+			
+			String pidsFormat = miscProperties.getProperty(BatchTool.PIDSFORMAT);
+			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err; 			
+			
+//System.out.println("pidsFormat = [" + pidsFormat + "]");
+			if (pidsFormat.equals("xml")) {
+				out.println("<" + XMLREPORTROOT + ">");
+			}
+			for (int i = 0, j = 0; i < buildKeys.size() || j < ingestKeys.size(); ) {
+//System.out.println("it = [" + i + "] [" + j + "]");				
+				String buildPath2file = "";
+				String ingestPath2file = "";
+				String pid = "";
+				try {
+					String buildFilename = "";				
+					String ingestFilename = "";
+					int compared = 0;
+					if (i < buildKeys.size()) {
+						buildFilename = (String) buildKeys.get(i);
+						compared = -1;
+					}
+					if (j < ingestKeys.size()) {
+						ingestFilename = (String) ingestKeys.get(j);
+						compared = 1;
+					}		
+					if (i < buildKeys.size() & j < ingestKeys.size()) {
+						compared =  buildFilename.compareTo(ingestFilename);
+					}
+					if (compared <= 0) {
+						buildPath2file = buildPath2directory + File.separator + buildFilename;
+						ingestPath2file = ingestPath2directory + File.separator + buildFilename;						
+						i++;
+					}
+					if (compared >= 0) {
+						ingestPath2file = ingestPath2directory + File.separator + ingestFilename;					
+						pid = (String) ingestMaps.get(ingestFilename);
+						j++;
+					}
+//System.out.println("no exceptions");					
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+//System.out.println("exception = [" + e.getMessage() + "]");
+					Thread.dumpStack();
+					throw e;
+				}
+
+				if (pidsFormat.equals("xml")) {
+//System.out.println("in loop, think it's xml i'm after]");					
+					out.print("\t<map ");
+					if (buildPath2file != null && ! buildPath2file.equals("")) {
+						out.print("path2spec=\"" + buildPath2file + "\" ");
+					}
+					if (ingestPath2file != null && ! ingestPath2file.equals("")) {
+						out.print("path2object=\"" + ingestPath2file + "\" ");
+					}
+					if (pid != null && ! pid.equals("")) {
+						out.print("pid=\"" + pid + "\" ");
+					}
+					//out.print("\t<map path2spec=\"" + buildPath2file + "\" path2object=\"" + ingestPath2file + "\" pid=\"" + pid + "\" />");					
+					out.println("/>");
+				} else if (pidsFormat.equals("text")) {
+					out.println(buildPath2file + "\t" + ingestPath2file + "\t" + pid);
+				}
+			}
+			if (pidsFormat.equals("xml")) {
+				out.println("</" + XMLREPORTROOT + ">");
+			}
+			out.close();				
 		}
 	}
 
+	static final String XMLREPORTROOT = "object-processing-map";
 	static final String STARTOBJECT = "initial-pid";
 	static final String KEYPATH = "key-path";
 	static final String METADATAPATH = "metadata";
