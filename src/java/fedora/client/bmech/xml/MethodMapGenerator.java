@@ -63,7 +63,9 @@ public class MethodMapGenerator
     {
       Element method = document.createElementNS(FMM, "fmm:Method");
       String mname = (methods[i].methodName == null) ? "" : methods[i].methodName;
+      String mlabel = (methods[i].methodLabel == null) ? "" : methods[i].methodLabel;
       method.setAttribute("operationName", mname.trim());
+      method.setAttribute("operationLabel", mlabel.trim());
       method.setAttribute("wsdlMsgName", (mname.trim() + "Request"));
       method.setAttribute("wsdlMsgOutput", "dissemResponse");
       root.appendChild(method);
@@ -114,6 +116,16 @@ public class MethodMapGenerator
       methodReturn.setAttribute("wsdlMsgTOMIME", sb.toString().trim());
       method.appendChild(methodReturn);
     }
+  }
+
+  public Element getRootElement()
+  {
+    return document.getDocumentElement();
+  }
+
+  public Document getDocument()
+  {
+    return document;
   }
 
   public void printMethodMap()

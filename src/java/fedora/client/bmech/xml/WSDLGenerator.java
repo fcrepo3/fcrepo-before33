@@ -93,8 +93,8 @@ public class WSDLGenerator
       root.appendChild(messages[i]);
     }
     root.appendChild(portType);
-    //root.appendChild(service);
-    //root.appendChild(binding);
+    root.appendChild(service);
+    root.appendChild(binding);
   }
 
   private void genWSDL(BMechTemplate newBMech)
@@ -104,11 +104,12 @@ public class WSDLGenerator
     String baseURL = newBMech.getServiceBaseURL();
     String bDefPID = newBMech.getbDefPID();
     String bMechLabel = newBMech.getbMechLabel();
+    // FIXIT!! make sure there are no spaces in middle of bMechName
     String bMechName = newBMech.getbMechName();
     Method[] methods = newBMech.getBMechMethods();
 
-    String defName = (bMechLabel == null) ? "" : bMechLabel;
-    root.setAttribute("name", defName);
+    String name = (bMechLabel == null) ? "" : bMechLabel;
+    root.setAttribute("name", name);
     root.setAttribute("targetNamespace", THIS);
     root.setAttributeNS(XMLNS, "xmlns:wsdl", WSDL);
     root.setAttributeNS(XMLNS, "xmlns:soap", SOAP);
@@ -116,7 +117,12 @@ public class WSDLGenerator
     root.setAttributeNS(XMLNS, "xmlns:http", HTTP);
     root.setAttributeNS(XMLNS, "xmlns:mime", MIME);
     root.setAttributeNS(XMLNS, "xmlns:xsd", XSD);
+    createService(bMechName, hasBaseURL, baseURL);
+    processMethods(hasBaseURL, methods);
+  }
 
+  private void createService(String bMechName, boolean hasBaseURL, String baseURL)
+  {
     // create wsdl:service
     service.setAttribute("name", bMechName);
     Element port = (Element)document.createElementNS(WSDL, "wsdl:port");
@@ -135,12 +141,14 @@ public class WSDLGenerator
       httpAddr.setAttribute("location", "LOCAL");
     }
     port.appendChild(httpAddr);
+    service.appendChild(port);
 
-    // process methods to create other WSDL elements
-    processMethods(root, methods);
+    // add label information to the http service binding
+    binding.setAttribute("name", (bMechName + "_http"));
+    binding.setAttribute("type", ("this:" + bMechName + "PortType"));
   }
 
-  private void processMethods(Element root, Method[] methods)
+  private void processMethods(boolean hasBaseURL, Method[] methods)
   {
     Element schema = (Element)document.createElementNS(XSD, "xsd:schema");
     HashMap parmUnion = new HashMap();
@@ -205,9 +213,41 @@ public class WSDLGenerator
       operation.appendChild(output);
       portType.appendChild(operation);
 
-      // add wsdl:message to wsdl:definitions
-      //root.appendChild(message);
+      // create wsdl:binding
+      // FIXIT!! assumes only an HTTP binding at this time!!
+      Element httpBinding = document.createElementNS(HTTP, "http:binding");
+      httpBinding.setAttribute("verb", "GET");
+      Element wsdlOperation = document.createElementNS(WSDL, "wsdl:operation");
+      wsdlOperation.setAttribute("name", methods[m].methodName);
+      Element httpOperation = document.createElementNS(HTTP, "http:operation");
+      if (hasBaseURL)
+      {
+        httpOperation.setAttribute("location",
+          methods[m].methodProperties.methodRelativeURL);
+      }
+      else
+      {
+        httpOperation.setAttribute("location",
+          methods[m].methodProperties.methodFullURL);
+      }
+      Element wsdlInput = document.createElementNS(WSDL, "wsdl:input");
+      wsdlInput.appendChild(document.createElementNS(HTTP, "http:urlReplacement"));
+      Element wsdlOutput = document.createElementNS(WSDL, "wsdl:output");
+      String[] MIMETypes = methods[m].methodProperties.returnMIMETypes;
+      for (int t = 0; t < MIMETypes.length; t++)
+      {
+        Element MIMEType = document.createElementNS(MIME, "mime:content");
+        MIMEType.setAttribute("type", MIMETypes[t]);
+        wsdlOutput.appendChild(MIMEType);
+      }
+      wsdlOperation.appendChild(httpOperation);
+      wsdlOperation.appendChild(wsdlInput);
+      wsdlOperation.appendChild(wsdlOutput);
+      binding.appendChild(httpBinding);
+      binding.appendChild(wsdlOperation);
     }
+    // end methods loop
+
     // add wsdl:message for Fedora dissemination response to wsdl:definitions
     Element responseMessage = document.createElementNS(WSDL, "wsdl:message");
     responseMessage.setAttribute("name", "dissemResponse");
@@ -216,7 +256,6 @@ public class WSDLGenerator
     responseMessagePart.setAttribute("type", "xsd:base64Binary");
     responseMessage.appendChild(responseMessagePart);
     messageElements.add(responseMessage);
-    //root.appendChild(responseMessage);
 
     // create wsdl:types
     Iterator iparm = parmUnion.values().iterator();
@@ -240,12 +279,13 @@ public class WSDLGenerator
       typeDef.appendChild(restrict);
       schema.appendChild(typeDef);
     }
-
-    // add wsdl:schema to wsdl:types and wsdl:types to wsdl:definitions
     types.appendChild(schema);
-    //root.appendChild(types);
   }
 
+  public Element getRootElement()
+  {
+    return document.getDocumentElement();
+  }
 
   public void printWSDL()
   {

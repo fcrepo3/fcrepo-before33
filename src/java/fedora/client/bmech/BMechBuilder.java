@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Set;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.StringTokenizer;
 
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
@@ -124,7 +125,15 @@ public class BMechBuilder extends JInternalFrame
           {
             MethodsPane mp = (MethodsPane)tabs[i];
             newBMech.setHasBaseURL(mp.hasBaseURL());
-            newBMech.setServiceBaseURL(mp.getBaseURL());
+            String baseURL = mp.getBaseURL();
+            if (baseURL.endsWith("/"))
+            {
+              newBMech.setServiceBaseURL(baseURL);
+            }
+            else
+            {
+              newBMech.setServiceBaseURL(baseURL + "/");
+            }
             newBMech.setBMechMethodMap(mp.getBMechMethodMap());
             newBMech.setBMechMethods(mp.getBMechMethods());
           }
@@ -139,6 +148,18 @@ public class BMechBuilder extends JInternalFrame
       mmg.printMethodMap();
       WSDLGenerator wsdlg = new WSDLGenerator(newBMech);
       wsdlg.printWSDL();
+      BMechMETSSerializer mets = null;
+      try
+      {
+        mets = new BMechMETSSerializer(
+          newBMech, mmg.getRootElement(), wsdlg.getRootElement());
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        assertTabPaneMsg("BMechBuilder: error in creating METS for bmech.", null);
+      }
+      mets.printMETS();
       return;
     }
 
