@@ -290,16 +290,6 @@
 			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<echo message="Translating manual.dbx to html"/>
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
-			<arg value="com.icl.saxon.StyleSheet"/>
-			<arg value="-o"/>
-			<arg path="dist/userdocs/distribution/manual.html"/>
-			<arg path="src/dbx/userdocs/manual.dbx"/>
-			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>
 		<echo message="Translating known-issues.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -907,6 +897,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.129  2003/05/16 19:38:07  cwilper
+  removed manual.dbx conversion
+
   Revision 1.128  2003/05/16 19:17:49  cwilper
   copying license and copyright files all in the right places.
 
