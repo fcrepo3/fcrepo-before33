@@ -97,7 +97,7 @@ public class ExportObject
                     if (dlg.getFile()!=null) {
                         File file = new File(new File(dlg.getDirectory()), dlg.getFile());
                         Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						ObjectFormatDialog fmtDialog = new ObjectFormatDialog("Select XML Format for Export");
 						if (fmtDialog.getSelection()!=null) {
 	                        exporter.export(pid, fmtDialog.getSelection(), new FileOutputStream(file), false);
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -128,7 +128,7 @@ public class ExportObject
                     int returnVal = browse.showOpenDialog(Administrator.getDesktop());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         Administrator.setLastDir(browse.getSelectedFile()); // remember the dir for next time
-						ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+						ObjectFormatDialog fmtDialog = new ObjectFormatDialog("Select XML Format for Export");
 						if (fmtDialog.getSelection()!=null) {
 	                        while (pidIter.hasNext()) {
 	                            String pid=(String) pidIter.next();
