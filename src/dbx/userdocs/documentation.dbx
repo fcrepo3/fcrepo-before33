@@ -50,7 +50,6 @@
 			<member><ulink url="server/webexp.html">Web Exposure</ulink></member>
 			<member><ulink url="server/do-const.html">Digital Object Construction</ulink></member>
 			<member><ulink url="server/localservices/index.html">Fedora Local Services</ulink></member>
-			<member><ulink url="server/mod-source.html">Modifying the Source</ulink></member>
 		</simplelist>
 	</sect1>
 	<sect1>
@@ -80,6 +79,7 @@
 		<title>Licensing and Use Information</title>
 		<simplelist type="vert">
 			<member><ulink url="distribution/license.html">License Information</ulink></member>
+			<member><ulink url="distribution/copyright.html">Copyright Information</ulink></member>
 		</simplelist>
 	</sect1>
 </article>
