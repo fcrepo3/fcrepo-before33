@@ -11,7 +11,7 @@ package fedora.server.management;
 
 import java.io.*;
 
-interface PIDGenerator {
+public interface PIDGenerator {
         public String generatePID(String NamespaceID) throws IOException;
         public String getLastPID() throws IOException;
 }
