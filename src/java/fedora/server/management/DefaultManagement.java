@@ -251,9 +251,17 @@ public class DefaultManagement
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
 */
 
-    private String getNextID(String id) {
-        // naive impl... just add "1" to the string
-        return id + "1";
+    // initial state is always I
+    public String addDatastream(Context context, 
+                                String pid, 
+                                String dsLabel,
+                                String mimeType,
+                                String dsLocation,
+                                String controlGroup,
+                                String mdType) throws ServerException {
+        m_ipRestriction.enforce(context);
+        DOWriter w=null;
+        return null;
     }
 
     public void modifyDatastreamByReference(Context context, String pid,
@@ -274,7 +282,7 @@ public class DefaultManagement
                     newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                     newds.DatastreamID=orig.DatastreamID;
                     // make sure it has a different id
-                    newds.DSVersionID=getNextID(orig.DSVersionID);
+                    newds.DSVersionID=w.newDatastreamID(datastreamId);
                     newds.DSLabel=dsLabel;
                     newds.DSMIME=orig.DSMIME;
                     Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -299,7 +307,7 @@ public class DefaultManagement
                         w.setDatastreamState(datastreamId, dsState); }
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                    audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+                    audit.id=w.newAuditRecordID();
                     audit.processType="Fedora API-M";
                     audit.action="modifyDatastreamByReference";
                     audit.responsibility=context.get("userId");
@@ -316,7 +324,7 @@ public class DefaultManagement
                 newds.metadataIdList().addAll(((DatastreamContent) orig).metadataIdList());
                 newds.DatastreamID=orig.DatastreamID;
                 // make sure it has a different id
-                newds.DSVersionID=getNextID(orig.DSVersionID);
+                newds.DSVersionID=w.newDatastreamID(datastreamId);
                 newds.DSLabel=dsLabel;
                 newds.DSMIME=orig.DSMIME;
                 Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -340,7 +348,7 @@ public class DefaultManagement
                         w.setDatastreamState(datastreamId, dsState); }
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+                audit.id=w.newAuditRecordID();
                 audit.processType="Fedora API-M";
                 audit.action="modifyDatastreamByReference";
                 audit.responsibility=context.get("userId");
@@ -392,7 +400,7 @@ public class DefaultManagement
             }
             newds.DatastreamID=orig.DatastreamID;
             // make sure it has a different id
-            newds.DSVersionID=getNextID(orig.DSVersionID);
+            newds.DSVersionID=w.newDatastreamID(datastreamId);
             newds.DSLabel=dsLabel;
             newds.DSMIME=orig.DSMIME;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
@@ -408,7 +416,7 @@ public class DefaultManagement
                         w.setDatastreamState(datastreamId, dsState); }
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+            audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="modifyDatastreamByReference";
             audit.responsibility=context.get("userId");
@@ -440,7 +448,7 @@ public class DefaultManagement
                     Disseminator newdiss=new Disseminator();
                     newdiss.dissID=orig.dissID;
                     // make sure it has a different id
-                    newdiss.dissVersionID=getNextID(orig.dissVersionID);
+                    newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
                     newdiss.dissLabel=dissLabel;
                     newdiss.dsBindMapID=orig.dsBindMapID;
                     newdiss.dsBindMap=orig.dsBindMap;
@@ -457,7 +465,7 @@ public class DefaultManagement
                     w.addDisseminator(newdiss);
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-                    audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+                    audit.id=w.newAuditRecordID();
                     audit.processType="Fedora API-M";
                     audit.action="modifyDisseminator";
                     audit.responsibility=context.get("userId");
@@ -534,7 +542,7 @@ public class DefaultManagement
                     start, end, deletedDates);
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-            audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+            audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
             audit.action="purgeDatastream";
             audit.responsibility=context.get("userId");
@@ -739,7 +747,7 @@ public class DefaultManagement
 
           // add the audit record
           fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-          audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+          audit.id=w.newAuditRecordID();
           audit.processType="Fedora API-M";
           audit.action="setDatastreamState";
           audit.responsibility=context.get("userId");
@@ -769,7 +777,7 @@ public class DefaultManagement
 
           // add the audit record
           fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-          audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+          audit.id=w.newAuditRecordID();
           audit.processType="Fedora API-M";
           audit.action="setDisseminatorState";
           audit.responsibility=context.get("userId");

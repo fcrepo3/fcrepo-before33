@@ -182,4 +182,56 @@ public class BasicDigitalObject
         return ret;
     }
 
+    public String newDatastreamID() {
+        return newID(datastreamIdIterator(), "DS");
+    }
+
+    public String newDatastreamID(String id) {
+        ArrayList versionIDs=new ArrayList();
+        Iterator iter=((ArrayList) m_datastreams.get(id)).iterator();
+        while (iter.hasNext()) {
+            Datastream ds=(Datastream) iter.next();
+            versionIDs.add(ds.DSVersionID);
+        }
+        return newID(versionIDs.iterator(), id + ".");
+    }
+
+    public String newDisseminatorID() {
+        return newID(disseminatorIdIterator(), "DISS");
+    }
+
+    public String newDisseminatorID(String id) {
+        ArrayList versionIDs=new ArrayList();
+        Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
+        while (iter.hasNext()) {
+            Disseminator diss=(Disseminator) iter.next();
+            versionIDs.add(diss.dissVersionID);
+        }
+        return newID(versionIDs.iterator(), id + ".");
+    }
+
+    public String newAuditRecordID() {
+        ArrayList auditIDs=new ArrayList();
+        Iterator iter=m_auditRecords.iterator();
+        while (iter.hasNext()) {
+            AuditRecord record=(AuditRecord) iter.next();
+            auditIDs.add(record.id);
+        }
+        return newID(auditIDs.iterator(), "AUDIT");
+    }
+
+    private String newID(Iterator iter, String start) {
+        int highest=1;
+        while (iter.hasNext()) {
+            String id=(String) iter.next();
+            if (id.startsWith(start) && id.length()>2) {
+                try {
+                    int num=Integer.parseInt(id.substring(2));
+                    if (num>highest) highest=num;
+                } catch (NumberFormatException ignored) { }
+            }
+        }
+        return start + highest;
+    }
+
 }

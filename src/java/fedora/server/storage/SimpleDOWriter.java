@@ -340,15 +340,43 @@ public class SimpleDOWriter
         invalidate();
     }
 
-    public void save() {
-    }
-
-    public void cancel() {
-        // cleanup temp, release session lock, and invalidate
-    }
-
     public void invalidate() {
         m_invalidated=true;
+    }
+
+    /**
+     * Generate a unique id for a datastream.
+     */
+    public String newDatastreamID() {
+        return m_obj.newDatastreamID();
+    }
+
+    /**
+     * Generate a unique id for a datastream version.
+     */
+    public String newDatastreamID(String dsID) {
+        return m_obj.newDatastreamID(dsID);
+    }
+
+    /**
+     * Generate a unique id for a disseminator.
+     */
+    public String newDisseminatorID() {
+        return m_obj.newDisseminatorID();
+    }
+
+    /**
+     * Generate a unique id for a disseminator version.
+     */
+    public String newDisseminatorID(String dissID) {
+        return m_obj.newDisseminatorID(dissID);
+    }
+
+    /**
+     * Generate a unique id for an audit record.
+     */
+    public String newAuditRecordID() {
+        return m_obj.newAuditRecordID();
     }
 
     private void assertNotPendingRemoval()

@@ -164,12 +164,34 @@ public interface DOWriter
      */
     public void commit(String logMessage) throws ServerException;
 
-    public void save() throws ServerException;
-
-    public void cancel() throws ServerException;
-
     /**
      * Marks this DOWriter handle invalid (unusable).
      */
     public void invalidate();
+
+    /**
+     * Generate a unique id for a datastream.
+     */
+    public String newDatastreamID();
+
+    /**
+     * Generate a unique id for a datastream version.
+     */
+    public String newDatastreamID(String dsID);
+
+    /**
+     * Generate a unique id for a disseminator.
+     */
+    public String newDisseminatorID();
+
+    /**
+     * Generate a unique id for a disseminator version.
+     */
+    public String newDisseminatorID(String dissID);
+
+    /**
+     * Generate a unique id for an audit record.
+     */
+    public String newAuditRecordID();    
+
 }

@@ -401,19 +401,13 @@ public class DefaultDOManager
      *
      * In the case where it is not a deletion, the session lock (TODO) is released, too.
      * This happens as the result of a writer.commit() call.
+     *
+     * FIXME: passing the logMessage in here (and writer.commit) probably
+     * isn't necessary... the audit record will already have been added by this 
+     * time.
      */
     public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
-        // make audit record
-        AuditRecord a=new AuditRecord();
-        a.id="REC1024";  // FIXME: id should be auto-gen'd somehow
-        a.processType="API-M";
-        a.action="Don't know";
-        a.responsibility=getUserId(context);
-        a.date=new Date();
-        a.justification=logMessage;
-        //obj.getAuditRecords().add(a);
-
         if (remove) {
             // Before removing an object, verify that there are no other objects
             // in the repository that depend on the object being deleted.

@@ -218,4 +218,29 @@ public interface DigitalObject {
      */
     public List disseminators(String id);
 
+    /**
+     * Generate a unique id for a datastream.
+     */
+    public String newDatastreamID();
+
+    /**
+     * Generate a unique id for a datastream version.
+     */
+    public String newDatastreamID(String dsID);
+
+    /**
+     * Generate a unique id for a disseminator.
+     */
+    public String newDisseminatorID();
+
+    /**
+     * Generate a unique id for a disseminator version.
+     */
+    public String newDisseminatorID(String dissID);
+
+    /**
+     * Generate a unique id for an audit record.
+     */
+    public String newAuditRecordID();
+
 }
