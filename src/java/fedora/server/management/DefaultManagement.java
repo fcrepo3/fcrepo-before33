@@ -52,6 +52,7 @@ import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 
@@ -237,6 +238,51 @@ public class DefaultManagement
         }
     }
 
+	public Property[] getObjectProperties(Context context, String pid)
+		throws ServerException {		
+		try {
+			logFinest("Entered DefaultManagement.getObjectProperties");
+			m_ipRestriction.enforce(context);			
+			ArrayList props = new ArrayList();
+			DOReader reader=m_manager.getReader(context, pid);
+			
+			props.add(new Property(
+						"info:fedora/fedora-system:def/fType",
+						reader.getFedoraObjectType()));
+			
+
+			props.add(new Property(
+						"info:fedora/fedora-system:def/cModel",
+						reader.getContentModelId()));
+						
+			props.add(new Property(
+						"info:fedora/fedora-system:def/label",
+						reader.GetObjectLabel()));
+						
+			props.add(new Property(
+						"info:fedora/fedora-system:def/state",
+						reader.GetObjectState()));
+						
+			props.add(new Property(
+						"info:fedora/fedora-system:def/owner",
+						reader.getOwnerId()));
+						
+			props.add(new Property(
+						"info:fedora/fedora-system:def/cDate",
+						DateUtility.convertDateToString(reader.getCreateDate())));
+						
+			props.add(new Property(
+						"info:fedora/fedora-system:def/mDate",
+						DateUtility.convertDateToString(reader.getLastModDate())));
+			
+			//Property[] extProps=reader.getExtProperties();
+			
+			return (Property[])props.toArray(new Property[0]);
+		} finally {
+			logFinest("Exiting DefaultManagement.getObjectProperties");
+		}
+	}
+
     public InputStream getObjectXML(Context context, 
                                     String pid, 
                                     String encoding) 
@@ -254,14 +300,15 @@ public class DefaultManagement
 
     public InputStream exportObject(Context context, 
                                     String pid, 
-                                    String format, 
+                                    String format,
+                                    String exportContext, 
                                     String encoding) 
     		throws ServerException {
         try {
             logFinest("Entered DefaultManagement.exportObject");
             m_ipRestriction.enforce(context);
             DOReader reader=m_manager.getReader(context, pid);
-            InputStream instream=reader.ExportObject(format);
+            InputStream instream=reader.ExportObject(format,exportContext);
             return instream;
         } finally {
             logFinest("Exiting DefaultManagement.exportObject");
