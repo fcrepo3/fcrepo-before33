@@ -6,7 +6,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Ross Wayland </METS:name>
 			<METS:note> Behavior Mechanism Object for UVA image behaviors with sizer applet, created as a sample object </METS:note>

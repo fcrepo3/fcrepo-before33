@@ -2,11 +2,11 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR DEFINITION OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:1" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for Std Image" PROFILE="fedora:BDEF">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:1" TYPE="FedoraBDefObject" LABEL="Behavior Definition Object for Std Image" PROFILE="fedora:BDEF">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Sandy Payette </METS:name>
 			<METS:note> Behavior Definition Object for standard image (abstract method definitions), created as a sample object </METS:note>

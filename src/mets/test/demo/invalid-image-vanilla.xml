@@ -6,7 +6,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Ross Wayland </METS:name>
 			<METS:note> Digital Object based on AICT image and created as the official Fedora sample object </METS:note>
@@ -295,31 +295,31 @@
 	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:fileSec>
-			<METS:fileGrp ID="DS1" STATUS="">
-				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="AICT thumbnail jpg image"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS2" STATUS="">
-				<!-- This is the medium sized image -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS3">
-				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="AICT high jpg image"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp ID="DS4">
-				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="AICT veryhigh jpg image"/>
-				</METS:file>
-			</METS:fileGrp>
-			<METS:fileGrp STATUS="A">
+		<METS:fileGrp ID="DS1" STATUS="">
+			<!--This is the thumbnail sized image -->
+			<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
+				<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="AICT thumbnail jpg image"/>
+			</METS:file>
+		</METS:fileGrp>
+		<METS:fileGrp ID="DS2" STATUS="">
+			<!-- This is the medium sized image -->
+			<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
+				<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
+			</METS:file>
+		</METS:fileGrp>
+		<METS:fileGrp ID="DS3">
+			<!--This is the high resolution image -->
+			<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
+				<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="AICT high jpg image"/>
+			</METS:file>
+		</METS:fileGrp>
+		<METS:fileGrp ID="DS4">
+			<!--This is the very high resolution image -->
+			<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
+				<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="AICT veryhigh jpg image"/>
+			</METS:file>
+		</METS:fileGrp>
+		<METS:fileGrp STATUS="A">
 			<!-- FOR Validation testing: Alternate very high file - just stored in the object, but not being used by any disseminator-->
 			<METS:file ID="DS5.0" CREATED="2002-05-25T08:32:00" MIMETYPE="image/gif" OWNERID="E" STATUS="A">
 				<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/altvhigh/006-007.jpg" xlink:title="alternate file"/>

@@ -6,7 +6,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-22T06:32:00" RECORDSTATUS="A">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Sandy Payette </METS:name>
 			<METS:note> Digital Object representing MrSID encoded image file </METS:note>
