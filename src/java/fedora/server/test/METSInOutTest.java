@@ -36,13 +36,13 @@ public class METSInOutTest {
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
             deser.deserialize(in, obj);
-            System.out.println("Done!");
+            System.out.println("Done.");
             METSDOSerializer ser=new METSDOSerializer("UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             System.out.println("Re-serializing...");
             ser.serialize(obj, out);
-            System.out.println("Done! Here it is:");
-            
+            System.out.println("Done. Here it is:");
+            System.out.println(out.toString("UTF-8"));
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
         }
