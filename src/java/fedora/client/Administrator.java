@@ -322,6 +322,11 @@ public class Administrator extends JFrame {
 		    System.out.println("InstantiateException Error:" + exc);
 		}
         */
+        
+        // turn off obnoxious Axis stdout/err messages
+        System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+        System.setProperty("org.apache.commons.logging.simplelog.defaultlog", "fatal");
+        System.setProperty("org.apache.commons.logging.simplelog.enterprise", "fatal");
         Administrator administrator=new Administrator();
 
         int xSize=710;
