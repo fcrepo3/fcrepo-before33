@@ -197,7 +197,8 @@ public class FedoraOAIProviderModule
     }
 
     public Set getMetadataFormats(String id)
-            throws RepositoryException {
+            throws NoMetadataFormatsException, IDDoesNotExistException, 
+            RepositoryException {
         return m_wrappedOAIProvider.getMetadataFormats(id);
     }
 
