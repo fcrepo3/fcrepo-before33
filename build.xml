@@ -215,6 +215,13 @@
 			<arg value="dist/server/config/deploy.wsdd"/>
 		</exec>
 	</target>
+	<target name="testclient">
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg value="fedora.server.test.TestClient"/>
+		</exec>
+	</target>
 	<target name="testdeployA">
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -287,6 +294,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.22  2002/08/15 14:47:43  cwilper
+  added testclient target
+
   Revision 1.21  2002/08/08 16:30:05  rlw
   Added target "testdeployA" (for testing, may go away) to deploy the API-A soap service.
 
