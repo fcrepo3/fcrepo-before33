@@ -35,7 +35,7 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.DEFINES_METHOD       = new RDFName(this, "definesMethod");
         this.IMPLEMENTS_BDEF      = new RDFName(this, "implementsBDef");
         this.LABEL                = new RDFName(this, "label");
-        this.LAST_MODIFIED_DATE   = new RDFName(this, "lastModifiedDate");
+
         this.OWNER                = new RDFName(this, "owner");
         this.STATE                = new RDFName(this, "state");
         this.USES_BMECH           = new RDFName(this, "usesBMech");
