@@ -135,7 +135,7 @@ public class FedoraOAIProvider
         List l=null;
         try {
             //FIXME: use maxResults from... config instead of hardcoding 100?
-            l=m_fieldSearch.listObjectFields(s_headerAndDCFields, 100,
+            l=m_fieldSearch.findObjects(s_headerAndDCFields, 100,
                     new FieldSearchQuery(Condition.getConditions("pid='" + pid 
                     + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
@@ -147,7 +147,7 @@ public class FedoraOAIProvider
         } else {
             // see if it exists
             try {
-                l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+                l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
                         new FieldSearchQuery(Condition.getConditions("pid='" 
                         + pid + "'"))).objectFieldsList();
             } catch (ServerException se) {
@@ -172,7 +172,7 @@ public class FedoraOAIProvider
         List l=null;
         FieldSearchResult fsr;
         try {
-            fsr=m_fieldSearch.listObjectFields(s_headerAndDCFields, (int) getMaxRecords(),
+            fsr=m_fieldSearch.findObjects(s_headerAndDCFields, (int) getMaxRecords(),
                     new FieldSearchQuery(Condition.getConditions(
                     "dcmDate>'2000-01-01'" + getDatePart(from, until) 
                     + getFTypePart(set))));
@@ -310,7 +310,7 @@ public class FedoraOAIProvider
         List l=null;
         FieldSearchResult fsr;
         try {
-            fsr=m_fieldSearch.resumeListObjectFields(resumptionToken);
+            fsr=m_fieldSearch.resumeFindObjects(resumptionToken);
             l=fsr.objectFieldsList();
         } catch (UnknownSessionTokenException uste) {
             throw new BadResumptionTokenException("Not a known resumptionToken.");
@@ -379,7 +379,7 @@ public class FedoraOAIProvider
         List l=null;
         FieldSearchResult fsr;
         try {
-            fsr=m_fieldSearch.listObjectFields(s_headerFields, (int) getMaxHeaders(),
+            fsr=m_fieldSearch.findObjects(s_headerFields, (int) getMaxHeaders(),
                     new FieldSearchQuery(Condition.getConditions(
                     "dcmDate>'2000-01-01'" + getDatePart(from, until) 
                     + getFTypePart(set))));
@@ -424,7 +424,7 @@ public class FedoraOAIProvider
         List l=null;
         FieldSearchResult fsr;
         try {
-            fsr=m_fieldSearch.resumeListObjectFields(resumptionToken);
+            fsr=m_fieldSearch.resumeFindObjects(resumptionToken);
             l=fsr.objectFieldsList();
         } catch (UnknownSessionTokenException uste) {
             throw new BadResumptionTokenException("Not a known resumptionToken.");
@@ -490,7 +490,7 @@ public class FedoraOAIProvider
         String pid=getPID(id);
         List l=null;
         try {
-            l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+            l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
                     new FieldSearchQuery(Condition.getConditions("pid='" 
                     + pid + "' dcmDate>'2000-01-01'"))).objectFieldsList();
         } catch (ServerException se) {
@@ -500,7 +500,7 @@ public class FedoraOAIProvider
             return m_formats;
         }
         try {
-            l=m_fieldSearch.listObjectFields(new String[] {"pid"}, 1,
+            l=m_fieldSearch.findObjects(new String[] {"pid"}, 1,
                     new FieldSearchQuery(Condition.getConditions("pid='" 
                     + pid + "'"))).objectFieldsList();
         } catch (ServerException se) {

@@ -283,14 +283,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     return null;
   }
   
-  public FieldSearchResult listObjectFields(String[] resultFields, 
+  public FieldSearchResult findObjects(String[] resultFields, 
           NonNegativeInteger maxResults, FieldSearchQuery query) 
           throws RemoteException {
       Context context=getContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
-                  listObjectFields(context, resultFields, maxResults.intValue(), 
+                  findObjects(context, resultFields, maxResults.intValue(), 
                   TypeUtility.convertGenFieldSearchQueryToFieldSearchQuery(
                   query));
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
@@ -319,13 +319,13 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                   objectFields);
 */
 
-  public FieldSearchResult resumeListObjectFields(String sessionToken) 
+  public FieldSearchResult resumeFindObjects(String sessionToken) 
           throws java.rmi.RemoteException {
       Context context=getContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
-                  resumeListObjectFields(context, sessionToken);
+                  resumeFindObjects(context, sessionToken);
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
       } catch (ServerException se) {
           logStackTrace(se);

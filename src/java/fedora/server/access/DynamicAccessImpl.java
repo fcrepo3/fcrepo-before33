@@ -263,7 +263,7 @@ public class DynamicAccessImpl
 
   // FIXIT: What do these mean in this context...anything?
   // Maybe these methods' exposure needs to be re-thought?
-  public FieldSearchResult listObjectFields(Context context,
+  public FieldSearchResult findObjects(Context context,
           String[] resultFields, int maxResults, FieldSearchQuery query)
           throws ServerException {
       return null;
@@ -271,7 +271,7 @@ public class DynamicAccessImpl
 
   // FIXIT: What do these mean in this context...anything?
   // Maybe these methods' exposure needs to be re-thought?
-  public FieldSearchResult resumeListObjectFields(Context context,
+  public FieldSearchResult resumeFindObjects(Context context,
           String sessionToken) throws ServerException {
       return null;
   }

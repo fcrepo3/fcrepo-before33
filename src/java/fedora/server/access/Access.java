@@ -131,7 +131,7 @@ public interface Access
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public FieldSearchResult listObjectFields(Context context, 
+  public FieldSearchResult findObjects(Context context, 
           String[] resultFields, int maxResults, FieldSearchQuery query) 
           throws ServerException;
 
@@ -144,7 +144,7 @@ public interface Access
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public FieldSearchResult resumeListObjectFields(Context context,
+  public FieldSearchResult resumeFindObjects(Context context,
           String sessionToken) throws ServerException;
   
 }

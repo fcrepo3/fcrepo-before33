@@ -137,7 +137,7 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="listObjectFieldsRequest">
+	<message name="findObjectsRequest">
 		<part name="resultFields" type="fedora-types:ArrayOfString">
 			<documentation>an array of unique object fields
             from fedora-types:ObjectFields.  This tells the server which fields
@@ -153,13 +153,13 @@
 			<documentation>the terms or conditions for the search.</documentation>
 		</part>
 	</message>
-	<message name="listObjectFieldsResponse">
+	<message name="findObjectsResponse">
 		<part name="response" type="fedora-types:FieldSearchResult">
 			<documentation>containing an array of ObjectFields and, possibly,
             a listSession.</documentation>
 		</part>
 	</message>
-	<message name="resumeListObjectFieldsRequest">
+	<message name="resumeFindObjectsRequest">
 		<part name="sessionToken" type="xsd:string">
 			<documentation>the token of the session in which the next few
                 results can be found.</documentation>
@@ -235,19 +235,19 @@
 			<input message="fedora-api:getBehaviorMethodsXMLRequest"/>
 			<output message="fedora-api:getBehaviorMethodsXMLResponse"/>
 		</operation>
-		<operation name="listObjectFields">
+		<operation name="findObjects">
 			<documentation>Gets the requested ObjectFields on all objects in the
                 repository matching the given criteria.
 			</documentation>
-			<input message="fedora-api:listObjectFieldsRequest"/>
-			<output message="fedora-api:listObjectFieldsResponse"/>
+			<input message="fedora-api:findObjectsRequest"/>
+			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
-		<operation name="resumeListObjectFields">
+		<operation name="resumeFindObjects">
 			<documentation>Gets the next list of results from a truncated
-                listObjectFields response.
+                findObjects response.
 			</documentation>
-			<input message="fedora-api:resumeListObjectFieldsRequest"/>
-			<output message="fedora-api:listObjectFieldsResponse"/>
+			<input message="fedora-api:resumeFindObjectsRequest"/>
+			<output message="fedora-api:findObjectsResponse"/>
 		</operation>
 	</portType>
 	<binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
@@ -315,8 +315,8 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-		<operation name="listObjectFields">
-			<http:operation location="listObjectFields"/>
+		<operation name="findObjects">
+			<http:operation location="findObjects"/>
 			<input>
 				<http:urlEncoded/>
 			</input>
@@ -324,8 +324,8 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-		<operation name="resumeListObjectFields">
-			<http:operation location="resumeListObjectFields"/>
+		<operation name="resumeFindObjects">
+			<http:operation location="resumeFindObjects"/>
 			<input>
 				<http:urlEncoded/>
 			</input>
@@ -390,8 +390,8 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<operation name="listObjectFields">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectFields"/>
+		<operation name="findObjects">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#findObjects"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
@@ -399,8 +399,8 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<operation name="resumeListObjectFields">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#resumeListObjectFields"/>
+		<operation name="resumeFindObjects">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#resumeFindObjects"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>

@@ -51,7 +51,7 @@ public interface FieldSearch {
      * @return FieldSearchResult the results
      * @throws ServerException if anything went wrong
      */
-    public FieldSearchResult listObjectFields(String[] resultFields, 
+    public FieldSearchResult findObjects(String[] resultFields, 
             int maxResults, FieldSearchQuery query) 
             throws ServerException;
 
@@ -64,7 +64,7 @@ public interface FieldSearch {
      * @return FieldSearchResult the results
      * @throws ServerException if anything went wrong
      */
-    public FieldSearchResult resumeListObjectFields(String sessionToken) 
+    public FieldSearchResult resumeFindObjects(String sessionToken) 
             throws ServerException;
             
 }

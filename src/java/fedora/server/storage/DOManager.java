@@ -89,11 +89,11 @@ public interface DOManager
             Calendar lastModDateMin, Calendar lastModDateMax) 
             throws ServerException;
             
-    public FieldSearchResult listObjectFields(Context context, 
+    public FieldSearchResult findObjects(Context context, 
             String[] resultFields, int maxResults, FieldSearchQuery query) 
             throws ServerException;
 
-    public FieldSearchResult resumeListObjectFields(Context context,
+    public FieldSearchResult resumeFindObjects(Context context,
             String sessionToken) 
             throws ServerException;
             

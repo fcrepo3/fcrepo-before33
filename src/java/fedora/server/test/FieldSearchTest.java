@@ -103,7 +103,7 @@ public class FieldSearchTest
         try {
             List results;
             //FIXME: limit # of returned results by...what?
-            results=m_fieldSearch.listObjectFields(new String[] {"pid", "cDate"}, 100,
+            results=m_fieldSearch.findObjects(new String[] {"pid", "cDate"}, 100,
                     new FieldSearchQuery("*test*")).objectFieldsList();
             System.out.println("search('pid', 'test') got " + results.size() + " results.");
             for (int i=0; i<results.size(); i++) {
@@ -213,7 +213,7 @@ public class FieldSearchTest
     public void printSimpleSearch(String[] fields, String terms) {
         try {
             System.out.println("Searching...");
-            printResults(fields, m_fieldSearch.listObjectFields(fields, 50,
+            printResults(fields, m_fieldSearch.findObjects(fields, 50,
                     new FieldSearchQuery(terms)).objectFieldsList());
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " 
@@ -225,7 +225,7 @@ public class FieldSearchTest
     public void printAdvancedSearch(String[] fields, String conditionQuery) {
         try {
             System.out.println("Searching...");
-            printResults(fields, m_fieldSearch.listObjectFields(fields, 50,
+            printResults(fields, m_fieldSearch.findObjects(fields, 50,
                     new FieldSearchQuery(Condition.getConditions(
                     conditionQuery))).objectFieldsList());
         } catch (Exception e) {

@@ -358,7 +358,7 @@ public class DefaultDOManager
         if (remove) {
             // Before removing an object, verify that there are no other objects
             // in the repository that depend on the object being deleted.
-            FieldSearchResult result = listObjectFields(context,
+            FieldSearchResult result = findObjects(context,
                 new String[] {"pid"}, 10,
                 new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
             if (result.objectFieldsList().size() > 0)
@@ -370,7 +370,7 @@ public class DefaultDOManager
                     + "interface with the query \"bDef~" + obj.getPid()
                     + "\" to obtain a list of dependent objects.");
             }
-            result = listObjectFields(context,
+            result = findObjects(context,
                 new String[] {"pid"}, 10,
                 new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
             if (result.objectFieldsList().size() > 0)
@@ -1430,16 +1430,16 @@ public class DefaultDOManager
         }
     }
 
-    public FieldSearchResult listObjectFields(Context context,
+    public FieldSearchResult findObjects(Context context,
             String[] resultFields, int maxResults, FieldSearchQuery query)
             throws ServerException {
-        return m_fieldSearch.listObjectFields(resultFields, maxResults, query);
+        return m_fieldSearch.findObjects(resultFields, maxResults, query);
     }
 
-    public FieldSearchResult resumeListObjectFields(Context context,
+    public FieldSearchResult resumeFindObjects(Context context,
             String sessionToken)
             throws ServerException {
-        return m_fieldSearch.resumeListObjectFields(sessionToken);
+        return m_fieldSearch.resumeFindObjects(sessionToken);
     }
 
 }

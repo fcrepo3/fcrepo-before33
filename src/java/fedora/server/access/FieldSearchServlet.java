@@ -121,13 +121,13 @@ public class FieldSearchServlet
             FieldSearchResult fsr=null;
             if ((fieldsArray!=null && fieldsArray.length>0)) {
                 if (sessionToken!=null) {
-                    fsr=s_access.resumeListObjectFields(context, sessionToken);
+                    fsr=s_access.resumeFindObjects(context, sessionToken);
                 } else {
                     if ((terms!=null) && (terms.length()!=0)) {
-                        fsr=s_access.listObjectFields(context, fieldsArray, 
+                        fsr=s_access.findObjects(context, fieldsArray, 
                                 maxResults, new FieldSearchQuery(terms));
                     } else {
-                        fsr=s_access.listObjectFields(context, fieldsArray, 
+                        fsr=s_access.findObjects(context, fieldsArray, 
                                 maxResults, new FieldSearchQuery(
                                 Condition.getConditions(query)));
                     }

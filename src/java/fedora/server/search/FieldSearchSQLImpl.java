@@ -236,7 +236,7 @@ public class FieldSearchSQLImpl
         }
     }
     
-    public FieldSearchResult listObjectFields(String[] resultFields, 
+    public FieldSearchResult findObjects(String[] resultFields, 
             int maxResults, FieldSearchQuery query)
             throws UnrecognizedFieldException, ObjectIntegrityException,
             RepositoryConfigurationException, StreamIOException, 
@@ -256,7 +256,7 @@ public class FieldSearchSQLImpl
         }
     }
 
-    public FieldSearchResult resumeListObjectFields(String sessionToken) 
+    public FieldSearchResult resumeFindObjects(String sessionToken) 
             throws UnrecognizedFieldException, ObjectIntegrityException,
             RepositoryConfigurationException, StreamIOException, 
             ServerException, UnknownSessionTokenException {
