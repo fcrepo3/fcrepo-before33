@@ -9,11 +9,14 @@ import javax.swing.JDialog;
 import javax.swing.JComboBox;
 import javax.swing.JRadioButton;
 import javax.swing.JCheckBox;
+import javax.swing.JOptionPane;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.JComponent;
@@ -25,9 +28,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.Vector;
+import java.util.StringTokenizer;
 
 import fedora.client.bmech.data.*;
 
@@ -39,21 +45,64 @@ public class MethodPropertiesDialog extends JDialog
     private JRadioButton rb_http;
     private JTextField rb_http_URL;
     private JRadioButton rb_soap;
+    private JTextField returnMIMES;
+    private MethodProperties mp;
 
-    // These are the combobox values
-    private String[] parmTypes = new String[]{"USER", "DEFAULT", "DATASTREAM"};
-    private String[] parmReq = new String[] {"YES", "NO"};
-    private String[] parmPassBy = new String[] {"REF", "VALUE"};
+    // These are used to load JComboBox table columns
+    private HashMap parmTypeTbl = new HashMap();
+    private HashMap parmTypeToDisplayTbl = new HashMap();
+    private void loadParmTypeTbl()
+    {
+      parmTypeTbl.put("USER", MethodParm.USER_INPUT);
+      parmTypeTbl.put("DATASTREAM", MethodParm.DATASTREAM_INPUT);
+      parmTypeTbl.put("DEFAULT", MethodParm.DEFAULT_INPUT);
+    }
+    private void loadParmTypeToDisplayTbl()
+    {
+      parmTypeToDisplayTbl.put(MethodParm.USER_INPUT, "USER");
+      parmTypeToDisplayTbl.put(MethodParm.DATASTREAM_INPUT, "DATASTREAM");
+      parmTypeToDisplayTbl.put(MethodParm.DEFAULT_INPUT, "DEFAULT");
+    }
+    private HashMap passByTbl = new HashMap();
+    private HashMap passByToDisplayTbl = new HashMap();
+    private void loadPassByTbl()
+    {
+      passByTbl.put("URL_REF", MethodParm.PASS_BY_REF);
+      passByTbl.put("VALUE", MethodParm.PASS_BY_VALUE);
+    }
+    private void loadPassByToDisplayTbl()
+    {
+      passByToDisplayTbl.put(MethodParm.PASS_BY_REF, "URL_REF");
+      passByToDisplayTbl.put(MethodParm.PASS_BY_VALUE, "VALUE");
+    }
+    private HashMap parmReqTbl = new HashMap();
+    private HashMap parmReqToDisplayTbl = new HashMap();
+    private void loadParmReqTbl()
+    {
+      parmReqTbl.put("YES", "true");
+      parmReqTbl.put("NO", "false");
+    }
+    private void loadParmReqToDisplayTbl()
+    {
+      parmReqToDisplayTbl.put("true", "YES");
+      parmReqToDisplayTbl.put("false", "NO");
+    }
+    //private String[] parmReq = new String[] {"YES", "NO"};
 
 
     public MethodPropertiesDialog(MethodsPane parent, String methodName,
       MethodProperties methodProperties)
     {
+        loadParmTypeTbl();
+        loadParmTypeToDisplayTbl();
+        loadPassByTbl();
+        loadPassByToDisplayTbl();
+        loadParmReqTbl();
+        loadParmReqToDisplayTbl();
         this.parent = parent;
         this.methodName = methodName;
-        renderCurrentProperties(methodProperties);
-        setTitle("Method Properties");
-        setSize(600, 300);
+        setTitle("Method Properties for: " + methodName);
+        setSize(800, 400);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
@@ -71,22 +120,23 @@ public class MethodPropertiesDialog extends JDialog
         rb_buttonGroup.add(rb_http);
         rb_buttonGroup.add(rb_soap);
         JPanel bindingPanel = new JPanel();
-        bindingPanel.setBorder(new TitledBorder("Method Binding"));
+        bindingPanel.setBorder(new TitledBorder("Method Binding:"));
         bindingPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.anchor = GridBagConstraints.WEST;
-        gbc.insets = new Insets(2,2,2,2);
+        gbc.insets = new Insets(15,2,2,2);
         gbc.gridy = 0;
         gbc.gridx = 0;
         bindingPanel.add(rb_http, gbc);
         gbc.gridx = 1;
         bindingPanel.add(rb_http_URL, gbc);
+        gbc.insets = new Insets(2,2,15,2);
         gbc.gridy = 1;
         gbc.gridx = 0;
         bindingPanel.add(rb_soap, gbc);
 
-        // User Parms Table Panel
-        parmTable = new JTable(10,7);
+        // Parms Table Panel
+        parmTable = new JTable(20,7);
         parmTable.setColumnSelectionAllowed(false);
         parmTable.setRowSelectionAllowed(true);
         parmTable.setRowHeight(18);
@@ -96,16 +146,22 @@ public class MethodPropertiesDialog extends JDialog
         // Set the ParmType column to be rendered and edited with JComboBox
         TableColumn tc1 = parmTable.getColumnModel().getColumn(1);
         tc1.setHeaderValue("Parm Type");
+        tc1.sizeWidthToFit();
+        String[] parmTypes = (String[])parmTypeTbl.keySet().toArray(new String[0]);
+        //String[] parmTypes = new String[] {"A", "B"};
         tc1.setCellRenderer(new ComboBoxRenderer(parmTypes));
         tc1.setCellEditor(new ComboBoxTableCellEditor(parmTypes));
         // Set the ParmReq column to be rendered and edited with JComboBox
         TableColumn tc2 = parmTable.getColumnModel().getColumn(2);
-        tc2.setHeaderValue("Parm Req'd");
+        tc2.setHeaderValue("Required?");
+        String[] parmReq = (String[])parmReqTbl.keySet().toArray(new String[0]);
         tc2.setCellRenderer(new ComboBoxRenderer(parmReq));
         tc2.setCellEditor(new ComboBoxTableCellEditor(parmReq));
         // Set the PassBy column to be rendered and edited with JComboBox
         TableColumn tc3 = parmTable.getColumnModel().getColumn(3);
         tc3.setHeaderValue("Pass By");
+        String[] parmPassBy = (String[])passByTbl.keySet().toArray(new String[0]);
+        //String[] parmPassBy = new String[] {"A", "B"};
         tc3.setCellRenderer(new ComboBoxRenderer(parmPassBy));
         tc3.setCellEditor(new ComboBoxTableCellEditor(parmPassBy));
         TableColumn tc4 = parmTable.getColumnModel().getColumn(4);
@@ -152,9 +208,13 @@ public class MethodPropertiesDialog extends JDialog
         t_buttonPanel.add(jb2);
         t_buttonPanel.add(jb3);
 
+        JPanel parmsPanel = new JPanel(new BorderLayout());
+        parmsPanel.setBorder(new TitledBorder("Method Parameter Definitions:"));
+        parmsPanel.add(scrollpane, BorderLayout.CENTER);
+        parmsPanel.add(t_buttonPanel, BorderLayout.EAST);
 
         // Dialog Buttons Panel
-        JButton done = new JButton("Save");
+        JButton done = new JButton("OK");
         done.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             saveProperties();
@@ -170,10 +230,33 @@ public class MethodPropertiesDialog extends JDialog
         mainButtonPanel.add(done);
         mainButtonPanel.add(cancel);
 
+        // Method Return Types Panel
+        returnMIMES = new JTextField(30);
+        JPanel returnPanel = new JPanel();
+        returnPanel.setBorder(new TitledBorder("Method Return Types:"));
+        returnPanel.setLayout(new GridBagLayout());
+        GridBagConstraints gbc2 = new GridBagConstraints();
+        gbc2.anchor = GridBagConstraints.WEST;
+        gbc2.insets = new Insets(15,2,15,2);
+        gbc2.gridy = 0;
+        gbc2.gridx = 0;
+        returnPanel.add(new JLabel("MIME types (comma delimit):"), gbc2);
+        gbc2.gridx = 1;
+        returnPanel.add(returnMIMES, gbc2);
+
+        JPanel lowerPanel = new JPanel();
+        lowerPanel.setLayout(new BorderLayout());
+        lowerPanel.add(returnPanel, BorderLayout.NORTH);
+        lowerPanel.add(mainButtonPanel, BorderLayout.SOUTH);
+
         getContentPane().add(bindingPanel, BorderLayout.NORTH);
-        getContentPane().add(scrollpane, BorderLayout.CENTER);
-        getContentPane().add(t_buttonPanel, BorderLayout.EAST);
-        getContentPane().add(mainButtonPanel, BorderLayout.SOUTH);
+        //getContentPane().add(topPanel, BorderLayout.NORTH);
+        getContentPane().add(parmsPanel, BorderLayout.CENTER);
+        //getContentPane().add(scrollpane, BorderLayout.CENTER);
+        //getContentPane().add(t_buttonPanel, BorderLayout.EAST);
+        getContentPane().add(lowerPanel, BorderLayout.SOUTH);
+        //getContentPane().add(mainButtonPanel, BorderLayout.SOUTH);
+        renderCurrentProperties(methodProperties);
         setVisible(true);
     }
 
@@ -198,10 +281,12 @@ public class MethodPropertiesDialog extends JDialog
     {
       System.out.println("MethodPropertiesDialog.saveProperties: " +
         "Saving values back in parent");
-      parent.setBMechMethodProperties(methodName, getMethodProperties());
-      //((MethodsPane)this.getParent()).setBMechMethodProperties(methodName, getMethodProperties());
-      if (validMethodProperties())
+      setMethodProperties();
+      if (validMethodProperties(getMethodProperties()))
       {
+        System.out.println("MethodPropertiesDialog.saveProperties: " +
+        "all method properties are valid.");
+        parent.setBMechMethodProperties(methodName, getMethodProperties());
         setVisible(false);
         dispose();
       }
@@ -213,44 +298,145 @@ public class MethodPropertiesDialog extends JDialog
       dispose();
     }
 
-    private boolean validMethodProperties()
+    private boolean parmsInURL(String http_URL, MethodParm[] parms)
     {
-      if (rb_http.isSelected())
+      for (int i=0; i<parms.length; i++)
       {
-        if (rb_http_URL.getText().equals(""))
+        String pattern = "\\(" + parms[i].parmName  + "\\)";
+        if (!(foundInString(http_URL, pattern)))
+        {
+          System.out.println("str: " + pattern + " not found in: " + http_URL);
+          return false;
+        }
+      }
+      System.out.println("All parms found within URL: " + http_URL);
+      return true;
+    }
+
+    private boolean foundInString(String inputString, String patternString)
+    {
+      Pattern pattern = Pattern.compile(patternString);
+      Matcher m = pattern.matcher(inputString);
+      return m.find();
+    }
+
+    private boolean validMethodProperties(MethodProperties mp)
+    {
+      System.out.println("MethodPropertiesDialog: validating properties...");
+      return (validBinding(mp)
+              && validMethodParms(mp.methodParms)
+              && validReturnTypes(mp.returnMIMETypes))
+        ? true : false;
+    }
+
+    private boolean validReturnTypes(String[] mimeTypes)
+    {
+      if (mimeTypes.length <= 0)
+      {
+          parent.assertMethodPropertiesMsg("You must enter an at least one return MIME type for method!");
+          return false;
+      }
+      System.out.println("Method Return Type is valid.");
+      return true;
+
+    }
+
+    private boolean validBinding(MethodProperties mp)
+    {
+      if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
+      {
+        if (mp.methodFullURL.equalsIgnoreCase("") || mp.methodFullURL == null)
         {
           parent.assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
           return false;
         }
+        else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
+        {
+          parent.assertMethodPropertiesMsg("A parm from the parm table is not "
+            + "encoded in the HTTP URL. See Help for URL replacement syntax.");
+          return false;
+        }
       }
+      else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
+      {
+          parent.assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
+            + " Please select HTTP binding.");
+          return false;
+
+      }
+      System.out.println("Method Binding is valid.");
+      return true;
+
+    }
+
+    private boolean validMethodParms(MethodParm[] parms)
+    {
+      for (int i=0; i<parms.length; i++)
+      {
+        if (!validMethodParm(parms[i]))
+        {
+          return false;
+        }
+      }
+      System.out.println("Method parms are valid.");
+      return true;
+    }
+
+    private boolean validMethodParm(MethodParm parm)
+    {
+        if ((parm.parmType == null) || (parm.parmType.equalsIgnoreCase("")))
+        {
+          parent.assertMethodPropertiesMsg("Parm Type must be selected for parm "
+            + parm.parmName);
+          return false;
+        }
+        else if ( parm.parmType.equalsIgnoreCase(parm.DATASTREAM_INPUT)
+          && parm.parmPassBy.equalsIgnoreCase(parm.PASS_BY_VALUE))
+        {
+          parent.assertMethodPropertiesMsg("'Pass By' must be URL_REF "
+            + "when 'Parm Type' is fedora:datastreamInputType.");
+          return false;
+        }
+        else if ((parm.parmPassBy == null) || (parm.parmPassBy.equalsIgnoreCase("")))
+        {
+          parent.assertMethodPropertiesMsg("A value for 'Pass By' must be selected for parm "
+            + parm.parmName);
+          return false;
+        }
+      System.out.println("Method parm " + parm.parmName + " is valid.");
       return true;
     }
 
     private MethodProperties getMethodProperties()
     {
-      MethodProperties mp = new MethodProperties();
-      if (rb_http.isSelected())
-      {
-        mp.methodFullURL = rb_http_URL.getText().trim();
-        mp.methodRelativeURL = null;
-        mp.protocolType = "HTTP";
-      }
-      else
-      {
-        mp.protocolType = "SOAP";
-      }
-
-      mp.methodParms = getMethodParms();
-      mp.dsBindingKeys = getDSBindingKeys(mp.methodParms);
       return mp;
     }
 
-    private String[] getDSBindingKeys(MethodParm[] parms)
+    private void setMethodProperties()
+    {
+      mp = new MethodProperties();
+      if (rb_http.isSelected())
+      {
+        mp.methodFullURL = rb_http_URL.getText();
+        mp.methodRelativeURL = null;
+        mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+      }
+      else
+      {
+        mp.protocolType = mp.SOAP_MESSAGE_PROTOCOL;
+      }
+      mp.returnMIMETypes = unloadReturnTypes();
+      mp.methodParms = unloadMethodParms();
+      //mp.dsBindingKeys = getDSBindingKeys(mp.methodParms);
+      return;
+    }
+
+    private String[] setDSBindingKeys(MethodParm[] parms)
     {
       Vector dsbindkeys = new Vector();
       for (int i=0; i<parms.length; i++)
       {
-        if (parms[i].parmType.equalsIgnoreCase("DATASTREAM"))
+        if (parms[i].parmType.equalsIgnoreCase(MethodParm.DATASTREAM_INPUT))
         {
           dsbindkeys.add(parms[i].parmName);
         }
@@ -258,8 +444,12 @@ public class MethodPropertiesDialog extends JDialog
       return (String[])dsbindkeys.toArray(new String[0]);
     }
 
-    private MethodParm[] getMethodParms()
+    private MethodParm[] unloadMethodParms()
     {
+      if (parmTable.isEditing())
+      {
+        parmTable.getCellEditor().stopCellEditing();
+      }
       HashMap parmMap = new HashMap();
       int rowcount = parmTable.getModel().getRowCount();
       System.out.println("parmTable rowcount=" + rowcount);
@@ -268,12 +458,12 @@ public class MethodPropertiesDialog extends JDialog
         if (parmTable.getValueAt(i,0) != null && parmTable.getValueAt(i,0) != "")
         {
           MethodParm parm = new MethodParm();
-          parm.parmName = (String)parmTable.getValueAt(i,0);
-          parm.parmType = (String)parmTable.getValueAt(i,1);
-          parm.parmRequired = (String)parmTable.getValueAt(i,2);
-          parm.parmPassBy = (String)parmTable.getValueAt(i,3);
-          parm.parmDefaultValue = (String)parmTable.getValueAt(i,4);
-          parm.parmLabel = (String)parmTable.getValueAt(i,5);
+          parm.parmName = ((String)parmTable.getValueAt(i,0));
+          parm.parmType = ((String)parmTypeTbl.get(parmTable.getValueAt(i,1)));
+          parm.parmRequired = ((String)parmReqTbl.get(parmTable.getValueAt(i,2)));
+          parm.parmPassBy = ((String)passByTbl.get(parmTable.getValueAt(i,3)));
+          parm.parmDefaultValue = ((String)parmTable.getValueAt(i,4));
+          parm.parmLabel = ((String)parmTable.getValueAt(i,5));
           parm.parmDomainValues = new String[0];
           parmMap.put(parm.parmName, parm);
         }
@@ -281,9 +471,94 @@ public class MethodPropertiesDialog extends JDialog
       return (MethodParm[])parmMap.values().toArray(new MethodParm[0]);
     }
 
-    private void renderCurrentProperties(MethodProperties properties)
+    private String[] unloadReturnTypes()
     {
-
+      Vector mimeTypes = new Vector();
+      StringTokenizer st = new StringTokenizer(returnMIMES.getText(), ",");
+      while (st.hasMoreElements())
+      {
+        mimeTypes.add(((String)st.nextElement()).trim());
+      }
+      return (String[])mimeTypes.toArray(new String[0]);
     }
 
+    private void renderCurrentProperties(MethodProperties properties)
+    {
+      if (properties == null)
+      {
+        return;
+      }
+      if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
+      {
+        rb_http.setSelected(true);
+        rb_http_URL.setText(properties.methodFullURL);
+        rb_soap.setSelected(false);
+      }
+      else if (properties.protocolType.equalsIgnoreCase(Method.SOAP_MESSAGE_PROTOCOL))
+      {
+        rb_http.setSelected(false);
+        rb_http_URL.setText("");
+        rb_soap.setSelected(true);
+      }
+
+      // render the existing return MIME types
+      StringBuffer sb = new StringBuffer();
+      System.out.println("count mime: " + properties.returnMIMETypes.length);
+      for (int i=0; i<properties.returnMIMETypes.length; i++)
+      {
+        sb.append(properties.returnMIMETypes[i]);
+        int j = i+1;
+        if (!(j == properties.returnMIMETypes.length))
+        {
+          sb.append(",");
+        }
+      }
+      returnMIMES.setText(sb.toString());
+
+      // render the existing method parms
+      MethodParm[] parms = properties.methodParms;
+      for (int i=0; i<parms.length; i++)
+      {
+        // make sure we have enough rows for the parms.
+        int freeRows = parmTable.getRowCount();
+        if (parms.length > freeRows)
+        {
+          int newRows = parms.length - freeRows;
+          for (int j=0; j<newRows; j++)
+          {
+            ((DefaultTableModel)parmTable.getModel()).addRow(
+              new Object[]{"", "", "", "", ""});
+          }
+        }
+
+        TableCellEditor ce;
+        // load existing parms into table
+        parmTable.setValueAt(parms[i].parmName, i, 0);
+
+        ce = parmTable.getCellEditor(i, 1);
+        ce.getTableCellEditorComponent(
+          parmTable, parmTypeToDisplayTbl.get(parms[i].parmType), true, i, 1);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 1);
+
+        ce = parmTable.getCellEditor(i, 2);
+        ce.getTableCellEditorComponent(
+          parmTable, parmReqToDisplayTbl.get(parms[i].parmRequired), true, i, 2);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 2);
+
+        ce = parmTable.getCellEditor(i, 3);
+        ce.getTableCellEditorComponent(
+          parmTable, passByToDisplayTbl.get(parms[i].parmPassBy), true, i, 3);
+        parmTable.setValueAt(ce.getCellEditorValue(), i, 3);
+
+        parmTable.setValueAt(parms[i].parmDefaultValue, i, 4);
+        parmTable.setValueAt(parms[i].parmLabel, i, 5);
+      }
+    }
+
+    protected void assertInvalidEntryMsg(String msg)
+    {
+      JOptionPane.showMessageDialog(
+        this, new String(msg), "Invalid Entry",
+        JOptionPane.INFORMATION_MESSAGE);
+    }
 }
