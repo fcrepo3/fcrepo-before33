@@ -54,8 +54,7 @@ public class SimpleBMechReader
 
     public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime)
             throws MethodNotFoundException, ServerException {
-        MethodDef[] methods=getServiceMethods(versDateTime);
-        return getParms(methods, methodName);
+        return getParms(getServiceMethods(versDateTime), methodName);
     }
 
     public MethodDefOperationBind[] getServiceMethodBindings(Date versDateTime)
@@ -81,4 +80,23 @@ public class SimpleBMechReader
         return new ByteArrayInputStream(
               getMethodMapDatastream(versDateTime).xmlContent);
     }
+
+    /**
+     * Get the parms out of a particular service method definition.
+     * @param methods
+     * @return
+     */
+     private MethodParmDef[] getParms(MethodDef[] methods, String methodName)
+      throws MethodNotFoundException, ServerException
+     {
+        for (int i=0; i<methods.length; i++)
+        {
+          if (methods[i].methodName.equalsIgnoreCase(methodName))
+          {
+            return methods[i].methodParms;
+          }
+        }
+        throw new MethodNotFoundException("[getParms] The behavior mechanism object, " + m_obj.getPid()
+                    + ", does not have a service method named '" + methodName);
+     }
 }

@@ -96,6 +96,31 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
           ((DatastreamXMLMetadata)datastreamTbl.get("METHODMAP")).xmlContent)));
   }
 
+  public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime)
+        throws GeneralException, ServerException
+  {
+    return getParms(this.getServiceMethods(versDateTime), methodName);
+  }
+
+  /**
+   * Get the parms out of a particular service method definition.
+   * @param methods
+   * @return
+   */
+   private MethodParmDef[] getParms(MethodDef[] methods, String methodName)
+    throws MethodNotFoundException, ServerException
+   {
+      for (int i=0; i<methods.length; i++)
+      {
+        if (methods[i].methodName.equalsIgnoreCase(methodName))
+        {
+          return methods[i].methodParms;
+        }
+      }
+      throw new MethodNotFoundException("[getParms] The behavior mechanism object, " + PID
+                  + ", does not have a service method named '" + methodName);
+   }
+
   /**
    * Get the set of method definitions with binding information.
    * Specifically, these are concrete service operations that are defined in the WSDL
@@ -113,22 +138,6 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
       new InputSource(new ByteArrayInputStream(
           ((DatastreamXMLMetadata)datastreamTbl.get("METHODMAP")).xmlContent)));
   }
-
-   public MethodParmDef[] getServiceMethodParms(String methodName, Date versDateTime)
-        throws GeneralException, ServerException
-    {
-      MethodDef[] methods = this.getServiceMethods(versDateTime);
-      MethodParmDef[] methodParms = null;
-      for (int i=0; i<methods.length; i++)
-      {
-        if (methods[i].methodName.equalsIgnoreCase(methodName))
-        {
-          methodParms = methods[i].methodParms;
-          break;
-        }
-      }
-      return(methodParms);
-    }
 
 
   /**
