@@ -177,52 +177,40 @@
 	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
 	</target>
-    <target name="utilclasses" depends="prep">
+	<target name="utilclasses" depends="prep">
 		<mkdir dir="temp/util"/>
-		<javac srcdir="${javaSourceDir}" 
-		       destdir="temp/util" 
-		       classpath="lib/server/md5.jar" 
-		       includes="fedora/utilities/**" 
-		       optimize="${javaClassOptimize}" 
-		       debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}" destdir="temp/util" classpath="lib/server/md5.jar" includes="fedora/utilities/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<jar jarfile="temp/fedora-utilities.jar" basedir="temp/util"/>
-    </target>
-    <target name="makepatch" depends="utilclasses">
-		<java classpath="lib/server/md5.jar;temp/fedora-utilities.jar"
-              classname="fedora.utilities.MakePatch"/>
-    </target>
-    <target name="stubwrappers" depends="prep,utilclasses,wsdl2java" description="Builds API wrapper stubs">
-        <mkdir dir="temp/clientgen"/>
-        <mkdir dir="temp/clientgen/fedora"/>
-        <mkdir dir="temp/clientgen/fedora/client"/>
-        <!-- Stub wrapper for API-M -->
-		<java classpath="temp/fedora-utilities.jar"
-              classname="fedora.utilities.BuildAxisStubWrapper">
-            <arg path="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java"/>
-            <arg path="src/java/fedora/client/FedoraStubWrapper.template"/>
-            <arg value="fedora.client"/>
-            <arg value="APIMStubWrapper"/>
-            <arg path="temp/clientgen/fedora/client/APIMStubWrapper.java"/>
-        </java>
-        <!-- Stub wrapper for API-A -->
-		<java classpath="temp/fedora-utilities.jar"
-              classname="fedora.utilities.BuildAxisStubWrapper">
-            <arg path="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java"/>
-            <arg path="src/java/fedora/client/FedoraStubWrapper.template"/>
-            <arg value="fedora.client"/>
-            <arg value="APIAStubWrapper"/>
-            <arg path="temp/clientgen/fedora/client/APIAStubWrapper.java"/>
-        </java>
-    </target>
+	</target>
+	<target name="makepatch" depends="utilclasses">
+		<java classpath="lib/server/md5.jar;temp/fedora-utilities.jar" classname="fedora.utilities.MakePatch"/>
+	</target>
+	<target name="stubwrappers" depends="prep,utilclasses,wsdl2java" description="Builds API wrapper stubs">
+		<mkdir dir="temp/clientgen"/>
+		<mkdir dir="temp/clientgen/fedora"/>
+		<mkdir dir="temp/clientgen/fedora/client"/>
+		<!-- Stub wrapper for API-M -->
+		<java classpath="temp/fedora-utilities.jar" classname="fedora.utilities.BuildAxisStubWrapper">
+			<arg path="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java"/>
+			<arg path="src/java/fedora/client/FedoraStubWrapper.template"/>
+			<arg value="fedora.client"/>
+			<arg value="APIMStubWrapper"/>
+			<arg path="temp/clientgen/fedora/client/APIMStubWrapper.java"/>
+		</java>
+		<!-- Stub wrapper for API-A -->
+		<java classpath="temp/fedora-utilities.jar" classname="fedora.utilities.BuildAxisStubWrapper">
+			<arg path="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java"/>
+			<arg path="src/java/fedora/client/FedoraStubWrapper.template"/>
+			<arg value="fedora.client"/>
+			<arg value="APIAStubWrapper"/>
+			<arg path="temp/clientgen/fedora/client/APIAStubWrapper.java"/>
+		</java>
+	</target>
 	<target name="clientprep" depends="prep" description="Prepare a temporary build area for client-related targets">
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
-		<javac srcdir="${javaSourceDir}:temp/server/java:temp/clientgen" 
-		       destdir="temp/client" 
-		       classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar;lib/common/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar;lib/client/batik-1.5.jar" 
-		       includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" 
-		       optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java:temp/clientgen" destdir="temp/client" classpath="lib/common/xerces2-2.0.2.jar;lib/client/jhbasic.jar;lib/client/gnu-getopt-1.0.9.jar;lib/common/saxon6.5.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/saaj.jar;lib/common/commons-httpclient.jar;lib/server/jai_core.jar;lib/server/jai_codec.jar;lib/client/batik-1.5.jar" includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
@@ -274,11 +262,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" 
-		sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" 
-		classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" 
-		destdir="dist/userdocs/server/serverdocs" author="true" version="true" 
-		use="true" additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="dist/server/tomcat41/webapps/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
@@ -901,6 +885,9 @@
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="dist/server/tomcat41/webapps/userdocs/WEB-INF"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/soapclient/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/saxon/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/imagemanip/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/fop/images/"/>
 	</target>
 	<target name="servertest" description="run a test on the server">
 		<exec executable="java">
@@ -941,10 +928,7 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" 
-		destdir="temp/server/classes" 
-		classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar" 
-		includes="fedora/server/**,fedora/logging/**,fedora/oai/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="lib/server/cos.jar;inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;lib/common/saxon6.5.jar;lib/common/junit.jar;lib/server/md5.jar" includes="fedora/server/**,fedora/logging/**,fedora/oai/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
