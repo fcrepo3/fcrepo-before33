@@ -3,7 +3,7 @@ package fedora.common.rdf;
 import fedora.common.Constants;
 
 /**
- *
+ * Namespace of Fedora external relationships.
  * -----------------------------------------------------------------------------
  *
  * <p><b>License and Copyright: </b>The contents of this file are subject to the
@@ -22,7 +22,7 @@ import fedora.common.Constants;
  * -----------------------------------------------------------------------------
  *
  */
-public class FedoraRelNamespace extends RDFNamespace {
+public class FedoraRelsExtNamespace extends RDFNamespace {
 
     // Properties
     public final RDFName IS_MEMBER_OF;
@@ -31,9 +31,9 @@ public class FedoraRelNamespace extends RDFNamespace {
 
     // Types
 
-    public FedoraRelNamespace() {
+    public FedoraRelsExtNamespace() {
 
-        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/rel#";
+        this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/relations-external#";
 
         // Properties
         this.IS_MEMBER_OF     = new RDFName(this, "isMemberOf");
