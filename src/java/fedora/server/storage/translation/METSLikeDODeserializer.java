@@ -569,7 +569,7 @@ public class METSLikeDODeserializer
                   // invocations, initial URL will have been replaced with
                   // internal reference to ManagedContent dsLocation and will
                   // no longer be a URL.
-                  if (m_obj.getState().equalsIgnoreCase("I"))
+                  if (m_obj.isNew())
                   {
                     try {
                       m_dsLocation=new URL(dsLocation);

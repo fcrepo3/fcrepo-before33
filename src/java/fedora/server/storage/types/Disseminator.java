@@ -32,6 +32,8 @@ public class Disseminator
 
   public String parentPID;
 
+  public boolean isNew=false;
+
   public String dissID;
 
   public String dissLabel;

@@ -200,20 +200,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-/*
-    public byte[] exportObject(String PID) throws java.rmi.RemoteException {
-        assertInitialized();
-        return new byte[0];
-    }
-
-    public void withdrawObject(String PID, String logMessage) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-
-    public void deleteObject(String PID, String logMessage) throws java.rmi.RemoteException {
-        assertInitialized();
-    }
-*/
     public void purgeObject(String PID, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {

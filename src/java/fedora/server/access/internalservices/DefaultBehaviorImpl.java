@@ -389,44 +389,44 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       }
       return new MIMETypedStream("text/html",in);
 
-    } else if ( ds.DSState.equals("W") && 
+    } else if ( ds.DSState.equals("I") && 
                 ( context.get("canUseInactiveDatastream")==null 
                   || (!context.get("canUseInactiveDatastream").equals("true")) ) 
               )
     {
-      // Datastream has been withdrawn so it is no longer accessible.
-      StringBuffer withdrawText = new StringBuffer();
-      withdrawText.append("<html><title>Datastream Withdrawn</title>");
-      withdrawText.append("<body>");
-      withdrawText.append("<center>");
-      withdrawText.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
-      withdrawText.append("<tr><td width=\"141\" height=\"134\" valign=\"top\">");
-      withdrawText.append("<img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
-      withdrawText.append("<td width=\"643\" valign=\"top\">");
-      withdrawText.append("<center>");
-      withdrawText.append("<h2>Fedora Digital Object</h2>");
-      withdrawText.append("<h3>Default Disseminator - <font color=\"red\">Error Page</font></h3>");
-      withdrawText.append("<h4><font color=\"red\">");
-      withdrawText.append("The requested Datastream has been WITHDRAWN by the Repository Administrator.<br>");
-      withdrawText.append("This Datastream can no longer be disseminated: </font></h4>");
-      withdrawText.append("</center>");
-      withdrawText.append("</td></tr>");
-      withdrawText.append("</table>");
-      withdrawText.append("<hr><font size=\"+1\" color=\"blue\">Object Identifier (PID):</font>");
-      withdrawText.append("<font size=\"+1\">" + reader.GetObjectPID() + "</font><hr>");
-      withdrawText.append("<p></p>");
-      withdrawText.append("<table width=\"784\" border=\"1\" cellspacing=\"5\" cellpadding=\"5\" bgcolor=\"silver\">");
-      withdrawText.append("<tr><td><b>DatastreamID</b></td><td>" + ds.DatastreamID + "</td></tr>");
-      withdrawText.append("<tr><td><b>DatastreamVersionID</b></td><td>" + ds.DSVersionID + "</td></tr>");
-      withdrawText.append("<tr><td><b>DatastreamLabel</b></td><td>" + ds.DSLabel + "</td></tr>");
-      withdrawText.append("<tr><td><b>DatastreamControlGroupType</b></td><td>" + ds.DSControlGrp + "</td></tr>");
-      withdrawText.append("<tr><td><b>DatastreamState</td></b><td>" + ds.DSState + "</td></tr>");
-      withdrawText.append("<tr><td><b>DatastreamMIMEType</b></td><td>" + ds.DSMIME + "</td></tr>");
-      withdrawText.append("</center></table>");
-      withdrawText.append("</body></html>");
+      // Datastream has been made inactive so it is no longer accessible.
+      StringBuffer inactiveText = new StringBuffer();
+      inactiveText.append("<html><title>Datastream Inactive</title>");
+      inactiveText.append("<body>");
+      inactiveText.append("<center>");
+      inactiveText.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+      inactiveText.append("<tr><td width=\"141\" height=\"134\" valign=\"top\">");
+      inactiveText.append("<img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+      inactiveText.append("<td width=\"643\" valign=\"top\">");
+      inactiveText.append("<center>");
+      inactiveText.append("<h2>Fedora Digital Object</h2>");
+      inactiveText.append("<h3>Default Disseminator - <font color=\"red\">Error Page</font></h3>");
+      inactiveText.append("<h4><font color=\"red\">");
+      inactiveText.append("The requested Datastream is INACTIVE.<br>");
+      inactiveText.append("This Datastream can no longer be disseminated: </font></h4>");
+      inactiveText.append("</center>");
+      inactiveText.append("</td></tr>");
+      inactiveText.append("</table>");
+      inactiveText.append("<hr><font size=\"+1\" color=\"blue\">Object Identifier (PID):</font>");
+      inactiveText.append("<font size=\"+1\">" + reader.GetObjectPID() + "</font><hr>");
+      inactiveText.append("<p></p>");
+      inactiveText.append("<table width=\"784\" border=\"1\" cellspacing=\"5\" cellpadding=\"5\" bgcolor=\"silver\">");
+      inactiveText.append("<tr><td><b>DatastreamID</b></td><td>" + ds.DatastreamID + "</td></tr>");
+      inactiveText.append("<tr><td><b>DatastreamVersionID</b></td><td>" + ds.DSVersionID + "</td></tr>");
+      inactiveText.append("<tr><td><b>DatastreamLabel</b></td><td>" + ds.DSLabel + "</td></tr>");
+      inactiveText.append("<tr><td><b>DatastreamControlGroupType</b></td><td>" + ds.DSControlGrp + "</td></tr>");
+      inactiveText.append("<tr><td><b>DatastreamState</td></b><td>" + ds.DSState + "</td></tr>");
+      inactiveText.append("<tr><td><b>DatastreamMIMEType</b></td><td>" + ds.DSMIME + "</td></tr>");
+      inactiveText.append("</center></table>");
+      inactiveText.append("</body></html>");
       try
       {
-        in = new ByteArrayInputStream(withdrawText.toString().getBytes("UTF-8"));
+        in = new ByteArrayInputStream(inactiveText.toString().getBytes("UTF-8"));
       } catch (UnsupportedEncodingException uee)
       {
         // Can never occur since Java fully supports UTF-8

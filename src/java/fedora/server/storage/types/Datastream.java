@@ -41,6 +41,8 @@ public class Datastream
       m_auditRecordIdList=new ArrayList();
   }
 
+  public boolean isNew=false;
+
   public String DatastreamID;
 
   public String DSVersionID;
@@ -57,17 +59,16 @@ public class Datastream
    *  This indicates the nature of the repository's control over the
    *  datastream content.  Values are:
    *  <p>
-   *  FIXME: I don't think type "P" is a type anymore...Protected or not
-   *  is controlled at the repository level, and both use "E".  Also,
-   *  "R" is a type... it means redirect (for streams)...right? - Chris
-   *  </p>
-   *  P = Protected-ExternalRef.  The datastream content is external to
-   *      to the repository and referenced by a URL.  The content is not
-   *      under the direct custodianship of the repository.  However,
-   *      the datastream content is protected by the repository.
-   *      The repository will not reveal the underlying location of the
-   *      datastream content and will mediate all access to the content
-   *      by collaborating services (e.g., a behavior mechanism service).
+   *  R = Redirected.
+   *      The datastream resides on an external server and is referenced
+   *      by a URL.  When a dissemination request for the *datastream*
+   *      comes through, Fedora sends an HTTP redirect to the client,
+   *      thereby causing the client to directly access the datastream
+   *      from its external location.  This is useful in cases where
+   *      the datastream is really some sort of streaming media that
+   *      cannot be piped through Fedora, or the datastream is an
+   *      HTML document with relative hyperlinks to the server on
+   *      which is is normally hosted.
    *  E = ExternalRef.  The datastream content is external to the repository
    *      and referenced by URL.  The content is not under the direct
    *      custodianship of the repository.  The URL is considered public

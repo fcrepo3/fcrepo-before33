@@ -485,7 +485,6 @@ public class DefaultDOManager
                 logWarning("Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
         } else {
-            boolean neverExistedBefore=obj.getState().equals("I");
             try {
                 // copy and store any datastreams of type Managed Content
                 Iterator dsIDIter = obj.datastreamIdIterator();
@@ -525,7 +524,7 @@ public class DefaultDOManager
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                                   + dmc.DSVersionID;
                         // RLW: change required by conversion fom byte[] to InputStream
-                        if (obj.getState().equals("I")) {
+                        if (obj.isNew()) {
                             getDatastreamStore().add(id, mimeTypedStream.getStream());
                         } else {
                             // object already existed...so we may need to call 
@@ -581,34 +580,6 @@ public class DefaultDOManager
                 // We'll just be conservative for now and call all levels both times.
                 // First, serialize the digital object into an Inputstream to be passed to validator.
 
-                // set object status to "A" if "I".  other status changes should occur elsewhere!
-                boolean isNewObject=false;
-                if (obj.getState().equals("I")) {
-                    isNewObject=true;
-                    obj.setState("A");
-                }
-                // set datastream statuses to "A" if "I".  other status changes should occur elsewhere!
-                Iterator dsIter=obj.datastreamIdIterator();
-                while (dsIter.hasNext()) {
-                    List dsList=(List) obj.datastreams((String) dsIter.next());
-                    for (int i=0; i<dsList.size(); i++) {
-                        Datastream ds=(Datastream) dsList.get(i);
-                        if (ds.DSState.equals("I")) {
-                            ds.DSState="A";
-                        }
-                    }
-                }
-                // same thing, but with disseminators
-                Iterator dissIter=obj.disseminatorIdIterator();
-                while (dissIter.hasNext()) {
-                    List dissList=(List) obj.disseminators((String) dissIter.next());
-                    for (int i=0; i<dissList.size(); i++) {
-                        Disseminator diss=(Disseminator) dissList.get(i);
-                        if (diss.dissState.equals("I")) {
-                            diss.dissState="A";
-                        }
-                    }
-                }
                 // set last mod date, in UTC
                 obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
                 // Set useSerializer to false to disable the serializer (for debugging/testing).
@@ -619,7 +590,7 @@ public class DefaultDOManager
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                     m_validator.validate(inV, 0, "store");
                     // if ok, write change to perm store here...right before db stuff
-                    if (isNewObject) {
+                    if (obj.isNew()) {
                         getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     } else {
                         getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
@@ -699,7 +670,7 @@ public class DefaultDOManager
                     throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
                 }
             } catch (ServerException se) {
-                if (neverExistedBefore) {
+                if (obj.isNew()) {
                     doCommit(context, obj, logMessage, true);
                 }
                 throw se;
@@ -818,17 +789,20 @@ public class DefaultDOManager
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
                 m_translator.deserialize(in2, obj, format, encoding);
-                // then, before doing anything, change the object status to I,
-                // and all datastreams and disseminators' statuses to I.
-                // objects,
-                obj.setState("I");
+                // then, before doing anything, set object and component states 
+                // to "A" if they're unspecified
+				if (obj.getState()==null) {
+                    obj.setState("A");
+				}
                 // datastreams,
                 Iterator dsIter=obj.datastreamIdIterator();
                 while (dsIter.hasNext()) {
                     List dsList=(List) obj.datastreams((String) dsIter.next());
                     for (int i=0; i<dsList.size(); i++) {
                         Datastream ds=(Datastream) dsList.get(i);
-                        ds.DSState="I";
+						if (ds.DSState==null) {
+                            ds.DSState="A";
+						}
                     }
                 }
                 // ...finally, disseminators
@@ -837,7 +811,9 @@ public class DefaultDOManager
                     List dissList=(List) obj.disseminators((String) dissIter.next());
                     for (int i=0; i<dissList.size(); i++) {
                         Disseminator diss=(Disseminator) dissList.get(i);
-                        diss.dissState="I";
+						if (diss.dissState==null) {
+                            diss.dissState="A";
+						}
                     }
                 }
                 // do we need to generate a pid?
@@ -886,6 +862,9 @@ public class DefaultDOManager
                 // now add it to the working area with the *known* pid
                 getTempStore().add(obj.getPid(), in4);
                 inTempStore=true; // signifies successful perm store addition
+
+                // signify that the object is new,
+				obj.setNew(true);
 
                 // then get the writer
                 DOWriter w=new SimpleDOWriter(context, this, m_translator,
@@ -992,6 +971,7 @@ public class DefaultDOManager
             }
             // make a record of it in the registry
             // FIXME: this method is incomplete...
+			// obj.setNew(true);
             //registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
 
             // serialize to disk, then validate.. if that's ok, go on.. else unregister it!

@@ -209,11 +209,6 @@ public class DefaultManagement
         return instream;
     }
 
-/*
-    public void withdrawObject(Context context, String pid, String logMessage) { }
-
-    public void deleteObject(Context context, String pid, String logMessage) { }
-*/
     public void purgeObject(Context context, String pid, String logMessage)
             throws ServerException {
         logFinest("Entered DefaultManagement.purgeObject");

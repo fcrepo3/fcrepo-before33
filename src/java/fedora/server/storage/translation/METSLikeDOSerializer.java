@@ -458,9 +458,7 @@ public class METSLikeDOSerializer
                 if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
                     throw new ObjectIntegrityException("Object's content datastream must have an id.");
                 }
-                if (ds.DSState==null || ds.DSState.equals("")) {
-                    throw new ObjectIntegrityException("Object's content datastream must have a state.");
-                }
+                if (ds.DSState==null) ds.DSState="";
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
                         + ds.DatastreamID + "\" STATUS=\"" + ds.DSState + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();

@@ -51,6 +51,10 @@ public interface DigitalObject {
 
     public void setFedoraObjectType(int t);
 
+    public boolean isNew();
+
+    public void setNew(boolean isNew);
+
     /**
      * Gets the pid.
      *

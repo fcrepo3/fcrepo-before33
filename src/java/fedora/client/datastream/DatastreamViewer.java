@@ -81,7 +81,7 @@ public class DatastreamViewer
 
     public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
     public static DatastreamConduit CONDUIT;
-    public static String[] datastreamState={"A","D","I","W"};
+    public static String[] datastreamState={"A","I","D"};
 
     public DatastreamViewer(String pid)
             throws Exception {
@@ -322,15 +322,11 @@ dt.getHeight()-5));
 
                     // NORTH: saveButton
                     JButton saveButton=new JButton("Save");
-                    /*JButton deleteButton=new JButton("Delete");
-                    JButton withdrawButton=new JButton("Withdraw");*/
                     if (xml) {
                         if (ds.getID().equals("METHODMAP")
                                 || ds.getID().equals("DSINPUTSPEC")
                                 || ds.getID().equals("WSDL") ) {
                            saveButton.setText("Note");
-                           /*deleteButton.setText("Delete - Note");
-                           withdrawButton.setText("Withdraw - Note");*/
                            saveButton.addActionListener(new ActionListener() {
                                public void actionPerformed(ActionEvent ae) {
                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
@@ -339,22 +335,6 @@ dt.getHeight()-5));
                                        JOptionPane.INFORMATION_MESSAGE);
                                }
                            });
-                           /*deleteButton.addActionListener(new ActionListener() {
-                               public void actionPerformed(ActionEvent ae) {
-                                   JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                       "METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified at this time.",
-                                       "Note: Unmodifiable Datastream",
-                                       JOptionPane.INFORMATION_MESSAGE);
-                               }
-                           });
-                           withdrawButton.addActionListener(new ActionListener() {
-                               public void actionPerformed(ActionEvent ae) {
-                                   JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                       "METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified at this time.",
-                                       "Note: Unmodifiable Datastream",
-                                       JOptionPane.INFORMATION_MESSAGE);
-                               }
-                           });*/
                         } else {
                            saveButton.addActionListener(
                                    new SaveDatastreamByValueListener(pid,
@@ -366,42 +346,11 @@ dt.getHeight()-5));
                                 new SaveDatastreamByReferenceListener(pid,
                                 ds.getID(), labelValueField,
                                 modifiedValueLabel, locationValueField, stateValueField));
-                        /*withdrawButton.addActionListener(
-                                new WithdrawDatastreamListener(pid,
-                                ds.getID(), modifiedValueLabel));
-                        deleteButton.addActionListener(
-                                new DeleteDatastreamListener(pid,
-                                ds.getID(), modifiedValueLabel));*/
                     }
 
             JPanel saveButtonPanel=new JPanel();
             saveButtonPanel.setLayout(new BorderLayout());
             saveButtonPanel.add(saveButton, BorderLayout.NORTH);
-            /*gridbag = new GridBagLayout();
-            c = new GridBagConstraints();
-            saveButtonPanel.setLayout(gridbag);
-
-                    // CENTER: saveButton
-            saveButtonPanel.add(saveButton, BorderLayout.CENTER);
-            c.gridx=0; // column 1
-            c.gridy=0; // row 1
-            c.gridwidth=GridBagConstraints.REMAINDER; // one column wide
-            c.insets = new Insets(10,10,10,0); // pad top and bottom
-            c.fill=GridBagConstraints.HORIZONTAL;
-            gridbag.setConstraints(saveButton, c);
-            saveButtonPanel.add(saveButton);
-
-                    // NORTH: withdrawButton
-            c.gridx=0; // column 1
-            c.gridy=1; // row 2
-            gridbag.setConstraints(withdrawButton, c);
-            saveButtonPanel.add(withdrawButton);
-
-                    // SOUTH: deleteButton
-            c.gridx=0; // column 1
-            c.gridy=2; // row 3
-            gridbag.setConstraints(deleteButton, c);
-            saveButtonPanel.add(deleteButton);*/
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
@@ -451,77 +400,7 @@ dt.getHeight()-5));
             }
         }
     }
-/*
-//
-    public class DeleteDatastreamListener
-            implements ActionListener {
 
-        private String m_pid;
-        private String m_dsId;
-        private JTextField m_labelField;
-        private JLabel m_modifiedDateLabel;
-        private JTextField m_locationField;
-
-        public DeleteDatastreamListener(String pid, String dsId, JLabel modifiedDateLabel) {
-            m_pid=pid;
-            m_dsId=dsId;
-            m_modifiedDateLabel=modifiedDateLabel;
-        }
-
-        public void actionPerformed(ActionEvent ae) {
-            String logMessage=JOptionPane.showInputDialog("Enter a log message.");
-            if (logMessage==null) return;
-            try {
-                DatastreamViewer.CONDUIT.delete (method removed) Datastream(m_pid, m_dsId, logMessage);
-                Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
-                        getCreateDate().getTime();
-                m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Failed",
-                    JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-    }
-//
-
-//
-    public class WithdrawDatastreamListener
-            implements ActionListener {
-
-        private String m_pid;
-        private String m_dsId;
-        private JTextField m_labelField;
-        private JLabel m_modifiedDateLabel;
-        private JTextField m_locationField;
-
-        public WithdrawDatastreamListener(String pid, String dsId, JLabel modifiedDateLabel) {
-            m_pid=pid;
-            m_dsId=dsId;
-            m_modifiedDateLabel=modifiedDateLabel;
-        }
-
-        public void actionPerformed(ActionEvent ae) {
-            String logMessage=JOptionPane.showInputDialog("Enter a log message.");
-            if (logMessage==null) return;
-            try {
-                DatastreamViewer.CONDUIT.withdraw (method deleted) Datastream(m_pid, m_dsId, logMessage);
-                Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
-                        getCreateDate().getTime();
-                m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Failed",
-                    JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-    }
-//
-*/
     public class SaveDatastreamByValueListener
             implements ActionListener {
 
