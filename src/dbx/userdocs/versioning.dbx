@@ -35,16 +35,17 @@
 	</articleinfo>
 	<sect1>
 		<title>Introduction</title>
-		<para>Fedora v1.2 for the first time includes content versioning functionality. Using this new capability, Fedora repository managers can provide preservation capabilities to repository content owners.</para>
-		<para>All components of data objects can be versioned in Fedora v1.2. Versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
+		<para>Fedora v1.2 for the first time includes content versioning functionality.  Content versioning is one of the preservation-oriented features of Fedora.   Using this new capability, Fedora repositories can maintain a record of how digital objects have changed over time.  This is achieved by the Fedora repository storing former versions of content, and by creating audit trail records about changes.    Also,  with the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  </para>
 	</sect1>
 	<sect1>
 		<title>Preservation</title>
 		<para>The ability to version content of Fedora data objects provides repositories with the ability to preserve not only the data for any given data object over time, but also to preserve the look and feel of the dissemination of that data object, since the original content is linked to the original delivery mechanisms used to disseminate that content.</para>
 	</sect1>
 	<sect1>
-		<title>How It Works in the XML</title>
-		<para>In a Fedora data object, datastreams are represented in fedora:mets by &lt;filegrp&gt; elements. When a modification is made to a datastream, a new &lt;file&gt; element is added to the &lt;filegrp&gt;. Disseminators are defined in the &lt;mets:behaviorSec&gt; element. As disseminators in the object are modified, new &lt;mets:serviceBinding&gt; elements are added to the &lt;mets:behaviorSec&gt;.</para>
+		<title>How It Works</title>
+		<para>In the Fedora versioning system, any modifications made to a Datastream or Disseminator through the Fedora management interface (API-M) will automatically result in a new version of that Datastream or Disseminator being created by Fedora.  Fedora will not create a new version of the whole digital object, instead it will version these specific components <emphasis>within</emphasis> the digital object container.  This has the benefit of the digital object PID remaining constant, and not having to keep track of multiple distinct versions of a digital object. </para>
+		<para>The Fedora repository maintains all versions of all Datastreams and Disseminators, thereby creating a history of how objects change over time.  Additionally, Fedora maintains an audit trail record of the nature of the object change events (e.g., who, what, when, why). </para>
+		<para>While a the components of data objects are versioned in Fedora v1.2, versioning of behavior objects (Behavior Definitions and Behavior Mechanisms) is in scope for future releases of the software.</para>
 	</sect1>
 	<sect1>
 		<title>Fedora Administrator</title>
