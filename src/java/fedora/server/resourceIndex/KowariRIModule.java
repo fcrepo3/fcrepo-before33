@@ -87,7 +87,7 @@ public class KowariRIModule extends Module implements ResourceIndex {
 			String serverhost = "localhost";
 			URI serverURI = new URI("rmi", serverhost, "/" + SERVER_NAME, null);
 			fullTextModelURI = new URI(serverURI.toString() + "#" + FULL_TEXT_MODEL_NAME);
-			File serverDir = new File(localServerPath + "/" + MODEL_NAME);
+			File serverDir = new File(localServerPath + File.separator + MODEL_NAME);
 			serverDir.mkdirs();
 			LocalSessionFactory factory;
 			factory = (LocalSessionFactory) SessionFactoryFinder.newSessionFactory(serverURI);
