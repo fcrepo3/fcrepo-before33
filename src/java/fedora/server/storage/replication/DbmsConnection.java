@@ -13,6 +13,8 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 import fedora.server.storage.*;
+import fedora.server.Server;
+import fedora.server.errors.InitializationException;
 
 
 /**
@@ -27,7 +29,7 @@ import fedora.server.storage.*;
 public class DbmsConnection {   
         private static ConnectionPool connectionPool = null;
 	private static final String dbPropsFile = "db.properties";
-
+	private static boolean debug = true;
 
 	public DbmsConnection() throws Exception {
 		initDB();
@@ -44,6 +46,7 @@ System.out.println("connectionPool: " + connectionPool);
 		connectionPool.free(connection);
 	}
 
+
         /**
          * Initializes the relational database connection.
          *
@@ -54,33 +57,55 @@ System.out.println("connectionPool: " + connectionPool);
           try
           {
             // read database properties file and init connection pool
-            FileInputStream fis = new FileInputStream(dbPropsFile);
-            Properties dbProps = new Properties();
-            dbProps.load(fis);
-            String driver = dbProps.getProperty("drivers");
-            String username = dbProps.getProperty("username");
-            String password = dbProps.getProperty("password");
-            String url = dbProps.getProperty("url");
-            Integer i1 = new Integer(dbProps.getProperty("initConnections"));
-            int initConnections = i1.intValue();
-            Integer i2 = new Integer(dbProps.getProperty("maxConnections"));
-            int maxConnections = i2.intValue();
+/*
+      FileInputStream fis = new FileInputStream(dbPropsFile);
+      Properties dbProps = new Properties();
+      dbProps.load(fis);
+      String driver = dbProps.getProperty("drivers");
+      String username = dbProps.getProperty("username");
+      String password = dbProps.getProperty("password");
+      String url = dbProps.getProperty("url");
+      Integer i1 = new Integer(dbProps.getProperty("initConnections"));
+      int initConnections = i1.intValue();
+      Integer i2 = new Integer(dbProps.getProperty("maxConnections"));
+      int maxConnections = i2.intValue();
+*/
             // FIXME!! above section of code to be replaced with the following
             // section when Server.java is functional
-            /*
-            Server serverInstance =
-            Server.getInstance(System.getProperty(Server.HOME_PROPERTY));
-            String driver = serverInstance.getDatastoreConfig("drivers");
-            String username = serverInstance.getDatastoreConfig("username");
-            String password = serverInstance.getDatastoreConfig("password");
-            String url = serverInstance.getDatastoreConfig("url");
-            Integer i1 = new Integer(serverInstance.getDatastoreConfig("minConnections"););
+
+
+            //String id = s_server.getModule("fedora.server.storage.DOManager").
+            //            getParameter("fast_db");
+            //FIXME!! - temporary fix until problem with above line is resolved
+            String id = "mysql1";
+            System.out.println("id: "+id);
+            System.out.flush();
+            String driv = s_server.getDatastoreConfig("mysql1").
+                          getParameter("jdbc_driver_class");
+            System.out.println("driver: "+driv);
+            String label = s_server.getParameter("label");
+            System.out.println("label: "+label);
+            System.out.flush();
+            String driver = s_server.getDatastoreConfig(id).
+                            getParameter("jdbc_driver_class");
+            String username = s_server.getDatastoreConfig(id).
+                              getParameter("dbuser");
+            String password = s_server.getDatastoreConfig(id).
+                              getParameter("dbpass");
+            String url = s_server.getDatastoreConfig(id).
+                         getParameter("connect_string");
+            Integer i1 = new Integer(s_server.getDatastoreConfig(id).
+                                     getParameter("pool_min"));
             int initConnections = i1.intValue();
-            Integer i2 = new Integer(serverInstance.getDatastoreConfig("maxConnections"););
+            Integer i2 = new Integer(s_server.getDatastoreConfig(id).
+                               getParameter("pool_max"));
             int maxConnections = i2.intValue();
-            */
-            //if(debug) System.out.println("\nurl = "+url);
-      
+            System.out.println("id: "+id+"\ndriver: "+driver+"\nuser"+username+
+                               "\npass: "+password+"\nurl: "+url+"\nmin: "+
+                               initConnections+"\nmax: "+maxConnections);
+            System.out.flush();
+            if(debug) System.out.println("\nurl = "+url);
+
             // initialize connection pool
             connectionPool = new ConnectionPool(driver, url, username, password,
                 initConnections, maxConnections, true);
@@ -94,21 +119,36 @@ System.out.println("connectionPool: " + connectionPool);
             Exception e = new Exception("");
             e.initCause(sqle);
             throw e;
-          } catch (FileNotFoundException fnfe)
-          {
-            System.out.println("Unable to read the properties file: " +
-                dbPropsFile);
-            Exception e = new Exception("");
-            e.initCause(fnfe);
-            throw e;
-          } catch (IOException ioe)
-          {
-            System.out.println(ioe);
-            Exception e = new Exception("");
-            e.initCause(ioe);
-            throw e;
           }
+          //} catch (FileNotFoundException fnfe)
+          //{
+          //  System.out.println("Unable to read the properties file: " +
+          //      dbPropsFile);
+          //  Exception e = new Exception("");
+          //  e.initCause(fnfe);
+          //  throw e;
+          //} catch (IOException ioe)
+          //{
+          //  System.out.println(ioe);
+          //  Exception e = new Exception("");
+          //  e.initCause(ioe);
+          //  throw e;
+          //}
         }
+
+        private static Server s_server;
+
+         static
+         {
+           try
+           {
+             s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+           } catch (InitializationException ie)
+           {
+             System.err.println(ie.getMessage());
+             System.err.flush();
+           }
+         }
 
         /**
         * 
