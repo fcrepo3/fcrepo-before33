@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<server xmlns="http://www.fedora.info/definitions/1/0/config/" xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
+<server xmlns="http://www.fedora.info/definitions/1/0/config/" 
+        xmlns:fedora-config="http://www.fedora.info/definitions/1/0/config/" 
+        class="fedora.server.BasicServer">
 	<param name="shutdownPassword" value="fedoraAdmin"/>
 	<param name="log_max_size" value="5242880"/>
 	<param name="log_max_days" value="7"/>
@@ -61,24 +63,23 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-            - allowHosts [default=all]
+            - allowHosts (optional)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must match for any Management request to be accepted. 
               If this is not specified, all requests will be accepted unless 
               the remote address matches a deny pattern.
-            - denyHosts [default=none]
+            - denyHosts (optional)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must not match for any Management request to be accepted. 
               If this is not specified, request acceptance is governed 
-              solely by the allowIPRanges attribute.
+              solely by the allowHosts parameter.
         </comment>
 		<param name="allowHosts" value="127.0.0.1" />
-		<param name="denyHosts" value="none" />
 	</module>
-	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
-		<comment>
+    <module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
+        <comment>
         Description:
           The access subsystem.
           This implements the methods necessary to fulfill API-A
@@ -88,22 +89,20 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-            - allowHosts [default=all]
+            - allowHosts (optional)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must match for any Management request to be accepted. 
               If this is not specified, all requests will be accepted unless 
               the remote address matches a deny pattern.
-            - denyHosts [default=none]
+            - denyHosts (optional)
               A comma-separated list of IP ranges that the client's address 
               is compared to. If this is specified, the remote address 
               must not match for any Management request to be accepted. 
               If this is not specified, request acceptance is governed 
-              solely by the allowIPRanges attribute.
-        </comment>
-		<param name="allowHosts" value="all" />
-		<param name="denyHosts" value="none" />
-	</module>
+              solely by the allowHosts parameter.
+            </comment>
+    </module>
 	<module role="fedora.server.storage.translation.DOTranslator"
                class="fedora.server.storage.translation.DOTranslatorModule">
 		<comment>Supports translation from DigitalObject to a stream of 
