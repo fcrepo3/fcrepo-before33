@@ -41,6 +41,7 @@ public class Ingest {
     // launch interactively
     public Ingest(int kind) {
         s_failedCount=0;
+        boolean wasMultiple=false;
         try {
             if (kind==ONE_FROM_FILE) {
                 JFileChooser browse=new JFileChooser(Administrator.getLastDir());
@@ -53,6 +54,7 @@ public class Ingest {
                         "Ingest succeeded.  PID='" + pid + "'.");
                 }
             } else if (kind==MULTI_FROM_DIR) {
+                wasMultiple=true;
                 JFileChooser browse=new JFileChooser(Administrator.getLastDir());
                 browse.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 int returnVal = browse.showOpenDialog(Administrator.getDesktop());
@@ -87,6 +89,7 @@ public class Ingest {
                     }
                 }
             } else if (kind==MULTI_FROM_REPOS) {
+                wasMultiple=true;
                 SourceRepoDialog sdlg=new SourceRepoDialog();
                 if (sdlg.getAPIA()!=null) {
                     FTypeDialog dlg=new FTypeDialog();
@@ -120,7 +123,7 @@ public class Ingest {
                     JOptionPane.ERROR_MESSAGE);
         } finally {
             try { 
-                if (s_log!=null) {
+                if (s_log!=null && wasMultiple) {
                     closeLog();
                     int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(),
                         "A detailed log file was created at\n"
