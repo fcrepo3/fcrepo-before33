@@ -20,21 +20,14 @@ body {
 }
 
 #logo {
-    /*
-    background-image: url('images/logo_44x60.gif');
+    background-image: url(images/logo_44x60.gif);
     background-repeat: no-repeat;
     background-position: top left;
-    */
+    
     float: left;
     height: 60px;
     width: 44px;
     visibility: visible;
-}
-
-#logo img {
-    border-style: none;
-    height: 60px;
-    width: 44px;
 }
 
 #title {
