@@ -11,11 +11,15 @@ import java.net.URL;
 import java.awt.*;
 import java.awt.event.*;
 import javax.help.CSH;
+import javax.help.HelpSet.Presentation;
 import javax.help.Map.ID;
+import javax.help.BadIDException;
 import javax.help.HelpBroker;
 import javax.help.HelpSet;
+import javax.help.InvalidHelpSetContextException;
 import javax.help.TextHelpModel;
 import java.util.Locale;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.Font;
 import java.awt.Dimension;
@@ -947,6 +951,46 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	if (debug) {
 	    System.err.println("SimpleHelpBroker: "+msg);
 	}
+    }
+
+    /* (non-Javadoc)
+     * @see javax.help.HelpBroker#setHelpSetPresentation(javax.help.HelpSet.Presentation)
+     */
+    public void setHelpSetPresentation(Presentation arg0) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see javax.help.HelpBroker#showID(javax.help.Map.ID, java.lang.String, java.lang.String)
+     */
+    public void showID(ID arg0, String arg1, String arg2) throws InvalidHelpSetContextException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see javax.help.HelpBroker#showID(java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void showID(String arg0, String arg1, String arg2) throws BadIDException {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see javax.help.HelpBroker#enableHelpKey(java.awt.Component, java.lang.String, javax.help.HelpSet, java.lang.String, java.lang.String)
+     */
+    public void enableHelpKey(Component arg0, String arg1, HelpSet arg2, String arg3, String arg4) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    /* (non-Javadoc)
+     * @see javax.help.HelpBroker#enableHelpOnButton(java.lang.Object, java.lang.String, javax.help.HelpSet, java.lang.String, java.lang.String)
+     */
+    public void enableHelpOnButton(Object arg0, String arg1, HelpSet arg2, String arg3, String arg4) throws IllegalArgumentException {
+        // TODO Auto-generated method stub
+        
     }
 
 }
