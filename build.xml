@@ -77,9 +77,10 @@
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
-		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
-		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
-		<copy file="dist/userdocs/demos.html" todir="dist/server/doc"/>
+		<!-- need to check w/ Chris whether these are still needed -->
+		<copy file="dist/userdocs/distribution/release-notes.html" todir="dist/server/doc"/>
+		<copy file="dist/userdocs/distribution/installation.html" todir="dist/server/doc"/>
+		<copy file="dist/userdocs/distribution/demos.html" todir="dist/server/doc"/>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -213,11 +214,11 @@
 		</copy>
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
-		<mkdir dir="dist/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
-		<copy todir="dist/server/tomcat41/webapps/userdocs/server/serverdocs">
+		<mkdir dir="dist/userdocs/server/serverdocs"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
+		<!--<copy todir="dist/server/tomcat41/webapps/userdocs/server/serverdocs">
 			<fileset dir="dist/serverdocs"/>
-		</copy>
+		</copy>-->
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -263,7 +264,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/release-notes.html"/>
+			<arg path="dist/userdocs/distribution/release-notes.html"/>
 			<arg path="src/dbx/userdocs/release-notes.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -273,7 +274,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/demos.html"/>
+			<arg path="dist/userdocs/distribution/demos.html"/>
 			<arg path="src/dbx/userdocs/demos.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -283,7 +284,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/installation.html"/>
+			<arg path="dist/userdocs/distribution/installation.html"/>
 			<arg path="src/dbx/userdocs/installation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -293,7 +294,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/manual.html"/>
+			<arg path="dist/userdocs/distribution/manual.html"/>
 			<arg path="src/dbx/userdocs/manual.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -303,20 +304,17 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/userdocs/known-issues.html"/>
+			<arg path="dist/userdocs/distribution/known-issues.html"/>
 			<arg path="src/dbx/userdocs/known-issues.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<copy todir="dist/server/tomcat41/webapps/userdocs/server">
-			<fileset dir="dist/userdocs"/>
-		</copy>
 		<echo message="Translating apialite.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/apialite/index.html"/>
+			<arg path="dist/userdocs/client/browser/apialite/index.html"/>
 			<arg path="src/dbx/userdocs/apialite.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -326,7 +324,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/apim/index.html"/>
+			<arg path="dist/userdocs/client/admin-gui/apim/index.html"/>
 			<arg path="src/dbx/userdocs/apimadmingui.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -336,11 +334,11 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/batch/index.html"/>
+			<arg path="dist/userdocs/client/admin-gui/batch/index.html"/>
 			<arg path="src/dbx/userdocs/batchclient.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<copy todir="dist/server/tomcat41/webapps/userdocs/batch/images">
+		<copy todir="dist/userdocs/client/admin-gui/batch/images">
 			<fileset dir="src/jpg/client/batch"/>
 		</copy>
 		<echo message="Translating documentation.dbx to html"/>
@@ -349,7 +347,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/index.html"/>
+			<arg path="dist/userdocs/index.html"/>
 			<arg path="src/dbx/userdocs/documentation.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -359,7 +357,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/server/license.html"/>
+			<arg path="dist/userdocs/distribution/license.html"/>
 			<arg path="src/dbx/userdocs/license.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -369,7 +367,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/oai/index.html"/>
+			<arg path="dist/userdocs/client/browser/oai/index.html"/>
 			<arg path="src/dbx/userdocs/oaiprovider.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -379,11 +377,11 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/search/index.html"/>
+			<arg path="dist/userdocs/client/browser/search/index.html"/>
 			<arg path="src/dbx/userdocs/search.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-		<copy todir="dist/server/tomcat41/webapps/userdocs/search/images">
+		<copy todir="dist/userdocs/client/browser/search/images">
 			<fileset dir="src/jpg/search"/>
 		</copy>
 		<echo message="Translating server.dbx to html"/>
@@ -392,7 +390,7 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/server/index.html"/>
+			<arg path="dist/userdocs/server/index.html"/>
 			<arg path="src/dbx/userdocs/server.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -402,37 +400,40 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/saxon/index.html"/>
+			<arg path="dist/userdocs/server/localservices/saxon/index.html"/>
 			<arg path="src/dbx/userdocs/saxon.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<copy file="dist/userdocs/server/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon/"/>
 		<echo message="Translating fop.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/fop/index.html"/>
+			<arg path="dist/userdocs/server/localservices/fop/index.html"/>
 			<arg path="src/dbx/userdocs/fop.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<copy file="dist/userdocs/server/localservices/fop/index.html" todir="dist/server/tomcat41/webapps/fop/"/>
 		<echo message="Translating imagemanip.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/imagemanip/index.html"/>
+			<arg path="dist/userdocs/server/localservices/imagemanip/index.html"/>
 			<arg path="src/dbx/userdocs/imagemanip.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
+		<copy file="dist/userdocs/server/localservices/imagemanip/index.html" todir="dist/server/tomcat41/webapps/imagemanip/"/>
 		<echo message="Translating localservices.dbx to html"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/localservices/index.html"/>
+			<arg path="dist/userdocs/server/localservices/index.html"/>
 			<arg path="src/dbx/userdocs/localservices.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
@@ -442,12 +443,71 @@
 			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
 			<arg value="com.icl.saxon.StyleSheet"/>
 			<arg value="-o"/>
-			<arg path="dist/server/tomcat41/webapps/userdocs/soapclient/index.html"/>
+			<arg path="dist/userdocs/client/servlet/soapclient/index.html"/>
 			<arg path="src/dbx/userdocs/soap.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>		
-		<copy file="dist/server/tomcat41/webapps/userdocs/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/server/tomcat41/webapps/userdocs/images/"/>
+		</exec>
+		<copy file="dist/userdocs/client/servlet/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient/"/>
+		<echo message="Translating diststruct.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/distribution/diststruct.html"/>
+			<arg path="src/dbx/userdocs/diststruct.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating introduction.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/server/introduction.html"/>
+			<arg path="src/dbx/userdocs/introduction.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating features.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/server/features.html"/>
+			<arg path="src/dbx/userdocs/features.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<echo message="Translating webexp.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/userdocs/server/webexp.html"/>
+			<arg path="src/dbx/userdocs/webexp.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/apim/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>		
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/search/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/soapclient/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/distribution/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/fop/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/imagemanip/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/saxon/images/"/>	
+		<copy todir="dist/server/tomcat41/webapps/userdocs">
+			<fileset dir="dist/userdocs"/>
+		</copy>
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -843,6 +903,15 @@
 </project>
 <!--
   $Log$
+  Revision 1.124  2003/05/15 22:33:24  rlw
+  restructures userdocs directory structure
+
+  eliminates:
+  dist/serverdocs   moved to dist/userdocs/server/serverdocs
+
+  dist/userdocs restructured (for static browsing)
+  dist/server/tomcat41/webapps/userdocs is a copy of dist/userdocs (for serving up via Fedora server)
+
   Revision 1.123  2003/05/15 15:13:08  rlw
   adds copies for newlogo2.jpg into soapclient webapp
 
