@@ -1,42 +1,95 @@
 package fedora.server.oai;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import fedora.server.search.FieldSearch;
 import fedora.oai.*; //FIXME:evil
+import fedora.server.Logging;
+import fedora.server.StdoutLogging;
+import fedora.server.errors.ServerException;
+import fedora.server.search.Condition;
+import fedora.server.search.FieldSearch;
 
 public class FedoraOAIProvider
+        extends StdoutLogging
         implements OAIProvider { 
+
+    private String m_repositoryName;
+    private String m_baseURL;
+    private Set m_adminEmails;
+    private Set m_descriptions;
+    private long m_maxSets;
+    private long m_maxRecords;
+    private long m_maxHeaders;
+    private FieldSearch m_fieldSearch;
+    private Set m_formats;
+    private static Set s_emptySet=new HashSet();
         
     public FedoraOAIProvider(String repositoryName, String baseURL, 
-        Set adminEmails, Set friendBaseURLs, String nsid, FieldSearch fieldSearch) {
+            Set adminEmails, Set friendBaseURLs, String namespaceID, 
+            long maxSets, long maxRecords, long maxHeaders, 
+            FieldSearch fieldSearch, Logging logTarget) {
+        super(logTarget);
+        m_repositoryName=repositoryName;
+        m_baseURL=baseURL;
+        m_adminEmails=adminEmails;
+        m_maxSets=maxSets;
+        m_maxRecords=maxRecords;
+        m_maxHeaders=maxHeaders;
+        m_fieldSearch=fieldSearch;
+        m_descriptions=new HashSet();
+        StringBuffer buf=new StringBuffer();
+        buf.append("      <oai-identifier xmlns=\"http://www.openarchives.org/OAI/2.0/oai-identifier\"\n");
+        buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+        buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/oai-identifier");
+        buf.append("          http://www.openarchives.org/OAI/2.0/oai-identifier.xsd\">\n");
+        buf.append("        <scheme>oai</scheme>\n");
+        buf.append("        <repositoryIdentifier>" + namespaceID + "</repositoryIdentifier>\n");
+        buf.append("        <delimiter>:</delimiter>\n");
+        buf.append("        <sampleIdentifier>oai:" + namespaceID + ":7654</sampleIdentifier>\n");
+        buf.append("      </oai-identifier>");
+        m_descriptions.add(buf.toString());
+        if (friendBaseURLs!=null && friendBaseURLs.size()>0) {
+            buf=new StringBuffer(); 
+            buf.append("      <friends xmlns=\"http://www.openarchives.org/OAI/2.0/friends/\"\n");
+            buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
+            buf.append("          xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/friends/\n");
+            buf.append("          http://www.openarchives.org/OAI/2.0/friends.xsd\">\n");
+            Iterator iter=friendBaseURLs.iterator();
+            while (iter.hasNext()) {
+                buf.append("        <baseURL>" + (String) iter.next() + "</baseURL>\n");
+            }
+            buf.append("      </friends>");
+            m_descriptions.add(buf.toString());
+        }
+        m_formats=new HashSet();
+        m_formats.add(new SimpleMetadataFormat("oai_dc", 
+                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd", 
+                "http://www.openarchives.org/OAI/2.0/oai_dc/"));
     }
-        
 
     /**
      * Get a human readable name for the repository.
      */
-    public String getRepositoryName()
-            throws RepositoryException {
-        return null;
+    public String getRepositoryName() {
+        return m_repositoryName;
     }
     
     /**
      * Get the HTTP endpoint for the OAI-PMH interface.
      */
-    public String getBaseURL()
-            throws RepositoryException {
-        return null;
+    public String getBaseURL() {
+        return m_baseURL;
     }
     
     /**
      * Get the version of the OAI-PMH supported by the repository.
      */
-    public String getProtocolVersion()
-            throws RepositoryException {
-        return null;
+    public String getProtocolVersion() {
+        return "2.0";
     }
 
     /**
@@ -44,26 +97,23 @@ public class FedoraOAIProvider
      * recording changes, modifications, or deletions in the repository.
      * A repository must not use datestamps lower than this.
      */
-    public Date getEarliestDatestamp()
-            throws RepositoryException {
-        return null;
+    public Date getEarliestDatestamp() {
+        return new Date();
     }
     
     /**
      * Get the manner in which the repository supports the notion of deleted
      * records.
      */
-    public DeletedRecordSupport getDeletedRecordSupport()
-            throws RepositoryException {
-        return null;
+    public DeletedRecordSupport getDeletedRecordSupport() {
+        return DeletedRecordSupport.NO;
     }
     
     /**
      * Get the finest harvesting granularity supported by the repository.
      */
-    public DateGranularitySupport getDateGranularitySupport()
-            throws RepositoryException {
-        return null;
+    public DateGranularitySupport getDateGranularitySupport() {
+        return DateGranularitySupport.SECONDS;
     }
     
     /**
@@ -71,9 +121,8 @@ public class FedoraOAIProvider
      *
      * This set must contain at least one item.
      */
-    public Set getAdminEmails()
-            throws RepositoryException {
-        return null;
+    public Set getAdminEmails() {
+        return m_adminEmails;
     }
     
     /**
@@ -82,9 +131,8 @@ public class FedoraOAIProvider
      * This set may be empty. Recommended values are those in RFC 2616 Section 
      * 14.11
      */
-    public Set getSupportedCompressionEncodings()
-            throws RepositoryException {
-        return null;
+    public Set getSupportedCompressionEncodings() {
+        return s_emptySet;
     }
     
     /**
@@ -97,9 +145,8 @@ public class FedoraOAIProvider
      * See http://www.openarchives.org/OAI/2.0/guidelines.htm for guidelines
      * regarding these repository-level descriptions.
      */
-    public Set getDescriptions()
-            throws RepositoryException {
-        return null;
+    public Set getDescriptions() {
+        return m_descriptions;
     }
 
     /**
@@ -108,7 +155,10 @@ public class FedoraOAIProvider
     public Record getRecord(String identifier, String metadataPrefix)
             throws CannotDisseminateFormatException, IDDoesNotExistException, 
             RepositoryException {
-        return null;
+        if (!metadataPrefix.equals("oai_dc")) {
+            throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
+        }
+        throw new RepositoryException("getRecord not impld");
     }
 
     /**
@@ -125,7 +175,10 @@ public class FedoraOAIProvider
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException,
             RepositoryException {
-        return null;
+        if (!metadataPrefix.equals("oai_dc")) {
+            throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
+        }
+        throw new RepositoryException("getRecords not impld");
     }
 
     /**
@@ -139,7 +192,10 @@ public class FedoraOAIProvider
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        return null;
+        if (1==2) {
+            return null;
+        }
+        throw new RepositoryException("getRecords not impld");
     }
 
     /**
@@ -153,7 +209,10 @@ public class FedoraOAIProvider
             String set)
             throws CannotDisseminateFormatException, NoRecordsMatchException, 
             NoSetHierarchyException, RepositoryException {
-        return null;
+        if (!metadataPrefix.equals("oai_dc")) {
+            throw new CannotDisseminateFormatException("Repository does not provide that format in OAI-PMH responses.");
+        }
+        throw new RepositoryException("getHeaders not impld");
     }
 
     /**
@@ -167,7 +226,7 @@ public class FedoraOAIProvider
             throws CannotDisseminateFormatException,
             NoRecordsMatchException, NoSetHierarchyException, 
             BadResumptionTokenException, RepositoryException {
-        return null;
+        throw new RepositoryException("getHeaders not impld");
     }
             
     /**
@@ -181,7 +240,10 @@ public class FedoraOAIProvider
      */
     public List getSets()
             throws NoSetHierarchyException, RepositoryException {
-        return null;
+        if (1==2) {
+            return null;
+        }
+        throw new RepositoryException("getSets not impld");
     }
 
     /**
@@ -194,7 +256,10 @@ public class FedoraOAIProvider
     public List getSets(String resumptionToken)
             throws BadResumptionTokenException,
             NoSetHierarchyException, RepositoryException {
-        return null;
+        if (1==2) {
+            return null;
+        }
+        throw new RepositoryException("getSets not impld");
     }
 
     /**
@@ -204,8 +269,37 @@ public class FedoraOAIProvider
      * @param identifier The item identifier, or null, meaning "the entire repository"
      */
     public Set getMetadataFormats(String id)
-            throws RepositoryException {
-        return null;
+            throws NoMetadataFormatsException, IDDoesNotExistException, 
+            RepositoryException {
+        if (id==null) {
+            return m_formats;
+        }
+        if (!id.startsWith("oai:")) {
+            throw new IDDoesNotExistException("For this repository, all identifiers in OAI requests should begin with oai:");
+        }
+        if (id.indexOf("'")!=-1) {
+            throw new IDDoesNotExistException("For this repository, no identifiers contain the apostrophe character.");
+        }
+        String pid=id.substring(4);
+        List l=null;
+        try {
+            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "' dcmDate>'1970-01-01'"));
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()>0) {
+            return m_formats;
+        }
+        try {
+            l=m_fieldSearch.search(new String[] {"pid"}, Condition.getConditions("pid='" + pid + "'"));
+        } catch (ServerException se) {
+            throw new RepositoryException(se.getClass().getName() + ": " + se.getMessage());
+        }
+        if (l.size()>0) {
+            throw new NoMetadataFormatsException("The item doesn't even have dc_oai metadata.");
+        } else {
+            throw new IDDoesNotExistException("The provided id does not match any item in the repository.");
+        }
     }
 
     /**
@@ -215,7 +309,7 @@ public class FedoraOAIProvider
      */
     public long getMaxSets()
             throws RepositoryException {
-        return -1;
+        return m_maxSets;
     }
             
     /**
@@ -225,7 +319,7 @@ public class FedoraOAIProvider
      */
     public long getMaxRecords()
             throws RepositoryException {
-        return -1;
+        return m_maxRecords;
     }
             
     /**
@@ -235,7 +329,7 @@ public class FedoraOAIProvider
      */
     public long getMaxHeaders()
             throws RepositoryException {
-        return -1;
+        return m_maxHeaders;
     }
     
 }
