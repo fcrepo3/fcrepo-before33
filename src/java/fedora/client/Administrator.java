@@ -459,8 +459,6 @@ public class Administrator extends JFrame {
         toolsBatchSubMenu.add(toolsBatchIngest);
 
         // rlw >
-        // SubMenuItem for batch modify tool to be added in Fedora 1.3
-        /*
         JMenu toolsBatchModify=new JMenu("Modify Batch");
         toolsBatchModify.setMnemonic(KeyEvent.VK_M);
         JMenuItem executeBatchModify=new JMenuItem("Process Directives", KeyEvent.VK_P);
@@ -485,7 +483,6 @@ public class Administrator extends JFrame {
         toolsBatchModify.add(validateBatchModify);
 
         toolsBatchSubMenu.add(toolsBatchModify);
-        */
         // < rlw
         toolsMenu.addSeparator();
         toolsMenu.add(toolsBatchSubMenu);
