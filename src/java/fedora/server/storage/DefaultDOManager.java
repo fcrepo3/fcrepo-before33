@@ -1004,7 +1004,7 @@ public class DefaultDOManager
     /**
      * Gets a writer on a new, empty object.
      */
-    public syncronized DOWriter newWriter(Context context)
+    public synchronized DOWriter newWriter(Context context)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context)");
         if (cachedObjectRequired(context)) {
