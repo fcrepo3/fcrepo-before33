@@ -1,4 +1,5 @@
 package fedora.server.storage.lowlevel;
+
 import java.io.File;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -24,19 +25,19 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	static {
 		if (conf.getTestConfig()) {
 			try {
-				commonConnectionPool = new ConnectionPool("org.gjt.mm.mysql.Driver", 
+				commonConnectionPool = new ConnectionPool("org.gjt.mm.mysql.Driver",
 					"jdbc:mysql://localhost/FedoraObjects",
 					"fedoraAdmin", "fedoraAdmin", 10, 100, true);
 			} catch (SQLException sqlException) {
 				System.out.println("\n*****didn't make connectionPool*****[[[[[");
-				System.out.println(sqlException.getMessage() + "\n]]]]]*****");		
-			}			
+				System.out.println(sqlException.getMessage() + "\n]]]]]*****");
+			}
 		} else {
 			Server s_server = null;
 			try {
 				s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
 			} catch (InitializationException ie) {
-				System.err.println(ie.getMessage());				
+				System.err.println(ie.getMessage());
 			}
 			ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
 				"fedora.server.storage.ConnectionPoolManager");
@@ -54,7 +55,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			}
 		}
 	}
-	
+
 	private ConnectionPool connectionPool = null;
 
 	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
@@ -69,8 +70,8 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		String path = null;
 		Connection connection = null;
 		Statement statement = null;
+                ResultSet rs = null;
 		try {
-			ResultSet rs = null;
 			int paths = 0;
 			connection = connectionPool.getConnection();
 			statement = connection.createStatement();
@@ -91,8 +92,8 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			throw new LowlevelStorageException(true,"sql failure (get)", e1);
 		} finally {
 			try {
-				statement.close();
-//				connection.close();
+                                if (rs != null) rs.close();
+				if (statement != null) statement.close();
 				connectionPool.free(connection);
 			} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 				throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (get)", e2);
@@ -196,8 +197,8 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			}
 			finally {
 				try {
-					statement.close();
-//					connection.close();
+                                        if (rs != null) rs.close();
+					if (statement != null) statement.close();
 					connectionPool.free(connection);
 				} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 					throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (enum)", e2);

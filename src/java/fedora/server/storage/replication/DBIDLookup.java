@@ -114,10 +114,10 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws SQLException {
-		String query;
+		String query = null;
 		String ID = null;
-		Statement statement;
-		ResultSet rs;
+		Statement statement = null;
+		ResultSet rs = null;
 
 		query = "SELECT dissDbID FROM diss WHERE ";
 		query += "bDefDbID = " + bDefDBID + " AND ";
@@ -170,10 +170,10 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws SQLException {
-		String query;
+		String query = null;
 		String ID = null;
-		Statement statement;
-		ResultSet rs;
+		Statement statement = null;
+		ResultSet rs = null;
 
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		query += lookupColumnName + " = '" + lookupColumnValue + "';";
@@ -209,10 +209,10 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
-		String query;
+		String query = null;
 		String ID = null;
-		Statement statement;
-		ResultSet rs;
+		Statement statement = null;
+		ResultSet rs = null;
 
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
@@ -234,10 +234,10 @@ public class DBIDLookup {
 	}
 
 	public String lookupDBID2FirstNum(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
-		String query;
+		String query = null;
 		String ID = null;
-		Statement statement;
-		ResultSet rs;
+		Statement statement = null;
+		ResultSet rs = null;
 
 		query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";

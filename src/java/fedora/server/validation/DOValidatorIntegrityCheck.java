@@ -110,6 +110,7 @@ import fedora.server.errors.InitializationException;
   {
     String BDefPID = null;
     ResultSet queryResult = null;
+    Statement statement = null;
     boolean rowFound = false;
 
     for (int i = 0; i < objectInfo.bDefPIDs.length; i++)
@@ -129,16 +130,25 @@ import fedora.server.errors.InitializationException;
             + "WHERE "
             + "bDef.bDefPID=\'" + BDefPID + "\';";
 
-        Statement statement = connection.createStatement();
+        statement = connection.createStatement();
         queryResult = statement.executeQuery(query);
         rowFound = queryResult.next();
-        statement.close();
       }
       catch (Throwable th)
       {
         throw new GeneralException("DOValidatorIntegrityCheck returned error. "
                   + "The underlying error was a " + th.getClass().getName()
                   + "The message was "  + "\"" + th.getMessage() + "\"");
+      } finally
+      {
+        try
+        {
+          if (queryResult!=null) queryResult.close();
+          if (statement!= null) statement.close();
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("Unexpected error from SQL database: " + sqle.getMessage());
+        }
       }
       if (!rowFound)
       {
@@ -167,6 +177,7 @@ import fedora.server.errors.InitializationException;
   {
     String BMechPID = null;
     ResultSet queryResult = null;
+    Statement statement = null;
     boolean rowFound = false;
 
     for (int i = 0; i < objectInfo.bMechPIDs.length; i++)
@@ -186,7 +197,7 @@ import fedora.server.errors.InitializationException;
             + "WHERE "
             + "bMech.bMechPID=\'" + BMechPID + "\';";
 
-        Statement statement = connection.createStatement();
+        statement = connection.createStatement();
         queryResult = statement.executeQuery(query);
         rowFound = queryResult.next();
         statement.close();
@@ -196,6 +207,16 @@ import fedora.server.errors.InitializationException;
         throw new GeneralException("DOValidatorIntegrityCheck returned error. "
                   + "The underlying error was a " + th.getClass().getName()
                   + "The message was "  + "\"" + th.getMessage() + "\"");
+      } finally
+      {
+        try
+        {
+          if (queryResult!=null) queryResult.close();
+          if (statement!= null) statement.close();
+        } catch (SQLException sqle)
+        {
+          throw new GeneralException("Unexpected error from SQL database: " + sqle.getMessage());
+        }
       }
       if (!rowFound)
       {

@@ -28,7 +28,7 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.MD5Utility;
 
 /**
- * A FieldSearchResults object returned as the result of a 
+ * A FieldSearchResults object returned as the result of a
  * FieldSearchSQLImpl search.
  * <p />
  * A FieldSearchResultSQLImpl is intended to be re-used in cases where
@@ -44,14 +44,14 @@ public class FieldSearchResultSQLImpl
         h.put("useCachedObject", "false");
         s_nonCachedContext=new ReadOnlyContext(h);
     }
-    
+
     /* fields supporting public accessors */
     private ArrayList m_objectFields;
     private String m_token;
     private long m_cursor=-1;
     private long m_completeListSize=-1;
     private Date m_expirationDate;
-  
+
     /* invariants */
     private Connection m_conn;
     private ConnectionPool m_cPool;
@@ -65,7 +65,7 @@ public class FieldSearchResultSQLImpl
     private ResultSet m_resultSet;
     private long m_nextCursor=0;
     private boolean m_expired;
-    
+
 
     /**
      * Construct a FieldSearchResultSQLImpl object.
@@ -77,7 +77,7 @@ public class FieldSearchResultSQLImpl
      * <p />
      * Once the ResultSet is obtained, one result is requested of it
      * (and remembered for use in step()); then the call returns.
-     * 
+     *
      * @param cPool the connectionPool
      * @param repoReader the provider of object field information for results
      * @param resultFields which fields should be returned in results
@@ -87,10 +87,10 @@ public class FieldSearchResultSQLImpl
      * @param query the end-user query
      * @param logTarget where to send log messages
      */
-    protected FieldSearchResultSQLImpl(ConnectionPool cPool, 
+    protected FieldSearchResultSQLImpl(ConnectionPool cPool,
             RepositoryReader repoReader, String[] resultFields, int maxResults,
-            int maxSeconds, FieldSearchQuery query, 
-            Logging logTarget) 
+            int maxSeconds, FieldSearchQuery query,
+            Logging logTarget)
             throws SQLException, QueryParseException {
         super(logTarget);
         m_cPool=cPool;
@@ -104,12 +104,13 @@ public class FieldSearchResultSQLImpl
         } catch (SQLException sqle) {
             // if there's any kind of problem getting the resultSet,
             // give the connection back to the pool
+            if (m_resultSet != null) m_resultSet.close();
             m_cPool.free(m_conn);
             throw sqle;
         }
     }
-    
-    private ResultSet getResultSet(FieldSearchQuery query) 
+
+    private ResultSet getResultSet(FieldSearchQuery query)
             throws SQLException, QueryParseException {
         StringBuffer queryText=new StringBuffer();
         queryText.append("SELECT doFields.pid FROM doFields");
@@ -119,10 +120,10 @@ public class FieldSearchResultSQLImpl
             queryText.append(getWhereClause(query.getConditions()));
         }
         return m_conn.createStatement().executeQuery(queryText.toString());
-        
+
     }
-    
-    private String getWhereClause(String terms) 
+
+    private String getWhereClause(String terms)
             throws QueryParseException {
         if (terms.indexOf("'")!=-1) {
             throw new QueryParseException("Query cannot contain the ' character.");
@@ -162,8 +163,8 @@ public class FieldSearchResultSQLImpl
         }
         return whereClause.toString();
     }
-    
-    private String getWhereClause(List conditions) 
+
+    private String getWhereClause(List conditions)
             throws QueryParseException {
         StringBuffer whereClause=new StringBuffer();
         boolean willJoin=false;
@@ -197,7 +198,7 @@ public class FieldSearchResultSQLImpl
                         }
                     } else { // =, <, <=, >, >=
                         // property must be parsable as a date... if ok,
-                        // do (cDate, mDate, dcmDate) 
+                        // do (cDate, mDate, dcmDate)
                         // or (date) <- dcDate from dcDates table
                         Date dt=DateUtility.parseDate(cond.getValue());
                         if (dt==null) {
@@ -209,17 +210,17 @@ public class FieldSearchResultSQLImpl
                         }
                         if (prop.equals("date")) {
                             // do a left join on the dcDates table...dcDate
-                            // query will be of form: 
-                            // select pid 
-                            // from doFields 
-                            // left join dcDates on doFields.pid=dcDates.pid 
+                            // query will be of form:
+                            // select pid
+                            // from doFields
+                            // left join dcDates on doFields.pid=dcDates.pid
                             // where...
                             if (!willJoin) {
                                 willJoin=true;
                                 whereClause.insert(0, " LEFT JOIN dcDates "
                                         + "ON doFields.pid=dcDates.pid");
                             }
-                            whereClause.append(" dcDates.dcDate" + op 
+                            whereClause.append(" dcDates.dcDate" + op
                                     + dt.getTime() );
                         } else {
                             whereClause.append(" doFields." + prop + op
@@ -251,11 +252,11 @@ public class FieldSearchResultSQLImpl
                     } else if (op.equals("~")) {
                         if (isDCProp(prop)) {
                             // prepend dc and caps the first char first...
-                            prop="dc" + prop.substring(0,1).toUpperCase() 
-                                    + prop.substring(1);  
+                            prop="dc" + prop.substring(0,1).toUpperCase()
+                                    + prop.substring(1);
                         }
                         // the field name is ok, so toSql it
-                        String sqlPart=toSql("doFields." + prop, 
+                        String sqlPart=toSql("doFields." + prop,
                                 cond.getValue());
                         if (sqlPart.startsWith(" ")) {
                             needsEscape=true;
@@ -275,7 +276,7 @@ public class FieldSearchResultSQLImpl
         }
         return whereClause.toString();
     }
-    
+
     protected boolean isExpired() {
         long passedSeconds=(System.currentTimeMillis() - m_startMillis)/1000;
         m_expired=(passedSeconds > m_maxSeconds);
@@ -290,17 +291,17 @@ public class FieldSearchResultSQLImpl
         }
         return m_expired;
     }
-   
+
     /**
      * Update object with the next chunk of results.
      *
      * if getToken() is null after this call, the resultSet was exhausted.
      */
-    protected void step() 
+    protected void step()
             throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
+            RepositoryConfigurationException, StreamIOException,
             ServerException {
-        m_objectFields=new ArrayList();        
+        m_objectFields=new ArrayList();
         int resultCount=0;
         // run through resultSet, adding each result to m_objectFields
         // for up to maxResults objects, or until the result set is
@@ -314,7 +315,7 @@ public class FieldSearchResultSQLImpl
             }
             // done with this block.  now, are there any more results to return?
             if (resultCount>0 && !m_resultSet.isAfterLast()) {
-                // yes, so generate a token, make sure the cursor is set, 
+                // yes, so generate a token, make sure the cursor is set,
                 // and make sure the expirationDate is set
                 long now=System.currentTimeMillis();
                 m_token=MD5Utility.getBase16Hash(this.hashCode() + "" +  now);
@@ -344,7 +345,7 @@ public class FieldSearchResultSQLImpl
             }
         }
     }
-    
+
     /**
      * For the given pid, get a reader on the object from the repository
      * and return an ObjectFields object with resultFields fields populated.
@@ -362,19 +363,19 @@ public class FieldSearchResultSQLImpl
      * @throws ServerException if any other kind of error occurs while reading
      *         the underlying object
      */
-    private ObjectFields getObjectFields(String pid) 
+    private ObjectFields getObjectFields(String pid)
             throws UnrecognizedFieldException, ObjectIntegrityException,
-            RepositoryConfigurationException, StreamIOException, 
+            RepositoryConfigurationException, StreamIOException,
             ServerException {
         DOReader r=m_repoReader.getReader(s_nonCachedContext, pid);
         ObjectFields f;
-        // If there's a DC record available, use SAX to parse the most 
+        // If there's a DC record available, use SAX to parse the most
         // recent version of it into f.
         DatastreamXMLMetadata dcmd=null;
         try {
             dcmd=(DatastreamXMLMetadata) r.GetDatastream("DC", null);
         } catch (ClassCastException cce) {
-            throw new ObjectIntegrityException("Object " + r.GetObjectPID() 
+            throw new ObjectIntegrityException("Object " + r.GetObjectPID()
                     + " has a DC datastream, but it's not inline XML.");
         }
         if (dcmd!=null) {
@@ -436,7 +437,7 @@ public class FieldSearchResultSQLImpl
         return f;
     }
 
-    
+
     public List objectFieldsList() {
         return m_objectFields;
     }
@@ -444,22 +445,22 @@ public class FieldSearchResultSQLImpl
     public String getToken() {
         return m_token;
     }
-    
+
     public long getCursor() {
         return m_cursor;
     }
-    
+
     public long getCompleteListSize() {
         return m_completeListSize;
     }
-    
+
     public Date getExpirationDate() {
         return m_expirationDate;
     }
-    
+
     /**
      * Return a condition suitable for a SQL WHERE clause, given a column
-     * name and a string with a possible pattern (using * and questionmark 
+     * name and a string with a possible pattern (using * and questionmark
      * wildcards).
      * <p></p>
      * If the string has any characters that need to be escaped, it will
@@ -607,6 +608,6 @@ public class FieldSearchResultSQLImpl
         }
         return false;
     }
-    
-}    
+
+}
 

@@ -589,9 +589,9 @@ System.out.println("insert dsbinding");
             throws SQLException {
         logFinest("Entered DefaultDOReplicator.deleteBehaviorDefinition");
         Statement st=null;
+        ResultSet results=null;
         try {
 		     st=connection.createStatement();
-            ResultSet results;
             //
             // READ
             //
@@ -625,11 +625,8 @@ System.out.println("insert dsbinding");
                     + "bDefDbID=" + dbid);
             logFinest("Deleted " + rowCount + " row(s).");
         } finally {
-            if (st!=null) {
-                try {
-                    st.close();
-                } catch (SQLException sqle) {}
-            }
+            if (results != null) results.close();
+            if (st!=null) st.close();
             logFinest("Exiting DefaultDOReplicator.deleteBehaviorDefinition");
         }
     }
@@ -656,9 +653,9 @@ System.out.println("insert dsbinding");
             throws SQLException {
         logFinest("Entered DefaultDOReplicator.deleteBehaviorMechanism");
         Statement st=null;
+        ResultSet results=null;
         try {
 		     st=connection.createStatement();
-            ResultSet results;
             //
             // READ
             //
@@ -726,11 +723,8 @@ System.out.println("insert dsbinding");
             logFinest("Deleted " + rowCount + " row(s).");
 
         } finally {
-            if (st!=null) {
-                try {
-                    st.close();
-                } catch (SQLException sqle) {}
-            }
+            if (results != null) results.close();
+            if (st!=null)st.close();
             logFinest("Exiting DefaultDOReplicator.deleteBehaviorMechanism");
         }
     }
@@ -759,9 +753,9 @@ System.out.println("insert dsbinding");
             throws SQLException {
         logFinest("Entered DefaultDOReplicator.deleteDigitalObject");
         Statement st=null;
+        ResultSet results=null;
         try {
 		     st=connection.createStatement();
-            ResultSet results;
             //
             // READ
             //
@@ -807,7 +801,7 @@ System.out.println("insert dsbinding");
                   dissIds.remove(id);
                 } else
                 {
-                  ResultSet rs;
+                  ResultSet rs = null;
                   logFinest("Getting associated bMechDbID(s) that are unique "
                         + "for this object in diss table...");
                   rs=logAndExecuteQuery(st, "SELECT bMechDbID from "
@@ -864,11 +858,8 @@ System.out.println("insert dsbinding");
                       "bMechDbID", bMechIds));
             logFinest("Deleted " + rowCount + " row(s).");
         } finally {
-            if (st!=null) {
-                try {
-                    st.close();
-                } catch (SQLException sqle) {}
-            }
+            if (results != null) results.close();
+            if (st!=null) st.close();
             logFinest("Exiting DefaultDOReplicator.deleteDigitalObject");
         }
     }

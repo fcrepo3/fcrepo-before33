@@ -484,7 +484,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         + "bMech "
         + "WHERE "
         + "bMech.bMechPID=\'" + bMechPID + "\';";
-    s_server.logFinest("LocatBmechPIDQuery: " + query);
+    s_server.logFinest("LocateBmechPIDQuery: " + query);
 
     try
     {
