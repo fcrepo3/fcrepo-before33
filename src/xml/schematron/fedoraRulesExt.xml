@@ -22,7 +22,10 @@
 		<sch:active pattern="preliminary"/>
 		<!-- TEMPORARY COMMENT OUT OF THE COMPLETED PHASE UNTIL INGEST PROCESS -->
 		<!-- IMPLEMENTS THE ASSIGNMENT OF DATES AND STATUS CODES TO THE OBJECT -->
+        <!-- FIXME:Is this commenting-out still necessary? -->
 		<!-- <sch:active pattern="completed"/> -->
+        <sch:active pattern="harvestable1"/>
+        <sch:active pattern="harvestable2"/>
 	</sch:phase>
 	<!-- PRELIMINARY PATTERN: -->
 	<!-- These rules are to be applied to objects no matter what phase of the object lifecycle they are in.-->
@@ -109,4 +112,38 @@
 			<sch:assert test="@ID">Inline Metadata Datastream must have a version id (element digiprovMD: ID missing)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
+  <sch:pattern name="HARVESTABLE datastreams must have a FORMATURI specified" id="harvestable1">
+    <sch:rule context="METS:dmdSecFedora[@HARVESTABLE='true']" name="Check for datastreams in dmdSecFedora">
+        <sch:assert test="child::node()/METS:mdWrap/@FORMATURI">
+           <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but does not have a FORMATURI.
+        </sch:assert>
+    </sch:rule>
+    <sch:rule context="METS:amdSec[@HARVESTABLE='true']" name="Check for datastreams in amdSec">
+        <sch:assert test="child::node()/METS:mdWrap/@FORMATURI">
+            <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but does not have a FORMATURI.
+        </sch:assert>
+    </sch:rule>
+    <sch:rule context="METS:fileGrp[@HARVESTABLE='true']" name="Check for datastreams in fileGrp">
+        <sch:assert test="METS:file/@FORMATURI">
+            <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but does not have a FORMATURI.
+        </sch:assert>
+    </sch:rule>
+  </sch:pattern>
+  <sch:pattern name="There may be at most one HARVESTABLE datastream of a given FORMATURI" id="harvestable2">
+    <sch:rule context="METS:dmdSecFedora[@HARVESTABLE='true']" name="Check for datastreams in dmdSecFedora">
+      <sch:assert test="(count(//METS:dmdSecFedora[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]) + count(//METS:amdSec[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]) + count(//METS:fileGrp[@HARVESTABLE='true' and METS:file/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]))=1">
+          <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but only one datastream of format <sch:value-of select="child::node()/METS:mdWrap/@FORMATURI"/> may be harvestable in this object.
+      </sch:assert>
+    </sch:rule>
+    <sch:rule context="METS:amdSec[@HARVESTABLE='true']" name="Check for datastreams in amdSec">
+      <sch:assert test="(count(//METS:dmdSecFedora[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]) + count(//METS:amdSec[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]) + count(//METS:fileGrp[@HARVESTABLE='true' and METS:file/@FORMATURI=current()/child::node()/METS:mdWrap/@FORMATURI]))=1">
+          <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but only one datastream of format <sch:value-of select="child::node()/METS:mdWrap/@FORMATURI"/> may be harvestable in this object.
+      </sch:assert>
+    </sch:rule>
+    <sch:rule context="METS:fileGrp[@HARVESTABLE='true']" name="Check for datastreams in fileGrp">
+      <sch:assert test="(count(//METS:dmdSecFedora[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/METS:file/@FORMATURI]) + count(//METS:amdSec[@HARVESTABLE='true' and child::node()/METS:mdWrap/@FORMATURI=current()/METS:file/@FORMATURI]) + count(//METS:fileGrp[@HARVESTABLE='true' and METS:file/@FORMATURI=current()/METS:file/@FORMATURI]))=1">
+          <sch:value-of select="@ID"/> datastream has HARVESTABLE='true' but only one datastream of format <sch:value-of select="METS:file/@FORMATURI"/> may be harvestable in this object.
+      </sch:assert>
+    </sch:rule>
+  </sch:pattern>
 </sch:schema>
