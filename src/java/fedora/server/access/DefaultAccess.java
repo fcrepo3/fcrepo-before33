@@ -2,13 +2,11 @@ package fedora.server.access;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -50,7 +48,7 @@ import fedora.server.utilities.DateUtility;
 public class DefaultAccess extends Module implements Access
 {
   /** Constant holding value of xml MIME type. */
-  private final static String CONTENT_TYPE_XML = "text/xml";
+  private final static String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
 
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
@@ -236,8 +234,6 @@ public class DefaultAccess extends Module implements Access
         // RLW: change required by conversion fom byte[] to InputStream
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
-        System.out.println("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
-                  + interval + " milliseconds.");
         logFiner("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
               + interval + " milliseconds.");
         return methodDefs;
@@ -287,8 +283,6 @@ public class DefaultAccess extends Module implements Access
     }
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip DynamicDisseminator: "
-        + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip DynamicDisseminator: "
         + interval + " milliseconds.");
 
@@ -314,8 +308,6 @@ public class DefaultAccess extends Module implements Access
     }
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip Looping Diss: "
-              + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip Looping Diss: "
               + interval + " milliseconds.");
 
@@ -335,8 +327,6 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip Get/Validate User Parms: "
-        + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip Get/Validate User Parms: "
         + interval + " milliseconds.");
 
@@ -355,8 +345,6 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip Get BMech Parms: "
-        + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip Get BMech Parms: "
         + interval + " milliseconds.");
 
@@ -372,15 +360,11 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip Assemble Dissemination: "
-        + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip Assemble Dissemination: "
         + interval + " milliseconds.");
 
     stopTime = new Date().getTime();
     interval = stopTime - initStartTime;
-    System.out.println("[DefaultAccess] Roundtrip GetDissemination: "
-              + interval + " milliseconds.");
     logFiner("[DefaultAccess] Roundtrip GetDissemination: "
               + interval + " milliseconds.");
     return dissemination;
@@ -410,7 +394,7 @@ public class DefaultAccess extends Module implements Access
         reader.getObjectMethods(versDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    System.out.println("[DefaultAccess] Roundtrip GetObjectMethods: "
+    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
               + interval + " milliseconds.");
 
     // DYNAMIC!! Grab any dynamic method definitions and merge them with
@@ -447,7 +431,7 @@ public class DefaultAccess extends Module implements Access
           reader.GetObjectPID(), versDateTime);
       return profile;
   }
-  
+
   /**
    * <p>Lists the specified fields of each object matching the given
    * criteria.</p>
@@ -455,12 +439,13 @@ public class DefaultAccess extends Module implements Access
    * @param context the context of this request
    * @param resultFields the names of the fields to return
    * @param maxResults the maximum number of results to return at a time
-   * @param the query
+   * @param query the query
+   * @return the results of te field search
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
-  public FieldSearchResult findObjects(Context context, 
-          String[] resultFields, int maxResults, FieldSearchQuery query) 
+  public FieldSearchResult findObjects(Context context,
+          String[] resultFields, int maxResults, FieldSearchQuery query)
           throws ServerException {
       m_ipRestriction.enforce(context);
       return m_manager.findObjects(context, resultFields, maxResults, query);
@@ -469,9 +454,10 @@ public class DefaultAccess extends Module implements Access
   /**
    * <p>Resumes an in-progress listing of object fields.</p>
    *
-   * @param content the context of this request
+   * @param context the context of this request
    * @param sessionToken the token of the session in which the remaining
    *        results can be obtained
+   * @return the next set of results from the initial field search
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
