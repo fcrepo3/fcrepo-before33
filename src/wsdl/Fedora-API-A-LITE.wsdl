@@ -191,7 +191,7 @@
 		</part>
 	</message>
 	<message name="findObjectsResponse">
-		<part name="response" type="fedora-types:FieldSearchResult">
+		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>An xml chunk containing an array of ObjectFields and, possibly,
             a listSession.</documentation>
 		</part>
