@@ -286,8 +286,10 @@
 		<copy file="src/properties/server/fedora/server/resources/Server.properties" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
 		<copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/>
 		<mkdir dir="dist/server/bin"/>
-		<copy file="src/bat/server/fedora.bat" todir="dist/server/bin"/>
-		<copy file="src/sh/server/fedora" todir="dist/server/bin"/>
+		<copy todir="dist/server/bin">
+			<fileset dir="src/bat/server"/>
+			<fileset dir="src/sh/server"/>
+       </copy>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
@@ -327,6 +329,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.39  2002/09/30 17:01:39  cwilper
+  copies *all* server/.bat and server/.sh files to dist\bin
+
   Revision 1.38  2002/09/29 16:14:12  cwilper
   sources the mckoi jdbc driver.jar in servertest
 
