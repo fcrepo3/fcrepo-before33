@@ -107,6 +107,9 @@ public class METSDODeserializer
     private String m_auditDate;
     private String m_auditJustification;
 
+    /** The most recently seen ID of a fedora:dsBindingMap structMap */
+    private String m_bindingMapId;
+    
     /** 
      * Never query the server and take it's values for Content-length and 
      * Content-type
@@ -400,6 +403,19 @@ public class METSDODeserializer
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
+            } else if (localName.equals("structMap")) {
+                // we don't know what disseminator this belongs to yet... just save the id for later
+                // the TYPE must be fedora:dsBindingMap -- no others allowed
+                if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) {
+                    m_bindingMapId=grab(a,M,"ID");
+                    if ( (m_bindingMapId==null) || (m_bindingMapId.equals("")) ) {
+                        throw new SAXException("structMap with TYPE fedora:dsBindingMap must specify a non-empty ID attribute.");
+                    }
+                } else {
+                    throw new SAXException("StructMap must have TYPE fedora:dsBindingMap");
+                }
+            } else if (localName.equals("div")) {
+                // todo:need to remember level
             }
         } else {
             if (m_inXMLMetadata) {

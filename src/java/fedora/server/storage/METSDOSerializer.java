@@ -355,17 +355,31 @@ public class METSDOSerializer
                         }
                         buf.append("  </amdSec>\n");
                     }
-                } else {
+                }
+            }
+            // Now iterate through datastreams a second time, doing the fileSec
+            idIter=obj.datastreamIdIterator();
+            boolean didFileSec=false;
+            while (idIter.hasNext()) {
+                String id=(String) idIter.next();
+                // from the first one in the version group with this id, check its type
+                Datastream ds=(Datastream) obj.datastreams(id).get(0);
+                if (ds.DSControlGrp!=Datastream.XML_METADATA) { // must be ext ref or managed (so needs mets fileSec)
                     //
-                    // Externally-referenced or managed datastreams
+                    // Externally-referenced or managed datastreams (fileSec)
                     //
-                    buf.append("  <fileSec><fileGrp ID=\"");
+                    if (!didFileSec) {
+                        buf.append("  <fileSec>\n");
+                        buf.append("   <fileGrp ID=\"DATASTREAMS\">\n");
+                        didFileSec=true;
+                    }
+                    buf.append("    <fileGrp ID=\"");
                     buf.append(ds.DatastreamID);
                     buf.append("\">\n");
                     Iterator contentIter=obj.datastreams(id).iterator();
                     while (contentIter.hasNext()) {
                         DatastreamContent dsc=(DatastreamContent) contentIter.next();
-                        buf.append("    <file ID=\"");
+                        buf.append("      <file ID=\"");
                         buf.append(dsc.DSVersionID);
                         buf.append("\" CREATED=\"");
                         buf.append(DateUtility.convertDateToString(dsc.DSCreateDT));
@@ -403,7 +417,7 @@ public class METSDOSerializer
                         if (dsc.DSControlGrp==Datastream.EXTERNAL_REF) {
                             DatastreamReferencedContent dsec=(DatastreamReferencedContent) dsc;
                             // xlink:title, xlink:href
-                            buf.append("      <FLocat ");
+                            buf.append("        <FLocat ");
                             buf.append(m_xlinkPrefix);
                             buf.append(":title=\"");
                             buf.append(dsec.DSLabel);
@@ -418,13 +432,14 @@ public class METSDOSerializer
                         } else {
                             // FContent=base64 encoded
                         }
-                        buf.append("    </file>\n");
+                        buf.append("      </file>\n");
                     } 
-                    buf.append("  </fileGrp></fileSec>\n"); 
-                    // FIXME: METS only allows one fileSec element in the entire doc...
-                    // so the datastreams must be iterated through a second time,
-                    // looking for file-ish datastreams.
+                    buf.append("    </fileGrp>\n");
                 }
+            }
+            if (didFileSec) {
+                buf.append("   </fileGrp>\n"); 
+                buf.append("  </fileSec>\n"); 
             }
             //
             // Serialization Complete
