@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <article>
-    <title>Release Notes</title>
-    <subtitle>Fedora</subtitle>
+    <title>Fedora Release Notes</title>
     <articleinfo>
         <author>
             <othername>Fedora Development Team</othername>
@@ -13,10 +12,82 @@
         </releaseinfo>
     </articleinfo>
     <section>
-        <title>Beta 1 (Changes since Alpha 1)</title>
+        <title>Beta 1 (Dec 20, 2002)</title>
         <para>
-This release adds x, y, and z, and fixes a.
-It was released Dec 20, 2002.
+12-20-02 - Version beta1
+         - 2 phase validation of objects implemented. Upon ingestion,
+           Fedora objects undergo a two phase validation process to
+           validate against the Fedora METS schema and to validate
+           against a set of rules defined for Fedora objects.
+         - Serialization/Deserialization turned on. Upon ingestion,
+           the XML-encoded object files are serialized into java objects
+           for use within API-M and then deserialized back into XML 
+           before being stored in the repository.
+         - PID generation activated. Upon ingestion, Fedora objects that
+           pass validation are automatically assigned a unique persistent 
+           identifer or PID. The namespace prefix on the PID is determined
+           by the namespace parameter in the fedora.cfg configuration
+           file. 
+         - Special default PID namespace. To simplify initial setup and use 
+           of the repository, the default namespace of "test:" enables 
+           special handling of Fedora object PIDs. If the PID namespace is
+           set to "test:" in the fedora/fcfg configuration file, the ingest
+           method will NOT generate unique PIDs, but will instead use the
+           PID values contained in the Fedora objects. This behavior occurs
+           ONLY for the namespace of "test:". This feature was enabled to
+           allow for easier loadeing of sample objects by novice users of
+           the repository software.
+         - Datastream mediation enabled. To provide better security for
+           the physical location of datastreams, a simple proxy has been
+           implemented to disguise the location of datastreams to external
+           mechanisms.
+         - Method Parameters enabled. Method parameters can now be defined in
+           Behavior Mechanism objects using WSDL providing a way to pass
+           parameters to methods from the end user. For example, an image
+           mechanism might have a method named getImage with parameters X
+           and Y that specify the pixel dimensions of the requested image.
+           Method parameters may be supplied by the end user on a dissemination
+           request to affect the result of the dissemination.
+         - Default Method Parameters enabled. Mechanism designers can now
+           create method parameters that are known only to the mechanism.
+           Default method parameters cannot be altered by the end user and
+           their values must be specified in the Behavior Mechanism object.
+         - Basic Batch Tool implemented. A simple batch tool has been added
+           enabling the creation of a batch of objects conforming to the
+           same content model. The tool consists of a 3 phase process. Phase 1
+           will take a directory structure consisting of datastreams and metadata
+           and convert that information into an XML-encoded file. Phase 2 will
+           then take the XML-encoded file and merge that with a object template
+           file that specifies the content model being used to produce a Fedora
+           METS-encoded file. Phase 3 of the process then ingests the METS-encoded
+           files and returns a list of the PIDs that were assigned to the new
+           objects. Phase 2 and Phase 3 are implemented in the beta1 release.
+           Phase 1 will be implemented in the next release and is NOT available
+           in the beta1 release.
+         - Enhancements to the example soap client (FedoraAccessSoapServlet).
+           In the alpha1 release, the soap client enabled one to reflect on
+           an object using GetBehaviorDefinitions and GetObjectMethods to
+           display a list of all methods for a given object and to disseminate
+           each of the methods. This interface has been enhanced to now allow
+           for user input of method parameters for those methods that define
+           parameters.
+         - Sample objects updated. The sample objects in the demo directory
+           have been renamed for readability. The content of the objects has
+           also been updated to reflect new additions like method parameters
+           and default method parameters. The WSDL in the mrsid mechanism
+           object in the alpha1 version contained errors that have been
+           corrected. There is also a sample directory of image files and
+           their associated metadata to create a batch of 10 image objects
+           using the new batch tool.
+         - Added download directory to fedora CVS website for downloading
+           both milestone source builds and nightly binary distributions.
+         - Added WIKI to fedora CVS website for user support and FAQ.
+         - Enhanced in-line documentation in code. Ancillary documentation and
+           diagrams updated.
+         - Master Specification Document updated. The Specification documented
+           distributed in June 2002 has been updated to reflect changes.
+         - DB Schema updated. A new table named MechDefaultParameter has been
+           added and the datatype and length of some column names have changed.
         </para>
         <section>
 		<title>Batch Ingest</title>
@@ -72,14 +143,81 @@ the href is to the fedora server.  There are a couple kinds.
             </para>
         </section>
 	</section>
+    <section>
+        <title>Alpha 1 (Oct 31, 2002)</title>
+        <para>
+This release includes a basic server that can ingest
+objects, view objects in the repository, and export objects.
+         </para>
+         <section>
+           <title>Management API</title>
+           <para>The management API is exposed via SOAP over HTTP and 
+                 has the following methods implemented:
+            <itemizedlist>
+               <listitem><para>ingestObject</para></listitem>
+               <listitem><para>purgeObject</para></listitem>
+               <listitem><para>listObjectPIDs</para></listitem>
+               <listitem><para>exportObject</para></listitem>
+             </itemizedlist>
+           </para>
+         </section>
+         <section>
+           <title>Management Client</title>
+           <para>The included GUI, Fedora Administrator, can be used
+                 to ingest objects, purge objects, view objects, and
+                 export objects.  It also includes diagnostic consoles
+                 for API-M and API-A.
+           </para>
+         </section>
+         <section>
+           <title>Access API</title>
+           <para>The access API is exposed via SOAP over HTTP and
+                 has the following methods implemented:
+             <itemizedlist>
+               <listitem>getBehaviorDefinitions</listitem>
+               <listitem>getBehaviorMethods</listitem>
+               <listitem>getBehaviorMethodsAsWSDL</listitem>
+               <listitem>getObjectMethods</listitem>
+               <listitem>getDissemination</listitem>
+             </itemizedlist>
+           </para>
+         </section>
+         <section>
+           <title>Access Client</title>
+           <para>
+             A java servlet is included with the server distribution
+             that translates from pure HTTP requests to SOAP requests
+             and provides an HTML interface so that object methods
+             may be browsed and getDissemination requests can be
+             provided without the need to send/recieve SOAP envelopes.
+           </para>
+         </section>
+         <section>
+           <title>Object Validation</title>
+           <para>Objects must be validated according to METS schema rules,
+                 Fedora-imposed schema rules, and object integrity rules.
+                 For this release, the validation module implements the
+                 first two, but only METS schema validation has been
+                 activated.
+           </para>
+         </section>
+         <section>
+           <title>Storage Subsystem</title>
+           <para>This has been implemented on top of a filesystem and a
+             partially redundant database.
+           </para>
+         </section>
+    </section>
 	<appendix>
 	  <title>Revision History</title>
 	  <para>The history of this document follows.</para>
 	  <literallayout>
 	  $Log$
+	  Revision 1.2  2002/12/20 16:14:30  cwilper
+	  put ross' stuff in here... alpha1 info formatted, beta1 needs same
+
 	  Revision 1.1  2002/12/19 21:25:39  cwilper
 	  initial creation
-
 	  </literallayout>
     </appendix>
 </article>
