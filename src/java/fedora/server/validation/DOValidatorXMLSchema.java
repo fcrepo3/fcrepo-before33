@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 
@@ -34,6 +35,7 @@ public class DOValidatorXMLSchema
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
 
     private URI schemaURI = null;
+    private DOIntegrityHandler iHandler = null; // new
 
     public static void main(String[] args)
     {
@@ -55,17 +57,11 @@ public class DOValidatorXMLSchema
         System.out.println("DOValidatorXMLSchema caught ServerException in main().");
         System.out.println("Suppressing message since not attached to Server.");
       }
-      catch (SAXException e)
+      catch (Throwable th)
       {
-        System.err.println("DOValidatorXMLSchema says SAXException in main(): " + e.getMessage());
-      }
-      catch (ParserConfigurationException e)
-      {
-        System.err.println("DOValidatorXMLSchema says ParserConfigurationException in main(): " + e.getMessage());
-      }
-      catch (IOException e)
-      {
-        System.err.println("DOValidatorXMLSchema says IOException in main(): " + e.getMessage());
+        System.out.println("DOValidatorXMLSchema returned error in main(). "
+                  + "The underlying error was a " + th.getClass().getName()
+                  + "The message was "  + "\"" + th.getMessage() + "\"");
       }
     }
 
@@ -98,7 +94,7 @@ public class DOValidatorXMLSchema
     }
 
     public void validate(File objectAsFile)
-      throws SAXException, ParserConfigurationException, IOException
+      throws ObjectValidityException, GeneralException
     {
       try
       {
@@ -106,18 +102,22 @@ public class DOValidatorXMLSchema
       }
       catch (IOException e)
       {
-        System.err.println("DOValidatorXMLSchema says caught IO ERROR in Validation: " + e.getMessage());
+        String msg = "DOValidatorXMLSchema returned error. "
+                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+                  + "The message was "  + "\"" + e.getMessage() + "\"";
+        System.out.println(msg);
+        throw new GeneralException(msg);
       }
     }
 
     public void validate(InputStream objectAsStream)
-      throws SAXException, ParserConfigurationException, IOException
+      throws ObjectValidityException, GeneralException
     {
       validate(new InputSource(objectAsStream));
     }
 
     public void validate(InputSource objectAsSource)
-      throws SAXException, ParserConfigurationException, IOException
+      throws ObjectValidityException, GeneralException
     {
       InputSource doXML = objectAsSource;
       try
@@ -133,14 +133,40 @@ public class DOValidatorXMLSchema
       sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaURI.toString());
       //sp.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", schemaFile);
 
+      iHandler = new DOIntegrityHandler(); // new
       XMLReader xmlreader = sp.getXMLReader();
+      xmlreader.setContentHandler(iHandler); // new
       xmlreader.setErrorHandler(new DOValidatorXMLErrorHandler());
       xmlreader.parse(doXML);
       }
+      catch (ParserConfigurationException e)
+      {
+        String msg = "DOValidatorXMLSchema returned parser error. "
+                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+                  + "The message was "  + "\"" + e.getMessage() + "\"";
+        System.out.println(msg);
+        throw new GeneralException(msg);
+      }
       catch (SAXException e)
       {
-        System.err.println("DOValidatorXMLSchema says re-throwing SAXException. ERROR in Validation: " + e.getMessage());
-        throw e;
+        String msg = "DOValidatorXMLSchema returned validation exception. "
+                  + "The underlying exception was a " + e.getClass().getName() + ".  "
+                  + "The message was "  + "\"" + e.getMessage() + "\"";
+        System.out.println(msg);
+        throw new ObjectValidityException(msg);
       }
+      catch (Exception e)
+      {
+        String msg = "DOValidatorXMLSchema returned error. "
+                  + "The underlying error was a " + e.getClass().getName() + ".  "
+                  + "The message was "  + "\"" + e.getMessage() + "\"";
+        System.out.println(msg);
+        throw new GeneralException(msg);
+      }
+    }
+
+    public DOIntegrityVariables getDOIntegrityVariables()
+    {
+      return iHandler.iVars;
     }
 }
