@@ -8,16 +8,41 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ *
+ * <p><b>Title:</b> RandomDCmetadataFactory.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class RandomDCMetadataFactory {
-        
-    private static String[] s_dcElements=new String[] {"title", "creator", 
-            "subject", "description", "publisher", "contributor", "date", 
+
+    private static String[] s_dcElements=new String[] {"title", "creator",
+            "subject", "description", "publisher", "contributor", "date",
             "type", "format", "identifier", "source", "language", "relation",
             "coverage", "rights"};
-            
+
     private ArrayList m_wordList=new ArrayList();
-            
-    public RandomDCMetadataFactory(File dictionaryFile) 
+
+    public RandomDCMetadataFactory(File dictionaryFile)
             throws IOException {
         BufferedReader in=new BufferedReader(new FileReader(dictionaryFile));
         String nextLine="";
@@ -40,7 +65,7 @@ public class RandomDCMetadataFactory {
         return get(repeatMax, wordMax, m_wordList);
     }
 
-    public static String get(int repeatMax, int wordMax, 
+    public static String get(int repeatMax, int wordMax,
             List wordList) {
         StringBuffer out=new StringBuffer();
         out.append("<oai_dc:dc\n"
@@ -53,15 +78,15 @@ public class RandomDCMetadataFactory {
             String dcElement=s_dcElements[x];
             int num=1+getRandom(repeatMax);
             for (int i=0; i<num; i++) {
-                out.append("<dc:" + dcElement + ">" 
-                        + getRandomWords(wordMax, wordList) 
+                out.append("<dc:" + dcElement + ">"
+                        + getRandomWords(wordMax, wordList)
                         + "</dc:" + dcElement + ">\n");
             }
         }
         out.append("</oai_dc:dc>");
         return out.toString();
     }
-    
+
     private static String getRandomWords(int wordMax, List wordList) {
         int count=1+getRandom(wordMax);
         StringBuffer out=new StringBuffer();
@@ -77,7 +102,7 @@ public class RandomDCMetadataFactory {
     public static int getRandom(int belowThis) {
         return (int) (Math.random() * belowThis);
     }
-    
+
     private static boolean allLetters(String w) {
         if (w.length()==0) return false;
         String l=w.toLowerCase();
@@ -89,5 +114,5 @@ public class RandomDCMetadataFactory {
         }
         return true;
     }
-    
+
 }

@@ -14,15 +14,40 @@ import javax.servlet.ServletException;
 import fedora.oai.OAIResponder;
 import fedora.oai.RepositoryException;
 
-public abstract class OAIProviderServlet 
+/**
+ *
+ * <p><b>Title:</b> OAIProviderServlet.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
+public abstract class OAIProviderServlet
         extends HttpServlet {
-        
+
     OAIResponder m_responder;
-    
+
     public OAIProviderServlet() {
     }
-        
-    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             HashMap params=new HashMap();
@@ -43,7 +68,7 @@ public abstract class OAIProviderServlet
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, getMessage(re));
         }
     }
-    
+
     private static String getMessage(RepositoryException re) {
         String msg=re.getMessage();
         if (msg==null) {
@@ -51,13 +76,13 @@ public abstract class OAIProviderServlet
         }
         return msg;
     }
-    
+
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response);
     }
 
-    public void init() 
+    public void init()
             throws ServletException {
         try {
             m_responder=getResponder();
@@ -66,16 +91,16 @@ public abstract class OAIProviderServlet
         }
     }
 
-    public void test(String[] args) 
+    public void test(String[] args)
             throws OAIException, RepositoryException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         getResponder().respond(getAsParameterMap(args), out);
         System.out.println(new String(out.toByteArray()));
     }
-    
-    public abstract OAIResponder getResponder() 
+
+    public abstract OAIResponder getResponder()
             throws RepositoryException;
-        
+
     public static HashMap getAsParameterMap(String[] args) {
         HashMap h=new HashMap();
         for (int i=0; i<args.length; i++) {

@@ -15,6 +15,32 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+
+/**
+ *
+ * <p><b>Title:</b> OAIResponder.java</p>
+ * <p><b>Description:</b> </p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
+ */
 public class OAIResponder {
 
     private OAIProvider m_provider;
@@ -24,13 +50,13 @@ public class OAIResponder {
         m_provider=provider;
     }
 
-    public void respond(Map args, OutputStream outStream) 
+    public void respond(Map args, OutputStream outStream)
             throws RepositoryException {
         m_granularity=m_provider.getDateGranularitySupport();
         PrintWriter out=null;
         try {
             out=new PrintWriter(new BufferedWriter(new OutputStreamWriter(outStream, "UTF-8")));
-        } catch (UnsupportedEncodingException uee) { 
+        } catch (UnsupportedEncodingException uee) {
             // not going to happen... all java impls support UTF-8
         }
         String verb=(String) args.get("verb");
@@ -64,8 +90,8 @@ public class OAIResponder {
                 Set adminEmails=m_provider.getAdminEmails();
                 Set compressions=m_provider.getSupportedCompressionEncodings();
                 Set descriptions=m_provider.getDescriptions();
-                respondToIdentify(args, baseURL, repositoryName,protocolVersion, 
-                        earliestDatestamp, deletedRecord, 
+                respondToIdentify(args, baseURL, repositoryName,protocolVersion,
+                        earliestDatestamp, deletedRecord,
                         adminEmails, compressions, descriptions, out);
             } else if (verb.equals("ListIdentifiers")) {
                 String rToken=(String) args.get("resumptionToken");
@@ -113,12 +139,12 @@ public class OAIResponder {
                 ResumptionToken resumptionToken=null;
                 if (m_provider.getMaxHeaders()>0) {
                     if (headers.size()>m_provider.getMaxHeaders()) {
-                        resumptionToken=(ResumptionToken) 
+                        resumptionToken=(ResumptionToken)
                                 headers.get(headers.size()-1);
                         headers=headers.subList(0, headers.size()-1);
                     }
                 }
-                respondToListIdentifiers(args, m_provider.getBaseURL(), 
+                respondToListIdentifiers(args, m_provider.getBaseURL(),
                         headers, resumptionToken, out);
             } else if (verb.equals("ListMetadataFormats")) {
                 String identifier=(String) args.get("identifier");
@@ -181,12 +207,12 @@ public class OAIResponder {
 System.out.println("GetRecords got " + records.size() + " items in the result list.");
                     if (records.size()>m_provider.getMaxRecords()) {
 System.out.println("GetRecords: will use resumptionToken");
-                        resumptionToken=(ResumptionToken) 
+                        resumptionToken=(ResumptionToken)
                                 records.get(records.size()-1);
                         records=records.subList(0, records.size()-1);
                     }
                 }
-                respondToListRecords(args, m_provider.getBaseURL(), 
+                respondToListRecords(args, m_provider.getBaseURL(),
                         records, resumptionToken, out);
             } else if (verb.equals("ListSets")) {
                 String rToken=(String) args.get("resumptionToken");
@@ -205,7 +231,7 @@ System.out.println("GetRecords: will use resumptionToken");
                 ResumptionToken resumptionToken=null;
                 if (m_provider.getMaxSets()>0) {
                     if (sets.size()>m_provider.getMaxSets()) {
-                        resumptionToken=(ResumptionToken) 
+                        resumptionToken=(ResumptionToken)
                                 sets.get(sets.size()-1);
                         sets=sets.subList(0, sets.size()-1);
                     }
@@ -220,15 +246,15 @@ System.out.println("GetRecords: will use resumptionToken");
             out.flush();
         }
     }
-    
-    private void assertSameGranularity(String from, String until) 
+
+    private void assertSameGranularity(String from, String until)
             throws BadArgumentException {
-        if ( ( (from.endsWith("Z")) && (!until.endsWith("Z")) ) 
+        if ( ( (from.endsWith("Z")) && (!until.endsWith("Z")) )
                 || ( (until.endsWith("Z")) && (!from.endsWith("Z")) ) ) {
             throw new BadArgumentException("Date granularities of from and until arguments do not match.");
         }
     }
-    
+
     private void respondToGetRecord(Map args, String baseURL, Record record,
             PrintWriter out) {
         appendTop(out);
@@ -238,9 +264,9 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("  </GetRecord>");
         appendBottom(out);
     }
-    
-    private void respondToIdentify(Map args, String baseURL, 
-            String repositoryName, String protocolVersion, 
+
+    private void respondToIdentify(Map args, String baseURL,
+            String repositoryName, String protocolVersion,
             Date earliestDatestamp, DeletedRecordSupport deletedRecord,
             Set adminEmails, Set compressions, Set descriptions, PrintWriter out) {
         appendTop(out);
@@ -271,7 +297,7 @@ System.out.println("GetRecords: will use resumptionToken");
     }
 
     // resumptionToken may be null
-    private void respondToListIdentifiers(Map args, String baseURL, 
+    private void respondToListIdentifiers(Map args, String baseURL,
             List headers, ResumptionToken resumptionToken, PrintWriter out) {
         appendTop(out);
         appendRequest(args, baseURL, out);
@@ -284,7 +310,7 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("  </ListIdentifiers>");
         appendBottom(out);
     }
-    
+
     private void respondToListMetadataFormats(Map args, String baseURL,
             Set metadataFormats, PrintWriter out) {
         appendTop(out);
@@ -302,9 +328,9 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("  </ListMetadataFormats>");
         appendBottom(out);
     }
-    
+
     // resumptionToken may be null
-    private void respondToListRecords(Map args, String baseURL, 
+    private void respondToListRecords(Map args, String baseURL,
             List records, ResumptionToken resumptionToken, PrintWriter out) {
         appendTop(out);
         appendRequest(args, baseURL, out);
@@ -316,7 +342,7 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("  </ListRecords>");
         appendBottom(out);
     }
-    
+
     // resumptionToken may be null
     private void respondToListSets(Map args, String baseURL,
             List sets, ResumptionToken resumptionToken, PrintWriter out) {
@@ -340,7 +366,7 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("  </ListSets>");
         appendBottom(out);
     }
-    
+
     private void appendRecord(String indent, Record record, PrintWriter out) {
         Header header=record.getHeader();
         String metadata=record.getMetadata();
@@ -360,7 +386,7 @@ System.out.println("GetRecords: will use resumptionToken");
         }
         out.println(indent + "</record>");
     }
-    
+
     private void appendHeader(String indent, Header header, PrintWriter out) {
         String identifier=header.getIdentifier();
         Date datestamp=header.getDatestamp();
@@ -379,7 +405,7 @@ System.out.println("GetRecords: will use resumptionToken");
         }
         out.println(indent + "</header>");
     }
-    
+
     private void appendResumptionToken(ResumptionToken token, PrintWriter out) {
         if (token!=null) {
             out.print("    <resumptionToken");
@@ -399,7 +425,7 @@ System.out.println("GetRecords: will use resumptionToken");
             }
         }
     }
-    
+
     private void appendRequest(Map args, String baseURL, PrintWriter out) {
         out.print("  <request");
         Iterator iter=args.keySet().iterator();
@@ -410,7 +436,7 @@ System.out.println("GetRecords: will use resumptionToken");
         }
         out.println(">" + OAIResponder.enc(baseURL) + "</request>");
     }
-    
+
     private void appendTop(PrintWriter out) {
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.println("<OAI-PMH xmlns=\"http://www.openarchives.org/OAI/2.0/\"");
@@ -418,7 +444,7 @@ System.out.println("GetRecords: will use resumptionToken");
         out.println("         xsi:schemaLocation=\"http://www.openarchives.org/OAI/2.0/ http://www.openarchives.org/OAI/2.0/OAI-PMH.xsd\">");
         out.println("  <responseDate>" + getUTCString(getUTCDate(new Date()), true) + "</responseDate>");
     }
-    
+
     private void appendBottom(PrintWriter out) {
         out.println("</OAI-PMH>");
     }
@@ -433,11 +459,11 @@ System.out.println("GetRecords: will use resumptionToken");
         if (e.getMessage()==null) {
             out.println("  <error code=\"" + e.getCode() + "\"/>");
         } else {
-            out.println("  <error code=\"" + e.getCode() + "\">" + OAIResponder.enc(e.getMessage()) + "</error>");        
+            out.println("  <error code=\"" + e.getCode() + "\">" + OAIResponder.enc(e.getMessage()) + "</error>");
         }
         appendBottom(out);
     }
-    
+
     private static String getUTCString(Date utcDate, boolean fineGranularity) {
         SimpleDateFormat formatter;
         if (fineGranularity) {
@@ -447,8 +473,8 @@ System.out.println("GetRecords: will use resumptionToken");
         }
         return formatter.format(utcDate);
     }
-    
-    private Date getUTCDate(String formattedDate) 
+
+    private Date getUTCDate(String formattedDate)
             throws BadArgumentException {
         if (formattedDate==null) {
             return null;
@@ -469,7 +495,7 @@ System.out.println("GetRecords: will use resumptionToken");
             throw new BadArgumentException("Error parsing date.");
         }
     }
-    
+
     private Date getUTCDate(Date localDate) {
         Calendar cal=Calendar.getInstance();
         int tzOffset=cal.get(Calendar.ZONE_OFFSET);
@@ -494,7 +520,7 @@ System.out.println("GetRecords: will use resumptionToken");
     }
 
     /**
-     * Appends an XML-appropriate encoding of the given String to the given 
+     * Appends an XML-appropriate encoding of the given String to the given
      * StringBuffer.
      *
      * @param in The String to encode.

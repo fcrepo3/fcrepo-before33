@@ -18,14 +18,36 @@ import fedora.oai.SimpleRecord;
 import fedora.oai.SimpleSetInfo;
 
 /**
- * A sample implementation of OAIProvider for testing and demonstration
- * purposes.
+ *
+ * <p><b>Title:</b> SampleOAIProvider.java</p>
+ * <p><b>Description:</b> A sample implementation of OAIProvider for testing and demonstration
+ * purposes.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * <p><b>License and Copyright: </b>The contents of this file are subject to the
+ * Mozilla Public License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of the License
+ * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.</p>
+ *
+ * <p>The entire file consists of original code.  Copyright © 2002, 2003 by The
+ * Rector and Visitors of the University of Virginia and Cornell University.
+ * All rights reserved.</p>
+ *
+ * -----------------------------------------------------------------------------
+ *
+ * @author cwilper@cs.cornell.edu
+ * @version 1.0
  */
 public class SampleOAIProvider
-        implements OAIProvider { 
+        implements OAIProvider {
 
     private static String s_rec1_identifier="sample:1";
-    
+
     private static String s_rec1_metadata="        <oai_dc:dc\n"
         + "           xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\"\n"
         + "           xmlns:dc=\"http://purl.org/dc/elements/1.1/\"\n"
@@ -48,7 +70,7 @@ public class SampleOAIProvider
         + "              8 figures</dc:description>\n"
         + "          <dc:date>2001-12-14</dc:date>\n"
         + "        </oai_dc:dc>";
-    
+
     private static String s_rec1_about="        <provenance\n"
         + "         xmlns=\"http://www.openarchives.org/OAI/2.0/provenance\"\n"
         + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
@@ -61,10 +83,10 @@ public class SampleOAIProvider
         + "          <metadataNamespace>http://www.openarchives.org/OAI/2.0/oai_dc/</metadataNamespace>\n"
         + "          </originDescription>\n"
         + "        </provenance>";
-        
+
     private SimpleHeader m_head1;
     private SimpleRecord m_rec1;
-        
+
     public SampleOAIProvider() {
         HashSet s=new HashSet();
         s.add("cs");
@@ -78,42 +100,42 @@ public class SampleOAIProvider
     public String getRepositoryName() {
         return "My Repository";
     }
-    
+
     public String getBaseURL() {
         return "http://localhost:8080/path/to/servlet";
     }
-    
+
     public String getProtocolVersion() {
         return "2.0";
     }
-    
+
     public Date getEarliestDatestamp() {
         return new Date();
     }
-    
+
     public DeletedRecordSupport getDeletedRecordSupport() {
         return DeletedRecordSupport.NO;
     }
-    
+
     public DateGranularitySupport getDateGranularitySupport() {
         return DateGranularitySupport.SECONDS;
-    } 
-    
+    }
+
     public Set getAdminEmails() {
         HashSet s=new HashSet();
         s.add("nobody@nowhere.com");
         return s;
     }
-    
+
     public Set getSupportedCompressionEncodings() {
         return new HashSet();
     }
-    
+
     public Set getDescriptions() {
         return new HashSet();
     }
 
-    public Record getRecord(String identifier, String metadataPrefix) 
+    public Record getRecord(String identifier, String metadataPrefix)
             throws IDDoesNotExistException {
             // throws CannotDisseminateFormatException, IDDoesNotExistException;
         if (identifier.equals("sample:1")) {
@@ -122,7 +144,7 @@ public class SampleOAIProvider
             throw new IDDoesNotExistException("An item with that id was not found.");
         }
     }
-    
+
     public List getRecords(Date from, Date until, String metadataPrefix,
             String set) {
             // throws CannotDisseminateFormatException,
@@ -132,7 +154,7 @@ public class SampleOAIProvider
         return a;
     }
 
-    public List getRecords(String resumptionToken) 
+    public List getRecords(String resumptionToken)
             throws BadResumptionTokenException {
         throw new BadResumptionTokenException("Sample doesn't support resumptionTokens.");
     }
@@ -144,11 +166,11 @@ public class SampleOAIProvider
         return a;
     }
 
-    public List getHeaders(String resumptionToken) 
+    public List getHeaders(String resumptionToken)
             throws BadResumptionTokenException {
         throw new BadResumptionTokenException("Sample doesn't support resumptionTokens.");
     }
-            
+
     public List getSets() {
         ArrayList a=new ArrayList();
         a.add(new SimpleSetInfo("Computer Science", "cs", new HashSet()));
@@ -163,8 +185,8 @@ public class SampleOAIProvider
 
     public Set getMetadataFormats(String id) {
         HashSet s=new HashSet();
-        s.add(new SimpleMetadataFormat("oai_dc", 
-                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd", 
+        s.add(new SimpleMetadataFormat("oai_dc",
+                "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));
         return s;
     }
@@ -172,11 +194,11 @@ public class SampleOAIProvider
     public long getMaxSets() {
         return 10;
     }
-            
+
     public long getMaxRecords() {
         return 10;
     }
-            
+
     public long getMaxHeaders() {
         return 10;
     }
