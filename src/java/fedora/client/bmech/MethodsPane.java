@@ -58,6 +58,7 @@ public class MethodsPane extends JPanel {
     protected JInternalFrame parent;
     private JRadioButton rb_baseURL;
     private JRadioButton rb_noBaseURL;
+    private JRadioButton rb_noBaseURLMS;
     private final ButtonGroup rb_buttonGroup = new ButtonGroup();
     protected String rb_chosen;
     private JTextField baseURL;
@@ -84,15 +85,23 @@ public class MethodsPane extends JPanel {
         this.parent = parent;
         setLayout(new BorderLayout());
         ActionListener rb_listen = new BaseURLActionListener();
+
         rb_baseURL = new JRadioButton("Base URL: ", true);
         rb_baseURL.setActionCommand("baseURL");
         rb_baseURL.addActionListener(rb_listen);
         rb_chosen = "baseURL";
+
+        rb_noBaseURLMS = new JRadioButton("No Base URL (Multi-Server Service)", false);
+        rb_noBaseURLMS.setActionCommand("noBaseURLMS");
+        rb_noBaseURLMS.addActionListener(rb_listen);
+
         rb_noBaseURL = new JRadioButton("No Base URL (Fedora LOCAL HTTP Resolver)", false);
         rb_noBaseURL.setActionCommand("noBaseURL");
         rb_noBaseURL.addActionListener(rb_listen);
+
         rb_buttonGroup.add(rb_baseURL);
         rb_buttonGroup.add(rb_noBaseURL);
+        rb_buttonGroup.add(rb_noBaseURLMS);
 
         JPanel serviceBasePanel = new JPanel();
         serviceBasePanel.setBorder(new TitledBorder("Service Address"));
@@ -108,6 +117,9 @@ public class MethodsPane extends JPanel {
         gbc.gridy = 1;
         gbc.gridx = 0;
         serviceBasePanel.add(rb_noBaseURL, gbc);
+        gbc.gridy = 2;
+        gbc.gridx = 0;
+        serviceBasePanel.add(rb_noBaseURLMS, gbc);
 
         JPanel methodsPanel = setMethodsPanel();
         methodsPanel.setBorder(new TitledBorder("Service Method Definitions:"));
@@ -204,6 +216,11 @@ public class MethodsPane extends JPanel {
         {
           baseURL.setEnabled(true);
         }
+        else if (rb_chosen.equalsIgnoreCase("noBaseURLMS"))
+        {
+          baseURL.setEnabled(false);
+          baseURL.setText("");
+        }
         else if (rb_chosen.equalsIgnoreCase("noBaseURL"))
         {
           baseURL.setEnabled(false);
@@ -228,6 +245,24 @@ public class MethodsPane extends JPanel {
         return baseURL.getText();
       }
       return null;
+    }
+
+    public boolean isMultiServer()
+    {
+      if (rb_chosen.equalsIgnoreCase("noBaseURLMS"))
+      {
+        return true;
+      }
+      return false;
+    }
+
+    public boolean isLocalHTTP()
+    {
+      if (rb_chosen.equalsIgnoreCase("noBaseURL"))
+      {
+        return true;
+      }
+      return false;
     }
 
     public HashMap getMethodMap()

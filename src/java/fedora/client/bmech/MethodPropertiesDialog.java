@@ -72,11 +72,16 @@ public class MethodPropertiesDialog extends JDialog
     private String methodName;
     private String baseURL;
     private JTable parmTable;
-    private JRadioButton rb_http;
-    private JTextField rb_http_URL;
+
     private JRadioButton rb_httpRelative;
-    private JTextField rb_httpRelative_URL;
+    private JRadioButton rb_httpFull;
+    private JRadioButton rb_httpDS;
     private JRadioButton rb_soap;
+
+    private JTextField URL_textRelative;
+    private JTextField URL_textFull;
+    private JTextField URL_textDS;
+
     private JTextField returnMIMES;
     private JButton helpURL;
 
@@ -200,38 +205,61 @@ public class MethodPropertiesDialog extends JDialog
     private JPanel setBindingPanel()
     {
         // Method Binding Panel
-        // http full URL
-        rb_http = new JRadioButton("Fedora LOCAL HTTP Resolver: (just encode datastream parm)", false);
-        rb_http.setActionCommand("http");
-        rb_http_URL = new JTextField(30);
-        rb_http_URL.setToolTipText("Enter the full URL for the service method." +
-          " The URL should use the replacement syntax described in the Help button.");
+
         helpURL = new JButton("Help");
         helpURL.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
             showURLHelp();
           }
         } );
+
+        // http just binding key
+        rb_httpDS = new JRadioButton("Fedora LOCAL HTTP Resolver: (enter datastream parm name)", false);
+        rb_httpDS.setActionCommand("http");
+        URL_textDS = new JTextField(30);
+        URL_textDS.setToolTipText("Enter the datastream parameter name in parentheses."
+          + "  See Help button for more details on syntax.");
+
+        // http full URL
+        rb_httpFull = new JRadioButton("Multi-Server Service: (enter full URL for method)", false);
+        rb_httpFull.setActionCommand("httpFull");
+        URL_textFull = new JTextField(30);
+        URL_textFull.setToolTipText("Enter the full URL for the service method." +
+          " The URL should use the replacement syntax described in the Help button.");
+
         // http relative URL
         String rLabel = "HTTP URL (relative):       " + baseURL;
         rb_httpRelative = new JRadioButton(rLabel, false);
         rb_httpRelative.setActionCommand("httprel");
+        URL_textRelative = new JTextField(30);
+        URL_textRelative.setToolTipText("Enter relative URL for the service method"
+          + "  See Help button for more details on syntax.");
+
         // soap checkbox
         rb_soap = new JRadioButton("SOAP Binding (auto-generated)", false);
         rb_soap.setActionCommand("soap");
         rb_soap.setEnabled(false);
         ButtonGroup rb_buttonGroup = new ButtonGroup();
+
+        // add one of the three variants for the service
         if (parent.hasBaseURL())
         {
           rb_httpRelative.setSelected(true);
           rb_buttonGroup.add(rb_httpRelative);
         }
-        else
+        else if (parent.isMultiServer())
         {
-          rb_http.setSelected(true);
-          rb_buttonGroup.add(rb_http);
+          rb_httpFull.setSelected(true);
+          rb_buttonGroup.add(rb_httpFull);
         }
+        else if (parent.isLocalHTTP())
+        {
+          rb_httpDS.setSelected(true);
+          rb_buttonGroup.add(rb_httpDS);
+        }
+        // add the soap variant
         rb_buttonGroup.add(rb_soap);
+
         JPanel bindingPanel = new JPanel();
         bindingPanel.setBorder(new TitledBorder("Method Binding:"));
         bindingPanel.setLayout(new GridBagLayout());
@@ -244,12 +272,27 @@ public class MethodPropertiesDialog extends JDialog
         {
           bindingPanel.add(rb_httpRelative, gbc);
         }
-        else
+        else if (parent.isMultiServer())
         {
-          bindingPanel.add(rb_http, gbc);
+          bindingPanel.add(rb_httpFull, gbc);
+        }
+        else if (parent.isLocalHTTP())
+        {
+          bindingPanel.add(rb_httpDS, gbc);
         }
         gbc.gridx = 1;
-        bindingPanel.add(rb_http_URL, gbc);
+        if (parent.hasBaseURL())
+        {
+          bindingPanel.add(URL_textRelative, gbc);
+        }
+        else if (parent.isMultiServer())
+        {
+          bindingPanel.add(URL_textFull, gbc);
+        }
+        else if (parent.isLocalHTTP())
+        {
+          bindingPanel.add(URL_textDS, gbc);
+        }
         gbc.gridx = 2;
         bindingPanel.add(helpURL, gbc);
         gbc.insets = new Insets(2,2,15,2);
@@ -648,15 +691,21 @@ public class MethodPropertiesDialog extends JDialog
       mp = new MethodProperties();
       if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
       {
-        if (rb_http.isSelected())
+        if (rb_httpDS.isSelected())
         {
-          mp.methodFullURL = rb_http_URL.getText();
+          mp.methodFullURL = URL_textDS.getText();
           mp.methodRelativeURL = mp.methodFullURL;
+          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+        }
+        else if (rb_httpFull.isSelected())
+        {
+          mp.methodFullURL = URL_textFull.getText();
+          mp.methodRelativeURL = " ";
           mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
         }
         else if (rb_httpRelative.isSelected())
         {
-          mp.methodRelativeURL = rb_http_URL.getText();
+          mp.methodRelativeURL = URL_textRelative.getText();
           // Get rid of forward slash if exists since the baseURL is
           // forced to end in a forward slash.
           if (mp.methodRelativeURL.startsWith("/"))
@@ -762,22 +811,56 @@ public class MethodPropertiesDialog extends JDialog
       }
       if (properties.protocolType.equalsIgnoreCase(Method.HTTP_MESSAGE_PROTOCOL))
       {
-        rb_http.setSelected(true);
+        //rb_http.setSelected(true);
         if (parent.hasBaseURL())
         {
-          rb_http_URL.setText(properties.methodRelativeURL);
+          rb_httpRelative.setSelected(true);
+          URL_textRelative.setText(properties.methodRelativeURL);
+
+          rb_httpDS.setSelected(false);
+          rb_httpFull.setSelected(false);
+
+          URL_textDS.setEnabled(false);
+          URL_textFull.setEnabled(false);
         }
-        else
+        else if (parent.isMultiServer())
         {
-          rb_http_URL.setText(properties.methodFullURL);
+          rb_httpFull.setSelected(true);
+          URL_textFull.setText(properties.methodFullURL);
+
+          rb_httpDS.setSelected(false);
+          rb_httpRelative.setSelected(false);
+
+          URL_textDS.setEnabled(false);
+          URL_textRelative.setEnabled(false);
+        }
+        else if (parent.isLocalHTTP())
+        {
+          rb_httpDS.setSelected(true);
+          URL_textDS.setText(properties.methodFullURL);
+
+          rb_httpFull.setSelected(false);
+          rb_httpRelative.setSelected(false);
+
+          URL_textFull.setEnabled(false);
+          URL_textRelative.setEnabled(false);
         }
 
         rb_soap.setSelected(false);
       }
       else if (properties.protocolType.equalsIgnoreCase(Method.SOAP_MESSAGE_PROTOCOL))
       {
-        rb_http.setSelected(false);
-        rb_http_URL.setText("");
+        rb_httpDS.setSelected(false);
+        rb_httpFull.setSelected(false);
+        rb_httpRelative.setSelected(false);
+
+        URL_textDS.setText("");
+        URL_textFull.setText("");
+        URL_textRelative.setText("");
+        URL_textDS.setEnabled(false);
+        URL_textFull.setEnabled(false);
+        URL_textRelative.setEnabled(false);
+
         rb_soap.setSelected(true);
       }
 
