@@ -48,8 +48,8 @@ public class DatastreamPane
     private JComboBox m_stateComboBox;
     private JTextField m_mimeTextField;
 
-    private JTextField m_formatURITextField;
-    private String m_origFormatURI;
+    //private JTextField m_formatURITextField;
+    //private String m_origFormatURI;
 
     private JTextField m_altIDsTextField;
     private String m_origAltIDs;
@@ -89,13 +89,13 @@ public class DatastreamPane
                     // LEFT: labels
                     JLabel stateLabel=new JLabel("State");
                     JLabel mimeLabel = new JLabel("MIME Type");
-                    JLabel formatURILabel = new JLabel("Format URI");
+                    //JLabel formatURILabel = new JLabel("Format URI");
                     JLabel altIDsLabel = new JLabel("Alternate IDs");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel[] leftCommonLabels=new JLabel[] { 
                             stateLabel, 
                             mimeLabel, 
-                            formatURILabel,
+                            //formatURILabel,
                             altIDsLabel,
                             controlGroupLabel};
 
@@ -135,11 +135,11 @@ public class DatastreamPane
                     m_mimeTextField.getDocument().addDocumentListener(
                             dataChangeListener);
 
-                    m_origFormatURI = m_mostRecent.getFormatURI();
-                    if (m_origFormatURI == null) m_origFormatURI = "";
-                    m_formatURITextField = new JTextField(m_origFormatURI);
-                    m_formatURITextField.getDocument().addDocumentListener(
-                            dataChangeListener);
+                    //m_origFormatURI = m_mostRecent.getFormatURI();
+                    //if (m_origFormatURI == null) m_origFormatURI = "";
+                    //m_formatURITextField = new JTextField(m_origFormatURI);
+                    //m_formatURITextField.getDocument().addDocumentListener(
+                    //        dataChangeListener);
 
                     m_origAltIDs = "";
                     String[] altIDs = m_mostRecent.getAltIDs();
@@ -162,7 +162,7 @@ public class DatastreamPane
                     JComponent[] leftCommonValues = 
                             new JComponent[] { m_stateComboBox, 
                                                m_mimeTextField, 
-                                               m_formatURITextField,
+                                               //m_formatURITextField,
                                                m_altIDsTextField,
                                                controlGroupValueLabel};
     
@@ -263,16 +263,17 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
-        if (!m_mostRecent.getMIMEType().equals(m_mimeTextField.getText())) {
-            return true;
-        }
-        if (!m_origFormatURI.equals(m_formatURITextField.getText())) {
-            return true;
-        }
-        if (!m_origAltIDs.equals(m_altIDsTextField.getText())) {
-            return true;
-        }
+        //if (!m_mostRecent.getMIMEType().equals(m_mimeTextField.getText())) {
+        //    return true;
+        //}
+        //if (!m_origFormatURI.equals(m_formatURITextField.getText())) {
+        //    return true;
+        //}
+        //if (!m_origAltIDs.equals(m_altIDsTextField.getText())) {
+        //    return true;
+        //}
         if (m_currentVersionPane.isDirty()) {
+System.out.println("In DatastreamPane and it says current version pane is dirty!");
             return true;
         }
         return false;
@@ -304,15 +305,15 @@ public class DatastreamPane
         String newMime = m_mimeTextField.getText().trim();
 		if (m_currentVersionPane.isDirty() 
 		        || !newMime.equals(oldMime)
-		        || !m_origFormatURI.equals(m_formatURITextField.getText())
+		        //|| !m_origFormatURI.equals(m_formatURITextField.getText())
 		        || !m_origAltIDs.equals(m_altIDsTextField.getText())) {
             String[] altIDs = m_altIDsTextField.getText().trim().split(" ");
-            String formatURI = m_formatURITextField.getText().trim();
+            //String formatURI = m_formatURITextField.getText().trim();
 		    // defer to the currentVersionPane if anything else changed
             try {
      		    m_currentVersionPane.saveChanges(state, 
      		                                     newMime, 
-     		                                     formatURI, 
+     		                                     //formatURI, 
      		                                     altIDs, 
      		                                     logMessage, 
      		                                     false);
@@ -330,7 +331,7 @@ public class DatastreamPane
                 if (selected==0) {
      		        m_currentVersionPane.saveChanges(state, 
      		                                         newMime, 
-     		                                         formatURI, 
+     		                                         //formatURI, 
      		                                         altIDs, 
      		                                         logMessage, 
      		                                         true);
@@ -360,7 +361,7 @@ public class DatastreamPane
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
         m_mimeTextField.setText(m_mostRecent.getMIMEType());
-        m_formatURITextField.setText(m_origFormatURI);
+        //m_formatURITextField.setText(m_origFormatURI);
         m_altIDsTextField.setText(m_origAltIDs);
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
@@ -392,6 +393,8 @@ public class DatastreamPane
         private Datastream m_ds;
         private JTextField m_locationTextField;
         private JTextField m_labelTextField;
+        private JTextField m_formatURITextField;
+		private String m_origFormatURI;
         private JButton m_editButton;
         private JButton m_viewButton;
         private JButton m_importButton;
@@ -412,6 +415,9 @@ public class DatastreamPane
 
         public CurrentVersionPane(Datastream ds) {
             m_ds=ds;
+            m_origFormatURI=m_ds.getFormatURI();
+            if (m_origFormatURI==null) m_origFormatURI="";
+            
             if (ds.getControlGroup().toString().equals("X")) {
                 X=true;
             } else if (ds.getControlGroup().toString().equals("M")) {
@@ -451,6 +457,8 @@ public class DatastreamPane
             // do the field panel (NORTH)
             JLabel labelLabel=new JLabel("Label");
             labelLabel.setPreferredSize(m_labelDims);
+			JLabel formatURILabel=new JLabel("Format URI");
+			formatURILabel.setPreferredSize(m_labelDims);
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
             JLabel[] labels;
@@ -458,17 +466,32 @@ public class DatastreamPane
                 JLabel locationLabel=new JLabel("Location");
                 locationLabel.setPreferredSize(m_labelDims);
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel, locationLabel, urlLabel};
+                    labels=new JLabel[] {labelLabel, 
+                    					 formatURILabel, 
+                    					 locationLabel, 
+                    					 urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel, urlLabel};
+                    labels=new JLabel[] {new JLabel("Created"), 
+                    					 labelLabel, 
+                    					 formatURILabel, 
+                    					 locationLabel, 
+                    					 urlLabel};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel, urlLabel};
+                    labels=new JLabel[] {labelLabel, 
+                    					 formatURILabel, 
+                    					 urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel, urlLabel};
+                    labels=new JLabel[] {new JLabel("Created"), 
+                    					 labelLabel, 
+                    					 formatURILabel, 
+                    					 urlLabel};
                 }
             }
+            // set up text fields for ds attributes at version level
+			JComponent[] values;
+            // ds label text field
             m_labelTextField=new JTextField(ds.getLabel());
             m_labelTextField.getDocument().addDocumentListener(
                     dataChangeListener);
@@ -478,11 +501,20 @@ public class DatastreamPane
                 // disable label changes for special datastreams
                 m_labelTextField.setEnabled(false);
             }
-
+            // ds format URI text field
+			m_formatURITextField=new JTextField(m_origFormatURI);
+			m_formatURITextField.getDocument().addDocumentListener(
+					dataChangeListener);
+			if (ds.getID().equals("METHODMAP")
+					|| ds.getID().equals("DSINPUTSPEC")
+					|| ds.getID().equals("WSDL") || noEdits) {
+				// disable formatURI changes for special datastreams
+				m_formatURITextField.setEnabled(false);
+			}
+            // Fedora URL text field
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
             urlTextField.setEditable(false);  // so they can copy, but not modify
-
-            JComponent[] values;
+			// ds location URL text field (R and E datastreams only)
             if (R || E) {
                 m_locationTextField=new JTextField(m_ds.getLocation());
                 m_locationTextField.getDocument().addDocumentListener(
@@ -491,7 +523,8 @@ public class DatastreamPane
                     m_locationTextField.setEnabled(false);
                 }
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField, 
+                    values=new JComponent[] {m_labelTextField,
+                    						 m_formatURITextField, 
                                              m_locationTextField, 
                                              urlTextField};
                                              
@@ -500,20 +533,23 @@ public class DatastreamPane
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
-                                             m_labelTextField, 
+                                             m_labelTextField,
+                                             m_formatURITextField, 
                                              m_locationTextField, 
                                              urlTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField, 
+                    values=new JComponent[] {m_labelTextField,
+                    						 m_formatURITextField, 
                                              urlTextField};
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
-                                             m_labelTextField, 
+                                             m_labelTextField,
+                                             m_formatURITextField, 
                                              urlTextField};
                 }
             }
@@ -723,69 +759,70 @@ public class DatastreamPane
             viewFrame.toFront();
         }
 
-	public void saveChanges(String state, 
-	                        String mimeType, 
-	                        String formatURI,
-	                        String[] altIDs,
-	                        String logMessage,
-	                        boolean force)
-            throws Exception {
-        String label=m_labelTextField.getText();
-		if (X) {
-		    byte[] content=new byte[0];
-		    if (m_editor!=null && m_editor.isDirty()) {
-			    InputStream in=m_editor.getContent();
-			    ByteArrayOutputStream out=new ByteArrayOutputStream();
-				StreamUtility.pipeStream(in, out, 4096);
-				content=out.toByteArray();
+		public void saveChanges(String state, 
+		                        String mimeType, 
+		                        //String formatURI,
+		                        String[] altIDs,
+		                        String logMessage,
+		                        boolean force)
+	            throws Exception {
+	        String label=m_labelTextField.getText();
+	        String formatURI=m_formatURITextField.getText();
+			if (X) {
+			    byte[] content=new byte[0];
+			    if (m_editor!=null && m_editor.isDirty()) {
+				    InputStream in=m_editor.getContent();
+				    ByteArrayOutputStream out=new ByteArrayOutputStream();
+					StreamUtility.pipeStream(in, out, 4096);
+					content=out.toByteArray();
+				}
+			    Administrator.APIM.modifyDatastreamByValue(m_pid, 
+			                                               m_ds.getID(), 
+	                                                       altIDs,
+			                                               label, 
+	                                                       true, // DEFAULT_VERSIONABLE
+	                                                       mimeType,
+	                                                       formatURI,
+			                                               content, 
+			                                               state,
+			                                               logMessage, 
+	                                                       force);
+			} else if (M) {
+	            String loc=null; // if not set, server will not change content
+	            if (m_importFile!=null) {
+	                // upload the import file, getting a temporary ref
+	                loc=Administrator.UPLOADER.upload(m_importFile);
+	            } else if (m_editor!=null && m_editor.isDirty()) {
+	                // They've edited managed content that came up in an editor... 
+	                // use its content
+	                loc=Administrator.UPLOADER.upload(m_editor.getContent());
+	            }
+	            Administrator.APIM.modifyDatastreamByReference(m_pid, 
+	                                                           m_ds.getID(),
+	                                                           altIDs,
+	                                                           label, 
+	                                                           true, // DEFAULT_VERSIONABLE
+	                                                           mimeType,
+	                                                           formatURI,
+	                                                           loc, 
+	                                                           state,
+	                                                           logMessage, 
+	                                                           force);
+	        } else {
+			    // external ref or redirect
+	            Administrator.APIM.modifyDatastreamByReference(m_pid, 
+	                                                           m_ds.getID(),
+	                                                           altIDs,
+	                                                           label, 
+	                                                           true, // DEFAULT_VERSIONABLE
+	                                                           mimeType,
+	                                                           formatURI,
+	                                                           m_locationTextField.getText(), 
+	                                                           state,
+	                                                           logMessage, 
+	                                                           force);
 			}
-		    Administrator.APIM.modifyDatastreamByValue(m_pid, 
-		                                               m_ds.getID(), 
-                                                       altIDs,
-		                                               label, 
-                                                       true, // DEFAULT_VERSIONABLE
-                                                       mimeType,
-                                                       formatURI,
-		                                               content, 
-		                                               state,
-		                                               logMessage, 
-                                                       force);
-		} else if (M) {
-            String loc=null; // if not set, server will not change content
-            if (m_importFile!=null) {
-                // upload the import file, getting a temporary ref
-                loc=Administrator.UPLOADER.upload(m_importFile);
-            } else if (m_editor!=null && m_editor.isDirty()) {
-                // They've edited managed content that came up in an editor... 
-                // use its content
-                loc=Administrator.UPLOADER.upload(m_editor.getContent());
-            }
-            Administrator.APIM.modifyDatastreamByReference(m_pid, 
-                                                           m_ds.getID(),
-                                                           altIDs,
-                                                           label, 
-                                                           true, // DEFAULT_VERSIONABLE
-                                                           mimeType,
-                                                           formatURI,
-                                                           loc, 
-                                                           state,
-                                                           logMessage, 
-                                                           force);
-        } else {
-		    // external ref or redirect
-            Administrator.APIM.modifyDatastreamByReference(m_pid, 
-                                                           m_ds.getID(),
-                                                           altIDs,
-                                                           label, 
-                                                           true, // DEFAULT_VERSIONABLE
-                                                           mimeType,
-                                                           formatURI,
-                                                           m_locationTextField.getText(), 
-                                                           state,
-                                                           logMessage, 
-                                                           force);
-		}
-    }
+	    }
         public boolean isDirty() {
             if (m_editor!=null) {
                 if (m_editor.isDirty()) {
@@ -808,6 +845,9 @@ public class DatastreamPane
             if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
                  return true;
             }
+			if (!m_origFormatURI.equals(m_formatURITextField)) {
+				return true;
+			}
             if (m_locationTextField!=null 
                     && !m_locationTextField.getText().equals(m_ds.getLocation())) {
                  return true;
@@ -818,6 +858,7 @@ public class DatastreamPane
 
         public void undoChanges() {
             m_labelTextField.setText(m_ds.getLabel());
+			m_formatURITextField.setText(m_ds.getFormatURI());
             if (m_locationTextField!=null) m_locationTextField.setText(m_ds.getLocation());
             if (m_editor!=null) m_editor.undoChanges();
             if (m_importFile!=null) {
@@ -864,11 +905,19 @@ public class DatastreamPane
             setLayout(new BorderLayout());
             // NORTH: fieldPanel
             // disabled labels and values
+            // ds label...
             JLabel labelLabel=new JLabel("Label");
             labelLabel.setMinimumSize(m_labelDims);
             JTextField labelValue=new JTextField();
             labelValue.setText(ds.getLabel());
             labelValue.setEditable(false);
+            // ds format URI...
+			JLabel formatURILabel=new JLabel("Format URI");
+			formatURILabel.setMinimumSize(m_labelDims);
+			JTextField formatURIValue=new JTextField();
+			formatURIValue.setText(ds.getFormatURI());
+			formatURIValue.setEditable(false);
+			// ds Fedora URL...
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, true));
@@ -877,14 +926,14 @@ public class DatastreamPane
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, new JLabel("Location"), urlLabel};
+                labels=new JLabel[] {labelLabel, formatURILabel, new JLabel("Location"), urlLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
-                values=new JComponent[] {labelValue, refValue, urlTextField};
+                values=new JComponent[] {labelValue, formatURIValue, refValue, urlTextField};
             } else {
-                labels=new JLabel[] {labelLabel, urlLabel};
-                values=new JComponent[] {labelValue, urlTextField};
+                labels=new JLabel[] {labelLabel, formatURILabel, urlLabel};
+                values=new JComponent[] {labelValue, formatURIValue, urlTextField};
             }
 
             JPanel fieldPanel=new JPanel();
