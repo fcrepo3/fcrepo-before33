@@ -1,23 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsd:schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" 
+<schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" 
+    xmlns="http://www.w3.org/2001/XMLSchema"
     xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
+    
+  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
+      schemaLocation="wsdl.xsd"/>
+  <import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
+      schemaLocation="soapenc.xsd"/>
+   
+  <complexType name="ArrayOfComponentInfo">
+    <annotation>
+      <documentation>an ordered list of ComponentInfos
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="fedora-types:ComponentInfo[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
+  <complexType name="ArrayOfDatastream">
+    <annotation>
+      <documentation>an ordered list of datastreams.
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="fedora-types:Datastream[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
+  <complexType name="ArrayOfDateTime">
+    <annotation>
+      <documentation>an ordered list of dateTimes.
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="dateTime[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
+  <complexType name="ArrayOfDisseminator">
+    <annotation>
+      <documentation>an ordered list of disseminators.
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="fedora-types:Disseminator[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
-<xsd:complexType name="ArrayOfProperty"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="MIMETypedStream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="ArrayOfString"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="ArrayOfDateTime"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="Datastream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="ArrayOfDatastream"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="ArrayOfComponentInfo"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="DatastreamBindingMap"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="Disseminator"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
-<xsd:complexType name="ArrayOfDisseminator"> <xsd:sequence> <xs:element name="part1" type="xsd:string"/> <xs:element name="part2" type="xsd:string"/> </xsd:sequence> </xs:complexType>
+  <complexType name="ArrayOfProperty">
+    <annotation>
+      <documentation>an ordered list of properties.
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="fedora-types:Property[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
 
-<!-- Here's some old stuff:
+  <complexType name="ArrayOfString">
+    <annotation>
+      <documentation>an ordered list of strings.
+      </documentation>
+    </annotation>
+    <complexContent>
+      <restriction base="soapenc:Array">
+        <attribute ref="soapenc:arrayType"
+            wsdl:arrayType="string[]"/>
+      </restriction>
+    </complexContent>
+  </complexType>
+  
+  <simpleType name="ComponentInfo">
+    <annotation>
+      <documentation>data about a datastream or disseminator.
+      </documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <simpleType name="Datastream">
+    <annotation>
+      <documentation>arbitrary data.
+      </documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <simpleType name="DatastreamBindingMap">
+    <annotation>
+      <documentation>an association of datastreams to a behavior mechanism.
+      </documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <simpleType name="Disseminator">
+    <annotation>
+      <documentation>a container for a pointer to a behavior mechanism and
+      interface, and a DatastreamBindingMap.
+      </documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <simpleType name="MIMETypedStream">
+    <annotation>
+      <documentation>a base-64 encoded stream of data with an associated 
+      MIME-type.</documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  <simpleType name="Property">
+    <annotation>
+      <documentation>a name-value pair.</documentation>
+    </annotation>
+    <restriction base="string"/>
+  </simpleType>
+  
+  
+<!--
+
+ Here's some old stuff:
 
   <xsd:element name="dsBindingSpec" type="fedora:dsBindingSpecType" abstract="true"/>
   <xsd:element name="dsBinding" type="fedora:dsBindBaseType" abstract="true"/>
@@ -60,4 +182,4 @@ The complex types will NOT define attributes because this is not allowed with SO
 
 -->
 
-</xsd:schema>
+</schema>
