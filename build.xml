@@ -651,6 +651,9 @@
 			<arg line="-s fedora-config.sh fedora-config"/>
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-rebuild.sh fedora-rebuild"/>
+		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-start.sh fedora-start"/>
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
