@@ -28,8 +28,8 @@ if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
-if not exist %THIS_JAVA_HOME%\bin\java.exe goto noJavaBin
-if not exist %THIS_JAVA_HOME%\bin\orbd.exe goto badJavaVersion
+if not exist "%THIS_JAVA_HOME%\bin\java.exe" goto noJavaBin
+if not exist "%THIS_JAVA_HOME%\bin\orbd.exe" goto badJavaVersion
 goto envOk
 
 :tryJavaHome
