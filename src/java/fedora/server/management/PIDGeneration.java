@@ -48,16 +48,15 @@ public class PIDGeneration implements PIDGenerator {
        int index;
        Properties props;
 
-                classRef = Class.forName("PIDGeneration");
+                classRef = Class.forName("fedora.server.management.PIDGeneration");
 
        // Single threaded per class here.
                 synchronized(classRef) {
            if (lastObjectID == null) {
                // Determine the logs directory pathname.
                logsDirectory = pidLogDir;
-System.out.println("logsDirectory: ["+logsDirectory+"]");
 
-               // Retrieve the last PID generated from the
+try{               // Retrieve the last PID generated from the
                // log file.
                lastPID = getLastPIDNoLock();
 
@@ -67,6 +66,9 @@ System.out.println("logsDirectory: ["+logsDirectory+"]");
 
                // Convert to BigInteger.
                lastObjectID = new BigInteger(tmpObjectID);
+} catch (Throwable th) {
+    lastObjectID = new BigInteger("0");
+}
            }
        }
         }
