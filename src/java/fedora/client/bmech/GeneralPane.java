@@ -7,7 +7,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.io.IOException;
 import fedora.client.bmech.data.DCElement;
 import fedora.client.Administrator;
 import fedora.client.objecteditor.Util;
@@ -58,28 +57,9 @@ public class GeneralPane extends JPanel
     {
         this.parent = parent;
         setLayout(new BorderLayout());
-        /*
-        JPanel contractPanel = new JPanel();
-        contractPanel.setLayout(new GridBagLayout());
-        contractPanel.setBorder(new TitledBorder("Behavior Definition Contract"));
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.anchor = GridBagConstraints.WEST;
-        gbc2.gridy = 0;
-        gbc2.gridx = 0;
-        contractPanel.add(
-          new JLabel("Behavior Definition PID:                         "),
-          gbc2);
-        gbc2.gridx = 1;
-        contractPanel.add(bDefPID = new JTextField(20), gbc2);
-        gbc2.gridx = 2;
-        contractPanel.add(new JLabel("                             "), gbc2);
-        gbc2.gridx = 3;
-        contractPanel.add(new JLabel("                             "), gbc2);
-*/
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new GridLayout(2,1));
         topPanel.add(setDescriptionPanel());
-        //topPanel.add(contractPanel);
 		topPanel.add(setContractPanel());
 
         add(topPanel, BorderLayout.NORTH);
@@ -222,10 +202,6 @@ public class GeneralPane extends JPanel
 		});	
 		gbc2.gridx = 1;
 		contractPanel.add(bDefPIDComboBox, gbc2);
-		//gbc2.gridx = 2;
-		//contractPanel.add(new JLabel("                             "), gbc2);
-		//gbc2.gridx = 3;
-		//contractPanel.add(new JLabel("                             "), gbc2);
 		return contractPanel;
 	}
 	

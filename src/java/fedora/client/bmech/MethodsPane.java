@@ -62,13 +62,13 @@ public class MethodsPane extends JPanel {
     private final ButtonGroup rb_buttonGroup = new ButtonGroup();
     protected String rb_chosen;
     private JTextField baseURL;
-    private JTable methodTable;
     protected DefaultTableModel methodTableModel;
     protected MethodDialog methodDialog;
     private boolean editMethodMode = false;
 
     // Method Map: key=methodData.methodName, value=methodData
     private HashMap methodMap = new HashMap();
+	private JTable methodTable;
 
     public MethodsPane(BDefBuilder parent)
     {
@@ -205,8 +205,13 @@ public class MethodsPane extends JPanel {
         return methodsPanel;
     }
 
+	
 	public JTable renderContractMethods(String bDefPID)
 	{
+	  // reinitialize the method map and the method table display
+	  methodMap = new HashMap();
+	  ((DefaultTableModel)methodTable.getModel()).setNumRows(0);
+	  
 	  List methodDefs = getBDefMethods(bDefPID);
 	  for (int i=0; i<methodDefs.size(); i++)
 	  {
@@ -353,7 +358,6 @@ public class MethodsPane extends JPanel {
         methodData.methodName = methodName;
         methodData.methodLabel = methodDesc;
         methodMap.put(methodData.methodName, methodData);
-
         methodTable.setValueAt(methodData.methodName, currentRowIndex,0);
         methodTable.setValueAt(methodData.methodLabel, currentRowIndex,1);
       }

@@ -55,7 +55,6 @@ public class BMechBuilder extends JInternalFrame
 
     protected JTabbedPane tabpane;
     protected BMechTemplate newBMech;
-    private boolean contractMethodsLoaded = false;
     private int selectedTabPane;
     private String s_host = null;
     private int s_port = 0;
@@ -149,24 +148,24 @@ public class BMechBuilder extends JInternalFrame
 			public void stateChanged(ChangeEvent e) {
 				// everytime a tab changes, update the bmech template object in memory
 				updateBMechTemplate();
-				// pre-populate the DatastreamInputPane with valid datastream 
-				// input parms that were defined in the MethodsPane
 				currentTabIndex = tabpane.getSelectedIndex();
 				currentTabName = tabpane.getTitleAt(currentTabIndex);
+				// pre-populate the MethodsPane with valid methods 
+				// associated with the behavior definition contract
 				if (currentTabIndex == 2)
 				{
 				  String bDefPID = newBMech.getbDefContractPID();
 				  if (!(bDefPID.equals(null)) && 
-				      !(bDefPID.equalsIgnoreCase("")) &&
-				      !contractMethodsLoaded)
+				      !(bDefPID.equalsIgnoreCase("")))
 				  {
 					MethodsPane mp =
 					  (MethodsPane)tabpane.getComponentAt(2);
 					mp.renderContractMethods(bDefPID);
-					contractMethodsLoaded = true;
 				  }
 
 				}
+				// pre-populate the DatastreamInputPane with valid datastream 
+				// input parms that were defined in the MethodsPane
 				if (currentTabIndex == 3)
 				{
 				  DatastreamInputPane dsip =
@@ -306,14 +305,14 @@ public class BMechBuilder extends JInternalFrame
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("ProfileTab"))
 		  {
-			//System.out.println("updateBMechTemplate: ProfileTab");
+			  //System.out.println("updateBMechTemplate: ProfileTab");
 			  // set the datastream input rules
 			  ServiceProfilePane spp = (ServiceProfilePane)tabs[i];
 			  newBMech.setServiceProfile(spp.getServiceProfile());
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
 		  {
-			//System.out.println("updateBMechTemplate: MethodsTab");
+			  //System.out.println("updateBMechTemplate: MethodsTab");
 			  MethodsPane mp = (MethodsPane)tabs[i];
 			  newBMech.setHasBaseURL(mp.hasBaseURL());
 			  if (mp.hasBaseURL())
@@ -358,14 +357,14 @@ public class BMechBuilder extends JInternalFrame
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
 		  {
-			//System.out.println("updateBMechTemplate: DSInputTab");
+			  //System.out.println("updateBMechTemplate: DSInputTab");
 			  // set the datastream input rules
 			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
 			  newBMech.setDSInputSpec(dsp.getDSInputRules());
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
 		  {
-			//System.out.println("updateBMechTemplate: DocumentsTab");
+			  //System.out.println("updateBMechTemplate: DocumentsTab");
 			  DocumentsPane docp = (DocumentsPane)tabs[i];
 			  newBMech.setDocDatastreams(docp.getDocDatastreams());
 		  }
