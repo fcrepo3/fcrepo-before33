@@ -200,12 +200,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
 	    String doURI = getDOURI(digitalObject);
+		String datastreamURI = doURI + "/" + datastreamID;
+		/*
 	    String datastreamURI;
 	    if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
 	        datastreamURI = ds.DatastreamURI;
 	    } else {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
+	    */
         
         // TODO a distinct URI for datastreams-as-datastreams,
         // as opposed to datastreams-as-representations/disseminations
@@ -376,12 +379,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
         String doURI = getDOURI(digitalObject);
+        String datastreamURI = doURI + "/" + datastreamID;
+        /*
         String datastreamURI;
         if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
             datastreamURI = ds.DatastreamURI;
         } else {
             datastreamURI = doURI + "/" + datastreamID;
         }
+        */
         
         // DELETE statements where datastreamURI is subject
         try {
@@ -1030,11 +1036,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     }
 
     private String getDOURI(DigitalObject digitalObject) {
+		return getDOURI(digitalObject.getPid());
+		/*
         if (digitalObject.getURI() != null && !digitalObject.getURI().equals("")) {
             return digitalObject.getURI();
         } else {
             return getDOURI(digitalObject.getPid());
         }
+        */
     }
 
     private String getDOURI(String pid) {
