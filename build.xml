@@ -270,6 +270,7 @@
     <copy file="temp/server/java/fedora/server/management/undeploy.wsdd"
           todir="dist/server/config"/>
     <replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
+    <replace file="dist/server/config/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
     <replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management/soap"/>
     <copy file="src/web-app/web.xml" todir="dist/server/tomcat41/webapps/fedora/WEB-INF"/>
     <copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
@@ -307,6 +308,17 @@
 
 <!--
   $Log$
+  Revision 1.16  2002/07/30 22:17:48  cwilper
+  Modified to sneakily insert the scope=application property that axis
+  understands into the auto-generated .wsdd file during server distribution.
+  It would be nice if wsdl2java let you configure this, and spit out the
+  file appropriately, but it doesn't.  Anyway... application scope is
+  necessary because i want a singleton object handling the requests (in
+  multiple threads, one would assume) for performance reasons.  Session
+  persistence isn't really necessary in the api as of yet, and the defult
+  scope creates a new object for each call to the service, which is costly
+  and unnecessary.
+
   Revision 1.15  2002/07/30 18:13:23  cwilper
   added a testdeploy target for testing (for now, may change), and also
   changed server target to copy (and mod) the deploy.wsdd and undeploy.wsdd
