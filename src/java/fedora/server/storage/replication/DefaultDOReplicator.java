@@ -481,8 +481,10 @@ public class DefaultDOReplicator
             }
             connection.commit();
         } catch (ReplicationException re) {
+            re.printStackTrace();
             throw re;
         } catch (ServerException se) {
+            se.printStackTrace();
             throw new ReplicationException("Replication exception caused by "
                     + "ServerException - " + se.getMessage());
         } finally {
@@ -684,7 +686,7 @@ public class DefaultDOReplicator
             rowCount=logAndExecuteUpdate(st, "DELETE FROM MechanismImpl WHERE "
                     + "BMECH_DBID=" + dbid);
             logFinest("Deleted " + rowCount + " row(s).");
-            logFinest("Attempting row deletion from MechDefaultMechanism table...");
+            logFinest("Attempting row deletion from MechDefaultParameter table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM MechDefaultParameter "
                 + "WHERE BMECH_DBID=" + dbid);
             logFinest("Deleted " + rowCount + " row(s).");
@@ -752,18 +754,53 @@ public class DefaultDOReplicator
                 dissIds.add(new Integer(results.getInt("DISS_DBID")));
             }
             results.close();
-            logFinest("Found " + dissIds.size() + " DISS_DBID(s).");
+            HashSet bMechIds = new HashSet();
+            logFinest("Getting DISS_DBID(s) from DigitalObjectDissAssoc "
+                    + "table unique to this object...");
+            Iterator iterator = dissIds.iterator();
+            while (iterator.hasNext())
+            {
+              Integer id = (Integer)iterator.next();
+              logFinest("Getting occurrences of DISS_DBID(s) in "
+                    + "DigitalObjectDissAssoc table...");
+              results=logAndExecuteQuery(st, "SELECT COUNT(*) from "
+                    + "DigitalOBjectDissAssoc WHERE DISS_DBID=" + id);
+              while (results.next())
+              {
+                Integer i1 = new Integer(results.getInt("COUNT(*)"));
+                if ( i1.intValue() > 1 )
+                {
+                  dissIds.remove(id);
+                } else
+                {
+                  ResultSet rs;
+                  logFinest("Getting associated BMECH_DBID(s) that are unique "
+                        + "for this object in Disseminator table...");
+                  rs=logAndExecuteQuery(st, "SELECT BMECH_DBID from "
+                    + "Disseminator WHERE DISS_DBID=" + id);
+                  while (rs.next())
+                  {
+                    bMechIds.add(new Integer(rs.getInt("BMECH_DBID")));
+                  }
+                  rs.close();
+                }
+              }
+              results.close();
 
+            }
+            logFinest("Found " + dissIds.size() + " DISS_DBID(s).");
+            logFinest("Getting BMECH_IDs matchingBindingMap_DBID(s) from DataStreamBinding "
+                    + "table...");
             logFinest("Getting BindingMap_DBID(s) from DataStreamBinding "
                     + "table...");
-            HashSet bmapIds=new HashSet();
-            results=logAndExecuteQuery(st, "SELECT BindingMap_DBID FROM "
-                    + "DataStreamBinding WHERE DO_DBID=" + dbid);
-            while (results.next()) {
-                bmapIds.add(new Integer(results.getInt("BindingMap_DBID")));
-            }
-            results.close();
-            logFinest("Found " + bmapIds.size() + " BindingMap_DBID(s).");
+            //HashSet bmapIds=new HashSet();
+            //results=logAndExecuteQuery(st, "SELECT BindingMap_DBID FROM "
+            //        + "DataStreamBinding WHERE DO_DBID=" + dbid);
+            //while (results.next()) {
+            //    bmapIds.add(new Integer(results.getInt("BindingMap_DBID")));
+            //}
+            //results.close();
+            //logFinest("Found " + bmapIds.size() + " BindingMap_DBID(s).");
             //
             // WRITE
             //
@@ -789,7 +826,8 @@ public class DefaultDOReplicator
                     + "table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM DataStreamBindingMap "
                     + "WHERE " + inIntegerSetWhereConditionString(
-                    "BindingMap_DBID", bmapIds));
+            //        "BindingMap_DBID", bmapIds));
+                      "BMECH_DBID", bMechIds));
             logFinest("Deleted " + rowCount + " row(s).");
         } finally {
             if (st!=null) {
