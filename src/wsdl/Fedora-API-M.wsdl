@@ -42,11 +42,6 @@
           url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
     </documentation>
   </types>
-  <message name="CreateObjectRequest">
-    <part name="nothing" type="xsd:string">
-      <documentation>an empty string.  This is necessary because axis doesn't support notification-style operations.</documentation>
-    </part>
-  </message>
   <message name="CreateObjectResponse">
     <part name="response" type="xsd:string">
       <documentation>the PID of the newly created object.</documentation>
@@ -531,8 +526,8 @@
       object's initial state will be N.  The repository will generate and return 
       a new PID for the object resulting from this request.  The PID will have 
       the namespace of the repository.</documentation>
-      <input message="CreateObjectRequest"/>
-      <output message="CreateObjectResponse"/>
+      <input message="null"/>
+      <output message="fedora-api:CreateObjectResponse"/>
     </operation>
     <operation name="IngestObject">
       <documentation>Creates a new digital object in the repository, given the 
@@ -545,8 +540,8 @@
       Syntax, 2) it does not specify the namespace of the repository, and 3) 
       it does not collide with an existing PID of an object in the repository.
       </documentation>
-      <input message="IngestObjectRequest"/>
-      <output message="IngestObjectResponse"/>
+      <input message="fedora-api:IngestObjectRequest"/>
+      <output message="fedora-api:IngestObjectResponse"/>
     </operation>
     <operation name="GetObjectXML">
       <documentation>Gets the XML portion of the entire METS-encoded 
@@ -554,8 +549,8 @@
       repository).  XML metadata datastreams will be included inline, content 
       datastreams will not be included, and external datastreams will be 
       referenced by url.</documentation>
-      <input message="GetObjectXMLRequest"/>
-      <output message="GetObjectXMLResponse"/>
+      <input message="fedora-api:GetObjectXMLRequest"/>
+      <output message="fedora-api:GetObjectXMLResponse"/>
     </operation>
     <operation name="ExportObject">
       <documentation>Gets the entire METS-encoded digital object for 
@@ -563,193 +558,193 @@
       metadata datastreams will be included inline, content datastreams will 
       be included inline (base64-encoded), and external datastreams will be 
       referenced by url.</documentation>
-      <input message="ExportObjectRequest"/>
-      <output message="ExportObjectResponse"/>
+      <input message="fedora-api:ExportObjectRequest"/>
+      <output message="fedora-api:ExportObjectResponse"/>
     </operation>
     <operation name="WithdrawObject">
       <documentation>Changes the object's state to W, making it inaccessible 
       from API-A.</documentation>
-      <input message="WithdrawObjectRequest"/>
+      <input message="fedora-api:WithdrawObjectRequest"/>
     </operation>
     <operation name="DeleteObject">
       <documentation>Marks an object as deleted, changing its state to D.  
       This makes it inaccessible from API-A, and eligible for purging by the 
       cleanup process.</documentation>
-      <input message="DeleteObjectRequest"/>
+      <input message="fedora-api:DeleteObjectRequest"/>
     </operation>
     <operation name="PurgeObject">
       <documentation>Permanently removes an object from the repository.
       </documentation>
-      <input message="PurgeObjectRequest"/>
+      <input message="fedora-api:PurgeObjectRequest"/>
     </operation>
     <operation name="ObtainLock">
       <documentation>Locks an object for writing.  Upon obtaining a lock, a 
       user may execute write methods on an object.</documentation>
-      <input message="ObtainLockRequest"/>
+      <input message="fedora-api:ObtainLockRequest"/>
     </operation>
     <operation name="ReleaseLock">
       <documentation>Unlocks an object for writing.</documentation>
-      <input message="ReleaseLockRequest"/>
+      <input message="fedora-api:ReleaseLockRequest"/>
     </operation>
     <operation name="GetLockingUser">
       <documentation>Tells who has a write lock on an object.</documentation>
-      <input message="GetLockingUserRequest"/>
-      <output message="GetLockingUserResponse"/>
+      <input message="fedora-api:GetLockingUserRequest"/>
+      <output message="fedora-api:GetLockingUserResponse"/>
     </operation>
     <operation name="GetObjectState">
       <documentation>Gets the state of the object.</documentation>
-      <input message="GetObjectStateRequest"/>
-      <output message="GetObjectStateResponse"/>
+      <input message="fedora-api:GetObjectStateRequest"/>
+      <output message="fedora-api:GetObjectStateResponse"/>
     </operation>
     <operation name="GetObjectCreateDate">
       <documentation>Gets the date/time of the object's creation in this 
       repository.</documentation>
-      <input message="GetObjectCreateDateRequest"/>
-      <output message="GetObjectCreateDateResponse"/>
+      <input message="fedora-api:GetObjectCreateDateRequest"/>
+      <output message="fedora-api:GetObjectCreateDateResponse"/>
     </operation>
     <operation name="GetObjectLastModDate">
       <documentation>Gets the date/time of the object's most recent modification 
       in this repository.  The modification date of an object is set when changes
       to an object are committed via the ReleaseLock method.
       </documentation>
-      <input message="GetObjectLastModDateRequest"/>
-      <output message="GetObjectLastModDateResponse"/>
+      <input message="fedora-api:GetObjectLastModDateRequest"/>
+      <output message="fedora-api:GetObjectLastModDateResponse"/>
     </operation>
     <operation name="GetObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
-      <input message="GetObjectAuditTrailRequest"/>
-      <output message="GetObjectAuditTrailResponse"/>
+      <input message="fedora-api:GetObjectAuditTrailRequest"/>
+      <output message="fedora-api:GetObjectAuditTrailResponse"/>
     </operation>
     <operation name="PurgeObject">
       <documentation>Permanently removes the object.</documentation>
-      <input message="PurgeObjectRequest"/>
+      <input message="fedora-api:PurgeObjectRequest"/>
     </operation>
     <operation name="ListObjectPIDs">
       <documentation>Gets a list of the PIDs of the objects in the 
       repository.</documentation>
-      <input message="ListObjectPIDsRequest"/>
-      <output message="ListObjectPIDsResponse"/>
+      <input message="fedora-api:ListObjectPIDsRequest"/>
+      <output message="fedora-api:ListObjectPIDsResponse"/>
     </operation>
     <operation name="AddDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
       object.  The MIME type is determined by the repository, which uses the 
       value of the Content-Type HTTP response header provided by an HTTP GET 
       request of the URL.</documentation>
-      <input message="AddDatastreamExternalRequest"/>
-      <output message="AddDatastreamExternalResponse"/>
+      <input message="fedora-api:AddDatastreamExternalRequest"/>
+      <output message="fedora-api:AddDatastreamExternalResponse"/>
     </operation>
     <operation name="AddDatastreamManagedContent">
       <documentation>Creates a Repository-Managed Content Datastream in the 
       object.  The repository uses the value of dsContent as the content of 
       the datastream.</documentation>
-      <input message="AddDatastreamManagedContentRequest"/>
-      <output message="AddDatastreamManagedContentResponse"/>
+      <input message="fedora-api:AddDatastreamManagedContentRequest"/>
+      <output message="fedora-api:AddDatastreamManagedContentResponse"/>
     </operation>
     <operation name="AddDatastreamXMLMetadata">
       <documentation>Creates an Implementor-Defined XML Metadata Datastream in 
       the object.</documentation>
-      <input message="AddDatastreamXMLMetadataRequest"/>
-      <output message="AddDatastreamXMLMetadataResponse"/>
+      <input message="fedora-api:AddDatastreamXMLMetadataRequest"/>
+      <output message="fedora-api:AddDatastreamXMLMetadataResponse"/>
     </operation>
     <operation name="AddDisseminator">
       <documentation>Creates a disseminator in the object.</documentation>
-      <input message="AddDisseminatorRequest"/>
-      <output message="AddDisseminatorResponse"/>
+      <input message="fedora-api:AddDisseminatorRequest"/>
+      <output message="fedora-api:AddDisseminatorResponse"/>
     </operation>
     <operation name="ModifyDisseminator">
       <documentation>Modifies a disseminator in the object.</documentation>
-      <input message="ModifyDisseminatorRequest"/>
+      <input message="fedora-api:ModifyDisseminatorRequest"/>
     </operation>
     <operation name="ModifyDatastreamExternal">
       <documentation>Modifies a Referenced External Content Datastream in the 
       object.</documentation>
-      <input message="ModifyDatastreamExternalRequest"/>
+      <input message="fedora-api:ModifyDatastreamExternalRequest"/>
     </operation>
     <operation name="ModifyDatastreamManagedContent">
       <documentation>Modifies a Repository-Managed Content Datastream in the 
       object.</documentation>
-      <input message="ModifyDatastreamManagedContentRequest"/>
+      <input message="fedora-api:ModifyDatastreamManagedContentRequest"/>
     </operation>
     <operation name="ModifyDatastreamXMLMetadata">
       <documentation>Modifies an Implementor-Defined XML Metadata Datastream in 
       the object.</documentation>
-      <input message="ModifyDatastreamXMLMetadataRequest"/>
+      <input message="fedora-api:ModifyDatastreamXMLMetadataRequest"/>
     </operation>
     <operation name="WithdrawDatastream">
       <documentation>Changes a datastream's state to W, making it inaccessible 
       from API-A.</documentation>
-      <input message="WithdrawDatastreamRequest"/>
+      <input message="fedora-api:WithdrawDatastreamRequest"/>
     </operation>
     <operation name="DeleteDatastream">
       <documentation>Marks a datastream as deleted, changing its state to D.  
       This makes it inaccessible from API-A, and eligible for purging by the 
       cleanup process.</documentation>
-      <input message="DeleteDatastreamRequest"/>
+      <input message="fedora-api:DeleteDatastreamRequest"/>
     </operation>
     <operation name="PurgeDatastream">
       <documentation>Permanently removes one or more versions of a datastream 
       from an object.</documentation>
-      <input message="PurgeDatastreamRequest"/>
-      <output message="PurgeDatastreamResponse"/>
+      <input message="fedora-api:PurgeDatastreamRequest"/>
+      <output message="fedora-api:PurgeDatastreamResponse"/>
     </operation>
     <operation name="WithdrawDisseminator">
       <documentation>Changes a disseminator's state to W, making it inaccessible 
       from API-A.</documentation>
-      <input message="WithdrawDisseminatorRequest"/>
+      <input message="fedora-api:WithdrawDisseminatorRequest"/>
     </operation>
     <operation name="DeleteDisseminator">
       <documentation>Marks a disseminator as deleted, changing its state to D.  
       This makes it inaccessible from API-A, and eligible for purging by the 
       cleanup process.</documentation>
-      <input message="DeleteDisseminatorRequest"/>
+      <input message="fedora-api:DeleteDisseminatorRequest"/>
     </operation>
     <operation name="PurgeDisseminator">
       <documentation>Permanently removes one or more versions of a disseminator 
       from an object.</documentation>
-      <input message="PurgeDisseminatorRequest"/>
-      <output message="PurgeDisseminatorResponse"/>
+      <input message="fedora-api:PurgeDisseminatorRequest"/>
+      <output message="fedora-api:PurgeDisseminatorResponse"/>
     </operation>
     <operation name="GetDatastream">
       <documentation>Gets a datastream in an object.</documentation>
-      <input message="GetDatastreamRequest"/>
-      <output message="GetDatastreamResponse"/>
+      <input message="fedora-api:GetDatastreamRequest"/>
+      <output message="fedora-api:GetDatastreamResponse"/>
     </operation>
     <operation name="GetDatastreams">
       <documentation>Gets all datastreams in an object.</documentation>
-      <input message="GetDatastreamsRequest"/>
-      <output message="GetDatastreamsResponse"/>
+      <input message="fedora-api:GetDatastreamsRequest"/>
+      <output message="fedora-api:GetDatastreamsResponse"/>
     </operation>
     <operation name="ListDatastreamIDs">
       <documentation>Gets a list of datastreams in an object.</documentation>
-      <input message="ListDatastreamIDsRequest"/>
-      <output message="ListDatastreamIDsResponse"/>
+      <input message="fedora-api:ListDatastreamIDsRequest"/>
+      <output message="fedora-api:ListDatastreamIDsResponse"/>
     </operation>
     <operation name="GetDatastreamHistory">
       <documentation>Gets the componentID, createDT, state, and label history
       of a datastream.</documentation>
-      <input message="GetDatastreamHistoryRequest"/>
-      <output message="GetDatastreamHistoryResponse"/>
+      <input message="fedora-api:GetDatastreamHistoryRequest"/>
+      <output message="fedora-api:GetDatastreamHistoryResponse"/>
     </operation>
     <operation name="GetDisseminator">
       <documentation>Gets a disseminator in an object.</documentation>
-      <input message="GetDisseminatorRequest"/>
-      <output message="GetDisseminatorResponse"/>
+      <input message="fedora-api:GetDisseminatorRequest"/>
+      <output message="fedora-api:GetDisseminatorResponse"/>
     </operation>
     <operation name="GetDisseminators">
       <documentation>Gets all disseminators in an object.</documentation>
-      <input message="GetDisseminatorsRequest"/>
-      <output message="GetDisseminatorsResponse"/>
+      <input message="fedora-api:GetDisseminatorsRequest"/>
+      <output message="fedora-api:GetDisseminatorsResponse"/>
     </operation>
     <operation name="ListDisseminatorIDs">
       <documentation>Gets a list of disseminators in an object.</documentation>
-      <input message="ListDisseminatorIDsRequest"/>
-      <output message="ListDisseminatorIDsResponse"/>
+      <input message="fedora-api:ListDisseminatorIDsRequest"/>
+      <output message="fedora-api:ListDisseminatorIDsResponse"/>
     </operation>
     <operation name="GetDisseminatorHistory">
       <documentation>Gets the componentID, createDT, state, and label history
       of a disseminator.</documentation>
-      <input message="GetDisseminatorHistoryRequest"/>
-      <output message="GetDisseminatorHistoryResponse"/>
+      <input message="fedora-api:GetDisseminatorHistoryRequest"/>
+      <output message="fedora-api:GetDisseminatorHistoryResponse"/>
     </operation>
   </portType>
   <binding name="Fedora-API-M-Binding-HTTPGET" type="fedora-api:Fedora-API-M">
@@ -792,6 +787,8 @@
     </operation>
     <operation name="CreateObject">
       <http:operation location="CreateObject"/>
+      <input>
+        <http:urlEncoded/>
       <output>
         <mime:mimeXml part="response"/>
       </output>
@@ -1045,6 +1042,11 @@
     <operation name="CreateObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#CreateObject"/>
+      <input>
+        <soap:body use="encoded" 
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
+            namespace="http://www.fedora.info/definitions/1/0/api/"/>
+      </input>
       <output>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
