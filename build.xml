@@ -511,7 +511,7 @@
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
+			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/common/lib/mysql-connector-java-2.0.14-bin.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/saxon6.5.jar"/>
 			<arg value="fedora.server.Server"/>
 			<arg value="test"/>
 		</exec>
@@ -611,6 +611,13 @@
 </project>
 <!--
   $Log$
+  Revision 1.104  2003/05/05 15:07:39  rlw
+  replaced old name for mm.mysql jar file with current name
+
+  mm.mysql-2.0.14-bin.jar
+  is now
+  mysql-connector-java-2.0.14-bin.jar
+
   Revision 1.103  2003/05/04 00:35:13  cwilper
   put imagemanip dependencies in (new jars).  put the jai stuff
   in tomcat41/lib/common, because it's signed and needs to be
