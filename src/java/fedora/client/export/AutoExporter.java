@@ -130,9 +130,11 @@ public class AutoExporter {
 
 	public static void validateFormat(String format)
 		throws IOException {
-			if (!format.equals("foxml1.0") && !format.equals("metslikefedora1")) {
+			if (!format.equals("foxml1.0") && 
+				!format.equals("metslikefedora1") && 
+				!format.equals("default")) {
 				throw new IOException("Invalid export format. Valid FORMAT values are: " +
-					"'foxml1.0' or 'metslikefedora1'");
+					"'foxml1.0' 'metslikefedora1' and 'default'");
 			}
 		}
 
