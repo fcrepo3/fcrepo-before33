@@ -1,121 +1,153 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.w3.org/2001/XMLSchema">
+<xsd:schema targetNamespace="http://www.fedora.info/definitions/1/0/types/" 
+	xmlns="http://www.w3.org/2001/XMLSchema" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:apachesoap="http://xml.apache.org/xml-soap">
 	<!--  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
       schemaLocation="wsdl.xsd"/>
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
       schemaLocation="soap-enc.xsd"/>-->
-	<complexType name="ArrayOfComponentInfo">
-		<annotation>
-			<documentation>an ordered list of ComponentInfos
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ComponentInfo[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<complexType name="ArrayOfDatastream">
-		<annotation>
-			<documentation>an ordered list of datastreams.
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Datastream[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<complexType name="ArrayOfDateTime">
-		<annotation>
-			<documentation>an ordered list of dateTimes.
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="dateTime[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<complexType name="ArrayOfDisseminator">
-		<annotation>
-			<documentation>an ordered list of disseminators.
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Disseminator[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<complexType name="ArrayOfProperty">
-		<annotation>
-			<documentation>an ordered list of properties.
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Property[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<complexType name="ArrayOfString">
-		<annotation>
-			<documentation>an ordered list of strings.
-      </documentation>
-		</annotation>
-		<complexContent>
-			<restriction base="soapenc:Array">
-				<attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
-			</restriction>
-		</complexContent>
-	</complexType>
-	<simpleType name="ComponentInfo">
-		<annotation>
-			<documentation>data about a datastream or disseminator.
-      </documentation>
-		</annotation>
-		<restriction base="string"/>
-	</simpleType>
-	<simpleType name="Datastream">
-		<annotation>
-			<documentation>arbitrary data (either referenced as a url or maintained
+	<xsd:complexType name="ArrayOfComponentInfo">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of ComponentInfos
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ComponentInfo[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ArrayOfDatastream">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of datastreams.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Datastream[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ArrayOfDateTime">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of dateTimes.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="dateTime[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ArrayOfDisseminator">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of disseminators.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Disseminator[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ArrayOfProperty">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of properties.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Property[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ArrayOfString">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of strings.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="string[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:simpleType name="ComponentInfo">
+		<xsd:annotation>
+			<xsd:documentation>data about a datastream or disseminator.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Datastream">
+		<xsd:annotation>
+			<xsd:documentation>arbitrary data (either referenced as a url or maintained
       as content) has: id, controlGroup 
       (INTERNAL=0/INLINEMETA=1/EXTERNAL=2/EXREQUEST=3), label, versionId,
       mimeType, infoType?, createDate, size.
-      </documentation>
-		</annotation>
-		<restriction base="string"/>
-	</simpleType>
-	<simpleType name="DatastreamBindingMap">
-		<annotation>
-			<documentation>a bindKeyName, datastreamID, and seqNo
-      </documentation>
-		</annotation>
-		<restriction base="string"/>
-	</simpleType>
-	<simpleType name="Disseminator">
-		<annotation>
-			<documentation>a container for a pointer to a behavior mechanism and
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="DatastreamBindingMap">
+		<xsd:annotation>
+			<xsd:documentation>a bindKeyName, datastreamID, and seqNo
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="string"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="Disseminator">
+		<xsd:annotation>
+			<xsd:documentation>a container for a pointer to a behavior mechanism and
       interface, and a DatastreamBindingMap. (id, createdate, label, 
       versiongroup, bdefid, bmechid, dsbindmap)
-      </documentation>
-		</annotation>
-		<restriction base="string"/>
-	</simpleType>
-	<complexType name="MIMETypedStream">
-		<annotation>
-			<documentation>a base-64 encoded stream of data with an associated MIME-type</documentation>
-		</annotation>
-		<sequence>
-			<element name="MIMEType" type="string"/>
-			<element name="stream" type="base64Binary"/>
-		</sequence>
-	</complexType>
-	<simpleType name="Property">
-		<annotation>
-			<documentation>a name-value pair.</documentation>
-		</annotation>
-		<restriction base="string"/>
-	</simpleType>
-</schema>
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="string"/>
+	</xsd:simpleType>
+	<xsd:complexType name="MIMETypedStream">
+		<xsd:annotation>
+			<xsd:documentation>a base-64 encoded stream of data with an associated MIME-type</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="MIMEType" type="string"/>
+			<xsd:element name="stream" type="base64Binary"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:complexType name="Property">
+		<xsd:annotation>
+			<xsd:documentation>a name-value pair.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:sequence>
+			<xsd:element name="name" type="string"/>
+			<xsd:element name="value" type="string"/>
+		</xsd:sequence>
+	</xsd:complexType>
+
+<!--	<xsd:complexType name="Vector">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of string arrays.
+      </xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="apachesoap:Vector">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType=""/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType> -->
+	
+	<xsd:complexType name="Vector">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of string arrays.</xsd:documentation>
+		</xsd:annotation>	
+		<xsd:sequence>
+			<xsd:element name="item" minOccurs="0" maxOccurs="unbounded" type="xsd:anyType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	<xsd:element name="Vector" nillable="true" type="fedora-types:Vector"/>
+	
+</xsd:schema>
