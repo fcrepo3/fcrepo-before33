@@ -136,10 +136,8 @@ public class DatastreamsPane
     public void setDirty(String id, boolean isDirty) {
         int i=getTabIndex(id);
         if (isDirty) {
-            System.out.println("Setting " + id + " tab to '" + id + "*'");
             m_tabbedPane.setTitleAt(i, id + "*");
         } else {
-            System.out.println("Setting " + id + " tab to '" + id + "'");
             m_tabbedPane.setTitleAt(i, id);
         }
     }
@@ -153,6 +151,7 @@ public class DatastreamsPane
         try {
             Datastream[] versions=Administrator.APIM.getDatastreamHistory(m_pid, dsID);
             m_currentVersionMap.put(dsID, versions[0]);
+            System.out.println("New create date is: " + versions[0].getCreateDate());
             DatastreamPane replacement=new DatastreamPane(m_owner, m_pid, versions, this);
             m_datastreamPanes[i]=replacement;
             m_tabbedPane.setComponentAt(i, replacement);

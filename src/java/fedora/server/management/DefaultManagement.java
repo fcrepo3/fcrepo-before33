@@ -193,15 +193,18 @@ public class DefaultManagement
                                String encoding, 
                                boolean newPid)
             throws ServerException {
-        getServer().logFinest("Entered DefaultManagement.ingestObject");
-        m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
-        String pid=w.GetObjectPID();
+        DOWriter w = null;
         try {
+            getServer().logFinest("Entered DefaultManagement.ingestObject");
+            m_ipRestriction.enforce(context);
+            w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
+            String pid=w.GetObjectPID();
             w.commit(logMessage);
             return pid;
         } finally {
-            m_manager.releaseWriter(w);
+            if (w != null) {
+                m_manager.releaseWriter(w);
+            }
             Runtime r=Runtime.getRuntime();
             getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
             getServer().logFinest("Exiting DefaultManagement.ingestObject");
@@ -214,20 +217,23 @@ public class DefaultManagement
                              String label, 
                              String logMessage)
             throws ServerException {
-        logFinest("Entered DefaultManagement.modifyObject");
-        m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getWriter(context, pid);
+        DOWriter w = null;
         try {
+            logFinest("Entered DefaultManagement.modifyObject");
+            m_ipRestriction.enforce(context);
+            w=m_manager.getWriter(context, pid);
             if (state!=null)
                 w.setState(state);
             if (label!=null)
                 w.setLabel(label);
             w.commit(logMessage);
         } finally {
-            m_manager.releaseWriter(w);
+            if (w != null) {
+                m_manager.releaseWriter(w);
+            }
             Runtime r=Runtime.getRuntime();
             getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
-            getServer().logFinest("Exiting DefaultManagement.ingestObject");
+            getServer().logFinest("Exiting DefaultManagement.modifyObject");
         }
     }
 
@@ -235,12 +241,15 @@ public class DefaultManagement
                                     String pid, 
                                     String encoding) 
     		throws ServerException {
-        logFinest("Entered DefaultManagement.getObjectXML");
-        m_ipRestriction.enforce(context);
-        DOReader reader=m_manager.getReader(context, pid);
-        InputStream instream=reader.GetObjectXML();
-        logFinest("Exiting DefaultManagement.getObjectXML");
-        return instream;
+        try {
+            logFinest("Entered DefaultManagement.getObjectXML");
+            m_ipRestriction.enforce(context);
+            DOReader reader=m_manager.getReader(context, pid);
+            InputStream instream=reader.GetObjectXML();
+            return instream;
+        } finally {
+            logFinest("Exiting DefaultManagement.getObjectXML");
+        }
     }
 
     public InputStream exportObject(Context context, 
@@ -248,25 +257,32 @@ public class DefaultManagement
                                     String format, 
                                     String encoding) 
     		throws ServerException {
-        logFinest("Entered DefaultManagement.exportObject");
-        m_ipRestriction.enforce(context);
-        DOReader reader=m_manager.getReader(context, pid);
-        InputStream instream=reader.ExportObject(format);
-        logFinest("Exiting DefaultManagement.exportObject");
-        return instream;
+        try {
+            logFinest("Entered DefaultManagement.exportObject");
+            m_ipRestriction.enforce(context);
+            DOReader reader=m_manager.getReader(context, pid);
+            InputStream instream=reader.ExportObject(format);
+            return instream;
+        } finally {
+            logFinest("Exiting DefaultManagement.exportObject");
+        }
     }
 
     public void purgeObject(Context context, 
                             String pid, 
                             String logMessage)
             throws ServerException {
-        logFinest("Entered DefaultManagement.purgeObject");
-        m_ipRestriction.enforce(context);
-        DOWriter w=m_manager.getWriter(context, pid);
-        w.remove();
-        w.commit(logMessage);
-        m_manager.releaseWriter(w);
-        logFinest("Exiting DefaultManagement.purgeObject");
+        DOWriter w = null;
+        try {
+            logFinest("Entered DefaultManagement.purgeObject");
+            m_ipRestriction.enforce(context);
+            w=m_manager.getWriter(context, pid);
+            w.remove();
+            w.commit(logMessage);
+        } finally {
+            if (w != null) m_manager.releaseWriter(w);
+            logFinest("Exiting DefaultManagement.purgeObject");
+        }
     }
 
     public String createDatastream(Context context,
@@ -279,9 +295,10 @@ public class DefaultManagement
                                    String dsLocation,
                                    String controlGroup,
                                    String dsState) throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.createDatastream");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
@@ -373,6 +390,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.createDatastream");
         }
     }
 
@@ -385,9 +403,10 @@ public class DefaultManagement
                                 String mdClass,
                                 String mdType,
                                 String dsState) throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.addDatastream");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
@@ -482,6 +501,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.addDatastream");
         }
     }
 
@@ -495,9 +515,10 @@ public class DefaultManagement
 									DSBindingMap bindingMap,
 									String dissState) throws ServerException {
 
-			m_ipRestriction.enforce(context);
 			DOWriter w=null;
 			try {
+                getServer().logFinest("Entered DefaultManagement.addDisseminator");
+    			m_ipRestriction.enforce(context);
 				w=m_manager.getWriter(context, pid);
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
@@ -535,6 +556,7 @@ public class DefaultManagement
 				if (w!=null) {
 					m_manager.releaseWriter(w);
 				}
+                getServer().logFinest("Exiting DefaultManagement.addDisseminator");
 			}
 		}
 
@@ -546,9 +568,10 @@ public class DefaultManagement
                                             String dsLocation, 
                                             String dsState)
             throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (orig.DSState.equals("D")) {
@@ -646,6 +669,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.modifyDatastreamByReference");
         }
     }
 
@@ -657,9 +681,10 @@ public class DefaultManagement
                                         InputStream dsContent, 
                                         String dsState) 
             throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (orig.DSState.equals("D")) {
@@ -722,6 +747,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.modifyDatastreamByValue");
         }
     }
 
@@ -737,10 +763,11 @@ public class DefaultManagement
                                    String logMessage, 
                                    String dissState)
             throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         DOReader r=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
             r=m_manager.getReader(context,pid);
@@ -813,6 +840,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.modifyDisseminator");
         }
     }
 
@@ -822,9 +850,10 @@ public class DefaultManagement
                                   String datastreamID, 
                                   Date endDT)
             throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.purgeDatastream");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDatastream(datastreamID, start, endDT);
@@ -894,6 +923,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.purgeDatastream");
         }
     }
 
@@ -939,9 +969,14 @@ public class DefaultManagement
                                     String datastreamID, 
                                     Date asOfDateTime)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        DOReader r=m_manager.getReader(context, pid);
-		return r.GetDatastream(datastreamID, asOfDateTime);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDatastream");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+    		return r.GetDatastream(datastreamID, asOfDateTime);
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDatastream");
+        }
     }
 
     public Datastream[] getDatastreams(Context context, 
@@ -949,30 +984,40 @@ public class DefaultManagement
                                        Date asOfDateTime, 
                                        String state)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        DOReader r=m_manager.getReader(context, pid);
-		return r.GetDatastreams(asOfDateTime, state);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDatastreams");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+    		return r.GetDatastreams(asOfDateTime, state);
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDatastream");
+        }
     }
 
     public Datastream[] getDatastreamHistory(Context context, 
                                              String pid, 
                                              String datastreamID)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        DOReader r=m_manager.getReader(context, pid);
-        Date[] versionDates=r.getDatastreamVersions(datastreamID);
-        Datastream[] versions=new Datastream[versionDates.length];
-        for (int i=0; i<versionDates.length; i++) {
-            versions[i]=r.GetDatastream(datastreamID, versionDates[i]);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDatastreamHistory");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+            Date[] versionDates=r.getDatastreamVersions(datastreamID);
+            Datastream[] versions=new Datastream[versionDates.length];
+            for (int i=0; i<versionDates.length; i++) {
+                versions[i]=r.GetDatastream(datastreamID, versionDates[i]);
+            }
+            // sort, ascending
+            Arrays.sort(versions, new DatastreamDateComparator());
+            // reverse it (make it descend, so most recent date is element 0)
+            Datastream[] out=new Datastream[versions.length];
+            for (int i=0; i<versions.length; i++) {
+                out[i]=versions[versions.length-1-i];
+            }
+            return out;
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDatastreamHistory");
         }
-        // sort, ascending
-        Arrays.sort(versions, new DatastreamDateComparator());
-        // reverse it (make it descend, so most recent date is element 0)
-        Datastream[] out=new Datastream[versions.length];
-        for (int i=0; i<versions.length; i++) {
-            out[i]=versions[versions.length-1-i];
-        }
-        return out;
     }
 
     public class DatastreamDateComparator
@@ -992,9 +1037,10 @@ public class DefaultManagement
                                     String disseminatorID, 
                                     Date endDT)
             throws ServerException {
-        m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
+            getServer().logFinest("Entered DefaultManagement.purgeDisseminator");
+            m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
@@ -1023,6 +1069,7 @@ public class DefaultManagement
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
+            getServer().logFinest("Exiting DefaultManagement.purgeDisseminator");
         }
     }
 
@@ -1031,9 +1078,14 @@ public class DefaultManagement
                                         String disseminatorId, 
                                         Date asOfDateTime)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        DOReader r=m_manager.getReader(context, pid);
-        return r.GetDisseminator(disseminatorId, asOfDateTime);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDisseminator");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+            return r.GetDisseminator(disseminatorId, asOfDateTime);
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDisseminator");
+        }
     }
 
     public Disseminator[] getDisseminators(Context context, 
@@ -1041,37 +1093,53 @@ public class DefaultManagement
                                            Date asOfDateTime, 
                                            String dissState)
             throws ServerException {
-        DOReader r=m_manager.getReader(context, pid);
-        return r.GetDisseminators(asOfDateTime, dissState);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDisseminators");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+            return r.GetDisseminators(asOfDateTime, dissState);
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDisseminators");
+        }
     }
 
     public Disseminator[] getDisseminatorHistory(Context context, 
                                                  String pid, 
                                                  String disseminatorID)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        DOReader r=m_manager.getReader(context, pid);
-        Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
-        Disseminator[] versions=new Disseminator[versionDates.length];
-        for (int i=0; i<versionDates.length; i++) {
-            versions[i]=r.GetDisseminator(disseminatorID, versionDates[i]);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getDisseminatorHistory");
+            m_ipRestriction.enforce(context);
+            DOReader r=m_manager.getReader(context, pid);
+            Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
+            Disseminator[] versions=new Disseminator[versionDates.length];
+            for (int i=0; i<versionDates.length; i++) {
+                versions[i]=r.GetDisseminator(disseminatorID, versionDates[i]);
+            }
+            // sort, ascending
+            Arrays.sort(versions, new DisseminatorDateComparator());
+            // reverse it (make it descend, so most recent date is element 0)
+            Disseminator[] out=new Disseminator[versions.length];
+            for (int i=0; i<versions.length; i++) {
+                out[i]=versions[versions.length-1-i];
+            }
+            return out;
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getDisseminatorHistory");
         }
-        // sort, ascending
-        Arrays.sort(versions, new DisseminatorDateComparator());
-        // reverse it (make it descend, so most recent date is element 0)
-        Disseminator[] out=new Disseminator[versions.length];
-        for (int i=0; i<versions.length; i++) {
-            out[i]=versions[versions.length-1-i];
-        }
-        return out;
     }
 
     public String[] getNextPID(Context context, 
                                int numPIDs,
                                String namespace)
             throws ServerException {
-        m_ipRestriction.enforce(context);
-        return m_manager.getNextPID(numPIDs, namespace);
+        try {
+            getServer().logFinest("Entered DefaultManagement.getNextPID");
+            m_ipRestriction.enforce(context);
+            return m_manager.getNextPID(numPIDs, namespace);
+        } finally {
+            getServer().logFinest("Exiting DefaultManagement.getNextPID");
+        }
     }
 
 
@@ -1159,9 +1227,10 @@ public class DefaultManagement
                                    String dsState, 
                                    String logMessage)
             throws ServerException {
-      m_ipRestriction.enforce(context);
       DOWriter w=null;
       try {
+          getServer().logFinest("Entered DefaultManagement.setDatastreamState");
+          m_ipRestriction.enforce(context);
           w=m_manager.getWriter(context, pid);
           fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);
           w.setDatastreamState(datastreamID, dsState);
@@ -1185,6 +1254,7 @@ public class DefaultManagement
           if (w!=null) {
               m_manager.releaseWriter(w);
           }
+          getServer().logFinest("Exiting DefaultManagement.setDatastreamState");
         }
     }
 
@@ -1194,9 +1264,10 @@ public class DefaultManagement
                                      String dissState, 
                                      String logMessage)
             throws ServerException {
-      m_ipRestriction.enforce(context);
       DOWriter w=null;
       try {
+          getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
+          m_ipRestriction.enforce(context);
           w=m_manager.getWriter(context, pid);
           fedora.server.storage.types.Disseminator diss=w.GetDisseminator(disseminatorID, null);
           w.setDisseminatorState(disseminatorID, dissState);
@@ -1220,6 +1291,7 @@ public class DefaultManagement
           if (w!=null) {
               m_manager.releaseWriter(w);
           }
-        }
-    }
+          getServer().logFinest("Exiting DefaultManagement.setDisseminatorState");
+      }
+   }
 }
