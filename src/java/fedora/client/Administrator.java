@@ -418,16 +418,6 @@ public class Administrator extends JFrame {
 
         menuBar.add(fileMenu);
 
-
-
-
-
-
-
-
-
-
-
         JMenu toolsMenu=new JMenu("Tools");
         toolsMenu.setMnemonic(KeyEvent.VK_T);
 
@@ -469,18 +459,6 @@ public class Administrator extends JFrame {
         toolsBatchSubMenu.add(toolsBatchIngest);
 
         // rlw
-
-/*        JMenu fileIngest=new JMenu("Ingest");
-        fileIngest.setMnemonic(KeyEvent.VK_I);
-        JMenu fileIngestOne=new JMenu("One Object");
-        fileIngestOne.setMnemonic(KeyEvent.VK_O);
-        JMenuItem fileIngestOneFromFile=new JMenuItem("From File...", KeyEvent.VK_F);
-        fileIngestOneFromFile.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new Ingest(Ingest.ONE_FROM_FILE);
-            }
-        });
-  */
         // SubMenuItem for batch modify tool
         //JMenuItem toolsBatchModify=new JMenuItem("Modify Batch", KeyEvent.VK_M);
         JMenu toolsBatchModify=new JMenu("Modify Batch");
