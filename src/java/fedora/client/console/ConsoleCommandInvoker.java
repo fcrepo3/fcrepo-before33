@@ -2,6 +2,7 @@ package fedora.client.console;
 
 import java.awt.BorderLayout;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JLabel;
@@ -66,9 +67,30 @@ public class ConsoleCommandInvoker
                     m_console.print("\n");
                 }
             }
+            long startms=new Date().getTime();
             Object returned=m_command.invoke(
                     m_console.getInvocationTarget(m_command), parameters);
-            m_console.print("Returned: " + stringify(returned) + "\n");
+            long endms=new Date().getTime();
+            long totalms=endms-startms;
+            if (returned!=null) {
+                m_console.print("Returned: " + stringify(returned) + "\n");
+            } else {
+                if (m_command.getReturnType()==null) {
+                    m_console.print("Returned.\n");
+                } else {
+                    m_console.print("Returned: <null>\n");
+                }
+            }
+            String duration;
+            if (totalms==0) {
+                duration="< 0.001 seconds.";
+            } else {
+                double secs=totalms/1000.0;
+                duration=secs+" seconds.";
+            }
+            m_console.print("Roundtrip time: ");
+            m_console.print(duration);
+            m_console.print("\n");
         } catch (InvocationTargetException ite) {
             m_console.print("ERROR (" + ite.getTargetException().getClass().getName() + ") : " 
                     + ite.getTargetException().getMessage() + "\n");
@@ -79,6 +101,7 @@ public class ConsoleCommandInvoker
     }
     
     private String stringify(Object obj) {
+        if (obj==null) { return "<null>"; }
         return obj.toString();
     }
     
