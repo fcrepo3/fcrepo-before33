@@ -95,6 +95,10 @@ public class METSDOSerializer
     private String m_xlinkPrefix;
     
     private String m_characterEncoding;
+    
+    public METSDOSerializer() {
+    System.out.println("Mets do serializer constructed.");
+    }
 
     /**
      * Constructs a METS serializer.

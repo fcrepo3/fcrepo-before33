@@ -127,6 +127,10 @@ public class METSDODeserializer
     
     private int m_queryBehavior;
     
+    public METSDODeserializer() {
+    System.out.println("Mets do deserializer constructed.");
+    }
+    
     /**
      * Initializes by setting up a parser that doesn't validate and never
      * queries the server for values of DSSize and DSMIME.
