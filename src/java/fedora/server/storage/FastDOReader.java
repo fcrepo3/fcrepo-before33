@@ -687,7 +687,11 @@ public class FastDOReader implements DOReader
           "SELECT DISTINCT "
           + "dsBind.dsLabel,"
           + "dsBind.dsMIME,"
-          + "dsBind.dsLocation "
+          + "dsBind.dsLocation, "
+          + "dsBind.dsState, "
+          + "dsBind.dsID, "
+          + "dsBind.dsControlGroupType, "
+          + "dsBind.dsCurrentVersionID "
           + "FROM "
           + "do,"
           + "dsBind "
@@ -716,6 +720,10 @@ public class FastDOReader implements DOReader
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
           datastream.DSLocation = unencodeLocalURL(results[2]);
+          datastream.DSState = results[3];
+          datastream.DatastreamID = results[4];
+          datastream.DSControlGrp = results[5];
+          datastream.DSVersionID = results[6];
           queryResults.addElement(datastream);
         }
 
@@ -791,7 +799,11 @@ public class FastDOReader implements DOReader
           "SELECT DISTINCT "
           + "dsBind.dsLabel,"
           + "dsBind.dsMIME,"
-          + "dsBind.dsLocation "
+          + "dsBind.dsLocation, "
+          + "dsBind.dsState, "
+          + "dsBind.dsID, "
+          + "dsBind.dsControlGroupType, "
+          + "dsBind.dsCurrentVersionID "
           + "FROM "
           + "do,"
           + "dsBind "
@@ -819,6 +831,10 @@ public class FastDOReader implements DOReader
           datastream.DSLabel = results[0];
           datastream.DSMIME = results[1];
           datastream.DSLocation = unencodeLocalURL(results[2]);
+          datastream.DSState = results[3];
+          datastream.DatastreamID = results[4];
+          datastream.DSControlGrp = results[5];
+          datastream.DSVersionID = results[6];
           queryResults.addElement(datastream);
         }
         datastreamArray = new Datastream[queryResults.size()];
@@ -956,7 +972,8 @@ public class FastDOReader implements DOReader
           + "dsBind.dsControlGroupType, "
           + "dsBind.dsID, "
           + "dsBind.dsCurrentVersionID, "
-          + "dsBindSpec.dsBindSpecName "
+          + "dsBindSpec.dsBindSpecName, "
+          + "dsBind.dsState "
           + " FROM "
           + "do,"
           + "bDef,"
@@ -1016,6 +1033,7 @@ public class FastDOReader implements DOReader
           dissBindInfo.dsID = results[8];
           dissBindInfo.dsVersionID = results[9];
           dissBindInfo.DSBindKey = results[10];
+          dissBindInfo.dsState = results[11];
           try
           {
             dissBindInfo.methodParms = this.getObjectMethodParms(results[1],
@@ -1100,7 +1118,8 @@ public class FastDOReader implements DOReader
           + "diss.dissID,"
           + "bDef.bDefPID,"
           + "bMech.bMechPID,"
-          + "dsBindMap.dsBindMapID "
+          + "dsBindMap.dsBindMapID, "
+          + "diss.dissState "
           + "FROM "
           + "bDef,"
           + "diss,"
@@ -1138,6 +1157,7 @@ public class FastDOReader implements DOReader
           disseminator.bDefID = results[1];
           disseminator.bMechID = results[2];
           disseminator.dsBindMapID = results[3];
+          disseminator.dissState = results[4];
         }
       } catch (Throwable th)
       {
@@ -1208,7 +1228,8 @@ public class FastDOReader implements DOReader
           + "diss.dissID,"
           + "bDef.bDefPID,"
           + "bMech.bMechPID,"
-          + "dsBindMap.dsBindMapID "
+          + "dsBindMap.dsBindMapID, "
+          + "diss.dissState "
           + "FROM "
           + "bDef,"
           + "diss,"
@@ -1246,6 +1267,7 @@ public class FastDOReader implements DOReader
           disseminator.bDefID = results[1];
           disseminator.bMechID = results[2];
           disseminator.dsBindMapID = results[3];
+          disseminator.dissState = results[4];
           queryResults.addElement(disseminator);
         }
         disseminatorArray = new Disseminator[queryResults.size()];
@@ -1598,7 +1620,8 @@ public class FastDOReader implements DOReader
         int rowCount = 0;
         for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
         {
-          datastreamIDs[rowCount] = (String)e.nextElement();
+          datastream = (Datastream)e.nextElement();
+          datastreamIDs[rowCount] = datastream.DatastreamID;
           rowCount++;
         }
       } catch (Throwable th)
