@@ -15,24 +15,6 @@
 			<wsdldoc:type name="fedora-types:ObjectProfile" url="http://www.fedora.info/definitions/1/0/types/#ObjectProfile"/>
 		</documentation>
 	</types>
-	<message name="advancedFieldSearchRequest">
-		<part name="resultFields" type="fedora-types:ArrayOfString">
-			<documentation>an array of unique object fields
-            from fedora-types:ObjectFields.  This tells the server which fields
-            should be returned from the query.</documentation>
-		</part>
-		<part name="query" type="fedora-types:ArrayOfCondition">
-			<documentation>the conditions (property, operation, value) that
-            must all be true (implicit AND) in order for an object to be
-            considered a match.</documentation>
-		</part>
-	</message>
-	<message name="advancedFieldSearchResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectFields">
-			<documentation>a set of ObjectFields structures, one for each
-            object that matched all conditions of the query.</documentation>
-		</part>
-	</message>
 	<message name="getObjectProfileRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -155,23 +137,34 @@
 			</documentation>
 		</part>
 	</message>
-	<message name="simpleFieldSearchRequest">
+	<message name="listObjectFieldsRequest">
 		<part name="resultFields" type="fedora-types:ArrayOfString">
 			<documentation>an array of unique object fields
             from fedora-types:ObjectFields.  This tells the server which fields
             should be returned from the query.</documentation>
 		</part>
-		<part name="terms" type="xsd:string">
-			<documentation>a space-delimited list of words that should be in
-            any field in order for an object to be considered a match.</documentation>
+		<part name="maxResults" type="xsd:nonNegativeInteger">
+			<documentation>the maximum number of results that the server should
+                provide at once.  This may be null, in which case the server
+                will return the maximum number of results it has been configured
+                to return.</documentation>
+		</part>
+		<part name="query" type="fedora-types:FieldSearchQuery">
+			<documentation>the terms or conditions for the search.</documentation>
 		</part>
 	</message>
-	<message name="simpleFieldSearchResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectFields">
-			<documentation>a set of ObjectFields structures, one for each
-            object that matched the query.</documentation>
+	<message name="listObjectFieldsResponse">
+		<part name="response" type="fedora-types:FieldSearchResult">
+			<documentation>containing an array of ObjectFields and, possibly,
+            a listSession.</documentation>
 		</part>
 	</message>
+	<message name="resumeListObjectFieldsRequest">
+		<part name="sessionToken" type="xsd:string">
+			<documentation>the token of the session in which the next few
+                results can be found.</documentation>
+		</part>
+    </message>
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
 		    accessing digital objects.  The access operations include methods to do
@@ -188,13 +181,6 @@
 		    on behalf of the client, simply returning a dissemination result via the
 		    Access service layer.
 		</documentation>
-		<operation name="advancedFieldSearch">
-			<documentation>Gets the requested ObjectFields on all objects in the
-                repository matching a set of conditions.
-			</documentation>
-			<input message="fedora-api:advancedFieldSearchRequest"/>
-			<output message="fedora-api:advancedFieldSearchResponse"/>
-		</operation>
 		<operation name="getObjectProfile">
 			<documentation>Gets a profile of the object which includes key
 				metadata fields and URLs for the object Dissemination 
@@ -249,26 +235,23 @@
 			<input message="fedora-api:getBehaviorMethodsXMLRequest"/>
 			<output message="fedora-api:getBehaviorMethodsXMLResponse"/>
 		</operation>
-		<operation name="simpleFieldSearch">
+		<operation name="listObjectFields">
 			<documentation>Gets the requested ObjectFields on all objects in the
-                repository having all search terms present somewhere in their
-                ObjectFields record.
+                repository matching the given criteria.
 			</documentation>
-			<input message="fedora-api:simpleFieldSearchRequest"/>
-			<output message="fedora-api:simpleFieldSearchResponse"/>
+			<input message="fedora-api:listObjectFieldsRequest"/>
+			<output message="fedora-api:listObjectFieldsResponse"/>
+		</operation>
+		<operation name="resumeListObjectFields">
+			<documentation>Gets the next list of results from a truncated
+                listObjectFields response.
+			</documentation>
+			<input message="fedora-api:resumeListObjectFieldsRequest"/>
+			<output message="fedora-api:listObjectFieldsResponse"/>
 		</operation>
 	</portType>
 	<binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
 		<http:binding verb="GET"/>
-		<operation name="advancedFieldSearch">
-			<http:operation location="advancedFieldSearch"/>
-			<input>
-				<http:urlEncoded/>
-			</input>
-			<output>
-				<mime:mimeXml part="response"/>
-			</output>
-		</operation>
 		<operation name="getObjectProfile">
 			<http:operation location="getObjectProfile"/>
 			<input>
@@ -332,8 +315,17 @@
 				<mime:mimeXml part="response"/>
 			</output>
 		</operation>
-		<operation name="simpleFieldSearch">
-			<http:operation location="simpleFieldSearch"/>
+		<operation name="listObjectFields">
+			<http:operation location="listObjectFields"/>
+			<input>
+				<http:urlEncoded/>
+			</input>
+			<output>
+				<mime:mimeXml part="response"/>
+			</output>
+		</operation>
+		<operation name="resumeListObjectFields">
+			<http:operation location="resumeListObjectFields"/>
 			<input>
 				<http:urlEncoded/>
 			</input>
@@ -344,15 +336,6 @@
 	</binding>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-		<operation name="advancedFieldSearch">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#advancedFieldSearch"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
 		<operation name="getObjectProfile">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProfile"/>
 			<input>
@@ -407,8 +390,17 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<operation name="simpleFieldSearch">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#simpleFieldSearch"/>
+		<operation name="listObjectFields">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectFields"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="resumeListObjectFields">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#resumeListObjectFields"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
