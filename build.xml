@@ -1,17 +1,94 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
 <project name="Fedora" default="all" basedir=".">
+	<property name="fedoraVersion" value="1.0"/>
 	<property name="javaClassDebug" value="on"/>
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
-	<property name="docDir" value="apidoc"/>
-	<target name="copyclient" depends="client" description="copies client to server dist area">
-		<copy todir="dist/server">
-			<fileset dir="dist/client"/>
-		</copy>
-	</target>
 	<target name="serverandclient" depends="server,client,localservices" description="builds both client and server in dist\server">
 	</target>
+        <target name="release" depends="srcrelease,binrelease" description="puts all source and binary distributable packages in dist/release">
+        </target>
+        <target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
+            <mkdir dir="dist"/>
+            <mkdir dir="dist/release"/>
+            <mkdir dir="dist/release/fedora-${fedoraVersion}-src"/>
+            <copy todir="dist/release/fedora-${fedoraVersion}-src">
+                <fileset dir=".">
+                    <exclude name="**/mysql-3.23.52/**"/>
+                </fileset>
+            </copy>
+            <tar longfile="gnu"
+                 tarfile="dist/release/fedora-${fedoraVersion}-src.tar">
+               <tarfileset dir="dist/release" mode="755">
+                 <include name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
+               </tarfileset> 
+               <tarfileset dir="dist/release">
+                 <include name="fedora-${fedoraVersion}-src/**"/>
+                 <exclude name="fedora-${fedoraVersion}-src/res/ant/bin/ant/**"/>
+               </tarfileset> 
+            </tar>
+            <gzip zipfile="dist/release/fedora-${fedoraVersion}-src.tar.gz" 
+                  src="dist/release/fedora-${fedoraVersion}-src.tar"/> 
+            <delete file="dist/release/fedora-${fedoraVersion}-src.tar"/>
+            <zip zipfile="dist/release/fedora-${fedoraVersion}-src.zip"
+                 basedir="dist/release"
+                 includes="fedora-${fedoraVersion}-src/**"/>
+            <delete dir="dist/release/fedora-${fedoraVersion}-src"/>
+        </target>
+        <target name="binrelease" depends="binreleasewindows,binreleaseunix" description="puts binary distributable packages in dist/release">
+             <delete dir="dist/release/fedora-${fedoraVersion}"/>
+        </target>
+        <target name="binreleaseunix" depends="binreleaseprep">
+
+             <!-- server -->
+             <tar longfile="gnu"
+                  tarfile="dist/release/fedora-${fedoraVersion}-server.tar">
+               <tarfileset dir="dist/release" mode="755">
+                 <include name="fedora-${fedoraVersion}/server/bin/**"/>
+               </tarfileset> 
+               <tarfileset dir="dist/release">
+                 <include name="fedora-${fedoraVersion}/server/**"/>
+                 <exclude name="fedora-${fedoraVersion}/server/bin/**"/>
+               </tarfileset> 
+             </tar>
+             <gzip zipfile="dist/release/fedora-${fedoraVersion}-server.tar.gz" 
+                   src="dist/release/fedora-${fedoraVersion}-server.tar"/> 
+             <delete file="dist/release/fedora-${fedoraVersion}-server.tar"/>
+
+             <!-- client -->
+             <tar longfile="gnu"
+                  tarfile="dist/release/fedora-${fedoraVersion}-client.tar">
+               <tarfileset dir="dist/release" mode="755">
+                 <include name="fedora-${fedoraVersion}/client/bin/**"/>
+               </tarfileset> 
+               <tarfileset dir="dist/release">
+                 <include name="fedora-${fedoraVersion}/client/**"/>
+                 <exclude name="fedora-${fedoraVersion}/client/bin/**"/>
+               </tarfileset> 
+             </tar>
+             <gzip zipfile="dist/release/fedora-${fedoraVersion}-client.tar.gz" 
+                   src="dist/release/fedora-${fedoraVersion}-client.tar"/> 
+             <delete file="dist/release/fedora-${fedoraVersion}-client.tar"/>
+        </target>
+        <target name="binreleasewindows" depends="binreleaseprep">
+             <zip zipfile="dist/release/fedora-${fedoraVersion}-server.zip"
+                  basedir="dist/release"
+                  includes="fedora-${fedoraVersion}/server/**"/>
+             <zip zipfile="dist/release/fedora-${fedoraVersion}-client.zip"
+                  basedir="dist/release"
+                  includes="fedora-${fedoraVersion}/client/**"/>
+        </target>
+        <target name="binreleaseprep" depends="serverdist" description="puts binary distributable packages in dist/release">
+             <mkdir dir="dist/release"/>
+             <mkdir dir="dist/release/fedora-${fedoraVersion}"/>
+             <copy todir="dist/release/fedora-${fedoraVersion}">
+                 <fileset dir="dist">
+                     <include name="server/**"/>
+                     <include name="client/**"/>
+                 </fileset>
+             </copy>
+        </target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
@@ -786,6 +863,14 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.113  2003/05/11 01:26:38  cwilper
+  added release target.  tar.gz's and zips of
+  - server binaries
+  - client binaries
+  - full source
+  will be put into dist/release/ when you run
+  this target.
+
   Revision 1.112  2003/05/10 14:16:37  rlw
   added transformation for localservices doc
 
