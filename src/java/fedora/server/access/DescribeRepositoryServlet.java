@@ -117,6 +117,12 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
+  /** Host name of the Fedora server **/
+  private static String fedoraServerHost = null;
+
+  /** Port number on which the Fedora server is running. **/
+  private static String fedoraServerPort = null;
+
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -344,11 +350,17 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
         {
           pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
           pw.write("<fedoraRepository "
-              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + ">");
-          pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " location=\"fedoraRepository.xsd\"/>");
+              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+              + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+              + "/fedoraRepository.xsd\">");
+          //pw.write("<fedoraRepository "
+          //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+          //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+          //    + ">");
+          //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+          //    + " location=\"fedoraRepository.xsd\"/>");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
           pw.write("<repositoryName>" + repositoryInfo.repositoryName + "</repositoryName>");
@@ -419,6 +431,8 @@ public class DescribeRepositoryServlet extends HttpServlet implements Logging
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
     } catch (InitializationException ie)

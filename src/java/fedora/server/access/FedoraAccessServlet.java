@@ -141,6 +141,12 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
+  /** Host name of the Fedora server **/
+  private static String fedoraServerHost = null;
+
+  /** Port number on which the Fedora server is running. **/
+  private static String fedoraServerPort = null;
+
   /**
    * Get the userId if the provided base64-encoded user:pass string
    * provides a correct user-to-password match.  Otherwise, return null.
@@ -581,21 +587,35 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
             pw.write("<objectProfile "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectProfile.xsd\"/>");
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+            + "/objectProfile.xsd\"" + " pid=\"" + PID + "\" >");
+            //pw.write("<objectProfile "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectProfile.xsd\"/>");
           } else
           {
             pw.write("<objectProfile "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
+                + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                + "/objectProfile.xsd\"" + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectProfile.xsd\"/>");
+            //pw.write("<objectProfile "
+            //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            //    + " pid=\"" + PID + "\""
+            //    + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+            //    + "\" >");
+            //pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+            //    + " location=\"objectProfile.xsd\"/>");
           }
 
           // PROFILE FIELDS SERIALIZATION
@@ -665,6 +685,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
     } catch (InitializationException ie)

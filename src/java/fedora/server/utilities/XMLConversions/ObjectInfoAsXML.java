@@ -1,5 +1,6 @@
 package fedora.server.utilities.XMLConversions;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.text.ParseException;
@@ -8,7 +9,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fedora.server.Server;
 import fedora.server.access.ObjectProfile;
+import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
@@ -56,6 +59,30 @@ import fedora.server.utilities.DCFields;
 public class ObjectInfoAsXML
 {
 
+  /** Fedora server instance */
+  private static Server s_server = null;
+
+  /** Host name of the Fedora server **/
+  private static String fedoraServerHost = null;
+
+  /** Port number on which the Fedora server is running. **/
+  private static String fedoraServerPort = null;
+
+  /** Make sure we have a server instance. */
+  static
+  {
+    try
+    {
+      s_server =
+          Server.getInstance(new File(System.getProperty("fedora.home")));
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
+    } catch (InitializationException ie)
+    {
+      System.err.println(ie.getMessage());
+    }
+  }
+
     public ObjectInfoAsXML()
     {
     }
@@ -65,11 +92,18 @@ public class ObjectInfoAsXML
         StringBuffer out = new StringBuffer();
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.append("<objectProfile "
-              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + " pid=\"" + objProfile.PID + "\" >");
-        out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-              + " location=\"objectProfile.xsd\"/>");
+            + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+            + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+            + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+            + "/objectProfile.xsd\"" + " pid=\"" + objProfile.PID + "\" >");
+        //out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        //out.append("<objectProfile "
+        //      + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+        //      + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+        //      + " pid=\"" + objProfile.PID + "\" >");
+        //out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+        //      + " location=\"objectProfile.xsd\"/>");
 
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
@@ -106,11 +140,17 @@ public class ObjectInfoAsXML
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.append("<objectMethods "
-            + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-            + " pid=\"" + PID + "\" >");
-        out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            + " location=\"objectMethods.xsd\"/>");
+            + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+            + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/\""
+            + " location=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+            + "/objectMethods.xsd\"" + " pid=\"" + PID + "\">");
+        //out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        //out.append("<objectMethods "
+        //    + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+        //    + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+        //    + " pid=\"" + PID + "\" >");
+        //out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+        //    + " location=\"objectMethods.xsd\"/>");
 
         String nextBdef = "null";
         String currentBdef = "";
