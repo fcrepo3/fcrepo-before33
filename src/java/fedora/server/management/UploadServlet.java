@@ -131,7 +131,7 @@ public class UploadServlet
      */
     public void init() throws ServletException {
         try {
-            s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+            s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
 			s_management=(Management) s_server.getModule("fedora.server.management.Management");
 			if (s_management==null) {
 			    throw new ServletException("Unable to get Management module from server.");

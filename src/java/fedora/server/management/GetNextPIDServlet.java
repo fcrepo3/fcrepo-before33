@@ -340,7 +340,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
   {
     try
     {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
       s_management = (Management) s_server.getModule("fedora.server.management.Management");
       s_serverHost = s_server.getParameter("fedoraServerHost");
       s_serverPort = s_server.getParameter("fedoraServerPort");
