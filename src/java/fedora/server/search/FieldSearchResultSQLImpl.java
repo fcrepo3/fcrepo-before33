@@ -23,6 +23,7 @@ import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.MD5Utility;
 
@@ -227,7 +228,7 @@ public class FieldSearchResultSQLImpl
                     }
                 } else {
                     if (op.equals("=")) {
-                        if (isDCProp(prop)) {
+                        if (isDCProp(prop) || prop.equals("bDef") || prop.equals("bMech") ) {
                             throw new QueryParseException("The = operator "
                                     + "can only be used with dates and "
                                     + "non-repeating fields.");
@@ -388,6 +389,7 @@ public class FieldSearchResultSQLImpl
             f=new ObjectFields();
         }
         // add non-dc values from doReader for the others in m_resultFields[]
+        Disseminator[] disses=null;
         for (int i=0; i<m_resultFields.length; i++) {
             String n=m_resultFields[i];
             if (n.equals("pid")) {
@@ -413,6 +415,22 @@ public class FieldSearchResultSQLImpl
             }
             if (n.equals("mDate")) {
                 f.setMDate(r.getLastModDate());
+            }
+            if (n.equals("bDef")) {
+                if (disses==null) {
+                    disses=r.GetDisseminators(null);
+                }
+                for (int i2=0; i2<disses.length; i2++) {
+                    f.bDefs().add(disses[i2].bDefID);
+                }
+            }
+            if (n.equals("bMech")) {
+                if (disses==null) {
+                    disses=r.GetDisseminators(null);
+                }
+                for (int i2=0; i2<disses.length; i2++) {
+                    f.bMechs().add(disses[i2].bMechID);
+                }
             }
         }
         return f;
@@ -455,7 +473,9 @@ public class FieldSearchResultSQLImpl
      */
     private static String toSql(String name, String in) {
         in=in.toLowerCase();
-        if (name.startsWith("dc") || (name.startsWith("doFields.dc"))) {
+        if (name.startsWith("dc") || (name.startsWith("doFields.dc"))
+            || (name.equals("bDef")) || (name.equals("doFields.bDef"))
+            || (name.equals("bMech")) || (name.equals("doFields.bMech")) ) {
             StringBuffer newIn=new StringBuffer();
             if (!in.startsWith("*")) {
                 newIn.append("* ");

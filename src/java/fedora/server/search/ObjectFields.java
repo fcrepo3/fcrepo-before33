@@ -30,9 +30,11 @@ public class ObjectFields
     private Date m_cDate;
     private Date m_mDate;
     private Date m_dcmDate;
+    private ArrayList m_bDefs=new ArrayList();
+    private ArrayList m_bMechs=new ArrayList();
 
     private StringBuffer m_currentContent;
-    private boolean[] m_want=new boolean[24];
+    private boolean[] m_want=new boolean[26];
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
     
@@ -60,6 +62,8 @@ public class ObjectFields
     public final static int COVERAGE=21;
     public final static int RIGHTS=22;
     public final static int DCMDATE=23;
+    public final static int BDEF=24;
+    public final static int BMECH=25;
 
     public ObjectFields() {
     }
@@ -116,6 +120,10 @@ public class ObjectFields
                 m_want[RIGHTS]=true;
             } else if (s.equalsIgnoreCase("dcmDate")) {
                 m_want[DCMDATE]=true;
+            } else if (s.equalsIgnoreCase("bDef")) {
+                m_want[BDEF]=true;
+            } else if (s.equalsIgnoreCase("bMech")) {
+                m_want[BMECH]=true;
             } else {
                 throw new UnrecognizedFieldException("Unrecognized field: '" + s + "'");
             }
@@ -211,6 +219,10 @@ public class ObjectFields
             coverages().add(m_currentContent.toString());
         } else if ( (m_want[RIGHTS]) && (localName.equals("rights")) ) {
             rights().add(m_currentContent.toString());
+        } else if ( (m_want[BDEF]) && (localName.equals("bDef")) ) {
+            bDefs().add(m_currentContent.toString());
+        } else if ( (m_want[BMECH]) && (localName.equals("bMech")) ) {
+            bMechs().add(m_currentContent.toString());
         }
     }
     
@@ -284,6 +296,14 @@ public class ObjectFields
 
     public Date getDCMDate() {
         return m_dcmDate;
+    }
+
+    public List bDefs() {
+        return m_bDefs;
+    }
+
+    public List bMechs() {
+        return m_bMechs;
     }
 
 }    

@@ -426,6 +426,9 @@
 			<element name="locker" type="string" minOccurs="0"/>
 			<element name="cDate" type="dateTime" minOccurs="0"/>
 			<element name="mDate" type="dateTime" minOccurs="0"/>
+			<element name="dcmDate" type="dateTime" minOccurs="0"/>
+			<element name="bDef" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="bMech" type="string" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="creator" type="string" minOccurs="0" maxOccurs="unbounded"/>
 			<element name="subject" type="string" minOccurs="0" maxOccurs="unbounded"/>

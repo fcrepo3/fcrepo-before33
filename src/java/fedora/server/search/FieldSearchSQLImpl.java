@@ -30,6 +30,7 @@ import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 
@@ -48,12 +49,12 @@ public class FieldSearchSQLImpl
     private int m_maxResults;
     private int m_maxSecondsPerSession;
     public static String[] DB_COLUMN_NAMES=new String[] {"pid", "label", 
-            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
-            "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
-            "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
-            "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
+            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate", 
+            "bDef", "bMech", "dcTitle", "dcCreator", "dcSubject", "dcDescription", 
+            "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat", 
+            "dcIdentifier", "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
     private static boolean[] s_dbColumnNumeric=new boolean[] {false, false,
-            false, false, false, false, true, true, true,
+            false, false, false, false, true, true, true, false, false,
             false, false, false, false, false,
             false, false, false, false, false,
             false, false, false, false, false};
@@ -98,7 +99,7 @@ public class FieldSearchSQLImpl
         Statement st=null;
         try {
             conn=m_cPool.getConnection();
-            String[] dbRowValues=new String[24];
+            String[] dbRowValues=new String[26];
             dbRowValues[0]=reader.GetObjectPID();
             String v;
             v=reader.GetObjectLabel();
@@ -129,6 +130,17 @@ public class FieldSearchSQLImpl
                 throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
                         + " has a DC datastream, but it's not inline XML.");
             }
+            // add bdef and bmech ids for each active disseminator
+            Disseminator[] disses=reader.GetDisseminators(null);
+            ArrayList bDefs=new ArrayList();
+            ArrayList bMechs=new ArrayList();
+            for (int i=0; i<disses.length; i++) {
+                bDefs.add(disses[i].bDefID);
+                bMechs.add(disses[i].bMechID);
+            }
+            dbRowValues[9]=getDbValue(bDefs);
+            dbRowValues[10]=getDbValue(bMechs);
+            // do dc stuff if needed
             if (dcmd==null) {
                 logFine("Did not have DC Metadata datastream for this object.");
             } else {
@@ -136,13 +148,13 @@ public class FieldSearchSQLImpl
                 InputStream in=dcmd.getContentStream();
                 DCFields dc=new DCFields(in);
                 dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
-                dbRowValues[9]=getDbValue(dc.titles()); 
-                dbRowValues[10]=getDbValue(dc.creators()); 
-                dbRowValues[11]=getDbValue(dc.subjects()); 
-                dbRowValues[12]=getDbValue(dc.descriptions()); 
-                dbRowValues[13]=getDbValue(dc.publishers()); 
-                dbRowValues[14]=getDbValue(dc.contributors()); 
-                dbRowValues[15]=getDbValue(dc.dates()); 
+                dbRowValues[11]=getDbValue(dc.titles()); 
+                dbRowValues[12]=getDbValue(dc.creators()); 
+                dbRowValues[13]=getDbValue(dc.subjects()); 
+                dbRowValues[14]=getDbValue(dc.descriptions()); 
+                dbRowValues[15]=getDbValue(dc.publishers()); 
+                dbRowValues[16]=getDbValue(dc.contributors()); 
+                dbRowValues[17]=getDbValue(dc.dates()); 
                 // get any dc.dates strings that are formed such that they
                 // can be treated as a timestamp
                 List wellFormedDates=null;
@@ -168,14 +180,14 @@ public class FieldSearchSQLImpl
                                 + dt.getTime() + ")");
                     }
                 }
-                dbRowValues[16]=getDbValue(dc.types()); 
-                dbRowValues[17]=getDbValue(dc.formats()); 
-                dbRowValues[18]=getDbValue(dc.identifiers()); 
-                dbRowValues[19]=getDbValue(dc.sources()); 
-                dbRowValues[20]=getDbValue(dc.languages()); 
-                dbRowValues[21]=getDbValue(dc.relations()); 
-                dbRowValues[22]=getDbValue(dc.coverages()); 
-                dbRowValues[23]=getDbValue(dc.rights()); 
+                dbRowValues[18]=getDbValue(dc.types()); 
+                dbRowValues[19]=getDbValue(dc.formats()); 
+                dbRowValues[20]=getDbValue(dc.identifiers()); 
+                dbRowValues[21]=getDbValue(dc.sources()); 
+                dbRowValues[22]=getDbValue(dc.languages()); 
+                dbRowValues[23]=getDbValue(dc.relations()); 
+                dbRowValues[24]=getDbValue(dc.coverages()); 
+                dbRowValues[25]=getDbValue(dc.rights()); 
             }
             logFine("Formulating SQL and inserting/updating...");
             SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
@@ -282,7 +294,7 @@ public class FieldSearchSQLImpl
     }
     
     /**
-     * Get the string that should be inserted for a dublin core column,
+     * Get the string that should be inserted for a repeating-value column,
      * given a list of values.  Turn each value to lowercase and separate them 
      * all by space characters.  If the list is empty, return null.
      *

@@ -81,6 +81,9 @@ public class FieldSearchServlet
                 html.append("<input type=\"checkbox\" name=\"fields\" value=\"locker\"" + (fieldHash.contains("locker") ? " checked" : "") + "> Locking User<br>");
                 html.append("<input type=\"checkbox\" name=\"fields\" value=\"cDate\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> Creation Date<br>");
                 html.append("<input type=\"checkbox\" name=\"fields\" value=\"mDate\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> Last Modified Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"dcmDate\"" + (fieldHash.contains("dcmDate") ? " checked" : "") + "> Dublin Core Modified Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"bDef\"" + (fieldHash.contains("bDef") ? " checked" : "") + "> Behavior Definition PID<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"bMech\"" + (fieldHash.contains("bMech") ? " checked" : "") + "> Behavior Mechanism PID<br>");
                 html.append("</td><td width=18% valign=top>");
                 html.append("<input type=\"checkbox\" name=\"fields\" value=\"title\"" + (fieldHash.contains("title") ? " checked" : "") + "> Title<br>");
                 html.append("<input type=\"checkbox\" name=\"fields\" value=\"creator\"" + (fieldHash.contains("creator") ? " checked" : "") + "> Creator<br>");
@@ -163,6 +166,12 @@ public class FieldSearchServlet
 			        appendXML(l, f.getCDate(), formatter, xmlBuf);
                             } else if (l.equalsIgnoreCase("mDate")) {
 			        appendXML(l, f.getMDate(), formatter, xmlBuf);
+                            } else if (l.equalsIgnoreCase("dcmDate")) {
+			        appendXML(l, f.getDCMDate(), formatter, xmlBuf);
+                            } else if (l.equalsIgnoreCase("bDef")) {
+			        appendXML(l, f.bDefs(), xmlBuf);
+                            } else if (l.equalsIgnoreCase("bMech")) {
+			        appendXML(l, f.bMechs(), xmlBuf);
                             } else if (l.equalsIgnoreCase("title")) {
 			        appendXML(l, f.titles(), xmlBuf);
                             } else if (l.equalsIgnoreCase("creator")) {
@@ -227,6 +236,12 @@ public class FieldSearchServlet
                                 html.append(formatter.format(f.getCDate()));
                             } else if (l.equalsIgnoreCase("mDate")) {
                                 html.append(formatter.format(f.getMDate()));
+                            } else if (l.equalsIgnoreCase("dcmDate")) {
+                                html.append(formatter.format(f.getDCMDate()));
+                            } else if (l.equalsIgnoreCase("bDef")) {
+                                html.append(getList(f.bDefs()));
+                            } else if (l.equalsIgnoreCase("bMech")) {
+                                html.append(getList(f.bMechs()));
                             } else if (l.equalsIgnoreCase("title")) {
                                 html.append(getList(f.titles()));
                             } else if (l.equalsIgnoreCase("creator")) {
@@ -287,6 +302,9 @@ public class FieldSearchServlet
                         if (fieldHash.contains("locker")) html.append("<input type=\"hidden\" name=\"fields\" value=\"locker\">");
                         if (fieldHash.contains("cDate")) html.append("<input type=\"hidden\" name=\"fields\" value=\"cDate\">");
                         if (fieldHash.contains("mDate")) html.append("<input type=\"hidden\" name=\"fields\" value=\"mDate\">");
+                        if (fieldHash.contains("dcmDate")) html.append("<input type=\"hidden\" name=\"fields\" value=\"dcmDate\">");
+                        if (fieldHash.contains("bDef")) html.append("<input type=\"hidden\" name=\"fields\" value=\"bDef\">");
+                        if (fieldHash.contains("bMech")) html.append("<input type=\"hidden\" name=\"fields\" value=\"bMech\">");
                         if (fieldHash.contains("title")) html.append("<input type=\"hidden\" name=\"fields\" value=\"title\">");
                         if (fieldHash.contains("creator")) html.append("<input type=\"hidden\" name=\"fields\" value=\"creator\">");
                         if (fieldHash.contains("subject")) html.append("<input type=\"hidden\" name=\"fields\" value=\"subject\">");

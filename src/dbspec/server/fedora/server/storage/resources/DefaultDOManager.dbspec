@@ -203,6 +203,15 @@
 		<column name="dcmDate" type="bigint" notNull="false">
 			<comment>The date the primary dublin core record was last modified.</comment>
 		</column>
+       <column name="bDef" type="text" notNull="false">
+           <comment>The pids of the behavior definition objects to which this object subscribes.</comment>
+       </column>
+       <column name="bMech" type="text" notNull="false">
+           <comment>The pids of the behavior mechanism objects to which this object subscribes.
+           The order corresponds to the bDef order; that is, for a given position in the bDef
+           list, the same position in the bMech list contains the pid of the bMech that fulfills
+           the contract of that bDef.</comment>
+       </column>
 		<column name="dcTitle" type="text" notNull="false">
 			<comment>All dc:title values, lowercase and delimited by space.</comment>
 		</column>
