@@ -12,8 +12,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import fedora.client.Administrator;
-import fedora.client.export.AutoExporter;
-import fedora.client.ObjectFormatDialog;
+import fedora.client.utility.export.AutoExporter;
+import fedora.client.export.ExportOptionsDialog;
 
 /**
  *
@@ -97,9 +97,12 @@ public class ExportObject
                     if (dlg.getFile()!=null) {
                         File file = new File(new File(dlg.getDirectory()), dlg.getFile());
                         Administrator.setLastDir(file.getParentFile()); // remember the dir for next time
-						ObjectFormatDialog fmtDialog = new ObjectFormatDialog("Select XML Format for Export");
-						if (fmtDialog.getSelection()!=null) {
-	                        exporter.export(pid, fmtDialog.getSelection(), new FileOutputStream(file), false);
+						ExportOptionsDialog optsDialog = new ExportOptionsDialog("Select Options for Export");
+						if (optsDialog.getFormatSelection()!=null) {
+	                        exporter.export(pid, 
+	                        			    optsDialog.getFormatSelection(),
+	                        			    optsDialog.getContextSelection(), 
+	                        			    new FileOutputStream(file));
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                                "Exported " + pid);
 						}
@@ -128,8 +131,8 @@ public class ExportObject
                     int returnVal = browse.showOpenDialog(Administrator.getDesktop());
                     if (returnVal == JFileChooser.APPROVE_OPTION) {
                         Administrator.setLastDir(browse.getSelectedFile()); // remember the dir for next time
-						ObjectFormatDialog fmtDialog = new ObjectFormatDialog("Select XML Format for Export");
-						if (fmtDialog.getSelection()!=null) {
+						ExportOptionsDialog optsDialog = new ExportOptionsDialog("Select Options for Export");
+						if (optsDialog.getFormatSelection()!=null) {
 	                        while (pidIter.hasNext()) {
 	                            String pid=(String) pidIter.next();
 	                            StringBuffer buf=new StringBuffer();
@@ -142,7 +145,10 @@ public class ExportObject
 	                                }
 	                            }
 	                            File outFile=new File(browse.getSelectedFile(), buf.toString() + ".xml");
-	                            exporter.export(pid, fmtDialog.getSelection(), new FileOutputStream(outFile),false);
+	                            exporter.export(pid, 
+	                            				optsDialog.getFormatSelection(), 
+	                            				optsDialog.getContextSelection(), 
+	                            				new FileOutputStream(outFile));
 	                        }
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                                "Exported " + m_pids.size() + " objects.");
