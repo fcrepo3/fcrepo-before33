@@ -9,7 +9,7 @@ import java.util.*;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TrippiException;
 
-import fedora.server.TestLogging;
+import fedora.server.DummyLogging;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.rebuild.*;
@@ -218,7 +218,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
                 throw new IOException("Cannot find required resource: " + DB_SPEC);
             }
     
-            SQLUtility.createNonExistingTables(m_cPool, specIn, new TestLogging());
+            SQLUtility.createNonExistingTables(m_cPool, specIn, new DummyLogging());
         } catch (SQLException s) {
             s.printStackTrace();
         } catch (FileNotFoundException e) {
