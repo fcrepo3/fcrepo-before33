@@ -76,7 +76,7 @@ public interface ResourceIndex extends TriplestoreReader {
     public static final String MODEL_BMECH             = NS_FEDORA_MODEL + "BMechObject";
     public static final String MODEL_DATAOBJECT        = NS_FEDORA_MODEL + "DataObject";
     
-    public static final String VIEW_DATE_MODIFIED      = NS_FEDORA_VIEW + "lastModified";
+    public static final String VIEW_DATE_MODIFIED      = NS_FEDORA_VIEW + "lastModifiedDate";
     //public static final String VIEW_DEPENDS             = NS_FEDORA_VIEW + "dependsOn";
     public static final String VIEW_DIRECT             = NS_FEDORA_VIEW + "isDirect";
     public static final String VIEW_DISSEMINATES       = NS_FEDORA_VIEW + "disseminates";
