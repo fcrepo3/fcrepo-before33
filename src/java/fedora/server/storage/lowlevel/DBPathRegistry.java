@@ -7,11 +7,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException; 
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
+import fedora.server.utilities.SQLUtility;
 class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
 	
@@ -29,7 +32,29 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 //"PIDRegistry"
 	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException{
 		super(registryName,storeBases);
-		
+
+
+        ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(    
+                "fedora.server.storage.ConnectionPoolManager");
+        if (cpmgr==null) {
+            throw new LowlevelStorageException(true,
+                    "Server module not loaded: " 
+                    + "fedora.server.storage.ConnectionPoolManager");
+        } else {
+            try {
+                connectionPool=cpmgr.getPool();         
+            } catch (ConnectionPoolNotFoundException cpnfe) { 
+                throw new LowlevelStorageException(true,     
+                        "Lowlevel storage can't get default pool.", cpnfe);
+            }
+        }  
+
+
+
+
+
+
+/*		
 		String username = s_server.getParameter("dbuser");
 		if (username == null) {
 			throw new LowlevelStorageException(true,"must configure dbuser");
@@ -58,11 +83,13 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		}
 		try {
 			String driver = "org.gjt.mm.mysql.Driver";
-      			connectionPool = new ConnectionPool(driver, url, username, password,
-				minConnections, /*initConnections,*/ maxConnections, true);
+      			connectionPool = new ConnectionPool(driver, url, username, password, */
+//				minConnections, /*initConnections,*/ maxConnections, true);
+/*
 		} catch (SQLException e) {
 			throw new LowlevelStorageException(true,"sql pool init failure", e);
 		}
+*/
 	}
 	
 	public String get(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
@@ -92,7 +119,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		} finally {
 			try {
 				statement.close();
-				connection.close();
+//				connection.close();
 				connectionPool.free(connection);
 			} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 				throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (get)", e2);
@@ -122,7 +149,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		} finally {
 			try {
 				statement.close();
-				connection.close();
+//				connection.close();
 				connectionPool.free(connection);
 			} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 				throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (exec)", e2);
@@ -145,11 +172,11 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			path = buffer.toString();
 		}
 		try {
-			executeSql("REPLACE INTO " + getRegistryName() +" (PID, Location) VALUES ('" + pid + "','" + path + "')");
-		} catch (ObjectNotInLowlevelStorageException e1) {
+            SQLUtility.replaceInto(connectionPool.getConnection(), 
+                    getRegistryName(), new String[] {"PID", "Location"},
+                    new String[] {pid, path}, "PID");
+		} catch (SQLException e1) {
 			throw new ObjectNotInLowlevelStorageException("put into db registry failed for [" + pid + "]", e1);
-		} catch (LowlevelStorageInconsistencyException e2) {
-			throw new LowlevelStorageInconsistencyException("[" + pid + "] put into db registry -multiple- times", e2);
 		}
 	}
 
@@ -191,7 +218,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			finally {
 				try {
 					statement.close();
-					connection.close();
+//					connection.close();
 					connectionPool.free(connection);
 				} catch (Exception e2) { // purposely general to include uninstantiated statement, connection
 					throw new LowlevelStorageException(true,"sql failure closing statement, connection, pool (enum)", e2);
