@@ -140,6 +140,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     Property[] userParms = null;
     long servletStartTime = new Date().getTime();
     boolean isGetObjectMethodsRequest = false;
+    boolean isGetObjectProfileRequest = false;
     boolean isGetDisseminationRequest = false;
 
     HashMap h=new HashMap();
@@ -165,7 +166,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           + "Encountered: "+ requestURI);
       logFinest("PID: " + PID + " bDefPID: "
           + " asOfDate: " + versDateTime);
-      isGetObjectMethodsRequest = true;
+      //isGetObjectMethodsRequest = true;
+      isGetObjectProfileRequest = true;
 
     } else if (URIArray.length > 7)
     {
@@ -177,7 +179,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         versDateTime = DateUtility.convertStringToDate(URIArray[8]);
       }
       logFinest("[FedoraAccessServlet] Dissemination Syntax "
-          + "Ecountered");
+          + "Encountered");
       logFinest("PID: " + PID + " bDefPID: " + bDefPID
           + " methodName: " + methodName + " asOfDate: " + versDateTime);
       isGetDisseminationRequest = true;
@@ -226,6 +228,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     try
     {
+/*
       if (isGetObjectMethodsRequest)
       {
         getObjectMethods(context, PID, asOfDateTime, xmlEncode, request, response);
@@ -235,7 +238,19 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
             + "GetObjectMethods: " + interval + " milliseconds.");
         logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetObjectMethods: " + interval + " milliseconds.");
-      } else if (isGetDisseminationRequest)
+      }
+*/
+      if (isGetObjectProfileRequest)
+      {
+        getObjectProfile(context, PID, asOfDateTime, xmlEncode, request, response);
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetObjectprofile: " + interval + " milliseconds.");
+        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
+            + "GetObjectProfile: " + interval + " milliseconds.");
+      }
+      else if (isGetDisseminationRequest)
       {
         getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime,
                          response);
@@ -260,6 +275,177 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
         se.printStackTrace();
     }
   }
+
+  public void getObjectProfile(Context context, String PID, Calendar asOfDateTime,
+      String xmlEncode, HttpServletRequest request,
+      HttpServletResponse response) throws IOException, ServerException
+  {
+
+    ServletOutputStream out = response.getOutputStream();
+    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    ObjectProfile objProfile = null;
+    PipedWriter pw = new PipedWriter();
+    PipedReader pr = new PipedReader(pw);
+
+    try
+    {
+      out = response.getOutputStream();
+      pw = new PipedWriter();
+      pr = new PipedReader(pw);
+      objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
+      if (objProfile != null)
+      {
+        // Object Methods found.
+        // Deserialize ObjectmethodsDef datastructure into XML
+        new ProfileSerializerThread(PID, objProfile, versDateTime, pw).start();
+        if (xmlEncode.equalsIgnoreCase(YES))
+        {
+          // Return results as raw XML
+          response.setContentType(CONTENT_TYPE_XML);
+          int bytestream = 0;
+          while ( (bytestream = pr.read()) >= 0)
+          {
+            out.write(bytestream);
+          }
+        } else
+        {
+          // Transform results into an html table
+          response.setContentType(CONTENT_TYPE_HTML);
+          File xslFile = new File(s_server.getHomeDir(), "access/viewObjectProfile.xslt");
+          TransformerFactory factory = TransformerFactory.newInstance();
+          Templates template = factory.newTemplates(new StreamSource(xslFile));
+          Transformer transformer = template.newTransformer();
+          Properties details = template.getOutputProperties();
+          transformer.transform(new StreamSource(pr), new StreamResult(out));
+        }
+        pr.close();
+
+      } else
+      {
+        // Object Profile Definition request returned nothing.
+        String message = "[FedoraAccessServlet] No Object Profile returned.";
+        logInfo(message);
+        showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
+        response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        response.sendError(response.SC_NO_CONTENT, message);
+      }
+    } catch (Throwable th)
+    {
+      String message = "[FedoraAccessServlet] An error has occured. "
+                     + " The error was a \" "
+                     + th.getClass().getName()
+                     + " \". Reason: "  + th.getMessage();
+      logWarning(message);
+      th.printStackTrace();
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+    } finally
+    {
+        if (pr != null) pr.close();
+    }
+    out.close();
+  }
+
+  /**
+   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   *
+   */
+  public class ProfileSerializerThread extends Thread
+  {
+    private PipedWriter pw = null;
+    private String PID = null;
+    private ObjectProfile objProfile = null;
+    private Date versDateTime = null;
+
+    /**
+     * <p> Constructor for ProfileSerializeThread.</p>
+     *
+     * @param PID The persistent identifier of the specified digital object.
+     * @param objMethDefArray An array of object mtehod definitions.
+     * @param versDateTime The version datetime stamp of the request.
+     * @param pw A PipedWriter to which the serialization info is written.
+     */
+    public ProfileSerializerThread(String PID, ObjectProfile objProfile,
+                        Date versDateTime, PipedWriter pw)
+    {
+      this.pw = pw;
+      this.PID = PID;
+      this.objProfile = objProfile;
+      this.versDateTime = versDateTime;
+    }
+
+    /**
+     * <p> This method executes the thread.</p>
+     */
+    public void run()
+    {
+      if (pw != null)
+      {
+        try
+        {
+          pw.write("<?xml version=\"1.0\"?>");
+          if (versDateTime == null || DateUtility.
+              convertDateToString(versDateTime).equalsIgnoreCase(""))
+          {
+            pw.write("<objectProfile "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectProfile.xsd\"/>");
+          } else
+          {
+            pw.write("<objectProfile "
+                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " pid=\"" + PID + "\""
+                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+                + "\" >");
+            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                + " location=\"objectProfile.xsd\"/>");
+          }
+
+          // PROFILE FIELDS SERIALIZATION
+          pw.write("<objLabel>" + objProfile.objectLabel + "</objLabel>");
+          pw.write("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
+          pw.write("<objCreateDate>" + objProfile.objectCreateDate + "</objCreateDate>");
+          pw.write("<objLastModDate>" + objProfile.objectLastModDate + "</objLastModDate>");
+          String objType = objProfile.objectType;
+          pw.write("<objType>");
+          if (objType.equalsIgnoreCase("O"))
+          {
+            pw.write("Fedora Data Object");
+          }
+          else if (objType.equalsIgnoreCase("D"))
+          {
+            pw.write("Fedora Behavior Definition Object");
+          }
+          else if (objType.equalsIgnoreCase("M"))
+          {
+            pw.write("Fedora Behavior Mechanism Object");
+          }
+          pw.write("</objType>");
+          pw.write("<objDissIndexViewURL>" + objProfile.dissIndexViewURL + "</objDissIndexViewURL>");
+          pw.write("<objItemIndexViewURL>" + objProfile.itemIndexViewURL + "</objItemIndexViewURL>");
+          pw.write("</objectProfile>");
+          pw.flush();
+          pw.close();
+        } catch (IOException ioe) {
+          System.err.println("WriteThread IOException: " + ioe.getMessage());
+        } finally
+        {
+          try
+          {
+            if (pw != null) pw.close();
+          } catch (IOException ioe)
+          {
+            System.err.println("WriteThread IOException: " + ioe.getMessage());
+          }
+        }
+      }
+    }
+  }
+
 
   /**
    * <p>This method calls the Fedora Access Subsystem to retrieve an array
