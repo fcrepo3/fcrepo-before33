@@ -749,7 +749,7 @@
 			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
 		</java>
 		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.common.dir}/classes;${lib.dir}\jrdf-0.3.3.jar"
+			classpath="${tomcat.server.dir}/classes;${lib.dir}/jrdf-0.3.3.jar"
 			output="dist/server/config/xacml-policies/vocabulary.txt"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
