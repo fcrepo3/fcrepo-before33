@@ -68,20 +68,6 @@ public interface DigitalObject {
      * @param pid The pid.
      */
     public void setPid(String pid);
-    
-	/**
-	 * Gets the object URI.
-	 *
-	 * @return The URI, or null if it hasn't been set.
-	 */
-	public String getURI();
-
-	/**
-	 * Sets the object URI.
-	 *
-	 * @param uri The URI.
-	 */
-	public void setURI(String uri);
 
     /**
      * Gets the state.

@@ -37,8 +37,6 @@ public class Datastream
   
   public String DatastreamID;
   
-  public String DatastreamURI;
-  
   public String[] DatastreamAltIDs = new String[0];
  
   public String DSFormatURI;

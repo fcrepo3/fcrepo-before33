@@ -85,14 +85,6 @@ public class BasicDigitalObject
     public void setPid(String pid) {
         m_pid=pid;
     }
-
-	public String getURI() {
-		return m_uri;
-	}
-
-	public void setURI(String uri) {
-		m_uri=uri;
-	}
 	
     public String getState() {
         return m_state;
