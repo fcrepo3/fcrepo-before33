@@ -4,12 +4,10 @@
     xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
     xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
     xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/">
-    
 <!--  <import namespace="http://schemas.xmlsoap.org/wsdl/" 
       schemaLocation="wsdl.xsd"/>
   <import namespace="http://schemas.xmlsoap.org/soap/encoding/" 
       schemaLocation="soapenc.xsd"/> -->
-   
   <complexType name="ArrayOfComponentInfo">
     <annotation>
       <documentation>an ordered list of ComponentInfos
@@ -98,7 +96,10 @@
   
   <simpleType name="Datastream">
     <annotation>
-      <documentation>arbitrary data.
+      <documentation>arbitrary data (either referenced as a url or maintained
+      as content) has: id, controlGroup 
+      (INTERNAL=0/INLINEMETA=1/EXTERNAL=2/EXREQUEST=3), label, versionId,
+      mimeType, infoType?, createDate, size.
       </documentation>
     </annotation>
     <restriction base="string"/>
@@ -106,7 +107,7 @@
   
   <simpleType name="DatastreamBindingMap">
     <annotation>
-      <documentation>an association of datastreams to a behavior mechanism.
+      <documentation>a bindKeyName, datastreamID, and seqNo
       </documentation>
     </annotation>
     <restriction base="string"/>
@@ -115,7 +116,8 @@
   <simpleType name="Disseminator">
     <annotation>
       <documentation>a container for a pointer to a behavior mechanism and
-      interface, and a DatastreamBindingMap.
+      interface, and a DatastreamBindingMap. (id, createdate, label, 
+      versiongroup, bdefid, bmechid, dsbindmap)
       </documentation>
     </annotation>
     <restriction base="string"/>
