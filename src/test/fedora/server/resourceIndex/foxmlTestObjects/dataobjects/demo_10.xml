@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:10" URI="info:fedora/demo:10" xmlns:METS="http://www.loc.gov/METS/"
+<foxml:digitalObject PID="demo:10" xmlns:METS="http://www.loc.gov/METS/"
   xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit"
   xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/"
   xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:xlink="http://www.w3.org/TR/xlink"
@@ -13,7 +13,7 @@
     <foxml:property NAME="info:fedora/fedora-system:def/cModel" VALUE="UVA_MRSID_IMAGE"/>
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.descMD.OTHER.UNSPECIFIED"
-    ID="DESC1" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/DESC1" VERSIONABLE="YES">
+    ID="DESC1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="DESC1.0"
       LABEL="UVA descriptive metadata for MRSID image" SIZE="1519">
       <foxml:xmlContent>
@@ -43,7 +43,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" FORMAT_URI="" ID="DS1" MIMETYPE="image/x-mrsid-image" STATE="A"
-    URI="info:fedora/demo:10/DS1" VERSIONABLE="YES">
+    VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="DS1.0"
       LABEL="Column Detail, Pavilion III, University of Virginia" SIZE="0">
       <foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp06.sid" TYPE="URL"/>
@@ -51,7 +51,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.techMD.OTHER.UNSPECIFIED"
-    ID="TECH1" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/TECH1" VERSIONABLE="YES">
+    ID="TECH1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="TECH1.0" LABEL="UVA technical metadata for MRSID image" SIZE="583">
       <foxml:xmlContent>
         <uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
@@ -69,7 +69,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.techMD.OTHER.UNSPECIFIED"
-    ID="DIGIPROV1" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/DIGIPROV1" VERSIONABLE="YES">
+    ID="DIGIPROV1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="DIGIPROV1.0"
       LABEL="UVA digiprov metadata for MRSID image" SIZE="387">
       <foxml:xmlContent>
@@ -85,7 +85,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.descMD.OTHER.UNSPECIFIED"
-    ID="DC" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/DC" VERSIONABLE="YES">
+    ID="DC" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="DC1.0"
       LABEL="DC Record for Column Detail, Pavillion III Architectural image object" SIZE="735">
       <foxml:xmlContent>
@@ -108,7 +108,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.rightsMD.OTHER.UNSPECIFIED"
-    ID="RIGHTS1" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/RIGHTS1" VERSIONABLE="YES">
+    ID="RIGHTS1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="RIGHTS1.0"
       LABEL="UVA access rights/policy metadata for MRSID  image" SIZE="370">
       <foxml:xmlContent>
@@ -125,7 +125,7 @@
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.techMD.OTHER.UNSPECIFIED"
-    ID="SOURCE1" MIMETYPE="text/xml" STATE="A" URI="info:fedora/demo:10/SOURCE1" VERSIONABLE="YES">
+    ID="SOURCE1" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
     <foxml:datastreamVersion CREATED="2002-05-20T06:32:00Z" ID="SOURCE1.0" LABEL="UVA source metadata for MRSID image" SIZE="375">
       <foxml:xmlContent>
         <uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd/">
@@ -136,6 +136,23 @@
             </uvalibadmin:mediatype>
           </uvalibadmin:source>
         </uvalibadmin:admin>
+      </foxml:xmlContent>
+      <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" FORMAT_URI="info:fedora/fedora-system:format/xml.mets.techMD.OTHER.UNSPECIFIED"
+    ID="RELS-EXT" MIMETYPE="text/xml" STATE="A" VERSIONABLE="YES">
+    <foxml:datastreamVersion CREATED="2004-12-07T19:32:00Z" ID="RELS-EXT1.0" LABEL="Relationships">
+      <foxml:xmlContent>
+        <rdf:RDF 
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
+            xmlns:nsdl="http://www.nsdl.org/ontologies/relationships#" 
+            xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+            <rdf:Description rdf:about="info:fedora/demo:10">
+                <nsdl:nsdlHasMetadata rdf:resource="info:fedora/nsdl:foo"/>
+                <nsdl:nsdlHasContent rdf:resource="info:fedora/nsdl:bar"/>
+            </rdf:Description>
+        </rdf:RDF>
       </foxml:xmlContent>
       <foxml:contentDigest DIGEST="future: hash of content goes here" TYPE="MD5"/>
     </foxml:datastreamVersion>
