@@ -146,7 +146,7 @@ public class DefinitiveDOReader implements DOReader
       //return(null);
 
       // LLSTORE: call to low level storage layer to retrieve object
-      InputStream doIn;
+      InputStream doIn = null;
       try
       {
         doIn = FileSystemLowlevelStorage.getInstance().retrieve(PID);
