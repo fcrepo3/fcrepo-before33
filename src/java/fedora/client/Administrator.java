@@ -255,7 +255,7 @@ public class Administrator extends JFrame {
         //       From [F]ile...
         //       From [R]epository...
         //     [M]ultiple Objects
-        //       From [F]ile...
+        //       From [D]irectory
         //       From [R]epository...
         //   [E]xport
         //     [O]ne Object...
@@ -306,6 +306,11 @@ public class Administrator extends JFrame {
             }
         });
         JMenuItem fileIngestOneFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
+        fileIngestOneFromRepository.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Ingest(Ingest.ONE_FROM_REPOS);
+            }
+        });
         fileIngestOne.add(fileIngestOneFromFile);
         fileIngestOne.add(fileIngestOneFromRepository);
         JMenu fileIngestMultiple=new JMenu("Multiple Objects");
@@ -317,6 +322,12 @@ public class Administrator extends JFrame {
             }
         });
         JMenuItem fileIngestMultipleFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
+        fileIngestMultipleFromRepository.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Ingest(Ingest.MULTI_FROM_REPOS);
+            }
+        });
+        
         fileIngestMultiple.add(fileIngestMultipleFromFile);
         fileIngestMultiple.add(fileIngestMultipleFromRepository);
         fileIngest.add(fileIngestOne);

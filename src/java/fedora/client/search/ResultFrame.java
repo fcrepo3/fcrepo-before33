@@ -87,15 +87,15 @@ public class ResultFrame
     private JButton m_moreButton;
     public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-    private static AutoFinder s_finder=null;
+    private AutoFinder m_finder=null;
 
     public ResultFrame(String frameTitle, String[] displayFields, String sessionToken) {
         super(frameTitle, true, true, true, true);
         try {
-            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(),
+            m_finder=new AutoFinder(Administrator.getHost(),
                     Administrator.getPort(), Administrator.getUser(),
                     Administrator.getPass());
-            searchAndDisplay(s_finder.resumeFindObjects(sessionToken),
+            searchAndDisplay(m_finder.resumeFindObjects(sessionToken),
                     displayFields);
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,10 +130,10 @@ public class ResultFrame
             }
         }
         try {
-            if (s_finder==null) s_finder=new AutoFinder(Administrator.getHost(),
+            if (m_finder==null) m_finder=new AutoFinder(Administrator.getHost(),
                 Administrator.getPort(), Administrator.getUser(),
                 Administrator.getPass());
-            searchAndDisplay(s_finder.findObjects(resultFields, maxResults,
+            searchAndDisplay(m_finder.findObjects(resultFields, maxResults,
                     query), displayFields);
         } catch (Exception e) {
             e.printStackTrace();

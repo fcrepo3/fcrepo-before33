@@ -266,7 +266,7 @@ public class LoginDialog
             try {
                 UserInfo inf=Administrator.APIM.describeUser(user);
             } catch (Exception e) {
-                if (e.getMessage().indexOf("Unauthorized")!=-1 || e.getMessage().indexOf("Unknown")!=-1) {
+                if (e.getMessage().indexOf("Unauthorized")!=-1 || e.getMessage().indexOf("Unrecognized")!=-1) {
                     throw new IOException("Bad username or password.");
                 }
             }
