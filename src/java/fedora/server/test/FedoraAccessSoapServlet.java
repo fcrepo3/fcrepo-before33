@@ -49,8 +49,8 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * the Fedora Access SOAP service are translated into a form suitable for
  * viewing with a web browser; in other words MIME-typed streams. Applications
  * that can readily handle SOAP requests and responses would most likely
- * communicate directly with the Fedora SOAP service rather than use a java
- * servlet as an intermediary. This servlet serves as an example of how to
+ * communicate directly with the Fedora Access SOAP service rather than use a
+ * java servlet as an intermediary. This servlet serves as an example of how to
  * construct a client that uses the Fedora Access API via SOAP.</p>
  *
  * <p>Input parameters for the servlet include:</p>
@@ -67,15 +67,20 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <li>bDefPID_ - persistent identifier of the Behavior Definiton object</li>
  * <li>methodName_ - name of the method</li>
  * <li>asOfDateTime_ - versioning datetime stamp</li>
+ * <li>xmlEncode_ - boolean switch used in conjunction with GetObjectMethods
+ *                  that determines whether output is formatted as XML or
+ *                  as HTML; value of "true" indicates XML format; value of
+ *                  false or omission indicates HTML format.
  * <li>userParms - behavior methods may require or provide optional parameters
- * that may be input as arguments to the method; these method parameters are
- * entered as name/value pairs like the other serlvet parameters. (optional)</li>
+ *                 that may be input as arguments to the method; these method
+ *                 parameters are entered as name/value pairs like the other
+ *                 serlvet parameters.(optional)</li>
  * </ul>
- * <p><i><b>Note that all servlet parameter names that are implementation specific
- * end with the underscore character ("_"). This is done to avoid possible
- * name clashes with user-supplied method parameter names. As a general rule,
- * user-supplied parameters should never contain names that end with the
- * underscore character to prevent possible name conflicts.</b></i>
+ * <p><i><b>Note that all servlet parameter names that are implementation
+ * specific end with the underscore character ("_"). This is done to avoid
+ * possible name clashes with user-supplied method parameter names. As a
+ * general rule, user-supplied parameters should never contain names that end
+ * with the underscore character to prevent possible name conflicts.</b></i>
  * </ul>
  *
  * <p>Copyright: Copyright (c) 2002</p>
@@ -91,9 +96,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
   /** Content type for xml. */
   private static final String CONTENT_TYPE_XML  = "text/xml";
-
-  /** Debug toggle for testing */
-  private static final boolean debug = false;
 
   /** URI of Fedora API definitions. */
   private static final String FEDORA_API_URI =
@@ -127,21 +129,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String GET_OBJECT_METHODS =
       "GetObjectMethods";
 
-  /** Servlet path for the parameter resolver servlet */
-  private static final String PARAMETER_RESOLVER_SERVLET_PATH =
-      "/fedora/getParmResolver?";
+  private static final String SERVLET_PATH = "/fedora/access/soapservlet?";
 
   /** User-supplied method parameters from servlet URL. */
   private Hashtable h_userParms = null;
-
-  /** The incoming request URL. */
-  private String requestURL = null;
-
-  /** The incoming request complete URI. */
-  private String requestURI = null;
-
-  /** Constant indicating value of the string "yes". */
-  private static final String YES = "yes";;
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -163,18 +154,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String bDefPID = null;
     String methodName = null;
     String PID = null;
-    String xmlEncode = "";
     Property[] userParms = null;
+    boolean xmlEncode = false;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
-
-    // getRequestURL only available in Servlet API 2.3.
-    // Use following for earlier releases servlet API:
-    // requestURL = new String("http://" + request.getServerName()
-    //                        + ":" + request.getServerPort()
-    //                        + request.getRequestURI() + "?");
-    requestURL = request.getRequestURL().toString()+"?";
-    requestURI = new String(requestURL + request.getQueryString());
     ServletOutputStream out = response.getOutputStream();
 
     // Get servlet input parameters.
@@ -200,7 +183,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                    convertStringToCalendar(request.getParameter(parm));
       } else if (parm.equals("xmlEncode_"))
       {
-        xmlEncode = request.getParameter(parm);
+        xmlEncode = new Boolean(request.getParameter(parm)).booleanValue();
       } else
       {
         // Any remaining parameters are assumed to be user-supplied method
@@ -255,57 +238,60 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // nonbrowser-based environment, one would use the returned data
             // structures directly and most likely forgo this transformation
             // step.
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Behavior Definitions</title>");
-            out.println("</head>");
-            out.println("<br></br>");
-            out.println("<center>");
-            out.println("<table border='1' cellpadding='5'>");
-            out.println("<tr>");
-            out.println("<td><b><font size='+2'><b>PID</font></td></b>");
-            out.println("<td><b><font size='+2'>Version Date</font></b></td>");
-            out.println("<td><b><font size='+2'>Behavior Definitions</font>"
+            StringBuffer html = new StringBuffer();
+            html.append("<html>");
+            html.append("<head>");
+            html.append("<title>Behavior Definitions</title>");
+            html.append("</head>");
+            html.append("<br></br>");
+            html.append("<center>");
+            html.append("<table border='1' cellpadding='5'>");
+            html.append("<tr>");
+            html.append("<td><b><font size='+2'><b>PID</font></td></b>");
+            html.append("<td><b><font size='+2'>Version Date</font></b></td>");
+            html.append("<td><b><font size='+2'>Behavior Definitions</font>"
                         + "</b></td");
-            out.println("</tr>");
+            html.append("</tr>");
 
             // Format table such that repeating fields display only once.
             int rows = behaviorDefs.length - 1;
             for (int i=0; i<behaviorDefs.length; i++)
             {
-              out.println("<tr>");
+              html.append("<tr>");
               if (i == 0)
               {
-                out.println("<td><font color='blue'><a href='" + requestURL
-                            + "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID
-                            + "</a></font></td>");
-                out.println("<td><font color='green'>"
-                            + DateUtility.convertDateToString(versDateTime)
-                            + "</font></td>");
-                out.println("<td><font color='red'>" + behaviorDefs[i]
-                            + "</font></td>");
+                html.append("<td><font color='blue'><a href='"
+                    + SERVLET_PATH
+                    + "action_=GetObjectMethods&PID_=" + PID+ "'>" + PID
+                    + "</a></font></td>");
+                html.append("<td><font color='green'>"
+                    + DateUtility.convertDateToString(versDateTime)
+                    + "</font></td>");
+                html.append("<td><font color='red'>" + behaviorDefs[i]
+                    + "</font></td>");
               } else if (i == 1)
               {
-                out.println("<td colspan='2' rowspan='" + rows
-                            + "'></td><td><font color='red'>" + behaviorDefs[i]
-                            + "</font></td>");
+                html.append("<td colspan='2' rowspan='" + rows
+                    + "'></td><td><font color='red'>" + behaviorDefs[i]
+                    + "</font></td>");
               } else
               {
-                out.println("<td><font color='red'>" + behaviorDefs[i]
-                            + "</font></td>");
+                html.append("<td><font color='red'>" + behaviorDefs[i]
+                    + "</font></td>");
               }
-              out.println("</tr>");
+              html.append("</tr>");
             }
-            out.println("</table>");
-            out.println("</center>");
-            out.println("<br></br>");
-            out.println("</body>");
-            out.println("</html>");
+            html.append("</table>");
+            html.append("</center>");
+            html.append("<br></br>");
+            html.append("</body>");
+            html.append("</html>");
+            out.print(html.toString());
           } else
           {
             // Behavior Definition request returned nothing.
-            String message = "FedoraSoapServlet: No Behavior Definitons "
-                           + "returned.";
+            String message = "[FedoraAccessSOAPServlet] No Behavior Definitons "
+                + "returned.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
@@ -314,10 +300,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // FIXME!! Needs more refined Exception handling.
         } catch (Exception e)
         {
-          String message = "FedoraSoapServlet: Failed to get Behavior "
-                         + "Definitions <br > Exception: "
-                         + e.getClass().getName() + " <br> Reason: "
-                         + e.getMessage();
+          String message = "[FedoraAccessSOAPServlet] Failed to get Behavior "
+              + "Definitions <br > Exception: "
+              + e.getClass().getName() + " <br> Reason: "
+              + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -348,74 +334,81 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // structures directly and most likely forgo this transformation
             // step.
             response.setContentType(CONTENT_TYPE_HTML);
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Behavior Methods</title>");
-            out.println("</head>");
-            out.println("<br></br>");
-            out.println("<center>");
-            out.println("<table border='1' cellpadding='5'>");
-            out.println("<tr>");
-            out.println("<td><b><font size='+2'> Object PID "
-                        + " </font></b></td>");
-            out.println("<td><b><font size='+2'> BDEF PID"
-                        + " </font></b></td>");
-            out.println("<td><b><font size='+2'> Version Date"
-                        + " </font></b></td>");
-            out.println("<td><b><font size='+2'> Method Name"
-                        + " </font></b></td>");
-            out.println("</tr>");
+            StringBuffer html = new StringBuffer();
+            html.append("<html>");
+            html.append("<head>");
+            html.append("<title>Behavior Methods</title>");
+            html.append("</head>");
+            html.append("<br></br>");
+            html.append("<center>");
+            html.append("<table border='1' cellpadding='5'>");
+            html.append("<tr>");
+            html.append("<td><b><font size='+2'> Object PID "
+                + " </font></b></td>");
+            html.append("<td><b><font size='+2'> BDEF PID"
+                + " </font></b></td>");
+            html.append("<td><b><font size='+2'> Version Date"
+                + " </font></b></td>");
+            html.append("<td><b><font size='+2'> Method Name"
+                + " </font></b></td>");
+            html.append("</tr>");
 
             // Format table such that repeating fields display only once.
             int rows = methodDefs.length - 1;
             for (int i=0; i<methodDefs.length; i++)
             {
               fedora.server.types.gen.MethodDef results = methodDefs[i];
-              out.println("<tr>");
+              html.append("<tr>");
               if (i == 0)
               {
-                out.println("<td><font color=\"blue\"> " + "<a href=\""
-                            + requestURL + "action_=GetObjectMethods&PID_="
-                            + PID + "\"> " + PID + " </a></font></td>");
-                out.println("<td><font color=\"green\"> " + bDefPID
-                            + " </font></td>");
-                out.println("<td><font color=\"green\"> "
-                            + DateUtility.convertDateToString(versDateTime)
-                            + "</font></td>");
-                out.println("<td><font color=\"red\"> " + "<a href=\""
-                            + requestURL + "action_=GetDissemination&PID_="
-                            + PID + "&bDefPID_=" + bDefPID + "&methodName_="
-                            + results.getMethodName() + "\"> "
-                            + results.getMethodName()
-                            + " </a></td>");
+                html.append("<td><font color=\"blue\"> " + "<a href=\""
+                    + SERVLET_PATH
+                    + "action_=GetObjectMethods&PID_="
+                    + PID + "\"> " + PID + " </a></font></td>");
+                html.append("<td><font color=\"green\"> " + bDefPID
+                    + " </font></td>");
+                html.append("<td><font color=\"green\"> "
+                    + DateUtility.convertDateToString(versDateTime)
+                    + "</font></td>");
+                html.append("<td><font color=\"red\"> " + "<a href=\""
+                    + SERVLET_PATH
+                    + "action_=GetDissemination&PID_="
+                    + PID + "&bDefPID_=" + bDefPID + "&methodName_="
+                    + results.getMethodName() + "\"> "
+                    + results.getMethodName()
+                    + " </a></td>");
               } else if (i == 1)
               {
-                out.println("<td colspan='3' rowspan='" + rows + "'></td>");
-                out.println("<td><font color=\"red\"> " + "<a href=\""
-                            + requestURL + "action_=GetDissemination&PID_="
-                            + PID + "&bDefPID_=" + bDefPID + "&methodName_="
-                            + results.getMethodName() + "\"> "
-                            + results.getMethodName()
-                            + " </a></td>");
+                html.append("<td colspan='3' rowspan='" + rows + "'></td>");
+                html.append("<td><font color=\"red\"> " + "<a href=\""
+                    + SERVLET_PATH
+                    + "action_=GetDissemination&PID_="
+                    + PID + "&bDefPID_=" + bDefPID + "&methodName_="
+                    + results.getMethodName() + "\"> "
+                    + results.getMethodName()
+                    + " </a></td>");
               } else
               {
-                out.println("<td><font color=\"red\"> " + "<a href=\""
-                            + requestURL + "action_=GetDissemination&PID_="
-                            + PID + "&bDefPID_=" + bDefPID + "&methodName_="
-                            + results.getMethodName() + "\"> "
-                            + results.getMethodName()
-                            + " </a></td>");
+                html.append("<td><font color=\"red\"> " + "<a href=\""
+                    + SERVLET_PATH
+                    + "action_=GetDissemination&PID_="
+                    + PID + "&bDefPID_=" + bDefPID + "&methodName_="
+                    + results.getMethodName() + "\"> "
+                    + results.getMethodName()
+                    + " </a></td>");
               }
-              out.println("</tr>");
+              html.append("</tr>");
             }
-            out.println("</table>");
-            out.println("</center>");
-            out.println("</body>");
-            out.println("</html>");
+            html.append("</table>");
+            html.append("</center>");
+            html.append("</body>");
+            html.append("</html>");
+            out.println(html.toString());
           } else
           {
             // Method Definitions request returned nothing.
-            String message = "FedoraSoapServlet: No Behavior Methods returned.";
+            String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+                + "returned.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
@@ -424,9 +417,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
           // FIXME!! Needs more refined Exception handling.
         } catch (Exception e)
         {
-          String message = "FedoraSoapServlet: No Behavior Methods returned."
-                         + " <br> Exception: " + e.getClass().getName()
-                         + " <br> Reason: "  + e.getMessage();
+          String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+              + "returned. <br> Exception: " + e.getClass().getName()
+              + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -457,16 +450,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
             ByteArrayInputStream methodResults =
                 new ByteArrayInputStream(methodDefs.getStream());
             response.setContentType(methodDefs.getMIMEType());
-
-            // FIXME!! Namespacing info should be handled by
-            // DefinitiveBMechReader; do it here for now.
-            out.println("<?xml version=\"1.0\"?>");
-            out.println("<definitions " +
-                "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema-instance\" "+
-                "xmlns:wsdl=\"http://schemas.xmlsoap.org/wsdl/\" "+
-                "xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\" "+
-                "xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\" "+
-                "xmlns:soap=\"http://schemas.xmlsoap.org/wsdl/soap/\">");
             int byteStream = 0;
             byte[] buffer = new byte[255];
             while ((byteStream = methodResults.read(buffer)) >= 0)
@@ -474,12 +457,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
               out.write(buffer, 0, byteStream);
             }
             buffer = null;
-            out.println("</definitions>");
           } else
           {
             // Method Definition request in XML form returned nothing.
-            String message = "FedoraSoapServlet: No Behavior Methods returned "
-                + "as XML.";
+            String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+                + "returned as XML.";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
@@ -487,9 +469,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
         } catch (Exception e)
         {
           // FIXME!! Needs more refined Exception handling.
-          String message = "FedoraSoapServlet: No Behavior Methods returned "
-                         + "as XML. <br> Exception: " + e.getClass().getName()
-                         + " <br> Reason: "  + e.getMessage();
+          String message = "[FedoraAccessSOAPServlet] No Behavior Methods "
+              + "returned as XML. <br> Exception: " + e.getClass().getName()
+              + " <br> Reason: "  + e.getMessage();
           System.err.println(message);
           showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                        userParms, response, message);
@@ -518,14 +500,16 @@ public class FedoraAccessSoapServlet extends HttpServlet
               // data structure directly and most likely forgo this
               // transformation step.
               //
-              if (dissemination.getMIMEType().equalsIgnoreCase("application/fedora-redirect"))
+              if (dissemination.getMIMEType().
+                  equalsIgnoreCase("application/fedora-redirect"))
               {
                 // A MIME type of application/fedora-redirect signals that the
                 // MIMETypedStream returned from the dissemination is a special
-                // Fedora-specific MIME type. In this case, teh Fedora server will
-                // not proxy the stream, but instead perform a simple redirect to
-                // the URL contained within the body of the MIMETypedStream. This
-                // special MIME type is used primarily for streaming media.
+                // Fedora-specific MIME type. In this case, teh Fedora server
+                // will not proxy the stream, but instead perform a simple
+                // redirect to the URL contained within the body of the
+                // MIMETypedStream. This special MIME type is used primarily
+                // for streaming media.
                 BufferedReader br = new BufferedReader(
                     new InputStreamReader(
                     new ByteArrayInputStream(dissemination.getStream())));
@@ -553,8 +537,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             } else
             {
               // Dissemination request returned nothing.
-              String message = "FedoraSoapServlet: No Dissemination result "
-                  + "returned. <br> See server logs for additional info";
+              String message = "[FedoraAccessSOAPServlet] No Dissemination "
+                  + "result returned. <br> See server logs for additional info";
               System.err.println(message);
               showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                            userParms, response, message);
@@ -563,11 +547,11 @@ public class FedoraAccessSoapServlet extends HttpServlet
           {
             // FIXME!! Needs more refined Exception handling.
             e.printStackTrace();
-            String message = "FedoraSoapServlet: No Dissemination result "
-                           + "returned. <br> Exception: "
-                           + e.getClass().getName()
-                           + " <br> Reason: "  + e.getMessage()
-                           + " <br> See server logs for additional info";
+            String message = "[FedoraAccessSOAPServlet] No Dissemination "
+                + "result returned. <br> Exception: "
+                + e.getClass().getName()
+                + " <br> Reason: "  + e.getMessage()
+                + " <br> See server logs for additional info";
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, response, message);
@@ -584,7 +568,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
         try
         {
-          //out = response.getWriter();
           out = response.getOutputStream();
           pw = new PipedWriter();
           pr = new PipedReader(pw);
@@ -594,7 +577,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // Object Methods found.
             // Deserialize ObjectmethodsDef datastructure into XML
             new SerializerThread(PID, objMethDefArray, versDateTime, pw).start();
-            if (xmlEncode.equalsIgnoreCase(YES))
+            if (xmlEncode)
             {
               // Return results as raw XML
               response.setContentType(CONTENT_TYPE_XML);
@@ -619,19 +602,20 @@ public class FedoraAccessSoapServlet extends HttpServlet
           } else
           {
             // Object Methods Definition request returned nothing.
-            String message = "[FedoraAccessServlet] No Object Method Definitions "
-                + "returned.";
+            String message = "[FedoraAccessServlet] No Object Method "
+                + "Definitions returned.";
             System.out.println(message);
-            showURLParms(action, PID, "", "", asOfDateTime, new Property[0], response, message);
+            showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                         response, message);
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             response.sendError(response.SC_NO_CONTENT, message);
           }
         } catch (Throwable th)
         {
           String message = "[FedoraAccessServlet] An error has occured. "
-                         + " The error was a \" "
-                         + th.getClass().getName()
-                         + " \". Reason: "  + th.getMessage();
+              + " The error was a \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage();
           System.out.println(message);
           th.printStackTrace();
           response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -648,7 +632,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       String message = "[FedoraAccessServlet] No Object Method Definitions "
           + "returned.";
       System.out.println(message);
-      showURLParms(action, PID, "", "", asOfDateTime, new Property[0], response, message);
+      showURLParms(action, PID, "", "", asOfDateTime, new Property[0],
+                   response, message);
       response.setStatus(HttpServletResponse.SC_NO_CONTENT);
       response.sendError(response.SC_NO_CONTENT, message);
     }
@@ -657,8 +642,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
     System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
         + "GetObjectMethods: " + interval + " milliseconds.");
   }
-
-  //
 
   /**
    * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
@@ -1259,19 +1242,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       isValid = false;
     }
 
-    if (debug)
-    {
-      System.err.println("PID: " + PID + "\nbDEF: " + bDefPID
-                         + "\nmethodName: " + methodName
-                         + "\naction: "+action);
-
-      for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
-      {
-        String name = (String)e.nextElement();
-        System.err.println("userParm: " + name
-                           + "\nuserValue: " + h_userParms.get(name));
-      }
-    }
     return isValid;
   }
 
@@ -1302,7 +1272,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
   {
 
     String versDate = DateUtility.convertCalendarToString(asOfDateTime);
-    if (debug) System.err.println("versdate: "+versDate);
     ServletOutputStream out = response.getOutputStream();
     response.setContentType(CONTENT_TYPE_HTML);
 
@@ -1367,19 +1336,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
     html.append("</body></html>");
     out.println(html.toString());
 
-    if (debug)
-    {
-      System.err.println("PID: " + PID + "\nbDefPID: " + bDefPID
-                         + "\nmethodName: " + methodName);
-      if (userParms != null)
-      {
-        for (int i=0; i<userParms.length; i++)
-        {
-          System.err.println("userParm: " + userParms[i].getName()
-              + "\nuserValue: "+userParms[i].getValue());
-        }
-      }
-    }
     System.err.println("REQUEST Returned NO Data");
   }
 }
