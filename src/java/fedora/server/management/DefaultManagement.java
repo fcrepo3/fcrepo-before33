@@ -17,11 +17,11 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
 import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.types.gen.AuditRecord;
-import fedora.server.types.gen.ComponentInfo;
+//import fedora.server.types.gen.AuditRecord;
+//import fedora.server.types.gen.ComponentInfo;
 import fedora.server.types.gen.Datastream;
-import fedora.server.types.gen.DatastreamBindingMap;
-import fedora.server.types.gen.Disseminator;
+//import fedora.server.types.gen.DatastreamBindingMap;
+//import fedora.server.types.gen.Disseminator;
 import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.DateUtility;
 
@@ -78,6 +78,7 @@ public class DefaultManagement
         }
     }
 
+/*
     public String createObject(Context context) 
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.createObject");
@@ -88,8 +89,9 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.createObject");
         return pid;
     }
+*/
 
-    public String ingestObject(Context context, InputStream serialization, String format, String encoding, boolean newPid) 
+    public String ingestObject(Context context, InputStream serialization, String logMessage, String format, String encoding, boolean newPid) 
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.ingestObject");
         m_ipRestriction.enforce(context);
@@ -101,7 +103,7 @@ public class DefaultManagement
         // in the future this "initial state" stuff will be reconsidered anyway,
         // applying the ideas of workflow, etc..
         try {
-            w.commit("First import.");
+            w.commit(logMessage);
         } catch (ServerException se) {
             logFinest("Auto-purging as a result of a failed auto-commit in ingestObject.");
             purgeObject(context, pid, "Purging because auto-commit (which is temporarily taken care of by the server's ingestObject operation) failed: " + se.getMessage());
@@ -123,12 +125,13 @@ public class DefaultManagement
         return instream;
     }
 
+/*
     public InputStream exportObject(Context context, String pid, String format, String encoding) { return null; }
 
     public void withdrawObject(Context context, String pid, String logMessage) { }
 
     public void deleteObject(Context context, String pid, String logMessage) { }
-
+*/
     public void purgeObject(Context context, String pid, String logMessage) 
             throws ServerException { 
         logFinest("Entered DefaultManagement.purgeObject");
@@ -146,10 +149,11 @@ public class DefaultManagement
 
 // obsolete: methods that require a lock will create one automatically
 // if one doesn't already exist... it's easier that way.
-    public void obtainLock(Context context, String pid) {
+/*    public void obtainLock(Context context, String pid) {
         
     }
-
+*/
+/*
     public void releaseLock(Context context, String pid, String logMessage, 
             boolean commit) 
             throws ServerException { 
@@ -164,7 +168,7 @@ public class DefaultManagement
         m_manager.releaseWriter(w);
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
-
+*/
     public ObjectInfo getObjectInfo(Context context, String pid) 
             throws ServerException { 
         getServer().logFinest("Entered DefaultManagement.getObjectInfo");
@@ -190,9 +194,9 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.getObjectInfo");
         return inf;
     }
-
+/*
     public AuditRecord[] getObjectAuditTrail(Context context, String pid) { return null; }
-
+*/
     public String[] listObjectPIDs(Context context, String pidPattern, 
             String foType, String lockedByPattern, String state, 
             String labelPattern, String contentModelIdPattern, 
@@ -206,15 +210,16 @@ public class DefaultManagement
                 lastModDateMin, lastModDateMax);
     }
 
+/*
     public String addDatastreamExternal(Context context, String pid, String dsLabel, String dsLocation) { return null; }
 
     public String addDatastreamManagedContent(Context context, String pid, String dsLabel, String MimeType, InputStream dsContent) { return null; }
 
     public String addDatastreamXMLMetadata(Context context, String pid, String dsLabel, String MdType, InputStream dsInlineMetadata) { return null; }
-
+*/
     public void modifyDatastreamByReference(Context context, String pid, 
             String datastreamId, String dsLabel, String logMessage, 
-            String dsLocation, boolean managed) 
+            String dsLocation) 
             throws ServerException { 
         m_ipRestriction.enforce(context);
         DOWriter w=null;
@@ -222,7 +227,6 @@ public class DefaultManagement
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             if (orig.DSControlGrp.equals("M")) {
-                if (managed) {
                     // copy the original datastream, replacing its DSLocation with
                     // the new location, triggering to doCommit that it needs to
                     // be loaded from a new remote location
@@ -252,10 +256,6 @@ public class DefaultManagement
                     audit.justification=logMessage;
                     w.getAuditRecords().add(audit);
                     newds.auditRecordIdList().add(audit.id);
-                    // also...how to replace() not add() later?....
-                } else {
-                    // TODO: they want it referenced...probably easy, but how to remove old content?
-                }
             } else {
                 // TODO: other control groups for current datastream
             }
@@ -308,7 +308,7 @@ modifyByValue
         
         
     }
-
+/*
     public void withdrawDatastream(Context context, String pid, 
             String datastreamId) throws ServerException { 
         m_ipRestriction.enforce(context);
@@ -319,13 +319,13 @@ modifyByValue
     public void deleteDatastream(Context context, String pid, String datastreamID) { }
 
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
-
+*/
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) { return null; }
-
+/*
     public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) { return null; }
-
+*/
     public String[] listDatastreamIDs(Context context, String pid, String state) { return null; }
-
+/*
     public ComponentInfo[] getDatastreamHistory(Context context, String pid, String datastreamID) { return null; }
 
     public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { return null; }
@@ -343,5 +343,5 @@ modifyByValue
     public String[] listDisseminatorIDs(Context context, String pid, String state) { return null; }
 
     public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
-    
+ */   
 }

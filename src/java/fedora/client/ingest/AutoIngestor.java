@@ -31,8 +31,8 @@ public class AutoIngestor {
             throws RemoteException, IOException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
         StreamUtility.pipeStream(in, out, 4096);
-        String pid=skeleton.ingestObject(out.toByteArray());
-        skeleton.releaseLock(pid, logMessage, true);
+        String pid=skeleton.ingestObject(out.toByteArray(), logMessage);
+        //skeleton.releaseLock(pid, logMessage, true);
         return pid;
     }
 

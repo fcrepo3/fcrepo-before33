@@ -83,6 +83,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return new ReadOnlyContext(h);
     }
 
+/*
     public String createObject()
             throws RemoteException {
         assertInitialized();
@@ -93,6 +94,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
+*/
 
     private void logStackTrace(Exception e) {
         StackTraceElement[] els=e.getStackTrace();
@@ -110,12 +112,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
     }
 
-    public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
+    public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {
           // always gens pid, unless pid in stream starts with "test: or demo:"
             return s_management.ingestObject(getContext(),
-                    new ByteArrayInputStream(METSXML), "metslikefedora1", "UTF-8", true);
+                    new ByteArrayInputStream(METSXML), logMessage, "metslikefedora1", "UTF-8", true);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -161,6 +163,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+/*
     public byte[] exportObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return new byte[0];
@@ -173,7 +176,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void deleteObject(String PID, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
     }
-
+*/
     public void purgeObject(String PID, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -183,7 +186,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             AxisUtility.throwFault(se);
         }
     }
-
+/*
     public void obtainLock(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
@@ -198,7 +201,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
     }
-
+*/
     public ObjectInfo getObjectInfo(String pid)
             throws RemoteException {
         assertInitialized();
@@ -209,11 +212,12 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
-
+/*
     public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
+*/
 
     public String[] listObjectPIDs(String pidPattern, String foType,
             String lockedByPattern, String state, String labelPattern,
@@ -232,7 +236,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         }
     }
-
+/*
     public String addDatastreamExternal(String PID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
@@ -247,15 +251,14 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
-
+*/
     public void modifyDatastreamByReference(String PID, String datastreamID, 
-            String dsLabel, String logMessage, String dsLocation, 
-            boolean managed) 
+            String dsLabel, String logMessage, String dsLocation)
             throws java.rmi.RemoteException {
         assertInitialized();
         try {
             s_management.modifyDatastreamByReference(getContext(), PID, 
-                    datastreamID, dsLabel, logMessage, dsLocation, managed);
+                    datastreamID, dsLabel, logMessage, dsLocation);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -265,7 +268,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void modifyDatastreamByValue(String PID, String datastreamID, String dsLabel, String logMessage, byte[] dsContent) throws java.rmi.RemoteException {
         assertInitialized();
     }
-
+/*
     public void withdrawDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();
     }
@@ -282,21 +285,22 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
-
+*/
     public fedora.server.types.gen.Datastream getDatastream(String PID, String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
+/*
     public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
-
+*/
     public String[] listDatastreamIDs(String PID, String state) throws java.rmi.RemoteException {
         return null;
     }
-
+/*
     public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
@@ -339,7 +343,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
-
+*/
     private void assertInitialized()
             throws java.rmi.RemoteException {
         if (!s_initialized) {

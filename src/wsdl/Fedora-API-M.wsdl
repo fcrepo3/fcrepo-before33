@@ -42,14 +42,19 @@
           url="http://www.fedora.info/definitions/1/0/auditing/#ArrayOfAuditRecord"/>
     </documentation>
   </types>
+<!--
   <message name="createObjectResponse">
     <part name="response" type="xsd:string">
       <documentation>the PID of the newly created object.</documentation>
     </part>
   </message>
+-->
   <message name="ingestObjectRequest">
     <part name="METSXML" type="xsd:base64Binary">
       <documentation>the digital object in METS format.</documentation>
+    </part>
+    <part name="logMessage" type="xsd:string">
+      <documentation>a log message.</documentation>
     </part>
   </message>
   <message name="ingestObjectResponse">
@@ -67,6 +72,7 @@
       <documentation>the digital object in METS format.</documentation>
     </part>
   </message>
+<!--
   <message name="exportObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -93,6 +99,7 @@
       <documentation>an explanation of the deletion.</documentation>
     </part>
   </message>
+-->
   <message name="purgeObjectRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -101,6 +108,7 @@
       <documentation>an explanation of the purge.</documentation>
     </part>
   </message>
+<!--
   <message name="obtainLockRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -118,6 +126,7 @@
       <documentation>whether the change(s) should be committed.</documentation>
     </part>
   </message>
+-->
   <message name="getObjectInfoRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -131,6 +140,7 @@
       and createDate and lastModDate (both xsd:dateTimes)</documentation>
     </part>
   </message>
+<!--
   <message name="getObjectAuditTrailRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -141,6 +151,7 @@
       <documentation>the ordered audit records for the object.</documentation>
     </part>
   </message>
+-->
   <message name="listObjectPIDsRequest">
     <part name="pidPattern" type="xsd:string">
       <documentation>the pid of the object, with optional wildcards * and ?</documentation>
@@ -180,6 +191,7 @@
       <documentation>the PIDs of the objects.</documentation>
     </part>
   </message>
+<!--
   <message name="addDatastreamExternalRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -239,6 +251,7 @@
       </documentation>
     </part>
   </message>
+-->
   <message name="modifyDatastreamByReferenceRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -254,9 +267,6 @@
     </part>
     <part name="dsLocation" type="xsd:string">
       <documentation>the url to the datastream.</documentation>
-    </part>
-    <part name="managed" type="xsd:boolean">
-      <documentation>whether the datastream's content should be maintained within the repository.</documentation>
     </part>
   </message>
   <message name="modifyDatastreamByValueRequest">
@@ -276,6 +286,7 @@
       <documentation>the content of the datastream.</documentation>
     </part>
   </message>
+<!--
   <message name="withdrawDatastreamRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -314,6 +325,7 @@
       </documentation>
     </part>
   </message>
+-->
   <message name="getDatastreamRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -332,6 +344,7 @@
       <documentation>the datastream.</documentation>
     </part>
   </message>
+<!--
   <message name="getDatastreamsRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -347,6 +360,7 @@
       <documentation>the datastreams.</documentation>
     </part>
   </message>
+-->
   <message name="listDatastreamIDsRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -360,6 +374,7 @@
       <documentation>the IDs of the datastreams.</documentation>
     </part>
   </message>
+<!--
   <message name="getDatastreamHistoryRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -506,6 +521,7 @@
       ordered earliest first.</documentation>
     </part>
   </message>
+-->
   <portType name="Fedora-API-M">
     <documentation>The Fedora Management service defines an open interface for
     administering the repository, including creating, modifying, and deleting
@@ -519,6 +535,7 @@
     underlying repository system handles the details of storing datastream
     content within the repository, as well as mediating connectivity for
     datastreams that reference external content.</documentation>
+<!--
     <operation name="createObject">
       <documentation>Creates a new, empty digital object in the repository. The 
       object's initial state will be N.  The repository will generate and return 
@@ -527,6 +544,7 @@
       <input message="null"/>
       <output message="fedora-api:createObjectResponse"/>
     </operation>
+-->
     <operation name="ingestObject">
       <documentation>Creates a new digital object in the repository, given the 
       data in the provided METS document.  The object's initial state will be N.  
@@ -550,6 +568,7 @@
       <input message="fedora-api:getObjectXMLRequest"/>
       <output message="fedora-api:getObjectXMLResponse"/>
     </operation>
+<!--
     <operation name="exportObject">
       <documentation>Gets the entire METS-encoded digital object for 
       external use (viewing, editing, moving to another repository).  XML 
@@ -570,11 +589,13 @@
       cleanup process.</documentation>
       <input message="fedora-api:deleteObjectRequest"/>
     </operation>
+-->
     <operation name="purgeObject">
       <documentation>Permanently removes an object from the repository.
       </documentation>
       <input message="fedora-api:purgeObjectRequest"/>
     </operation>
+<!--
     <operation name="obtainLock">
       <documentation>Locks an object for writing.  Upon obtaining a lock, a 
       user may execute write methods on an object.</documentation>
@@ -584,16 +605,19 @@
       <documentation>Unlocks an object for writing.</documentation>
       <input message="fedora-api:releaseLockRequest"/>
     </operation>
+-->
     <operation name="getObjectInfo">
       <documentation>Gets key information about the object.</documentation>
       <input message="fedora-api:getObjectInfoRequest"/>
       <output message="fedora-api:getObjectInfoResponse"/>
     </operation>
+<!--
     <operation name="getObjectAuditTrail">
       <documentation>Gets all audit trail records for the object.</documentation>
       <input message="fedora-api:getObjectAuditTrailRequest"/>
       <output message="fedora-api:getObjectAuditTrailResponse"/>
     </operation>
+-->
     <operation name="listObjectPIDs">
       <documentation>Gets a list of the PIDs of the objects in the 
       repository matching all the criteria given.  This is a simple AND search.
@@ -602,6 +626,7 @@
       <input message="fedora-api:listObjectPIDsRequest"/>
       <output message="fedora-api:listObjectPIDsResponse"/>
     </operation>
+<!--
     <operation name="addDatastreamExternal">
       <documentation>Creates a Referenced External Content Datastream in the 
       object.  The MIME type is determined by the repository, which uses the 
@@ -632,6 +657,7 @@
       <documentation>Modifies a disseminator in the object.</documentation>
       <input message="fedora-api:modifyDisseminatorRequest"/>
     </operation>
+-->
     <operation name="modifyDatastreamByReference">
       <documentation>Modifies an existing datastream in an object, by reference.
       </documentation>
@@ -641,6 +667,7 @@
       <documentation>Modifies an existing datastream in an object, by value.</documentation>
       <input message="fedora-api:modifyDatastreamByValueRequest"/>
     </operation>
+<!--
     <operation name="withdrawDatastream">
       <documentation>Changes a datastream's state to W, making it inaccessible 
       from API-A.</documentation>
@@ -675,21 +702,25 @@
       <input message="fedora-api:purgeDisseminatorRequest"/>
       <output message="fedora-api:purgeDisseminatorResponse"/>
     </operation>
+-->
     <operation name="getDatastream">
       <documentation>Gets a datastream in an object.</documentation>
       <input message="fedora-api:getDatastreamRequest"/>
       <output message="fedora-api:getDatastreamResponse"/>
     </operation>
+<!--
     <operation name="getDatastreams">
       <documentation>Gets all datastreams in an object.</documentation>
       <input message="fedora-api:getDatastreamsRequest"/>
       <output message="fedora-api:getDatastreamsResponse"/>
     </operation>
+-->
     <operation name="listDatastreamIDs">
       <documentation>Gets a list of datastreams in an object.</documentation>
       <input message="fedora-api:listDatastreamIDsRequest"/>
       <output message="fedora-api:listDatastreamIDsResponse"/>
     </operation>
+<!--
     <operation name="getDatastreamHistory">
       <documentation>Gets the componentID, createDT, state, and label history
       of a datastream.</documentation>
@@ -717,9 +748,11 @@
       <input message="fedora-api:getDisseminatorHistoryRequest"/>
       <output message="fedora-api:getDisseminatorHistoryResponse"/>
     </operation>
+-->
   </portType>
   <binding name="Fedora-API-M-Binding-SOAPHTTP" type="fedora-api:Fedora-API-M">
     <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+<!--
     <operation name="createObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#createObject"/>
@@ -734,6 +767,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
     <operation name="ingestObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#ingestObject"/>
@@ -762,6 +796,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+<!--
     <operation name="exportObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#exportObject"/>
@@ -794,6 +829,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
+-->
     <operation name="purgeObject">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#purgeObject"/>
@@ -803,6 +839,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
+<!--
     <operation name="obtainLock">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#obtainLock"/>
@@ -821,6 +858,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
+-->
     <operation name="getObjectInfo">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectInfo"/>
@@ -830,6 +868,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
+<!--
     <operation name="getObjectAuditTrail">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectAuditTrail"/>
@@ -844,6 +883,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
     <operation name="listObjectPIDs">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#listObjectPIDs"/>
@@ -858,6 +898,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+<!--
     <operation name="addDatastreamExternal">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamExternal"/>
@@ -900,6 +941,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
     <operation name="modifyDatastreamByReference">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#modifyDatastreamByReference"/>
@@ -918,6 +960,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </input>
     </operation>
+<!--
     <operation name="withdrawDatastream">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#withdrawDatastream"/>
@@ -959,6 +1002,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
     <operation name="getDatastream">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastream"/>
@@ -973,6 +1017,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+<!--
     <operation name="getDatastreams">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
@@ -987,6 +1032,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
     <operation name="listDatastreamIDs">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreamIDs"/>
@@ -1001,6 +1047,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+<!--
     <operation name="getDatastreamHistory">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
@@ -1117,6 +1164,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+-->
   </binding>
   <service name="Fedora-API-M-Service">
     <port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
