@@ -62,7 +62,7 @@ public interface DefaultBehavior
    * <p>Returns the Dissemination Index for the object.  The Dissemination
    * Index is a list of method definitions that represent all disseminations
    * possible on the object.  The Dissemination Index is returned as XML
-   * encoded to the objectmethods.xsd schema.</p>
+   * encoded to the objectMethods.xsd schema.</p>
    * @return
    * @throws ServerException
    */

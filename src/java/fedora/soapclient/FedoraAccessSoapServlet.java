@@ -922,22 +922,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           } else
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -975,7 +975,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             nextBdef = currentBdef;
           }
           pw.write("</bdef>");
-          pw.write("</object>");
+          pw.write("</objectMethods>");
           pw.flush();
           pw.close();
         } catch (IOException ioe) {
@@ -1223,22 +1223,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           } else
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1276,7 +1276,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             nextBdef = currentBdef;
           }
           pw.write("</bdef>");
-          pw.write("</object>");
+          pw.write("</objectMethods>");
           pw.flush();
           pw.close();
         } catch (IOException ioe) {
@@ -1336,22 +1336,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
           if (versDateTime == null || DateUtility.
               convertDateToString(versDateTime).equalsIgnoreCase(""))
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           } else
           {
-            pw.write("<object "
+            pw.write("<objectMethods "
                 + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
             pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
+                + " location=\"objectMethods.xsd\"/>");
           }
           String nextBdef = "null";
           String currentBdef = "";
@@ -1367,7 +1367,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                   + versDateTime + "\" />");
             }
           }
-          pw.write("</object>");
+          pw.write("</objectMethods>");
           pw.flush();
           pw.close();
         } catch (IOException ioe) {

@@ -105,12 +105,12 @@ public class ObjectInfoAsXML
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.append("<object "
+        out.append("<objectMethods "
             + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
             + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
             + " pid=\"" + PID + "\" >");
         out.append("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-            + " location=\"objectmethods.xsd\"/>");
+            + " location=\"objectMethods.xsd\"/>");
 
         String nextBdef = "null";
         String currentBdef = "";
@@ -148,7 +148,7 @@ public class ObjectInfoAsXML
           nextBdef = currentBdef;
         }
         out.append("</bdef>");
-        out.append("</object>");
+        out.append("</objectMethods>");
         return out.toString();
     }
 
