@@ -23,6 +23,7 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.utilities.DateUtility;
 
 import java.util.ArrayList;
@@ -78,7 +79,8 @@ public class SimpleDOReader
     public SimpleDOReader(Context context, RepositoryReader repoReader,
             DOTranslator translator,
             String exportFormat, String storageFormat,
-            String encoding, InputStream serializedObject, Logging logTarget)
+            String encoding,
+            InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         super(logTarget);
@@ -89,7 +91,8 @@ public class SimpleDOReader
 		m_storageFormat=storageFormat;
         m_encoding=encoding;
         m_obj=new BasicDigitalObject();
-        m_translator.deserialize(serializedObject, m_obj, m_storageFormat, encoding);
+        m_translator.deserialize(serializedObject, m_obj, m_storageFormat, 
+        	encoding, DOTranslationUtility.DESERIALIZE_INSTANCE);
     }
 
     /**
@@ -143,25 +146,59 @@ public class SimpleDOReader
         return m_obj.getAuditRecords();
     }
 
+	/**
+	 * Return the object as an XML input stream in the internal
+	 * serialization format.
+	 */
     public InputStream GetObjectXML()
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
-        m_translator.serialize(m_obj, bytes, m_storageFormat, "UTF-8", false);
+        m_translator.serialize(m_obj, bytes, m_storageFormat, 
+			"UTF-8", DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
         return new ByteArrayInputStream(bytes.toByteArray());
     }
 
+	/**
+	 * Return the object as an XML input stream in the "move/migrate"
+	 * export format in which all relative repository URLs are converted
+	 * to the Fedora local URL syntax ("http://local.fedora.server/...")
+	 * and all internal identifiers are converted to public callback URLs.  
+	 * 
+	 * For External (E) and Redirected (R) datastreams, the datastream 
+	 * location will be evaluated, and if it represents a relative 
+	 * repository URL, it will be returned with the Fedora local URL syntax.
+	 * For Managed Content (M) Datastreams, the datastream location will
+	 * be converted from an internal identifier to a public dissemination
+	 * URL that can be used to callback to the repository to obtain the
+	 * datastream content bytestream.
+	 * 
+	 * For certain inline XML datastreams (WSDL and SERVICE_PROFILE in 
+	 * BMech objects), any instances of URLs relative to the local
+	 * repository will be converted to use the Fedora local URL syntax.
+	 * 
+	 * These conversions are intended to preserve the "relative" nature
+	 * of these URLs when objects are moved or migrated to other repositories.
+	 * The Fedora local URL syntax will be recognized by repositories upon
+	 * ingest, and the new repository will consider these URLs to be local
+	 * to itself.
+	 */
     public InputStream ExportObject(String format)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
-			System.out.println("SimpleDOReader.ExportObject using default format of " + m_exportFormat);
-			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", true);
+			System.out.println("SimpleDOReader.ExportObject using default format: " + m_exportFormat);
+			System.out.println("SimpleDOReader.ExportObject transContext: ");
+			m_translator.serialize(m_obj, bytes, m_exportFormat, 
+				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE);
+				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
 		}
 		else {
 			System.out.println("SimpleDOReader.ExportObject with format arg of " + format);
-			m_translator.serialize(m_obj, bytes, format, "UTF-8", true);
+			m_translator.serialize(m_obj, bytes, format,
+				"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_RELATIVE); 
+				//"UTF-8", DOTranslationUtility.SERIALIZE_EXPORT_ABSOLUTE);
 		}
 
         return new ByteArrayInputStream(bytes.toByteArray());
