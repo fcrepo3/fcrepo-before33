@@ -1,11 +1,16 @@
 package fedora.server.management;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import fedora.server.Context;
@@ -15,6 +20,8 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StreamReadException;
+import fedora.server.errors.StreamWriteException;
 import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
@@ -59,6 +66,10 @@ public class DefaultManagement
     private IPRestriction m_ipRestriction;
     private String m_fedoraServerHost;
     private String m_fedoraServerPort;
+    private int m_uploadStorageMinutes;
+    private int m_lastId;
+    private File m_tempDir;
+    private HashMap m_uploadStartTime=new HashMap();
 
     /**
      * Creates and initializes the Management Module.
@@ -89,6 +100,45 @@ public class DefaultManagement
                     + "for Access subsystem: " + se.getClass().getName() + ": "
                     + se.getMessage(), getRole());
         }
+        // how many minutes should we hold on to uploaded files? default=5
+		String min=getParameter("uploadStorageMinutes");
+		if (min==null) min="5";
+		try {
+		    m_uploadStorageMinutes=Integer.parseInt(min);
+			if (m_uploadStorageMinutes<1) {
+			    throw new ModuleInitializationException("uploadStorageMinutes "
+				        + "must be 1 or more, if specified.", getRole());
+			}
+		} catch (NumberFormatException nfe) {
+		    throw new ModuleInitializationException("uploadStorageMinutes must "
+			        + "be an integer, if specified.", getRole());
+		}
+		// initialize storage area by 1) ensuring the directory is there
+		// and 2) reading in the existing files, if any, and setting their
+		// startTime to the current time.
+		try {
+            m_tempDir=new File(getServer().getHomeDir(), "management/upload");
+    		if (!m_tempDir.isDirectory()) {
+    		    m_tempDir.mkdirs();
+    		}
+			// put leftovers in hash, while saving highest id as m_lastId
+			String[] fNames=m_tempDir.list();
+			Long leftoverStartTime=new Long(System.currentTimeMillis());
+            m_lastId=0;
+			for (int i=0; i<fNames.length; i++) {
+                try {
+				    int id=Integer.parseInt(fNames[i]);
+					if (id>m_lastId) m_lastId=id;
+			        m_uploadStartTime.put(fNames[i], leftoverStartTime);
+				} catch (NumberFormatException nfe) {
+				    // skip files that aren't named numerically
+				}
+			}
+		} catch (Exception e) {
+		    throw new ModuleInitializationException("Error while initializing "
+			        + "temporary storage area: " + e.getClass().getName() + ": "
+					+ e.getMessage(), getRole());
+		}
     }
 
     public void postInitModule()
@@ -702,4 +752,65 @@ public class DefaultManagement
 
     public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) { return null; }
  */
+
+    public String putTempStream(InputStream in)
+    	    throws StreamWriteException {
+		// first clean up after old stuff
+		long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
+		Iterator iter=m_uploadStartTime.keySet().iterator();
+        while (iter.hasNext()) {
+		    String id=(String) iter.next();
+		    Long startTime=(Long) m_uploadStartTime.get(id);
+			if (startTime.longValue()<minStartTime) {
+			    // remove from filesystem and hash
+				File f=new File(m_tempDir, id);
+				if (f.delete()) {
+				    logInfo("Removed uploaded file '" + id + "' because it expired.");
+				} else {
+				    logWarning("Could not remove expired uploaded file '" + id 
+				            + "'.  Check existence/permissions in management/upload/ directory.");
+				}
+				m_uploadStartTime.remove(id);
+			}
+		}
+        // then generate an id
+		int id=getNextTempId();
+		// and attempt to save the stream
+	    try {
+		    StreamUtility.pipeStream(in, new FileOutputStream(new File(m_tempDir, "" + id)), 8192);
+		} catch (Exception e) {
+		    throw new StreamWriteException(e.getMessage());
+		}
+		// if we got this far w/o an exception, add to hash with current time
+		// and return the identifier-that-looks-like-a-url
+		long now=System.currentTimeMillis();
+		m_uploadStartTime.put("" + id, new Long(now));
+		return "uploaded://" + id;
+	}
+
+    private synchronized int getNextTempId() {
+	    m_lastId++;
+		return m_lastId;
+	}
+
+    public InputStream getTempStream(String id)
+    	    throws StreamReadException {
+		// it should come in starting with "uploaded://"
+		if (id.startsWith("uploaded://") || id.length()<12) {
+		    String internalId=id.substring(11);
+			if (m_uploadStartTime.get(internalId)!=null) {
+			    // found... remove from hash and return inputstream
+			    m_uploadStartTime.remove(internalId);
+				try {
+			        return new FileInputStream(new File(m_tempDir, internalId));
+				} catch (Exception e) {
+				    throw new StreamReadException(e.getMessage());
+				}
+			} else {
+		        throw new StreamReadException("Id specified, '" + id + "', does not match an existing file.");
+			}
+		} else {
+		    throw new StreamReadException("Invalid id syntax '" + id + "'.");
+		}
+	}
 }

@@ -42,6 +42,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
+import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
@@ -107,6 +108,7 @@ public class DefaultDOManager
     private DOValidator m_validator;
     private FieldSearch m_fieldSearch;
     private ExternalContentManager m_contentManager;
+    private Management m_management;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -189,6 +191,12 @@ public class DefaultDOManager
 
     public void postInitModule()
             throws ModuleInitializationException {
+		// get ref to management module
+		m_management = (Management) getServer().getModule("fedora.server.management.Management");
+		if (m_management==null) {
+            throw new ModuleInitializationException(
+                    "Management module not loaded.", getRole());
+		}
         // get ref to contentmanager module
         m_contentManager = (ExternalContentManager)
           getServer().getModule("fedora.server.storage.ExternalContentManager");
@@ -499,10 +507,17 @@ public class DefaultDOManager
                           (Datastream) dsIter.next();
                       if (dmc.DSLocation.indexOf("//")!=-1) {
                         // if it's a url, we need to grab content for this version
-                        MIMETypedStream mimeTypedStream = m_contentManager.
-                            getExternalContent(dmc.DSLocation.toString());
-                        logInfo("Retrieving ManagedContent datastream from remote "
-                            + "location: " + dmc.DSLocation);
+                        MIMETypedStream mimeTypedStream;
+						if (dmc.DSLocation.startsWith("uploaded://")) {
+						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation));
+                            logInfo("Retrieving ManagedContent datastream from internal uploaded "
+                                + "location: " + dmc.DSLocation);
+						} else {
+                            mimeTypedStream = m_contentManager.
+                                getExternalContent(dmc.DSLocation.toString());
+                            logInfo("Retrieving ManagedContent datastream from remote "
+                                + "location: " + dmc.DSLocation);
+						}
                         // RLW: change required by conversion fom byte[] to InputStream
                         //ByteArrayInputStream bais =
                         //    new ByteArrayInputStream(mimeTypedStream.stream);

@@ -100,4 +100,8 @@ public interface Management {
 
 //    public ComponentInfo[] getDisseminatorHistory(Context context, String pid, String disseminatorId) throws ServerException;
 
+    public String putTempStream(InputStream in) throws ServerException;
+
+    public InputStream getTempStream(String id) throws ServerException;
+
 }
