@@ -11,7 +11,7 @@ import fedora.client.Administrator;
 
 /**
  * Launch a dialog for selecting which XML format to ingest.
- * Valid options as of Fedora 2.0 are "foxml1.0" and "metsf1.0".
+ * Valid options as of Fedora 2.0 are "foxml1.0" and "metslikefedora1".
  *
  * -----------------------------------------------------------------------------
  *
@@ -45,8 +45,8 @@ public class ObjectFormatDialog
 	protected String fmt_chosen;
 
 
-    public ObjectFormatDialog() {
-        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Select XML Format", true);
+    public ObjectFormatDialog(String title) {
+        super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), title, true);
 		setSize(300, 200);
 		setModal(true);
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -70,7 +70,7 @@ public class ObjectFormatDialog
 		foxmlButton.setActionCommand("foxml1.0");
 		foxmlButton.addActionListener(this);
 		metsfButton = new JRadioButton("METS-F (METS Fedora)", false);
-		metsfButton.setActionCommand("metsf1.0");
+		metsfButton.setActionCommand("metslikefedora1");
 		metsfButton.addActionListener(this);
 		fmt_buttonGroup.add(foxmlButton);
 		fmt_buttonGroup.add(metsfButton);
@@ -83,7 +83,7 @@ public class ObjectFormatDialog
                 dispose();
             }
         });
-        okButton.setText("Ok");
+        okButton.setText("OK");
         
 		JButton cancelButton=new JButton(new AbstractAction() {
 			public void actionPerformed(ActionEvent evt) {
@@ -115,7 +115,7 @@ public class ObjectFormatDialog
 		if (foxmlButton.isSelected()) {
 			fmt_chosen = "foxml1.0";
 		} else if (metsfButton.isSelected()) {
-			fmt_chosen = "metsf1.0";
+			fmt_chosen = "metslikefedora1";
 		} 
 	}
 }
