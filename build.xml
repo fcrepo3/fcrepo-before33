@@ -48,6 +48,46 @@
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
+    
+    	<!-- begin additions -->
+		<mkdir dir="dist/batch"/>
+		<copy file="src/doc/batch/batchtool-beta1.doc" todir="dist/batch"/>		
+		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
+		<copy file="src/xsl/batch/merge.xsl" todir="dist/batch"/>
+		
+		<mkdir dir="dist/batch/bin"/>
+		<copy file="src/bat/batch/fedora-batch.bat" todir="dist/batch/bin"/>		
+
+		<mkdir dir="dist/batch/beta1-demo1"/>
+		<copy file="src/mets/batch/beta1-demo1/beta1-demo1.xml" todir="dist/batch/beta1-demo1"/>
+
+		<mkdir dir="dist/batch/beta1-demo2"/>
+		<copy file="src/mets/batch/beta1-demo2/beta1-demo2.xml" todir="dist/batch/beta1-demo2"/>
+		
+		<copy todir="dist/batch/beta1-demo1">
+			<fileset dir="src/properties/batch/beta1-demo1"/>
+		</copy>
+		
+		<copy todir="dist/batch/beta1-demo2">
+			<fileset dir="src/properties/batch/beta1-demo2"/>
+		</copy>
+
+		<copy todir="dist/batch/beta1-demo1/objects">
+			<fileset dir="src/mets/batch/beta1-demo1/objects"/>
+		</copy>
+		
+		<copy todir="dist/batch/beta1-demo2/object-specifics">
+			<fileset dir="src/xml/batch/beta1-demo2/object-specifics"/>
+		</copy>
+		<mkdir dir="dist/batch/beta1-demo2/objects"/>
+		
+		<copy todir="dist/server/tomcat41/webapps/ROOT/beta1-demo">
+			<fileset dir="src/jpg/batch/beta1-demo"/>
+		</copy>
+
+		<!-- data demos => dist -->
+	<!-- end additions -->
+    
 		<echo message="Finished building client distribution in dist/client/client"/>
 	</target>
 	<target name="runclient" depends="client" description="run the client">
@@ -55,6 +95,7 @@
 			<arg line="-jar client.jar"/>
 		</exec>
 	</target>
+	
 	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
 	</target>
@@ -398,6 +439,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.56  2002/12/20 16:35:17  wdn5e
+  batchtool additions
+
   Revision 1.55  2002/12/19 21:29:17  cwilper
   oops.. re-inserted copy of client dist to server dist dir in 'serverdist'
   target.
