@@ -433,18 +433,19 @@ public class DefaultDOManager
             // We'll just be conservative for now and call all levels both times.
             // First, serialize the digital object into an Inputstream to be passed to validator.
 
-            // FIXME: Uncomment the following to validate on the serialized obj.
-            // This is currently bypassed in favor of the exact copy of the ingested object
-            // due to METSDOSerializer's malfunctioning
-            //ByteArrayOutputStream out = new ByteArrayOutputStream();
-            //m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-            //ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-            //m_validator.validate(inV, 0, "store");
-            m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
-
-            // validation worked... so write to perm storage, then update the
-            // lockinguser (set to NULL) and systemVersion (add one)
-            // FIXME: write change to perm store here...right before db stuff
+            // Set useSerializer to false to disable the serializer (for debugging/testing).
+            boolean useSerializer=true;
+            if (useSerializer) {
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+                ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+                m_validator.validate(inV, 0, "store");
+                // if ok, write change to perm store here...right before db stuff
+                getPermanentStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+            } else {
+                m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
+            }
+            // update lockinguser (set to NULL) and systemVersion (add one)
             Connection conn=null;
             try {
                 conn=m_connectionPool.getConnection();
@@ -618,6 +619,11 @@ public class DefaultDOManager
      *
      * A new object is created in the system, locked by the current user.
      * The incoming stream must represent a valid object.
+     *
+     * If newPid is false, the PID from the stream will be used
+     * If newPid is true, the PID generator will create a new PID, unless
+     * the PID in the stream has a namespace-id part of "test"... in which
+     * cast the PID from the stream will be used
      */
     public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
@@ -644,20 +650,24 @@ public class DefaultDOManager
                 BasicDigitalObject obj=new BasicDigitalObject();
                 m_translator.deserialize(in2, obj, format, encoding);
                 // do we need to generate a pid?
-                if (newPid) {
-                   getServer().logFinest("Ingesting client wants a new PID.");
-                   // yes... so do that, then set it in the obj.
-                   String p=null;
-                   try {
-                       p=m_pidGenerator.generatePID(m_pidNamespace);
-                   } catch (Exception e) {
-                       throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
-                               + e.getClass().getName() + ") - " + e.getMessage());
-                   }
-                   getServer().logFiner("Generated PID: " + p);
-                   obj.setPid(p);
+                if (obj.getPid().startsWith("test:")) {
+                    getServer().logFinest("Stream contained PID with 'test' namespace-id... will use PID from stream.");
                 } else {
-                   getServer().logFinest("Ingesting client wants to use existing PID.");
+                    if (newPid) {
+                        getServer().logFinest("Ingesting client wants a new PID.");
+                        // yes... so do that, then set it in the obj.
+                        String p=null;
+                        try {
+                            p=m_pidGenerator.generatePID(m_pidNamespace);
+                        } catch (Exception e) {
+                            throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
+                                    + e.getClass().getName() + ") - " + e.getMessage());
+                        }
+                        getServer().logFiner("Generated PID: " + p);
+                        obj.setPid(p);
+                    } else {
+                        getServer().logFinest("Ingesting client wants to use existing PID.");
+                    }
                 }
                 // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
 
@@ -670,14 +680,14 @@ public class DefaultDOManager
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
 
-                // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
-                ByteArrayOutputStream out=new ByteArrayOutputStream();
-                m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-                //ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-                //getPermanentStore().add(obj.getPid(), newIn);
-
+                // FIXME: I don't think sending to perm store is needed in the normal 
+                // case (i.e. where the serializer is used throughout), but it doesn't
+                // hurt here for now... if it's decided that this isn't necessary,
+                // and this is removed, be sure to change the .replace(...) call
+                // to .add(...) in doCommit()
                 InputStream in3=getTempStore().retrieve("temp-ingest");
                 getPermanentStore().add(obj.getPid(), in3);
+                
                 permPid=obj.getPid();
                 inPermanentStore=true; // signifies successful perm store addition
                 InputStream in4=getTempStore().retrieve("temp-ingest");
