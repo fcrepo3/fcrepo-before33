@@ -111,11 +111,16 @@ import fedora.server.errors.InitializationException;
     String BDefPID = null;
     ResultSet queryResult = null;
     boolean rowFound = false;
-    try
+
+    for (int i = 0; i < objectInfo.bDefPIDs.length; i++)
     {
-      for (int i = 0; i < objectInfo.bDefPIDs.length; i++)
+      try
       {
         BDefPID = objectInfo.bDefPIDs[i];
+        if (BDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+        {
+          continue;
+        }
         String  query =
             "SELECT "
             + "BehaviorDefinition.BDEF_DBID "
@@ -129,23 +134,23 @@ import fedora.server.errors.InitializationException;
         rowFound = queryResult.next();
         statement.close();
       }
-    }
-    catch (Throwable th)
-    {
-      throw new GeneralException("DOValidatorIntegrityCheck returned error. "
-                + "The underlying error was a " + th.getClass().getName()
-                + "The message was "  + "\"" + th.getMessage() + "\"");
-    }
-    if (!rowFound)
-    {
-      System.out.println("Digital Object Disseminator "
-              + "refers to a Behavior Definition Object that does not exist "
-              + "in the local repository: "
-              + BDefPID);
-      throw new ObjectValidityException("Digital Object Disseminator "
-              + "refers to a Behavior Definition Object that does not exist "
-              + "in the local repository: "
-              + BDefPID);
+      catch (Throwable th)
+      {
+        throw new GeneralException("DOValidatorIntegrityCheck returned error. "
+                  + "The underlying error was a " + th.getClass().getName()
+                  + "The message was "  + "\"" + th.getMessage() + "\"");
+      }
+      if (!rowFound)
+      {
+        System.out.println("Digital Object Disseminator "
+                + "refers to a Behavior Definition Object that does not exist "
+                + "in the local repository: "
+                + BDefPID);
+        throw new ObjectValidityException("Digital Object Disseminator "
+                + "refers to a Behavior Definition Object that does not exist "
+                + "in the local repository: "
+                + BDefPID);
+      }
     }
   }
 
@@ -163,11 +168,16 @@ import fedora.server.errors.InitializationException;
     String BMechPID = null;
     ResultSet queryResult = null;
     boolean rowFound = false;
-    try
+
+    for (int i = 0; i < objectInfo.bMechPIDs.length; i++)
     {
-      for (int i = 0; i < objectInfo.bMechPIDs.length; i++)
+      try
       {
         BMechPID = objectInfo.bMechPIDs[i];
+        if (BMechPID.equalsIgnoreCase("uva-bmech-bootstrap:2"))
+        {
+          continue;
+        }
         String  query =
             "SELECT "
             + "BehaviorMechanism.BMECH_DBID "
@@ -181,23 +191,23 @@ import fedora.server.errors.InitializationException;
         rowFound = queryResult.next();
         statement.close();
       }
-    }
-    catch (Throwable th)
-    {
-      throw new GeneralException("DOValidatorIntegrityCheck returned error. "
-                + "The underlying error was a " + th.getClass().getName()
-                + "The message was "  + "\"" + th.getMessage() + "\"");
-    }
-    if (!rowFound)
-    {
-      System.out.println("Digital Object Disseminator "
-              + "refers to a Behavior Mechanism Object that does not exist "
-              + "in the local repository: "
-              + BMechPID);
-      throw new ObjectValidityException("Digital Object Disseminator "
-              + "refers to a Behavior Mechanism Object that does not exist "
-              + "in the local repository: "
-              + BMechPID);
+      catch (Throwable th)
+      {
+        throw new GeneralException("DOValidatorIntegrityCheck returned error. "
+                  + "The underlying error was a " + th.getClass().getName()
+                  + "The message was "  + "\"" + th.getMessage() + "\"");
+      }
+      if (!rowFound)
+      {
+        System.out.println("Digital Object Disseminator "
+                + "refers to a Behavior Mechanism Object that does not exist "
+                + "in the local repository: "
+                + BMechPID);
+        throw new ObjectValidityException("Digital Object Disseminator "
+                + "refers to a Behavior Mechanism Object that does not exist "
+                + "in the local repository: "
+                + BMechPID);
+      }
     }
   }
 }
