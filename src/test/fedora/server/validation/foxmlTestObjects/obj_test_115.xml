@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---*******************************************************************************************************************************************-->
+<!-- THIS FOXML TEST OBJECT:  Test for bad RELS-EXT datastream (disallowed assertion in dc namespace)-->
+<!---*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="test:115" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---*******************************************************************************************************************************************-->
+	<!--   FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object-->
+	<!---*******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
+	</foxml:objectProperties>
+	<foxml:datastream ID="RELS-EXT" MIMETYPE="text/xml" CONTROL_GROUP="X">
+		<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Fedora Relationship Metadata">
+			<foxml:xmlContent>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<rdf:Description rdf:about="info:fedora/test:115">
+						<fedora:isMemberOfCollection rdf:resource="info:fedora/something:48"/>
+						<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
+						<dc:title>my life</dc:title>
+					</rdf:Description>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+</foxml:digitalObject>
