@@ -31,9 +31,27 @@
         </releaseinfo>
 	</articleinfo>
 	<sect1>
-		<title>Release 1.1.1 (Bug Fix Release) - September 5, 2003</title>
-		<para>Fedora 1.1.1 provides a fix for bugs detected by users of Fedora 1.1.</para>
+		<title>Release 1.11 (Bug Fix Release) - September 5, 2003</title>
+		<para>Fedora 1.11 provides a fix for bugs detected by users of Fedora 1.1.</para>
 		<para>The new release is backward compatible with Fedora 1.1. If you are updating from an earlier release, please refer to the release notes for Fedora 1.1 regarding backward compatibility issues and new features introduced in Fedora 1.1</para>
+		<sect2>
+		    <title>BUG FIXES:</title>
+			<sect3><title>1. SQL DB Corruption During Datastream Modification</title>
+			<para>The bug was an errant update query for the SQL database 
+that when modifying a datastream it had the potential for 
+corrupting the SQL database dsBind table. It only got
+introduced when attempting to modify a Datastream using the 
+View/EditDatastream menu option in the admin GUI.
+With this fix, the modifyDatastream 
+command is safe to use.</para>
+			</sect3>
+			<sect3><title>2. OAI-PMH Unicode Support</title>
+			<para>OAI-PMH interface was not sending the correct HTTP Content-type
+			header value to indicate the character encoding of the XML, and as
+			a result, the Servlet that provides OAI-PMH functionality was not
+			properly encoding the output in UTF-8.</para>
+			</sect3>
+		</sect2>
 	</sect1>
 	<sect1>
 		<title>Release 1.1 (Bug Fix Release) - August 5, 2003</title>
