@@ -285,9 +285,10 @@ public class MethodsPane extends JPanel {
         int currentRowIndex = methodTable.getSelectedRow();
         String methodName = (String)methodTable.getValueAt(currentRowIndex,0);
         System.out.println("methodname=" + methodName);
-        if (methodName.equalsIgnoreCase(""))
+        if (methodName == null || methodName.trim().equals(""))
         {
           assertNoMethodMsg("You must enter a method name before entering properties");
+          return;
         }
         else
         {

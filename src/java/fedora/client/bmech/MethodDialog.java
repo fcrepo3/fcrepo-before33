@@ -82,16 +82,19 @@ public class MethodDialog extends JDialog {
     private void saveMethodFields()
     {
       System.out.println("Saving values back in parent");
-      try
+      if (validMethod())
       {
-        parent.setBMechMethod(
-          methodName.getText().trim(), methodDescription.getText().trim());
-        setVisible(false);
-        dispose();
-      }
-      catch (BMechBuilderException e)
-      {
-        parent.assertMethodExistsMsg("The method name already exists.");
+        try
+        {
+          parent.setBMechMethod(
+            methodName.getText().trim(), methodDescription.getText().trim());
+          setVisible(false);
+          dispose();
+        }
+        catch (BMechBuilderException e)
+        {
+          parent.assertMethodExistsMsg("The method name already exists.");
+        }
       }
     }
 
@@ -99,5 +102,21 @@ public class MethodDialog extends JDialog {
     {
       setVisible(false);
       dispose();
+    }
+
+    private boolean validMethod()
+    {
+      if (methodName.getText() == null || methodName.getText().trim().equals(""))
+      {
+        parent.assertNoMethodMsg("You must enter a method name");
+        return false;
+      }
+      else if (methodDescription.getText() == null ||
+               methodDescription.getText().trim().equals(""))
+      {
+        parent.assertNoMethodMsg("You must enter a method description");
+        return false;
+      }
+      return true;
     }
 }

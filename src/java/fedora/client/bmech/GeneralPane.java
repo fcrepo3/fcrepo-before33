@@ -26,6 +26,7 @@ public class GeneralPane
 
     private JTextField bDefPID;
     private JTextField bMechLabel;
+    private JTextField bMechName;
     private JTable dcTable;
     protected DefaultTableModel model;
 
@@ -37,15 +38,17 @@ public class GeneralPane
         // Text Fields Panel
         JPanel textPanel = new JPanel();
         textPanel.setBorder(new TitledBorder("Service Contract"));
-        textPanel.setLayout(new GridLayout(5,2));
+        textPanel.setLayout(new GridLayout(6,2));
         textPanel.add(new JLabel(""));
         textPanel.add(new JLabel(""));
         textPanel.add(new JLabel("Behavior Mechanism PID: "));
-        textPanel.add(new JLabel("unassigned"));
-        textPanel.add(new JLabel("Enter Behavior Definition Contract (bDefPID): "));
+        textPanel.add(new JLabel("system assigned"));
+        textPanel.add(new JLabel("Behavior Definition Contract (bDefPID): "));
         textPanel.add(bDefPID = new JTextField());
-        textPanel.add(new JLabel("Enter Behavior Mechanism Label: "));
+        textPanel.add(new JLabel("Behavior Mechanism Label: "));
         textPanel.add(bMechLabel = new JTextField());
+        textPanel.add(new JLabel("Behavior Mechanism Nickname (1 word): "));
+        textPanel.add(bMechName = new JTextField());
         textPanel.add(new JLabel(""));
         textPanel.add(new JLabel(""));
 
@@ -125,6 +128,11 @@ public class GeneralPane
     public String getBMechLabel()
     {
       return bMechLabel.getText();
+    }
+
+    public String getBMechName()
+    {
+      return bMechName.getText();
     }
 
     public DCElement[] getDCElements()
