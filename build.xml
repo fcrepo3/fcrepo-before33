@@ -730,6 +730,9 @@
 			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
 		</copy>
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
+			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
+		</java>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
 				<exclude name="org/**"/>
