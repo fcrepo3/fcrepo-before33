@@ -1,47 +1,21 @@
 package fedora.client.search;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.basic.BasicTableUI;
 import javax.xml.rpc.ServiceException;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.Font;
-import java.awt.Point;
+import java.awt.*;
+import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import fedora.swing.jtable.DefaultSortTableModel;
 import fedora.swing.jtable.JSortTable;
 import fedora.client.Administrator;
+import fedora.client.actions.ChangeObjectState;
 import fedora.client.actions.ExportObject;
 import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObject;
@@ -329,6 +303,14 @@ public class ResultFrame
             add(i1);
             add(i2);
             add(i3);
+            JMenu m1=new JMenu("Set object state to");
+            JMenuItem activeItem=new JMenuItem(new ChangeObjectState(pid, "Active"));
+            JMenuItem inactiveItem=new JMenuItem(new ChangeObjectState(pid, "Inactive"));
+            JMenuItem deletedItem=new JMenuItem(new ChangeObjectState(pid, "Deleted"));
+            m1.add(activeItem);
+            m1.add(inactiveItem);
+            m1.add(deletedItem);
+            add(m1);
         }
     }
 
@@ -356,6 +338,14 @@ public class ResultFrame
             add(i1);
             add(i2);
             add(i3);
+            JMenu m1=new JMenu("Set object states to");
+            JMenuItem activeItem=new JMenuItem(new ChangeObjectState(pids, "Active"));
+            JMenuItem inactiveItem=new JMenuItem(new ChangeObjectState(pids, "Inactive"));
+            JMenuItem deletedItem=new JMenuItem(new ChangeObjectState(pids, "Deleted"));
+            m1.add(activeItem);
+            m1.add(inactiveItem);
+            m1.add(deletedItem);
+            add(m1);
         }
     }
 }
