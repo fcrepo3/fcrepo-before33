@@ -198,7 +198,7 @@
 						<wsdl:binding name="HTTP-MrSID" type="MrSID">
 							<http:binding verb="GET"/>
 							<wsdl:operation name="getThumbnail">
-								<http:operation location="get_mrsid_url.pl?image=(MRSID_IMG)&amp;size=thumbnail&amp;zoom=no"/>
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=thumbnail&amp;zoom=no"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -207,7 +207,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getMedium">
-								<http:operation location="get_mrsid_url.pl?image=(MRSID_IMG)&amp;size=small&amp;zoom=no"/>
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=small&amp;zoom=no"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -216,7 +216,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getHigh">
-								<http:operation location="get_mrsid_url.pl?image=(MRSID_IMG)&amp;size=medium1&amp;zoom=yes"/>
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=medium1&amp;zoom=yes"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
@@ -225,7 +225,7 @@
 								</wsdl:output>
 							</wsdl:operation>
 							<wsdl:operation name="getVeryHigh">
-								<http:operation location="get_mrsid_url.pl?image=(MRSID_IMG)&amp;size=medium2&amp;zoom=yes"/>
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=medium2&amp;zoom=yes"/>
 								<wsdl:input>
 									<http:urlReplacement/>
 								</wsdl:input>
