@@ -951,7 +951,7 @@ public class DefinitiveDOReader implements DOReader
             System.out.println("uri: "+uri);
             String ns = "<"+qName+" xmlns:"+prefix+"=\""+uri+"\" ";
             System.out.println("ns: "+ns);
-            h_xmlstream.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+            //h_xmlstream.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
             h_xmlstream.write(ns);
             isRootXMLDatastreamElement = false;
           } else
