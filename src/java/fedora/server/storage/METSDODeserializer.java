@@ -553,7 +553,8 @@ public class METSDODeserializer
                     }
                     m_dsXMLBuffer.append(a.getLocalName(i));
                     m_dsXMLBuffer.append("=\"");
-                    m_dsXMLBuffer.append(a.getValue(i));
+                    // re-encode decoded standard entities (&, <, >, ", ')
+                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i))); 
                     m_dsXMLBuffer.append("\"");
                 }
                 m_dsXMLBuffer.append('>');
