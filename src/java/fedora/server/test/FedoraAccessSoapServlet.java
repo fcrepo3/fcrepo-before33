@@ -1234,7 +1234,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     // Clear cache if size gets larger than DISS_CACHE_SIZE
     // FIXME!! This needs to part of the Fedora server config parameters
     if (disseminationCache.size() > DISS_CACHE_SIZE ||
-        (clearCache == null || clearCache.equalsIgnoreCase(YES)))
+        (clearCache != null && clearCache.equalsIgnoreCase(YES)))
     {
       clearDisseminationCache();
     }
