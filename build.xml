@@ -283,7 +283,10 @@
 		</copy>
 		<!-- end testing -->
 		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
-		<copy file="src/properties/server/fedora/server/resources/Server.properties" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
+		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
+		    <fileset dir="src/properties/server"/>
+		    <fileset dir="src/dbspec/server"/>
+        </copy>
 		<copy file="src/fcfg/server/fedora.fcfg" todir="dist/server/config"/>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
@@ -329,6 +332,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.40  2002/10/02 12:53:00  cwilper
+  changed copy of properties to always include all,
+  and added copy of all dbspecs
+
   Revision 1.39  2002/09/30 17:01:39  cwilper
   copies *all* server/.bat and server/.sh files to dist\bin
 
