@@ -382,7 +382,7 @@
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
 		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
-		<param name="jdbcDriverClass" value="org.gjt.mm.mysql.Driver"/>
+		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
