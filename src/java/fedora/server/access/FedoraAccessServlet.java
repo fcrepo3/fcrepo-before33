@@ -805,7 +805,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
          // If access is based on restrictions to content,
          // this is the last chance to apply those restrictions
          // before returnign dissemination result to client.
-         HttpService httpService = new HttpService(dissURL);
+         HttpService httpService = new HttpService();
          try
          {
            dissemination = httpService.getHttpContent(dissURL);
