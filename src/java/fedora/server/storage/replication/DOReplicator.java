@@ -41,12 +41,10 @@ public class DOReplicator {
      * @exception SQLException JDBC, SQL error
      * @exception Exception General exeception (DBMS init code)
      */
-    public void replicateBehaviorDefinitionObject(BDefReader bDefReader) 
-            throws ReplicationException, ClassNotFoundException, 
-            SQLException, Exception {
+    public void replicate(BDefReader bDefReader) 
+            throws ReplicationException, SQLException {
         Connection connection=null;
         try {
-            DbmsConnection db;
             DBIDLookup dl;
             MethodDef behaviorDefs[];
             RowInsertion ri;
@@ -93,7 +91,7 @@ public class DOReplicator {
      * @exception SQLException JDBC, SQL error
      * @exception Exception General exeception (DBMS init code)
      */
-    public void replicateBehaviorMechanismObject(BMechReader bMechReader) 
+    public void replicate(BMechReader bMechReader) 
             throws ReplicationException, SQLException {
         Connection connection=null;
         try {
@@ -232,7 +230,7 @@ public class DOReplicator {
     * @exception SQLException JDBC, SQL error
     * @exception Exception General exeception (DBMS init code)
     */
-    public void replicateDO(DOReader doReader) throws ReplicationException, SQLException {
+    public void replicate(DOReader doReader) throws ReplicationException, SQLException {
         Connection connection=null;
         try {
             DSBindingMapAugmented[] allBindingMaps;
