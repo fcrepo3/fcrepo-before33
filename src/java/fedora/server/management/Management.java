@@ -62,6 +62,17 @@ public interface Management {
                                 String mdType,
 								String dsState) throws ServerException;
 
+    public String createDatastream(Context context,
+                                   String pid,
+                                   String dsID,
+                                   String dsLabel,
+                                   boolean versionable,
+                                   String MIMEType,
+                                   String formatURI,
+                                   String location,
+                                   String controlGroup,
+                                   String dsState) throws ServerException;
+
     public void modifyDatastreamByReference(Context context, String pid, String datastreamID, String dsLabel, String logMessage, String dsLocation, String dsState) throws ServerException;
 
     public void modifyDatastreamByValue(Context context, String pid, String datastreamID, String dsLabel, String logMessage, InputStream dsContent, String dsState) throws ServerException;

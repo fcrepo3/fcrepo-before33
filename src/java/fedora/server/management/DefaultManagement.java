@@ -259,7 +259,107 @@ public class DefaultManagement
 
 */
 
-    // initial state is always I
+    public String createDatastream(Context context,
+                                   String pid,
+                                   String dsID,
+                                   String dsLabel,
+                                   boolean versionable,
+                                   String MIMEType,
+                                   String formatURI,
+                                   String dsLocation,
+                                   String controlGroup,
+                                   String dsState) throws ServerException {
+        m_ipRestriction.enforce(context);
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            Datastream ds;
+            if (controlGroup.equals("X")) {
+                ds=new DatastreamXMLMetadata();
+                ds.DSInfoType="";  // field is now deprecated
+                try {
+                    InputStream in;
+                    if (dsLocation.startsWith("uploaded://")) {
+                        in=getTempStream(dsLocation);
+                    } else {
+                        in=m_contentManager.getExternalContent(dsLocation).getStream();
+                    }
+                    // parse with xerces... then re-serialize, removing
+                    // processing instructions and ensuring the encoding gets to UTF-8
+                    ByteArrayOutputStream out=new ByteArrayOutputStream();
+                    // use xerces to pretty print the xml, assuming it's well formed
+                    OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+                    fmt.setIndent(2);
+                    fmt.setLineWidth(120);
+                    fmt.setPreserveSpace(false);
+                    fmt.setOmitXMLDeclaration(true);
+                    XMLSerializer ser=new XMLSerializer(out, fmt);
+                    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    DocumentBuilder builder=factory.newDocumentBuilder();
+                    Document doc=builder.parse(in);
+                    ser.serialize(doc);
+                    // now put it in the byte array
+                    ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
+                } catch (Exception e) {
+                    String extraInfo;
+                    if (e.getMessage()==null)
+                        extraInfo="";
+                    else
+                        extraInfo=" : " + e.getMessage();
+                    throw new GeneralException("Error with " + dsLocation + extraInfo);
+                }
+            } else if (controlGroup.equals("M")) {
+                ds=new DatastreamManagedContent();
+                ds.DSInfoType="DATA";
+            } else if (controlGroup.equals("R") || controlGroup.equals("E")) {
+                ds=new DatastreamReferencedContent();
+                ds.DSInfoType="DATA";
+            } else {
+                throw new GeneralException("Invalid control group: " + controlGroup);
+            }
+            //
+            // FIXME: Also need to take versionable and formatURI values
+            //        into consideration here.
+            //
+            ds.isNew=true;
+            ds.DSControlGrp=controlGroup;
+            ds.DSLabel=dsLabel;
+            ds.DSLocation=dsLocation;
+            ds.DSMIME=MIMEType;
+            ds.DSState= dsState;
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            ds.DSCreateDT=nowUTC;
+            if (dsID==null) {
+                ds.DatastreamID=w.newDatastreamID();
+            } else {
+                if (w.GetDatastream(dsID, null)!=null) {
+                    throw new GeneralException("A datastream already exists with ID: " + dsID);
+                } else {
+                    ds.DatastreamID=dsID;
+                }
+            }
+            ds.DSVersionID=ds.DatastreamID + ".0";
+            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="createDatastream";
+            audit.componentID=ds.DatastreamID;
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification="Added a new datastream";
+            w.getAuditRecords().add(audit);
+            ds.auditRecordIdList().add(audit.id);
+            w.addDatastream(ds);
+            w.commit("Added a new datastream");
+            return ds.DatastreamID;
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
+        }
+    }
+
     public String addDatastream(Context context,
                                 String pid,
                                 String dsLabel,
@@ -368,6 +468,7 @@ public class DefaultManagement
             }
         }
     }
+
 	public String addDisseminator(Context context,
 									String pid,
 									String bDefPid,

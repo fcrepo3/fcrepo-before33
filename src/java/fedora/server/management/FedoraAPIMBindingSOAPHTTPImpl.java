@@ -284,6 +284,33 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+    public String createDatastream(String PID,
+                                   String dsID,
+                                   String label,
+                                   boolean versionable,
+                                   String MIMEType,
+                                   String formatURI,
+                                   String location,
+                                   String controlGroup,
+                                   String dsState) throws RemoteException {
+        assertInitialized();
+        try {
+            return s_management.createDatastream(getContext(), 
+                                                 PID, 
+                                                 dsID,
+                                                 label, 
+                                                 versionable,
+                                                 MIMEType,
+                                                 formatURI,
+                                                 location,
+                                                 controlGroup,
+                                                 dsState);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+
     public void modifyDatastreamByReference(String PID, String datastreamID,
             String dsLabel, String logMessage, String dsLocation, String dsState)
             throws java.rmi.RemoteException {

@@ -135,6 +135,42 @@
 			<documentation>the datastreamID of the newly added datastream.</documentation>
 		</part>
 	</message>
+	<message name="createDatastreamRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="dsID" type="xsd:string">
+			<documentation>the ID of the datastream (32 characters max).  
+			If given as null, Fedora will generate an id for you.</documentation>
+		</part>
+		<part name="label" type="xsd:string">
+			<documentation>the label for the datastream.</documentation>
+		</part>
+		<part name="versionable" type="xsd:boolean">
+			<documentation>Whether Fedora should maintain old versions of the datastream when it is modified,
+			or it should just over-write the old content.</documentation>
+		</part>
+		<part name="MIMEType" type="xsd:string">
+			<documentation>the mime type.</documentation>
+		</part>
+		<part name="formatURI" type="xsd:string">
+			<documentation>the format URI (a more granular format identifier than mime type).  Optional.</documentation>
+		</part>
+		<part name="location" type="xsd:string">
+			<documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
+		</part>
+		<part name="controlGroup" type="xsd:string">
+			<documentation>the control group.  This must be one of "X", "M", "R", or "E".</documentation>
+		</part>
+		<part name="dsState" type="xsd:string">
+			<documentation>the initial state of the datastream.</documentation>
+		</part>
+	</message>
+	<message name="createDatastreamResponse">
+		<part name="response" type="xsd:string">
+			<documentation>the datastreamID of the newly added datastream.</documentation>
+		</part>
+	</message>
 	<message name="addDisseminatorRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -511,9 +547,15 @@
     </operation>
 -->
 		<operation name="addDatastream">
-			<documentation>Creates a new datastream in the object.</documentation>
+			<documentation>THIS METHOD HAS BEEN DEPRECATED - USE CREATEDATASTREAM INSTEAD.  
+			Creates a new datastream in the object.</documentation>
 			<input message="fedora-api:addDatastreamRequest"/>
 			<output message="fedora-api:addDatastreamResponse"/>
+		</operation>
+		<operation name="createDatastream">
+			<documentation>Creates a new datastream in the object.</documentation>
+			<input message="fedora-api:createDatastreamRequest"/>
+			<output message="fedora-api:createDatastreamResponse"/>
 		</operation>
 		<operation name="addDisseminator">
 			<documentation>Creates a disseminator in the object.</documentation>
@@ -673,6 +715,15 @@
 -->
 		<operation name="addDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastream"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="createDatastream">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#createDatastream"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
