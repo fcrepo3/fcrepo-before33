@@ -1,10 +1,8 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
-import java.io.FileOutputStream;
 
 import fedora.server.storage.types.DigitalObject;
-import org.trippi.RDFFormat;
 
 /**
  * @author Edwin Shin
@@ -25,7 +23,7 @@ public class TestResourceIndexLevels extends TestResourceIndex {
     }
     
     public void testLevelOff() throws Exception {
-        m_ri = new ResourceIndexImpl(0, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_OFF, m_conn, m_cPool, null);
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
@@ -49,7 +47,7 @@ public class TestResourceIndexLevels extends TestResourceIndex {
     }
     
     public void testLevelOn() throws Exception {
-        m_ri = new ResourceIndexImpl(1, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_ON, m_conn, m_cPool, null);
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
         assertEquals(17, m_ri.countTriples(null, null, null, 0));
@@ -58,23 +56,22 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         assertEquals(39, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(81, m_ri.countTriples(null, null, null, 0));
+        assertEquals(83, m_ri.countTriples(null, null, null, 0));
+        export("/tmp/out1.rdf");
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(81, m_ri.countTriples(null, null, null, 0));
+        assertEquals(83, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(81, m_ri.countTriples(null, null, null, 0));
+        assertEquals(83, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(81, m_ri.countTriples(null, null, null, 0));
-        
-        //m_ri.export(new FileOutputStream("/tmp/out1.rdf"), RDFFormat.RDF_XML);
+        assertEquals(83, m_ri.countTriples(null, null, null, 0));
     }
     
     public void testLevelWithPermutations() throws Exception {
-        m_ri = new ResourceIndexImpl(2, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_PERMUTATIONS, m_conn, m_cPool, null);
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
@@ -84,16 +81,16 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         assertEquals(39, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(106, m_ri.countTriples(null, null, null, 0));
+        assertEquals(108, m_ri.countTriples(null, null, null, 0));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(106, m_ri.countTriples(null, null, null, 0));
+        assertEquals(108, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(106, m_ri.countTriples(null, null, null, 0));
+        assertEquals(108, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(106, m_ri.countTriples(null, null, null, 0));
+        assertEquals(108, m_ri.countTriples(null, null, null, 0));
     }
 }

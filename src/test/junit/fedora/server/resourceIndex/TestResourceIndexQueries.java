@@ -89,7 +89,15 @@ public class TestResourceIndexQueries extends TestResourceIndex {
     }
     
     public void testCount() throws Exception {
-        assertEquals(78, m_ri.countTriples(null, null, null, 0));
+        int count = m_ri.countTriples(null, null, null, 0);
+        
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(78, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(78, count);
+        }
         //m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
     }
     
@@ -97,10 +105,26 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         String query = "SELECT ?subject ?predicate ?object " +
                        "WHERE  (?subject ?predicate ?object)";
         TupleIterator it;
+        int count;
         it = m_ri.findTuples("rdql", query, 0, true);
-        assertEquals(74, it.count());
+        count = it.count();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(74, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(74, count);
+        }
+        
         it = m_ri.findTuples("rdql", query, 0, false);
-        assertEquals(78, it.count());
+        count = it.count();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(78, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(78, count);
+        }
         
     }
     
@@ -118,9 +142,17 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         }
         Collections.sort(members);
         
-        assertEquals(2, members.size());
-        assertEquals("info:fedora/demo:ri1100", members.get(0));
-        assertEquals("info:fedora/demo:ri1102", members.get(1));
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, members.size());
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(2, members.size());
+            assertEquals("info:fedora/demo:ri1100", members.get(0));
+            assertEquals("info:fedora/demo:ri1102", members.get(1));
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(2, members.size());
+            assertEquals("info:fedora/demo:ri1100", members.get(0));
+            assertEquals("info:fedora/demo:ri1102", members.get(1));
+        }
     }
     
     public void testQueryDate() throws Exception {

@@ -1,17 +1,12 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 import fedora.common.PID;
 import fedora.server.storage.types.DigitalObject;
 
 import org.jrdf.graph.Triple;
 
-import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
 import org.trippi.TripleMaker;
 
@@ -45,7 +40,15 @@ public class TestResourceIndexImpl extends TestResourceIndex {
                 + "/dataobjects/demo_ri1000.xml"));
         m_ri.addDigitalObject(obj);
         m_ri.commit();
-        assertEquals(3, m_ri.countTriples(null, null, null, 0));
+        
+        int count = m_ri.countTriples(null, null, null, 0);
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(3, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(3, count);
+        }
         TripleIterator it = m_ri.findTriples(TripleMaker.createResource(PID.toURI(obj.getPid())), 
                                              null, null, 0);
         Triple t;
@@ -57,23 +60,39 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         }
     }
         
-    public void testAddAndDelete() throws Exception {    
+    public void testAddAndDelete() throws Exception {  
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
         int a = m_ri.countTriples(null, null, null, 0);
-        assertTrue(m_ri.countTriples(null, null, null, 0) > 0);
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, a);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(17, a);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(17, a);
+        }
         
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
         int b = m_ri.countTriples(null, null, null, 0);
-        assertTrue(b > a);
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, b);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(39, b);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(39, b);
+        }
         
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
         int c = m_ri.countTriples(null, null, null, 0);
-        assertTrue(c > b);
-        
-        m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, c);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(83, c);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(108, c);
+        }
         
         m_ri.deleteDigitalObject(dataobject);
         m_ri.commit();
@@ -89,7 +108,7 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         m_ri.deleteDigitalObject(bdef);
         m_ri.commit();
         int f = m_ri.countTriples(null, null, null, 0);
-        assertEquals(0, m_ri.countTriples(null, null, null, 0));
+        assertEquals(0, f);
     }
     
     public void testDoubleAdd() throws Exception {

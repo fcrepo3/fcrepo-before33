@@ -45,12 +45,26 @@ public class TestResourceIndexDB extends TestResourceIndex {
         String query = "SELECT * FROM riMethod";
         ResultSet rs = select.executeQuery(query);
         rs.last();
-        assertEquals(1, rs.getRow());
+        int count = rs.getRow();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(1, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(1, count);
+        }
         
         query = "SELECT * FROM riMethodPermutation";
         rs = select.executeQuery(query);
         rs.last();
-        assertEquals(1, rs.getRow());
+        count = rs.getRow();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(1, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(6, count);
+        }
         
         m_ri.deleteDigitalObject(bdef);
         m_ri.commit();
@@ -71,12 +85,26 @@ public class TestResourceIndexDB extends TestResourceIndex {
         query = "SELECT * FROM riMethodImpl";
         rs = select.executeQuery(query);
         rs.last();
-        assertEquals(2, rs.getRow());
+        count = rs.getRow();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(2, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(2, count);
+        }
         
         query = "SELECT * FROM riMethodMimeType";
         rs = select.executeQuery(query);
         rs.last();
-        assertEquals(3, rs.getRow());
+        count = rs.getRow();
+        if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
+            assertEquals(0, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
+            assertEquals(3, count);
+        } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
+            assertEquals(3, count);
+        }
         
         m_ri.deleteDigitalObject(bmech);
         m_ri.commit();

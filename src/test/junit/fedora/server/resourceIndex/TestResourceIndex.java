@@ -3,12 +3,14 @@ package fedora.server.resourceIndex;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Map;
 
+import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
 
 import fedora.common.Constants;
@@ -186,5 +188,9 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         FOXMLDODeserializer deser = new FOXMLDODeserializer();
         deser.deserialize(in, obj, "UTF-8", 0);
         return obj;
+    }
+    
+    protected void export(String path) throws Exception {
+        m_ri.export(new FileOutputStream(path), RDFFormat.RDF_XML);
     }
 }
