@@ -8,7 +8,7 @@ set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
-"%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Djava.endorsed.dirs=%TC%\common\endorsed;%TC%\webapps\fedora\WEB-INF\lib -Djava.io.tmpdir=%TC%\temp fedora.server.utilities.rebuild.Rebuild %1
+"%JAVA_HOME%\bin\java" -server -Xmn32m -Xms128m -Xmx128m -cp %TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Djava.endorsed.dirs=%TC%\common\endorsed;%TC%\webapps\fedora\WEB-INF\lib;%TC%\common\lib -Djava.io.tmpdir=%TC%\temp fedora.server.utilities.rebuild.Rebuild %1
 set JAVA_HOME=%OLD_JAVA_HOME%
 goto end
 
