@@ -223,8 +223,8 @@ public class DefaultDOReplicator
               logFinest("Iterating, dissDbID: "+dissDbID);
 
               // get disseminator info for this disseminator
-              results=logAndExecuteQuery(st, "SELECT diss.bDefDbID, diss.bMechDbID, bmech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState "
-                  + "FROM diss,bmech WHERE bmech.bMechDbID=diss.bMechDbID AND diss.dissDbID=" + dissDbID);
+              results=logAndExecuteQuery(st, "SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState "
+                  + "FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=" + dissDbID);
               updates=new ArrayList();
               int bDefDbID = 0;
               int bMechDbID = 0;
@@ -600,8 +600,8 @@ public class DefaultDOReplicator
                                 // Find disseminators that have been removed within an existing object
                                 // (disseminator(s) still exist in the database)
                                 results=logAndExecuteQuery(st, "SELECT dsBindMapDbID, dsBindMapID"
-                                    + " FROM dsBindMap,bmech,diss"
-                                    + " WHERE dsBindMap.bmechDbID=bmech.bmechDbID AND bmech.bmechPID='" + dissArray[j].bMechID + "' "
+                                    + " FROM dsBindMap,bMech,diss"
+                                    + " WHERE dsBindMap.bmechDbID=bMech.bmechDbID AND bMech.bmechPID='" + dissArray[j].bMechID + "' "
                                     + " AND diss.dissID='" + dissArray[j].dissID + "' AND dsBindMapID='" + dissArray[j].dsBindMapID + "' ;");
 
                                 if (!results.next()) {
