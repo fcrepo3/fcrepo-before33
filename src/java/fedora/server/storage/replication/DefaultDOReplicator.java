@@ -8,6 +8,7 @@ import fedora.server.errors.*;
 import fedora.server.errors.*;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
+import fedora.server.utilities.SQLUtility;
 
 import fedora.server.Module;
 import fedora.server.Server;
@@ -101,8 +102,8 @@ public class DefaultDOReplicator
                 if (!ds.DSLabel.equals(dsLabel) 
                         || !ds.DSLocation.equals(dsLocation)) {
                     updates.add("UPDATE dsBind SET dsLabel='" 
-                            + aposEscape(ds.DSLabel) + "', dsLocation='" 
-                            + aposEscape(ds.DSLocation)
+                            + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='" 
+                            + SQLUtility.aposEscape(ds.DSLocation)
                             + "' WHERE dsID='" + dsID + "'");
                 }
             }
@@ -532,7 +533,7 @@ public class DefaultDOReplicator
                     m_ri.insertDigitalObjectDissAssocRow(connection, doDBID,
                             dissDBID);
                 }
-                try{
+//                try{
                     allBindingMaps = doReader.GetDSBindingMaps(null);
                     for (int i=0; i<allBindingMaps.length; ++i) {
                         bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,
@@ -584,7 +585,7 @@ public class DefaultDOReplicator
                                     allBindingMaps[i].dsBindingsAugmented[j].seqNo,
                                     allBindingMaps[i].dsBindingsAugmented[j].
                                     datastreamID,
-                                    allBindingMaps[i].dsBindingsAugmented[j].bindLabel,
+                                    allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSLocation,
                                     allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
@@ -593,10 +594,10 @@ public class DefaultDOReplicator
         
                         }
                     }
-                    } catch(Exception e)
-                    {
-                      e.printStackTrace();
-                    }
+//                    } catch(Exception e)
+//                    {
+//                      e.printStackTrace();
+//                    }
                     connection.commit();
                 } catch (ReplicationException re) {
                     re.printStackTrace();
@@ -1002,17 +1003,4 @@ public class DefaultDOReplicator
         }
     }
     
-    private String aposEscape(String in) {
-        if (in.indexOf("'")==-1) return in;
-        StringBuffer out=new StringBuffer();
-        for (int i=0; i<in.length(); i++) {
-            char c=in.charAt(i);
-            if (c=='\'') {
-                out.append('\'');
-            }
-            out.append(c);
-        }
-        return out.toString();
-    }
-
 }

@@ -13,6 +13,8 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
+import fedora.server.utilities.SQLUtility;
+
 /**
 *
 * Description: Provides methods to insert Fedora database rows.
@@ -34,7 +36,7 @@ public class RowInsertion {
         */
 	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + bDefLabel + "');";
+		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + SQLUtility.aposEscape(bDefLabel) + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -52,7 +54,7 @@ public class RowInsertion {
         */
 	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + bMechLabel + "');";
+		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + SQLUtility.aposEscape(bMechLabel) + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -76,7 +78,7 @@ public class RowInsertion {
         */
 	public void insertDataStreamBindingRow(Connection connection, String doDbID, String dsBindKeyDbID, String dsBindMapDbID, String dsBindKeySeq, String dsID, String dsLabel, String dsMIME, String dsLocation, String dsControlGroupType, String dsCurrentVersionID, String policyDbID) throws SQLException {
 
-		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + dsLabel + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "');";
+		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + SQLUtility.aposEscape(dsLabel) + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -94,7 +96,7 @@ public class RowInsertion {
         */
 	public void insertDataStreamBindingMapRow(Connection connection, String bMechDbID, String dsBindMapID, String dsBindMapLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO dsBindMap (bMechDbID, dsBindMapID, dsBindMapLabel) VALUES ('" + bMechDbID + "', '" + dsBindMapID + "', '" + dsBindMapLabel + "');";
+		String insertionStatement = "INSERT INTO dsBindMap (bMechDbID, dsBindMapID, dsBindMapLabel) VALUES ('" + bMechDbID + "', '" + dsBindMapID + "', '" + SQLUtility.aposEscape(dsBindMapLabel) + "');";
 		insertGen(connection, insertionStatement);
 	}
 
@@ -113,7 +115,7 @@ public class RowInsertion {
         */
 	public void insertDataStreamBindingSpecRow(Connection connection, String bMechDbID, String dsBindSpecName, String dsBindSpecOrdinality, String dsBindSpecCardinality, String dsBindSpecLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO dsBindSpec (bMechDbID, dsBindSpecName, dsBindSpecOrdinality, dsBindSpecCardinality, dsBindSpecLabel) VALUES ('" + bMechDbID + "', '" + dsBindSpecName + "', '" + dsBindSpecOrdinality + "', '" + dsBindSpecCardinality + "', '" + dsBindSpecLabel + "');";
+		String insertionStatement = "INSERT INTO dsBindSpec (bMechDbID, dsBindSpecName, dsBindSpecOrdinality, dsBindSpecCardinality, dsBindSpecLabel) VALUES ('" + bMechDbID + "', '" + SQLUtility.aposEscape(dsBindSpecName) + "', '" + dsBindSpecOrdinality + "', '" + dsBindSpecCardinality + "', '" + SQLUtility.aposEscape(dsBindSpecLabel) + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -147,7 +149,7 @@ public class RowInsertion {
         */
 	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  doLabel + "');";
+		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -182,7 +184,7 @@ public class RowInsertion {
         */
 	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + dissLabel + "');";
+		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "');";
 		insertGen(connection, insertionStatement);
 	}
 
@@ -223,7 +225,7 @@ public class RowInsertion {
         */
 	public void insertMethodRow(Connection connection, String bDefDbID, String methodName, String methodLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO method (bDefDbID, methodName, methodLabel) VALUES ('" + bDefDbID + "', '" + methodName + "', '" + methodLabel + "');";
+		String insertionStatement = "INSERT INTO method (bDefDbID, methodName, methodLabel) VALUES ('" + bDefDbID + "', '" + SQLUtility.aposEscape(methodName) + "', '" + SQLUtility.aposEscape(methodLabel) + "');";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -251,9 +253,9 @@ public class RowInsertion {
                 + "parmDomainValues, parmRequiredFlag, parmLabel, "
                 + "parmType) VALUES ('"
                 + methDBID + "', '" + bdefDBID + "', '"
-                + parmName + "', '" + parmDefaultValue + "', '"
-                + parmDomainValues + "', '"
-                + parmRequiredFlag + "', '" + parmLabel + "', '"
+                + SQLUtility.aposEscape(parmName) + "', '" + SQLUtility.aposEscape(parmDefaultValue) + "', '"
+                + SQLUtility.aposEscape(parmDomainValues) + "', '"
+                + parmRequiredFlag + "', '" + SQLUtility.aposEscape(parmLabel) + "', '"
                 + parmType + "');";
                 insertGen(connection, insertionStatement);
 	}
@@ -281,9 +283,9 @@ public class RowInsertion {
                  + "defParmDomainValues, defParmRequiredFlag, defParmLabel, "
                  + "defParmType) VALUES ('"
                  + methDBID + "', '" + bmechDBID + "', '"
-                 + parmName + "', '" + parmDefaultValue + "', '"
-                 + parmDomainValues + "', '"
-                 + parmRequiredFlag + "', '" + parmLabel + "', '"
+                 + SQLUtility.aposEscape(parmName) + "', '" + SQLUtility.aposEscape(parmDefaultValue) + "', '"
+                 + SQLUtility.aposEscape(parmDomainValues) + "', '"
+                 + parmRequiredFlag + "', '" + SQLUtility.aposEscape(parmLabel) + "', '"
                  + parmType + "');";
                  insertGen(connection, insertionStatement);
 	}

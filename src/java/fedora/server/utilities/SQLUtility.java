@@ -224,5 +224,18 @@ public abstract class SQLUtility {
             tcConn.createTable(spec);
         }
     }
+    
+    public static String aposEscape(String in) {
+        if (in.indexOf("'")==-1) return in;
+        StringBuffer out=new StringBuffer();
+        for (int i=0; i<in.length(); i++) {
+            char c=in.charAt(i);
+            if (c=='\'') {
+                out.append('\'');
+            }
+            out.append(c);
+        }
+        return out.toString();
+    }
 
 }
