@@ -75,7 +75,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         s_initException = ie;
     }
   }
-  
+
   private Context getContext() {
       HashMap h=new HashMap();
       h.put("application", "apia");
@@ -89,7 +89,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   }
 
   public ObjectFields[] advancedFieldSearch(
-          String[] resultFields, Condition[] conditions) 
+          String[] resultFields, Condition[] conditions)
           throws RemoteException {
       Context context=getContext();
       assertInitialized();
@@ -109,7 +109,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   }
 
   public ObjectFields[] simpleFieldSearch(
-          String[] resultFields, String terms) 
+          String[] resultFields, String terms)
           throws RemoteException {
       Context context=getContext();
       assertInitialized();
@@ -214,14 +214,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * @throws java.rmi.RemoteException
    */
   public fedora.server.types.gen.MIMETypedStream
-  getBehaviorMethodsAsWSDL(java.lang.String PID, java.lang.String bDefPID,
+  getBehaviorMethodsXML(java.lang.String PID, java.lang.String bDefPID,
   java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
     Context context=getContext();
     try
     {
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          s_access.getBehaviorMethodsAsWSDL(context, PID,
+          s_access.getBehaviorMethodsXML(context, PID,
           bDefPID, asOfDateTime);
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
