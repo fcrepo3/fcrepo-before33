@@ -50,6 +50,7 @@
 			<member><ulink url="/userdocs/batch/">Admin Client Batch Utility</ulink></member>
 			<member><ulink url="/userdocs/oai/">OAI Provider Interface</ulink></member>
 			<member><ulink url="/userdocs/server/">Fedora Server</ulink></member>
+			<member><ulink url="/userdocs/localservices/">Fedora Local Services</ulink></member>
 		</simplelist>
 	</sect1>
 	<sect1>
