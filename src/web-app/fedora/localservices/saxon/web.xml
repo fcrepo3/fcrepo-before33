@@ -12,6 +12,6 @@
       </servlet>
 	<servlet-mapping>
 		<servlet-name>SaxonServlet</servlet-name>
-		<url-pattern>/saxon/*</url-pattern>
+		<url-pattern>/SaxonServlet/*</url-pattern>
 	</servlet-mapping>
 </web-app>
