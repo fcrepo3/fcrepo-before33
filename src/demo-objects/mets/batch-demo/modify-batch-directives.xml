@@ -311,8 +311,6 @@
 	<!-- logMessage - message to be written in audit trail record           -->		
 	<!--                                                                    -->
 	<!-- Optional attributes on directive:                                  -->
-	<!-- bDefLabel - label of the behavior definition object                -->
-	<!-- bMechLabel - label of the behavior mechanism object                -->
 	<!-- dissState - state of the disseminator                              -->
 	<!--                                                                    -->
 	<!-- Sub-elements on directive:                                         -->
@@ -356,8 +354,6 @@
 	<!--                                                                    -->
 	<!-- Optional attributes on directive:                                  -->
 	<!-- dissLabel - label of the disseminator                              -->
-	<!-- bDefLabel - label of the behavior definition object                -->
-	<!-- bMechLabel - label of the behavior mechanism object                -->
 	<!-- dissState - state of the disseminator                              -->	    
 	<!-- force - boolean indicating whether to purge the object if any      -->
 	<!--         critical dependencies exist. A value of true will purge    -->
