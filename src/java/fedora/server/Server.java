@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Handler;
@@ -469,6 +470,11 @@ public abstract class Server
     public static String INIT_LOG_WARNING_CANTWRITESTARTUPLOG=
             s_const.getString("init.log.warning.cantwritestartuplog");
 
+    /**
+     * The server-wide default locale, obtained via <code>getLocale()</code>.
+     */
+    private static Locale s_locale;
+    
     /**
      * Holds an instance of a <code>Server</code> for each distinct 
      * <code>File</code> given as a parameter to <code>getInstance(...)</code>
@@ -1311,6 +1317,24 @@ public abstract class Server
     public final void finalize() 
             throws ServerShutdownException, ModuleShutdownException {
         shutdown();
+    }
+    
+    public final static Locale getLocale() {
+        if (s_locale==null) {
+            String language=System.getProperty("locale.language");
+            String country=System.getProperty("locale.country");
+            String variant=System.getProperty("locale.variant");
+            if ((language!=null) && (country!=null)) {
+                if (variant!=null) {
+                    s_locale=new Locale(language, country, variant);
+                } else {
+                    s_locale=new Locale(language, country);
+                }
+            } else {
+                s_locale=Locale.getDefault();
+            }
+        }
+        return s_locale;
     }
 
     /**
