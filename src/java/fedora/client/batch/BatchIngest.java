@@ -9,6 +9,8 @@ class BatchIngest {
 	
 	String host = null; //"localhost";
 	int port = 0; //8080;
+	String username;
+	String password;
 	
 	//set by arguments to constructor 
 	String objectsPath = null;
@@ -21,6 +23,8 @@ class BatchIngest {
 		pidsFormat = optValues.getProperty(BatchTool.PIDSFORMAT);		
 		host = optValues.getProperty(BatchTool.SERVERFQDN);
 		String serverPortAsString = optValues.getProperty(BatchTool.SERVERPORT);
+		username = optValues.getProperty(BatchTool.USERNAME);
+		password = optValues.getProperty(BatchTool.PASSWORD);
 		if (! BatchTool.argOK(objectsPath)) {
 			System.err.println("objectsPath required");			
 			throw new Exception();
@@ -43,6 +47,15 @@ class BatchIngest {
 		} else {
 			port = Integer.parseInt(serverPortAsString);
 		}					
+		if (! BatchTool.argOK(username)) {
+			System.err.println("username required");			
+			throw new Exception();
+		}					
+		if (! BatchTool.argOK(password)) {
+			System.err.println("password required");			
+			throw new Exception();
+		}					
+       
 	}
 	
 	private boolean good2go = false;
@@ -53,7 +66,7 @@ class BatchIngest {
 		
 	final void process() throws Exception {
     		//System.err.println("in BatchIngest.process()");			
-		AutoIngestor autoIngestor = new AutoIngestor(host, port);
+		AutoIngestor autoIngestor = new AutoIngestor(host, port, username, password);
 
 		//get files from batchDirectory
 		File[] files = null; {

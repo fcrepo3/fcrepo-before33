@@ -44,7 +44,7 @@ public class PurgeObject
         }
         AutoPurger purger=null;
         try {
-            purger=new AutoPurger(Administrator.getHost(), Administrator.getPort());
+            purger=new AutoPurger(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getClass().getName() + ": " + e.getMessage(),

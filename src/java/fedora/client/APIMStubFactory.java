@@ -7,11 +7,11 @@ import javax.xml.rpc.ServiceException;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.management.FedoraAPIMServiceLocator;
 
-public abstract class APIMSkeletonFactory {
+public abstract class APIMStubFactory {
 
-public static FedoraAPIM getSkeleton(String host, int port) 
+public static FedoraAPIM getStub(String host, int port, String username, String password) 
         throws MalformedURLException, ServiceException {
-    FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator();
+    FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator(username, password);
     URL ourl=new URL(locator.getFedoraAPIMPortSOAPHTTPAddress());
     StringBuffer nurl=new StringBuffer();
     nurl.append("http://");

@@ -92,6 +92,8 @@ class BatchTool {
 
 	static final String SERVERFQDN = "server-fqdn";
 	static final String SERVERPORT = "server-port";	
+	static final String USERNAME = "username";
+	static final String PASSWORD = "password";	
 	private static final String EAT = "ingest";
 	static final String PIDSPATH = "ingested-pids";
 	static final String PIDSFORMAT = "pids-format";	

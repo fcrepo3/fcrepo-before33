@@ -38,7 +38,7 @@ public class ManagementConsole
         implements Console {
         
     private Administrator m_mainFrame;
-    private static FedoraAPIMServiceLocator m_locator=new FedoraAPIMServiceLocator();
+    private FedoraAPIMServiceLocator m_locator;
     private JTextArea m_outputArea;
     private JTextField m_hostTextField;
     private JTextField m_portTextField;
@@ -51,6 +51,7 @@ public class ManagementConsole
               true, //maximizable
               true);//iconifiable
         m_mainFrame=mainFrame;
+        m_locator=new FedoraAPIMServiceLocator(Administrator.getUser(), Administrator.getPass());
         
         
         m_outputArea = new JTextArea();

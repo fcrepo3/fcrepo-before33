@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMSkeletonFactory;
+import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
@@ -19,9 +19,9 @@ public class AutoExporter {
 
     private FedoraAPIM m_apim;    
 
-    public AutoExporter(String host, int port) 
+    public AutoExporter(String host, int port, String user, String pass) 
             throws MalformedURLException, ServiceException {
-        m_apim=APIMSkeletonFactory.getSkeleton(host, port);
+        m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
     public void export(String pid, OutputStream outStream) throws RemoteException, IOException {
@@ -40,23 +40,25 @@ public class AutoExporter {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoExporter host port filename pid");
+        System.out.println("Usage: AutoExporter host port username password filename pid");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=4) {
-                AutoExporter.showUsage("You must provide four arguments.");
+            if (args.length!=6) {
+                AutoExporter.showUsage("You must provide six arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
-                String pid=args[3];
+                String username=args[2];
+                String password=args[3];
+                String pid=args[5];
                 // third arg==file... must exist
-                File f=new File(args[2]);
+                File f=new File(args[4]);
                 if (f.exists()) {
                     AutoExporter.showUsage("Third argument must be the path to a non-existing file.");
                 } else {
-                    AutoExporter a=new AutoExporter(hostName, portNum);
+                    AutoExporter a=new AutoExporter(hostName, portNum, username, password);
                     a.export(pid, new FileOutputStream(f));
                 }
             }

@@ -66,9 +66,11 @@ public class Administrator extends JFrame {
     private JLabel m_aboutText;
     private static String s_host;
     private static int s_port;
+    private static String s_user;
+    private static String s_pass;
 
-    public Administrator(String host, int port) {
-        super("Fedora Administrator - Server at " + host + ":" + port);
+    public Administrator(String host, int port, String user, String pass) {
+        super("Fedora Administrator - " + user + " using server at " + host + ":" + port);
         if (System.getProperty("fedora.home")!=null) {
             File f=new File(System.getProperty("fedora.home"));
             if (f.exists() && f.isDirectory()) {
@@ -77,6 +79,8 @@ public class Administrator extends JFrame {
         }
         s_host=host;
         s_port=port;
+        s_user=user;
+        s_pass=pass;
         
         cl=this.getClass().getClassLoader();
 
@@ -406,7 +410,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 host=s_host;
                 port=s_port;
                 logMessage="First import.";
-                AutoIngestor ingestor=new AutoIngestor(host, port);
+                AutoIngestor ingestor=new AutoIngestor(host, port, s_user, s_pass);
                 String pid=ingestor.ingestAndCommit(in, logMessage);
                 JOptionPane.showMessageDialog(this,
                         "Ingest succeeded.  PID='" + pid + "'.");
@@ -440,7 +444,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 int port;
                 host=s_host;
                 port=s_port;
-                AutoExporter exporter=new AutoExporter(host, port);
+                AutoExporter exporter=new AutoExporter(host, port, s_user, s_pass);
                 exporter.export(pid, new FileOutputStream(file));
                 JOptionPane.showMessageDialog(this,
                         "Export succeeded.");
@@ -503,6 +507,14 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         return s_port;
     }
 
+    public static String getUser() {
+        return s_user;
+    }
+
+    public static String getPass() {
+        return s_pass;
+    }
+
     public static void main(String[] args) {
     /*
         try {
@@ -523,6 +535,8 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.NoOpLog");
         String host="localhost";
         int port=8080;
+        String user="fedoraAdmin";
+        String pass="fedoraAdmin";
         if (args.length>0) {
             host=args[0];
             if (args.length>1) {
@@ -531,10 +545,16 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
                 } catch (NumberFormatException nfe) {
                     System.out.println("Warning: " + args[1] + " is not a valid port number.  Using default.");
                 }
+                if (args.length>2) {
+                    user=args[2]; 
+                    if (args.length>3) {
+                        pass=args[3];
+                    }
+                }
             }
         }
-        System.out.println("Using Fedora server at " + host + ":" + port);
-        Administrator administrator=new Administrator(host, port);
+        System.out.println("Using Fedora server at " + host + ":" + port + " with userId=" + user + " and password=[not displayed].");
+        Administrator administrator=new Administrator(host, port, user, pass);
 
         int xSize=710;
         int ySize=580;

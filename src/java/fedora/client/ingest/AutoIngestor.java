@@ -9,7 +9,7 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMSkeletonFactory;
+import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
@@ -17,9 +17,9 @@ public class AutoIngestor {
 
     private FedoraAPIM m_apim;    
 
-    public AutoIngestor(String host, int port) 
+    public AutoIngestor(String host, int port, String user, String pass) 
             throws MalformedURLException, ServiceException {
-        m_apim=APIMSkeletonFactory.getSkeleton(host, port);
+        m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
     public String ingestAndCommit(InputStream in, String logMessage) 
@@ -39,26 +39,28 @@ public class AutoIngestor {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoIngestor host port filename \"log message\"");
+        System.out.println("Usage: AutoIngestor host port username password filename \"log message\"");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=4) {
-                AutoIngestor.showUsage("You must provide four arguments.");
+            if (args.length!=6) {
+                AutoIngestor.showUsage("You must provide six arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
-                String logMessage=args[3];
+                String username=args[2];
+                String password=args[3];
+                String logMessage=args[5];
                 // third arg==file... must exist
-                File f=new File(args[2]);
+                File f=new File(args[4]);
                 if (!f.exists()) {
                     AutoIngestor.showUsage("Third argument must be the path to an existing file.");
                 } else {
                     if (f.isDirectory()) {
                         AutoIngestor.showUsage("Third argument must be a file path -- not a directory path.");
                     } else {
-                        AutoIngestor a=new AutoIngestor(hostName, portNum);
+                        AutoIngestor a=new AutoIngestor(hostName, portNum, username, password);
                         System.out.println(a.ingestAndCommit(new FileInputStream(f), logMessage));
                     }
                 }

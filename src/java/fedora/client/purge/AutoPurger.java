@@ -11,7 +11,7 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMSkeletonFactory;
+import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.StreamUtility;
 
@@ -19,9 +19,9 @@ public class AutoPurger {
 
     private FedoraAPIM m_apim;    
 
-    public AutoPurger(String host, int port) 
+    public AutoPurger(String host, int port, String user, String pass) 
             throws MalformedURLException, ServiceException {
-        m_apim=APIMSkeletonFactory.getSkeleton(host, port);
+        m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
     public void purge(String pid, String logMessage) throws RemoteException, IOException {
@@ -36,19 +36,19 @@ public class AutoPurger {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoPurger host port pid logMessage");
+        System.out.println("Usage: AutoPurger host port username password pid logMessage");
     }
 
     public static void main(String[] args) {
         try {
             if (args.length!=4) {
-                AutoPurger.showUsage("You must provide four arguments.");
+                AutoPurger.showUsage("You must provide six arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
-                String pid=args[2];
-                String logMessage=args[3];
-                AutoPurger a=new AutoPurger(hostName, portNum);
+                String pid=args[4];
+                String logMessage=args[5];
+                AutoPurger a=new AutoPurger(hostName, portNum, args[2], args[3]);
                 a.purge(pid, logMessage);
             }
         } catch (Exception e) {

@@ -56,8 +56,6 @@ import fedora.server.types.gen.ObjectInfo;
 public class RepositoryBrowser
         extends JInternalFrame {
         
-    private static FedoraAPIMServiceLocator m_locator=new FedoraAPIMServiceLocator();
-
     private JSortTable m_table;
     
     public RepositoryBrowser(String pidPattern, String foType, 
@@ -81,7 +79,7 @@ public class RepositoryBrowser
                                 "Last Modified"};
 
         try {
-        AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort());
+        AutoLister a=new AutoLister(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         Map m=a.list(pidPattern, foType, lockedByPattern, state,
                 labelPattern, contentModelIdPattern, createDateMin,
                 createDateMax, lastModDateMin, lastModDateMax);

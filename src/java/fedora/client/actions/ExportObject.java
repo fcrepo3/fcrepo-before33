@@ -38,7 +38,7 @@ public class ExportObject
     public void actionPerformed(ActionEvent ae) {
         AutoExporter exporter=null;
         try {
-            exporter=new AutoExporter(Administrator.getHost(), Administrator.getPort());
+            exporter=new AutoExporter(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(Administrator.getDesktop(),
                     e.getClass().getName() + ": " + e.getMessage(),

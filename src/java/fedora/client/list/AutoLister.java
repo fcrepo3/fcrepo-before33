@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMSkeletonFactory;
+import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ObjectInfo;
 
@@ -17,9 +17,9 @@ public class AutoLister {
 
     private FedoraAPIM m_apim;    
 
-    public AutoLister(String host, int port) 
+    public AutoLister(String host, int port, String user, String pass) 
             throws MalformedURLException, ServiceException {
-        m_apim=APIMSkeletonFactory.getSkeleton(host, port);
+        m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
 
     public Map list(String pidPattern, String foType, String lockedByPattern, 
@@ -51,18 +51,18 @@ public class AutoLister {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: AutoLister host port D|M|O");
+        System.out.println("Usage: AutoLister host port username password D|M|O");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=3) {
-                AutoLister.showUsage("You must provide three arguments.");
+            if (args.length!=5) {
+                AutoLister.showUsage("You must provide five arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
-                AutoLister a=new AutoLister(hostName, portNum);
-                Map m=a.list(null, args[2], null, null, null, null, null, null,
+                AutoLister a=new AutoLister(hostName, portNum, args[2], args[3]);
+                Map m=a.list(null, args[4], null, null, null, null, null, null,
                         null, null);
                 Iterator pidIter=m.keySet().iterator();
                 while (pidIter.hasNext()) {
