@@ -60,7 +60,7 @@ public class Disseminator
 
   public String dissState;
   
-  public String dissVersionable;
+  public boolean dissVersionable;
 
   public Disseminator()
   {

@@ -485,9 +485,6 @@ public abstract class DOTranslationUtility {
 			&& ds.DSControlGrp.equalsIgnoreCase("X")) {
 				ds.DSMIME="text/xml";
 		}
-		if (ds.DSVersionable==null || ds.DSVersionable.equals("")) {
-			ds.DSVersionable="YES";
-		}
 		// For METS backward compatibility
 		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
 				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
@@ -530,10 +527,8 @@ public abstract class DOTranslationUtility {
 	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException {
 
 		// Until future when we implement selective versioning,
-		// set default to YES.
-		if (diss.dissVersionable==null || diss.dissVersionable.equals("")) {
-			diss.dissVersionable="YES";
-		}
+		// set default to true.
+		diss.dissVersionable=true;
 		return diss;
 	}
 }

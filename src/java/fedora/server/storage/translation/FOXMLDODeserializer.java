@@ -104,7 +104,7 @@ public class FOXMLDODeserializer
 	// temporary variables for datastream processing
     private String m_dsId;
 	private String m_dsURI;
-	private String m_dsVersionable;
+	private boolean m_dsVersionable;
     private String m_dsVersId;
     private Date m_dsCreateDate;
     private String m_dsState;
@@ -135,7 +135,7 @@ public class FOXMLDODeserializer
 	private String m_dissID;
 	private String m_bDefID;
 	private String m_dissState;
-	private String m_dissVersionable;
+	private boolean m_dissVersionable;
 	private DSBindingMap m_dsBindMap;
 	private ArrayList m_dsBindings;
 	
@@ -322,17 +322,19 @@ public class FOXMLDODeserializer
 				m_dsFormatURI=grab(a, F, "FORMAT_URI");
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				m_dsControlGrp=grab(a, F, "CONTROL_GROUP");
-				m_dsVersionable=grab(a, F, "VERSIONABLE");
-				// If dsVersionable is null or missing, default to YES.
-				if (m_dsVersionable==null || m_dsVersionable.equals("")) {
-					m_dsVersionable="YES";
+				String versionable =grab(a, F, "VERSIONABLE");
+				// If dsVersionable is null or missing, default to true.
+				if (versionable==null || versionable.equals("")) {
+					m_dsVersionable=true;
+				} else {
+					m_dsVersionable=new Boolean(versionable).booleanValue();
 				}
 				// Never allow the AUDIT datastream to be versioned
 				// since it naturally represents a system-controlled
 				// view of changes over time.
 				checkMETSFormat(m_dsFormatURI);
 				if (m_dsId.equals("AUDIT")) {
-					m_dsVersionable="NO";
+					m_dsVersionable=false;
 				}
 			} else if (localName.equals("datastreamVersion")) {
 				// get datastream version-level attributes...
@@ -436,16 +438,24 @@ public class FOXMLDODeserializer
 				m_dissID=grab(a, F,"ID");
 				m_bDefID=grab(a, F, "BDEF_CONTRACT_PID");
 				m_dissState=grab(a, F,"STATE");
-				m_dissVersionable=grab(a, F,"VERSIONABLE");
+				String versionable =grab(a, F, "VERSIONABLE");
+				// disseminator versioning is defaulted to true
+				if (versionable==null || versionable.equals("")) {
+					m_dissVersionable=true;
+				} else {
+					m_dissVersionable=new Boolean(versionable).booleanValue();
+				}
             } else if (localName.equals("disseminatorVersion")) {
 				m_diss = new Disseminator();
 				m_diss.dissID=m_dissID;
 				m_diss.bDefID=m_bDefID;
 				m_diss.dissState=m_dissState;
-				m_diss.dissVersionable=m_dissVersionable;
-				// If dissVersionable is null or missing, default to YES.
-				if (m_diss.dissVersionable==null || m_diss.dissVersionable.equals("")) {
-					m_diss.dissVersionable="YES";
+				String versionable =grab(a, F, "VERSIONABLE");
+				// disseminator versioning is defaulted to true
+				if (versionable==null || versionable.equals("")) {
+					m_dissVersionable=true;
+				} else {
+					m_dissVersionable=new Boolean(versionable).booleanValue();
 				}
 				m_diss.dissVersionID=grab(a, F,"ID");
 				m_diss.dissLabel=grab(a, F, "LABEL");
@@ -729,7 +739,7 @@ public class FOXMLDODeserializer
 			// reinitialize datastream attributes ...
 			m_dsId="";
 			m_dsURI="";
-			m_dsVersionable="";
+			m_dsVersionable=true;
 			m_dsState="";
 			m_dsAltIds=new String[0];
 			m_dsFormatURI="";
@@ -746,7 +756,7 @@ public class FOXMLDODeserializer
 			m_dissID="";
 			m_bDefID="";
 			m_dissState="";
-			m_dissVersionable="";
+			m_dissVersionable=true;
         }
 
     }
@@ -930,7 +940,7 @@ public class FOXMLDODeserializer
 		// temporary variables for processing datastreams		
 		m_dsId="";
 		m_dsURI="";
-		m_dsVersionable="";
+		m_dsVersionable=true;
 		m_dsVersId="";
 		m_dsCreateDate=null;
 		m_dsState="";
@@ -956,7 +966,7 @@ public class FOXMLDODeserializer
 		m_dissID="";
 		m_bDefID="";
 		m_dissState="";
-		m_dissVersionable="";
+		m_dissVersionable=true;
 		m_dsBindMap=null;
 		m_dsBindings=null;
 		

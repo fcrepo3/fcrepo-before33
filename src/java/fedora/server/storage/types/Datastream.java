@@ -83,7 +83,7 @@ public class Datastream
 
   public String DSState;
   
-  public String DSVersionable;
+  public boolean DSVersionable;
   
   // Version-level attributes:
   public String DSVersionID;

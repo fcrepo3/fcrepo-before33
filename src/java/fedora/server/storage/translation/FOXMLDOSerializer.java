@@ -291,7 +291,7 @@ public class FOXMLDOSerializer
 				+ " MIMETYPE=\"" + "text/xml" + "\""
 				+ " FORMAT_URI=\"" + "info:fedora/fedora-system:format/xml.fedora.audit" + "\""
 				+ " CONTROL_GROUP=\"" + "X" + "\""
-				+ " VERSIONABLE=\"" + "NO" + "\">\n");
+				+ " VERSIONABLE=\"" + "false" + "\">\n");
 			// insert the ds version-level elements
 			buf.append("        <" + FOXML_PREFIX 
 				+ ":datastreamVersion ID=\"" + "AUDIT.0" + "\"" 

@@ -381,11 +381,7 @@ public class DefaultManagement
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
             ds.DSFormatURI=formatURI;
-            if (versionable) {
-                ds.DSVersionable = "YES";
-            } else {
-                ds.DSVersionable = "NO";
-            }
+            ds.DSVersionable=versionable;
             ds.DSMIME=MIMEType;
             if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
                 throw new InvalidStateException("The datastream state of \"" + dsState
@@ -545,11 +541,7 @@ public class DefaultManagement
                     if (altIDs == null) altIDs = orig.DatastreamAltIDs;
                     newds.DatastreamAltIDs = altIDs;
                     newds.DSLabel=dsLabel;
-                    if (versionable) {
-                        newds.DSVersionable = "YES";
-                    } else {
-                        newds.DSVersionable = "NO";
-                    }
+                    newds.DSVersionable=versionable;
                     newds.DSMIME = mimeType;
                     if (formatURI == null) formatURI = orig.DSFormatURI;
                     newds.DSFormatURI=formatURI;
@@ -611,11 +603,7 @@ public class DefaultManagement
                 newds.DSLabel=dsLabel;
                 if (altIDs == null) altIDs = orig.DatastreamAltIDs;
                 newds.DatastreamAltIDs = altIDs;
-                if (versionable) {
-                    newds.DSVersionable = "YES";
-                } else {
-                    newds.DSVersionable = "NO";
-                }
+                newds.DSVersionable=versionable;
                 newds.DSMIME = mimeType;
                 if (formatURI == null) formatURI = orig.DSFormatURI;
                 newds.DSFormatURI=formatURI;
@@ -753,11 +741,7 @@ public class DefaultManagement
             newds.DSLabel=dsLabel;
             if (altIDs == null) altIDs = orig.DatastreamAltIDs;
             newds.DatastreamAltIDs = altIDs;
-            if (versionable) {
-                newds.DSVersionable = "YES";
-            } else {
-                newds.DSVersionable = "NO";
-            }
+            newds.DSVersionable=versionable;
             newds.DSMIME = mimeType;
             if (formatURI == null) formatURI = orig.DSFormatURI;
             newds.DSFormatURI = formatURI;

@@ -829,7 +829,7 @@ public class METSLikeDODeserializer
 		// set datastream variables with values grabbed from the SAX parse     	  	
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=""; // FOXML only. In METS it's null;
-		ds.DSVersionable=""; // FOXML only. In METS it's null;
+		ds.DSVersionable=true; // FOXML only. In METS it's null;
 		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
@@ -874,7 +874,7 @@ public class METSLikeDODeserializer
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
 		ds.DatastreamURI=""; // FOXML only. In METS it's null;
-		ds.DSVersionable=""; // FOXML only. In METS it's null;
+		ds.DSVersionable=true; // FOXML only. In METS it's null;
 		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
@@ -1066,7 +1066,7 @@ public class METSLikeDODeserializer
 		// set the attrs common to all datastream versions
 		ds.DatastreamID="RELS-INT";
 		ds.DatastreamURI=""; // FOXML only. In METS it's null;
-		ds.DSVersionable="NO";
+		ds.DSVersionable=false;
 		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID="RELS-INT.0";
 		ds.DSLabel="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.";

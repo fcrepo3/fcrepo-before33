@@ -51,7 +51,7 @@ public abstract class TypeUtility
         out.setID(in.DatastreamID);
         out.setAltIDs(in.DatastreamAltIDs);
         out.setLabel(in.DSLabel);
-        out.setVersionable(in.DSVersionable == null || in.DSVersionable.equalsIgnoreCase("NO"));
+        out.setVersionable(in.DSVersionable);
         out.setMIMEType(in.DSMIME);
         out.setFormatURI(in.DSFormatURI);
         out.setSize(in.DSSize);
