@@ -2,7 +2,32 @@ package fedora.server.validation;
 
 /**
  * <p>Title: DOValidatorImpl.java </p>
- * <p>Description: . </p>
+ * <p>Description: The implementation of the digital object validation
+ * module (see DOValidator.class and DOValidatorModule.class).  Digital
+ * object validation is implemented as three levels:
+ *   - Level 1:  XML Schema Validation - the digital object will be
+ *   validated against the METS XML Schema.  An ObjectValidityException
+ *   will be thrown if the object fails the schema test.
+ *   - Level 2: Schematron Rules Validation - the digital object
+ *   will be validated against a set of rules express by a Schematron
+ *   schema.  These rules are Fedora-specific and are beyond what
+ *   is expressed in the METS XML Schema.  The Schematron schema expressed
+ *   rules for different phases of the object lifecycle.  There are rules
+ *   appropriate to a digital object when it is first ingested into the
+ *   repository (essentially rules for a valid "ingest package."  There are
+ *   additional rules that must be met before a digital object is considered
+ *   valid to be stored in the repository.  These rules pertain to aspects
+ *   of the object that are system assigned, such as created dates and
+ *   state codes. An ObjectValidityException will be thrown if the object
+ *   fails the Fedora rules test.
+ *   - Level 3:  Referential Integrity Checking - the digital object
+ *   will be validated programmatically to check that certain relationships
+ *   expressed in the object are valid.  Disseminators will be checked to
+ *   make sure that Behavior Defintion and Behavior Mechanism objects that
+ *   are referred to actually exist in the local repository.  (In the future
+ *   some degree of link checking may be performed on datastreasm, plus
+ *   other TBD checks.) An ObjectValidityException will be thrown if the
+ *   object fails the integrity checks.</p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
  * @author Sandy Payette, payette@cs.cornell.edu
@@ -13,6 +38,8 @@ package fedora.server.validation;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
+import fedora.server.storage.ConnectionPool;
+import java.sql.Connection;
 
 // Java imports
 import java.io.File;
@@ -36,61 +63,122 @@ import javax.xml.transform.TransformerException;
 
 public class DOValidatorImpl implements DOValidator
 {
-  /**
-   * Configuration variables for the Digital Object Validator.
-   * (These will ultimately be set via Module initialization, but this
-   * class can be tested stand-alone via main(), in which cas the pre-set
-   * values for the configuration variables will be used as defaults.)
-   *
-   */
+   // FOR TESTING: The configuration variables are normally set via
+   // DOValidatorModule initialization, but they are set with some default
+   // values so that this class can be tested stand-alone via main().
+
+   /** Configuration variable: tempdir is a working area for validation */
     protected static String tempDir = "temp/";
+
+    /**
+     * Configuration variable: xmlSchemaURL is the URL of the METS XML Schema
+     */
     protected static String xmlSchemaURL = "http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd";
+
+    /**
+     *  Configuration variable: xmlSchemaLocalPath is the location of the
+     *  repository's local copy of the METS XML Schema
+     */
     protected static String xmlSchemaLocalPath = "c:/mellon-test/work/xsd/mets-fedora.xsd";
+
+    /**
+     *  Configuration variable: schematronPreprocessorID is the Schematron
+     *  stylesheet that is used to transform a Schematron schema into a
+     *  validating stylesheet based on the rules in the schema.
+     */
     protected static String schematronPreprocessorID = "schematron/preprocessor.xslt";
+
+    /**
+     *  Configuration variable: schematronSchemaID is the Schematron
+     *  schema that expressed Fedora-specific validation rules.
+     *  It is transformed into a validating stylesheet by the Schematron
+     *  preprocessing stylesheet.
+     */
     protected static String schematronSchemaID = "schematron/fedoraRules.xml";
+
+    /**
+     *  Configuration variable: schematronValidatingXslID is path identifier
+     *  for the Schematron validating stylesheet that is created dynamically
+     *  by the preprocessing stylesheet's transformation of the Fedora-specific
+     *  Schematron schema.  This is basically a temporary file location since
+     *  a validating stylesheet is created for each validation run.
+     */
     protected static String schematronValidatingXslID = "schematron/fedoraValidator.xslt";
 
-    // TEMPORARY: static variables to support testing via main()
+    /**
+     * Configuration variable: connectionPool is a database connection
+     *  pool to be used by the validation module for miscellaneous lookups.
+     */
+    protected static ConnectionPool connectionPool = null;
+
+    // FOR TESTING: Class variables to get a database ConnectionPool
+    // during unit testing when Server is not instantiated.
+    private static int minConnections = 10;
+    private static int maxConnections = 100;
+    private static String jdbcDriverClass = "org.gjt.mm.mysql.Driver";
+    private static String dbUsername = null;
+    private static String dbPassword = null;
+    private static String jdbcURL = "jdbc:mysql://localhost/FedoraObjects";
+
+    // FOR TESTING: static variables to support testing via main()
     protected static boolean debug = true;
+
+    /**
+     *  Digital object variables that are required to support
+     *  Level 3 validation (Integrity).  These are picked up
+     *  by a content handler during XML Schema validation so the
+     *  digital object does not have to be re-parsed when these
+     *  variables are needed.
+     */
+    private DOIntegrityVariables iVars = null;
 
     public static void main(String[] args)
     {
       if (args.length < 2)
       {
-        System.err.println("usage: java DOValidatorImpl objectLocation validationLevel workFlowPhase" + "\n" +
+        System.err.println("usage: java DOValidatorImpl objectLocation validationLevel " +
+          "workFlowPhase dbUsername dbPassword" + "\n" +
           "  objectLocation: the file path of the object to be validated" + "\n" +
           "  validationLevel: {0|1|2|3} where" + "\n" +
           "      0=all validation, 1=xmlSchema only, 2=schematron only, 3=referential integrity only" + "\n" +
-          "  workFlowPhase: {ingest|store} the phase of the object lifecycle to which validation pertains");
+          "  workFlowPhase: {ingest|store} the phase of the object lifecycle to which validation pertains" + "\n" +
+          "  dbUsername: userName for the FedoraObjects database" + "\n" +
+          "  dbPassword: password for the FedoraObjects database");
         System.exit(1);
       }
 
       try
       {
+        // Get a database connection in the absence of a Server instance
+        // which would be available in DOValidatorModule.
+        dbUsername = args[3];
+        dbPassword = args[4];
+        connectionPool = new ConnectionPool(
+                          jdbcDriverClass, jdbcURL, dbUsername,
+                          dbPassword, minConnections, maxConnections, true);
+
         File objectAsFile = new File((String)args[0]);
         DOValidatorImpl dov = new DOValidatorImpl();
         dov.validate(new FileInputStream(objectAsFile), new Integer(args[1]).intValue(), args[2]);
       }
-      catch (GeneralException e)
-      {
-        System.out.println("DOValidatorImpl caught GeneralException in Constructor.");
-        System.out.println("Suppressing message since not attached to Server.");
-      }
       catch (ObjectValidityException e)
       {
-        System.out.println("DOValidatorImpl caught ObjectValidityException in Constructor.");
+        System.out.println("DOValidatorImpl caught ObjectValidityException.");
         System.out.println("Suppressing message since not attached to Server.");
       }
       catch (ServerException e)
       {
-        System.out.println("DOValidatorImpl caught ServerException in Constructor.");
+        System.out.println("DOValidatorImpl caught ServerException.");
         System.out.println("Suppressing message since not attached to Server.");
       }
-      catch (Exception e)
+      catch (Throwable th)
       {
-        System.out.println("ERROR in DOValidatorImpl: " + e.getMessage());
+        System.out.println("DOValidatorImpl returned error in main(). "
+                  + "The underlying error was a " + th.getClass().getName() + ".  "
+                  + "The message was "  + "\"" + th.getMessage() + "\"");
       }
       System.exit(1);
+
     }
 
   /**
@@ -113,14 +201,16 @@ public class DOValidatorImpl implements DOValidator
    *        1 = perform only XML Schema validation
    *        2 = perform only Schematron Rules validation
    *        3 = perform only referential integrity checks for the object
+   *
    * @param workFlowPhase The stage in the work flow for which the validation should be contextualized.
    *        "ingest" = the object is in the submission format for the ingest stage phase
    *        "store" = the object is in the authoritative format for the final storage phase
+   *
    * @throws ServerException If validation fails for any reason.
    */
     public void validate(InputStream objectAsStream, int validationLevel, String workFlowPhase)
-      //throws ObjectValidityException, GeneralException
-      throws ServerException
+      throws ObjectValidityException, GeneralException
+      //throws ServerException
     {
       // ISSUE!!!: We need to use the object Inputstream twice, once for XML Schema validation
       // and once for Schematron validation.  We may want to consider implementing some form
@@ -133,19 +223,22 @@ public class DOValidatorImpl implements DOValidator
         //validate(objectAsFile, "2", workFlowPhase);
         validate(objectAsFile, validationLevel, workFlowPhase);
       }
-      catch (ServerException e)
+      catch (ObjectValidityException e)
       {
-        System.out.println("DOValidatorImpl says caught ServerException. Re-throwing as ServerException: ");
+        throw e;
+      }
+      catch (GeneralException e)
+      {
         throw e;
       }
       catch (Exception e)
       {
-        System.out.println("DOValidatorImpl says caught Exception. Re-throwing as GeneralException: " + e.getMessage());
+        System.out.println("DOValidatorImpl caught Exception. Re-throwing as GeneralException: " + e.getMessage());
         throw new GeneralException(e.getMessage());
       }
     }
 
-      /**
+  /**
    * <p>Validates a digital object.</p>
    *
    * @param in The digital object provided as a file.
@@ -161,38 +254,145 @@ public class DOValidatorImpl implements DOValidator
    * @throws ServerException If validation fails for any reason.
    */
     public void validate(File objectAsFile, int validationLevel, String workFlowPhase)
-      //throws ObjectValidityException, GeneralException
-      throws ServerException
+      throws ObjectValidityException, GeneralException
+      //throws ServerException
     {
       switch ( validationLevel )
       {
-      // Default: ALL forms of validation
+      // ALL forms of validation
       case 0:
-        validateL1(objectAsFile, xmlSchemaLocalPath);
-        validateL2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
+        validate_L1(objectAsFile, xmlSchemaLocalPath);
+        validate_L2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
                    schematronValidatingXslID, workFlowPhase);
-        validateL3(objectAsFile);
+        validate_L3(objectAsFile);
         break;
+
       // XML Schema Validation only
       case 1:
-        validateL1(objectAsFile, xmlSchemaLocalPath);
+        validate_L1(objectAsFile, xmlSchemaLocalPath);
         break;
+
       // Schematron Rules Validation only
       case 2:
-        validateL2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
+        validate_L2(objectAsFile, schematronSchemaID, schematronPreprocessorID,
                    schematronValidatingXslID, workFlowPhase);
         break;
+
       // Referential Integrity Checks only
       case 3:
-        validateL3(objectAsFile);
+        validate_L3(objectAsFile);
         break;
-      // Default: ALL forms of validation
+
+      // Default: if no validation level specified, throw exception
       default:
         System.out.println("DOValidatorImpl says invalid validationLevel specified.");
         cleanUp(objectAsFile);
         throw new GeneralException("DOValidatorImpl.validate has invalid validationLevel: " + validationLevel);
       }
       cleanUp(objectAsFile);
+    }
+
+    private void validate_L1(File objectAsFile, String xmlSchemaLocalPath)
+      //throws ServerException
+      throws ObjectValidityException, GeneralException
+    {
+      // Level 1: METS rules validation using XML Schema
+      System.out.println("Validating object to Level 1 (METS/XML SCHEMA) ...");
+      try
+      {
+        //DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaLocalPath);
+        DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaURL);
+        xsv.validate(objectAsFile);
+        iVars = xsv.getDOIntegrityVariables();
+      }
+      catch (ObjectValidityException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (GeneralException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (Exception e)
+      {
+        System.out.println("DOValidatorImpl caught Exception. Re-throwing as GeneralException: " + e.getMessage());
+        cleanUp(objectAsFile);
+        throw new GeneralException(e.getMessage());
+      }
+      System.out.println("Level 1 Validation OK (METS/XMLSchema).");
+    }
+
+    private void validate_L2(File objectAsFile, String schemaID, String preprocessorID, String validatingXslID, String phase)
+      //throws ServerException
+      throws ObjectValidityException, GeneralException
+    {
+      // Level 2: Fedora rules validation using Schematron
+      System.out.println("Validating object to Level 2 (FEDORA/SCHEMATRON) ...");
+      try
+      {
+        DOValidatorSchematron validator =
+          new DOValidatorSchematron(schemaID, preprocessorID, validatingXslID, phase);
+        validator.validate(objectAsFile);
+      }
+      catch (ObjectValidityException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (GeneralException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (Exception e)
+      {
+        System.out.println("DOValidatorImpl says caught Exception. Re-throwing as GeneralException: " + e.getMessage());
+        cleanUp(objectAsFile);
+        throw new GeneralException(e.getMessage());
+      }
+      System.out.println("Level 2 Validation OK (FEDORA/SCHEMATRON).");
+    }
+
+    private void validate_L3(File objectAsFile)
+      //throws ServerException
+      throws ObjectValidityException, GeneralException
+    {
+      System.out.println("Validating object to Level 3 (INTEGRITY) ...");
+      DOValidatorIntegrityCheck iChecker = null;
+      Connection dbConnection = dbConnect(connectionPool);
+      try
+      {
+        if (iVars == null)
+        {
+          iChecker = new DOValidatorIntegrityCheck(objectAsFile, xmlSchemaURL, dbConnection);
+        }
+        else
+        {
+          iChecker = new DOValidatorIntegrityCheck(iVars, dbConnection);
+        }
+        iChecker.validate();
+        dbDisconnect(connectionPool, dbConnection);
+      }
+      catch (ObjectValidityException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (GeneralException e)
+      {
+        cleanUp(objectAsFile);
+        throw e;
+      }
+      catch (Exception e)
+      {
+        System.out.println("DOValidatorImpl says caught Exception. Re-throwing as GeneralException: " + e.getMessage());
+        cleanUp(objectAsFile);
+        throw new GeneralException(e.getMessage());
+      }
+      System.out.println("Level 3 Validation OK (INTEGRITY).");
+      return;
     }
 
     private void streamCopy(InputStream in, OutputStream out)
@@ -237,64 +437,32 @@ public class DOValidatorImpl implements DOValidator
         return(objectAsFile);
     }
 
-    private void validateL1(File objectAsFile, String xmlSchemaLocalPath)
-      throws ServerException
+    private Connection dbConnect(ConnectionPool pool) throws GeneralException
     {
-      // Level 1: METS rules validation using XML Schema
-      System.out.println("Validating object to Level 1 (METS/XML SCHEMA) ...");
       try
       {
-        //DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaLocalPath);
-        DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaURL);
-        xsv.validate(objectAsFile);
+        // Get a database connection so we can query the FedoraObjects database
+        return pool.getConnection();
       }
-      catch (SAXException e)
+      catch (Throwable th)
       {
-        System.out.println("DOValidatorImpl says caught SAXException. Re-throwing as ObjectValidityException: " + e.getMessage());
-        cleanUp(objectAsFile);
-        throw new ObjectValidityException(e.getMessage());
+        throw new GeneralException("Digital Object Validator returned error: ("
+            + th.getClass().getName() + ") - "  + th.getMessage());
       }
-      catch (Exception e)
-      {
-        System.out.println("DOValidatorImpl says caught Exception. Re-throwing as GeneralException: " + e.getMessage());
-        cleanUp(objectAsFile);
-        throw new GeneralException(e.getMessage());
-      }
-      System.out.println("Finished Level 1 Validation (METS/XMLSchema).");
     }
 
-    private void validateL2(File objectAsFile, String schemaID, String preprocessorID, String validatingXslID, String phase)
-      throws ServerException
+    private void dbDisconnect(ConnectionPool pool, Connection connection) throws ServerException
     {
-      // Level 2: Fedora rules validation using Schematron
-      System.out.println("Validating object to Level 2 (FEDORA/SCHEMATRON) ...");
       try
       {
-        DOValidatorSchematron validator =
-          new DOValidatorSchematron(schemaID, preprocessorID, validatingXslID, phase);
-        validator.validate(objectAsFile);
+        pool.free(connection);
+        connection.close();
       }
-      catch (ServerException e)
+      catch (Throwable th)
       {
-        System.out.println("DOValidatorImpl says caught ServerException. Re-throwing as ServerException: ");
-        cleanUp(objectAsFile);
-        throw e;
+        throw new GeneralException("Digital Object Validator returned error: ("
+            + th.getClass().getName() + ") - " + th.getMessage());
       }
-      catch (Exception e)
-      {
-        System.out.println("DOValidatorImpl says caught Exception. Re-throwing as GeneralException: " + e.getMessage());
-        cleanUp(objectAsFile);
-        throw new GeneralException(e.getMessage());
-      }
-      System.out.println("Finished Level 2 Validation (FEDORA/SCHEMATRON).");
-    }
-
-    private void validateL3(File objectAsFile)
-      throws ServerException
-    {
-      // Placeholder for future integrity checks.  Still working on
-      // requirements here.
-      return;
     }
 
     // FIXIT!!  This is a hack for now.  I want to distinguish temporary object files
