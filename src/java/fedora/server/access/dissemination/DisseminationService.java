@@ -3,31 +3,26 @@ package fedora.server.access.dissemination;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.Timestamp;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fedora.server.Server;
+import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
-import fedora.server.storage.types.DisseminationBindingInfo;
-import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
-import fedora.server.storage.types.MIMETypedStream;
+import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.DatastreamMediation;
+import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.types.MIMETypedStream;
 
 /**
  * <p>Title: DisseminationService.java</p>
@@ -52,14 +47,13 @@ public class DisseminationService
    */
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
 
-  /** Port number on which the Fedora server is running. */
+  /** Port number on which the Fedora server is running; determined from
+   * fedora.fcfg config file.
+   */
   private static String fedoraServerPort = null;
 
-  /** IP address of the Fedora server; determined dynamically from this class.*/
-  private static String fedoraServerAddress = null;
-
-  /** The database ConnectionPool */
-  private static ConnectionPool connectionPool = null;
+  /** URL of the DatastreamResolverServlet; built dynamically.*/
+  private static String datastreamResolverServletURL = null;
 
   /** The expiration limit in minutes for removing entries from the database. */
   private static int datastreamExpirationLimit = 0;
@@ -68,6 +62,9 @@ public class DisseminationService
    * datastream mediation.
    */
   private static int counter = 0;
+
+  /** The IP address of the local host; determined dynamically. */
+  private static InetAddress hostIP = null;
 
   /** Make sure we have a server instance for error logging purposes. */
   static
@@ -82,16 +79,44 @@ public class DisseminationService
               + "system property was not set.");
       } else
       {
-          s_server = Server.getInstance(new File(fedoraHome));
+        s_server = Server.getInstance(new File(fedoraHome));
+        hostIP = null;
+        fedoraServerPort = s_server.getParameter("fedoraServerPort");
+        s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
+        hostIP = InetAddress.getLocalHost();
+        datastreamResolverServletURL = "http://" + hostIP.getHostAddress()
+                            + ":" + fedoraServerPort
+                            + "/fedora/getDS?id=";
+        s_server.logFinest("datastreamResolverServletURL: "
+                           + datastreamResolverServletURL);
+        String expireLimit = s_server.getParameter("datastreamExpirationLimit");
+        if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
+        {
+          expireLimit = "300";
+        }
+        Integer I1 =
+            new Integer(expireLimit);
+        datastreamExpirationLimit = I1.intValue();
+        s_server.logFinest("datastreamExpirationLimit: "
+                           + datastreamExpirationLimit);
       }
     } catch (InitializationException ie)
     {
         System.err.println(ie.getMessage());
+
+    } catch (UnknownHostException uhe)
+    {
+      System.err.println("DisseminationService was unable to "
+          + "resolve the IP address of the Fedora Server: "
+          + datastreamResolverServletURL + "."
+          + " The underlying error was a "
+          + uhe.getClass().getName() + "The message "
+          + "was \"" + uhe.getMessage() + "\"");
     }
   }
 
-  /** The hashtable containing information required for datastream mediation */
-  protected static Hashtable dsRegistry = new Hashtable(100);
+  /** The hashtable containing information required for datastream mediation. */
+  protected static Hashtable dsRegistry = new Hashtable(1000);
 
   /**
    * <p>Constructs an instance of DisseminationService. Initializes two class
@@ -105,50 +130,20 @@ public class DisseminationService
    */
   public DisseminationService() throws ServerException
   {
-    InetAddress host = null;
-    try
+
+    if (this.fedoraServerPort == null || fedoraServerPort.equalsIgnoreCase(""))
     {
-      this.fedoraServerPort = s_server.getParameter("fedoraServerPort");
-      s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
-      if (fedoraServerPort == null || fedoraServerPort.equalsIgnoreCase(""))
-      {
-        throw new DisseminationException("DisseminationService was unable to "
-            + "resolve the port number of the Fedora Server: "
-            + fedoraServerAddress + "from the configuration file. This "
-            + "information is required by the Dissemination Service.");
-      }
-      host = InetAddress.getLocalHost();
-      this.fedoraServerAddress = "http://" + host.getHostAddress()
-                                  + ":" + fedoraServerPort
-                                  + "/fedora/getDS?id=";
-      s_server.logFinest("fedoraServerAddress: " + fedoraServerAddress);
-      ConnectionPoolManager poolManager = (ConnectionPoolManager)
-          s_server.getModule("fedora.server.storage.ConnectionPoolManager");
-      this.connectionPool = poolManager.getPool();
-      String expireLimit = s_server.getParameter("datastreamExpirationLimit");
-      if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
-      {
-        s_server.logWarning("DisseminationService was unable to "
-            + "resolve the datastream expiration limit from the configuration "
-            + "file. The expiration limit has been set to 5 minutes.");
-        datastreamExpirationLimit = 5;
-      } else
-      {
-        Integer I1 =
-            new Integer(expireLimit);
-        datastreamExpirationLimit = I1.intValue();
-        s_server.logFinest("datastreamExpirationLimit: "
-                           + datastreamExpirationLimit);
-      }
-    } catch (UnknownHostException uhe)
-    {
-      throw new DisseminationException("DisseminationService was unable to "
-          + "resolve the IP address of the Fedora Server: "
-          + fedoraServerAddress + "."
-          + " The underlying error was a "
-          + uhe.getClass().getName() + "The message "
-          + "was \"" + uhe.getMessage() + "\"");
+      throw new DisseminationException("[DisseminationService] was unable to "
+          + "resolve the port number of the Fedora Server: "
+          + datastreamResolverServletURL + "from the configuration file. This "
+          + "information is required by the Dissemination Service.");
     }
+    if (this.hostIP == null)
+    {
+      throw new DisseminationException("[DisseminationService] was unable to "
+          + "resolve the IP address of the Fedora Server: "
+          + datastreamResolverServletURL + " .");
+      }
   }
 
   /**
@@ -222,12 +217,10 @@ public class DisseminationService
         {
           // Except for last row, get the value of the next binding key
           // to compare with the value of the current binding key.
-          s_server.logFinest("currentKey: '" + currentKey + "'");
           nextKey = dissBindInfoArray[i+1].DSBindKey;
-          s_server.logFinest("nextKey: '" + nextKey + "'");
         }
-s_server.logFinest("currentKey: '" + currentKey + "'");
-s_server.logFinest("nextKey: '" + nextKey + "'");
+        s_server.logFinest("currentKey: '" + currentKey + "'");
+        s_server.logFinest("nextKey: '" + nextKey + "'");
         // In most cases, there is only a single datastream that matches a
         // given DSBindingKey so the substitution process is to just replace
         // the occurence of (BINDING_KEY) with the value of the datastream
@@ -263,14 +256,14 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
         {
           // Case where binding keys are equal which means that multiple
           // datastreams matched the same binding key.
-          replaceString = fedoraServerAddress
+          replaceString = datastreamResolverServletURL
               + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType)
               + "+(" + dissBindInfo.DSBindKey + ")";
         } else
         {
           // Case where there are multiple binding keys.
-          replaceString = fedoraServerAddress
+          replaceString = datastreamResolverServletURL
               + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType);
         }
@@ -342,9 +335,9 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
    * with an arbitrary counter appended to the end to insure uniqueness. The
    * syntax is of the form:
    * <ul>
-   * <p>YYYY-MM-DDThh:mm:ss.mmm:dddddd where</p>
+   * <p>YYYY-MM-DD hh:mm:ss.mmm:dddddd where</p>
    * <ul>
-   * <li>YYYY - year (1970-2037)</li>
+   * <li>YYYY - year (1900-8099)</li>
    * <li>MM - month (01-12)</li>
    * <li>DD - day (01-31)</li>
    * <li>hh - hours (0-23)</li>
@@ -354,15 +347,13 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
    * <li>dddddd - incremental counter (0-999999)</li>
    * </ul>
    * </ul>
-   * <p>The "T" character between the date and time is added to avoid having a
-   * blank in the URL
    *
    * @param dsLocation The physical location of the datastream.
    * @param dsControlGroupType The type of the datastream.
    * @return A temporary ID used to reference the physical location of the
    *         specified datastream
-   * @throws ServerException If an error occurs in connecting or updating the
-   *         database or an illegal Control Group Type is encountered.
+   * @throws ServerException If an error occurs in registering a datastream
+   *         location.
    */
   public String registerDatastreamLocation(String dsLocation,
       String dsControlGroupType) throws ServerException
@@ -374,7 +365,6 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
     long currentTime = new Timestamp(new Date().getTime()).getTime();
     long expireLimit = currentTime -
                        (long)datastreamExpirationLimit*1000;
-
     try
     {
 
@@ -415,7 +405,7 @@ s_server.logFinest("nextKey: '" + nextKey + "'");
     }
 
     // Since the tempID will eventually appear in a URL, escape any blanks with
-    // a plus sign.
+    // the character "T".
     return tempID.replaceAll(" ","T");
   }
 
