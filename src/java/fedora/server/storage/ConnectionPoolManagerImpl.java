@@ -71,10 +71,10 @@ public class ConnectionPoolManagerImpl extends Module
       defaultPoolName = this.getParameter("defaultPoolName");
       if (defaultPoolName == null || defaultPoolName.equalsIgnoreCase(""))
       {
-        throw new ModuleInitializationException("Default Connection Pool " +
-            "Name Not Specified", getRole());
+        throw new ModuleInitializationException("Default Connection Pool "
+            + "Name Not Specified", getRole());
       }
-      System.out.println("DefaultPoolName: "+defaultPoolName);
+      s_server.logInfo("DefaultPoolName: "+defaultPoolName);
       String poolList = this.getParameter("poolNames");
 
       // Pool names should be comma delimited
@@ -83,27 +83,27 @@ public class ConnectionPoolManagerImpl extends Module
       // Initialize each connection pool
       for (int i=0; i<poolNames.length; i++)
       {
-        System.out.println("poolName["+i+"] = "+poolNames[i]);
+        s_server.logInfo("poolName["+i+"] = "+poolNames[i]);
         jdbcDriverClass = s_server.getDatastoreConfig(poolNames[i]).
                  getParameter("jdbcDriverClass");
-        System.out.println("driver: "+jdbcDriverClass);
+        s_server.logInfo("JDBC driver: "+jdbcDriverClass);
         dbUsername = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbUsername");
-        System.out.println("user: "+dbUsername);
+        s_server.logInfo("Database username: "+dbUsername);
         dbPassword = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbPassword");
-        System.out.println("pass: "+dbPassword);
+        s_server.logInfo("Database password: "+dbPassword);
         jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("jdbcURL");
-        System.out.println("URL: "+jdbcURL);
+        s_server.logInfo("JDBC connection URL: "+jdbcURL);
         Integer i1 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("minPoolSize"));
         int minConnections = i1.intValue();
-        System.out.println("min: "+minConnections);
+        s_server.logInfo("Minimum connections: "+minConnections);
         Integer i2 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("maxPoolSize"));
         int maxConnections = i2.intValue();
-        System.out.println("max: "+maxConnections);
+        s_server.logInfo("Maximum connections: "+maxConnections);
 
         // If a ddlConverter has been specified for the pool,
         // try to instantiate it so the ConnectionPool can use
@@ -115,17 +115,18 @@ public class ConnectionPoolManagerImpl extends Module
         String ddlConverterClassName=getServer().
                   getDatastoreConfig(poolNames[i]).
                   getParameter("ddlConverter");
-        if (ddlConverterClassName!=null) {
-          try 
+        if (ddlConverterClassName!=null)
+        {
+          try
           {
-            ddlConverter=(DDLConverter) 
+            ddlConverter=(DDLConverter)
                     Class.forName(ddlConverterClassName).newInstance();
           } catch (Throwable th) {
             throw new ModuleInitializationException("A DDLConverter was "
                     + "specified for the pool \"" + poolNames[i]
                     + "\", but it couldn't be instantiated.  The underlying "
-                    + "error was a " + th.getClass().getName() 
-                    + "The message was \"" + th.getMessage() + "\".", 
+                    + "error was a " + th.getClass().getName()
+                    + "The message was \"" + th.getMessage() + "\".",
                     getRole());
           }
         }
@@ -136,26 +137,22 @@ public class ConnectionPoolManagerImpl extends Module
           ConnectionPool connectionPool = new ConnectionPool(jdbcDriverClass,
               jdbcURL, dbUsername, dbPassword, minConnections,
               maxConnections, true, ddlConverter);
-          System.out.println("Initialized Pool: "+connectionPool);
+          s_server.logInfo("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
-          System.out.println("putPoolInHash: "+h_ConnectionPools.size());
+          s_server.logInfo("putPoolInHash: "+h_ConnectionPools.size());
         } catch (SQLException sqle)
         {
-          System.out.println("Unable to initialize connection pool: " +
-                             poolNames[i] + ": " + sqle.getMessage());
-          s_server.logWarning("Unable to initialize connection pool: " +
-                              poolNames[i] + ": " + sqle.getMessage());
+          s_server.logWarning("Unable to initialize connection pool: "
+                              + poolNames[i] + ": " + sqle.getMessage());
         }
       }
 
-    } catch (PatternSyntaxException pse)
+    } catch (Throwable th)
     {
-      throw new ModuleInitializationException(
-          pse.getMessage(),"fedora.server.storage.ConnectionPoolManager");
-    } catch (NullPointerException npe)
-    {
-      throw new ModuleInitializationException(
-          npe.getMessage(),"fedora.server.storage.ConnectionPoolManager");
+      throw new ModuleInitializationException("A connection pool could "
+          + "not be instantiated. The underlying error was a "
+          + th.getClass().getName() + "The message was \""
+          + th.getMessage() + "\".", getRole());
     }
   }
 
@@ -177,17 +174,18 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(poolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(poolName);
-        System.out.println("PoolFound: "+connectionPool);
+        this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: pool was never initialized or name could not be found
-        throw new ConnectionPoolNotFoundException("Connection pool " +
-            "not found: " + poolName);
+        throw new ConnectionPoolNotFoundException("Connection pool "
+            + "not found: " + poolName);
       }
-    } catch (Exception e)
-    {
-      throw new ConnectionPoolNotFoundException("Connection pool " +
-          "not found: " + poolName + "\n" + e.getMessage());
+    } catch (Throwable th) {
+      throw new ConnectionPoolNotFoundException("The specified connection "
+          + "pool \"" + poolName + "\" could not be found. The underlying "
+          + "error was a " + th.getClass().getName()
+          + "The message was \"" + th.getMessage() + "\".");
     }
 
     return connectionPool;
@@ -211,7 +209,7 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(defaultPoolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(defaultPoolName);
-        System.out.println("PoolFound: "+connectionPool);
+        this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: default pool was never initialized or could not be found
@@ -219,10 +217,11 @@ public class ConnectionPoolManagerImpl extends Module
             "not found: " + defaultPoolName);
       }
 
-    } catch (Exception e)
-    {
-      throw new ConnectionPoolNotFoundException("Default connection pool " +
-          "not found: "+defaultPoolName + "\n" + e.getMessage());
+    } catch (Throwable th) {
+      throw new ConnectionPoolNotFoundException("The default connection "
+          + "pool \"" + defaultPoolName + "\" could not be found. The "
+          + "underlying error was a " + th.getClass().getName()
+          + "The message was \"" + th.getMessage() + "\".");
     }
 
     return connectionPool;
