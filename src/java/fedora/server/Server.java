@@ -507,6 +507,11 @@ public abstract class Server
     private boolean m_initialized;
 
     /**
+     * What server profile should be used?
+     */
+    private static String s_serverProfile=System.getProperty("fedora.serverProfile"); 
+
+    /**
      * Initializes the Server based on configuration.
      * <p></p>
      *
@@ -538,6 +543,17 @@ public abstract class Server
             }
             File configFile=new File(homeDir + File.separator + CONFIG_DIR 
                     + File.separator + CONFIG_FILE);
+            logConfig("Server home is " + homeDir.toString());
+            if (s_serverProfile==null) {
+                logConfig("fedora.serverProfile property not set... will always "
+                        + "use param 'value' attributes from configuration for param values.");
+            } else {
+                logConfig("fedora.serverProfile property was '" 
+                        + s_serverProfile + "'... will use param '" 
+                        + s_serverProfile + "value' attributes from "
+                        + "configuration for param values, falling back to "
+                        + "'value' attributes where unspecified.");
+            }
             logConfig("Loading and validating configuration file \"" 
                     + configFile + "\"");
 
@@ -759,14 +775,24 @@ public abstract class Server
                     if (nameNode==null) {
                         nameNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_NAME);
                     }
-                    Node valueNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
-                            CONFIG_ATTRIBUTE_VALUE);
-                    if (valueNode==null) {
-                        valueNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_VALUE);
+                    Node valueNode=null;
+                    if (s_serverProfile!=null) {
+                        valueNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                            s_serverProfile + "value");
+                        if (valueNode==null) {
+                            valueNode=attrs.getNamedItem(s_serverProfile + "value");
+                        }
                     }
-                    if (nameNode==null || valueNode==null) {
-                        throw new ServerInitializationException(
-                                INIT_CONFIG_SEVERE_INCOMPLETEPARAM);
+                    if (valueNode==null) {
+                        valueNode=attrs.getNamedItemNS(CONFIG_NAMESPACE,
+                                CONFIG_ATTRIBUTE_VALUE);
+                        if (valueNode==null) {
+                            valueNode=attrs.getNamedItem(CONFIG_ATTRIBUTE_VALUE);
+                        }
+                        if (nameNode==null || valueNode==null) {
+                            throw new ServerInitializationException(
+                                    INIT_CONFIG_SEVERE_INCOMPLETEPARAM);
+                        }
                     }
                     if (nameNode.getNodeValue().equals("") ||
                             valueNode.getNodeValue().equals("")) {
