@@ -350,6 +350,11 @@ public class DefaultManagement
                                    String dsLocation,
                                    String controlGroup,
                                    String dsState) throws ServerException {
+                                   	
+        if (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL")) {
+			throw new GeneralException("Creation of a datastream with an"
+				+ " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
+        }
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.createDatastream");
@@ -635,6 +640,10 @@ public class DefaultManagement
                                             String dsLocation, 
                                             String dsState)
             throws ServerException {
+		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
+			throw new GeneralException("Modification of the system-controlled AUDIT"
+				+ " datastream is not permitted.");
+		}
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
@@ -764,6 +773,10 @@ public class DefaultManagement
                                         InputStream dsContent, 
                                         String dsState) 
             throws ServerException {
+		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
+			throw new GeneralException("Modification of the system-controlled AUDIT"
+				+ " datastream is not permitted.");
+		}
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
