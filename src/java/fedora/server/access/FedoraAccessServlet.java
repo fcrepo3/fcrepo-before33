@@ -238,8 +238,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       } else if (action.equals(VIEW_OBJECT))
       {
         response.setContentType(CONTENT_TYPE_HTML);
-        out.println("<html><body>");
-        out.println("PID: "+PID);
+        //out.println("<html><body>");
         viewObject(PID, bDefPID, methodName, asOfDate, request, out);
       }
     }
@@ -477,7 +476,6 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
     {
       fastReader = new FastDOReader(PID, bDefPID, methodName, versDateTime);
       queryResults = fastReader.getObject(PID, versDateTime);
-      //PrintWriter out = response.getWriter();
       String servletURL = request.getServerName()+":"+request.getServerPort()+
                    request.getRequestURI();
       if (debug) System.out.println("servletURL: "+servletURL);
@@ -491,27 +489,28 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       {
         switch(i)
         {
-          case 0: out.println("<th><font color=\"blue\"> Object PID "
-                              + " </font></th>");
+          case 0: out.println("<th><font color=\"blue\"> Object PID "+
+                              " </font></th>");
           break;
-          case 2: out.println("<th><font color=\"green\"> BDEF PID"
-                              +" </font></th>");
+          case 1: out.println("<th><font color=\"green\"> Disseminator ID"+
+                              " </font></th>");
           break;
-          case 1: out.println("<th><font color=\"green\"> Disseminator ID"
-                              + " </font></th>");
-          case 3: out.println("<th><font color=\"red\"> BMECH PID"
-                              + " </font></th>");
+          case 2: out.println("<th><font color=\"green\"> BDEF PID"+
+                              " </font></th>");
           break;
-          case 4: out.println("<th><font color=\"red\"> Method Name"
-                              + " </font></th>");
+          case 3: out.println("<th><font color=\"red\"> BMECH PID"+
+                              " </font></th>");
+          break;
+          case 4: out.println("<th><font color=\"red\"> Method Name"+
+                              " </font></th>");
           break;
           default: out.println("<td><font color=\"black\"></font></td>");
         }
       }
+      out.println("</tr>");
       while (e.hasMoreElements())
       {
         String[] results = (String[])e.nextElement();
-        out.println("</tr>");
         out.println("<tr>");
         for (int i=0; i<results.length; i++)
         {
@@ -789,7 +788,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           " </td><td>= </td><td>"+e.nextElement()+"</td></tr>");
         }
         out.println("</table>></font>");
-        //out.println("</body></html>");
+        out.println("</body></html>");
         checkOK = false;
       }
     } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
@@ -830,7 +829,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           " </td><td>= </td><td>"+e.nextElement()+"</td></tr></font>");
         }
         out.println("</table>></font>");
-        //out.println("</body></html>");
+        out.println("</body></html>");
         checkOK = false;
       }
     } else if (action.equals(GET_BEHAVIOR_METHODS))
@@ -870,7 +869,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           "(OPTIONAL)</font></tr></font>");
         }
         out.println("</table>></font>");
-        //out.println("</body></html>");
+        out.println("</body></html>");
         checkOK = false;
       }
     } else if (action.equals(VIEW_OBJECT))
@@ -911,7 +910,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
           " </td><td>= </td><td>"+e.nextElement()+"</td></tr></font>");
         }
         out.println("</table>></font>");
-        //out.println("</body></html>");
+        out.println("</body></html>");
         checkOK = false;
       }
     } else
@@ -944,7 +943,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
         "<td>= </td><td>"+e.nextElement()+"</td></tr></font>");
       }
       out.println("</table></font>");
-      //out.println("</body></html>");
+      out.println("</body></html>");
       checkOK = false;
     }
 
