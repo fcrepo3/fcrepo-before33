@@ -141,7 +141,7 @@ public class DefinitiveDOReader implements DOReader
       //InputSource doXML = new InputSource(new FileInputStream(doFile));
 
       // LLSTORE: call to low level storage layer to retrieve object
-      doXML = new InputSource(FileSystemLowlevelStorage.getInstance().retrieve(objectPID));
+      doXML = new InputSource(FileSystemLowlevelStorage.getPermanentStore().retrieve(objectPID));
     }
     catch(LowlevelStorageException e)
     {
@@ -195,7 +195,7 @@ public class DefinitiveDOReader implements DOReader
       InputStream doIn = null;
       try
       {
-        doIn = FileSystemLowlevelStorage.getInstance().retrieve(PID);
+        doIn = FileSystemLowlevelStorage.getPermanentStore().retrieve(PID);
       }
       catch(LowlevelStorageException e)
       {
