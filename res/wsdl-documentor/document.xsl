@@ -82,7 +82,7 @@
         </code>
 
         <!-- documentation -->
-        <dir><p><xsl:value-of select="wsdl:documentation"/></p></dir>
+        <dir><p><xsl:copy-of select="wsdl:documentation/child::node()"/></p></dir>
 
         <!-- params -->
 		<xsl:if test="wsdl:input">
