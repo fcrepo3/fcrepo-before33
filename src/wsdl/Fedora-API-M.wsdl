@@ -42,11 +42,11 @@
 		<part name="pid" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
 		</part>
-		<part name="label" type="xsd:string">
-			<documentation>the new label.  Null means leave unchanged.</documentation>
-		</part>
 		<part name="state" type="xsd:string">
 			<documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
+		</part>
+		<part name="label" type="xsd:string">
+			<documentation>the new label.  Null means leave unchanged.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a log message.</documentation>
