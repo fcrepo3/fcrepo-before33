@@ -345,7 +345,7 @@ public class DefaultManagement
                     }
                     ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
                     // If it's a RELS-EXT datastream, do validation
-                    if (dsID.equals("RELS-EXT")){
+                    if (dsID!=null && dsID.equals("RELS-EXT")){
                     	validateRelsExt(pid, new ByteArrayInputStream(
                     		((DatastreamXMLMetadata) ds).xmlContent));
                     }
