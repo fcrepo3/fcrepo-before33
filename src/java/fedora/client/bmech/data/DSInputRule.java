@@ -2,19 +2,19 @@ package fedora.client.bmech.data;
 
 public class DSInputRule
 {
-  public String bindingKeyName;
+  public String bindingKeyName = null;
 
-  public int minNumBindings;
+  public String minNumBindings = null;
 
-  public int maxNumBindings;
+  public String maxNumBindings = null;
 
-  public boolean ordinality;
+  public String ordinality = null;
 
-  public String bindingLabel;
+  public String bindingLabel = null;
 
-  public String bindingInstruction;
+  public String bindingInstruction = null;
 
-  public String[] bindingMIMETypes;
+  public String bindingMIMEType = null;
 
   public DSInputRule()
   {
