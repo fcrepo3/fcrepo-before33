@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
 import fedora.client.APIAStubFactory;
@@ -46,6 +47,7 @@ public class AutoIngestor {
 
 	private FedoraAPIA m_apia;
     private FedoraAPIM m_apim;
+    private static HashMap s_repoInfo=new HashMap();
 
     public AutoIngestor(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
@@ -84,8 +86,12 @@ public class AutoIngestor {
 		// For backward compatibility:
 		// For pre-2.0 repositories, the only valid ingest format is "metslikefedora1"
 		// and there only exists the 'ingestObject' APIM method which assumes this format.
-		RepositoryInfo repoinfo=apia.describeRepository();
-		StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+		RepositoryInfo repoInfo = (RepositoryInfo) s_repoInfo.get(apia);
+        if (repoInfo == null) {
+            repoInfo = apia.describeRepository();
+            s_repoInfo.put(apia, repoInfo);
+        }
+		StringTokenizer stoken = new StringTokenizer(repoInfo.getRepositoryVersion(), ".");
 		if (new Integer(stoken.nextToken()).intValue() < 2) {
 			if (!ingestFormat.equals("metslikefedora1")){
 				throw new IOException("You are connected to a pre-2.0 Fedora repository " +
