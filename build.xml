@@ -375,7 +375,17 @@ if you can confirm.
 			<arg path="dist/server/tomcat41/webapps/imagemanip/index.html"/>
 			<arg path="src/dbx/userdocs/imagemanip.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
-		</exec>						
+		</exec>
+		<echo message="Translating localservices.dbx to html"/>
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+			<arg value="com.icl.saxon.StyleSheet"/>
+			<arg value="-o"/>
+			<arg path="dist/server/tomcat41/webapps/userdocs/localservices/index.html"/>
+			<arg path="src/dbx/userdocs/localservices.dbx"/>
+			<arg path="res/docbook-xsl/html/docbook.xsl"/>
+		</exec>		
 	</target>
 	<target name="debug-wsdl" depends="prep" description="Produce html reports on the validity of the API-A, API-A-LITE, and API-M wsdl in temp/debug/">
 		<mkdir dir="temp/debug"/>
@@ -776,6 +786,9 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.112  2003/05/10 14:16:37  rlw
+  added transformation for localservices doc
+
   Revision 1.111  2003/05/10 01:32:26  rlw
   added transformations for local services dbx docs
 
