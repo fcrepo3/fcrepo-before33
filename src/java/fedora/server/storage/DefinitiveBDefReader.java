@@ -52,7 +52,7 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
       doReader.GetDisseminators(null);
       doReader.GetBehaviorDefs(null);
       Disseminator d = doReader.GetDisseminator("DISS1", null);
-      doReader.GetBMechMethods(d.bDefID, null);
+      doReader.getObjectMethods(d.bDefID, null);
       doReader.GetDSBindingMaps(null);
       // Bdef reader methods
       doReader.getAbstractMethods(null);
