@@ -59,7 +59,24 @@ public class BasicServer
 
     public void initServer()
             throws ServerInitializationException {
+
+        String fedoraServerHost = null;
+        String fedoraServerPort = null;
+
         initLogger();
+
+        // fedoraServerHost (required)
+        fedoraServerHost=getParameter("fedoraServerHost");
+        if (fedoraServerHost==null) {
+            throw new ServerInitializationException("Parameter fedoraServerHost "
+                + "not given, but it's required.");
+        }
+        // fedoraServerPort (required)
+        fedoraServerPort=getParameter("fedoraServerPort");
+        if (fedoraServerPort==null) {
+            throw new ServerInitializationException("Parameter fedoraServerPort "
+                + "not given, but it's required.");
+        }
     }
 
     private int getLoggerIntParam(String paramName)
