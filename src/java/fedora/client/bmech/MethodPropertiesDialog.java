@@ -65,6 +65,7 @@ import fedora.client.bmech.data.*;
 public class MethodPropertiesDialog extends JDialog
 {
     private MethodsPane parent;
+    private String builderClassName;
     private String methodName;
     private String baseURL;
     private JTable parmTable;
@@ -130,18 +131,70 @@ public class MethodPropertiesDialog extends JDialog
         loadParmReqTbl();
         loadParmReqToDisplayTbl();
         this.parent = parent;
+        this.builderClassName = parent.parent.getClass().getName();
         this.methodName = methodName;
-        this.baseURL = parent.getBaseURL();
-        if (parent.hasBaseURL())
-        {
-          this.baseURL = (parent.getBaseURL().endsWith("/"))
-            ? parent.getBaseURL() : (parent.getBaseURL() + "/");
-        }
+
         setTitle("Method Properties for: " + methodName);
         setSize(800, 400);
         setModal(true);
         getContentPane().setLayout(new BorderLayout());
 
+        // Service Binding Panel
+        JPanel bindingPanel = null;
+        if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+        {
+          this.baseURL = parent.getBaseURL();
+          if (parent.hasBaseURL())
+          {
+            this.baseURL = (parent.getBaseURL().endsWith("/"))
+              ? parent.getBaseURL() : (parent.getBaseURL() + "/");
+          }
+          bindingPanel = setBindingPanel();
+        }
+
+        // Method Parms Panel
+        JPanel parmsPanel = setParmsPanel();
+
+        // Method Return Panel
+        JPanel returnPanel = setMethodReturnPanel();
+
+        // Dialog Buttons Panel
+        JButton done = new JButton("OK");
+        done.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            saveProperties();
+          }
+        } );
+        JButton cancel = new JButton("Cancel");
+        cancel.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            cancelProperties();
+          }
+        } );
+        JPanel mainButtonPanel = new JPanel();
+        mainButtonPanel.add(done);
+        mainButtonPanel.add(cancel);
+
+        JPanel lowerPanel = new JPanel();
+        lowerPanel.setLayout(new BorderLayout());
+        if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+        {
+          lowerPanel.add(returnPanel, BorderLayout.NORTH);
+        }
+        lowerPanel.add(mainButtonPanel, BorderLayout.SOUTH);
+
+        if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+        {
+          getContentPane().add(bindingPanel, BorderLayout.NORTH);
+        }
+        getContentPane().add(parmsPanel, BorderLayout.CENTER);
+        getContentPane().add(lowerPanel, BorderLayout.SOUTH);
+        renderCurrentProperties(methodProperties);
+        setVisible(true);
+    }
+
+    private JPanel setBindingPanel()
+    {
         // Method Binding Panel
         // http full URL
         rb_http = new JRadioButton("HTTP URL: ", false);
@@ -191,7 +244,11 @@ public class MethodPropertiesDialog extends JDialog
         gbc.gridy = 1;
         gbc.gridx = 0;
         bindingPanel.add(rb_soap, gbc);
+        return bindingPanel;
+    }
 
+    private JPanel setParmsPanel()
+    {
         // Parms Table Panel
         parmTable = new JTable(20,7);
         parmTable.setColumnSelectionAllowed(false);
@@ -204,8 +261,16 @@ public class MethodPropertiesDialog extends JDialog
         TableColumn tc1 = parmTable.getColumnModel().getColumn(1);
         tc1.setHeaderValue("Parm Type");
         tc1.sizeWidthToFit();
-        String[] parmTypes = (String[])parmTypeTbl.keySet().toArray(new String[0]);
-        //String[] parmTypes = new String[] {"A", "B"};
+        String[] parmTypes;
+        if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+        {
+          parmTypes = (String[])parmTypeTbl.keySet().toArray(new String[0]);
+        }
+        else
+        {
+          parmTypes = new String[] {(String)
+            parmTypeToDisplayTbl.get(MethodParm.USER_INPUT)};
+        }
         tc1.setCellRenderer(new ComboBoxRenderer(parmTypes));
         tc1.setCellEditor(new ComboBoxTableCellEditor(parmTypes));
         // Set the ParmReq column to be rendered and edited with JComboBox
@@ -259,7 +324,6 @@ public class MethodPropertiesDialog extends JDialog
         } );
 
         JPanel t_buttonPanel = new JPanel();
-        //t_buttonPanel.setLayout(new GridLayout(3,1));
         t_buttonPanel.setLayout(new BoxLayout(t_buttonPanel, BoxLayout.Y_AXIS));
         t_buttonPanel.add(jb1);
         t_buttonPanel.add(jb2);
@@ -269,50 +333,26 @@ public class MethodPropertiesDialog extends JDialog
         parmsPanel.setBorder(new TitledBorder("Method Parameter Definitions:"));
         parmsPanel.add(scrollpane, BorderLayout.CENTER);
         parmsPanel.add(t_buttonPanel, BorderLayout.EAST);
-
-        // Dialog Buttons Panel
-        JButton done = new JButton("OK");
-        done.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            saveProperties();
-          }
-        } );
-        JButton cancel = new JButton("Cancel");
-        cancel.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-            cancelProperties();
-          }
-        } );
-        JPanel mainButtonPanel = new JPanel();
-        mainButtonPanel.add(done);
-        mainButtonPanel.add(cancel);
-
-        // Method Return Types Panel
-        returnMIMES = new JTextField(30);
-        JPanel returnPanel = new JPanel();
-        returnPanel.setBorder(new TitledBorder("Method Return Types:"));
-        returnPanel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.anchor = GridBagConstraints.WEST;
-        gbc2.insets = new Insets(15,2,15,2);
-        gbc2.gridy = 0;
-        gbc2.gridx = 0;
-        returnPanel.add(new JLabel("MIME types (comma delimit):"), gbc2);
-        gbc2.gridx = 1;
-        returnPanel.add(returnMIMES, gbc2);
-
-        JPanel lowerPanel = new JPanel();
-        lowerPanel.setLayout(new BorderLayout());
-        lowerPanel.add(returnPanel, BorderLayout.NORTH);
-        lowerPanel.add(mainButtonPanel, BorderLayout.SOUTH);
-
-        getContentPane().add(bindingPanel, BorderLayout.NORTH);
-        getContentPane().add(parmsPanel, BorderLayout.CENTER);
-        getContentPane().add(lowerPanel, BorderLayout.SOUTH);
-        renderCurrentProperties(methodProperties);
-        setVisible(true);
+        return parmsPanel;
     }
 
+    private JPanel setMethodReturnPanel()
+    {
+      // Method Return Types Panel
+      returnMIMES = new JTextField(30);
+      JPanel returnPanel = new JPanel();
+      returnPanel.setBorder(new TitledBorder("Method Return Types:"));
+      returnPanel.setLayout(new GridBagLayout());
+      GridBagConstraints gbc2 = new GridBagConstraints();
+      gbc2.anchor = GridBagConstraints.WEST;
+      gbc2.insets = new Insets(15,2,15,2);
+      gbc2.gridy = 0;
+      gbc2.gridx = 0;
+      returnPanel.add(new JLabel("MIME types (comma delimit):"), gbc2);
+      gbc2.gridx = 1;
+      returnPanel.add(returnMIMES, gbc2);
+      return returnPanel;
+    }
     private void addTableRow()
     {
       // Append a row
@@ -332,16 +372,15 @@ public class MethodPropertiesDialog extends JDialog
 
     private void saveProperties()
     {
-      System.out.println("MethodPropertiesDialog.saveProperties: " +
-        "Saving values back in parent");
       setMethodProperties();
       MethodProperties properties = getMethodProperties();
       if (validMethodProperties(properties))
       {
-        System.out.println("MethodPropertiesDialog.saveProperties: " +
-        "all method properties are valid.");
-        mp.dsBindingKeys = setDSBindingKeys(properties.methodParms);
-        parent.setBMechMethodProperties(methodName, mp);
+        if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
+        {
+          mp.dsBindingKeys = setDSBindingKeys(properties.methodParms);
+        }
+        parent.setMethodProperties(methodName, mp);
         setVisible(false);
         dispose();
       }
@@ -377,7 +416,7 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validMethodProperties(MethodProperties mp)
     {
-      System.out.println("MethodPropertiesDialog: validating properties...");
+      System.out.println("MethodPropertiesDialog: validating method properties...");
       return (validBinding(mp)
               && validMethodParms(mp.methodParms)
               && validReturnTypes(mp.returnMIMETypes))
@@ -386,47 +425,49 @@ public class MethodPropertiesDialog extends JDialog
 
     private boolean validReturnTypes(String[] mimeTypes)
     {
-      if (mimeTypes.length <= 0)
+      if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
       {
-          assertMethodPropertiesMsg("You must enter an at least one return MIME type for method!");
-          return false;
+        if (mimeTypes.length <= 0)
+        {
+            assertMethodPropertiesMsg("You must enter an at least one return MIME type for method!");
+            return false;
+        }
       }
-      System.out.println("Method Return Type is valid.");
       return true;
 
     }
 
     private boolean validBinding(MethodProperties mp)
     {
-      if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
+      if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
       {
-        if (mp.methodFullURL == null || mp.methodFullURL.trim().equals(""))
+        if (mp.protocolType.equalsIgnoreCase(mp.HTTP_MESSAGE_PROTOCOL))
         {
-          assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
-          return false;
+          if (mp.methodFullURL == null || mp.methodFullURL.trim().equals(""))
+          {
+            assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
+            return false;
+          }
+          else if (mp.methodRelativeURL.startsWith("http://"))
+          {
+            assertMethodPropertiesMsg("A relative URL cannot begin with http://");
+            return false;
+          }
+          else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
+          {
+            assertMethodPropertiesMsg("A parm from the parm table is not "
+              + "encoded in the HTTP URL. See Help for URL replacement syntax.");
+            return false;
+          }
         }
-        else if (mp.methodRelativeURL.startsWith("http://"))
+        else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
         {
-          assertMethodPropertiesMsg("A relative URL cannot begin with http://");
-          return false;
-        }
-        else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
-        {
-          assertMethodPropertiesMsg("A parm from the parm table is not "
-            + "encoded in the HTTP URL. See Help for URL replacement syntax.");
-          return false;
+            assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
+              + " Please select HTTP binding.");
+            return false;
         }
       }
-      else if (mp.protocolType.equalsIgnoreCase(mp.SOAP_MESSAGE_PROTOCOL))
-      {
-          assertMethodPropertiesMsg("Sorry, the SOAP bindings are not supported yet."
-            + " Please select HTTP binding.");
-          return false;
-
-      }
-      System.out.println("Method Binding is valid.");
       return true;
-
     }
 
     private boolean validMethodParms(MethodParm[] parms)
@@ -469,7 +510,6 @@ public class MethodPropertiesDialog extends JDialog
           + "when 'Parm Type' is fedora:datastreamInputType.");
         return false;
       }
-      System.out.println("Method parm " + parm.parmName + " is valid.");
       return true;
     }
 
@@ -481,31 +521,33 @@ public class MethodPropertiesDialog extends JDialog
     private void setMethodProperties()
     {
       mp = new MethodProperties();
-      if (rb_http.isSelected())
+      if (builderClassName.equalsIgnoreCase("fedora.client.bmech.BMechBuilder"))
       {
-        mp.methodFullURL = rb_http_URL.getText();
-        mp.methodRelativeURL = mp.methodFullURL;
-        mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
-      }
-      else if (rb_httpRelative.isSelected())
-      {
-        mp.methodRelativeURL = rb_http_URL.getText();
-        // Get rid of forward slash if exists since the baseURL is
-        // forced to end in a forward slash.
-        if (mp.methodRelativeURL.startsWith("/"))
+        if (rb_http.isSelected())
         {
-          mp.methodRelativeURL = mp.methodRelativeURL.substring(1);
+          mp.methodFullURL = rb_http_URL.getText();
+          mp.methodRelativeURL = mp.methodFullURL;
+          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
         }
-        mp.methodFullURL = baseURL + mp.methodRelativeURL;
-        mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
-      }
-      else
-      {
-        mp.protocolType = mp.SOAP_MESSAGE_PROTOCOL;
+        else if (rb_httpRelative.isSelected())
+        {
+          mp.methodRelativeURL = rb_http_URL.getText();
+          // Get rid of forward slash if exists since the baseURL is
+          // forced to end in a forward slash.
+          if (mp.methodRelativeURL.startsWith("/"))
+          {
+            mp.methodRelativeURL = mp.methodRelativeURL.substring(1);
+          }
+          mp.methodFullURL = baseURL + mp.methodRelativeURL;
+          mp.protocolType = mp.HTTP_MESSAGE_PROTOCOL;
+        }
+        else
+        {
+          mp.protocolType = mp.SOAP_MESSAGE_PROTOCOL;
+        }
       }
       mp.returnMIMETypes = unloadReturnTypes();
       mp.methodParms = unloadMethodParms();
-      //mp.dsBindingKeys = setDSBindingKeys(mp.methodParms);
       return;
     }
 
@@ -530,7 +572,7 @@ public class MethodPropertiesDialog extends JDialog
       }
       HashMap parmMap = new HashMap();
       int rowcount = parmTable.getModel().getRowCount();
-      System.out.println("parmTable rowcount=" + rowcount);
+      //System.out.println("parmTable rowcount=" + rowcount);
       for (int i=0; i<rowcount; i++)
       {
         if (parmTable.getValueAt(i,0) != null && parmTable.getValueAt(i,0) != "")
@@ -548,7 +590,7 @@ public class MethodPropertiesDialog extends JDialog
           if ((values = (String)parmTable.getValueAt(i,6)) != null)
           {
             StringTokenizer st = new StringTokenizer(values, ",");
-            System.out.println("count domain parms = " + st.countTokens());
+            //System.out.println("count domain parms = " + st.countTokens());
             while (st.hasMoreElements())
             {
               domainValues.add(((String)st.nextElement()).trim());
@@ -601,7 +643,7 @@ public class MethodPropertiesDialog extends JDialog
 
       // render the existing return MIME types
       StringBuffer sb = new StringBuffer();
-      System.out.println("count mime: " + properties.returnMIMETypes.length);
+      //System.out.println("count mime: " + properties.returnMIMETypes.length);
       for (int i=0; i<properties.returnMIMETypes.length; i++)
       {
         sb.append(properties.returnMIMETypes[i]);
@@ -653,7 +695,7 @@ public class MethodPropertiesDialog extends JDialog
 
         // render the existing domain values
         StringBuffer sb2 = new StringBuffer();
-        System.out.println("count values: " + parms[i].parmDomainValues.length);
+        //System.out.println("count values: " + parms[i].parmDomainValues.length);
         for (int i2=0; i2<parms[i].parmDomainValues.length; i2++)
         {
           sb2.append(parms[i].parmDomainValues[i2]);
