@@ -1,13 +1,13 @@
 package fedora.server.access;
 
-/**
- * <p>Title: FedoraAPIABindingSOAPHTTPImpl.java</p>
- * <p>Description: Implements the Fedora Access SOAP service.
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
- * @version 1.0
- */
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import fedora.server.access.localservices.HttpService;
 import fedora.server.errors.HttpServiceNotFoundException;
@@ -20,18 +20,14 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.DateUtility;
 
-// java imports
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ByteArrayOutputStream;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-
-
+/**
+ * <p>Title: FedoraAPIABindingSOAPHTTPImpl.java</p>
+ * <p>Description: Implements the Fedora Access SOAP service.
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Ross Wayland
+ * @version 1.0
+ */
 public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.access.FedoraAPIA
 {
@@ -44,9 +40,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * <p>Gets a list of Behavior Definition object PIDs for the specified
    * digital object.</p>
    *
-   * @param PID persistent identifier of the digital object
-   * @param asOfDateTime versioning datetime stamp
-   * @return String[] containing Behavior Definitions
+   * @param PID The persistent identifier of the digital object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An array containing Behavior Definition PIDs.
    * @throws java.rmi.RemoteException
    */
   public java.lang.String[] getBehaviorDefinitions(java.lang.String PID,
@@ -74,11 +70,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * <p>Gets a list of Behavior Methods associated with the specified
    * Behavior Mechanism object.</p>
    *
-   * @param PID persistent identifier of Digital Object
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param asOfDateTime versioning datetime stamp
-   * @return MethodDef[] containing method definitions
-   * @throws java.rmi.RemoteException
+   * @param PID The persistent identifier of digital object.
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An array of method definitions.
+   * @throws java.rmi.RemoteException.
    */
   public fedora.server.types.gen.MethodDef[] getBehaviorMethods(
       java.lang.String PID, java.lang.String bDefPID,
@@ -99,9 +95,6 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       {
         fedora.server.types.gen.MethodDef mdef =
                  new fedora.server.types.gen.MethodDef();
-        //mdef.setHttpBindingOperationLocation(
-        //    methodResults[i].httpBindingOperationLocation);
-        //mdef.setHttpBindingURL(methodResults[i].httpBindingURL);
         mdef.setMethodLabel(methodResults[i].methodLabel);
         mdef.setMethodName(methodResults[i].methodName);
         MethodParmDef[] parmResults = methodResults[i].methodParms;
@@ -137,10 +130,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * <p>Gets a bytestream containing the WSDL that defines the Behavior Methods
    * of the associated Behavior Mechanism object.</p>
    *
-   * @param PID persistent identifier of Digital Object
-   * @param bDefPID persistent identifier of Behavior Definition object
-   * @param asOfDateTime versioning datetime stamp
-   * @return MIMETypedStream containing WSDL method definitions
+   * @param PID The persistent identifier of Digital Object.
+   * @param bDefPID The persistent identifier of Behavior Definition object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return A MIME-typed stream containing WSDL method definitions.
    * @throws java.rmi.RemoteException
    */
   public fedora.server.types.gen.MIMETypedStream
@@ -185,12 +178,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
    * <p>Gets a MIME-typed bytestream containing the result of a dissemination.
    * </p>
    *
-   * @param PID persistent identifier of the Digital Object
-   * @param bDefPID persistent identifier of the Behavior Definition object
-   * @param methodName name of the method
-   * @param asOfDateTime version datetime stamp of the digital object
-   * @param userParms array of user-supplied method parameters and values
-   * @return MIMETypedStream containing the dissemination result
+   * @param PID The persistent identifier of the Digital Object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param asOfDateTime The version datetime stamp of the digital object.
+   * @param userParms An array of user-supplied method parameters and values.
+   * @return A MIME-typed stream containing the dissemination result.
    * @throws java.rmi.RemoteException
    */
   public fedora.server.types.gen.MIMETypedStream
@@ -215,6 +208,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           versDateTime);
       String replaceString = null;
       int numElements = dissResults.length;
+
       // Get row(s) of WSDL results and perform string substitution
       // on DSBindingKey and method parameter values in WSDL
       // Note: In case where more than one datastream matches the
@@ -224,6 +218,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       for (int i=0; i<dissResults.length; i++)
       {
         dissResult = dissResults[i];
+
         // If AddressLocation has a value of "LOCAL", this is a flag to
         // indicate the associated OperationLocation requires no
         // AddressLocation. i.e., the OperationLocation contains all
@@ -251,6 +246,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           nextKey = dissResults[i+1].DSBindKey;
           if (debug) System.out.println("' nextKey: '"+nextKey+"'");
         }
+
         // In most cases, there is only a single datastream that matches a given
         // DSBindingKey so the substitution process is to just replace the
         // occurence of (BINDING_KEY) with the value of the datastream location.
@@ -347,9 +343,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   /**
    * <p>Gets a list of all method definitions for the specified object.</p>
    *
-   * @param PID persistent identifier for the digital object
-   * @param asOfDateTime versioning datetime stamp
-   * @return ObjectMethodsDef array of object method definitions
+   * @param PID The persistent identifier for the digital object.
+   * @param asOfDateTime The versioning datetime stamp.
+   * @return An array of object method definitions.
    * @throws java.rmi.RemoteException
    */
   public fedora.server.types.gen.ObjectMethodsDef[]
@@ -373,10 +369,6 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           new fedora.server.types.gen.ObjectMethodsDef[methodResults.length];
       for (int i=0; i<methodResults.length; i++)
       {
-        //System.out.println("PID:["+i+"] ="+methodResults[i].PID);
-        //System.out.println("bDEF:["+i+"] ="+methodResults[i].bDefPID);
-        //System.out.println("meth:["+i+"] ="+methodResults[i].methodName);
-        //System.out.flush();
         fedora.server.types.gen.ObjectMethodsDef mdef =
             new fedora.server.types.gen.ObjectMethodsDef();
         mdef.setPID(methodResults[i].PID);
@@ -396,10 +388,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
      * All matching occurrences of the pattern string will be replaced in the
      * input string by the replacement string.
      *
-     * @param inputString source string
-     * @param patternString regular expression pattern
-     * @param replaceString replacement string
-     * @return String source string with substitutions
+     * @param inputString The source string.
+     * @param patternString The regular expression pattern.
+     * @param replaceString The replacement string.
+     * @return The source string with substitutions.
      */
     private String substituteString(String inputString, String patternString,
                                    String replaceString)
