@@ -34,13 +34,13 @@ import java.text.SimpleDateFormat;
 
 /**
  * A DOReader backed by a DigitalObject.
- * 
+ *
  * @author cwilper@cs.cornell.edu
  */
 public class SimpleDOReader
         extends StdoutLogging
         implements DOReader {
-        
+
     private DigitalObject m_obj;
     private Context m_context;
     private RepositoryReader m_repoReader;
@@ -51,11 +51,11 @@ public class SimpleDOReader
 
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-    
-    public SimpleDOReader(Context context, RepositoryReader repoReader, 
-            DOTranslator translator, String shortExportFormat, 
+
+    public SimpleDOReader(Context context, RepositoryReader repoReader,
+            DOTranslator translator, String shortExportFormat,
             String longExportFormat, String currentFormat,
-            String encoding, InputStream serializedObject, Logging logTarget) 
+            String encoding, InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         super(logTarget);
@@ -66,7 +66,7 @@ public class SimpleDOReader
         m_longExportFormat=longExportFormat;
         m_encoding=encoding;
         m_obj=new BasicDigitalObject();
-        m_translator.deserialize(serializedObject, m_obj, currentFormat, encoding); 
+        m_translator.deserialize(serializedObject, m_obj, currentFormat, encoding);
     }
 
     public String getFedoraObjectType() {
@@ -81,24 +81,24 @@ public class SimpleDOReader
             }
         }
     }
-    
+
     public String getContentModelId() {
         return m_obj.getContentModelId();
     }
-    
+
     public Date getCreateDate() {
         return m_obj.getCreateDate();
     }
-    
+
     public Date getLastModDate() {
         return m_obj.getLastModDate();
     }
-    
+
     public String getLockingUser() {
         return m_obj.getLockingUser();
     }
 
-    public InputStream GetObjectXML() 
+    public InputStream GetObjectXML()
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
@@ -179,7 +179,7 @@ public class SimpleDOReader
             } else {
                 long diff=vTime-ds.DSCreateDT.getTime();
                 if (diff >= 0) {
-                    if ( (diff < bestTimeDifference) 
+                    if ( (diff < bestTimeDifference)
                             || (bestTimeDifference==-1) ) {
                         bestTimeDifference=diff;
                         closestWithoutGoingOver=ds;
@@ -263,7 +263,7 @@ public class SimpleDOReader
             } else {
                 long diff=vTime-diss.dissCreateDT.getTime();
                 if (diff >= 0) {
-                    if ( (diff < bestTimeDifference) 
+                    if ( (diff < bestTimeDifference)
                             || (bestTimeDifference==-1) ) {
                         bestTimeDifference=diff;
                         closestWithoutGoingOver=diss;
@@ -305,35 +305,35 @@ public class SimpleDOReader
         }
         return bDefIds;
     }
-    
-    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) 
+
+    public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
             return null;
         }
         return m_repoReader.getBMechReader(m_context, mechPid).
-                GetBehaviorMethods(versDateTime);
+                getServiceMethods(versDateTime);
     }
-    
-    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime) 
+
+    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException, ServerException {
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
             return null;
         }
         return m_repoReader.getBMechReader(m_context, mechPid).
-                GetBehaviorMethodsWSDL(versDateTime);
+                getServiceMethodsXML(versDateTime);
     }
-    
+
     /**
      * Gets the bmech id for the disseminator subscribing to the bdef.
-     * 
+     *
      * @return null if it's the bootstrap bdef
      * @throws DisseminatorNotFoundException if no matching disseminator
      *         is found in the object.
      */
-    private String getBMechPid(String bDefPID, Date versDateTime) 
+    private String getBMechPid(String bDefPID, Date versDateTime)
             throws DisseminatorNotFoundException {
         if (bDefPID.equals("uva-bdef-bootstrap:1")) {
             return null;
@@ -346,14 +346,14 @@ public class SimpleDOReader
             }
         }
         if (bMechPid==null) {
-            throw new DisseminatorNotFoundException("The object, " 
+            throw new DisseminatorNotFoundException("The object, "
                     + m_obj.getPid() + ", does not have a disseminator"
-                    + " with bdef " + bDefPID + " at " 
+                    + " with bdef " + bDefPID + " at "
                     + getWhenString(versDateTime));
         }
         return bMechPid;
     }
-    
+
     protected String getWhenString(Date versDateTime) {
         if (versDateTime==null) {
             return m_formatter.format(versDateTime);
@@ -361,12 +361,12 @@ public class SimpleDOReader
             return "the current time";
         }
     }
-    
-    public MethodParmDef[] GetBMechMethodParms(String bDefPID, 
-            String methodName, Date versDateTime) 
+
+    public MethodParmDef[] GetBMechMethodParms(String bDefPID,
+            String methodName, Date versDateTime)
             throws DisseminatorNotFoundException, MethodNotFoundException,
             ServerException {
-        // The parms are expressed in the abstract method definitions 
+        // The parms are expressed in the abstract method definitions
         // of the WSDL datastream in the behavior DEFINITION object.
         String mechPid=getBMechPid(bDefPID, versDateTime);
         if (mechPid==null) {
@@ -374,14 +374,14 @@ public class SimpleDOReader
         }
         // Note that the mechanism object is used here as
         // if it were a behavior definition object.
-        // this works because the part of the WSDL datastream 
+        // this works because the part of the WSDL datastream
         // that is being looked at should be the same.
-        return getParms(m_repoReader.getBDefReader(m_context, mechPid).
-                GetBehaviorMethods(versDateTime), methodName);
+        return getParms(m_repoReader.getBMechReader(m_context, mechPid).
+                getServiceMethods(versDateTime), methodName);
     }
 
     public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
-            String methodName, Date versDateTime) 
+            String methodName, Date versDateTime)
             throws DisseminatorNotFoundException, MethodNotFoundException,
             ServerException {
         // The *default* parms are expressed in the method bindings
@@ -397,7 +397,7 @@ public class SimpleDOReader
      * @return null if methods is given as null
      * @throws MethodNotFoundException if no mush method exist in the array.
      */
-    private MethodParmDef[] getParms(MethodDef[] methods, String methodName) 
+    private MethodParmDef[] getParms(MethodDef[] methods, String methodName)
             throws MethodNotFoundException {
         if (methods==null) {
             return null;
@@ -410,7 +410,7 @@ public class SimpleDOReader
         }
         if (methodParms==null) {
             throw new MethodNotFoundException("The object, " + m_obj.getPid()
-                    + ", does not have a method named '" + methodName); 
+                    + ", does not have a method named '" + methodName);
         }
         return methodParms;
     }
@@ -436,10 +436,10 @@ public class SimpleDOReader
                 Datastream ds=GetDatastream(bindings[j].datastreamID, versDateTime);
                 if (ds==null) {
                     String whenString=getWhenString(versDateTime);
-                    throw new ObjectIntegrityException("The object, " 
+                    throw new ObjectIntegrityException("The object, "
                             + m_obj.getPid() + ", does not have a datastream"
-                            + " with id " + bindings[j].datastreamID 
-                            + " at " + whenString 
+                            + " with id " + bindings[j].datastreamID
+                            + " at " + whenString
                             + ", so the datastream binding map used by "
                             + "disseminator " + disses[i].dissID + " at "
                             + whenString + " is invalid.");
@@ -449,14 +449,14 @@ public class SimpleDOReader
                 augBinding.DSLabel=ds.DSLabel;
                 augBinding.DSMIME=ds.DSMIME;
                 augBinding.DSLocation=ds.DSLocation;
-                augBindings[j]=augBinding;          
+                augBindings[j]=augBinding;
             }
             augMap.dsBindingsAugmented=augBindings;
             augMaps[i]=augMap;
         }
         return augMaps;
     }
-    
+
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime) {
         return null;
@@ -465,5 +465,5 @@ public class SimpleDOReader
     public ObjectMethodsDef[] getObjectMethodsDef(Date versDateTime) {
         return null;
     }
-    
+
 }
