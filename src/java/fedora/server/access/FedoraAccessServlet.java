@@ -127,9 +127,6 @@ public class FedoraAccessServlet extends HttpServlet
   /** Instance of DOManager. */
   private static DOManager m_manager = null;
 
-  /** Context for cached objects. */
-  private static Context s_context = null;
-
   /** Full URL for the parameter resolver servlet. Hostname and port
    *  are determined dynamically and are assumed to be the same as
    *  for this servlet.
@@ -163,11 +160,6 @@ public class FedoraAccessServlet extends HttpServlet
               "fedora.server.storage.DOManager");
       s_access =
               (Access) s_server.getModule("fedora.server.access.Access");
-      HashMap h = new HashMap();
-      h.put("application", "apia");
-      h.put("useCachedObject", "true");
-      h.put("userId", "fedoraAdmin");
-      s_context = new ReadOnlyContext(h);
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
@@ -203,6 +195,13 @@ public class FedoraAccessServlet extends HttpServlet
     boolean isGetDisseminationRequest = false;
     PARAMETER_RESOLVER_URL = "http://" + request.getServerName()
         + ":" + request.getServerPort() + PARAMETER_RESOLVER_SERVLET_PATH;
+        
+    HashMap h=new HashMap();
+    h.put("application", "apia");
+    h.put("useCachedObject", "true");
+    h.put("userId", "fedoraAdmin");
+    h.put("host", request.getRemoteAddr());
+    ReadOnlyContext context = new ReadOnlyContext(h);
 
     // getRequestURL only available in Servlet API 2.3.
     // Use following for earlier releases servlet API:
@@ -291,16 +290,17 @@ public class FedoraAccessServlet extends HttpServlet
 
     if (isGetObjectMethodsRequest)
     {
-      getObjectMethods(PID, asOfDate, xmlEncode, userParms, request, response);
+      getObjectMethods(context, PID, asOfDate, xmlEncode, userParms, request, 
+              response);
     } else if (isGetDisseminationRequest)
     {
-      getDissemination(PID, bDefPID, methodName, userParms, asOfDate,
+      getDissemination(context, PID, bDefPID, methodName, userParms, asOfDate,
                        clearCache, response);
     }
 
   }
 
-  public void getObjectMethods(String PID, Calendar asOfDateTime,
+  public void getObjectMethods(Context context, String PID, Calendar asOfDateTime,
       String xmlEncode, Property[] userParms, HttpServletRequest request,
       HttpServletResponse response) throws IOException
   {
@@ -312,7 +312,7 @@ public class FedoraAccessServlet extends HttpServlet
 
     try
     {
-      objMethDefArray = s_access.getObjectMethods(s_context, PID, asOfDateTime);
+      objMethDefArray = s_access.getObjectMethods(context, PID, asOfDateTime);
       if (objMethDefArray != null)
       {
         // Object Methods found.
@@ -610,7 +610,7 @@ public class FedoraAccessServlet extends HttpServlet
 */
 
 
-  public void getDissemination(String PID, String bDefPID, String methodName,
+  public void getDissemination(Context context, String PID, String bDefPID, String methodName,
       Property[] userParms, Calendar asOfDate, String clearCache,
       HttpServletResponse response) throws IOException
   {
@@ -619,7 +619,7 @@ public class FedoraAccessServlet extends HttpServlet
     {
       // See if dissemination request is in local cache
       MIMETypedStream dissemination = null;
-      dissemination = getDisseminationFromCache(PID, bDefPID,
+      dissemination = getDisseminationFromCache(context, PID, bDefPID,
           methodName, userParms, asOfDate, clearCache, response);
       if (dissemination != null)
       {
@@ -706,7 +706,7 @@ public class FedoraAccessServlet extends HttpServlet
    * @return The MIME-typed stream containing dissemination result.
    * @throws IOException If an error occurrs with an input or output operation.
    */
-  private synchronized MIMETypedStream getDisseminationFromCache(
+  private synchronized MIMETypedStream getDisseminationFromCache(Context context,
       String PID, String bDefPID, String methodName,
       Property[] userParms, Calendar asOfDate, String clearCache,
       HttpServletResponse response) throws IOException
@@ -730,7 +730,7 @@ public class FedoraAccessServlet extends HttpServlet
       //disseminationResult = GetDissemination(PID, bDefPID, methodName,
       //    userParms, asOfDate);
       System.out.println("calling access");
-      disseminationResult = s_access.getDissemination(s_context,PID, bDefPID, methodName, userParms, asOfDate);
+      disseminationResult = s_access.getDissemination(context, PID, bDefPID, methodName, userParms, asOfDate);
       System.out.println("returned from access");
       } catch (ServerException se)
       {

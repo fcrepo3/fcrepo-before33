@@ -11,6 +11,7 @@ import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
 import fedora.server.errors.ServerException;
+import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
@@ -31,6 +32,7 @@ public class DefaultManagement
         extends Module implements Management {
         
     private DOManager m_manager;
+    private IPRestriction m_ipRestriction;
 
     /**
      * Creates and initializes the Management Module.
@@ -52,6 +54,15 @@ public class DefaultManagement
     
     public void initModule()
             throws ModuleInitializationException {
+        String allowHosts=getParameter("allowHosts");
+        String denyHosts=getParameter("denyHosts");
+        try {
+            m_ipRestriction=new IPRestriction(allowHosts, denyHosts);
+        } catch (ServerException se) {
+            throw new ModuleInitializationException("Error setting IP restriction "
+                    + "for Access subsystem: " + se.getClass().getName() + ": "
+                    + se.getMessage(), getRole());
+        }        
     }
 
     public void postInitModule()
@@ -67,6 +78,7 @@ public class DefaultManagement
     public String createObject(Context context) 
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.createObject");
+        m_ipRestriction.enforce(context);
         DOWriter w=m_manager.newWriter(context);
         String pid=w.GetObjectPID();
         m_manager.releaseWriter(w);
@@ -77,6 +89,7 @@ public class DefaultManagement
     public String ingestObject(Context context, InputStream serialization, String format, String encoding, boolean newPid) 
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.ingestObject");
+        m_ipRestriction.enforce(context);
         DOWriter w=m_manager.newWriter(context, serialization, format, encoding, newPid);
         String pid=w.GetObjectPID();
         // FIXME: this logic should go in clients,
@@ -98,6 +111,7 @@ public class DefaultManagement
 
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException { 
         logFinest("Entered DefaultManagement.getObjectXML");
+        m_ipRestriction.enforce(context);
         DOReader reader=m_manager.getReader(context, pid);
         InputStream instream=reader.GetObjectXML(); 
         logFinest("Exiting DefaultManagement.getObjectXML");
@@ -113,6 +127,7 @@ public class DefaultManagement
     public void purgeObject(Context context, String pid, String logMessage) 
             throws ServerException { 
         logFinest("Entered DefaultManagement.purgeObject");
+        m_ipRestriction.enforce(context);
         // FIXME: This should get a writer and call remove, then commit instead...but this works for now
         fedora.server.storage.types.BasicDigitalObject obj=new fedora.server.storage.types.BasicDigitalObject();
         obj.setPid(pid);
@@ -126,6 +141,7 @@ public class DefaultManagement
             boolean commit) 
             throws ServerException { 
         getServer().logFinest("Entered DefaultManagement.releaseLock");
+        m_ipRestriction.enforce(context);
         DOWriter w=m_manager.getWriter(context, pid);
         if (commit) {
             w.commit(logMessage); // FIXME: make the audit record HERE
@@ -139,6 +155,7 @@ public class DefaultManagement
     public ObjectInfo getObjectInfo(Context context, String pid) 
             throws ServerException { 
         getServer().logFinest("Entered DefaultManagement.getObjectInfo");
+        m_ipRestriction.enforce(context);
         ObjectInfo inf=new ObjectInfo();
         DOReader r=m_manager.getReader(context, pid);
         inf.setLabel(r.GetObjectLabel());
@@ -169,6 +186,7 @@ public class DefaultManagement
             Calendar createDateMin, Calendar createDateMax, 
             Calendar lastModDateMin, Calendar lastModDateMax) 
             throws ServerException {
+        m_ipRestriction.enforce(context);
         return m_manager.listObjectPIDs(context, pidPattern,
                 foType, lockedByPattern, state, labelPattern,
                 contentModelIdPattern, createDateMin, createDateMax, 

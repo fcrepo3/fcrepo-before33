@@ -1,5 +1,6 @@
 package fedora.server.management;
 
+import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
@@ -27,8 +28,10 @@ import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
 
 public class FedoraAPIMBindingSOAPHTTPImpl 
         implements FedoraAPIM {
@@ -49,8 +52,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     private static ILowlevelStorage s_st;
 
-    private static ReadOnlyContext s_context;
-    
     /** Before fulfilling any requests, make sure we have a server instance. */
     static {
         try {
@@ -64,11 +65,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_server=Server.getInstance(new File(fedoraHome));
                 s_initialized=true;
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
-                HashMap h=new HashMap();
-                h.put("application", "apim");
-                h.put("useCachedObject", "false");
-                h.put("userId", "fedoraAdmin");
-                s_context=new ReadOnlyContext(h);
             }
             s_st=FileSystemLowlevelStorage.getPermanentStore();  // FIXME: Move this
         } catch (InitializationException ie) {
@@ -78,11 +74,24 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
     
+    private Context getContext() {
+        HashMap h=new HashMap();
+        h.put("application", "apim");
+        h.put("useCachedObject", "false");
+        h.put("userId", "fedoraAdmin");
+        HttpServletRequest req=(HttpServletRequest) MessageContext.
+                getCurrentContext().getProperty(
+                HTTPConstants.MC_HTTP_SERVLETREQUEST);
+                System.out.println("HOST:" + req.getRemoteAddr());
+        h.put("host", req.getRemoteAddr());
+        return new ReadOnlyContext(h);
+    }
+    
     public String createObject() 
             throws RemoteException {
         assertInitialized();
         try {
-            return s_management.createObject(s_context);
+            return s_management.createObject(getContext());
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -108,7 +117,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            return s_management.ingestObject(s_context, 
+            return s_management.ingestObject(getContext(), 
                     new ByteArrayInputStream(METSXML), "mets11fedora1", "UTF-8", true); // always gens pid, unless pid in stream starts with "test:"
         } catch (ServerException se) {
             logStackTrace(se);
@@ -117,37 +126,13 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             logStackTrace(e);
             throw AxisUtility.getFault(e);
         }
-/*        try {
-            String pid="1234";
-            TestFileStreamStorage st=new TestFileStreamStorage(new File(s_server.getHomeDir(), "data"), 4096);
-            METSDOSerializer ser=new METSDOSerializer("UTF-8");
-            METSDODeserializer deser=new METSDODeserializer("UTF-8", false, METSDODeserializer.QUERY_NEVER); // don't check if it's well-formed xml
-            w=new DefinitiveDOWriter(pid, st, st, null, 
-                    deser, ser, deser, ser, new ByteArrayInputStream(METSXML),
-                    true);
-            return w.GetObjectPID();
-        } catch (ServerException se) {
-            AxisUtility.throwFault(se);
-        } catch (Exception e) {
-            AxisUtility.throwFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
-        } */
-       /* 
-    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
-            TestStreamStorage tempStorage, StreamValidator validator,
-            DODeserializer importDeserializer, DOSerializer storageSerializer,
-            DODeserializer storageDeserializer, DOSerializer exportSerializer,
-            InputStream initialContent, boolean useContentPid) 
-            throws ObjectIntegrityException, 
-            StreamIOException, StreamReadException {        
-        */    
-            
     }
 
     public byte[] getObjectXML(String PID) 
             throws RemoteException {
         assertInitialized();
         try {
-            InputStream in=s_management.getObjectXML(s_context, PID, "mets11fedora1", "UTF-8");
+            InputStream in=s_management.getObjectXML(getContext(), PID, "mets11fedora1", "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
@@ -182,10 +167,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public byte[] exportObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            InputStream in=w.ExportObject();
-            ByteArrayOutputStream out=new ByteArrayOutputStream();
-            pipeStream(in, out);
-            return out.toByteArray();
+            return new byte[0];
         } catch (ServerException se) {
             logStackTrace(se);
             AxisUtility.throwFault(se);
@@ -207,7 +189,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public void purgeObject(String PID, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
         try {
-            s_management.purgeObject(s_context, PID, logMessage);
+            s_management.purgeObject(getContext(), PID, logMessage);
         } catch (ServerException se) {
             logStackTrace(se);
             AxisUtility.throwFault(se);
@@ -248,7 +230,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            return s_management.getObjectInfo(s_context, pid);
+            return s_management.getObjectInfo(getContext(), pid);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -268,7 +250,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            return s_management.listObjectPIDs(s_context, pidPattern,
+            return s_management.listObjectPIDs(getContext(), pidPattern,
                     foType, lockedByPattern, state, labelPattern,
                     contentModelIdPattern, createDateMin, createDateMax, 
                     lastModDateMin, lastModDateMax);

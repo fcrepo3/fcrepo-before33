@@ -3,6 +3,11 @@ package fedora.server.access;
 import java.io.File;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
+
+import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
 import fedora.server.errors.InitializationException;
@@ -35,7 +40,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   private static Access s_access;
 
   /** Context for cached objects. */
-  private static ReadOnlyContext s_context;
+  private static ReadOnlyContext context;
 
   /** Debug toggle for testing. */
   private static boolean debug = false;
@@ -58,12 +63,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
               (Access) s_server.getModule("fedora.server.access.Access");
           Boolean B1 = new Boolean(s_server.getParameter("debug"));
           debug = B1.booleanValue();
-          HashMap h=new HashMap();
-          h.put("application", "apia");
-          h.put("useCachedObject", "true");
-          h.put("userId", "fedoraAdmin");
-          s_context=new ReadOnlyContext(h);
-          s_server.logFinest("got server instance: context: "+s_context+
+          s_server.logFinest("got server instance: " +
                              "s_init: "+s_initialized);
       }
     } catch (InitializationException ie) {
@@ -71,6 +71,18 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         s_initialized = false;
         s_initException = ie;
     }
+  }
+  
+  private Context getContext() {
+      HashMap h=new HashMap();
+      h.put("application", "apia");
+      h.put("useCachedObject", "true");
+      h.put("userId", "fedoraAdmin");
+      HttpServletRequest req=(HttpServletRequest) MessageContext.
+              getCurrentContext().getProperty(
+              HTTPConstants.MC_HTTP_SERVLETREQUEST);
+      h.put("host", req.getRemoteAddr());
+      return new ReadOnlyContext(h);
   }
 
   /**
@@ -85,11 +97,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public java.lang.String[] getBehaviorDefinitions(java.lang.String PID,
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
+    Context context=getContext();
     assertInitialized();
     try
     {
       String[] bDefs =
-          s_access.getBehaviorDefinitions(s_context, PID, asOfDateTime);
+          s_access.getBehaviorDefinitions(context, PID, asOfDateTime);
       if (bDefs != null && debug)
       {
         for (int i=0; i<bDefs.length; i++)
@@ -127,11 +140,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       java.lang.String PID, java.lang.String bDefPID,
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
+    Context context=getContext();
     assertInitialized();
     try
     {
       fedora.server.storage.types.MethodDef[] methodDefs =
-          s_access.getBehaviorMethods(s_context, PID, bDefPID, asOfDateTime);
+          s_access.getBehaviorMethods(context, PID, bDefPID, asOfDateTime);
       fedora.server.types.gen.MethodDef[] genMethodDefs =
           TypeUtility.convertMethodDefArrayToGenMethodDefArray(methodDefs);
       return genMethodDefs;
@@ -162,10 +176,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   getBehaviorMethodsAsWSDL(java.lang.String PID, java.lang.String bDefPID,
   java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
+    Context context=getContext();
     try
     {
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          s_access.getBehaviorMethodsAsWSDL(s_context, PID,
+          s_access.getBehaviorMethodsAsWSDL(context, PID,
           bDefPID, asOfDateTime);
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
@@ -203,12 +218,13 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       fedora.server.types.gen.Property[] userParms,
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
+    Context context=getContext();
     try
     {
       fedora.server.storage.types.Property[] properties =
           TypeUtility.convertGenPropertyArrayToPropertyArray(userParms);
       fedora.server.storage.types.MIMETypedStream mimeTypedStream =
-          s_access.getDissemination(s_context, PID, bDefPID, methodName,
+          s_access.getDissemination(context, PID, bDefPID, methodName,
           properties, asOfDateTime);
       fedora.server.types.gen.MIMETypedStream genMIMETypedStream =
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
@@ -239,10 +255,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       getObjectMethods(java.lang.String PID,
       java.util.Calendar asOfDateTime) throws java.rmi.RemoteException
   {
+    Context context=getContext();
     try
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
-          s_access.getObjectMethods(s_context, PID, asOfDateTime);
+          s_access.getObjectMethods(context, PID, asOfDateTime);
       fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
           TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
           objectMethodDefs);

@@ -17,6 +17,7 @@ import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
+import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -45,6 +46,9 @@ public class DefaultAccess extends Module implements Access
 
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
+
+  /** IP Restriction for the Access subsystem. */
+  private IPRestriction m_ipRestriction;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -77,6 +81,15 @@ public class DefaultAccess extends Module implements Access
       throw new ModuleInitializationException("Can't get a DOManager "
           + "from Server.getModule", getRole());
     }
+    String allowHosts=getParameter("allowHosts");
+    String denyHosts=getParameter("denyHosts");
+    try {
+        m_ipRestriction=new IPRestriction(allowHosts, denyHosts);
+    } catch (ServerException se) {
+        throw new ModuleInitializationException("Error setting IP restriction "
+                + "for Access subsystem: " + se.getClass().getName() + ": "
+                + se.getMessage(), getRole());
+    }
   }
 
   /**
@@ -93,6 +106,7 @@ public class DefaultAccess extends Module implements Access
   public String[] getBehaviorDefinitions(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
+    m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     String[] behaviorDefs = null;
     DOReader reader =
@@ -117,6 +131,7 @@ public class DefaultAccess extends Module implements Access
   public MethodDef[] getBehaviorMethods(Context context, String PID,
       String bDefPID, Calendar asOfDateTime) throws ServerException
   {
+    m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
@@ -143,6 +158,7 @@ public class DefaultAccess extends Module implements Access
   public MIMETypedStream getBehaviorMethodsAsWSDL(Context context,
       String PID, String bDefPID, Calendar asOfDateTime) throws ServerException
   {
+    m_ipRestriction.enforce(context);
     try
     {
       ByteArrayOutputStream baos = new ByteArrayOutputStream(4096);
@@ -194,6 +210,7 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Calendar asOfDateTime) throws ServerException
   {
+    m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
@@ -251,6 +268,7 @@ public class DefaultAccess extends Module implements Access
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
+    m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
@@ -286,6 +304,7 @@ public class DefaultAccess extends Module implements Access
       String methodName, Hashtable h_userParms, Date versDateTime)
       throws ServerException
   {
+    m_ipRestriction.enforce(context);
     DOReader fdor = null;
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;

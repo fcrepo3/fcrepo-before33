@@ -2,6 +2,8 @@ package fedora.server.security;
 
 import java.util.ArrayList;
 
+import fedora.server.Context;
+import fedora.server.errors.DisallowedHostException;
 import fedora.server.errors.InvalidIPSpecException;
 
 public class IPRestriction {
@@ -50,14 +52,22 @@ public class IPRestriction {
 
     public boolean allows(String address) 
             throws InvalidIPSpecException {
-        int a=parseAddress(address);
+        long a=parseAddress(address);
         return allowed(a) && !denied(a);
     }
     
-    private boolean allowed(int address) {
+    public void enforce(Context context) 
+            throws DisallowedHostException, InvalidIPSpecException {
+        if (context.get("host")!=null && !allows(context.get("host"))) {
+            throw new DisallowedHostException("Host " + context.get("host") 
+                    + " is not allowed due to ip restriction.");
+        }
+    }
+    
+    private boolean allowed(long address) {
         if (m_allowSpecified) {
             for (int i=0; i<m_allowRanges.size(); i++) {
-                if (((Range) m_allowRanges.get(i)).has(address)) {
+                if (((IPRange) m_allowRanges.get(i)).has(address)) {
                     return true;
                 }
             }
@@ -67,10 +77,10 @@ public class IPRestriction {
         }
     }
     
-    private boolean denied(int address) {
+    private boolean denied(long address) {
         if (m_denySpecified) {
             for (int i=0; i<m_denyRanges.size(); i++) {
-                if (((Range) m_denyRanges.get(i)).has(address)) {
+                if (((IPRange) m_denyRanges.get(i)).has(address)) {
                     return true;
                 }
             }
@@ -80,48 +90,53 @@ public class IPRestriction {
         }
     }
     
-    private Range parseRange(String range) 
+    private IPRange parseRange(String range) 
             throws InvalidIPSpecException {
-        int beginning;
-        int ending;
+        long beginning;
+        long ending;
         if (range.indexOf("-")==-1) {
             beginning=parseAddress(range);
             ending=beginning;
         } else {
-            String[] r=range.split();
+            String[] r=range.split("-");
             if (r.length!=2) {
                 throw new InvalidIPSpecException("Invalid IP range: '" + range + "'");
             }
             beginning=parseAddress(r[0]);
             ending=parseAddress(r[1]);
         }
-        return new Range(beginning, ending);
+        return new IPRange(beginning, ending);
     }
     
-    private int parseAddress(String address) 
+    private long parseAddress(String address) 
             throws InvalidIPSpecException {
-        String[] parts=address.split("\.");
+        String[] parts=address.split("\\.");
         if (parts.length!=4) {
             throw new InvalidIPSpecException("Invalid IP address: '" + address + "'");
         }
         return parseOctet(parts[3], 0)
-                + parseOctet(pars[2], 1)
-                + parseOctet(pars[1]), 2)
-                + parseOctet(pars[0]), 3);
+                + parseOctet(parts[2], 1)
+                + parseOctet(parts[1], 2)
+                + parseOctet(parts[0], 3);
     }
 
     // least-significant byte num is 0
-    private int parseOctet(String octet, int byteNum)
+    private long parseOctet(String octet, int byteNum)
             throws InvalidIPSpecException {
         try {
-            int n=Integer.parseInt(octet);
-            if ( (n<0) || (n>255) ) {
+            long l=Long.parseLong(octet);
+            if ( (l<0) || (l>255) ) {
                 throw new InvalidIPSpecException("Invalid octet: '" + octet + "'");
             }
-            for (int i=0; i<byteNum; i++) {
-                n=n*256;
+            if (byteNum==1) {
+                return l*256;
+            } else if (byteNum==2) {
+                 return l*256*256;
+            } else if (byteNum==3) {
+                return l*256*256*256;
+            } else {
+                return l;
             }
-            return n;
         } catch (NumberFormatException nfe) {
             throw new InvalidIPSpecException("Invalid octet: '" + octet + "'");
         }
@@ -129,17 +144,17 @@ public class IPRestriction {
 
     protected class IPRange {
 
-        private int m_beginning;
-        private int m_ending;
+        private long m_beginning;
+        private long m_ending;
 
-        public Range(int beginning, int ending)
+        public IPRange(long beginning, long ending)
                 throws InvalidIPSpecException {
-            if ( (beginning<0) || (ending>4294967295) ) {
-                throw new IPRangeException("IP range cannot be outside 0.0.0.0 and 255.255.255.255");
+            if ( (beginning<0) ) {
+                throw new InvalidIPSpecException("IP range cannot be outside 0.0.0.0 and 255.255.255.255");
             }
             if (beginning>ending) {
                 // swap if reversed order
-                int oldEnding=ending;
+                long oldEnding=ending;
                 ending=beginning;
                 beginning=oldEnding;
             }
@@ -147,7 +162,7 @@ public class IPRestriction {
             m_ending=ending;
         }
 
-        public boolean has(int number) {
+        public boolean has(long number) {
             return ((number>=m_beginning) && (number<=m_ending));
         }
 
