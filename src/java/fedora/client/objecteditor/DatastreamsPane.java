@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
@@ -60,7 +61,7 @@ public class DatastreamsPane
                     getDatastreams(pid, null, null);
             m_datastreamPanes=new DatastreamPane[currentVersions.length];
             for (int i=0; i<currentVersions.length; i++) {
-                m_datastreamPanes[i]=new DatastreamPane(pid, currentVersions[i]);
+                m_datastreamPanes[i]=new DatastreamPane(pid, currentVersions[i], this);
                 m_tabbedPane.add(currentVersions[i].getID(), m_datastreamPanes[i]);
             }
 
@@ -68,6 +69,23 @@ public class DatastreamsPane
         setBorder(BorderFactory.createEmptyBorder(6,6,0,6));
         add(m_tabbedPane, BorderLayout.CENTER);
 
+    }
+
+    /**
+     * Refresh the content of the tab for the indicated datastream with the
+     * latest information from the server.
+     */
+    protected void refresh(String dsID) {
+        int i=m_tabbedPane.indexOfTab(dsID);
+        try {
+            Datastream ds=Administrator.APIM.getDatastream(m_pid, dsID, null);
+            m_tabbedPane.setComponentAt(i, new DatastreamPane(m_pid, ds, this));
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    e.getMessage() + "\nTry re-opening the object viewer.", 
+                    "Error while refreshing",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public boolean isDirty() {

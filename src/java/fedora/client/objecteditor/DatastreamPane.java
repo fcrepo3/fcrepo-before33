@@ -82,14 +82,17 @@ public class DatastreamPane
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
     private CurrentVersionPane m_currentVersionPane;
+    private DatastreamsPane m_owner;
+    private PurgeButtonListener m_purgeButtonListener;
 
     /**
      * Build the pane.
      */
-    public DatastreamPane(String pid, Datastream mostRecent)
+    public DatastreamPane(String pid, Datastream mostRecent, DatastreamsPane owner)
             throws Exception {
 		m_pid=pid;
         m_mostRecent=mostRecent;
+        m_owner=owner;
         new TextContentEditor();  // causes it to be registered if not already
         new ImageContentViewer();  // causes it to be registered if not already
         new SVGContentViewer();  // causes it to be registered if not already
@@ -158,6 +161,9 @@ public class DatastreamPane
                     versions[i]=Administrator.APIM.getDatastream(pid,
                             mostRecent.getID(), dates[dates.length-i-1]);
                 }
+                // now that they're sorted, set up the shared button listener for purge
+                m_purgeButtonListener=new PurgeButtonListener(versions);
+                // do the slider if needed
                 if (versions.length>1) {
                     m_versionSlider=new JSlider(JSlider.HORIZONTAL,
                             0, versions.length-1, 0);
@@ -176,6 +182,7 @@ public class DatastreamPane
                     m_versionSlider.setLabelTable(m_labelTables[0]);
                     m_versionSlider.setPaintLabels(true);
                 }
+
 
                 // CENTER: m_valuePane(one card for each version)
 
@@ -277,14 +284,7 @@ public class DatastreamPane
     }
 
     public void changesSaved() {
-        int i=m_stateComboBox.getSelectedIndex();
-        if (i==0)
-           m_mostRecent.setState("A");
-        if (i==1)
-           m_mostRecent.setState("I");
-        if (i==2)
-           m_mostRecent.setState("D");
-        m_currentVersionPane.changesSaved();
+        m_owner.refresh(m_mostRecent.getID());
     }
 
     public void undoChanges() {
@@ -579,6 +579,11 @@ public class DatastreamPane
                 }
                 }
             });
+            // and purge is, too
+            JButton purgeButton=new JButton("Purge...");
+            purgeButton.addActionListener(m_purgeButtonListener);
+            purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
+            actionPane.add(purgeButton);
             add(actionPane, BorderLayout.SOUTH);
         }
 
@@ -700,23 +705,6 @@ public class DatastreamPane
             }
             if (m_importFile!=null) return true;
             return false;
-        }
-
-        public void changesSaved() {
-            m_ds.setLabel(m_labelTextField.getText());
-            if (m_locationTextField!=null) m_ds.setLocation(m_locationTextField.getText());
-            if (m_editor!=null) m_editor.changesSaved();
-            if (m_importFile!=null) {
-                // update display, and set to null
-                m_importFile=null;
-                if (m_importLabel!=null) {
-                    remove(m_importLabel);
-                    m_importLabel=null;
-                }
-            }
-            // But all this may be a moot point, since it may be best to just
-            // re-load the entire datastream history to get a fresh view with
-            // the new version being the editable one
         }
 
         public void undoChanges() {
@@ -851,6 +839,10 @@ public class DatastreamPane
                 }
             });
             buttonPanel.add(exportButton);
+            JButton purgeButton=new JButton("Purge...");
+            purgeButton.addActionListener(m_purgeButtonListener);
+            purgeButton.setActionCommand(s_formatter.format(m_ds.getCreateDate().getTime()));
+            buttonPanel.add(purgeButton);
             add(buttonPanel, BorderLayout.SOUTH);
 
         }
@@ -860,4 +852,23 @@ public class DatastreamPane
         }
 
     }
+
+    protected class PurgeButtonListener
+            implements ActionListener {
+
+        Datastream[] m_versions;
+
+        public PurgeButtonListener(Datastream[] versions) {
+            m_versions=versions;
+
+        }
+
+        public void actionPerformed(ActionEvent evt) {
+            String dateAsString=evt.getActionCommand();
+            
+            System.out.println(dateAsString);
+
+        }
+    }
+
 }
