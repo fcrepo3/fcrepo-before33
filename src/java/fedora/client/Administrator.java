@@ -24,7 +24,6 @@ import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
 import fedora.client.export.Export;
-import fedora.client.ingest.AutoIngestor;
 import fedora.client.ingest.Ingest;
 import fedora.client.objecteditor.ObjectEditorFrame;
 import fedora.client.purge.AutoPurger;
