@@ -523,7 +523,7 @@ public abstract class Server
      * required module roles have been met.
      *
      * @param rootConfigElement The root <code>Element</code> of configuration.
-     * @param homeDir The home directory of the server, used to interpret 
+     * @param homeDir The home directory of fedora, used to interpret 
      *        relative paths used in configuration.
      * @throws ServerInitializationException If there was an error starting
      *         the server.
@@ -538,13 +538,13 @@ public abstract class Server
             m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
             m_loadedModules=new HashMap();
             m_homeDir=new File(homeDir, "server");
-            File logDir=new File(homeDir, LOG_DIR);
+            File logDir=new File(m_homeDir, LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdir(); // try to create dir if doesn't exist
             }
-            File configFile=new File(homeDir + File.separator + CONFIG_DIR 
+            File configFile=new File(m_homeDir + File.separator + CONFIG_DIR 
                     + File.separator + CONFIG_FILE);
-            logConfig("Server home is " + homeDir.toString());
+            logConfig("Server home is " + m_homeDir.toString());
             if (s_serverProfile==null) {
                 logConfig("fedora.serverProfile property not set... will always "
                         + "use param 'value' attributes from configuration for param values.");
