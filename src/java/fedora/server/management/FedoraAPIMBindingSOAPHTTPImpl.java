@@ -14,6 +14,7 @@ import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.AxisUtility;
+import fedora.server.utilities.TypeUtility;
 
 import java.io.File;
 import java.io.ByteArrayInputStream;
@@ -310,9 +311,17 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 */
     public fedora.server.types.gen.Datastream getDatastream(String PID, String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
-        return null;
+        try {
+            fedora.server.storage.types.Datastream ds=s_management.getDatastream(getContext(), PID, datastreamID, asOfDateTime);
+            return TypeUtility.convertDatastreamToGenDatastream(ds);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
-
+    
 /*
     public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
@@ -320,7 +329,15 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 */
     public String[] listDatastreamIDs(String PID, String state) throws java.rmi.RemoteException {
-        return null;
+        assertInitialized();
+        try {
+            return s_management.listDatastreamIDs(getContext(), PID, state);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 /*
     public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(String PID, String datastreamID) throws java.rmi.RemoteException {

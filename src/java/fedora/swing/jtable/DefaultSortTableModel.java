@@ -36,7 +36,8 @@ public class DefaultSortTableModel
   
   public boolean isSortable(int col)
   {
-    return true;
+    //return true;   // FIXME: columns can't be sorted till the how-do-i-get-the-pid-if-its-not-part-of-the-table-model-and-the-model-has-been-sorted problem is solved
+    return false;
   }
   
     public boolean isCellEditable(int rowIndex, int columnIndex) {

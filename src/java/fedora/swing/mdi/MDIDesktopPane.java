@@ -44,8 +44,8 @@ public class MDIDesktopPane extends JDesktopPane {
         }
         frame.setLocation(p.x, p.y);
         if (frame.isResizable()) {
-            w = getWidth() - (getWidth()/3);
-            h = getHeight() - (getHeight()/3);
+            w = getWidth() - (getWidth()/5);
+            h = getHeight() - (getHeight()/5);
             if (w < frame.getMinimumSize().getWidth()) w = (int)frame.getMinimumSize().getWidth();
             if (h < frame.getMinimumSize().getHeight()) h = (int)frame.getMinimumSize().getHeight();
             frame.setSize(w, h);

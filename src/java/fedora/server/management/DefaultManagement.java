@@ -17,11 +17,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
 import fedora.server.storage.types.DatastreamManagedContent;
-//import fedora.server.types.gen.AuditRecord;
-//import fedora.server.types.gen.ComponentInfo;
-import fedora.server.types.gen.Datastream;
-//import fedora.server.types.gen.DatastreamBindingMap;
-//import fedora.server.types.gen.Disseminator;
+import fedora.server.storage.types.Datastream;
 import fedora.server.types.gen.ObjectInfo;
 import fedora.server.utilities.DateUtility;
 
@@ -185,6 +181,7 @@ public class DefaultManagement
         getServer().logFinest("Exiting DefaultManagement.releaseLock");
     }
 */
+    // fixme: i don't think this is needed...maybe it is though
     public ObjectInfo getObjectInfo(Context context, String pid)
             throws ServerException {
         getServer().logFinest("Entered DefaultManagement.getObjectInfo");
@@ -336,11 +333,25 @@ modifyByValue
 
     public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
 */
-    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) { return null; }
+    public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime) 
+            throws ServerException { 
+        m_ipRestriction.enforce(context);
+        DOReader r=m_manager.getReader(context, pid);
+        Date d=null;
+        if (asOfDateTime!=null) {
+            d=asOfDateTime.getTime();
+        }
+        return r.GetDatastream(datastreamID, d);
+    }
 /*
     public Datastream[] getDatastreams(Context context, String pid, Calendar asOfDateTime) { return null; }
 */
-    public String[] listDatastreamIDs(Context context, String pid, String state) { return null; }
+    public String[] listDatastreamIDs(Context context, String pid, String state) 
+            throws ServerException { 
+        m_ipRestriction.enforce(context);
+        DOReader r=m_manager.getReader(context, pid);
+        return r.ListDatastreamIDs(state);
+    }
 /*
     public ComponentInfo[] getDatastreamHistory(Context context, String pid, String datastreamID) { return null; }
 

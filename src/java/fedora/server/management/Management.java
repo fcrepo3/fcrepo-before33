@@ -5,12 +5,8 @@ import java.util.Calendar;
 
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
-//import fedora.server.types.gen.AuditRecord;
-//import fedora.server.types.gen.ComponentInfo;
-import fedora.server.types.gen.Datastream;
-//import fedora.server.types.gen.DatastreamBindingMap;
-//import fedora.server.types.gen.Disseminator;
 import fedora.server.types.gen.ObjectInfo;
+import fedora.server.storage.types.Datastream;
 
 /**
  *

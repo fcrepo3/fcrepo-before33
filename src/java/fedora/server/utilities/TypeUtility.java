@@ -38,6 +38,33 @@ import java.util.TimeZone;
 public abstract class TypeUtility
 {
 
+    public static fedora.server.types.gen.Datastream 
+            convertDatastreamToGenDatastream(
+            fedora.server.storage.types.Datastream in) {
+        fedora.server.types.gen.Datastream out=
+                new fedora.server.types.gen.Datastream();
+        String group=in.DSControlGrp;
+        out.setControlGroup(fedora.server.types.gen.DatastreamControlGroup.fromValue(group));
+        if (group.equals("X")) {
+            fedora.server.storage.types.DatastreamXMLMetadata mdDS=
+                    (fedora.server.storage.types.DatastreamXMLMetadata) in;
+            out.setContentStream(mdDS.xmlContent);
+        } else {
+            out.setLocation(in.DSLocation);
+        }
+        java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
+        cal.setTime(in.DSCreateDT);
+        out.setCreateDate(cal);
+        out.setID(in.DatastreamID);
+        out.setInfoType(in.DSInfoType);
+        out.setLabel(in.DSLabel);
+        out.setMIMEType(in.DSMIME);
+        out.setSize(in.DSSize);
+        out.setState(in.DSState);
+        out.setVersionID(in.DSVersionID);
+        return out;
+    }
+
     public static fedora.server.types.gen.FieldSearchResult
             convertFieldSearchResultToGenFieldSearchResult(
             fedora.server.search.FieldSearchResult result) {
