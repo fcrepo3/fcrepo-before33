@@ -29,7 +29,7 @@ import fedora.server.errors.InitializationException;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-class Configuration {
+public class Configuration {
 
 	private final boolean backslashIsEscape;
 	private final String separator;
