@@ -240,12 +240,7 @@ public class DatastreamViewer
                         fieldGrid.add(labelValueField);
                         JTextField locationValueField=null;
                         if (!xml) {
-                            String locationValue;
-                            if (group.equals("M")) {
-                                locationValue="";
-                            } else {
-                                locationValue=ds.getLocation();
-                            }
+                            String locationValue=ds.getLocation();
                             locationValueField=new JTextField(locationValue, 15);
                             locationValueField.setCaretPosition(0);
                             c.gridx=0; // column 1
@@ -294,7 +289,7 @@ public class DatastreamViewer
                     String dsState = ds.getState();
                     stateValueField.setSelectedItem(dsState);
                     Dimension dt = stateValueField.getPreferredSize();
-                    stateValueField.setPreferredSize(new Dimension((int)dt.getWidth()-90, (int)
+                    stateValueField.setPreferredSize(new Dimension((int)dt.getWidth()-75, (int)
 dt.getHeight()-5));
                     c.gridx=0; // column 1
                     c.gridy=2; // row 3
