@@ -21,6 +21,33 @@ public abstract class SQLUtility {
     public static void replaceInto(Connection conn, String tableName, 
             String[] columns, String[] values, String uniqueColumn) 
             throws SQLException {
+        replaceInto(conn, tableName, columns, values, uniqueColumn, null);
+    }
+    
+    public static void replaceInto(Connection conn, String tableName, 
+            String[] columns, String[] values, String uniqueColumn,
+            Logging log) 
+            throws SQLException {
+        // figure out if we need to escape an apostrophe
+        for (int i=0; i<values.length; i++) {
+            String val=values[i];
+            if (val!=null) {
+                StringBuffer newVal=new StringBuffer();
+                boolean apos=false;
+                for (int x=0; x<val.length(); x++) {
+                    char c=val.charAt(x);
+                    if (c=='\'') {
+                        newVal.append("''");
+                        apos=true;
+                    } else {
+                        newVal.append(c);
+                    }
+                }
+                if (apos) {
+                    values[i]=newVal.toString();
+                }
+            }
+        }
         StringBuffer s=new StringBuffer(); // set clause
         s.append("SET ");
         String uVal=null;
@@ -57,7 +84,9 @@ public abstract class SQLUtility {
         Statement st=null;
         try {
             st=conn.createStatement();
-//System.out.println("SQLUtility.executeUpdate, trying: " + u.toString());
+            if (log!=null) {
+                log.logFiner("SQLUtility.executeUpdate, trying: " + u.toString());
+            }
             if (st.executeUpdate(u.toString())==0) {
                 StringBuffer i=new StringBuffer(); // insert statement
                 i.append("INSERT INTO ");
@@ -75,12 +104,18 @@ public abstract class SQLUtility {
                     if (x>0) {
                         i.append(", ");
                     }
-                    i.append("'");
-                    i.append(values[x]);
-                    i.append("'");
+                    if (values[x]==null) {
+                        i.append("NULL");
+                    } else {
+                        i.append("'");
+                        i.append(values[x]);
+                        i.append("'");
+                    }
                 }
                 i.append(")");
-//System.out.println("SQLUtility.executeUpdate, now trying: " + i.toString());
+                if (log!=null) {
+                    log.logFiner("SQLUtility.executeUpdate, now trying: " + i.toString());
+                }
                 st.executeUpdate(i.toString());
             }
         } catch (SQLException sqle) {
@@ -88,11 +123,9 @@ public abstract class SQLUtility {
         } finally {
             if (st!=null) {
                 try {
-//System.out.println("SQLUtility.executeUpdate, closing statement!");
                     st.close();
                 } catch (SQLException sqle) { }
             }
-//System.out.println("SQLUtility.executeUpdate, exiting!");
         }
     }
     

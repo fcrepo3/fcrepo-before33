@@ -1,14 +1,21 @@
 package fedora.server.search;
 
+import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
 
 public class ObjectFields 
@@ -112,6 +119,31 @@ public class ObjectFields
             } else {
                 throw new UnrecognizedFieldException("Unrecognized field: '" + s + "'");
             }
+        }
+    }
+    
+    public ObjectFields(String[] fieldNames, InputStream in) 
+            throws UnrecognizedFieldException, RepositoryConfigurationException, 
+            ObjectIntegrityException, StreamIOException {
+        this(fieldNames);
+        SAXParser parser=null;
+        try {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            parser=spf.newSAXParser();
+        } catch (Exception e) {
+            throw new RepositoryConfigurationException("Error getting SAX "
+                    + "parser for DC metadata: " + e.getClass().getName() 
+                    + ": " + e.getMessage());
+        }
+        try {
+            parser.parse(in, this);
+        } catch (SAXException saxe) {
+            throw new ObjectIntegrityException(
+                    "Parse error parsing ObjectFields: " + saxe.getMessage());
+        } catch (IOException ioe) {
+            throw new StreamIOException("Stream error parsing ObjectFields: " 
+                    + ioe.getMessage());
         }
     }
     

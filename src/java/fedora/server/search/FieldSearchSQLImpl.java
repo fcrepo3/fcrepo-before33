@@ -19,8 +19,10 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.QueryParseException;
+import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
@@ -42,7 +44,7 @@ public class FieldSearchSQLImpl
     private RepositoryReader m_repoReader;
     private static long s_maxResults=200;
     private static String[] s_dbColumnNames=new String[] {"pid", "label", 
-            "foType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
+            "fType", "cModel", "state", "locker", "cDate", "mDate", "dcmDate",
             "dcTitle", "dcCreator", "dcSubject", "dcDescription", "dcPublisher",
             "dcContributor", "dcDate", "dcType", "dcFormat", "dcIdentifier",
             "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
@@ -74,13 +76,28 @@ public class FieldSearchSQLImpl
             conn=m_cPool.getConnection();
             String[] dbRowValues=new String[24];
             dbRowValues[0]=reader.GetObjectPID();
-            dbRowValues[1]=reader.GetObjectLabel();
-            dbRowValues[2]=reader.getFedoraObjectType();
-            dbRowValues[3]=reader.getContentModelId();
-            dbRowValues[4]=reader.GetObjectState();
-            dbRowValues[5]=reader.getLockingUser();
-            dbRowValues[6]=formatter.format(reader.getCreateDate());
-            dbRowValues[7]=formatter.format(reader.getLastModDate());
+            String v;
+            v=reader.GetObjectLabel();
+            if (v!=null) v=v.toLowerCase();
+            dbRowValues[1]=v;
+            dbRowValues[2]=reader.getFedoraObjectType().toLowerCase();
+            v=reader.getContentModelId();
+            if (v!=null) v=v.toLowerCase();
+            dbRowValues[3]=v;
+            dbRowValues[4]=reader.GetObjectState().toLowerCase();
+            v=reader.getLockingUser();
+            if (v!=null) v=v.toLowerCase();
+            dbRowValues[5]=v;
+            Date date=reader.getCreateDate();
+            if (date==null) {  // should never happen, but if it does, don't die
+                date=new Date();
+            }
+            dbRowValues[6]=formatter.format(date);
+            date=reader.getLastModDate();
+            if (date==null) {  // should never happen, but if it does, don't die
+                date=new Date();
+            }
+            dbRowValues[7]=formatter.format(date);
             DatastreamXMLMetadata dcmd=null;
             try {
                 dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
@@ -91,8 +108,7 @@ public class FieldSearchSQLImpl
             if (dcmd==null) {
                 logFine("Did not have DC Metadata datastream for this object.");
             } else {
-                logFine("Had DC Metadata datastream for this object.  "
-                        + "Formulating SQL and inserting/updating...");
+                logFine("Had DC Metadata datastream for this object.");
                 InputStream in=dcmd.getContentStream();
                 DCFields dc=new DCFields(in);
                 dbRowValues[8]=formatter.format(dcmd.DSCreateDT);
@@ -136,9 +152,10 @@ public class FieldSearchSQLImpl
                 dbRowValues[21]=getDbValue(dc.relations()); 
                 dbRowValues[22]=getDbValue(dc.coverages()); 
                 dbRowValues[23]=getDbValue(dc.rights()); 
-                SQLUtility.replaceInto(conn, "doFields", s_dbColumnNames,
-                        dbRowValues, "pid");
             }
+            logFine("Formulating SQL and inserting/updating...");
+            SQLUtility.replaceInto(conn, "doFields", s_dbColumnNames,
+                    dbRowValues, "pid", this);
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of " 
                     + "object with pid '" + pid + ": " + sqle.getMessage());
@@ -155,7 +172,7 @@ public class FieldSearchSQLImpl
         }
     }
     
-    // delete from doFields where pid=pid
+    // delete from doFields where pid=pid, dcDates where pid=pid
     public boolean delete(String pid) 
             throws ServerException {
         logFinest("Entering delete(String)");
@@ -165,6 +182,7 @@ public class FieldSearchSQLImpl
             conn=m_cPool.getConnection();
             st=conn.createStatement();
             st.executeUpdate("DELETE FROM doFields WHERE pid='" + pid + "'");
+            st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid + "'");
             return true;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting delete of " 
@@ -187,19 +205,48 @@ public class FieldSearchSQLImpl
             throws StorageDeviceException, QueryParseException, ServerException {
         Connection conn=null;
         try {
-            logFinest("Entering search(String, String)");
+            logFinest("Entering search(String[], String)");
             if (terms.indexOf("'")!=-1) {
                 throw new QueryParseException("Query cannot contain the ' character.");
             }
-            String whereClause="";
+            StringBuffer whereClause=new StringBuffer();
             if (!terms.equals("*") && !terms.equals("")) {
-                whereClause=" WHERE ";
-                // TODO:formulate the rest...
+                whereClause.append(" WHERE");
+                // formulate the where clause if the terms aren't * or ""
+                int usedCount=0;
+                boolean needsEscape=false;
+                for (int i=0; i<s_dbColumnNames.length; i++) {
+                    String column=s_dbColumnNames[i];
+                    // use only stringish columns in query
+                    boolean use=column.indexOf("Date")==-1;
+                    if (!use) {
+                        if (column.equals("dcDate")) {
+                            use=true;
+                        }
+                    }
+                    if (use) {
+                        if (usedCount>0) {
+                            whereClause.append(" OR");
+                        }
+                        String qPart=toSql(column, terms);
+                        if (qPart.charAt(0)==' ') {
+                            needsEscape=true;
+                        } else {
+                            whereClause.append(" ");
+                        }
+                        whereClause.append(qPart);
+                        usedCount++;
+                    }
+                }
+                if (needsEscape) {
+                    whereClause.append(" {escape '/'}");
+                }
             }
-            // TODO:formulate the rest...
-            logFinest("Doing search using whereClause: '" + terms + "'");
+            logFinest("Doing search using whereClause: '" 
+                    + whereClause.toString() + "'");
             conn=m_cPool.getConnection();
-            List ret=getObjectFields(conn, "dcFields" + whereClause, resultFields);
+            List ret=getObjectFields(conn, "SELECT pid FROM doFields" 
+                    + whereClause.toString(), resultFields);
             return ret;
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting word search: \"" 
@@ -208,17 +255,17 @@ public class FieldSearchSQLImpl
             if (conn!=null) {
                 m_cPool.free(conn);
             }
-            logFinest("Exiting search(String, String)");
+            logFinest("Exiting search(String[], String)");
         }
     }
 
     public List search(String[] resultFields, List conditions) 
             throws ServerException {
         try {
-            logFinest("Entering search(String, List)");
+            logFinest("Entering search(String[], List)");
             return null;
         } finally {
-            logFinest("Exiting search(String, List)");
+            logFinest("Exiting search(String[], List)");
         }
             /*
             StringBuffer queryPart=new StringBuffer();
@@ -244,8 +291,12 @@ public class FieldSearchSQLImpl
              */
                                     
     }
-    
-        
+
+    /**
+     * Get the string that should be inserted for a dublin core column,
+     * given a list of values.  Turn each value to lowercase and separate them 
+     * all by space characters.  If the list is empty, return null.
+     */
     private static String getDbValue(List dcItem) {
         if (dcItem.size()==0) {
             return null;
@@ -259,12 +310,16 @@ public class FieldSearchSQLImpl
         out.append(" ");
         return out.toString();
     }
- 
-    // tablePart should contain the name of at least one table, if multiple,
-    // separate by space-comma... like "doFields, dcDates"
+
+    /**
+     * Perform the given query for 'pid' using the given connection
+     * and return the result as a List of ObjectFields objects
+     * with resultFields populated.
+     */
     private List getObjectFields(Connection conn, String query,
             String[] resultFields) 
-            throws SQLException, UnrecognizedFieldException, ServerException {
+            throws SQLException, UnrecognizedFieldException, 
+            ObjectIntegrityException, ServerException {
         Statement st=null;
         try {
             ArrayList fields=new ArrayList();
@@ -283,20 +338,73 @@ public class FieldSearchSQLImpl
             }
         }
     }
-    
+
+    /**
+     * For the given pid, get a reader on the object from the repository
+     * and return an ObjectFields object with resultFields fields populated.
+     */
     private ObjectFields getObjectFields(String pid, String[] resultFields) 
-            throws UnrecognizedFieldException, ServerException {
-        ObjectFields f=new ObjectFields(resultFields);
+            throws UnrecognizedFieldException, ObjectIntegrityException,
+            RepositoryConfigurationException, StreamIOException, 
+            ServerException {
         DOReader r=m_repoReader.getReader(s_nonCachedContext, pid);
-        
-        //TODO: sax parse most recent DC datastream
-        
-        //TODO: add non-dc values from doReader for the others in resultFields[]
-        
+        ObjectFields f;
+        // If there's a DC record available, use SAX to parse the most 
+        // recent version of it into f.
+        DatastreamXMLMetadata dcmd=null;
+        try {
+            dcmd=(DatastreamXMLMetadata) r.GetDatastream("DC", null);
+        } catch (ClassCastException cce) {
+            throw new ObjectIntegrityException("Object " + r.GetObjectPID() 
+                    + " has a DC datastream, but it's not inline XML.");
+        }
+        if (dcmd!=null) {
+            logFinest("");
+            f=new ObjectFields(resultFields, dcmd.getContentStream());
+            // add dcmDate if wanted
+            for (int i=0; i<resultFields.length; i++) {
+                if (resultFields[i].equals("dcmDate")) {
+                    f.setDCMDate(dcmd.DSCreateDT);
+                }
+            }
+        } else {
+            f=new ObjectFields();
+        }
+        // add non-dc values from doReader for the others in resultFields[]
+        for (int i=0; i<resultFields.length; i++) {
+            String n=resultFields[i];
+            if (n.equals("pid")) {
+                f.setPid(pid);
+            }
+            if (n.equals("label")) {
+                f.setLabel(r.GetObjectLabel());
+            }
+            if (n.equals("fType")) {
+                f.setFType(r.getFedoraObjectType());
+            }
+            if (n.equals("cModel")) {
+                f.setCModel(r.getContentModelId());
+            }
+            if (n.equals("state")) {
+                f.setState(r.GetObjectState());
+            }
+            if (n.equals("locker")) {
+                f.setLocker(r.getLockingUser());
+            }
+            if (n.equals("cDate")) {
+                f.setCDate(r.getCreateDate());
+            }
+            if (n.equals("mDate")) {
+                f.setMDate(r.getLastModDate());
+            }
+        }
         return f;
     }
     
-    // returns null if can't parse as date
+    /**
+     * Attempt to parse the given string of form: yyyy-MM-dd[Thh:mm:ss[Z]] 
+     * as a Date.  If the string is not of that form, return null.
+     */
     private static Date parseDate(String str) {
         if (str.indexOf("T")!=-1) {
             try {
@@ -318,279 +426,128 @@ public class FieldSearchSQLImpl
         
     }
     
-/*
-    
-    private String getXMLString(DOReader reader) 
-            throws ServerException {
-        StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        out.append("<fields>\n");
-        out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
-        String label=reader.GetObjectLabel();
-        if (label==null) label="";
-        out.append("<label>" + label + "</label>\n");
-        out.append("<fType>" + reader.getFedoraObjectType() + "</fType>\n");
-        String cModel=reader.getContentModelId();
-        if (cModel==null) cModel="";
-        out.append("<cModel>" + cModel + "</cModel>\n");
-        out.append("<state>" + reader.GetObjectState() + "</state>\n");
-        String locker=reader.getLockingUser();
-        if (locker==null) locker="";
-        out.append("<locker>" + locker + "</locker>\n");
-        out.append("<cDate>" + formatter.format(reader.getCreateDate()) + "</cDate>\n");
-        out.append("<cDateAsNum>" + reader.getCreateDate().getTime() + "</cDateAsNum>\n");
-        out.append("<mDate>" + formatter.format(reader.getLastModDate()) + "</mDate>\n");
-        out.append("<mDateAsNum>" + reader.getLastModDate().getTime() + "</mDateAsNum>\n");
-        DatastreamXMLMetadata dcmd=null;
-        try {
-            dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
-        } catch (ClassCastException cce) {
-            throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
-                    + " has a DC datastream, but it's not inline XML.");
+    /**
+     * Return a condition suitable for a SQL WHERE clause, given a column
+     * name and a string with a possible pattern (using * and ? wildcards).
+     * If the string has any characters that need to be escaped, it will
+     * begin with a space, indicating to the caller that the entire WHERE
+     * clause should end with " {escape '/'}".
+     */
+    public static String toSql(String name, String in) {
+        in=in.toLowerCase();
+        if (name.startsWith("dc")) {
+            StringBuffer newIn=new StringBuffer();
+            if (!in.startsWith("*")) {
+                newIn.append("* ");
+            }
+            newIn.append(in);
+            if (!in.endsWith("*")) {
+                newIn.append(" *");
+            }
+            in=newIn.toString();
         }
-        if (dcmd!=null) {
-            logFine("Had DC Metadata datastream for this object.");
-            out.append("<dcmDate>" + formatter.format(dcmd.DSCreateDT) + "</dcmDate>\n");
-            out.append("<dcmDateAsNum>" + dcmd.DSCreateDT.getTime() + "</dcmDateAsNum>\n");
-            InputStream in=dcmd.getContentStream();
-            DCFields dc=new DCFields(in);
-            for (int i=0; i<dc.titles().size(); i++) {
-                out.append("<title>");
-                out.append((String) dc.titles().get(i));
-                out.append("</title>\n");
-            }
-            for (int i=0; i<dc.creators().size(); i++) {
-                out.append("<creator>");
-                out.append((String) dc.creators().get(i));
-                out.append("</creator>\n");
-            }
-            for (int i=0; i<dc.subjects().size(); i++) {
-                out.append("<subject>");
-                out.append((String) dc.subjects().get(i));
-                out.append("</subject>\n");
-            }
-            for (int i=0; i<dc.descriptions().size(); i++) {
-                out.append("<description>");
-                out.append((String) dc.descriptions().get(i));
-                out.append("</description>\n");
-            }
-            for (int i=0; i<dc.publishers().size(); i++) {
-                out.append("<publisher>");
-                out.append((String) dc.publishers().get(i));
-                out.append("</publisher>\n");
-            }
-            for (int i=0; i<dc.contributors().size(); i++) {
-                out.append("<contributor>");
-                out.append((String) dc.contributors().get(i));
-                out.append("</contributor>\n");
-            }
-            for (int i=0; i<dc.dates().size(); i++) {
-                String dateString=(String) dc.dates().get(i);
-                out.append("<date>");
-                out.append(dateString);
-                out.append("</date>\n");
-                long dateNum=parseDateAsNum(dateString);
-                if (dateNum!=-1) {
-                    out.append("<dateAsNum>");
-                    out.append(dateNum);
-                    out.append("</dateAsNum>");
-                }
-            }
-            for (int i=0; i<dc.types().size(); i++) {
-                out.append("<type>");
-                out.append((String) dc.types().get(i));
-                out.append("</type>\n");
-            }
-            for (int i=0; i<dc.formats().size(); i++) {
-                out.append("<format>");
-                out.append((String) dc.formats().get(i));
-                out.append("</format>\n");
-            }
-            for (int i=0; i<dc.identifiers().size(); i++) {
-                out.append("<identifier>");
-                out.append((String) dc.identifiers().get(i));
-                out.append("</identifier>\n");
-            }
-            for (int i=0; i<dc.sources().size(); i++) {
-                out.append("<source>");
-                out.append((String) dc.sources().get(i));
-                out.append("</source>\n");
-            }
-            for (int i=0; i<dc.languages().size(); i++) {
-                out.append("<language>");
-                out.append((String) dc.languages().get(i));
-                out.append("</language>\n");
-            }
-            for (int i=0; i<dc.relations().size(); i++) {
-                out.append("<relation>");
-                out.append((String) dc.relations().get(i));
-                out.append("</relation>\n");
-            }
-            for (int i=0; i<dc.coverages().size(); i++) {
-                out.append("<coverage>");
-                out.append((String) dc.coverages().get(i));
-                out.append("</coverage>\n");
-            }
-            for (int i=0; i<dc.rights().size(); i++) {
-                out.append("<rights>");
-                out.append((String) dc.rights().get(i));
-                out.append("</rights>\n");
-            }
-        } else {
-            logFine("Did not have DC Metadata datastream for this object.");
-        }
-        out.append("</fields>");
-        logFinest("Writing to XML DB: " + out.toString());
-        return out.toString();
-    }
-    
-    public boolean delete(String pid) 
-            throws ServerException {
-        logFinest("Entering delete(String)");
-        try {
-            Collection coll=getCollection(pid);
-            XMLResource resource=(XMLResource) coll.getResource(pid);
-            if (resource==null) {
-                logFinest("Did not find resource with pid '" + pid + "'. Returning false.");
-                logFinest("Exiting delete(String)");
-                return false;
-            }
-            logFinest("Found resource with pid '" + pid + "'.  Deleting and returning true.");
-            coll.removeResource(resource);
-        } catch (XMLDBException xmldbe) {
-            throw new StorageDeviceException("Error attempting delete of " 
-                    + "object with pid '" + pid + "': "
-                    + xmldbe.getClass().getName() + ": " + xmldbe.getMessage());
-        }
-        logFinest("Exiting delete(String)");
-        return true;
-    }
-
-    public List search(String[] resultFields, String terms) 
-            throws StorageDeviceException, QueryParseException, ServerException {
-        try {
-            logFinest("Entering search(String, String)");
-            if (terms.indexOf("'")!=-1) {
-                throw new QueryParseException("Query cannot contain the ' character.");
-            }
-            logFinest("Doing search using queryPart: . &= '" + terms + "'");
-            ResourceSet res=m_queryService.query("document(*)/fields[. &= '" + terms + "']");
-            if (res==null) {
-                return new ArrayList();
-            }
-            logFinest("Finished search, getting result.");
-            List ret=getObjectFields(res, resultFields);
-            logFinest("Exiting search(String, String)");
-            return ret;
-        } catch (XMLDBException xmldbe) {
-            throw new StorageDeviceException("Error attempting search of terms: \"" 
-                    + terms + "\": " + xmldbe.getClass().getName() + ": " 
-                    + xmldbe.getMessage());
-        }
-    }
-
-    public List search(String[] resultFields, List conditions) 
-            throws ServerException {
-        try {
-            logFinest("Entering search(String, List)");
-            StringBuffer queryPart=new StringBuffer();
-            for (int i=0; i<conditions.size(); i++) {
-                Condition cond=(Condition) conditions.get(i);
-                if (i>0) {
-                    queryPart.append(" and ");
-                }
-                queryPart.append(' ');
-                String op=cond.getOperator().getSymbol();
-                if (cond.getProperty().toLowerCase().endsWith("date")) {
-                    if ( (op.startsWith(">")) || (op.startsWith("<")) ) {
-                        // num by itself
-                        long n=parseDateAsNum(cond.getValue());
-                        if (n==-1) { 
-                            throw new QueryParseException("Bad date given with "
-                                    + "lt, le, gt, or ge operator.  Dates must "
-                                    + "be given in yyyy-MM-ddThh:mm:ss[Z] or yyyy-MM-dd format.");
-                        }
-                        queryPart.append(cond.getProperty());
-                        queryPart.append("AsNum");
-                        queryPart.append(' ');
-                        queryPart.append(cond.getOperator().getSymbol());
-                        queryPart.append(' ');
-                        queryPart.append(n);
-                    } else {
-                        // try AsNum with 'or' on string ... if op is '='... otherwise just as string
-                        long n=-1;
-                        if (op.equals("=")) {
-                            n=parseDateAsNum(cond.getValue());
-                        }
-                        if (n!=-1) {
-                            queryPart.append("(");
-                            queryPart.append(cond.getProperty());
-                            queryPart.append("AsNum");
-                            queryPart.append(' ');
-                            queryPart.append(cond.getOperator().getSymbol());
-                            queryPart.append(' ');
-                            queryPart.append(n);
-                            queryPart.append(" or ");
-                        }
-                        queryPart.append(cond.getProperty());
-                        queryPart.append(' ');
-                        if (cond.getOperator().getSymbol().equals("~")) {
-                            queryPart.append("&");
-                        }
-                        queryPart.append("= '");
-                        queryPart.append(cond.getValue());
-                        queryPart.append("'");
-                        if (n!=-1) {
-                            queryPart.append(")");
-                        }
-                    }
+        if (in.indexOf("\\")!=-1) {
+            // has one or more escapes, un-escape and translate
+            StringBuffer out=new StringBuffer();
+            out.append("\'");
+            boolean needLike=false;
+            boolean needEscape=false;
+            boolean lastWasEscape=false;
+            for (int i=0; i<in.length(); i++) {
+                char c=in.charAt(i);
+                if ( (!lastWasEscape) && (c=='\\') ) {
+                    lastWasEscape=true;
                 } else {
-                    queryPart.append(cond.getProperty());
-                    if (op.equals("~")) {
-                        queryPart.append("&=");
+                    char nextChar='!';
+                    boolean useNextChar=false;
+                    if (!lastWasEscape) {
+                        if (c=='?') {
+                            out.append('_');
+                            needLike=true;
+                        } else if (c=='*') {
+                            out.append('%');
+                            needLike=true;
+                        } else {
+                            nextChar=c;
+                            useNextChar=true;
+                        }
                     } else {
-                        queryPart.append(op);
+                        nextChar=c;
+                        useNextChar=true;
                     }
-                    queryPart.append(" '");
-                    queryPart.append(cond.getValue());
-                    queryPart.append("'");
+                    if (useNextChar) {
+                        if (nextChar=='\"') {
+                            out.append("\\\"");
+                            needEscape=true;
+                        } else if (nextChar=='\'') {
+                            out.append("\\\'");
+                            needEscape=true;
+                        } else if (nextChar=='%') {
+                            out.append("\\%");
+                            needEscape=true;
+                        } else if (nextChar=='_') {
+                            out.append("\\_");
+                            needEscape=true;
+                        } else {
+                            out.append(nextChar);
+                        }
+                    }
+                    lastWasEscape=false;
                 }
             }
-            logFinest("Doing search using queryPart: " + queryPart.toString());
-            ResourceSet res=m_queryService.query("document(*)/fields[" + queryPart.toString() + "]");
-            if (res==null) {
-                return new ArrayList();
+            out.append("\'");
+            if (needLike) {
+                out.insert(0, " LIKE ");
+            } else {
+                out.insert(0, " = ");
             }
-            logFinest("Finished search, getting result.");
-            List ret=getObjectFields(res, resultFields);
-            logFinest("Exiting search(String, List)");
-            return ret;
-        } catch (XMLDBException xmldbe) {
-            throw new StorageDeviceException("Error attempting advanced search: "
-                    + xmldbe.getClass().getName() + ": " + xmldbe.getMessage());
+            out.insert(0, name);
+            if (needEscape) {
+                out.insert(0, ' ');
+            }
+            return out.toString();
+        } else {
+            // no escapes, just translate if needed
+            StringBuffer out=new StringBuffer();
+            out.append("\'");
+            boolean needLike=false;
+            boolean needEscape=false;
+            for (int i=0; i<in.length(); i++) {
+                char c=in.charAt(i);
+                if (c=='?') {
+                    out.append('_');
+                    needLike=true;
+                } else if (c=='*') {
+                    out.append('%');
+                    needLike=true;
+                } else if (c=='\"') {
+                    out.append("\\\"");
+                    needEscape=true;
+                } else if (c=='\'') {
+                    out.append("\\\'");
+                    needEscape=true;
+                } else if (c=='%') {
+                    out.append("\\%");
+                    needEscape=true;
+                } else if (c=='_') {
+                    out.append("\\_");
+                    needEscape=true;
+                } else {
+                    out.append(c);
+                }
+            }
+            out.append("\'");
+            if (needLike) {
+                out.insert(0, " LIKE ");
+            } else {
+                out.insert(0, " = ");
+            }
+            out.insert(0, name);
+            if (needEscape) {
+                out.insert(0, ' ');
+            }
+            return out.toString();
         }
-    }
-    
-    private List getObjectFields(ResourceSet resources, String fields[]) 
-            throws XMLDBException, ServerException {
-        logFinest("Entering getObjectFields(ResourceSet, String[])");
-        ArrayList ret=new ArrayList();
-        long numResults=resources.getSize();
-        if (s_maxResults<resources.getSize()) {
-            numResults=s_maxResults;
-        }
-        for (long i=0; i<numResults; i++) {
-            ObjectFields f=new ObjectFields(fields);
-            XMLResource res=(XMLResource) resources.getResource(i);
-            res.getContentAsSAX(f);
-            ret.add(f);
-        }
-        logFinest("Exiting getObjectFields(ResourceSet, String[])");
-        return ret;
-    }
-    */
-    
-    public static void main(String[] args) {
     }
 
 }

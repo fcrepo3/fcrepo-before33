@@ -74,26 +74,26 @@ public class DirectoryBasedRepositoryReader
         if (!directory.isDirectory()) {
             throw new StorageDeviceException("Repository storage directory not found.");
         }
-        File thisFile=null;
         try {
             for (int i=0; i<files.length; i++) {
-                thisFile=files[i];
-                FileInputStream in=new FileInputStream(thisFile);
-                SimpleDOReader reader=new SimpleDOReader(null, this, m_translator,
-                        m_shortExportFormat, m_longExportFormat, m_storageFormat,
-                        m_encoding, in, this);
-                String pid=reader.GetObjectPID();
-                if (reader.GetObjectPID().length()==0) {
-                    logWarning("File " + files[i] + " has no pid...skipping");
-                } else {
-                    m_files.put(pid, files[i]);
+                File thisFile=files[i];
+                try {
+                    FileInputStream in=new FileInputStream(thisFile);
+                    SimpleDOReader reader=new SimpleDOReader(null, this, m_translator,
+                            m_shortExportFormat, m_longExportFormat, m_storageFormat,
+                            m_encoding, in, this);
+                    String pid=reader.GetObjectPID();
+                    if (reader.GetObjectPID().length()==0) {
+                        logWarning("File " + files[i] + " has no pid...skipping");
+                    } else {
+                        m_files.put(pid, files[i]);
+                    }
+                } catch (NullPointerException npe) {
+                    System.out.println("Error in " + thisFile.getName() + "...skipping");
                 }
             }
         } catch (FileNotFoundException fnfe) {
             // naw
-        } catch (NullPointerException npe) {
-            if (thisFile!=null)
-                System.out.println("Error in " + thisFile.getName() + "...skipping");
         }
     }
     

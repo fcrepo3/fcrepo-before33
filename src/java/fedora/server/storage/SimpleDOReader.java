@@ -141,6 +141,7 @@ public class SimpleDOReader
     }
 
     public String GetObjectState() {
+        if (m_obj.getState()==null) return "A"; // shouldn't happen, but if it does don't die
         return m_obj.getState();
     }
 

@@ -11,6 +11,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import fedora.oai.sample.RandomDCMetadataFactory; 
+import fedora.server.StdoutLogging;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchExistImpl;
 import fedora.server.search.FieldSearchSQLImpl;
@@ -66,7 +67,6 @@ public class FieldSearchTest
                     "jdbc:mckoi://localhost/", "fedoraAdmin", "fedoraAdmin", 5, 
                     10, true);
             m_fieldSearch=new FieldSearchSQLImpl(m_cPool, m_repoReader, null);
-            m_fieldSearch.setLogLevel(1);
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
             e.printStackTrace();
@@ -316,7 +316,6 @@ public class FieldSearchTest
                         Integer.parseInt(args[3]), Integer.parseInt(args[4]), 
                         new File(args[5]), new File(args[6]), new File(args[7]),
                         new File(args[8]));
-                test.shutdown();
             } else if (args[0].equals("update")) {
                 test.testUpdateAll();
             } else if (args[0].equals("simple")) {
@@ -343,6 +342,7 @@ public class FieldSearchTest
             test.testUpdateAll();
             test.testSimpleSearch();
         }
+        test.shutdown();
     }
 
 }
