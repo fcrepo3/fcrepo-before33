@@ -36,7 +36,7 @@
       </ol>
     </div>
   </div>
-  
+ <div class="sec1"> 
   <div> 
     <h2><a name=d0e48></a>Introduction</h2>
   </div>
@@ -49,7 +49,8 @@
     appropriately. The command-line scripts are located in FEDORA_HOME/client/bin/. 
     In Windows, these commands resolve to batch files (.bat); in <span class=GramE>Unix</span>, 
     they resolve to shell scripts (.sh).</p>
-  
+ </div>
+ <div class="sec1"> 
     <h2><a name=d0e55></a>fedora-dsinfo</h2>
  
   <blockquote> 
@@ -77,19 +78,20 @@
       information should be shown.
   </li>
 </ul>
-<div>Example:</div>
-  <div>
+Example:
+
   <blockquote> 
     <p>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5</p>
   </blockquote>
   <p>Displays key information about each of an object's datastreams. </p>
-  </div> 
-    <h2><a name=d0e89></a><span class=GramE>fedora-export</span></h2>
+</div> 
+<div class="sec1">   
+ <h2><a name=d0e89>fedora-export</a></h2>
   
-  <blockquote> 
+
     <p><b>fedora-export</b> HST:PRT 
       USR PSS PID|FTYPS PATH</p>
-  </blockquote>
+ 
   <p>Where:</p>
 <ul>
   <li><b>HST </b>- The repository's hostname. </li>
@@ -112,9 +114,10 @@
   </blockquote>
   <p>Exports one or more objects from a Fedora repository.
   </p>
-  <div> 
-    <h2><a name=d0e131></a>fedora-find</h2>
   </div>
+  <div class="sec1"> 
+    <h2><a name=d0e131></a>fedora-find</h2>
+  
   <blockquote> 
     <p><b>fedora-find</b> [hostname] 
       [port-number] [fieldList] [searchString]</p>
@@ -132,7 +135,7 @@
   <li><b> [searchString]</b> - A simple text string to search all fields for. 
     This may include wildcard characters and is case-insensitive.</li>
 </ul>
-<div> 
+ 
   <p>Example:</p>
   <blockquote> 
     <p>fedora-find localhost 
@@ -145,9 +148,11 @@
   <p>A simple way to search a repository's indexed fields. More advanced searches 
     can be done with the web-based search interface at http://host:port/fedora/search, 
     or the Admin GUI's search interface. </p>
-  <div> 
+ </div> 
+  
+  <div class="sec1"> 
     <h2><a name=d0e164></a>fedora-ingest</h2>
-  </div>
+  
   <blockquote> 
     <p><b>fedora-ingest</b> f[ile] PATH THST:TPRT 
       TUSR TPSS [LOG]</p>
@@ -157,7 +162,7 @@
       TUSR TPSS [LOG]</p>
   </blockquote>
   <p>Where:</p>
-</div>
+
 <ul>
   <li><b> PATH </b>- the local file or directory name.</li>
   <li><b> FTYPS</b> - any combination of the characters O, D, and M, specifying 
@@ -171,7 +176,7 @@
   <li><b> LOG</b> - the optional log message. If unspecified, the log message 
     will indicate the source of the object(s).</li>
 </ul>
-<div> 
+ 
   <p>Examples:</p>
   <blockquote> 
     <p>fedora-ingest file obj1.xml example.com:80 fedoraAdmin fedoraAdmin</p>
@@ -182,15 +187,16 @@
   </blockquote>
   <p>Ingests one or more objects into the repository, either 
     from disk or from another Fedora repository. </p>
-  <div> 
+</div>
+<div class="sec1"> 
     <h2><a name=d0e221></a>fedora-ingest-demos</h2>
-  </div>
+
   <blockquote> 
     <p><b>fedora-ingest-demos</b> 
       [hostname] [port-number] [user] [pass]</p>
   </blockquote>
   <p>Where:</p>
-</div>
+
 <ul>
   <li><b> [hostname]</b> - The hostname of the Fedora server; default is localhost.</li>
   <li><b>[port-number]</b> - The port number on which the Fedora server is running; 
@@ -198,7 +204,7 @@
   <li><b>[user] </b>- The Fedora user (e.g. fedoraAdmin).</li>
   <li><b>[pass]</b> - The Fedora user's password.</li>
 </ul>
-<div> 
+ 
   <p>Example:</p>
   <blockquote> 
     <p>fedora-ingest-demos localhost 
@@ -209,9 +215,10 @@
     This script should not be run until you have ensured that the hostname and 
     port numbers in the demo objects have been corrected (with the fedora-convert-demos 
     script) to use the actual hostname and port of your Fedora server. </p>
-  <div> 
+</div>
+<div class="sec1"> 
     <h2><a name=d0e252></a>fedora-convert-demos</h2>
-  </div>
+ 
   <blockquote> 
     <p><b>fedora-convert-demos</b> 
       [fromHostName] [fromPortNum] 
@@ -219,7 +226,7 @@
       [fedoraHomeDir]</p>
   </blockquote>
   <p>Where:</p>
-</div>
+
 <ul>
   <li><b>[fromHostName]</b> - The hostname currently being used in the demo object 
     files.</li>
@@ -230,7 +237,7 @@
   <li><b> [fedoraHomeDir] </b>- Fedora's install base directory. This is the directory 
     that contains the client directory.</li>
 </ul>
-<div> 
+ 
   <p>Example:</p>
   <blockquote> 
     <p>fedora-convert-demos localhost 
@@ -249,15 +256,16 @@
     and wish to change the hostname and port of the Fedora server, as the demo 
     objects are already in the repository and the references inside them will 
     automatically be corrected by the server. </p>
-  <div> 
+ </div>
+<div class="sec1"> 
     <h2><a name=d0e291></a>fedora-purge</h2>
-  </div>
+
   <blockquote> 
     <p><b>fedora-purge</b> [hostname] 
       [port-number] [user] [pass] [pid] [logMessage]</p>
   </blockquote>
   <p>Where:</p>
-</div>
+
 <ul>
   <li><b> [hostname] </b>- The hostname of the Fedora server; default is localhost.</li>
   <li><b> [port-number]</b> - The port number on which the Fedora server is running; 
@@ -267,7 +275,7 @@
   <li><b> [pid]</b> - The PID of the object to permanently remove.</li>
   <li><b>[logMessage]</b> - A log message explaining the removal.</li>
 </ul>
-<div>
+
   <p>Example:</p>
   <blockquote> 
     <p>fedora-purge localhost 
@@ -279,15 +287,17 @@
     that depend on them. When removing a BDef from the 
     repository, first the dependent object(s) should be removed, then the implementing 
     Behavior Mechanism(s), then the BDef itself. </p>
-  <h2><a name="fedmod"></a>fedora-modify</h2>
 </div>
+<div class="sec1">
+  <h2><a name="fedmod"></a>fedora-modify</h2>
+
 <blockquote> 
   <p><b>fedora-modify</b> 
     [hostname:port]? [user]? [password]? [directives-filepath] [log-filepath]?[validate-only-option]*</p>
 </blockquote>
-<div> 
+ 
   <p>Where:</p>
-</div>
+
 <ul>
   <li><b> [host:port]</b> - The hostname and port of the target Fedora server.</li>
   <li><b> [user]</b> - The Fedora administrator username (e.g., fedoraAdmin)</li>
@@ -300,7 +310,7 @@
     parameter can have any non-blank value. If present, the directives file will 
     be validated only. If omitted, the directives file will be immediately processed.</li>
 </ul>
-<div>
+
   <p>The fedora-modify command line utility enables the running of the batch modify 
     utility of the Administrator GUI client from the command line.</p>
 </div>
