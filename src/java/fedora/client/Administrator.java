@@ -401,10 +401,25 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         // [H]elp
         JMenu helpMenu=new JMenu("Help");
         helpMenu.setMnemonic(KeyEvent.VK_H);
-        JMenuItem helpContents=new JMenuItem("Fedora Manual",KeyEvent.VK_M);
-        helpContents.setToolTipText("Shows the Fedora Manual");
+        JMenuItem helpContents=new JMenuItem("Documentation",KeyEvent.VK_D);
+        String portPart="";
+        if (getPort()!=80) portPart=":" + getPort();
+        String documentationURL="http://" + getHost() + portPart + "/userdocs/";
+        helpContents.setToolTipText("See " + documentationURL);
+        
+        helpContents.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+              String portPart="";
+              if (getPort()!=80) portPart=":" + getPort();
+              String documentationURL="http://" + getHost() + portPart + "/userdocs/";
+              JOptionPane.showMessageDialog(getDesktop(),
+                      "For documentation, see " + documentationURL,
+                      "Fedora Documentation",
+                      JOptionPane.INFORMATION_MESSAGE);
+          }
+        });
 
-
+/**
    HelpSet hs;
    try {
       URL hsu = cl.getResource("help/jhelpset.hs");
@@ -427,6 +442,7 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
    } catch (Exception ee) {
       System.out.println("Help could not be loaded:" + ee.getClass().getName() + ":" + ee.getMessage());
    }
+*/   
 
         JFrame dummy=new JFrame();
         dummy.setIconImage(new ImageIcon(cl.getResource("images/standard/general/About16.gif")).getImage());

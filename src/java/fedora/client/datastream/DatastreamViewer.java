@@ -281,7 +281,7 @@ public class DatastreamViewer
                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                        "METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified at this time.",
                                        "Note: Unmodifiable Datastream",
-                                       JOptionPane.ERROR_MESSAGE);
+                                       JOptionPane.INFORMATION_MESSAGE);
                                }
                            });
                         } else {
