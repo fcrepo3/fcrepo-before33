@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<!-- xml2xsl.xsl
-	this stylesheet is a "meta" or general stylesheet:
-	it transforms its source/input into another, "object" or specific, stylesheet.
-	the source/input to the meta stylesheet is a METS document.
-	the source/input to the object stylesheet contains a subset of METS nodes, in a simplified schema.
-	application of the object stylesheet substitutes the METS nodes present in its source/input
-	into the original meta source/input, replacing values from the original.
-
-	this requires xsl:if or xsl:choose elements to be inserted into the object stylesheet,
-	instead of executed in the meta stylesheet.  hence the use of xsl:element, xsl:attribute, 
-	and xsl:value-of elements below
+<!-- merge.xsl
+	substitute per-object XML data into per-batch METS XML template
 -->
 
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
@@ -39,20 +30,19 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
 	</xsl:template>
-
-	<!-- xsl:template match="comment()" >
-		< xsl:element name="xsl:comment">
-			< xsl:value-of select="."/>
-		< /xsl:element>
-	< /xsl:template -->
 	
 	<xsl:template match="/" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" >
 		<xsl:copy>
+			<xsl:if test="$substitutions/input/comment">
+				<xsl:comment>
+					<xsl:value-of select="$substitutions/input/comment"/>
+				</xsl:comment>
+			</xsl:if>		
 			<xsl:apply-templates />
 		</xsl:copy>
 	</xsl:template>
 	
-	<!-- target substitution /METS:mets/@LABEL -->
+	<!-- substitute per-object @OBJID and @LABEL -->
 	<xsl:template match="/METS:mets">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -70,7 +60,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 	
-	<!-- target substitutions @CREATEDATE and @LASTMODDATE in /METS:metsHdr -->
+	<!-- substitute xform param data for @CREATEDATE and @LASTMODDATE -->
 	<xsl:template match="/METS:mets/METS:metsHdr" xmlns:METS="http://www.loc.gov/METS/" >
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -85,10 +75,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			<xsl:apply-templates select="node()"/>
     		</xsl:copy>
 	</xsl:template>
-	
 
-	<!-- target substitutions @CREATED in METS:file METS:behaviorSec -->
-	<xsl:template match="METS:file|/METS:mets/METS:behaviorSec/METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
+	<!-- substitute xform param data for @CREATED -->
+	<xsl:template match="METS:techMD|METS:rightsMD|METS:sourceMD|METS:digiprovMD|METS:descMD|METS:file|METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:if test="$date">
@@ -99,49 +88,39 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			<xsl:apply-templates select="node()"/>
     		</xsl:copy>
 	</xsl:template>
-	
-	<!-- target substitutions @CREATED in METS:dmdSec, METS:techMD, METS:rightsMD, METS:sourceMD, METS:digiprovMD in /METS:mets -->
-	<xsl:template match="/METS:mets/METS:dmdSec|/METS:mets/METS:techMD|/METS:mets/METS:rightsMD|/METS:mets/METS:sourceMD|/METS:mets/METS:digiprovMD" xmlns:METS="http://www.loc.gov/METS/">
+
+	<!-- substitute per-datastream metadata -->
+	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData|/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
-			<xsl:if test="$date">
-				<xsl:attribute name="CREATED">
-					<xsl:value-of select="$date"/>
-				</xsl:attribute>
-			</xsl:if>
-			<xsl:apply-templates select="node()"/>
-    		</xsl:copy>
-	</xsl:template>
-	
-
-
-
-	
-	<!-- target substitutions name and note in /METS:mets/METS:metsHdr/METS:agent -->
-	<!-- support additional comments -->
-	<xsl:template match="/METS:mets/METS:metsHdr/METS:agent[@TYPE='INDIVIDUAL']/METS:name" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:if test="$substitutions/input/agents/INDIVIDUAL/METS:name/comment">
-			<xsl:element name="xsl:comment">
-				<xsl:value-of select="$substitutions/input/agents/INDIVIDUAL/METS:name/comment" />
-			</xsl:element>
-		</xsl:if>
-		<xsl:copy>
-			<xsl:apply-templates select="@*"/>			
+			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DIGIPROV1, from amdSec element -->			
 			<xsl:choose>
-				<xsl:when test="$substitutions/input/agents/INDIVIDUAL/METS:name/text()">
-					<xsl:value-of select="$substitutions/input/agents/INDIVIDUAL/METS:name/text()"/>
+				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
+					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:value-of select="text()" />
+					<xsl:apply-templates select="node()"/>
 				</xsl:otherwise>
-			</xsl:choose>
-			<!-- processing terminals here, so no need to xsl:apply-templates select="node()" -->
+			</xsl:choose>		
     		</xsl:copy>
 	</xsl:template>
-	<!-- >>>>>>>>>>> needs testing and replication for ORGANIZATION|OTHER x note <<<<<<<<<<< -->
 
+	<!-- substitute per-datastream metadata labels -->
+	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap" 
+		xmlns:METS="http://www.loc.gov/METS/">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="metadataID" select="../../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->
+			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:apply-templates select="node()"/>			
+    		</xsl:copy>
+	</xsl:template>	
 
-	<!-- target substitutions @title and @xlink:href in /METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat -->
+	<!-- substitute per-datastream @xlink:title and @xlink:href -->
  	<xsl:template match="/METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:variable name="datastream" select="../../@ID" />
 		<xsl:copy>
@@ -167,90 +146,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
     		</xsl:copy>
 	</xsl:template>
 	
-
-
-	
-
-	
-	
-	
-	 
-	<!-- support only additional comments on /METS:mets/METS:metsHdr/METS:agent -->
-	<xsl:template match="/METS:mets/METS:metsHdr/METS:agent[@TYPE='INDIVIDUAL']" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:if test="$substitutions/input/agents/INDIVIDUAL/comment">
-			<!-- xsl:comment -->
-				<!-- xsl:value-of select="$substitutions/input/agents/INDIVIDUAL/comment" / -->
-			<!-- /xsl:comment -->
-		</xsl:if>
-		<xsl:call-template name="generic-node" />
-	</xsl:template>	
-	
-	<!-- support only additional comments on /METS:mets/METS:metsHdr/METS:agent -->
-	<xsl:template match="/METS:mets/METS:metsHdr/METS:agent[@TYPE='ORGANIZATION']" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:if test="$substitutions/input/agents/ORGANIZATION/comment">
-			<!-- xsl:comment -->
-				<!-- xsl:value-of select="$substitutions/input/agents/INDIVIDUAL/comment" / -->
-			<!-- /xsl:comment -->
-		</xsl:if>
-		<xsl:call-template name="generic-node" />
-	</xsl:template>	
-
-	<!-- support only additional comments on /METS:mets/METS:metsHdr/METS:agent -->
-	<xsl:template match="/METS:mets/METS:metsHdr/METS:agent[@TYPE='OTHER']" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:if test="$substitutions/input/agents/OTHER/comment">
-			<!-- xsl:comment -->
-				<!-- xsl:value-of select="$substitutions/input/agents/INDIVIDUAL/comment" / -->
-			<!-- /xsl:comment -->
-		</xsl:if>
-		<xsl:call-template name="generic-node" />
-	</xsl:template>		
-	
-	
-	<!-- target substitutions @CREATED in METS:dmdSec, METS:techMD, METS:rightsMD, METS:sourceMD, METS:digiprovMD in /METS:mets/METS:amdSec -->
-	<xsl:template match="/METS:mets/METS:amdSec/METS:dmdSec|/METS:mets/METS:amdSec/METS:techMD|/METS:mets/METS:amdSec/METS:rightsMD|/METS:mets/METS:amdSec/METS:sourceMD|/METS:mets/METS:amdSec/METS:digiprovMD" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:copy>
-			<xsl:apply-templates select="@*"/>
-			<xsl:if test="$date">
-				<xsl:attribute name="CREATED">
-					<xsl:value-of select="$date"/>
-				</xsl:attribute>
-			</xsl:if>
-			<xsl:apply-templates select="node()"/>
-    		</xsl:copy>
-	</xsl:template>	
-
-	 <!-- 2/25 -->
-	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap" 
-		xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:copy>
-			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="metadataID" select="../../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->
-			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" >
-				<xsl:attribute name="LABEL">
-					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />
-				</xsl:attribute>
-			</xsl:if>
-			<xsl:apply-templates select="node()"/>			
-    		</xsl:copy>
-	</xsl:template>	
-
-	 <!-- target substitution (per-datastream metadata) -->
-	<xsl:template match="/METS:mets/METS:dmdSecFedora/*/METS:mdWrap/METS:xmlData|/METS:mets/METS:amdSec/*/METS:mdWrap/METS:xmlData" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:copy>
-			<xsl:apply-templates select="@*"/>
-			<xsl:variable name="metadataID" select="../../../@ID" /><!-- e.g., DIGIPROV1, from amdSec element -->			
-			<xsl:choose>
-				<xsl:when test="$substitutions/input/metadata/metadata[@ID=$metadataID]">
-					<xsl:apply-templates select="$substitutions/input/metadata/metadata[@ID=$metadataID]/*" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="node()"/>
-				</xsl:otherwise>
-			</xsl:choose>		
-    		</xsl:copy>
-	</xsl:template>
-	
-	 <!-- 2/25 -->
+	 <!-- substitute per-disseminator labels; prefer datastream-specific over disseminator-general -->
 	<xsl:template match="/METS:mets/METS:structMap/METS:div/METS:div" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
@@ -264,15 +160,9 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 					<xsl:apply-templates select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@LABEL" />
 				</xsl:when>
 			</xsl:choose>		
-			
-
 			<xsl:apply-templates select="node()"/>			
     		</xsl:copy>
 	</xsl:template>	
-
-	
-	 <!-- >>>>>>>>>>>>>> target substitution (per-datastream DESC metadata) <<<<<<<<<<<< -->
-
 	
 </xsl:transform>
 
