@@ -17,7 +17,7 @@ if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
 fi
 
 # FEDORA_JAVA_HOME or JAVA_HOME
-if [ -z "${FEDORA_JAVA_HOME:-$JAVA_HOME}" ]; then
+if [ -z "${FEDORA_JAVA_HOME:=$JAVA_HOME}" ]; then
 	echo "ERROR: neither FEDORA_JAVA_HOME nor JAVA_HOME is defined."
     exit 1
 fi
