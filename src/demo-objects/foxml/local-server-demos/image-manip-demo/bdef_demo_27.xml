@@ -5,7 +5,6 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Behavior Definition Object for Image Manipulation Servlet"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:52Z"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:52Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BDEF"/>
 	</foxml:objectProperties>
 	<foxml:datastream ID="DC" CONTROL_GROUP="X" MIMETYPE="text/xml" STATE="A">
