@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"http://www.altova.com/schemas/docbook/docbookx.dtd">
+<?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
+<?xml-stylesheet type="text/xsl" 
+    href="http://www.altova.com/stylesheets/docbook/xhtml/docbook.xsl"?>
 <article>
 	<articleinfo>
 		<graphic fileref="images//newlogo2.jpg"/>
@@ -9,9 +14,11 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title><trademark class="trade">Fedora</trademark> API-M Admin GUI Client User Documentation</title>
+		<title>
+			<trademark class="trade">Fedora</trademark> API-M Admin GUI Client User Documentation</title>
 		<subtitle>Software Release 1.2</subtitle>
-		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
+		<corpauthor>
+			<trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -28,51 +35,229 @@
 	<sect1>
 		<title>Introduction</title>
 		<para>
-			<emphasis>Fedora Administrator</emphasis> comes
-       with the client distribution.  You can use it to connect to a local or remote
-       Fedora repository to browse and modify the contents of a repository.</para>
+			<emphasis>Fedora Administrator</emphasis> is the direct link to API-M functionality for repository administrators. Using this tool it is possible to ingest, search for and retrieve, modify and purge data objects and build, search for and retrieve, modify, and purge behavioral objects.</para>
 	</sect1>
 	<sect1>
-		<title>Using the GUI</title>
-		<para>To start Fedora Administrator, type</para>
+		<title>Using Fedora Administrator</title>
+		<para>navigate to the $FEDORA_HOME/client/bin directory</para>
 		<para>fedora-admin [hostname] [port] [user] [pass]</para>
 		<para>For example,
             <emphasis>fedora-admin localhost 8080 fedoraAdmin fedoraAdmin</emphasis> will start
             the GUI for a server running on the local machine, port 8080,
             where fedoraAdmin's password is simply, "fedoraAdmin".
         </para>
+		<para>New to the 1.2 release of Fedora is the authentication dialog. When you start Fedora Administrator, you will be asked to choose the server to which you wish to connect, your username and password. The server and username fields are pre-populated and the password is validated using values from fedora.fcfg</para>
+	</sect1>
+	<sect1>
+		<title>Menus</title>
+		<para>Fedora Administrator has been designed with standard Windows based menus. The following menus are available in the Administrator window:</para>
+		<itemizedlist>
+			<listitem>
+				<para>File</para>
+			</listitem>
+			<listitem>
+				<para>Tools</para>
+			</listitem>
+			<listitem>
+				<para>Builders</para>
+			</listitem>
+			<listitem>
+				<para>Window</para>
+			</listitem>
+			<listitem>
+				<para>Help</para>
+			</listitem>
+		</itemizedlist>
 		<sect2>
-			<title>Tasks</title>
+			<title>File Menu</title>
+			<para>Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.</para>
+			<sect3>
+				<title>New</title>
+				<para>This menu option allows users to build a new data object from component parts.</para>
+			</sect3>
+			<sect3>
+				<title>Open</title>
+				<para>The Open menu requires input of an object PID for retrieval of the object. Upon retrieval, the object is displayed on two tabbed panes.</para>
+				<para><emphasis>Object Properties Pane</emphasis></para>
+				<para>The default first pane is the Object Properties pane.  On this pane the state and label of the object may be modified. Creation and modification dates are shown, along with the content model to which the object subscribes and the owner of the object.</para>
+				<blockquote>
+					<itemizedlist>
+					<title>Object States</title>
+					<para>Valid object states appear in the drop down menu and include:</para>
+					<listitem>
+						<para><emphasis>Active</emphasis>: the object is freely available to all users.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Inactive</emphasis>: the object is only available to repository administrators.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Deleted</emphasis>: the object has been marked for permanent removal from the repository, pending review by repository administrators.</para>
+					</listitem>
+				</itemizedlist>
+				</blockquote>
+				<para>Also available on this pane is the ability to view the object’s xml, export the object to a file, or purge the object from the repository.</para>
+				<blockquote>
+					<para><emphasis role="bold">Viewing XML</emphasis>: From this window, the XML of the object can be viewed, but cannot be modified.</para>
+					<para><emphasis role="bold">Export Object</emphasis>: If Export is selected, the user will be prompted for a file name and location to which to write the xml file.  The format for exported objects is fedora:mets.</para>
+					<para><emphasis role="bold">Purge Object</emphasis>: Purging an object completely removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option and the purge cannot be undone.</para>
+				</blockquote>
+				<para><emphasis>The Datastreams Pane</emphasis></para>
+				<para>On the Datastreams Pane, the state of each datastream in the object can be modified, along with the datastream label and location. The MIME type of the datastream is shown, along with the control group, info type, create date, and the Fedora URL of the object.</para>
+				<blockquote>
+					<itemizedlist>
+					<title>Datastream States</title>
+					<para>Valid datastream states appear in the drop down menu and include:</para>
+					<listitem>
+						<para><emphasis>Active</emphasis>: the datastream is freely available to all users.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Inactive</emphasis>: the datastream is only available to repository administrators.</para>
+					</listitem>
+					<listitem>
+						<para><emphasis>Deleted</emphasis>: the datastream has been marked for permanent removal from the repository, pending review by repository administrators.</para>
+					</listitem>
+				</itemizedlist>
+				</blockquote>
+				<para>From this pane, users may additionally request to view a datastream, add a new datastream to the object, export a datastream’s contents, or purge the datastream from the object.</para>
+				<para>Please note that datastreams which are linked to active disseminators may not be purged.</para>
+				<para>If a datastream has a MIME type of <emphasis>text</emphasis>, it may be edited in place by clicking the Edit button and making the desired changes in the editing window.  A user may also choose to import new data by clicking the Import button or to export the data contained in the datastream by clicking the Export button. If the datastream is not linked to an active disseminator, it may be purged from the object. Note: Purge is not valid for the DC metadata datastream because it is always linked to the default disseminator.</para>
+				<para>If <emphasis>Import</emphasis> is selected, the user is prompted for a file name or url where the the import file is located. </para>
+				<para>If <emphasis>Export</emphasis> is selected, the user is prompted for a file name and location to which to write the xml file of the DC metadata.</para>
+				<para>If <emphasis>Purge</emphasis> is selected, the user is warned that the operation is permanent and must click “Yes” to continue. If “Yes” is selected, the datastream is immediately purged from the object.</para>
+				<para>Datatstreams with a MIME type of <emphasis>image</emphasis> may only be viewed, exported, or purged from the object.</para>
+			</sect3>
+			<sect3>
+				<title>Ingest</title>
+				<para>When selecting to ingest objects from the File menu, users have the option of ingesting a single object or multiple objects.</para>
+				<para>Objects may currently only be ingested from a file. Future releases of the software will allow ingestion from other repositories.</para>
+				<sect4>
+					<title>One Object</title>
+					<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking open will cause the file to be ingested. If the repository has been set to retain pids on ingest in the fedora.fcfg file, the pid in the object xml will be maintained. Otherwise, the pid will be overwritten. If the pid of the new object matches the pid of an existing object, the existing object will be overwritten.</para>
+				</sect4>
+				<sect4>
+					<title>Multiple Objects</title>
+					<para>Users may also ingest all the files in a directory by selecting the Ingest Multiple Objects menu item.</para>
+					<para>Upon selecting this menu option, a dialog box prompts the user to select or browse to the directory containing the objects to be selected. Once the directory has been identified, clicking Open will activate a second dialog box which prompts the user to select the type of object to be ingested—behavior definition, behavior mechanism, and/or data object.</para>
+					<para>Please remember that the behavior objects to which a data object are bound must exist in the repository before the data object can be ingested.  Order of ingestion must be</para>
+					<orderedlist>
+						<listitem>
+							<para>Behavior Definition</para>
+						</listitem>
+						<listitem>
+							<para>Behavior Mechanism</para>
+						</listitem>
+						<listitem>
+							<para>Data Object</para>
+						</listitem>
+					</orderedlist>
+					<para>Using the multiple object ingest menu allows users to place all objects in a single directory, and the Fedora software will ingest objects in the proper order.</para>
+					<para>If the repository has been set to retain pids on ingest in the fedora.fcfg, the pid in the object xml will be maintained. Otherwise, the pid will be overwritten. If the pid of the new object matches the pid of an existing object, the existing object will be overwritten.</para>
+				</sect4>
+			</sect3>
+			<sect3>
+				<title>Export</title>
+				<para>Users have the option of exporting a single object or multiple objects.</para>
+				<sect4>
+					<title>One Object</title>
+					<para>When the Export One Object option is selected, the user is prompted to select a directory to which the export file will be written. Clicking Open causes the user to be prompted for an object pid and when OK is clicked, the file is exported to the selected directory. The file is named <emphasis>pid_value.xml</emphasis>.</para>
+				</sect4>
+				<sect4>
+					<title>Multiple Objects</title>
+					<para>When the Export Multiple Objects option is selected, the user is prompted to select a directory to which the export files will be written. Clicking Open causes the user to be prompted for which type of object is to be exported--behavior definitions, behavior mechanisms, or data objects. The default selection is Data Objects. When the file types are selected and OK is clicked, the system searches for and retrieves <emphasis role="bold">all</emphasis> objects of that type, which are then exported to individual files in the destination directory. The files are named <emphasis>pid_value.xml</emphasis>.</para>
+				</sect4>
+			</sect3>
+			<sect3>
+				<title>Purge Object</title>
+				<para>Purging an object completely and permanently removes it from the repository. Upon selecting the Purge option, the user will be prompted to enter an object pid and a reason for the object’s removal. Please note that objects with dependencies in the repository cannot be purged. WARNING: There is no “Are you sure?” dialog with this option.</para>
+			</sect3>
+			<sect3>
+				<title>View Object XML</title>
+				<para>This menu option allows a user to view the xml, but not edit. XML may be cut and pasted into another application using standard Windows commands (CTL-C, CTL-V) if desired.</para>
+			</sect3>
+			<sect3>
+				<title>Change Repository</title>
+				<para>The Change Repository option allows a user to login to a different Fedora repository.  When selected, this menu option causes the Login dialog to be displayed. The user may then select a different Fedora server with which to connect, entering the appropriate login name and password.</para>
+			</sect3>
+			<sect3>
+				<title>Exit</title>
+				<para>The Exit menu option closes all connections with the Fedora server instance and logs the user out of the repository.</para>
+			</sect3>
+		</sect2>
+		<sect2>
+			<title>Tools Menu</title>
+			<para>Commands on the Tools menu provide the user with the ability to search and retrieve objects from the repository, build and ingest batches of digital objects, and under the console menu, gain access directly to API-M and API-A methods for testing purposes. </para>
+			<sect3>
+				<title>Search/Browse Repository</title>
+				<para>The Search/Browse Repository menu option provides a mechanism for searching and retrieving objects from the Fedora repository.  Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using this menu option.  The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the <emphasis>Datastream ID</emphasis> is DC, and the XML conforms to the schema at <ulink url="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">http://www.openarchives.org/OAI/2.0/oai_dc.xsd</ulink>.  If a Dublin Core metadata datastream is not provided, Fedora will construct a minimal DC datastream consisting of the elements dc:title and dc:identifier. The value for dc:title will be obtained from the object's label (if present in the object) and the value for dc:identifier will be assigned to the object's persistent identifier or PID.</para>
+		<para>The search interface provides both simple and advanced searching.  All queries are case insensitive.  Simple Search enables queries of words and phrases occurring anywhere in than object's indexed metadata fields.  Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (&#160; &#061; and &#126;&#160;) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both).  The wildcards, &#42; and &#63; may be used in any string-based query.</para>
+				<sect4>
+					<title>Search Repository</title>
+					<para>In the Search Repository</para>
+					<sect5>
+						<title>Simple Search Tab</title>
+						<para>The Simple Search query searches both the Dublin Core metadata and the Fedora System Metadata fields. </para>
+					</sect5>
+					<sect5>
+						<title>Advanced Search Tab</title>
+						<para>The Advanced Search query enables searching of specific fields provided in the query. </para>
+
+					</sect5>
+				</sect4>
+			</sect3>
+			<sect3>
+				<title>Batch</title>
+				<para>blah</para>
+			</sect3>
+			<sect3>
+				<title>Console</title>
+				<para>blah</para>
+			</sect3>
+		</sect2>
+		<sect2>
+			<title>Builders</title>
+			<para>blah</para>
+			<sect3>
+				<title>Behavior Definition Builder</title>
+				<para>blah</para>
+			</sect3>
+			<sect3>
+				<title>Behavior Mechanism Builder</title>
+				<para>blah</para>
+			</sect3>
+		</sect2>
+		<sect2>
+			<title>Window Menu</title>
+			<para>The Window menu contains standard commands for managing multiple panes open in the Fedora Administrator window. These include:</para>
 			<itemizedlist>
 				<listitem>
-					<para>
-						<emphasis role="bold">Ingest an Object</emphasis> - Select "Ingest Object" from the File menu.  You will be prompted for the file name.  After Fedora successfully imports it, it will return the PID of the object in the repository.</para>
+					<para>Cascade</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">Ingest a Batch of Objects</emphasis> - Fedora Administrator can help you create large batches of objects and ingest them.  See the <ulink url="../batch/index.html">batch utility documentation</ulink> for instructions on this.</para>
+					<para>Tile</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">Creating a Behavior Definition or Behavior Mechanism Object</emphasis> - Although you can use the example Behavior Definition and Behavior Mechanisms that come in the distribution's demo/ directory, you can also create these objects and ingest them without the need to write XML by hand.  See the <ulink url="../../../server/do-const.html">Digital Object Construction Guide</ulink> for more information on this.</para>
+					<para>Minimize All</para>
 				</listitem>
 				<listitem>
-					<para>
-						<emphasis role="bold">Search the Repository</emphasis> - From the menu, select "Tools", then "Search/Browse" and the Search window will come up.  At the top, select the fields you want returned from the search.  At the bottom, enter your query.  The advanced query allows you to do fielded searches.  After you form your query, click "Search" and the results will come up in a table view.  Right click on a row or select multiple rows and right click for a contextual menu.  From there you can view or export an object's xml, purge objects, or view/edit an object's datastreams.</para>
-				</listitem>
-				<listitem>
-					<para>
-						<emphasis role="bold">View and Modify an Object's Datastreams</emphasis> - You can reach this option from search results or from the File menu if you know the PID of the object you want to edit.  The datastream editor will have a tab per datastream.  If the datastream is inline XML, you can edit it directly, then press save.  If it's a referenced datastream or managed content, you can set the URL and click Save.  You'll be prompted for a log message, after which the change will be made to the repository.</para>
-				</listitem>
-				<listitem>
-					<para>
-						<emphasis role="bold">View and Export an Object's XML (in METS format)</emphasis> - You can also reach this option from search results or the File menu.  Select the output file and Fedora will export the object to your local disk.</para>
-				</listitem>
-				<listitem>
-					<para>
-						<emphasis role="bold">Purge an Object</emphasis> - Enter the PID and a log message and Fedora will remove the object from the repository.  If you're removing a Behavior Definition, you must remove dependent objects first.</para>
+					<para>Restore All</para>
 				</listitem>
 			</itemizedlist>
 		</sect2>
+		<sect2>
+			<title>Help Menu</title>
+			<para>The help menu has two options:</para>
+			<itemizedlist>
+				<listitem>
+					<para>Documentation: which gives users the URL to the online documentation for Fedora.</para>
+				</listitem>
+				<listitem>
+					<para>About Fedora Administrator: which provides version information, and copyright and licensing notices.</para>
+				</listitem>
+			</itemizedlist>
+		</sect2>
+	</sect1>
+	<sect1>
+		<title>Appendix A: Digital Object Construction</title>
+		<para>This manual's focus is on practical use of the Fedora Administrator Tool. For further discussion on the theory behind digital object construction, please see the <ulink url="server/do-const.html">Digital Object Construction manual</ulink>.</para>
 	</sect1>
 </article>
