@@ -160,7 +160,7 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDatastream(String id, Date start, Date end)
+    public Date[] removeDatastream(String id, Date start, Date end)
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
@@ -197,6 +197,12 @@ public class SimpleDOWriter
             }
         }
         versions.removeAll(removeList);
+        // finally, return the dates of each deleted item
+        Date[] deletedDates=new Date[removeList.size()];
+        for (int i=0; i<removeList.size(); i++) {
+            deletedDates[i]=((Datastream) removeList.get(i)).DSCreateDT;
+        }
+        return deletedDates;
     }
 
     /**
@@ -212,7 +218,7 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDisseminator(String id, Date start, Date end)
+    public Date[] removeDisseminator(String id, Date start, Date end)
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
@@ -257,6 +263,12 @@ public class SimpleDOWriter
             }
         }
         versions.removeAll(removeList);
+        // finally, return the dates of each deleted item
+        Date[] deletedDates=new Date[removeList.size()];
+        for (int i=0; i<removeList.size(); i++) {
+            deletedDates[i]=((Disseminator) removeList.get(i)).dissCreateDT;
+        }
+        return deletedDates;
     }
 
     /**

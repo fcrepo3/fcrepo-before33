@@ -114,7 +114,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDatastream(String id, Date start, Date end)
+    public Date[] removeDatastream(String id, Date start, Date end)
             throws ServerException;
 
     /**
@@ -132,7 +132,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void removeDisseminator(String id, Date start, Date end)
+    public Date[] removeDisseminator(String id, Date start, Date end)
             throws ServerException;
 
     /**
