@@ -68,6 +68,14 @@ xacml authorization later
 password
 13. see notes on surrogate below
 
+    /* these realm methods are called in the given order in tomcat 5.0:
+     * 1. findSecurityConstraints
+     * 2. hasUserDataPermission
+     * 3. authenticate
+     * 4. hasResourcePermission
+     */
+
+
 new JAASNullLoginModule (2005/03/26)
 1. this "authenticates" any user when triggered by JAASRealm that this is the represented user
 in the case of a surrogate (web frontend)
