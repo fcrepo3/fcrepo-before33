@@ -222,8 +222,11 @@ public class DefaultAccess extends Module implements Access
         new fedora.server.storage.types.Property[userParms.length];
     for (int i=0; i<userParms.length; i++)
     {
-      uParms[i].name = userParms[i].getName();
-      uParms[i].value = userParms[i].getValue();
+      fedora.server.storage.types.Property uParm =
+               new fedora.server.storage.types.Property();
+      uParm.name = userParms[i].getName();
+      uParm.value = userParms[i].getValue();
+      uParms[i] = uParm;
     }
     try
     {
