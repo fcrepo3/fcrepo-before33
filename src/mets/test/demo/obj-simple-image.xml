@@ -6,7 +6,7 @@
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
-	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="A">
+	<METS:metsHdr ID="H1" CREATEDATE="2002-05-20T06:32:00" LASTMODDATE="2002-05-20T06:32:00" RECORDSTATUS="I">
 		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
 			<METS:name> Ross Wayland </METS:name>
 			<METS:note> Digital Object based on AICT image and created as the official Fedora sample object </METS:note>
@@ -69,7 +69,7 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:technical>
-							<uvalibadmin:format>image/jpg</uvalibadmin:format>
+							<uvalibadmin:format>image/jpeg</uvalibadmin:format>
 							<uvalibadmin:compression>none</uvalibadmin:compression>
 							<uvalibadmin:bitDepth BITS="8"/>
 							<uvalibadmin:colorSpace>RBG</uvalibadmin:colorSpace>
@@ -87,7 +87,7 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:technical>
-							<uvalibadmin:format>image/jpg</uvalibadmin:format>
+							<uvalibadmin:format>image/jpeg</uvalibadmin:format>
 							<uvalibadmin:compression>LZW</uvalibadmin:compression>
 							<uvalibadmin:bitDepth BITS="8"/>
 							<uvalibadmin:colorSpace>RBG</uvalibadmin:colorSpace>
@@ -105,7 +105,7 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:technical>
-							<uvalibadmin:format>image/jpg</uvalibadmin:format>
+							<uvalibadmin:format>image/jpeg</uvalibadmin:format>
 							<uvalibadmin:compression>LZW</uvalibadmin:compression>
 							<uvalibadmin:bitDepth BITS="16"/>
 							<uvalibadmin:colorSpace>RBG</uvalibadmin:colorSpace>
@@ -123,7 +123,7 @@
 				<METS:xmlData>
 					<uvalibadmin:admin>
 						<uvalibadmin:technical>
-							<uvalibadmin:format>image/jpg</uvalibadmin:format>
+							<uvalibadmin:format>image/jpeg</uvalibadmin:format>
 							<uvalibadmin:compression>none</uvalibadmin:compression>
 							<uvalibadmin:bitDepth BITS="32"/>
 							<uvalibadmin:colorSpace>RBG</uvalibadmin:colorSpace>
@@ -330,25 +330,25 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="">
 				<!--This is the thumbnail sized image -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="">
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="M" STATUS="">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/thumbs/aict/006-007.jpg" xlink:title="AICT thumbnail jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="">
 				<!-- This is the medium sized image -->
-				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
+				<METS:file ID="DS2.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH2 DIGIPROV2 SOURCE2 RIGHTS2" OWNERID="E" STATUS="">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/dic/colls/archive/screen/aict/006-007.jpg" xlink:title="AICT medium jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3">
 				<!--This is the high resolution image -->
-				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
+				<METS:file ID="DS3.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH3 DIGIPROV3 SOURCE3 RIGHTS3" OWNERID="E" STATUS="">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/high/006-007.jpg" xlink:title="AICT high jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS4">
 				<!--This is the very high resolution image -->
-				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
+				<METS:file ID="DS4.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/jpeg" ADMID="TECH4 DIGIPROV4 SOURCE4 RIGHTS4" OWNERID="E" STATUS="">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/aict/vhigh/006-007.jpg" xlink:title="AICT veryhigh jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
