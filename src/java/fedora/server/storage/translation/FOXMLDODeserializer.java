@@ -266,13 +266,43 @@ public class FOXMLDODeserializer
             // WE ARE NOT INSIDE A BLOCK OF INLINE XML...
             if (localName.equals("digitalObject")) {
                 m_rootElementFound=true;
-                // get object identifiers
+                //======================
+                // OBJECT IDENTIFIERS...
+                //======================
 				m_obj.setPid(grab(a, F, "PID"));
 				m_obj.setURI("info:fedora/" + grab(a, F, "PID"));
-			// get object properties
+			//=====================
+			// OBJECT PROPERTIES...
+			//=====================
             } else if (localName.equals("property") || localName.equals("extproperty")) {
 				m_objPropertyName = grab(a, F, "NAME");
-			// PROCESS DATASTREAMS...
+				if (m_objPropertyName.equals("info:fedora/def:dobj:state")){
+					m_obj.setState(grab(a, F, "VALUE"));
+				} else if (m_objPropertyName.equals("info:fedora/def:dobj:cModel")){
+					m_obj.setContentModelId(grab(a, F, "VALUE"));
+				} else if (m_objPropertyName.equals("info:fedora/def:dobj:label")){
+					m_obj.setLabel(grab(a, F, "VALUE"));
+				} else if (m_objPropertyName.equals("info:fedora/def:dobj:cDate")){
+					m_obj.setCreateDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
+				} else if (m_objPropertyName.equals("info:fedora/def:dobj:mDate")){
+					m_obj.setLastModDate(DateUtility.convertStringToDate(grab(a, F, "VALUE")));
+				} else if (m_objPropertyName.equals("info:fedora/def:dobj:fType")){
+					String objType = grab(a, F, "VALUE");
+					if (objType==null) { objType="FedoraObject"; }
+					if (objType.equalsIgnoreCase("FedoraBDefObject")) {
+						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
+					} else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
+						m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
+					} else {
+						m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
+					}
+				} else {
+					// add an extensible property in the property map
+					m_obj.setExtProperty(m_objPropertyName, grab(a, F, "VALUE"));
+				}
+			//===============
+			// DATASTREAMS...
+			//===============
 			} else if (localName.equals("datastream")) {
 				// get datastream attributes...
 				m_dsId=grab(a, F, "ID");
@@ -311,7 +341,9 @@ public class FOXMLDODeserializer
 				if (m_dsVersId.equals("AUDIT.0")) {
 					m_gotAudit=true;
 				}
-			// get the datastream content...
+			//======================
+			// DATASTREAM CONTENT...
+			//======================
 			// inside a datastreamVersion element, it's either going to be
 			// xmlContent (inline xml), contentLocation (a reference) or binaryContent
 			} else if (localName.equals("xmlContent")) {
@@ -361,8 +393,10 @@ public class FOXMLDODeserializer
             } else if (localName.equals("binaryContent")) {
 				// FIXME: implement support for this in Fedora 1.2
 				m_readingBinaryContent=true;
+			//==================
+			// DISSEMINATORS...
+			//==================
             } else if (localName.equals("disseminator")) {
-				// PROCESS DISSEMINATORS...
 				m_dissID=grab(a, F,"ID");
 				m_bDefID=grab(a, F, "BDEF_CONTRACT_PID");
 				m_dissState=grab(a, F,"STATE");
@@ -404,7 +438,9 @@ public class FOXMLDODeserializer
 				m_dsBindings.add(dsb);
 			}
         } else {
-        	// WE ARE INSIDE A BLOCK OF INLINE XML!
+        	//===============
+        	// INLINE XML...
+        	//===============
             if (m_inXMLMetadata) {
                 // we are inside an xmlContent element.
                 // just output it, remembering the number of foxml:xmlContent elements we see
@@ -457,12 +493,8 @@ public class FOXMLDODeserializer
                 }
                 m_dsXMLBuffer.append('>');
                 
-                // FOXML INSIDE FOXML! Set an indicator that means that we 
-                // encountered a FOXML xmlContent element within this 
-                // inline XML datastream!  This means that we have an inline 
-                // XML datastream that is itself FOXML.  We do not want 
-                // to parse this! It must be treated as just a blob of 
-                // xml content from the standpoint of this digital object.
+                // FOXML INSIDE FOXML! we have an inline XML datastream 
+                // that is itself FOXML.  We do not want to parse this!
                 if (uri.equals(F) && localName.equals("xmlContent")) {
                     m_xmlDataLevel++;
                 }
@@ -501,10 +533,14 @@ public class FOXMLDODeserializer
     }
 
     public void endElement(String uri, String localName, String qName) {
+		//==================
+		// INLINE XML...
+		//==================
         if (m_inXMLMetadata) {
-			// WE ARE DEALING WITH INLINE XML...
+			//=====================
+			// AUDIT DATASTREAM... 
+			//=====================
 			if (m_gotAudit) {
-				// AUDIT datastream... 
 				// Pick up audit records from the current ds version
 				// and populate audit records array in digital object.
 				if (localName.equals("action")) {
@@ -541,10 +577,16 @@ public class FOXMLDODeserializer
 				}
 			// process end of xmlContent ONLY if it is NOT embedded within inline XML!
 			} else if (uri.equals(F) && localName.equals("xmlContent") && m_xmlDataLevel==0) {
+				//=====================
+				// AUDIT DATASTREAM...
+				//=====================
 				if (m_dsId.equals("AUDIT")) {
 					// if we are in the inline XML of the AUDIT datastream just 
 					// end processing and move on.  Audit datastream handled elsewhere.
 					m_inXMLMetadata=false;
+				//========================
+				// ALL OTHER INLINE XML...
+				//========================
 				} else {
 					// for ALL other inline xml datastreams...
 					// populate the appropriate class of datastream and add it to m_obj
@@ -589,33 +631,9 @@ public class FOXMLDODeserializer
                     m_xmlDataLevel--;
                 }					
             }
-        // WE ARE NOT DEALING WITH INLINE XML ...
-        } else if (uri.equals(F) && (localName.equals("property") || localName.equals("extproperty"))) {
-			if (m_objPropertyName.equals("info:fedora/def:dobj:state")){
-				m_obj.setState(m_elementContent.toString());
-			} else if (m_objPropertyName.equals("info:fedora/def:dobj:cmodel")){
-				m_obj.setContentModelId(m_elementContent.toString());
-			} else if (m_objPropertyName.equals("info:fedora/def:dobj:label")){
-				m_obj.setLabel(m_elementContent.toString());
-			} else if (m_objPropertyName.equals("info:fedora/def:dobj:created")){
-				m_obj.setCreateDate(DateUtility.convertStringToDate(m_elementContent.toString()));
-			} else if (m_objPropertyName.equals("info:fedora/def:dobj:modified")){
-				m_obj.setLastModDate(DateUtility.convertStringToDate(m_elementContent.toString()));
-			} else if (m_objPropertyName.equals("info:fedora/def:dobj:type")){
-				String objType = m_elementContent.toString();
-				if (objType==null) { objType="FedoraObject"; }
-				if (objType.equalsIgnoreCase("FedoraBDefObject")) {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BDEF_OBJECT);
-				} else if (objType.equalsIgnoreCase("FedoraBMechObject")) {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_BMECH_OBJECT);
-				} else {
-					m_obj.setFedoraObjectType(DigitalObject.FEDORA_OBJECT);
-				}
-			} else {
-				// add an extensible property in the property map
-				m_obj.setExtProperty(m_objPropertyName, m_elementContent.toString());
-			}
-
+        //========================================
+        // ALL OTHER ELEMENTS (NOT INLINE XML)...
+        //========================================
         } else if (uri.equals(F) && localName.equals("binaryContent")) {
 			// FIXME: Implement functionality for inline base64 datastreams
 			// in a future version (post 2.0)
