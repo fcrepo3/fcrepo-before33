@@ -441,7 +441,7 @@ public class METSLikeDOSerializer
                 } else if (md.DSMDClass==DatastreamXMLMetadata.DIGIPROV) {
                     mdClass="digiprovMD";
                 } else {
-                    throw new ObjectIntegrityException("Object's inline XML datastream must have a class.");
+                    throw new ObjectIntegrityException("Object's inline XML datastream must have a class (md.DSMDClass=" + md.DSMDClass + ").");
                 }
                 appendMDSec(obj, "amdSec", mdClass, obj.datastreams(id),
                         buf, encoding);

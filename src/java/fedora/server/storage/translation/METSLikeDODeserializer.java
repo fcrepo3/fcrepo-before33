@@ -387,6 +387,9 @@ public class METSLikeDODeserializer
         m_prefixUris.put(prefix, uri);
         // if we're looking at inline metadata, be sure to save the prefix
         // so we know it's used in that datastream
+
+        // AHA!
+        // m_inXMLMetadata isn't true yet, so it never gets added to the hash
         if (m_inXMLMetadata) {
             if (!m_dsPrefixes.contains(prefix)) {
                 if (!"".equals(prefix)) {
@@ -774,9 +777,9 @@ public class METSLikeDODeserializer
                     m_dsXMLBuffer.append(' ');
                     String aPrefix=(String) m_prefixes.get(a.getURI(i));
                     if (aPrefix!=null) {
-                        if (!m_dsPrefixes.contains(prefix)) {
-                            if (!"".equals(prefix)) {
-                                m_dsPrefixes.add(prefix);
+                        if (!m_dsPrefixes.contains(aPrefix)) {
+                            if (!"".equals(aPrefix)) {
+                                m_dsPrefixes.add(aPrefix);
                             }
                         }
                         m_dsXMLBuffer.append(aPrefix);
