@@ -217,7 +217,8 @@ public abstract class Server
      */
     public static String NAMESPACE_PREFIX=MessageFormat.format(
             s_const.getString("namespace.prefix"),
-            new Object[] {VERSION_MAJOR, VERSION_MINOR});
+            //new Object[] {VERSION_MAJOR, VERSION_MINOR});
+            new Object[] {"1", "0"}); // so config namespace uses 1/0/
 
     /** The configuration file elements' namespace. 0={namespace.prefix} */
     public static String CONFIG_NAMESPACE=MessageFormat.format(
