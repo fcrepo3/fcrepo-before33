@@ -88,6 +88,10 @@
 		<copy todir="dist/client" file="COPYRIGHT.TXT"/>
 		<copy todir="dist/client" file="license.html"/>
 		<copy todir="dist/client" file="copyright.html"/>
+            <mkdir dir="dist/server/userdocs"/>
+		<copy todir="dist/server/userdocs">
+			<fileset dir="dist/userdocs"/>
+		</copy>
 	</target>
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
@@ -223,9 +227,6 @@
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
 		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon" sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/common/junit.jar;lib/common/saxon6.5.jar;lib/server/md5.jar" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
-		<!--<copy todir="dist/server/tomcat41/webapps/userdocs/server/serverdocs">
-			<fileset dir="dist/serverdocs"/>
-		</copy>-->
 	</target>
 	<target name="devdocs" depends="prep" description="Assemble development/system documentation into dist/devdocs">
 		<mkdir dir="dist"/>
@@ -728,7 +729,9 @@
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/server"/>
 		<copy todir="dist/server">
-			<fileset dir="inc/server"/>
+			<fileset dir="inc/server">
+                      <exclude name="**/exist09/**"/>
+                  </fileset>
 		</copy>
 		<copy file="src/xsd/fedora-types.xsd" todir="dist/server/xsd"/>
 		<copy file="src/xsd/fedora-auditing.xsd" todir="dist/server/xsd"/>
@@ -944,6 +947,12 @@
 </project>
 <!--
   $Log$
+  Revision 1.137  2003/05/17 06:37:23  cwilper
+  fixed:
+  - userdocs not going in server/
+  - javadocs not always going in userdocs
+  - exist09 dir in server
+
   Revision 1.136  2003/05/17 03:19:21  rlw
   copied license/copyright to dist/userdocs/distribution
 
