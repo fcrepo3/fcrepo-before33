@@ -23,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -74,6 +75,7 @@ public class DatastreamViewer
         extends JInternalFrame {
         
     public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
+    public static DatastreamConduit CONDUIT;
 
     public DatastreamViewer(String pid) 
             throws Exception {
@@ -82,15 +84,16 @@ public class DatastreamViewer
               true, //closable
               true, //maximizable
               true);//iconifiable
+              
+        CONDUIT=new DatastreamConduit(Administrator.getHost(),
+                Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
 
         // outerPane(tabbedPane, closeButtonPane)
         
             // CENTER: tabbedPane(datastream panels)
             
             JTabbedPane tabbedPane=new JTabbedPane();
-            DatastreamConduit c=new DatastreamConduit(Administrator.getHost(),
-                    Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
-            String[] dsIDs=c.listDatastreamIDs(pid, "A");
+            String[] dsIDs=CONDUIT.listDatastreamIDs(pid, "A");
             if ( (dsIDs==null) || (dsIDs.length==0) ) {
                 JPanel noDatastreamsPanel=new JPanel();
                 noDatastreamsPanel.setLayout(new BorderLayout());
@@ -99,7 +102,8 @@ public class DatastreamViewer
                 tabbedPane.addTab("NO DATASTREAMS", noDatastreamsPanel);
             } else {
                 for (int i=0; i<dsIDs.length; i++) {
-                    tabbedPane.addTab(dsIDs[i], new DatastreamPanel(c.getDatastream(pid, dsIDs[i], null)));
+                    tabbedPane.addTab(dsIDs[i], new DatastreamPanel(pid, 
+                            CONDUIT.getDatastream(pid, dsIDs[i], null)));
                 }
             }
             tabbedPane.setSelectedIndex(0);
@@ -136,10 +140,7 @@ public class DatastreamViewer
     public class DatastreamPanel
             extends JPanel {
             
-        private Datastream m_ds;
-        
-        public DatastreamPanel(Datastream ds) {
-            m_ds=ds;
+        public DatastreamPanel(String pid, Datastream ds) {
             boolean xml=false;
             if (ds.getControlGroup().toString().equals("X")) {
                 xml=true;
@@ -221,6 +222,7 @@ public class DatastreamViewer
                         if (!xml) numRows++;
                         fieldGrid.setLayout(new GridLayout(numRows, 1));
                         fieldGrid.add(labelValueField);
+                        JTextField locationValueField=null;
                         if (!xml) {
                             String locationValue;
                             if (group.equals("M")) {
@@ -228,7 +230,7 @@ public class DatastreamViewer
                             } else {
                                 locationValue=ds.getLocation();
                             }
-                            JTextField locationValueField=new JTextField(locationValue, 15);
+                            locationValueField=new JTextField(locationValue, 15);
                             locationValueField.setCaretPosition(0);
                             fieldGrid.add(locationValueField);
                         }
@@ -237,9 +239,10 @@ public class DatastreamViewer
                     JPanel multiLineValuePanel=new JPanel();
                     multiLineValuePanel.setLayout(new BorderLayout());
                     multiLineValuePanel.add(fieldGrid, BorderLayout.NORTH);
+                    JTextArea xmlEditor=null;
                     if (xml) {
                         // CENTER: [JScrollPane(xmlEditor)]
-                        JTextArea xmlEditor=new JTextArea();
+                        xmlEditor=new JTextArea();
                         xmlEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
                         try {
                             // use xerces to pretty print the xml to the editor
@@ -269,6 +272,17 @@ public class DatastreamViewer
                 
                     // NORTH: saveButton
                     JButton saveButton=new JButton("Save");
+                    if (xml) {
+                        saveButton.addActionListener(
+                                new SaveDatastreamByValueListener(pid, 
+                                ds.getID(), labelValueField, 
+                                modifiedValueLabel, xmlEditor));
+                    } else {
+                        saveButton.addActionListener(
+                                new SaveDatastreamByReferenceListener(pid, 
+                                ds.getID(), labelValueField, 
+                                modifiedValueLabel, locationValueField));
+                    }
                 
                 JPanel saveButtonPanel=new JPanel();
                 saveButtonPanel.setLayout(new BorderLayout());
@@ -282,169 +296,81 @@ public class DatastreamViewer
         }
         
     }
-
-/*
-            // NORTH: fieldsPanel(selectedFieldsLabel, modifySelectedFieldsButtonPanel)
-
-                // CENTER: selectedFieldsLabel
-                JLabel selectedFieldsLabel=new JLabel();
-                StringBuffer text=new StringBuffer();
-                text.append("<html><i>");
-                for (int i=0; i<m_displayFields.size(); i++) {
-                    if (i>0) text.append(", ");
-                    text.append((String) m_displayFields.get(i));
-                }
-                text.append("</i></html>");
-                selectedFieldsLabel.setText(text.toString());
-
-                // EAST: modifySelectedFieldsButton
-                JButton modifySelectedFieldsButton=new JButton("Change..");
-                ChangeFieldsButtonListener cfbl=
-                        new ChangeFieldsButtonListener(selectedFieldsLabel,
-                        m_displayFields);
-                modifySelectedFieldsButton.addActionListener(cfbl);
-
-            JPanel fieldsPanel=new JPanel();
-            fieldsPanel.setLayout(new BorderLayout());
-            fieldsPanel.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createTitledBorder(
-                    BorderFactory.createEtchedBorder(), "Fields to Display"),
-                    BorderFactory.createEmptyBorder(0,6,6,6)));
-            fieldsPanel.add(selectedFieldsLabel, BorderLayout.CENTER);
-            fieldsPanel.add(modifySelectedFieldsButton, BorderLayout.EAST);
-
-            // CENTER: tabbedPaneContainer(m_tabbedPane)
-
-                // CENTER: m_tabbedPane(simpleSearchPanel, advancedSearchPanel)
-
-                    // PANE 1: simpleSearchPanel(simplePromptPanel, simpleInstructionsLabel)
-
-                        // NORTH: simplePromptPanel(promptLabel, m_simpleQueryField)
-
-                            // FLOW: promptLabel
-
-                            JLabel promptLabel=new JLabel("Search all fields for ");
-
-                            // FLOW: m_simpleQueryField
-
-                            m_simpleQueryField=new JTextField("*", 15);
-
-                        JPanel simplePromptPanel=new JPanel();
-                        simplePromptPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-                        simplePromptPanel.add(promptLabel);
-                        simplePromptPanel.add(m_simpleQueryField);
-
-                        // SOUTH: simpleInstructionsLabel
-
-                        JLabel simpleInstructionsLabel=new JLabel("<html>Note: You may use the ? and * wildcards.  '?' means <i>any one</i> character, and '*' means <i>any number of any characters</i>. Searches are case-insensitive.");
-
-                    JPanel simpleSearchPanel=new JPanel();
-                    simpleSearchPanel.setLayout(new BorderLayout());
-                    simpleSearchPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
-                    simpleSearchPanel.add(simplePromptPanel, BorderLayout.NORTH);
-                    simpleSearchPanel.add(simpleInstructionsLabel, BorderLayout.CENTER);
-
-                    // PANE 2: advancedSearchPanel(innerConditionsPanel, modifyConditionsOuterPanel)
-
-                        // CENTER: innerConditionsPanel(conditionsScrollPane)
-
-                            // CENTER: conditionsScrollPane(conditionsTable)
-
-                                // WRAPS: conditionsTable
-                                m_model=new ConditionsTableModel();
-                                JTable conditionsTable=new JTable(m_model);
-
-                            JScrollPane conditionsScrollPane=
-                                    new JScrollPane(conditionsTable);
-                            conditionsScrollPane.setBorder(
-                                    BorderFactory.createEmptyBorder(0,0,6,6));
-
-                        JPanel innerConditionsPanel=new JPanel();
-                        innerConditionsPanel.setLayout(new BorderLayout());
-                        innerConditionsPanel.add(conditionsScrollPane, BorderLayout.CENTER);
-
-                        // EAST: modifyConditionsOuterPanel(modifyConditionsInnerPanel)
-
-                            // NORTH: modifyConditionsInnerPanel
-
-                                // GRID: addConditionButton
-                                JButton addConditionButton=new JButton("Add..");
-
-                                // GRID: modifyConditionButton
-                                JButton modifyConditionButton=new JButton("Change..");
-
-                                // GRID: deleteConditionButton
-                                JButton deleteConditionButton=new JButton("Delete");
-
-                            // Now that buttons are available, register the
-                            // list selection listener that sets their enabled state.
-                            conditionsTable.setSelectionMode(
-                                    ListSelectionModel.SINGLE_SELECTION);
-                            ConditionSelectionListener sListener=
-                                    new ConditionSelectionListener(modifyConditionButton,
-                                            deleteConditionButton, -1);
-                            conditionsTable.getSelectionModel().
-                                    addListSelectionListener(sListener);
-                            // ..and add listeners to the buttons
-
-                            addConditionButton.addActionListener(
-                                    new AddConditionButtonListener(m_model));
-                            modifyConditionButton.addActionListener(
-                                    new ChangeConditionButtonListener(m_model, sListener));
-                            deleteConditionButton.addActionListener(
-                                    new DeleteConditionButtonListener(m_model, sListener));
-
-                            JPanel modifyConditionsInnerPanel=new JPanel();
-                            modifyConditionsInnerPanel.setLayout(new GridLayout(3, 1));
-                            modifyConditionsInnerPanel.add(addConditionButton);
-                            modifyConditionsInnerPanel.add(modifyConditionButton);
-                            modifyConditionsInnerPanel.add(deleteConditionButton);
-
-                        JPanel modifyConditionsOuterPanel=new JPanel();
-                        modifyConditionsOuterPanel.setLayout(new BorderLayout());
-                        modifyConditionsOuterPanel.add(modifyConditionsInnerPanel, BorderLayout.NORTH);
-
-                    JPanel advancedSearchPanel=new JPanel();
-                    advancedSearchPanel.setLayout(new BorderLayout());
-                    advancedSearchPanel.setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
-                    advancedSearchPanel.add(innerConditionsPanel, BorderLayout.CENTER);
-                    advancedSearchPanel.add(modifyConditionsOuterPanel, BorderLayout.EAST);
-
-                m_tabbedPane=new JTabbedPane();
-                m_tabbedPane.addTab("Simple", simpleSearchPanel);
-                m_tabbedPane.setSelectedIndex(0);
-                m_tabbedPane.addTab("Advanced", advancedSearchPanel);
-
-            JPanel tabbedPaneContainer=new JPanel();
-            tabbedPaneContainer.setLayout(new BorderLayout());
-            tabbedPaneContainer.setBorder(BorderFactory.createCompoundBorder(
-                    BorderFactory.createEmptyBorder(6,0,6,0),
-                    BorderFactory.createCompoundBorder(
-                    BorderFactory.createTitledBorder(
-                    BorderFactory.createEtchedBorder(), "Query"),
-                    BorderFactory.createEmptyBorder(0,6,6,6))));
-            tabbedPaneContainer.add(m_tabbedPane, BorderLayout.CENTER);
-
-            // SOUTH: finishButtonsPanel
-
-                // FLOW: searchButton
-                JButton searchButton=new JButton("Search");
-                searchButton.addActionListener(new SearchButtonListener(
-                        cfbl, m_model));
-
-                // FLOW: cancelButton
-                JButton cancelButton=new JButton("Cancel");
-                cancelButton.addActionListener(new ActionListener() {
-                    public void actionPerformed(ActionEvent e) {
-                        doDefaultCloseAction();
-                    }
-                });
-
-            JPanel finishButtonsPanel=new JPanel();
-            finishButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-            finishButtonsPanel.add(searchButton);
-            finishButtonsPanel.add(cancelButton);
+    
+    public class SaveDatastreamByReferenceListener 
+            implements ActionListener {
             
-        */
+        private String m_pid;
+        private String m_dsId;
+        private JTextField m_labelField;
+        private JLabel m_modifiedDateLabel;
+        private JTextField m_locationField;
+        
+        public SaveDatastreamByReferenceListener(String pid, String dsId,
+                JTextField labelField, JLabel modifiedDateLabel, 
+                JTextField locationField) {
+            m_pid=pid;
+            m_dsId=dsId;
+            m_labelField=labelField;
+            m_modifiedDateLabel=modifiedDateLabel;
+            m_locationField=locationField;
+        }
+            
+        public void actionPerformed(ActionEvent ae) {
+            String logMessage=JOptionPane.showInputDialog("Enter a log message.");
+            if (logMessage==null) return;
+            try {
+                DatastreamViewer.CONDUIT.modifyDatastreamByReference(m_pid, m_dsId,
+                        m_labelField.getText(), logMessage, 
+                        m_locationField.getText());
+                Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
+                        getCreateDate().getTime();
+                m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "Failed",
+                    JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    public class SaveDatastreamByValueListener
+            implements ActionListener {
+            
+        private String m_pid;
+        private String m_dsId;
+        private JTextField m_labelField;
+        private JLabel m_modifiedDateLabel;
+        private JTextArea m_textArea;
+        
+        public SaveDatastreamByValueListener(String pid, String dsId,
+                JTextField labelField, JLabel modifiedDateLabel, 
+                JTextArea textArea) {
+            m_pid=pid;
+            m_dsId=dsId;
+            m_labelField=labelField;
+            m_modifiedDateLabel=modifiedDateLabel;
+            m_textArea=textArea;
+        }
+            
+        public void actionPerformed(ActionEvent ae) {
+            String logMessage=JOptionPane.showInputDialog("Enter a log message.");
+            if (logMessage==null) return;
+            try {
+                DatastreamViewer.CONDUIT.modifyDatastreamByValue(m_pid, m_dsId,
+                        m_labelField.getText(), logMessage, 
+                        m_textArea.getText().getBytes("UTF-8"));
+                Date dt=DatastreamViewer.CONDUIT.getDatastream(m_pid, m_dsId, null).
+                        getCreateDate().getTime();
+                m_modifiedDateLabel.setText(DatastreamViewer.FORMATTER.format(dt));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    e.getClass().getName() + ": " + e.getMessage(),
+                    "Failed",
+                    JOptionPane.ERROR_MESSAGE);
+            }        
+        }
+    }
 
 }

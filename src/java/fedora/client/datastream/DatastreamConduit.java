@@ -51,6 +51,12 @@ public class DatastreamConduit {
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
     
+    public static String[] listDatastreamIDs(FedoraAPIM skeleton, String pid,
+            String state)
+            throws RemoteException {
+        return skeleton.listDatastreamIDs(pid, state);
+    }
+    
     public String[] listDatastreamIDs(String pid, String state) 
             throws RemoteException {
         return listDatastreamIDs(m_apim, pid, state);
@@ -67,13 +73,37 @@ public class DatastreamConduit {
             throws RemoteException {
         return getDatastream(m_apim, pid, dsId, asOfDateTime);
     }
-
-    public static String[] listDatastreamIDs(FedoraAPIM skeleton, String pid,
-            String state)
+    
+    public static void modifyDatastreamByReference(FedoraAPIM skeleton, 
+            String pid, String dsId, String dsLabel, String logMessage,
+            String location) 
             throws RemoteException {
-        return skeleton.listDatastreamIDs(pid, state);
+        skeleton.modifyDatastreamByReference(pid, dsId, dsLabel, logMessage,
+                location);
+    }
+
+    public void modifyDatastreamByReference(String pid, String dsId,
+            String dsLabel, String logMessage, String location) 
+            throws RemoteException {
+        modifyDatastreamByReference(m_apim, pid, dsId, dsLabel, logMessage,
+                location);
     }
     
+    public static void modifyDatastreamByValue(FedoraAPIM skeleton, 
+            String pid, String dsId, String dsLabel, String logMessage, 
+            byte[] content) 
+            throws RemoteException {
+        skeleton.modifyDatastreamByValue(pid, dsId, dsLabel, logMessage,
+                content);
+    }
+
+    public void modifyDatastreamByValue(String pid, String dsId,
+            String dsLabel, String logMessage, byte[] content) 
+            throws RemoteException {
+        modifyDatastreamByValue(m_apim, pid, dsId, dsLabel, logMessage,
+                content);
+    }
+
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");

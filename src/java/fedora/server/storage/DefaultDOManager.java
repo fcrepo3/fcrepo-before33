@@ -548,7 +548,9 @@ public class DefaultDOManager
                 // First, serialize the digital object into an Inputstream to be passed to validator.
 
                 // set object status to "A" if "I".  other status changes should occur elsewhere!
+                boolean isNewObject=false;
                 if (obj.getState().equals("I")) {
+                    isNewObject=true;
                     obj.setState("A");
                 }
                 // set datastream statuses to "A" if "I".  other status changes should occur elsewhere!
@@ -583,7 +585,11 @@ public class DefaultDOManager
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
                     m_validator.validate(inV, 0, "store");
                     // if ok, write change to perm store here...right before db stuff
-                    getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                    if (isNewObject) {
+                        getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                    } else {
+                        getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                    }
                 } else {
                     m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
                 }
