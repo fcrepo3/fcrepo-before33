@@ -306,9 +306,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
-        <xsd:attribute name="HARVESTABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION:  add attribute STATUS to dmdSec -->
-		<!-- FEDORA EXTENSION:  add attribute HARVESTABLE to dmdSec -->
 	</xsd:complexType>
 	<xsd:complexType name="amdSecType">
 		<xsd:annotation>
@@ -371,9 +369,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
-        <xsd:attribute name="HARVESTABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION:  add attribute STATUS to amdSec -->
-		<!-- FEDORA EXTENSION:  add attribute HARVESTABLE to amdSec -->
 	</xsd:complexType>
 	<xsd:complexType name="fileGrpType">
 		<xsd:annotation>
@@ -488,9 +484,7 @@
 					<xsd:attribute name="GROUPID" type="xsd:string" use="optional"/>
 					<xsd:attribute name="DMDID" type="xsd:IDREFS" use="optional"/>
 					<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
-                    <xsd:attribute name="FORMATURI" type="xsd:string" use="optional"/>
 					<!-- FEDORA EXTENSION:  additional attributes DMDID and STATUS on file -->
-		            <!-- FEDORA EXTENSION: additional attribute FORMATURI on file -->
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:choice>
@@ -500,9 +494,7 @@
 		<xsd:attribute name="DMDID" type="xsd:IDREFS" use="optional"/>
 		<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
-		<xsd:attribute name="HARVESTABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION: additional attributes DMDID LABEL STATUS on fileGrp -->
-		<!-- FEDORA EXTENSION:  additional attribute HARVESTABLE on fileGrp -->
 	</xsd:complexType>
 	<xsd:complexType name="structMapType">
 		<xsd:annotation>
@@ -924,9 +916,7 @@
 					<xsd:attribute name="ID" type="xsd:ID" use="optional"/>
 					<xsd:attribute name="MIMETYPE" type="xsd:string" use="optional"/>
 					<xsd:attributeGroup ref="METADATA"/>
-                    <xsd:attribute name="FORMATURI" type="xsd:string" use="optional"/>
 					<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
-		            <!-- FEDORA EXTENSION: additional attribute FORMATURI on mdWrap -->
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:all>
