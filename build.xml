@@ -2,169 +2,152 @@
 <!--  $Id$ -->
 <project name="Fedora" default="serverdist" basedir=".">
 	<description>The Fedora Project </description>
-	
 	<!-- set global properties for this build -->
-	<property name="build.debug"		value="on"/>
-	<property name="build.optimize"		value="off"/>
-	<property name="src.dir"			location="src"/>
-	<property name="src.java.dir"		location="${src.dir}/java"/>
-	<property name="build.dir"			location="build"/>
-	<property name="dist.dir"			location="dist"/>
-	<property name="lib.dir"			location="lib"/>
-	<property name="release.dir"		location="${dist.dir}/release"/>
-    <property name="server.dist.dir"    location="${dist.dir}/server"/>
-    <property name="properties.dir"     location="${src.dir}/properties"/>
-	
+	<property name="build.debug" value="on"/>
+	<property name="build.optimize" value="off"/>
+	<property name="src.dir" location="src"/>
+	<property name="src.java.dir" location="${src.dir}/java"/>
+	<property name="build.dir" location="build"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="release.dir" location="${dist.dir}/release"/>
+	<property name="server.dist.dir" location="${dist.dir}/server"/>
+	<property name="properties.dir" location="${src.dir}/properties"/>
 	<!-- load external properties files -->
 	<loadproperties srcFile="${properties.dir}/lib.properties"/>
-    <loadproperties srcFile="${properties.dir}/mckoi.properties"/>
-    <loadproperties srcFile="${properties.dir}/tomcat.properties"/>
-    <loadproperties srcFile="${properties.dir}/server/fedora/server/resources/Server.properties">
-        <filterchain>
-            <linecontains>
-                <contains value="version."/>
-            </linecontains>
-        </filterchain>
-    </loadproperties>
-    
-    <!-- get the version of Fedora -->
-    <property name="fedora.version"     value="${version.major}.${version.minor}"/>
-    <property name="fedora.releaseDate" value="${version.releaseDate}"/>
-    
-    <!-- 
+	<loadproperties srcFile="${properties.dir}/mckoi.properties"/>
+	<loadproperties srcFile="${properties.dir}/tomcat.properties"/>
+	<loadproperties srcFile="${properties.dir}/server/fedora/server/resources/Server.properties">
+		<filterchain>
+			<linecontains>
+				<contains value="version."/>
+			</linecontains>
+		</filterchain>
+	</loadproperties>
+	<!-- get the version of Fedora -->
+	<property name="fedora.version" value="${version.major}.${version.minor}"/>
+	<property name="fedora.releaseDate" value="${version.releaseDate}"/>
+	<!-- 
         The following pattern of <pathconvert> and <fileset> declarations 
         take a set of jar files, and:
             1. create a path, suitable for classpath declarations
             2. create a comma-separated list of just the file names
             3. create a fileset, suitable for copying to release locations
     -->
-    <pathconvert pathsep="," property="server-libs.list">
-        <path id="server-libs.path">
-            <pathelement location="${lib.avalon-framework}"/>
-            <pathelement location="${lib.batik}"/>
-            <pathelement location="${lib.cos}"/>
-            <pathelement location="${lib.fop}"/>
-            <pathelement location="${lib.ij}"/>
-            <pathelement location="${lib.jai_codec}"/>
-            <pathelement location="${lib.jai_core}"/>
-            <pathelement location="${lib.md5}"/>
-            
-            <pathelement location="${lib.jena}"/>
-            <pathelement location="${lib.kowari-driver}"/>
-            <pathelement location="${lib.trippi}"/>
-            <pathelement location="${lib.rio}"/>
-            <pathelement location="${lib.xmlpull}"/>
-            <pathelement location="${lib.xpp3}"/>
-            <pathelement location="${lib.activation}"/>
-            <pathelement location="${lib.castor}"/>
-            <pathelement location="${lib.lucene}"/>
-            <pathelement location="${lib.log4j}"/>
-            <pathelement location="${lib.oro}"/>
-            <pathelement location="${lib.trove}"/>
-        </path>
-        <map from="${lib.dir}${file.separator}" to=""/>
-    </pathconvert>
-    <fileset dir="${lib.dir}" id="server-libs.fileset" includes="${server-libs.list}"/>
-    
-    <pathconvert pathsep="," property="client-libs.list">
-        <path id="client-libs.path">
-            <pathelement location="${lib.axis}"/>
-            <pathelement location="${lib.batik}"/>
-            <pathelement location="${lib.commons-discovery}"/>
-            <pathelement location="${lib.commons-httpclient}"/>
-            <pathelement location="${lib.commons-logging}"/>
-            <pathelement location="${lib.getopt}"/>
-            <pathelement location="${lib.jai_codec}"/>
-            <pathelement location="${lib.jai_core}"/>
-            <pathelement location="${lib.jaxrpc}"/>
-            <pathelement location="${lib.jrdf}"/>
-            <pathelement location="${lib.saaj}"/>
-            <pathelement location="${lib.saxon}"/>
-            <pathelement location="${lib.wsdl4j}"/>
-            <pathelement location="${lib.xerces}"/>
-            <pathelement location="${lib.xml-apis}"/>
-        </path>
-        <map from="${lib.dir}${file.separator}" to=""/>
-    </pathconvert>
-    <fileset dir="${lib.dir}" id="client-libs.fileset" includes="${client-libs.list}"/>
-    
-    <path id="localservices-lib.path">
-        <pathelement location="${lib.avalon-framework}"/>
-        <pathelement location="${lib.batik}"/>
-        <pathelement location="${lib.commons-httpclient}"/>
-        <pathelement location="${lib.fop}"/>
-        <pathelement location="${lib.ij}"/>
-        <pathelement location="${lib.jai_codec}"/>
-        <pathelement location="${lib.jai_core}"/>
-        <pathelement location="${lib.saxon}"/>
-        <pathelement location="${lib.servlet}"/>
-    </path>
-    
-    <path id="serverclasses-lib.path">
-        <pathelement location="${lib.axis}"/>
-        <pathelement location="${lib.commons-logging}"/>
-        <pathelement location="${lib.cos}"/>
-        <pathelement location="${lib.jaxrpc}"/>
-        <pathelement location="${lib.jena}"/>
-        <pathelement location="${lib.junit}"/>
-        <pathelement location="${lib.kowari-driver}"/>
-        <pathelement location="${lib.trippi}"/>
-        <pathelement location="${lib.rio}"/>
-        <pathelement location="${lib.xmlpull}"/>
-        <pathelement location="${lib.xpp3}"/>
-        <pathelement location="${lib.md5}"/>
-        <pathelement location="${lib.saxon}"/>
-        <pathelement location="${lib.servlet}"/>
-        <pathelement location="${lib.wsdl4j}"/>
-        <pathelement location="${lib.xerces}"/>
-        <pathelement location="${lib.xml-apis}"/>
-    </path>
-    
-    <!-- Set up the classpath arguments to be inserted into the Fedora startup scripts -->
-    <path id="AxisUtility-libs.path">
-        <pathelement location="${lib.axis}"/>
-        <pathelement location="${lib.commons-discovery}"/>
-        <pathelement location="${lib.commons-logging}"/>
-        <pathelement location="${lib.jaxrpc}"/>
-        <pathelement location="${lib.saaj}"/>
-        <pathelement location="${lib.tt-bytecode}"/>
-        <pathelement location="${lib.wsdl4j}"/>
-        <pathelement location="${lib.xerces}"/>
-        <pathelement location="${lib.xml-apis}"/> 
-    </path>
-    <!-- $TC_COMMON should not be interpreted by Ant. -->
-    <pathconvert targetos="unix" property="AxisUtility.unix.libs" refid="AxisUtility-libs.path">
-        <map from="${lib.dir}" to="$TC_COMMON"/>
-    </pathconvert>
-    <!-- %TC_COMMON% should not be interpreted by Ant. -->
-    <pathconvert targetos="windows" property="AxisUtility.windows.libs" refid="AxisUtility-libs.path">
-        <map from="${lib.dir}" to="%TC_COMMON%"/>
-    </pathconvert>
-    <path id="ServerController-libs.path">
-        <pathelement location="${lib.servlet}"/>
-    </path>
-    <!-- $TC_COMMON should not be interpreted by Ant. -->
-    <pathconvert targetos="unix" property="ServerController.unix.libs" refid="ServerController-libs.path">
-        <map from="${lib.dir}" to="$TC_COMMON"/>
-    </pathconvert>
-    <!-- %TC_COMMON% should not be interpreted by Ant. -->
-    <pathconvert targetos="windows" property="ServerController.windows.libs" refid="ServerController-libs.path">
-        <map from="${lib.dir}" to="%TC_COMMON%"/>
-    </pathconvert>
-    
-    <!-- targets -->        
-	<target name="serverandclient" depends="server,client,localservices" 
-		    description="builds both client and server in dist/server">
+	<pathconvert pathsep="," property="server-libs.list">
+		<path id="server-libs.path">
+			<pathelement location="${lib.avalon-framework}"/>
+			<pathelement location="${lib.batik}"/>
+			<pathelement location="${lib.cos}"/>
+			<pathelement location="${lib.fop}"/>
+			<pathelement location="${lib.ij}"/>
+			<pathelement location="${lib.jai_codec}"/>
+			<pathelement location="${lib.jai_core}"/>
+			<pathelement location="${lib.md5}"/>
+			<pathelement location="${lib.jena}"/>
+			<pathelement location="${lib.kowari-driver}"/>
+			<pathelement location="${lib.trippi}"/>
+			<pathelement location="${lib.rio}"/>
+			<pathelement location="${lib.xmlpull}"/>
+			<pathelement location="${lib.xpp3}"/>
+			<pathelement location="${lib.activation}"/>
+			<pathelement location="${lib.castor}"/>
+			<pathelement location="${lib.lucene}"/>
+			<pathelement location="${lib.log4j}"/>
+			<pathelement location="${lib.oro}"/>
+			<pathelement location="${lib.trove}"/>
+		</path>
+		<map from="${lib.dir}${file.separator}" to=""/>
+	</pathconvert>
+	<fileset dir="${lib.dir}" id="server-libs.fileset" includes="${server-libs.list}"/>
+	<pathconvert pathsep="," property="client-libs.list">
+		<path id="client-libs.path">
+			<pathelement location="${lib.axis}"/>
+			<pathelement location="${lib.batik}"/>
+			<pathelement location="${lib.commons-discovery}"/>
+			<pathelement location="${lib.commons-httpclient}"/>
+			<pathelement location="${lib.commons-logging}"/>
+			<pathelement location="${lib.getopt}"/>
+			<pathelement location="${lib.jai_codec}"/>
+			<pathelement location="${lib.jai_core}"/>
+			<pathelement location="${lib.jaxrpc}"/>
+			<pathelement location="${lib.jrdf}"/>
+			<pathelement location="${lib.saaj}"/>
+			<pathelement location="${lib.saxon}"/>
+			<pathelement location="${lib.wsdl4j}"/>
+			<pathelement location="${lib.xerces}"/>
+			<pathelement location="${lib.xml-apis}"/>
+		</path>
+		<map from="${lib.dir}${file.separator}" to=""/>
+	</pathconvert>
+	<fileset dir="${lib.dir}" id="client-libs.fileset" includes="${client-libs.list}"/>
+	<path id="localservices-lib.path">
+		<pathelement location="${lib.avalon-framework}"/>
+		<pathelement location="${lib.batik}"/>
+		<pathelement location="${lib.commons-httpclient}"/>
+		<pathelement location="${lib.fop}"/>
+		<pathelement location="${lib.ij}"/>
+		<pathelement location="${lib.jai_codec}"/>
+		<pathelement location="${lib.jai_core}"/>
+		<pathelement location="${lib.saxon}"/>
+		<pathelement location="${lib.servlet}"/>
+	</path>
+	<path id="serverclasses-lib.path">
+		<pathelement location="${lib.axis}"/>
+		<pathelement location="${lib.commons-logging}"/>
+		<pathelement location="${lib.cos}"/>
+		<pathelement location="${lib.jaxrpc}"/>
+		<pathelement location="${lib.jena}"/>
+		<pathelement location="${lib.junit}"/>
+		<pathelement location="${lib.kowari-driver}"/>
+		<pathelement location="${lib.trippi}"/>
+		<pathelement location="${lib.rio}"/>
+		<pathelement location="${lib.xmlpull}"/>
+		<pathelement location="${lib.xpp3}"/>
+		<pathelement location="${lib.md5}"/>
+		<pathelement location="${lib.saxon}"/>
+		<pathelement location="${lib.servlet}"/>
+		<pathelement location="${lib.wsdl4j}"/>
+		<pathelement location="${lib.xerces}"/>
+		<pathelement location="${lib.xml-apis}"/>
+	</path>
+	<!-- Set up the classpath arguments to be inserted into the Fedora startup scripts -->
+	<path id="AxisUtility-libs.path">
+		<pathelement location="${lib.axis}"/>
+		<pathelement location="${lib.commons-discovery}"/>
+		<pathelement location="${lib.commons-logging}"/>
+		<pathelement location="${lib.jaxrpc}"/>
+		<pathelement location="${lib.saaj}"/>
+		<pathelement location="${lib.tt-bytecode}"/>
+		<pathelement location="${lib.wsdl4j}"/>
+		<pathelement location="${lib.xerces}"/>
+		<pathelement location="${lib.xml-apis}"/>
+	</path>
+	<!-- $TC_COMMON should not be interpreted by Ant. -->
+	<pathconvert targetos="unix" property="AxisUtility.unix.libs" refid="AxisUtility-libs.path">
+		<map from="${lib.dir}" to="$TC_COMMON"/>
+	</pathconvert>
+	<!-- %TC_COMMON% should not be interpreted by Ant. -->
+	<pathconvert targetos="windows" property="AxisUtility.windows.libs" refid="AxisUtility-libs.path">
+		<map from="${lib.dir}" to="%TC_COMMON%"/>
+	</pathconvert>
+	<path id="ServerController-libs.path">
+		<pathelement location="${lib.servlet}"/>
+	</path>
+	<!-- $TC_COMMON should not be interpreted by Ant. -->
+	<pathconvert targetos="unix" property="ServerController.unix.libs" refid="ServerController-libs.path">
+		<map from="${lib.dir}" to="$TC_COMMON"/>
+	</pathconvert>
+	<!-- %TC_COMMON% should not be interpreted by Ant. -->
+	<pathconvert targetos="windows" property="ServerController.windows.libs" refid="ServerController-libs.path">
+		<map from="${lib.dir}" to="%TC_COMMON%"/>
+	</pathconvert>
+	<!-- targets -->
+	<target name="serverandclient" depends="server,client,localservices" description="builds both client and server in dist/server">
 	</target>
-	
-	<target name="release" 
-		    depends="srcrelease,binrelease" 
-		    description="puts all source and binary distributable packages in dist/release">
+	<target name="release" depends="srcrelease,binrelease" description="puts all source and binary distributable packages in dist/release">
 	</target>
-	
-	<target name="srcrelease" 
-		    depends="clean" 
-		    description="puts source distributable packages in dist/release">
+	<target name="srcrelease" depends="clean" description="puts source distributable packages in dist/release">
 		<mkdir dir="${dist.dir}"/>
 		<mkdir dir="${release.dir}"/>
 		<mkdir dir="${release.dir}/fedora-${fedora.version}-src"/>
@@ -183,12 +166,9 @@
 		<zip zipfile="${release.dir}/fedora-${fedora.version}-src.zip" basedir="${release.dir}" includes="fedora-${fedora.version}-src/**"/>
 		<delete dir="${release.dir}/fedora-${fedora.version}-src"/>
 	</target>
-	
-	<target name="binrelease" depends="binreleasewindows,binreleaseunix" 
-		    description="puts binary distributable packages in dist/release">
+	<target name="binrelease" depends="binreleasewindows,binreleaseunix" description="puts binary distributable packages in dist/release">
 		<delete dir="${release.dir}/fedora-${fedora.version}"/>
 	</target>
-	
 	<target name="binreleaseunix" depends="binreleaseprep">
 		<!-- server -->
 		<tar longfile="gnu" tarfile="dist/release/fedora-${fedora.version}-server.tar">
@@ -215,12 +195,10 @@
 		<gzip zipfile="${release.dir}/fedora-${fedora.version}-client.tar.gz" src="${release.dir}/fedora-${fedora.version}-client.tar"/>
 		<delete file="${release.dir}/fedora-${fedora.version}-client.tar"/>
 	</target>
-	
 	<target name="binreleasewindows" depends="binreleaseprep">
 		<zip zipfile="${release.dir}/fedora-${fedora.version}-server.zip" basedir="${release.dir}" includes="fedora-${fedora.version}/server/**"/>
 		<zip zipfile="${release.dir}/fedora-${fedora.version}-client.zip" basedir="${release.dir}" includes="fedora-${fedora.version}/client/**"/>
 	</target>
-	
 	<target name="binreleaseprep" depends="serverdist" description="puts binary distributable packages in dist/release">
 		<mkdir dir="${release.dir}"/>
 		<mkdir dir="${release.dir}/fedora-${fedora.version}"/>
@@ -231,10 +209,7 @@
 			</fileset>
 		</copy>
 	</target>
-	
-	<target name="serverdist" 
-		    depends="serverandclient,userdocs,serverdocs" 
-		    description="a distribution of client and server, with documentation (suitable for release)">
+	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<copy todir="dist/server" file="LICENSE.TXT"/>
 		<copy todir="dist/server" file="COPYRIGHT.TXT"/>
 		<copy todir="dist/server" file="license.html"/>
@@ -252,7 +227,6 @@
 			<fileset dir="dist/userdocs"/>
 		</copy>
 	</target>
-	
 	<target name="clientunixstuff" depends="clientmostly" if="buildingOnUnix">
 		<!-- add symlinks for shell scripts in unix -->
 		<exec dir="./dist/client/bin" executable="/bin/ln">
@@ -284,25 +258,19 @@
 		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-build.sh fedora-batch-build"/>
-		</exec>		
+		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-ingest.sh fedora-batch-ingest"/>
-		</exec>		
+		</exec>
 		<exec dir="./dist/client/bin" executable="/bin/ln">
 			<arg line="-s fedora-batch-buildingest.sh fedora-batch-buildingest"/>
-		</exec>						
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
 	</target>
-	
-	<target name="client" 
-		    depends="clientunixstuff,clientmostly" 
-		    description="Client distribution">
+	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
 	</target>
-	
-	<target name="clientmostly" 
-		    depends="clientclasses,clienthelp,clientimages,clientjarincludes" 
-		    description="Client distribution">
+	<target name="clientmostly" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<condition property="buildingOnUnix">
 			<os family="unix"/>
 		</condition>
@@ -313,62 +281,51 @@
 		<copy todir="dist/client/bin">
 			<fileset dir="src/sh/client"/>
 		</copy>
-		<!-- begin setup for demo objects -->
+		<!-- Prepare demo objects (see datastream content for demos in target "servermostly") -->
 		<mkdir dir="dist/client/demo"/>
-		<copy todir="dist/client/demo">
-			<fileset dir="src/mets/demo"/>
+		<mkdir dir="dist/client/demo/foxml"/>
+		<mkdir dir="dist/client/demo/mets"/>
+		<copy todir="dist/client/demo/foxml">
+			<fileset dir="src/demo-objects/foxml"/>
 		</copy>
-        
-        <!-- Create the client manifest file -->
-        <pathconvert pathsep=" " property="client.mfs.classpath" refid="client-libs.path">
-            <map from="${lib.dir}${file.separator}" to="lib/"/>
-        </pathconvert>
-        <copy file="src/mfs/client.mfs" toFile="temp/client.mfs">
-            <filterset>
-                <filter token="client.mfs.classpath" value="${client.mfs.classpath}"/>
-            </filterset>
-        </copy>
-        
-		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="temp/client.mfs"/>
-		<mkdir dir="dist/client/lib"/>
-        <copy todir="dist/client/lib">
-            <fileset refid="client-libs.fileset"/>     
-        </copy>
-		<!-- vvvvv start batchtool build.  it's all here, -->
-		<!-- except for demo-content (under target "servermostly") -->
+		<copy todir="dist/client/demo/mets">
+			<fileset dir="src/demo-objects/mets"/>
+		</copy>
+		<!-- Prepare batch demo-->
 		<copy file="src/xsl/batchtool/merge.xsl" todir="dist/client/lib"/>
 		<mkdir dir="dist/client/demo/batch-demo"/>
-		<copy file="src/mets/demo/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
+		<copy file="src/demo-objects/mets/batch-demo/mets-template.xml" todir="dist/client/demo/batch-demo"/>
 		<copy todir="dist/client/demo/batch-demo/object-specifics">
 			<fileset dir="src/xml/batch-demo/object-specifics"/>
 		</copy>
 		<mkdir dir="dist/client/demo/batch-demo/objects"/>
-		<!-- pop'ed on running demo in fedora-admin as build or build-ingest -->
-		<!-- ^^^^^ end batch tool build -->
+		<!-- Create the client manifest file -->
+		<pathconvert pathsep=" " property="client.mfs.classpath" refid="client-libs.path">
+			<map from="${lib.dir}${file.separator}" to="lib/"/>
+		</pathconvert>
+		<copy file="src/mfs/client.mfs" toFile="temp/client.mfs">
+			<filterset>
+				<filter token="client.mfs.classpath" value="${client.mfs.classpath}"/>
+			</filterset>
+		</copy>
+		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="temp/client.mfs"/>
+		<mkdir dir="dist/client/lib"/>
+		<copy todir="dist/client/lib">
+			<fileset refid="client-libs.fileset"/>
+		</copy>
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
-	
-	<target name="prep" 
-		    description="Prepare a temporary build area for targets">
+	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
 	</target>
-	
 	<target name="utilclasses" depends="prep">
 		<mkdir dir="temp/util"/>
-		<javac srcdir="${src.java.dir}" 
-			   destdir="temp/util" 
-			   classpath="${lib.md5}" 
-			   includes="fedora/utilities/**" 
-			   optimize="${build.optimize}" 
-			   debug="${build.debug}"/>
+		<javac srcdir="${src.java.dir}" destdir="temp/util" classpath="${lib.md5}" includes="fedora/utilities/**" optimize="${build.optimize}" debug="${build.debug}"/>
 		<jar jarfile="temp/fedora-utilities.jar" basedir="temp/util"/>
 	</target>
-	
 	<target name="makepatch" depends="utilclasses">
-		<java classpath="${lib.md5};temp/fedora-utilities.jar" 
-			   classname="fedora.utilities.MakePatch"/>
+		<java classpath="${lib.md5};temp/fedora-utilities.jar" classname="fedora.utilities.MakePatch"/>
 	</target>
-		
 	<target name="stubwrappers" depends="prep,utilclasses,wsdl2java" description="Builds API wrapper stubs">
 		<mkdir dir="temp/clientgen"/>
 		<mkdir dir="temp/clientgen/fedora"/>
@@ -390,20 +347,12 @@
 			<arg path="temp/clientgen/fedora/client/APIAStubWrapper.java"/>
 		</java>
 	</target>
-	
 	<target name="clientprep" depends="prep" description="Prepare a temporary build area for client-related targets">
 		<mkdir dir="temp/client"/>
 	</target>
-	
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
-		<javac srcdir="${src.java.dir}:temp/server/java:temp/clientgen" 
-			   destdir="temp/client" 
-			   classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf}" 
-			   includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" 
-			   optimize="${build.optimize}" 
-			   debug="${build.debug}"/>
+		<javac srcdir="${src.java.dir}:temp/server/java:temp/clientgen" destdir="temp/client" classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf}" includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
-	
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
 		<copy todir="temp/client/help">
@@ -416,26 +365,23 @@
 			<fileset dir="src/jhelpmap/client/help"/>
 		</copy>
 	</target>
-	
 	<target name="clientimages" depends="clientprep" description="Assemble client images dir sources into temp/client/images">
 		<mkdir dir="temp/client/images"/>
 		<copy todir="temp/client/images">
 			<fileset dir="src/gif/client/images"/>
 		</copy>
 	</target>
-	
 	<target name="clientjarincludes" depends="clientprep" description="Assemble client includes temp/client">
 		<copy todir="temp/client">
 			<fileset dir="inc/client/jar"/>
 		</copy>
- 
-        <copy todir="temp/client">
-            <fileset dir="src/properties/client"/>
-            <filterset>
-                <filter token="version"     value="${fedora.version}"/>
-                <filter token="releaseDate" value="${fedora.releaseDate}"/>
-            </filterset>
-        </copy>
+		<copy todir="temp/client">
+			<fileset dir="src/properties/client"/>
+			<filterset>
+				<filter token="version" value="${fedora.version}"/>
+				<filter token="releaseDate" value="${fedora.releaseDate}"/>
+			</filterset>
+		</copy>
 	</target>
 	<!--
   <target name="docs"
@@ -461,14 +407,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" 
-			     sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" 
-			     classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf}" 
-			     destdir="dist/userdocs/server/serverdocs" 
-			     author="true" 
-			     version="true" 
-			     use="true" 
-			     additionalparam="-breakiterator"/>
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.common.rdf,fedora.server.config" sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5};${lib.jena};${lib.trippi};${lib.jrdf}" destdir="dist/userdocs/server/serverdocs" author="true" version="true" use="true" additionalparam="-breakiterator"/>
 		<copy todir="${tomcat.deploy.dir}/userdocs/server/serverdocs">
 			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
@@ -737,7 +676,7 @@
 			<arg path="src/dbx/userdocs/webexp.dbx"/>
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
-        <echo message="Finished doc translations"/>
+		<echo message="Finished doc translations"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/cmd-line/images/"/>
@@ -967,7 +906,7 @@
 			<fileset dir="inc/server">
 				<exclude name="**/exist09/**"/>
 			</fileset>
-		</copy>           
+		</copy>
 		<copy todir="dist/server/xsd">
 			<fileset dir="src/xsd"/>
 		</copy>
@@ -994,8 +933,8 @@
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
 		</copy>
-    <!-- stylesheets for the resource index query interface at fedora/risearch -->
-    <mkdir dir="${tomcat.deploy.dir}/ROOT/ri"/>
+		<!-- stylesheets for the resource index query interface at fedora/risearch -->
+		<mkdir dir="${tomcat.deploy.dir}/ROOT/ri"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT/ri">
 			<fileset dir="src/xsl/ri"/>
 		</copy>
@@ -1012,60 +951,56 @@
 			<fileset dir="src/dbspec/server"/>
 		</copy>
 		<copy todir="dist/server/config">
-            <fileset dir="src/fcfg/server">
-                <include name="**/*.fcfg"/>
-            </fileset>      
-        </copy>      
+			<fileset dir="src/fcfg/server">
+				<include name="**/*.fcfg"/>
+			</fileset>
+		</copy>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
 			<fileset dir="src/sh/server"/>
-            <filterset>
-                <filter token="mckoi.basename" value="${mckoi.basename}"/>
-                <filter token="tomcat.basename" value="${tomcat.basename}"/>
-                <filter token="AxisUtility.unix.libs" value="${AxisUtility.unix.libs}"/>
-                <filter token="AxisUtility.windows.libs" value="${AxisUtility.windows.libs}"/>
-                <filter token="ServerController.unix.libs" value="${ServerController.unix.libs}"/>
-                <filter token="ServerController.windows.libs" value="${ServerController.windows.libs}"/>
-            </filterset>      
+			<filterset>
+				<filter token="mckoi.basename" value="${mckoi.basename}"/>
+				<filter token="tomcat.basename" value="${tomcat.basename}"/>
+				<filter token="AxisUtility.unix.libs" value="${AxisUtility.unix.libs}"/>
+				<filter token="AxisUtility.windows.libs" value="${AxisUtility.windows.libs}"/>
+				<filter token="ServerController.unix.libs" value="${ServerController.unix.libs}"/>
+				<filter token="ServerController.windows.libs" value="${ServerController.windows.libs}"/>
+			</filterset>
 		</copy>
-          
 		<copy file="${lib.junit}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-		
-        <!-- testing new tomcat -->
-        <copy file="${lib.xerces}" todir="${tomcat.dir}/common/lib"/>
-        <copy file="${lib.xml-apis}" todir="${tomcat.dir}/common/lib"/>
-        <copy file="${lib.axis}" todir="${tomcat.dir}/common/lib"/> 
-        <copy file="${lib.jaxrpc}" todir="${tomcat.dir}/common/lib"/> 
-        <copy file="${lib.saaj}" todir="${tomcat.dir}/common/lib"/>
-        <copy file="${lib.commons-discovery}" todir="${tomcat.dir}/common/lib"/>
-        <copy file="${lib.commons-logging}" todir="${tomcat.dir}/common/lib"/>   
-        <copy file="${lib.wsdl4j}" todir="${tomcat.dir}/common/lib"/>   
-        <copy file="${lib.tt-bytecode}" todir="${tomcat.dir}/common/lib"/>   
-        <copy file="${lib.mckoi-jdbc}" todir="${tomcat.dir}/common/lib"/>   
-        <copy file="${lib.mysql-connector}" todir="${tomcat.dir}/common/lib"/>  
-            
-        <copy file="${lib.avalon-framework}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.batik}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.cos}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.fop}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.ij}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.jai_codec}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.jai_core}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.md5}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-        <copy file="${lib.saxon}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
-            
+		<!-- testing new tomcat -->
+		<copy file="${lib.xerces}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.xml-apis}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.axis}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.jaxrpc}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.saaj}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.commons-discovery}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.commons-logging}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.wsdl4j}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.tt-bytecode}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.mckoi-jdbc}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.mysql-connector}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.avalon-framework}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.batik}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.cos}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.fop}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.ij}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.jai_codec}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.jai_core}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.md5}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
+		<copy file="${lib.saxon}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<!-- Saxon for use with Schematron validation -->
 		<copy file="${lib.saxon}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib">
-			<fileset refid="server-libs.fileset"/>    
+			<fileset refid="server-libs.fileset"/>
 		</copy>
 		<mkdir dir="dist/server/access"/>
-        <!-- Stylesheets used by the Default Disseminator-->
-        <copy file="src/xsl/access/viewObjectMethods.xslt" todir="dist/server/access"/>
-        <copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
-        <copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
-        <copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>   
+		<!-- Stylesheets used by the Default Disseminator-->
+		<copy file="src/xsl/access/viewObjectMethods.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/viewItemIndex.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/viewDublinCore.xslt" todir="dist/server/access"/>
 		<!--Repository Info xsl stylesheet used by API-A-LITE  -->
 		<copy file="src/xsl/access/viewRepositoryInfo.xslt" todir="dist/server/access"/>
 		<!--Object History xsl stylesheet used by API-A-LITE  -->
@@ -1076,7 +1011,10 @@
 		<copy file="src/xsl/access/reportHtml.xslt" todir="dist/server/access"/>
 		<!--Report xsl stylesheet to copy xml intact  -->
 		<copy file="src/xsl/access/reportXml.xslt" todir="dist/server/access"/>
-		<!--Datastream and Method xsl stylesheets used by API-A-LITE-->		<copy file="src/xsl/access/listDatastreams.xslt" todir="dist/server/access"/>		<copy file="src/xsl/access/listMethods.xslt" todir="dist/server/access"/>		<echo message="Finished building server distribution in dist/server"/>
+		<!--Datastream and Method xsl stylesheets used by API-A-LITE-->
+		<copy file="src/xsl/access/listDatastreams.xslt" todir="dist/server/access"/>
+		<copy file="src/xsl/access/listMethods.xslt" todir="dist/server/access"/>
+		<echo message="Finished building server distribution in dist/server"/>
 		<mkdir dir="dist/server/management"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>
@@ -1151,29 +1089,12 @@
 			<arg path="dist/server/exist09"/>
 		</exec>
 	</target>
-	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/obj-definitive-test.xml... print re-serialized version, then do level 1 and level 2 validation.">
-		<exec executable="java">
-			<arg value="-Dfedora.home=dist/server"/>
-			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
-			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
-			<arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
-			<arg value="-classpath"/>
-			<arg path="${lib.xerces};${tomcat.deploy.dir}/fedora/WEB-INF/classes;${tomcat.deploy.dir}/fedora/WEB-INF/lib/saxon6.5.jar"/>
-			<arg value="fedora.server.test.METSInOutTest"/>
-			<arg value="src/mets/test/demo/obj-definitive-test.xml"/>
-		</exec>
-	</target>
 	<target name="serverclasses" depends="serverprep,wsdl2java" description="Compile server java code into temp/server/classes">
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMServiceLocator.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${src.java.dir}:temp/server/java" 
-			   destdir="temp/server/classes" 
-			   classpathref="serverclasses-lib.path" 
-			   includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" 
-			   optimize="${build.optimize}" 
-			   debug="${build.debug}"/>
+		<javac srcdir="${src.java.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -1182,11 +1103,7 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" 
-			   destdir="temp/localservices/classes" 
-			   classpathref="localservices-lib.path" 
-			   optimize="${build.optimize}" 
-			   debug="${build.debug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpathref="localservices-lib.path" optimize="${build.optimize}" debug="${build.debug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
@@ -1201,12 +1118,7 @@
 			<arg value="temp/server/classes"/>
 			<arg value="fedora/server/types/gen/"/>
 		</exec>
-		<javac srcdir="temp/soapclient/java" 
-			   destdir="temp/soapclient/classes" 
-			   classpath="${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;${lib.saxon};${lib.junit};${lib.md5};temp/soapclient/lib/fedoragentypes.jar;temp/soapclient/lib/fedorautilities.jar" 
-			   includes="**" 
-			   optimize="${build.optimize}" 
-			   debug="${build.debug}"/>
+		<javac srcdir="temp/soapclient/java" destdir="temp/soapclient/classes" classpath="${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;${lib.saxon};${lib.junit};${lib.md5};temp/soapclient/lib/fedoragentypes.jar;temp/soapclient/lib/fedorautilities.jar" includes="**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="localservicesprep" depends="prep" description="Prepare a temporary build area for localservices-related targets">
 		<mkdir dir="temp/localservices"/>
@@ -1219,8 +1131,7 @@
 		</copy>
 	</target>
 	<!-- Builds all autogenerated code (e.g. for use in Eclipse, add the generatedCode directory as a source folder) -->
-	<target name="generatedCode" depends="stubwrappers" 
-            description="Builds all autogenerated code (e.g. WSDL)">
+	<target name="generatedCode" depends="stubwrappers" description="Builds all autogenerated code (e.g. WSDL)">
 		<mkdir dir="temp/generatedCode"/>
 		<copy todir="temp/generatedCode">
 			<fileset dir="temp/clientgen">
@@ -1234,7 +1145,7 @@
 				<exclude name="**/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 				<exclude name="**/FedoraAPIMServiceLocator.java"/>
 			</fileset>
-            <fileset dir="src/properties/server"/>     
+			<fileset dir="src/properties/server"/>
 		</copy>
 	</target>
 	<target name="clean" description="Clean up all targets and temp files">
