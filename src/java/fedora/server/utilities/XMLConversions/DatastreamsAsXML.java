@@ -85,7 +85,7 @@ public class DatastreamsAsXML
         if (versDateTime == null)
         {
           itemDissURL = reposBaseURL + "/fedora/get/"
-            + PID + "/fedora-system:3/getItem?itemID=" + datastreamID;
+            + PID + '/' + datastreamID;
         }
         else
         {
