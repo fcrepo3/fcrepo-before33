@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import fedora.oai.*; //FIXME:evil
+import fedora.oai.*;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
@@ -19,6 +19,7 @@ import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
+import fedora.server.utilities.StreamUtility;
 
 /**
  *
@@ -249,78 +250,78 @@ public class FedoraOAIProvider
         out.append("            http://www.openarchives.org/OAI/2.0/oai_dc.xsd\">\n");
         for (int i=0; i<dc.titles().size(); i++) {
             out.append("          <dc:title>");
-            out.append((String) dc.titles().get(i));
+            out.append(StreamUtility.enc((String) dc.titles().get(i)));
             out.append("          </dc:title>\n");
         }
         for (int i=0; i<dc.creators().size(); i++) {
             out.append("          <dc:creator>");
-            out.append((String) dc.creators().get(i));
+            out.append(StreamUtility.enc((String) dc.creators().get(i)));
             out.append("          </dc:creator>\n");
         }
         for (int i=0; i<dc.subjects().size(); i++) {
             out.append("          <dc:subject>");
-            out.append((String) dc.subjects().get(i));
+            out.append(StreamUtility.enc((String) dc.subjects().get(i)));
             out.append("          </dc:subject>\n");
         }
         for (int i=0; i<dc.descriptions().size(); i++) {
             out.append("          <dc:description>");
-            out.append((String) dc.descriptions().get(i));
+            out.append(StreamUtility.enc((String) dc.descriptions().get(i)));
             out.append("          </dc:description>\n");
         }
         for (int i=0; i<dc.publishers().size(); i++) {
             out.append("          <dc:publisher>");
-            out.append((String) dc.publishers().get(i));
+            out.append(StreamUtility.enc((String) dc.publishers().get(i)));
             out.append("          </dc:publisher>\n");
         }
         for (int i=0; i<dc.contributors().size(); i++) {
             out.append("          <dc:contributor>");
-            out.append((String) dc.contributors().get(i));
+            out.append(StreamUtility.enc((String) dc.contributors().get(i)));
             out.append("          </dc:contributor>\n");
         }
         for (int i=0; i<dc.dates().size(); i++) {
-            String dateString=(String) dc.dates().get(i);
+            String dateString=StreamUtility.enc((String) dc.dates().get(i));
             out.append("          <dc:date>");
             out.append(dateString);
             out.append("          </dc:date>\n");
         }
         for (int i=0; i<dc.types().size(); i++) {
             out.append("          <dc:type>");
-            out.append((String) dc.types().get(i));
+            out.append(StreamUtility.enc((String) dc.types().get(i)));
             out.append("          </dc:type>\n");
         }
         for (int i=0; i<dc.formats().size(); i++) {
             out.append("          <dc:format>");
-            out.append((String) dc.formats().get(i));
+            out.append(StreamUtility.enc((String) dc.formats().get(i)));
             out.append("          </dc:format>\n");
         }
         for (int i=0; i<dc.identifiers().size(); i++) {
             out.append("          <dc:identifier>");
-            out.append((String) dc.identifiers().get(i));
+            out.append(StreamUtility.enc((String) dc.identifiers().get(i)));
             out.append("          </dc:identifier>\n");
         }
         for (int i=0; i<dc.sources().size(); i++) {
             out.append("          <dc:source>");
-            out.append((String) dc.sources().get(i));
+            out.append(StreamUtility.enc((String) dc.sources().get(i)));
             out.append("          </dc:source>\n");
         }
         for (int i=0; i<dc.languages().size(); i++) {
             out.append("          <dc:language>");
-            out.append((String) dc.languages().get(i));
+            out.append(StreamUtility.enc((String) dc.languages().get(i)));
             out.append("          </dc:language>\n");
         }
         for (int i=0; i<dc.relations().size(); i++) {
             out.append("          <dc:relation>");
-            out.append((String) dc.relations().get(i));
+            out.append(StreamUtility.enc((String) dc.relations().get(i)));
             out.append("          </dc:relation>\n");
         }
         for (int i=0; i<dc.coverages().size(); i++) {
             out.append("          <dc:coverage>");
-            out.append((String) dc.coverages().get(i));
+            out.append(StreamUtility.enc((String) dc.coverages().get(i)));
             out.append("          </dc:coverage>\n");
         }
         for (int i=0; i<dc.rights().size(); i++) {
             out.append("          <dc:rights>");
-            out.append((String) dc.rights().get(i));
+            out.append(StreamUtility.enc((String) dc.rights().get(i)));
             out.append("          </dc:rights>\n");
         }
         out.append("        </oai_dc:dc>");
