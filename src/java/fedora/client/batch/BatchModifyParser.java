@@ -132,6 +132,7 @@ public class BatchModifyParser extends DefaultHandler
      *
      * @param UPLOADER - An instance of Uploader.
      * @param APIM - An instance of FedoraAPIM.
+     * @param APIA - An instance of Fedora APIA.
      * @param in - An input stream containing the xml to be parsed.
      * @param out - A print stream used for writing log info.
      */
@@ -900,7 +901,6 @@ public class BatchModifyParser extends DefaultHandler
                 m_inXMLMetadata=false;
                 m_firstInlineXMLElement=false;
                 String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-                //datastream..dsXMLBuffer.append(combined);
                 try {
                     if(m_ds!=null && combined !=null)
                         m_ds.xmlContent = combined.getBytes("UTF-8");
@@ -1096,7 +1096,6 @@ public class BatchModifyParser extends DefaultHandler
                         }
                     } else {
                         failedCount++;
-                        //purgeDatastream = false;
                         logFailedDirective(m_ds.objectPID, localName, null,
                             "Unable to purge datastream; verify datastream ID and/or asOfDate");
                     }
@@ -1209,7 +1208,6 @@ public class BatchModifyParser extends DefaultHandler
                             "disseminatorID: " + dissID + " Created.");
                     } else {
                         failedCount++;
-                        //addDisseminator = false;
                         logFailedDirective(m_diss.parentPID, localName, null,
                             "Unable to create disseminator...");
                     }
@@ -1271,9 +1269,6 @@ public class BatchModifyParser extends DefaultHandler
                 if (purgeDisseminator) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
-                    //    m_diss.dissID, m_diss.asOfDate);
-                    //versionsPurged = APIM.purgeDisseminator(m_diss.parentPID,
-                    //        m_diss.dissID, m_diss.asOfDate, m_diss.force);
                         m_diss.dissID, m_diss.asOfDate, m_diss.logMessage);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
@@ -1417,6 +1412,12 @@ public class BatchModifyParser extends DefaultHandler
     /**
      * Get a map of pid-to-label of behavior mechanisms that implement
      * the behavior defined by the indicated bdef.
+     * 
+     * @param bDefPID PID of the associated behavior defintion object.
+     * 
+     * @return A list of the behavior mechanism labels.
+     * 
+     * @throws IOException If an error occurs in retrieving the list of labels.
      */
     public static Map getBMechLabelMap(String bDefPID)
             throws IOException {

@@ -95,7 +95,9 @@ public class AutoModify
    *
    * @param directivesFilePath - The absolute file path of the file containing
    *                             the modify directives.
-   * @param logFilePath - the absolute file path of the log file.
+   * @param logFilePath - The absolute file path of the log file.
+   * @param isValidateOnly - Boolean flag; true indicates validate only; false indicates
+   *                         process the directives file.
    */
   public void modify(String directivesFilePath, String logFilePath, boolean isValidateOnly)
   {
@@ -109,7 +111,10 @@ public class AutoModify
    * @param UPLOADER - An instance of the Uploader.
    * @param directivesFilePath - The absolute file path of the file containing
    *                             the modify directives.
-   * @param logFilePath - the absolute file path of the log file.
+   * @param APIA - An instance of FedoraAPIA.
+   * @param logFilePath - The absolute file path of the log file.
+   * @param isValidateOnly - Boolean flag; true indicates validate only; false indicates
+   *                         process the directives file.
    */
   public static void modify(FedoraAPIM APIM, Uploader UPLOADER, FedoraAPIA APIA,
           String directivesFilePath, String logFilePath, boolean isValidateOnly) {

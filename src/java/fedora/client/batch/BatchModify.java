@@ -56,8 +56,6 @@ public class BatchModify
 
     /**
      * <p>Constructor for the class.</p>
-     *
-     * @param s_admin - An instance of FedoraAPIM.
      */
     public BatchModify() {
         InputStream in = null;

@@ -1194,6 +1194,7 @@ public class FastDOReader implements DOReader
    * <p>Gets all disseminators of the specified object.</p>
    *
    * @param versDateTime versioning datetime stamp
+   * @param state The state of disseminators to be retrieved.
    * @return Disseminator[] array of disseminators
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
@@ -1520,7 +1521,7 @@ public class FastDOReader implements DOReader
    * @param PID The persistent identifier of the digitla object.
    * @return An Array containing the list of timestamps indicating when changes
    *         were made to the object.
-   * @throws ServerException If any type of error occurred fulfilling the
+   * @throws GeneralException If any type of error occurred fulfilling the
    *         request.
    */
   public String[] getObjectHistory(String PID) throws GeneralException

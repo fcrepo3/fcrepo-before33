@@ -237,6 +237,7 @@ public class DisseminationService
    * information from the digital object and its associated Behavior
    * Mechanism object.</p>
    *
+   * @param context The current context. 
    * @param PID The persistent identifier of the digital object.
    * @param h_userParms A hashtable of user-supplied method parameters.
    * @param dissBindInfoArray The associated dissemination binding information.

@@ -262,6 +262,7 @@ public class GetObjectHistoryServlet extends HttpServlet
      * <p> Constructor for ObjectHistorySerializerThread.</p>
      *
      * @param objectHistory An object history data structure.
+     * @param PID The pid of the digital object.
      * @param pw A PipedWriter to which the serialization info is written.
      */
     public ObjectHistorySerializerThread(String[] objectHistory, String PID, PipedWriter pw)
@@ -362,10 +363,7 @@ public class GetObjectHistoryServlet extends HttpServlet
    * sent to the servlet and hopefully fix the problem.</p>
    *
    * @param PID The persistent identifier of the digital object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName the name of the method.
-   * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param userParms An array of user-supplied method parameters and values.
+   * @param h_userParms An array of user-supplied method parameters and values.
    * @param response The servlet response.
    * @param message The message text to include at the top of the output page.
    * @throws IOException If an error occurrs with an input or output operation.

@@ -56,8 +56,6 @@ public class BatchModifyValidator extends DefaultHandler
     /**
      * <p>Constructor allows this class to initiate the parsing.</p>
      *
-     * @param UPLOADER - An instance of Uploader.
-     * @param APIM - An instance of FedoraAPIM.
      * @param in - An input stream containing the xml to be parsed.
      * @param out - A print stream used for writing log info.
      * @throws Exception - If an error occurs in configuring
