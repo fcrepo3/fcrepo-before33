@@ -771,6 +771,7 @@ public abstract class TypeUtility
       genRepositoryInfo.setRepositoryBaseURL(repositoryInfo.repositoryBaseURL);
       genRepositoryInfo.setRepositoryVersion(repositoryInfo.repositoryVersion);
       genRepositoryInfo.setRepositoryPIDNamespace(repositoryInfo.repositoryPIDNamespace);
+      genRepositoryInfo.setDefaultExportFormat(repositoryInfo.defaultExportFormat);
       genRepositoryInfo.setOAINamespace(repositoryInfo.OAINamespace);
       genRepositoryInfo.setAdminEmailList(repositoryInfo.adminEmailList);
       genRepositoryInfo.setSamplePID(repositoryInfo.samplePID);
