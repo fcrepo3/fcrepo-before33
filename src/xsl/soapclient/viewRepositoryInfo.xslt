@@ -70,6 +70,16 @@
 								<xsl:value-of select="repositoryPID/PID-sample"/>
 							</td>
 						</tr>
+						<xsl:for-each select="//retainPID">
+						<tr>
+							<td align="right">
+								<font color="blue">Retain PID Namespace: </font>
+							</td>
+							<td align="left">
+								<xsl:value-of select="."/>
+							</td>
+						</tr>
+						</xsl:for-each>						
 						<tr>
 							<td align="right">
 								<font color="blue">OAI Namespace:</font>
