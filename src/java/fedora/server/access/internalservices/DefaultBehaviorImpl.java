@@ -167,6 +167,14 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream getMethodIndex() throws ServerException
   {
+    // sdp: the dissemination index doesn't work for bdef and bmech objects
+    // so send back a message saying so.
+    if ((reader.getFedoraObjectType().equalsIgnoreCase("D")) ||
+        (reader.getFedoraObjectType().equalsIgnoreCase("M")))
+    {
+      return noMethodIndexMsg();
+    }
+
     ObjectMethodsDef[] methods =
       m_access.getObjectMethods(context, reader.GetObjectPID(), asOfDateTime);
     InputStream in = null;
@@ -184,6 +192,38 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
     return new MIMETypedStream("text/xml", in);
   }
 
+  private MIMETypedStream noMethodIndexMsg() throws GeneralException
+  {
+      String msg = new String("The Dissemination Index is not available"
+        + " for Behavior Definition or Behavior Mechanism objects."
+        + " This will be activated in the next release of Fedora.");
+      StringBuffer sb = new StringBuffer();
+      sb.append("<html><head><title>Dissemination Index Not Available</title></head>");
+      sb.append("<body><center>");
+      sb.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
+      sb.append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+      sb.append("<td width=\"643\" valign=\"top\">");
+      sb.append("<center><h2>Fedora Repository</h2>");
+      sb.append("<h3>Dissemination Index</h3>");
+      sb.append("</center></td></tr></table>");
+      sb.append("<p>" + msg + "</p>");
+      sb.append("</body>");
+      sb.append("</html>");
+      String msgOut = sb.toString();
+      ByteArrayInputStream in = null;
+      try
+      {
+        in = new ByteArrayInputStream(msgOut.getBytes("UTF-8"));
+      }
+      catch (UnsupportedEncodingException uee)
+      {
+        throw new GeneralException("[DefaultBehaviorImpl] An error has occurred. "
+            + "The error was a \"" + uee.getClass().getName() + "\"  . The "
+            + "Reason was \"" + uee.getMessage() + "\"  .");
+      }
+      return new MIMETypedStream("text/html", in);
+  }
+
   /**
    * <p>Returns an HTML rendering of the Dissemination Index for the object.
    * The Dissemination Index is a list of method definitions that represent
@@ -196,6 +236,14 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
    */
   public MIMETypedStream viewMethodIndex() throws ServerException
   {
+    // sdp: the dissemination index doesn't work for bdef and bmech objects
+    // so send back a message saying so.
+    if ((reader.getFedoraObjectType().equalsIgnoreCase("D")) ||
+        (reader.getFedoraObjectType().equalsIgnoreCase("M")))
+    {
+      return noMethodIndexMsg();
+    }
+
     try
     {
       InputStream in = getMethodIndex().getStream();
