@@ -405,20 +405,7 @@ public class FedoraAccessServlet extends HttpServlet
       userParmCounter++;
     }
 
-    try {
-      PID = Server.getPID(URIArray[5]).toString();  // normalize the PID
-    } catch (Throwable th) {
-        String message = "[FedoraAccessServlet] An error has occured in "
-                + "accessing the Fedora Access Subsystem. The error was \" "
-                + th.getClass().getName()
-                + " \". Reason: "  + th.getMessage()
-                + "  Input Request was: \"" + request.getRequestURL().toString();
-        logger.logWarning(message);
-        response.setContentType(CONTENT_TYPE_HTML);
-        ServletOutputStream out = response.getOutputStream();
-        out.println("<html><body><h3>" + message + "</h3></body></html>");
-        return;
-        }
+    PID = URIArray[5];
 
     try
     {
@@ -435,20 +422,7 @@ public class FedoraAccessServlet extends HttpServlet
       }
       else if (isGetDisseminationRequest)
       {
-       try {
-            bDefPID = Server.getPID(URIArray[6]).toString();  // this one too
-        } catch (Throwable th) {
-            String message = "[FedoraAccessServlet] An error has occured in "
-                    + "accessing the Fedora Access Subsystem. The error was \" "
-                    + th.getClass().getName()
-                    + " \". Reason: "  + th.getMessage()
-                    + "  Input Request was: \"" + request.getRequestURL().toString();
-            logger.logWarning(message);
-            response.setContentType(CONTENT_TYPE_HTML);
-            ServletOutputStream out = response.getOutputStream();
-            out.println("<html><body><h3>" + message + "</h3></body></html>");
-            return;
-        }
+        bDefPID = URIArray[6];
         logger.logFinest("[FedoraAccessServlet] Dissemination Syntax "
             + "Encountered");
         logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID

@@ -163,6 +163,7 @@ public class DefaultAccess extends Module implements Access
   public void checkState(Context context, String objectType, String state, String PID)
       throws ServerException
   {
+    PID = Server.getPID(PID).toString();
     // Check Object State
     if ( state.equalsIgnoreCase("D")  &&
          ( context.get("canUseDeletedObject")==null
@@ -204,7 +205,9 @@ public class DefaultAccess extends Module implements Access
       String bDefPID, String methodName, Property[] userParms,
       Date asOfDateTime) throws ServerException
   {
+    PID = Server.getPID(PID).toString();
     m_ipRestriction.enforce(context);
+    bDefPID = Server.getPID(bDefPID).toString();
     long initStartTime = new Date().getTime();
     long startTime = new Date().getTime();
     DOReader reader = m_manager.getReader(context, PID);
@@ -344,6 +347,7 @@ public class DefaultAccess extends Module implements Access
       Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
+    PID = Server.getPID(PID).toString();
     m_ipRestriction.enforce(context);
     DOReader reader =
         m_manager.getReader(context, PID);
@@ -380,6 +384,7 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
+    PID = Server.getPID(PID).toString();
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -406,6 +411,7 @@ public class DefaultAccess extends Module implements Access
   public ObjectProfile getObjectProfile(Context context, String PID,
     Date asOfDateTime) throws ServerException
   {
+    PID = Server.getPID(PID).toString();
     DOReader reader = m_manager.getReader(context, PID);
 
     // Check data object state
@@ -508,6 +514,7 @@ public class DefaultAccess extends Module implements Access
    */
   public String[] getObjectHistory(Context context, String PID) throws ServerException
   {
+    PID = Server.getPID(PID).toString();
     m_ipRestriction.enforce(context);
     DOReader reader = m_manager.getReader(context, PID);
 
@@ -580,6 +587,8 @@ public class DefaultAccess extends Module implements Access
       String methodName, Hashtable h_userParms, Date versDateTime)
       throws ServerException
   {
+    PID = Server.getPID(PID).toString();
+    bDefPID = Server.getPID(bDefPID).toString();
     m_ipRestriction.enforce(context);
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
@@ -811,6 +820,7 @@ public class DefaultAccess extends Module implements Access
 
   public MIMETypedStream getDatastreamDissemination(Context context, String PID,
           String dsID, Date asOfDateTime) throws ServerException {
+      PID = Server.getPID(PID).toString();
       m_ipRestriction.enforce(context);
       long startTime = new Date().getTime();
       DOReader reader = m_manager.getReader(context, PID);
