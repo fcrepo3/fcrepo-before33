@@ -735,18 +735,90 @@
 			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
 		</java>
 		<java classname="fedora.common.policy.Release2_1Namespace" 
-			classpath="${tomcat.deploy.dir}/fedora/WEB-INF/classes;${lib.dir}\jrdf-0.3.3.jar"
+			classpath="${tomcat.common.dir}/classes;${lib.dir}\jrdf-0.3.3.jar"
 			output="dist/server/config/xacml-policies/vocabulary.txt"/>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
 				<exclude name="org/**"/>
+				<exclude name="fedora/server/security/ReducedPolicyEnforcementPoint.class"/>
+				<exclude name="fedora/server/security/ReducedPolicyFinderModule.class"/>
+				<exclude name="fedora/server/security/Transom.class"/>				
+				<!--
+				<exclude name="fedora/server/Context.class"/>
+				<exclude name="fedora/server/ReadOnlyContext.class"/>
+				<exclude name="fedora/server/MultiValueMap.class"/>
+				<exclude name="fedora/server/Pluggable.class"/>
+				<exclude name="fedora/server/Parameterized.class"/>
+				<exclude name="fedora/common/**"/>								
+				<exclude name="fedora/server/security/ContextAttributeFinderModule.class"/>					
+				<exclude name="fedora/server/security/PolicyEnforcementPoint.class"/>
+				<exclude name="fedora/server/security/PolicyFinderModule.class"/>								
+				<exclude name="fedora/server/security/AttributeFinderModule.class"/>				
+				<exclude name="fedora/server/security/ResourceAttributeFinderModule.class"/>
+				<exclude name="fedora/server/errors/GeneralException.class"/>
+				<exclude name="fedora/server/errors/ServerException.class"/>
+				<exclude name="fedora/server/Server.class"/>
+				<exclude name="fedora/common/PID.class"/>				
+				<exclude name="fedora/server/errors/MalformedPidException.class"/>
+				<exclude name="fedora/server/errors/ModuleInitializationException.class"/>
+				<exclude name="fedora/server/errors/ModuleShutdownException"/>
+				<exclude name="fedora/server/errors/ServerInitializationException.class"/>
+				<exclude name="fedora/server/errors/ServerShutdownException.class"/>
+				<exclude name="fedora/server/errors/AuthzOperationalException.class"/>
+				<exclude name="fedora/server/errors/NotAuthorizedException.class"/>
+				<exclude name="fedora/server/storage/DOManager.class"/>
+				<exclude name="fedora/server/storage/DOReader.class"/>
+				<exclude name="fedora/server/storage/types/Datastream.class"/>
+				-->
 			</fileset>
 		</copy>
+        <copy file="${lib.dir}\jrdf-0.3.3.jar" todir="${tomcat.common.dir}/lib"/>
 		<copy todir="${tomcat.server.dir}/classes">
 			<fileset dir="temp/server/classes">
 				<include name="org/**"/>
 			</fileset>
 		</copy>
+		<copy todir="${tomcat.common.dir}/classes">
+			<fileset dir="temp/server/classes">
+				<include name="fedora/server/security/Transom.class"/>	
+				<!--
+				<include name="fedora/server/security/PolicyEnforcementPoint.class"/>
+				<include name="fedora/server/security/PolicyFinderModule.class"/>				
+				<include name="fedora/server/security/AttributeFinderModule.class"/>				
+				<include name="fedora/server/security/ResourceAttributeFinderModule.class"/>
+				<include name="fedora/server/errors/GeneralException.class"/>
+				<include name="fedora/server/errors/ServerException.class"/>
+				<include name="fedora/server/Server.class"/>				
+				<include name="fedora/common/PID.class"/>
+				<include name="fedora/server/errors/MalformedPidException.class"/>
+				<include name="fedora/server/errors/ModuleInitializationException.class"/>
+				<include name="fedora/server/errors/ModuleShutdownException"/>
+				<include name="fedora/server/errors/ServerInitializationException.class"/>
+				<include name="fedora/server/errors/ServerShutdownException.class"/>
+				<include name="fedora/server/errors/AuthzOperationalException.class"/>
+				<include name="fedora/server/errors/NotAuthorizedException.class"/>
+				<include name="fedora/server/storage/DOManager.class"/>
+				<include name="fedora/server/storage/DOReader.class"/>
+				<include name="fedora/server/storage/types/Datastream.class"/>	
+				-->			
+			</fileset>
+		</copy>
+		<copy todir="${tomcat.server.dir}/classes">
+			<fileset dir="temp/server/classes">
+				<include name="fedora/server/security/ReducedPolicyEnforcementPoint.class"/>
+				<include name="fedora/server/security/ReducedPolicyFinderModule.class"/>	
+				<include name="fedora/server/security/PolicyFinderModule.class"/>	
+				<include name="fedora/server/Context.class"/>
+				<include name="fedora/server/ReadOnlyContext.class"/>
+				<include name="fedora/server/MultiValueMap.class"/>
+				<include name="fedora/server/Pluggable.class"/>
+				<include name="fedora/server/Parameterized.class"/>
+				<include name="fedora/common/**"/>
+				<include name="fedora/server/security/ContextAttributeFinderModule.class"/>	
+				<include name="fedora/server/security/AttributeFinderModule.class"/>					
+			</fileset>
+		</copy>
+		
 		<copy file="src/java/org/apache/catalina/realm/readme.txt" todir="${tomcat.server.dir}/classes/org/apache/catalina/realm"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
