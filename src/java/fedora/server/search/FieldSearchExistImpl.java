@@ -2,18 +2,30 @@ package fedora.server.search;
 
 import java.io.InputStream;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import org.exist.xmldb.DatabaseImpl;
 import org.xmldb.api.DatabaseManager;
 import org.xmldb.api.base.Collection;
 import org.xmldb.api.base.Database;
+import org.xmldb.api.base.ResourceSet;
 import org.xmldb.api.base.XMLDBException;
+import org.xmldb.api.modules.XMLResource;
+import org.xmldb.api.modules.XPathQueryService;
 import org.xmldb.api.modules.CollectionManagementService;
 
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.QueryParseException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageDeviceException;
 import fedora.server.storage.DOReader;
+import fedora.server.storage.types.DatastreamXMLMetadata;
 
 /**
  * A FieldSearch implementation that uses an eXist XML Database backend, v0.9.
@@ -33,6 +45,7 @@ public class FieldSearchExistImpl
         implements FieldSearch {
         
     Collection m_coll;
+    XPathQueryService m_queryService;
         
     // logTarget=null if stdout
     public FieldSearchExistImpl(String existHome, Logging logTarget) 
@@ -45,61 +58,254 @@ public class FieldSearchExistImpl
         database.setProperty("create-database", "true");
         DatabaseManager.registerDatabase(database);
         logFinest("Getting fieldsearch collection");
-        m_coll = DatabaseManager.getCollection("xmldb:exist:///db/fieldsearch");
+        m_coll=DatabaseManager.getCollection("xmldb:exist:///db/fieldsearch");
         if (m_coll == null) {
             logFinest("fieldsearch collection did not exist; creating it");
-            Collection root = DatabaseManager.getCollection("xmldb:exist:///db");
+            Collection root=DatabaseManager.getCollection("xmldb:exist:///db");
             CollectionManagementService mgtService = 
                     (CollectionManagementService)
                     root.getService("CollectionManagementService", "1.0");
             m_coll=mgtService.createCollection("fieldsearch");
         }
+        logFiner("The fieldsearch collection has " + m_coll.getResourceCount() 
+                + " items.");
+        m_queryService=(XPathQueryService) 
+                m_coll.getService("XPathQueryService", "1.0");
+        m_queryService.setProperty("pretty", "true");
+        m_queryService.setProperty("encoding", "ISO-8859-1");
         logFinest("Exiting constructor");
     }
 
     public void update(DOReader reader) 
             throws ServerException {
         logFinest("Entering update(DOReader)");
+        String pid=reader.GetObjectPID();
+        try {
+            XMLResource resource=(XMLResource) m_coll.getResource(pid);
+            if (resource==null) {
+                logFiner("Object " + pid + " not in XML db yet, will write content for the first time.");
+                resource=(XMLResource) m_coll.createResource(pid, "XMLResource");
+            } else {
+                logFiner("Object " + pid + " found in XML db, will overwrite content.");
+            }
+            resource.setContent(getXMLString(reader));
+            m_coll.storeResource(resource);
+        } catch (XMLDBException xmldbe) {
+            throw new StorageDeviceException("Error attempting update of " 
+                    + "object with pid '" + pid + "': "
+                    + xmldbe.getClass().getName() + ": " + xmldbe.getMessage());
+        }
         logFinest("Exiting update(DOReader)");
+    }                                       
+    
+    private String getXMLString(DOReader reader) 
+            throws ServerException {
+        StringBuffer out=new StringBuffer();
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        out.append("<fields>\n");
+        out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
+        String label=reader.GetObjectLabel();
+        if (label==null) label="";
+        out.append("<label>" + label + "</label>\n");
+        out.append("<fType>" + reader.getFedoraObjectType() + "</fType>\n");
+        String cModel=reader.getContentModelId();
+        if (cModel==null) cModel="";
+        out.append("<cModel>" + cModel + "</cModel>\n");
+        out.append("<state>" + reader.GetObjectState() + "</state>\n");
+        String locker=reader.getLockingUser();
+        if (locker==null) locker="";
+        out.append("<locker>" + locker + "</locker>\n");
+        out.append("<cDate>" + formatter.format(reader.getCreateDate()) + "</cDate>\n");
+        out.append("<cDateAsNum>" + reader.getCreateDate().getTime() + "</cDateAsNum>\n");
+        out.append("<mDate>" + formatter.format(reader.getLastModDate()) + "</mDate>\n");
+        out.append("<mDateAsNum>" + reader.getLastModDate().getTime() + "</mDateAsNum>\n");
+        DatastreamXMLMetadata dcmd=null;
+        try {
+            dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
+        } catch (ClassCastException cce) {
+            throw new ObjectIntegrityException("Object " + reader.GetObjectPID() 
+                    + " has a DC datastream, but it's not inline XML.");
+        }
+        if (dcmd!=null) {
+            InputStream in=dcmd.getContentStream();
+            DCFields dc=new DCFields(in);
+            for (int i=0; i<dc.titles().size(); i++) {
+                out.append("<title>");
+                out.append((String) dc.titles().get(i));
+                out.append("</title>\n");
+            }
+            for (int i=0; i<dc.creators().size(); i++) {
+                out.append("<creator>");
+                out.append((String) dc.creators().get(i));
+                out.append("</creator>\n");
+            }
+            for (int i=0; i<dc.subjects().size(); i++) {
+                out.append("<subject>");
+                out.append((String) dc.subjects().get(i));
+                out.append("</subject>\n");
+            }
+        }
+/*    
+    <description></description>
+    <publisher></publisher>
+    <contributor></contributor>
+    <date></date>
+    <type></type>
+    <format></format>
+    <identifier></identifier>
+    <source></source>
+    <language></language>
+    <relation></relation>
+    <coverage></coverage>
+    <rights></rights>
+*/
+        out.append("</fields>");
+        return out.toString();
     }
     
-    public void delete(String pid) 
+    public boolean delete(String pid) 
             throws ServerException {
-        logFinest("Entering delete(DOReader)");
-        logFinest("Exiting delete(DOReader)");
+        logFinest("Entering delete(String)");
+        try {
+            XMLResource resource=(XMLResource) m_coll.getResource(pid);
+            if (resource==null) {
+                logFinest("Did not find resource with pid '" + pid + "'. Returning false.");
+                logFinest("Exiting delete(String)");
+                return false;
+            }
+            logFinest("Found resource with pid '" + pid + "'.  Deleting and returning true.");
+            m_coll.removeResource(resource);
+        } catch (XMLDBException xmldbe) {
+            throw new StorageDeviceException("Error attempting delete of " 
+                    + "object with pid '" + pid + "': "
+                    + xmldbe.getClass().getName() + ": " + xmldbe.getMessage());
+        }
+        logFinest("Exiting delete(String)");
+        return true;
     }
 
-    public Object[][] search(String[] resultFields, String condition, 
-            int firstResultIndex, int lastResultIndex) 
-            throws ServerException {
-        logFinest("Entering search(...)");
-        logFinest("Exiting search(...)");
-        return new Object[1][1];
-    }
-    
-    public int count(String condition) 
-            throws ServerException {
-        logFinest("Entering count(...)");
-        logFinest("Exiting count(...)");
-        return 1;
-    }
-    
-    public static void printUsage(String message) {
-        System.out.println("ERROR: " + message);
-        System.out.println("Usage:");
-        System.out.println("  FieldSearchExistImpl existHomeDir");
-    }
-    
-    public static void main(String[] args) {
-        if (args.length!=1) {
-            printUsage("Need to give one argument.");
-        } else {
-            try {
-                FieldSearchExistImpl fs=new FieldSearchExistImpl(args[0], null);
-            } catch (Exception e) {
-                printUsage(e.getClass().getName() + ": " + e.getMessage());
+    public List search(String[] resultFields, String terms) 
+            throws StorageDeviceException, ServerException {
+        try {
+            logFinest("Entering search(String, String)");
+            logFinest("Doing search using queryPart: . &= '" + terms + "'");
+            ResourceSet res=m_queryService.query("document(*)/fields[. &= '" + terms + "']");
+            if (res==null) {
+                return new ArrayList();
             }
+            logFinest("Finished search, getting result.");
+            List ret=getObjectFields(res, resultFields);
+            logFinest("Exiting search(String, String)");
+            return ret;
+        } catch (XMLDBException xmldbe) {
+            throw new StorageDeviceException("Error attempting search of terms: \"" 
+                    + terms + "\": " + xmldbe.getClass().getName() + ": " 
+                    + xmldbe.getMessage());
         }
     }
     
+    private long parseDateAsNum(String str) {
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        try {
+            Date d=formatter.parse(str);
+            return d.getTime();
+        } catch (ParseException pe) {
+            return -1;
+        }
+    }
+    
+    public List search(String[] resultFields, List conditions) 
+            throws ServerException {
+        try {
+            logFinest("Entering search(String, List)");
+            StringBuffer queryPart=new StringBuffer();
+            for (int i=0; i<conditions.size(); i++) {
+                Condition cond=(Condition) conditions.get(i);
+                if (i>0) {
+                    queryPart.append(" and ");
+                }
+                queryPart.append(' ');
+                String op=cond.getOperator().getSymbol();
+                if (cond.getProperty().toLowerCase().endsWith("date")) {
+                    if ( (op.startsWith(">")) || (op.startsWith("<")) ) {
+                        // num by itself
+                        long n=parseDateAsNum(cond.getValue());
+                        if (n==-1) { 
+                            throw new QueryParseException("Bad date given with "
+                                    + "lt, le, gt, or ge operator.  Dates must "
+                                    + "be given in yyyy-MM-dd hh:mm:ss format.");
+                        }
+                        queryPart.append(cond.getProperty());
+                        queryPart.append("AsNum");
+                        queryPart.append(' ');
+                        queryPart.append(cond.getOperator().getSymbol());
+                        queryPart.append(' ');
+                        queryPart.append(n);
+                    } else {
+                        // try AsNum with 'or' on string ... if op is '='... otherwise just as string
+                        long n=-1;
+                        if (op.equals("=")) {
+                            n=parseDateAsNum(cond.getValue());
+                        }
+                        if (n!=-1) {
+                            queryPart.append("(");
+                            queryPart.append(cond.getProperty());
+                            queryPart.append("AsNum");
+                            queryPart.append(' ');
+                            queryPart.append(cond.getOperator().getSymbol());
+                            queryPart.append(' ');
+                            queryPart.append(n);
+                            queryPart.append(" or ");
+                        }
+                        queryPart.append(cond.getProperty());
+                        queryPart.append(' ');
+                        queryPart.append(cond.getOperator().getSymbol());
+                        queryPart.append(" '");
+                        queryPart.append(cond.getValue());
+                        queryPart.append("'");
+                        if (n!=-1) {
+                            queryPart.append(")");
+                        }
+                    }
+                } else {
+                    queryPart.append(cond.getProperty());
+                    if (op.equals("~")) {
+                        queryPart.append("&=");
+                    } else {
+                        queryPart.append(op);
+                    }
+                    queryPart.append(" '");
+                    queryPart.append(cond.getValue());
+                    queryPart.append("'");
+                }
+            }
+            logFinest("Doing search using queryPart: " + queryPart.toString());
+            ResourceSet res=m_queryService.query("document(*)/fields[" + queryPart.toString() + "]");
+            if (res==null) {
+                return new ArrayList();
+            }
+            logFinest("Finished search, getting result.");
+            List ret=getObjectFields(res, resultFields);
+            logFinest("Exiting search(String, List)");
+            return ret;
+        } catch (XMLDBException xmldbe) {
+            throw new StorageDeviceException("Error attempting advanced search: "
+                    + xmldbe.getClass().getName() + ": " + xmldbe.getMessage());
+        }
+    }
+    
+    private List getObjectFields(ResourceSet resources, String fields[]) 
+            throws XMLDBException, ServerException {
+        logFinest("Entering getObjectFields(ResourceSet, String[])");
+        ArrayList ret=new ArrayList();
+        for (long i=0; i<resources.getSize(); i++) {
+            ObjectFields f=new ObjectFields(fields);
+            XMLResource res=(XMLResource) resources.getResource(i);
+            res.getContentAsSAX(f);
+            ret.add(f);
+        }
+        logFinest("Exiting getObjectFields(ResourceSet, String[])");
+        return ret;
+    }
+
 }

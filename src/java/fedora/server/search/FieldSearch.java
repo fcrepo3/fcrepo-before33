@@ -1,15 +1,21 @@
 package fedora.server.search;
 
+import java.util.List;
+
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
 
 public interface FieldSearch {
 
-    public void update(DOReader reader) throws ServerException;
+    public void update(DOReader reader) 
+            throws ServerException;
     
-    public void delete(String pid) throws ServerException;
+    public boolean delete(String pid) 
+            throws ServerException;
 
-    public Object[][] search(String[] resultFields, String condition, int firstResultIndex, int lastResultIndex) throws ServerException;
+    public List search(String[] resultFields, String terms) 
+            throws ServerException;
     
-    public int count(String condition) throws ServerException;
+    public List search(String[] resultFields, List conditions) 
+            throws ServerException;
 }
