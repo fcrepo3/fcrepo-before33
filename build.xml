@@ -20,6 +20,7 @@
 		<mkdir dir="dist/server/doc"/>
 		<copy file="dist/userdocs/release-notes.html" todir="dist/server/doc"/>
 		<copy file="dist/userdocs/installation.html" todir="dist/server/doc"/>
+		<copy file="dist/userdocs/demos.html" todir="dist/server/doc"/>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
 	</target>
@@ -578,6 +579,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.95  2003/03/07 02:02:46  payette
+  added copy of demos.dbx to new server/doc area
+
   Revision 1.94  2003/03/07 01:50:28  payette
   add demo docbook transform to userdocs
 
