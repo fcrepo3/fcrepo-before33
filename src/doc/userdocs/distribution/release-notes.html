@@ -1,49 +1,48 @@
-
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US"> <head> 
-<title>Fedora Identifiers</title>
-<meta name="robots" content="all"/>
-<link href="../docstyle.css" rel="stylesheet" type="text/css"/>
-<script language="Javascript">
-    
-  </script></head>
-<body> <div class="article"><div class="titlepage">
-<div>
-  <h1 class="title"><a name="d0e2"></a> <span class="inlinemediaobject"><img src="../images/fedora_logo108x150.jpg"></span> 
-  </h1>
-</div>
-<div> 
-  <h1 class="title"><a name="d0e2"></a> Fedora&#153; API-A Sample SOAP Client</h1>
-</div>
-<div>
-  <h3 class="subtitle"><i>Software Release 2.0</i></h3>
-</div>
-<div> 
-  <h3 class="corpauthor"> Fedora&#153; Development Team</h3>
-</div>
-<br><div clas="toc">
-<h2>Table of Contents</h2>
-<div class="tocbox">
-<ol>
-  <li><a href="#rel2.0">Release 2.0 - January 21, 2005</a></li>
-  <ol>
-    <li><a href="#rel2.0.migrate">Migrating from Fedora 1.2.1 to Fedora 2.0</a></li>
-	<li><a href="#rel2.0.features">New Features</a></li>
-	<li><a href="#rel2.0.bugfix">Bug Fixes</a></li>
-  </ol>
-  <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) - April 19, 2004</a></li>
-  <li><a href="#rel1.2">Release 1.2 - December 15, 2003</a></li>
-  <li><a href="#rel1.1.1">Release 1.1.1 (Bug Fix Release) - September 5, 2003</a></li>
-  <li><a href="#rel1.1">Release 1.1 (Bug Fix Release) - August 5, 2003</a></li>
-  <li><a href="#rel1.0">Release 1.0 - May 16, 2003</a></li>
-  <li><a href="#rel0.9">Release 0.9 - March 7, 2003</a></li>
-  <li><a href="#relbeta1">Beta 1 - Dec 20, 2002</a></li>
-  <li><a href="#relalpha1">Alpha 1 - Oct 31, 2002</a></li>
-</ol>
-</div>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+  <title>Fedora Release Notes</title>
+  <meta name="robots" content="all"/>
+  <link href="../docstyle.css" rel="stylesheet" type="text/css"/>
+</head>
+
+<body>
+  <div id="header">
+    <div id="logo" style="">
+      <a href="../index.html">
+        <img border="0" width="54" height="75" src="../images/fedora_logo108x150.jpg"/>
+      </a>
+    </div>
+    <div id="title">
+      <h1>Fedora Release Notes</h1>
+      <h2>Fedora Release 2.0</h2>
+    </div>
+  </div>
+  <div clas="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+      <ol>
+        <li><a href="#rel2.0">Release 2.0 - January 28, 2005</a></li>
+        <ol type="A">
+          <li><a href="#rel2.0.migrate">Migrating from Fedora 1.2.1 to Fedora 2.0</a></li>
+	      <li><a href="#rel2.0.features">New Features</a></li>
+	      <li><a href="#rel2.0.bugfix">Bug Fixes</a></li>
+        </ol>
+        <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) - April 19, 2004</a></li>
+        <li><a href="#rel1.2">Release 1.2 - December 15, 2003</a></li>
+        <li><a href="#rel1.1.1">Release 1.1.1 (Bug Fix Release) - September 5, 2003</a></li>
+        <li><a href="#rel1.1">Release 1.1 (Bug Fix Release) - August 5, 2003</a></li>
+        <li><a href="#rel1.0">Release 1.0 - May 16, 2003</a></li>
+        <li><a href="#rel0.9">Release 0.9 - March 7, 2003</a></li>
+        <li><a href="#relbeta1">Beta 1 - Dec 20, 2002</a></li>
+        <li><a href="#relalpha1">Alpha 1 - Oct 31, 2002</a></li>
+      </ol>
+    </div>
 </div>
 <div class="sect">
-<h2><a name="rel2.0">1. Release 2.0 - January 21, 2005</a></h2>
+<h2><a name="rel2.0">1. Release 2.0 - January 28, 2005</a></h2>
   <p>
   Fedora 2.0 is a major release that culminates Phase I of the initial Fedora 
   project that began in October 2001 and ended in October 2004. Fedora 2.0 includes 
@@ -78,31 +77,45 @@
     <li>Shut down your Fedora 1.2.1 server (using fedora-stop)</p></li>
     <li>Make a backup of the METSLikeExportDOSerializer.class file.
       <p>Under Windows, make a backup of the following file:</p>
-	  <p>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class</p>
+      <div class="code">
+	    <pre>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class</pre>
+	  </div>
       <p>Under Unix, make a backup of the following file:
-	  <p>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class<p></li>
+      <div class="code">
+	    <pre>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class</pre>
+	  </div>
+	</li>
     <li>Copy the METSLikeExportDOSerializer.class from this patch into the above 
   directory replacing the one there.
-      <p>Under Windows, copy the METSLikeExportDOSerializer.class from patch into</p>
-      <p>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation </p>
-      <p>directory, OVER THE EXISTING FILE.</p>
-      <p>Under Unix, copy the METSLikeExportDOSerializer.class from patch into</p>
-      <p>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation </p>
-      <p>directory, OVER THE EXISTING FILE.</p></li>
+      <p>Under Windows, copy the METSLikeExportDOSerializer.class from patch into the following directory</p>
+      <div class="code">
+        <pre>%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation </pre>
+      </div>
+      <p>OVER THE EXISTING FILE.</p>
+      <p>Under Unix, copy the METSLikeExportDOSerializer.class from patch into the following directory</p>
+      <div class="code">
+        <pre>$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation </pre>
+      </div>
+      <p>OVER THE EXISTING FILE.</p></li>
     <li>(OPTIONAL) If you installed the source code distribution of Fedora, you should 
   also copy the included METSLikeExportDOSerializer.java file into your source 
   directory.
       <p>Under Windows, copy the METSLikeExportDOSerializer.java file from the patch 
-  into
-      <p>%FEDORA_HOME%\src\java\fedora\server\storage\translation directory, OVER THE 
-  EXISTING FILE.</p>
-      <p>Under Unix, copy the METSLikeExportDOSerializer.java file from the patch into </p>
-    <p>$FEDORA_HOME/src/java/fedora/server/storage/translation directory, OVER THE 
-  EXISTING FILE.</p></li>
+  into the following directory
+      <div class="code">
+        <pre>%FEDORA_HOME%\src\java\fedora\server\storage\translation</pre>
+      </div>
+      <p>OVER THE EXISTING FILE.</p>
+      <p>Under Unix, copy the METSLikeExportDOSerializer.java file from the patch into the following directory</p>
+      <div class="code">
+        <pre>$FEDORA_HOME/src/java/fedora/server/storage/translation</pre>
+      </div>
+      <p>OVER THE EXISTING FILE.</p>
+    </li>
   <li>Re-start your Fedora 1.2.1 server (using fedora-start). Your Fedora 1.2.1 
   repository is now ready for exporting its objects to the new server.</li>
   <li>Download the Fedora 2.0 software from
-  http://www.fedora.info/release/2.0</li>
+  <a href="http://www.fedora.info/release/2.0">http://www.fedora.info/release/2.0</a></li>
   <li>Install and configure the new Fedora 2.0 repository with a different host 
   and port than the Fedora 1.2.1 server.</li>
   <li>Start the Fedora 2.0 server (using fedora-start).</li>
@@ -128,9 +141,14 @@
       <li>Run the fedora-ingest command-line utility which is found in the client/bin 
   directory.
         <p>Under Windows, this file is found in:</p>
-        <p>%FEDORA_HOME%\client\bin\fedora-ingest.bat</p>
+        <div class="code">
+          <pre>%FEDORA_HOME%\client\bin\fedora-ingest.bat</pre>
+        </div>
         <p>Under Unix, this file is found in: </p>
-        <p>$FEDORA_HOME/client/bin/fedora-ingest.sh</p></li>
+        <div class="code">
+          <pre>$FEDORA_HOME/client/bin/fedora-ingest.sh</pre>
+        </div>
+      </li>
      <li>Arguments for the fedora-ingest utility should include the following:</li>
 	 <ul>
        <li>Type of ingest: specify R for repository</li>
@@ -147,8 +165,10 @@
   is the default</li>
        <li>Log message: use &quot;&quot; for no message.
          <p>For example: </p>
-         <p>fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port
-  fedoraAdmin fedoraAdmin &quot;&quot;</p></li>
+         <div class="code">
+           <pre>fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port fedoraAdmin fedoraAdmin &quot;&quot;</pre>
+         </div>
+      </li>
      </ul>
    </ol>
    </ol>
@@ -164,7 +184,7 @@
 <div class="sect2">
 <h2><a name="rel2.0.features"></a>New Features</h2>
 <ol>
-  <li>Fedora Object XML (FOXML)
+  <li><b>Fedora Object XML (FOXML)</b>
   <p>A new XML schema has been developed that provides a simple and unambiguous expression 
   the Fedora digital object model. Previously, Fedora digital objects could only 
   be expressed in XML using an extension of the METS schema. FOXML is the new 
@@ -186,8 +206,9 @@
   (GDRF). Refer to the user documentation for more details about FOXML and new 
   features of the Fedora Object Model.</p>
   <p>The XML schema for FOXML is available at:</p>
-  <p>http://www.fedora.info/definitions/1/0/foxml1-0.xsd</p></li>
-  <li>Ingest and Export with Different XML Formats 
+  <p><a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">http://www.fedora.info/definitions/1/0/foxml1-0.xsd</a></p>
+  </li>
+  <li><b>Ingest and Export with Different XML Formats</b>
   <p>The Fedora project is committed to providing repository ingest and export functions 
   are compatible with community developed standards for digital object XML encoding. 
   This is motivated by both interoperability and digital preservation concerns, 
@@ -199,9 +220,10 @@
   will add support for METS 1.3 and MPEG21/DIDL. Internally, the Fedora repository 
   system provides a translation module that is responsible for mapping digital 
   objects to the different supported formats. See the new &quot;Ingest and Export 
-  Guide&quot; in the system documentation for more details.</p><li>
-  <li>Relationship Metadata for Digital Objects
-  Fedora now supports the assertion of object-to-object relationships. Fedora 
+  Guide&quot; in the system documentation for more details.</p>
+  </li>
+  <li><b>Relationship Metadata for Digital Objects</b>
+  <p>Fedora now supports the assertion of object-to-object relationships. Fedora 
   digital objects can be related to other Fedora objects in many ways. For example 
   there may be a Fedora object that represents a collection and other objects 
   that are members of that collection. Also, it may be the case that one object 
@@ -214,16 +236,18 @@
   Also, there is support for community or user-defined relationships. The relationships 
   datastream is automatically indexed by Fedora as part of the new Resource Index 
   module (described below), which provides RDF-based searching of the repository, 
-  including object-to-object relationships.</p></li>
-  <li>Resource Index
-  The Resource Index Module provides an RDF storage and query service for object 
+  including object-to-object relationships.</p>
+  </li>
+  <li><b>Resource Index</b>
+  <p>The Resource Index Module provides an RDF storage and query service for object 
   metadata and relationships in Fedora. By default, the Resource Index indexes 
   object properties, datastream, and dissemination information. In addition, user-defined, 
   inter-object relationships expressed the RELS-EXT datastream are also automatically 
   indexed. Refer to the user documentation for additional information about the 
-  Resource Index.</p></li>
-  <li>Batch Modify Utility
-  A new utility has been added to the Fedora administrative client that allows 
+  Resource Index.</p>
+  </li>
+  <li><b>Batch Modify Utility</b>
+  <p>A new utility has been added to the Fedora administrative client that allows 
   repository administrators to perform object modifications in batch mode. The 
   utility is built using the management API method of API-M so that most of the 
   API-M methods can be run against groups of objects. The utility works by creating 
@@ -231,133 +255,149 @@
   processed in sequence to carry out the designated tasks. A sample batch modify 
   directives file is included in the distribution in the batch-demo directory. 
   Refer to the Batch Modify Utility user documentation for additional information 
-  regarding the batch Modify Utility.</p></li>
-  <li>Repository Administrator Reporting Tools
-  A new Reporting interface has been added for obtaining simple administrative 
+  regarding the batch Modify Utility.</p>
+  </li>
+  <li><b>Repository Administrator Reporting Tools</b>
+  <p>A new Reporting interface has been added for obtaining simple administrative 
   reports about objects in the repository. The interface consists of several static 
   queries that can be performed on the repository to obtain statistics about objects. 
   These queries currently include object counts based on type of object, creation 
-  date, and pid namespace. Refer to the user documentation for additional information.</p></li>
-  <li>Third party Library Upgrades
+  date, and pid namespace. Refer to the user documentation for additional information.</p>
+  </li>
+  <li><b>Third party Library Upgrades</b>
   <p>All of the major third party libraries used in the Fedora codebase have been 
   updated to reflect the most current stable versions available. This includes 
   updating the underlying tomcat server to tomcat version 5. For Additional details 
   regarding new library versions, refer to the LICENSE.html file in the distribution 
-  which has a complete list of the new library versions.</p></li>
-  <li>Performance Tuning
+  which has a complete list of the new library versions.</p>
+  </li>
+  <li><b>Performance Tuning</b>
   <p>Significant enhancements have been made to the Fedora server code to improve 
   ingest performance. These enhancements included both tuning of the underlying 
   relational database as well as tuning how ingests are handled internally in 
-  the Fedora server.</p></li>
-  <li>API-A and API-A-LITE Changes
+  the Fedora server.</p>
+  </li>
+  <li><b>API-A and API-A-LITE Changes</b>
   <p>A general cleanup of the methods found in API-A and API-A-LITE has been done 
   to provide better consistency between the SOAP-based and REST-based interfaces 
   for API-A. The corresponding WSDL files have also been updated to reflect the 
   changes. </p>
   <p>Previously in Fedora 1.2.1:</p>
-  <p>API-A</p>
-  <ul>
-  <li>describeRepository</li>
-  <li>findObjects</li>
-  <li>getBehaviorDefinitions</li>
-  <li>getBehaviorMethods</li>
-  <li>getBehaviorMethodsXML</li>
-  <li>getDissemination</li>
-  <li>getObjectMethods</li>
-  <li>getObjectProfile</li>
-  <li>resumeFindObjects</li>
-  </ul>
-<p>API-A-LITE</p>
-<ul>
-<li>describeRepository</li>
-  <li>findObjects</li>
-  <li>getDissemination</li>
-  <li>getObjectProfile</li>
-  <li>resumeFindObjects</li>
-  </ul>
+  <div class="code">
+  <pre>
+  API-A
+  
+    describeRepository
+    findObjects
+    getBehaviorDefinitions
+    getBehaviorMethods
+    getBehaviorMethodsXML
+    getDissemination
+    getObjectMethods
+    getObjectProfile
+    resumeFindObjects
+ 
+  API-A-LITE
+
+    describeRepository</li>
+    findObjects</li>
+    getDissemination</li>
+    getObjectProfile</li>
+    resumeFindObjects</pre>
+    </div>
 <p>In Fedora 2.0:</p>
-<p>API-A</p>
-<ul>
-<li>describeRepository</li>
-  <li>findObjects</li>
-  <li>getDatastreamDissemination</li>
-  <li>getDissemination</li>
-  <li>getObjectHistory</li>
-  <li>getObjectProfile</li>
-  <li>listMethods</li>
-  <li>listDatastreams</li>
-  <li>resumeFindObjects</li>
-</ul>
-<p>API-A-LITE</p>
-<ul>
-<li>describeRepository</li>
-  <li>findObjects</li>
-  <li>getDatastreamDissemination</li>
-  <li>getDissemination</li>
-  <li>getObjectHistory</li>
-  <li>getObjectProfile</li>
-  <li>listMethods</li>
-  <li>listDatastreams</li>
-  <li>resumeFindObjects</li>
-  </ul>
+<div class="code">
+  <pre>
+  API-A
+
+  describeRepository</li>
+  findObjects</li>
+  getDatastreamDissemination</li>
+  getDissemination</li>
+  getObjectHistory</li>
+  getObjectProfile</li>
+  listMethods</li>
+  listDatastreams</li>
+  resumeFindObjects</li>
+
+  API-A-LITE
+
+  describeRepository
+  findObjects
+  getDatastreamDissemination
+  getDissemination
+  getObjectHistory
+  getObjectProfile
+  listDatastreams
+  listMethods
+  resumeFindObjects
+  </pre>
+  </div>
 <p>API-A Methods removed:</p>
-<p>getBehaviorDefinitions - the functionality of this method is replaced with 
+<ul>
+<li>getBehaviorDefinitions - the functionality of this method is replaced with 
   the revised getObjectProfile method which now provides complete object info 
-  including behavior definitions and methods.</p>
-<p>getBehaviorMethods - the functionality of this method is replaced with the 
+  including behavior definitions and methods.</li>
+<li>getBehaviorMethods - the functionality of this method is replaced with the 
   revised getObjectProfile method which now provides complete object info including 
-  behavior definitions and methods.</p>
-<p>getBehaviorMethodsXML - the functionality of this method is replaced with the 
+  behavior definitions and methods.</li>
+<li>getBehaviorMethodsXML - the functionality of this method is replaced with the 
   revised getObjectProfile method which now provides complete object info including 
-  behavior definitions and methods.</p>
-<p>getObjectMethods - the functionality of this method is replaced with the revised 
+  behavior definitions and methods.</li>
+<li>getObjectMethods - the functionality of this method is replaced with the revised 
   getObjectProfile method which now provides complete object info including behavior 
-  definitions and methods.</p>
+  definitions and methods.</li>
+</ul>
 <p>API-A Methods added or modified:</p>
-<p>getDatastreamDissemination - this new method replaces the functionality provided 
+<ul>
+<li>getDatastreamDissemination - this new method replaces the functionality provided 
   in earlier releases using the getItem method of the Default Disseminator to 
   return the contents of a datastream. Use of the default disseminator getItem 
-  method is now deprecated.</p>
-<p>getObjectHistory - this new method provides a change history for a digital 
+  method is now deprecated.</li>
+<li>getObjectHistory - this new method provides a change history for a digital 
   object listing each modification date when an object component has been modified. 
   This is an interim solution to provide some basic information through API-A 
   and API-A-LITE about the change history of an object. Eventually we would like 
   to provide more detailed information from the Fedora audit records so one could 
   obtain a detailed history of what changes were made to specific components of 
-  the object.</p>
-<p>getObjectProfile - this method has been modified to return the complete object 
+  the object.</li>
+<li>getObjectProfile - this method has been modified to return the complete object 
   profile for a digital object. The object profile now includes all component 
-  information about an object.</p>
-<p>listDatastreams - this new method replaces the functionality provided in earlier 
+  information about an object.</li>
+<li>listDatastreams - this new method replaces the functionality provided in earlier 
   releases using the getItemIndex method of the Default Disseminator to list the 
-  datastreams of an object.</p>
-<p>listMethods - this new method replaces the functionality provided in earlier 
+  datastreams of an object.</li>
+<li>listMethods - this new method replaces the functionality provided in earlier 
   releases using the getMethodIndex method of the Default Disseminator to list 
-  the methods of an object.</p>
+  the methods of an object.</li>
   </li>
-<li>API-M changes
-<p>logMessage parameter now exists on all object-modifying methods.</p>
-<p>Datastream altIDs attribute. Any number of alternate identifiers can be specified 
+</ul>
+<li><b>API-M changes</b>
+<p></p>
+<ul>
+<li>logMessage parameter now exists on all object-modifying methods.</li>
+<li>Datastream altIDs attribute. Any number of alternate identifiers can be specified 
   for datastreams on creation or modification. This information is currently maintained, 
-  but not acted upon.</p>
-<p>Datastream versionable attribute. A new boolean parameter that indicates whether 
+  but not acted upon.</li>
+<li>Datastream versionable attribute. A new boolean parameter that indicates whether 
   Fedora should make changes in-place or retain prior versions on datastream modification. 
   This information is currently maintained, but not acted upon.</p>
-<p>modifyDatastream now supports changing the mimeType and<br>
-  formatURI, and altID.</p>
-<p>modifyDatastream and modifyDisseminator methods now support a &quot;force&quot; 
+<li>modifyDatastream now supports changing the mimeType and<br>
+  formatURI, and altID.</li>
+<li>modifyDatastream and modifyDisseminator methods now support a &quot;force&quot; 
   parameter, which indicates that even if a data type contract would be broken, 
-  Fedora should accept the change anyway.</p>
-<p>purgeObject and purgeDatastream now include force parameters. Currently when 
+  Fedora should accept the change anyway.</li>
+<li>purgeObject and purgeDatastream now include force parameters. Currently when 
   specified as true, these throw an exception. This feature will be implemented 
-  in a future release.</p>
-<p>Consistent parameter ordering. Parameter ordering of all the API-M methods 
+  in a future release.</li>
+<li>Consistent parameter ordering. Parameter ordering of all the API-M methods 
   was adjusted to make parameter ordering more consistent. Generally, the first 
   one or two parameters identify the thing being accessed/modified (object PID, 
   datastream or disseminator ID). When &quot;logMessage&quot; is relevant, it 
   occurs just after any data parameters. When &quot;force&quot; is relevant, it 
-  occurs last.</p>
-<p>Summary of changes:</p>
+  occurs last.</li>
+</ul>
+<p>Summary of API-M changes:</p>
 <ul>
 <li>addDatastream: added parameters altIDs and logMessage</li>
   <li>addDisseminator: added parameter logMessage; removed</li>
@@ -387,7 +427,7 @@
   <li>setDisseminatorState: [no change]</li>
   </ul>
 </li>
-<li>PID Definition Syntax Relaxed
+<li><b>PID Definition Syntax Relaxed</b>
 <p>Prior to Fedora version 2.0, the syntax for persistent identifiers (PIDs) was 
   defined as a subset of the URN syntax, but was not strictly enforced by the 
   server software. In version 2.0, the PID definition syntax has been relaxed 
@@ -398,27 +438,28 @@
   The only differences with non-normalized PIDs are that the colon delimiter may 
   be encoded as &quot;%3a&quot; or &quot;%3A&quot;, and hex-digits may use lowercase 
   [a-f].</p>
-  <br>
+  <div class="code">
+  <pre>
   PID:<br>
   Length : maximum 64<br>
-  Syntax : namespace-id &quot;:&quot; object-id<br>
-  <br>
+  Syntax : namespace-id &quot;:&quot; object-id
+  
   namespace-id:<br>
-  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; ) 1+<br>
-  <br>
+  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; ) 1+
+  
   object-id:<br>
-  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; / &quot;~&quot; 
-  / <br>
-  &quot;_&quot; / escaped-octet ) 1+<br>
-  <br>
-  escaped-octet:<br>
-  Syntax : &quot;%&quot; hex-digit hex-digit<br>
-  <br>
-  hex-digit:<br>
+  Syntax : ( [A-Z] / [a-z] / [0-9] / &quot;-&quot; / &quot;.&quot; / &quot;~&quot; / &quot;_&quot; / escaped-octet ) 1+<br>
+  
+  escaped-octet:
+  Syntax : &quot;%&quot; hex-digit hex-digit
+  
+  hex-digit:
   Syntax : [0-9] / [A-F]
-<p></p>
+
+  </pre>
+  </div>
 </li>
-<li>Including PID As Default Parameter in Disseminations
+<li><b>Including PID As Default Parameter in Disseminations</b>
 <p>When constructing complex user-defined disseminators that reference disseminations 
   from other objects, it is often handy to be able to pass the PID of the data 
   object on to the nested dissemination requests. Prior to Fedora 2.0, the only 
@@ -426,51 +467,64 @@
   method and use it to pass the value of the PID. This syntax is ackward since 
   the PID of the data object is already contained in the dissemination request. 
   For example:</p>
-<p>http://localhost:8080/fedora/get/demo:999/demo:991/getMethod?userparm1=value&amp;userparm2=value&amp;pid=demo:999</p>
-<p>In the future, we plan to make it possible for the PID of the data object to 
+  <div class="code">
+  <pre>http://localhost:8080/fedora/get/demo:999/demo:991/getMethod?userparm1=value&amp;userparm2=value&amp;pid=demo:999</pre>
+  </div>
+  <p>In the future, we plan to make it possible for the PID of the data object to 
   be automatically passed as a parameter so it is always available downstream 
   as a valid parameter on any dissemination request. As an interim solution to 
   address this issue, Fedora 2.0 allows the PID of the data object to be passed 
   as a default behavior mechanism parameter by using a special syntax of the DefaultInputParm 
   element in the behavior mechanism object. For example:</p>
-<p>&lt;fmm:DefaultInputParm <br>
-  defaultValue=&quot;$PID&quot; <br>
-  label=&quot;The PID of the data object&quot; <br>
-  parmName=&quot;PID&quot; <br>
-  passBy=&quot;VALUE&quot; <br>
-  required=&quot;true&quot;/&gt;</p>
+  <div class="code">
+  <pre>&lt;fmm:DefaultInputParm defaultValue="$PID" label="The PID of the data object" parmName="PID" passBy="VALUE" required="true"/&gt;</pre>
+  </div>
 <p>Specifying a DefaultInputParm with a default value of &quot;$PID&quot; will 
   result in the PID of the data object being passed on to the external service 
   defined in the behavior mechanism object. In the WSDL section of the behavior 
   mechanism object, reference the special DefaultInputParm as you would other 
   parameters. For example:</p>
-<p> &lt;wsdl:operation name=&quot;getService&quot;&gt;<br>
-  &lt;http:operation<br>
-  location=&quot;runScript.pl?pid=(PID)&quot;/&gt;<br>
-  .<br>
-  .<br>
-  .</p>
+  <div class="code">
+  <pre>
+  &lt;wsdl:operation name="getService"&gt;
+    &lt;http:operation location="runScript.pl?pid=(PID)"/&gt;
+       .
+       .
+       .
+  </pre>
+  </div>
 <p>At run time, this will be translated into</p>
-<p>runScript.pl?pid=pid-of-the-data-object</p>
+<div class="code">
+<pre>
+  runScript.pl?pid=pid-of-the-data-object
+</pre>
+</div>
 <p><br>
   A similar syntax is available to pass the object URI of the data object. If 
   you want to pass the data object's URI, then specify a DefaultInputParm with 
   a default value of &quot;$objuri&quot; and this will be translated at run time 
   into </p>
-<p>runScript.pl?pid=info:fedora:/pid-of-the-data-object</p>
+<div class="code">
+<pre>runScript.pl?pid=info:fedora:/pid-of-the-data-object</pre>
+</div>
 <p>where PID is the persistent identifier of the data object.</p>
 <p>The demo data object object named demo_SmileyStuff.xml and the associated behavior 
   mechanism object named demo_DualResImageCollection.xml provide an example of 
   the new syntax.<br>
 </p>
 </li>
-<li>Syntax Of Timestamp Values Extended
+<li><b>Syntax Of Timestamp Values Extended</b>
 <p>Prior to Fedora 2.0, the syntax of timestamp values was to the nearest second. 
   This range has been extended in Fedora 2.0 to include milliseconds to capture 
   versioning changes that occur in less than one second. The new timestamp syntax 
   is:</p>
-<p>YYYY-MM-DDTHH:MM:SS:SSSZ </p>
-<p>e.g., 2005-01-17T12:13:54:185Z</p>
+  <div class="code">
+  <pre>
+  YYYY-MM-DDTHH:MM:SS:SSSZ
+  
+  e.g., 2005-01-17T12:13:54:185Z
+  </pre>
+  </div>
 </li>
 </ol>
 </div>
@@ -478,15 +532,68 @@
 <div class="sect2">
 <h2><a name="rel2.0.bugfix"></a>Bug Fixes</h2>
 <ol>
-  <li>Incorrect GMT Datetimes - Creation dates for objects do not appear to have 
-  the correct GMT timestamps. (Bugzilla #52)
+  <li><b>Incorrect GMT Datetimes - Creation dates for objects do not appear to have 
+  the correct GMT timestamps. (Bugzilla #52)</b>
 <p>When objects were created, the GMT timestamps stored did not reflect the correct 
   time of object creation. This was bug in fedora.server.utilitites.DateUtility. 
   The time zone offset was incorrectly being applied to the creation datetime. 
-  Objects now reflect the correct GMT creation datetimestamp.</p>
-<li>Date issues when Server and Client in different Timezones - Creation dates 
+  Objects now reflect the correct GMT creation datetimestamp.</p>  
+<li><b>Managed datastreams inadvertently deleted - Under certain situations managed 
+  content datastreams could be deleted when purging similarly PIDed objects. (Bugzilla 
+  #53)</b>
+<p>This was a bug in fedora.server.storage.replication.DefaultDOReplicator. Managed 
+  datastreams are stored internally using an identifier that consists of objPID 
+  + dsID + dsVerID. An errant regular expression was matching </p>
+  </li>
+<li><b>Errant space in SchemaLocation used by getnextPID - There is an erroneous 
+  space preceding the SchemaLocation in output for getNextPID. (Bugzilla #54)</b>
+<p>The SchemaLoaction in the xml header output when running the getNextPID method 
+  of API-M and API-M-LITE contains an errant blank. This bug will only cause problems 
+  if trying to validate the xml output from the server. The errant space has been 
+  removed.</p>
+  </li>
+  <li><b>Dublin Core description element missing from drop down menu in admin GUI 
+  client. (Bugzilla #55)</b>
+<p>The drop down menu for Dublin Core elements in the admin GUI does not contain 
+  the description element. The description element has been added to the drop 
+  down list.</p>
+  </li>
+<li><b>Unable to disseminate timestamped disseminations - Under certain situations, 
+  attempting timestamped disseminations would throw NullPointerException. (Bugzilla 
+  #56)</b>
+<p>This bug only occurs when attempting timestamped disseminations using user-defined 
+  disseminators (i.e., disseminators other than the default disseminator).</p>
+<p>This was a bug in fedora.server.storage.SimpleDOReader. When datastream state 
+  checking was added in Fedora 1.2, the section of code dealing with populating 
+  the DisseminationBindingInfo class did not include the new variable for datastream 
+  state. As a result this variable in the class is never initialized which leads 
+  to the eventual null pointer exception when attempting timestamped disseminations 
+  with user-defined disseminations.</p>
+  </li>  
+<li><b>Serializer fails on export of bMech objects. Exporting bMech objects throws 
+  NullPointerException. (Bugzilla #57)</b>
+<p>The problem was that the method that checked WSDL and SERVICE-PROFILE datastreams 
+  for instances of the local pattern &quot;http://local.fedora.server&quot; did 
+  not have this pattern compiled. This caused a null pointer exception when the 
+  xml datastreams were searched for this pattern. Bmech objects now export correctly.</p>
+  </li>
+<li><b>Object Label updates not reflected in ObjectProfile - Changing an object's 
+  label in the admin GUI is not reflected when disseminationg objectProfile. (Bugzilla 
+  #58)</b>
+<p>This was a bug in the replicator where the object label field was not being 
+  updated when the object label was changed in the object xml. Object label changes 
+  are now properly displayed when disseminating the objectProfile.</p>
+  </li>
+<li><b>Timestamp information not displayed in all views of Default Disseminator 
+  (Bugzilla #59)</b>
+<p>Timestamp information was not being properly handled by the XSL stylesheet 
+  that is used to style the output from viewItemIndex. This is now corrected and 
+  timestamp info is properly displayed in all views of the default disseminator 
+  (getObjectProfile, viewItemIndex, and viewMethodIndex).</p>
+  </li>
+<li><b>Date issues when Server and Client in different Timezones - Creation dates 
   for objects can be incorrect when server and client are in different time zones. 
-  (Bugzilla #60)
+  (Bugzilla #60)</b>
 <p> When a Fedora server is in one time zone and a Fedora client is in a different 
   time zone, it was discovered that incorrect timestamps were displayed by the 
   client when retrieving objects from the server.</p>
@@ -504,68 +611,15 @@
   STRINGS in ISO8601 format: mm-dd-yyThh:mm:ssZ. This allows Fedora to accept 
   strings in mm-dd-yy or mm-dd-yyThh:mm:ss or mm-dd-yyThh:mm:ssZ format, to keep backward compatiability.</p>
 </li>  
-<li>3. Unable to disseminate timestamped disseminations - Under certain situations, 
-  attempting timestamped disseminations would throw NullPointerException. (Bugzilla 
-  #55)
-<p>This bug only occurs when attempting timestamped disseminations using user-defined 
-  disseminators (i.e., disseminators other than the default disseminator).</p>
-<p>This was a bug in fedora.server.storage.SimpleDOReader. When datastream state 
-  checking was added in Fedora 1.2, the section of code dealing with populating 
-  the DisseminationBindingInfo class did not include the new variable for datastream 
-  state. As a result this variable in the class is never initialized which leads 
-  to the eventual null pointer exception when attempting timestamped disseminations 
-  with user-defined disseminations.</p>
-  </li>
-<li>4. Managed datastreams inadvertently deleted - Under certain situations managed 
-  content datastreams could be deleted when purging similarly PIDed objects. (Bugzilla 
-  #53)
-<p>This was a bug in fedora.server.storage.replication.DefaultDOReplicator. Managed 
-  datastreams are stored internally using an identifier that consists of objPID 
-  + dsID + dsVerID. An errant regular expression was matching </p>
-  </li>
-<li>5. Errant space in SchemaLocation used by getnextPID - There is an erroneous 
-  space preceding the SchemaLocation in output for getNextPID. (Bugzilla #54)
-<p>The SchemaLoaction in the xml header output when running the getNextPID method 
-  of API-M and API-M-LITE contains an errant blank. This bug will only cause problems 
-  if trying to validate the xml output from the server. The errant space has been 
-  removed.</p>
-  </li>
-  <li>Dublin Core description element missing from drop down menu in admin GUI 
-  client. (Bugzilla #55)
-<p>The drop down menu for Dublin Core elements in the admin GUI does not contain 
-  the description element. The description element has been added to the drop 
-  down list.</p>
-  </li>
-<li>7. Serializer fails on export of bMech objects. Exporting bMech objects throws 
-  NullPointerException. (Bugzilla #56)
-<p>The problem was that the method that checked WSDL and SERVICE-PROFILE datastreams 
-  for instances of the local pattern &quot;http://local.fedora.server&quot; did 
-  not have this pattern compiled. This caused a null pointer exception when the 
-  xml datastreams were searched for this pattern. Bmech objects now export correctly.</p>
-  </li>
-<li>8. Object Label updates not reflected in ObjectProfile - Changing an object's 
-  label in the admin GUI is not reflected when disseminationg objectProfile. (Bugzilla 
-  #58)
-<p>This was a bug in the replicator where the object label field was not being 
-  updated when the object label was changed in the object xml. Object label changes 
-  are now properly displayed when disseminating the objectProfile.</p>
-  </li>
-<li>9. Timestamp information not displayed in all views of Default Disseminator 
-  (Bugzilla #59)
-<p>Timestamp information was not being properly handled by the XSL stylesheet 
-  that is used to style the output from viewItemIndex. This is now corrected and 
-  timestamp info is properly displayed in all views of the default disseminator 
-  (getObjectProfile, viewItemIndex, and viewMethodIndex).</p>
-  </li>
-<li>10. Problem when versions get assigned the same timestamp (Bugzilla #64)
+<li><b>Problem when versions get assigned the same timestamp (Bugzilla #64)</b>
 <p>In certain situations when modifications to an object component occur in rapid 
   succession it was observed that a timestamp granularity of seconds was insufficient 
   and you could have two versions with the same timestamp values to the nearest 
   second. The solution was to extend the value of timestamps to include milliseconds 
   to prevent any potential conflict.</p>
   </li>
-  <li>Inconsistent treatment of nulls versus empty string in arguments of modifyDatastream 
-  and modifyDisseminator methods of API-M (Bugzilla #68)
+  <li><b>Inconsistent treatment of nulls versus empty string in arguments of modifyDatastream 
+  and modifyDisseminator methods of API-M (Bugzilla #68)</b>
 <p>The treatment of nulls versus empty strings in arguments for the modifyDatastream 
   and modifyDisseminator methods of API-M is now more consistent. Arguments specified 
   as null indicate that the original attribute of the component is to remain unchanged. 
@@ -573,7 +627,7 @@
   be set to the empty string. Arguments specified as non-null or non-empty indicate 
   the original attribute is to be replaced by the specified value.</p>
   </li>
-<li>Error when editing disseminator label when using McKoi (Bugzilla #76)
+<li><b>Error when editing disseminator label when using McKoi (Bugzilla #76)</b>
 <p>When attempting to edit a disseminator's label when using McKoi as the underlying 
   SQL database, the server would throw SQLException. This error was due to a typographical 
   error in the database column name being used. Oracle and MySQL are case insensitive 
@@ -582,7 +636,7 @@
   The case of the column name is now corrected and works for all three database 
   implementations.</p>
   </li>
-<li>Oracle error on ingest: cannot insert NULL into DSBIND.DS (Bugzilla #77)
+<li><b>Oracle error on ingest: cannot insert NULL into DSBIND.DS (Bugzilla #77)</b>
 <p>In certain situations when using Oracle as the underlying SQL database, ingest 
   would fail with SQLException. The cause was attempting to insert NULL into the 
   column dsBindKeySeq when no value was specified in the object for this optional 
@@ -591,15 +645,15 @@
   the object.</p>
   </li>
   
-<li>Editing object label containing apostrophe throws SQLException (Bugzilla 
-  #82)
+<li><b>Editing object label containing apostrophe throws SQLException (Bugzilla 
+  #82)</b>
 <p>When attempting to edit an object's label containing an apostrophe, the server 
   responds with SQLException. The apostrophe character is a special character 
   that must be properly escaped in SQL INSERT statements. Object labels are now 
   checked for special characters and properly escaped before issuing the SQL INSERT 
   command.</p>
   </li>
-<li>Oracle char(1) column types return with space padding (bugzilla #85)
+<li><b>Oracle char(1) column types return with space padding (bugzilla #85)</b>
 <p>It was observed that when using Oracle as the underlying SQL database, 
   column types of char(1) would return with space padding which could result in 
   errors downstream. This was not the case with McKoi or MySQL. The fix was to 
@@ -612,7 +666,7 @@
 
 <!-- Inserted Release Notes from Fedora 1.2.1 -->
 
-<div><h2 class="title" style="clear: both"><a name="rel1.2.1"></a>Release 1.2.1 (Bug Fix Release) - April 19, 2004</h2></div></div><p>Fedora 1.2.1 provides fixes to several bugs that were reported by users of Fedora 1.2.   The new release is backward compatible with Fedora 1.2 and contains no changes to the underlying database schema. 
+<div><h2 class="title" style="clear: both"><a name="rel1.2.1"></a>2. Release 1.2.1 (Bug Fix Release) - April 19, 2004</h2></div></div><p>Fedora 1.2.1 provides fixes to several bugs that were reported by users of Fedora 1.2.   The new release is backward compatible with Fedora 1.2 and contains no changes to the underlying database schema. 
 		</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e48"></a>IMPORTANT!! - Migrating From Fedora Releases Prior to Fedora 1.2</h3></div></div><p>Users wishing to migrate from releases prior to Fedora 1.2 need to follow the steps outlined in <a href="#rel1.2">Release 1.2 - December 15, 2003</a> and migrate to version 1.2 BEFORE attempting migration to Fedora 1.2.1.</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e55"></a>Migrating From Fedora 1.2 to Fedora 1.2.1</h3></div></div><p>
               If you are upgrading from Fedora 1.2:
             </p><div class="itemizedlist"><ul type="disc"><li><p>Shut down your existing repository using the fedora-stop command.</p></li><li><p>If you are using mysql, look at the new installation's config/fedora.fcfg file.  Find the line that contains the word "autoReconnect".  Open your old config/fedora.fcfg file and edit the jdbcURL parameter so it ends similarly (with "&amp;amp;autoReconnect=true").</p></li><li><p>Copy your old config/fedora.fcfg over the new one.</p></li><li><p>If you were using the bundled mckoi database with your previous installation, stop it with mckoi-stop.  Then go to the mckoi094 directory in the new release and create a directory there called "data".  Next, copy all mckoi094/data files from your previous installation to the NEW mckoi094/data directory.  (If you previously modified the db.conf file, copy that over to the new mckoi094 directory, too)
@@ -631,7 +685,7 @@ MIME types other than text/xml when the XMLMetadata radio button is checked. The
 				</h4></div></div><p>If a datastream has a state other than Active and it is bound to a disseminator or if already bound and the binding is removed/re-added, the state of the associated datastream is reset in the sql db to Active. This was a bug in fedora.server.storage.DefaultDOReplicator that had to do with the updating of dsBind table when creating or modifying datastream bindings. The datastream state is correct in the xml, but the replication is incorrect in the sql database. Before the fix, the state of the updated bindings was always being set to "A" so if the state of a datastream was other than "A" and a binding that used that datastream was created/modified, the state in the sql database was reset to "A". The state of the datastream in the xml is now used to set the state when creating or updating a binding map. This guarantees that the state in dsBind table will always be the sameas that of datastream in xml.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e171"></a>18. Batch Utiltity - Sample mets-template.xml used in batch utility demo contains metadata wrapper errors. (Bugzilla # 25)
 				</h4></div></div><p>Some of the METS metadata wrapper elements in the mets-template.xml example file used with the batch utility are incorrect. e.g., administrative source metadata is in a techMD wrapper element. The typographical errors have been corrected in the sample template file.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e176"></a>19. Oracle open_cursor limit exceeded (Bugzilla # 29)
 				</h4></div></div><p>Users implementing Fedora with Oracle reported that the database would hang when attempting deletes of large numbers of objects. The database hang was the result of exceeding the open_cursor limit set by the database. This problem has only been reported with Oracle. There are apparently some subtle differences between the various JDBC drivers and how they handle cleanup when a ResultSet or Statement is closed. The JDBC code has been modified to better handle these variations and address the open_cursor problem for Oracle users.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e181"></a>20. FedoraMets ID lengths - ID lengths silently ignored. (Bugzilla # 30)
-				</h4></div></div><p>Fedora stores the definitive copy of objects as xml, but for performance also replicates a copy of objects in an sql database. With xml, there are no limitations on the length of attribute values or content. However, the sql database does impose field lengths which restrict the length of identifiers and labels. Users reported the truncation of some identifers in the sql database as a result of having identifier strings in the xml that exceeded the database schema field lengths. The xml validation code has been modified to verify the length of Fedora identifiers.  Exceptions are now thrown at ingest time if any identifiers in the xml exceed the field lengths specified for those fields in the database schema. Currently, the validation is only applied to identifiers. Descriptive fields like labels, will be be truncated if they exceed the database schema field lengths. We will consider extending the validation checking to labels in the next release.</p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.2"></a>Release 1.2 - December 15, 2003</h2></div></div><p>This new release contains a number of significant new features, including content versioning, the complete implementation of the Fedora Management interface, and major additions to the Fedora Administrator client to enable object creation and editing.  With the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  Additionally, this release provides a migration utility for mass export and mass ingest of objects from either directories or other repositories.  The migration utility enables the moving of objects from older versions of Fedora repositories into the lastest version.  It also is of general utility for copying or moving objects among repositories, for unloading repositories, and for bulk ingest of objects.</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e191"></a>IMPORTANT!!! Upgrading From a Previous Release of Fedora</h3></div></div><p>Although Fedora 1.2 is backward compatible with previous versions of Fedora at the interface definition level,  there are changes to the underlying database schema that require digital objects to be migrated from an old Fedora installation to the new Fedora installation.   If you want to keep digital objects from an old repository and migreate them to the new Fedora 1.2 repository, you must run the migration utility provided with Fedora 1.2.  DO NOT INSTALL FEDORA 1.2 ON TOP OF THE PREVIOUS RELEASE.  To upgrade from a previous release and migrate digital objects into the new repository follow these steps: </p><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e196"></a>
+				</h4></div></div><p>Fedora stores the definitive copy of objects as xml, but for performance also replicates a copy of objects in an sql database. With xml, there are no limitations on the length of attribute values or content. However, the sql database does impose field lengths which restrict the length of identifiers and labels. Users reported the truncation of some identifers in the sql database as a result of having identifier strings in the xml that exceeded the database schema field lengths. The xml validation code has been modified to verify the length of Fedora identifiers.  Exceptions are now thrown at ingest time if any identifiers in the xml exceed the field lengths specified for those fields in the database schema. Currently, the validation is only applied to identifiers. Descriptive fields like labels, will be be truncated if they exceed the database schema field lengths. We will consider extending the validation checking to labels in the next release.</p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.2"></a>3. Release 1.2 - December 15, 2003</h2></div></div><p>This new release contains a number of significant new features, including content versioning, the complete implementation of the Fedora Management interface, and major additions to the Fedora Administrator client to enable object creation and editing.  With the advent of content versioning, the Fedora Access interfaces now support date-time stamped requests, so that a client can "go back in time" and see a digital object as it looked in the past.  Additionally, this release provides a migration utility for mass export and mass ingest of objects from either directories or other repositories.  The migration utility enables the moving of objects from older versions of Fedora repositories into the lastest version.  It also is of general utility for copying or moving objects among repositories, for unloading repositories, and for bulk ingest of objects.</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e191"></a>IMPORTANT!!! Upgrading From a Previous Release of Fedora</h3></div></div><p>Although Fedora 1.2 is backward compatible with previous versions of Fedora at the interface definition level,  there are changes to the underlying database schema that require digital objects to be migrated from an old Fedora installation to the new Fedora installation.   If you want to keep digital objects from an old repository and migreate them to the new Fedora 1.2 repository, you must run the migration utility provided with Fedora 1.2.  DO NOT INSTALL FEDORA 1.2 ON TOP OF THE PREVIOUS RELEASE.  To upgrade from a previous release and migrate digital objects into the new repository follow these steps: </p><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e196"></a>
 					<span class="emphasis"><em>STEP 1 - INSTALLATION: </em></span>
 				</h4></div></div><p>Follow the steps outlined in the <a href="../distribution/installation.html" target="_top">Fedora Installation Guide.</a>  If you plan to migrate digital objects from a repository that is a 	previous version of Fedora, be sure to configure the new Fedora 1.2 installation to run in parallel to the existing installation.  After the new Fedora 1.2 is installed, you will run a migration 	utility that will unload all objects from your old repository and ingest them into your new repository. <span class="emphasis"><em>If you are installing Fedora 1.2 on the same machine as a previous version, 	make sure to set the following configurations for the Fedora 1.2 installation:</em></span>
 				</p><div class="sect4"><div class="titlepage"></div><p>1. install Fedora 1.2 into a different directory than the previous installation (set $FEDORA_HOME environment variable accordingly)</p><p>2. initialize a new database for Fedora 1.2 using the database configuration scripts which are set up with new defaults.  If using MySQL, run mysql-config.bat (.sh for unix) with the new default database name of  &#8220;fedora12&#8221; (or your own new database name that differs from the name used in your pre-existing Fedora installation.  For McKoi, run the mkoi-init.bat (.sh for unix) which has a new default port number for Fedora 1.2. </p><p>3. set a different port for Fedora 1.2 to run on (fedoraServerPort in the Fedora config file fedora.fcfg)</p><p>4. set a different shutdown port for Fedora 1.2 (fedoraShutdownPort)</p><p>5. set a different redirect port for Fedora 1.2 (fedoraRedirectPort)</p><p>6. set a different storage path for digital objects (object_store_base)</p><p>7. set a different storage path for datastreams (datastream_store_base) </p><p>8. set a different storage path for temporary files (temp_store_base) </p><p>9. set the Fedora 1.2 repository to allow the PIDs from the old repository to be accepted (add namspaces to retainPIDs in fedora.fcfg)</p><p>10. if the OLD Fedora installation is running on <span class="emphasis"><em>a different machine</em></span>, modify the fedora configuration file of the OLD Fedora installation to 	requests to be made by the new Fedora 1.2 repository. (Add IP address of Fedora 1.2 repository to allowHosts in fedora.fcfg of OLD repository.)</p></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e234"></a>
@@ -645,7 +699,7 @@ MIME types other than text/xml when the XMLMetadata radio button is checked. The
 						<span class="emphasis"><em>b.  Selection of behavior contract for a Behavior Mechanism Objects.  </em></span>  A drop-down list of all the Behavior Definition objects in the connected repository is provided in the Behavior Mechanism builder.  The user can select a Behavior Definition as the behavior contract when building Behavior Mechanism objects.  The methods defined by the Behavior Definition objects are pre-loaded into the builder tool to assist in building a Behavior Mechanism object.</p></div><div class="sect4"><div class="titlepage"></div><p>
 						<span class="emphasis"><em>c. Various enhancements. </em></span>  Help buttons, better table entry for Dublin Core records, better management of dialog windows (e.g., no lost windows outside of main frame), minor bug fixes, and cosmetics.</p></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e332"></a>9.	Fedora Administrator - Batch Utility enhancement.</h4></div></div><p>A log file is now produced for all output of the batch processing.  Formerly, the results of batch processing initiated through Fedora Administrator were sent to the screen and could not be saved.  Log files are deposited in a new directory at FEDORA_HOME/client/logs.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e337"></a>10.  Fedora Administrator - Easier purge for multiple objects.</h4></div></div><p>A minor enhancement has been made to the Repository Search/Browse tool that allows multiple objects to be selected from search results and to be purged without the user being required to enter a log message for each object.  Now a single message can be entered for the whole set of objects, and the purge is activated over the whole selected set.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e342"></a>11.  XML schemas for all Fedora-generated XML.</h4></div></div><p>All XML formats that are used as to encode the results of Fedora API-A-LITE requests are now expressed as XML Schema.  These schema files are located in the FEDORA_HOME\dist\server\xsd directory, and are also referenced in the schemaLocation attribute on the root element of Fedora XML responses.</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e347"></a>BUG FIXES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e350"></a>1.	 Ingest exception &#8220;unknown protocol c&#8221; in Windows XP.</h4></div></div><p>Under rare conditions in some Windows XP installations, an obscure exception is thrown during object ingest that reports &#8220;unknown protocol c.&#8221; This bug was traced to the digital object validation module, specifically in the Schematron validation phase (see DOValidatorSchematron.java).   The problem had to do with instantiation of stylesheets. In previous versions of Fedora, the Schematron preprocessing stylesheet was configured in the repository using a local file path to a location in the Fedora server (see fedora.fcfg).  In some of the XP installations of Fedora, the XSLT processor had problems instantiating an XSLT stylesheet whose input location was defined with a file path.  The problem was fixed by ensuring that all stylesheets are instantiated in a StreamSource object via a URL instead of file path.  </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e355"></a>2.	 Failure on database connections with MySQL 3.23.53-3.23.58 on Windows.</h4></div></div><p>In particular older versions of MySQL on the Windows platform there is a problem related to case sensitivity in database names that prevents database connections.  Specifically, if a database is configured (e.g., via the Fedora mysql-config script) with a database name that is mixed upper and lower case characters, the database will not be recognizable at runtime.  In these older versions of MySQL,  the mixed case database name is accepted at configuration time, and loaded into the MySQL system tables.  However, MySQL then creates the actual database directory on the filesystem with all lower case.  Thus, at runtime, there is a mismatch between what&#8217;s listed in the MySQL system table and what&#8217;s on the file system.  In these offending versions of MySQL, the database is not found due to this case sensitivity problem.  The work-around for this is to use all lower case characters in the database name (e.g., "fedoraobjects" ) when performing the database configurations.  However, since the problem is fixed in Windows MySQL 4.x and later, it is recommended that Fedora administrators install the latest production version of MySQL (currently 4.0.16).</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e360"></a>3.	 Datastream size limit problem via Default Disseminator requests.</h4></div></div><p>Access to Datastreams via the Default Disseminator methods could fail for very large Datastreams in repositories running with limited memory.  The problem was traced to sections of code in DefaultBehaviorImpl where the Datastream content was being passed as a byte array instead of as an InputStream.  All code now streams content via InputStream classes.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e365"></a>4.	Concurrent ingest failure.</h4></div></div><p>When two clients were simultaneously ingesting objects into a repository, an ingest failure would occur if the ingest requests hit the repository at exactly the same time.  The exception reported by Fedora was that &#8220;temp-ingest already exists&#8221; which means that the temporary PID named &#8220;temp-ingest&#8221; was already in use.  The problem was fixed by having all temporary PIDS appended with a date-time stamp, rendering them unique within a running repository instance.  Now multiple concurrent client processes can run ingests against the repository.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e370"></a>5.	ConcurrentModificationException on API-A-LITE.</h4></div></div><p>This has shown up periodically when clients are running searches via API-A-LITE.  The problem was traced to a part of the code that was cleaning up stale search sessions.  Java throws a ConcurrentModificationException exception when you are iterating over something and trying to change it at the same time. The solution was to build a separate list of to-be-deleted items while iterating through  the session list, and then, when finished, remove the appropriate items from the  session list. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e375"></a>6.	OAI provider service not escaping characters properly.</h4></div></div><p>Fedora OAI provider service was not escaping internal entities (e.g., ampersands).  For example, if the Dublin Core record contains an ampersand, the OAI output only produced a single ampersand character instead of the escaped encoding.  This is now fixed and entities are properly escaped. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e380"></a>7.	Dissemination of Inactive or Deleted Datastreams.</h4></div></div><p>If a datastream had a non-active state, it was still able to be disseminated via API-A and API-A-Lite.  Inactive or deleted datastreams are not intended to be exposed via the Fedora Access interfaces.  However, inactive datastreams are always discoverable via the Fedora Management interface.  In this new release, only active (state=&#8221;A&#8221;) datastreams will be exposed via API-A and API-A-Lite.  If a dissemination is run that involves a non-active datastream, the repository will throw an exception and provide a meaningful message. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e385"></a>8.	Possible Database Corruption as Result of Purging Objects.</h4></div></div><p>Due to the way the relational database for the object cache was normalized, there was the potential for database corruption to occur in certain cases of purging objects.  During purge, rows in the datastream binding map table could be inadvertently deleted during a purge object operation when there were still other objects depending on those rows.   New referential integrity checks have been put into the database replication module to ensure that this will not occur. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e390"></a>9.  DateTimeStamp Using 12 Hour Clock Schema.</h4></div></div><p>The format being used to initialize the DateTimeStamp was using the 12-hour clock setting instead of the 24-hour clock setting. This is fixed now and all DateTimeStamp values use the 24-hour clock format.
 </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e395"></a>10.  API-A Not Functional With Example Soap Client When Running On Different Host (12/2)</h4></div></div><p>If the example soap client was installed on a different host than the Fedora server, API-A requests would fail to display the transformed xml-to-html results. This was caused by a typographical error in the name of the stylesheet parameter in soapclient properties file that conveyed the Fedora server hostname. This is fixed now and example soap client can be run on any host.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e400"></a>11.  Mckoi-stop.sh Ignoring FEDORA_JAVA_HOME</h4></div></div><p>Mckoi-stop.sh script was ignoring environment variable for FEDORA_JAVA_HOME. This is fixed now.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e405"></a>12.  FedoraAccessSOAPClient Returns ServletException When Disseminating Datastreams of Type "Redirected"</h4></div></div><p>Attempts to disseminate datastreams that are of type "R' caused the soap client servlet to throw ServletException. This was caused by a ServletOutputStream being closed prematurely in FedoraAccessSOAPServlet. This is fixed now and Redirected datastreams can be disseminated using the soap client.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e410"></a>13.  Minor Bug Fixes to BDef/BMech Builder</h4></div></div><p> Reworked bmech builder class action listeners to keep bmech template object update in memory for every change to tabpane. This fixes bug where ds binding keys don't stay updated properly in pre-load of dsinput pane. Also, various other improvements in validation. Fixed bug where methodURL fields for the method being created did not property clean out when change among radio buttons occured (to change the URL from service base, to local service, to multiserver). Previously if you started things off with a service baseURL, then entered the baseURL, then changed to a LOCAL service or multi-server, the baseURL would still be hanging out in the method URL fields.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e415"></a>14.  ListDatastreamIDs in FastDOReader returns ClassCastException</h4></div></div><p>A Datastream data type was being erroneously cast as a String which caused the Exception. This has now been fixed so that ListDatastreamIDs returns the appropriate list of datastream IDs.</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e420"></a>KNOWN ISSUES (and ways to avoid them):</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e423"></a>1. Setting Object State on Ingest XML.</h4></div></div><p>In a METS XML file used for ingest, object state is encoded on the RECORDSTATUS attribute of the METS header element.  If this value is populated on the ingest file, the Fedora repository will accept it as is.  Therefore, if the value of RECORDSTATUS is set to anything other than &#8220;A&#8221; (Active), the object will NOT be accessible via the Fedora Access interface.  In other words, the object will not be considered active, and it will not be able to be disseminated.  If objects are ingested in the inactive state,  the state can be modified via the new object editor in the Fedora Administrator client (see menu item File/Open Object). </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e428"></a>2.	Bug in MySQL v4.0.12 on Linux causes database corruption.</h4></div></div><p>The problem shows up only in Linux when running MySQL v4.0.12.  Specifically, if a purgeDisseminator operation is run in the Fedora repository the problem is provoked.  Normally, the  purgeDisseminator operation removes a disseminator from a Fedora object XML store, and also initiates a replication process to make sure the disseminator is removed from the relational database object cache.  Internal to the Fedora code, an SQL delete query is run via JDBC.  The bug occurred when a the delete query was run.  The query uses a where clause that should dependably evaluate to FALSE (i.e., &#8220;WHERE 1=2&#8221;), but in this particular version of MySQL under Linux, the query curiously and erroneously evaluates to TRUE.  This particular query is intended to prevent certain rows from being deleted from the database.  Instead rows are deleted resulting in referential integrity problems in the database.  <span class="emphasis"><em>The solution to this problem is to upgrade to MySQL v4.0.14 or higher which does not have this bug!</em></span>
-				</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e436"></a>3.	Field Search via API-A (SOAP binding) not backwards compatible.</h4></div></div><p>Due to a type definition change in the WSDL for API-A, the SOAP binding for the field search operation (i.e., findObjects) in not backward compatible across prior releases of Fedora.  Thus, a search initiated via API-A (using SOAP) from a Fedora 1.2 client can not be fulfilled by a Fedora 1.1 or 1.0 server.  In the WSDL for API-A, the findObjects operation defined a return type of fedora-types:FieldSearchResult (which is an array of fedora-types:ObjectFields).  Formerly, fedora-types:ObjectFields defined an element named &#8220;locker.&#8221; In Fedora 1.2, that element is now defined as &#8220;owner.&#8221;  Such interface changes are not accommodated by the Apache Axis library used to process SOAP requests.  Fedora does not currently maintain different versions of its WSDL, so the change occurs in the &#8220;official&#8221; WSDL for the Fedora Access service.  The problem can be bypassed by clients using the REST-oriented binding for the findObjects operation (see API-A-Lite in Fedora 1.2).  The REST-oriented binding provides for a looser method binding, and allows the XML result be returned without type checking.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e441"></a>4.	Behavior Mechanisms with SOAP Bindings Not Yet Supported.</h4></div></div><p>(see release notes for Fedora 1.1).</p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.1.1"></a>Release 1.1.1 (Bug Fix Release) - September 5, 2003</h2></div></div><p>Fedora 1.1.1 provides a fix for bugs detected by users of Fedora 1.1.</p><p>The new release is backward compatible with Fedora 1.1. If you are updating from an earlier release, please refer to the release notes for Fedora 1.1 regarding backward compatibility issues and new features introduced in Fedora 1.1</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e454"></a>BUG FIXES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e457"></a>1. SQL DB Corruption During Datastream Modification</h4></div></div><p>The bug was an errant update query for the SQL database 
+				</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e436"></a>3.	Field Search via API-A (SOAP binding) not backwards compatible.</h4></div></div><p>Due to a type definition change in the WSDL for API-A, the SOAP binding for the field search operation (i.e., findObjects) in not backward compatible across prior releases of Fedora.  Thus, a search initiated via API-A (using SOAP) from a Fedora 1.2 client can not be fulfilled by a Fedora 1.1 or 1.0 server.  In the WSDL for API-A, the findObjects operation defined a return type of fedora-types:FieldSearchResult (which is an array of fedora-types:ObjectFields).  Formerly, fedora-types:ObjectFields defined an element named &#8220;locker.&#8221; In Fedora 1.2, that element is now defined as &#8220;owner.&#8221;  Such interface changes are not accommodated by the Apache Axis library used to process SOAP requests.  Fedora does not currently maintain different versions of its WSDL, so the change occurs in the &#8220;official&#8221; WSDL for the Fedora Access service.  The problem can be bypassed by clients using the REST-oriented binding for the findObjects operation (see API-A-Lite in Fedora 1.2).  The REST-oriented binding provides for a looser method binding, and allows the XML result be returned without type checking.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e441"></a>4.	Behavior Mechanisms with SOAP Bindings Not Yet Supported.</h4></div></div><p>(see release notes for Fedora 1.1).</p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.1.1"></a>4. Release 1.1.1 (Bug Fix Release) - September 5, 2003</h2></div></div><p>Fedora 1.1.1 provides a fix for bugs detected by users of Fedora 1.1.</p><p>The new release is backward compatible with Fedora 1.1. If you are updating from an earlier release, please refer to the release notes for Fedora 1.1 regarding backward compatibility issues and new features introduced in Fedora 1.1</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e454"></a>BUG FIXES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e457"></a>1. SQL DB Corruption During Datastream Modification</h4></div></div><p>The bug was an errant update query for the SQL database 
 that when modifying a datastream it had the potential for 
 corrupting the SQL database dsBind table. It only got
 introduced when attempting to modify a Datastream using the 
@@ -659,10 +713,10 @@ command is safe to use.</p></div><div class="sect3"><div class="titlepage"><div>
                         modifyDatastreamByReference required that something was provided
                         for the DSLocation.  Now, if DSLocation is passed in a null or empty,
                         the original datastream content will be used (no change).
-                        </p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.1"></a>Release 1.1 (Bug Fix Release) - August 5, 2003</h2></div></div><p>Fedora 1.1 provides fixes to several bugs that were detected by users of Fedora 1.0.   It also provides a new API-A method (&#8220;describeRepository&#8221;) that enables a client to obtain information about the repository server.</p><p>The new release is backward compatible with Fedora 1.0, with the exception of the Fedora server configuration file.  If you are upgrading from Fedora 1.0, use you will need to enter your configuration values from the old Fedora 1.0 configuration file into the new configuration file provided with Fedora 1.1.  </p><p>Aside from this, the Fedora 1.1 software is compatible with pre-existing digital objects created in Fedora 1.0.  There is no need to re-create or convert existing digital objects.  Fedora 1.1 can be configured to point at the existing file system location where Fedora 1.0 objects are stored, and to the existing relational database that contains information about the digital objects. </p><p>** REMEMBER:  Do NOT use the Fedora 1.0 server configuration file (fedora.fcfg) with the new Fedora 1.1 release. </p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e483"></a>NEW FEATURES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e486"></a>1. New API-A Method For Repository Info. </h4></div></div><p>The API-A and API-A-LITE interfaces now define and implement the &#8220;describeRepository&#8221; request.  This request will provide information about the repository server including repository name, version, base URL, and other attributes.  The repository information can be obtained in either XML or HTML formats.</p><p>The API-A-LITE syntax is: <span class="bold"><b>http://yourhost:yourport/fedora/describe</b></span>
-				</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e496"></a>2. Server Support For Self-Referential URLs.  </h4></div></div><p>The Fedora server now has internal support for avoiding breakage of self-referential URLs (i.e., URLs that contain the hostname and port of the Fedora server itself).  This change allows the Fedora server host and port to be re-configured without breaking digital objects that contained URLs that referred to a previous host and port configuration. There are two places where self-referential URLs may exist:  (1) in Behavior Mechanism Objects, where service bindings refer to a &#8220;local service&#8221; that runs within the repository server, and (2) in objects that contain a Datastream that references a dissemination of a digital object that is stored in the local repository.   </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e501"></a>3.  New Source Code Revision Numbers. </h4></div></div><p>Java Docs will now show the revision number generated from the Fedora CVS repository.   These will not reflect the current Fedora software release number, but the actual version of the particular java source file. This will make it easier to determine whether a particular piece of code has changed from one Fedora release to another.  For example, the source file FedoraAccessServlet.java has a release number of 1.58 as distributed within the Fedora 1.1 software.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e506"></a>4.  Suppression of Messages in Standard Out.  </h4></div></div><p> All non-essential  debugging and logging messages were removed from standard out.  All meaningful server messages are now sent to the Fedora server log file.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e511"></a>5.  Oracle 9i Support. </h4></div></div><p>The Fedora server now has support for Oracle 9i.  See Fedora system documentation for details..</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e516"></a>BUG FIXES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e519"></a>1.  Failure of Batch Client Utility in UNIX Environment.</h4></div></div><p>Specifically, a failure in running the Batch Build and Batch Build and Ingest menu items in the AdminGUI client when running the client in X-Windows.  The batch utility could not correctly resolve file locations of object-specific files.</p><p>REPORTED ERROR: Recoverable error. java.net.UnknownHostException</p><p>FIX: The problem was traced to line 196 of fedora.client.batch.BatchXforms and has to do with the number of slashes in the file path (i.e., file:///).  Solaris (and perhaps UNIX in general) wants only 2-trailing slashes instead of three.  Places in the code where this has been a problem have been modified to ensure that any such URL strings are instantiated as a java.io.File object, then converted to a java.net.URI object.  The URL string is finally obtained via the toString() method of the java.net.URI class.  The strings generated in this manner are acceptable on both Windows and UNIX platforms.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e528"></a>2.  Unable to Ingest Demo Objects when Fedora Server NOT on Port 8080.</h4></div></div><p>The problem occurs because the METS xml files for the demo digital objects contain URLs that assume that the repository is running on port 8080.  The URLs point to the location of the demo content that is served up by the local repository server.</p><p>REPORTED ERROR: [DefaultExternalContentManager] returned an error. The underlying error was a fedora.server.errors.StreamIOException The message was "Server returned a non-200 response code (404) from GET request of URL: http://localhost:8080/demo/batch-demo/thumb/americanacademy.jpg"</p><p>FIX:  There are two kinds of demos that are affected:  &#8220;batch demos&#8221; that are loaded via the batch tool and &#8220;local server demos.&#8221;  The content for the batch demos has been moved to www.fedora.info where it will always be available.  The METS xml files for the batch demo objects now have URLs that point to the demo content at this stable location.  The &#8220;local server demos&#8221; are intended to be run completely within the local server context (meaning a network connection is not necessary to run them).   The content for these objects must, therefore, remain local to the Fedora server.  A new command line utility called &#8220;fedora-convert-demos&#8221; is provided to convert demo object xml files to reference the currently configured host and port.  If the Fedora repository is configured to a host and port other than the default of localhost:8080, the &#8220;fedora-convert-demos&#8221; utility should be run before ingesting local demo objects into the repository. The &#8220;fedora-convert-demos&#8221; is found in the FEDORA_HOME/client/bin/ directory.  Instructions on running the utility can be found in the Client Documentation section of the system documentation.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e537"></a>3.  Failure of Server Start-up when Running with Java 1.4.2.</h4></div></div><p>The Fedora server fails during initialization of the DefaultAccess module.  DefaultAccess tries to use a dependent module (DOManager) that has not yet been loaded by the Fedora server.  The problem does NOT occur in Java 1.4.0 or 1.4.1.</p><p>REPORTED ERROR: Can't get a DOManager from Server.getModule</p><p>FIX:  DefaultAccess is a server module, that itself needs access to other server modules.  The DefaultAccess module initialization fails because DefaultAccess tries to access a dependent module (DOManager) that has not yet been loaded by the server.  The problem is that server modules are not loaded in any particular order on server startup.  Within any particular module&#8217;s initModule method, you can't assume that ANY other modules are available from the server via the getModule(...) call.  The solution is to move chunks of code like this to the postInitModule(...) method of the module in question.  At THIS point in the server's lifecycle, you can assume that all modules have been loaded and are available via getModule(...), and that their initModule(...) methods have been called.  Fedora server modules are listed in a HashMap.  The reason that this problem showed up in Java 1.4.2 and not prior versions is that the order in which entries are put in a HashMap has changed in Java 1.4.2.  It was just coincidence that the problem did not show up in prior Java versions (that loaded the HashMap in a different order.)</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e546"></a>4.  Hard-coding of Defaults for Server Host and Port.</h4></div></div><p>There were several places in the Fedora 1.0 code base where the default host and port of the server was hard-coded as &#8220;localhost:8080&#8221;.  This required the repository administrator to make multiple changes when configuring a Fedora server to run on a different host or port.</p><p>FIX:  All references to hostname and port are now driven off the fedoraServerHost and fedoraServerPort parameters in the Fedora server configuration file (fedora.fcfg).  With this fix, a simple modification to these parameters and a re-starting the server is all that is necessary to change where the fedora server runs.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e553"></a>5.  Fedora Shutdown and Redirect Ports Hard-coded. </h4></div></div><p>The Fedora server shutdown and redirect ports were not configurable.  They were hard-coded in the Tomcat server_template.xml file as &#8220;8005&#8221; and  &#8220;8443&#8221; respectively.</p><p>FIX: These are now configurable in the Fedora server configuration file (fedora.fcfg).</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e560"></a>6.	OAI Identifier was NOT Configurable. </h4></div></div><p>The repository domain name part of the OAI identifier was not configurable.  It was hard-wired to be &#8220;fedora.info&#8221; which is not unique to a repository.</p><p> FIX: The Fedora server configuration file (fedora.fcfg) now has a repository domain name parameter in the OAI-PMH module.</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e567"></a>KNOWN ISSUES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e570"></a>1.  Remote Password-protected Datastreams Need to be Redirected:</h4></div></div><p> Fedora 1.0 and 1.1 servers are unable to mediate access to remote datastreams that are password-protected.  Currently, Fedora provides IP restriction for its own interfaces (API-A and API-M).  However, at this time, it does not handle backend security handshakes with remote servers.   Thus, when a digital object makes reference to a datastream on a remote server and that server protects its content with HTTP Basic Authentication, Fedora will not be able to negotiate with the remote server to access that content.  The way around this is to make sure that such datastreams are marked with as type R (Redirected Content).  This is done in the METS XML file by setting OWNERID=R on the METS file element that used to encode the datastream. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e575"></a>2.  Behavior Mechanisms with SOAP Bindings Not Yet Supported:</h4></div></div><p>  Fedora 1.0 and 1.1 servers cannot currently communicate with external web services that require the SOAP messaging protocol.   This means that Behavior Mechanism Objects should not include WSDL that describes a service with SOAP bindings.   In the current release, Fedora is able to communicate with web services that can be accessed via URLs using a simple HTTP GET (REST-style web services).  The next release of Fedora will include a SOAP dispatching module which will enable the Fedora server to send SOAP requests to other services and receive SOAP responses from those services.  </p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.0"></a>Release 1.0 - May 16, 2003</h2></div></div><p>This release is the first public release of the Fedora repository system. Fedora is licensed under the Mozilla License. Refer to the README and COPYING files in the distribution for details of the license and restrictions governing copying and redistribution. This release includes some major changes since release 0.9 that include the following additions and enhancements.
+                        </p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.1"></a>5. Release 1.1 (Bug Fix Release) - August 5, 2003</h2></div></div><p>Fedora 1.1 provides fixes to several bugs that were detected by users of Fedora 1.0.   It also provides a new API-A method (&#8220;describeRepository&#8221;) that enables a client to obtain information about the repository server.</p><p>The new release is backward compatible with Fedora 1.0, with the exception of the Fedora server configuration file.  If you are upgrading from Fedora 1.0, use you will need to enter your configuration values from the old Fedora 1.0 configuration file into the new configuration file provided with Fedora 1.1.  </p><p>Aside from this, the Fedora 1.1 software is compatible with pre-existing digital objects created in Fedora 1.0.  There is no need to re-create or convert existing digital objects.  Fedora 1.1 can be configured to point at the existing file system location where Fedora 1.0 objects are stored, and to the existing relational database that contains information about the digital objects. </p><p>** REMEMBER:  Do NOT use the Fedora 1.0 server configuration file (fedora.fcfg) with the new Fedora 1.1 release. </p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e483"></a>NEW FEATURES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e486"></a>1. New API-A Method For Repository Info. </h4></div></div><p>The API-A and API-A-LITE interfaces now define and implement the &#8220;describeRepository&#8221; request.  This request will provide information about the repository server including repository name, version, base URL, and other attributes.  The repository information can be obtained in either XML or HTML formats.</p><p>The API-A-LITE syntax is: <span class="bold"><b>http://yourhost:yourport/fedora/describe</b></span>
+				</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e496"></a>2. Server Support For Self-Referential URLs.  </h4></div></div><p>The Fedora server now has internal support for avoiding breakage of self-referential URLs (i.e., URLs that contain the hostname and port of the Fedora server itself).  This change allows the Fedora server host and port to be re-configured without breaking digital objects that contained URLs that referred to a previous host and port configuration. There are two places where self-referential URLs may exist:  (1) in Behavior Mechanism Objects, where service bindings refer to a &#8220;local service&#8221; that runs within the repository server, and (2) in objects that contain a Datastream that references a dissemination of a digital object that is stored in the local repository.   </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e501"></a>3.  New Source Code Revision Numbers. </h4></div></div><p>Java Docs will now show the revision number generated from the Fedora CVS repository.   These will not reflect the current Fedora software release number, but the actual version of the particular java source file. This will make it easier to determine whether a particular piece of code has changed from one Fedora release to another.  For example, the source file FedoraAccessServlet.java has a release number of 1.58 as distributed within the Fedora 1.1 software.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e506"></a>4.  Suppression of Messages in Standard Out.  </h4></div></div><p> All non-essential  debugging and logging messages were removed from standard out.  All meaningful server messages are now sent to the Fedora server log file.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e511"></a>5.  Oracle 9i Support. </h4></div></div><p>The Fedora server now has support for Oracle 9i.  See Fedora system documentation for details..</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e516"></a>BUG FIXES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e519"></a>1.  Failure of Batch Client Utility in UNIX Environment.</h4></div></div><p>Specifically, a failure in running the Batch Build and Batch Build and Ingest menu items in the AdminGUI client when running the client in X-Windows.  The batch utility could not correctly resolve file locations of object-specific files.</p><p>REPORTED ERROR: Recoverable error. java.net.UnknownHostException</p><p>FIX: The problem was traced to line 196 of fedora.client.batch.BatchXforms and has to do with the number of slashes in the file path (i.e., file:///).  Solaris (and perhaps UNIX in general) wants only 2-trailing slashes instead of three.  Places in the code where this has been a problem have been modified to ensure that any such URL strings are instantiated as a java.io.File object, then converted to a java.net.URI object.  The URL string is finally obtained via the toString() method of the java.net.URI class.  The strings generated in this manner are acceptable on both Windows and UNIX platforms.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e528"></a>2.  Unable to Ingest Demo Objects when Fedora Server NOT on Port 8080.</h4></div></div><p>The problem occurs because the METS xml files for the demo digital objects contain URLs that assume that the repository is running on port 8080.  The URLs point to the location of the demo content that is served up by the local repository server.</p><p>REPORTED ERROR: [DefaultExternalContentManager] returned an error. The underlying error was a fedora.server.errors.StreamIOException The message was "Server returned a non-200 response code (404) from GET request of URL: http://localhost:8080/demo/batch-demo/thumb/americanacademy.jpg"</p><p>FIX:  There are two kinds of demos that are affected:  &#8220;batch demos&#8221; that are loaded via the batch tool and &#8220;local server demos.&#8221;  The content for the batch demos has been moved to www.fedora.info where it will always be available.  The METS xml files for the batch demo objects now have URLs that point to the demo content at this stable location.  The &#8220;local server demos&#8221; are intended to be run completely within the local server context (meaning a network connection is not necessary to run them).   The content for these objects must, therefore, remain local to the Fedora server.  A new command line utility called &#8220;fedora-convert-demos&#8221; is provided to convert demo object xml files to reference the currently configured host and port.  If the Fedora repository is configured to a host and port other than the default of localhost:8080, the &#8220;fedora-convert-demos&#8221; utility should be run before ingesting local demo objects into the repository. The &#8220;fedora-convert-demos&#8221; is found in the FEDORA_HOME/client/bin/ directory.  Instructions on running the utility can be found in the Client Documentation section of the system documentation.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e537"></a>3.  Failure of Server Start-up when Running with Java 1.4.2.</h4></div></div><p>The Fedora server fails during initialization of the DefaultAccess module.  DefaultAccess tries to use a dependent module (DOManager) that has not yet been loaded by the Fedora server.  The problem does NOT occur in Java 1.4.0 or 1.4.1.</p><p>REPORTED ERROR: Can't get a DOManager from Server.getModule</p><p>FIX:  DefaultAccess is a server module, that itself needs access to other server modules.  The DefaultAccess module initialization fails because DefaultAccess tries to access a dependent module (DOManager) that has not yet been loaded by the server.  The problem is that server modules are not loaded in any particular order on server startup.  Within any particular module&#8217;s initModule method, you can't assume that ANY other modules are available from the server via the getModule(...) call.  The solution is to move chunks of code like this to the postInitModule(...) method of the module in question.  At THIS point in the server's lifecycle, you can assume that all modules have been loaded and are available via getModule(...), and that their initModule(...) methods have been called.  Fedora server modules are listed in a HashMap.  The reason that this problem showed up in Java 1.4.2 and not prior versions is that the order in which entries are put in a HashMap has changed in Java 1.4.2.  It was just coincidence that the problem did not show up in prior Java versions (that loaded the HashMap in a different order.)</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e546"></a>4.  Hard-coding of Defaults for Server Host and Port.</h4></div></div><p>There were several places in the Fedora 1.0 code base where the default host and port of the server was hard-coded as &#8220;localhost:8080&#8221;.  This required the repository administrator to make multiple changes when configuring a Fedora server to run on a different host or port.</p><p>FIX:  All references to hostname and port are now driven off the fedoraServerHost and fedoraServerPort parameters in the Fedora server configuration file (fedora.fcfg).  With this fix, a simple modification to these parameters and a re-starting the server is all that is necessary to change where the fedora server runs.</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e553"></a>5.  Fedora Shutdown and Redirect Ports Hard-coded. </h4></div></div><p>The Fedora server shutdown and redirect ports were not configurable.  They were hard-coded in the Tomcat server_template.xml file as &#8220;8005&#8221; and  &#8220;8443&#8221; respectively.</p><p>FIX: These are now configurable in the Fedora server configuration file (fedora.fcfg).</p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e560"></a>6.	OAI Identifier was NOT Configurable. </h4></div></div><p>The repository domain name part of the OAI identifier was not configurable.  It was hard-wired to be &#8220;fedora.info&#8221; which is not unique to a repository.</p><p> FIX: The Fedora server configuration file (fedora.fcfg) now has a repository domain name parameter in the OAI-PMH module.</p></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e567"></a>KNOWN ISSUES:</h3></div></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e570"></a>1.  Remote Password-protected Datastreams Need to be Redirected:</h4></div></div><p> Fedora 1.0 and 1.1 servers are unable to mediate access to remote datastreams that are password-protected.  Currently, Fedora provides IP restriction for its own interfaces (API-A and API-M).  However, at this time, it does not handle backend security handshakes with remote servers.   Thus, when a digital object makes reference to a datastream on a remote server and that server protects its content with HTTP Basic Authentication, Fedora will not be able to negotiate with the remote server to access that content.  The way around this is to make sure that such datastreams are marked with as type R (Redirected Content).  This is done in the METS XML file by setting OWNERID=R on the METS file element that used to encode the datastream. </p></div><div class="sect3"><div class="titlepage"><div><h4 class="title"><a name="d0e575"></a>2.  Behavior Mechanisms with SOAP Bindings Not Yet Supported:</h4></div></div><p>  Fedora 1.0 and 1.1 servers cannot currently communicate with external web services that require the SOAP messaging protocol.   This means that Behavior Mechanism Objects should not include WSDL that describes a service with SOAP bindings.   In the current release, Fedora is able to communicate with web services that can be accessed via URLs using a simple HTTP GET (REST-style web services).  The next release of Fedora will include a SOAP dispatching module which will enable the Fedora server to send SOAP requests to other services and receive SOAP responses from those services.  </p></div></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel1.0"></a>6. Release 1.0 - May 16, 2003</h2></div></div><p>This release is the first public release of the Fedora repository system. Fedora is licensed under the Mozilla License. Refer to the README and COPYING files in the distribution for details of the license and restrictions governing copying and redistribution. This release includes some major changes since release 0.9 that include the following additions and enhancements.
 		</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e585"></a>1.  Behavior Definition and Behavior Mechanism Object Builder </h3></div></div><p>A new tool has been added to the Admin client that facilitates the building of behavior definition and behavior mechanism objects. The bdef/bmech builder provides a graphical user interface that greatly simplifies the task of creating behavior definition and behavior mechanism objects from scratch.</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e590"></a>2.  Additional Component Management Method Implemented</h3></div></div><p>Several additional methods in API-M have been implemented. The new methods include</p><div class="itemizedlist"><ul type="disc"><li><p>GetDatastream &#8211; retrieve the specified datastream</p></li><li><p>GetDisseminator &#8211; retrieve the specified disseminator</p></li><li><p>ListDatastreamIDs &#8211; obtain a list of datastream IDs</p></li><li><p>ListDisseminatorIDs &#8211; obtain a list of disseminator IDs</p></li><li><p>ModifyDatastreamExternal &#8211; change the pointer to a Referenced External Content datastream</p></li><li><p>ModifyDatastreamManagedContent &#8211; change the contents of a Managed Content datastream</p></li><li><p>ModifyDatastreamXMLMetadata  - change the contents of an Implementor-Defined XML Metadata datastream</p></li><li><p>modifyDisseminator  - modify the references to the behavior definition or behavior mechanism associated with the specified disseminator</p></li></ul></div></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e620"></a>3.  Batch Utility Enhancements</h3></div></div><p>The Batch Utility has been enhanced to make it less platform specific:  all application files are now specified relative to the FEDORA_HOME environment variable.  Also, a new tool has been added, combining  build and ingest into a single step.
-</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e625"></a>4.  Documentation</h3></div></div><p>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User&#8217;s Guide, and Developer&#8217;s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</p><p>http://hostname:port/userdocs</p><div class="itemizedlist"><ul type="disc"><li><p>hostname - required hostname of the Fedora server.</p></li><li><p>port - required port number on which the Fedora server is running.</p></li><li><p>userdocs - a required parameter specifying the Fedora servlet path hostname - required hostname of the Fedora server.</p></li></ul></div><p>In-line documentation in the source code has also been updated.</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel0.9"></a>Release 0.9 - March 7, 2003</h2></div></div><p>
+</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e625"></a>4.  Documentation</h3></div></div><p>The Fedora documentation now includes revised and enhanced Installation Guide, Release Notes, Manual, and Demos Guide. The Fedora manual includes a general introduction to the architecture, Installation Guide, User&#8217;s Guide, and Developer&#8217;s Guide. Upon successful installation, all documentation is also available through the userdocs webapp and can be access using the syntax:</p><p>http://hostname:port/userdocs</p><div class="itemizedlist"><ul type="disc"><li><p>hostname - required hostname of the Fedora server.</p></li><li><p>port - required port number on which the Fedora server is running.</p></li><li><p>userdocs - a required parameter specifying the Fedora servlet path hostname - required hostname of the Fedora server.</p></li></ul></div><p>In-line documentation in the source code has also been updated.</p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="rel0.9"></a>7. Release 0.9 - March 7, 2003</h2></div></div><p>
         This release includes major changes since the December Beta1 release 
         that include the following additions and enhancements.
         </p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e649"></a>1.  Repository-Managed Content Datastreams</h3></div></div><p>
@@ -703,7 +757,7 @@ There are two categories of demonstrations:
 For additional information refer to the demos.html file in the userdocs directory.
             </p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e734"></a>13.  Documentation</h3></div></div><p>
             After you have installed the software and started the server, you can access the documentation at http://localhost:8080/userdocs (substitute your own hostname and port number if using something other than the default).
-            </p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="relbeta1"></a>Beta 1 - Dec 20, 2002</h2></div></div><p>
+            </p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="relbeta1"></a>8. Beta 1 - Dec 20, 2002</h2></div></div><p>
 		This release adds several important features to the Fedora software,
 		including a batch ingest tool, parameterized disseminations,
         and datastream mediation.  Digital object serialization and
@@ -798,7 +852,7 @@ For additional information refer to the demos.html file in the userdocs director
            diagrams updated.
          Master Specification Document updated. The Specification documented
            distributed in June 2002 has been updated to reflect changes.
-          </p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="relalpha1"></a>Alpha 1 - Oct 31, 2002</h2></div></div><p>
+          </p></div></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="relalpha1"></a>9. Alpha 1 - Oct 31, 2002</h2></div></div><p>
          Provided for the first time at the
          development/deployment team meeting at UVA, this release
          includes a basic server that can ingest
@@ -828,6 +882,22 @@ For additional information refer to the demos.html file in the userdocs director
            </p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e882"></a>6.  Storage Subsystem</h3></div></div><p>This has been implemented on top of a filesystem and a
              partially redundant database.
            </p></div></div>
-<!-- end Inserted release notesf rom Fedora 1.2.1 -->		   
+<!-- end Inserted release notesf rom Fedora 1.2.1 -->	
+  <div class="footer">
+    <span style="float: left;">
+      <em>Copyright &#xA9; 2005 Fedora Project</em>
+    </span>
+    <span style="float: right;">
+      <em>
+        Last Modified
+        <script>
+          var cvsDate = "$Date$";
+          var parts = cvsDate.split(" ");
+          var modifiedDate = parts[1];
+          document.write(modifiedDate);
+        </script>
+      </em>
+    </span>
+  </div>	   
 </body>
 </html>
