@@ -7,6 +7,7 @@ public class BMechTemplate {
 
     private String bDefPID = null;
     private String bMechLabel = null;
+    private String bMechName = null;
     private DCElement[] dcRecord = new DCElement[0];
     private boolean hasBaseURL;
     private String serviceBaseURL;
@@ -37,6 +38,16 @@ public class BMechTemplate {
     public void setbMechLabel(String bMechLabel)
     {
         this.bMechLabel = bMechLabel;
+    }
+
+    public String getbMechName()
+    {
+        return bMechName;
+    }
+
+    public void setbMechName(String bMechName)
+    {
+        this.bMechName = bMechName;
     }
 
     public DCElement[] getDCRecord()
