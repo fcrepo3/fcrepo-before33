@@ -399,12 +399,21 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         return null;
     }
-
-    public java.util.Calendar[] purgeDisseminator(String PID, String disseminatorID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
 */
+
+    public java.util.Calendar[] purgeDisseminator(String PID, 
+            String disseminatorID, java.util.Calendar endDT) 
+            throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            return s_management.purgeDisseminator(getContext(), PID, disseminatorID, endDT);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
+    }
 
     public fedora.server.types.gen.Disseminator[] getDisseminatorHistory(String PID, String disseminatorID) throws java.rmi.RemoteException {
       assertInitialized();

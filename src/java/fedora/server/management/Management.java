@@ -85,7 +85,7 @@ public interface Management {
 
 //    public void deleteDisseminator(Context context, String pid, String disseminatorID) throws ServerException;
 
-//    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorID, Calendar startDateTime, Calendar endDateTime) throws ServerException;
+    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorID, Calendar endDT) throws ServerException;
 
     public Disseminator getDisseminator(Context context, String pid, String disseminatorID, Calendar asOfDateTime) throws ServerException;
 

@@ -923,9 +923,52 @@ public class DefaultManagement
 
     public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { }
 
-    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) { return null; }
 */
-
+    public Calendar[] purgeDisseminator(Context context, String pid, 
+            String disseminatorID, Calendar endDT) 
+            throws ServerException { 
+        m_ipRestriction.enforce(context);
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            Date start=null;
+            Date end=null;
+            if (endDT!=null) {
+                end=endDT.getTime();
+            }
+            Date[] deletedDates=w.removeDisseminator(disseminatorID, start, end);
+            if (w.GetDisseminator(disseminatorID, null)==null) {
+                // FIXME: Purging an entire disseminator is disabled;
+                //        the replication code needs to be updated first.
+                //        To re-enable this for API-M, remove this check.
+                throw new GeneralException("Server code for full disseminator purging not implemented yet.");
+            }
+            // make a log messsage explaining what happened
+            String logMessage=getPurgeLogMessage("disseminator", disseminatorID,
+                    start, end, deletedDates);
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="purgeDisseminator";
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            // Normally we associate an audit record with a specific version
+            // of a disseminator, but in this case we are talking about a range
+            // of versions.  So we'll just add it to the object, but not associate
+            // it with anything.
+            w.getAuditRecords().add(audit);
+            // It looks like all went ok, so commit
+            // ... then give the response
+            w.commit(logMessage);
+            return dateArrayToCalendarArray(deletedDates);
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
+        }
+    }
 
     public Disseminator getDisseminator(Context context, String pid,
             String disseminatorId, Calendar asOfDateTime)
