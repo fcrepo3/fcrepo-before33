@@ -39,6 +39,7 @@ import fedora.server.management.PIDGenerator;
 import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
+import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
@@ -151,7 +152,7 @@ public class DefaultDOManager
 
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
-                getModule("fedora.server.storage.DOTranslator");
+                getModule("fedora.server.storage.translation.DOTranslator");
         // get ref to replicator
         m_replicator=(DOReplicator) getServer().
                 getModule("fedora.server.storage.replication.DOReplicator");
@@ -323,7 +324,7 @@ public class DefaultDOManager
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.storage.ConnectionPoolManager",
-                "fedora.server.storage.DOTranslator",
+                "fedora.server.storage.translation.DOTranslator",
                 "fedora.server.storage.replication.DOReplicator",
                 "fedora.server.validation.DOValidator" };
     }

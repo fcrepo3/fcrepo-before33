@@ -9,7 +9,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
-import fedora.server.storage.DOTranslator;
+import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
@@ -57,7 +57,7 @@ public class SimpleDOReader
             String longExportFormat, String currentFormat,
             String encoding, InputStream serializedObject, Logging logTarget) 
             throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException {
+            UnsupportedTranslationException, ServerException {
         super(logTarget);
         m_context=context;
         m_repoReader=repoReader;
@@ -100,7 +100,7 @@ public class SimpleDOReader
 
     public InputStream GetObjectXML() 
             throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException {
+            UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         m_translator.serialize(m_obj, bytes, m_shortExportFormat, "UTF-8");
         return new ByteArrayInputStream(bytes.toByteArray());
@@ -108,7 +108,7 @@ public class SimpleDOReader
 
     public InputStream ExportObject()
             throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException {
+            UnsupportedTranslationException, ServerException {
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
         m_translator.serialize(m_obj, bytes, m_longExportFormat, "UTF-8");
         return new ByteArrayInputStream(bytes.toByteArray());

@@ -1,4 +1,4 @@
-package fedora.server.storage;
+package fedora.server.storage.translation;
 
 import java.io.InputStream;
 import java.io.OutputStream;

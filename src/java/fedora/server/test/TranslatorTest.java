@@ -2,6 +2,7 @@ package fedora.server.test;
 
 import fedora.server.storage.types.*;
 import fedora.server.storage.*;
+import fedora.server.storage.translation.*;
 import fedora.server.errors.*;
 import fedora.server.*;
 import java.io.*;
@@ -30,7 +31,7 @@ public class TranslatorTest {
             in=new FileInputStream(new File(args[0]));
             Server server;
             server=Server.getInstance(new File(System.getProperty("fedora.home")));
-            DOTranslator trans=(DOTranslator) server.getModule("fedora.server.storage.DOTranslator");
+            DOTranslator trans=(DOTranslator) server.getModule("fedora.server.storage.translation.DOTranslator");
             if (trans==null) {
                 throw new IOException("DOTranslator module not found via getModule");
             }

@@ -2,9 +2,9 @@ package fedora.server.test;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.DOTranslatorImpl;
-import fedora.server.storage.METSDOSerializer;
-import fedora.server.storage.METSDODeserializer;
+import fedora.server.storage.translation.DOTranslatorImpl;
+import fedora.server.storage.translation.METSDOSerializer;
+import fedora.server.storage.translation.METSDODeserializer;
 import fedora.server.validation.DOValidatorImpl;
 
 import java.io.ByteArrayInputStream;

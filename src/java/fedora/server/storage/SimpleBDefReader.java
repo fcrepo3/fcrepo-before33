@@ -11,7 +11,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
-import fedora.server.storage.DOTranslator;
+import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;

@@ -1,4 +1,4 @@
-package fedora.server.storage;
+package fedora.server.storage.translation;
 
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;

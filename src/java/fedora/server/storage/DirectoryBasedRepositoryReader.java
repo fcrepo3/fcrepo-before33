@@ -16,6 +16,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
+import fedora.server.storage.translation.DOTranslator;
 
 /**
  * A RepositoryReader that uses a directory of serialized objects
