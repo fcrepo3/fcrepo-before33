@@ -5,7 +5,7 @@ package fedora.server.errors;
  *
  * @author cwilper@cs.cornell.edu
  */
-public class ModuleInitializationException 
+public class ModuleInitializationException
         extends InitializationException {
 
     /** The role of the module in which the error occurred */
@@ -26,7 +26,7 @@ public class ModuleInitializationException
     /**
      * Gets the role of the module in which the error occurred.
      *
-     * @returns The role.
+     * @return The role.
      */
     public String getRole() {
         return m_role;

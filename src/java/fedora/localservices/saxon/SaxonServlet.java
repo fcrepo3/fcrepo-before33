@@ -28,7 +28,6 @@ import java.util.Properties;
  * http://saxon.sourceforge.net/</a>.</p>
  *
  * <p>Company: </p>
- * @copyright
  * @author Michael Kay
  * @version 6.5.2
  */

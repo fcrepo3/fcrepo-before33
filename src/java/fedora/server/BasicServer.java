@@ -21,23 +21,23 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 
-public class BasicServer 
+public class BasicServer
         extends Server {
-        
+
     private File logDir;
-        
-    public BasicServer(Element rootElement, File fedoraHomeDir) 
+
+    public BasicServer(Element rootElement, File fedoraHomeDir)
             throws ServerInitializationException,
                    ModuleInitializationException {
         super(rootElement, fedoraHomeDir);
     }
-    
-    public void initServer() 
+
+    public void initServer()
             throws ServerInitializationException {
         initLogger();
     }
-    
-    private int getLoggerIntParam(String paramName) 
+
+    private int getLoggerIntParam(String paramName)
             throws ServerInitializationException {
         String s=getParameter(paramName);
         int ret;
@@ -51,7 +51,7 @@ public class BasicServer
                     throw new NumberFormatException();
                 }
             } catch (NumberFormatException nfe) {
-                throw new ServerInitializationException(paramName 
+                throw new ServerInitializationException(paramName
                         + " must be an integer from 0 to " + Integer.MAX_VALUE);
             }
             String retString;
@@ -64,8 +64,8 @@ public class BasicServer
         }
         return ret;
     }
-    
-    private void initLogger() 
+
+    private void initLogger()
             throws ServerInitializationException {
         Logger logger=Logger.getAnonymousLogger();
         logger.setUseParentHandlers(false);
@@ -102,7 +102,7 @@ public class BasicServer
             logConfig("log_level specified = " + levelParam + ", ok.");
         }
         logger.setLevel(logLevel);
-        
+
         String dirParam=getParameter("log_dir");
         File logDir;
         if (dirParam==null) {
@@ -124,7 +124,7 @@ public class BasicServer
         String ext=".log";
         DatingFileHandler fh=null;
         try {
-            fh=new DatingFileHandler(logDir, maxSize, maxDays, maxFiles, ext, 
+            fh=new DatingFileHandler(logDir, maxSize, maxDays, maxFiles, ext,
                     new SimpleXMLFormatter(true, "UTF-8"), flushThreshold);
             fh.setLevel(Level.FINEST);
         } catch (IOException ioe) {
@@ -135,8 +135,8 @@ public class BasicServer
         logFinest("Logger initialized. Switching to file-based log...");
         setLogger(logger);
     }
-    
-    public void shutdownServer() 
+
+    public void shutdownServer()
             throws ServerShutdownException {
         closeLogger();
     }
@@ -145,12 +145,12 @@ public class BasicServer
      * Gets the names of the roles that are required to be fulfilled by
      * modules specified in this server's configuration file.
      *
-     * @returns String[] The roles.
+     * @return String[] The roles.
      */
     public String[] getRequiredModuleRoles() {
         return new String[] {"fedora.server.storage.DOManager"};
     }
-    
+
     public static void main(String[] args) throws Exception {
         // prepare for an in-tomcat-instance run of the server by
         // reading the adminPassword and fedoraServerPort from fedora.fcfg,
@@ -180,7 +180,7 @@ public class BasicServer
                         adminPassword=valueNode.getNodeValue();
                     }
                 }
-                File serverTemplate=new File(fedoraHome, "tomcat41/conf/server_template.xml"); 
+                File serverTemplate=new File(fedoraHome, "tomcat41/conf/server_template.xml");
                 BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
                 FileWriter out=new FileWriter(new File(fedoraHome, "tomcat41/conf/server.xml"));
                 String nextLine="";
@@ -204,8 +204,8 @@ public class BasicServer
                 }
                 in.close();
                 out.close();
-                
-                File usersTemplate=new File(fedoraHome, "tomcat41/conf/tomcat-users_template.xml"); 
+
+                File usersTemplate=new File(fedoraHome, "tomcat41/conf/tomcat-users_template.xml");
                 in=new BufferedReader(new FileReader(usersTemplate));
                 out=new FileWriter(new File(fedoraHome, "tomcat41/conf/tomcat-users.xml"));
                 nextLine="";
@@ -232,5 +232,5 @@ public class BasicServer
             }
         }
     }
-    
+
 }

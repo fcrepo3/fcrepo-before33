@@ -170,7 +170,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param context
    * @param PID   identifier of digital object being reflected upon
    * @param asOfDateTime
-   * @return
+   * @return an array of behavior definition PIDs
    * @throws ServerException
    */
   public String[] getBehaviorDefinitions(Context context, String PID,
@@ -188,7 +188,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param PID   identifier of digital object being reflected upon
    * @param bDefPID identifier of dynamic behavior definition
    * @param asOfDateTime
-   * @return
+   * @return an array of method definitions
    * @throws ServerException
    */
   public MethodDef[] getBehaviorMethods(Context context, String PID,
@@ -206,7 +206,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param PID  identifier of digital object being reflected upon
    * @param bDefPID  identifier of dynamic behavior definition
    * @param asOfDateTime
-   * @return
+   * @return MIME-typed stream containing XML-encoded method definitions
    * @throws ServerException
    */
   public MIMETypedStream getBehaviorMethodsXML(Context context, String PID,
@@ -228,7 +228,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param methodName
    * @param userParms
    * @param asOfDateTime
-   * @return
+   * @return a MIME-typed stream containing the dissemination result
    * @throws ServerException
    */
   public MIMETypedStream getDissemination(Context context, String PID,
@@ -261,7 +261,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param context
    * @param PID  identifier of digital object being reflected upon
    * @param asOfDateTime
-   * @return
+   * @return an array of object method definitions
    * @throws ServerException
    */
   public ObjectMethodsDef[] getObjectMethods(Context context, String PID,
@@ -278,7 +278,7 @@ public class DynamicAccessModule extends Module implements Access
    * @param context
    * @param PID  identifier of digital object being reflected upon
    * @param asOfDateTime
-   * @return
+   * @return an object profile data structure
    * @throws ServerException
    */
   public ObjectProfile getObjectProfile(Context context, String PID,
@@ -289,8 +289,8 @@ public class DynamicAccessModule extends Module implements Access
 
   // FIXIT: What do these mean in this context...anything?
   // Maybe these methods' exposure needs to be re-thought?
-  public FieldSearchResult listObjectFields(Context context, 
-          String[] resultFields, int maxResults, FieldSearchQuery query) 
+  public FieldSearchResult listObjectFields(Context context,
+          String[] resultFields, int maxResults, FieldSearchQuery query)
           throws ServerException {
       return null;
   }
@@ -301,7 +301,7 @@ public class DynamicAccessModule extends Module implements Access
           String sessionToken) throws ServerException {
       return null;
   }
-  
+
   /**
    */
   protected boolean isDynamicBehaviorDefinition(Context context, String PID,

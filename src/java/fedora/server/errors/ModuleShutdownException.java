@@ -5,7 +5,7 @@ package fedora.server.errors;
  *
  * @author cwilper@cs.cornell.edu
  */
-public class ModuleShutdownException 
+public class ModuleShutdownException
         extends ShutdownException {
 
     /** The role of the module in which the error occurred */
@@ -26,7 +26,7 @@ public class ModuleShutdownException
     /**
      * Gets the module in which the error occurred.
      *
-     * @returns Module The module.
+     * @return Module The module.
      */
     public String getRole() {
         return m_role;

@@ -378,7 +378,7 @@ public class SimpleDOReader
      * @param bDefPID
      * @param methodName
      * @param versDateTime
-     * @return
+     * @return an array of method parameter definitions
      * @throws DisseminatorNotFoundException
      * @throws MethodNotFoundException
      * @throws ServerException
