@@ -77,8 +77,8 @@ As a precaution, policies should be tested for effect.  This is good practice, a
 testing is the only check of the policy-writer's understanding of xacml and against the 
 inevitable typ0.
 
-Though sunxacml parsing is relaxed, <Desciption> </Desciption> apparently requires at least one
-character content:  <Desciption/> doesn't do it.
+Though sunxacml parsing is relaxed, <Desciption> </Desciption> apparently requires at least one-character 
+content:  <Desciption/> doesn't do it.
 
 For now, there is no Fedora-based xacml schema checking of policies.  Some policies fail sunxacml parse
 with console errors; with repository-policies, this would be at server startup, with object-policies, 
@@ -189,7 +189,7 @@ Permit or Deny is returned if a rule did apply and thus returned its effect.
 Or the combining algorithm of an individual policy or of the PolicySet might have converted, 
 e.g., an Indeterminate into a Deny.
 
-To protect against a bug in sunxacml code, Fedora's policy evaluation point (PEP) 
+To protect against a possible bug in sunxacml code, Fedora's policy evaluation point (PEP) 
 software additionally enforces the 5 items above.  If all are satisfied, operation proceeds
 normally; if any are not, an Authorization fault is thrown.
 
