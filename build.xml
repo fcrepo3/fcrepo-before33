@@ -82,7 +82,7 @@
             depends="serverclasses"
             description="Generate user and developer docs in dist/server/serverdocs">
         <mkdir dir="dist/serverdocs"/>
-        <javadoc packagenames="fedora.server,fedora.server.types,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.errors,fedora.server.auditing,fedora.server.behavior,fedora.server.test,fedora.server.storage.types"
+        <javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types"
              sourcepath="${javaSourceDir};temp/server/java;src/html/server/javadoc"
 		     classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"
              destdir="dist/serverdocs"
@@ -194,11 +194,11 @@
 			<arg value="--NStoPkg"/>
 			<arg value="http://www.fedora.info/definitions/1/0/api/=fedora.server.management"/>
 			<arg value="--NStoPkg"/>
-			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types"/>
+			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types.gen"/>
 			<arg value="--NStoPkg"/>
-			<arg value="http://www.fedora.info/definitions/1/0/auditing/=fedora.server.auditing"/>
+			<arg value="http://www.fedora.info/definitions/1/0/auditing/=fedora.server.types.gen"/>
 			<arg value="--NStoPkg"/>
-			<arg value="http://www.fedora.info/definitions/1/0/binding/=fedora.server.binding"/>
+			<arg value="http://www.fedora.info/definitions/1/0/binding/=fedora.server.types.gen"/>
 			<arg value="-o"/>
 			<arg value="temp/server/java"/>
 			<arg path="temp/wsdl2java/Fedora-API-M.wsdl"/>
@@ -215,7 +215,7 @@
 			<arg value="--NStoPkg"/>
 			<arg value="http://www.fedora.info/definitions/1/0/api/=fedora.server.access"/>
 			<arg value="--NStoPkg"/>
-			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types"/>
+			<arg value="http://www.fedora.info/definitions/1/0/types/=fedora.server.types.gen"/>
 			<arg value="-o"/>
 			<arg value="temp/server/java"/>
 			<arg path="temp/wsdl2java/Fedora-API-A.wsdl"/>
@@ -309,6 +309,16 @@
 </project>
 <!--
   $Log$
+  Revision 1.24  2002/08/21 21:21:57  cwilper
+  Updated as per our meeting today re:types packaging.  This effectively
+  moves fedora generated types (which used to be in fedora.server.types,
+  fedora.server.auditing, fedora.server.binding) to fedora.server.types.gen.
+  It is now more obvious that the storage types (those returned by
+  DOReader and DOWriter instances) are not to be coupled with
+  the interface types (those used at the API-M and API-A level).  It
+  is understood that overall packaging will be reconsidered later, but
+  for now this works.
+
   Revision 1.23  2002/08/19 18:21:22  cwilper
   added package.html's dir to sourcedocs target's sourcepath
 

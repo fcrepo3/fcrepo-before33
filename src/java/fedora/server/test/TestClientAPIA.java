@@ -50,14 +50,14 @@ public class TestClientAPIA
       call.setOperationName(new javax.xml.namespace.QName(qName1, "GetBehaviorMethods") );
       QName qn = new QName("http://www.fedora.info/definitions/1/0/types/",
                             "MIMETypedStream");
-      call.registerTypeMapping(fedora.server.types.MIMETypedStream.class,
+      call.registerTypeMapping(fedora.server.types.gen.MIMETypedStream.class,
                                qn,
-                               new org.apache.axis.encoding.ser.BeanSerializerFactory(fedora.server.types.MIMETypedStream.class, qn),
-                               new org.apache.axis.encoding.ser.BeanDeserializerFactory(fedora.server.types.MIMETypedStream.class, qn));
-      //call.setReturnType(new javax.xml.namespace.QName(qName2, "MIMETypedStream"), fedora.server.types.MIMETypedStream.class);
+                               new org.apache.axis.encoding.ser.BeanSerializerFactory(fedora.server.types.gen.MIMETypedStream.class, qn),
+                               new org.apache.axis.encoding.ser.BeanDeserializerFactory(fedora.server.types.gen.MIMETypedStream.class, qn));
+      //call.setReturnType(new javax.xml.namespace.QName(qName2, "MIMETypedStream"), fedora.server.types.gen.MIMETypedStream.class);
 
-      fedora.server.types.MIMETypedStream methodDefs =
-          (fedora.server.types.MIMETypedStream) call.invoke( new Object[] { PID, bDefPID, asOfDate} );
+      fedora.server.types.gen.MIMETypedStream methodDefs =
+          (fedora.server.types.gen.MIMETypedStream) call.invoke( new Object[] { PID, bDefPID, asOfDate} );
       String mime = methodDefs.getMIMEType();
       System.out.println("\n\n*****GETBEHAVIORMETHODS RESULTS*****\nMIME: "+mime);
       ByteArrayInputStream bais = new ByteArrayInputStream(methodDefs.getStream());
@@ -72,8 +72,8 @@ public class TestClientAPIA
       bDefPID = "web_ead";
       String method = "get_admin";
       call.setOperationName(new javax.xml.namespace.QName(qName1, "GetDissemination") );
-      fedora.server.types.MIMETypedStream dissemination =
-          (fedora.server.types.MIMETypedStream) call.invoke( new Object[] { PID, bDefPID, method, asOfDate} );
+      fedora.server.types.gen.MIMETypedStream dissemination =
+          (fedora.server.types.gen.MIMETypedStream) call.invoke( new Object[] { PID, bDefPID, method, asOfDate} );
       mime = methodDefs.getMIMEType();
       System.out.println("\n\n****DISSEMINATION RESULTS*****\nDissemination MIME: "+mime);
       BufferedReader br = new BufferedReader(

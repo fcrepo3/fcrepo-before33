@@ -2,20 +2,19 @@
  * FedoraAPIMBindingSOAPHTTPImpl.java
  *
  * This file was auto-generated from WSDL
- * by the Apache Axis Wsdl2java emitter.
+ * by the Apache Axis WSDL2Java emitter.
  */
 
-
 package fedora.server.management;
-
 
 import org.apache.axis.AxisEngine;
 import org.apache.axis.MessageContext;
 
-public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.FedoraAPIM {
+public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.FedoraAPIM{
     public java.lang.String createObject() throws java.rmi.RemoteException {
-        return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
+                return "This would be a PID if this operation implementation wasn't a stub.  BTW, the scope of this service (as defined by the scope property in the wsdd file) is '" 
                 + AxisEngine.getCurrentMessageContext().getStrProp("scope") + "'.";
+
     }
 
     public java.lang.String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
@@ -61,7 +60,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
         return null;
     }
 
-    public fedora.server.auditing.AuditRecord[] getObjectAuditTrail(java.lang.String PID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(java.lang.String PID) throws java.rmi.RemoteException {
         return null;
     }
 
@@ -103,11 +102,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
         return null;
     }
 
-    public fedora.server.types.Datastream getDatastream(java.lang.String PID, java.lang.String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream getDatastream(java.lang.String PID, java.lang.String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         return null;
     }
 
-    public fedora.server.types.Datastream[] getDatastreams(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream[] getDatastreams(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         return null;
     }
 
@@ -115,15 +114,15 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
         return null;
     }
 
-    public fedora.server.types.ComponentInfo[] getDatastreamHistory(java.lang.String PID, java.lang.String datastreamID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(java.lang.String PID, java.lang.String datastreamID) throws java.rmi.RemoteException {
         return null;
     }
 
-    public java.lang.String addDisseminator(java.lang.String PID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+    public java.lang.String addDisseminator(java.lang.String PID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
         return null;
     }
 
-    public void modifyDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+    public void modifyDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
     }
 
     public void deleteDisseminator(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
@@ -133,11 +132,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
         return null;
     }
 
-    public fedora.server.types.Disseminator getDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Disseminator getDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         return null;
     }
 
-    public fedora.server.types.Disseminator[] getDisseminators(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Disseminator[] getDisseminators(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         return null;
     }
 
@@ -145,7 +144,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl implements fedora.server.management.F
         return null;
     }
 
-    public fedora.server.types.ComponentInfo[] getDisseminatorHistory(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.ComponentInfo[] getDisseminatorHistory(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
         return null;
     }
 

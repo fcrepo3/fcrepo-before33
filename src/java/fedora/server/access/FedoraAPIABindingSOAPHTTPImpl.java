@@ -31,9 +31,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
     return doReader.GetBehaviorDefs(null);
     }
 
-    public fedora.server.types.MIMETypedStream getBehaviorMethods(java.lang.String PID, java.lang.String bDefPID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.MIMETypedStream getBehaviorMethods(java.lang.String PID, java.lang.String bDefPID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
       ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-      fedora.server.types.MIMETypedStream bDefMethods = null;
+      fedora.server.types.gen.MIMETypedStream bDefMethods = null;
       try
       {
         DefinitiveBDefReader doReader = new DefinitiveBDefReader(bDefPID);
@@ -49,7 +49,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
         System.out.println(ioe);
       }
       //bDefMethods = new MIMETypedStream(CONTENT_TYPE_XML,baos.toByteArray());
-      bDefMethods = new fedora.server.types.MIMETypedStream();
+      bDefMethods = new fedora.server.types.gen.MIMETypedStream();
       bDefMethods.setMIMEType(CONTENT_TYPE_XML);
       bDefMethods.setStream(baos.toByteArray());
 
@@ -57,11 +57,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
 
     }
 
-    public fedora.server.types.MIMETypedStream getDissemination(java.lang.String PID, java.lang.String bDefPID, java.lang.String methodName, fedora.server.types.Property[] parameters, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.MIMETypedStream getDissemination(java.lang.String PID, java.lang.String bDefPID, java.lang.String methodName, fedora.server.types.gen.Property[] parameters, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
       String protocolType = null;
       Vector dissResult = null;
       String dissURL = null;
-      fedora.server.types.MIMETypedStream dissemination = null;
+      fedora.server.types.gen.MIMETypedStream dissemination = null;
       FastDOReader fastReader = new FastDOReader(PID, bDefPID, methodName);
       dissResult = fastReader.getDissemination(PID, bDefPID, methodName);
       if (dissResult.size() == 0)
@@ -130,7 +130,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements fedora.server.access.Fedor
         {
           MIMETypedStream diss = null;
           diss = fastReader.getHttpContent(dissURL);
-          dissemination = new fedora.server.types.MIMETypedStream();
+          dissemination = new fedora.server.types.gen.MIMETypedStream();
           dissemination.setMIMEType(diss.MIMEType);
           dissemination.setStream(diss.stream);
         } else if (protocolType.equalsIgnoreCase("soap"))
