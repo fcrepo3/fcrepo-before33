@@ -581,6 +581,8 @@ public class DefaultManagement
                     w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
                     // set new altIDs across all versions
                     w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
+                    // set new versionable across all versions
+                    w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id=w.newAuditRecordID();
@@ -773,6 +775,8 @@ public class DefaultManagement
             w.setDatastreamFormatURI(datastreamId, newds.DSFormatURI);
             // set new altIDs across all versions
             w.setDatastreamAltIDs(datastreamId, newds.DatastreamAltIDs);
+            // set new versionable across all versions
+            w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -888,7 +892,7 @@ public class DefaultManagement
             // just add the disseminator
             w.addDisseminator(newdiss);
             if (!orig.dissState.equals(newdiss.dissState)) {
-                w.setDisseminatorState(disseminatorId, newdiss.dissState); }            
+                w.setDisseminatorState(disseminatorId, newdiss.dissState); }
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
