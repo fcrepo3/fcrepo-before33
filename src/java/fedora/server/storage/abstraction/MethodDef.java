@@ -16,6 +16,10 @@ public class MethodDef
     public String methodLabel;
     public MethodParmDef[] methodParms;
 
+    public String httpBindingURL;
+
+    // TODO: deal with soap bindings
+
     public MethodDef()
     {
     }
