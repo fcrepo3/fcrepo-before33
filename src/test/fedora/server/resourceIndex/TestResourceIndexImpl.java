@@ -4,21 +4,17 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.net.URI;
-
-import org.kowari.server.driver.SessionFactoryFinder;
-import org.kowari.server.local.LocalSessionFactory;
-import org.kowari.store.DatabaseSession;
-import org.kowari.store.jena.GraphKowariMaker;
-import org.kowari.store.jena.ModelKowariMaker;
-
-import com.hp.hpl.jena.rdf.model.Model;
-import com.hp.hpl.jena.shared.ReificationStyle;
+import java.util.Map;
+import java.util.HashMap;
 
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.BasicDigitalObject;
+
+import org.trippi.TriplestoreConnector;
+import org.trippi.TriplestoreWriter;
+
 import junit.framework.TestCase;
 
 /**
@@ -26,9 +22,8 @@ import junit.framework.TestCase;
  *
  */
 public class TestResourceIndexImpl extends TestCase {
-    private static final String LOCAL_SERVER_PATH = "/tmp/kowariTest";
+    private static final String LOCAL_SERVER_PATH = "/tmp/fedoraTest";
     private static final String MODEL_NAME = "testResourceIndex";
-    private static final String SERVER_HOST = "localhost";
     private static final String SERVER_NAME = "testFedora";
     private static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
     
@@ -40,16 +35,15 @@ public class TestResourceIndexImpl extends TestCase {
     private static final int CP_MAXCONN = 1;
     private static final boolean CP_WAIT = true;
     
+    private static final String TRIPPI_CONNECTOR_CLASSNAME = "org.trippi.impl.kowari.KowariConnector";
     
-    private String m_modelURI;
-    private LocalSessionFactory m_factory;
-    private DatabaseSession m_session;
-    private Model m_model;
-    private RIStore m_kowariRIStore;
     private ResourceIndex ri;
     private DigitalObject digitalObject, m_bDef, m_bMech;
     
     private ConnectionPool cPool;
+    
+    private TriplestoreConnector m_conn;
+    private TriplestoreWriter m_writer;
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestResourceIndexImpl.class);
@@ -59,27 +53,28 @@ public class TestResourceIndexImpl extends TestCase {
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        URI serverURI = new URI("rmi", SERVER_HOST, "/" + SERVER_NAME, null);
-        m_modelURI = serverURI.toString() + "#" + MODEL_NAME;
-        File serverDir = new File(LOCAL_SERVER_PATH + "/" + MODEL_NAME);
-        serverDir.mkdirs();
-        m_factory = (LocalSessionFactory)SessionFactoryFinder.newSessionFactory(serverURI);
-		if (m_factory.getDirectory() == null) {
-		    m_factory.setDirectory(serverDir);
-		}
-		m_session = (DatabaseSession) m_factory.newSession();
-        
-		// the connection pool
+		// the database connection pool
         cPool = new ConnectionPool(CP_DRIVER, CP_URL, CP_USERNAME, CP_PASSWORD, CP_ICONN, CP_MAXCONN, CP_WAIT);
 
-        // create the model
-        GraphKowariMaker graphMaker = new GraphKowariMaker(m_session, serverURI,
-                ReificationStyle.Minimal);
-        ModelKowariMaker modelMaker = new ModelKowariMaker(graphMaker);
-        m_model = modelMaker.createModel(MODEL_NAME);
-        m_kowariRIStore = new KowariRIStore(m_session, m_model);
-        ri = new ResourceIndexImpl(3, m_kowariRIStore, cPool, null);
-        //digitalObject = getDigitalObject();
+        // trippi
+        Map config = new HashMap();
+        config.put("modelName", MODEL_NAME);
+        config.put("poolMaxGrowth", "-1");
+        config.put("path", LOCAL_SERVER_PATH);
+        config.put("bufferFlushBatchSize", "20000");
+        config.put("autoCreate", "true");
+        config.put("bufferSafeCapacity", "40000");
+        config.put("autoFlushDormantSeconds", "15");
+        config.put("poolInitialSize", "3");
+        config.put("serverName", SERVER_NAME);
+        config.put("readOnly", "false");
+        config.put("autoTextIndex", "false");
+        config.put("autoFlushBufferSize", "20000");
+        config.put("remote", "false");
+        config.put("memoryBuffer", "true");
+        
+        m_conn = TriplestoreConnector.init(TRIPPI_CONNECTOR_CLASSNAME, config);
+        ri = new ResourceIndexImpl(3, m_conn, cPool, null);
         
         // needed by the deserializer
         System.setProperty("fedoraServerHost", "localhost");
@@ -93,23 +88,14 @@ public class TestResourceIndexImpl extends TestCase {
      */
     protected void tearDown() throws Exception {
         try {
-            if (m_model != null) {
-                try {
-                    m_model.close();
-                } finally {
-                    m_model = null;
-                }
+            if (m_writer != null) {
+                m_writer.close();
             }
-            if (m_session != null) {
-                m_session.close();
+            if (m_conn != null) {
+                m_conn.close();
             }
-            if (m_factory != null) {
-                m_factory.delete();
-            }
-
         } finally {
             ri = null;
-            m_kowariRIStore = null;
             digitalObject = null;
         }
         
@@ -123,7 +109,7 @@ public class TestResourceIndexImpl extends TestCase {
 //        addBMechs();
 //        addDataObjects();
 //    	
-//    	m_kowariRIStore.write(new FileOutputStream("/tmp/out.rdf"));
+//    	m_writer.write(new FileOutputStream("/tmp/out.rdf"));
 //    }
     
     public void testAddDigitalObject() throws Exception {
@@ -137,8 +123,11 @@ public class TestResourceIndexImpl extends TestCase {
         addDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR + "/bdefs/demo_8.xml"));
         addDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR + "/bmechs/demo_9.xml"));
         addDigitalObject(new File(DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_10.xml"));
-        
-    	m_kowariRIStore.write(new FileOutputStream("/tmp/out.rdf"));
+        try {
+    	m_writer.dump(new FileOutputStream("/tmp/out.rdf"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 //    public void testAddDatastream() {

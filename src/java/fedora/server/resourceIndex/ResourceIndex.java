@@ -1,6 +1,7 @@
 package fedora.server.resourceIndex;
 
-import fedora.server.errors.ServerException;
+import org.trippi.TriplestoreReader;
+
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.types.*;
 
@@ -11,7 +12,7 @@ import fedora.server.storage.types.*;
  * 
  * @author Edwin Shin
  */
-public interface ResourceIndex {
+public interface ResourceIndex extends TriplestoreReader {
     public static final int INDEX_LEVEL_OBJECT_FIELDS = 1;
     public static final int INDEX_LEVEL_DISSEMINATIONS = 2;
     public static final int INDEX_LEVEL_DEPENDENCIES = 3;
@@ -48,8 +49,6 @@ public interface ResourceIndex {
 	
 	public int getIndexLevel();
 	
-	public RIResultIterator executeQuery(RIQuery query) throws ResourceIndexException ;
-	
 	public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
 	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
@@ -58,23 +57,15 @@ public interface ResourceIndex {
 	
 	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
-	/*
-	 * TODO not clear if modify component requests should take the form of
-	 *     modifyX(DigitalObject do, String componentID)
-	 * 
-	 * TODO should delete component requests just be
-	 *     delete(String doPID, String componentID) ?
-	 */
+	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
 	
-	public void modifyDatastream(Datastream ds) ;
+	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
 	
-	public void modifyDisseminator(Disseminator diss) ;
+	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
 	
-	public void deleteDigitalObject(String pid) ;
+	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
 	
-	public void deleteDatastream(Datastream ds) ;
-	
-	public void deleteDisseminator(Disseminator diss) ;
+	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
 }
 
 

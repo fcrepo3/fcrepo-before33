@@ -17,6 +17,8 @@ import javax.wsdl.*;
 import javax.xml.namespace.QName;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,9 +36,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
+import org.trippi.TripleFactory;
+import org.trippi.TripleIterator;
+import org.trippi.TriplestoreConnector;
+import org.trippi.TriplestoreReader;
+import org.trippi.TriplestoreWriter;
+import org.trippi.TrippiException;
+import org.trippi.TupleIterator;
 import org.xml.sax.InputSource;
-
-import com.hp.hpl.jena.rdql.Value;
 
 /**
  * Implementation of the ResourceIndex interface.
@@ -52,44 +62,38 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     //		- changes in levels
     //		- distinct levels or discrete mix & match (e.g., combinations of DC, REP & REP-DEP, RELS, etc.)
     private int m_indexLevel;
-	private RIStore m_store;
 	private static final String FEDORA_URI_SCHEME = "info:fedora/";
-	private static final String DC_URI_PREFIX = "http://purl.org/dc/elements/1.1/";
     
     // For the database
     private ConnectionPool m_cPool;
     private Connection m_conn;
     private Statement m_statement;
     private ResultSet m_resultSet;
-	
-	/**
-	 * @param target
-	 */
-	public ResourceIndexImpl(int indexLevel, RIStore store, Logging target) {
-		super(target);
-		m_indexLevel = indexLevel;
-		m_store = store;
-	}
     
-    public ResourceIndexImpl(int indexLevel, RIStore store, ConnectionPool cPool, Logging target) {
+    // Triplestore (Trippi)
+    private TriplestoreConnector m_connector;
+    private TriplestoreReader m_reader;
+    private TriplestoreWriter m_writer;
+    private List m_tQueue;
+    
+    public ResourceIndexImpl(int indexLevel, 
+                             TriplestoreConnector connector, 
+                             ConnectionPool cPool, 
+                             Logging target) throws ResourceIndexException {
         super(target);
         m_indexLevel = indexLevel;
-        m_store = store;
+        m_connector = connector;
+        m_writer = m_connector.getWriter();
+        m_reader = m_connector.getReader();
+        m_tQueue = new ArrayList();
         m_cPool = cPool;
         try {
             m_conn = m_cPool.getConnection();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new ResourceIndexException("ResourceIndex Connection Pool " +
+                                             "was unable to get a connection", e);
         }
     }
-	
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#query(fedora.server.resourceIndex.RIQuery)
-	 */
-	public RIResultIterator executeQuery(RIQuery query) throws ResourceIndexException {
-		return m_store.executeQuery(query);
-	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
@@ -99,16 +103,18 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
-		m_store.insertLiteral(doIdentifier, LABEL_URI, digitalObject.getLabel());
-		m_store.insertLiteral(doIdentifier, DATE_CREATED_URI, getDate(digitalObject.getCreateDate()));
-		m_store.insertLiteral(doIdentifier, DATE_LAST_MODIFIED_URI, getDate(digitalObject.getLastModDate()));
+        queuePlainLiteralTriple(doIdentifier, LABEL_URI, digitalObject.getLabel());
+        queuePlainLiteralTriple(doIdentifier, DATE_CREATED_URI, getDate(digitalObject.getCreateDate()));
+        queuePlainLiteralTriple(doIdentifier, DATE_LAST_MODIFIED_URI, getDate(digitalObject.getLastModDate()));
 		
 		if (digitalObject.getOwnerId() != null) {
-		    m_store.insertLiteral(doIdentifier, OWNER_ID_URI, digitalObject.getOwnerId());
+		    queuePlainLiteralTriple(doIdentifier, OWNER_ID_URI, digitalObject.getOwnerId());
 		}
-		m_store.insertLiteral(doIdentifier, CONTENT_MODEL_ID_URI, digitalObject.getContentModelId());
-		m_store.insertLiteral(doIdentifier, STATE_URI, digitalObject.getState());
+		queuePlainLiteralTriple(doIdentifier, CONTENT_MODEL_ID_URI, digitalObject.getContentModelId());
+		queuePlainLiteralTriple(doIdentifier, STATE_URI, digitalObject.getState());
 		
+        addQueue(false);
+
 		// handle type specific duties
 		// TODO: if it turns out rdfType is the only "special" thing to do,
 		// then we may as well use a getRDFType(fedoraObjectType) method instead
@@ -157,12 +163,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Volatile Datastreams: False for datastreams that are locally managed 
         // (have a control group "M" or "I").
         String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
-	    
-        m_store.insert(doURI, HAS_REPRESENTATION_URI, datastreamURI);
-	    m_store.insertLiteral(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT));
-        m_store.insertLiteral(datastreamURI, DISSEMINATION_DIRECT_URI, "true");
-        m_store.insertLiteral(datastreamURI, DISSEMINATION_VOLATILE_URI, isVolatile);
-	    
+
+        queueTriple(doURI, HAS_REPRESENTATION_URI, datastreamURI);
+        queuePlainLiteralTriple(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT));
+        queuePlainLiteralTriple(datastreamURI, DISSEMINATION_DIRECT_URI, "true");
+        queuePlainLiteralTriple(datastreamURI, DISSEMINATION_VOLATILE_URI, isVolatile);
+        addQueue(false);
+        
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
 		if (datastreamID.equalsIgnoreCase("DC")) {
 			addDublinCoreDatastream(digitalObject, ds);
@@ -188,21 +195,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
-	    m_store.insert(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
-		
+        
+        queueTriple(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
 	    DSBindingMap m = diss.dsBindMap; // is this needed???
 	    String bDefPID = diss.bDefID;
 	    
 	    // insert representations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
-//		    List methods = getMethodNames(bDefPID);
-//		    Iterator it = methods.iterator();
-//		    String rep;
-//		    while (it.hasNext()) {
-//		    	rep = doIdentifier + "/" + bDefPID + "/" + (String)it.next();
-//		    	m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, rep);
-//		    }
-            
             String query = "SELECT riMethodPermutation.permutation, riMethodMimeType.mimeType " +
                            "FROM riMethodPermutation, riMethodMimeType, riMethodImpl " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
@@ -218,129 +217,168 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      permutation = rs.getString("permutation");
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     m_store.insert(doIdentifier, HAS_REPRESENTATION_URI, rep);
+                     queueTriple(doIdentifier, HAS_REPRESENTATION_URI, rep);
                      // TODO mimetype as URI...what form???
-                     m_store.insertLiteral(rep, DISSEMINATION_MEDIA_TYPE_URI, mimeType);
-                     
+                     queuePlainLiteralTriple(rep, 
+                                             DISSEMINATION_MEDIA_TYPE_URI, 
+                                             mimeType);
+                     queuePlainLiteralTriple(rep, 
+                                             DISSEMINATION_DIRECT_URI, 
+                                             "false"); 
                  }
             } catch (SQLException e) {
-                 // TODO Auto-generated catch block
-                 e.printStackTrace();
+                throw new ResourceIndexException(e.getMessage(), e);
             }
-            
 	    }
-        
-        // get reps from db, given bdefPid, bMechPid
-        // SELECT permutation FROM riPermutation 
-        /*
-         * SELECT riMethodPermutation.permutation, riMimeType.mimeType
-         * FROM riMethodPermutation, riMimeType, riMethodImpl
-         * WHERE riMethodPermutation.methodId = riMethodImpl.methodId
-         *       AND riMethodImpl.methodImplId = riMimeType.methodImplId 
-         *       AND riMethodImpl.bMechPid = ''; 
-         * 
-         * SELECT riMethodPermutation.permutation
-         * FROM riMethodPermutation, riMethod
-         * WHERE riMethodPermutation.methodId = riMethod.methodId
-         *       AND riMethod.bDefPid = '';
-         */
 
-	    
 	    // TODO
-	    //m_store.insert(disseminatorIdentifier, DISSEMINATION_MEDIA_TYPE_URI, diss.?);
-        //m_store.insertLiteral(disseminatorIdentifier, DISSEMINATION_DIRECT_URI, "false"); // not going against a service, i.e. datastreams (true/false)
-        
-        //?
 		//m_store.insertLiteral(disseminatorIdentifier, DATE_LAST_MODIFIED_URI, getDate(diss.dissCreateDT));
-		
-        
 		//m_store.insertLiteral(disseminatorIdentifier, STATE_URI, diss.dissState); // change to uri #active/#inactive
-		
-        //?
         //m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
-		
-        
         //m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
-	}
+        addQueue(false);
+    }
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
 	 */
 	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
 		// FIXME simple, dumb way to modify
-		deleteDigitalObject(digitalObject.getPid());
+		deleteDigitalObject(digitalObject);
         addDigitalObject(digitalObject);        
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDatastream(fedora.server.storage.types.Datastream)
 	 */
-	public void modifyDatastream(Datastream ds) {
-		// TODO Auto-generated method stub
-		
+	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+		deleteDatastream(digitalObject, datastreamID);
+        addDatastream(digitalObject, datastreamID);
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDissemination(fedora.server.storage.types.Dissemination)
 	 */
-	public void modifyDisseminator(Disseminator diss) {
-		// TODO Auto-generated method stub
-		
+	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+		deleteDisseminator(digitalObject, disseminatorID);
+        addDisseminator(digitalObject, disseminatorID);
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
 	 */
-	public void deleteDigitalObject(String pid) {
-		// TODO Auto-generated method stub
+	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
+        Iterator it;
+        it = digitalObject.datastreamIdIterator();
+        while (it.hasNext()) {
+            deleteDatastream(digitalObject, (String)it.next());
+        }
+        
+        // Add disseminators
+        it = digitalObject.disseminatorIdIterator();
+        while (it.hasNext()) {
+            deleteDisseminator(digitalObject, (String)it.next());          
+        }
+        
+        // FIXME delete all statements where doURI is subject or object
+        String query = "delete ";
+        
+        String doURI = getDOURI(digitalObject);
+
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDatastream(fedora.server.storage.types.Datastream)
 	 */
-	public void deleteDatastream(Datastream ds) {
-		// TODO Auto-generated method stub
+	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+	    Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
+        String doURI = getDOURI(digitalObject);
+        String datastreamURI;
+        if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
+            datastreamURI = ds.DatastreamURI;
+        } else {
+            datastreamURI = doURI + "/" + datastreamID;
+        }
+        
+        // DELETE statements where datastreamURI is subject
+        // DELETE statements where datastreamURI is object
+        
+        // FIXME handle special case datastreams, e.g. WSDL, METHODMAP
 		
 	}
 
 	/* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDissemination(fedora.server.storage.types.Dissemination)
 	 */
-	public void deleteDisseminator(Disseminator diss) {
-		// TODO Auto-generated method stub
-		
+	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+        Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
+        String doIdentifier = getDOURI(digitalObject);
+        
+        String bDefPID = diss.bDefID;
+        String bMechPID = diss.bMechID;
+        
+        // delete bMech reference: 
+        //(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
+        
+        if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
+            // delete statement where rep is subject or object
+            String query = "SELECT permutation " +
+                           "FROM riMethodPermutation, riMethodImpl " +
+                           "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
+                           "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
+            Statement select;
+            
+            try {
+                 select = m_conn.createStatement();
+                 ResultSet rs = select.executeQuery(query);
+                 String permutation, rep;
+                 while (rs.next()) {
+                     permutation = rs.getString("permutation");
+                     rep = doIdentifier + "/" + bDefPID + "/" + permutation;
+                     // TODO delete... or can we use wildcards, e.g. delete where doIdentifier/bDefPID and doIdentifier/bDefPID/*
+                 }
+            } catch (SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                throw new ResourceIndexException(e.getMessage());
+            }
+        }	
 	}
 
 	private void addBDef(DigitalObject bDef) throws ResourceIndexException {
 		String doURI = getDOURI(bDef);
-		m_store.insert(doURI, RDF_TYPE_URI, BDEF_RDF_TYPE_URI);
+        queueTriple(doURI, RDF_TYPE_URI, BDEF_RDF_TYPE_URI);
 		
 		Datastream ds = getLatestDatastream(bDef.datastreams("METHODMAP"));
 		MethodDef[] mdef = getMethodDefs(bDef.getPid(), ds);
 		for (int i = 0; i < mdef.length; i++) {
-	        m_store.insertLiteral(doURI, DEFINES_METHOD_URI, mdef[i].methodName);
+            queuePlainLiteralTriple(doURI, DEFINES_METHOD_URI, mdef[i].methodName);
 	        // m_store.insertLiteral(doIdentifier, "foo:methodLabel", mdef[i].methodLabel);
 	    }
+        addQueue(false);
 	}
 	
 	private void addBMech(DigitalObject bMech) throws ResourceIndexException {
 		String doURI = getDOURI(bMech);
-		m_store.insert(doURI, RDF_TYPE_URI, BMECH_RDF_TYPE_URI);
-		
+        queueTriple(doURI, RDF_TYPE_URI, BMECH_RDF_TYPE_URI);
+	
 		String bDefPid = getBDefPid(bMech);
-		m_store.insert(doURI, IMPLEMENTS_BDEF_URI, getDOURI(bDefPid));
-		
+		queueTriple(doURI, IMPLEMENTS_BDEF_URI, getDOURI(bDefPid));
+		addQueue(false);	
 	}
 	
-	private void addDataObject(DigitalObject digitalObject) {
+	private void addDataObject(DigitalObject digitalObject) throws ResourceIndexException {
 		String identifier = getDOURI(digitalObject);
-		m_store.insert(identifier, RDF_TYPE_URI, DATA_OBJECT_RDF_TYPE_URI);	
+        queueTriple(identifier, RDF_TYPE_URI, DATA_OBJECT_RDF_TYPE_URI);	
+        addQueue(false);
 	}
 	
 	private void addDublinCoreDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
 	    String doURI = getDOURI(digitalObject);
 	    DatastreamXMLMetadata dc = (DatastreamXMLMetadata)ds;
 		DCFields dcf;
+        final String DC_URI_PREFIX = "http://purl.org/dc/elements/1.1/";
+        
 		try {
 			dcf = new DCFields(dc.getContentStream());
 		} catch (Throwable t) {
@@ -349,82 +387,70 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		Iterator it;
 		it = dcf.titles().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "title", (String)it.next());
+            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "title", (String)it.next());
 		}
 		it = dcf.creators().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "creator", (String)it.next());
+            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "creator", (String)it.next());
 		}
 		it = dcf.subjects().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "subject", (String)it.next());
+            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "subject", (String)it.next());
 		}
 		it = dcf.descriptions().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "description", (String)it.next());
+            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "description", (String)it.next());
 		}
 		it = dcf.publishers().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "publisher", (String)it.next());
+            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "publisher", (String)it.next());
 		}
 		it = dcf.contributors().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "contributor", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "contributor", (String)it.next());
 		}
 		it = dcf.dates().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "date", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "date", (String)it.next());
 		}
 		it = dcf.types().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "type", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "type", (String)it.next());
 		}
 		it = dcf.formats().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "format", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "format", (String)it.next());
 		}
 		it = dcf.identifiers().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "identifier", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "identifier", (String)it.next());
 		}
 		it = dcf.sources().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "source", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "source", (String)it.next());
 		}
 		it = dcf.languages().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "language", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "language", (String)it.next());
 		}
 		it = dcf.relations().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "relation", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "relation", (String)it.next());
 		}
 		it = dcf.coverages().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "coverage", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "coverage", (String)it.next());
 		}
 		it = dcf.rights().iterator();
 		while (it.hasNext()) {
-			m_store.insertLiteral(doURI, DC_URI_PREFIX + "rights", (String)it.next());
+			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "rights", (String)it.next());
 		}
+        addQueue(false);
 	}
 	
     private void addDSInputSpecDatastream(Datastream ds) {
         // Placeholder. We don't currently do more than
-        // index the fact that there is said datastream
-        //      DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
-        //      ServiceMapper serviceMapper = new ServiceMapper(digitalObject.getPid());
-        //      BMechDSBindSpec dsBindSpec;
-        //      try {
-        //          dsBindSpec = serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
-        //      } catch (Throwable t) {
-        //          throw new ResourceIndexException(t.getMessage());
-        //      }
-        //      String bDefPID = dsBindSpec.bDefPID;
-        //      
-        //      String bMechPID = dsBindSpec.bMechPID;
-        //      
-        //      BMechDSBindRule[] x = dsBindSpec.dsBindRules;
+        // index the fact that said datastream exists
     }
     
     private void addExtPropertiesDatastream(Datastream ds) {
@@ -551,10 +577,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
 	}
 	
-    private void addRelsDatastream(Datastream ds) {
-        // TODO ristore can take the rdfxml straight... need test case for this method
+    private void addRelsDatastream(Datastream ds) throws ResourceIndexException {
         DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
-        m_store.read(rels.getContentStream(), "");
+        try {
+            m_writer.load(rels.getContentStream(), null);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
     }
     
     private void addServiceProfileDatastream(Datastream ds) {
@@ -577,10 +608,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
             return;
         }
-        
 
-        // SELECT methodId FROM riMethod WHERE bDefPid = '' AND methodName = '';
-        // INSERT INTO riMethodMimeType (methodId, mimeType) VALUES ()
         String doURI = getDOURI(digitalObject);
         String bDefPid = getBDefPid(digitalObject);
         String bMechPid = digitalObject.getPid();
@@ -607,14 +635,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             while (it.hasNext()) {
                 QName qname = (QName)it.next();
                 Binding binding = (Binding)bindings.get(qname);
-                //System.out.println("*bindingKey: " + qname);
-                
+
                 List bops = binding.getBindingOperations();
                 Iterator bit = bops.iterator();
                 while (bit.hasNext()) {
                     BindingOperation bop = (BindingOperation)bit.next();
                     methodName = bop.getName();
-                    System.out.println("*BindingOperation.getName(): " + methodName);
                     riMethodFK = getRIMethodPrimaryKey(bDefPid, methodName);
                     riMethodImplPK = getRIMethodImplPrimaryKey(bMechPid, methodName);
                     insertMethodImpl.setString(1, riMethodImplPK);
@@ -633,7 +659,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                             insertMethodMimeType.setString(1, riMethodImplPK);
                             insertMethodMimeType.setString(2, mimeType);
                             insertMethodMimeType.addBatch();
-                            System.out.println("*mc.getType(): " + mimeType);
                         }
                     }
                 }
@@ -680,22 +705,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 	}
 	
-//	private List getMethodNames(String bdefPID) throws ResourceIndexException {
-//		RDQLQuery query = new RDQLQuery("SELECT ?o WHERE (<" + getDOURI(bdefPID) + "> <" + DEFINES_METHOD_URI + "> ?o)");
-//        
-//        logFinest("Started query to resource index (rdql).");
-//        JenaResultIterator results = (JenaResultIterator)executeQuery(query);
-//		
-//		Value v;
-//		List methods = new ArrayList();
-//		while (results.hasNext()) {
-//			v = (Value)results.next().get("o");
-//			methods.add(v.getString());
-//		}
-//        logFinest("Finished query to resource index and iteration of results.");
-//		return methods;
-//	}
-	
 	private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
 	    DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
 	    ServiceMapper serviceMapper = new ServiceMapper(pid);
@@ -733,6 +742,59 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	private String getDOURI(String pid) {
 	    return FEDORA_URI_SCHEME + pid;
 	}
+    
+    private void queueTriple(String subject, 
+                             String predicate, 
+                             String object) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleFactory.create(subject, predicate, object));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queuePlainLiteralTriple(String subject, 
+                                         String predicate, 
+                                         String object) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleFactory.createPlain(subject, predicate, object));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueLocalLiteralTriple(String subject, 
+                                         String predicate, 
+                                         String object, 
+                                         String language) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleFactory.createLocal(subject, predicate, object, language));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueTypedLiteralTriple(String subject, 
+                                         String predicate, 
+                                         String object, 
+                                         String datatype) throws ResourceIndexException {
+        try {
+            m_tQueue.add(TripleFactory.createTyped(subject, predicate, object, datatype));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+}
+    
+    private void addQueue(boolean flush) throws ResourceIndexException {
+        try {
+            m_writer.add(m_tQueue, flush);
+        } catch (IOException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+        m_tQueue.clear();
+    }
 	
 	/**
 	 * 
@@ -884,6 +946,130 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             copy.addAll(result);
             crossProduct.add(copy);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#setAliasMap(java.util.Map)
+     */
+    public void setAliasMap(Map aliasToPrefix) throws TrippiException {
+        m_reader.setAliasMap(aliasToPrefix);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#getAliasMap()
+     */
+    public Map getAliasMap() throws TrippiException {
+        return m_reader.getAliasMap();
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#findTuples(java.lang.String, java.lang.String, int, boolean)
+     */
+    public TupleIterator findTuples(String queryLang,
+                                    String tupleQuery,
+                                    int limit,
+                                    boolean distinct) throws TrippiException {
+        return m_reader.findTuples(queryLang, tupleQuery, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#countTuples(java.lang.String, java.lang.String, int, boolean)
+     */
+    public int countTuples(String queryLang,
+                           String tupleQuery,
+                           int limit,
+                           boolean distinct) throws TrippiException {
+        return m_reader.countTuples(queryLang, tupleQuery, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#findTriples(java.lang.String, java.lang.String, int, boolean)
+     */
+    public TripleIterator findTriples(String queryLang,
+                                      String tripleQuery,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
+        return m_reader.findTriples(queryLang, tripleQuery, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#countTriples(java.lang.String, java.lang.String, int, boolean)
+     */
+    public int countTriples(String queryLang,
+                            String tripleQuery,
+                            int limit,
+                            boolean distinct) throws TrippiException {
+        return m_reader.countTriples(queryLang, tripleQuery, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#findTriples(org.jrdf.graph.SubjectNode, org.jrdf.graph.PredicateNode, org.jrdf.graph.ObjectNode, int)
+     */
+    public TripleIterator findTriples(SubjectNode subject,
+                                      PredicateNode predicate,
+                                      ObjectNode object,
+                                      int limit) throws TrippiException {
+        return m_reader.findTriples(subject, predicate, object, limit);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#countTriples(org.jrdf.graph.SubjectNode, org.jrdf.graph.PredicateNode, org.jrdf.graph.ObjectNode, int)
+     */
+    public int countTriples(SubjectNode subject,
+                            PredicateNode predicate,
+                            ObjectNode object,
+                            int limit) throws TrippiException {
+        return m_reader.countTriples(subject, predicate, object, limit);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#findTriples(java.lang.String, java.lang.String, java.lang.String, int, boolean)
+     */
+    public TripleIterator findTriples(String queryLang,
+                                      String tripleQuery,
+                                      String tripleTemplate,
+                                      int limit,
+                                      boolean distinct) throws TrippiException {
+        return m_reader.findTriples(queryLang, tripleQuery, tripleTemplate, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#countTriples(java.lang.String, java.lang.String, java.lang.String, int, boolean)
+     */
+    public int countTriples(String queryLang,
+                            String tripleQuery,
+                            String tripleTemplate,
+                            int limit,
+                            boolean distinct) throws TrippiException {
+        return m_reader.countTriples(queryLang, tripleQuery, tripleTemplate, limit, distinct);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#dump(java.io.OutputStream)
+     */
+    public void dump(OutputStream out) throws IOException, TrippiException {
+        m_reader.dump(out);
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#listTupleLanguages()
+     */
+    public String[] listTupleLanguages() {
+        return m_reader.listTupleLanguages();
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#listTripleLanguages()
+     */
+    public String[] listTripleLanguages() {
+        return m_reader.listTripleLanguages();
+    }
+
+    /* (non-Javadoc)
+     * @see org.trippi.TriplestoreReader#close()
+     */
+    public void close() throws TrippiException {
+        m_reader.close();
     }
 
 }
