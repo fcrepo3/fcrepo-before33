@@ -87,7 +87,7 @@ public class METSLikeDODeserializer
     private boolean m_readingContent;
 
     private boolean m_firstInlineXMLElement;
-    
+
     /** Namespace prefixes used in the currently scanned datastream */
     private ArrayList m_dsPrefixes;
 
@@ -108,7 +108,7 @@ public class METSLikeDODeserializer
     private String m_auditResponsibility;
     private String m_auditDate;
     private String m_auditJustification;
-    
+
     /** Hashmap for holding disseminators during parsing, keyed
      * by structMapId */
     private HashMap m_dissems;
@@ -117,7 +117,7 @@ public class METSLikeDODeserializer
      * Currently-being-initialized disseminator, during structmap parsing.
      */
     private Disseminator m_diss;
-    
+
     /**
      * Whether, while in structmap, we've already seen a div
      */
@@ -125,7 +125,7 @@ public class METSLikeDODeserializer
 
     /** The structMapId of the dissem currently being parsed. */
     private String m_structId;
-    
+
     /**
      * Never query the server and take it's values for Content-length and
      * Content-type
@@ -190,7 +190,7 @@ public class METSLikeDODeserializer
         spf.setNamespaceAware(true);
         m_parser=spf.newSAXParser();
     }
-    
+
     public DODeserializer getInstance()
             throws RepositoryConfigurationException {
         try {
@@ -496,7 +496,7 @@ public class METSLikeDODeserializer
                 // construct a new Disseminator object to hold the structMap...
                 // and later, the other info
                 //
-                // Building up a global map of Disseminators, m_dissems, 
+                // Building up a global map of Disseminators, m_dissems,
                 // keyed by bindingmap ID.
                 //
                 if (grab(a,M,"TYPE").equals("fedora:dsBindingMap")) {
@@ -563,7 +563,7 @@ public class METSLikeDODeserializer
                 m_dissemId=grab(a,M,"ID");
                 m_dissemState=grab(a,M,"STATUS");
             } else if (localName.equals("serviceBinding")) {
-                // remember the structId so we can grab the right dissem 
+                // remember the structId so we can grab the right dissem
                 // when parsing children
                 m_structId=grab(a,M,"STRUCTID");
                 // grab the disseminator associated with the provided structId
@@ -578,7 +578,7 @@ public class METSLikeDODeserializer
                 dissem.dissCreateDT=DateUtility.convertStringToDate(grab(a,M,"CREATED"));
                 dissem.dissLabel=grab(a,M,"LABEL");
             } else if (localName.equals("interfaceMD")) {
-                // interfaceDef LABEL="UVA Std Image Behavior Definition" 
+                // interfaceDef LABEL="UVA Std Image Behavior Definition"
                 // LOCTYPE="URN" xlink:href="test:1"/>
                 Disseminator dissem=(Disseminator) m_dissems.get(m_structId);
                 // already have the id from containing element, just need label
@@ -634,7 +634,7 @@ public class METSLikeDODeserializer
                     m_dsXMLBuffer.append(a.getLocalName(i));
                     m_dsXMLBuffer.append("=\"");
                     // re-encode decoded standard entities (&, <, >, ", ')
-                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i))); 
+                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i)));
                     m_dsXMLBuffer.append("\"");
                 }
                 m_dsXMLBuffer.append('>');
@@ -736,7 +736,8 @@ public class METSLikeDODeserializer
                     ds.DSInfoType=m_dsInfoType;
                     ds.DSMDClass=m_dsMDClass;
                     ds.DSState=m_dsState;
-                    ds.DSLocation=m_obj.getPid() + "+" + m_dsId;
+                    ds.DSLocation=m_obj.getPid() + "+" + m_dsId + "+"
+                        + m_dsVersId;
                     // add it to the digitalObject
                     m_obj.datastreams(m_dsId).add(ds);
                 }
