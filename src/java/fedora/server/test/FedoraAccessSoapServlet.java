@@ -623,6 +623,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     {
       // FIXME!! - need to decide on exception handling
       System.out.println("GetBehaviorMethods: No Method Defs FOUND");
+      return behaviorDefs;
     }
     return behaviorDefs;
   }
@@ -671,6 +672,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     } catch (Exception e)
     {
       System.out.println(e.getMessage());
+      return methodDefs;
     }
     return methodDefs;
   }
@@ -713,6 +715,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     } catch (Exception e)
     {
       System.out.println(e.getMessage());
+      return methodDefs;
     }
     return methodDefs;
   }
@@ -769,6 +772,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     {
       System.out.println(e.getMessage());
       this.getServletContext().log(e.getMessage(), e.getCause());
+      return dissemination;
     }
     return dissemination;
    }
@@ -810,6 +814,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     } catch (Exception e)
     {
       System.out.println(e.getMessage());
+      return objMethDefArray;
     }
     return objMethDefArray;
   }
