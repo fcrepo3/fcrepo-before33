@@ -69,7 +69,7 @@ public class DisseminationService
   private static DOManager m_manager;
 
   /** The current context */
-  private static Context m_context;
+  //private static Context m_context;
 
   /** Signifies the special type of address location known as LOCAL.
    *  An address location of LOCAL implies that no remote host name is
@@ -200,12 +200,14 @@ public class DisseminationService
           + datastreamResolverServletURL + " .");
     }
 
+    /*
     // Initialize context.
      HashMap h = new HashMap();
      h.put("application", "apia");
      h.put("useCachedObject", "false");
      h.put("userId", "fedoraAdmin");
      m_context = ReadOnlyContext.getContext(h);
+     */
   }
 
   public void checkState(Context context, String state, String dsID, String PID)
@@ -413,7 +415,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(dissBindInfo.dsLocation, PID)
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID)
                         + "+(" + dissBindInfo.DSBindKey + ")";;
             } else {
                 replaceString =
@@ -442,7 +444,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(dissBindInfo.dsLocation, PID);
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID);
             } else
             {
                 replaceString = dissBindInfo.dsLocation;
@@ -766,7 +768,7 @@ public class DisseminationService
    *           specified datastream.
    * @throws ServerException - If anything goes wrong during the conversion attempt.
    */
-  private String resolveInternalDSLocation(String internalDSLocation,
+  private String resolveInternalDSLocation(Context context, String internalDSLocation,
       String PID) throws ServerException
   {
       String[] s = internalDSLocation.split("\\+");
@@ -774,7 +776,7 @@ public class DisseminationService
 
       if (s.length == 3)
       {
-          DOReader doReader =  m_manager.getReader(m_context, PID);
+          DOReader doReader =  m_manager.getReader(context, PID);
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
           if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
           dsLocation = "http://"+fedoraServerHost+":"+fedoraServerPort
