@@ -2,18 +2,19 @@ package fedora.server.storage;
 
 /**
  * <p>Title: DefinitiveDOReader.java </p>
- * <p>Description: Digital Object Reader. Uses SAX parser on METS. </p>
- * <p>COMPONENT VERSIONING NOT SUPPORTED IN THIS READER!! </p>
- * <p>ASSUMES THAT NO VERSIONING IS IN THE OBJECT XML. </p>
- * <p>MUST FIX THIS TO LOOK FOR CURRENT VERSIONS OF COMPONENTS. </p>
+ * <p>Description: Digital Object Reader. Uses SAX parser on METS.
+ * COMPONENT VERSIONING NOT SUPPORTED IN THIS READER!!
+ * ASSUMES THERE IS NO VERSIONING IS IN THE OBJECT XML.
+ * MUST FIX THIS TO LOOK FOR CURRENT VERSIONS OF COMPONENTS. </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
- * @author Sandy Payette
+ * @author Sandy Payette, payette@cs.cornell.edu
  * @version 1.0
  */
 
 import fedora.server.storage.types.*;
 import fedora.server.storage.lowlevel.*;
+import fedora.server.errors.*;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -140,10 +141,16 @@ public class DefinitiveDOReader implements DOReader
     }
   }
 
-    public InputStream GetObjectXML()
-    {
-      //return(null);
+   /**
+     * Gets the content of the entire digital object as XML.  The object will
+     * be returned exactly as it is stored in the repository.
+     *
+     * @throws ServerException If there object could not be found or there was
+     *        was a failure in accessing the object for any reason.
+     */
 
+    public InputStream GetObjectXML() throws ObjectIntegrityException, StreamIOException
+    {
       // LLSTORE: call to low level storage layer to retrieve object
       InputStream doIn = null;
       try
@@ -157,7 +164,7 @@ public class DefinitiveDOReader implements DOReader
       return(doIn);
     }
 
-    public InputStream ExportObject()
+    public InputStream ExportObject() throws ObjectIntegrityException, StreamIOException
     {
       return(null);
     }
@@ -166,25 +173,25 @@ public class DefinitiveDOReader implements DOReader
    * Methods that pertain to getting the digital object components
    */
 
-    public String GetObjectPID()
+    public String GetObjectPID() throws ObjectIntegrityException
     {
       if (debug) System.out.println("GetObjectPID = " + PID);
       return(PID);
     }
 
-    public String GetObjectLabel()
+    public String GetObjectLabel() throws ObjectIntegrityException
     {
       if (debug) System.out.println("GetObjectLabel = " + doLabel);
       return(doLabel);
     }
 
-    public String GetObjectState()
+    public String GetObjectState() throws ObjectIntegrityException
     {
       if (debug) System.out.println("GetObjectState = " + doState);
       return(doState);
     }
 
-    public String[] ListDatastreamIDs(String state)
+    public String[] ListDatastreamIDs(String state) throws ObjectIntegrityException
     {
       //FIXIT! Implement the state filter!!
       Set idSet = datastreamTbl.keySet();
@@ -199,7 +206,7 @@ public class DefinitiveDOReader implements DOReader
       return(dsIDList);
     }
 
-    public Datastream[] GetDatastreams(Date versDateTime)
+    public Datastream[] GetDatastreams(Date versDateTime) throws ObjectIntegrityException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = datastreamTbl.values();
@@ -232,6 +239,7 @@ public class DefinitiveDOReader implements DOReader
     }
 
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
+      throws ObjectIntegrityException
     {
       // TODO! dateTime filter not implemented in this release!!
       Datastream datastream = (Datastream) datastreamTbl.get(datastreamID);
@@ -248,6 +256,7 @@ public class DefinitiveDOReader implements DOReader
     }
 
     public Disseminator[] GetDisseminators(Date versDateTime)
+      throws ObjectIntegrityException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = disseminatorTbl.values();
@@ -281,7 +290,7 @@ public class DefinitiveDOReader implements DOReader
       return(disseminators);
     }
 
-    public String[] ListDisseminatorIDs(String state)
+    public String[] ListDisseminatorIDs(String state) throws ObjectIntegrityException
     {
       // FIXIT!  Implement the state filter!!
       Set idSet = disseminatorTbl.keySet();
@@ -297,6 +306,7 @@ public class DefinitiveDOReader implements DOReader
     }
 
     public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
+      throws ObjectIntegrityException
     {
       // TODO! dateTime filter not implemented in this release!!
       Disseminator disseminator = (Disseminator) disseminatorTbl.get(disseminatorID);
@@ -318,7 +328,7 @@ public class DefinitiveDOReader implements DOReader
    */
 
     // Returns PIDs of Behavior Definitions to which object subscribes
-    public String[] GetBehaviorDefs(Date versDateTime)
+    public String[] GetBehaviorDefs(Date versDateTime) throws ObjectIntegrityException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = disseminatorTbl.values();
@@ -341,6 +351,7 @@ public class DefinitiveDOReader implements DOReader
 
     // Returns list of methods that Behavior Mechanism implements for a BDef
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
+      throws ObjectIntegrityException, GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
 
@@ -365,6 +376,7 @@ public class DefinitiveDOReader implements DOReader
 
     // Overloaded method: returns InputStream as alternative
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
+      throws ObjectIntegrityException, GeneralException
     {
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
@@ -378,6 +390,7 @@ public class DefinitiveDOReader implements DOReader
     }
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+          throws ObjectIntegrityException, GeneralException
     {
       Collection disseminators = disseminatorTbl.values();
       DSBindingMapAugmented[] allBindingMaps = new DSBindingMapAugmented[disseminators.size()];
