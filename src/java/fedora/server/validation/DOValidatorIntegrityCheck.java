@@ -143,7 +143,7 @@ import fedora.server.errors.InitializationException;
             + "FROM "
             + "bDef "
             + "WHERE "
-            + "bDef.bDefPID=\'" + BDefPID + "\';";
+            + "bDef.bDefPID=\'" + BDefPID + "\'";
 
         statement = connection.createStatement();
         queryResult = statement.executeQuery(query);
@@ -210,7 +210,7 @@ import fedora.server.errors.InitializationException;
             + "FROM "
             + "bMech "
             + "WHERE "
-            + "bMech.bMechPID=\'" + BMechPID + "\';";
+            + "bMech.bMechPID=\'" + BMechPID + "\'";
 
         statement = connection.createStatement();
         queryResult = statement.executeQuery(query);

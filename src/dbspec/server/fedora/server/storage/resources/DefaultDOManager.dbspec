@@ -94,7 +94,7 @@
 		<column name="methodDbID" type="int(11)" notNull="true" default="0" index="methodDbID"/>
 		<column name="bDefDbID" type="int(11)" notNull="true" default="0" index="bDefDbID"/>
 		<column name="parmName" type="varchar(32)" notNull="true" default="" index="parmName"/>
-		<column name="parmDefaultValue" type="varchar(255)" notNull="true" default="" index="parmDefaultValue"/>
+		<column name="parmDefaultValue" type="varchar(255)" notNull="false" default="" index="parmDefaultValue"/>
 		<column name="parmDomainValues" type="varchar(255)" notNull="true" default="" index="parmDomainValues"/>
 		<column name="parmRequiredFlag" type="varchar(5)" notNull="true" default="false" index="parmRequiredFlag"/>
 		<column name="parmLabel" type="varchar(255)" notNull="true" default="" index="parmLabel"/>
@@ -156,12 +156,6 @@
 		</column>
 		<column name="contentModelID" type="varchar(255)" notNull="true" default="">
 			<comment>The content model of the object.</comment>
-		</column>
-		<column name="createDate" type="timestamp" notNull="true">
-			<comment>The date the object was first created or ingested into the repository.</comment>
-		</column>
-		<column name="lastModifiedDate" type="timestamp" notNull="true">
-			<comment>The date the object was last changed.</comment>
 		</column>
 	</table>
     <table name="doFields">

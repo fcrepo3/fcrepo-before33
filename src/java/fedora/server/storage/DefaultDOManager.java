@@ -610,9 +610,9 @@ public class DefaultDOManager
                     int systemVersion=results.getInt("systemVersion");
                     systemVersion++;
                     Date now=new Date();
-                    String formattedLastModDate=m_formatter.format(now);
+//                    String formattedLastModDate=m_formatter.format(now);
                     s.executeUpdate("UPDATE doRegistry SET systemVersion="
-                            + systemVersion + ", lockingUser=NULL, createDate=createDate, lastModifiedDate='" + formattedLastModDate + "' "
+                            + systemVersion + ", lockingUser=NULL "
                             + "WHERE doPID='" + obj.getPid() + "'");
                 } catch (SQLException sqle) {
                     throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
@@ -661,7 +661,7 @@ public class DefaultDOManager
                     throw se;
                 } catch (Throwable th) {
                   System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
-                  th.printStackTrace();
+                  logStackTrace(th);
                     throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
                 }
             } catch (ServerException se) {
@@ -671,6 +671,16 @@ public class DefaultDOManager
                 throw se;
             }
         }
+    }
+    
+    private void logStackTrace(Throwable th) {
+        StackTraceElement[] els=th.getStackTrace();
+        StringBuffer lines=new StringBuffer();
+        for (int i=0; i<els.length; i++) {
+            lines.append(els[i].toString());
+            lines.append("\n");
+        }
+        logFiner("Stack trace: " + th.getClass().getName() + "\n" + lines.toString());
     }
 
     /**
@@ -746,7 +756,7 @@ public class DefaultDOManager
                 // get the lock
                 lockingUser=getUserId(context);
                 s.executeUpdate("UPDATE doRegistry SET lockingUser='"
-                    + lockingUser + "', createDate=createDate, lastModifiedDate=lastModifiedDate WHERE doPID='" + pid + "'");
+                    + lockingUser + "' WHERE doPID='" + pid + "'");
             }
             if (!lockingUser.equals(getUserId(context))) {
                 throw new ObjectLockedException("The object is locked by " + lockingUser);
@@ -1228,17 +1238,14 @@ public class DefaultDOManager
             foType="M";
         }
         try {
-            String formattedCreateDate=m_formatter.format(createDate);
-            String formattedLastModDate=m_formatter.format(lastModDate);
+          //  String formattedCreateDate=m_formatter.format(createDate);
+          //  String formattedLastModDate=m_formatter.format(lastModDate);
             String query="INSERT INTO doRegistry (doPID, foType, "
                                                    + "lockingUser, label, "
-                                                   + "contentModelID, createDate, "
-                                                   + "lastModifiedDate) "
+                                                   + "contentModelID) "
                        + "VALUES ('" + pid + "', '" + foType +"', '"
                                      + userId +"', '" + SQLUtility.aposEscape(theLabel) + "', '"
-                                     + theContentModelId + "', '"
-                                     + formattedCreateDate + "', '"
-                                     + formattedLastModDate + "')";
+                                     + theContentModelId + "')";
             conn=m_connectionPool.getConnection();
             st=conn.createStatement();
             st.executeUpdate(query);
@@ -1355,7 +1362,7 @@ public class DefaultDOManager
             whereClause.append("AND ");
             whereClause.append(part);
         }
-        if (createDateMin!=null) {
+/* this entire method is deprecated (see findObjects)        if (createDateMin!=null) {
             whereClause.append(" AND createDate >= '");
             whereClause.append(m_formatter.format(createDateMin));
             whereClause.append('\'');
@@ -1375,6 +1382,7 @@ public class DefaultDOManager
             whereClause.append(m_formatter.format(lastModDateMax));
             whereClause.append('\'');
         }
+*/
         if (needEscape) {
             whereClause.append(" {escape '/'}");
         }

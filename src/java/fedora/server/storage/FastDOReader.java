@@ -269,7 +269,7 @@ public class FastDOReader implements DOReader
           + "do.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("[FastDOReader] GetBehaviorDefsQuery: " + query);
       String results = null;
@@ -381,7 +381,7 @@ public class FastDOReader implements DOReader
           + "mechImpl.methodDbID=method.methodDbID AND "
           + "bMech.bDefDbID=bDef.bDefDbID AND "
           + "bDef.bDefPID='" + bDefPID + "' AND "
-          + "method.methodName='"  + methodName + "' ";
+          + "method.methodName='"  + methodName + "'";
 
       s_server.logFinest("GetBMechMethodParmQuery=" + query);
       try
@@ -530,7 +530,7 @@ public class FastDOReader implements DOReader
           + "method.methodDbID = mechImpl.methodDbID AND "
           + "method.bDefDbID = bDef.bDefDbID AND "
           + "bDef.bDefPID = \'" + bDefPID + "\' AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -681,7 +681,7 @@ public class FastDOReader implements DOReader
           + "WHERE "
           + "do.doDbID = dsBind.doDbID AND "
           + "dsBind.dsID=\'" + datastreamID +"\' AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("GetDatastreamQuery: " + query);
       String[] results = null;
@@ -783,7 +783,7 @@ public class FastDOReader implements DOReader
           + "dsBind "
           + "WHERE "
           + "do.doDbID = dsBind.doDbID AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("GetDatastreamsQuery: " + query);
       String[] results = null;
@@ -1041,7 +1041,7 @@ public class FastDOReader implements DOReader
           + "bMech.bMechDbID = diss.bMechDbID AND "
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
           + "diss.dissID=\'" + disseminatorID + "\' AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("GetDisseminatorQuery: " + query);
       String[] results = null;
@@ -1144,7 +1144,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "bMech.bMechDbID = diss.bMechDbID AND "
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("GetDisseminatorsQuery: " + query);
       String[] results = null;
@@ -1303,7 +1303,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefDbID = mechImpl.bDefDbID AND "
           + "method.methodDbID = mechImpl.methodDbID AND "
           + "do.doPID=\'" + GetObjectPID() + "\' "
-          + "ORDER BY bDef.bDefPID, method.methodName;";
+          + "ORDER BY bDef.bDefPID, method.methodName";
 
       s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -1494,7 +1494,7 @@ public class FastDOReader implements DOReader
           + "dsBind "
           + "WHERE "
           + "do.doDbID = dsBind.doDbID AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("ListDatastreamIDsQuery: " + query);
       String[] results = null;
@@ -1596,7 +1596,7 @@ public class FastDOReader implements DOReader
           + "WHERE "
           + "do.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
-          + "do.doPID=\'" + PID + "\';";
+          + "do.doPID=\'" + PID + "\'";
 
       s_server.logFinest("ListDisseminatorIDsQuery: " + query);
       String[] results = null;
@@ -1691,7 +1691,7 @@ public class FastDOReader implements DOReader
         + "FROM "
         + "do "
         + "WHERE "
-        + "do.doPID=\'" + PID + "\';";
+        + "do.doPID=\'" + PID + "\'";
     s_server.logFinest("LocatPIDQuery: " + query);
 
     try

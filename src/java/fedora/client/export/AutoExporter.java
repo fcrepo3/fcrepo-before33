@@ -68,6 +68,9 @@ public class AutoExporter {
         try {
             // use xerces to pretty print the xml, assuming it's well formed
             OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+            fmt.setIndent(2);
+            fmt.setLineWidth(120);
+            fmt.setPreserveSpace(false);
             XMLSerializer ser=new XMLSerializer(outStream, fmt);
             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);

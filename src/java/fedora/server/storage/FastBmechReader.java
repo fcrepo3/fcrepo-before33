@@ -174,7 +174,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "mechImpl.methodDbID=method.methodDbID AND "
           + "bMech.bDefDbID=bDef.bDefDbID AND "
           + "bMech.bMechPID='" + bMechPID + "' AND "
-          + "method.methodName='"  + methodName + "' ";
+          + "method.methodName='"  + methodName + "'";
 
       s_server.logFinest("[FastBmechReader] GetBmechDefaultMethodParmQuery=" + query);
       try
@@ -311,7 +311,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "bDef.bDefDbID = mechImpl.bDefDbID AND "
           + "method.methodDbID = mechImpl.methodDbID AND "
           + "method.bDefDbID = bDef.bDefDbID AND "
-          + "bMech.bMechPID = \'" + bMechPID + "\' ;";
+          + "bMech.bMechPID = \'" + bMechPID + "\'";
 
       s_server.logFinest("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -499,7 +499,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         + "FROM "
         + "bMech "
         + "WHERE "
-        + "bMech.bMechPID=\'" + bMechPID + "\';";
+        + "bMech.bMechPID=\'" + bMechPID + "\'";
     s_server.logFinest("LocateBmechPIDQuery: " + query);
 
     try

@@ -64,7 +64,13 @@ public class OracleDDLConverter
               if (cs.getType().toLowerCase().indexOf("smallint(")==0) {
                 out.append("smallint");
               } else {
+                if (cs.getType().toLowerCase().equals("bigint")) {
+                    out.append("NUMBER(20,0)");
+                } else if (cs.getType().toLowerCase().equals("text")) {
+                    out.append("CLOB");
+                } else {
                 out.append(cs.getType());
+                }
               }
             }
             if (cs.isAutoIncremented()) {

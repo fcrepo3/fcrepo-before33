@@ -319,5 +319,4 @@ public class RowInsertion {
 		rowCount = statement.executeUpdate(insertionStatement);
 		statement.close();
 	}
-
-}
+}   

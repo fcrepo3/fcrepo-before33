@@ -156,7 +156,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           + "method "
           + "WHERE "
           + "method.bDefDbID = bDef.bDefDbID AND "
-          + "bDef.bDefPID = \'" + bDefPID + "\';";
+          + "bDef.bDefPID = \'" + bDefPID + "\'";
 
       s_server.logFinest("[FastBdefReader] getAbstractMethodsQuery: " + query);
       String[] results = null;
@@ -309,7 +309,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           + "method.bDefDbID=parm.bDefDbID AND "
           + "method.methodDbID=parm.methodDbID AND "
           + "bDef.bDefPID='" + bDefPID + "' AND "
-          + "method.methodName='"  + methodName + "';";
+          + "method.methodName='"  + methodName + "'";
 
       s_server.logFinest("GetBdefMethodParmQuery=" + query);
       try
@@ -423,7 +423,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
         + "FROM "
         + "bDef "
         + "WHERE "
-        + "bDef.bDefPID=\'" + bDefPID + "\';";
+        + "bDef.bDefPID=\'" + bDefPID + "\'";
     s_server.logFinest("LocatBdefPIDQuery: " + query);
 
     try

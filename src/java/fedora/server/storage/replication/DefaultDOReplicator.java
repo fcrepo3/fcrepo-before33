@@ -57,8 +57,6 @@ public class DefaultDOReplicator
     }
 
     public void initModule() {
-        m_ri=new RowInsertion();
-        m_dl=new DBIDLookup();
     }
 
     public void postInitModule()
@@ -312,10 +310,10 @@ public class DefaultDOReplicator
                 // Insert Behavior Definition row
                 bDefPID = bDefReader.GetObjectPID();
                 bDefLabel = bDefReader.GetObjectLabel();
-                m_ri.insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
+                insertBehaviorDefinitionRow(connection, bDefPID, bDefLabel);
 
                 // Insert method rows
-                bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
+                bDefDBID = lookupBehaviorDefinitionDBID(connection, bDefPID);
                 if (bDefDBID == null) {
                     throw new ReplicationException(
                         "BehaviorDefinition row doesn't exist for PID: "
@@ -323,12 +321,12 @@ public class DefaultDOReplicator
                 }
                 behaviorDefs = bDefReader.getAbstractMethods(null);
                 for (int i=0; i<behaviorDefs.length; ++i) {
-                    m_ri.insertMethodRow(connection, bDefDBID,
+                    insertMethodRow(connection, bDefDBID,
                             behaviorDefs[i].methodName,
                             behaviorDefs[i].methodLabel);
 
                     // Insert method parm rows
-                    methDBID =  m_dl.lookupMethodDBID(connection, bDefDBID,
+                    methDBID =  lookupMethodDBID(connection, bDefDBID,
                         behaviorDefs[i].methodName);
                     for (int j=0; j<behaviorDefs[i].methodParms.length; j++)
                     {
@@ -355,7 +353,7 @@ public class DefaultDOReplicator
                       {
                         sb.append("null");
                       }
-                      m_ri.insertMethodParmRow(connection, methDBID, bDefDBID,
+                      insertMethodParmRow(connection, methDBID, bDefDBID,
                               methodParmDefs[j].parmName,
                               methodParmDefs[j].parmDefaultValue,
                               sb.toString(),
@@ -419,7 +417,7 @@ public class DefaultDOReplicator
                 dsBindSpec = bMechReader.getServiceDSInputSpec(null);
                 bDefPID = dsBindSpec.bDefPID;
 
-                bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
+                bDefDBID = lookupBehaviorDefinitionDBID(connection, bDefPID);
                 if (bDefDBID == null) {
                     throw new ReplicationException("BehaviorDefinition row doesn't "
                             + "exist for PID: " + bDefPID);
@@ -428,11 +426,11 @@ public class DefaultDOReplicator
                 bMechPID = bMechReader.GetObjectPID();
                 bMechLabel = bMechReader.GetObjectLabel();
 
-                m_ri.insertBehaviorMechanismRow(connection, bDefDBID, bMechPID,
+                insertBehaviorMechanismRow(connection, bDefDBID, bMechPID,
                         bMechLabel);
 
                 // Insert dsBindSpec rows
-                bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection, bMechPID);
+                bMechDBID = lookupBehaviorMechanismDBID(connection, bMechPID);
                 if (bMechDBID == null) {
                     throw new ReplicationException("BehaviorMechanism row doesn't "
                             + "exist for PID: " + bDefPID);
@@ -447,14 +445,14 @@ public class DefaultDOReplicator
                   cardinality = Integer.toString(
                       dsBindSpec.dsBindRules[i].maxNumBindings);
 
-                  m_ri.insertDataStreamBindingSpecRow(connection,
+                  insertDataStreamBindingSpecRow(connection,
                       bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName,
                       ordinality_flag, cardinality,
                       dsBindSpec.dsBindRules[i].bindingLabel);
 
                   // Insert dsMIME rows
                   dsBindingKeyDBID =
-                      m_dl.lookupDataStreamBindingSpecDBID(connection,
+                      lookupDataStreamBindingSpecDBID(connection,
                       bMechDBID, dsBindSpec.dsBindRules[i].bindingKeyName);
                   if (dsBindingKeyDBID == null) {
                     throw new ReplicationException(
@@ -467,7 +465,7 @@ public class DefaultDOReplicator
                   for (int j=0;
                        j<dsBindSpec.dsBindRules[i].bindingMIMETypes.length;
                        ++j) {
-                    m_ri.insertDataStreamMIMERow(connection,
+                    insertDataStreamMIMERow(connection,
                         dsBindingKeyDBID,
                         dsBindSpec.dsBindRules[i].bindingMIMETypes[j]);
                   }
@@ -488,7 +486,7 @@ public class DefaultDOReplicator
                     }
 
                     // Insert mechDefParm rows
-                    methodDBID = m_dl.lookupMethodDBID(connection, bDefDBID,
+                    methodDBID = lookupMethodDBID(connection, bDefDBID,
                             behaviorBindingsEntry.methodName);
                     if (methodDBID == null) {
                         throw new ReplicationException("Method row doesn't "
@@ -524,7 +522,7 @@ public class DefaultDOReplicator
                         if (sb.length() == 0) sb.append("null");
                       }
 
-                      m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
+                      insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
                               methodParmDefs[j].parmName,
                               methodParmDefs[j].parmDefaultValue,
                               sb.toString(),
@@ -535,7 +533,7 @@ public class DefaultDOReplicator
                     }
                     for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
                         dsBindingKeyDBID =
-                                m_dl.lookupDataStreamBindingSpecDBID(connection,
+                                lookupDataStreamBindingSpecDBID(connection,
                                 bMechDBID,
                                 dsBindSpec.dsBindRules[j].bindingKeyName);
                         if (dsBindingKeyDBID == null) {
@@ -557,7 +555,7 @@ public class DefaultDOReplicator
                               equalsIgnoreCase(
                               dsBindSpec.dsBindRules[j].bindingKeyName))
                           {
-                            m_ri.insertMechanismImplRow(connection, bMechDBID,
+                            insertMechanismImplRow(connection, bMechDBID,
                                 bDefDBID, methodDBID, dsBindingKeyDBID,
                                 "http", "text/html",
                                 behaviorBindingsEntry.serviceBindingAddress,
@@ -622,9 +620,9 @@ public class DefaultDOReplicator
                 doPID = doReader.GetObjectPID();
                 doLabel = doReader.GetObjectLabel();
 
-                m_ri.insertDigitalObjectRow(connection, doPID, doLabel);
+                insertDigitalObjectRow(connection, doPID, doLabel);
 
-                doDBID = m_dl.lookupDigitalObjectDBID(connection, doPID);
+                doDBID = lookupDigitalObjectDBID(connection, doPID);
                 if (doDBID == null) {
                     throw new ReplicationException("do row doesn't "
                             + "exist for PID: " + doPID);
@@ -632,14 +630,14 @@ public class DefaultDOReplicator
 
                 disseminators = doReader.GetDisseminators(null);
                 for (int i=0; i<disseminators.length; ++i) {
-                    bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection,
+                    bDefDBID = lookupBehaviorDefinitionDBID(connection,
                             disseminators[i].bDefID);
                     if (bDefDBID == null) {
                         throw new ReplicationException("BehaviorDefinition row "
                                 + "doesn't exist for PID: "
                                 + disseminators[i].bDefID);
                     }
-                    bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,
+                    bMechDBID = lookupBehaviorMechanismDBID(connection,
                             disseminators[i].bMechID);
                     if (bMechDBID == null) {
                         throw new ReplicationException("BehaviorMechanism row "
@@ -647,13 +645,13 @@ public class DefaultDOReplicator
                                 + disseminators[i].bMechID);
                     }
                     // Insert Disseminator row if it doesn't exist.
-                    dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID,
+                    dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
                             bMechDBID, disseminators[i].dissID);
                     if (dissDBID == null) {
                         // Disseminator row doesn't exist, add it.
-                        m_ri.insertDisseminatorRow(connection, bDefDBID, bMechDBID,
+                        insertDisseminatorRow(connection, bDefDBID, bMechDBID,
                         disseminators[i].dissID, disseminators[i].dissLabel);
-                        dissDBID = m_dl.lookupDisseminatorDBID(connection, bDefDBID,
+                        dissDBID = lookupDisseminatorDBID(connection, bDefDBID,
                                 bMechDBID, disseminators[i].dissID);
                         if (dissDBID == null) {
                             throw new ReplicationException("diss row "
@@ -662,13 +660,13 @@ public class DefaultDOReplicator
                         }
                     }
                     // Insert doDissAssoc row
-                    m_ri.insertDigitalObjectDissAssocRow(connection, doDBID,
+                    insertDigitalObjectDissAssocRow(connection, doDBID,
                             dissDBID);
                 }
 //                try{
                     allBindingMaps = doReader.GetDSBindingMaps(null);
                     for (int i=0; i<allBindingMaps.length; ++i) {
-                        bMechDBID = m_dl.lookupBehaviorMechanismDBID(connection,
+                        bMechDBID = lookupBehaviorMechanismDBID(connection,
                                 allBindingMaps[i].dsBindMechanismPID);
                         if (bMechDBID == null) {
                             throw new ReplicationException("BehaviorMechanism row "
@@ -677,14 +675,14 @@ public class DefaultDOReplicator
                         }
 
                         // Insert dsBindMap row if it doesn't exist.
-                        bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(connection,
+                        bindingMapDBID = lookupDataStreamBindingMapDBID(connection,
                                 bMechDBID, allBindingMaps[i].dsBindMapID);
                         if (bindingMapDBID == null) {
                             // DataStreamBinding row doesn't exist, add it.
-                            m_ri.insertDataStreamBindingMapRow(connection, bMechDBID,
+                            insertDataStreamBindingMapRow(connection, bMechDBID,
                             allBindingMaps[i].dsBindMapID,
                             allBindingMaps[i].dsBindMapLabel);
-                            bindingMapDBID = m_dl.lookupDataStreamBindingMapDBID(
+                            bindingMapDBID = lookupDataStreamBindingMapDBID(
                                     connection,bMechDBID,allBindingMaps[i].dsBindMapID);
                             if (bindingMapDBID == null) {
                                 throw new ReplicationException(
@@ -697,7 +695,7 @@ public class DefaultDOReplicator
 
                         for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length;
                                 ++j) {
-                            dsBindingKeyDBID = m_dl.lookupDataStreamBindingSpecDBID(
+                            dsBindingKeyDBID = lookupDataStreamBindingSpecDBID(
                                     connection, bMechDBID,
                                     allBindingMaps[i].dsBindingsAugmented[j].
                                     bindKeyName);
@@ -711,7 +709,7 @@ public class DefaultDOReplicator
                             }
 
                             // Insert DataStreamBinding row
-                            m_ri.insertDataStreamBindingRow(connection, doDBID,
+                            insertDataStreamBindingRow(connection, doDBID,
                                     dsBindingKeyDBID,
                                     bindingMapDBID,
                                     allBindingMaps[i].dsBindingsAugmented[j].seqNo,
@@ -1151,5 +1149,596 @@ public class DefaultDOReplicator
             logFinest("Exiting DefaultDOReplicator.delete");
         }
     }
+    
+        /**
+        *
+        * Inserts a Behavior Definition row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefPID Behavior definition PID
+        * @param bDefLabel Behavior definition label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertBehaviorDefinitionRow(Connection connection, String bDefPID, String bDefLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO bDef (bDefPID, bDefLabel) VALUES ('" + bDefPID + "', '" + SQLUtility.aposEscape(bDefLabel) + "')";
+       
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a Behavior Mechanism row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefDbID Behavior definition DBID
+        * @param bMechDbID Behavior mechanism DBID
+        * @param bMechLabel Behavior mechanism label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO bMech (bDefDbID, bMechPID, bMechLabel) VALUES ('" + bDefDbID + "', '" + bMechPID + "', '" + SQLUtility.aposEscape(bMechLabel) + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a DataStreamBindingRow row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param doPID Digital object PID
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param dsBindMapDbID Binding map DBID
+        * @param dsBindKeySeq Datastream binding key sequence number
+        * @param dsID Datastream ID
+        * @param dsLabel Datastream label
+        * @param dsMIME Datastream mime type
+        * @param dsLocation Datastream location
+        * @param policyDbID Policy DBID
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDataStreamBindingRow(Connection connection, String doDbID, String dsBindKeyDbID, String dsBindMapDbID, String dsBindKeySeq, String dsID, String dsLabel, String dsMIME, String dsLocation, String dsControlGroupType, String dsCurrentVersionID, String policyDbID) throws SQLException {
+
+		String insertionStatement = "INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID) VALUES ('" + doDbID + "', '" + dsBindKeyDbID + "', '" + dsBindMapDbID + "', '" + dsBindKeySeq + "', '" + dsID + "', '" + SQLUtility.aposEscape(dsLabel) + "', '" + dsMIME + "', '" + dsLocation + "', '" + dsControlGroupType + "', '" + dsCurrentVersionID + "', '" + policyDbID + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a dsBindMap row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dsBindMapID Datastream binding map ID
+        * @param dsBindMapLabel Datastream binding map label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDataStreamBindingMapRow(Connection connection, String bMechDbID, String dsBindMapID, String dsBindMapLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO dsBindMap (bMechDbID, dsBindMapID, dsBindMapLabel) VALUES ('" + bMechDbID + "', '" + dsBindMapID + "', '" + SQLUtility.aposEscape(dsBindMapLabel) + "')";
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a dsBindSpec row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dsBindSpecName Datastream binding spec name
+        * @param dsBindSpecOrdinality Datastream binding spec ordinality flag
+        * @param dsBindSpecCardinality Datastream binding cardinality
+        * @param dsBindSpecLabel Datastream binding spec lable
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDataStreamBindingSpecRow(Connection connection, String bMechDbID, String dsBindSpecName, String dsBindSpecOrdinality, String dsBindSpecCardinality, String dsBindSpecLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO dsBindSpec (bMechDbID, dsBindSpecName, dsBindSpecOrdinality, dsBindSpecCardinality, dsBindSpecLabel) VALUES ('" + bMechDbID + "', '" + SQLUtility.aposEscape(dsBindSpecName) + "', '" + dsBindSpecOrdinality + "', '" + dsBindSpecCardinality + "', '" + SQLUtility.aposEscape(dsBindSpecLabel) + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a dsMIME row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param dsMIMEName Datastream MIME type name
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDataStreamMIMERow(Connection connection, String dsBindKeyDbID, String dsMIMEName) throws SQLException {
+
+		String insertionStatement = "INSERT INTO dsMIME (dsBindKeyDbID, dsMIMEName) VALUES ('" + dsBindKeyDbID + "', '" + dsMIMEName + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a do row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param doPID DigitalObject PID
+        * @param doLabel DigitalObject label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a doDissAssoc row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param doDbID DigitalObject DBID
+        * @param dissDbID Disseminator DBID
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDigitalObjectDissAssocRow(Connection connection, String doDbID, String dissDbID) throws SQLException {
+
+		String insertionStatement = "INSERT INTO doDissAssoc (doDbID, dissDbID) VALUES ('" + doDbID + "', '" + dissDbID + "')";
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a Disseminator row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefDbID Behavior definition DBID
+        * @param bMechDbID Behavior mechanism DBID
+        * @param dissID Disseminator ID
+        * @param dissLabel Disseminator label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertDisseminatorRow(Connection connection, String bDefDbID, String bMechDbID, String dissID, String dissLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel) VALUES ('" + bDefDbID + "', '" + bMechDbID + "', '" + dissID + "', '" + SQLUtility.aposEscape(dissLabel) + "')";
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a mechImpl row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechDbID Behavior mechanism DBID
+        * @param bDefDbID Behavior definition DBID
+        * @param methodDbID Method DBID
+        * @param dsBindKeyDbID Datastream binding key DBID
+        * @param protocolType Mechanism implementation protocol type
+        * @param returnType Mechanism implementation return type
+        * @param addressLocation Mechanism implementation address location
+        * @param operationLocation Mechanism implementation operation location
+        * @param policyDbID Policy DBID
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertMechanismImplRow(Connection connection, String bMechDbID, String bDefDbID, String methodDbID, String dsBindKeyDbID, String protocolType, String returnType, String addressLocation, String operationLocation, String policyDbID) throws SQLException {
+
+		String insertionStatement = "INSERT INTO mechImpl (bMechDbID, bDefDbID, methodDbID, dsBindKeyDbID, protocolType, returnType, addressLocation, operationLocation, policyDbID) VALUES ('" + bMechDbID + "', '" + bDefDbID + "', '" + methodDbID + "', '" + dsBindKeyDbID + "', '" + protocolType + "', '" + returnType + "', '" + addressLocation + "', '" + operationLocation + "', '" + policyDbID + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * Inserts a method row.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefDbID Behavior definition DBID
+        * @param methodName Behavior definition label
+        * @param methodLabel Behavior definition label
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertMethodRow(Connection connection, String bDefDbID, String methodName, String methodLabel) throws SQLException {
+
+		String insertionStatement = "INSERT INTO method (bDefDbID, methodName, methodLabel) VALUES ('" + bDefDbID + "', '" + SQLUtility.aposEscape(methodName) + "', '" + SQLUtility.aposEscape(methodLabel) + "')";
+
+		insertGen(connection, insertionStatement);
+	}
+
+       /**
+        *
+        * @param connection An SQL Connection.
+        * @param methDBID The method database ID.
+        * @param bdefDBID The behavior Definition object database ID.
+        * @param parmName the parameter name.
+        * @param parmDefaultValue A default value for the parameter.
+        * @param parmRequiredFlag A boolean flag indicating whether the
+        *        parameter is required or not.
+        * @param parmLabel The parameter label.
+        * @param parmType The parameter type.
+        * @throws SQLException JDBC, SQL error
+        */
+        public void insertMethodParmRow(Connection connection, String methDBID,
+            String bdefDBID, String parmName, String parmDefaultValue,
+            String parmDomainValues, String parmRequiredFlag,
+            String parmLabel, String parmType)
+            throws SQLException {
+                String insertionStatement = "INSERT INTO parm "
+                + "(methodDbID, bDefDbID, parmName, parmDefaultValue, "
+                + "parmDomainValues, parmRequiredFlag, parmLabel, "
+                + "parmType) VALUES ('"
+                + methDBID + "', '" + bdefDBID + "', '"
+                + SQLUtility.aposEscape(parmName) + "', '" + SQLUtility.aposEscape(parmDefaultValue) + "', '"
+                + SQLUtility.aposEscape(parmDomainValues) + "', '"
+                + parmRequiredFlag + "', '" + SQLUtility.aposEscape(parmLabel) + "', '"
+                + parmType + "')";
+                insertGen(connection, insertionStatement);
+	}
+
+        /**
+         *
+         * @param connection An SQL Connection.
+         * @param methDBID The method database ID.
+         * @param bdefDBID The behavior Definition object database ID.
+         * @param parmName the parameter name.
+         * @param parmDefaultValue A default value for the parameter.
+         * @param parmRequiredFlag A boolean flag indicating whether the
+         *        parameter is required or not.
+         * @param parmLabel The parameter label.
+         * @param parmType The parameter type.
+         * @throws SQLException JDBC, SQL error
+         */
+         public void insertMechDefaultMethodParmRow(Connection connection, String methDBID,
+             String bmechDBID, String parmName, String parmDefaultValue,
+             String parmDomainValues, String parmRequiredFlag,
+             String parmLabel, String parmType)
+             throws SQLException {
+                 String insertionStatement = "INSERT INTO mechDefParm "
+                 + "(methodDbID, bMechDbID, defParmName, defParmDefaultValue, "
+                 + "defParmDomainValues, defParmRequiredFlag, defParmLabel, "
+                 + "defParmType) VALUES ('"
+                 + methDBID + "', '" + bmechDBID + "', '"
+                 + SQLUtility.aposEscape(parmName) + "', '" + SQLUtility.aposEscape(parmDefaultValue) + "', '"
+                 + SQLUtility.aposEscape(parmDomainValues) + "', '"
+                 + parmRequiredFlag + "', '" + SQLUtility.aposEscape(parmLabel) + "', '"
+                 + parmType + "')";
+                 insertGen(connection, insertionStatement);
+	}
+
+        /**
+        *
+        * General JDBC row insertion method.
+        *
+        * @param connection JDBC DBMS connection
+        * @param insertionStatement SQL row insertion statement
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public void insertGen(Connection connection, String insertionStatement) throws SQLException {
+		int rowCount = 0;
+		Statement statement = null;
+
+		statement = connection.createStatement();
+
+		logFinest("Doing DB Insert: " + insertionStatement);
+		rowCount = statement.executeUpdate(insertionStatement);
+		statement.close();
+	}
+   
+        /**
+        *
+        * Looks up a BehaviorDefinition DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefPID Behavior definition PID
+        *
+        * @return The DBID of the specified Behavior Definition row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws StorageDeviceException {
+		return lookupDBID1(connection, "bDefDbID", "bDef", "bDefPID", bDefPID);
+	}
+
+        /**
+        *
+        * Looks up a BehaviorMechanism DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechPID Behavior mechanism PID
+        *
+        * @return The DBID of the specified Behavior Mechanism row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws StorageDeviceException {
+		return lookupDBID1(connection, "bMechDbID", "bMech", "bMechPID", bMechPID);
+	}
+
+        /**
+        *
+        * Looks up a dsBindMap DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechDBID Behavior mechanism DBID
+        * @param dsBindingMapID Data stream binding map ID
+        *
+        * @return The DBID of the specified dsBindMap row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws StorageDeviceException {
+		return lookupDBID2FirstNum(connection, "dsBindMapDbID", "dsBindMap", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
+	}
+
+        /**
+        *
+        * Looks up a dsBindSpec DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bMechDBID Behavior mechanism DBID
+        * @param dsBindingSpecName Data stream binding spec name
+        *
+        * @return The DBID of the specified dsBindSpec row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws StorageDeviceException {
+		return lookupDBID2FirstNum(connection, "dsBindKeyDbID", "dsBindSpec", "bMechDbID", bMechDBID, "dsBindSpecName", dsBindingSpecName);
+	}
+
+        /**
+        *
+        * Looks up a do DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param doPID Data object PID
+        *
+        * @return The DBID of the specified DigitalObject row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws StorageDeviceException {
+		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
+	}
+
+        /**
+        *
+        * Looks up a Disseminator DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefDBID Behavior definition DBID
+        * @param bMechDBID Behavior mechanism DBID
+        * @param dissID Disseminator ID
+        *
+        * @return The DBID of the specified Disseminator row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws StorageDeviceException {
+            Statement statement = null;
+            ResultSet rs = null;
+            String query = null;
+            String ID = null;
+            try
+            {
+		query = "SELECT dissDbID FROM diss WHERE ";
+		query += "bDefDbID = " + bDefDBID + " AND ";
+		query += "bMechDbID = " + bMechDBID + " AND ";
+		query += "dissID = '" + dissID + "'";
+
+		logFinest("Doing Query: " + query);
+
+		statement = connection.createStatement();
+		rs = statement.executeQuery(query);
+
+		while (rs.next())
+			ID = rs.getString(1);
+
+            } catch (Throwable th)
+            {
+              throw new StorageDeviceException("[DBIDLookup] An error has "
+                  + "occurred. The error was \" " + th.getClass().getName()
+                  + " \". The cause was \" " + th.getMessage() + " \"");
+            } finally
+            {
+                try
+                {
+                    if (rs != null) rs.close();
+                    if (statement != null) statement.close();
+
+                } catch (SQLException sqle)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + sqle.getClass().getName()
+                        + " \". The cause was \" " + sqle.getMessage() + " \"");
+                }
+            }
+            return ID;
+	}
+
+        /**
+        *
+        * Looks up a method DBID.
+        *
+        * @param connection JDBC DBMS connection
+        * @param bDefDBID Behavior definition DBID
+        * @param methName Method name
+        *
+        * @return The DBID of the specified method row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws StorageDeviceException {
+		return lookupDBID2FirstNum(connection, "methodDbID", "method", "bDefDbID", bDefDBID, "methodName", methName);
+	}
+
+        /**
+        *
+        * General JDBC lookup method with 1 lookup column value.
+        *
+        * @param connection JDBC DBMS connection
+        * @param DBIDName DBID column name
+        * @param tableName Table name
+        * @param lookupColumnName Lookup column name
+        * @param lookupColumnValue Lookup column value
+        *
+        * @return The DBID of the specified row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws StorageDeviceException {
+		String query = null;
+		String ID = null;
+		Statement statement = null;
+		ResultSet rs = null;
+
+                try
+                {
+
+    		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+		    query += lookupColumnName + " = '" + lookupColumnValue + "'";
+
+                    logFinest("Doing Query: " + query);
+
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
+
+                    while (rs.next())
+			ID = rs.getString(1);
+
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
+
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
+	}
+
+        /**
+        *
+        * General JDBC lookup method with 2 lookup column values.
+        *
+        * @param connection JDBC DBMS connection
+        * @param DBIDName DBID Column name
+        * @param tableName Table name
+        * @param lookupColumnName1 First lookup column name
+        * @param lookupColumnValue1 First lookup column value
+        * @param lookupColumnName2 Second lookup column name
+        * @param lookupColumnValue2 Second lookup column value
+        *
+        * @return The DBID of the specified row.
+        *
+        * @exception SQLException JDBC, SQL error
+        */
+	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws StorageDeviceException {
+		String query = null;
+		String ID = null;
+		Statement statement = null;
+		ResultSet rs = null;
+
+                try
+                {
+
+		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+                    query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
+                    query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
+
+                    logFinest("Doing Query: " + query);
+
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
+
+                    while (rs.next())
+			ID = rs.getString(1);
+
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
+
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
+	}
+
+	public String lookupDBID2FirstNum(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws StorageDeviceException {
+		String query = null;
+		String ID = null;
+		Statement statement = null;
+		ResultSet rs = null;
+
+                try
+                {
+		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
+                    query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";
+                    query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
+
+                    logFinest("Doing Query: " + query);
+
+                    statement = connection.createStatement();
+                    rs = statement.executeQuery(query);
+
+                    while (rs.next())
+			ID = rs.getString(1);
+
+                } catch (Throwable th)
+                {
+                    throw new StorageDeviceException("[DBIDLookup] An error has "
+                        + "occurred. The error was \" " + th.getClass().getName()
+                        + " \". The cause was \" " + th.getMessage() + " \"");
+                } finally
+                {
+                    try
+                    {
+                        if (rs != null) rs.close();
+                        if (statement != null) statement.close();
+
+                    } catch (SQLException sqle)
+                    {
+                        throw new StorageDeviceException("[DBIDLookup] An error has "
+                            + "occurred. The error was \" " + sqle.getClass().getName()
+                            + " \". The cause was \" " + sqle.getMessage() + " \"");
+                    }
+                }
+                return ID;
+	}
 
 }
