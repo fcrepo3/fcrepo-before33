@@ -31,6 +31,7 @@
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
+		<param name="defaultPoolName" value="poolOne"/>
 		<param name="poolNames" value="poolOne"/>
 	</module>
 	<datastore id="mysql1">
