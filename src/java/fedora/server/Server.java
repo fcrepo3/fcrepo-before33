@@ -186,6 +186,9 @@ public abstract class Server
     /** The name of the property that tells the server where it's based. */
     public static String HOME_PROPERTY=s_const.getString("home.property");
 
+	/** The internal XML storage format for digital objects */
+	public static String STORAGE_FORMAT=s_const.getString("format.storage");
+	
     /** The directory where server configuration is stored, relative to home. */
     public static String CONFIG_DIR=s_const.getString("config.dir");
 
