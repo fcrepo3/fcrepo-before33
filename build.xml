@@ -186,7 +186,7 @@
 		<mkdir dir="temp/server/java"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar"/>
 			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
 			<arg value="-s"/>
 			<arg value="--skeletonDeploy"/>
@@ -207,7 +207,7 @@
 		<copy file="src/wsdl/Fedora-API-A.wsdl" todir="temp/wsdl2java"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar"/>
 			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
 			<arg value="-s"/>
 			<arg value="--skeletonDeploy"/>
@@ -224,7 +224,7 @@
 	<target name="testdeploy">
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar"/>
 			<arg value="org.apache.axis.client.AdminClient"/>
 			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
 			<arg value="dist/server/config/deploy.wsdd"/>
@@ -233,7 +233,7 @@
 	<target name="testclient">
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg path="inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
 			<arg value="fedora.server.test.TestClient"/>
 		</exec>
 	</target>
@@ -309,6 +309,10 @@
 </project>
 <!--
   $Log$
+  Revision 1.26  2002/09/06 06:54:39  cwilper
+  added saaj.jar and commons-discovery.jar in classpaths for axis-related
+  targets, so that axisv1rc1 works
+
   Revision 1.25  2002/08/29 10:44:49  cwilper
   serverclasses target compiles logging extensions
 
