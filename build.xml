@@ -378,6 +378,9 @@
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<!-- Saxon for use with Schematron validation -->
 		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
+		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib">
+			<fileset dir="lib/server"/>
+        </copy>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE: local copy packaged with repository distribution -->
 		<mkdir dir="dist/server/access"/>
 		<copy file="src/xsl/access/objectmethods.xslt" todir="dist/server/access"/>
@@ -393,15 +396,16 @@
 			<arg value="test"/>
 		</exec>
 	</target>
-	<target name="fieldsearchtest" description="run fedora.server.search.FieldSearchDBImpl.">
+	<target name="fieldsearchtest" description="run fedora.server.search.FieldSearchExistImpl.">
 		<exec executable="java">
 			<arg value="-Dfedora.home=dist/server"/>
 			<arg value="-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl"/>
 			<arg value="-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl"/>
 			<arg value="-Djavax.xml.transform.TransformerFactory=com.icl.saxon.TransformerFactoryImpl"/>
 			<arg value="-classpath"/>
-			<arg path="dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar;dist/server/tomcat41/common/lib/mkjdbc.jar;dist/server/tomcat41/common/lib/ojdbc14.jar;dist/server/tomcat41/common/lib/mm.mysql-2.0.14-bin.jar"/>
-			<arg value="fedora.server.search.FieldSearchDBImpl"/>
+			<arg path="dist/server/tomcat41/common/lib/log4j-1.2.4.jar;dist/server/tomcat41/common/lib/xerces2-2.0.2.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/saxon6.5.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/exist.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/jakarta-oro-2.0.6.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/antlr.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/excalibur-cli-1.0.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/resolver-20020130.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/trove.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xalan-2.3.1.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xmldb.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/lib/xmlrpc-1.1.jar"/>
+            <arg value="fedora.server.search.FieldSearchExistImpl"/>
+			<arg path="dist/server/exist09"/>
 		</exec>
 	</target>
 	<target name="metstest" description="run fedora.server.test.METSInOutTest on src/mets/test/demo/std-img-bdef.xml... print re-serialized version, then do level 1 and level 2 validation.">
@@ -442,7 +446,12 @@
 		<delete file="temp/server/java/fedora/server/management/FedoraAPIMBindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${javaSourceDir}:temp/server/java" destdir="temp/server/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;res/saxon-6.5/saxon.jar" includes="fedora/server/**,edu/cornell/dlrg/logging/**" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="${javaSourceDir}:temp/server/java" 
+               destdir="temp/server/classes" 
+               classpath="inc/server/tomcat41/common/lib/servlet.jar;inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar"
+               includes="fedora/server/**,edu/cornell/dlrg/logging/**" 
+               optimize="${javaClassOptimize}" 
+               debug="${javaClassDebug}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -454,6 +463,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.61  2003/01/17 14:29:40  cwilper
+  changes for eXist libs
+
   Revision 1.60  2003/01/15 13:57:33  rlw
   changes related to API-A-LITE
 
