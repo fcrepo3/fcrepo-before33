@@ -47,6 +47,7 @@ import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
+import fedora.server.resourceIndex.*;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
 import fedora.server.search.FieldSearchResult;
@@ -115,6 +116,7 @@ public class DefaultDOManager
     private ExternalContentManager m_contentManager;
     private Management m_management;
     private HashSet m_retainPIDs;
+    private ResourceIndex m_resourceIndex;
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -254,6 +256,19 @@ public class DefaultDOManager
             throw new ModuleInitializationException(
                     "DOValidator not loaded.", getRole());
         }
+        // get ref to ResourceIndex
+        m_resourceIndex=(ResourceIndex) getServer().
+        		getModule("fedora.server.resourceIndex.ResourceIndex");
+        if (m_resourceIndex==null) {
+            // FIXME should throw exception when not loaded.
+            // but until ResourceIndex supports discrete indexing levels
+            // we don't force loading of the module for cases where
+            // we don't want to use it.
+            logFinest("ResourceIndex not loaded");
+            //throw new ModuleInitializationException(
+            //        "ResourceIndex not loaded", getRole());
+        }
+        
         // now get the connectionpool
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
                 getModule("fedora.server.storage.ConnectionPoolManager");
@@ -318,6 +333,8 @@ public class DefaultDOManager
     }
 
     public String[] getRequiredModuleRoles() {
+        // FIXME add "fedora.server.resourceIndex.ResourceIndex" once
+        // we force loading of the module
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.search.FieldSearch",
@@ -606,6 +623,14 @@ public class DefaultDOManager
                         DELTA-MODULE.modifiedObject(getReader(context, obj.getPid()), obj);
                     }
                     */
+                    
+                    // FIXME for now, for testing, only this single hook into
+                    // the ResourceIndex
+                    if (m_resourceIndex != null) {
+                        logFinest("Passed validation.  Adding to ResourceIndex...");
+                        m_resourceIndex.addDigitalObject(obj);
+                    }
+                    
                     // if ok, write change to perm store here...right before db stuff
                     logFinest("Passed validation.  Storing object...");
                     if (obj.isNew()) {
