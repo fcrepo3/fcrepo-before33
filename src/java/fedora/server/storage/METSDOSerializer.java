@@ -174,7 +174,9 @@ public class METSDOSerializer
             buf.append("    OBJID=\"");
             buf.append(obj.getPid());
             buf.append("\"\n    LABEL=\"");
-            StreamUtility.enc(obj.getLabel(), buf);
+            if (obj.getLabel()!=null) {
+                StreamUtility.enc(obj.getLabel(), buf);
+            }
             buf.append("\"\n    TYPE=\"");
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                 buf.append("FedoraBDefObject");
