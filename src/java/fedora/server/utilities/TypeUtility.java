@@ -529,8 +529,8 @@ public abstract class TypeUtility
   {
     if (genObjectMethodDef != null)
     {
-      fedora.server.storage.types.ObjectMethodsDef objectMethodDefs =
-          new fedora.server.storage.types.ObjectMethodsDef();
+      //fedora.server.storage.types.ObjectMethodsDef objectMethodDefs =
+      //    new fedora.server.storage.types.ObjectMethodsDef();
       fedora.server.storage.types.ObjectMethodsDef objectMethodDef =
           new fedora.server.storage.types.ObjectMethodsDef();
       objectMethodDef.PID = genObjectMethodDef.getPID();
@@ -623,6 +623,64 @@ public abstract class TypeUtility
       genObjectMethodDef.setMethodName(objectMethodDef.methodName);
       return genObjectMethodDef;
 
+    } else
+    {
+      return null;
+    }
+  }
+
+    /**
+   * <p>Converts an instance of fedora.server.types.gen.ObjectProfile into
+   * an instance of fedora.server.access.ObjectProfile.</p>
+   *
+   * @param genObjectProfile An instance of
+   *        fedora.server.types.gen.ObjectProfile.
+   * @return An instance of fedora.server.access.ObjectProfile.
+   */
+  public static fedora.server.access.ObjectProfile
+      convertGenObjectProfileToObjectProfile(
+      fedora.server.types.gen.ObjectProfile genObjectProfile)
+  {
+    if (genObjectProfile != null)
+    {
+      fedora.server.access.ObjectProfile objectProfile =
+          new fedora.server.access.ObjectProfile();
+      objectProfile.PID = genObjectProfile.getPid();
+      objectProfile.objectLabel = genObjectProfile.getObjLabel();
+      objectProfile.objectContentModel = genObjectProfile.getObjContentModel();
+      objectProfile.objectType = genObjectProfile.getObjType();
+      objectProfile.objectCreateDate =
+          DateUtility.convertCalendarToDate(genObjectProfile.getObjCreateDate());
+      objectProfile.objectLastModDate =
+          DateUtility.convertCalendarToDate(genObjectProfile.getObjLastModDate());
+      objectProfile.dissIndexViewURL = genObjectProfile.getObjDissIndexViewURL();
+      objectProfile.itemIndexViewURL = genObjectProfile.getObjItemIndexViewURL();
+      return objectProfile;
+    } else
+    {
+      return null;
+    }
+  }
+
+  public static fedora.server.types.gen.ObjectProfile
+      convertObjectProfileToGenObjectProfile(
+      fedora.server.access.ObjectProfile objectProfile)
+  {
+    if (objectProfile != null)
+    {
+      fedora.server.types.gen.ObjectProfile genObjectProfile =
+          new fedora.server.types.gen.ObjectProfile();
+      genObjectProfile.setPid(objectProfile.PID);
+      genObjectProfile.setObjLabel(objectProfile.objectLabel);
+      genObjectProfile.setObjContentModel(objectProfile.objectContentModel);
+      genObjectProfile.setObjType(objectProfile.objectType);
+      genObjectProfile.setObjCreateDate(
+          DateUtility.convertDateToCalendar(objectProfile.objectCreateDate));
+      genObjectProfile.setObjLastModDate(
+          DateUtility.convertDateToCalendar(objectProfile.objectLastModDate));
+      genObjectProfile.setObjDissIndexViewURL(objectProfile.dissIndexViewURL);
+      genObjectProfile.setObjItemIndexViewURL(objectProfile.itemIndexViewURL);
+      return genObjectProfile;
     } else
     {
       return null;
