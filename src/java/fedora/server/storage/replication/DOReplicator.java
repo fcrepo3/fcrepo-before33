@@ -1,3 +1,5 @@
+package fedora.server.storage.replication;
+
 /**
  * <p>Title: DOReplicator.java</p>
  * <p>Description: Replicates Fedora object data. 
@@ -11,16 +13,10 @@ import java.util.*;
 import java.sql.*;
 import java.io.*;
 
+import fedora.server.errors.*;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.storage.replication.*;
-
-class ReplicationException extends Exception {
-       public ReplicationException() {}
-       public ReplicationException(String msg) {
-         super(msg);
-       }
-}
 
 /**
 * <p>
@@ -44,7 +40,7 @@ public class DOReplicator {
     */
     public void replicateBehaviorDefinitionObject(DefinitiveBDefReader bDefReader) throws ReplicationException, ClassNotFoundException, SQLException {
 	DbmsConnection db;
-	IDLookup idl;
+	DBIDLookup dl;
 	MethodDef behaviorDefs[];
 	RowInsertion ri;
 	String bDefDBID;
@@ -61,8 +57,8 @@ public class DOReplicator {
     	ri.insertBehaviorDefinitionRow(db, bDefPID, bDefLabel);
 
 	// Insert Method rows
-	idl = new IDLookup();
-	bDefDBID = idl.lookupBehaviorDefinitionDBID(db, bDefPID);
+	dl = new DBIDLookup();
+	bDefDBID = dl.lookupBehaviorDefinitionDBID(db, bDefPID);
 	if (bDefDBID == null)
 		throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + bDefPID);
 
@@ -85,7 +81,7 @@ public class DOReplicator {
     public void replicateBehaviorMechanismObject(DefinitiveBMechReader bMechReader) throws ReplicationException, ClassNotFoundException, SQLException {
 	BMechDSBindSpec dsBindSpec;
 	DbmsConnection db;
-	IDLookup idl;
+	DBIDLookup dl;
 	MethodDef behaviorBindings[];
 	RowInsertion ri;
 	String bDefDBID;
@@ -105,8 +101,8 @@ public class DOReplicator {
 	dsBindSpec = bMechReader.GetDSBindingSpec(null);
 	bDefPID = dsBindSpec.bDefPID;
 
-	idl = new IDLookup();
-	bDefDBID = idl.lookupBehaviorDefinitionDBID(db, bDefPID);
+	dl = new DBIDLookup();
+	bDefDBID = dl.lookupBehaviorDefinitionDBID(db, bDefPID);
 	if (bDefDBID == null)
 		throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + bDefPID);
 
@@ -117,7 +113,7 @@ public class DOReplicator {
     	ri.insertBehaviorMechanismRow(db, bDefDBID, bMechPID, bMechLabel);
 
 	// Insert DataStreamBindingSpec rows
-	bMechDBID = idl.lookupBehaviorMechanismDBID(db, bMechPID);
+	bMechDBID = dl.lookupBehaviorMechanismDBID(db, bMechPID);
 	if (bMechDBID == null)
 		throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + bDefPID);
 
@@ -147,14 +143,14 @@ public class DOReplicator {
 //         for (int i=0; i<behaviorBindings.length; ++i) {
 for (int i=0; i<1; ++i) {
 
-		methodDBID = idl.lookupMethodDBID(db, bDefDBID, behaviorBindings[i].methodName);
+		methodDBID = dl.lookupMethodDBID(db, bDefDBID, behaviorBindings[i].methodName);
 		if (methodDBID == null)
 			throw new ReplicationException("Method row doesn't exist for method name: " + behaviorBindings[i].methodName);
 
 		for (int j=0; j<dsBindSpec.dsBindRules.length; ++j) {
 
 			dsBindingKeyDBID = 
-				idl.lookupDataStreamBindingSpecDBID(db, bMechDBID, 
+				dl.lookupDataStreamBindingSpecDBID(db, bMechDBID, 
 				dsBindSpec.dsBindRules[j].bindingKeyName);
 			if (dsBindingKeyDBID == null)
 				throw new ReplicationException(
@@ -190,7 +186,7 @@ for (int i=0; i<1; ++i) {
 	DSBindingMapAugmented[] allBindingMaps;
 	DbmsConnection db;
 	Disseminator disseminators[]; 
-	IDLookup idl;
+	DBIDLookup dl;
 	RowInsertion ri;
 	String bDefDBID;
 	String bindingMapDBID;
@@ -214,29 +210,29 @@ for (int i=0; i<1; ++i) {
 	ri = new RowInsertion();
     	ri.insertDigitalObjectRow(db, doPID, doLabel);
 
-	idl = new IDLookup();
-	doDBID = idl.lookupDigitalObjectDBID(db, doPID);
+	dl = new DBIDLookup();
+	doDBID = dl.lookupDigitalObjectDBID(db, doPID);
 	if (doDBID == null)
 		throw new ReplicationException("DigitalObject row doesn't exist for PID: " + doPID);
 
 	disseminators = doReader.GetDisseminators(null);
 	for (int i=0; i<disseminators.length; ++i) {
-		bDefDBID = idl.lookupBehaviorDefinitionDBID(db, disseminators[i].bDefID);
+		bDefDBID = dl.lookupBehaviorDefinitionDBID(db, disseminators[i].bDefID);
 		if (bDefDBID == null)
 			throw new ReplicationException("BehaviorDefinition row doesn't exist for PID: " + disseminators[i].bDefID);
 
-		bMechDBID = idl.lookupBehaviorMechanismDBID(db,  disseminators[i].bMechID);
+		bMechDBID = dl.lookupBehaviorMechanismDBID(db,  disseminators[i].bMechID);
 		if (bMechDBID == null)
 			throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + disseminators[i].bMechID);
 
 
 		// Insert Disseminator row if it doesn't exist.
-		dissDBID = idl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
+		dissDBID = dl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
 		if (dissDBID == null) {
 			// Disseminator row doesn't exist, add it.
     			ri.insertDisseminatorRow(db, bDefDBID, bMechDBID, 
 				disseminators[i].dissID, disseminators[i].dissLabel);
-			dissDBID = idl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
+			dissDBID = dl.lookupDisseminatorDBID(db, bDefDBID, bMechDBID, disseminators[i].dissID);
 			if (dissDBID == null) 
 				throw new ReplicationException("Disseminator row doesn't exist for PID: " + disseminators[i].dissID);
 		}
@@ -248,12 +244,12 @@ for (int i=0; i<1; ++i) {
 	allBindingMaps = doReader.GetDSBindingMaps(null);
 	for (int i=0; i<allBindingMaps.length; ++i) {
 
-		bMechDBID = idl.lookupBehaviorMechanismDBID(db,  allBindingMaps[i].dsBindMechanismPID);
+		bMechDBID = dl.lookupBehaviorMechanismDBID(db,  allBindingMaps[i].dsBindMechanismPID);
 		if (bMechDBID == null)
 			throw new ReplicationException("BehaviorMechanism row doesn't exist for PID: " + allBindingMaps[i].dsBindMechanismPID);
 
 		// Insert DataStreamBindingMap row if it doesn't exist.
-		bindingMapDBID = idl.lookupDataStreamBindingMapDBID(db, bMechDBID, 
+		bindingMapDBID = dl.lookupDataStreamBindingMapDBID(db, bMechDBID, 
 			allBindingMaps[i].dsBindMapID);
 		if (bindingMapDBID == null) {
 			// DataStreamBinding row doesn't exist, add it.
@@ -261,13 +257,13 @@ for (int i=0; i<1; ++i) {
 				allBindingMaps[i].dsBindMapID, 
 				allBindingMaps[i].dsBindMapLabel);
 
-			bindingMapDBID = idl.lookupDataStreamBindingMapDBID(db, bMechDBID, allBindingMaps[i].dsBindMapID);
+			bindingMapDBID = dl.lookupDataStreamBindingMapDBID(db, bMechDBID, allBindingMaps[i].dsBindMapID);
 			if (bindingMapDBID == null) 
 				throw new ReplicationException("lookupDataStreamBindingMapDBID row doesn't exist for bMechDBID: " + bMechDBID + ", dsBindingMapID: " + allBindingMaps[i].dsBindMapID);
 		}
 
 		for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length; ++j) {
-			dsBindingKeyDBID = idl.lookupDataStreamBindingSpecDBID(db, bMechDBID, allBindingMaps[i].dsBindingsAugmented[j].bindKeyName);
+			dsBindingKeyDBID = dl.lookupDataStreamBindingSpecDBID(db, bMechDBID, allBindingMaps[i].dsBindingsAugmented[j].bindKeyName);
 			if (dsBindingKeyDBID == null) 
 				throw new ReplicationException("lookupDataStreamBindingDBID row doesn't exist for bMechDBID: " + bMechDBID + ", bindKeyName: " + allBindingMaps[i].dsBindingsAugmented[j].bindKeyName + "i=" + i + " j=" + j);
 
@@ -317,7 +313,6 @@ for (int i=0; i<1; ++i) {
 
 	System.out.println("rplOpt=" + rplOpt + " pid=" + pid);
 
-	DeleteTest dt = new DeleteTest();
 	if (rplOpt.equals("do")) {
 		System.out.println("Calling DefinitiveDOReader with: " + pid);
     		DefinitiveDOReader doReader = new DefinitiveDOReader(pid);
