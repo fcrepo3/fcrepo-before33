@@ -456,12 +456,23 @@
 		<echo message="Finished building server distribution in dist/server"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
-		<copy todir="dist/server/tomcat41/webapps/saxon/WEB-INF/classes">
-			<fileset dir="temp/localservices/classes"/>
+       <!-- saxon service -->
+		<copy todir="dist/server/tomcat41/webapps/saxon/WEB-INF/classes/fedora/localservices/saxon">
+			<fileset dir="temp/localservices/classes/fedora/localservices/saxon"/>
 		</copy>
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="dist/server/tomcat41/webapps/saxon/WEB-INF"/>
-		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
 		<copy file="src/web-app/fedora/localservices/saxon/index.html" todir="dist/server/tomcat41/webapps/saxon"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/server/tomcat41/webapps/saxon/WEB-INF/lib"/>
+       <!-- fop service -->
+		<copy todir="dist/server/tomcat41/webapps/fop/WEB-INF/classes/fedora/localservices/fop">
+			<fileset dir="temp/localservices/classes/fedora/localservices/fop"/>
+		</copy>
+		<copy file="src/web-app/fedora/localservices/fop/web.xml" todir="dist/server/tomcat41/webapps/fop/WEB-INF"/>
+		<copy file="src/web-app/fedora/localservices/fop/index.html" todir="dist/server/tomcat41/webapps/fop"/>
+		<copy file="lib/server/avalon-framework.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
+		<copy file="lib/server/batik.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
+		<copy file="lib/server/fop.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
+       <!-- soap client -->
 		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
 			<fileset dir="temp/soapclient/classes"/>
 		</copy>
@@ -474,6 +485,7 @@
 		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
+       <!-- userdocs -->
 		<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="src/web-app/userdocs"/>
 		</copy>
@@ -549,7 +561,9 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" 
+              classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar" 
+              optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
@@ -583,6 +597,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.98  2003/03/10 18:00:21  cwilper
+  added fop stuff
+
   Revision 1.97  2003/03/07 20:45:36  rlw
   doc updates
 
