@@ -24,6 +24,7 @@ import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
+import fedora.client.ingest.Ingest;
 import fedora.client.objecteditor.ObjectEditorFrame;
 import fedora.client.purge.AutoPurger;
 import fedora.client.search.ResultFrame;
@@ -300,7 +301,8 @@ public class Administrator extends JFrame {
         JMenuItem fileIngestOneFromFile=new JMenuItem("From File...", KeyEvent.VK_F);
         fileIngestOneFromFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                fileIngestAction();
+                new Ingest(Ingest.ONE_FROM_FILE);
+                // old way -> fileIngestAction();
             }
         });
         JMenuItem fileIngestOneFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
@@ -308,7 +310,12 @@ public class Administrator extends JFrame {
         fileIngestOne.add(fileIngestOneFromRepository);
         JMenu fileIngestMultiple=new JMenu("Multiple Objects");
         fileIngestMultiple.setMnemonic(KeyEvent.VK_M);
-        JMenuItem fileIngestMultipleFromFile=new JMenuItem("From File...", KeyEvent.VK_F);
+        JMenuItem fileIngestMultipleFromFile=new JMenuItem("From Directory...", KeyEvent.VK_D);
+        fileIngestMultipleFromFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new Ingest(Ingest.MULTI_FROM_DIR);
+            }
+        });
         JMenuItem fileIngestMultipleFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
         fileIngestMultiple.add(fileIngestMultipleFromFile);
         fileIngestMultiple.add(fileIngestMultipleFromRepository);

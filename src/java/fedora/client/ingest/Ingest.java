@@ -1,7 +1,10 @@
 package fedora.client.ingest;
 
+import java.awt.*;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import javax.swing.*;
 
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
@@ -27,10 +30,45 @@ public class Ingest {
     public static int MULTI_FROM_REPOS=3;
 
     public static String LAST_PATH;
-    
+
     // launch interactively
-    public Ingest(int kind) 
-            throws Exception {
+    public Ingest(int kind) {
+        try {
+            if (kind==ONE_FROM_FILE) {
+                JFileChooser browse=new JFileChooser(Administrator.getLastDir());
+                int returnVal = browse.showOpenDialog(Administrator.getDesktop());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = browse.getSelectedFile();
+                    Administrator.setLastDir(file.getParentFile());
+                    String pid=oneFromFile(file, Administrator.APIM, null);
+                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                        "Ingest succeeded.  PID='" + pid + "'.");
+                }
+            } else if (kind==MULTI_FROM_DIR) {
+                JFileChooser browse=new JFileChooser(Administrator.getLastDir());
+                browse.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+                int returnVal = browse.showOpenDialog(Administrator.getDesktop());
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = browse.getSelectedFile();
+                    Administrator.setLastDir(file);
+                    String fTypes="DMO";
+                    String[] pids=multiFromDirectory(file, fTypes, Administrator.APIM, null);
+                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                        "Ingest succeeded.  Details are in File->Advanced->STDOUT/STDERR window.");
+                }
+            } else if (kind==ONE_FROM_REPOS) {
+            } else if (kind==MULTI_FROM_REPOS) {
+            }
+        } catch (Exception e) {
+            String msg=e.getMessage();
+            if (msg==null) {
+                msg=e.getClass().getName();
+            }
+            JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                    msg,
+                    "Ingest Failure",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     // if logMessage is null, will use original path in logMessage
