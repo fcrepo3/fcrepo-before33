@@ -161,9 +161,6 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
       logFiner("[DatastreamResolverServlet] TimeStamp differential "
           + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
           (long)keyTimestamp.getTime()) + " milliseconds");
-      System.out.println("[DatastreamResolverServlet] TimeStamp differential "
-          + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
-          (long)keyTimestamp.getTime()) + " milliseconds");
       if (currentTimestamp.getTime() - keyTimestamp.getTime() >
           (long) datastreamMediationLimit)
       {
