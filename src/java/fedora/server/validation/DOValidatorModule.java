@@ -60,8 +60,6 @@ public class DOValidatorModule extends Module implements DOValidator
           this.getParameter("schematronPreprocessor")).getPath();
       String schematronSchemaID = new File(getServer().getHomeDir(),
           this.getParameter("schematronSchema")).getPath();
-      String schematronValidatingXslID = new File(getServer().getHomeDir(),
-          this.getParameter("schematronValidatingXsl")).getPath();
       ConnectionPool connectionPool=((ConnectionPoolManager)
           getServer().getModule(
           "fedora.server.storage.ConnectionPoolManager")).getPool();
@@ -73,11 +71,9 @@ public class DOValidatorModule extends Module implements DOValidator
                 + schematronPreprocessorID);
       logFiner("[DOValidatorModule] schematronSchemaID set to: "
                 + schematronSchemaID);
-      logFiner("[DOValidatorModule] schematronValidatingXslID set to: "
-                + schematronValidatingXslID);
       // instantiate the validation implementation class
       dov = new DOValidatorImpl(tempDir, xmlSchemaURL, schematronPreprocessorID,
-            schematronSchemaID, schematronValidatingXslID, connectionPool);
+            schematronSchemaID, connectionPool);
     }
     catch(Exception e)
     {
