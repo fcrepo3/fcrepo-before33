@@ -74,9 +74,9 @@ public class METSInOutTest {
             if (args.length>1) {
                 ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
                 DOValidatorImpl v=new DOValidatorImpl(
-                        null, "http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora-ext.xsd",
+                        null, "dist/server/xsd/mets-fedora-ext.xsd",
                         "dist/server/schematron/preprocessor.xslt",
-                        "dist/server/schematron/fedoraRulesExt.xml", null);
+                        "dist/server/schematron/fedoraRulesExt.xml", null, null);
                 if (args[1].equals("1")) {
                     v.validate(newIn, 1, "ingest");
                     System.out.println("Level 1 validation: PASSED!");
