@@ -29,7 +29,17 @@
     <servlet-class>
         fedora.server.access.FedoraAccessServlet
     </servlet-class>
-  </servlet>
+    <init-param>
+      <param-name>myparam</param-name>
+      <param-value>myvalue</param-value>
+      <description>
+      the parameter name and value... this is how the
+      syntax of this file goes.  
+      http://jakarta.apache.org/tomcat/tomcat-3.3-doc/appdev/web.xml.txt
+      explains the syntax more.
+      </description>
+    </init-param>
+    </servlet>
 
   <servlet-mapping>
     <servlet-name>AxisServlet</servlet-name>
