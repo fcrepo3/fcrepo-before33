@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:SmileyDinnerware" xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Smiley Dinnerware"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="X" ID="DC"> 
+    <foxml:datastreamVersion ID="DC.1" MIMETYPE="text/xml" LABEL="Dublin Core Metadata">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Smiley Dinnerware</dc:title>
+          <dc:description>Made from 100% pure paper and plastic, this dinnerware is sure to impress your kids.</dc:description>
+          <dc:identifier>demo:SmileyDinnerware</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="RELS-EXT"> 
+    <foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Relationships to other objects">
+      <foxml:xmlContent>
+        <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rel="info:fedora/fedora-system:def/rel#">
+          <rdf:Description rdf:about="info:fedora/demo:SmileyDinnerware">
+            <rel:isMemberOf rdf:resource="info:fedora/demo:SmileyStuff"/>
+          </rdf:Description>
+        </rdf:RDF>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="E" ID="MediumSize.jpg"> 
+    <foxml:datastreamVersion ID="MediumSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Medium-size image">
+      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyDinnerware-MediumSize.jpg" TYPE="URL"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="E" ID="FullSize.jpg"> 
+    <foxml:datastreamVersion ID="FullSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Full-size image">
+      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyDinnerware-FullSize.jpg" TYPE="URL"/>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:disseminator BDEF_CONTRACT_PID="demo:DualResImage" ID="DualResImage">
+    <foxml:disseminatorVersion BMECH_SERVICE_PID="demo:DualResImageImpl" ID="DualResImage1.0" LABEL="Dual Resolution Disseminator">
+      <foxml:serviceInputMap>
+        <foxml:datastreamBinding DATASTREAM_ID="FullSize.jpg" KEY="FULL_SIZE" LABEL="Binding to Full-size image" ORDER="0"/>
+        <foxml:datastreamBinding DATASTREAM_ID="MediumSize.jpg" KEY="MEDIUM_SIZE" LABEL="Binding to Medium-size image" ORDER="0"/>
+      </foxml:serviceInputMap>
+    </foxml:disseminatorVersion>
+  </foxml:disseminator>
+</foxml:digitalObject>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject PID="demo:DualResImageImpl"
+  xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+  <foxml:objectProperties>
+    <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraBMechObject"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Dual Resolution Image Implementation"/>
+    <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="fedora:BMECH"/>
+  </foxml:objectProperties>
+  <foxml:datastream CONTROL_GROUP="X" ID="WSDL"> 
+    <foxml:datastreamVersion ID="WSDL1.0" MIMETYPE="text/xml" LABEL="WSDL definition of service" SIZE="3588">
+      <foxml:xmlContent>
+        <wsdl:definitions name="Dual Resolution Image Implementation" targetNamespace="bmech"
+          xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+          xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap"
+          xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:this="bmech"
+          xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+          <wsdl:types>
+            <xsd:schema targetNamespace="bmech">
+              <xsd:simpleType name="FULL_SIZEType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+              <xsd:simpleType name="MEDIUM_SIZEType">
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+            </xsd:schema>
+          </wsdl:types>
+          <wsdl:message name="fullSizeRequest">
+            <wsdl:part name="FULL_SIZE" type="this:FULL_SIZEType"/>
+          </wsdl:message>
+          <wsdl:message name="mediumSizeRequest">
+            <wsdl:part name="MEDIUM_SIZE" type="this:MEDIUM_SIZEType"/>
+          </wsdl:message>
+          <wsdl:message name="dissemResponse">
+            <wsdl:part name="dissem" type="xsd:base64Binary"/>
+          </wsdl:message>
+          <wsdl:portType name="DualResImageImplPortType">
+            <wsdl:operation name="fullSize">
+              <wsdl:input message="this:fullSizeRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+            <wsdl:operation name="mediumSize">
+              <wsdl:input message="this:mediumSizeRequest"/>
+              <wsdl:output message="this:dissemResponse"/>
+            </wsdl:operation>
+          </wsdl:portType>
+          <wsdl:service name="DualResImageImpl">
+            <wsdl:port binding="this:DualResImageImpl_http" name="DualResImageImpl_port">
+              <http:address location="LOCAL"/>
+            </wsdl:port>
+          </wsdl:service>
+          <wsdl:binding name="DualResImageImpl_http" type="this:DualResImageImplPortType">
+            <http:binding verb="GET"/>
+            <wsdl:operation name="fullSize">
+              <http:operation location="(FULL_SIZE)"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="image/jpeg"/>
+              </wsdl:output>
+            </wsdl:operation>
+            <wsdl:operation name="mediumSize">
+              <http:operation location="(MEDIUM_SIZE)"/>
+              <wsdl:input>
+                <http:urlReplacement/>
+              </wsdl:input>
+              <wsdl:output>
+                <mime:content type="image/jpeg"/>
+              </wsdl:output>
+            </wsdl:operation>
+          </wsdl:binding>
+        </wsdl:definitions>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="SERVICE-PROFILE"> 
+    <foxml:datastreamVersion ID="SERVICE-PROFILE1.0" MIMETYPE="text/xml"
+      LABEL="Service Profile - Technical description of the service" SIZE="834">
+      <foxml:xmlContent>
+        <fsvp:serviceProfile bDefPID="demo:DualResImage" name="" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+          <fsvp:serviceDescription/>
+          <fsvp:serviceImplementation>
+            <fsvp:serviceLiveTestURL/>
+            <fsvp:serviceMessagingProtocol>HTTP GET</fsvp:serviceMessagingProtocol>
+            <fsvp:serviceInputFormats/>
+            <fsvp:serviceOutputFormats>
+              <fsvp:MIMEType>image/jpeg</fsvp:MIMEType>
+            </fsvp:serviceOutputFormats>
+            <fsvp:serviceImplDependencies/>
+          </fsvp:serviceImplementation>
+        </fsvp:serviceProfile>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DC"> 
+    <foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" LABEL="Dublin Core Metadata for Service" SIZE="256">
+      <foxml:xmlContent>
+        <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+          <dc:title>Dual Resolution Image Implementation</dc:title>
+          <dc:identifier>demo:DualResImageImpl</dc:identifier>
+        </oai_dc:dc>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="DSINPUTSPEC"> 
+    <foxml:datastreamVersion ID="DSINPUTSPEC1.0" MIMETYPE="text/xml" LABEL="Datastream Input Specification for Service" SIZE="924">
+      <foxml:xmlContent>
+        <fbs:DSInputSpec bDefPID="demo:DualResImage"
+          label="Datastream Input Specification for Dual Resolution Image Implementation" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="FULL_SIZE">
+            <fbs:DSInputLabel>FULL_SIZE Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+          <fbs:DSInput DSMax="1" DSMin="1" DSOrdinality="false" wsdlMsgPartName="MEDIUM_SIZE">
+            <fbs:DSInputLabel>MEDIUM_SIZE Binding</fbs:DSInputLabel>
+            <fbs:DSMIME>image/jpeg</fbs:DSMIME>
+            <fbs:DSInputInstruction/>
+          </fbs:DSInput>
+        </fbs:DSInputSpec>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+  <foxml:datastream CONTROL_GROUP="X" ID="METHODMAP"> 
+    <foxml:datastreamVersion ID="METHODMAP1.0" MIMETYPE="text/xml" LABEL="Mapping of WSDL to Fedora notion of Method Definitions" SIZE="1183">
+      <foxml:xmlContent>
+        <fmm:MethodMap bDefPID="demo:DualResImage" name="MethodMap - Dual Resolution Image Implementation" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+          <fmm:Method operationLabel="A full-size image" operationName="fullSize" wsdlMsgName="fullSizeRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DatastreamInputParm defaultValue="" label="The full-size image" parmName="FULL_SIZE" passBy="URL_REF" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="image/jpeg"/>
+          </fmm:Method>
+          <fmm:Method operationLabel="A medium-size image" operationName="mediumSize" wsdlMsgName="mediumSizeRequest" wsdlMsgOutput="dissemResponse">
+            <fmm:DatastreamInputParm defaultValue="" label="The medium-size image" parmName="MEDIUM_SIZE" passBy="URL_REF" required="true"/>
+            <fmm:MethodReturnType wsdlMsgName="dissemResponse" wsdlMsgTOMIME="image/jpeg"/>
+          </fmm:Method>
+        </fmm:MethodMap>
+      </foxml:xmlContent>
+    </foxml:datastreamVersion>
+  </foxml:datastream>
+</foxml:digitalObject>
