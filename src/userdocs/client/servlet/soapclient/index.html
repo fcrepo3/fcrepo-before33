@@ -1,50 +1,555 @@
-<html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>Fedora&#153; SOAP Client Documentation</title></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
-		<div class="article"><div class="titlepage"><div><h1 class="title"><a name="d0e2"></a>
-			<span class="inlinemediaobject"><img src="../../../images/fedora_logo108x150.jpg"></span>
-		</h1></div>
-    <div> 
-      <h1 class="title"><a name="d0e2"></a> Fedora&#153; API-A Sample SOAP Client</h1>
-    </div>
-			<div><h3 class="subtitle"><i>Software Release 2.0</i></h3></div>
-    <div> 
-      <h3 class="corpauthor"> Fedora&#153; Development Team</h3>
-    </div>
-			<div>
-      <p class="copyright">Copyright &copy; 2002-2005 The Rector and Visitors 
-        of The University of Virginia and Cornell University</p>
-    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e48">Introduction</a></dt><dt><a href="#d0e267">Configuration</a></dt><dt><a href="#d0e297">Examples</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e48"></a>Introduction</h2></div></div><p>The Fedora API-A interface is implemented as a SOAP service that consists of the following methods:</p><blockquote class="blockquote"><div class="itemizedlist"><ul type="disc"><li><p>GetBehaviorDefinitions - gets list of Behavior Defintions.</p></li><li><p>GetBehaviorMethods - gets list of Behavior Methods.</p></li><li><p>GetBehaviorMethodsXML - gets Behavior Methods as XML.</p></li><li><p>GetDissemination - gets a dissemination result.</p></li><li><p>GetObjectmethods - gets a list of all Behavior Methods of an object.</p></li><li><p>GetObjectProfile - gets object profile.</p></li><li><p>DescribeRepository - gets information about the repository, including version.</p></li><li><p>FindObjects - gets the requested ObjectFields on all objects in the
-                repository matching the given criteria.</p></li><li><p>ResumeFindObjects - gets the next list of results from a truncated
-                findObjects response.</p></li><li><p>GetObjectHistory - gets the change history of an object consisting of a list of timestamps indicating when object components were created or modified.</p></li></ul></div></blockquote><p>For more information on the method definitions, refer to the API descriptions located at <a href="http://www.fedora.info/definitions/1/0/api/" target="_top">http://www.fedora.info/definitions/1/0/api/</a> . </p><p>The Fedora API-A sample SOAP client is an example of a java servlet-based client that provides a front end to the Fedora Access API-A SOAP service. The sample client is designed to provide a <span class="emphasis"><em>browser centric</em></span> view of the Fedora Access interface. Return types from the Fedora Access SOAP service are translated into a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications that can readily handle SOAP requests and responses would most likely communicate directly with the Fedora Access SOAP service rather than use a java servlet as an intermediary. <span class="emphasis"><em>This servlet is provided as an example of how to construct a client that uses the Fedora Access API via SOAP and currently does not implement all methods found in API-A. As noted below, the sample Soap Client does not provide implementations for the methods FindObjects and ResumeFindObjects.</em></span>
-		</p><p>
-			<span class="bold"><b>Client Syntax</b></span>
-		</p><p>Input parameters for the servlet include:</p><div class="itemizedlist"><ul type="disc"><li><p>
-					<span class="bold"><b>action_</b></span> - name of Fedora service which must be one of the following:</p><div class="itemizedlist"><ul type="round"><li><p>
-							<span class="emphasis"><em>GetBehaviorDefinitions</em></span> - gets list of Behavior Defintions</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>GetBehaviorMethods</em></span> - gets list of Behavior Methods </p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li><li><p>requires bDefPID_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>GetBehaviorMethodsXML</em></span> - gets WSDL-defined Behavior Methods definitions as XML</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li><li><p>requires bDefPID_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>GetDissemination</em></span> - gets a dissemination result</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li><li><p>requires bDefPID_</p></li><li><p>requires methodName_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>GetObjectMethods</em></span> - gets a list of all Behavior Methods of an object.</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>GetObjectProfile</em></span> - gets object profile.</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>DescribeRepository</em></span> - gets description of the repository.</p><div class="itemizedlist"><ul type="square"><li><p>no parameters required</p></li></ul></div></li><li><p>
-							<span class="emphasis"><em>FindObjects</em></span> - gets the requested ObjectFields on all objects in the
-                repository matching the given criteria. <span class="bold"><b>
-								<span class="emphasis"><em>(NOT CURRENTLY IMPLEMENTED)</em></span>
-							</b></span>
-						</p></li><li><p>
-							<span class="emphasis"><em>ResumeFindObjects</em></span> - gets the next list of results from a truncated
-                findObjects response. <span class="bold"><b>
-								<span class="emphasis"><em>(NOT CURRENTLY IMPLEMENTED)</em></span>
-							</b></span>
-						</p></li><li><p>
-							<span class="emphasis"><em>GetObjectHistory</em></span> - gets object change history.</p><div class="itemizedlist"><ul type="square"><li><p>requires PID_</p></li></ul></div></li></ul></div></li><li><p>
-					<span class="bold"><b>PID_</b></span> - persistent identifier of the digital object</p></li><li><p>
-					<span class="bold"><b>bDefPID_</b></span> - persistent identifier of the Behavior Definiton object</p></li><li><p>
-					<span class="bold"><b>methodName_</b></span> - name of the method</p></li><li><p>
-					<span class="bold"><b>asOfDateTime_</b></span> - versioning datetime stamp (optional). Proper syntax is YYYY-MM-DDTHH:MM:SS where HH is 24-hour clock.</p></li><li><p>
-					<span class="bold"><b>xml_</b></span> - boolean switch used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, GetObjectProfile and DescribeRepository methods that determines whether output is formatted as XML or as HTML; value of "true" indicates that the results are to be returned as XML; value of false or omission indicates display in HTML table format. (optional)</p></li><li><p>
-					<span class="bold"><b>userParms</b></span> - behavior methods may require or provide optional parameters that may be input as arguments to a behavior method; these method parameters are entered as name/value pairs like the other serlvet parameters.(optional)</p></li></ul></div><p>Note that all servlet parameter names that are implementation specific end with the underscore character ("_"). This is done to avoid possible name clashes with user-supplied method parameter names. As a general rule, user-supplied parameters should never contain names that end with the underscore character to prevent possible name conflicts. </p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e267"></a>Configuration</h2></div></div><p>The sample client can be run as an integral part of the Fedora server or as a standalone client on a different machine or server. If running outside the Fedora server, its only requirements are a servlet engine using Java Servlet API 2.1 or higher, the endpoint of a functional Fedora Server, and the servlet path mapping used to access the soap client. The endpoint and servlet path info are configured in the soapclient.properties file that is located in the WEB-INF directory of the soapclient webapp module in the Fedora distribution directory tree. The properties file specifies three variables:</p><div class="itemizedlist"><ul type="disc"><li><p>
-					<span class="bold"><b>fedoraEndpoint</b></span> - the URL of the Fedora API-A SOAP service; default is "http://localhost:8080/fedora/access/soap"</p></li><li><p>
-					<span class="bold"><b>soapClientServletPath</b></span> - the servlet path used to access the soapclient; default is "/soapclient/apia"</p></li><li><p>
-					<span class="bold"><b>soapClientMethodParmResolverServletPath</b></span> - the servlet mapping used to access the MethodParmResolverServlet which is a utility servlet of the soap client; default is "/soapclient/getAccessParmResolver"</p></li></ul></div><p>The web.xml file for the soap client webapp uses these default settings. If the webapp is ported to another servlet engine and any of the serlvet mappings change, the web.xml and the soapclient.properties file must both be updated accordingly. The servlets will dynamically get the values in the soapclient.properties file so no changes should be needed in the source code.</p><p>When the Fedora server is built, it will automatically create the soapclient webapp module and place it in the Fedora distribution directory. The generated SOAP type libraries that are bundled with the client are tied to the WSDL type definitions defined for Fedora API-A. Any changes made to the WSDL for API-A will require rebuilding of the Fedora server and the soap client webapp module.</p><p>Note that if you change the host name or port number on which the Fedora server is running, you must also update the value for the fedoraEndpoint parameter in the soapclient.properties file to reflect the new values. Otherwise, the soap client will be unable to connect to the Fedora server running under the new host name or port number. If you are running the soap client bundled together with the Fedora server, you need to stop the Fedora server, update the soapclient.properties file, and then restart the Fedora server so the new property values will be recognized by the soapclient webapp.</p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e297"></a>Examples</h2></div></div><div class="orderedlist"><ol type="1"><li><p>Get the BehaviorDefinitions for a data object with a PID of demo:5</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetBehaviorDefinitions&amp;PID_=demo:5</p></blockquote></li><li><p>Get the BehaviorMethods for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetBehaviorMethods&amp;PID_=demo:5&amp;bDefPID_=demo:1</p></blockquote></li><li><p>Get the BehaviorMethodsXML for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetBehaviorMethodsXML&amp;PID_=demo:5&amp;bDefPID_=demo:1</p></blockquote></li><li><p>Get the Dissemination for a data object with a PID of demo:5 and associated behavior definition object with a PID of demo:1 and methodName of getThumbnail</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=demo:5&amp;bDefPID_=demo:1&amp;methodName_=getThumbnail </p></blockquote></li><li><p>Get the ObjectMethods for a data object with a PID of demo:5: </p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetObjectMethods&amp;PID_=demo:5</p></blockquote></li><li><p>Get the ObjectProfile for a data object with a PID of demo:5:</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=demo:5</p></blockquote></li><li><p>Get information about the repository:</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=DescribeRepository</p></blockquote></li><li><p>Get the ObjectHistory for a data object with a PID of demo:5:</p><blockquote class="blockquote"><p>http://localhost:8080/soapclient/apia?action_=GetObjectHistory&amp;PID_=demo:5</p></blockquote></li></ol></div></div></div></body></html>
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 9">
+<meta name=Originator content="Microsoft Word 9">
+<link rel=File-List href="./index_files/filelist.xml">
+<link rel=Edit-Time-Data href="./index_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Fedora&#8482; SOAP Client Documentation</title>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Ross Wayland</o:Author>
+  <o:LastAuthor>Ross Wayland</o:LastAuthor>
+  <o:Revision>3</o:Revision>
+  <o:TotalTime>33</o:TotalTime>
+  <o:Created>2005-01-20T00:12:00Z</o:Created>
+  <o:LastSaved>2005-01-20T15:41:00Z</o:LastSaved>
+  <o:Pages>3</o:Pages>
+  <o:Words>1156</o:Words>
+  <o:Characters>6593</o:Characters>
+  <o:Company>University of Virginia</o:Company>
+  <o:Lines>54</o:Lines>
+  <o:Paragraphs>13</o:Paragraphs>
+  <o:CharactersWithSpaces>8096</o:CharactersWithSpaces>
+  <o:Version>9.6926</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+@font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;
+	mso-font-charset:2;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:0 268435456 0 0 -2147483648 0;}
+ /* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	color:black;}
+h1
+	{color:black;}
+h2
+	{color:black;}
+h3
+	{color:black;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;
+	text-underline:single;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:#840084;
+	text-decoration:underline;
+	text-underline:single;}
+p
+	{font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	color:black;}
+span.inlinemediaobject
+	{mso-style-name:inlinemediaobject;}
+p.copyright, li.copyright, div.copyright
+	{mso-style-name:copyright;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";
+	color:black;}
+span.bold
+	{mso-style-name:bold;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+@list l0
+	{mso-list-id:420686579;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1331033562 -740389442 803906096 -1496009076 -1848079426 1672759222 2146857536 2040707416 -518902460 -248479138;}
+@list l1
+	{mso-list-id:1193693108;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-316479256 -1034248384 -283490620 1190803900 1806053440 1873053908 -1090064428 1057764060 1939794012 -674334782;}
+@list l1:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l2
+	{mso-list-id:1414471138;
+	mso-list-type:hybrid;
+	mso-list-template-ids:947284022 1034090718 -529780994 603619240 -218740054 -545982986 1613113850 -1601786586 47891820 1013893226;}
+@list l2:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l3
+	{mso-list-id:1709452573;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1050745572 -10973124 -867508456 1005639190 -1458246192 -711165178 1013192980 1959549090 -1633619632 350934050;}
+@list l3:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l3:level2
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0B7;
+	mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Symbol;}
+@list l3:level3
+	{mso-level-number-format:bullet;
+	mso-level-text:\F0A7;
+	mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-ansi-font-size:10.0pt;
+	font-family:Wingdings;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body bgcolor=white lang=EN-US link=blue vlink="#840084" style='tab-interval:
+.5in' alink="#0000FF">
+
+<div class=Section1>
+
+<h1><a name=d0e2><img width=108 height=150 id="_x0000_i1025"
+src="..\..\..\images\fedora_logo108x150.jpg"></a></h1>
+
+<span style='mso-bookmark:d0e2'></span>
+
+<h1>Fedora&#8482; API-A Sample SOAP Client</h1>
+
+<h3><i>Software Release 2.0</i></h3>
+
+<h3>Fedora&#8482; Development Team</h3>
+
+<p class=copyright>Copyright © 2002-2005 The Rector and Visitors of The
+University of Virginia and Cornell University</p>
+
+
+<div class=MsoNormal align=center style='text-align:center'>
+
+<hr size=2 width="100%" align=center>
+
+</div>
+
+
+<p><b>Table of Contents</b></p>
+
+<p class=MsoNormal><a href="#d0e48">Introduction</a></p>
+
+<p class=MsoNormal><a href="#d0e267">Configuration</a></p>
+
+<p class=MsoNormal><a href="#d0e297">Examples</a></p>
+
+<h2><a name=d0e48></a>Introduction</h2>
+
+<p>The Fedora API-A interface is implemented as a SOAP service that consists of
+the following methods:</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>DescribeRepository - gets information about the
+repository, including version.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>GetDatastreamDissemination &#8211; gets the content&#8217;s of the
+specified datastream.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>GetDissemination - gets a dissemination result.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>GetObjectHistory - gets the change history of an object
+consisting of a list of timestamps indicating when object components were
+created or modified.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>GetObjectProfile - gets object profile.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>FindObjects - gets the requested ObjectFields on all
+objects in the repository matching the given criteria.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>ListDatastreams &#8211; lists the datastreams in the
+specified object.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>ListMethods &#8211; lists the methods in the specified
+object.</p>
+
+<p style='margin-right:.5in;margin-left:1.0in;text-indent:-.25in;mso-list:l1 level1 lfo1;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>ResumeFindObjects - gets the next list of results from
+a truncated findObjects response.</p>
+
+<p>For more information on the method definitions, refer to the API
+descriptions located at <a href="http://www.fedora.info/definitions/1/0/api/"
+target="_top">http://www.fedora.info/definitions/1/0/api/</a> . </p>
+
+<p>The Fedora API-A sample SOAP client is an example of a java servlet-based
+client that provides a front end to the Fedora Access API-A SOAP service. The
+sample client is designed to provide a <em>browser centric</em> view of the
+Fedora Access interface. Return types from the Fedora Access SOAP service are
+translated into a form suitable for viewing with a web browser; i.e.,
+MIME-typed streams. Applications that can readily handle SOAP requests and
+responses would most likely communicate directly with the Fedora Access SOAP
+service rather than use a java servlet as an intermediary. <em>This servlet is
+provided as an example of how to construct a client that uses the Fedora Access
+API via SOAP and currently does not implement all methods found in API-A. As
+noted below, the sample Soap Client does not provide implementations for the
+methods FindObjects and ResumeFindObjects.</em> </p>
+
+<p><span class=bold><b>Client Syntax</b></span> </p>
+
+<p>Input parameters for the servlet include:</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>action_</b></span> - name of Fedora
+service which must be one of the following:</p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>DescribeRepository</em> - gets description of the
+repository. </p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings;font-style:normal'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]>no parameters required<em><span style='font-style:
+normal'><o:p></o:p></span></em></p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol;font-style:normal'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]><em>GetDatastreamDissemination</em><em><span
+style='font-style:normal'> &#8211; gets the contents of the specified datastream<o:p></o:p></span></em></p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings;font-style:normal'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]><em><span style='font-style:normal'>requires PID_<o:p></o:p></span></em></p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings;font-style:normal'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]><em><span style='font-style:normal'>requires DSID_<o:p></o:p></span></em></p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>GetDissemination</em> - gets a dissemination result</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>requires PID_</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>requires bDefPID_</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>requires methodName_</p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>GetObjectHistory</em> - gets object change history.</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>requires PID_</p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>GetObjectProfile</em> - gets object profile.</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]>requires PID_</p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span class=bold><span
+style='font-size:10.0pt;mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><em>FindObjects</em> - gets the requested
+ObjectFields on all objects in the repository matching the given criteria. <em><b>(NOT
+CURRENTLY IMPLEMENTED)</b></em><span class=bold><b> </b><o:p></o:p></span></p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>ListDatastreams &#8211;</em> lists the datastreams in the
+specified object</p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings;font-style:normal'>§<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]><em>requires PID_</em><em><span style='font-style:
+normal'><o:p></o:p></span></em></p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><em><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol;font-style:normal'>·<span
+style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></em><![endif]><em>ListMethods &#8211; lists the methods for the specified
+object</em><em><span style='font-style:normal'><o:p></o:p></span></em></p>
+
+<p style='margin-left:1.5in;text-indent:-.25in;mso-list:l3 level3 lfo2;
+tab-stops:list 1.5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Wingdings'>§<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>requires PID_</em></p>
+
+<p style='margin-left:1.0in;text-indent:-.25in;mso-list:l3 level2 lfo2;
+tab-stops:list 1.0in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><em>ResumeFindObjects</em> - gets the next list of
+results from a truncated findObjects response. <em><b>(NOT CURRENTLY
+IMPLEMENTED)</b></em><span class=bold><b> </b></span></p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>PID_</b></span> - persistent
+identifier of the digital object</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>bDefPID_</b></span> - persistent
+identifier of the Behavior Definiton object</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>methodName_</b></span> - name of
+the method</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>asOfDateTime_</b></span> -
+versioning datetime stamp (optional). Proper syntax is YYYY-MM-DDTHH:MM:SS.SSSZ
+where HH is 24-hour clock and SSS is milliseconds.</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>xml_</b></span> - boolean switch
+used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods,
+GetObjectMethods, GetObjectProfile and DescribeRepository methods that
+determines whether output is formatted as XML or as HTML; value of
+&quot;true&quot; indicates that the results are to be returned as XML; value of
+false or omission indicates display in HTML table format. (optional)</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l3 level1 lfo2;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>userParms</b></span> - behavior
+methods may require or provide optional parameters that may be input as
+arguments to a behavior method; these method parameters are entered as
+name/value pairs like the other serlvet parameters.(optional)</p>
+
+<p>Note that all servlet parameter names that are implementation specific end
+with the underscore character (&quot;_&quot;). This is done to avoid possible
+name clashes with user-supplied method parameter names. As a general rule, user-supplied
+parameters should never contain names that end with the underscore character to
+prevent possible name conflicts. </p>
+
+<h2><a name=d0e267></a>Configuration</h2>
+
+<p>The sample client can be run as an integral part of the Fedora server or as
+a standalone client on a different machine or server. If running outside the
+Fedora server, its only requirements are a servlet engine using Java Servlet
+API 2.1 or higher, the endpoint of a functional Fedora Server, and the servlet
+path mapping used to access the soap client. The endpoint and servlet path info
+are configured in the soapclient.properties file that is located in the WEB-INF
+directory of the soapclient webapp module in the Fedora distribution directory
+tree. The properties file specifies three variables:</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l2 level1 lfo3;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>fedoraEndpoint</b></span> - the URL
+of the Fedora API-A SOAP service; default is
+&quot;http://localhost:8080/fedora/access/soap&quot;</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l2 level1 lfo3;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>soapClientServletPath</b></span> -
+the servlet path used to access the soapclient; default is
+&quot;/soapclient/apia&quot;</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l2 level1 lfo3;
+tab-stops:list .5in'><![if !supportLists]><span style='font-size:10.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><span class=bold><b>soapClientMethodParmResolverServletPath</b></span>
+- the servlet mapping used to access the MethodParmResolverServlet which is a
+utility servlet of the soap client; default is
+&quot;/soapclient/getAccessParmResolver&quot;</p>
+
+<p>The web.xml file for the soap client webapp uses these default settings. If
+the webapp is ported to another servlet engine and any of the serlvet mappings
+change, the web.xml and the soapclient.properties file must both be updated
+accordingly. The servlets will dynamically get the values in the
+soapclient.properties file so no changes should be needed in the source code.</p>
+
+<p>When the Fedora server is built, it will automatically create the soapclient
+webapp module and place it in the Fedora distribution directory. The generated
+SOAP type libraries that are bundled with the client are tied to the WSDL type
+definitions defined for Fedora API-A. Any changes made to the WSDL for API-A
+will require rebuilding of the Fedora server and the soap client webapp module.</p>
+
+<p>Note that if you change the host name or port number on which the Fedora
+server is running, you must also update the value for the fedoraEndpoint
+parameter in the soapclient.properties file to reflect the new values.
+Otherwise, the soap client will be unable to connect to the Fedora server
+running under the new host name or port number. If you are running the soap
+client bundled together with the Fedora server, you need to stop the Fedora
+server, update the soapclient.properties file, and then restart the Fedora
+server so the new property values will be recognized by the soapclient webapp.</p>
+
+<h2><a name=d0e297></a>Examples</h2>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>1.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Get information about the repository:</p>
+
+<p style='margin-left:.75in;text-indent:.25in'>http://localhost:8080/soapclient/apia?action_=DescribeRepository</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>2.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Get the thumbnail datastream (with DSID of DS1) in data object
+with a PID of demo:5</p>
+
+<p style='margin-left:1.0in'>http://localhost:8080/soapclient/apia?action_=GetDatastreamDissemination&amp;PID_=demo:5&amp;dsID_=DS1</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>3.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Get the Dissemination for a data object with a PID of demo:5
+and associated behavior definition object with a PID of demo:1 and methodName
+of getThumbnail</p>
+
+<p style='margin-right:.5in;margin-left:1.0in'>http://localhost:8080/soapclient/apia?action_=GetDissemination&amp;PID_=demo:5&amp;bDefPID_=demo:1&amp;methodName_=getThumbnail
+</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>4.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Get the ObjectHistory for a data object with a PID of demo:5:</p>
+
+<p style='margin-left:.75in;text-indent:.25in'>http://localhost:8080/soapclient/apia?action_=GetObjectHistory&amp;PID_=demo:5</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>5.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>Get the ObjectProfile for a data object with a PID of demo:5:</p>
+
+<p style='margin-right:.5in;margin-left:1.0in'>http://localhost:8080/soapclient/apia?action_=GetObjectProfile&amp;PID_=demo:5</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>6.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>List the datastreams for data object with PID of demo:5</p>
+
+<p style='margin-left:1.0in'>http://localhost:8080/soapclient/apia?action_=ListDatastreams&amp;PID_=demo:5</p>
+
+<p style='margin-left:.5in;text-indent:-.25in;mso-list:l0 level1 lfo4;
+tab-stops:list .5in'><![if !supportLists]>7.<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span><![endif]>List the methods for data object with PID of demo:5</p>
+
+<p style='margin-left:1.0in'>http://localhost:8080/soapclient/apia?action_=ListMethods&amp;PID_=demo:5</p>
+
+</div>
+
+</body>
+
+</html>
