@@ -77,7 +77,7 @@
 			<title>File Menu</title>
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="images/filemenu.jpg"/>
+					<imagedata fileref="images/file_menu.jpg"/>
 				</imageobject>
 			</mediaobject>
 			<para>Commands on the file menu allow a repository administrator to perform operations on objects in the repository or to log in to a different repository.</para>
@@ -253,13 +253,18 @@
 				<para>Objects may currently only be ingested from a file. Future releases of the software will allow ingestion from other repositories.</para>
 				<sect4>
 					<title>One Object</title>
+					<mediaobject>
+						<imageobject>
+							<imagedata fileref="images/ingestdirdialog.jpg"/>
+						</imageobject>
+					</mediaobject>
 					<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking open will cause the file to be ingested. If the repository has been set to retain PIDs on ingest in the fedora.fcfg file, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. If the PID of the new object matches the PID of an existing object, the existing object will be overwritten.</para>
 				</sect4>
 				<sect4>
 					<title>Objects by Type</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata fileref="images/ingestdirdialog.jpg"/>
+							<imagedata fileref="images/fileingestdirdialog.jpg"/>
 						</imageobject>
 					</mediaobject>
 					<para>Users may also ingest all the files in a directory by selecting the Ingest Objects by Type menu item.</para>
@@ -367,7 +372,7 @@
 					<para>At the top of the Search window, the user may select fields to be displayed by clicking the change button and selecting/deselecting field names from the dialog.</para>
 					<mediaobject>
 						<imageobject>
-							<imagedata fileref="images/searchfields.jpg"/>
+							<imagedata fileref="images/searchfieldsdialog.jpg"/>
 						</imageobject>
 					</mediaobject>
 					<para>The Simple Search searches all indexed metadata fields for the text entered into the text box. All searches are case insensitive.  The wildcard character '*'; can be substituted for any string of characters. The wildcard character '?'; can be substituted for any single character. Clicking Search will retrieve a list of objects where the entered text string appears in an indexed metadata field.</para>
