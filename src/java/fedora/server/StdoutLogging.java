@@ -33,63 +33,70 @@ public abstract class StdoutLogging
     public void logSevere(String message) {
         if (m_target!=null) {
             m_target.logSevere(message);
-        }
-        if (loggingSevere()) {
-            System.out.println("SEVERE: " + message);
+        } else {
+            if (loggingSevere()) {
+                System.out.println("SEVERE: " + message);
+            }
         }
     }
     
     public void logWarning(String message) {
         if (m_target!=null) {
             m_target.logWarning(message);
-        }
-        if (loggingWarning()) {
-            System.out.println("WARNING: " + message);
+        } else {
+            if (loggingWarning()) {
+                System.out.println("WARNING: " + message);
+            }
         }
     }
     
     public void logInfo(String message) {
         if (m_target!=null) {
             m_target.logInfo(message);
-        }
-        if (loggingInfo()) {
-            System.out.println("INFO: " + message);
+        } else {
+            if (loggingInfo()) {
+                System.out.println("INFO: " + message);
+            }
         }
     }
     
     public void logConfig(String message) {
         if (m_target!=null) {
             m_target.logConfig(message);
-        }
-        if (loggingConfig()) {
-            System.out.println("CONFIG: " + message);
+        } else {
+            if (loggingConfig()) {
+                System.out.println("CONFIG: " + message);
+            }
         }
     }
     
     public void logFine(String message) {
         if (m_target!=null) {
             m_target.logFine(message);
-        }
-        if (loggingFine()) {
-            System.out.println("FINE: " + message);
+        } else {
+            if (loggingFine()) {
+                System.out.println("FINE: " + message);
+            }
         }
     }
     
     public void logFiner(String message) {
         if (m_target!=null) {
             m_target.logFiner(message);
-        }
-        if (loggingFiner()) {
-            System.out.println("FINER: " + message);
+        } else {
+            if (loggingFiner()) {
+                System.out.println("FINER: " + message);
+            }
         }
     }
     
     public void logFinest(String message) {
         if (m_target!=null) {
             m_target.logFinest(message);
-        }
-        if (loggingFinest()) {
-            System.out.println("FINEST: " + message);
+        } else {
+            if (loggingFinest()) {
+                System.out.println("FINEST: " + message);
+            }
         }
     }
     
