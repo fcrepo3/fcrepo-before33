@@ -61,9 +61,21 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-          None.
+            - allowHosts [default=all]
+              A comma-separated list of IP ranges that the client's address 
+              is compared to. If this is specified, the remote address 
+              must match for any Management request to be accepted. 
+              If this is not specified, all requests will be accepted unless 
+              the remote address matches a deny pattern.
+            - denyHosts [default=none]
+              A comma-separated list of IP ranges that the client's address 
+              is compared to. If this is specified, the remote address 
+              must not match for any Management request to be accepted. 
+              If this is not specified, request acceptance is governed 
+              solely by the allowIPRanges attribute.
         </comment>
-		<param name="testName" value="testValue"/>
+		<param name="allowHosts" value="127.0.0.1" />
+		<param name="denyHosts" value="none" />
 	</module>
 	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
 		<comment>
@@ -76,9 +88,21 @@
               over the wire
             - how the storage subsystem is implemented.
         Parameters:
-          None.
+            - allowHosts [default=all]
+              A comma-separated list of IP ranges that the client's address 
+              is compared to. If this is specified, the remote address 
+              must match for any Management request to be accepted. 
+              If this is not specified, all requests will be accepted unless 
+              the remote address matches a deny pattern.
+            - denyHosts [default=none]
+              A comma-separated list of IP ranges that the client's address 
+              is compared to. If this is specified, the remote address 
+              must not match for any Management request to be accepted. 
+              If this is not specified, request acceptance is governed 
+              solely by the allowIPRanges attribute.
         </comment>
-		<param name="testName" value="testValue"/>
+		<param name="allowHosts" value="all" />
+		<param name="denyHosts" value="none" />
 	</module>
 	<module role="fedora.server.storage.translation.DOTranslator"
                class="fedora.server.storage.translation.DOTranslatorModule">
