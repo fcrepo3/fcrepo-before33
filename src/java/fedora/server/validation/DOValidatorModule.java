@@ -32,7 +32,7 @@ public class DOValidatorModule extends Module implements DOValidator
    * An instance of the core implementation class for DOValidator.
    * The DOValidatorModule acts as a wrapper to this class.
    */
-  private DOValidatorImpl dov = new DOValidatorImpl();
+  private DOValidatorImpl dov = null;
 
   /**
    * <p>Constructs a new DOValidatorModule</p>
@@ -49,41 +49,35 @@ public class DOValidatorModule extends Module implements DOValidator
         super(moduleParameters, server, role);
     }
 
-  /**
-   * Initializes the Module based on configuration parameters. The
-   * implementation of this method is dependent on the schema used to define
-   * the parameter names for the role of
-   * <code>fedora.server.storage.DOValidatorModule</code>.
-   *
-   * @throws ModuleInitializationException If initialization values are
-   *         invalid or initialization fails for some other reason.
-   */
-  public void initModule() throws ModuleInitializationException
-  {
-    try
-    {
-      dov.tempDir = System.getProperty("fedora.home") + this.getParameter("tempDir");
-      dov.xmlSchemaURL = this.getParameter("xmlSchemaURL");
-      dov.xmlSchemaLocalPath = System.getProperty("fedora.home") + this.getParameter("xmlSchemaLocalPath");
-      dov.schematronPreprocessorID = System.getProperty("fedora.home") + this.getParameter("schematronPreprocessor");
-      dov.schematronSchemaID = System.getProperty("fedora.home") + this.getParameter("schematronSchema");
-      dov.schematronValidatingXslID = System.getProperty("fedora.home") + this.getParameter("schematronValidatingXsl");
-    }
-    catch(Exception e)
-    {
-      System.out.println("Unable to initialize validation module: " + e.getMessage());
-      throw new ModuleInitializationException(
-          e.getMessage(),"fedora.server.validation.DOValidatorModule");
-    }
-  }
-
   public void postInitModule() throws ModuleInitializationException
   {
     try
     {
-        // Get a connection pool manager for the validator module
-        dov.connectionPool=((ConnectionPoolManager) getServer().getModule(
-            "fedora.server.storage.ConnectionPoolManager")).getPool();
+      String tempDir = new File(getServer().getHomeDir(),
+          this.getParameter("tempDir")).getPath();
+      String xmlSchemaURL = this.getParameter("xmlSchemaURL");
+      String schematronPreprocessorID = new File(getServer().getHomeDir(),
+          this.getParameter("schematronPreprocessor")).getPath();
+      String schematronSchemaID = new File(getServer().getHomeDir(),
+          this.getParameter("schematronSchema")).getPath();
+      String schematronValidatingXslID = new File(getServer().getHomeDir(),
+          this.getParameter("schematronValidatingXsl")).getPath();
+      ConnectionPool connectionPool=((ConnectionPoolManager)
+          getServer().getModule(
+          "fedora.server.storage.ConnectionPoolManager")).getPool();
+      logFiner("[DOValidatorModule] tempDir set to: "
+                + tempDir);
+      logFiner("[DOValidatorModule] xmlSchemaURL set to: "
+                + xmlSchemaURL);
+      logFiner("[DOValidatorModule] schematronPreprocessorID set to: "
+                + schematronPreprocessorID);
+      logFiner("[DOValidatorModule] schematronSchemaID set to: "
+                + schematronSchemaID);
+      logFiner("[DOValidatorModule] schematronValidatingXslID set to: "
+                + schematronValidatingXslID);
+      // instantiate the validation implementation class
+      dov = new DOValidatorImpl(tempDir, xmlSchemaURL, schematronPreprocessorID,
+            schematronSchemaID, schematronValidatingXslID, connectionPool);
     }
     catch(Exception e)
     {
@@ -109,10 +103,11 @@ public class DOValidatorModule extends Module implements DOValidator
    * @throws ServerException If validation fails for any reason.
    */
   public void validate(InputStream objectAsStream, int validationLevel, String workFlowPhase)
-    //throws ObjectValidityException, GeneralException
     throws ServerException
   {
     dov.validate(objectAsStream, validationLevel, workFlowPhase);
+    logFiner("[DOValidatorModule] Completed object validation at level: "
+              + validationLevel);
   }
 
   /**
@@ -131,9 +126,10 @@ public class DOValidatorModule extends Module implements DOValidator
    * @throws ServerException If validation fails for any reason.
    */
   public void validate(File objectAsFile, int validationLevel, String workFlowPhase)
-    //throws ObjectValidityException, GeneralException
     throws ServerException
   {
       dov.validate(objectAsFile, validationLevel, workFlowPhase);
+      logFiner("[DOValidatorModule] Completed object validation at level: "
+              + validationLevel);
   }
 }
