@@ -58,7 +58,7 @@ public class DatastreamPane
     private PurgeButtonListener m_purgeButtonListener;
     private boolean m_done;
     private Dimension m_labelDims;
-    private JLabel m_dtLabel;
+    private JTextArea m_dtLabel;
     private JPanel m_dateLabelAndValue;
     private Datastream[] m_versions;
 
@@ -121,39 +121,35 @@ public class DatastreamPane
                             m_owner.colorTabForState(m_mostRecent.getID(), curState);
                         }
                     });
-                    JLabel mimeTypeValueLabel=new JLabel(mostRecent.getMIMEType());
-                    JLabel controlGroupValueLabel=new JLabel(
+                    JTextArea mimeTypeValueLabel=new JTextArea(mostRecent.getMIMEType());
+                    mimeTypeValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    mimeTypeValueLabel.setEditable(false);
+                    JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
                                     mostRecent.getControlGroup().toString())
                             );
-                    JLabel infoTypeValueLabel=new JLabel(mostRecent.getInfoType());
+                    controlGroupValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    controlGroupValueLabel.setEditable(false);
+                    JTextArea infoTypeValueLabel=new JTextArea(mostRecent.getInfoType());
+                    infoTypeValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    infoTypeValueLabel.setEditable(false);
                     JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel, controlGroupValueLabel, infoTypeValueLabel};
- //                   JComponent[] rightCommonValues=new JComponent[] {controlGroupValueLabel, infoTypeValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
                 GridBagLayout leftCommonGridBag=new GridBagLayout();
                 leftCommonPane.setLayout(leftCommonGridBag);
                 addLabelValueRows(leftCommonLabels, leftCommonValues, 
                         leftCommonGridBag, leftCommonPane);
-/*            
-                JPanel rightCommonPane=new JPanel();
-                GridBagLayout rightCommonGridBag=new GridBagLayout();
-                rightCommonPane.setLayout(rightCommonGridBag);
-                addLabelValueRows(rightCommonLabels, rightCommonValues, 
-                        rightCommonGridBag, rightCommonPane);
-*/
-            JPanel commonPane=leftCommonPane;
-//            JPanel commonPane=new JPanel();
-//            commonPane.setLayout(new FlowLayout());
-//            commonPane.add(leftCommonPane);
-//            commonPane.add(rightCommonPane);
+
+                JPanel commonPane=leftCommonPane;
 
             // CENTER: versionPane(m_versionSlider, m_valuePane)
 
                 // NORTH: m_versionSlider
 
-                // now that they're sorted, set up the shared button listener for purge
+                // set up the shared button listener for purge
                 m_purgeButtonListener=new PurgeButtonListener(versions);
+
                 // do the slider if needed
                 if (versions.length>1) {
                     m_versionSlider=new JSlider(JSlider.HORIZONTAL,
@@ -162,18 +158,6 @@ public class DatastreamPane
                     m_versionSlider.setMajorTickSpacing(1);
                     m_versionSlider.setSnapToTicks(true);
                     m_versionSlider.setPaintTicks(true);
-                    /*
-                    m_labelTables=new Hashtable[versions.length];
-					for (int i=0; i<versions.length; i++) {
-					    Hashtable thisTable=new Hashtable();
-						thisTable.put(new Integer(i), new JLabel("Created " 
-						        + s_formatter.format(versions[i].getCreateDate().getTime())));
-						m_labelTables[i]=thisTable;
-					}
-
-                    m_versionSlider.setLabelTable(m_labelTables[0]);
-                    m_versionSlider.setPaintLabels(true);
-                    */
                 }
 
 
@@ -201,24 +185,18 @@ public class DatastreamPane
 
             JPanel versionPane=new JPanel();
             versionPane.setLayout(new BorderLayout());
-/*            String versionPaneLabel="(1 Version)";
-            if (versions.length>1) {
-                versionPaneLabel="(" + versions.length + " Versions)";
-            }
-            versionPane.setBorder( BorderFactory.createTitledBorder(
-                            BorderFactory.createEmptyBorder(),
-                            versionPaneLabel ));
-*/
             if (versions.length>1) {
                 // Add a panel to versionPane.NORTH
                 // FlowLayout(SwingConstants.LEFT)
-                // JLabel Created  JLabel Date   m_versionSlider
+                // Created   Date   m_versionSlider
                 m_dateLabelAndValue=new JPanel(new FlowLayout(FlowLayout.LEFT, 4, 0));
                 JLabel createdLabel=new JLabel("Created");
                 createdLabel.setPreferredSize(m_labelDims);
                 m_dateLabelAndValue.add(createdLabel);
                 m_dateLabelAndValue.add(Box.createHorizontalStrut(0));
-                m_dtLabel=new JLabel(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+                m_dtLabel=new JTextArea(s_formatter.format(versions[0].getCreateDate().getTime()) + " ");
+                m_dtLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                m_dtLabel.setEditable(false);
                 m_dateLabelAndValue.add(m_dtLabel);
 
                 JPanel stretch=new JPanel(new BorderLayout());
@@ -226,7 +204,6 @@ public class DatastreamPane
                 stretch.add(m_dateLabelAndValue, BorderLayout.WEST);
                 stretch.add(m_versionSlider, BorderLayout.CENTER);
                 versionPane.add(stretch, BorderLayout.NORTH);
-                //versionPane.add(m_versionSlider, BorderLayout.NORTH);
             }
             versionPane.add(m_valuePane, BorderLayout.CENTER);
 
@@ -441,19 +418,31 @@ public class DatastreamPane
                     m_locationTextField.setEnabled(false);
                 }
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField, m_locationTextField, urlTextField};
+                    values=new JComponent[] {m_labelTextField, 
+                                             m_locationTextField, 
+                                             urlTextField};
                 } else {
-                    values=new JComponent[] {new JLabel(
-                        s_formatter.format(m_ds.getCreateDate().getTime())), 
-                        m_labelTextField, m_locationTextField, urlTextField};
+                    JTextArea cDateTextArea=new JTextArea(
+                            s_formatter.format(m_ds.getCreateDate().getTime()));
+                    cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
+                    cDateTextArea.setEditable(false);
+                    values=new JComponent[] {cDateTextArea,
+                                             m_labelTextField, 
+                                             m_locationTextField, 
+                                             urlTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    values=new JComponent[] {m_labelTextField, urlTextField};
+                    values=new JComponent[] {m_labelTextField, 
+                                             urlTextField};
                 } else {
-                    values=new JComponent[] {new JLabel(
-                        s_formatter.format(m_ds.getCreateDate().getTime())), 
-                        m_labelTextField, urlTextField};
+                    JTextArea cDateTextArea=new JTextArea(
+                            s_formatter.format(m_ds.getCreateDate().getTime()));
+                    cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
+                    cDateTextArea.setEditable(false);
+                    values=new JComponent[] {cDateTextArea,
+                                             m_labelTextField, 
+                                             urlTextField};
                 }
             }
 
@@ -464,9 +453,9 @@ public class DatastreamPane
                     grid, fieldPane);
             add(fieldPane, BorderLayout.NORTH);
 
+            // Do the buttons!
             JPanel actionPane=new JPanel();
             actionPane.setLayout(new FlowLayout());
-           // actionPane.setLayout(new BoxLayout(actionPane, BoxLayout.Y_AXIS));
             if (m_canEdit) {
                 // we know it's editable... add a button
                 m_editButton.addActionListener(new ActionListener() {

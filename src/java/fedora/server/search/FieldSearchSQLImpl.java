@@ -27,6 +27,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.DatastreamXMLMetadata;
@@ -143,14 +144,9 @@ public class FieldSearchSQLImpl
                 date=new Date();
             }
             dbRowValues[7]="" + date.getTime();
-            DatastreamXMLMetadata dcmd=null;
-            try {
-                dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
-            } catch (ClassCastException cce) {
-                throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
-                        + " has a DC datastream, but it's not inline XML.");
-            }
             // add bdef and bmech ids for each active disseminator
+            // and if the object is a bMech, add the bDefPID (from the 
+            // datastream input spec) to its list of bDefs
             Disseminator[] disses=reader.GetDisseminators(null, null);
             ArrayList bDefs=new ArrayList();
             ArrayList bMechs=new ArrayList();
@@ -158,9 +154,23 @@ public class FieldSearchSQLImpl
                 bDefs.add(disses[i].bDefID);
                 bMechs.add(disses[i].bMechID);
             }
+            if (dbRowValues[2].equals("m")) {
+                // get it as a BMechReader and add the bDefPID
+                BMechReader mechReader=m_repoReader.getBMechReader(
+                        s_nonCachedContext,
+                        reader.GetObjectPID());
+                bDefs.add(mechReader.getServiceDSInputSpec(null).bDefPID);
+            }
             dbRowValues[9]=getDbValue(bDefs);
             dbRowValues[10]=getDbValue(bMechs);
             // do dc stuff if needed
+            DatastreamXMLMetadata dcmd=null;
+            try {
+                dcmd=(DatastreamXMLMetadata) reader.GetDatastream("DC", null);
+            } catch (ClassCastException cce) {
+                throw new ObjectIntegrityException("Object " + reader.GetObjectPID()
+                        + " has a DC datastream, but it's not inline XML.");
+            }
             if (dcmd==null) {
                 logFine("Did not have DC Metadata datastream for this object.");
             } else {

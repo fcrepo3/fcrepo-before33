@@ -90,6 +90,7 @@ public class Administrator extends JFrame {
     public static Color INACTIVE_COLOR=new Color(210, 210, 180);
     public static Color DELETED_COLOR=new Color(210, 180, 180);
     public static Color DEFAULT_COLOR=new Color(185, 185, 185);
+    public static Color BACKGROUND_COLOR;
 
     public static FedoraAPIA APIA=null;
     public static FedoraAPIM APIM=null;
@@ -104,6 +105,7 @@ public class Administrator extends JFrame {
         WATCH_AREA.setCaretPosition(0);
 
         s_maxButtonHeight=new JTextField("test").getPreferredSize().height;
+        BACKGROUND_COLOR=new JPanel().getBackground();
 
         if (host!=null) {
             // already must have passed through non-interactive login

@@ -19,7 +19,6 @@ public class DatastreamBindingPane
         implements DatastreamListener, 
                    TableModelListener {
 
-    private Disseminator m_diss;
     private Datastream[] m_datastreams;
     private DatastreamInputSpec m_spec;
     private HashMap m_ruleForKey;
@@ -30,9 +29,9 @@ public class DatastreamBindingPane
     static ImageIcon fulfilledIcon=new ImageIcon(Administrator.cl.getResource("images/fedora/checkmark16.gif"));
 
     public DatastreamBindingPane(Datastream[] currentVersions,
-                                 Disseminator diss,
+                                 DatastreamBinding[] initialBindings,
+                                 String bMechPID,
                                  DatastreamInputSpec spec) {
-        m_diss=diss;
         m_datastreams=currentVersions;
         m_spec=spec;
 
@@ -44,8 +43,7 @@ public class DatastreamBindingPane
         }
 
         // sort existing values, prepping for putting them in the table model
-        SortedMap dsBindingMap=getSortedBindingMap(
-                m_diss.getDsBindMap().getDsBindings());
+        SortedMap dsBindingMap=getSortedBindingMap(initialBindings);
 
         // construct the tabbedpane, one tab per binding key
         JTabbedPane bindingTabbedPane=new JTabbedPane();
@@ -56,6 +54,7 @@ public class DatastreamBindingPane
             String key=(String) keys.next();
             Set values=(Set) dsBindingMap.get(key);
             SingleKeyBindingPanel p=new SingleKeyBindingPanel(
+                    bMechPID,
                     key, 
                     values, 
                     (DatastreamBindingRule) m_ruleForKey.get(key),
@@ -152,18 +151,20 @@ public class DatastreamBindingPane
         private JButton m_upButton;
         private JButton m_downButton;
 
-        public SingleKeyBindingPanel(String bindingKey, 
+        public SingleKeyBindingPanel(String bMechPID,
+                                     String bindingKey, 
                                      Set dsBindings, 
                                      DatastreamBindingRule rule,
                                      TableModelListener listener) {
-            // TODO: create a copy of dsBindings here so we can impl isDirty()
-            JTextArea topTextArea=createTopTextArea(rule);
-            topTextArea.setBackground(getBackground());
+            JEditorPane instructionPane=createInstructionPane(bMechPID, rule);
+            instructionPane.setBackground(getBackground());
 
-            JPanel statusPane=new JPanel();
-            statusPane.setBorder(BorderFactory.createEmptyBorder(4,0,0,0));
-            m_statusLabel=new JLabel("2 more datastreams needed.", notFulfilledIcon, SwingConstants.TRAILING);
-            statusPane.add(m_statusLabel);
+            JPanel statusPane=new JPanel(new BorderLayout());
+            m_statusLabel=new JLabel(" Binding is incomplete.");
+            JPanel leftify=new JPanel(new BorderLayout());
+            leftify.add(m_statusLabel, BorderLayout.WEST);
+            statusPane.add(leftify, BorderLayout.NORTH);
+  //          statusPane.add(instructionPane, BorderLayout.SOUTH);
 
             m_tableModel=new DatastreamBindingTableModel(dsBindings, bindingKey);
             m_table=new JTable(m_tableModel);
@@ -178,7 +179,6 @@ public class DatastreamBindingPane
 
             JPanel middlePane=new JPanel(new BorderLayout());
             middlePane.add(new JScrollPane(m_table), BorderLayout.CENTER);
-            middlePane.add(statusPane, BorderLayout.SOUTH);
 
             GridBagLayout gridbag=new GridBagLayout();
             JPanel buttonPane=new JPanel(gridbag);
@@ -232,8 +232,9 @@ public class DatastreamBindingPane
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-            add(topTextArea, BorderLayout.NORTH);
+            add(statusPane, BorderLayout.NORTH);
             add(bottomPane, BorderLayout.CENTER);
+            add(instructionPane, BorderLayout.SOUTH);
         }
 
         public void tableChanged(TableModelEvent e) {
@@ -244,69 +245,93 @@ public class DatastreamBindingPane
 			}
 		}
 
-        private JTextArea createTopTextArea(
-                DatastreamBindingRule rule) {
+        private JEditorPane createInstructionPane(String bMechPID,
+                                            DatastreamBindingRule rule) {
             StringBuffer buf=new StringBuffer();
             // requires x to y datastreams...
-            buf.append("Requires ");
+            buf.append("The <b>");
+            buf.append(rule.getKey());
+            buf.append("</b> binding requires ");
             if (rule.getMin()==0) {
                 if (rule.getMax()==-1) {
-                    buf.append("any number of datastreams");
+                    buf.append("<i>any number</i> of datastreams");
                 } else {
-                    buf.append("up to ");
-                    buf.append(rule.getMax());
-                    buf.append(" datastream");
+                    buf.append("<i>up to ");
+                    if (rule.getMax()==1) {
+                        buf.append("one");
+                    } else {
+                        buf.append(rule.getMax());
+                    }
+                    buf.append("</i> datastream");
                     if (rule.getMax()>1) {
+                        buf.append('s');
                     }
                 }
             } else {
+                buf.append("<i>");
                 if (rule.getMin()==rule.getMax()) {
-                    buf.append(rule.getMin());
-                    buf.append(" datastream");
+                    if (rule.getMin()==1) {
+                        buf.append("one");
+                    } else {
+                        buf.append(rule.getMin());
+                    }
+                    buf.append("</i> datastream");
                     if (rule.getMax()>1) {
                         buf.append('s');
                     }
                 } else {
-                    buf.append(rule.getMin());
-                    buf.append(" to ");
-                    buf.append(rule.getMax());
-                    buf.append(" datastreams");
+                    if (rule.getMin()==1) {
+                        buf.append("one");
+                    } else {
+                        buf.append(rule.getMin());
+                    }
+                    if (rule.getMax()==-1) {
+                        buf.append(" or more</i> datastreams");
+                    } else {
+                        buf.append(" to ");
+                        buf.append(rule.getMax());
+                        buf.append("</i> datastreams");
+                    }
                 }
             }
             // of type...
             String[] types=rule.getTypes();
             buf.append(" of ");
             if (rule.accepts("*/*")) {
-                buf.append("any type.");
+                buf.append("<i>any type</i>.");
             } else {
                 buf.append("type ");
+                buf.append("<i>");
                 buf.append(types[0]);
+                buf.append("</i>");
                 if (types.length==2) {
                     buf.append(" or ");
+                    buf.append("<i>");
                     buf.append(types[1]);
+                    buf.append("</i>");
                 } else if (types.length>2) {
                     for (int i=1; i<types.length; i++) {
                         buf.append(", ");
                         if (i==types.length-1) {
                             buf.append("or ");
                         }
+                        buf.append("<i>");
                         buf.append(types[i]);
+                        buf.append("</i>");
                     }
                 }
             }
-            // add \n(inputInstruction) if available
+            // add inputInstruction if available
             if (rule.getInputInstruction()!=null 
                     && rule.getInputInstruction().length()>0) {
-                buf.append(": ");
+                buf.append(" - ");
                 buf.append(rule.getInputInstruction());
             } else {
                 buf.append(".");
             }
-            // finally, set up and return the JTextArea
-            JTextArea result=new JTextArea(buf.toString());
-            result.setLineWrap(true);
+            // finally, set up and return the Pane
+            JEditorPane result=new JEditorPane("text/html", buf.toString());
             result.setEditable(false);
-            result.setWrapStyleWord(true);
             return result;
         }
 

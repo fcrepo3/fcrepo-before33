@@ -113,12 +113,20 @@ public class ObjectPane
                     m_labelTextField=new JTextField(label);
                     m_labelTextField.getDocument().addDocumentListener(
                             dataChangeListener);
-                    JLabel cModelValueLabel=new JLabel(cModel);
-                    JLabel cDateValueLabel=new JLabel(
+                    JTextArea cModelValueLabel=new JTextArea(cModel);
+                    cModelValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    cModelValueLabel.setEditable(false);
+                    JTextArea cDateValueLabel=new JTextArea(
                             s_formatter.format(cDate.getTime()));
-                    JLabel mDateValueLabel=new JLabel(
+                    cDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    cDateValueLabel.setEditable(false);
+                    JTextArea mDateValueLabel=new JTextArea(
                             s_formatter.format(mDate.getTime()));
-                    JLabel ownerIdValueLabel=new JLabel(ownerId);
+                    mDateValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    mDateValueLabel.setEditable(false);
+                    JTextArea ownerIdValueLabel=new JTextArea(ownerId);
+                    ownerIdValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
+                    ownerIdValueLabel.setEditable(false);
                     JComponent[] values=new JComponent[] { m_stateComboBox,
                             m_labelTextField, cModelValueLabel, cDateValueLabel,
                             mDateValueLabel, ownerIdValueLabel };

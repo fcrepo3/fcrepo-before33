@@ -117,7 +117,10 @@ public class DisseminatorPane
         JPanel bDefLabelPanel=new JPanel(new BorderLayout());
         bDefLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
         bDefLabelPanel.add(m_bDefLabelTextField, BorderLayout.CENTER);
-        bDefInfo.add(new JLabel("Defined by " + m_mostRecent.getBDefPID()), BorderLayout.WEST);
+        JTextArea definedBy=new JTextArea("Defined by " + m_mostRecent.getBDefPID());
+        definedBy.setBackground(Administrator.BACKGROUND_COLOR);
+        definedBy.setEditable(false);
+        bDefInfo.add(definedBy, BorderLayout.WEST);
         bDefInfo.add(bDefLabelPanel, BorderLayout.CENTER);
         Administrator.constrainHeight(bDefButton);
         bDefInfo.add(bDefButton, BorderLayout.EAST);
@@ -231,11 +234,14 @@ public class DisseminatorPane
         JPanel commonPane=new JPanel(new BorderLayout());
         commonPane.add(topCommonPane, BorderLayout.NORTH);
 
-        // set up the version pane, with the slider
         m_purgeButtonListener=new PurgeButtonListener(versions);
 
-        // do the slider if needed
+        // set up the version pane, with the slider if needed
         if (versions.length>1) {
+
+// FIXME: this needs to match how the datastream stuff is done now,
+//        with the date to the left of the slider
+
             m_didSlider=true;
             m_versionSlider=new JSlider(JSlider.HORIZONTAL, 0, versions.length-1, 0);
             m_versionSlider.addChangeListener(this);
@@ -360,6 +366,8 @@ public class DisseminatorPane
             extends JPanel
             implements PotentiallyDirty {
 
+        private CardLayout m_bindingsCard;
+        private JPanel m_stackedBindingPane;
         private Disseminator m_diss;
         private JTextField m_labelTextField;
         private JTextField m_bMechLabelTextField;
@@ -382,7 +390,6 @@ public class DisseminatorPane
             m_labelTextField.getDocument().addDocumentListener(dataChangeListener);
             m_labelTextField.setEditable(true);
             m_labelTextField.setEnabled(!m_diss.getState().equals("D"));
-            // m_bmechComboBox, m_bMechLabelTextField, bMechButton
 
 // FIXME: replace this with a combo box populated with all
 //        possible bMechs, and attach it to a smart event handler
@@ -418,14 +425,18 @@ public class DisseminatorPane
             if (m_didSlider) {
                 right=new JComponent[] {m_labelTextField, bMechInfo};
             } else {
-                right=new JComponent[] {
-                        new JLabel(s_formatter.format(m_diss.getCreateDate().getTime())), 
-                        m_labelTextField, 
-                        bMechInfo};
+                JTextArea cDateArea=new JTextArea(
+                        s_formatter.format(m_diss.getCreateDate().getTime()));
+                cDateArea.setBackground(Administrator.BACKGROUND_COLOR);
+                cDateArea.setEditable(false);
+                right=new JComponent[] {cDateArea,
+                                        m_labelTextField, 
+                                        bMechInfo};
             }
             GridBagLayout topGridBag=new GridBagLayout();
             JPanel topPanel=new JPanel(topGridBag);
             addLabelValueRows(left, right, topGridBag, topPanel);
+
             // middle panel is for displaying the datastream binding
             JPanel middlePanel=new JPanel(new BorderLayout());
             middlePanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
@@ -434,8 +445,11 @@ public class DisseminatorPane
 // later, undoChanges will undo each... similarly, isDirty() will use
 // the list of them to check whether the currently displayed one is dirty
 
-
-
+            CardLayout m_bindingsCard=new CardLayout();
+            JPanel m_stackedBindingPane=new JPanel(m_bindingsCard);
+            
+            // do a search, finding pids and labels of bmechs implementing
+            // the bdef this disseminator uses.
 
             HashMap hash=new HashMap();
             hash.put("itemID", "DSINPUTSPEC");
@@ -449,9 +463,20 @@ public class DisseminatorPane
                     );
             DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
                     m_gramps.getInitialCurrentDatastreamVersions(),
-                    m_diss, spec);
+                    m_diss.getDsBindMap().getDsBindings(), 
+                    m_diss.getBMechPID(), spec);
             m_gramps.addDatastreamListener(dsBindingPane);
+
+
             middlePanel.add(dsBindingPane, BorderLayout.CENTER);
+
+
+            JLabel bindingsLabel=new JLabel("Bindings");
+            bindingsLabel.setPreferredSize(m_labelDims);
+            JPanel bindingsLabelPane=new JPanel(new BorderLayout());
+            bindingsLabelPane.setBorder(BorderFactory.createEmptyBorder(0,0,0,8));
+            bindingsLabelPane.add(bindingsLabel, BorderLayout.NORTH);
+            middlePanel.add(bindingsLabelPane, BorderLayout.WEST);
            // bottom panel is for the purge button
             JPanel bottomPanel=new JPanel(new FlowLayout());
             JButton purgeButton=new JButton("Purge...");
