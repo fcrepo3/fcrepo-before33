@@ -436,8 +436,8 @@ public class DefaultAccess extends Module implements Access
       profile.PID = reader.GetObjectPID();
       profile.objectLabel = reader.GetObjectLabel();
       profile.objectContentModel = reader.getContentModelId();
-      profile.objectCreateDate = DateUtility.convertDateToString(reader.getCreateDate());
-      profile.objectLastModDate = DateUtility.convertDateToString(reader.getLastModDate());
+      profile.objectCreateDate = reader.getCreateDate();
+      profile.objectLastModDate = reader.getLastModDate();
       profile.objectType = reader.getFedoraObjectType();
       profile.dissIndexViewURL = getDissIndexViewURL(getReposBaseURL(),
           reader.GetObjectPID(), versDateTime);

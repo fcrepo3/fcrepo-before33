@@ -407,7 +407,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   }
 
   /**
-   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
+   * <p> A Thread to serialize an ObjectProfile object into XML.</p>
    *
    */
   public class ProfileSerializerThread extends Thread
@@ -421,7 +421,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
      * <p> Constructor for ProfileSerializeThread.</p>
      *
      * @param PID The persistent identifier of the specified digital object.
-     * @param objMethDefArray An array of object mtehod definitions.
+     * @param objProfile An object profile data structure.
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
@@ -468,8 +468,10 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           // PROFILE FIELDS SERIALIZATION
           pw.write("<objLabel>" + objProfile.objectLabel + "</objLabel>");
           pw.write("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
-          pw.write("<objCreateDate>" + objProfile.objectCreateDate + "</objCreateDate>");
-          pw.write("<objLastModDate>" + objProfile.objectLastModDate + "</objLastModDate>");
+          String cDate = DateUtility.convertDateToString(objProfile.objectCreateDate);
+          pw.write("<objCreateDate>" + cDate + "</objCreateDate>");
+          String mDate = DateUtility.convertDateToString(objProfile.objectLastModDate);
+          pw.write("<objLastModDate>" + mDate + "</objLastModDate>");
           String objType = objProfile.objectType;
           pw.write("<objType>");
           if (objType.equalsIgnoreCase("O"))

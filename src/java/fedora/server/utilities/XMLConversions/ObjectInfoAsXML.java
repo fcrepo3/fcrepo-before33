@@ -56,8 +56,10 @@ public class ObjectInfoAsXML
         // PROFILE FIELDS SERIALIZATION
         out.append("<objLabel>" + objProfile.objectLabel + "</objLabel>");
         out.append("<objContentModel>" + objProfile.objectContentModel + "</objContentModel>");
-        out.append("<objCreateDate>" + objProfile.objectCreateDate + "</objCreateDate>");
-        out.append("<objLastModDate>" + objProfile.objectLastModDate + "</objLastModDate>");
+        String cDate = DateUtility.convertDateToString(objProfile.objectCreateDate);
+        out.append("<objCreateDate>" + cDate + "</objCreateDate>");
+        String mDate = DateUtility.convertDateToString(objProfile.objectLastModDate);
+        out.append("<objLastModDate>" + mDate + "</objLastModDate>");
         String objType = objProfile.objectType;
         out.append("<objType>");
         if (objType.equalsIgnoreCase("O"))
