@@ -184,8 +184,24 @@ public class ServerConfiguration
         return m_moduleConfigurations;
     }
 
+    public ModuleConfiguration getModuleConfiguration(String role) {
+        for (int i = 0; i < m_moduleConfigurations.size(); i++) {
+            ModuleConfiguration config = (ModuleConfiguration) m_moduleConfigurations.get(i);
+            if (config.getRole().equals(role)) return config;
+        }
+        return null;
+    }
+
     public List getDatastoreConfigurations() {
         return m_datastoreConfigurations;
+    }
+
+    public DatastoreConfiguration getDatastoreConfiguration(String id) {
+        for (int i = 0; i < m_datastoreConfigurations.size(); i++) {
+            DatastoreConfiguration config = (DatastoreConfiguration) m_datastoreConfigurations.get(i);
+            if (config.getId().equals(id)) return config;
+        }
+        return null;
     }
 
 }
