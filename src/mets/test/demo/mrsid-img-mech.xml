@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!---********************************************************************************************-->
+<!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
+<!---********************************************************************************************-->
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvadesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/" xmlns:uvadigiprov="http://dl.lib.virginia.edu/bin/admin/digiprov/" xmlns:uvasource="http://dl.lib.virginia.edu/bin/admin/source/" xmlns:uvarights="http://dl.lib.virginia.edu/bin/admin/rights/" xmlns:uvatech="http://dl.lib.virginia.edu/bin/admin/tech/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="uva-bmech-mrsid:15" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for UVA Standard Image" PROFILE="fedora:BMECH">
+	<!---*******************************************************************************************************************************************-->
+	<!--  FEDORA SYSTEM METADATA: -->
+	<!---*******************************************************************************************************************************************-->
+	<METS:metsHdr ID="H1" CREATEDATE="2002-02-17T06:32:00" LASTMODDATE="2002-02-17T06:32:00" RECORDSTATUS="">
+		<METS:agent ID="A1" ROLE="CREATOR" TYPE="INDIVIDUAL">
+			<METS:name> Sandy Payette </METS:name>
+			<METS:note> Behavior Mechanism Object for UVA standard image behaviors using a MrSID encoded file </METS:note>
+		</METS:agent>
+		<METS:agent ID="A2" ROLE="CUSTODIAN" TYPE="ORGANIZATION">
+			<METS:name> University of Virginia Library </METS:name>
+			<METS:note> Object owned by UVA </METS:note>
+		</METS:agent>
+	</METS:metsHdr>
+	<!---*******************************************************************************************************************************************-->
+	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!---*******************************************************************************************************************************************-->
+	<!-- DATASTREAM : METADATA DESCRIBING THE DATA BINDING SPECIFICATION  FOR THE MrSID MECHANISM -->
+	<!-- Here we store XML data that conforms to the Fedora dsBindSpec schema. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="DSBIND">
+		<METS:techMD ID="TECH1.0" CREATED="2002-02-17T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Binding Specification for MrSID mechanism">
+				<METS:xmlData>
+					<fbs:DSBindingSpec>
+						<fbs:mechanismID scheme="URN">uva-bmech-mrsid:15</fbs:mechanismID>
+						<fbs:behaviorDefID scheme="URN">uva-bdef-stdimg:8</fbs:behaviorDefID>
+						<fbs:DSBinding BindingKeyName="MRSID" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSBindingLabel>MrSid file</fbs:DSBindingLabel>
+							<fbs:DSBindingInstructions>MrSid wavelet encoded image file</fbs:DSBindingInstructions>
+							<fbs:DSMIME>image/x-mrsid-image</fbs:DSMIME>
+						</fbs:DSBinding>
+					</fbs:DSBindingSpec>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!-- ****************************************************************************************************************************************** -->
+	<!--  DATASTREAM -  METADATA IN THE FORM OF A WSDL SPECIFICATION FOR THE STD IMAGE MECHANISM -->
+	<!--  Here we store WSDL inline as a form of metadata about the mechanism represented by this object. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="WSDL">
+		<METS:techMD ID="TECH2.0" CREATED="2002-02-17T06:32:00" STATUS="">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL service definitions for Std Image Behaviors using MrSid mechanism">
+				<METS:xmlData>
+					<wsdl:definitions name="image-std" targetNamespace="uva-bmech-mrsid:15" xmlns="uva-bmech-mrsid:15" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
+						<!-- ************************************************************************************************************************************** -->
+						<!-- WSDL: SCHEMA TYPE DEFINITIONS -->
+						<!-- Here are all data types needed by the mechanism.  These could also be imported from a separate file.  -->
+						<!-- *************************************************************************************************************************************-->
+						<wsdl:types>
+							<xsd:schema targetNamespace="uva-bmech-mrsid:15" xmlns:pa="uva-bmech-mrsid:15" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+								<!-- ********************************************************************************************************************************* -->
+								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="fedora-dsbind.xsd"/>
+								<!-- **************************************************************************************************************** -->
+								<!-- TYPE DEFINITIONS TO SUPPORT MECHANISM OPERATIONS (when using SOAP) -->
+								<!-- These are restrictions on the abstract fedora datastream binding type (see fedora-dsbind.xsd). -->
+								<!-- They specifiy a base64Binary format for transmitting datastreams from Fedora repository  -->
+								<!--  to the mechanism using a SOAP message.  -->
+								<!-- ************************************************************************************************************** -->
+								<xsd:complexType name="ThumbImageTransmitType">
+									<xsd:complexContent>
+										<xsd:restriction base="fedora:dsBindBaseType">
+											<xsd:sequence>
+												<xsd:element name="keyName" type="xsd:string" fixed="THUMBRES_IMG"/>
+												<xsd:element name="MIME">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:enumeration value="image/x-mrsid-image"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="content" type="xsd:base64Binary"/>
+											</xsd:sequence>
+										</xsd:restriction>
+									</xsd:complexContent>
+								</xsd:complexType>
+								<xsd:complexType name="MedImageTransmitType">
+									<xsd:complexContent>
+										<xsd:restriction base="fedora:dsBindBaseType">
+											<xsd:sequence>
+												<xsd:element name="keyName" type="xsd:string" fixed="MEDRES_IMG"/>
+												<xsd:element name="MIME">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:enumeration value="image/x-mrsid-image"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="content" type="xsd:base64Binary"/>
+											</xsd:sequence>
+										</xsd:restriction>
+									</xsd:complexContent>
+								</xsd:complexType>
+								<xsd:complexType name="HighImageTransmitType">
+									<xsd:complexContent>
+										<xsd:restriction base="fedora:dsBindBaseType">
+											<xsd:sequence>
+												<xsd:element name="keyName" type="xsd:string" fixed="HIGHRES_IMG"/>
+												<xsd:element name="MIME">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:enumeration value="image/x-mrsid-image"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="content" type="xsd:base64Binary"/>
+											</xsd:sequence>
+										</xsd:restriction>
+									</xsd:complexContent>
+								</xsd:complexType>
+								<xsd:complexType name="VeryHighImageTransmitType">
+									<xsd:complexContent>
+										<xsd:restriction base="fedora:dsBindBaseType">
+											<xsd:sequence>
+												<xsd:element name="keyName" type="xsd:string" fixed="VERYHIGHRES_IMG"/>
+												<xsd:element name="MIME">
+													<xsd:simpleType>
+														<xsd:restriction base="xsd:string">
+															<xsd:enumeration value="image/x-mrsid-image"/>
+														</xsd:restriction>
+													</xsd:simpleType>
+												</xsd:element>
+												<xsd:element name="content" type="xsd:base64Binary"/>
+											</xsd:sequence>
+										</xsd:restriction>
+									</xsd:complexContent>
+								</xsd:complexType>
+								<!-- ******************************************************************************************************************** -->
+								<!-- WSDL:  UTILITY TYPE REQUIRED OF ALL FEDORA-COMPLIANT MECHANISMS -->
+								<!-- ******************************************************************************************************************** -->
+								<xsd:complexType name="MIMEStream">
+									<xsd:sequence>
+										<xsd:element name="MIME" type="xsd:string"/>
+										<xsd:element name="stream" type="xsd:base64Binary" minOccurs="1" maxOccurs="1"/>
+									</xsd:sequence>
+								</xsd:complexType>
+							</xsd:schema>
+						</wsdl:types>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: MESSAGE DEFINITIONS  -->
+						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:message name="getThumbRequest">
+							<wsdl:part name="THUMBRES_IMG" type="pa:ThumbImageTransmitType"/>
+						</wsdl:message>
+						<wsdl:message name="getMedRequest">
+							<wsdl:part name="MEDRES_IMG" type="pa:MedImageTransmitType"/>
+						</wsdl:message>
+						<wsdl:message name="getHighRequest">
+							<wsdl:part name="HIGHRES_IMG" type="pa:HighImageTransmitType"/>
+						</wsdl:message>
+						<wsdl:message name="getVeryHighRequest">
+							<wsdl:part name="VERYHIGHRES_IMG" type="pa:VeryHighImageTransmitType"/>
+						</wsdl:message>
+						<wsdl:message name="singlestream_response">
+							<wsdl:part name="result" type="pa:MIMEStream"/>
+						</wsdl:message>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Behavior Definitions) -->
+						<!-- Here we define the behaviors that the mechanism  implements -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:portType name="MrSIDPort">
+							<wsdl:operation name="getThumbnail">
+								<wsdl:input message="getThumbRequest"/>
+								<wsdl:output message="singlestream_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getMedium">
+								<wsdl:input message="getMedRequest"/>
+								<wsdl:output message="singlestream_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getHigh">
+								<wsdl:input message="getHighRequest"/>
+								<wsdl:output message="singlestream_response"/>
+							</wsdl:operation>
+							<wsdl:operation name="getVeryHigh">
+								<wsdl:input message="getVeryHighRequest"/>
+								<wsdl:output message="singlestream_response"/>
+							</wsdl:operation>
+						</wsdl:portType>
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: THE BEHAVIOR SERVICE DEFINITION -->
+						<!-- Here we define how to invoke operations of the Behavior Mechanism Service -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:service name="MrSID">
+							<!-- THIS IS THE HTTP PORT -->
+							<wsdl:port name="MrSID-impl" binding="HTTP-MrSID">
+								<http:address location="http://iris.lib.virginia.edu/mrsid/bin/"/>
+							</wsdl:port>
+						</wsdl:service>
+						<!-- ******************************************************************************************************************** -->
+						<!--The HTTP Bindings for MrSID Service: -->
+						<!-- ******************************************************************************************************************** -->
+						<wsdl:binding name="HTTP-MrSID" type="MrSID">
+							<http:binding verb="GET"/>
+							<wsdl:operation name="getThumbnail">
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=thumbnail&amp;zoom=no"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/gif"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getMedium">
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=small&amp;zoom=no"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="application/java"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getHigh">
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=medium1&amp;zoom=yes"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/jpg"/>
+								</wsdl:output>
+							</wsdl:operation>
+							<wsdl:operation name="getVeryHigh">
+								<http:operation location="get_mrsid_url.pl?image=(MRSID)&amp;size=medium2&amp;zoom=yes"/>
+								<wsdl:input>
+									<http:urlReplacement/>
+								</wsdl:input>
+								<wsdl:output>
+									<mime:content type="image/jpg"/>
+								</wsdl:output>
+							</wsdl:operation>
+						</wsdl:binding>
+					</wsdl:definitions>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
+	<!---*******************************************************************************************************************************************-->
+	<!--  Here we aggregate file(s) that relate to the watermarking mechanism service.-->
+	<!-- These can be schema definitions, debugging tools, documentation, or other resources.  -->
+	<!-- ******************************************************************************************************************** -->
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="DS1" STATUS="">
+				<METS:file ID="DS1.0" SEQ="1" CREATED="2000-08-22T06:32:00" MIMETYPE="text/html" OWNERID="E" STATUS="">
+					<METS:FLocat LOCTYPE="URL" xlink:href=" http://uva.lib.edu/mech/mrsid/doc/mrsid.html" xlink:title="Programmer documentation"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<!---*******************************************************************************************************************************************-->
+	<!--- FEDORA DATASTREAM BINDING MAPS  -->
+	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
+	<!---*******************************************************************************************************************************************-->
+	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
+	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
+			<METS:div TYPE="DSBINDSPEC" LABEL="XML data that serves as Datastream Binding Specification for MrSID service">
+				<METS:fptr FILEID="DSBIND"/>
+			</METS:div>
+			<METS:div TYPE="BMECH-WSDL" LABEL="MrSID service definitions in WSDL format">
+				<METS:fptr FILEID="WSDL"/>
+			</METS:div>
+			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the MrSID service">
+				<METS:fptr FILEID="DS1"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<!---*******************************************************************************************************************************************-->
+	<!--- DISSEMINATORS-->
+	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
+	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
+	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
+	<!-- -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- THE BOOTSTRAP  DISSEMINATOR -->
+	<!---*******************************************************************************************************************************************-->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
+	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
+	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="">
+		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-bootstrap:1"/>
+		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-bootstrap:2"/>
+	</METS:behaviorSec>
+</METS:mets>
