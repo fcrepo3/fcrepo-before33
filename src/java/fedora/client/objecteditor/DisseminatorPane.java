@@ -69,11 +69,9 @@ public class DisseminatorPane
         m_labelDims=new JLabel("Mechanism").getPreferredSize();
         JLabel label1=new JLabel("State"); 
         label1.setPreferredSize(m_labelDims);
-        JLabel label2=new JLabel("Behaviors");
+        JLabel label2=new JLabel("Behavior");
         label2.setPreferredSize(m_labelDims);
-        JLabel label3=new JLabel("");
-        label3.setPreferredSize(m_labelDims);
-        JLabel[] left=new JLabel[] {label1, label2, label3};
+        JLabel[] left=new JLabel[] {label1, label2};
         m_stateComboBox=new JComboBox(new String[] {"Active", "Inactive", "Deleted"});
         Administrator.constrainHeight(m_stateComboBox);
         if (m_mostRecent.getState().equals("A")) {
@@ -104,7 +102,7 @@ public class DisseminatorPane
                 m_owner.colorTabForState(m_mostRecent.getID(), curState);
             }
         });
-        JButton bDefButton=new JButton("Open as Object");
+        JButton bDefButton=new JButton("Open");
         bDefButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 new ViewObject(m_mostRecent.getBDefPID()).launch();
@@ -122,118 +120,22 @@ public class DisseminatorPane
         JPanel bDefLabelPanel=new JPanel(new BorderLayout());
         bDefLabelPanel.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
         bDefLabelPanel.add(m_bDefLabelTextField, BorderLayout.CENTER);
-        JTextArea definedBy=new JTextArea("Defined by " + m_mostRecent.getBDefPID());
+        JTextArea definedBy=new JTextArea("is defined by " + m_mostRecent.getBDefPID());
         definedBy.setBackground(Administrator.BACKGROUND_COLOR);
         definedBy.setEditable(false);
         bDefInfo.add(definedBy, BorderLayout.WEST);
         bDefInfo.add(bDefLabelPanel, BorderLayout.CENTER);
         Administrator.constrainHeight(bDefButton);
         bDefInfo.add(bDefButton, BorderLayout.EAST);
-
-        // get the method map info from the behavior definition
-        HashMap parms=new HashMap();
-        parms.put("itemID", "METHODMAP");
-        java.util.List mDefs=MethodDefinition.parse(
-                Administrator.DOWNLOADER.getDissemination(
-                        m_mostRecent.getBDefPID(), 
-                        "fedora-system:3",
-                        "getItem", parms, null));
-        String[] mNames=new String[mDefs.size()];
-        for (int i=0; i<mDefs.size(); i++) {
-            MethodDefinition mDef=(MethodDefinition) mDefs.get(i);
-            mNames[i]=mDef.getName();
-        }
-        m_methodComboBox=new JComboBox(mNames);
-        Administrator.constrainHeight(m_methodComboBox);
-        m_methodComboBox.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                String mName=(String) m_methodComboBox.getSelectedItem();
-                m_methodCardLayout.show(m_methodCard, mName);
-                m_methodDescCardLayout.show(m_methodDescCard, mName);
-            }
-        });
-        JPanel methodPanel=new JPanel(new BorderLayout());
-        JPanel northComboBoxPanel=new JPanel(new BorderLayout());
-        northComboBoxPanel.add(m_methodComboBox, BorderLayout.NORTH);
-        m_methodDescCard=new JPanel();
-        m_methodDescCardLayout=new CardLayout();
-        m_methodDescCard.setLayout(m_methodDescCardLayout);
-        northComboBoxPanel.add(m_methodDescCard, BorderLayout.CENTER);
-        methodPanel.add(northComboBoxPanel, BorderLayout.WEST);
-        m_methodCard=new JPanel();
-        m_methodCardLayout=new CardLayout();
-        m_methodCard.setLayout(m_methodCardLayout);
-        m_methodCard.setBorder(BorderFactory.createEmptyBorder(0,4,0,4));
-        // add each methodDetailPane to the m_methodCard using the cardlayout
-        for (int i=0; i<mDefs.size(); i++) {
-            MethodDefinition mDef=(MethodDefinition) mDefs.get(i);
-            JPanel methodDetailPane=new JPanel(new BorderLayout());
-            // label of the method at top, if it's there
-            JTextArea methodLabelTextArea=new JTextArea();
-            methodLabelTextArea.setLineWrap(true);
-            methodLabelTextArea.setEditable(false);
-            methodLabelTextArea.setWrapStyleWord(true);
-            methodLabelTextArea.setBackground(methodDetailPane.getBackground());
-            StringBuffer text=new StringBuffer();
-            if (mDef.getLabel()!=null && mDef.getLabel().length()>0) {
-                text.append(mDef.getLabel());
-            }
-            methodLabelTextArea.setText(text.toString());
-            m_methodDescCard.add(methodLabelTextArea, mNames[i]);
-            if (mDef.parameterDefinitions().size()>0) {
-                // do parameter tabs
-                JTabbedPane parmsTabbedPane=new JTabbedPane();
-                for (int j=0; j<mDef.parameterDefinitions().size(); j++) {
-                    ParameterDefinition pDef=(ParameterDefinition) 
-                            mDef.parameterDefinitions().get(j);
-                    JPanel parmPanel=new JPanel(new BorderLayout());
-                    parmPanel.setBorder(BorderFactory.createEmptyBorder(4,4,4,4));
-                    // Optional parameter. [(Default value is "")]
-                    // [description]
-                    // Valid Values:
-                    JTextArea parmDescTextArea=new JTextArea();
-                    parmDescTextArea.setLineWrap(true);
-                    parmDescTextArea.setEditable(false);
-                    parmDescTextArea.setWrapStyleWord(true);
-                    parmDescTextArea.setBackground(methodDetailPane.getBackground());
-                    StringBuffer pText=new StringBuffer();
-                    String pDefTitle=pDef.getName();
-                    if (pDef.isRequired()) {
-                        pText.append("Required parameter.");
-                    } else {
-                        pText.append("Optional parameter. ");
-                        if (pDef.getDefaultValue()!=null && pDef.getDefaultValue().length()>0) {
-                            pText.append("(Defaults to \"" + pDef.getDefaultValue() + "\")");
-                        }
-                    }
-                    if (pDef.getLabel()!=null) {
-                        pText.append("\n" + pDef.getLabel());
-                    }
-                    if (pDef.validValues().size()>0) {
-                        pText.append("\nValid values: ");
-                        for (int k=0; k<pDef.validValues().size(); k++) {
-                            if (k>0) pText.append(", ");
-                            pText.append((String) pDef.validValues().get(k));
-                        }
-                    }
-                    parmDescTextArea.setText(pText.toString());
-                    parmPanel.add(parmDescTextArea, BorderLayout.NORTH);
-                    parmsTabbedPane.add(pDefTitle, parmPanel);
-                    parmsTabbedPane.setBackgroundAt(j, Administrator.DEFAULT_COLOR);
-                }
-                methodDetailPane.add(parmsTabbedPane, BorderLayout.CENTER);
-            }
-            // then add it to the card, by name
-            m_methodCard.add(methodDetailPane, mNames[i]);
-        }
-        // then add the card to the methodPanel, to the right of the dropdown
-        methodPanel.add(m_methodCard, BorderLayout.CENTER);
+        JPanel bDefAll=new JPanel(new BorderLayout());
+        bDefAll.add(bDefInfo, BorderLayout.NORTH);
+        bDefAll.add(new BehaviorDescriptionPanel(m_mostRecent.getBDefPID(), null), BorderLayout.SOUTH);
 
         // top common
-        JComponent[] right=new JComponent[] {m_stateComboBox, bDefInfo, methodPanel};
+        JComponent[] right=new JComponent[] {m_stateComboBox, bDefAll};
         GridBagLayout topCommonLayout=new GridBagLayout();
         JPanel topCommonPane=new JPanel(topCommonLayout);
-        addRows(left, right, topCommonLayout, topCommonPane);
+        Util.addRows(left, right, topCommonLayout, topCommonPane, true, false);
 
         // ahh well
         JPanel commonPane=new JPanel(new BorderLayout());
@@ -451,7 +353,7 @@ public class DisseminatorPane
                 }
             });
 
-            JButton bMechButton=new JButton("Open as Object");
+            JButton bMechButton=new JButton("Open");
             Administrator.constrainHeight(bMechButton);
             bMechButton.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent evt) {
@@ -512,7 +414,7 @@ public class DisseminatorPane
                 DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
                         m_gramps.getInitialCurrentDatastreamVersions(),
                         bindings, 
-                        bMechPID, spec, m_editingPane);
+                        bMechPID, spec, null, m_editingPane);
                 m_gramps.addDatastreamListener(dsBindingPane);
                 m_bindingPanes.put(bMechPID, dsBindingPane);
                 m_stackedBindingPane.add(dsBindingPane, bMechPID);

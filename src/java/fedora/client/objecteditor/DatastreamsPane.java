@@ -79,9 +79,6 @@ public class DatastreamsPane
                         this);
                 StringBuffer tabLabel=new StringBuffer();
                 tabLabel.append(m_currentVersions[i].getID());
-    /*            tabLabel.append(" (");
-                tabLabel.append(m_currentVersions[i].getState());
-                tabLabel.append(")"); */
                 m_tabbedPane.add(tabLabel.toString(), m_datastreamPanes[i]);
                 m_tabbedPane.setToolTipTextAt(i, m_currentVersions[i].getMIMEType() 
                         + " - " + m_currentVersions[i].getLabel() + " (" 
@@ -91,7 +88,6 @@ public class DatastreamsPane
             m_tabbedPane.add("New...", new JPanel());
 
         setLayout(new BorderLayout());
-        //setBorder(BorderFactory.createEmptyBorder(4,4,0,4));
         add(m_tabbedPane, BorderLayout.CENTER);
 
         doNew(ALL_KNOWN_MIMETYPES, false);
@@ -310,11 +306,34 @@ public class DatastreamsPane
                 + "relative hyperlinks, or there are licensing or access restrictions that prevent "
                 + "it from being proxied.";
 
+        private JComboBox m_stateComboBox;
+        private String m_initialState;
+
         public NewDatastreamPane(String[] dropdownMimeTypes) {
 
-            JComponent[] left=new JComponent[] { new JLabel("Label"), 
+            JComponent[] left=new JComponent[] { new JLabel("State"),
+                                                 new JLabel("Label"), 
                                                  new JLabel("MIME Type"), 
                                                  new JLabel("Control Group") };
+
+            m_stateComboBox=new JComboBox(new String[] {"Active",
+                                                        "Inactive",
+                                                        "Deleted"});
+            m_initialState="A";
+            m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+            Administrator.constrainHeight(m_stateComboBox);
+            m_stateComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    m_initialState=((String) m_stateComboBox.getSelectedItem()).substring(0,1);
+                    if (m_initialState.equals("A")) {
+                        m_stateComboBox.setBackground(Administrator.ACTIVE_COLOR);
+                    } else if (m_initialState.equals("I")) {
+                        m_stateComboBox.setBackground(Administrator.INACTIVE_COLOR);
+                    } else if (m_initialState.equals("D")) {
+                        m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+                    }
+                }
+            });
 
             m_labelTextField=new JTextField("Enter a label here.");
             m_mimeComboBox=new JComboBox(dropdownMimeTypes);
@@ -352,7 +371,7 @@ public class DatastreamsPane
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
 
-            JComponent[] right=new JComponent[] { m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
+            JComponent[] right=new JComponent[] { m_stateComboBox, m_labelTextField, m_mimeComboBox, controlGroupOuterPanel };
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -541,7 +560,7 @@ public class DatastreamsPane
             entryPane.add(commonPane, BorderLayout.NORTH);
             entryPane.add(m_specificPane, BorderLayout.CENTER);
 
-            JButton saveButton=new JButton("Save");
+            JButton saveButton=new JButton("Save Datastream");
             Administrator.constrainHeight(saveButton);
             saveButton.setActionCommand("Save");
             saveButton.addActionListener(this);
@@ -600,7 +619,7 @@ public class DatastreamsPane
                         location=m_referenceTextField.getText();
                     }
                     String newID=Administrator.APIM.addDatastream(pid, label, 
-                            mimeType, location, m_controlGroup, mdClass, mdType, "I");
+                            mimeType, location, m_controlGroup, mdClass, mdType, m_initialState);
                     addDatastreamTab(newID);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),

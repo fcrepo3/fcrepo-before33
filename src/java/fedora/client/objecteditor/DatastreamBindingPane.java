@@ -31,12 +31,15 @@ public class DatastreamBindingPane
     static ImageIcon notFulfilledIcon=new ImageIcon(Administrator.cl.getResource("images/fedora/exclaim16.gif"));
     static ImageIcon fulfilledIcon=new ImageIcon(Administrator.cl.getResource("images/fedora/checkmark16.gif"));
     private JTabbedPane m_bindingTabbedPane;
+    private ValidityListener m_validityListener;
 
     public DatastreamBindingPane(Datastream[] currentVersions,
                                  DatastreamBinding[] initialBindings,
                                  String bMechPID,
                                  DatastreamInputSpec spec,
+                                 ValidityListener validityListener,  // ok if null
                                  EditingPane owner) {  // ok if null
+        m_validityListener=validityListener;
         m_owner=owner;
         m_datastreams=currentVersions;
         m_spec=spec;
@@ -155,6 +158,10 @@ public class DatastreamBindingPane
         if (m_owner!=null) {
             m_owner.setValid(doValidityCheck());
             m_owner.dataChangeListener.dataChanged();
+        } else {
+            if (m_validityListener!=null) {
+                m_validityListener.setValid(doValidityCheck());
+            }
         }
     }
 
