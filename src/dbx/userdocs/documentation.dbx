@@ -100,6 +100,9 @@
 				<ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI - Behavior Definition and Mechanism Builders</ulink>
 			</member>
 			<member>
+				<ulink url="client/browser/apimlite/index.html">Web Browser: Repository Management via API-M-Lite</ulink>			
+			</member>
+			<member>
 				<ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink>
 			</member>
 			<member>
@@ -119,6 +122,9 @@
 			<member>
 				<ulink url="http://www.fedora.info/definitions/1/0/api/#apim">API-M: SOAP Management Interface</ulink>
 			</member>
+			<member>
+				<ulink url="http://www.fedora.info/definitions/1/0/api/#apimlite">API-M-Lite: HTTP Management Interface</ulink>
+			</member>			
 		</simplelist>
 	</sect1>
 	<sect1>
