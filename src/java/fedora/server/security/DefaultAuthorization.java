@@ -165,9 +165,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 		RESOURCE_AS_OF_DATE_URI = new URI(RESOURCE_AS_OF_DATE_URI_STRING);
 		//RESOURCE_STATE_URI = new URI(RESOURCE_STATE_URI_STRING);
 		
-		RESOURCE_DATASTREAM_ID_URI = new URI(RESOURCE_DATASTREAM_ID_URI_STRING);
+		RESOURCE_DATASTREAM_ID_URI = new URI(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri);
 		//RESOURCE_DATASTREAM_NAMESPACE_URI = new URI(RESOURCE_DATASTREAM_NAMESPACE_URI_STRING);
-		RESOURCE_DATASTREAM_STATE_URI = new URI(RESOURCE_DATASTREAM_STATE_URI_STRING);
+		RESOURCE_DATASTREAM_STATE_URI = new URI(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri);
 		RESOURCE_DATASTREAM_LOCATION_URI = new URI(RESOURCE_DATASTREAM_LOCATION_URI_STRING);
 		RESOURCE_DATASTREAM_CONTROL_GROUP_URI = new URI(RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING);
 
@@ -188,24 +188,24 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 		RESOURCE_N_NEW_PIDS_URI = new URI(RESOURCE_N_NEW_PIDS_URI_STRING);
 
-		ENVIRONMENT_CURRENT_DATETIME_URI = new URI(ENVIRONMENT_CURRENT_DATETIME_URI_STRING);
-		ENVIRONMENT_CURRENT_DATE_URI = new URI(ENVIRONMENT_CURRENT_DATE_URI_STRING);
-		ENVIRONMENT_CURRENT_TIME_URI = new URI(ENVIRONMENT_CURRENT_TIME_URI_STRING);		
-		ENVIRONMENT_REQUEST_PROTOCOL_URI = new URI(ENVIRONMENT_REQUEST_PROTOCOL_URI_STRING);
-		ENVIRONMENT_REQUEST_SCHEME_URI = new URI(ENVIRONMENT_REQUEST_SCHEME_URI_STRING);
-		ENVIRONMENT_REQUEST_SECURITY_URI = new URI(ENVIRONMENT_REQUEST_SECURITY_URI_STRING);
-		ENVIRONMENT_REQUEST_AUTHTYPE_URI = new URI(ENVIRONMENT_REQUEST_AUTHTYPE_URI_STRING);
-		ENVIRONMENT_REQUEST_METHOD_URI = new URI(ENVIRONMENT_REQUEST_METHOD_URI_STRING);	
-		ENVIRONMENT_REQUEST_SESSION_ENCODING_URI = new URI(ENVIRONMENT_REQUEST_SESSION_ENCODING_URI_STRING);	
-		ENVIRONMENT_REQUEST_SESSION_STATUS_URI = new URI(ENVIRONMENT_REQUEST_SESSION_STATUS_URI_STRING);		
-		ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI = new URI(ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI_STRING);
-		ENVIRONMENT_REQUEST_CONTENT_TYPE_URI = new URI(ENVIRONMENT_REQUEST_CONTENT_TYPE_URI_STRING);
-		ENVIRONMENT_REQUEST_SOAP_OR_REST_URI = new URI(ENVIRONMENT_REQUEST_MESSAGE_PROTOCOL_URI_STRING);
-		ENVIRONMENT_CLIENT_FQDN_URI = new URI(ENVIRONMENT_CLIENT_FQDN_URI_STRING);		
-		ENVIRONMENT_CLIENT_IP_URI = new URI(ENVIRONMENT_CLIENT_IP_URI_STRING);
-		ENVIRONMENT_SERVER_FQDN_URI = new URI(ENVIRONMENT_SERVER_FQDN_URI_STRING);
-		ENVIRONMENT_SERVER_IP_URI = new URI(ENVIRONMENT_SERVER_IP_URI_STRING);	
-		ENVIRONMENT_SERVER_PORT_URI = new URI(ENVIRONMENT_SERVER_PORT_URI_STRING);	
+		ENVIRONMENT_CURRENT_DATETIME_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_DATE_TIME.uri);
+		ENVIRONMENT_CURRENT_DATE_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_DATE.uri);
+		ENVIRONMENT_CURRENT_TIME_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_TIME.uri);		
+		ENVIRONMENT_REQUEST_PROTOCOL_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_PROTOCOL.uri);
+		ENVIRONMENT_REQUEST_SCHEME_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SCHEME.uri);
+		ENVIRONMENT_REQUEST_SECURITY_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SECURITY.uri);
+		ENVIRONMENT_REQUEST_AUTHTYPE_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_AUTHTYPE.uri);
+		ENVIRONMENT_REQUEST_METHOD_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_METHOD.uri);	
+		ENVIRONMENT_REQUEST_SESSION_ENCODING_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri);	
+		ENVIRONMENT_REQUEST_SESSION_STATUS_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_STATUS.uri);		
+		ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_LENGTH.uri);
+		ENVIRONMENT_REQUEST_CONTENT_TYPE_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_TYPE.uri);
+		ENVIRONMENT_REQUEST_SOAP_OR_REST_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_MESSAGE_PROTOCOL.uri);
+		ENVIRONMENT_CLIENT_FQDN_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_FQDN.uri);		
+		ENVIRONMENT_CLIENT_IP_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri);
+		ENVIRONMENT_SERVER_FQDN_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_FQDN.uri);
+		ENVIRONMENT_SERVER_IP_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_IP_ADDRESS.uri);	
+		ENVIRONMENT_SERVER_PORT_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_PORT.uri);	
 		//RESOURCE_STATE_URI = new URI(RESOURCE_STATE);
 
 	} catch (URISyntaxException e) {
@@ -300,10 +300,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, dsId);
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, dsId);
 			resourceAttributes.set(RESOURCE_DATASTREAM_LOCATION_URI_STRING, dsLocation);
 			resourceAttributes.set(RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING, controlGroup);
-			resourceAttributes.set(RESOURCE_DATASTREAM_STATE_URI_STRING, dsState);
+			resourceAttributes.set(Constants.MODEL.DATASTREAM_STATE.uri, dsState);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException("enforceX could not complete", e);	
@@ -389,7 +389,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);		
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);		
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException("enforceX could not complete", e);	
@@ -405,7 +405,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);		
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);		
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException("enforceX could not complete", e);	
@@ -435,7 +435,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_STATE_URI_STRING, datastreamState);	
+			resourceAttributes.set(Constants.MODEL.DATASTREAM_STATE.uri, datastreamState);	
 			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
@@ -583,7 +583,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
 			resourceAttributes.set(RESOURCE_DATASTREAM_LOCATION_URI_STRING, datastreamLocation);			
 			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamState);	
 		} catch (Exception e) {
@@ -601,7 +601,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);
 			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
@@ -654,7 +654,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);	
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException("enforceX could not complete", e);	
@@ -704,7 +704,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);	
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
 			resourceAttributes.set(ACTION_DATASTREAM_NEW_STATE_URI_STRING, datastreamNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
@@ -762,7 +762,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_DATASTREAM_ID_URI_STRING, datastreamId);	
+			resourceAttributes.set(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri, datastreamId);	
 			resourceAttributes.set(RESOURCE_AS_OF_DATE_URI_STRING, asOfDateAsString);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
