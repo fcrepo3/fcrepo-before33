@@ -316,45 +316,35 @@ public class DefaultAccess extends Module implements Access
       }
     }
 
-    // Check if there are any user supplied parameters
-    if (!h_userParms.isEmpty())
+    if (!h_validParms.isEmpty())
     {
+      // Iterate over valid parmameters to check for any missing required parms.
+      Enumeration e = h_validParms.keys();
+      while (e.hasMoreElements())
+      {
+        String validName = (String)e.nextElement();
+        MethodParmDef mp = (MethodParmDef)h_validParms.get(validName);
+        if(mp.parmRequired && h_userParms.get(validName) == null)
+        {
+          // This is a fatal error. A required method parameter does not
+          // appear in the list of user supplied parameters.
+          sb.append("The required parameter \""
+              + methodParm.parmName + "\" was not found in the "
+              + "user-supplied parameter list.");
+          throw new InvalidUserParmException("[Invalid User Parameters] "
+              + sb.toString());
+        }
+      }
+
       // Iterate over each user supplied parameter name
       Enumeration parmNames = h_userParms.keys();
       while (parmNames.hasMoreElements())
       {
         String parmName = (String)parmNames.nextElement();
-        if (h_validParms.isEmpty())
-        {
-          // This is an error. There are no method parameters defined for
-          // this method and user parameters are specified in the
-          // dissemination request.
-          sb.append("The method parameter \"" + parmName
-                    + "\" is not valid for the method \""
-                    + methodName + "\"."
-                    + "The method \"" + methodName
-                    + "\" defines no method parameters.");
-          throw new InvalidUserParmException("[Invalid User Parameters] "
-              + sb.toString());
-        }
         methodParm = (MethodParmDef)h_validParms.get(parmName);
         if (methodParm != null && methodParm.parmName != null)
         {
           // Method has one or more parameters defined
-          if (methodParm.parmRequired)
-          {
-            // Method parm is required
-            if (h_userParms.get(methodParm.parmName) == null)
-            {
-              // This is a fatal error. A required method parameter does not
-              // appear in the list of user supplied parameters.
-              sb.append("The required parameter \""
-                  + methodParm.parmName + "\" was not found in the "
-                  + "user-supplied parameter list.");
-              isValid = false;
-            }
-          }
-
           // Check for default value if user-supplied value is null or empty
           String value = (String)h_userParms.get(methodParm.parmName);
           if (value == null && value.equalsIgnoreCase(""))
@@ -383,13 +373,15 @@ public class DefaultAccess extends Module implements Access
             // Value of user-supplied parameter contains a value.
             // Validate the supplied value against the parmDomainValues list.
             String[] parmDomainValues = methodParm.parmDomainValues;
-            if (!parmDomainValues[0].equalsIgnoreCase(""))
+            System.out.println("parmDomainSize: "+parmDomainValues.length);
+            if (!parmDomainValues[0].equalsIgnoreCase("null"))
             {
               boolean isValidValue = false;
               String userValue = (String)h_userParms.get(methodParm.parmName);
               for (int i=0; i<parmDomainValues.length; i++)
               {
-                if (userValue.equalsIgnoreCase(parmDomainValues[i]))
+                if (userValue.equalsIgnoreCase(parmDomainValues[i]) ||
+                    parmDomainValues[i].equalsIgnoreCase("null"))
                 {
                   isValidValue = true;
                 }
@@ -433,27 +425,25 @@ public class DefaultAccess extends Module implements Access
       }
     } else
     {
-      // There were no user supplied parameters.
-      // Check if this method has any required parameters.
-      if (methodParms != null)
+      // There are no method parameters define for this method.
+      if (!h_userParms.isEmpty())
       {
-        for (int i=0; i<methodParms.length; i++)
+        // This is an error. There are no method parameters defined for
+        // this method and user parameters are specified in the
+        // dissemination request.
+        Enumeration e = h_userParms.keys();
+        while (e.hasMoreElements())
         {
-          methodParm = methodParms[i];
-          if (methodParm.parmRequired)
-          {
-            // This is a fatal error. A required method parameter was not
-            // supplied.
-            sb.append("The method parameter \""
-                + methodParm.parmName
-                + "\" is required by the method \""
-                + methodName + "\".");
-            isValid = false;
-          }
+          sb.append("The method parameter \"" + (String)e.nextElement()
+                    + "\" is not valid for the method \""
+                    + methodName + "\"."
+                    + "The method \"" + methodName
+                    + "\" defines no method parameters.");
         }
+        throw new InvalidUserParmException("[Invalid User Parameters] "
+            + sb.toString());
       }
     }
-
     if (!isValid)
     {
       throw new InvalidUserParmException("[Invalid User Parameter] "
