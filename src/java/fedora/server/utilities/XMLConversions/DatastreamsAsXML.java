@@ -27,7 +27,7 @@ public class DatastreamsAsXML
     }
 
     // FIXIT!! Make the output of this valid XML with namespaces for fedora
-    public String getItemList(String reposBaseURL, DOReader reader, Date versDateTime)
+    public String getItemIndex(String reposBaseURL, DOReader reader, Date versDateTime)
             throws ServerException {
         Datastream[] datastreams = reader.GetDatastreams(versDateTime);
         StringBuffer out = new StringBuffer();
