@@ -196,12 +196,12 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
             + "<font color=\"red\"> Mechanism has failed to respond "
             + "to the DatastreamResolverServlet within the specified "
             + "time limit of \"" + datastreamMediationLimit + "\""
-            + "seconds. Datastream access denied.");
+            + "milliseconds. Datastream access denied.");
         logWarning("[DatastreamResolverServlet] Error: "
             + "Mechanism has failed to respond "
             + "to the DatastreamResolverServlet within the specified "
             + "time limit of  \"" + datastreamMediationLimit + "\""
-            + "  seconds. Datastream access denied.");
+            + "  milliseconds. Datastream access denied.");
         out.close();
         return;
       }
