@@ -523,18 +523,14 @@ public abstract class TypeUtility
       convertGenPropertyToProperty(
       fedora.server.types.gen.Property genProperty)
   {
+    fedora.server.storage.types.Property property =
+          new fedora.server.storage.types.Property();
     if (genProperty != null)
     {
-      fedora.server.storage.types.Property property =
-          new fedora.server.storage.types.Property();
       property.name = genProperty.getName();
       property.value = genProperty.getValue();
-      return property;
-
-    } else
-    {
-      return null;
     }
+    return property;
   }
 
   /**
@@ -580,18 +576,14 @@ public abstract class TypeUtility
       convertPropertyToGenProperty(
       fedora.server.storage.types.Property property)
   {
+    fedora.server.types.gen.Property genProperty =
+        new fedora.server.types.gen.Property();
     if (property != null)
     {
-      fedora.server.types.gen.Property genProperty =
-          new fedora.server.types.gen.Property();
       genProperty.setName(property.name);
       genProperty.setValue(property.value);
-      return genProperty;
-
-    } else
-    {
-      return null;
     }
+    return genProperty;
   }
 
   public static void main(String[] args)
