@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<article>
+	<title>Developer's Guide</title>
+	<subtitle>Fedora-Mellon Project</subtitle>
+	<articleinfo><author><othername>Fedora-Mellon Development Team</othername></author><edition>$Revision$</edition><date>$Date$</date><releaseinfo>$Id$</releaseinfo></articleinfo>
+	<section>
+		<title>Prerequisites</title>
+		<section>
+			<title>OS</title>
+			<para>Fedora development can occur on any OS/Hardware combination that supports the required development tools. At the very least, this includes:
+      <itemizedlist>
+					<title/>
+					<listitem>
+						<para>Recent Windows releases (NT4/2k, 95/98/Me, XP)</para>
+					</listitem>
+					<listitem>
+						<para>Modern Unix flavors (Linux, Solaris, etc.)</para>
+					</listitem>
+				</itemizedlist>
+			</para>
+		</section>
+		<section>
+			<title>Tools/Programs</title>
+			<section>
+				<title>Java</title>
+				<para>A JDK v1.3+, with any IDE you prefer.  This may change to JDK1.4.  Note: In this guide, no
+      particular IDE is assumed - instructions will be written assuming none.</para>
+			</section>
+			<section>
+				<title>CVS Client</title>
+				<para>CVS is used for revision control.  It comes with most modern unix installations by default.  For windows users, and those new to CVS, you can download and read about it at <ulink url="http://www.cvshome.org/">cvshome.org</ulink>.  From this point forward, this guide assumes your have the 'cvs' executable in your PATH, although your partciular IDE may already integrate CVS support. You may wish to consult <ulink url="http://cvsbook.red-bean.com/cvsbook.html">the online cvs book</ulink> as a reference.</para>
+			</section>
+			<section>
+				<title>SSH(1) Client</title>
+				<para>SSH is used in conjunction with CVS to enable secure communication with the source code repository.  Modern unix installations usually come with ssh(1) and ssh-keygen installed.  Windows users can download an SSH client called Putty from <ulink url="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">this site</ulink>.  If you're a Windows user and you don't already have an SSH client and RSA key generator, go ahead and download (at least) putty, plink, pageant, and puttygen from that site.  The remainder of this guide assumes that:
+      <itemizedlist>
+						<title/>
+						<listitem>
+							<para>If you're a Unix user, you have ssh(1) and ssh-keygen installed and in your PATH.</para>
+						</listitem>
+						<listitem>
+							<para>If you're a Windows user, you have putty, plink, pageant, and puttygen installed and in your PATH.</para>
+						</listitem>
+					</itemizedlist>
+				</para>
+			</section>
+			<section>
+				<title>Other Tools</title>
+				<para>Other tools necessary for building and unit testing of the project are included as part of the project within CVS <link linkend="dir_res">in the res/ directory</link>.  They will be downloaded when you first perform a "checkout" operation from CVS.  &lt;&lt;TODO: When source code is finally made public, some of these tools may need to be removed from CVS in order to comply with their licenses for redistribution.  When that time comes, instructions will be included in this gude on what the tools are, how to get them, and where to put them so that the project builds and runs without problems.&gt;&gt;</para>
+			</section>
+		</section>
+		<section>
+			<title>SourceForge account</title>
+			<para>To log into the project site at <ulink url="http://comm.nsdlib.org/projects/fedora/">comm.nsdlib.org/projects/fedora</ulink>, and to work with the CVS repository, you should have a SourceForge account. </para>
+		</section>
+	</section>
+	<section>
+		<title>Working with the Sources</title>
+		<section>
+			<title>Getting Started</title>
+			<orderedlist>
+				<title>Steps</title>
+				<listitem>
+					<para>
+						<emphasis>OPTIONAL:</emphasis> Log into <ulink url="http://comm.nsdlib.org/projects/fedora/">the project site</ulink>  (see the link in the upper-left on that page) using an SSL-capable browser to ensure that your account has been set up.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>REQUIRED:</emphasis> Use ssh to log into comm.nsdlib.org to initialize your user directory.</para>
+					<para>This is necessary in order to use CVS.</para>
+					<para>Windows users: type "plink comm.nsdlib.org" Unix users: type "ssh comm.nsdlib.org"  If it asks if you want to store the server's key in your cache, say yes.  Then enter your username and password when prompted.  When successful, you'll see a command-prompt.  Type "exit" to logout.  Your user directory should now be initialized.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>OPTIONAL:</emphasis> Create a private/public RSA key pair if you don't already have one, and upload your public key to SourceForge.</para>
+					<para>This allows you to run CVS actions over the network without providing your password every time.</para>
+					<para>Windows users: type "puttygen", take the defaults, and click "Generate".  Follow the instructions and then save your private and public keys in a secure place on your system.</para>
+					<para>Unix users: type "ssh-keygen" and you'll be led through the process.  Make sure your public and private keys are saved in a place that ssh(1) will look (usually ~/.ssh, which is the default)</para>
+					<para>Note for both Windows and Unix users: using a passphrase on your private key isn't necessary if you keep your private key file secure (readable only by you).  If you decide to use a key passphrase, make it anything you want, and note that whenever you use your private key, you'll need to manually provide that passphrase.</para>
+					<para>Now upload your public key to <ulink url="http://comm.nsdlib.org/projects/fedora/">the SourceForge site</ulink> by 1) logging in, then 2) selecting "Account Maintenance", then 3) selecting "Edit Keys" from the bottom of that page where it says "CVS/SSH Shared Authorized Keys", then 4) pasting your public key into the box, and finally 5) selecting the "Update" button.</para>
+					<para>Windows users: type "pageant" to bring up the putty agent.  This program keeps your private key in memory during secure network communication so that it can be used by the putty ssh client (plink).  It runs in the background.  Bring the pageant window to the foreground and select "add key", then select your private key file.  Note: this step is not necessary for Unix users because by default, ssh(1) looks in a standard place for your private key whenever it is invoked.</para>
+					<para>Test logging in without typing your password.  Windows users: type "plink username@comm.nsdlib.org" (where <emphasis>username</emphasis> is your login name).  Unix users: type "ssh username@comm.nsdlib.org".  Your ssh client should log you in automatically.  Type "exit" to logout.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>OPTIONAL:</emphasis> Set your CVSROOT environment variable to <emphasis>:ext:username@comm.nsdlib.org:/cvsroot/fedora</emphasis>, where <emphasis>username</emphasis> is your login name on the SourceForge site.</para>
+					<para>If you don't do this, you'll have to provide the -d option along with this information every time you do anything with cvs.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis>REQUIRED:</emphasis> Set your CVS_RSH environment variable to "ssh" (for Unix) or "plink" (for Windows)</para>
+					<para>This tells your cvs client that it can run cvs commands over your ssh client.</para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section>
+			<title>Checking out the Project Files</title>
+			<para>When your system is properly configured as specified above, you can type: "cvs co mellon",
+            and the project files from the repository will be copied to your system, in a directory named
+            "mellon".  This is your working copy.  Note that cvs differs from other revision control systems
+            in that checking out a file does not lock it for modification by other people.</para>
+		</section>
+		<section>
+			<title>Preparing Your Environment to use Ant</title>
+			<para>The ant tool is included in the project files, under res/ant.  You may already have ant
+      installed on your system.  If you don't, you will need to add <emphasis>&lt;work_path&gt;/mellon/res/ant/bin</emphasis> to
+      your PATH environment variable before builds will work (where &lt;work_path&gt; is the full path to the directory in which you executed the "cvs co mellon" command above).</para>
+		</section>
+		<section>
+			<title>Navigating and Understanding the Directory Structure</title>
+			<para>The CVS repository's copy of the project files is navigable from <ulink url="https://comm.nsdlib.org/horde/chora/cvs.php/fedora/mellon">this page on the SourceForge site</ulink>.  When you commit changes to the CVS repository from your working copy, they will be reflected on the site.</para>
+			<para>A description of the cvs mellon/ directory structure follows.</para>
+			<section>
+				<title>build.xml</title>
+				<para>The makefile for the entire project, in ant (v1.4) format.  (Ant is a cross-platform build tool similar to make...<ulink url="http://jakarta.apache.org/ant">Read more about it here, if you're interested</ulink>.). This contains the dependencies and calls to external programs that help to produce the final form(s) of the project.</para>
+			</section>
+			<section>
+				<title>lib/</title>
+				<para>Components that 1) help in compiling the project to its final form(s), and 2) are necessary for the final form(s), but are not part of the intellectual basis of the project.</para>
+				<section>
+					<title>lib/client/</title>
+					<para>For client builds/dists only.</para>
+				</section>
+				<section>
+					<title>lib/server/</title>
+					<para>For server builds/dists only.</para>
+				</section>
+				<section>
+					<title>lib/common/</title>
+					<para>For both client and server builds/dists.</para>
+				</section>
+			</section>
+			<section id="dir_res">
+				<title>res/</title>
+				<para>Components that help in compiling the project to its final form(s), but are neither 1) part of the intellectual basis of the project, nor 2) necessary for the final form(s) of the project.</para>
+				<section>
+					<title>res/ant</title>
+					<para>The ant tool, v1.4.  This is necessary for builds.</para>
+				</section>
+			</section>
+			<section>
+				<title>inc/</title>
+				<para>Files and directories that are included with the final form(s) of the project, but are not 1) part of the intellectual basis of the project, nor 2) used during compilation of the project.</para>
+				<section>
+					<title>inc/client/</title>
+					<para>To be included in client distributions</para>
+				</section>
+				<section>
+					<title>inc/server/</title>
+					<para>To be included in server distributions</para>
+				</section>
+				<section>
+					<title>inc/common/</title>
+					<para>To be included in both distributions</para>
+				</section>
+			</section>
+			<section>
+				<title>src/</title>
+				<para>The intellectual basis of the project, organized into directories named by file type.  There are many possible logical groupings of files within a project.  The 'file type' grouping used at this directory level is the only one dictated outside the build.xml (ant) file.  Groupings inside these directories are not necessary, but may be useful during compilation (for example, the java directory is organized by package because the java compiler expects it to be that way)  Note that file type should usually be based on mime type distinctions, and if there is a standard file extension for the particular type, that should be used.  For xml files that don't have a well-established extension, rather than putting them all in xml, put them in a directory using some obvious identifier for their schema namespace (but non-version specific, to be consistent with file extension conventions).</para>
+				<para>&lt;&lt;TODO: At the end of this list, insert other types, with brief descriptions and directory structure explanations, if applicable.&gt;&gt;</para>
+				<section>
+					<title>src/java</title>
+					<para>Java source code.  See the javadocs for a description of
+            the packaging scheme used (which also matches the directory scheme beneath src/java).</para>
+				</section>
+				<section>
+					<title>src/dbx</title>
+					<para>DocBook XML files</para>
+				</section>
+				<section>
+					<title>src/mfs</title>
+					<para>Manifest files (used for jar packaging)</para>
+				</section>
+			</section>
+		</section>
+		<section>
+			<title>Coding and Revision Control Guidelines</title>
+			<para>Be nice and document your code and make it readable by others.  (Use consistent indenting, javadoc, etc.)  Sun's <ulink url="http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html">Code conventions for Java</ulink> provide a nice basis, but I don't think we have to be too anal about enforcing coding style -- shoot for consistency and clarity.</para>
+			<para>When committing changes, write a note (however short) indicating what you did.</para>
+			<para>Once a module checked into cvs is compiling, don't make changes that cause builds to fail.</para>
+			<para>If you add a tool or library dependency to the project, 1) make sure it doesn't break supported platforms for development and deployment, and 2) check the tool into cvs in the appropriate place</para>
+			<para>If you modify the build.xml file, never introduce absolute paths, and never delete targets unless you're sure nobody is dependent on them.</para>
+		</section>
+	</section>
+	<section>
+		<title>Doing Builds</title>
+		<para>To see the targets, be sure you're in the mellon directory, and type "ant -projecthelp".  To run a target, type "ant &lt;target_name&gt;".  After a main target is built, it should tell you where the result is.</para>
+		<para>&lt;&lt;TODO: Talk more about the main targets here.&gt;&gt;</para>
+	</section>
+	<appendix><title>Revision History</title>
+	<para>Here is the revision history of this guide:</para>
+	<literallayout>
+    $Log$
+    Revision 1.1  2002/05/03 18:50:29  cwilper
+    moved to devdocs subdir and removed system-specific headers
+
+    Revision 1.2  2002/05/02 20:06:56  cwilper
+    Fixed a couple misspellings and added CVS tags inline.
+</literallayout></appendix>
+</article>
