@@ -93,8 +93,8 @@ public class Administrator extends JFrame {
         m_aboutText=new JLabel("<html>Copyright 2002 University of "
                 + "Virginia and Cornell University.<p>This software was "
                 + "made possible by a grant from the<p>Andrew W. Mellon "
-                + "Foundation.<p><p>Version: Beta 1<p>Release Date: "
-                + "Unreleased.<p><p>Note: This is a pre-release version "
+                + "Foundation.<p><p>Version: 0.9<p>Release Date: "
+                + "March 7, 2003<p><p>Note: This is a pre-release version "
                 + "of Fedora<P>See http://www.fedora.info/ for "
                 + "more information.");
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
