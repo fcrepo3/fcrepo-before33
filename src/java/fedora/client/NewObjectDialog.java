@@ -3,17 +3,12 @@ package fedora.client;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 import fedora.client.actions.ViewObject;
-import fedora.client.ingest.AutoIngestor;
+import fedora.client.utility.ingest.AutoIngestor;
 
-import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.RepositoryInfo;
-import fedora.server.types.gen.UserInfo;
 import fedora.server.utilities.StreamUtility;
 
 /**
