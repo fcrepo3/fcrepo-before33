@@ -56,12 +56,14 @@ public class SimpleBDefReader
     public SimpleBDefReader(Context context, RepositoryReader repoReader,
             DOTranslator translator,
             String exportFormat, String storageFormat,
-            String encoding, InputStream serializedObject, Logging logTarget)
+            String encoding,
+            InputStream serializedObject, Logging logTarget)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
 		super(context, repoReader, translator,
-                exportFormat, storageFormat, encoding, serializedObject,
-                logTarget);
+                exportFormat, storageFormat, 
+                encoding,
+                serializedObject, logTarget);
         serviceMapper = new ServiceMapper(GetObjectPID());
     }
 
