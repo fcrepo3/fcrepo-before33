@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--*******************************************************************************************************************************************-->
+<!-- FOXML REFERENCE EXAMPLE OBJECT:  -->
+<!-- This is an example of a FOXML encoded digital object as it would appear in the Fedora persistent storage area. -->
+<!--*******************************************************************************************************************************************-->
+<!-- The digitalObject root element contains the object PID, which uniquely identifies the Fedora object  -->
+<!--*******************************************************************************************************************************************-->
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#" PID="demo:999" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+	<!---***************************************************************************************************************************************
+	 	FEDORA OBJECT PROPERTIES : non-versionable properties of the digital object
+	 	At ingest, the object MUST have these attributes:
+	 		- type: 				(required) The object is classified as one of three primitive Fedora object types, 
+	 							namely FedoraObject, FedoraBDefObject, or FedoraBMechObject	 							
+	 		- state: 				(required) The object state can be Active (A), Inactive (I), or Deleted (D)
+	 		
+	 	And at ingest, it may have these optional attributes:	 		
+	 		- label: 				(optional) The object is given a user-defined descriptive label.  		
+	 		- contentModel: 		(optional) The object is given user-defined content model identifier 
+	 							(to classify the pattern of datastreams and disseminations found in this object).
+	 							
+	 	The system will automatically assign these attributes (they should not be put in the ingest files,
+	 	 but they appear in stored files):  							
+	 		- createdDate: 		(system assigned) The object creation date is assigned to the millisecond. 
+	 		- lastModifiedDate:	(system assigned) The object creation date is assigned to the millisecond. 
+	******************************************************************************************************************************************-->
+	<foxml:objectProperties>
+		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="FOXML Reference Example"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST_IMAGE"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2004-12-10T00:21:58.000Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-01-20T22:46:07.506Z"/>
+		<!-- EXTENSIBLE OBJECT PROPERTIES -->
+		<!-- These are optional, user-defined object properties, for example an OAI identifier for the object. -->
+		<!-- Fedora will store these, but it will not recognize them or operate on them. -->
+		<foxml:extproperty NAME="http://www.openarchives.org/OAI/1.1/oai-identifier.xsd" VALUE="oai:cornell.edu:demo:999"/>
+	</foxml:objectProperties>
+	<!--*******************************************************************************************************************************************
+	  	FEDORA RESERVED DATASTREAM: DUBLIN CORE METADATA FOR OBJECT:
+	  	This datastream is always recognized by Fedora by the reserved datastream identifier of "DC". 
+	 	 Fedora will automatically index the DC datastream as part of the default repository catalog search, 
+	  	and also as part of the new RDF-based Resource Index. 
+	*********************************************************************************************************************************************-->
+	<foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DC.0" MIMETYPE="text/xml" LABEL="Default Dublin Core Record" SIZE="488" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+					<dc:title>FOXML Reference Object</dc:title>
+					<dc:creator>Sandy Payette</dc:creator>
+					<dc:subject>Fedora documentation</dc:subject>
+					<dc:description>FOXML showing how a digital object is encoded for persistent storage in a Fedora repository</dc:description>
+					<dc:publisher>Cornell CIS</dc:publisher>
+					<dc:identifier>demo:999</dc:identifier>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		FEDORA RESERVED DATASTREAM: OBJECT-TO-OBJECT RELATIONSHIPS 
+	  	This datastream is always recognized by Fedora by the reserved datastream identifier of "RELS-EXT". 
+	  	The RELS-EXT datastream is used to make assertions about the relationship of this digital object to other digital 
+	  	objects. Assertions are made in RDF.  Relationships can be asserted from the default Fedora relationship 
+	  	namespace or other namespaces. Fedora will automatically index this datastream as part of the new RDF-based 
+	  	Resource Index. 
+	  	The RELS-EXT datastream is validated by Fedora.
+	*************************************************************************************************************************************************
+	  	See the RDF Schema for the default Fedora relationships at: http://www.fedora.info/definitions/1/0/fedora-rels.rdfs 
+	  	See the "Fedora Relationship Metadata Guide" in the system documentation for specific constraints and syntax rules.
+	*************************************************************************************************************************************************
+	 	Below, the RDF <Description> element declares that the asserted relationships are about "this" digital object since
+	 	its rdf:about attribute points to the Fedora URI for this object.  (Fedora URIs are PIDs prepended with "info:fedora/").
+	 	See system documentation for more information about Fedora URIs. 
+	 	Below, there are two relationships from the fedora namespace to indicate that this object is a member of two 
+	 	different collections. For each relationship assertion, the rdf:resource attribute must contain the URI of another
+	 	Fedora object that this object is related to.  For example, there exists a Fedora object known as 
+	 	"info:fedora/test:collection1" that represents a specific collection. 
+	*******************************************************************************************************************************************-->
+	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
+		<foxml:datastreamVersion ID="RELS-EXT.0" MIMETYPE="text/xml" LABEL="Fedora Object-to-Object Relationship Metadata" SIZE="752" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:xmlContent>
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<rdf:Description rdf:about="info:fedora/demo:999">
+						<!-- This object ("info:fedora/demo:999") is a member of Collection #1 (info:fedora/test:collection1) -->
+						<fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection1"/>
+						<!-- ... and it is also a member of Collection #2 (info:fedora/test:collection2) -->
+						<fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection2"/>
+						<!-- You can also make your own relationship assertions in your own namespace...-->
+						<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
+					</rdf:Description>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--**************************************************************************************************************************************
+	 	DATASTREAMS  (notice the four different kinds of datastreams supported by Fedora)
+	*******************************************************************************************************************************************
+		Notice that Fedora will automatically keep track of different versions of a datastream.  
+		Datastreams are versioned whenever modifications are made via API-M 
+
+		At ingest, each datastream MUST have following attributes: 
+			- ID					(required) a unique identifier for the datastream within this object.  User can provide it,
+								or if not provided, the system will assign one.
+			- STATE			(Required) The datastream state can be Active (A), Inactive (I), or Deleted (D)
+			- CONTROL_GROUP (required) indicates the kind of datastream, either Externally Referenced Content (E), 
+								Redirected Content (R), Managed Content (M) or Inline XML (X) 
+			- MIME				(required per version) user-assigned MIME type of the bytestream referred to by the 
+								contentLocation URL
+			
+		And at ingest, it may have these optional attributes: 
+			- LABEL			(optional per version) user-assigned descriptive label for the datastream 
+			- ALT_IDS			(optional per version) user-assigned set of alternative identifiers for the datastream, 
+								with the identifiers separated by spaces
+			- FORMAT_URI		(optional per version) user-assigned URI used to identify the media type of the bytestream 
+								referred to 	by the contentLocation URL (more specific than MIME type) 
+			- SIZE				(optional per version) size of the bytestream referred to by the contentLocation.  
+								User can provide it, or Fedora can be configured to calculate it.  
+								
+		The system will assign these attributes (they should not be put in the ingest file):
+			- VERSIONABLE		(system-assigned)  a true/false indication as to whether the datastream should 
+								be versioned by the Fedora repository service.  In Fedora 2.0, all datastreams are set to 
+								VERSIONABLE="true".  In a future release, selective datastream versioning will be enabled and
+								this attribute can then be user-assigned.
+			- CREATED			(system-assigned per version) creation date for the datastream version, to the millisecond
+	*******************************************************************************************************************************************
+		DATASTREAM (E): 
+		This datastream demonstrates "Externally Referenced Content" (see attribute CONTROL_GROUP=E).  
+		The contentLocation element points to content on a external web server (meaning the content is not under the 
+		custodianship of  the Fedora repository).  When repository access requests are made for this datastream, the 
+		content bytestream will be mediated by the Fedora repository service, meaning that Fedora will get the content 
+		and return it to the client.  The client will not be aware of the true URL of the content.  Notice that the datastream 
+	*******************************************************************************************************************************************-->
+	<foxml:datastream CONTROL_GROUP="E" ID="IMAGE" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="IMAGE.0" MIMETYPE="image/x-mrsid-image" LABEL="Image of Pavilion III, University of Virginia" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		DATASTREAM (R):
+		This datastream demonstrates "Redirected Referenced Content"  (see attribute CONTROL_GROUP=R).  
+		Like the E datastream above, the contentLocation points to content on a external web server.  However, in this case, 
+		when repository access requests are made for this datastream, the repository will redirect the client to this URL, 
+		and will not mediate the streaming of the content.  This is particularly useful when the content is a streaming media 
+		file, or for complex, animated web pages where streaming through the Fedora server may cause lossiness. 
+		(The .jpg image is not a great motivating example of the "R" datastream, but it just used in this example.)
+	*******************************************************************************************************************************************-->
+	<foxml:datastream CONTROL_GROUP="R" ID="DRAWING-BEST" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DRAWING-BEST.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (veryhigh res)" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		DATASTREAM (M):
+		This datastream demonstrates "Managed Content"  (see attribute CONTROL_GROUP=M).  
+		This is an example of a datastream whose content bytestream is under the direct custodianship of the Fedora 
+		repository.  Notice that the contentLocation points to an internal identifier instead of a URL.  The content 
+		is actually stored in the repository's persistent storage area.  When Fedora access requests are made for this 
+		datastream, the repository service retrieves the content from its own persistent storage area.   
+		
+		It is worth noting that prior to iingest into the repository, this datastream was specified with a contentLocation URL 
+		pointing to an external source.  You can see this contentLocation URLs commented out below.  Since this 
+		datastream is marked as CONTROL_GROUP=M, the repository service must store the bytestream inside the 
+		repository.  Therefore, when this object was ingested,  the Fedora repository service called back to this URL 
+		to obtain the content for local storage.  Once the content was stored,  the orignial URL was replaced with the 
+		Fedora internal identifier depicted below. 
+		See the "Fedora Ingest and Export Guide" in the system documentation for more details on encoding ingest files.
+	*******************************************************************************************************************************************-->
+	<foxml:datastream CONTROL_GROUP="M" ID="DRAWING-BETTER" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DRAWING-BETTER.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/>
+			<!-- <foxml:contentLocation REF="demo:999+DRAWING-BETTER+DRAWING-BETTER.0" TYPE="INTERNAL_ID"/> -->
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		DATASTREAM (M): (with multiple versions)
+		This datastream also demonstrates "Managed Content"  (see attribute CONTROL_GROUP=M).  
+		
+		Notice in the example below the datastream has two versions.  In the second version the datastream label was 
+		changed and an alternate identifier was added.   Fedora access requests can be given date-time stamps to
+		retrieve the appropriate version.
+	*******************************************************************************************************************************************-->
+	<foxml:datastream CONTROL_GROUP="M" ID="DRAWING-ICON" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DRAWING-ICON.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+		<foxml:datastreamVersion ID="DRAWING-ICON.1" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (thumbnail icon)" ALT_IDS="doi:10.1234/123" CREATED="2005-01-20T22:46:07.428Z">
+			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" TYPE="URL"/>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		DATASTREAM (X):
+		This datastream demonstrates "Inlined XML Content" (see attribute CONTROL_GROUP=X).
+		This type of datastream is used when it is desirable to have XML content "inlined" within the digital object XML 
+		wrapper itself. 	Notice that there is no contentLocation element pointing to a content URL;  instead there is a block 
+		of XML wrapped by the <xmlContent> element. 
+	**********************************************************************************************************************************************-->
+	<foxml:datastream ID="UVATECH" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="UVATECH.0" MIMETYPE="text/xml" FORMAT_URI="info:fedora/format:xml:uvalibadmin" LABEL="UVA Technical Metadata Record" SIZE="556" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:xmlContent>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
+					<uvalibadmin:technical>
+						<uvalibadmin:format>image/jpeg</uvalibadmin:format>
+						<uvalibadmin:compression>LZW</uvalibadmin:compression>
+						<uvalibadmin:bitDepth BITS=""/>
+						<uvalibadmin:colorSpace/>
+						<uvalibadmin:colorProfile CPLOCAT="" CPFILE=""/>
+						<uvalibadmin:resolution>600</uvalibadmin:resolution>
+					</uvalibadmin:technical>
+				</uvalibadmin:admin>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+		EXPERIMENTAL DATASTREAM:  
+		FEDORA RESERVED DATASTREAM FOR INNER OBJECT RELATIONSHIP METADATA 
+		This datastream demonstrates datastream-to-datastream relationships in this object, expressed as RDF. 
+		The sample datastream shows how to assert that the "UVATECH" datastream is metadata about the "DRAWING" 
+		datastream. Unlike the RELS-EXT datastream, the RDF is NOT validated by Fedora (since RELS-INT is still experimental). 
+		Clients can provide a RELS-INT datastream if they want one, but the Fedora repository will not operate on it at this time.  
+	*******************************************************************************************************************************************-->
+	<foxml:datastream ID="RELS-INT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="false">
+		<foxml:datastreamVersion ID="RELS-INT.0" MIMETYPE="text/xml" LABEL="Fedora Internal Object Relationship Metadata" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:xmlContent>
+				<!-- Note:  it is up to the object owner to ensure that these relationships are maintained as the object changes.-->
+				<!-- Fedora does not ensure referential integrity of RELS-INT assertions at this time. -->
+				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:relsint="info:fedora/fedora-system:def/relations-internal#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+					<relsint:Datastream rdf:about="info:fedora/demo:999/UVATECH">
+						<relsint:adminMetadataFor rdf:resource="info:fedora/demo:999/DRAWING"/>
+					</relsint:Datastream>
+				</rdf:RDF>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!--*******************************************************************************************************************************************
+	  	SYSTEM-CONTROLLED AUDIT TRAIL DATASTREAM 
+	  	The Fedora repository system will automatically create an audit trail of changes made to the digital object.  
+	  	An audit record will be added for each API-M operation that changes the object. 
+	 	 The system creates and updates this special audit trail datastream and prevents any client from modifying it.  
+	*******************************************************************************************************************************************-->
+	<foxml:datastream CONTROL_GROUP="X" ID="AUDIT" STATE="A" VERSIONABLE="false">
+		<foxml:datastreamVersion CREATED="2004-12-10T00:21:58.000Z" FORMAT_URI="info:fedora/fedora-system:format/xml.fedora.audit" ID="AUDIT.0" LABEL="Fedora Object Audit Trail" MIMETYPE="text/xml">
+			<foxml:xmlContent>
+				<audit:auditTrail xmlns:audit="info:fedora/fedora-system:def/audit#">
+					<audit:record ID="AUDREC1">
+						<audit:process type="Fedora API-M"/>
+						<audit:action>modifyDatastreamByReference</audit:action>
+						<audit:componentID>DRAWING-ICON</audit:componentID>
+						<audit:responsibility>fedoraAdmin</audit:responsibility>
+						<audit:date>2005-01-20T22:46:07.428Z</audit:date>
+						<audit:justification>changed the datastream label and added an alternate identifier.</audit:justification>/>
+          			</audit:record>
+				</audit:auditTrail>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+	<!---******************************************************************************************************************************************
+	 	CUSTOM DISSEMINATORS: 
+	 	Note that the Fedora repository system provides a default disseminator for each object.  The default disseminator is 
+	 	dynamically associated with every object, thus it does not appear explicitly in the FOXML encoding of the object. 
+	 	The <disseminator> element is used to specifying special-purpose disseminators that extend the object's default 
+	 	access points.  	See the Fedora system documenation for a full discussion of Disseminators and their utility. 
+	 	
+	 	At ingest, each Disseminator MUST have following attributes: 
+			- ID						(required) a unique identifier for the disseminatoar within this object.  User can provide it,
+									or if not provided, the system will assign one.
+			- BDEF_CONTRACT_PID	(required)
+			- STATE				(required) The datastream state can be Active (A), Inactive (I), or Deleted (D)
+			- BMECH_SERVICE_PID 	(required per version)
+			
+		And, at ingest, it must have a serviceInputMap element to define one or more datastreams inputs to the BMECH service:
+			- DATASTREAM_ID	(required)  the unique identifier of a datastream that should be an input parm to the service
+			- KEY				(required)  the input parm name that the datastream should be associated with.
+								(The name of this key is defined in the object named by the BMECH_SERVICE_PID.)
+			- LABEL			(optional) a label to describe the nature of the input binding
+			- ORDER			(optional)  if there are multiple datastream inputs defined, and they have an intrinsic order,
+								then this contains an integer indicating sequence number.
+			
+		The system will assign these attributes (they should not be put in the ingest file):
+			- VERSIONABLE		(system-assigned)  true/false indication as to whether the datastream should be versioned by
+								the Fedora repository service.  In Fedora 2.0, all datastreams are set to 
+								VERSIONABLE="true".  In a future release, selective datastream versioning will be enabled and
+								this attribute can then be user-assigned.
+			- CREATED			(system-assigned per version) creation date for the datastream version, to the millisecond
+		*******************************************************************************************************************************************
+		
+		DISSEMINATOR 1:  
+		Provides "virtual representations" of this object.  A virtual representation of an object is a view 
+		of the object that is created by a service operation.  In this case, different renditions of the IMAGE datastream of this 
+		object can be obtained at runtime by via the operations defined by this disseminator. 
+
+	 	Note that on the disseminator, the BDEF_CONTRACT_PID attribute is used to identify the desired set of extended 
+	 	operations to produce virtual representations of this object at runtime (requested via API-A and API-A-LITE). 
+	 	These operations have abstract definitions that are stored in a special Fedora digital object (in this case a 
+	 	FedoraBDefObject known as demo:8). So, the set of extended operations that produce "virtual representations" get 
+	 	associated with this digital object in a by-reference manner.  Naming a BDEF_CONTRACT_PID on a disseminator is 
+	 	analogous to identifying a particular abstract service interface to be associated with this digital object. 
+	 	
+	 	The BMECH_SERVICE_PID attribute (on the disseminatorVersion element) is used to identify a specific service 
+	 	that runs the abstract operations of the BDEF_CONTRACT_PID.  The service binding information is stored in a 
+	 	special Fedora digital object (in this case 	a FedoraBMechObject know as demo:9).  The service binding information 
+	 	is specified using the Web Service Description Language (WSDL), which the Fedora repository services uses to figure 
+	 	out how to dispatch 	requests to an external web service that will produce the dynamic views of this digital object. 
+	 	The BMECH_SERVICE_PID is kind of like identifying a particular implementation of an abstract interface.
+		
+		Note that the BMECH_SERVICE_PID attribute is at the disseminatorVersion level.  This means you could modify a 
+		disseminator to point to a different service implementation	(i.e., represented by a different BMECH_SERVICE_PID), 
+		and this information would be captured in a new version of this disseminator.  Both versions would implement the same 
+		BDEF contract.  A change to the BMECH_SERVICE_PID essentially means that the repository will use a "new" implementation 
+		of the service that implements the BDEF contract.  Below, a new disseminator version is depicted below, but it is commented 
+		out since the  new service implementation is hypothetical ("i.e., newservice:100"). 
+		 *******************************************************************************************************************************************-->
+	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:8" STATE="A" VERSIONABLE="true">
+		<foxml:disseminatorVersion ID="DISS1.0" BMECH_SERVICE_PID="demo:9" LABEL="Disseminator to provide dynamic views of a MRSID image" CREATED="2004-12-10T00:21:58.000Z">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="IMAGE" KEY="MRSID" LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+		<!-- 
+		<foxml:disseminatorVersion ID="DISS1.1" BMECH_SERVICE_PID="newservice:100" LABEL="Disseminator with a better MRSID service" CREATED="2005-01-20T22:46:08.001Z">
+			<foxml:serviceInputMap>
+				<foxml:datastreamBinding DATASTREAM_ID="IMAGE" KEY="MRSID" LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0"/>
+			</foxml:serviceInputMap>
+		</foxml:disseminatorVersion>
+		-->
+	</foxml:disseminator>
+</foxml:digitalObject>
