@@ -70,12 +70,18 @@ public class FOXMLDOSerializer
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
+	private static String s_hostInfo; // the actual host and port of the server
+	private static String s_localServerDissemUrlStart;  // dissem URL pattern for M datastreams
+			   
     private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
     private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
     private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
     private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
+    
+    private static Pattern s_localPattern; // "http://local.fedora.server/"
 
     private boolean m_onPort80=false;
+    private boolean m_encodeForExport=false;
 
     public FOXMLDOSerializer() {
     }
@@ -84,10 +90,11 @@ public class FOXMLDOSerializer
         return new FOXMLDOSerializer();
     }
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding)
+    public void serialize(DigitalObject obj, OutputStream out, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
 		System.out.println("Serializing using FOXMLDOSerializer...");
+		m_encodeForExport=encodeForExport;
         // get the host info in a static var so search/replaces are quicker later
         if (s_localServerUrlStartWithPort==null) {
             String fedoraHome=System.getProperty("fedora.home");
@@ -114,12 +121,25 @@ public class FOXMLDOSerializer
                     System.exit(1);
                 }
             }
+            // set the configured host:port of the repository
+			s_hostInfo="http://" + fedoraServerHost;
+			if (!fedoraServerPort.equals("80")) {
+				s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
+			}
+			s_hostInfo=s_hostInfo + "/";
+			
+			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
+			
+			// set the patterns that must be detected for later replacements
             s_localServerUrlStartWithPort=Pattern.compile("http://"
                     + fedoraServerHost + ":" + fedoraServerPort + "/");
             s_localServerUrlStartWithoutPort=Pattern.compile("http://"
                     + fedoraServerHost + "/");
             s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/");
             s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/");
+            
+            // the pattern of the internal "localized" string for local URLs
+            s_localPattern=Pattern.compile("http://local.fedora.server/");
         }
         // now do serialization stuff
         StringBuffer buf=new StringBuffer();
@@ -236,6 +256,9 @@ public class FOXMLDOSerializer
 		Iterator iter=obj.datastreamIdIterator();
 		while (iter.hasNext()) {
 			String dsid = (String) iter.next();
+			if (dsid==null || dsid.equals("")) {
+				throw new ObjectIntegrityException("Missing datastream ID in object: " + obj.getPid());
+			}
 			// AUDIT datastream is rebuilt from the latest in-memory audit trail
 			// which is a separate array list in the DigitalObject class.
 			// So, ignore it here.
@@ -265,18 +288,20 @@ public class FOXMLDOSerializer
 					+ " CREATED=\"" + m_formatter.format(vds.DSCreateDT) + "\""
 					+ " SIZE=\"" + vds.DSSize +  "\">\n");
 			
-				// if E or R insert content location as URL
+				// if E or R insert ds content location as URL
 				if (vds.DSControlGrp.equalsIgnoreCase("E") ||
 					vds.DSControlGrp.equalsIgnoreCase("R") ) {
 						buf.append("      <" + FOXML_PREFIX 
 							+ ":contentLocation TYPE=\"" + "URL\""
-							+ " REF=\"" + StreamUtility.enc(normalizeDSLocation(vds.DSLocation)) 
+							+ " REF=\"" 
+							+ StreamUtility.enc(normalizeDSLocat(obj.getPid(), vds)) 
 							+ "\"/>\n");	
-				// if M insert content location as internal identifier				
+				// if M insert ds content location as an internal identifier				
 				} else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
 					buf.append("      <" + FOXML_PREFIX 
 						+ ":contentLocation TYPE=\"" + "INTERNAL_ID\""
-						+ " REF=\"" + StreamUtility.enc(normalizeDSLocation(vds.DSLocation)) 
+						+ " REF=\"" 
+						+ StreamUtility.enc(normalizeDSLocat(obj.getPid(), vds)) 
 						+ "\"/>\n");	
 				// if X insert inline XML
 				} else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
@@ -318,7 +343,8 @@ public class FOXMLDOSerializer
 				+ " LABEL=\"" + "Fedora Object Audit Trail" + "\""
 				+ " CREATED=\"" + m_formatter.format(obj.getCreateDate()) +  "\">\n");
 			buf.append("      <" + FOXML_PREFIX + ":xmlContent>\n");
-			buf.append("        <" + m_fedoraAuditPrefix + ":auditTrail" + ">\n");
+			buf.append("        <" + m_fedoraAuditPrefix + ":auditTrail xmlns:" 
+						+ m_fedoraAuditPrefix + "=\"" + FEDORA_AUDIT_NS + "\">\n");
 			for (int i=0; i<obj.getAuditRecords().size(); i++) {
 				AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
 				validateAudit(audit);
@@ -365,25 +391,9 @@ public class FOXMLDOSerializer
              (ds.DatastreamID.equals("SERVICE-PROFILE") || 
 			  ds.DatastreamID.equals("WSDL")) ) {
 	            // If WSDL or SERVICE-PROFILE datastream (in BMech) 
-	            // and it contains a service URL that's local, 
-	            // then modify the URL with a machine-neutral
-	            // host identifier.
-	            try {
-	                String xml=new String(ds.xmlContent, "UTF-8");
-	                xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
-	                        "http://local.fedora.server/");
-	                xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
-	                        "http://local.fedora.server/");
-					if (m_onPort80) {
-	                    xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-	                            "http://local.fedora.server/");
-	                    xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-	                            "http://local.fedora.server/");
-				    }
-	                buf.append(xml);
-	            } catch (UnsupportedEncodingException uee) {
-	                // wont happen, java always supports UTF-8
-	            }
+	            // make sure that any embedded URLs are encoded 
+	            // appropriately for either EXPORT or STORE.
+	            buf.append(normalizeDSInlineXML(ds));
         } else {
             appendXMLStream(ds.getContentStream(), buf, encoding);
         }
@@ -561,7 +571,7 @@ public class FOXMLDOSerializer
 			(ds.DSLocation==null || ds.DSLocation.equals(""))) {
 			throw new ObjectIntegrityException("Content datastream must have a location.");
 		}
-		if (ds.DSMIME==null && ds.DSControlGrp.equalsIgnoreCase("X")) {
+		if ((ds.DSMIME==null || ds.DSVersionID.equals("")) && ds.DSControlGrp.equalsIgnoreCase("X")) {
 			ds.DSMIME="text/xml";
 		}
 		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
@@ -629,19 +639,87 @@ public class FOXMLDOSerializer
 			throw new ObjectIntegrityException("Audit record must have justification.");
 		}
 	}
-	private String normalizeDSLocation(String dsLocation) {
-		// When datastream location makes reference to the LOCAL machine and port
-		// (i.e., the one that the repository is running on), then we want to put 
-		// placeholders in the ds location.  This is to prevent breakage if the 
-		// repository host:port is reconfigured.
-		String newLoc = dsLocation;
-		newLoc=s_localServerUrlStartWithPort.matcher(dsLocation).replaceAll("http://local.fedora.server/");
-		newLoc=s_localhostUrlStartWithPort.matcher(dsLocation).replaceAll("http://local.fedora.server/");
-	  	if (m_onPort80) {
-			newLoc=s_localServerUrlStartWithoutPort.matcher(dsLocation).replaceAll("http://local.fedora.server/");
-			newLoc=s_localhostUrlStartWithoutPort.matcher(dsLocation).replaceAll("http://local.fedora.server/");
-	  	}
-	  	return newLoc;
+	private String normalizeDSLocat(String PID, Datastream ds) {
+		// SERIALIZE FOR EXPORT: Ensure that ds location is appropriate for export (public usage)
+		if (m_encodeForExport){
+			String publicLoc=ds.DSLocation;
+			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
+				// make sure ACTUAL host:port is on ds location for localized content URLs
+				if (ds.DSLocation!=null && 
+					ds.DSLocation.startsWith("http://local.fedora.server/")) {
+					// That's our cue.. make it a proper URL with the server's host:port
+					publicLoc=s_hostInfo + ds.DSLocation.substring(27);
+				}
+				return publicLoc;
+			} else if (ds.DSControlGrp.equals("M")) {
+				// make sure internal ids are converted to public dissemination URLs
+				publicLoc=s_localServerDissemUrlStart 
+						+ PID 
+						+ "/fedora-system:3/getItem/"
+						+ m_formatter.format(ds.DSCreateDT)
+						+ "?itemID=" + ds.DatastreamID;
+				return publicLoc;
+			} else {
+				return publicLoc;
+			}
+		}
+		// SERIALIZE FOR INTERNAL STORAGE (or for GetObjectXML requests): 
+		// Ensure that ds location contains the internal storage identifiers
+		else {
+			String newLoc=ds.DSLocation;
+			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
+				// When ds location makes reference to the LOCAL machine and port
+				// (i.e., the one that the repository is running on), then we want to put 
+				// a "localizer" string in the ds location.  This is to prevent breakage if the 
+				// repository host:port is reconfigured after an object has been ingested.
+				newLoc=s_localServerUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+				newLoc=s_localhostUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+			  	if (m_onPort80) {
+					newLoc=s_localServerUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+					newLoc=s_localhostUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+			  	}
+			  	return newLoc;
+			} else if (ds.DSControlGrp.equals("M")) {
+				// make sure ds location is an internal identifier (PID+DSID+DSVersionID)
+				if (!ds.DSLocation.startsWith(PID)) {
+					newLoc = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
+				}
+				return newLoc;
+			} else {
+				return newLoc;
+			}
+		}
+	}
+	
+	private String normalizeDSInlineXML(DatastreamXMLMetadata ds) {
+		String xml = null;
+		try {
+			xml = new String(ds.xmlContent, "UTF-8");
+		} catch (UnsupportedEncodingException uee) {
+			// wont happen, java always supports UTF-8
+		}
+		if (m_encodeForExport) {
+			// Make appropriate for EXPORT:
+			// detect any "localized" placeholders ("local.fedora.server")
+			// and replace with host:port of the local server.
+			xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
+		} else {
+			// Make appropriate for INTERNAL STORE (and for GetObjectXML):
+			// detect host:port pattern that is the local server and
+			// "localize" URLs with the internal placeholder "local.fedora.server"
+			xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
+					"http://local.fedora.server/");
+			xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
+					"http://local.fedora.server/");
+			if (m_onPort80) {
+				xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+						"http://local.fedora.server/");
+				xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
+						"http://local.fedora.server/");
+			}
+		}
+		return xml;
+		
 	}
 	
 	private String getTypeAttribute(DigitalObject obj)

@@ -56,7 +56,7 @@ import fedora.server.utilities.StreamUtility;
 public class METSLikeDOSerializer
         implements DOSerializer {
 
-    public static final String FEDORA_AUDIT_NS="http://www.fedora.info/definitions/audit";
+    public static final String FEDORA_AUDIT_NS="info:fedora/def:audit";
     public static final String METS_PREFIX="METS";
     public static final String METS_NS="http://www.loc.gov/METS/";
     public static final String METS_XSD_LOCATION="http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd";
@@ -66,16 +66,23 @@ public class METSLikeDOSerializer
     public static final String XSI_NS="http://www.w3.org/2001/XMLSchema-instance";
 
     private String m_XLinkPrefix="xlink";
-    private String m_fedoraAuditPrefix="fedora-auditing";
+    private String m_fedoraAuditPrefix="audit";
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+
+	private static String s_hostInfo; // the actual host and port of the server
 
     private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
     private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
     private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
     private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
+    
+	private static Pattern s_localPattern; // "http://local.fedora.server/"
+    
+	private static String s_localServerDissemUrlStart; // "http://actual.hostname:8080/fedora/get/"
 
     private boolean m_onPort80=false;
+    private boolean m_encodeForExport=false;
 
     public METSLikeDOSerializer() {
     }
@@ -84,10 +91,12 @@ public class METSLikeDOSerializer
         return new METSLikeDOSerializer();
     }
 
-    public void serialize(DigitalObject obj, OutputStream out, String encoding)
+    public void serialize(DigitalObject obj, OutputStream out, String encoding,
+		boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
 		System.out.println("Serializing using METSLike...");
+		m_encodeForExport=encodeForExport;
         // get the host info in a static var so search/replaces are quicker later
         if (s_localServerUrlStartWithPort==null) {
             String fedoraHome=System.getProperty("fedora.home");
@@ -114,6 +123,15 @@ public class METSLikeDOSerializer
                     System.exit(1);
                 }
             }
+			// set the configured host:port of the repository
+			s_hostInfo="http://" + fedoraServerHost;
+			if (!fedoraServerPort.equals("80")) {
+				s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
+			}
+			s_hostInfo=s_hostInfo + "/";
+			// set the start pattern for public dissemination URLs off local server
+			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
+			// set other patterns
             s_localServerUrlStartWithPort=Pattern.compile("http://"
                     + fedoraServerHost + ":" + fedoraServerPort + "/");
             s_localServerUrlStartWithoutPort=Pattern.compile("http://"
@@ -297,27 +315,14 @@ public class METSLikeDOSerializer
                     + "\" MDTYPE=\"" + mdType + "\"" + otherString
                     + labelString + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
+            
+			// If WSDL or SERVICE-PROFILE datastream (in BMech) 
+			// make sure that any embedded URLs are encoded 
+			// appropriately for either EXPORT or STORE.
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT
-                    && (ds.DatastreamID.equals("SERVICE-PROFILE")) || (ds.DatastreamID.equals("WSDL")) ) {
-                // If it's the WSDL or SERVICE-PROFILE datastream in a bMech and it contains a
-                // service URL that's local, replace it with a machine-neutral
-                // host identifier.
-                try {
-                    String xml=new String(ds.xmlContent, "UTF-8");
-                    xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
-                    xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
-                            "http://local.fedora.server/");
-					if (m_onPort80) {
-                        xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
-                                "http://local.fedora.server/");
-                        xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
-                                "http://local.fedora.server/");
-				    }
-                    buf.append(xml);
-                } catch (UnsupportedEncodingException uee) {
-                    // wont happen, java always supports UTF-8
-                }
+                    && (ds.DatastreamID.equals("SERVICE-PROFILE")) 
+                    || (ds.DatastreamID.equals("WSDL")) ) {
+                buf.append(normalizeDSInlineXML(ds));
             } else {
                 appendStream(ds.getContentStream(), buf, encoding);
             }
@@ -419,11 +424,6 @@ public class METSLikeDOSerializer
         }
     }
 
-    // append the admin md, while replacing occurances of
-    // s_localServerUrlStartWithPort and s_localServerUrlStartWithoutPort and
-    // s_localhostUrlStartWithPort and s_localhostUrlStartWithoutPort
-    // with "http://local.fedora.server/" in the SERVICE-PROFILE and WSDL id'd admin datastreams
-    // bMech objects.
     private void appendOtherAdminMD(DigitalObject obj, StringBuffer buf,
             String encoding)
             throws ObjectIntegrityException, UnsupportedEncodingException,
@@ -471,7 +471,7 @@ public class METSLikeDOSerializer
                     buf.append("    <" + METS_PREFIX + ":fileGrp ID=\"DATASTREAMS\">\n");
                 }
                 if (ds.DatastreamID==null || ds.DatastreamID.equals("")) {
-                    throw new ObjectIntegrityException("Object's content datastream must have an id.");
+					throw new ObjectIntegrityException("Missing datastream ID in object: " + obj.getPid());
                 }
                 if (ds.DSState==null) ds.DSState="";
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
@@ -479,45 +479,26 @@ public class METSLikeDOSerializer
                         + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
-                    DatastreamContent dsc=(DatastreamContent) contentIter.next();
-                    if (dsc.DSVersionID==null || dsc.DSVersionID.equals("")) {
-                        throw new ObjectIntegrityException("Object's content datastream must have a version id.");
-                    }
-                    if (dsc.DSCreateDT==null) {
-                        throw new ObjectIntegrityException("Object's content datastream must have a create date.");
-                    }
-                    if (dsc.DSMIME==null || dsc.DSMIME.equals("")) {
-                        dsc.DSMIME="text/xml";
-                    }
+                    Datastream dsc=validateDatastream((Datastream) contentIter.next());
+                    
                     String labelString="";
                     if (dsc.DSLabel!=null && !dsc.DSLabel.equals("")) {
                         labelString=" " + m_XLinkPrefix + ":title=\""
                                 + StreamUtility.enc(dsc.DSLabel) + "\"";
                     }
-                    if (dsc.DSLocation==null || dsc.DSLocation.equals("")) {
-                        throw new ObjectIntegrityException("Object's content datastream must have a location.");
-                    }
-                    // replace any local machine+port-specific urls to
-                    // machine-neutral ones
-                    dsc.DSLocation=s_localServerUrlStartWithPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
-                    dsc.DSLocation=s_localhostUrlStartWithPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
-                    if (m_onPort80) {
-                      dsc.DSLocation=s_localServerUrlStartWithoutPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
-                      dsc.DSLocation=s_localhostUrlStartWithoutPort.matcher(dsc.DSLocation).replaceAll("http://local.fedora.server/");
-                    }
+					if (dsc.DSMIME==null) dsc.DSMIME="";
                     String sizeString=" SIZE=\"" + dsc.DSSize + "\"";
-                    String admIDString=getIdString(obj, dsc, true);
-                    String dmdIDString=getIdString(obj, dsc, false);
-                    if (dsc.DSControlGrp==null || dsc.DSControlGrp.equals("")) {
-                        throw new ObjectIntegrityException("Object's content datastream must have a control group.");
-                    }
+                    String admIDString=getIdString(obj, (DatastreamContent)dsc, true);
+                    String dmdIDString=getIdString(obj, (DatastreamContent)dsc, false);
+
                     buf.append("        <" + METS_PREFIX + ":file ID=\""
                             + dsc.DSVersionID + "\" CREATED=\"" + m_formatter.format(dsc.DSCreateDT)
                             + "\" MIMETYPE=\"" + dsc.DSMIME + "\"" + sizeString
                             + admIDString + dmdIDString + " OWNERID=\"" + dsc.DSControlGrp + "\">\n");
                     buf.append("          <" + METS_PREFIX + ":FLocat" + labelString
                             + " LOCTYPE=\"URL\" " + m_XLinkPrefix
-                            + ":href=\"" + StreamUtility.enc(dsc.DSLocation) + "\"/>\n");
+					        + ":href=\"" + StreamUtility.enc(normalizeDSLocat(obj.getPid(), dsc)) + "\"/>\n");
+                    //        + ":href=\"" + StreamUtility.enc(dsc.DSLocation) + "\"/>\n");
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
                 buf.append("      </" + METS_PREFIX + ":fileGrp>\n");
@@ -692,6 +673,104 @@ public class METSLikeDOSerializer
     private void appendRootElementEnd(StringBuffer buf) {
         buf.append("</" + METS_PREFIX + ":mets>");
     }
+
+	private Datastream validateDatastream(Datastream ds)
+		throws ObjectIntegrityException {
+		// check on some essentials
+		if (ds.DSVersionID==null || ds.DSVersionID.equals("")) {
+			throw new ObjectIntegrityException("Datastream must have a version id.");
+		}			
+		if (ds.DSCreateDT==null) {
+			throw new ObjectIntegrityException("Object's content datastream must have a create date.");
+		}
+		if (ds.DSLocation==null || ds.DSLocation.equals("")) {
+			throw new ObjectIntegrityException("Object's content datastream must have a location.");
+		}
+		return ds;
+	}
+	
+	private String normalizeDSLocat(String PID, Datastream ds) {
+		// SERIALIZE FOR EXPORT: Ensure that ds location is appropriate for export (public usage)
+		if (m_encodeForExport){
+			String publicLoc=ds.DSLocation;
+			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
+				// make sure ACTUAL host:port is on ds location for localized content URLs
+				if (ds.DSLocation!=null && 
+					ds.DSLocation.startsWith("http://local.fedora.server/")) {
+					// That's our cue.. make it a proper URL with the server's host:port
+					publicLoc=s_hostInfo + ds.DSLocation.substring(27);
+				}
+				return publicLoc;
+			} else if (ds.DSControlGrp.equals("M")) {
+				// make sure internal ids are converted to public dissemination URLs
+				publicLoc=s_localServerDissemUrlStart 
+						+ PID 
+						+ "/fedora-system:3/getItem/"
+						+ m_formatter.format(ds.DSCreateDT)
+						+ "?itemID=" + ds.DatastreamID;
+				return publicLoc;
+			} else {
+				return publicLoc;
+			}
+		}
+		// SERIALIZE FOR INTERNAL STORAGE (or for GetObjectXML requests): 
+		// Ensure that ds location contains the internal storage identifiers
+		else {
+			String newLoc=ds.DSLocation;
+			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
+				// When ds location makes reference to the LOCAL machine and port
+				// (i.e., the one that the repository is running on), then we want to put 
+				// a "localizer" string in the ds location.  This is to prevent breakage if the 
+				// repository host:port is reconfigured after an object has been ingested.
+				newLoc=s_localServerUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+				newLoc=s_localhostUrlStartWithPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+				if (m_onPort80) {
+					newLoc=s_localServerUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+					newLoc=s_localhostUrlStartWithoutPort.matcher(ds.DSLocation).replaceAll("http://local.fedora.server/");
+				}
+				return newLoc;
+			} else if (ds.DSControlGrp.equals("M")) {
+				// make sure ds location is an internal identifier (PID+DSID+DSVersionID)
+				if (!ds.DSLocation.startsWith(PID)) {
+					newLoc = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
+				}
+				return newLoc;
+			} else {
+				return newLoc;
+			}
+		}
+	}
+	
+	private String normalizeDSInlineXML(DatastreamXMLMetadata ds) {
+		String xml = null;
+		try {
+			xml = new String(ds.xmlContent, "UTF-8");
+		} catch (UnsupportedEncodingException uee) {
+			// wont happen, java always supports UTF-8
+		}
+		if (m_encodeForExport) {
+			// Make appropriate for EXPORT:
+			// detect any "localized" placeholders ("local.fedora.server")
+			// and replace with host:port of the local server.
+			xml=s_localPattern.matcher(xml).replaceAll(s_hostInfo);
+		} else {
+			// Make appropriate for INTERNAL STORE (and for GetObjectXML):
+			// detect host:port pattern that is the local server and
+			// "localize" URLs with the internal placeholder "local.fedora.server"
+			xml=s_localServerUrlStartWithPort.matcher(xml).replaceAll(
+					"http://local.fedora.server/");
+			xml=s_localhostUrlStartWithPort.matcher(xml).replaceAll(
+					"http://local.fedora.server/");
+			if (m_onPort80) {
+				xml=s_localServerUrlStartWithoutPort.matcher(xml).replaceAll(
+						"http://local.fedora.server/");
+				xml=s_localhostUrlStartWithoutPort.matcher(xml).replaceAll(
+						"http://local.fedora.server/");
+			}
+		}
+		return xml;
+		
+	}
 
     private void writeToStream(StringBuffer buf, OutputStream out,
             String encoding, boolean closeWhenFinished)
