@@ -2,6 +2,7 @@ package fedora.server.management;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -560,7 +561,97 @@ public class DefaultManagement
     public void deleteDatastream(Context context, String pid, String datastreamID) { }
 
 */
-    public Calendar[] purgeDatastream(Context context, String pid, String datastreamID, Calendar startDT, Calendar endDT) { return null; }
+    public Calendar[] purgeDatastream(Context context, String pid, 
+            String datastreamID, Calendar startDT, Calendar endDT) 
+            throws ServerException { 
+        m_ipRestriction.enforce(context);
+        DOWriter w=null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            Date start=null;
+            if (startDT!=null) {
+                start=startDT.getTime();
+            }
+            Date end=null;
+            if (endDT!=null) {
+                end=endDT.getTime();
+            }
+            Date[] deletedDates=w.removeDatastream(datastreamID, start, end);
+            // check if there's at least one version with this id...
+            if (w.GetDatastream(datastreamID, null)==null) {
+                // Deleting all versions of a datastream is currently unsupported
+                // FIXME: In the future, this exception should be replaced with an
+                // integrity check.
+                throw new GeneralException("Purge was aborted because it would"
+                        + " result in the permanent deletion of ALL versions "
+                        + "of the datastream.");
+            }
+            // make a log messsage explaining what happened
+            String logMessage=getPurgeLogMessage("datastream", datastreamID, 
+                    start, end, deletedDates);
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id="AUDIT" + w.getAuditRecords().size() + 1;
+            audit.processType="Fedora API-M";
+            audit.action="purgeDatastream";
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            // Normally we associate an audit record with a specific version
+            // of a datastream, but in this case we are talking about a range
+            // of versions.  So we'll just add it to the object, but not associate
+            // it with anything.
+            w.getAuditRecords().add(audit);
+
+            // It looks like all went ok, so commit
+            w.commit(logMessage);
+            // ... then give the response
+            Calendar response[]=new Calendar[deletedDates.length];
+            for (int i=0; i<deletedDates.length; i++) {
+                response[i]=new GregorianCalendar();
+                response[i].setTime(deletedDates[i]);
+            }
+            return response;
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
+        }
+    }
+
+    private String getPurgeLogMessage(String kindaThing, String id, Date start, 
+            Date end, Date[] deletedDates) {
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        StringBuffer buf=new StringBuffer();
+        buf.append("Purged ");
+        buf.append(kindaThing);
+        buf.append(" (ID=");
+        buf.append(id);
+        buf.append("), versions ranging from ");
+        if (start==null) {
+            buf.append("the beginning of time");
+        } else {
+            buf.append(formatter.format(start));
+        }
+        buf.append(" to ");
+        if (end==null) {
+            buf.append("the end of time");
+        } else {
+            buf.append(formatter.format(end));
+        }
+        buf.append(".  This resulted in the permanent removal of ");
+        buf.append(deletedDates.length + " ");
+        buf.append(kindaThing);
+        buf.append(" version(s) (");
+        for (int i=0; i<deletedDates.length; i++) {
+            if (i>0) {
+                buf.append(", ");
+            }
+            buf.append(formatter.format(deletedDates[i]));
+        }
+        buf.append(") and all associated audit records.");
+        return buf.toString();
+    }
 
     public Datastream getDatastream(Context context, String pid, String datastreamID, Calendar asOfDateTime)
             throws ServerException {

@@ -104,7 +104,6 @@ public class DatastreamConduit {
                 content);
     }
 
-//
     public static void deleteDatastream(FedoraAPIM skeleton,
             String pid, String dsId, String logMessage)
             throws RemoteException {
@@ -116,9 +115,7 @@ public class DatastreamConduit {
             throws RemoteException {
         deleteDatastream(m_apim, pid, dsId, logMessage);
     }
-//
 
-//
     public static void withdrawDatastream(FedoraAPIM skeleton,
             String pid, String dsId, String logMessage)
             throws RemoteException {
@@ -130,7 +127,18 @@ public class DatastreamConduit {
             throws RemoteException {
         withdrawDatastream(m_apim, pid, dsId, logMessage);
     }
-//
+
+    public static Calendar[] purgeDatastream(FedoraAPIM skeleton,
+            String pid, String dsId, Calendar startDT, Calendar endDT)
+            throws RemoteException {
+        return skeleton.purgeDatastream(pid, dsId, startDT, endDT);
+    }
+
+    public Calendar[] purgeDatastream(String pid, String dsId,
+            Calendar startDT, Calendar endDT)
+            throws RemoteException {
+        return purgeDatastream(m_apim, pid, dsId, startDT, endDT);
+    }
 
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
