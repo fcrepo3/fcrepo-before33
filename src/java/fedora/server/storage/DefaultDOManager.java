@@ -30,6 +30,7 @@ import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InvalidContextException;
+import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ObjectExistsException;
@@ -374,7 +375,11 @@ public class DefaultDOManager
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                       + dmc.DSVersionID;
                   logInfo("Deleting ManagedContent datastream. " + "id: " + id);
-                  getDatastreamStore().remove(id);
+                  try {
+                    getDatastreamStore().remove(id);
+                  } catch (LowlevelStorageException llse) {
+                    logWarning("While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
+                  }
                 }
               }
             }
