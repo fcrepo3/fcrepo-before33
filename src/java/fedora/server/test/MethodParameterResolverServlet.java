@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 
 /**
@@ -25,7 +26,9 @@ public class MethodParameterResolverServlet extends HttpServlet
 {
 
   /** A string constant for the html MIME type */
-  static final private String CONTENT_TYPE = "text/html";
+  static final private String HTML_CONTENT_TYPE = "text/html";
+
+  private static final String API_A_SERVLET_PATH = "/fedora/access/soapservlet?";
 
   public void init() throws ServletException
   {}
@@ -44,8 +47,9 @@ public class MethodParameterResolverServlet extends HttpServlet
     String bDefPID = null;
     String methodName = null;
     String serverURI = null;
+    String versDateTime = null;
     StringBuffer methodParms = new StringBuffer();
-    response.setContentType(CONTENT_TYPE);
+    response.setContentType(HTML_CONTENT_TYPE);
     PrintWriter out = response.getWriter();
 
     // Get servlet parameters.
@@ -63,9 +67,9 @@ public class MethodParameterResolverServlet extends HttpServlet
       } else if (name.equals("methodName"))
       {
         methodName = (String)request.getParameter(name);
-      } else if (name.equals("serverURI"))
-      {
-        serverURI = (String)request.getParameter(name);
+        } else if (name.equals("asOfDateTime"))
+        {
+        versDateTime = (String)request.getParameter(name);
       } else if (name.equals("Submit")) {
         // Submit parameter is ignored.
       } else
@@ -78,29 +82,48 @@ public class MethodParameterResolverServlet extends HttpServlet
     // Check for any missing required parameters.
     if ((PID == null || PID.equalsIgnoreCase("")) ||
         (bDefPID == null || bDefPID.equalsIgnoreCase("")) ||
-        (methodName == null || methodName.equalsIgnoreCase("")) ||
-        (serverURI == null || serverURI.equalsIgnoreCase("")) )
+        (methodName == null || methodName.equalsIgnoreCase("")) )
     {
-      out.println("<br><b>Unable to resolve dissemination request."
-                  + "<br><table border=\"0\"><tr><td>PID</td><td>"
-                  + PID + "</td></tr><tr><td>bDefPID</td><td>"
-                  + bDefPID + "</td></tr><tr><td>methodName</td><td>"
-                  + methodName + "</td></tr><tr><td>serverURI</td><td>"
-                  + serverURI + "</td></tr></table><br>");
+      String message = "[MethodParameterResolverServlet] Insufficient "
+          + "information to construct dissemination request. Parameters "
+          + "received from web form were: PID: " + PID
+          + " -- bDefPID: " + bDefPID
+          + " -- methodName: " + methodName
+          + " -- methodParms: " + methodParms.toString() + "\".  ";
+      System.out.println(message);
+      response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
     } else
     {
       // Translate parameters into dissemination request.
-      StringBuffer url = new StringBuffer();
-      url.append(serverURI
+      StringBuffer redirectURL = new StringBuffer();
+      URLDecoder decode = new URLDecoder();
+      PID = decode.decode(PID, "UTF-8");
+      bDefPID = decode.decode(bDefPID,"UTF-8");
+      redirectURL.append(API_A_SERVLET_PATH
           + "action_=GetDissemination&"
           + "PID_=" + PID + "&"
           + "bDefPID_=" + bDefPID + "&"
-          + "methodName_=" + methodName + "&"
-          +methodParms.toString());
+          + "methodName_=" + methodName);
+      if (methodParms.length() > 0)
+      {
+        if (versDateTime == null || versDateTime.equalsIgnoreCase(""))
+        {
+          redirectURL.append("&"+methodParms.toString());
+        } else
+        {
+          redirectURL.append("&asOfDate_="+versDateTime+"&"+methodParms.toString());
+        }
+      } else
+      {
+        if (versDateTime != null && !versDateTime.equalsIgnoreCase(""))
+        {
+          redirectURL.append("&asOfDate_="+versDateTime);
+        }
+      }
 
-      // remove any dangling ampersands and redirect request.
-      url.replace(url.lastIndexOf("&"),url.lastIndexOf("&")+1,"");
-      response.sendRedirect(url.toString());
+      // Redirect to API-A interface.
+      response.sendRedirect(redirectURL.toString());
     }
   }
 

@@ -414,8 +414,8 @@ public class DisseminationService
     {
       throw new DisseminationException("[DisseminationService] register"
           + "DatastreamLocation: "
-          + "returned an error.\nThe underlying error was a "
-          + th.getClass().getName() + "\nThe message "
+          + "returned an error. The underlying error was a "
+          + th.getClass().getName() + " The message "
           + "was \"" + th.getMessage() + "\" .");
     }
 
