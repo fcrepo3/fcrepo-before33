@@ -141,7 +141,7 @@ public class DefinitiveDOWriter
             TestStreamStorage tempStorage, StreamValidator validator,
             DODeserializer importDeserializer, DOSerializer storageSerializer,
             DODeserializer storageDeserializer, DOSerializer exportSerializer,
-            InputStream initialContent) 
+            InputStream initialContent, boolean useContentPid) 
             throws ObjectIntegrityException, 
             StreamIOException, StreamReadException {
         m_obj=new BasicDigitalObject();
@@ -155,6 +155,9 @@ public class DefinitiveDOWriter
         m_pendingRemoval=false;
         m_removed=false;
         set(initialContent);
+        if (!useContentPid) {
+            m_obj.setPid(pid);
+        }
     }
 
     /**
