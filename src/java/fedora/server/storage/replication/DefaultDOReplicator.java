@@ -1832,30 +1832,17 @@ public class DefaultDOReplicator
           // port configuration changes after an object is stored in the
           // repository.
           if (fedoraServerPort.equalsIgnoreCase("80") &&
-              hostPortPattern.matcher(locationString).find())
-          {
-              //System.out.println("port is 80 and hostPort pattern found - convert to l.f.s");
-              return hostPortPattern.matcher(
-                locationString).replaceAll("local.fedora.server");
-          }
-          else if (fedoraServerPort.equalsIgnoreCase("80") &&
               hostPattern.matcher(locationString).find())
           {
-              //System.out.println("port is 80 and host pattern found - convert to l.f.s");
+              //System.out.println("port is 80 and host-only pattern found - convert to l.f.s");
               return hostPattern.matcher(
-                locationString).replaceAll("local.fedora.server");
-          }
-
-          else if (hostPortPattern.matcher(locationString).find())
-          {
-              //System.out.println("hostPort pattern found - convert to l.f.s");
-              return hostPortPattern.matcher(
                 locationString).replaceAll("local.fedora.server");
           }
           else
           {
-              //System.out.println("no local pattern found");
-              return locationString;
+              //System.out.println("looking for hostPort pattern to convert to l.f.s");
+              return hostPortPattern.matcher(
+                locationString).replaceAll("local.fedora.server");
           }
         }
 
