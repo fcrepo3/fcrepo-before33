@@ -879,7 +879,7 @@ public class BatchModifyParser extends DefaultHandler
                     xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
                     xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
                     xml.append("           xmlns:METS=\"http://www.loc.gov/METS/\"\n");
-                    xml.append("           xmlns:fedoraAudit=\"http://fedora.comm.nsdlib.org/audit\"\n");
+                    xml.append("           xmlns:fedoraAudit=\"http://www.fedora.info/definitions/audit\"\n");
                     xml.append("           xmlns:xlink=\"http://www.w3.org/TR/xlink\"\n");
                     xml.append("           xsi:schemaLocation=\"http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd\"\n");
                     xml.append("           TYPE=\"FedoraObject\"\n");
@@ -893,6 +893,7 @@ public class BatchModifyParser extends DefaultHandler
                     ByteArrayInputStream in=new ByteArrayInputStream(
                             objXML.getBytes("UTF-8"));
                     String newPID=AutoIngestor.ingestAndCommit(
+                    		Administrator.APIA,
                             Administrator.APIM,
                             in,
                             "Created with Admin GUI \"New Object\" command");
