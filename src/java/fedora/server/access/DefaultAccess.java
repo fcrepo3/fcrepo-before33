@@ -107,12 +107,19 @@ public class DefaultAccess extends Module implements Access
   public String[] getBehaviorDefinitions(Context context, String PID,
       Calendar asOfDateTime) throws ServerException
   {
+    long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     String[] behaviorDefs = null;
     DOReader reader =
         m_manager.getReader(context, PID);
     behaviorDefs = reader.GetBehaviorDefs(versDateTime);
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip GetBehaviorDefinitions: "
+        + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip GetBehaviorDefinitions: "
+        + interval + " milliseconds.");
     return behaviorDefs;
   }
 
@@ -132,12 +139,19 @@ public class DefaultAccess extends Module implements Access
   public MethodDef[] getBehaviorMethods(Context context, String PID,
       String bDefPID, Calendar asOfDateTime) throws ServerException
   {
+    long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
     MethodDef[] methodResults =
         reader.GetBMechMethods(bDefPID, versDateTime);
+    long stopTime = new Date().getTime();
+    long interval = stopTime - startTime;
+    System.out.println("[DefaultAccess] Roundtrip GetBehaviorMethods: "
+              + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip GetBehaviorMethods: "
+              + interval + " milliseconds.");
     return methodResults;
   }
 
@@ -159,6 +173,7 @@ public class DefaultAccess extends Module implements Access
   public MIMETypedStream getBehaviorMethodsXML(Context context,
       String PID, String bDefPID, Calendar asOfDateTime) throws ServerException
   {
+    long startTime = new Date().getTime();
     m_ipRestriction.enforce(context);
     try
     {
@@ -178,6 +193,12 @@ public class DefaultAccess extends Module implements Access
       {
         MIMETypedStream methodDefs =
             new MIMETypedStream(CONTENT_TYPE_XML, baos.toByteArray());
+        long stopTime = new Date().getTime();
+        long interval = stopTime - startTime;
+        System.out.println("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
+                  + interval + " milliseconds.");
+        logFiner("[DefaultAccess] Roundtrip GetBehaviorMethodsXML: "
+              + interval + " milliseconds.");
         return methodDefs;
       }
     } catch (IOException ioe)
@@ -256,6 +277,8 @@ public class DefaultAccess extends Module implements Access
     long interval = stopTime - startTime;
     System.out.println("[DefaultAccess] Roundtrip GetDissemination: "
               + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip GetDissemination: "
+              + interval + " milliseconds.");
     return dissemination;
   }
 
@@ -284,6 +307,8 @@ public class DefaultAccess extends Module implements Access
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
     System.out.println("[DefaultAccess] Roundtrip GetObjectMethods: "
+              + interval + " milliseconds.");
+    logFiner("[DefaultAccess] Roundtrip GetObjectMethods: "
               + interval + " milliseconds.");
     return methodDefs;
   }
