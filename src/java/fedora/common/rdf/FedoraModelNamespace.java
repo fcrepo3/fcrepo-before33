@@ -33,6 +33,8 @@ public class FedoraModelNamespace extends RDFNamespace {
     public final RDFName OWNER;
     public final RDFName STATE;
     public final RDFName USES_BMECH;
+    public final RDFName OBJECT_STATE;
+    public final RDFName DATASTREAM_STATE;
 
     // Values
     public final RDFName ACTIVE;
@@ -59,6 +61,9 @@ public class FedoraModelNamespace extends RDFNamespace {
         this.OWNER                = new RDFName(this, "owner");
         this.STATE                = new RDFName(this, "state");
         this.USES_BMECH           = new RDFName(this, "usesBMech");
+        this.OBJECT_STATE         = new RDFName(this, "objectState");
+        this.DATASTREAM_STATE     = new RDFName(this, "datastreamState");
+
 
         // Values
         this.ACTIVE               = new RDFName(this, "Active");

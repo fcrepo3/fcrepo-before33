@@ -6,6 +6,8 @@ import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
+
+import fedora.common.Constants;
 import fedora.server.ReadOnlyContext;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
@@ -25,7 +27,10 @@ import fedora.server.storage.types.Datastream;
 	private ResourceAttributeFinderModule() {
 		super();
 		try {
-			registerAttribute(Authorization.RESOURCE_OBJECT_STATE_URI_STRING, StringAttribute.identifier);
+			registerAttribute(Constants.MODEL.OBJECT_STATE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.MODEL.DATASTREAM_STATE.uri, StringAttribute.identifier);			
+			registerAttribute(Constants.MODEL.OWNER.uri, StringAttribute.identifier);
+			registerAttribute(Constants.MODEL.CONTENT_MODEL.uri, StringAttribute.identifier);			
 			registerAttribute(Authorization.RESOURCE_DATASTREAM_STATE_URI_STRING, StringAttribute.identifier);
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET);
 			setInstantiatedOk(true);
@@ -89,7 +94,6 @@ import fedora.server.storage.types.Datastream;
 		return resourceId;			
 	}
 
-	
 	private final boolean validResourceId(String resourceId) {
 		if (resourceId == null)
 			return false;		
@@ -99,9 +103,56 @@ import fedora.server.storage.types.Datastream;
 		return true;
 	}
 	
+	private final String getDatastreamId(EvaluationCtx context) {
+		URI datastreamIdUri = null;
+		try {
+			datastreamIdUri = new URI(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		EvaluationResult attribute = context.getResourceAttribute(STRING_ATTRIBUTE_URI, datastreamIdUri, null);
+
+		Object element = getAttributeFromEvaluationCtx(attribute);
+		if (element == null) {
+			log("getDatastreamId: " + " exit on " + "can't get resource-id on request callback");
+			return null;
+		}
+
+		if (! (element instanceof StringAttribute)) {
+			log("getDatastreamId: " + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
+			return null;			
+		}
+ 
+		String datastreamId = ((StringAttribute) element).getValue();			
+		
+		if (datastreamId == null) {
+			log("getDatastreamId: " + " exit on " + "null resource-id");
+			return null;			
+		}
+
+		if (! validDatastreamId(datastreamId)) {
+			log("getDatastreamId: " + " exit on " + "invalid resource-id");
+			return null;			
+		}
+		
+		return datastreamId;			
+	}
+
+	private final boolean validDatastreamId(String datastreamId) {
+		if (datastreamId == null)
+			return false;		
+		// "" is a valid resource id, for it represents a don't-care condition
+		if (" ".equals(datastreamId))
+			return false;
+		return true;
+	}
+
+	
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context) {
 		String resourceId = getResourceId(context);		
 		if ("".equals(resourceId)) {
+			log("no resourceId");
 			return null;
 		}
 		log("getResourceAttribute, resourceId=" + resourceId);
@@ -114,31 +165,40 @@ import fedora.server.storage.types.Datastream;
 			return null;
 		}
 		String[] values = null;
-		if (Authorization.RESOURCE_OBJECT_STATE_URI_STRING.equals(attributeId)) {
-			log("looking for fedora-object-state");
+		if (Constants.MODEL.OBJECT_STATE.uri.equals(attributeId)) {
 			try {
 				values = new String[1];
 				values[0] = reader.GetObjectState();
+				log("got " + Constants.MODEL.OBJECT_STATE.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("couldn't get datastream");
+				log("failed getting " + Constants.MODEL.OBJECT_STATE.uri);
 				return null;					
 			}
-			log("got fedora-object-state=" + values);
-		} else if (Authorization.RESOURCE_DATASTREAM_STATE_URI_STRING.equals(attributeId)) {
-			log("looking for fedora-datastream-state");			
-			URI temp = getAttributeIdUri(Authorization.RESOURCE_DATASTREAM_ID_URI_STRING);
-
-			EvaluationResult attribute = context.getResourceAttribute(STRING_ATTRIBUTE_URI, temp, resourceCategory);
-			Object element = getAttributeFromEvaluationCtx(attribute);
-			if (element == null) {
-				log("ResourceAttributeFinder:findAttribute" + " exit on " + "can't get resource-id on request callback");
+		} else if (Constants.MODEL.OWNER.uri.equals(attributeId)) { 
+				try {
+					values = new String[1];
+					values[0] = reader.getOwnerId();
+					log("got " + Constants.MODEL.OWNER.uri + "=" + values[0]);
+				} catch (ServerException e) {
+					log("failed getting " + Constants.MODEL.OWNER.uri);
+					return null;					
+				}
+		} else if (Constants.MODEL.CONTENT_MODEL.uri.equals(attributeId)) { 
+			try {
+				values = new String[1];
+				values[0] = reader.getContentModelId();
+				log("got " + Constants.MODEL.CONTENT_MODEL.uri + "=" + values[0]);
+			} catch (ServerException e) {
+				log("failed getting " + Constants.MODEL.CONTENT_MODEL.uri);
+				return null;					
+			}				
+		} else if (Constants.MODEL.DATASTREAM_STATE.uri.equals(attributeId)) {
+			String datastreamId = getDatastreamId(context);
+			if ("".equals(datastreamId)) {
+				log("no datastreamId");
 				return null;
 			}
-			if (! (element instanceof StringAttribute)) {
-				log("ResourceAttributeFinder:findAttribute" + " exit on " + "couldn't get datastream-pid from xacml request " + "non-string returned");
-				return null;			
-			}
-			String datastreamId = ((StringAttribute) element).getValue();
+			log("datastreamId=" + datastreamId);
 			Datastream datastream;
 			try {
 				datastream = reader.GetDatastream(datastreamId, new Date()); //right import (above)?
@@ -146,8 +206,12 @@ import fedora.server.storage.types.Datastream;
 				log("couldn't get datastream");
 				return null;					
 			}
+			if (datastream == null) {
+				log("got null datastream");
+				return null;
+			}
 			values = new String[1];
-			 values[0] = datastream.DSState;
+			values[0] = datastream.DSState;
 		} else {
 			log("looking for unknown resource attribute=" + attributeId);			
 		}

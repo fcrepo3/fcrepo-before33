@@ -12,8 +12,8 @@
       <Action>
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
-            AttributeId="info:fedora/fedora-system:def/policy#action-api"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">apia</AttributeValue>
+            AttributeId="info:fedora/fedora-system:def/policy-action#api"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">info:fedora/fedora-system:def/policy-action#apia</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>    

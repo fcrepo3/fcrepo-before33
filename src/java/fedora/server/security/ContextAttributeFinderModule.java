@@ -7,6 +7,9 @@ import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
+
+import fedora.common.Constants;
+import fedora.common.rdf.RDFName;
 import fedora.server.Context;
 
 /*package*/ class ContextAttributeFinderModule extends AttributeFinderModule {
@@ -24,16 +27,33 @@ import fedora.server.Context;
 	private ContextAttributeFinderModule() {
 		super();
 		try {
-			registerAttribute(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, StringAttribute.identifier);
-			registerAttribute(Authorization.ENVIRONMENT_CLIENT_IP_URI_STRING, StringAttribute.identifier);
-			attributesDenied.add(Authorization.ACTION_CONTEXT_URI_STRING);
-			attributesDenied.add(Authorization.SUBJECT_ID_URI_STRING);
-			attributesDenied.add(Authorization.ACTION_ID_URI_STRING);
-			attributesDenied.add(Authorization.ACTION_API_URI_STRING);
 			registerSupportedDesignatorType(AttributeDesignator.SUBJECT_TARGET);
 			registerSupportedDesignatorType(AttributeDesignator.ACTION_TARGET); //<<??????
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET); //<<?????
 			registerSupportedDesignatorType(AttributeDesignator.ENVIRONMENT_TARGET);
+
+			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_DATE_TIME.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_DATE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_TIME.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_PROTOCOL.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SCHEME.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SECURITY.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_AUTHTYPE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_METHOD.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_STATUS.uri, StringAttribute.identifier);		
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_LENGTH.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_TYPE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_FQDN.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_FQDN.uri, StringAttribute.identifier);
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_IP_ADDRESS.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_PORT.uri, StringAttribute.identifier);				
+ 
+			attributesDenied.add(Constants.POLICY_ACTION.CONTEXT_ID.uri);
+			attributesDenied.add(Authorization.SUBJECT_ID_URI_STRING);
+			attributesDenied.add(Authorization.ACTION_ID_URI_STRING);
+			attributesDenied.add(Constants.POLICY_ACTION.API.uri);
 			
 			setInstantiatedOk(true);
 		} catch (URISyntaxException e1) {
@@ -54,7 +74,7 @@ import fedora.server.Context;
 			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId type");
 		}
 		try {
-			contextIdId = new URI(Authorization.ACTION_CONTEXT_URI_STRING);
+			contextIdId = new URI(Constants.POLICY_ACTION.CONTEXT_ID.uri);
 		} catch (URISyntaxException e) {
 			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId itself");
 		}

@@ -5,11 +5,5 @@
 -->
 <tomcat-users>
   <user name="fedoraAdmin" password="#" roles="administrator" />
-  <user name="noroles" password="noroles" roles="" />
-  <user name="vivauser" password="vivauser" roles="institution=VIVA" />
-  <user name="vivaadmin" password="vivaadmin" roles="institution=VIVA,administator" />
-  <user name="uvacsstudent" password="uvacsstudent" roles="institution=UVA,status=Student,department=CS" />   
-  <user name="uvacsfaculty" password="uvacsfaculty" roles="institution=UVA,status=Faculty,department=CS" />
-  <user name="uvaartstudent" password="uvaartstudent" roles="institution=UVA,status=Student,department=ART" />   
-  <user name="uvaartfaculty" password="uvaartfaculty" roles="institution=UVA,status=Faculty,department=ART" />
+  <user name="guest" password="" roles="" />
 </tomcat-users>

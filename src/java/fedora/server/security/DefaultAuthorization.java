@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
@@ -307,7 +309,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_ADD_DATASTREAM, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.ADD_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceAddDisseminator(Context context, String pid) 
@@ -325,7 +327,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_ADD_DISSEMINATOR, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.ADD_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 		
 	public final void enforceExportObject(Context context, String pid) 
@@ -343,7 +345,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_EXPORT_OBJECT, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.EXPORT_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}			
 	
 	
@@ -361,7 +363,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DISSEMINATOR_HISTORY, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATOR_HISTORY.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceGetNextPid(Context context, String namespace, int nNewPids) 
@@ -377,7 +379,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_NEXT_PID, ACTION_API_VALUE_APIM, "", namespace, context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_NEXT_PID.uri, Constants.POLICY_ACTION.APIM.uri, "", namespace, context);
 	}	
 
 	public final void enforceGetDatastream(Context context, String pid, String datastreamId) 
@@ -393,7 +395,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DATASTREAM, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
@@ -409,7 +411,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DATASTREAM_HISTORY, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM_HISTORY.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	private final String ensureDate (Date date, Context context) throws AuthzOperationalException {
@@ -440,7 +442,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DATASTREAMS, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAMS.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDate) 
@@ -459,7 +461,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);		
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DISSEMINATOR, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
@@ -477,7 +479,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DISSEMINATORS, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATORS.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceGetObjectProperties(Context context, String pid) 
@@ -495,7 +497,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_OBJECT_PROPERTIES, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_PROPERTIES.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforceGetObjectXML(Context context, String pid) 
@@ -513,7 +515,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_OBJECT_XML, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_XML.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}		
 	
 	public final void enforceIngestObject(Context context, String pid) 
@@ -531,7 +533,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_INGEST_OBJECT, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.INGEST_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceListObjectInFieldSearchResults(Context context, String pid) 
@@ -550,7 +552,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			}
 			context.setResourceAttributes(resourceAttributes);
 			*/
-			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_LIST_OBJECT_IN_FIELD_SEARCH_RESULTS, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
 	}	
 	
@@ -570,7 +572,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			}
 			context.setResourceAttributes(resourceAttributes);
 			*/
-			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+			xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
 	}
 
@@ -589,7 +591,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_MODIFY_DATASTREAM_BY_REFERENCE, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String datastreamState) 
@@ -606,7 +608,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_MODIFY_DATASTREAM_BY_VALUE, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DATASTREAM_BY_VALUE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String bmechPid, String disseminatorState) 
@@ -626,23 +628,23 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_MODIFY_DISSEMINATOR, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
-	public final void enforceModifyObject(Context context, String pid, String objectState) 
+	public final void enforceModifyObject(Context context, String pid, String newObjectState) 
 	throws NotAuthorizedException { 
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
 		try {
 			//resourceAttributes.set(RESOURCE_ID_URI_STRING, pid);	
 			//resourceAttributes.set(RESOURCE_NAMESPACE_URI_STRING, extractNamespace(pid));	
-			resourceAttributes.set(RESOURCE_OBJECT_STATE_URI_STRING, objectState);	
+			resourceAttributes.set(Constants.POLICY_ACTION.NEW_OBJECT_STATE.uri, newObjectState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_MODIFY_OBJECT, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.MODIFY_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
 	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId) 
@@ -658,7 +660,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_PURGE_DATASTREAM, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_DATASTREAM.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
 	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId) 
@@ -674,7 +676,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_PURGE_DISSEMINATOR, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_DISSEMINATOR.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
 	public final void enforcePurgeObject(Context context, String pid) 
@@ -692,7 +694,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_PURGE_OBJECT, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.PURGE_OBJECT.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 
 	public final void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
@@ -709,7 +711,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_SET_DATASTREAM_STATE, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.SET_DATASTREAM_STATE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
@@ -727,14 +729,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);	
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_SET_DISSEMINATOR_STATE, ACTION_API_VALUE_APIM, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.SET_DISSEMINATOR_STATE.uri, Constants.POLICY_ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public void enforceDescribeRepository(Context context) 
 	throws NotAuthorizedException {
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_DESCRIBE_REPOSITORY, ACTION_API_VALUE_APIA, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.DESCRIBE_REPOSITORY.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 
 	public void enforceFindObjects(Context context) 
@@ -742,14 +744,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		System.err.println("enforceFindObjects, subject (from context)=" + context.getSubjectValue(SUBJECT_ID_URI_STRING));
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_FIND_OBJECTS, ACTION_API_VALUE_APIA, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.FIND_OBJECTS.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 	
 	public void enforceRIFindObjects(Context context) 
 	throws NotAuthorizedException {
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_FIND_OBJECTS, ACTION_API_VALUE_APIA, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.FIND_OBJECTS.uri, Constants.POLICY_ACTION.APIA.uri, "", "", context);
 	}
 
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
@@ -767,7 +769,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);			
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DATASTREAM_DISSEMINATION, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DATASTREAM_DISSEMINATION.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public void enforceGetDissemination(Context context, String pid, String bDefPID, String methodName, Date asOfDate) 
@@ -787,7 +789,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);			
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_DISSEMINATION, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_DISSEMINATION.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceGetObjectHistory(Context context, String pid) 
@@ -805,7 +807,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		*/
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_OBJECT_HISTORY, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_HISTORY.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceGetObjectProfile(Context context, String pid, Date asOfDate) 
@@ -822,7 +824,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_GET_OBJECT_PROFILE, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.GET_OBJECT_PROFILE.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceListDatastreams(Context context, String pid, Date asOfDate) 
@@ -839,7 +841,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_LIST_DATASTREAMS, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_DATASTREAMS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	public void enforceListMethods(Context context, String pid, Date asOfDate) 
@@ -856,7 +858,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException("enforceX could not complete", e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), ACTION_ID_VALUE_LIST_METHODS, ACTION_API_VALUE_APIA, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(SUBJECT_ID_URI_STRING), Constants.POLICY_ACTION.LIST_METHODS.uri, Constants.POLICY_ACTION.APIA.uri, pid, extractNamespace(pid), context);
 	}
 
 	  private static final String pad(int n, int length) throws Exception {

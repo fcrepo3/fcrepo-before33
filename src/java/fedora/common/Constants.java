@@ -36,5 +36,8 @@ public interface Constants {
     public static final RDFSyntaxNamespace       RDF      = new RDFSyntaxNamespace();
     public static final FedoraViewNamespace      VIEW     = new FedoraViewNamespace();
     public static final XSDNamespace             XSD      = new XSDNamespace();
+    public static final FedoraPolicyActionNamespace     POLICY_ACTION    = new FedoraPolicyActionNamespace();
+    public static final FedoraPolicyEnvironmentNamespace     POLICY_ENVIRONMENT    = new FedoraPolicyEnvironmentNamespace();
+    public static final FedoraPolicyResourceNamespace     POLICY_RESOURCE    = new FedoraPolicyResourceNamespace();
 
 }

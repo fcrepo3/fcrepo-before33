@@ -19,6 +19,8 @@ import com.sun.xacml.ctx.ResponseCtx;
 import com.sun.xacml.ctx.Result;
 import com.sun.xacml.ctx.Subject;
 import com.sun.xacml.finder.PolicyFinder;
+
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.NotAuthorizedException;
@@ -48,8 +50,8 @@ public class PolicyEnforcementPoint {
 		try {
 			subjectIdUri = new URI(Authorization.SUBJECT_ID_URI_STRING);
 			actionIdUri = new URI(Authorization.ACTION_ID_URI_STRING);
-			actionApiUri = new URI(Authorization.ACTION_API_URI_STRING);
-			contextUri = new URI(Authorization.ACTION_CONTEXT_URI_STRING);
+			actionApiUri = new URI(Constants.POLICY_ACTION.API.uri);
+			contextUri = new URI(Constants.POLICY_ACTION.CONTEXT_ID.uri);
 			pidUri = new URI(Authorization.RESOURCE_ID_URI_STRING);
 			namespaceUri = new URI(Authorization.RESOURCE_NAMESPACE_URI_STRING);
 			System.err.println("all uris set, no throws");

@@ -19,26 +19,26 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#state" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">I</AttributeValue>
+          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#objectState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#state" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">D</AttributeValue>
+          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#objectState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>      
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastream-state" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">I</AttributeValue>
+          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastreamState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastream-state" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">D</AttributeValue>
+          <ResourceAttributeDesignator AttributeId="info:fedora/fedora-system:def/model#datastreamState" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>
     </Resources>

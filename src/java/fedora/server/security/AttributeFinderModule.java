@@ -283,6 +283,7 @@ import fedora.server.storage.types.Datastream;
 	
 	protected final void log(String msg) {
 		if (! log) return;
+		msg = this.getClass().getName() + ": " + msg;
 		if (servletContext != null) {
 			servletContext.log(msg);
 		} else {
