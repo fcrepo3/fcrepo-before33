@@ -9,7 +9,7 @@ rem ----- MySQL installation, use the appropriate username and password for the 
 rem ----- that has DBA authority on the MySQL installation. The following local 
 rem ----- environment variables are set based on the input arguments to the script.
 rem
-rem ----- mysql_home      - the location where MySQL is installed
+rem ----- mysql_home      - the location where MySQL is installed (use double quotes if path contains spaces, e.g. "C:\Program Files\MySQL\MySQL server 4.1")
 rem ----- mysql_dba_user  - the name of the MySQL user with dba privileges (default: root)
 rem ----- mysql_dba_pass  - the password for the MySQL user with dba privileges (default" none)
 rem ----- fedoradba_user  - the name of MySQL user admin for Fedora database (default: fedoraAdmin)
@@ -19,11 +19,6 @@ rem ----- mysql41_flag    - optional MySQL 4.1 flag. Any string value will indic
 rem
 rem ----- check for input arguments
 
-if "%1" == "" goto showUsage
-if "%2" == "" goto showUsage
-if "%3" == "" goto showUsage
-if "%4" == "" goto showUsage
-if "%5" == "" goto showUsage
 if "%6" == "" goto showUsage
 
 set mysql_home=%1
@@ -106,7 +101,7 @@ goto end
 echo.
 echo Usage: mySQLConfig.bat mysqlHome mysqlDBAUser mysqlDBAPass fedoraUser fedoraPass fedoraDbName
 echo.
-echo mysqlHome     - The location where MySQL is installed (e.g., c:\mysql)
+echo mysqlHome     - The location where MySQL is installed (use double quotes if path contains spaces, e.g. "C:\Program Files\MySQL\MySQL server 4.1")
 echo mysqlDBAUser  - MySQL username with DBA authority  (root if new install)
 echo mysqlDBAPass  - MySQL password for DBA username    (none if new install)
 echo fedoraUser    - username for Fedora admin user (use fedoraAdmin as default)
