@@ -1,0 +1,26 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>Fedora&#153; API-M-Lite Documentation</title><meta name="generator" content="DocBook XSL Stylesheets V1.50.0"></head>
+   <body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+   <div class="article"><div class="titlepage"><div><h1 class="title"><a name="d0e2"></a><span class="inlinemediaobject"><img src="../../../images/fedora_logo108x150.jpg"></span></h1></div>
+    <div> 
+      <h1 class="title"><a name="d0e2"></a>Fedora&#153; API-M-Lite Interface Client 
+        User Documentation</h1>
+    </div><div><h3 class="subtitle"><i>Software Release 2.0</i></h3></div>
+    <div> 
+      <h3 class="corpauthor">Fedora&#153; Development Team</h3>
+    </div>
+      <div>
+      <p class="copyright">Copyright &copy; 2002-2005 The Rector and Visitors 
+        of The University of Virginia and Cornell University</p>
+    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e44">Introduction</a></dt><dt><a href="#d0e57">Client Syntax</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e44"></a>Introduction</h2></div></div>
+	  <p>The Fedora API-M-Lite interface is implemented as an HTTP service that provides a simple 
+			URI-oriented definition for the Management service of a Fedora repository.  It is intended to
+			support a REST-like style of access to the Fedora Management web service (in contrast to a traditional
+			SOAP web service definition).  This means that we define a simple URL syntax that can be used to
+			issue management service requests. 	API-M-LITE does not provide service bindings for all of 
+			the operations defined in Fedora's full Management service (API-M).  Currently, API-M-LITE  only 
+			provides bindings for the method listed below. Additional methods will be implemented for API-M-Lite
+			in future releases of Fedora.
+			</p><div class="itemizedlist"><ul type="disc"><li><p>getNextPID - gets a list of the requested next available PIDs.</p></li></ul></div><p>For more information on the method definitions, refer to the API descriptions 
+  located at <a href="http://www.fedora.info/definitions/1/0/api/" target="_top">http://www.fedora.info/definitions/1/0/api/</a></p></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e57"></a>Client Syntax</h2></div></div><div class="variablelist"><p class="title"><b>getNextPID syntax:</b></p><dl><dt><span class="term">http://hostname:port/fedora/mgmt/getNextPID?<span class="bold"><b>[numPIDs=NUMPIDS&amp;][namespace=NAMESPACE&amp;][xml=BOOLEAN&amp;]</b></span></span></dt><dd><p>This syntax requests a list of the next available PIDs. The result is returned as a MIME-typed stream. Items enclosed in square brackets are optional.</p></dd></dl></div><blockquote class="blockquote"><div class="itemizedlist"><ul type="disc"><li><p>hostname - required hostname of the Fedora server. </p></li><li><p>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </p></li><li><p>fedora - a required parameter specifying the Fedora servlet path.</p></li><li><p>mgmt - a required parameter specifying the Fedora servlet path.</p></li><li><p>numPIDs - a optional parameter specifying the number of PIDs to generate. If omitted, the value defaults to one.</p></li><li><p>namespace - an optional parameter specifying the namespace to be used in generating the PIDs. If omitted, the value defaults to the value of the pidNamespace parameter in the fedora.fcfg configuration file. </p></li><li><p>xml - an optional parameter indicating the format of the response. A value of "false" indicates the response format is HTML. A value of "true" indicates the response format is  XML. If omitted, the value defaults to a value of "false".</p></li></ul></div></blockquote><div class="variablelist"><p class="title"><b>Examples</b></p><dl><dt><span class="term">Generate a single PID using the default namespace configured in the fedora.fcfg file and return the results as HTML:</span></dt><dd><p>http://localhost:8080/fedora/mgmt/getNextPID?</p></dd><dt><span class="term">Generate five PIDs using the default namespace configured in the fedora.fcfg file and return the results as HTML:</span></dt><dd><p>http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5</p></dd><dt><span class="term">Generate 5 PIDs using a namespace value of "my-namespace" and return the results as HTML:</span></dt><dd><p>http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace</p></dd><dt><span class="term">Generate 5 PIDs using the namespace value of "my-namespace" and return the results as XML:</span></dt><dd><p>http://localhost:8080/fedora/mgmt/getNextPID?numPIDs=5&amp;namespace=my-namespace&amp;xml=true</p></dd></dl></div></div></div></body></html>
