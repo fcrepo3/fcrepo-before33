@@ -1,6 +1,6 @@
 /**
- * Image manipulations are handled by ImageJ, a Java API written for image
- * processing.
+ * Image manipulations (with the exception of the watermarking function)
+ * are handled by ImageJ, a Java API written for image processing.
  *
  * Image encoding and decoding is handled by JAI, the Java Advanced Imaging
  * API, with the exception of GIF encoding, which is handled by ImageJ.
@@ -10,7 +10,7 @@
  *  Rasband, W.S., ImageJ, National Institutes of Health, Bethesda,
  *  Maryland, USA, http://rsb.info.nih.gov/ij/, 1997-2003.
  *
- *	The GifEncoder portion of ImageJ is copyrighted below:
+ *    The GifEncoder portion of ImageJ is copyrighted below:
  *
  *  Transparency handling and variable bit size courtesy of Jack Palevich.
  *
@@ -64,21 +64,23 @@ import ij.*;
 import ij.io.*;
 import ij.process.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 /**
- *	ImageManipulation is a Java servlet that takes a URL of an image as a param
- *	and based on other given parameters, can perform a variety of image related
- *	manipulations on the object. After the image is manipulated, it is then
- *	sent back as an image/type object to the calling parent, most often a
- *	browser or an HTML img tag.
+ *    ImageManipulation is a Java servlet that takes a URL of an image as a param
+ *    and based on other given parameters, can perform a variety of image related
+ *    manipulations on the object. After the image is manipulated, it is then
+ *    sent back as an image/type object to the calling parent, most often a
+ *    browser or an HTML img tag.
  *
- *	@author Theodore Serbinski, tss24@cornell.edu
- *	@version 1.0
- *	@created April 2003
+ *    @author Theodore Serbinski, tss24@cornell.edu
+ *    @version 1.0
+ *    @created April 2003
  */
 public class ImageManipulation extends HttpServlet {
 
@@ -87,47 +89,71 @@ public class ImageManipulation extends HttpServlet {
     private MultiThreadedHttpConnectionManager cManager=
             new MultiThreadedHttpConnectionManager();
 
-	/**
-	 *	Method automatically called by browser to handle image manipulations.
-	 *
-	 *	@param	req	Browser request to servlet
-	 *					res Response sent back to browser after image manipulation
-	 *	@throws	IOException	If an input or output exception occurred
-	 *					ServletException	If a servlet exception occurred
-	 */
-	public void doGet(HttpServletRequest req, HttpServletResponse res) 
+    /**
+     *    Method automatically called by browser to handle image manipulations.
+     *
+     *    @param    req    Browser request to servlet
+     *                    res Response sent back to browser after image manipulation
+     *    @throws    IOException    If an input or output exception occurred
+     *                    ServletException    If a servlet exception occurred
+     */
+    public void doGet(HttpServletRequest req, HttpServletResponse res) 
             throws ServletException, IOException {
 
-		// collect all possible parameters for servlet
-		String url= req.getParameter("url");
-		String op= req.getParameter("op");
-		String newWidth= req.getParameter("newWidth");
-		String brightAmt= req.getParameter("brightAmt");
-		String zoomAmt= req.getParameter("zoomAmt");
-		String wmText= req.getParameter("wmText");
-		String cropX= req.getParameter("cropX");
-		String cropY= req.getParameter("cropY");
-		String cropWidth= req.getParameter("cropWidth");
-		String cropHeight= req.getParameter("cropHeight");
-		String convertTo= req.getParameter("convertTo");
+        // collect all possible parameters for servlet
+        String url= req.getParameter("url");
+        String op= req.getParameter("op");
+        String newWidth= req.getParameter("newWidth");
+        String brightAmt= req.getParameter("brightAmt");
+        String zoomAmt= req.getParameter("zoomAmt");
+        String wmText= req.getParameter("wmText");
+        String cropX= req.getParameter("cropX");
+        String cropY= req.getParameter("cropY");
+        String cropWidth= req.getParameter("cropWidth");
+        String cropHeight= req.getParameter("cropHeight");
+        String convertTo= req.getParameter("convertTo");
         if (convertTo!=null) convertTo=convertTo.toLowerCase();
         try {
             if (op==null) throw new ServletException("op parameter not specified.");
             String outputMimeType;
             // get the image via url and put it into the ImagePlus processor.
-            ImageProcessor ip=new ImagePlus("temp", getImage(url)).getProcessor();
+            BufferedImage img=getImage(url);
+            // do watermarking stuff 
+            if (op.equals("watermark")) {
+	        if (wmText==null) {
+		    throw new ServletException("Must specify wmText.");
+		}
+                Graphics g=img.getGraphics();
+                int fontSize=img.getWidth()*3/100;
+                if (fontSize<10) fontSize=10;
+                g.setFont(new Font("Lucida Sans", Font.BOLD, fontSize));
+		FontMetrics fm=g.getFontMetrics();
+                int stringWidth=(int) fm.getStringBounds(wmText, g).getWidth();
+		int x=img.getWidth()/2 - stringWidth/2;
+                int y=img.getHeight() - fm.getHeight(); 
+                g.setColor(new Color(180, 180, 180));
+                g.fill3DRect(x-10, y-fm.getHeight()-4, stringWidth+20, 
+                        fm.getHeight()+12, true);
+                g.setColor(new Color(100, 100, 100));
+                g.drawString(wmText, x+2, y+2);
+                g.setColor(new Color(240, 240, 240));
+                g.drawString(wmText, x, y);
+            }
+            ImageProcessor ip=new ImagePlus("temp", img).getProcessor();
             // if the inputMimeType is image/gif, need to convert to RGB in any case
             if (inputMimeType.equals("image/gif")) {
                 ip=ip.convertToRGB();
                 alreadyConvertedToRGB=true;
             }
             // causes scale() and resize() to do bilinear interpolation
-    		ip.setInterpolate(true);
+            ip.setInterpolate(true);
             if (!op.equals("convert")) {
                 if (op.equals("resize")) ip=resize(ip,newWidth);
                 else if (op.equals("zoom")) ip=zoom(ip, zoomAmt);
                 else if (op.equals("brightness")) ip=brightness(ip, brightAmt);
-                else if (op.equals("watermark")) ip=watermark(ip,wmText);
+                else if (op.equals("watermark")) {
+                    // this is now taken care of beforehand (see above)
+                }
                 else if (op.equals("grayscale")) ip=grayscale(ip);
                 else if (op.equals("crop")) ip=crop(ip,cropX,cropY,cropWidth,cropHeight);
                 else {
@@ -157,10 +183,11 @@ public class ImageManipulation extends HttpServlet {
             outputImage(ip, out, outputMimeType);
             out.flush(); out.close();
         } catch (Exception e) {
+        e.printStackTrace();
             res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    e.getMessage());
+                    e.getClass().getName() + ": " + e.getMessage());
         }
-	}
+    }
 
     /**
      * Gets and deserializes the image at the given URL into an Image object.
@@ -178,7 +205,7 @@ public class ImageManipulation extends HttpServlet {
      * @return Image The image object, if successful.
      * @throws Exception If any of the aforementioned problems occurs.
      */
-    private Image getImage(String url) 
+    private BufferedImage getImage(String url) 
             throws Exception {
         GetMethod get=null;
         try {
@@ -253,206 +280,163 @@ public class ImageManipulation extends HttpServlet {
         }
     }
     
-	/**
-	 *	Resizes an image to the supplied new width in pixels. The height is
-	 *	reduced proportionally to the new width.
-	 *
-	 *	@param	ip The image to resize
-	 *				 	newWidth The width in pixels to resize the image to
-	 *	@return The image resized
-	 */
-	private ImageProcessor resize(ImageProcessor ip, String newWidth) {
-		if (newWidth != null) {
-			try {
-				int width= Integer.parseInt(newWidth);
+    /**
+     *    Resizes an image to the supplied new width in pixels. The height is
+     *    reduced proportionally to the new width.
+     *
+     *    @param    ip The image to resize
+     *                     newWidth The width in pixels to resize the image to
+     *    @return The image resized
+     */
+    private ImageProcessor resize(ImageProcessor ip, String newWidth) {
+        if (newWidth != null) {
+            try {
+                int width= Integer.parseInt(newWidth);
 
-				if (width < 0)
-					return ip;
+                if (width < 0)
+                    return ip;
 
-				int imgWidth= ip.getWidth();
-				int imgHeight= ip.getHeight();
+                int imgWidth= ip.getWidth();
+                int imgHeight= ip.getHeight();
 
-				ip= ip.resize(width, width*imgHeight/imgWidth);
+                ip= ip.resize(width, width*imgHeight/imgWidth);
             }
-			// no need to do anything with number format exception since the servlet
-			// returns only images; just return the original image
-			catch (NumberFormatException e) {}
-		}
+            // no need to do anything with number format exception since the servlet
+            // returns only images; just return the original image
+            catch (NumberFormatException e) {}
+        }
 
-		return ip;
-	}
-
-
-	/**
-	 *	Zooms either in or out of an image by a supplied amount. The zooming
-	 *	occurs from the center of the image.
-	 *
-	 *	@param	ip The image to zoom
-	 *					zoomAmt The amount to zoom the image.
-	 *									0 < zoomAmt < 1 : zoom out
-	 *									1 = zoomAmt     : original image
-	 *									1 < zoomAmt			: zoom in
-	 *	@return The image zoomed
-	 */
-	private ImageProcessor zoom(ImageProcessor ip, String zoomAmt) {
-		if (zoomAmt != null) {
-			try {
-				float zoom= Float.parseFloat(zoomAmt);
-
-				if (zoom < 0)
-					return ip;
-
-				ip.scale(zoom,zoom);
-
-				// if the image is being zoomed out, trim the extra whitespace around the image
-				if (zoom < 1) {
-					int imgWidth= ip.getWidth();
-					int imgHeight= ip.getHeight();
-
-					// set a ROI around the image, minus the extra whitespace
-					ip.setRoi((int)(Math.round(imgWidth/2-imgWidth*zoom/2)), (int)(Math.round(imgHeight/2-imgHeight*zoom/2)), (int)(Math.round(imgWidth*zoom)), (int)(Math.round(imgHeight*zoom)));
-					ip= ip.crop();
-				}
-
-			}
-
-			// no need to do anything with number format exception since the servlet
-			// returns only images; just return the original image
-			catch (NumberFormatException e) {}
-		}
-
-		return ip;
-	}
+        return ip;
+    }
 
 
-	/**
-	 *	Adjusts the brightness of an image by a supplied amount.
-	 *
-	 *	@param	ip The image to adjust the brightness of
-	 *					brightAmt The amount to adjust the brightness of the image by
-	 *									0 <= brightAmt < 1 : darkens image
-	 *									1 = brightAmt      : original image
-	 *									1 < brightAmt			 : brightens image
-	 *	@return The image with brightness levels adjusted
-	 */
-	private ImageProcessor brightness(ImageProcessor ip, String brightAmt) {
-		if (brightAmt != null) {
-			try {
-				float bright= Float.parseFloat(brightAmt);
+    /**
+     *    Zooms either in or out of an image by a supplied amount. The zooming
+     *    occurs from the center of the image.
+     *
+     *    @param    ip The image to zoom
+     *                    zoomAmt The amount to zoom the image.
+     *                                    0 < zoomAmt < 1 : zoom out
+     *                                    1 = zoomAmt     : original image
+     *                                    1 < zoomAmt            : zoom in
+     *    @return The image zoomed
+     */
+    private ImageProcessor zoom(ImageProcessor ip, String zoomAmt) {
+        if (zoomAmt != null) {
+            try {
+                float zoom= Float.parseFloat(zoomAmt);
 
-				if (bright < 0)
-					return ip;
+                if (zoom < 0)
+                    return ip;
 
-				ip.multiply(bright);
+                ip.scale(zoom,zoom);
 
-			}
+                // if the image is being zoomed out, trim the extra whitespace around the image
+                if (zoom < 1) {
+                    int imgWidth= ip.getWidth();
+                    int imgHeight= ip.getHeight();
 
-			// no need to do anything with number format exception since the servlet
-			// returns only images; just return the original image
-			catch (NumberFormatException e) {}
-		}
+                    // set a ROI around the image, minus the extra whitespace
+                    ip.setRoi((int)(Math.round(imgWidth/2-imgWidth*zoom/2)), (int)(Math.round(imgHeight/2-imgHeight*zoom/2)), (int)(Math.round(imgWidth*zoom)), (int)(Math.round(imgHeight*zoom)));
+                    ip= ip.crop();
+                }
 
-		return ip;
-	}
+            }
 
+            // no need to do anything with number format exception since the servlet
+            // returns only images; just return the original image
+            catch (NumberFormatException e) {}
+        }
 
-	/**
-	 *	Adds a watermark to an image using the supplied text.
-	 *
-	 *	@param	ip The image to add a watermark to
-	 *					watermarkText The text to write on the image
-	 *	@return	The watermarked image
-	 */
-	private ImageProcessor watermark(ImageProcessor ip, String watermarkText) {
-		if (watermarkText != null) {
-			try {
-				// set the font size to 3% of the image width or a minimum size of 10
-				int fontSize= ip.getWidth()*3/100;
-				if (fontSize < 10) fontSize= 10;
-
-				ip.setFont(new Font("SansSerif", Font.BOLD, fontSize));
-
-				// place text at bottom, center of image
-				int x= ip.getWidth()/2 - ip.getStringWidth(watermarkText)/2;
-				int y= ip.getHeight() - ip.getFontMetrics().getHeight();
-
-				// create a rectangle around text that is lighter than the image
-				ip.setRoi(x-5, y-ip.getFontMetrics().getHeight()-5, ip.getStringWidth(watermarkText) + 10, ip.getFontMetrics().getHeight() + 10);
-				ip.add(85);
-
-				// more colors:
-				// http://java.sun.com/j2se/1.4.1/docs/api/java/awt/Color.html
-				Color c= new Color(33,33,33);
-				ip.setColor(c);
-				ip.drawString(watermarkText, x, y);
-
-			}
-
-			// no need to do anything with number format exception since the servlet
-			// returns only images; just return the original image
-			catch (NumberFormatException e) {}
-		}
-
-		return ip;
-	}
+        return ip;
+    }
 
 
-	/**
-	 *	Converts an image to gray scale.
-	 *
-	 *	@param	ip The image to convert to grayscale
-	 *	@return The image converted to grayscale
-	 */
-	private ImageProcessor grayscale(ImageProcessor ip) {
-		ip= ip.convertToByte(true);
+    /**
+     *    Adjusts the brightness of an image by a supplied amount.
+     *
+     *    @param    ip The image to adjust the brightness of
+     *                    brightAmt The amount to adjust the brightness of the image by
+     *                                    0 <= brightAmt < 1 : darkens image
+     *                                    1 = brightAmt      : original image
+     *                                    1 < brightAmt             : brightens image
+     *    @return The image with brightness levels adjusted
+     */
+    private ImageProcessor brightness(ImageProcessor ip, String brightAmt) {
+        if (brightAmt != null) {
+            try {
+                float bright= Float.parseFloat(brightAmt);
 
-		return ip;
-	}
+                if (bright < 0)
+                    return ip;
 
+                ip.multiply(bright);
 
-	/**
-	 *	Crops an image with supplied starting point and ending point.
-	 *
-	 *	@param	ip The image to crop
-	 *					cropX The starting x position; x=0 corresponds to left side of image
-	 *					cropY	The starting y position; y=0 corresponds to top of image
-	 *					cropWidth The width of the crop, starting from the above x
-	 *					cropHeight The height of the crop, starting from the above y
-	 *	@return The image cropped
-	 */
-	public ImageProcessor crop(ImageProcessor ip, String cropX, String cropY, String cropWidth, String cropHeight) {
-		if ((cropX != null) && (cropY !=null)) {
-			try {
-				int x= Integer.parseInt(cropX);
-				int y= Integer.parseInt(cropY);
-				int width;
-				int height;
+            }
 
-				// if value for cropWidth is not given, just use the width of the image
-				if (cropWidth != null)
-					width= Integer.parseInt(cropWidth);
-				else
-					width= ip.getWidth();
+            // no need to do anything with number format exception since the servlet
+            // returns only images; just return the original image
+            catch (NumberFormatException e) {}
+        }
 
-				// if value for cropHeight is not given, just use the height of the image
-				if (cropHeight != null)
-					height= Integer.parseInt(cropHeight);
-				else
-					height= ip.getHeight();
+        return ip;
+    }
 
-				// if any value is negative, this causes ImageJ to explode, so just return
-				if (x < 0 || y < 0 || width < 0 || height < 0)
-					return ip;
+    /**
+     *    Converts an image to gray scale.
+     *
+     *    @param    ip The image to convert to grayscale
+     *    @return The image converted to grayscale
+     */
+    private ImageProcessor grayscale(ImageProcessor ip) {
+        ip= ip.convertToByte(true);
 
-				ip.setRoi(x,y,width,height);
-				ip= ip.crop();
-			}
+        return ip;
+    }
 
-			// no need to do anything with number format exception since the servlet
-			// returns only images; just return the original image
-			catch (NumberFormatException e) {}
-		}
+    /**
+     *    Crops an image with supplied starting point and ending point.
+     *
+     *    @param    ip The image to crop
+     *                    cropX The starting x position; x=0 corresponds to left side of image
+     *                    cropY    The starting y position; y=0 corresponds to top of image
+     *                    cropWidth The width of the crop, starting from the above x
+     *                    cropHeight The height of the crop, starting from the above y
+     *    @return The image cropped
+     */
+    public ImageProcessor crop(ImageProcessor ip, String cropX, String cropY, String cropWidth, String cropHeight) {
+        if ((cropX != null) && (cropY !=null)) {
+            try {
+                int x= Integer.parseInt(cropX);
+                int y= Integer.parseInt(cropY);
+                int width;
+                int height;
 
-		return ip;
-	}
+                // if value for cropWidth is not given, just use the width of the image
+                if (cropWidth != null)
+                    width= Integer.parseInt(cropWidth);
+                else
+                    width= ip.getWidth();
+
+                // if value for cropHeight is not given, just use the height of the image
+                if (cropHeight != null)
+                    height= Integer.parseInt(cropHeight);
+                else
+                    height= ip.getHeight();
+
+                // if any value is negative, this causes ImageJ to explode, so just return
+                if (x < 0 || y < 0 || width < 0 || height < 0)
+                    return ip;
+
+                ip.setRoi(x,y,width,height);
+                ip= ip.crop();
+            }
+
+            // no need to do anything with number format exception since the servlet
+            // returns only images; just return the original image
+            catch (NumberFormatException e) {}
+        }
+
+        return ip;
+    }
 }
