@@ -217,7 +217,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
    *        rules-to-stylesheet stylesheet, default is
    *        <i>schematron/preprocessor.xslt</i>
    * @param schematronSchemaPath Local location of Fedora Schematron rules,
-   *        default is <i>schematron/fedoraRules.xml</i>
+   *        default is <i>schematron/fedoraRulesExt.xml</i>
    * @param connectionPool For level3 validation, connectionpool to db holding
    *        Fedora objects, default is null.
    * @throws ServerException If construction fails for any reason.

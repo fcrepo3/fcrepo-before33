@@ -37,7 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
  *
  * <p><b>Title:</b> DOValidatorSchematron.java</p>
  * <p><b>Description:</b> Schematron validation for fedora objects encoded in
- * the Fedora extension of METS.  The schematron schema (fedoraRules.xml)
+ * schematron schema for Fedora.  The schematron schema (fedoraRulesExt.xml)
  * expresses a set of rules using XPATH that enable us to check for things
  * that are either not expressed in the METS XML schema, or that cannot be
  * expressed with XML Schema language.  Generally we will look for things
@@ -272,7 +272,7 @@ public class DOValidatorSchematron
    * Schematron validation.  The validating stylesheet is created dynamically
    * using the preprocessor stylesheet and the Schematron schema for Fedora.
    * The workFlowPhase is key.  The stylesheet is created for the appropriate
-   * phase as specified in the fedoraRules.xml schema.  Valid work flow phases
+   * phase as specified in the fedoraRulesExt.xml schema.  Valid work flow phases
    * are currently "ingest" and "store."  Different schematron rules apply to
    * different phases of the object lifecycle.  Some rules are applied when
    * an object is first being ingested into the repository.  Other rules apply
