@@ -64,6 +64,7 @@ import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
+import fedora.server.storage.ConnectionPoolManagerImpl;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DisseminationBindingInfo;
@@ -1266,6 +1267,7 @@ private static final String dbPropsFile = "db.properties";
       //String id = s_server.getModule("fedora.server.storage.DOManager").
       //            getParameter("fast_db");
       //FIXME!! - temporary fix until problem with above line is resolved
+      /*
       String id = "mysql1";
       System.out.println("id: "+id);
       System.out.flush();
@@ -1307,7 +1309,22 @@ private static final String dbPropsFile = "db.properties";
       // FIXME!! - Decide on Exception handling
       Exception e = new Exception("");
       e.initCause(sqle);
-      throw e;
+      throw e; */
+      //ConnectionPoolManager cpm = s_server.getConnectionPoolManager("pool");
+      //System.out.println("cpm: "+cpm);
+      //ConnectionPool connectionPool = cpm.getPool("poolOne");
+      //String id = s_server.getModule("fedora.server.storage.ConnectionDOManager").
+      //            getParameter("fast_db");
+      //System.out.println("id: "+id);
+      Server s_server =
+          Server.getInstance(new File(System.getProperty("fedora.home")));
+      ConnectionPoolManagerImpl poolManager =
+          (ConnectionPoolManagerImpl)s_server.
+          getModule("fedora.server.storage.ConnectionPoolManager");
+      connectionPool = poolManager.getPool("poolOne");
+    } catch (Exception e)
+    {
+      System.out.println("Failed to get Pool: "+e.getMessage());
     }
     //} catch (FileNotFoundException fnfe)
     //{
@@ -1864,7 +1881,7 @@ private static final String dbPropsFile = "db.properties";
   }
 
 
-  private static Server s_server;
+/*  private static Server s_server;
 
   static
   {
@@ -1877,5 +1894,5 @@ private static final String dbPropsFile = "db.properties";
       System.err.flush();
     }
   }
-
+*/
 }
