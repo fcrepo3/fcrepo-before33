@@ -105,7 +105,7 @@ import fedora.server.storage.types.Datastream;
 	private final String getDatastreamId(EvaluationCtx context) {
 		URI datastreamIdUri = null;
 		try {
-			datastreamIdUri = new URI(Constants.POLICY_RESOURCE.DATASTREAM_ID.uri);
+			datastreamIdUri = new URI(Constants.DATASTREAM.ID.uri);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

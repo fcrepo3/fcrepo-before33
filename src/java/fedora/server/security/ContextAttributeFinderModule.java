@@ -32,28 +32,32 @@ import fedora.server.Context;
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET); //<<?????
 			registerSupportedDesignatorType(AttributeDesignator.ENVIRONMENT_TARGET);
 
-			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_DATE_TIME.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_DATE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.CURRENT_TIME.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_PROTOCOL.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SCHEME.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SECURITY.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_AUTHTYPE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_METHOD.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_STATUS.uri, StringAttribute.identifier);		
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_LENGTH.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_TYPE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_FQDN.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_FQDN.uri, StringAttribute.identifier);
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_IP_ADDRESS.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_PORT.uri, StringAttribute.identifier);				
- 
-			attributesDenied.add(Constants.POLICY_ACTION.CONTEXT_ID.uri);
-			attributesDenied.add(Authorization.SUBJECT_ID_URI_STRING);
-			attributesDenied.add(Authorization.ACTION_ID_URI_STRING);
-			attributesDenied.add(Constants.POLICY_ACTION.API.uri);
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, StringAttribute.identifier);
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_TIME.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.HTTP_REQUEST.PROTOCOL.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.SCHEME.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.SECURITY.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.AUTHTYPE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.METHOD.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.HTTP_REQUEST.SESSION_STATUS.uri, StringAttribute.identifier);		
+			registerAttribute(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_FQDN.uri, StringAttribute.identifier);
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, StringAttribute.identifier);	
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_PORT.uri, StringAttribute.identifier);				
+
+			attributesDenied.add(PolicyEnforcementPoint.XACML_SUBJECT_ID);
+			attributesDenied.add(PolicyEnforcementPoint.XACML_ACTION_ID);
+			attributesDenied.add(PolicyEnforcementPoint.XACML_RESOURCE_ID);
+			
+			attributesDenied.add(Constants.ACTION.CONTEXT_ID.uri);
+			attributesDenied.add(Constants.SUBJECT.LOGIN_ID.uri);
+			attributesDenied.add(Constants.ACTION.ID.uri);
+			attributesDenied.add(Constants.ACTION.API.uri);
 			
 			setInstantiatedOk(true);
 		} catch (URISyntaxException e1) {
@@ -74,7 +78,7 @@ import fedora.server.Context;
 			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId type");
 		}
 		try {
-			contextIdId = new URI(Constants.POLICY_ACTION.CONTEXT_ID.uri);
+			contextIdId = new URI(Constants.ACTION.CONTEXT_ID.uri);
 		} catch (URISyntaxException e) {
 			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId itself");
 		}
@@ -133,8 +137,11 @@ import fedora.server.Context;
 				} else {
 					switch(context.nSubjectValues(attributeId)) {
 						case 0: 
+							values = null;
+							/*
 							values = new String[1];
 							((String[])values)[0] = Authorization.UNDEFINED;
+							*/
 							break;
 						case 1: 
 							values = new String[1];
@@ -151,8 +158,11 @@ import fedora.server.Context;
 				} else {
 					switch(context.nActionValues(attributeId)) {
 						case 0: 
+							values = null;
+							/*
 							values = new String[1];
 							((String[])values)[0] = Authorization.UNDEFINED;
+							*/
 							break;
 						case 1: 
 							values = new String[1];
@@ -168,9 +178,12 @@ import fedora.server.Context;
 					values = null;
 				} else {
 					switch(context.nResourceValues(attributeId)) {
-						case 0: 
+						case 0:
+							values = null;
+							/* 
 							values = new String[1];
 							((String[])values)[0] = Authorization.UNDEFINED;
+							*/
 							break;
 						case 1: 
 							values = new String[1];
@@ -186,9 +199,12 @@ import fedora.server.Context;
 					values = null;
 				} else {
 					switch(context.nEnvironmentValues(attributeId)) {
-						case 0: 
+						case 0:
+							values = null;
+							/* 
 							values = new String[1];
 							((String[])values)[0] = Authorization.UNDEFINED;
+							*/
 							break;
 						case 1: 
 							values = new String[1];

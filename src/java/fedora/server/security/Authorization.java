@@ -15,49 +15,56 @@ public interface Authorization {
 	throws NotAuthorizedException;
 	*/
 	
+	/* newly deleted, we are gathered here...
+	  
+	public static final String RESOURCE_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-namespace";
+	public static final String RESOURCE_AS_OF_DATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-asOfDate";
+
+	 
 	public static final String UNDEFINED = "UNDEFINED";
+	//public static final String SUBJECT_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+	//public static final String ACTION_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:action-id";
+	//public static final String ACTION_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-newState";	
+	//public static final String ACTION_DATASTREAM_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-datastreamNewState";
+	//public static final String ACTION_DISSEMINATOR_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-disseminatorNewState";
+	//public static final String RESOURCE_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
+	//public static final String RESOURCE_DATASTREAM_LOCATION_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamLocation";
+	//public static final String RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamControlGroup";
+	//public static final String RESOURCE_BDEF_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefPid";
+	//public static final String RESOURCE_BDEF_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefNamespace";
+	//public static final String RESOURCE_BMECH_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechPid";
+	//public static final String RESOURCE_BMECH_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechNamespace";
+	//public static final String RESOURCE_DISSEMINATOR_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorId";
+	//public static final String RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorNamespace";	
+	//public static final String RESOURCE_DISSEMINATOR_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorState";
+	//public static final String RESOURCE_DISSEMINATOR_METHOD_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorMethod";
+	//public static final String RESOURCE_DISSEMINATED_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedPid";
+	//public static final String RESOURCE_DISSEMINATED_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedNamespace";
+	//public static final String RESOURCE_N_NEW_PIDS_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-nNewPids";
+
+	
+	*	*/
 
 	//subject
 	public static final String SUBJECT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:subject";
 	public static final String SUBJECT_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:subject-category:access-subject";
-	public static final String SUBJECT_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
                                      
 	//action	
 	public static final String ACTION_CATEGORY = "urn:oasis:names:tc:xacml:1.0:action";
 	public static final String ACTION_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:action-category:access-action";
-	public static final String ACTION_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:action-id";
 
 
-	public static final String ACTION_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-newState";	
-	public static final String ACTION_DATASTREAM_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-datastreamNewState";
-	public static final String ACTION_DISSEMINATOR_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-disseminatorNewState";
 
 	//resource
 	public static final String RESOURCE_CATEGORY = "urn:oasis:names:tc:xacml:1.0:resource";
 	public static final String RESOURCE_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:resource-category:access-resource";
-	public static final String RESOURCE_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
 	
 	//pid is given as resource-id
-	public static final String RESOURCE_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-namespace";
-	public static final String RESOURCE_AS_OF_DATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-asOfDate";
 	
 	//public static final String RESOURCE_OBJECT_STATE_URI_STRING = "info:fedora/fedora-system:def/model#state";
 	//public static final String RESOURCE_DATASTREAM_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastream-id";	
 	// no namespace for datastream id, which is not a pid	
 	//public static final String RESOURCE_DATASTREAM_STATE_URI_STRING = "info:fedora/fedora-system:def/model:datastream-state"; // <<feed back	
-	public static final String RESOURCE_DATASTREAM_LOCATION_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamLocation";
-	public static final String RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamControlGroup";
-	public static final String RESOURCE_BDEF_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefPid";
-	public static final String RESOURCE_BDEF_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefNamespace";
-	public static final String RESOURCE_BMECH_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechPid";
-	public static final String RESOURCE_BMECH_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechNamespace";
-	public static final String RESOURCE_DISSEMINATOR_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorId";
-	public static final String RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorNamespace";	
-	public static final String RESOURCE_DISSEMINATOR_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorState";
-	public static final String RESOURCE_DISSEMINATOR_METHOD_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorMethod";
-	public static final String RESOURCE_DISSEMINATED_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedPid";
-	public static final String RESOURCE_DISSEMINATED_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedNamespace";
-	public static final String RESOURCE_N_NEW_PIDS_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-nNewPids";
 	
 	//environment
 	public static final String ENVIRONMENT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:environment";

@@ -149,7 +149,7 @@ public class GetObjectHistoryServlet extends HttpServlet
         h_userParms.put(name,value);
     }
 
-    Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
     try {
         getObjectHistory(context, PID, xml, response);
     } catch (Throwable th)

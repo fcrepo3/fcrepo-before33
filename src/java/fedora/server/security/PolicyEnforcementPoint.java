@@ -40,7 +40,26 @@ public class PolicyEnforcementPoint {
 	static final String ENFORCE_MODE_PERMIT_ALL_REQUESTS = "permit-all-requests";
 	static final String ENFORCE_MODE_DENY_ALL_REQUESTS = "deny-all-requests";	
 
+	public static final String XACML_SUBJECT_ID = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
+	public static final String XACML_ACTION_ID = "urn:oasis:names:tc:xacml:1.0:action:action-id";
+	public static final String XACML_RESOURCE_ID = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
+
+	private final URI XACML_SUBJECT_ID_URI;
+	private final URI XACML_ACTION_ID_URI;
+	private final URI XACML_RESOURCE_ID_URI;
+	
+	private final URI SUBJECT_ID_URI;
+	private final URI ACTION_ID_URI;
+	private final URI ACTION_API_URI;
+	private final URI ACTION_CONTEXT_URI;
+	private final URI RESOURCE_ID_URI;
+	private final URI RESOURCE_NAMESPACE_URI;
+	
 	private PolicyEnforcementPoint() {
+		URI xacmlSubjectIdUri = null;
+		URI xacmlActionIdUri = null;
+		URI xacmlResourceIdUri = null;
+		
 		URI subjectIdUri = null;
 		URI actionIdUri = null;
 		URI actionApiUri = null;
@@ -48,16 +67,22 @@ public class PolicyEnforcementPoint {
 		URI pidUri = null;
 		URI namespaceUri = null;
 		try {
-			subjectIdUri = new URI(Authorization.SUBJECT_ID_URI_STRING);
-			actionIdUri = new URI(Authorization.ACTION_ID_URI_STRING);
-			actionApiUri = new URI(Constants.POLICY_ACTION.API.uri);
-			contextUri = new URI(Constants.POLICY_ACTION.CONTEXT_ID.uri);
-			pidUri = new URI(Authorization.RESOURCE_ID_URI_STRING);
-			namespaceUri = new URI(Authorization.RESOURCE_NAMESPACE_URI_STRING);
+			xacmlSubjectIdUri = new URI(XACML_SUBJECT_ID);
+			xacmlActionIdUri = new URI(XACML_ACTION_ID);
+			xacmlResourceIdUri = new URI(XACML_RESOURCE_ID);
+			subjectIdUri = new URI(Constants.SUBJECT.LOGIN_ID.uri);
+			actionIdUri = new URI(Constants.ACTION.ID.uri);
+			actionApiUri = new URI(Constants.ACTION.API.uri);
+			contextUri = new URI(Constants.ACTION.CONTEXT_ID.uri);
+			pidUri = new URI(Constants.OBJECT.PID.uri);
+			namespaceUri = new URI(Constants.OBJECT.NAMESPACE.uri);
 			System.err.println("all uris set, no throws");
 		} catch (URISyntaxException e) {
 			System.err.println("***throw in XACMLPep constructor");
 		} finally {
+			XACML_SUBJECT_ID_URI = xacmlSubjectIdUri;
+			XACML_ACTION_ID_URI = xacmlActionIdUri;
+			XACML_RESOURCE_ID_URI = xacmlResourceIdUri;
 			SUBJECT_ID_URI = subjectIdUri;
 			ACTION_ID_URI = actionIdUri;
 			ACTION_API_URI = actionApiUri;
@@ -179,17 +204,19 @@ System.err.println("***debugging CombinedPolicyModule");
 
 	 */
 	
-	private final Set wrapSubjects(String subjectId) {
-		System.err.println("wrapSubjectIdAsSubjects(): " + subjectId);
-		if ((subjectId == null) || ("".equals(subjectId))) {
-			subjectId = Authorization.UNDEFINED;
-		}
-		StringAttribute stringAttribute = new StringAttribute(subjectId);
-		Attribute singleSubjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
-		System.err.println("wrapSubjectIdAsSubjects(): singleSubjectAttribute, id=" + singleSubjectAttribute.getId() + ", type=" + singleSubjectAttribute.getType() + ", value=" + singleSubjectAttribute.getValue());
+	private final Set wrapSubjects(String subjectLoginId) {
+		System.err.println("wrapSubjectIdAsSubjects(): " + subjectLoginId);
+		StringAttribute stringAttribute = new StringAttribute("");
+		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
+		System.err.println("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
 		Set subjectAttributes = new HashSet();
-		subjectAttributes.add(singleSubjectAttribute);
-		
+		subjectAttributes.add(subjectAttribute);
+		if ((subjectLoginId != null) && "".equals(subjectLoginId)) {
+			stringAttribute = new StringAttribute(subjectLoginId);
+			subjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
+			System.err.println("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
+		}
+		subjectAttributes.add(subjectAttribute);		
 		/*
 		Iterator it = context.names();
 		while (it.hasNext()) {
@@ -233,21 +260,14 @@ System.err.println("***debugging CombinedPolicyModule");
 	}
 
 	
-	private final URI SUBJECT_ID_URI;
-	private final URI ACTION_ID_URI;
-	private final URI ACTION_API_URI;
-	private final URI ACTION_CONTEXT_URI;
-	private final URI RESOURCE_ID_URI;
-	private final URI RESOURCE_NAMESPACE_URI;
-
-
-	
 	private final Set wrapActions(String actionId, String actionApi, String contextIndex) {
 		Set actions = new HashSet();
-		Attribute action = new Attribute(ACTION_ID_URI, null, null, new StringAttribute(actionId));
+		Attribute action = new Attribute(XACML_ACTION_ID_URI, null, null, new StringAttribute(""));
+		actions.add(action);
+		action = new Attribute(ACTION_ID_URI, null, null, new StringAttribute(actionId));
 		actions.add(action);
 		action = new Attribute(ACTION_API_URI, null, null, new StringAttribute(actionApi));
-		actions.add(action);
+		actions.add(action);		
 		action = new Attribute(ACTION_CONTEXT_URI, null, null, new StringAttribute(contextIndex));
 		actions.add(action);
 		return actions;
@@ -257,6 +277,8 @@ System.err.println("***debugging CombinedPolicyModule");
 	private final Set wrapResources(String pid, String namespace) throws AuthzOperationalException {
 		Set resources = new HashSet();
 		Attribute attribute = null;
+		attribute = new Attribute(XACML_RESOURCE_ID_URI, null, null, new StringAttribute(""));
+		resources.add(attribute);
 		attribute = new Attribute(RESOURCE_ID_URI, null, null, new StringAttribute(pid));
 		resources.add(attribute);
 		attribute = new Attribute(RESOURCE_NAMESPACE_URI, null, null, new StringAttribute(namespace));

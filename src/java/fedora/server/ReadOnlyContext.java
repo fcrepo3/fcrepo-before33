@@ -271,37 +271,37 @@ public class ReadOnlyContext
   	MultiValueMap environmentMap = new MultiValueMap();
   	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
   	try {
-  		environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_PROTOCOL.uri, request.getProtocol());
-  		environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SCHEME.uri, request.getScheme());
-  		environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SECURITY.uri, (request.isSecure()) ? "secure" : "insecure");
+  		environmentMap.set(Constants.HTTP_REQUEST.PROTOCOL.uri, request.getProtocol());
+  		environmentMap.set(Constants.HTTP_REQUEST.SCHEME.uri, request.getScheme());
+  		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, (request.isSecure()) ? "secure" : "insecure");
   	
   	    if (request.getAuthType() != null) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_AUTHTYPE.uri, request.getAuthType());  
+  	    	environmentMap.set(Constants.HTTP_REQUEST.AUTHTYPE.uri, request.getAuthType());  
   	    }
   	
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_METHOD.uri, request.getMethod());	
+  	    environmentMap.set(Constants.HTTP_REQUEST.METHOD.uri, request.getMethod());	
   	    if (request.isRequestedSessionIdFromCookie()) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri, "cookie");    	
+  	    	environmentMap.set(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, "cookie");    	
   	    } else if (request.isRequestedSessionIdFromURL()) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri, "url");    	
+  	    	environmentMap.set(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, "url");    	
   	    }
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_STATUS.uri, request.isRequestedSessionIdValid() ? "valid" : "invalid"   );
+  	    environmentMap.set(Constants.HTTP_REQUEST.SESSION_STATUS.uri, request.isRequestedSessionIdValid() ? "valid" : "invalid"   );
   	    if (request.getContentLength() > -1) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_LENGTH.uri, "" + request.getContentLength());    	
+  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, "" + request.getContentLength());    	
   	    }
   	    if (request.getContentType() != null) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_TYPE.uri, request.getContentType());
+  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, request.getContentType());
   	    }
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_MESSAGE_PROTOCOL.uri, soapOrRest);
+  	    environmentMap.set(Constants.HTTP_REQUEST.MESSAGE_PROTOCOL.uri, soapOrRest);
   	    if (! request.getRemoteHost().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {	    
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_FQDN.uri, request.getRemoteHost().toLowerCase());        
+  	    	environmentMap.set(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, request.getRemoteHost().toLowerCase());        
   	    }
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri, request.getRemoteAddr());
+  	    environmentMap.set(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, request.getRemoteAddr());
   	    if (! request.getLocalName().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
-  	    	environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_FQDN.uri, request.getLocalName().toLowerCase());
+  	    	environmentMap.set(Constants.HTTP_REQUEST.SERVER_FQDN.uri, request.getLocalName().toLowerCase());
   	    }
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_IP_ADDRESS.uri, request.getLocalAddr());
-  	    environmentMap.set(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_PORT.uri, "" + request.getLocalPort());
+  	    environmentMap.set(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, request.getLocalAddr());
+  	    environmentMap.set(Constants.HTTP_REQUEST.SERVER_PORT.uri, "" + request.getLocalPort());
   	} catch (Exception e) {
   	} finally {
   		environmentMap.lock();
@@ -329,7 +329,7 @@ public class ReadOnlyContext
   		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
   	}
   	try {		
-  		subjectMap.set(Authorization.SUBJECT_ID_URI_STRING, subjectId);
+  		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, subjectId);
   		for (int i = 0; (roles != null) && (i < roles.length); i++) {
   			String[] parts = parseRole(roles[i]);
  			if ((parts != null) && parts.length == 2) {
@@ -347,8 +347,8 @@ public class ReadOnlyContext
 
   	HashMap commonParams = new HashMap();
   	commonParams.put("useCachedObject", "" + useCachedObject);    
-  	commonParams.put("userId", subjectMap.getString(Authorization.SUBJECT_ID_URI_STRING)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
-  	commonParams.put("host", environmentMap.getString(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
+  	commonParams.put("userId", subjectMap.getString(Constants.SUBJECT.LOGIN_ID.uri)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
+  	commonParams.put("host", environmentMap.getString(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
       ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap, password);
       return temp;
     }

@@ -132,7 +132,7 @@ public class DescribeRepositoryServlet extends HttpServlet
       }
     }
 
-    Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
     try {
         describeRepository(context, xml, response);
     } catch (Throwable th)

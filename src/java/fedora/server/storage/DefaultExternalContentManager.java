@@ -124,7 +124,7 @@ public class DefaultExternalContentManager extends Module
   		HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager()); 
   		client.setConnectionTimeout(20000); // wait 20 seconds max
   		log("password=" + context.getPassword());
-  		client.getState().setCredentials(null, null, new UsernamePasswordCredentials(context.getSubjectValue(Authorization.SUBJECT_ID_URI_STRING),context.getPassword()));
+  		client.getState().setCredentials(null, null, new UsernamePasswordCredentials(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri),context.getPassword()));
   		client.getState().setAuthenticationPreemptive(true);
   		log("in getExternalContent(), after setup");
   	  	GetMethod get = null;

@@ -206,7 +206,7 @@ public class ListDatastreamsServlet extends HttpServlet
 
       try {
           if (isListDatastreamsRequest) {    
-              Context context = ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+              Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
               listDatastreams(context, PID, asOfDateTime, xml, request, response);
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;

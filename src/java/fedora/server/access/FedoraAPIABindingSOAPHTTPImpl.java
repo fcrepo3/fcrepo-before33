@@ -98,14 +98,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-    return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, true);
+    return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, true);
   }
 
   private Context getUncachedContext() {
       HttpServletRequest req=(HttpServletRequest) MessageContext.
               getCurrentContext().getProperty(
               HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, false);
+      return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
   }
 
   public java.lang.String[] getObjectHistory(java.lang.String PID)

@@ -91,7 +91,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, false);
+        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
     }
 
     private void logStackTrace(Exception e) {
