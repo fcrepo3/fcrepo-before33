@@ -9,10 +9,8 @@ if [ -z "$FEDORA_HOME" ]; then
 fi
 
 if [ -r "$FEDORA_HOME"/server/bin/fedora.sh ]; then
-  	. "$FEDORA_HOME"/server/bin/fedora.sh
+  	exec "$FEDORA_HOME"/server/bin/fedora.sh start "$@"
 else
 	echo "ERROR: $FEDORA_HOME/server/bin/fedora.sh was not found."
 	exit 1
 fi
-
-exec "$FEDORA_HOME"/server/bin/fedora.sh start "$@"
