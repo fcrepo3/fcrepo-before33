@@ -22,13 +22,9 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.Server;
-//import fedora.server.storage.DefinitiveDOReader;
 import fedora.server.storage.FastDOReader;
-//import fedora.server.storage.types.DisseminationBindingInfo;
-//import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MIMETypedStream;
-//import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
 
@@ -115,7 +111,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
       // cache size parameter in config file; for now, put at top level.
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
       Integer I1 = new Integer(s_server.getParameter("disseminationCacheSize"));
-      System.out.println("I1: "+I1+"i1: "+I1.intValue());
       DISS_CACHE_SIZE = I1.intValue();
       Boolean B1 = new Boolean(s_server.getParameter("debug"));
       debug = B1.booleanValue();
@@ -164,7 +159,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     requestURI = requestURL+request.getQueryString();
     session = request.getSession(true);
     PrintWriter out = response.getWriter();
-    if (debug) System.out.println("RequestURL: "+requestURL+
+    if (debug) s_server.logFinest("RequestURL: "+requestURL+
                                   "RequestURI: "+requestURI+
                                   "Session: "+session);
     // Get servlet input parameters
@@ -202,14 +197,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
     // API-A interface requires user-supplied paramters to be of type
     // Property[] so create Property[] from hashtable of user parameters.
     int userParmCounter = 0;
-    userParms = new Property[h_userParms.size()];
-    for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
+    if ( !h_userParms.isEmpty() )
     {
-      Property userParm = new Property();
-      userParm.name = (String)e.nextElement();
-      userParm.value = (String)h_userParms.get(userParm.name);
-      userParms[userParmCounter] = userParm;
-      userParmCounter++;
+      userParms = new Property[h_userParms.size()];
+      for ( Enumeration e = h_userParms.keys(); e.hasMoreElements();)
+      {
+        Property userParm = new Property();
+        userParm.name = (String)e.nextElement();
+        userParm.value = (String)h_userParms.get(userParm.name);
+        userParms[userParmCounter] = userParm;
+        userParmCounter++;
+      }
     }
 
     // Validate servlet URL parameters to verify that all parameters required
@@ -237,23 +235,22 @@ public class FedoraAccessSoapServlet extends HttpServlet
             {
               out.write(byteStream);
             }
+            dissemResult.close();
           } else
           {
             // Dissemination request failed
             // FIXME!! need to decide on exception handling
+            s_server.logWarning("Dissemination Result: NULL");
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                         clearCache, response);
-            System.out.println("Dissemination Result: NULL");
-            this.getServletContext().log("Dissemination Result: NULL");
           }
         } catch (Exception e)
         {
           // FIXME!! Decide on error handling
-          System.out.println(e.getMessage());
-          System.out.println("GetDissemination: NO RESULT");
+          s_server.logWarning(e.getMessage());
+          s_server.logWarning("GetDissemination: NO RESULT");
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                        clearCache, response);
-          this.getServletContext().log(e.getMessage(), e.getCause());
         }
       } else if (action.equals(GET_BEHAVIOR_DEFINITIONS))
       {
@@ -320,14 +317,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
             // FIXME!! need to decide on exception handling
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                         clearCache, response);
-            System.out.println("GetBehaviorDefinition Result: NULL");
-            this.getServletContext().log("GetBehaviorDefinitions Result: NULL");
+            s_server.logWarning("GetBehaviorDefinitions Result: NULL");
           }
 
           // FIXME!! Decide on Exception handling
         } catch (Exception e)
         {
-          System.out.println(e.getMessage());
+          s_server.logWarning(e.getMessage());
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                        clearCache, response);
         }
@@ -412,16 +408,16 @@ public class FedoraAccessSoapServlet extends HttpServlet
           } else
           {
             // No method definitions found; echo back request parameters
+            s_server.logWarning("GetBehaviorMethods: NO METHODS FOUND");
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                          clearCache, response);
-           System.out.println("GetBehaviorMethods: NO METHODS FOUND");
           }
 
           // FIXME!! Need to decide on Exception handling
         } catch (Exception e)
         {
-          System.out.println(e.getMessage());
-          System.out.println("GetBehaviorMethods: NO RESULTS");
+          s_server.logWarning(e.getMessage());
+          s_server.logWarning("GetBehaviorMethods: NO RESULTS");
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                        clearCache, response);
         }
@@ -438,8 +434,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
               ByteArrayInputStream methodResults =
                   new ByteArrayInputStream(methodDefs.getStream());
               response.setContentType(methodDefs.getMIMEType());
-              if (debug) System.out.println("MIMEType: "+
-                  methodDefs.getMIMEType());
               // WSDL is actually just an XML fragment so add appropriate
               // XML namespace and XML declaration to make a valid XML
               // output stream
@@ -461,17 +455,16 @@ public class FedoraAccessSoapServlet extends HttpServlet
             } else
             {
               // No method WSDL found; echo back request parameters
+              s_server.logWarning("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
               showURLParms(action, PID, bDefPID, methodName, asOfDate,
                            userParms, clearCache, response);
-             System.out.println("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
             }
           } catch (Exception e)
           {
-            System.out.println("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
-            System.out.println(e.getMessage());
+            s_server.logWarning("GetBehaviorMethodsAsWSDL: NO METHODS FOUND");
+            s_server.logWarning(e.getMessage());
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                          clearCache, response);
-            this.getServletContext().log(e.getMessage(), e.getCause());
         }
       } else if (action.equals(GET_OBJECT_METHODS))
       {
@@ -559,18 +552,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
           } else
           {
             // No object methods were found; echo back request parameters
+            s_server.logWarning("GetObjectMethods: NO METHODS FOUND");
             showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                          clearCache, response);
-           System.out.println("GetObjectMethods: NO METHODS FOUND");
           }
         } catch (Exception e)
         {
           // FIXME!! Need to decide on Exception handling
-          System.out.println(e.getMessage());
-          this.getServletContext().log(e.getMessage(), e.getCause());
+          s_server.logWarning(e.getMessage());
+          s_server.logWarning("GetObjectMethods: NO METHODS FOUND");
           showURLParms(action, PID, bDefPID, methodName, asOfDate, userParms,
                        clearCache, response);
-          System.out.println("GetObjectMethods: NO METHODS FOUND");
         }
       }
     } else
@@ -579,7 +571,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       // URL parameters failed validation check
       // Output from showURLParms method should provide enough information
       // to discern the cause of the failure.
-      System.out.println("URLParametersInvalid");
+      s_server.logWarning("URLParametersInvalid");
       showURLParms(action, PID, bDefPID, methodName,asOfDate, userParms,
                    clearCache, response);
     }
@@ -625,7 +617,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     } catch (Exception e)
     {
       // FIXME!! - need to decide on exception handling
-      System.out.println("GetBehaviorMethods: No Method Defs FOUND");
+      s_server.logWarning("GetBehaviorMethods: No Method Defs FOUND");
       return behaviorDefs;
     }
     return behaviorDefs;
@@ -674,7 +666,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           call.invoke( new Object[] { PID, bDefPID, asOfDate} );
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
+      s_server.logWarning(e.getMessage());
       return methodDefs;
     }
     return methodDefs;
@@ -717,7 +709,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                    call.invoke( new Object[] { PID, bDefPID, asOfDate} );
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
+      s_server.logWarning(e.getMessage());
       return methodDefs;
     }
     return methodDefs;
@@ -753,6 +745,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       QName qn =
           new QName("http://www.fedora.info/definitions/1/0/types/",
           "MIMETypedStream");
+      QName qn2 = new QName("http://www.fedora.info/definitions/1/0/types/",
+                            "Property");
       call.registerTypeMapping(
           fedora.server.types.gen.MIMETypedStream.class,
           qn,
@@ -760,9 +754,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
           fedora.server.types.gen.MIMETypedStream.class, qn),
           new org.apache.axis.encoding.ser.BeanDeserializerFactory(
           fedora.server.types.gen.MIMETypedStream.class, qn));
+      call.registerTypeMapping(fedora.server.types.gen.Property.class,
+          qn2,
+          new org.apache.axis.encoding.ser.BeanSerializerFactory(
+          fedora.server.types.gen.Property.class, qn2),
+          new org.apache.axis.encoding.ser.BeanDeserializerFactory(
+          fedora.server.types.gen.Property.class, qn2));
       fedora.server.types.gen.MIMETypedStream dissem =
           (fedora.server.types.gen.MIMETypedStream)
-          call.invoke( new Object[] { PID, bDefPID, methodName,
+          call.invoke( new Object[] { PID, bDefPID, methodName, userParms,
           asOfDate} );
 
       // FIXME!! Decide on exception handling
@@ -773,8 +773,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
       }
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
-      this.getServletContext().log(e.getMessage(), e.getCause());
+      s_server.logWarning(e.getMessage());
       return dissemination;
     }
     return dissemination;
@@ -816,7 +815,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
     } catch (Exception e)
     {
-      System.out.println(e.getMessage());
+      s_server.logWarning(e.getMessage());
       return objMethDefArray;
     }
     return objMethDefArray;
@@ -888,9 +887,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
       {
         // Dissemination request succeeded, so add to local cache
         disseminationCache.put(requestURI, disseminationResult);
-         if (debug) System.out.println("ADDED to CACHE: "+requestURI);
+         if (debug) s_server.logFinest("ADDED to CACHE: "+requestURI);
       }
-      if (debug) System.out.println("CACHE SIZE: "+disseminationCache.size());
+      if (debug) s_server.logFinest("CACHE SIZE: "+disseminationCache.size());
     }
     return disseminationResult;
   }
@@ -1232,13 +1231,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
     if (debug)
     {
-      System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: "+methodName+
+      s_server.logFinest("PID: "+PID+"bDEF: "+bDefPID+"methodName: "+methodName+
                          "action: "+action);
 
       for ( Enumeration e = h_userParms.keys(); e.hasMoreElements(); )
       {
         String name = (String)e.nextElement();
-        System.out.println("<p>userParm: "+name+
+        s_server.logFinest("<p>userParm: "+name+
                            " userValue: "+h_userParms.get(name));
       }
     }
@@ -1282,18 +1281,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
       methodParms = fdor.GetBMechMethodParm(bDefPID, methodName, versDateTime);
 
       // FIXME!! Decide on Exception handling
-    //} catch(MethodNotFoundException mpnfe)
-    //{
-    //  System.out.println(mpnfe.getMessage());
-    //  this.getServletContext().log(mpnfe.getMessage(), mpnfe.getCause());
-    //} catch (ObjectNotFoundException onfe)
-    //{
-    //  System.out.println(onfe.getMessage());
-    //  this.getServletContext().log(onfe.getMessage(), onfe.getCause());
-    //}
     } catch (Exception e)
     {
-      System.err.println(e.getMessage());
+      s_server.logWarning(e.getMessage());
     }
 
     // Put valid method parameters and their attributes into hashtable
@@ -1325,7 +1315,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             if (h_userParms.get(methodParm.parmName) == null)
             {
               // Error: required method parameter not in user-supplied list
-              System.out.println("REQUIRED PARAMETER:" + methodParm.parmName +
+              s_server.logFinest("REQUIRED PARAMETER:" + methodParm.parmName +
                                  " NOT FOUND");
               response.setContentType(CONTENT_TYPE_HTML);
               PrintWriter out = response.getWriter();
@@ -1336,7 +1326,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
             } else
             {
               // Required parameter found
-              if (debug) System.out.println("Required parameter FOUND: " +
+              if (debug) s_server.logFinest("Required parameter FOUND: " +
                   methodParm.parmName);
             }
           }
@@ -1352,20 +1342,20 @@ public class FedoraAccessSoapServlet extends HttpServlet
               // Default value is specified for this parameter.
               // Substitute default value.
               h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
-              if (debug) System.out.println("SET DEFAULT VALUE: "+
+              if (debug) s_server.logFinest("SET DEFAULT VALUE: "+
                   methodParm.parmDefaultValue);
             }
           } else
           {
             // Value of user-supplied parameter is NOT null or empty
-            if (debug) System.out.println("NO DEFAULT VALUE APPLIED");
+            if (debug) s_server.logFinest("NO DEFAULT VALUE APPLIED");
           }
           if (!h_userParms.isEmpty() &&
               (h_userParms.get(methodParm.parmName) == null) )
           {
             // User-supplied parameter name does not match any valid parameter
             // names for this method.
-            System.out.println("USER SUPPLIED PARAMETER NOT VALID FOR THIS " +
+            s_server.logWarning("USER SUPPLIED PARAMETER NOT VALID FOR THIS " +
                               "METHOD: "+methodParm.parmName);
             response.setContentType(CONTENT_TYPE_HTML);
             PrintWriter out = response.getWriter();
@@ -1376,7 +1366,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           }
         } else
         {
-          if (debug) System.out.println("NAME NOT FOUND: "+name);
+          if (debug) s_server.logWarning("NAME NOT FOUND: "+name);
         }
     }
     } else
@@ -1391,7 +1381,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
           if (methodParm.parmRequired)
           {
             // A required method parameter was not found
-            if (debug) System.out.println("emptyREQUIRED PARAM NAME NOT FOUND: "
+            if (debug) s_server.logWarning("REQUIRED PARAM NAME NOT FOUND: "
                 + methodParm.parmName);
             response.setContentType(CONTENT_TYPE_HTML);
             PrintWriter out = response.getWriter();
@@ -1399,10 +1389,6 @@ public class FedoraAccessSoapServlet extends HttpServlet
                         "REQUIRED METHOD PARAMETER NOT FOUND: "+methodParm.parmName+
                           "</font></b>");
             valid = false;
-          } else
-          {
-            //if (debug) System.out.println("emptyNON-REQUIRED PARAM FOUND: " +
-            //    methodParm.parmName);
           }
         }
       }
@@ -1436,7 +1422,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
   {
 
     String versDate = DateUtility.convertCalendarToString(asOfDate);
-    if (debug) System.out.println("versdate: "+versDate);
+    if (debug) s_server.logWarning("versdate: "+versDate);
     PrintWriter out = response.getWriter();
     response.setContentType(CONTENT_TYPE_HTML);
     // Display servlet input parameters
@@ -1501,17 +1487,17 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
     if (debug)
     {
-      System.out.println("PID: "+PID+"bDEF: "+bDefPID+"methodName: " +
+      s_server.logFinest("PID: "+PID+"bDEF: "+bDefPID+"methodName: " +
                          methodName);
       if (userParms != null)
       {
         for (int i=0; i<userParms.length; i++)
         {
-          System.out.println("<p>userParm: "+userParms[i].name+
+          s_server.logFinest("<p>userParm: "+userParms[i].name+
           " userValue: "+userParms[i].value);
         }
       }
     }
-    System.out.println("REQUEST Returned NO Data");
+    s_server.logWarning("REQUEST Returned NO Data");
   }
 }
