@@ -70,15 +70,26 @@ public class FOXMLDOSerializer
     private SimpleDateFormat m_formatter=
             new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	private static String s_hostInfo; // the actual host and port of the server
-	private static String s_localServerDissemUrlStart;  // dissem URL pattern for M datastreams
-			   
-    private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
-    private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
-    private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
-    private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
+	// Pattern for URLs that contain the placeholder string indicating the URL is
+	// based at the local repository server.  When we serialized for EXPORT, we
+	// will detect this pattern and replace it with the actual host name.
+	private static Pattern s_localPattern = Pattern.compile("http://local.fedora.server/");
+	
+	// The actual host and port of the repository server		
+	private static String s_hostInfo = null; 
+
+	// Patterns of the various ways that the local repository server address may be 
+  	// encoded.  When we serialized for STORAGE, we want to replace the actual host:port
+  	// of URLs to the local repository with the placeholder string "http://local.fedora.server/"
+  	// to virtualize the local host:port.  This is to allow the repository host:port to 
+  	// be reconfigured after an object has been stored, and be able to recreate the proper
+  	// URL based on the new configuration. 	
+  	private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
+  	private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"
+  	private static Pattern s_localhostUrlStartWithPort; // "http://localhost:8080/"
+  	private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
     
-    private static Pattern s_localPattern; // "http://local.fedora.server/"
+  	private static String s_localServerDissemUrlStart; // "http://actual.hostname:8080/fedora/get/"
 
     private boolean m_onPort80=false;
     private boolean m_encodeForExport=false;
@@ -96,7 +107,7 @@ public class FOXMLDOSerializer
 		System.out.println("Serializing using FOXMLDOSerializer...");
 		m_encodeForExport=encodeForExport;
         // get the host info in a static var so search/replaces are quicker later
-        if (s_localServerUrlStartWithPort==null) {
+        if (s_hostInfo==null) {
             String fedoraHome=System.getProperty("fedora.home");
             String fedoraServerHost=null;
             String fedoraServerPort=null;
@@ -128,9 +139,10 @@ public class FOXMLDOSerializer
 			}
 			s_hostInfo=s_hostInfo + "/";
 			
+			// set the pattern for public dissemination URLs at local server
 			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
 			
-			// set the patterns that must be detected for later replacements
+			// set other patterns using the configured host and port
             s_localServerUrlStartWithPort=Pattern.compile("http://"
                     + fedoraServerHost + ":" + fedoraServerPort + "/");
             s_localServerUrlStartWithoutPort=Pattern.compile("http://"
@@ -138,8 +150,6 @@ public class FOXMLDOSerializer
             s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/");
             s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/");
             
-            // the pattern of the internal "localized" string for local URLs
-            s_localPattern=Pattern.compile("http://local.fedora.server/");
         }
         // now do serialization stuff
         StringBuffer buf=new StringBuffer();
