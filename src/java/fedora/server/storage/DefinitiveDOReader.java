@@ -89,7 +89,7 @@ public class DefinitiveDOReader implements DOReader
     doReader.GetDatastream("DS1", null);
     doReader.GetDisseminators(null);
     doReader.GetBehaviorDefs(null);
-    Disseminator d = doReader.GetDisseminator("DISS4", null);
+    Disseminator d = doReader.GetDisseminator("DISS1", null);
     doReader.GetBMechMethods(d.bDefID, null);
     doReader.GetDSBindingMaps(null);
 
