@@ -221,7 +221,7 @@ public class BasicDigitalObject
     }
 
     private String newID(Iterator iter, String start) {
-        int highest=1;
+        int highest=0;
         while (iter.hasNext()) {
             String id=(String) iter.next();
             if (id.startsWith(start) && id.length()>start.length()) {

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -15,6 +16,14 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+
+import org.apache.xml.serialize.OutputFormat;
+import org.apache.xml.serialize.XMLSerializer;
 
 import fedora.server.Context;
 import fedora.server.Module;
@@ -29,6 +38,8 @@ import fedora.server.security.IPRestriction;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOWriter;
+import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DSBindingMap;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.storage.types.DatastreamContent;
@@ -76,6 +87,7 @@ public class DefaultManagement
     private int m_lastId;
     private File m_tempDir;
     private Hashtable m_uploadStartTime;
+    private ExternalContentManager m_contentManager;
 
     /**
      * Creates and initializes the Management Module.
@@ -155,6 +167,12 @@ public class DefaultManagement
                 "fedora.server.storage.DOManager");
         if (m_manager==null) {
             throw new ModuleInitializationException("Can't get a DOManager "
+                    + "from Server.getModule", getRole());
+        }
+        m_contentManager=(ExternalContentManager) getServer().getModule(
+                "fedora.server.storage.ExternalContentManager");
+        if (m_contentManager==null) {
+            throw new ModuleInitializationException("Can't get an ExternalContentManager "
                     + "from Server.getModule", getRole());
         }
         m_fedoraServerHost=getServer().getParameter("fedoraServerHost");
@@ -258,10 +276,103 @@ public class DefaultManagement
                                 String mimeType,
                                 String dsLocation,
                                 String controlGroup,
+                                String mdClass,
                                 String mdType) throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
-        return null;
+        try {
+            w=m_manager.getWriter(context, pid);
+            Datastream ds;
+            if (controlGroup.equals("X")) {
+                ds=new DatastreamXMLMetadata();
+                ds.DSInfoType=mdType;
+                if (mdClass.equals("descriptive")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
+                } else if (mdClass.equals("digital provenance")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.DIGIPROV;
+                } else if (mdClass.equals("source")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.SOURCE;
+                } else if (mdClass.equals("rights")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.RIGHTS;
+                } else if (mdClass.equals("technical")) {
+                    ((DatastreamXMLMetadata) ds).DSMDClass=DatastreamXMLMetadata.TECHNICAL;
+                } else {
+                    throw new GeneralException("mdClass must be one of the following:\n"
+                            + " - descriptive\n"
+                            + " - digital provenance\n"
+                            + " - source\n"
+                            + " - rights\n"
+                            + " - technical");
+                }
+                // retrieve the content and set the xmlContent field appropriately
+                try {
+                    InputStream in;
+                    if (dsLocation.startsWith("uploaded://")) {
+                        in=getTempStream(dsLocation);
+                    } else {
+                        in=m_contentManager.getExternalContent(dsLocation).getStream();
+                    }
+                    // parse with xerces... then re-serialize, removing 
+                    // processing instructions and ensuring the encoding gets to UTF-8
+                    ByteArrayOutputStream out=new ByteArrayOutputStream();
+                    // use xerces to pretty print the xml, assuming it's well formed
+                    OutputFormat fmt=new OutputFormat("XML", "UTF-8", true);
+                    fmt.setIndent(2);
+                    fmt.setLineWidth(120);
+                    fmt.setPreserveSpace(false);
+                    fmt.setOmitXMLDeclaration(true);
+                    XMLSerializer ser=new XMLSerializer(out, fmt);
+                    DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
+                    factory.setNamespaceAware(true);
+                    DocumentBuilder builder=factory.newDocumentBuilder();
+                    Document doc=builder.parse(in);
+                    ser.serialize(doc);
+                    // now put it in the byte array
+                    ((DatastreamXMLMetadata) ds).xmlContent=out.toByteArray();
+                } catch (Exception e) {
+                    String extraInfo;
+                    if (e.getMessage()==null) 
+                        extraInfo="";
+                    else
+                        extraInfo=" : " + e.getMessage();
+                    throw new GeneralException("Error with " + dsLocation + extraInfo);
+                }
+            } else if (controlGroup.equals("M")) {
+                ds=new DatastreamManagedContent();
+                ds.DSInfoType="DATA"; 
+            } else if (controlGroup.equals("R") || controlGroup.equals("E")) {
+                ds=new DatastreamReferencedContent();
+                ds.DSInfoType="DATA"; 
+            } else {
+                throw new GeneralException("Invalid control group: " + controlGroup);
+            }
+            ds.isNew=true;
+            ds.DSControlGrp=controlGroup;
+            ds.DSLabel=dsLabel;
+            ds.DSLocation=dsLocation;
+            ds.DSMIME=mimeType;
+            ds.DSState="I";
+            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            ds.DSCreateDT=nowUTC;
+            ds.DatastreamID=w.newDatastreamID();
+            ds.DSVersionID=ds.DatastreamID + ".0";
+            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="addDatastream";
+            audit.responsibility=context.get("userId");
+            audit.date=nowUTC;
+            audit.justification="Added a new datastream";
+            w.getAuditRecords().add(audit);
+            ds.auditRecordIdList().add(audit.id); 
+            w.addDatastream(ds);
+            w.commit("Added a new datastream");
+            return ds.DatastreamID;
+        } finally {
+            if (w!=null) {
+                m_manager.releaseWriter(w);
+            }
+        }
     }
 
     public void modifyDatastreamByReference(Context context, String pid,

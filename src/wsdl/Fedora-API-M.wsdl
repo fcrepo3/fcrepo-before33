@@ -90,23 +90,36 @@
       <documentation>the ordered audit records for the object.</documentation>
     </part>
   </message>
-  <message name="addDatastreamExternalRequest">
+  -->
+  <message name="addDatastreamRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
     </part>
-    <part name="dsLabel" type="xsd:string">
+    <part name="label" type="xsd:string">
       <documentation>the label for the datastream.</documentation>
     </part>
-    <part name="dsLocation" type="xsd:string">
-      <documentation>the url to the datastream.</documentation>
+    <part name="MIMEType" type="xsd:string">
+      <documentation>the mime type.</documentation>
+    </part>
+    <part name="location" type="xsd:string">
+      <documentation>the location of the datastream.  The content will be retrieved from this location.</documentation>
+    </part>
+    <part name="controlGroup" type="xsd:string">
+      <documentation>the control group.  This must be one of "X", "M", "R", or "E".</documentation>
+    </part>
+    <part name="MDClass" type="xsd:string">
+      <documentation>the metadata class.  This is only required if the controlGroup is "X", and it must be one of "descriptive", "digital provenance", "source", "rights", or "technical".</documentation>
+    </part>
+    <part name="MDType" type="xsd:string">
+      <documentation>the metadata type.  This is only required if the controlGroup is "X", and it should be a well-accepted string that indicates the type of metadata.</documentation>
     </part>
   </message>
-  <message name="addDatastreamExternalResponse">
+  <message name="addDatastreamResponse">
     <part name="response" type="xsd:string">
-      <documentation>the datastreamID of the newly added datastream.
-      </documentation>
+      <documentation>the datastreamID of the newly added datastream.</documentation>
     </part>
   </message>
+  <!--
   <message name="addDatastreamManagedContentRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -460,14 +473,13 @@
       <input message="fedora-api:getObjectAuditTrailRequest"/>
       <output message="fedora-api:getObjectAuditTrailResponse"/>
     </operation>
-    <operation name="addDatastreamExternal">
-      <documentation>Creates a Referenced External Content Datastream in the 
-      object.  The MIME type is determined by the repository, which uses the 
-      value of the Content-Type HTTP response header provided by an HTTP GET 
-      request of the URL.</documentation>
-      <input message="fedora-api:addDatastreamExternalRequest"/>
-      <output message="fedora-api:addDatastreamExternalResponse"/>
+    -->
+    <operation name="addDatastream">
+      <documentation>Creates a new datastream in the object.</documentation>
+      <input message="fedora-api:addDatastreamRequest"/>
+      <output message="fedora-api:addDatastreamResponse"/>
     </operation>
+    <!--
     <operation name="addDatastreamManagedContent">
       <documentation>Creates a Repository-Managed Content Datastream in the 
       object.  The repository uses the value of dsContent as the content of 
@@ -627,9 +639,10 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
-    <operation name="addDatastreamExternal">
+    -->
+    <operation name="addDatastream">
       <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamExternal"/>
+          soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastream"/>
       <input>
         <soap:body use="encoded" 
             encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
@@ -641,6 +654,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+    <!--
     <operation name="addDatastreamManagedContent">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#addDatastreamManagedContent"/>
