@@ -772,8 +772,8 @@ public class METSLikeDODeserializer
                 // the m_auditBuffer by making it non-null, and getting
                 // ready to accept data by allocating a new StringBuffer
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
-                    if (localName.equals("process")) {
-                        m_auditProcessType=grab(a, uri, "type");
+					if (localName.equals("process")) {
+						m_auditProcessType=grab(a, uri, "type");              	
                     } else if ( (localName.equals("action"))
 							|| (localName.equals("componentID"))
                             || (localName.equals("responsibility"))
@@ -810,13 +810,14 @@ public class METSLikeDODeserializer
                     && m_xmlDataLevel==0) {
                 // finished all xml metadata for this datastream
                 if (m_dsId.equals("FEDORA-AUDITTRAIL")) {
-                    // we've been looking at an audit trail...
-                    // m_auditProcessType, m_auditAction, m_auditComponentID, 
-                    // m_auditResponsibility, m_auditDate, m_auditJustification
-                    // should all be set
+                    // we've been looking at an audit trail... set audit record
                     AuditRecord a=new AuditRecord();
-                    a.id=m_dsVersId; // it's like the FEDORA-AUDITTRAIL is a
-                                     // datastream and the records are versions
+                    // In METS each audit record is in its own <digiprovMD>
+                    // element within an <amdSec>.  So, pick up the XML ID
+                    // of the <digiprovMD> element for the audit record id.
+                    // This amdSec is treated like a datastream, and each 
+                    // digiprovMD is a version, so id was parsed into dsVersId.
+                    a.id=m_dsVersId; 
                     a.processType=m_auditProcessType;
                     a.action=m_auditAction;
                     a.componentID=m_auditComponentID;
