@@ -6,7 +6,7 @@
 <!-- remove security nodes, including possibly misleading comments -->
 <xsl:template match="login-config"/>
 <xsl:template match="security-constraint"/>
-<xsl:template match="comment()"/>
+<xsl:template match="comment()" priority="1"/>
 
 <!-- copy other elements -->
 <xsl:template match="node()">
