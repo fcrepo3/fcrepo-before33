@@ -424,4 +424,21 @@
 		<param name="minPoolSize" value="10"/>
 		<param name="maxPoolSize" value="100"/>
 	</datastore>
+    <datastore id="localKowariTriplestore">
+        <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
+        <param name="modelName" value="resourceIndex"/>
+        <param name="poolMaxGrowth" value="-1"/>
+        <param name="path" value="C:\ristore"/>
+        <param name="bufferFlushBatchSize" value="20000"/>
+        <param name="autoCreate" value="true"/>
+        <param name="bufferSafeCapacity" value="40000"/>
+        <param name="autoFlushDormantSeconds" value="15"/>
+        <param name="poolInitialSize" value="3"/>
+        <param name="serverName" value="fedora"/>
+        <param name="readOnly" value="false"/>
+        <param name="textModelName" value="resourceIndex-fullText"/>
+        <param name="autoFlushBufferSize" value="20000"/>
+        <param name="remote" value="false"/>
+        <param name="memoryBuffer" value="true"/>
+    </datastore>
 </server>
