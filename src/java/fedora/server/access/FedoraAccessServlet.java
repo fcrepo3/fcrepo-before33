@@ -49,6 +49,7 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       "GetBehaviorDefinitions";
   private static final String GET_BEHAVIOR_METHODS = "GetBehaviorMethods";
   private static final String GET_DISSEMINATION = "GetDissemination";
+  private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
   private static final int DISS_CACHE_SIZE = 100;
   private static final SimpleDateFormat formatter =
       new SimpleDateFormat ("yyyy-MM-dd'T'HH:mm:ss");
@@ -309,6 +310,14 @@ public class FedoraAccessServlet extends HttpServlet implements FedoraAccess
       while (e.hasMoreElements())
       {
         results = new DissResultSet((String[])e.nextElement());
+        // If AddressLocation is LOCAL, this is a flag to indicate
+        // the associated OperationLocation requires no AddressLocation.
+        // i.e., the OperationLocation contains all information necessary
+        // to perform the dissemination request.
+        if (results.addressLocation.equals(LOCAL_ADDRESS_LOCATION))
+        {
+          results.addressLocation = "";
+        }
         // Match DSBindingKey pattern in WSDL
         String bindingKeyPattern = "\\("+results.dsBindingKey+"\\)";
         if (counter == 1)
