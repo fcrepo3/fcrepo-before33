@@ -84,7 +84,7 @@ public interface DefaultBehavior
    * <p>Returns the Item Index for the object.  The Item
    * Index is a list of all datastreams in the object.  The datastream items
    * can be data or metadata.  The Item Index is returned as XML
-   * encoded to the objectitems.xsd schema.</p>
+   * encoded to the objectItemIndex.xsd schema.</p>
    * @return
    * @throws ServerException
    */

@@ -57,7 +57,7 @@ public class DatastreamsAsXML
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://www.fedora.info/definitions/1/0/access/objectItemList.xsd\""
+              + " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
               + " PID=\"" + reader.GetObjectPID() + "\">\n");
 
         for (int i=0; i<datastreams.length; i++)
