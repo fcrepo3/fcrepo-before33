@@ -63,7 +63,7 @@ import org.xml.sax.InputSource;
  *
  */
 public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
-    // TODO how are we going to handle different indexing levels?
+    // TODO handling different indexing levels
     // 		- initial index
     //		- latent indexing: "tagging" objects with current index level to support querying what needs indexing later
     //		- subsequent insert/edits/deletes
@@ -122,13 +122,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     /* (non-Javadoc)
      * @see fedora.server.resourceIndex.ResourceIndex#getIndexLevel()
      * 
-     * Levels:
-     *  B
-     *  R
-     *  P
-     *  D
-     * 
-     * Marking for latent indexing
      */
     public int getIndexLevel() {
         return m_indexLevel;
@@ -197,10 +190,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		}
 	}
 
-    /* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#addDatastream(fedora.server.storage.types.Datastream)
-	 */
-	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+	protected void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
 	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -246,10 +236,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		}		
 	}
 
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#addDisseminator(fedora.server.storage.types.Dissemination)
-	 */
-	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+	protected void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
 	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -331,10 +318,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         addDigitalObject(digitalObject);
 	}
 
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDatastream(fedora.server.storage.types.Datastream)
-	 */
-	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+	protected void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
         if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -343,10 +327,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         addDatastream(digitalObject, datastreamID);
 	}
 
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#modifyDissemination(fedora.server.storage.types.Dissemination)
-	 */
-	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+	protected void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
         if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -386,10 +367,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDatastream(fedora.server.storage.types.Datastream)
-	 */
-	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+	protected void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
 	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -428,10 +406,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
 	}
 
-	/* (non-Javadoc)
-	 * @see fedora.server.resourceIndex.ResourceIndex#deleteDissemination(fedora.server.storage.types.Dissemination)
-	 */
-	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+	protected void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
         if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -1176,59 +1151,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         return dsBindSpec.bDefPID;
     }
 
-    /**
-     * 
-     * Case insensitive sort by parameter name
-     */
-    protected class MethodParmDefParmNameComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            MethodParmDef p1 = (MethodParmDef)o1;
-            MethodParmDef p2 = (MethodParmDef)o2;
-            return p1.parmName.toUpperCase().compareTo(p2.parmName.toUpperCase());
-        }
-        
-    }
-    
-    protected class CrossProduct {
-        public List crossProduct;
-        public List lol;
-        
-        public CrossProduct(List listOfLists) {
-            this.lol = listOfLists;
-            this.crossProduct = new ArrayList();
-        }
-        
-        public List getCrossProduct() {
-            generateCrossProduct(new ArrayList());
-            return crossProduct;
-        }
-        
-        private void generateCrossProduct(List productList) {
-            if (productList.size() == lol.size()) {
-                addCopy(productList);
-            } else {
-                int idx = productList.size();
-                List elementList = (List)lol.get(idx);
-                Iterator it = elementList.iterator();
-                if (it.hasNext()) {
-                    productList.add(it.next());
-                    generateCrossProduct(productList);
-                    while (it.hasNext()) {
-                        productList.set(idx, it.next());
-                        generateCrossProduct(productList);
-                    }
-                    productList.remove(idx);
-                }
-            }
-        }
-        
-        private void addCopy(List result) {
-            List copy = new ArrayList();
-            copy.addAll(result);
-            crossProduct.add(copy);
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.trippi.TriplestoreReader#setAliasMap(java.util.Map)
      */
@@ -1345,5 +1267,57 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     public void close() throws TrippiException {
         m_reader.close();
     }
+    
+    /**
+     * Case insensitive sort by parameter name
+     */
+    protected class MethodParmDefParmNameComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            MethodParmDef p1 = (MethodParmDef)o1;
+            MethodParmDef p2 = (MethodParmDef)o2;
+            return p1.parmName.toUpperCase().compareTo(p2.parmName.toUpperCase());
+        }
+    }
+    
+    protected class CrossProduct {
+        public List crossProduct;
+        public List lol;
+        
+        public CrossProduct(List listOfLists) {
+            this.lol = listOfLists;
+            this.crossProduct = new ArrayList();
+        }
+        
+        public List getCrossProduct() {
+            generateCrossProduct(new ArrayList());
+            return crossProduct;
+        }
+        
+        private void generateCrossProduct(List productList) {
+            if (productList.size() == lol.size()) {
+                addCopy(productList);
+            } else {
+                int idx = productList.size();
+                List elementList = (List)lol.get(idx);
+                Iterator it = elementList.iterator();
+                if (it.hasNext()) {
+                    productList.add(it.next());
+                    generateCrossProduct(productList);
+                    while (it.hasNext()) {
+                        productList.set(idx, it.next());
+                        generateCrossProduct(productList);
+                    }
+                    productList.remove(idx);
+                }
+            }
+        }
+        
+        private void addCopy(List result) {
+            List copy = new ArrayList();
+            copy.addAll(result);
+            crossProduct.add(copy);
+        }
+    }
+
 
 }
