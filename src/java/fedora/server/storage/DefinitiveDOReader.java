@@ -39,6 +39,17 @@ import java.util.regex.*;
 
 public class DefinitiveDOReader implements DOReader
 {
+  private static ObjectIntegrityException ERROR_GETTING_COMPONENT =
+    new ObjectIntegrityException("Fedora error getting the requested object component. ");
+
+  private static ObjectIntegrityException ERROR_DESERIALIZING_OBJECT =
+    new ObjectIntegrityException("Fedora error deserializing the requested object component. ");
+
+  private static StreamIOException ERROR_LLSTORE_RETRIEVE =
+    new StreamIOException("Fedora error retrieving object from low-level storage. ");
+
+  private static GeneralException ERROR_MISC =
+    new GeneralException("some error that you don't get any more info about. ");
 
   // TEMPORARY: static variables to suppor testing via main()
   protected static boolean debug = true;
@@ -86,40 +97,63 @@ public class DefinitiveDOReader implements DOReader
 
     if (debug)
     {
-      // FOR TESTING...
-      DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
-      doReader.GetObjectPID();
-      doReader.GetObjectLabel();
-      doReader.GetObjectState();
-      doReader.ListDatastreamIDs("A");
-      doReader.ListDisseminatorIDs("A");
-      Datastream[] dsArray = doReader.GetDatastreams(null);
-      doReader.GetDatastream(dsArray[0].DatastreamID, null);
-      doReader.GetDisseminators(null);
-      String[] bdefArray = doReader.GetBehaviorDefs(null);
-      doReader.GetBMechMethods(bdefArray[0], null);
-      doReader.GetDSBindingMaps(null);
+      try
+      {
+        // FOR TESTING...
+        DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
+        doReader.GetObjectPID();
+        doReader.GetObjectLabel();
+        doReader.GetObjectState();
+        doReader.ListDatastreamIDs("A");
+        doReader.ListDisseminatorIDs("A");
+        Datastream[] dsArray = doReader.GetDatastreams(null);
+        doReader.GetDatastream(dsArray[0].DatastreamID, null);
+        doReader.GetDisseminators(null);
+        String[] bdefArray = doReader.GetBehaviorDefs(null);
+        doReader.GetBMechMethods(bdefArray[0], null);
+        doReader.GetDSBindingMaps(null);
+      }
+      catch (ServerException e)
+      {
+        System.err.println("FEDORA EXCEPTION:)" + e.getMessage());
+      }
+      catch (Exception e)
+      {
+        System.err.println("NON-FEDORA EXCEPTION:)" + e.toString());
+      }
     }
   }
 
-  public DefinitiveDOReader()
+  public DefinitiveDOReader() throws ServerException
   {
   }
-  public DefinitiveDOReader(String objectPID)
+  public DefinitiveDOReader(String objectPID) throws ServerException
   {
     // FOR TESTING:
     // Read the digital object xml from test storage
     //File doFile = locateObject(objectPID);
     //if (debug) System.out.println("object filepath = " + doFile.getPath());
 
+    InputSource doXML = null;
     try
     {
       //FOR TESTING:
       //InputSource doXML = new InputSource(new FileInputStream(doFile));
 
       // LLSTORE: call to low level storage layer to retrieve object
-      InputSource doXML = new InputSource(FileSystemLowlevelStorage.getInstance().retrieve(objectPID));
+      doXML = new InputSource(FileSystemLowlevelStorage.getInstance().retrieve(objectPID));
+    }
+    catch(LowlevelStorageException e)
+    {
+      throw ERROR_LLSTORE_RETRIEVE;
+    }
+    catch (Exception e)
+    {
+      throw ERROR_MISC;
+    }
 
+    try
+    {
       doErrorHandler = new DOReaderSAXErrorHandler();
       SAXParserFactory saxfactory = SAXParserFactory.newInstance();
       saxfactory.setValidating(false);
@@ -133,11 +167,14 @@ public class DefinitiveDOReader implements DOReader
       long endparseTime = System.currentTimeMillis();
       long runTime = endparseTime - startparseTime;
       System.out.println("PARSE RUN TIME (in millisec): " + runTime);
-
+    }
+    catch (SAXException e)
+    {
+      throw ERROR_DESERIALIZING_OBJECT;
     }
     catch (Exception e)
     {
-      System.err.println("Error: (FIXME: throw an appropriate exception here)" + e.toString());
+      throw ERROR_MISC;
     }
   }
 
@@ -145,14 +182,14 @@ public class DefinitiveDOReader implements DOReader
      * Gets the content of the entire digital object as XML.  The object will
      * be returned exactly as it is stored in the repository.
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
      * @throws StreamIOException If there was a failure in accessing the object
      *         for any IO reason during retrieval of the object from low-level storage.
      *         Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
 
-    public InputStream GetObjectXML() throws ObjectIntegrityException, StreamIOException
+    public InputStream GetObjectXML() throws StreamIOException, GeneralException
     {
       // LLSTORE: call to low level storage layer to retrieve object
       InputStream doIn = null;
@@ -160,9 +197,13 @@ public class DefinitiveDOReader implements DOReader
       {
         doIn = FileSystemLowlevelStorage.getInstance().retrieve(PID);
       }
+      catch(LowlevelStorageException e)
+      {
+        throw ERROR_LLSTORE_RETRIEVE;
+      }
       catch (Exception e)
       {
-        System.err.println("Error: (FIXME: throw an appropriate exception here)" + e.toString());
+        throw ERROR_MISC;
       }
       return(doIn);
     }
@@ -179,13 +220,13 @@ public class DefinitiveDOReader implements DOReader
      * its datastream content, except in cases where the datastream content is
      * not actually stored within the repository system.
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
      * @throws StreamIOException If there was a failure in accessing the object
      *         for any IO reason during retrieval of the object from low-level storage.
      *         Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public InputStream ExportObject() throws ObjectIntegrityException, StreamIOException
+    public InputStream ExportObject() throws StreamIOException, GeneralException
     {
       return(null);
     }
@@ -193,10 +234,10 @@ public class DefinitiveDOReader implements DOReader
     /**
      * Gets the PID of the digital object.
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String GetObjectPID() throws ObjectIntegrityException
+    public String GetObjectPID() throws GeneralException
     {
       if (debug) System.out.println("GetObjectPID = " + PID);
       return(PID);
@@ -205,10 +246,10 @@ public class DefinitiveDOReader implements DOReader
     /**
      * Gets the label of the digital object.
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String GetObjectLabel() throws ObjectIntegrityException
+    public String GetObjectLabel() throws GeneralException
     {
       if (debug) System.out.println("GetObjectLabel = " + doLabel);
       return(doLabel);
@@ -220,10 +261,10 @@ public class DefinitiveDOReader implements DOReader
      * A=Active, W=Withdrawn, C=Marked for Deletion, D=Pending Deletion.
      * New states may be defined in the future.
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String GetObjectState() throws ObjectIntegrityException
+    public String GetObjectState() throws GeneralException
     {
       if (debug) System.out.println("GetObjectState = " + doState);
       return(doState);
@@ -235,10 +276,10 @@ public class DefinitiveDOReader implements DOReader
      * that are in a particular state should be listed (e.g., only active
      * Datastreams with a state value of "A").
      *
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String[] ListDatastreamIDs(String state) throws ObjectIntegrityException
+    public String[] ListDatastreamIDs(String state) throws GeneralException
     {
       //FIXIT! Implement the state filter!!
       Set idSet = datastreamTbl.keySet();
@@ -259,10 +300,10 @@ public class DefinitiveDOReader implements DOReader
      * (i.e., gets the version of the Datastreams as of the specified date/time).
      *
      * @param state The date-time stamp to get appropriate Datastream versions
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public Datastream[] GetDatastreams(Date versDateTime) throws ObjectIntegrityException
+    public Datastream[] GetDatastreams(Date versDateTime) throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = datastreamTbl.values();
@@ -302,11 +343,11 @@ public class DefinitiveDOReader implements DOReader
      *
      * @param datastreamID The Datastream identifier
      * @param state The date-time stamp to get appropriate Datastream version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public Datastream GetDatastream(String datastreamID, Date versDateTime)
-      throws ObjectIntegrityException
+      throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
       Datastream datastream = (Datastream) datastreamTbl.get(datastreamID);
@@ -328,11 +369,11 @@ public class DefinitiveDOReader implements DOReader
      * (i.e., gets the version of the Disseminators as of the specified date/time).
      *
      * @param state The date-time stamp to get appropriate Disseminator version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public Disseminator[] GetDisseminators(Date versDateTime)
-      throws ObjectIntegrityException
+      throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = disseminatorTbl.values();
@@ -373,10 +414,10 @@ public class DefinitiveDOReader implements DOReader
      * Disseminators with a state value of "A").
      *
      * @param state The state of the Disseminators to be listed.
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String[] ListDisseminatorIDs(String state) throws ObjectIntegrityException
+    public String[] ListDisseminatorIDs(String state) throws GeneralException
     {
       // FIXIT!  Implement the state filter!!
       Set idSet = disseminatorTbl.keySet();
@@ -399,11 +440,11 @@ public class DefinitiveDOReader implements DOReader
      *
      * @param disseminatorID The Disseminator identifier
      * @param state The date-time stamp to get appropriate Disseminator version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public Disseminator GetDisseminator(String disseminatorID, Date versDateTime)
-      throws ObjectIntegrityException
+      throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
       Disseminator disseminator = (Disseminator) disseminatorTbl.get(disseminatorID);
@@ -424,10 +465,10 @@ public class DefinitiveDOReader implements DOReader
      * on what Behavior Definitions objects the Disseminators refer to.
      *
      * @param versDateTime The date-time stamp to get appropriate version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public String[] GetBehaviorDefs(Date versDateTime) throws ObjectIntegrityException
+    public String[] GetBehaviorDefs(Date versDateTime) throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
       Collection c = disseminatorTbl.values();
@@ -459,11 +500,11 @@ public class DefinitiveDOReader implements DOReader
      *
      * @param bDefPID The PID of a Behavior Definition to which the object subscribes
      * @param versDateTime The date-time stamp to get appropriate version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime)
-      throws ObjectIntegrityException, GeneralException
+      throws GeneralException
     {
       // TODO! dateTime filter not implemented in this release!!
 
@@ -493,11 +534,11 @@ public class DefinitiveDOReader implements DOReader
      *
      * @param bDefPID The PID of a Behavior Definition to which the object subscribes
      * @param versDateTime The date-time stamp to get appropriate version
-     * @throws ObjectIntegrityException If there was a failure in accessing the object
-     *         for any integrity-oriented reason. Extends ServerException.
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
-      throws ObjectIntegrityException, GeneralException
+      throws GeneralException
     {
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
@@ -511,7 +552,7 @@ public class DefinitiveDOReader implements DOReader
     }
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
-          throws ObjectIntegrityException, GeneralException
+          throws GeneralException
     {
       Collection disseminators = disseminatorTbl.values();
       DSBindingMapAugmented[] allBindingMaps = new DSBindingMapAugmented[disseminators.size()];
