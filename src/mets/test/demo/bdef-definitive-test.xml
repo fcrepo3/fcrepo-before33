@@ -19,73 +19,39 @@
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!-- ****************************************************************************************************************************************** -->
-	<!--  DATASTREAM -  METADATA IN THE FORM OF A WSDL ABSTRACT DEFINITIONS -->
-	<!--  Here we store WSDL inline as a form of metadata about the behavior definition represented by this object. -->
+	<!--  METHOD MAP: Usage pattern for Behavior Definition Objects.  A Fedora Behavior Definition contains abstract method -->
+	<!--  names and user input parameters.  The method definitions represent what an end user would see as -->
+	<!--  the set of methods that can be run as disseminations.  The method definitions are stripped of any mechanism-specific -->
+	<!--  information.  The method return type  is always a MIME-typed stream. -->
+	<!--  NOTE:  Some elements in the Method Map schema are not appropriate for usage when encoding a Fedora Behavior Definition. -->
+	<!--  These are elements that pertain to mapping a concrete service definition (WSDL)  to Fedora (in a Behavior Mechanism Object). -->
+	<!--  The following Method Map schema entities do NOT apply to Behavior Definitions:  -->
+	<!--  element DefaultInputParm,  element DatastreamInputParm, element MethodReturnType, -->
+	<!--  and attributes wsdlMsgName and wsdlMsgOutput on element Method. -->
 	<!-- ****************************************************************************************************************************************** -->
-	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL ABSTRACT SERVICE DEFINITION for UVA PickSize Image">
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA PickSize Image">
 				<METS:xmlData>
-					<wsdl:definitions name="image-std" targetNamespace="test:13" xmlns="test:13" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
-						<!-- ************************************************************************************************************************************** -->
-						<!-- WSDL: SCHEMA TYPE DEFINITIONS TO SUPPORT ABSTRACT OPERATIONS  (Behavior Definitions)-->
-						<!-- *************************************************************************************************************************************-->
-						<wsdl:types>
-							<xsd:schema targetNamespace="test:13" xmlns:serviceDef="test:13" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-								<!-- ********************************************************************************************************************************* -->
-								<!-- Import the Fedora base types -->
-								<!--********************************************************************************************************************************* -->
-								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="http://www.cs.cornell.edu/payette/mellon/fedora/fedora-behavior-bind.xsd"/>
-								<!-- ******************************************************************************************************************************** -->
-								<!-- TYPE DEFINITIONS TO SUPPORT INPUT PARAMETERS FOR ABSTRACT SERVICE OPERATIONS -->
-								<!-- These are restrictions on the fedora base types (see fedora-behavior-bind.xsd): -->
-								<!-- 1. userInputType: user-supplied parameters can be defined as input to a service operation by -->
-								<!-- restricting the fedora userInputType.  The userInputType is defined as a string, thus we assume -->
-								<!-- all user-supplied parameters will be some restriction on a string. -->
-								<!-- ******************************************************************************************************************************** -->
-								<!-- -->
-								<!-- SIMPLE USER-SUPPLIED PARAMETERS: these are string parameters whose value will be supplied -->
-								<!-- by the user at run time.  These user-supplied parameters will show up in the official method definitions of -->
-								<!-- the behavior definition to which this service subscribes -->
-								<!-- Note: In this example there are two user-supplied parameters. -->
-								<!--     ZOOM - which can have values of "yes" or "no" -->
-								<!--     SIZE    - which is unbounded and can have any value" -->
-								<xsd:simpleType name="ZOOM">
-									<xsd:restriction base="fedora:userInputType">
-										<xsd:enumeration value="yes"/>
-										<xsd:enumeration value="no"/>
-									</xsd:restriction>
-								</xsd:simpleType>
-								<xsd:simpleType name="SIZE">
-									<xsd:restriction base="fedora:userInputType"/>
-								</xsd:simpleType>
-							</xsd:schema>
-						</wsdl:types>
-						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: MESSAGE DEFINITIONS  -->
-						<!-- Here we define the messages that will be used by the operations defined below.      -->
-						<!-- FOR FEDORA MESSAGES MUST BE DEFINED EVEN IF THEY HAVE NO PARTS!!!! -->
-						<!-- ******************************************************************************************************************** -->
-						<!-- NOTE: message parts on request messages represent parameters whose values will be supplied by users at runtime. -->
-						<!-- The part types can be dereferenced to its base type of fedora:userInputType, defined above.  -->
-						<wsdl:message name="getSizeRequest">
-							<wsdl:part name="ZOOM" type="serviceDef:ZOOM"/>
-							<wsdl:part name="SIZE" type="serviceDef:SIZE"/>
-						</wsdl:message>
-						<wsdl:message name="singlestream_response">
-							<wsdl:part name="result" type="fedora:MIMEStreamReturnType"/>
-						</wsdl:message>
-						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Behavior Definitions) -->
-						<!-- Here we define the behavior definitions as abstract service operations -->
-						<!-- ******************************************************************************************************************** -->
-						<wsdl:portType name="PickSizeImagePort">
-							<wsdl:operation name="getSize">
-								<wsdl:input message="getSizeRequest"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>
-						</wsdl:portType>
-					</wsdl:definitions>
+					<fmm:MethodMap name="Fedora MethodMap for PickSize Image BDef" bDefPID="test:13" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getThumbnail">
+						</fmm:Method>
+						<fmm:Method operationName="getSize">
+							<fmm:UserInputParm parmName="ZOOM" defaultValue="yes" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="yes"/>
+									<fmm:ValidParm value="no"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+							<fmm:UserInputParm parmName="SIZE" defaultValue="medium1" passBy="VALUE">
+								<fmm:ValidParmValues>
+									<fmm:ValidParm value="small"/>
+									<fmm:ValidParm value="medium1"/>
+									<fmm:ValidParm value="medium2"/>
+								</fmm:ValidParmValues>
+							</fmm:UserInputParm>
+						</fmm:Method>
+					</fmm:MethodMap>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -112,8 +78,8 @@
 	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
-			<METS:div TYPE="BDEF-WSDL" LABEL="Abstract behavior definition in WSDL format">
-				<METS:fptr FILEID="WSDL"/>
+			<METS:div TYPE="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format">
+				<METS:fptr FILEID="METHODMAP"/>
 			</METS:div>
 			<METS:div TYPE="BDEF-GUIDE" LABEL="The Official Guide to the UVA PickSize Image Behavior Definition">
 				<METS:fptr FILEID="DS1"/>

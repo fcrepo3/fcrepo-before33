@@ -2,7 +2,7 @@
 <!---********************************************************************************************-->
 <!-- SAMPLE FEDORA BEHAVIOR MECHANISM OBJECT ENCODED USING METS -->
 <!---********************************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:fbs="http://fedora.comm.nsdlib.org/bindspec" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:20" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for UVA Standard Image" PROFILE="fedora:BMECH">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/mets/ http://www.cs.cornell.edu/payette/mellon/fedora/mets-fedora.xsd" OBJID="test:20" TYPE="FedoraBMechObject" LABEL="Behavior Mechanism Object for Simple HTTP Metadata Getter Service implementing UVA Metadata BDEF contract." PROFILE="fedora:BMECH">
 	<!---*******************************************************************************************************************************************-->
 	<!--  FEDORA SYSTEM METADATA: -->
 	<!---*******************************************************************************************************************************************-->
@@ -17,238 +17,223 @@
 		</METS:agent>
 	</METS:metsHdr>
 	<!---*******************************************************************************************************************************************-->
-	<!---User-Defined XML METADATA DATASTREAMS-->
+	<!--  INLINE METADATA DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT: -->
 	<!---*******************************************************************************************************************************************-->
-	<!-- DATASTREAM : METADATA DESCRIBING THE DATA BINDING SPECIFICATION  FOR THE STD IMAGE MECHANISM -->
-	<!-- Here we store XML data that conforms to the Fedora dsBindSpec schema. -->
-	<!-- ****************************************************************************************************************************************** -->
-	<METS:amdSec ID="DSBIND">
-		<METS:techMD ID="DSBIND1.0" CREATED="2002-02-17T06:32:00" STATUS="">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Binding Specification for Uva Descriptive Metadata">
+	<!---********************************************************************************************-->
+	<!-- SERVICE PROFILE: -->
+	<!-- This is a Fedora metadata format for describing an external service. The intent is to have some basic "preservation-significant"  -->
+	<!-- metadata that can be helpful in diagnosing potential vulnerabilities with the service over time. -->
+	<!-- NOTE!! The Fedora Service Profile Schema is still a work in progress!!  This is a preliminary metadata format which requires more analysis.-->
+	<!--********************************************************************************************-->
+	<METS:amdSec ID="SERVICE-PROFILE">
+		<METS:techMD ID="SERVICE-PROFILE1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Service Profile - Technical description of the service">
 				<METS:xmlData>
-					<fbs:DSBindingSpec>
-						<fbs:mechanismID scheme="URN">test:20</fbs:mechanismID>
-						<fbs:behaviorDefID scheme="URN">test:19</fbs:behaviorDefID>
-						<fbs:DSBinding BindingKeyName="UVADESC_META" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSBindingLabel>Uva descriptive metadata</fbs:DSBindingLabel>
-							<fbs:DSBindingInstructions>Uva descmeta</fbs:DSBindingInstructions>
+					<!-- bDefPID is the PID of the Fedora Behavior Definition Object that contains an abstract description of the operations the service implements-->
+					<!-- bMechPID is the PID of THIS Behavior Mechanism Object (self-referential) which is a surrogate for an external service-->
+					<fsvp:serviceProfile bDefPID="test:19" bMechPID="test:20" xmlns:fsvp="http://fedora.comm.nsdlib.org/service/profile">
+						<!-- The URI for the namespace that Fedora will use to refer to the service.  Fedora convention is to use the value of behaviorMechPID. -->
+						<fsvp:serviceNamespaceURI>test:20</fsvp:serviceNamespaceURI>
+						<fsvp:serviceName>Simple HTTP Metadata Getter</fsvp:serviceName>
+						<fsvp:serviceLabel/>
+						<fsvp:serviceImplementation>
+							<fsvp:serviceTransportProtocol>HTTP</fsvp:serviceTransportProtocol>
+							<fsvp:serviceMessagingtProtocol>HTTP GET</fsvp:serviceMessagingtProtocol>
+							<fsvp:serviceInputFormats>
+								<fsvp:MIMEType/>
+							</fsvp:serviceInputFormats>
+							<fsvp:serviceOutputFormats>
+								<fsvp:MIMEType/>
+								<fsvp:MIMEType/>
+								<fsvp:MIMEType/>
+							</fsvp:serviceOutputFormats>
+							<fsvp:serviceImplDependencies>
+								<fsvp:tool name="" version="" type=""/>
+								<fsvp:tool name="" version="" type=""/>
+							</fsvp:serviceImplDependencies>
+							<fsvp:serviceLiveTestURL/>
+						</fsvp:serviceImplementation>
+					</fsvp:serviceProfile>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- SERVICE DATASTREAM INPUT SPECIFICATION: -->
+	<!-- THIS IS  METADATA DESCRIBING A DATASTREAM CONTRACT BETWEEN A FEDORA DATA OBJECT and the SERVICE. -->
+	<!-- This specifies the what kind of Datastream(s) must be in a Fedora Data Object to serve as runtime input to the external service -->
+	<!-- represented by this Behavior Mechanism Object.  -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="DSINPUTSPEC">
+		<METS:techMD ID="DSINPUTSPEC1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Datastream Input Specification for Simple HTTP Metadata Getter service">
+				<METS:xmlData>
+					<fbs:DSInputSpec label="Metadata Getter Datastream Input Specification" bDefPID="test:19" bMechPID="test:20" xmlns:fbs="http://fedora.comm.nsdlib.org/service/bindspec">
+						<fbs:DSInput wsdlMsgPartName="UVADESC_META" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Uva descriptive metadata</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-						</fbs:DSBinding>
-						<fbs:DSBinding BindingKeyName="UVATECH_META" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSBindingLabel>Uva descriptive metadata</fbs:DSBindingLabel>
-							<fbs:DSBindingInstructions>Uva descmeta</fbs:DSBindingInstructions>
+							<fbs:DSInputInstruction>xml descriptive metadata encoded to the schema http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="UVATECH_META" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Uva technical metadata</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-						</fbs:DSBinding>
-						<fbs:DSBinding BindingKeyName="UVADIGIPROV_META" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSBindingLabel>Uva descriptive metadata</fbs:DSBindingLabel>
-							<fbs:DSBindingInstructions>Uva descmeta</fbs:DSBindingInstructions>
+							<fbs:DSInputInstruction>xml technical metadata encoded to the schema http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="UVADIGIPROV_META" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Uva provenance metadata</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-						</fbs:DSBinding>
-						<fbs:DSBinding BindingKeyName="UVARIGHTS_META" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSBindingLabel>Uva descriptive metadata</fbs:DSBindingLabel>
-							<fbs:DSBindingInstructions>Uva descmeta</fbs:DSBindingInstructions>
+							<fbs:DSInputInstruction>xml provenance metadata encoded to the schema (insert schema URL)</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="UVARIGHTS_META" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Uva rights metadata</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-						</fbs:DSBinding>
-						<fbs:DSBinding BindingKeyName="UVASOURCE_META" DSMin="1" DSMax="1" DSOrdinality="false">
-							<fbs:DSBindingLabel>Uva descriptive metadata</fbs:DSBindingLabel>
-							<fbs:DSBindingInstructions>Uva descmeta</fbs:DSBindingInstructions>
+							<fbs:DSInputInstruction>xml rights metadata encoded to the schema (insert schema URL)</fbs:DSInputInstruction>
+						</fbs:DSInput>
+						<fbs:DSInput wsdlMsgPartName="UVASOURCE_META" DSMin="1" DSMax="1" DSOrdinality="false">
+							<fbs:DSInputLabel>Uva source metadata</fbs:DSInputLabel>
 							<fbs:DSMIME>text/xml</fbs:DSMIME>
-						</fbs:DSBinding>						
-					</fbs:DSBindingSpec>
+							<fbs:DSInputInstruction>xml source metadata encoded to the schema (insert schema URL)</fbs:DSInputInstruction>
+						</fbs:DSInput>
+					</fbs:DSInputSpec>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<!---*******************************************************************************************************************************************-->
+	<!-- FEDORA-TO-WSDL METHOD MAP: -->
+	<!-- THIS IS  METADATA DESCRIBING HOW THE SERVICE WSDL MAPS TO FEDORA METHOD DEFINITIONS -->
+	<!-- This is how we make a service definition expressed in WSDL play nicely with Fedora. -->
+	<!-- ****************************************************************************************************************************************** -->
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Mapping of WSDL to Fedora notion of Method Definitions">
+				<METS:xmlData>
+					<fmm:MethodMap name="MethodMap - Simple HTTP Metadata Getter BMech for UVA Metadata BDEF" bDefPID="test:19" bMechPID="test:20" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<!-- NOTE: The operationName attribute correlates to WSDL operation in terms of mapping to WSDL definitions -->
+						<fmm:Method operationName="getUvaDescMeta" wsdlMsgName="getUvaDescMetaRequest" wsdlMsgOutput="meta_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="UVADESC_META" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="meta_response" wsdlMsgTOMIME="text/xml"/>
+						</fmm:Method>
+						<fmm:Method operationName="getUvaTechMeta" wsdlMsgName="getUvaTechMetaRequest" wsdlMsgOutput="meta_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="UVATECH_META" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="meta_response" wsdlMsgTOMIME="text/xml"/>
+						</fmm:Method>
+						<fmm:Method operationName="getUvaDigiprovMeta" wsdlMsgName="getUvaDigiprovMetaRequest" wsdlMsgOutput="meta_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="UVADIGIPROV_META" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="meta_response" wsdlMsgTOMIME="text/xml"/>
+						</fmm:Method>
+						<fmm:Method operationName="getUvaRightsMeta" wsdlMsgName="getUvaRightsMetaRequest" wsdlMsgOutput="meta_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="UVARIGHTS_META" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="meta_response" wsdlMsgTOMIME="text/xml"/>
+						</fmm:Method>
+						<fmm:Method operationName="getUvaSourceMeta" wsdlMsgName="getUvaSourceMetaRequest" wsdlMsgOutput="meta_response">
+							<!-- NOTE: The parmName attribute correlates to WSDL message part name in terms of mapping to WSDL definitions -->
+							<fmm:DatastreamInputParm parmName="UVASOURCE_META" passBy="URL_REF"/>
+							<fmm:MethodReturnType wsdlMsgName="meta_response" wsdlMsgTOMIME="text/xml"/>
+						</fmm:Method>
+					</fmm:MethodMap>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
 	</METS:amdSec>
 	<!-- ****************************************************************************************************************************************** -->
-	<!--  DATASTREAM -  METADATA IN THE FORM OF A WSDL SPECIFICATION FOR THE STD IMAGE MECHANISM -->
-	<!--  Here we store WSDL inline as a form of metadata about the mechanism represented by this object. -->
+	<!--  WSDL SERVICE DEFINITION -->
+	<!--  Here we store WSDL as a form of metadata about the external service that is represented by this  -->
+	<!--  Fedora Behavior Definition Object. -->
 	<!-- ****************************************************************************************************************************************** -->
 	<METS:amdSec ID="WSDL">
 		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL service definitions for Std Image">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL definition for Simple HTTP Metadata Getter">
 				<METS:xmlData>
-					<wsdl:definitions name="uvadesc-std" targetNamespace="test:20" xmlns="test:20" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
-						<!-- ************************************************************************************************************************************** -->
-						<!-- WSDL: SCHEMA TYPE DEFINITIONS FOR THE STD IMAGE MECHANISM-->
-						<!-- Here are all data types needed by the mechanism.  These could also be imported from a separate file.  -->
-						<!-- *************************************************************************************************************************************-->
+					<!-- ******************************************************************************************************************************** -->
+					<!-- PRE-EXISTING SERVICE WSDL THAT IS NOT FEDORA-AWARE -->
+					<!-- ******************************************************************************************************************************** -->
+					<wsdl:definitions name="Simple HTTP Metadata Getter Service" targetNamespace="metaget" xmlns:this="metaget" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+						<!-- ******************************************************************************************************************** -->
+						<!-- WSDL: Schema Type Definitions used in this WSDL -->
+						<!-- ******************************************************************************************************************** -->
 						<wsdl:types>
-							<xsd:schema targetNamespace="test:20" xmlns:service="test:20" xmlns:fedora="http://fedora.comm.nsdlib.org/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-								<!-- ********************************************************************************************************************************* -->
-								<!-- Import the Fedora base types for binding to services. -->
-								<!--********************************************************************************************************************************* -->
-								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="http://www.cs.cornell.edu/payette/mellon/fedora/fedora-behavior-bind.xsd"/>
-								<!-- ******************************************************************************************************************************** -->
-								<!-- TYPE DEFINITIONS TO SUPPORT INPUT PARAMETERS FOR SERVICE OPERATIONS -->
-								<!-- These are restrictions on the fedora base types (see fedora-behavior-bind.xsd): -->
-								<!-- 1. datastreamInputType: Datastreams an be defined as input to a service operation by -->
-								<!-- by restricting the fedora datastreamInputType.  The datastreamInputType is defined as a complex -->
-								<!-- type with two elements: a MIME type and content.  Content can be specified as either a URL (content-by-reference) 	-->
-								<!-- or as base64Binary (content-by-value).  -->
-								<!-- Generally, content will be specified as a URL for HTTP service bindings.  For SOAP bindings content can be -->
-								<!-- specified as either a URL or base64Bindary.  -->
-								<!-- 2. userInputType: user-supplied parameters can be defined as input to a service operation by -->
-								<!-- restricting the fedora userInputType.  The userInputType is defined as a string, thus we assume -->
-								<!-- all user-supplied parameters will be some restriction on a string. -->
-								<!-- 3. defaultInputType:  other parameters, with default values, can be defined as input to a service operation. -->
-								<!-- by restricting the fedora defaultInputType.   The defaultInputType is defined as a string, -->
-								<!-- thus we assume all default parameters will be some restriction on a string.-->
-								<!-- ******************************************************************************************************************************** -->
-								<!-- -->
-								<!-- DATASTREAM-AS-INPUT PARAMETERS: these are parameters that identify datastreams in a Fedora -->
-								<!-- data object that will serve as input to the service.  Fedora data objects are created with indirect references to -->
-								<!-- the type definitions described here.   The way this is done is that each data object has a METS structMap-->
-								<!-- that specifies a service URI (PID of bmech object).  The <div> elements of the structMap refer to datastreams -->
-								<!-- in the data object.  Each <div> element has a TYPE attribute that corresponds with the name of one of the complexTypes -->
-								<!-- defined below (a restriction of fedora:datastreamInputType).   At runtime, it is the job of the -->
-								<!-- Fedora repository to locate the appropriate datastreams in the data object based on the name of the 	complexType.-->
-								<xsd:complexType name="UVADESC_META">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:datastreamInputType">
-											<xsd:sequence>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="text/xml"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="UVATECH_META">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:datastreamInputType">
-											<xsd:sequence>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="text/xml"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="UVADIGIPROV_META">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:datastreamInputType">
-											<xsd:sequence>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="text/xml"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="UVARIGHTS_META">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:datastreamInputType">
-											<xsd:sequence>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="text/xml"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>
-								<xsd:complexType name="UVASOURCE_META">
-									<xsd:complexContent>
-										<xsd:restriction base="fedora:datastreamInputType">
-											<xsd:sequence>
-												<xsd:element name="MIME">
-													<xsd:simpleType>
-														<xsd:restriction base="xsd:string">
-															<xsd:enumeration value="text/xml"/>
-														</xsd:restriction>
-													</xsd:simpleType>
-												</xsd:element>
-												<xsd:element name="contentURL" type="xsd:string" minOccurs="1" maxOccurs="1"/>
-											</xsd:sequence>
-										</xsd:restriction>
-									</xsd:complexContent>
-								</xsd:complexType>																								
+							<xsd:schema targetNamespace="metaget">
+								<xsd:simpleType name="metadataURLType">
+									<xsd:restriction base="xsd:string"/>
+								</xsd:simpleType>
 							</xsd:schema>
 						</wsdl:types>
 						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: MESSAGE DEFINITIONS  -->
-						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
+						<!-- WSDL: MESSAGE DEFINITIONS -->
 						<!-- ******************************************************************************************************************** -->
-						<wsdl:message name="getUvaDescMetaRequest">
-							<wsdl:part name="UVADESC_META" type="service:UVADESC_META"/>
+						<wsdl:message name="getUvaDescMeta">
+							<wsdl:part name="UVADESC_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaTechMetaRequest">
-							<wsdl:part name="UVATECH_META" type="service:UVATECH_META"/>
+						<wsdl:message name="getUvaTechMeta">
+							<wsdl:part name="UVATECH_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaDigiprovMetaRequest">
-							<wsdl:part name="UVADIGIPROV_META" type="service:UVADIGIPROV_META"/>
+						<wsdl:message name="getUvaDigiprovMeta">
+							<wsdl:part name="UVADIGIPROV_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaRightsMetaRequest">
-							<wsdl:part name="UVARIGHTS_META" type="service:UVARIGHTS_META"/>
+						<wsdl:message name="getUvaRightsMeta">
+							<wsdl:part name="UVARIGHTS_META" type="this:metadataURLType"/>
 						</wsdl:message>
-						<wsdl:message name="getUvaSourceMetaRequest">
-							<wsdl:part name="UVASOURCE_META" type="service:UVASOURCE_META"/>
-						</wsdl:message>																								
-						<wsdl:message name="singlestream_response">
-							<wsdl:part name="result" type="fedora:MIMEStreamReturnType"/>
+						<wsdl:message name="getUvaSourceMeta">
+							<wsdl:part name="UVASOURCE_META" type="this:metadataURLType"/>
+						</wsdl:message>
+						<wsdl:message name="meta_response">
+							<wsdl:part name="metadata" type="xsd:base64Binary"/>
 						</wsdl:message>
 						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Behavior Definitions) -->
-						<!-- Here we define the behaviors that the mechanism  implements -->
+						<!-- WSDL: ABSTRACT OPERATION  DEFINITIONS (Fedora Behavior Definitions) -->
+						<!-- Here we define the operations the service implements -->
 						<!-- ******************************************************************************************************************** -->
-						<wsdl:portType name="stdUvaDescMetaPort">
+						<wsdl:portType name="GetMetadataPortType">
 							<wsdl:operation name="getUvaDescMeta">
-								<wsdl:input message="getUvaDescMetaRequest"/>
-								<wsdl:output message="singlestream_response"/>
+								<wsdl:input message="this:getUvaDescMetaRequest"/>
+								<wsdl:output message="this:meta_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getUvaTechMeta">
-								<wsdl:input message="getUvaTechMetaRequest"/>
-								<wsdl:output message="singlestream_response"/>
+								<wsdl:input message="this:getUvaTechMetaRequest"/>
+								<wsdl:output message="this:meta_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getUvaDigiprovMeta">
-								<wsdl:input message="getUvaDigiprovMetaRequest"/>
-								<wsdl:output message="singlestream_response"/>
+								<wsdl:input message="this:getUvaDigiprovMetaRequest"/>
+								<wsdl:output message="this:meta_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getUvaRightsMeta">
-								<wsdl:input message="getUvaRightsMetaRequest"/>
-								<wsdl:output message="singlestream_response"/>
+								<wsdl:input message="this:getUvaRightsMetaRequest"/>
+								<wsdl:output message="this:meta_response"/>
 							</wsdl:operation>
 							<wsdl:operation name="getUvaSourceMeta">
-								<wsdl:input message="getUvaSourceMetaRequest"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>																												
+								<wsdl:input message="this:getUvaSourceMetaRequest"/>
+								<wsdl:output message="this:meta_response"/>
+							</wsdl:operation>
 						</wsdl:portType>
 						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: THE BEHAVIOR SERVICE DEFINITION -->
-						<!-- Here we define how to invoke operations of the Behavior Mechanism Service -->
+						<!-- WSDL: THE SERVICE DEFINITION -->
+						<!-- Here we define how to bind to operations to run the Service -->
 						<!-- ******************************************************************************************************************** -->
-						<wsdl:service name="std-uvadescmeta">
-							<!-- THIS IS THE HTTP PORT: EXAMPLE OF NULL MECHANISM (NO TRANSFORMATION OF DATASTREAM) -->
-							<wsdl:port name="std-uvadescmeta-impl" binding="HTTP-std-uvadescmeta">
+						<wsdl:service name="GetMetadata">
+							<!-- THIS IS THE HTTP PORT -->
+							<wsdl:port name="GetMetadata_port" binding="this:GetMetadata_http">
+								<!-- NOTE on http:address:  this is not proper WSDL, but we are setting the http:address location to LOCAL -->
+								<!-- to signify that the WSDL describes an internal Fedora service which has no public end-point. -->
 								<http:address location="LOCAL"/>
 							</wsdl:port>
 						</wsdl:service>
 						<!-- ******************************************************************************************************************** -->
-						<!--The HTTP Binding: EXAMPLE OF NULL MECHANISM (NO TRANSFORMATION OF DATASTREAM) -->
-						<!--This is still under consideration how to encode this situation. Just want to do HTTP GET on Datastream. -->
+						<!-- The HTTP Bindings for Service: -->
+						<!-- NOTE: the http:operation location attribute is subject to a URL replacement algorithm.  -->
+						<!-- See the W3C Specification for WSDL Bindings at: http://www.w3.org/TR/2002/WD-wsdl12-bindings-20020709 -->
 						<!-- ******************************************************************************************************************** -->
-						<wsdl:binding name="HTTP-std-uvadescmeta" type="std-uvadescmeta">
+						<wsdl:binding name="GetMetadata_http" type="this:GetMetadataPortType">
 							<http:binding verb="GET"/>
 							<wsdl:operation name="getUvaDescMeta">
+								<!-- NOTE on http:operation:  this is not proper WSDL, but we are setting the http:operation location to -->
+								<!-- the message part that, itself, is a URL.  This is done in conjunction with the setting of the http:address -->
+								<!-- to LOCAL in the port definition.  This is done to signify that the WSDL describes an internal Fedora -->
+								<!--service which has no public end-point. -->
 								<http:operation location="(UVADESC_META)"/>
 								<wsdl:input>
 									<http:urlReplacement/>
@@ -292,7 +277,7 @@
 								<wsdl:output>
 									<mime:content type="text/xml"/>
 								</wsdl:output>
-							</wsdl:operation>																												
+							</wsdl:operation>
 						</wsdl:binding>
 					</wsdl:definitions>
 				</METS:xmlData>
@@ -300,10 +285,9 @@
 		</METS:techMD>
 	</METS:amdSec>
 	<!---*******************************************************************************************************************************************-->
-	<!--- DATASTREAMS:  EXTERNAL-REFERENCED CONTENT and REPOSITORY-MANAGED CONTENT-->
-	<!---*******************************************************************************************************************************************-->
-	<!--  Here we aggregate file(s) that relate to the watermarking mechanism service.-->
-	<!-- These can be schema definitions, debugging tools, documentation, or other resources.  -->
+	<!--- OTHER DATASTREAMS FOR THIS BEHAVIOR MECHANISM OBJECT -->
+	<!--  This is content that is relevant to describing the external service that this Behavior Mechanism Object represents. -->
+	<!--  These can be schema definitions, debugging tools, documentation, or other resources.  -->
 	<!-- ******************************************************************************************************************** -->
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
@@ -315,34 +299,41 @@
 		</METS:fileGrp>
 	</METS:fileSec>
 	<!---*******************************************************************************************************************************************-->
-	<!--- FEDORA DATASTREAM BINDING MAPS  -->
-	<!--  In Fedora the METS structure maps are associated with the DISSEMINATOR mechanisms (see METS:behaviorSec).-->
-	<!---*******************************************************************************************************************************************-->
-	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
+	<!--  DATASTREAM BINDING MAP FOR FOR THIS BEHAVIOR MECHANISM OBJECT-->
+	<!-- Since THIS Behavior Mechanism Object is, itself, a Fedora Digital Object, we can disseminate its contents. -->
+	<!-- The Fedora system provides a bootstrap service (built-in to the repository system) that will enable the -->
+	<!-- dissemination of content from a Behavior Mechanism Objects.  What follows is the Datastream Binding Map for that -->
+	<!-- is used by the bootstrap service.  -->
+	<!-- ******************************************************************************************************************** -->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
-			<METS:div TYPE="DSBINDSPEC" LABEL="XML data that serves as Datastream Binding Specification for Std UvaDescMeta service">
-				<METS:fptr FILEID="DSBIND"/>
+			<METS:div TYPE="SERVICE-PROFILE" LABEL="Service profile metadata">
+				<METS:fptr FILEID="SERVICE-PROFILE"/>
 			</METS:div>
-			<METS:div TYPE="BMECH-WSDL" LABEL="Std UvaDescMeta service definitions in WSDL format">
+			<METS:div TYPE="FEDORA-TO-WSDL-DSINPUTSPEC" LABEL="XML data that serves describes the requirements for Datastreams that will be used as input to the service">
+				<METS:fptr FILEID="DSINPUTSPEC"/>
+			</METS:div>
+			<METS:div TYPE="FEDORA-TO-WSDL-METHODMAP" LABEL="XML data that enables FEDORA to understand how to use the service WSDL">
+				<METS:fptr FILEID="METHODMAP"/>
+			</METS:div>
+			<METS:div TYPE="WSDL" LABEL="Service definitions in WSDL format">
 				<METS:fptr FILEID="WSDL"/>
 			</METS:div>
-			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the Std UvaDescMeta service">
+			<METS:div TYPE="PROGGUIDE" LABEL="The Programmer's user guide for using the service">
 				<METS:fptr FILEID="DS1"/>
 			</METS:div>
 		</METS:div>
 	</METS:structMap>
 	<!---*******************************************************************************************************************************************-->
-	<!--- DISSEMINATORS-->
-	<!-- A disseminator provides a "behavior-centric" view of the object.  It has an attribute STRUCTID -->
-	<!-- which is an IDREF to a mechanism-specific structMap.  The structMap labels datastreams in -->
-	<!-- a manner that is understood by the mechanism defined in the disseminator.  -->
-	<!-- -->
+	<!--- BOOTSTRAP  DISSEMINATOR FOR THIS BEHAVIOR MECHANISM OBJECT: -->
+	<!--  This is a disseminator for THIS Behavior Definition Object that lets a client be able to treat it like any other Fedora Object.  -->
+	<!--  Thus, clients can disseminate all this great metadata about the external service that is represented by this -->
+	<!--  Behavior Mechanism Object. -->
 	<!---*******************************************************************************************************************************************-->
-	<!--- THE BOOTSTRAP  DISSEMINATOR -->
-	<!---*******************************************************************************************************************************************-->
-	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior Mechanism to run the behaviors. -->
+	<!--- The Disseminator subscribes to the Fedora Bootstrap Behavior Definition.  It uses the Fedora Bootstrap Behavior -->
+	<!--   Mechanism to run the behaviors. -->
 	<!--  The Bootstrap behaviors enable a client to get disseminations of the contents of this Behavior Mechanism Object.   -->
+	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1.0" STRUCTID="S1" BTYPE="uva-bdef-bootstrap:1" CREATED="2000-08-22T06:32:00" LABEL="Bootstrap Behaviors" GROUPID="DISS1" STATUS="">
 		<METS:interfaceDef LABEL="Bootstrap Behavior Definition" LOCTYPE="URN" xlink:href="uva-bdef-bootstrap:1"/>
 		<METS:mechanism LABEL="Bootstrap Behavior Mechanism" LOCTYPE="URN" xlink:href="uva-bmech-bootstrap:2"/>

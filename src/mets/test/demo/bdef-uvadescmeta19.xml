@@ -19,79 +19,32 @@
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!-- ****************************************************************************************************************************************** -->
-	<!--  DATASTREAM -  METADATA IN THE FORM OF A WSDL ABSTRACT DEFINITIONS -->
-	<!--  Here we store WSDL inline as a form of metadata about the behavior definition represented by this object. -->
+	<!--  METHOD MAP: Usage pattern for Behavior Definition Objects.  A Fedora Behavior Definition contains abstract method -->
+	<!--  names and user input parameters.  The method definitions represent what an end user would see as -->
+	<!--  the set of methods that can be run as disseminations.  The method definitions are stripped of any mechanism-specific -->
+	<!--  information.  The method return type  is always a MIME-typed stream. -->
+	<!--  NOTE:  Some elements in the Method Map schema are not appropriate for usage when encoding a Fedora Behavior Definition. -->
+	<!--  These are elements that pertain to mapping a concrete service definition (WSDL)  to Fedora (in a Behavior Mechanism Object). -->
+	<!--  The following Method Map schema entities do NOT apply to Behavior Definitions:  -->
+	<!--  element DefaultInputParm,  element DatastreamInputParm, element MethodReturnType, -->
+	<!--  and attributes wsdlMsgName and wsdlMsgOutput on element Method. -->
 	<!-- ****************************************************************************************************************************************** -->
-	<METS:amdSec ID="WSDL">
-		<METS:techMD ID="WSDL1.0" CREATED="2002-02-17T06:32:00" STATUS="">
-			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="WSDL ABSTRACT SERVICE DEFINITION for UVA Standard Image">
+	<METS:amdSec ID="METHODMAP">
+		<METS:techMD ID="METHODMAP1.0" CREATED="2002-02-17T06:32:00" STATUS="A">
+			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="Method Map for Fedora Behavior Definition for UVA Metadata">
 				<METS:xmlData>
-					<wsdl:definitions name="uvadesc-std" targetNamespace="test:19" xmlns="test:19" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/">
-						<!-- ************************************************************************************************************************************** -->
-						<!-- WSDL: SCHEMA TYPES FOR STD IMAGE BEHAVIOR DEFINITION -->
-						<!-- *************************************************************************************************************************************-->
-						<wsdl:types>
-							<xsd:schema targetNamespace="test:19" xmlns:serviceDef="test:19" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap" xmlns:soapenc="http://schemas.xmlsoap.org/wsdl/soap/encoding" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-								<!-- ********************************************************************************************************************************* -->
-								<!-- Import the Fedora base types -->
-								<!--********************************************************************************************************************************* -->
-								<xsd:import namespace="http://fedora.comm.nsdlib.org/" schemaLocation="http://www.cs.cornell.edu/payette/mellon/fedora/fedora-behavior-bind.xsd"/>
-								<!-- ******************************************************************************************************************************** -->
-								<!-- TYPE DEFINITIONS TO SUPPORT INPUT PARAMETERS FOR ABSTRACT SERVICE OPERATIONS -->
-								<!-- These are restrictions on the fedora base types (see fedora-behavior-bind.xsd): -->
-								<!-- 1. userInputType: user-supplied parameters can be defined as input to a service operation by -->
-								<!-- restricting the fedora userInputType.  The userInputType is defined as a string, thus we assume -->
-								<!-- all user-supplied parameters will be some restriction on a string. -->
-								<!-- ******************************************************************************************************************************** -->
-								<!-- -->
-								<!-- SIMPLE USER-SUPPLIED PARAMETERS: these are string parameters whose value will be supplied -->
-								<!-- by the user at run time.  These user-supplied parameters will show up in the official method definitions of -->
-								<!-- the behavior definition to which this service subscribes -->
-								<!-- -->
-								<!-- NO USER PARMS FOR THIS BDEF -->
-							</xsd:schema>
-						</wsdl:types>
-						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: MESSAGE DEFINITIONS  -->
-						<!-- Here we define the messages that will be used by the WSDL operations, defined below.      -->
-						<!-- FOR FEDORA MESSAGES MUST BE DEFINED EVEN IF THEY HAVE NO PARTS!!!! -->
-						<!-- ******************************************************************************************************************** -->
-						<!-- NOTE: message parts on request messages represent parameters whose values will be supplied by users at runtime. -->
-						<!-- The part types can be dereferenced to its base type of fedora:userInputType, defined above.  -->
-						<wsdl:message name="getUvaDescMeta"/>
-						<wsdl:message name="getUvaTechMeta"/>
-						<wsdl:message name="getUvaDigiprovMeta"/>
-						<wsdl:message name="getUvaRightsMeta"/>
-						<wsdl:message name="getUvaSourceMeta"/>
-						<wsdl:message name="singlestream_response">
-							<wsdl:part name="result" type="fedora:MIMEStreamReturnType"/>
-						</wsdl:message>
-						<!-- ******************************************************************************************************************** -->
-						<!-- WSDL: ABSTRACT OPERATIONS  (Behavior Definitions) -->
-						<!-- ******************************************************************************************************************** -->
-						<wsdl:portType name="stdUvaDescMetaPort">
-							<wsdl:operation name="getUvaDescMeta">
-								<wsdl:input message="getUvaDescMeta"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>
-							<wsdl:operation name="getUvaTechMeta">
-								<wsdl:input message="getUvaTechMeta"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>
-							<wsdl:operation name="getUvaDigiprovMeta">
-								<wsdl:input message="getUvaDigiprovMeta"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>
-							<wsdl:operation name="getUvaRightsMeta">
-								<wsdl:input message="getUvaRightsMeta"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>
-							<wsdl:operation name="getUvaSourceMeta">
-								<wsdl:input message="getUvaSourceMeta"/>
-								<wsdl:output message="singlestream_response"/>
-							</wsdl:operation>																												
-						</wsdl:portType>
-					</wsdl:definitions>
+					<fmm:MethodMap name="Fedora MethodMap for UVA Metadata BDef" bDefPID="test:19" xmlns:fmm="http://fedora.comm.nsdlib.org/service/methodmap">
+						<fmm:Method operationName="getUvaDescMeta">
+						</fmm:Method>
+						<fmm:Method operationName="getUvaTechMeta">
+						</fmm:Method>
+						<fmm:Method operationName="getUvaDigiprovMeta">
+						</fmm:Method>
+						<fmm:Method operationName="getUvaRightsMeta">
+						</fmm:Method>
+						<fmm:Method operationName="getUvaSourceMeta">
+						</fmm:Method>
+					</fmm:MethodMap>
 				</METS:xmlData>
 			</METS:mdWrap>
 		</METS:techMD>
@@ -118,8 +71,8 @@
 	<!-- DATASTREAM BINDING MAP FOR THE FEDORA BOOTSTRAP MECHANISM (An internal Fedora service) -->
 	<METS:structMap ID="S1" TYPE="fedora:dsBindingMap">
 		<METS:div TYPE="uva-bmech-bootstrap:2" LABEL="Datastream Binding Map for Fedora Bootstrap Mechanism">
-			<METS:div TYPE="BDEF-WSDL" LABEL="Abstract behavior definition in WSDL format">
-				<METS:fptr FILEID="WSDL"/>
+			<METS:div TYPE="BDEF-METHODMAP" LABEL="Abstract behavior definition in Fedora Method Map format">
+				<METS:fptr FILEID="METHODMAP"/>
 			</METS:div>
 			<METS:div TYPE="BDEF-GUIDE" LABEL="The Official Guide to the UVA Descriptive Metadata Behavior Definition">
 				<METS:fptr FILEID="DS1"/>
