@@ -251,25 +251,4 @@ public class RowInsertion {
 		statement.close();
 	}
 
-        /**
-        * 
-        * Used for unit testing and demonstration purposes.
-        *
-        * @param args program arguments
-        *
-        * @exception Exception exceptions that are thrown from called methods
-        */
-        public static void main(String[] args) throws Exception {
-		String returnString;
-		Connection connection;
-
-		DbmsConnection db = new DbmsConnection();
-		connection = db.getConnection();
-
-		RowInsertion ri = new RowInsertion();
-		ri.insertDigitalObjectRow(connection, "x", "x");
-		System.out.println("insertDigitalObject returned");
-
-		db.freeConnection(connection);
-	}
 }

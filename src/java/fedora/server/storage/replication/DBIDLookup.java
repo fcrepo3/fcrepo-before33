@@ -260,27 +260,4 @@ public class DBIDLookup {
 		return ID;
 	}
 
-        /**
-        * 
-        * Used for unit testing and demonstration purposes.
-        *
-        * @param args program arguments
-        *
-        * @exception Exception exceptions that are thrown from called methods
-        */
-        public static void main(String[] args) throws Exception {
-		int rc;
-		String returnString;
-		Connection connection;
-
-		DbmsConnection db = new DbmsConnection();
-		connection = db.getConnection();
-
-		DBIDLookup dl = new DBIDLookup();
-
-		returnString = dl.lookupDigitalObjectDBID(connection, args[0]);
-		System.out.println("lookupDigitalObjectDBID returns: " + returnString);
-
-		db.freeConnection(connection);
-	}
 }
