@@ -24,7 +24,7 @@ public class FedoraModelNamespace extends RDFNamespace {
     public final RDFName BMECH_OBJECT;
     public final RDFName DATA_OBJECT;
 
-    protected FedoraModelNamespace() {
+    public FedoraModelNamespace() {
 
         this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/model#";
 

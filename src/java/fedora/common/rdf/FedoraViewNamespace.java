@@ -12,7 +12,7 @@ public class FedoraViewNamespace extends RDFNamespace {
     public final RDFName LAST_MODIFIED_DATE;
     public final RDFName MIME_TYPE;
 
-    protected FedoraViewNamespace() {
+    public FedoraViewNamespace() {
 
         this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/view#";
 

@@ -12,6 +12,7 @@ public interface Constants {
     public static final String FEDORA_SYSTEM_DEF_URI = FEDORA_SYSTEM_DEF_PID.toURI();
 
     public static final FedoraModelNamespace MODEL = new FedoraModelNamespace();
+    public static final FedoraViewNamespace  VIEW  = new FedoraViewNamespace();
 /*
     public static FedoraViewNamespace  VIEW  = new FedoraViewNamespace();
 */
