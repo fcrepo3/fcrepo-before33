@@ -225,7 +225,8 @@ public class DatastreamResolverServlet extends HttpServlet
             (ExternalContentManager)s_server.getModule(
             "fedora.server.storage.ExternalContentManager");
         mimeTypedStream =
-            externalContentManager.getExternalContent(dsPhysicalLocation);
+            externalContentManager.getExternalContent(dsPhysicalLocation,
+            ReadOnlyContext.getContext("", request, false)); //"", false are really don't-cares
         outStream = response.getOutputStream();
         response.setContentType(mimeTypedStream.MIMEType);
         Property[] headerArray = mimeTypedStream.header;

@@ -853,7 +853,7 @@ public class DefaultAccess extends Module implements Access
       
       if (ds.DSControlGrp.equalsIgnoreCase("E")) {
           DatastreamReferencedContent drc = (DatastreamReferencedContent) reader.GetDatastream(dsID, asOfDateTime);
-          mimeTypedStream = m_externalContentManager.getExternalContent(drc.DSLocation);
+          mimeTypedStream = m_externalContentManager.getExternalContent(drc.DSLocation, context);
       } else if(ds.DSControlGrp.equalsIgnoreCase("M")) {
           DatastreamManagedContent dmc = (DatastreamManagedContent) reader.GetDatastream(dsID, asOfDateTime);
           mimeTypedStream = new MIMETypedStream(ds.DSMIME, dmc.getContentStream(), null);

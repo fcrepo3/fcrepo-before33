@@ -850,7 +850,7 @@ public class DefaultDOManager
                                             dmc.DSLocation.substring(7)), null);
 						} else {
                             mimeTypedStream = m_contentManager.
-                                getExternalContent(dmc.DSLocation.toString());
+                                getExternalContent(dmc.DSLocation.toString(), context);
                             logInfo("COMMIT: Retrieving ManagedContent datastream from remote "
                                 + "location: " + dmc.DSLocation);
 						}

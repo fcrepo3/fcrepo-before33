@@ -352,7 +352,7 @@ public class DefaultManagement
                     if (dsLocation.startsWith("uploaded://")) {
                         in=getTempStream(dsLocation);
                     } else {
-                        in=m_contentManager.getExternalContent(dsLocation).getStream();
+                        in=m_contentManager.getExternalContent(dsLocation, context).getStream();
                     }
                     ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
                     // If it's a RELS-EXT datastream, do validation

@@ -1,14 +1,33 @@
 package fedora.server.storage;
 
+import java.awt.Dimension;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.List;
 
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HeaderElement;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.methods.GetMethod;
+
+import fedora.client.Administrator;
+import fedora.client.SwingWorker;
+import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -17,6 +36,9 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Property;
+import fedora.server.utilities.StreamUtility;
+import fedora.server.security.Authorization;
+import fedora.common.Constants;
 
 /**
  *
@@ -111,60 +133,80 @@ public class DefaultExternalContentManager extends Module
    * @throws HttpServiceNotFoundException If the URL connection could not
    *         be established.
    */
-  public MIMETypedStream getExternalContent(String URL)
-      throws GeneralException, HttpServiceNotFoundException
-  {
-    InputStream inStream = null;
-    MIMETypedStream httpContent = null;
-    try
-    {
-      //URL url = new URL(java.net.URLDecoder.decode(URL, "utf-8"));
-      URL url = new URL(URL);
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-      connection.setRequestProperty("User-Agent", m_userAgent);
-      if (connection.getResponseCode()!=HttpURLConnection.HTTP_OK)
-      {
-          throw new StreamIOException(
-                  "Server returned a non-200 response code ("
-                  + connection.getResponseCode() + ") from GET request of URL: "
-                  + URL);
-      }
-      connection.setInstanceFollowRedirects(true);
-      Map header = connection.getHeaderFields();
-      Property[] headerArray = new Property[header.size()];
-      Set headerSet = header.keySet();
-      Iterator iter = headerSet.iterator();
-      int i = 0;
-      while(iter.hasNext()) {
-          headerArray[i] = new Property();
-          headerArray[i].name = (String) iter.next();
-          List list = (List) header.get(headerArray[i].name);
-          Iterator listIter = list.iterator();
-          StringBuffer sb = new StringBuffer();
-          while(listIter.hasNext()) {
-              sb.append((String)listIter.next());
-          }
-          headerArray[i].value = sb.toString();
-          i++;
-      }
-      String contentType = connection.getContentType();
-      inStream = connection.getInputStream();
-      if(contentType == null)
-      {
-        contentType =
-          URLConnection.guessContentTypeFromStream(connection.getInputStream());
-        if (contentType == null) contentType = "text/plain";
-      }
-      httpContent = new MIMETypedStream(contentType, inStream, headerArray);
-      return(httpContent);
-
-    } catch (Throwable th)
-    {
-        th.printStackTrace();
-      throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
-          + "returned an error.  The underlying error was a "
-          + th.getClass().getName() + "  The message "
-          + "was  \"" + th.getMessage() + "\"  .  ");
-    }
+  public MIMETypedStream getExternalContent(String url, Context context)
+      throws GeneralException, HttpServiceNotFoundException {
+  	log("in getExternalContent(), url=" + url);
+  	MIMETypedStream httpContent = null;
+  	try {
+  		HttpClient client = new HttpClient(new MultiThreadedHttpConnectionManager()); 
+  		client.setConnectionTimeout(20000); // wait 20 seconds max
+  		log("password=" + context.getPassword());
+  		client.getState().setCredentials(null, null, new UsernamePasswordCredentials(context.getSubjectValue(Authorization.SUBJECT_ID_URI_STRING),context.getPassword()));
+  		client.getState().setAuthenticationPreemptive(true);
+  		log("in getExternalContent(), after setup");
+  	  	GetMethod get = null;
+  		int resultCode = -1;
+  		for (int loops = 0; (url != null) && (loops < 25); loops++) {
+  			log("in getExternalContent(), new loop, url=" + url);
+  			get = new GetMethod(url);
+  			url = null;
+  			log("in getExternalContent(), got GetMethod object=" + get);
+  			get.addRequestHeader("User-Agent", m_userAgent);
+  			get.setDoAuthentication(true);
+  			get.setFollowRedirects(true);
+  			resultCode=client.executeMethod(get);
+  			if (300 <= resultCode && resultCode <= 399) {
+  				url=get.getResponseHeader("Location").getValue();
+  				log("in getExternalContent(), got redirect, new url=" + url);
+  			}
+  		}
+  		if (resultCode!=HttpURLConnection.HTTP_OK) {
+  			log("in getExternalContent(), got bad code=" + resultCode);
+  			throw new StreamIOException(
+                "Server returned a non-200 response code ("
+                + resultCode + ") from GET request of URL: "
+                + url);
+  		}          
+  		log("in getExternalContent(), got 200");
+  		//connection.setInstanceFollowRedirects(true);
+  		Header[] headers = get.getResponseHeaders();
+  		Property[] headerArray = new Property[headers.length];
+  		for (int i = 0; i < headers.length; i++) {
+  			headerArray[i] = new Property();
+  			headerArray[i].name = headers[i].getName();
+  			headerArray[i].value = headers[i].getValue();
+  			log("in getExternalContent(), (after loop) " + headerArray[i].name + "=" + headerArray[i].value);
+  		}
+  		String contentType = "text/plain";
+  		if (get.getResponseHeader("Content-Type") != null) {
+  			contentType = get.getResponseHeader("Content-Type").getValue();
+  		}
+  		log("in getExternalContent(), contentType=" + contentType);
+  		for (int ha=0; ha<headerArray.length; ha++) {
+  			log("in getExternalContent(), header=" + headerArray[ha].name + "=" + headerArray[ha].value);
+  		}
+  		httpContent = new MIMETypedStream(contentType, get.getResponseBodyAsStream(), headerArray);
+  		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream. 
+  		log("in getExternalContent(), httpContent=" + httpContent);
+  	} catch (Throwable th) {
+  		th.printStackTrace();
+  		throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
+  			+ "returned an error.  The underlying error was a "
+			+ th.getClass().getName() + "  The message "
+			+ "was  \"" + th.getMessage() + "\"  .  ");
+  	} finally {
+  		log("in getExternalContent(), in finally");
+ 	
+  	}    	
+	return(httpContent);
   }
+  
+  private boolean log = false;
+  
+  private final void log(String msg) {
+  	if (log) {
+	  	System.err.println(msg);	  		
+  	}
+  }
+  
 }

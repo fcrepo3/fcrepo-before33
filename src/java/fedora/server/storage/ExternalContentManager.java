@@ -1,5 +1,6 @@
 package fedora.server.storage;
 
+import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MIMETypedStream;
 
@@ -31,7 +32,7 @@ import fedora.server.storage.types.MIMETypedStream;
  */
 public interface ExternalContentManager
 {
-  public MIMETypedStream getExternalContent(String URL)
+  public MIMETypedStream getExternalContent(String URL, Context context)
       throws ServerException;
 
 }
