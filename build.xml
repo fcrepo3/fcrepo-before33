@@ -2,7 +2,7 @@
 
 <!--
   $Id$
-  
+
   TODO: Add optimized targets (separate output area)
         Finish doc targets
         Add server targets, similar to client, pulling off common classes
@@ -15,13 +15,13 @@
 
   <property name="javaSourceDir" value="src/java"/>
   <property name="docDir" value="apidoc"/>
-    
+
   <target name="all"
           depends="client"
           description="Build all distributions">
   </target>
-  
-  <target name="client" 
+
+  <target name="client"
           depends="clientclasses,clienthelp,clientimages,clientjarincludes"
           description="Client distribution">
     <mkdir dir="dist"/>
@@ -45,12 +45,12 @@
       <arg line="-jar client.jar"/>
     </exec>
   </target>
-    
+
   <target name="prep"
           description="Prepare a temporary build area for targets">
     <mkdir dir="temp"/>
   </target>
-    
+
   <target name="clientprep"
           depends="prep"
           description="Prepare a temporary build area for client-related targets">
@@ -67,7 +67,7 @@
            optimize="${javaClassOptimize}"
            debug="${javaClassDebug}"/>
   </target>
-    
+
   <target name="clienthelp"
           depends="clientprep"
           description="Assemble JavaHelp for client into temp/client/help">
@@ -82,7 +82,7 @@
       <fileset dir="src/jhelpmap/client/help"/>
     </copy>
   </target>
-  
+
   <target name="clientimages"
           depends="clientprep"
           description="Assemble client images dir sources into temp/client/images">
@@ -91,7 +91,7 @@
       <fileset dir="src/gif/client/images"/>
     </copy>
   </target>
-  
+
   <target name="clientjarincludes"
           depends="clientprep"
           description="Assemble client includes temp/client">
@@ -104,8 +104,8 @@
 <!--
   <target name="docs"
           description="Build dev docs and user docs">
-  </target>    
-    
+  </target>
+
   <target name="apidoc"
           description="Build the javadocs">
     <mkdir dir="apidoc"/>
@@ -123,26 +123,31 @@
           description="Assemble development/system documentation into dist/devdocs">
     <mkdir dir="dist"/>
     <mkdir dir="dist/devdocs"/>
+    <echo message="Copying docs that don't need translation"/>
     <copy todir="dist/devdocs">
       <fileset dir="src/txt/devdocs"/>
       <fileset dir="src/doc/devdocs"/>
       <fileset dir="src/sdr/devdocs"/>
     </copy>
+    <mkdir dir="dist/devdocs/devguide"/>
     <echo message="Translating devguide.dbx to html"/>
     <exec executable="java">
       <arg value="-classpath"/>
-      <arg path="res/xalan/bin/xalan.jar;res/xalan/bin/xercesImpl.jar;res/xalan/bin/xml-apis.jar"/>
-      <arg value="org.apache.xalan.xslt.Process"/>
-      <arg value="-in"/>
+      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+      <arg value="com.icl.saxon.StyleSheet"/>
       <arg path="src/dbx/devdocs/devguide.dbx"/>
-      <arg value="-xsl"/>
-      <arg path="res/docbook-xsl/html/docbook.xsl"/>
-      <arg value="-out"/>
-      <arg path="dist/devdocs/devguide.html"/>
+      <arg path="res/docbook-xsl/html/chunk.xsl"/>
+      <arg value="saxon.extensions=true"/>
+      <arg value="chunk.section.depth=1"/>
     </exec>
+    <move todir="dist/devdocs/devguide">
+      <fileset dir=".">
+        <include name="*.html"/>
+      </fileset>
+    </move>
   </target>
-          
-    
+
+
   <target name="clean"
           description="Clean up all targets and temp files">
     <delete dir="temp"/>
@@ -153,6 +158,12 @@
 
 <!--
   $Log$
+  Revision 1.4  2002/05/09 21:23:06  cwilper
+  Changed devdocs target to produce devguide.html
+  in chunks rather than one big piece.  Also switched
+  xslt to saxon 6.5 since it works better than the
+  latest version of xalan for this purpose.
+
   Revision 1.3  2002/05/03 20:48:54  cwilper
   Added docbook to html target for devdocs
 
