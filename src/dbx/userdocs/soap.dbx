@@ -53,6 +53,9 @@
 				<listitem>
 					<para>GetObjectProfile - gets object profile.</para>
 				</listitem>
+				<listitem>
+					<para>DescribeRepository - gets information about the repository, including version.</para>
+				</listitem>
 			</itemizedlist>
 		</blockquote>
 		<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink> . </para>
@@ -132,6 +135,15 @@
 							</listitem>
 						</itemizedlist>
 					</listitem>
+					<listitem>
+						<para>
+							<emphasis>DescribeRepository</emphasis> - gets description of the repository.</para>
+						<itemizedlist>
+							<listitem>
+								<para>no parameters required</para>
+							</listitem>
+						</itemizedlist>
+					</listitem>
 				</itemizedlist>
 			</listitem>
 			<listitem>
@@ -152,7 +164,7 @@
 			</listitem>
 			<listitem>
 				<para>
-					<emphasis role="bold">xml_</emphasis> - boolean switch used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, and GetObjectProfile methods that determines whether output is formatted as XML or as HTML; value of "true" indicates that the results are to be returned as XML; value of false or omission indicates display in HTML table format. (optional)</para>
+					<emphasis role="bold">xml_</emphasis> - boolean switch used in conjunction with GetBehaviorDefinitions, GetBehaviorMethods, GetObjectMethods, GetObjectProfile and DescribeRepository methods that determines whether output is formatted as XML or as HTML; value of "true" indicates that the results are to be returned as XML; value of false or omission indicates display in HTML table format. (optional)</para>
 			</listitem>
 			<listitem>
 				<para>
@@ -218,6 +230,12 @@
 				<para>Get the ObjectProfile for a data object with a PID of test:3:</para>
 				<blockquote>
 					<para>http://localhost:8080/soapclient/apia?action_&#61;GetObjectProfile&amp;PID_&#61;test:3</para>
+				</blockquote>
+			</listitem>
+			<listitem>
+				<para>Get information about the repository:</para>
+				<blockquote>
+					<para>http://localhost:8080/soapclient/apia?action_&#61;DescribeRepository</para>
 				</blockquote>
 			</listitem>
 		</orderedlist>

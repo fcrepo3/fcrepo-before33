@@ -35,13 +35,13 @@
 		<para>The Fedora API-A-Lite interface is implemented as an HTTP service that consists of the following methods:</para>
 		<itemizedlist>
 			<listitem>
-				<para>GetDissemination - gets the specified dissemination request</para>
+				<para>getDissemination - gets the specified dissemination request</para>
 			</listitem>
 			<listitem>
-				<para>Get ObjectProfile - gets the Object Profile of the specified object</para>
+				<para>getObjectProfile - gets the Object Profile of the specified object</para>
 			</listitem>
 			<listitem>
-				<para>Describe  - provides information about the Fedora repository server, including name, version, base URL</para>
+				<para>describeRepository  - provides information about the Fedora repository server, including name, version, base URL</para>
 			</listitem>
 		</itemizedlist>
 		<para>For more information on the method definitions, refer to the API descriptions 
@@ -94,7 +94,7 @@
 			</itemizedlist>
 		</blockquote>
 		<variablelist>
-			<title>GetObjectProfile syntax:</title>
+			<title>getObjectProfile syntax:</title>
 			<varlistentry>
 				<term>http://hostname:port/fedora/get/PID<emphasis role="bold">[/dateTime][?xml=BOOLEAN]</emphasis>
 				</term>
@@ -131,7 +131,7 @@
 			</itemizedlist>
 		</blockquote>
 		<variablelist>
-			<title>Describe syntax:</title>
+			<title>describeRepository syntax:</title>
 			<varlistentry>
 				<term>http://hostname:port/fedora/describe<emphasis role="bold">[?xml=BOOLEAN]</emphasis>
 				</term>
