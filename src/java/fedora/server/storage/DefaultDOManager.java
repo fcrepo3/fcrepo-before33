@@ -47,9 +47,9 @@ import fedora.server.utilities.TableSpec;
  *
  * @author cwilper@cs.cornell.edu
  */
-public class DefaultDOManager 
+public class DefaultDOManager
         extends Module implements DOManager {
-        
+
     private String m_pidNamespace;
     private String m_storagePool;
     private String m_storageFormat;
@@ -58,12 +58,12 @@ public class DefaultDOManager
     private DOTranslator m_translator;
     private ILowlevelStorage m_permanentStore;
     private ILowlevelStorage m_tempStore;
-    
+
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
-    
+
     public static String DEFAULT_STATE="L";
-        
+
     /**
      * Creates a new DefaultDOManager.
      */
@@ -75,7 +75,7 @@ public class DefaultDOManager
     /**
      * Gets initial param values.
      */
-    public void initModule() 
+    public void initModule()
             throws ModuleInitializationException {
         // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-')
         m_pidNamespace=getParameter("pidNamespace");
@@ -129,8 +129,8 @@ public class DefaultDOManager
             m_storageCharacterEncoding="UTF-8";
         }
     }
-    
-    public void postInitModule() 
+
+    public void postInitModule()
             throws ModuleInitializationException {
         // get ref to pidgenerator
         m_pidGenerator=(PIDGenerator) getServer().
@@ -138,9 +138,9 @@ public class DefaultDOManager
         // get the permanent and temporary storage handles
         // m_permanentStore=FileSystemLowlevelStorage.getPermanentStore();
         // m_tempStore=FileSystemLowlevelStorage.getTempStore();
-        // moved above to getPerm and getTemp (lazy instantiation) because of 
+        // moved above to getPerm and getTemp (lazy instantiation) because of
         // multi-instance problem due to s_server.getInstance occurring while another is running
-        
+
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
                 getModule("fedora.server.storage.DOTranslator");
@@ -205,14 +205,14 @@ public class DefaultDOManager
             }
         } catch (SQLException sqle) {
             throw new ModuleInitializationException("Error while attempting to "
-                    + "inspect database tables: " + sqle.getMessage(), 
+                    + "inspect database tables: " + sqle.getMessage(),
                     getRole());
         } finally {
             if (conn!=null) {
                 m_connectionPool.free(conn);
             }
         }
-        
+
         if (nonExisting.size()>0) {
             Iterator nii=nonExisting.iterator();
             int i=0;
@@ -252,7 +252,7 @@ public class DefaultDOManager
                 }
             } catch (SQLException sqle) {
                 throw new ModuleInitializationException("Error while attempting"
-                    + " to create non-existing table(s): " + sqle.getMessage(), 
+                    + " to create non-existing table(s): " + sqle.getMessage(),
                     getRole());
             } finally {
                 if (tcConn!=null) {
@@ -272,23 +272,23 @@ public class DefaultDOManager
 
 //        return m_permanentStore;
     }
-    
+
     public ILowlevelStorage getTempStore() {
         return FileSystemLowlevelStorage.getTempStore();
 //        return m_tempStore;
     }
-    
+
     public ConnectionPool getConnectionPool() {
         return m_connectionPool;
     }
-    
+
     public String[] getRequiredModuleRoles() {
         return new String[] {
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.storage.ConnectionPoolManager",
                 "fedora.server.storage.DOTranslator" };
     }
-    
+
     public String getStorageFormat() {
         return m_storageFormat;
     }
@@ -316,16 +316,16 @@ public class DefaultDOManager
     public DOReader getReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
-            return new FastDOReader(pid);
+            return new FastDOReader(context, pid);
         } else {
             return new DefinitiveDOReader(pid);
         }
     }
-    
-    public DisseminatingDOReader getDisseminatingReader(Context context, String pid) 
+
+    public DisseminatingDOReader getDisseminatingReader(Context context, String pid)
             throws ServerException {
         if (cachedObjectRequired(context)) {
-            return new FastDOReader(pid);
+            return new FastDOReader(context, pid);
         } else {
             throw new InvalidContextException("A DisseminatingDOReader is unavailable in a non-cached context.");
         }
@@ -359,11 +359,11 @@ public class DefaultDOManager
      *
      * @param context The current context.
      * @param pid The pid of the object.
-     * @throws ObjectNotFoundException If the object does not exist. 
+     * @throws ObjectNotFoundException If the object does not exist.
      * @throws ObjectLockedException If the object is already locked by someone else.
      */
-    protected void obtainLock(Context context, String pid) 
-            throws ObjectLockedException, ObjectNotFoundException, 
+    protected void obtainLock(Context context, String pid)
+            throws ObjectLockedException, ObjectNotFoundException,
             StorageDeviceException, InvalidContextException {
         Connection conn=null;
         try {
@@ -379,7 +379,7 @@ public class DefaultDOManager
             String lockingUser=results.getString("LockingUser");
             if (lockingUser==null) {
                 // get the lock
-                s.executeUpdate("UPDATE ObjectRegistry SET LockingUser='" 
+                s.executeUpdate("UPDATE ObjectRegistry SET LockingUser='"
                     + getUserId(context) + "' WHERE DO_PID='" + pid + "'");
             }
             if (!lockingUser.equals(getUserId(context))) {
@@ -410,11 +410,11 @@ public class DefaultDOManager
         } else {
             // ensure we've got a lock
             obtainLock(context, pid);
-            
+
             // TODO: make sure there's no session lock on a writer for the pid
-            
+
             BasicDigitalObject obj=new BasicDigitalObject();
-            m_translator.deserialize(getPermanentStore().retrieve(pid), obj, 
+            m_translator.deserialize(getPermanentStore().retrieve(pid), obj,
                     m_storageFormat, m_storageCharacterEncoding);
             DOWriter w=new DefinitiveDOWriter(this, obj);
             // add to internal list...somehow..think...
@@ -428,7 +428,7 @@ public class DefaultDOManager
      * A new object is created in the system, locked by the current user.
      * The incoming stream must represent a valid object.
      */
-    public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid) 
+    public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
         if (cachedObjectRequired(context)) {
@@ -437,7 +437,7 @@ public class DefaultDOManager
             // write it to temp, as "temp-ingest": FIXME: temp-ingest stuff is temporary, and not threadsafe
             getTempStore().add("temp-ingest", in);
             InputStream in2=getTempStore().retrieve("temp-ingest");
-            
+
             // deserialize it first
             BasicDigitalObject obj=new BasicDigitalObject();
             m_translator.deserialize(in2, obj, format, encoding);
@@ -450,7 +450,7 @@ public class DefaultDOManager
                try {
                    p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
                } catch (Exception e) {
-                   throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: (" 
+                   throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
                            + e.getClass().getName() + ") - " + e.getMessage());
                }
                getServer().logFiner("Generated PID: " + p);
@@ -459,8 +459,8 @@ public class DefaultDOManager
                getServer().logFinest("Ingesting client wants to use existing PID.");
             }
             // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
-            
-            
+
+
 // FIXME: uncomment the following after lv0 test
 //            assertValidPid(obj.getPid());
 
@@ -469,18 +469,18 @@ public class DefaultDOManager
             }
             // make a record of it in the registry
             registerObject(obj.getPid(), getUserId(context));
-            
-            // serialize to disk, then validate.. if that's ok, go on.. else unregister it! 
+
+            // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
             ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
-            // getPermanentStore().add(obj.getPid(), newIn); 
-            getPermanentStore().add(obj.getPid(), in3); 
+            // getPermanentStore().add(obj.getPid(), newIn);
+            getPermanentStore().add(obj.getPid(), in3);
             InputStream in4=getTempStore().retrieve("temp-ingest");
             getTempStore().add(obj.getPid(), in4);
             getTempStore().remove("temp-ingest");
-            
-             
+
+
             // then get the writer
             DOWriter w=new DefinitiveDOWriter(this, obj);
             // add to internal list...somehow..think...
@@ -491,7 +491,7 @@ public class DefaultDOManager
     /**
      * Gets a writer on a new, empty object.
      */
-    public DOWriter newWriter(Context context) 
+    public DOWriter newWriter(Context context)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.newWriter(Context)");
         if (cachedObjectRequired(context)) {
@@ -503,7 +503,7 @@ public class DefaultDOManager
             try {
                 p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
             } catch (Exception e) {
-                throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: (" 
+                throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
                         + e.getClass().getName() + ") - " + e.getMessage());
             }
             getServer().logFiner("Generated PID: " + p);
@@ -515,8 +515,8 @@ public class DefaultDOManager
             }
             // make a record of it in the registry
             registerObject(obj.getPid(), getUserId(context));
-            
-            // serialize to disk, then validate.. if that's ok, go on.. else unregister it! 
+
+            // serialize to disk, then validate.. if that's ok, go on.. else unregister it!
         }
         return null;
     }
@@ -533,13 +533,13 @@ public class DefaultDOManager
         }
         return ret;
     }
-    
+
     /**
      * Throws an exception if the PID is invalid.
      * <pre>
      * Basically:
      * ----------
-     * The implementation's limit for the namespace 
+     * The implementation's limit for the namespace
      * id is 17 characters.
      *
      * The limit for object id is 10 characters,
@@ -548,7 +548,7 @@ public class DefaultDOManager
      *
      * This does not necessarily mean a particular
      * installation can handle 2.14 billion objects.
-     * The max number of objects is practically 
+     * The max number of objects is practically
      * limited by:
      *   - disk storage limits
      *   - OS filesystem impl. limits
@@ -564,21 +564,21 @@ public class DefaultDOManager
      * (like bigint), but it's likely a limit in number of
      * rows would be reached before the int type is
      * exhausted.
-     * 
+     *
      * So for PIDs, which use URN syntax, the NSS part (in
      * our case, a decimal number [see spec section
      * 8.3.1(3)]) can be *practically* be between 1 and 10
      * (decimal) digits.
-     * 
+     *
      * Additionally, where PIDs are stored in the db, we
-     * impose a max length of 32 chars.  
-     * 
+     * impose a max length of 32 chars.
+     *
      * Given the urn-syntax-imposed 5 chars ('urn:' and ':'),
      * the storage system's int-type limit of 10 chars for
      * row ids, and the storage system's imposed limit of 32
      * chars for the total pid, this leaves 17 characters for
      * the namespace id.
-     * 
+     *
      * urn:17maxChars-------:10maxChars
      * ^                              ^
      * |-------- 32 chars max --------|
@@ -645,11 +645,11 @@ public class DefaultDOManager
                     + "an integer between 0 and 2.147483647 billion.");
         }
     }
-    
+
     /**
      * Checks the object registry for the given object.
      */
-    public boolean objectExists(String pid) 
+    public boolean objectExists(String pid)
             throws StorageDeviceException {
         Connection conn=null;
         try {
@@ -668,11 +668,11 @@ public class DefaultDOManager
             }
         }
     }
-    
+
     /**
      * Adds a new, locked object.
      */
-    private void registerObject(String pid, String userId) 
+    private void registerObject(String pid, String userId)
             throws StorageDeviceException {
         Connection conn=null;
         try {
@@ -689,8 +689,8 @@ public class DefaultDOManager
             }
         }
     }
-    
-    public String[] listObjectPIDs(Context context, String state) 
+
+    public String[] listObjectPIDs(Context context, String state)
             throws StorageDeviceException {
         ArrayList pidList=new ArrayList();
         Connection conn=null;
