@@ -365,6 +365,24 @@ public class DisseminationService
             + "URL: " + dissURL);
       }
 
+      // FIXME Need a more elegant means of handling optional userInputParm
+      // method parameters that are not supplied by the invoking client;
+      // for now, any optional parms that were not supplied are removed from
+      // the outgoing URL. This works because parms are validated in
+      // DefaultAccess to insure all required parms are present and all parm
+      // names match parm names defined for the specific method. The only
+      // unsubstituted parms left in the operationLocation string at this point
+      // are those for optional parameters that the client omitted in the
+      // initial request so they can safely be removed from the outgoing
+      // dissemination URL. This step is only needed when optional parameters
+      // are not supplied by the client.
+      if (dissURL.indexOf("(") != -1)
+      {
+          dissURL = stripParms(dissURL);
+          s_server.logFinest("[DisseminationService] Non-supplied optional "
+              + "userInputParm values removed from URL: " + dissURL);
+      }
+
       // Resolve content referenced by dissemination result.
       s_server.logFinest("[DisseminationService] ProtocolType: "+protocolType);
       if (protocolType.equalsIgnoreCase("http"))
@@ -563,5 +581,37 @@ public class DisseminationService
     Pattern pattern = Pattern.compile(patternString);
     Matcher m = pattern.matcher(inputString);
     return m.replaceAll(replaceString);
+  }
+
+  /**
+   * <p> Removes any optional userInputParms which remain in the dissemination
+   * URL. This occurs when a method has optional parameters and the user does
+   * not supply a value for one or more of the optional parameters. The result
+   * is a syntax similar to "parm=(PARM_BIND_KEY)". This method removes these
+   * non-supplied optional parameters from the string.</p>
+   *
+   * @param dissURL String to be processed.
+   * @return An edited string with parameters removed where no value was
+   *         specified for any optional parameters.
+   */
+  private String stripParms(String dissURL)
+  {
+    String requestURI = dissURL.substring(0,dissURL.indexOf("?")+1);
+    String parmString = dissURL.substring(dissURL.indexOf("?")+1,dissURL.length());
+    String[] parms = parmString.split("&");
+    StringBuffer sb = new StringBuffer();
+    for (int i=0; i<parms.length; i++)
+    {
+      int len = parms[i].length() - 1;
+      if (parms[i].lastIndexOf(")") != len)
+      {
+        sb.append(parms[i]+"&");
+      }
+    }
+    int index = sb.lastIndexOf("&");
+    if ( index != -1 && index+1 == sb.length())
+      sb.replace(index,sb.length(),"");
+    System.out.println("Outgoing URL: "+requestURI+sb.toString());
+    return requestURI+sb.toString();
   }
 }
