@@ -14,9 +14,9 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title>Fedora System Documentation</title>
+		<title><trademark class="trade">Fedora</trademark> System Documentation</title>
 		<subtitle>Software Release 1.1.1</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -100,7 +100,7 @@
 				<ulink url="client/admin-gui/builder/index.html">Java Application: Admin GUI - Behavior Definition and Mechanism Builders</ulink>
 			</member>
 			<member>
-				<ulink url="client/browser/apimlite/index.html">Web Browser: Repository Management via API-M-Lite</ulink>			
+				<ulink url="client/browser/apimlite/index.html">Web Browser: Repository Management via API-M-Lite</ulink>
 			</member>
 			<member>
 				<ulink url="client/servlet/soapclient/index.html">Java Servlet: SOAP Access via API-A</ulink>
@@ -124,7 +124,7 @@
 			</member>
 			<member>
 				<ulink url="http://www.fedora.info/definitions/1/0/api/#apimlite">API-M-Lite: HTTP Management Interface</ulink>
-			</member>			
+			</member>
 		</simplelist>
 	</sect1>
 	<sect1>

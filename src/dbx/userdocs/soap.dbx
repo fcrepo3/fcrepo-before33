@@ -14,9 +14,9 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title>Fedora API-A Sample SOAP Client</title>
+		<title><trademark class="trade">Fedora</trademark> API-A Sample SOAP Client</title>
 		<subtitle>Software Release 1.1.1</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -67,7 +67,8 @@
 			</itemizedlist>
 		</blockquote>
 		<para>For more information on the method definitions, refer to the API descriptions located at <ulink url="http://www.fedora.info/definitions/1/0/api/">http://www.fedora.info/definitions/1/0/api/</ulink> . </para>
-		<para>The Fedora API-A sample SOAP client is an example of a java servlet-based client that provides a front end to the Fedora Access API-A SOAP service. The sample client is designed to provide a <emphasis>browser centric</emphasis> view of the Fedora Access interface. Return types from the Fedora Access SOAP service are translated into a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications that can readily handle SOAP requests and responses would most likely communicate directly with the Fedora Access SOAP service rather than use a java servlet as an intermediary. <emphasis>This servlet is provided as an example of how to construct a client that uses the Fedora Access API via SOAP and currently does not implement all methods found in API-A. As noted below, the sample Soap Client does not provide implementations for the methods FindObjects and ResumeFindObjects.</emphasis></para>
+		<para>The Fedora API-A sample SOAP client is an example of a java servlet-based client that provides a front end to the Fedora Access API-A SOAP service. The sample client is designed to provide a <emphasis>browser centric</emphasis> view of the Fedora Access interface. Return types from the Fedora Access SOAP service are translated into a form suitable for viewing with a web browser; i.e., MIME-typed streams. Applications that can readily handle SOAP requests and responses would most likely communicate directly with the Fedora Access SOAP service rather than use a java servlet as an intermediary. <emphasis>This servlet is provided as an example of how to construct a client that uses the Fedora Access API via SOAP and currently does not implement all methods found in API-A. As noted below, the sample Soap Client does not provide implementations for the methods FindObjects and ResumeFindObjects.</emphasis>
+		</para>
 		<para>
 			<emphasis role="bold">Client Syntax</emphasis>
 		</para>
@@ -155,12 +156,18 @@
 					<listitem>
 						<para>
 							<emphasis>FindObjects</emphasis> - gets the requested ObjectFields on all objects in the
-                repository matching the given criteria. <emphasis role="bold"><emphasis>(NOT CURRENTLY IMPLEMENTED)</emphasis></emphasis></para>
+                repository matching the given criteria. <emphasis role="bold">
+								<emphasis>(NOT CURRENTLY IMPLEMENTED)</emphasis>
+							</emphasis>
+						</para>
 					</listitem>
 					<listitem>
 						<para>
 							<emphasis>ResumeFindObjects</emphasis> - gets the next list of results from a truncated
-                findObjects response. <emphasis role="bold"><emphasis>(NOT CURRENTLY IMPLEMENTED)</emphasis></emphasis></para>
+                findObjects response. <emphasis role="bold">
+								<emphasis>(NOT CURRENTLY IMPLEMENTED)</emphasis>
+							</emphasis>
+						</para>
 					</listitem>
 				</itemizedlist>
 			</listitem>

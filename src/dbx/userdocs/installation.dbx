@@ -14,9 +14,9 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title>Fedora Installation and Configuration Guide</title>
+		<title><trademark class="trade">Fedora</trademark> Installation and Configuration Guide</title>
 		<subtitle>Software Release 1.1.1</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -223,7 +223,7 @@
 				</para>
 				<para>
 					<emphasis>Important:</emphasis> If you are installing Fedora under Windows and plan to use an earlier version of MYSQL (e.g., 3.23.53 thru 3.23.58), you should use all lower case characters when specifiying the Fedora database name when running the mysql-config.bat script (e.g., "fedoraobjects" instead of "FedoraObjects"). Additional information regarding the use of earlier versions of Windows MYSQL can be found <ulink url="http://www.fedora.info/wiki/bin/view/Fedora/PoolWasntFoundMessage">on this page of the Fedora wiki</ulink>.
-				</para>				
+				</para>
 			</section>
 			<section>
 				<title>Oracle 9i</title>
@@ -320,13 +320,13 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						<listitem>
 							<para>The port on which the server is shutdown. Port conflicts can arise if you are running multiple instances of a tomcat or Fedora server on the same machine. Fedora uses the default shutdown port number of 8005. If you are running other standalone instances of tomcat or Fedora on the same machine, each instance will require a unique shutdown port. This parameter allows you to change the port number used to shutdown the Fedora server to avoid potential port conflicts with other servers.</para>
 						</listitem>
-					</varlistentry>										
+					</varlistentry>
 					<varlistentry>
 						<term>fedoraRedirectPort</term>
 						<listitem>
 							<para>The port on which the server is redirected. Port conflicts can arise if you are running multiple instances of a tomcat or Fedora server on the same machine. Fedora uses the default redirect port number of 8443. If you are running other standalone instances of tomcat or Fedora on the same machine, each instance will require a unique redirect port. This parameter allows you to change the port number used to redirect the Fedora server to avoid potential port conflicts with other servers.</para>
 						</listitem>
-					</varlistentry>						
+					</varlistentry>
 					<varlistentry>
 						<term>
 							<emphasis role="bold">fedoraServerHost</emphasis>
@@ -350,13 +350,13 @@ http://technet.oracle.com/software/tech/java/sqlj_jdbc/content.html</ulink>.
 						<listitem>
 							<para>This parameter defines the namespaces of PIDs to retain during the ingest process. When an object is ingested, Fedora normally allocates a unique PID within <emphasis>pidNamespace</emphasis> for it regardless of what PID actually exists in the object.  This option provides a way to override that behavior on a per-pid-namespace basis.  If specified, this should be a space-delimited list of pid namespaces that will be accepted in the object as-is. By default, this list includes the namespaces of “test“ and “demo“.</para>
 						</listitem>
-					</varlistentry>					
+					</varlistentry>
 					<varlistentry>
 						<term>DOManager/storagePool</term>
 						<listitem>
 							<para>This specifies the database connection pool to be used for the storage subsystem.  Normally this will just identify ConnectionPoolManager’s default connection pool.</para>
 						</listitem>
-					</varlistentry>										
+					</varlistentry>
 					<varlistentry>
 						<term>
 							<emphasis role="bold">Management/allowHosts</emphasis>

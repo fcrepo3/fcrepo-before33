@@ -14,9 +14,9 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title>Fedora Client Command-Line Utilities</title>
+		<title><trademark class="trade">Fedora</trademark> Client Command-Line Utilities</title>
 		<subtitle>Software Release 1.1.1</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -211,7 +211,7 @@
 	<sect1>
 		<title>fedora-convert-demos</title>
 		<blockquote>
-			<para>														 
+			<para>
 				<emphasis role="bold">fedora-convert-demos</emphasis> &#091;fromHostName&#093; &#091;fromPortNum&#093; &#091;toHostName&#093; &#091;toHostNum&#093; &#091;fedoraHomeDir&#093;</para>
 		</blockquote>
 		<para>Where:</para>
@@ -242,7 +242,7 @@
 		   ingested.
 	    </para>
 		<para>
-           <emphasis>Background:</emphasis> The demo objects that come with the Fedora client have embedded URLs inside them
+			<emphasis>Background:</emphasis> The demo objects that come with the Fedora client have embedded URLs inside them
 		   that assume the server is running on a machine called localhost on port number 8080.
 		   Those URLs must be changed to reflect the actual host and port the server is running on.
 		   Rather than search through all the demo files and change the references by hand, you can

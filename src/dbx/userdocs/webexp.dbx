@@ -14,9 +14,9 @@
 				</imageobject>
 			</inlinemediaobject>
 		</title>
-		<title>Web Exposure of the Fedora Access Service</title>
+		<title>Web Exposure of the <trademark class="trade">Fedora</trademark> Access Service</title>
 		<subtitle>Software Release 1.1.1</subtitle>
-		<corpauthor>Fedora Development Team</corpauthor>
+		<corpauthor><trademark class="trade">Fedora</trademark> Development Team</corpauthor>
 		<copyright>
 			<year>2003</year>
 			<holder>The Rector and Visitors of The University of Virginia and Cornell University</holder>
@@ -504,102 +504,6 @@
 		<para>The Fedora repository system also includes a search interface that enables searching across both System Metadata and user-defined Dublin Core metadata.Upon ingestion, metadata from the Fedora System Metadata section and the Dublin Core (DC) Metadata section of the object are indexed in a relational database, and may be searched using the search interface. The DC Metadata section is an optional Implementor-Defined XML Metadata datastream in the object, where the "Datastream ID" is DC, and the XML conforms to the schema at: http://www.openarchives.org/OAI/2.0/oai_dc.xsd. If such a datastream is not provided, Fedora will construct a default Dublin Core record using the label of the object as the dc:title value and the PID of the object as the dc:identifier value. The search interface provides both simple and advanced searching via a web page included with the repository software. All queries are case insensitive. Simple search enables queries of words and phrases occurring anywhere in an object's indexed metadata fields. Advanced Search enables fielded searching across any combination of metadata elements using string comparison operators (= and ~) for string fields, and value comparison operators (&#160; &#061;, &#62;, &#8805;, &#60;, &#8804; &#160;) for date fields (dc:date fields may be treated as both). The wildcards, &#42; and &#63; may be used in any string-based query.  The search interface can be accessed using the syntax:</para>
 		<para>http://hostname:port/fedora/search?{<emphasis role="bold">terms=TERMS|query=QUERY}[&amp;maxResults=MAXRESULTS]</emphasis>[&amp;xml=true][&amp;pid=true][&amp;label=true][&amp;fType=true][&amp;cModel=true][&amp;state=true][&amp;ownerId=true][&amp;cDate=true][&amp;mDate=true][&amp;dcmDate=true][&amp;bDef=true][&amp;bMech=true][&amp;title=true][&amp;creator=true][&amp;subject=true][&amp;description=true][&amp;publisher=true][&amp;contributor=true][&amp;date=true][&amp;type=true][&amp;format=true][&amp;identifier=true][&amp;source=tru]e[&amp;language=true][&amp;relation=true][&amp;coverage=true][&amp;rights=true]</para>
 		<para>This syntax essentially performs a search upon the objects in the repository.  It finds objects that meet the criteria specified in the request.  The criteria are evaluated against an index of the repostory that contains unqualified Dublin Core and Fedora-specific metadata elements.  The syntax provides a client with the ability to specify the search criteria as either a phrase (a simple keyword search), or as a set of name value pairs (a field-based search).  </para>
-	<blockquote>
-		<itemizedlist>
-			<listitem>
-				<para>hostname - required hostname of the Fedora server. </para>
-			</listitem>
-			<listitem>
-				<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
-			</listitem>
-			<listitem>
-				<para>fedora - a required parameter specifying the Fedora servlet path.</para>
-			</listitem>
-			<listitem>
-				<para>search - a required parameter specifying the Fedora servlet path for the findObjects request.</para>
-			</listitem>
-			<listitem>
-				<para><emphasis role="bold">terms</emphasis> - a phrase represented as a sequence of characters (including the ? and * wildcards) for the search.  If this sequence is found in any of the fields for an object, the object is considered a match.  Do NOT use this parameter in combination with the "query" parameter. </para>
-			</listitem>
-			<listitem>
-				<para><emphasis role="bold">query</emphasis> - a sequence of space-separated conditions.  A condition consists of a metadata element name followed directly by an operator, followed directly be a value.  Valid element names are (pid, label, fType, cModel, state, ownerId, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject, description, publisher, contributor, date, type, format, identifier, source, language, relation, coverage, rights).  Valid operators are:  contains (~), equals (=), greater than (&gt;), less than (&lt;), greater than or equals (&gt;=), less than or equals (&lt;=).  The contains (~) operator may be used in combination with the ? and * wildcards to query for simple string patterns.   Space-separators should be encoded in the URL as %20.  Operators must be encoded when used in the URL syntax as follows:  the (=) operator must be encoded as %3D, the (&gt;) operator as %3E, the (&lt;) operator as %3C,  the (&gt;=) operator as %3E%3D, the (&lt;=) operator as %3C%3D, and the (~) operator as %7E. Values may be any string.  If the string contains a space, the value should begin and end with a single quote character ('). If all conditions are met for an object, the object is considered a match. Do NOT use this parameter in combination with the "terms" parameter.  See example URLs at the end of this document for usage.</para>
-			</listitem>
-			<listitem>
-				<para><emphasis role="bold">maxResults</emphasis> - the maximum number of results that the server should
-               provide at once.  If this is unspecified, the server will default  to a small value. </para>
-			</listitem>
-			<listitem><para><emphasis role="bold">xml</emphasis> - whether to return the result as an xml document.  If this is given as true, the result will be in xml.  Otherwise, the result will be provided in a simple html document.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">pid</emphasis> - if true, the Fedora persistent identifier (PID) element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">label</emphasis> - if true, the Fedora object label element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">fType</emphasis> - if true, the Fedora object type element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">cModel</emphasis> - if true, the Fedora content model element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">state</emphasis> - if true, the Fedora object state element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">ownerId</emphasis> - if true, the identity of users who own matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">cDate</emphasis> - if true, the Fedora create date element of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">mDate</emphasis> - if true, the Fedora modified date of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">dcmDate</emphasis> - if true, the Dublin Core modified date element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">title</emphasis> - if true, the Dubliin Core title element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">creator</emphasis> - if true, the Dubliin Core creator element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">subject</emphasis> - if true, the Dubliin Core subject element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">description</emphasis> - if true, the Dubliin Core description element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">publisher</emphasis> - if true, the Dubliin Core publisher element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">contributor</emphasis> - if true, the Dubliin Core contributor element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">date</emphasis> - if true, the Dubliin Core date element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">type</emphasis> - if true, the Dubliin Core type element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">format</emphasis> - if true, the Dubliin Core format element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">identifier</emphasis> - if true, the Dubliin Core identifier element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">source</emphasis> - if true, the Dubliin Core source element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">language</emphasis> - if true, the Dubliin Core language element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">relation</emphasis> - if true, the Dubliin Core relation element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">coverage</emphasis> - if true, the Dubliin Core coverage element(s) of matching objects will be included in the response.</para>
-			</listitem>
-			<listitem><para><emphasis role="bold">rights</emphasis> - if true, the Dubliin Core right element(s) of matching objects will be included in the response.</para>
-			</listitem>
-		</itemizedlist>
-	</blockquote>
-	<variablelist>
-		<title>Examples:</title>
-		<varlistentry>
-			<term>Find objects in the repostiory that are indexed with the keyword "fedora." The result set should provide the PID and Dublin Core title elements for each object:</term>
-			<listitem><para>http://localhost:8080/fedora/search?terms=fedora&amp;pid=true&amp;title=true</para></listitem>			
-		</varlistentry>
-		<varlistentry>
-			<term>Find objects in the repository where the Dublin Core title contains the word "Rome" and the Dublin Core creator contains the word "Staples".  The result set should provide the PID, plus the Dubin Core creator and title elements for each object:  </term>
-			<listitem><para>http://localhost:8080/fedora/search?query=title%7Erome%20creator%7Estaples&amp;pid=true&amp;title=true&amp;creator=true</para></listitem>	
-		</varlistentry>	
-		<varlistentry>
-			<term>Find objects in the repository whose PID ends with the number 1.  The result set should provide a max of 50 hits at a time, and it should provide the PID and Dubin Core title element for each object. The result set should be returned as xml:  </term>
-			<listitem><para>http://localhost:8080/fedora/search?query=pid%7E*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;title=true</para></listitem>	
-		</varlistentry>
-	</variablelist>
-	</sect1>
-	<sect1>
-		<title>Resuming a Search for Objects in the Repository (API-A-LITE resumeFindObjects)</title>
-		<para>If a search was requested and the result set contains more "hits" than what was specified in the maxResults parameter of the search URL, then the following syntax is used to obtain the next group of items in the result set. </para>
-		<para>http://hostname:port/fedora/search<emphasis role="bold">?sessionToken=SESSIONID[&amp;xml=BOOLEAN]</emphasis></para>
 		<blockquote>
 			<itemizedlist>
 				<listitem>
@@ -614,9 +518,171 @@
 				<listitem>
 					<para>search - a required parameter specifying the Fedora servlet path for the findObjects request.</para>
 				</listitem>
-				<listitem><para><emphasis role="bold">sessionToken</emphasis> - the identifier of the session to which the search results are being returned.</para></listitem>
-				<listitem><para><emphasis role="bold">xml</emphasis> - boolean indicating whether to return the search results as xml .  If this is  given as true, the result will be in 	xml.  Otherwise, the result will be provided in a simple html document.</para></listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">terms</emphasis> - a phrase represented as a sequence of characters (including the ? and * wildcards) for the search.  If this sequence is found in any of the fields for an object, the object is considered a match.  Do NOT use this parameter in combination with the "query" parameter. </para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">query</emphasis> - a sequence of space-separated conditions.  A condition consists of a metadata element name followed directly by an operator, followed directly be a value.  Valid element names are (pid, label, fType, cModel, state, ownerId, cDate, mDate, dcmDate, bDef, bMech, title, creator, subject, description, publisher, contributor, date, type, format, identifier, source, language, relation, coverage, rights).  Valid operators are:  contains (~), equals (=), greater than (&gt;), less than (&lt;), greater than or equals (&gt;=), less than or equals (&lt;=).  The contains (~) operator may be used in combination with the ? and * wildcards to query for simple string patterns.   Space-separators should be encoded in the URL as %20.  Operators must be encoded when used in the URL syntax as follows:  the (=) operator must be encoded as %3D, the (&gt;) operator as %3E, the (&lt;) operator as %3C,  the (&gt;=) operator as %3E%3D, the (&lt;=) operator as %3C%3D, and the (~) operator as %7E. Values may be any string.  If the string contains a space, the value should begin and end with a single quote character ('). If all conditions are met for an object, the object is considered a match. Do NOT use this parameter in combination with the "terms" parameter.  See example URLs at the end of this document for usage.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">maxResults</emphasis> - the maximum number of results that the server should
+               provide at once.  If this is unspecified, the server will default  to a small value. </para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">xml</emphasis> - whether to return the result as an xml document.  If this is given as true, the result will be in xml.  Otherwise, the result will be provided in a simple html document.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">pid</emphasis> - if true, the Fedora persistent identifier (PID) element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">label</emphasis> - if true, the Fedora object label element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">fType</emphasis> - if true, the Fedora object type element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">cModel</emphasis> - if true, the Fedora content model element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">state</emphasis> - if true, the Fedora object state element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">ownerId</emphasis> - if true, the identity of users who own matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">cDate</emphasis> - if true, the Fedora create date element of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">mDate</emphasis> - if true, the Fedora modified date of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">dcmDate</emphasis> - if true, the Dublin Core modified date element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">title</emphasis> - if true, the Dubliin Core title element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">creator</emphasis> - if true, the Dubliin Core creator element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">subject</emphasis> - if true, the Dubliin Core subject element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">description</emphasis> - if true, the Dubliin Core description element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">publisher</emphasis> - if true, the Dubliin Core publisher element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">contributor</emphasis> - if true, the Dubliin Core contributor element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">date</emphasis> - if true, the Dubliin Core date element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">type</emphasis> - if true, the Dubliin Core type element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">format</emphasis> - if true, the Dubliin Core format element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">identifier</emphasis> - if true, the Dubliin Core identifier element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">source</emphasis> - if true, the Dubliin Core source element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">language</emphasis> - if true, the Dubliin Core language element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">relation</emphasis> - if true, the Dubliin Core relation element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">coverage</emphasis> - if true, the Dubliin Core coverage element(s) of matching objects will be included in the response.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">rights</emphasis> - if true, the Dubliin Core right element(s) of matching objects will be included in the response.</para>
+				</listitem>
 			</itemizedlist>
-	</blockquote>
+		</blockquote>
+		<variablelist>
+			<title>Examples:</title>
+			<varlistentry>
+				<term>Find objects in the repostiory that are indexed with the keyword "fedora." The result set should provide the PID and Dublin Core title elements for each object:</term>
+				<listitem>
+					<para>http://localhost:8080/fedora/search?terms=fedora&amp;pid=true&amp;title=true</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Find objects in the repository where the Dublin Core title contains the word "Rome" and the Dublin Core creator contains the word "Staples".  The result set should provide the PID, plus the Dubin Core creator and title elements for each object:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/search?query=title%7Erome%20creator%7Estaples&amp;pid=true&amp;title=true&amp;creator=true</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>Find objects in the repository whose PID ends with the number 1.  The result set should provide a max of 50 hits at a time, and it should provide the PID and Dubin Core title element for each object. The result set should be returned as xml:  </term>
+				<listitem>
+					<para>http://localhost:8080/fedora/search?query=pid%7E*1&amp;maxResults=50&amp;xml=true&amp;pid=true&amp;title=true</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
+	</sect1>
+	<sect1>
+		<title>Resuming a Search for Objects in the Repository (API-A-LITE resumeFindObjects)</title>
+		<para>If a search was requested and the result set contains more "hits" than what was specified in the maxResults parameter of the search URL, then the following syntax is used to obtain the next group of items in the result set. </para>
+		<para>http://hostname:port/fedora/search<emphasis role="bold">?sessionToken=SESSIONID[&amp;xml=BOOLEAN]</emphasis>
+		</para>
+		<blockquote>
+			<itemizedlist>
+				<listitem>
+					<para>hostname - required hostname of the Fedora server. </para>
+				</listitem>
+				<listitem>
+					<para>port - required port number on which the Fedora server is running. fedora - required name of the Fedora access service. </para>
+				</listitem>
+				<listitem>
+					<para>fedora - a required parameter specifying the Fedora servlet path.</para>
+				</listitem>
+				<listitem>
+					<para>search - a required parameter specifying the Fedora servlet path for the findObjects request.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">sessionToken</emphasis> - the identifier of the session to which the search results are being returned.</para>
+				</listitem>
+				<listitem>
+					<para>
+						<emphasis role="bold">xml</emphasis> - boolean indicating whether to return the search results as xml .  If this is  given as true, the result will be in 	xml.  Otherwise, the result will be provided in a simple html document.</para>
+				</listitem>
+			</itemizedlist>
+		</blockquote>
 	</sect1>
 </article>
