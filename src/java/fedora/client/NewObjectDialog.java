@@ -182,7 +182,6 @@ public class NewObjectDialog
               if (ok) {
 	          	dispose();
 	              // now that things look ok, give it a try
-	              /**
 	              StringBuffer xml=new StringBuffer();
 	              xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 	              xml.append("<METS:mets xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -196,8 +195,8 @@ public class NewObjectDialog
 	              xml.append("           PROFILE=\"" + StreamUtility.enc(cModel) + "\">\n");
 	              xml.append("</METS:mets>");
 	              String objXML=xml.toString();
-	              **/
 
+	              /**
 				StringBuffer xml=new StringBuffer();
 				xml.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
 				xml.append("<foxml:digitalObject xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -213,6 +212,7 @@ public class NewObjectDialog
 				String objXML=xml.toString();
 	            System.out.println("Ingesting new object:");
 	            System.out.println(objXML);
+	              **/
 
 	            ByteArrayInputStream in=new ByteArrayInputStream(
 	                    objXML.getBytes("UTF-8"));
@@ -220,7 +220,8 @@ public class NewObjectDialog
 	            		Administrator.APIA,
 	                    Administrator.APIM,
 	                    in,
-	                    "foxml1.0",
+	            //        "foxml1.0",
+	                    "metslikefedora1",
 	                    "Created with Admin GUI \"New Object\" command");
 	            new ViewObject(newPID).launch();
               }
