@@ -33,6 +33,7 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.InvalidStateException;
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
@@ -222,9 +223,15 @@ public class DefaultManagement
             logFinest("Entered DefaultManagement.modifyObject");
             m_ipRestriction.enforce(context);
             w=m_manager.getWriter(context, pid);
-            if (state!=null)
+            if (state!=null && !state.equals("")) {
+                if (!state.equals("A") && !state.equals("D") && !state.equals("I")) {
+                  throw new InvalidStateException("The object state of \"" + state
+                          + "\" is invalid. The allowed values for state are: "
+                          + " A (active), D (deleted), and I (inactive).");
+                }                
                 w.setState(state);
-            if (label!=null)
+            }
+            if (label!=null && !label.equals(""))
                 w.setLabel(label);
             w.commit(logMessage);
             return w.getLastModDate();
@@ -402,6 +409,11 @@ public class DefaultManagement
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
             ds.DSMIME=MIMEType;
+            if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+                throw new InvalidStateException("The datastream state of \"" + dsState
+                        + "\" is invalid. The allowed values for state are: "
+                        + " A (active), D (deleted), and I (inactive).");
+            }            
             ds.DSState= dsState;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
@@ -526,6 +538,11 @@ public class DefaultManagement
             ds.DSLabel=dsLabel;
             ds.DSLocation=dsLocation;
             ds.DSMIME=mimeType;
+            if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+                throw new InvalidStateException("The datastream state of \"" + dsState
+                        + "\" is invalid. The allowed values for state are: "
+                        + " A (active), D (deleted), and I (inactive).");
+            }            
             ds.DSState= dsState;
             Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
             ds.DSCreateDT=nowUTC;
@@ -569,6 +586,11 @@ public class DefaultManagement
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
 				diss.parentPID = pid;
+        if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
+            throw new InvalidStateException("The disseminator state of \"" + dissState
+                    + "\" is invalid. The allowed values for state are: "
+                    + " A (active), D (deleted), and I (inactive).");
+        }				
 				diss.dissState= dissState;
 				diss.dissLabel = dissLabel;
 				diss.bMechID = bMechPid;
@@ -639,8 +661,18 @@ public class DefaultManagement
                     //newds.DSSize will be computed later
                     newds.DSControlGrp="M";
                     newds.DSInfoType=orig.DSInfoType;
-                    newds.DSState=dsState;
-                    //newds.DSState=orig.DSState;
+                    if(dsState==null || dsState.equals("")) {
+                      // If reference unspecified leave state unchanged
+                      newds.DSState = orig.DSState;
+                    } else {
+                      // Check that supplied value for state is one of the allowable values
+                      if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+                          throw new InvalidStateException("The datastream state of \"" + dsState
+                                  + "\" is invalid. The allowed values for state are: "
+                                  + " A (active), D (deleted), and I (inactive).");
+                      }                           
+                      newds.DSState = dsState;
+                    }                     
                     if (dsLocation==null || dsLocation.equals("")) {
                         // if location unspecified, cause a copy of the
                         // prior content to be made at commit-time
@@ -651,8 +683,8 @@ public class DefaultManagement
                     // just add the datastream
                     w.addDatastream(newds);
                     // if state was changed, set new state
-                    if (!orig.DSState.equals(dsState)) {
-                        w.setDatastreamState(datastreamId, dsState); }
+                    if (!orig.DSState.equals(newds.DSState)) {
+                        w.setDatastreamState(datastreamId, newds.DSState); }
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id=w.newAuditRecordID();
@@ -678,8 +710,18 @@ public class DefaultManagement
                 newds.DSCreateDT=nowUTC;
                 newds.DSControlGrp=orig.DSControlGrp;
                 newds.DSInfoType=orig.DSInfoType;
-                newds.DSState=dsState;
-                //newds.DSState=orig.DSState;
+                if(dsState==null || dsState.equals("")) {
+                  // If reference unspecified leave state unchanged
+                  newds.DSState = orig.DSState;
+                } else {
+                  // Check that supplied value for state is one of the allowable values
+                  if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+                      throw new InvalidStateException("The datastream state of \"" + dsState
+                              + "\" is invalid. The allowed values for state are: "
+                              + " A (active), D (deleted), and I (inactive).");
+                  }                           
+                  newds.DSState = dsState;
+                }                
                 if (dsLocation==null || dsLocation.equals("")) {
                     // if location unspecified for referenced or external,
                     // just use the old location
@@ -690,8 +732,8 @@ public class DefaultManagement
                 // just add the datastream
                 w.addDatastream(newds);
                 // if state was changed, set new state
-                if (!orig.DSState.equals(dsState)) {
-                        w.setDatastreamState(datastreamId, dsState); }
+                if (!orig.DSState.equals(newds.DSState)) {
+                        w.setDatastreamState(datastreamId, newds.DSState); }
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
@@ -764,12 +806,23 @@ public class DefaultManagement
             newds.DSCreateDT=nowUTC;
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
-            newds.DSState=dsState;
+            if(dsState==null || dsState.equals("")) {
+              // If reference unspecified leave state unchanged
+              newds.DSState = orig.DSState;
+            } else {
+              // Check that supplied value for state is one of the allowable values
+              if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+                  throw new InvalidStateException("The datastream state of \"" + dsState
+                          + "\" is invalid. The allowed values for state are: "
+                          + " A (active), D (deleted), and I (inactive).");
+              }                           
+              newds.DSState = dsState;
+            }
             // just add the datastream
             w.addDatastream(newds);
             // if state was changed, set new state
-            if (!orig.DSState.equals(dsState)) {
-                        w.setDatastreamState(datastreamId, dsState); }
+            if (!orig.DSState.equals(newds.DSState)) {
+                        w.setDatastreamState(datastreamId, newds.DSState); }
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -856,12 +909,21 @@ public class DefaultManagement
               newdiss.bMechLabel=bMechLabel;
             }
             if (dissState==null || dissState.equals("")) {
+              // If reference unspecified leave state unchanged
               newdiss.dissState=orig.dissState;
             } else {
+              // Check that supplied value for state is one of the allowable values
+              if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
+                  throw new InvalidStateException("The disseminator state of \"" + dissState
+                          + "\" is invalid. The allowed values for state are: "
+                          + " A (active), D (deleted), and I (inactive).");
+              }	        	        
               newdiss.dissState=dissState;
             }
             // just add the disseminator
             w.addDisseminator(newdiss);
+            if (!orig.dissState.equals(newdiss.dissState)) {
+                w.setDisseminatorState(disseminatorId, newdiss.dissState); }            
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -1271,6 +1333,11 @@ public class DefaultManagement
           getServer().logFinest("Entered DefaultManagement.setDatastreamState");
           m_ipRestriction.enforce(context);
           w=m_manager.getWriter(context, pid);
+          if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
+              throw new InvalidStateException("The datastream state of \"" + dsState
+                      + "\" is invalid. The allowed values for state are: "
+                      + " A (active), D (deleted), and I (inactive).");
+          }          
           fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);
           w.setDatastreamState(datastreamID, dsState);
 
@@ -1308,6 +1375,11 @@ public class DefaultManagement
           getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
           m_ipRestriction.enforce(context);
           w=m_manager.getWriter(context, pid);
+          if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
+              throw new InvalidStateException("The disseminator state of \"" + dissState
+                      + "\" is invalid. The allowed values for state are: "
+                      + " A (active), D (deleted), and I (inactive).");
+          }          
           fedora.server.storage.types.Disseminator diss=w.GetDisseminator(disseminatorID, null);
           w.setDisseminatorState(disseminatorID, dissState);
 
