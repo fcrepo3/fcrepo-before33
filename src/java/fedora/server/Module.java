@@ -6,28 +6,32 @@ import fedora.server.errors.ModuleShutdownException;
 
 /**
  * The base class for Fedora server modules.
- *
- * A ParameterizedComponent with initModule() and shutdownModule()
- * methods.
- *
- * Modules are configured via a &lt;module&gt; element in conf/fedora.fcfc.  
- * The schema for this element is in fedora-config.xsd.
- *
- * Modules are instantiated during server start-up.
+ * <p></p>
+ * A <code>Module</code> is a singleton object of a Fedora <code>Server</code> 
+ * instance with a simple lifecycle, supported by the <code>initModule()</code>
+ * and <code>shutdownModule()</code> methods, which are automatically called
+ * during server startup and shutdown, respectively.
+ * <p></p>
+ * Modules are configured via "param" elements inside module elements
+ * in the configuration file.  An instance of each module specified in the
+ * configuration file is automatically created at startup and is available
+ * via the <code>getModule(String)</code> instance method of the 
+ * <code>Server</code> class.
  *
  * @author cwilper@cs.cornell.edu
+ * @version $Id$
  */
 public abstract class Module 
-        extends ParameterizedComponent {
+        extends Pluggable {
 
     private String m_role;
 
     /**
      * Creates and initializes the Module.
-     *
+     * <p></p>
      * When the server is starting up, this is invoked as part of the
      * initialization process.
-     *
+     * <p></p>
      * @param moduleParameters A pre-loaded Map of name-value pairs comprising
      *                         the intended configuration of this Module.
      * @param role The role this module fulfills, a java class name.
@@ -44,6 +48,9 @@ public abstract class Module
 
     /**
      * Gets the role this module fulfills, as given in the constructor.
+     * <p></p>
+     * <i>Role</i> is the name of the class or interface that this 
+     * concrete <code>Module</code> extends or implements.
      *
      * @returns String The role.
      */
@@ -69,7 +76,8 @@ public abstract class Module
      *                                 is a problem, it won't end up aborting
      *                                 the shutdown process.  Therefore, this
      *                                 method should do everything possible
-     *                                 to recover from exceptional situations.
+     *                                 to recover from exceptional situations
+     *                                 before throwing an exception.
      */
     public abstract void shutdownModule() 
             throws ModuleShutdownException;
