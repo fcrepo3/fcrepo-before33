@@ -45,6 +45,7 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
     // Values of urn:oasis:names:tc:xacml:1.0:action:action-id    
 	public final RDFName ADD_DATASTREAM;	
 	public final RDFName ADD_DISSEMINATOR;	
+	public final RDFName ADMIN_PING;		
 	public final RDFName EXPORT_OBJECT;	
 	public final RDFName GET_DATASTREAM;	
 	public final RDFName GET_DATASTREAM_HISTORY;	
@@ -107,6 +108,7 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
 
     	this. ADD_DATASTREAM               = new RDFName(this, "addDatastream");	
     	this. ADD_DISSEMINATOR               = new RDFName(this, "addDisseminator");	
+    	this. ADMIN_PING               = new RDFName(this, "adminPing");    	
     	this. EXPORT_OBJECT               = new RDFName(this, "exportObject");	
     	this. GET_DATASTREAM               = new RDFName(this, "getDatastream");	
     	this. GET_DATASTREAM_HISTORY               = new RDFName(this, "getDatastreamHistory");	
