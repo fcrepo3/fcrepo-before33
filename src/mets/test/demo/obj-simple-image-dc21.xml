@@ -423,6 +423,6 @@
      <METS:serviceBinding ID="DISS2.0" STRUCTID="S2" BTYPE="test:19" CREATED="2002-05-20T06:32:00" LABEL="DubinCore Behaviors">
 		<METS:interfaceMD LABEL="DublinCore Behavior Description" LOCTYPE="URN" xlink:href="test:19"/>
 		<METS:serviceBindMD LABEL="Behavior Mechanims to Conver UVADESC to DC" LOCTYPE="URN" xlink:href="test:20"/>
-     <METS:serviceBinding>
+     </METS:serviceBinding>
 	</METS:behaviorSec>
 </METS:mets>
