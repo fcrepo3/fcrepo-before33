@@ -149,6 +149,33 @@
     </move>
     -->
   </target>
+  
+  <target name="debug-wsdl"
+          depends="prep"
+          description="Produce html reports on the validity of the API-A and API-M wsdl in temp/debug/">
+    <mkdir dir="temp/debug"/>
+    <echo message="Producing html reports on the validity of API-A and API-M..."/>
+    <echo message="Doing API-A..."/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+      <arg value="com.icl.saxon.StyleSheet"/>
+      <arg value="-o"/>
+      <arg path="temp/debug/Fedora-API-A.html"/>
+      <arg path="src/wsdl/Fedora-API-A.wsdl"/>
+      <arg path="res/wsdl-validator/validate.xsl"/>
+    </exec>
+    <echo message="Doing API-M..."/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+      <arg value="com.icl.saxon.StyleSheet"/>
+      <arg value="-o"/>
+      <arg path="temp/debug/Fedora-API-M.html"/>
+      <arg path="src/wsdl/Fedora-API-M.wsdl"/>
+      <arg path="res/wsdl-validator/validate.xsl"/>
+    </exec>
+  </target>
 
 
   <target name="clean"
@@ -161,6 +188,9 @@
 
 <!--
   $Log$
+  Revision 1.6  2002/07/12 17:39:57  cwilper
+  added task for validating wsdl
+
   Revision 1.5  2002/05/10 20:39:08  cwilper
   Changed devdocs build back to single-file output... multi-file output is ugly/confusing IMHO
 
