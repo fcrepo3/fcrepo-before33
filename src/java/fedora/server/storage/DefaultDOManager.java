@@ -73,7 +73,7 @@ public class DefaultDOManager
 
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
-    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd'T'hh:mm:ss");
+    private SimpleDateFormat m_formatter=new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
 
     public static String DEFAULT_STATE="L";
 
@@ -592,8 +592,9 @@ public class DefaultDOManager
             String lockingUser=results.getString("lockingUser");
             if (lockingUser==null) {
                 // get the lock
+                lockingUser=getUserId(context);
                 s.executeUpdate("UPDATE doRegistry SET lockingUser='"
-                    + getUserId(context) + "', createDate=createDate, lastModifiedDate=lastModifiedDate WHERE doPID='" + pid + "'");
+                    + lockingUser + "', createDate=createDate, lastModifiedDate=lastModifiedDate WHERE doPID='" + pid + "'");
             }
             if (!lockingUser.equals(getUserId(context))) {
                 throw new ObjectLockedException("The object is locked by " + lockingUser);
