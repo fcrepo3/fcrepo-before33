@@ -114,6 +114,20 @@ public class SimpleDOWriter
         }
     }
 
+    public void setDatastreamMimeType(String datastreamID, String mimeType)
+            throws ServerException {
+      assertNotInvalidated();
+      assertNotPendingRemoval();
+      List allVersions = m_obj.datastreams(datastreamID);
+      Iterator dsIter = allVersions.iterator();
+
+      // Set all versions of this datastreamID to the specified mimeType
+      while (dsIter.hasNext()) {
+          Datastream ds = (Datastream) dsIter.next();
+          ds.DSMIME = mimeType;
+        }
+    }
+
     public void setDisseminatorState(String disseminatorID, String dissState)
            throws ServerException {
       assertNotInvalidated();

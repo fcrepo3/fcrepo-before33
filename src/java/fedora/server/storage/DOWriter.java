@@ -73,6 +73,16 @@ public interface DOWriter
     public void setDatastreamState(String id, String state) throws ServerException;
 
     /**
+     * Sets the mime type for all versions of the specified datastream.
+     *
+     * @param id The datastream id.
+     * @param mimeType The new mime type.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public void setDatastreamMimeType(String id, String mimeType) throws ServerException;
+
+    /**
      * Sets the state for all versions of the specified disseminator.
      *
      * @param id The disseminator id.

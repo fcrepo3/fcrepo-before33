@@ -580,6 +580,9 @@ public class DefaultManagement
                     // if state was changed, set new state
                     if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
+                    // if mimeType was changed, set new mimeType
+                    if (!orig.DSMIME.equals(newds.DSMIME)) {
+                        w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
                     // add the audit record
                     fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                     audit.id=w.newAuditRecordID();
@@ -636,6 +639,9 @@ public class DefaultManagement
                 // if state was changed, set new state
                 if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
+                // if mimeType was changed, set new mimeType
+                if (!orig.DSMIME.equals(newds.DSMIME)) {
+                    w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
                 // add the audit record
                 fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
                 audit.id=w.newAuditRecordID();
@@ -762,6 +768,9 @@ public class DefaultManagement
             // if state was changed, set new state
             if (!orig.DSState.equals(newds.DSState)) {
                         w.setDatastreamState(datastreamId, newds.DSState); }
+            // if mimeType was changed, set new mimeType
+            if (!orig.DSMIME.equals(newds.DSMIME)) {
+                w.setDatastreamMimeType(datastreamId, newds.DSMIME); }
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();

@@ -46,6 +46,7 @@ public class DatastreamPane
 
     private Hashtable[] m_labelTables;
     private JComboBox m_stateComboBox;
+    private JTextField m_mimeTextField;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
@@ -80,8 +81,9 @@ public class DatastreamPane
 
                     // LEFT: labels
                     JLabel stateLabel=new JLabel("State");
+                    JLabel mimeLabel = new JLabel("MIME Type");
                     JLabel controlGroupLabel=new JLabel("Control Group");
-                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, controlGroupLabel};
+                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeLabel, controlGroupLabel};
 
                     // RIGHT: values
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
@@ -115,13 +117,17 @@ public class DatastreamPane
                         }
                     });
 
+                    m_mimeTextField = new JTextField(m_mostRecent.getMIMEType());
+                    m_mimeTextField.getDocument().addDocumentListener(
+                            dataChangeListener);
+
                     JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
                                     mostRecent.getControlGroup().toString())
                             );
                     controlGroupValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     controlGroupValueLabel.setEditable(false);
-                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, controlGroupValueLabel};
+                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, m_mimeTextField, controlGroupValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
                 GridBagLayout leftCommonGridBag=new GridBagLayout();
@@ -220,6 +226,9 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
+        if (!m_mostRecent.getMIMEType().equals(m_mimeTextField.getText())) {
+            return true;
+        }
         if (m_currentVersionPane.isDirty()) {
             return true;
         }
@@ -248,9 +257,27 @@ public class DatastreamPane
            state="I";
         if (i==2)
            state="D";
-		if (m_currentVersionPane.isDirty()) {
+        String oldMime = m_mostRecent.getMIMEType();
+        String newMime = m_mimeTextField.getText();
+		if (m_currentVersionPane.isDirty() || !newMime.equals(oldMime)) {
 		    // defer to the currentVersionPane if anything else changed
-		    m_currentVersionPane.saveChanges(state, logMessage);
+            try {
+     		    m_currentVersionPane.saveChanges(state, newMime, logMessage, false);
+            } catch (Exception e) {
+                if (e.getMessage() == null 
+                        || e.getMessage().indexOf(" would invalidate ") == -1) {
+                    throw e;
+                }
+                // ask if they want to force it.
+                Object[] options = { "Yes", "No" };
+                int selected=JOptionPane.showOptionDialog(null, 
+                        e.getMessage() + "\n\nForce it?",
+                        "Warning", JOptionPane.DEFAULT_OPTION, 
+                        JOptionPane.WARNING_MESSAGE, null, options, options[1]);
+                if (selected==0) {
+     		        m_currentVersionPane.saveChanges(state, newMime, logMessage, true);
+                }
+            }
 		} else {
 		    // since only state changed, we can take care of it here
 			Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
@@ -274,6 +301,7 @@ public class DatastreamPane
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
         }
+        m_mimeTextField.setText(m_mostRecent.getMIMEType());
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
     }
@@ -304,7 +332,6 @@ public class DatastreamPane
         private Datastream m_ds;
         private JTextField m_locationTextField;
         private JTextField m_labelTextField;
-        private JTextField m_mimeTextField;
         private JButton m_editButton;
         private JButton m_viewButton;
         private JButton m_importButton;
@@ -366,22 +393,20 @@ public class DatastreamPane
             labelLabel.setPreferredSize(m_labelDims);
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
-            JLabel mimeLabel = new JLabel("MIME Type");
-            mimeLabel.setPreferredSize(m_labelDims);
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Location");
                 locationLabel.setPreferredSize(m_labelDims);
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel, locationLabel, urlLabel, mimeLabel};
+                    labels=new JLabel[] {labelLabel, locationLabel, urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel, urlLabel, mimeLabel};
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel, locationLabel, urlLabel};
                 }
             } else {
                 if (m_versionSlider!=null) {
-                    labels=new JLabel[] {labelLabel, urlLabel, mimeLabel};
+                    labels=new JLabel[] {labelLabel, urlLabel};
                 } else {
-                    labels=new JLabel[] {new JLabel("Created"), labelLabel, urlLabel, mimeLabel};
+                    labels=new JLabel[] {new JLabel("Created"), labelLabel, urlLabel};
                 }
             }
             m_labelTextField=new JTextField(ds.getLabel());
@@ -394,12 +419,6 @@ public class DatastreamPane
                 m_labelTextField.setEnabled(false);
             }
 
-            m_mimeTextField=new JTextField(ds.getMIMEType());
-            m_mimeTextField.getDocument().addDocumentListener(
-                    dataChangeListener);
-            if (noEdits) m_mimeTextField.setEnabled(false);
-
-    
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
             urlTextField.setEditable(false);  // so they can copy, but not modify
 
@@ -414,8 +433,8 @@ public class DatastreamPane
                 if (m_versionSlider!=null) {
                     values=new JComponent[] {m_labelTextField, 
                                              m_locationTextField, 
-                                             urlTextField,
-                                             m_mimeTextField};
+                                             urlTextField};
+                                             
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
@@ -423,22 +442,19 @@ public class DatastreamPane
                     values=new JComponent[] {cDateTextArea,
                                              m_labelTextField, 
                                              m_locationTextField, 
-                                             urlTextField,
-                                             m_mimeTextField};
+                                             urlTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
                     values=new JComponent[] {m_labelTextField, 
-                                             urlTextField,
-                                             m_mimeTextField};
+                                             urlTextField};
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
                     cDateTextArea.setEditable(false);
                     values=new JComponent[] {cDateTextArea,
                                              m_labelTextField, 
-                                             urlTextField,
-                                             m_mimeTextField};
+                                             urlTextField};
                 }
             }
 
@@ -647,10 +663,12 @@ public class DatastreamPane
             viewFrame.toFront();
         }
 
-	public void saveChanges(String state, String logMessage)
+	public void saveChanges(String state, 
+	                        String mimeType, 
+	                        String logMessage,
+	                        boolean force)
             throws Exception {
         String label=m_labelTextField.getText();
-        String mimeType = m_mimeTextField.getText();
 		if (X) {
 		    byte[] content=new byte[0];
 		    if (m_editor!=null && m_editor.isDirty()) {
@@ -669,7 +687,7 @@ public class DatastreamPane
 		                                               content, 
 		                                               state,
 		                                               logMessage, 
-                                                       false); // DEFAULT_FORCE
+                                                       force);
 		} else if (M) {
             String loc=null; // if not set, server will not change content
             if (m_importFile!=null) {
@@ -690,7 +708,7 @@ public class DatastreamPane
                                                            loc, 
                                                            state,
                                                            logMessage, 
-                                                           false); // DEFAULT_FORCE
+                                                           force);
         } else {
 		    // external ref or redirect
             Administrator.APIM.modifyDatastreamByReference(m_pid, 
@@ -703,7 +721,7 @@ public class DatastreamPane
                                                            m_locationTextField.getText(), 
                                                            state,
                                                            logMessage, 
-                                                           false); // DEFAULT_FORCE
+                                                           force);
 		}
     }
         public boolean isDirty() {
@@ -727,9 +745,6 @@ public class DatastreamPane
             }
             if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
                  return true;
-            }
-            if (!m_ds.getMIMEType().equals(m_mimeTextField.getText())) {
-                return true;
             }
             if (m_locationTextField!=null 
                     && !m_locationTextField.getText().equals(m_ds.getLocation())) {
@@ -797,22 +812,17 @@ public class DatastreamPane
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, true));
             urlTextField.setEditable(false);  // so they can copy, but not modify
 
-            JLabel mimeLabel = new JLabel("MIME Type");
-            mimeLabel.setPreferredSize(m_labelDims);
-            JTextField mimeTextField = new JTextField(m_ds.getMIMEType());
-            mimeTextField.setEditable(false);  // so they can copy, but not modify
-
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, new JLabel("Location"), urlLabel, mimeLabel};
+                labels=new JLabel[] {labelLabel, new JLabel("Location"), urlLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
-                values=new JComponent[] {labelValue, refValue, urlTextField, mimeTextField};
+                values=new JComponent[] {labelValue, refValue, urlTextField};
             } else {
-                labels=new JLabel[] {labelLabel, urlLabel, mimeLabel};
-                values=new JComponent[] {labelValue, urlTextField, mimeTextField};
+                labels=new JLabel[] {labelLabel, urlLabel};
+                values=new JComponent[] {labelValue, urlTextField};
             }
 
             JPanel fieldPanel=new JPanel();
