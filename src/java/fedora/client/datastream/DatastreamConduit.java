@@ -140,6 +140,17 @@ public class DatastreamConduit {
         return purgeDatastream(m_apim, pid, dsId, startDT, endDT);
     }
 
+    public static Calendar[] getDatastreamHistory(FedoraAPIM skeleton,
+            String pid, String dsId)
+            throws RemoteException {
+        return skeleton.getDatastreamHistory(pid, dsId);
+    }
+
+    public Calendar[] getDatastreamHistory(String pid, String dsId)
+            throws RemoteException {
+        return getDatastreamHistory(m_apim, pid, dsId);
+    }
+
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
@@ -162,15 +173,20 @@ public class DatastreamConduit {
                     System.out.println("Datastream : " + ids[i]);
                     Datastream ds=c.getDatastream(pid, ids[i], null);
                     System.out.println("State : " + ds.getState());
-                    System.out.println("Version ID : " + ds.getVersionID());
-                    System.out.println("Create Date : " + FORMATTER.format(ds.getCreateDate().getTime()));
                     System.out.println("Control Group : " + ds.getControlGroup().toString());
-                    System.out.println("Label : " + ds.getLabel());
                     System.out.println("Info Type : " + ds.getInfoType());
                     System.out.println("Mime Type : " + ds.getMIMEType());
                     if ((!ds.getControlGroup().toString().equals("X"))
                             && (!ds.getControlGroup().toString().equals("X"))) {
                         System.out.println("Location : " + ds.getLocation());
+                    }
+                    // print version id, create date, and label for each version
+                    Calendar[] dates=c.getDatastreamHistory(pid, ids[i]);
+                    for (int j=0; j<dates.length; j++) {
+                        Datastream ver=c.getDatastream(pid, ids[i], dates[j]);
+                        System.out.println(" Version : " + ver.getVersionID());
+                        System.out.println("  Created : " + FORMATTER.format(ver.getCreateDate().getTime()));
+                        System.out.println("  Label : " + ver.getLabel());
                     }
                     System.out.println("");
                 }

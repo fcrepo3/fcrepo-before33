@@ -11,7 +11,6 @@
 			<wsdldoc:type name="fedora-types:ArrayOfDateTime" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDateTime"/>
 			<wsdldoc:type name="fedora-types:Datastream" url="http://www.fedora.info/definitions/1/0/types/#Datastream"/>
 			<wsdldoc:type name="fedora-types:ArrayOfDatastream" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDatastream"/>
-			<wsdldoc:type name="fedora-types:ArrayOfComponentInfo" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfComponentInfo"/>
 			<wsdldoc:type name="fedora-types:DatastreamBindingMap" url="http://www.fedora.info/definitions/1/0/types/#DatastreamBindingMap"/>
 			<wsdldoc:type name="fedora-types:Disseminator" url="http://www.fedora.info/definitions/1/0/types/#Disseminator"/>
 			<wsdldoc:type name="fedora-types:ArrayOfDisseminator" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfDisseminator"/>
@@ -354,7 +353,6 @@
 			<documentation>the IDs of the datastreams.</documentation>
 		</part>
 	</message>
-	<!--
   <message name="getDatastreamHistoryRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -364,11 +362,11 @@
     </part>
   </message>
   <message name="getDatastreamHistoryResponse">
-    <part name="response" type="fedora-types:ArrayOfComponentInfo">
-      <documentation>component information for each version of the datastream,
-      ordered earliest first.</documentation>
+    <part name="response" type="fedora-types:ArrayOfDateTime">
+      <documentation>creation dates for each version of the datastream.</documentation>
     </part>
   </message>
+<!--
   <message name="addDisseminatorRequest">
     <part name="PID" type="xsd:string">
       <documentation>the PID of the object.</documentation>
@@ -496,9 +494,8 @@
     </part>
   </message>
   <message name="getDisseminatorHistoryResponse">
-    <part name="response" type="fedora-types:ArrayOfComponentInfo">
-      <documentation>component information for each version of the disseminator,
-      ordered earliest first.</documentation>
+    <part name="response" type="fedora-types:ArrayOfDateTime">
+      <documentation>creation dates for each version of the disseminator.</documentation>
     </part>
   </message>
 -->
@@ -700,13 +697,12 @@
 			<input message="fedora-api:listDatastreamIDsRequest"/>
 			<output message="fedora-api:listDatastreamIDsResponse"/>
 		</operation>
-		<!--
     <operation name="getDatastreamHistory">
-      <documentation>Gets the componentID, createDT, state, and label history
-      of a datastream.</documentation>
+      <documentation>Gets the creation dates of each version of a datastream.</documentation>
       <input message="fedora-api:getDatastreamHistoryRequest"/>
       <output message="fedora-api:getDatastreamHistoryResponse"/>
     </operation>
+		<!--
     <operation name="getDisseminator">
       <documentation>Gets a disseminator in an object.</documentation>
       <input message="fedora-api:getDisseminatorRequest"/>
@@ -723,8 +719,7 @@
       <output message="fedora-api:listDisseminatorIDsResponse"/>
     </operation>
     <operation name="getDisseminatorHistory">
-      <documentation>Gets the componentID, createDT, state, and label history
-      of a disseminator.</documentation>
+      <documentation>Gets the creation dates of each version of a disseminator.</documentation>
       <input message="fedora-api:getDisseminatorHistoryRequest"/>
       <output message="fedora-api:getDisseminatorHistoryResponse"/>
     </operation>
@@ -982,7 +977,6 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-		<!--
     <operation name="getDatastreamHistory">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
@@ -997,6 +991,7 @@
             namespace="http://www.fedora.info/definitions/1/0/api/"/>
       </output>
     </operation>
+		<!--
     <operation name="addDisseminator">
       <soap:operation style="rpc" 
           soapAction="http://www.fedora.info/definitions/1/0/api/#addDisseminator"/>

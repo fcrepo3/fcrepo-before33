@@ -602,21 +602,24 @@ public class DefaultManagement
             // of versions.  So we'll just add it to the object, but not associate
             // it with anything.
             w.getAuditRecords().add(audit);
-
             // It looks like all went ok, so commit
             w.commit(logMessage);
             // ... then give the response
-            Calendar response[]=new Calendar[deletedDates.length];
-            for (int i=0; i<deletedDates.length; i++) {
-                response[i]=new GregorianCalendar();
-                response[i].setTime(deletedDates[i]);
-            }
-            return response;
+            return dateArrayToCalendarArray(deletedDates);
         } finally {
             if (w!=null) {
                 m_manager.releaseWriter(w);
             }
         }
+    }
+
+    private Calendar[] dateArrayToCalendarArray(Date[] dates) {
+        Calendar response[]=new Calendar[dates.length];
+        for (int i=0; i<dates.length; i++) {
+            response[i]=new GregorianCalendar();
+            response[i].setTime(dates[i]);
+        }
+        return response;
     }
 
     private String getPurgeLogMessage(String kindaThing, String id, Date start, 
@@ -672,9 +675,15 @@ public class DefaultManagement
         DOReader r=m_manager.getReader(context, pid);
         return r.ListDatastreamIDs(state);
     }
-/*
-    public ComponentInfo[] getDatastreamHistory(Context context, String pid, String datastreamID) { return null; }
 
+    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID) 
+            throws ServerException { 
+        m_ipRestriction.enforce(context);
+        DOReader r=m_manager.getReader(context, pid);
+        return dateArrayToCalendarArray(r.getDatastreamVersions(datastreamID));
+    }
+
+/*
     public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { return null; }
 
     public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) { }

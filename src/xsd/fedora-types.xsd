@@ -13,16 +13,6 @@
 			</xsd:restriction>
 		</xsd:complexContent>
 	</xsd:complexType>
-	<xsd:complexType name="ArrayOfComponentInfo">
-		<xsd:annotation>
-			<xsd:documentation>an ordered list of ComponentInfos</xsd:documentation>
-		</xsd:annotation>
-		<xsd:complexContent>
-			<xsd:restriction base="soapenc:Array">
-				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ComponentInfo[]"/>
-			</xsd:restriction>
-		</xsd:complexContent>
-	</xsd:complexType>
 	<xsd:complexType name="ArrayOfCondition">
 		<xsd:annotation>
 			<xsd:documentation>an ordered list of Conditions for searching, with the implied AND boolean operator.</xsd:documentation>
@@ -168,13 +158,6 @@
 			<xsd:enumeration value="gt"/>
 			<xsd:enumeration value="ge"/>
 		</xsd:restriction>
-	</xsd:simpleType>
-	<xsd:simpleType name="ComponentInfo">
-		<xsd:annotation>
-			<xsd:documentation>data about a datastream or disseminator.
-      </xsd:documentation>
-		</xsd:annotation>
-		<xsd:restriction base="string"/>
 	</xsd:simpleType>
 	<xsd:complexType name="Condition">
 		<xsd:annotation>

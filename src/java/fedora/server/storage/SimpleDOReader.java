@@ -238,6 +238,15 @@ public class SimpleDOReader
         }
     }
 
+    public Date[] getDatastreamVersions(String datastreamID) {
+        List l=m_obj.datastreams(datastreamID);
+        Date[] versionDates=new Date[l.size()];
+        for (int i=0; i<l.size(); i++) {
+            versionDates[i]=((Datastream) l.get(i)).DSCreateDT;
+        }
+        return versionDates;
+    }
+
     public Datastream[] GetDatastreams(Date versDateTime) {
         String[] ids=ListDatastreamIDs(null);
         ArrayList al=new ArrayList();

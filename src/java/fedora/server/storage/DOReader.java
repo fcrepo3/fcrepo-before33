@@ -168,6 +168,17 @@ public interface DOReader
     public String[] ListDatastreamIDs(String state) throws ServerException;
 
     /**
+     * Gets the creation dates of all versions of a particular datastream,
+     * in no particular order.
+     *
+     * @param datastreamID The datastream identifier
+     * @return the creation dates.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public Date[] getDatastreamVersions(String datastreamID) throws ServerException;
+
+    /**
      * Gets all datastreams as of a certain date.
      * This iterates through all datastreams in the object and
      * returns only those that existed at the given date/time,

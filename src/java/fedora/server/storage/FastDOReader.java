@@ -866,6 +866,25 @@ public class FastDOReader implements DOReader
     return datastreamArray;
   }
 
+  public Date[] getDatastreamVersions(String datastreamID)
+      throws ServerException {
+    Date[] createDateArray;
+    try
+    {
+      if (doReader == null)
+      {
+        doReader = m_manager.getReader(m_context, PID);
+      }
+      createDateArray = doReader.getDatastreamVersions(datastreamID);
+    } catch (Throwable th)
+    {
+      throw new GeneralException("[FastDOReader] Definitive doReader returned "
+          + "error. The underlying error was a  \"" + th.getClass().getName()
+          + "\"  . The message was  \"" + th.getMessage() + "\"  .");
+    }
+    return createDateArray;
+  }
+
   /**
    * Gets the dissemination binding info necessary to perform a particular
    * dissemination.

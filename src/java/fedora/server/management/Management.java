@@ -92,7 +92,7 @@ public interface Management {
 
     public String[] listDatastreamIDs(Context context, String pid, String state) throws ServerException;
 
-//    public ComponentInfo[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
+    public Calendar[] getDatastreamHistory(Context context, String pid, String datastreamID) throws ServerException;
 
 //    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 

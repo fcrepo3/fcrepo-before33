@@ -401,12 +401,20 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
         }
     }
-/*
-    public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(String PID, String datastreamID) throws java.rmi.RemoteException {
+    public Calendar[] getDatastreamHistory(String PID, String datastreamID) 
+            throws java.rmi.RemoteException {
         assertInitialized();
-        return null;
+        try {
+            return s_management.getDatastreamHistory(getContext(), PID, datastreamID);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Exception e) {
+            throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        }
     }
 
+/*
     public String addDisseminator(String PID, String bMechPID, String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
