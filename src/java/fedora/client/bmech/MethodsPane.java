@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.awt.BorderLayout;
@@ -206,17 +207,17 @@ public class MethodsPane extends JPanel {
     }
 
 	public void clearContractMethods()
-	{	
+	{
 		// reinitialize the method map and the method table display
 		methodMap = new HashMap();
 		((DefaultTableModel)methodTable.getModel()).setNumRows(0);
 	}
-	
+
 	public JTable renderContractMethods(String bDefPID)
 	{
 	  // reinitialize the method map and the method table display
 	  clearContractMethods();
-	  
+
 	  List methodDefs = getBDefMethods(bDefPID);
 	  for (int i=0; i<methodDefs.size(); i++)
 	  {
@@ -474,7 +475,17 @@ public class MethodsPane extends JPanel {
 
     private void helpTable()
     {
-      return;
+      JTextArea helptxt = new JTextArea();
+      helptxt.setLineWrap(true);
+      helptxt.setWrapStyleWord(true);
+      helptxt.setBounds(0,0,550,20);
+      helptxt.append("The Methods Tab is used to define a 'behavior contract'"
+      + " which is a set of abstract method definitions.  Define the method names and"
+      + " any user-supplied parameters to those methods.");
+
+      JOptionPane.showMessageDialog(
+        this, helptxt, "Help for Abstract Methods Tab",
+          JOptionPane.OK_OPTION);
     }
 
     protected void assertNoMethodMsg(String msg)

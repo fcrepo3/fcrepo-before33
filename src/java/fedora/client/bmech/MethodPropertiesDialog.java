@@ -417,7 +417,25 @@ public class MethodPropertiesDialog extends JDialog
 
     private void helpTable()
     {
-      return;
+      JTextArea helptxt = new JTextArea();
+      helptxt.setLineWrap(true);
+      helptxt.setWrapStyleWord(true);
+      helptxt.setBounds(0,0,550,20);
+      helptxt.append("The Method Properties Pane is used to define method parameters"
+      + " for the selected method. Each parameter has the following properties:\n\n"
+      + " Name - the name of the parameter (required)\n\n"
+      + " Type - the type of the parameter. (required) For Behavior Definition objects,"
+      + " the only valid type is USER. For Behavior Mechanism objects, valid types include"
+      + " USER (user parms), DATASTREAM (datastream parms), and DEFAULT (mechanism default parms)\n\n"
+      + " Required - boolean flag that specifies whether the parameter is required. (required)\n\n"
+      + " PassBy - determines whether the parameter value is passed by-reference or by-value (required)\n\n"
+      + " DefaultValue - value indicating the default value for the parameter if one is not provided. (optional)\n\n"
+      + " Description - label describing the parameter. (optional)\n\n"
+      + " ValidValues - comma delimited list of valid values for the parameter. (optional)\n\n");
+
+      JOptionPane.showMessageDialog(
+        this, helptxt, "Help for Abstract Methods Tab",
+          JOptionPane.OK_OPTION);
     }
 
     private void showURLHelp()
@@ -425,7 +443,6 @@ public class MethodPropertiesDialog extends JDialog
         JTextArea helptxt = new JTextArea();
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
-        helptxt.setBounds(0,0,550,20);
         helptxt.append("The Method Binding entry pane must specify an appropriate"
           + " URL syntax necessary to run a particular service method being defined for this "
           + " Behavior Mechanism object.\n\n"
@@ -489,9 +506,10 @@ public class MethodPropertiesDialog extends JDialog
         helptxt.append("(parmname1)\n");
         helptxt.append("For example:\n");
         helptxt.append("(HIGHRESIMAGE)\n");
-
+        JScrollPane js = new JScrollPane(helptxt);
+        js.setPreferredSize(new Dimension(400,500));
         JOptionPane.showMessageDialog(
-          this, helptxt, "Help for Method Binding URL",
+          this, js, "Help for Method Binding URL",
           JOptionPane.OK_OPTION);
     }
 
