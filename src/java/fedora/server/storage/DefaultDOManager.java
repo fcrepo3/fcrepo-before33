@@ -409,211 +409,239 @@ public class DefaultDOManager
             try {
                 getTempStore().remove(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
-                // ignore... it might not be in temp storage so this is ok.
-                // FIXME: could check modification state with reg table to
-                // deal with this better, but for now this works
+                logWarning("Object wasn't found in temporary low level store, but that might be ok...continuing with purge.");
             }
-            getObjectStore().remove(obj.getPid());
+            // remove from definitive storage
+            try {
+                getObjectStore().remove(obj.getPid());
+            } catch (ObjectNotInLowlevelStorageException onilse) {
+                logWarning("Object wasn't found in permanent low level store, but that might be ok...continuing with purge.");
+            }
             // Remove it from the registry
-            unregisterObject(obj.getPid());
-            // Set entry for this object to "D" in the replication jobs table
-            addReplicationJob(obj.getPid(), true);
-            // tell replicator to do deletion
-            m_replicator.delete(obj.getPid());
-            removeReplicationJob(obj.getPid());
-            logInfo("Deleting from FieldSearch indexes...");
-            m_fieldSearch.delete(obj.getPid());
-        } else {
-            // copy and store any datastreams of type Managed Content
-            Iterator dsIDIter = obj.datastreamIdIterator();
-            while (dsIDIter.hasNext())
-            {
-              String dsID=(String) dsIDIter.next();
-              Datastream dStream=(Datastream) obj.datastreams(dsID).get(0);
-              String controlGroupType = dStream.DSControlGrp;
-              if ( controlGroupType.equalsIgnoreCase("M") &&
-                   (dStream.DSLocation.indexOf("//")!=-1) )
-                   // if it's managed, and a url, means we need to grab content
-              {
-                List allVersions = obj.datastreams(dsID);
-                Iterator dsIter = allVersions.iterator();
-
-                // iterate over all versions of this dsID
-                while (dsIter.hasNext())
-                {
-                  Datastream dmc =
-                      (Datastream) dsIter.next();
-                  MIMETypedStream mimeTypedStream = m_contentManager.
-                      getExternalContent(dmc.DSLocation.toString());
-                  logInfo("Retrieving ManagedContent datastream from remote "
-                      + "location: " + dmc.DSLocation);
-                  // RLW: change required by conversion fom byte[] to InputStream
-                  //ByteArrayInputStream bais =
-                  //    new ByteArrayInputStream(mimeTypedStream.stream);
-                  // RLW: change required by conversion fom byte[] to InputStream
-                  String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
-                            + dmc.DSVersionID;
-                  // RLW: change required by conversion fom byte[] to InputStream
-                  if (obj.getState().equals("I")) {
-                      getDatastreamStore().add(id, mimeTypedStream.getStream());
-                  } else {
-                      // object already existed...so call replace instead
-                      getDatastreamStore().replace(id, mimeTypedStream.getStream());
-                  }
-                  //getDatastreamStore().add(id, bais);
-                  // RLW: change required by conversion fom byte[] to InputStream
-
-                  // Make new audit record.
-
-                  /*
-                  // SDP: commented out since audit record id is not yet
-                  // auto-incremented and we get XML validation error when
-                  // there are multiple managed content datastreams (we get
-                  // duplicate ID elements in the XML)
-                  a = new AuditRecord();
-                  int numAuditRecs = obj.getAuditRecords().size() + 1;
-                  a.id = "REC-" + numAuditRecs;
-                  a.processType = "API-M";
-                  a.action = "Added a ManagedContent datastream for the first "
-                      + "time. Copied remote content stored at \""
-                      + dmc.DSLocation + "\" and stored it in the Fedora "
-                      + "permanentStore under the id: " + id;
-                  a.responsibility = getUserId(context);
-                  a.date = new Date();
-                  a.justification = logMessage;
-                  obj.getAuditRecords().add(a);
-                  */
-
-                  // Reset dsLocation in object to new internal location.
-                  dmc.DSLocation = id;
-                  logInfo("Replacing ManagedContent datastream with "
-                      + "internal id: " + id);
-                  //bais = null;
-                }
-              }
-            }
-
-            // save to definitive store, validating beforehand
-            // update the system version (add one) and reflect that the object is no longer locked
-
-            // Validation:
-            // Perform FINAL validation before saving the object to persistent storage.
-            // For now, we'll request all levels of validation (level=0), but we can
-            // consider whether there is too much redundancy in requesting full validation
-            // at time of ingest, then again, here, at time of storage.
-            // We'll just be conservative for now and call all levels both times.
-            // First, serialize the digital object into an Inputstream to be passed to validator.
-
-            // set object status to "A" if "I".  other status changes should occur elsewhere!
-            if (obj.getState().equals("I")) {
-                obj.setState("A");
-            }
-            // set datastream statuses to "A" if "I".  other status changes should occur elsewhere!
-            Iterator dsIter=obj.datastreamIdIterator();
-            while (dsIter.hasNext()) {
-                List dsList=(List) obj.datastreams((String) dsIter.next());
-                for (int i=0; i<dsList.size(); i++) {
-                    Datastream ds=(Datastream) dsList.get(i);
-                    if (ds.DSState.equals("I")) {
-                        ds.DSState="A";
-                    }
-                }
-            }
-            // same thing, but with disseminators
-            Iterator dissIter=obj.disseminatorIdIterator();
-            while (dissIter.hasNext()) {
-                List dissList=(List) obj.disseminators((String) dissIter.next());
-                for (int i=0; i<dissList.size(); i++) {
-                    Disseminator diss=(Disseminator) dissList.get(i);
-                    if (diss.dissState.equals("I")) {
-                        diss.dissState="A";
-                    }
-                }
-            }
-            // set last mod date, in UTC
-            obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
-            // Set useSerializer to false to disable the serializer (for debugging/testing).
-            boolean useSerializer=true;
-            if (useSerializer) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
-                ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-                m_validator.validate(inV, 0, "store");
-                // if ok, write change to perm store here...right before db stuff
-                getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
-            } else {
-                m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
-            }
-            // update lockinguser (set to NULL) and systemVersion (add one)
-            Connection conn=null;
-            Statement s = null;
-            ResultSet results=null;
+            boolean wasInRegistry=false;
             try {
-                conn=m_connectionPool.getConnection();
-                String query="SELECT systemVersion "
-                           + "FROM doRegistry "
-                           + "WHERE doPID='" + obj.getPid() + "'";
-                s=conn.createStatement();
-                results=s.executeQuery(query);
-                if (!results.next()) {
-                    throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
-                }
-                int systemVersion=results.getInt("systemVersion");
-                systemVersion++;
-                Date now=new Date();
-                String formattedLastModDate=m_formatter.format(now);
-                s.executeUpdate("UPDATE doRegistry SET systemVersion="
-                        + systemVersion + ", lockingUser=NULL, createDate=createDate, lastModifiedDate='" + formattedLastModDate + "' "
-                        + "WHERE doPID='" + obj.getPid() + "'");
-            } catch (SQLException sqle) {
-                throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
-            } finally {
-                try
-                {
-                  if (results!=null) results.close();
-                  if (s!= null) s.close();
-                  m_connectionPool.free(conn);
-                } catch (SQLException sqle)
-                {
-                  throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
-                }
-            }
-            // add to replication jobs table
-            addReplicationJob(obj.getPid(), false);
-            // replicate
-            try {
-                if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
-                    logInfo("Attempting replication as bdef object: " + obj.getPid());
-                    BDefReader reader=getBDefReader(context, obj.getPid());
-                    logInfo("Got a BDefReader...");
-                    m_replicator.replicate(reader);
-                    logInfo("Updating FieldSearch indexes...");
-                    m_fieldSearch.update(reader);
-                } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
-                    logInfo("Attempting replication as bmech object: " + obj.getPid());
-                    BMechReader reader=getBMechReader(context, obj.getPid());
-                    logInfo("Got a BMechReader...");
-                    m_replicator.replicate(reader);
-                    logInfo("Updating FieldSearch indexes...");
-                    m_fieldSearch.update(reader);
-                } else {
-                    logInfo("Attempting replication as normal object: " + obj.getPid());
-                    DOReader reader=getReader(context, obj.getPid());
-                    logInfo("Got a DOReader...");
-                    m_replicator.replicate(reader);
-                    logInfo("Updating FieldSearch indexes...");
-                    m_fieldSearch.update(reader);
-                }
-                // FIXME: also remove from temp storage if this is successful
-                removeReplicationJob(obj.getPid());
+                unregisterObject(obj.getPid());
+                wasInRegistry=true;
             } catch (ServerException se) {
-              System.out.println("Error while replicating: " + se.getClass().getName() + ": " + se.getMessage());
-              se.printStackTrace();
+                logWarning("Object couldn't be removed from fieldsearch indexes, but that might be ok...continuing with purge.");
+            }
+            if (wasInRegistry) {
+                try {
+                    // Set entry for this object to "D" in the replication jobs table
+                    addReplicationJob(obj.getPid(), true);
+                    // tell replicator to do deletion
+                    m_replicator.delete(obj.getPid());
+                    removeReplicationJob(obj.getPid());
+                } catch (ServerException se) {
+                    logWarning("Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
+                }
+            }
+
+            try {
+                logInfo("Deleting from FieldSearch indexes...");
+                m_fieldSearch.delete(obj.getPid());
+            } catch (ServerException se) {
+                logWarning("Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+            }
+        } else {
+            boolean neverExistedBefore=obj.getState().equals("I");
+            try {
+                // copy and store any datastreams of type Managed Content
+                Iterator dsIDIter = obj.datastreamIdIterator();
+                while (dsIDIter.hasNext())
+                {
+                  String dsID=(String) dsIDIter.next();
+                  Datastream dStream=(Datastream) obj.datastreams(dsID).get(0);
+                  String controlGroupType = dStream.DSControlGrp;
+                  if ( controlGroupType.equalsIgnoreCase("M") &&
+                       (dStream.DSLocation.indexOf("//")!=-1) )
+                       // if it's managed, and a url, means we need to grab content
+                  {
+                    List allVersions = obj.datastreams(dsID);
+                    Iterator dsIter = allVersions.iterator();
+    
+                    // iterate over all versions of this dsID
+                    while (dsIter.hasNext())
+                    {
+                      Datastream dmc =
+                          (Datastream) dsIter.next();
+                      MIMETypedStream mimeTypedStream = m_contentManager.
+                          getExternalContent(dmc.DSLocation.toString());
+                      logInfo("Retrieving ManagedContent datastream from remote "
+                          + "location: " + dmc.DSLocation);
+                      // RLW: change required by conversion fom byte[] to InputStream
+                      //ByteArrayInputStream bais =
+                      //    new ByteArrayInputStream(mimeTypedStream.stream);
+                      // RLW: change required by conversion fom byte[] to InputStream
+                      String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
+                                + dmc.DSVersionID;
+                      // RLW: change required by conversion fom byte[] to InputStream
+                      if (obj.getState().equals("I")) {
+                          getDatastreamStore().add(id, mimeTypedStream.getStream());
+                      } else {
+                          // object already existed...so call replace instead
+                          getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                      }
+                      //getDatastreamStore().add(id, bais);
+                      // RLW: change required by conversion fom byte[] to InputStream
+    
+                      // Make new audit record.
+    
+                      /*
+                      // SDP: commented out since audit record id is not yet
+                      // auto-incremented and we get XML validation error when
+                      // there are multiple managed content datastreams (we get
+                      // duplicate ID elements in the XML)
+                      a = new AuditRecord();
+                      int numAuditRecs = obj.getAuditRecords().size() + 1;
+                      a.id = "REC-" + numAuditRecs;
+                      a.processType = "API-M";
+                      a.action = "Added a ManagedContent datastream for the first "
+                          + "time. Copied remote content stored at \""
+                          + dmc.DSLocation + "\" and stored it in the Fedora "
+                          + "permanentStore under the id: " + id;
+                      a.responsibility = getUserId(context);
+                      a.date = new Date();
+                      a.justification = logMessage;
+                      obj.getAuditRecords().add(a);
+                      */
+    
+                      // Reset dsLocation in object to new internal location.
+                      dmc.DSLocation = id;
+                      logInfo("Replacing ManagedContent datastream with "
+                          + "internal id: " + id);
+                      //bais = null;
+                    }
+                  }
+                }
+
+                // save to definitive store, validating beforehand
+                // update the system version (add one) and reflect that the object is no longer locked
+    
+                // Validation:
+                // Perform FINAL validation before saving the object to persistent storage.
+                // For now, we'll request all levels of validation (level=0), but we can
+                // consider whether there is too much redundancy in requesting full validation
+                // at time of ingest, then again, here, at time of storage.
+                // We'll just be conservative for now and call all levels both times.
+                // First, serialize the digital object into an Inputstream to be passed to validator.
+    
+                // set object status to "A" if "I".  other status changes should occur elsewhere!
+                if (obj.getState().equals("I")) {
+                    obj.setState("A");
+                }
+                // set datastream statuses to "A" if "I".  other status changes should occur elsewhere!
+                Iterator dsIter=obj.datastreamIdIterator();
+                while (dsIter.hasNext()) {
+                    List dsList=(List) obj.datastreams((String) dsIter.next());
+                    for (int i=0; i<dsList.size(); i++) {
+                        Datastream ds=(Datastream) dsList.get(i);
+                        if (ds.DSState.equals("I")) {
+                            ds.DSState="A";
+                        }
+                    }
+                }
+                // same thing, but with disseminators
+                Iterator dissIter=obj.disseminatorIdIterator();
+                while (dissIter.hasNext()) {
+                    List dissList=(List) obj.disseminators((String) dissIter.next());
+                    for (int i=0; i<dissList.size(); i++) {
+                        Disseminator diss=(Disseminator) dissList.get(i);
+                        if (diss.dissState.equals("I")) {
+                            diss.dissState="A";
+                        }
+                    }
+                }
+                // set last mod date, in UTC
+                obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
+                // Set useSerializer to false to disable the serializer (for debugging/testing).
+                boolean useSerializer=true;
+                if (useSerializer) {
+                    ByteArrayOutputStream out = new ByteArrayOutputStream();
+                    m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+                    ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
+                    m_validator.validate(inV, 0, "store");
+                    // if ok, write change to perm store here...right before db stuff
+                    getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                } else {
+                    m_validator.validate(getTempStore().retrieve(obj.getPid()), 0, "store");
+                }
+                // update lockinguser (set to NULL) and systemVersion (add one)
+                Connection conn=null;
+                Statement s = null;
+                ResultSet results=null;
+                try {
+                    conn=m_connectionPool.getConnection();
+                    String query="SELECT systemVersion "
+                               + "FROM doRegistry "
+                               + "WHERE doPID='" + obj.getPid() + "'";
+                    s=conn.createStatement();
+                    results=s.executeQuery(query);
+                    if (!results.next()) {
+                        throw new ObjectNotFoundException("Error creating replication job: The requested object doesn't exist in the registry.");
+                    }
+                    int systemVersion=results.getInt("systemVersion");
+                    systemVersion++;
+                    Date now=new Date();
+                    String formattedLastModDate=m_formatter.format(now);
+                    s.executeUpdate("UPDATE doRegistry SET systemVersion="
+                            + systemVersion + ", lockingUser=NULL, createDate=createDate, lastModifiedDate='" + formattedLastModDate + "' "
+                            + "WHERE doPID='" + obj.getPid() + "'");
+                } catch (SQLException sqle) {
+                    throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+                } finally {
+                    try
+                    {
+                      if (results!=null) results.close();
+                      if (s!= null) s.close();
+                      m_connectionPool.free(conn);
+                    } catch (SQLException sqle)
+                    {
+                      throw new StorageDeviceException("Error creating replication job: " + sqle.getMessage());
+                    }
+                }
+                // add to replication jobs table
+                addReplicationJob(obj.getPid(), false);
+                // replicate
+                try {
+                    if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
+                        logInfo("Attempting replication as bdef object: " + obj.getPid());
+                        BDefReader reader=getBDefReader(context, obj.getPid());
+                        logInfo("Got a BDefReader...");
+                        m_replicator.replicate(reader);
+                        logInfo("Updating FieldSearch indexes...");
+                        m_fieldSearch.update(reader);
+                    } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
+                        logInfo("Attempting replication as bmech object: " + obj.getPid());
+                        BMechReader reader=getBMechReader(context, obj.getPid());
+                        logInfo("Got a BMechReader...");
+                        m_replicator.replicate(reader);
+                        logInfo("Updating FieldSearch indexes...");
+                        m_fieldSearch.update(reader);
+                    } else {
+                        logInfo("Attempting replication as normal object: " + obj.getPid());
+                        DOReader reader=getReader(context, obj.getPid());
+                        logInfo("Got a DOReader...");
+                        m_replicator.replicate(reader);
+                        logInfo("Updating FieldSearch indexes...");
+                        m_fieldSearch.update(reader);
+                    }
+                    // FIXME: also remove from temp storage if this is successful
+                    removeReplicationJob(obj.getPid());
+                } catch (ServerException se) {
+                  System.out.println("Error while replicating: " + se.getClass().getName() + ": " + se.getMessage());
+                  se.printStackTrace();
+                    throw se;
+                } catch (Throwable th) {
+                  System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
+                  th.printStackTrace();
+                    throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
+                }
+            } catch (ServerException se) {
+                if (neverExistedBefore) {
+                    doCommit(context, obj, logMessage, true);
+                }
                 throw se;
-            } catch (Throwable th) {
-              System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
-              th.printStackTrace();
-                throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
             }
         }
     }
@@ -865,31 +893,42 @@ public class DefaultDOManager
                 // if there IS a DC record, make sure one of the dc:identifiers
                 // is the pid
                 DatastreamXMLMetadata dc=(DatastreamXMLMetadata) w.GetDatastream("DC", null);
-                boolean hadDC=true;
+                DCFields dcf;
                 if (dc==null) {
-                    hadDC=false;
                     dc=new DatastreamXMLMetadata("UTF-8");
                     dc.DSMDClass=DatastreamXMLMetadata.DESCRIPTIVE;
                     dc.DatastreamID="DC";
                     dc.DSVersionID="DC1.0";
-                //    dc.DSControlGRP="X";
+                    dc.DSControlGrp="X";
                     dc.DSCreateDT=nowUTC;
                     dc.DSLabel="Dublin Core Metadata";
                     dc.DSMIME="text/xml";
                     dc.DSSize=0;
                     dc.DSState="A";
-                    StringBuffer buf=new StringBuffer();
+                    dcf=new DCFields();
+                    if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
+                        dcf.titles().add(obj.getLabel());
+                    }
                     
-                }
-                //DCFields dcFields=new DCFields(dcDatastream.stream......);
-                if (!hadDC) {
-                    // give it a dc:title.  base it on object label.
+                } else {
+                    dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
                 }
                 // ensure one of the dc:identifiers is the pid
-                // here...
-                
-
-                // add to internal list...somehow..think...
+                boolean sawPid=false;
+                for (int i=0; i<dcf.identifiers().size(); i++) {
+                    if ( ((String) dcf.identifiers().get(i)).equals(obj.getPid()) ) {
+                        sawPid=true;
+                    }
+                }
+                if (!sawPid) {
+                    dcf.identifiers().add(obj.getPid());
+                }
+                // set the value of the dc datastream according to what's in the DCFields object
+                try {
+                    dc.xmlContent=dcf.getAsXML().getBytes("UTF-8");
+                } catch (UnsupportedEncodingException uee) {
+                    // safely ignore... we know UTF-8 works
+                }
 
                 // at this point all is good...
                 // so make a record of it in the registry

@@ -163,5 +163,39 @@ public class DCFields
     public List rights() {
         return m_rights;
     }
+
+    /**
+     * Get the DCFields as a String in namespace-qualified XML form, 
+     * matching the oai_dc schema.... but without the xml declaration.
+     */
+    public String getAsXML() {
+        StringBuffer out=new StringBuffer();
+        out.append("<oai_dc:dc xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n");
+        appendXML(titles(), "title", out);
+        appendXML(creators(), "creator", out);
+        appendXML(subjects(), "subject", out);
+        appendXML(descriptions(), "description", out);
+        appendXML(publishers(), "publisher", out);
+        appendXML(contributors(), "contributor", out);
+        appendXML(dates(), "date", out);
+        appendXML(types(), "type", out);
+        appendXML(formats(), "format", out);
+        appendXML(identifiers(), "identifier", out);
+        appendXML(sources(), "source", out);
+        appendXML(languages(), "language", out);
+        appendXML(relations(), "relation", out);
+        appendXML(coverages(), "coverage", out);
+        appendXML(rights(), "rights", out);
+        out.append("</oai_dc:dc>\n");
+        return out.toString();
+    }
+
+    private void appendXML(List values, String name, StringBuffer out) {
+        for (int i=0; i<values.size(); i++) {
+            out.append("  <dc:" + name + ">");
+            out.append(StreamUtility.enc((String) values.get(i)));
+            out.append("</dc:" + name + ">\n");
+        }
+    }
     
 }    

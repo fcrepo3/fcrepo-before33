@@ -104,16 +104,13 @@ public class DefaultManagement
         // applying the ideas of workflow, etc..
         try {
             w.commit(logMessage);
-        } catch (ServerException se) {
-            logFinest("Auto-purging as a result of a failed auto-commit in ingestObject.");
-            purgeObject(context, pid, "Purging because auto-commit (which is temporarily taken care of by the server's ingestObject operation) failed: " + se.getMessage());
-            throw se;
+            return pid;
+        } finally {
+            m_manager.releaseWriter(w);
+            Runtime r=Runtime.getRuntime();
+            getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
+            getServer().logFinest("Exiting DefaultManagement.ingestObject");
         }
-        m_manager.releaseWriter(w);
-        Runtime r=Runtime.getRuntime();
-        getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
-        getServer().logFinest("Exiting DefaultManagement.ingestObject");
-        return pid;
     }
 
     public InputStream getObjectXML(Context context, String pid, String format, String encoding) throws ServerException { 
