@@ -121,7 +121,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--MrSID Wavelet encoded file -->
-				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/x-mrsid-image" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="P" STATUS="A">
+				<METS:file ID="DS1.0" CREATED="2002-05-20T06:32:00" MIMETYPE="image/x-mrsid-image" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Pavilion III, University of Virginia"/>
 				</METS:file>
 			</METS:fileGrp>
