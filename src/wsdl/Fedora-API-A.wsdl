@@ -107,14 +107,14 @@
       <documentation>Gets a list of behavior definitions supported by a
       digital object.  This is a set of PIDs, one for each behavior
       definition type associated with the object's disseminator(s).</documentation>
-      <input message="GetBehaviorDefinitionsRequest"/>
-      <output message="GetBehaviorDefinitionsResponse"/>
+      <input message="fedora-api:GetBehaviorDefinitionsRequest"/>
+      <output message="fedora-api:GetBehaviorDefinitionsResponse"/>
     </operation>
     <operation name="GetBehaviorMethods">
       <documentation>Gets a list of the method descriptions for a given
       behavior definition type associated with the digital object.</documentation>
-      <input message="GetBehaviorMethodsRequest"/>
-      <output message="GetBehaviorMethodsResponse"/>
+      <input message="fedora-api:GetBehaviorMethodsRequest"/>
+      <output message="fedora-api:GetBehaviorMethodsResponse"/>
     </operation>
     <operation name="GetDissemination">
       <documentation>Gets a MIME-typed view of the digital
@@ -124,8 +124,8 @@
       is fulfilled (i.e., what behavior mechanism performs the
       work, and how the request is invoked upon the behavior
       mechanism).</documentation>
-      <input message="GetDisseminationRequest"/>
-      <output message="GetDisseminationResponse"/>
+      <input message="fedora-api:GetDisseminationRequest"/>
+      <output message="fedora-api:GetDisseminationResponse"/>
     </operation>
   </portType>
   <binding name="Fedora-API-A-Binding-HTTPGET" type="fedora-api:Fedora-API-A">
