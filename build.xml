@@ -28,6 +28,9 @@
                    <arg line="-s fedora-ingest.sh fedora-ingest"/>
                 </exec> 
                 <exec dir="./dist/client/bin" executable="/bin/ln">
+                   <arg line="-s fedora-ingest-demos.sh fedora-ingest-demos"/>
+                </exec> 
+                <exec dir="./dist/client/bin" executable="/bin/ln">
                    <arg line="-s fedora-purge-demos.sh fedora-purge-demos"/>
                 </exec> 
                 <exec dir="./dist/client/bin" executable="/bin/ln">
@@ -742,6 +745,9 @@ if you can confirm.
 </project>
 <!--
   $Log$
+  Revision 1.109  2003/05/09 04:55:10  cwilper
+  missed fedora-ingest-demos.sh symlink before...got it now
+
   Revision 1.108  2003/05/09 04:41:52  cwilper
   makes symbolic links for client and server .sh scripts, if the
   build is running on a unix-like machine (linux, solaris, macosX)
