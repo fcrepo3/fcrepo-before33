@@ -443,7 +443,7 @@
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
 		<mkdir dir="dist/userdocs/server/serverdocs"/>
-		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common" 
+		<javadoc packagenames="fedora.server,fedora.server.types.gen,fedora.server.management,fedora.server.access,fedora.server.storage,fedora.server.storage.replication,fedora.server.storage.lowlevel,fedora.server.errors,fedora.server.behavior,fedora.server.test,fedora.server.storage.types,fedora.server.utilities,fedora.server.validation,fedora.server.access.dissemination,fedora.oai,fedora.oai.sample,fedora.logging,fedora.server.search,fedora.server.security,fedora.server.storage.service,fedora.localservices.saxon,fedora.common,fedora.server.config" 
 			     sourcepath="${src.java.dir};temp/server/java;src/html/server/javadoc" 
 			     classpath="${lib.xerces};${lib.cos};${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.junit};${lib.saxon};${lib.md5}" 
 			     destdir="dist/userdocs/server/serverdocs" 
@@ -1049,10 +1049,7 @@
 		<copy file="src/xsl/access/reportHtml.xslt" todir="dist/server/access"/>
 		<!--Report xsl stylesheet to copy xml intact  -->
 		<copy file="src/xsl/access/reportXml.xslt" todir="dist/server/access"/>
-		<!--Datastream and Method xsl stylesheets used by API-A-LITE-->
-		<copy file="src/xsl/access/listDatastreams.xslt" todir="dist/server/access"/>
-		<copy file="src/xsl/access/listMethods.xslt" todir="dist/server/access"/>
-		<echo message="Finished building server distribution in dist/server"/>
+		<!--Datastream and Method xsl stylesheets used by API-A-LITE-->		<copy file="src/xsl/access/listDatastreams.xslt" todir="dist/server/access"/>		<copy file="src/xsl/access/listMethods.xslt" todir="dist/server/access"/>		<echo message="Finished building server distribution in dist/server"/>
 		<mkdir dir="dist/server/management"/>
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>
