@@ -61,18 +61,18 @@ import org.xml.sax.InputSource;
 public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     // TODO handling different indexing levels
     // 		- initial index
-    //		- latent indexing: "tagging" objects with current index level to support querying what needs indexing later
+    //		- latent indexing: "tagging" objects with current index level to 
+    //        support querying what needs indexing later
     //		- subsequent insert/edits/deletes
     //		- changes in levels
-    //		- distinct levels or discrete mix & match (e.g., combinations of DC, REP & REP-DEP, RELS, etc.)
+    //		- distinct levels or discrete mix & match (e.g., combinations of DC, 
+    //        REP & REP-DEP, RELS, etc.)
+    //      - clean up/separate out sql/database calls
     
     private int m_indexLevel;
     
     // For the database
     private ConnectionPool m_cPool;
-    //private Connection m_conn;
-    //private Statement m_statement;
-    //private ResultSet m_resultSet;
     
     // Triplestore (Trippi)
     private TriplestoreConnector m_connector;
@@ -127,6 +127,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        return;
         }
         
+        // List (queue) of statements to add (poor man's transaction impl)
         List tripleQ = new ArrayList();
         
         String pid = digitalObject.getPid();
@@ -154,7 +155,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
 		// handle type specific duties
 		int fedoraObjectType = digitalObject.getFedoraObjectType();
-		String rdfType;
 		switch (fedoraObjectType) {
 			case DigitalObject.FEDORA_BDEF_OBJECT: 
 				addBDef(tripleQ, digitalObject);
@@ -193,14 +193,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         Datastream ds = getLatestDatastream(digitalObject.datastreams(datastreamID));
 	    String doURI = getDOURI(digitalObject);
 		String datastreamURI = doURI + "/" + datastreamID;
-		/*
-	    String datastreamURI;
-	    if (ds.DatastreamURI != null && !ds.DatastreamURI.equals("")) {
-	        datastreamURI = ds.DatastreamURI;
-	    } else {
-	        datastreamURI = doURI + "/" + datastreamID;
-	    }
-	    */
         
         // TODO a distinct URI for datastreams-as-datastreams,
         // as opposed to datastreams-as-representations/disseminations
@@ -212,13 +204,14 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         //    queuePlainLiteralTriple(datastreamURI, MODEL_ALT_ID, altIDs[i]);
         //}
         
-        // TODO not needed till we do dependency analysis
-        // Volatile Datastreams: False for datastreams that are locally managed 
-        // (have a control group "M" or "I").
-        //String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
-        //queuePlainLiteralTriple(datastreamURI, VIEW_DIRECT, "true");
-        //queuePlainLiteralTriple(datastreamURI, VIEW_VOLATILE, isVolatile);
-
+        if (m_indexLevel % INDEX_LEVEL_DEPENDENCIES == 0) {
+            // isVolatile: false for datastreams that are locally managed 
+            // (have a control group "M" or "I").
+            String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
+            queueIsDirect(tripleQ, datastreamURI, "true");
+            queueIsVolatile(tripleQ, datastreamURI, isVolatile);
+        }
+        
         queueDissemination(tripleQ, doURI, datastreamURI);
         queueCreatedDate(tripleQ, datastreamURI, ds.DSCreateDT);
         
@@ -226,13 +219,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		if (datastreamID.equalsIgnoreCase("DC")) {
 			addDublinCoreDatastream(tripleQ, digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
-            addDSInputSpecDatastream(ds);
+            // do nothing
         } else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
             addMethodMapDatastream(digitalObject, ds);
         } else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
             addRelsDatastream(tripleQ, ds);
         } else if (datastreamID.equalsIgnoreCase("SERVICE-PROFILE")) { 
-            addServiceProfileDatastream(ds);
+            // do nothing
 		} else if (datastreamID.equalsIgnoreCase("WSDL")) { 
 		    addWSDLDatastream(digitalObject, ds);
 		}		
@@ -586,14 +579,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		}
 	}
 	
-    private void addDSInputSpecDatastream(Datastream ds) {
-        // Placeholder
-    }
-    
-    private void addExtPropertiesDatastream(Datastream ds) {
-        // Placeholder
-    }
-	
     /**
      * MethodMap datastream is only required for identifying the various 
      * combinations (permutations) of method names, their parameters and values.
@@ -634,7 +619,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     	    for (int i = 0; i < mdef.length; i++) {
     	    	methodName = mdef[i].methodName;
     	    	MethodParmDef[] mparms = mdef[i].methodParms;
-    	    	if (m_indexLevel != INDEX_LEVEL_PERMUTATIONS || mparms.length == 0) { // no method parameters
+    	    	if (m_indexLevel % INDEX_LEVEL_PERMUTATIONS != 0 || mparms.length == 0) { // no method parameters
                     permutations.add(methodName);
     	    	} else {
     	    		noRequiredParms = true;
@@ -721,10 +706,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
-    }
-    
-    private void addServiceProfileDatastream(Datastream ds) {
-        // Placeholder
     }
     
     /**
@@ -1194,6 +1175,26 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             queue.add(TripleMaker.create(bMechURI, 
                                          MODEL.IMPLEMENTS_BDEF.uri, 
                                          bDefURI));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueIsDirect(List queue, String subject, String isDirect) throws ResourceIndexException {
+        try {
+            queue.add(TripleMaker.create(subject, 
+                                         VIEW.IS_DIRECT.uri, 
+                                         isDirect));
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void queueIsVolatile(List queue, String subject, String isVolatile) throws ResourceIndexException {
+        try {
+            queue.add(TripleMaker.create(subject, 
+                                         VIEW.IS_VOLATILE.uri, 
+                                         isVolatile));
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
