@@ -321,6 +321,12 @@ public class DynamicAccessModule extends Module implements Access
       return null;
   }
 
+  // FIXIT: What do these mean in this context...anything?
+  // Maybe these methods' exposure needs to be re-thought?
+  public RepositoryInfo describeRepository(Context context) throws ServerException {
+      return null;
+  }
+
   /**
    */
   protected boolean isDynamicBehaviorDefinition(Context context, String PID,

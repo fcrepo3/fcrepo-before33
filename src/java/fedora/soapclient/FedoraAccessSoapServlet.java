@@ -37,6 +37,7 @@ import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.ObjectMethodsDef;
 import fedora.server.types.gen.ObjectProfile;
+import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.types.gen.Property;
 import fedora.server.utilities.DateUtility;
 
@@ -67,12 +68,14 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <li>GetDissemination - Gets a dissemination result</li>
  * <li>GetObjectmethods - Gets a list of all Behavior Methods of an object.</li>
  * <li>GetObjectProfile - Gets object profile.</li>
+ * <li>DescribeRepository - Gets information about the repository server.</li>
  * </ol>
  * <li>PID_ - persistent identifier of the digital object</li>
  * <li>bDefPID_ - persistent identifier of the Behavior Definiton object</li>
  * <li>methodName_ - name of the method</li>
  * <li>asOfDateTime_ - versioning datetime stamp</li>
- * <li>xml_ - boolean switch used in conjunction with GetObjectMethods
+ * <li>xml_ - boolean switch used in conjunction with GetObjectMethods,
+ *                  GetObjectProfile, and DescribeRepository
  *                  that determines whether output is formatted as XML or
  *                  as HTML; value of "true" indicates XML format; value of
  *                  false or omission indicates HTML format.
@@ -148,6 +151,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
   /** GetObjectProfile service name. */
   private static final String GET_OBJECT_PROFILE =
       "GetObjectProfile";
+
+  /** GetObjectProfile service name. */
+  private static final String DESCRIBE_REPOSITORY =
+      "DescribeRepository";
 
   /** Properties file for soap client */
   private static final String soapClientPropertiesFile =
@@ -779,6 +786,88 @@ public class FedoraAccessSoapServlet extends HttpServlet
         //  + "GetObjectProfile: " + interval + " milliseconds.");
         // end Object Profile processing
       }
+      else if (action.equals(DESCRIBE_REPOSITORY))
+      {
+        RepositoryInfo repositoryInfo = null;
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader(pw);
+        OutputStreamWriter out = null;
+
+        try
+        {
+          pw = new PipedWriter();
+          pr = new PipedReader(pw);
+          repositoryInfo = describeRepository();
+          if (repositoryInfo != null)
+          {
+            // Repository Info found.
+            // Deserialize RepositoryInfo datastructure into XML
+            new ReposInfoSerializerThread(repositoryInfo, pw).start();
+            if (xml)
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              int bufSize = 4096;
+              char[] buf=new char[bufSize];
+              int len=0;
+              while ( (len = pr.read(buf, 0, bufSize)) != -1) {
+                  out.write(buf, 0, len);
+              }
+              out.flush();
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              out = new OutputStreamWriter(response.getOutputStream(), "UTF-8");
+              File xslFile = new File(this.getServletContext().getRealPath("WEB-INF/xsl/viewRepositoryInfo.xslt"));
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.setParameter("title_", new StringValue("Fedora"));
+              transformer.setParameter("subtitle_", new StringValue("Describe Repository View"));
+              transformer.setParameter("soapClientServletPath", new StringValue(SOAP_CLIENT_SERVLET_PATH));
+              transformer.setParameter("soapMethodParmResolverServletPath", new StringValue(METHOD_PARM_RESOLVER_SERVLET_PATH));
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+            }
+            out.flush();
+
+          } else
+          {
+            // No Repository Info returned
+            String message = "[FedoraAccessSoapServlet] No Repository Info returned.";
+            System.out.println(message);
+            showURLParms(action, "", "", "", null, new Property[0],
+                         response, message);
+          }
+        } catch (Throwable th)
+        {
+          String message = "[FedoraAccessSoapServlet] An error has occured. "
+              + " The error was a \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage();
+          System.out.println(message);
+          th.printStackTrace();
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        } finally
+        {
+          try
+          {
+            if (pr != null) pr.close();
+            if (out != null) out.close();
+          } catch (Throwable th)
+          {
+            String message = "[FedoraAccessSoapServlet] An error has occured. "
+                + " The error was a \" " + th.getClass().getName()
+                + " \". Reason: "  + th.getMessage();
+            throw new ServletException(message);
+          }
+        }
+        long stopTime = new Date().getTime();
+        long interval = stopTime - servletStartTime;
+      }
       else
       {
         // Action not recognized
@@ -987,6 +1076,89 @@ public class FedoraAccessSoapServlet extends HttpServlet
           pw.write("<objDissIndexViewURL>" + objProfile.getObjDissIndexViewURL() + "</objDissIndexViewURL>");
           pw.write("<objItemIndexViewURL>" + objProfile.getObjItemIndexViewURL() + "</objItemIndexViewURL>");
           pw.write("</objectProfile>");
+          pw.flush();
+          pw.close();
+        } catch (IOException ioe) {
+          System.err.println("WriteThread IOException: " + ioe.getMessage());
+        } finally
+        {
+          try
+          {
+            if (pw != null) pw.close();
+          } catch (IOException ioe)
+          {
+            System.err.println("WriteThread IOException: " + ioe.getMessage());
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * <p> A Thread to serialize a RepositoryInfo object into XML.</p>
+   *
+   */
+  public class ReposInfoSerializerThread extends Thread
+  {
+    private PipedWriter pw = null;
+    private RepositoryInfo repositoryInfo = null;
+
+    /**
+     * <p> Constructor for ReposInfoSerializeThread.</p>
+     *
+     * @param repositoryInfo A repository info data structure.
+     * @param pw A PipedWriter to which the serialization info is written.
+     */
+    public ReposInfoSerializerThread(RepositoryInfo repositoryInfo, PipedWriter pw)
+    {
+      this.pw = pw;
+      this.repositoryInfo = repositoryInfo;
+    }
+
+    /**
+     * <p> This method executes the thread.</p>
+     */
+    public void run()
+    {
+      if (pw != null)
+      {
+        try
+        {
+          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+          pw.write("<fedoraRepository "
+              + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+              + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+              + ">");
+          pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+              + " location=\"fedoraRepository.xsd\"/>");
+
+          // REPOSITORY INFO FIELDS SERIALIZATION
+          pw.write("<repositoryName>" + repositoryInfo.getRepositoryName() + "</repositoryName>");
+          pw.write("<repositoryBaseURL>" + repositoryInfo.getRepositoryBaseURL() + "</repositoryBaseURL>");
+          pw.write("<repositoryVersion>" + repositoryInfo.getRepositoryVersion() + "</repositoryVersion>");
+          pw.write("<repositoryPID>");
+          pw.write("    <PID-namespaceIdentifier>"
+            + repositoryInfo.getRepositoryPIDNamespace()
+            + "</PID-namespaceIdentifier>");
+          pw.write("    <PID-delimiter>" + ":"+ "</PID-delimiter>");
+          pw.write("    <PID-sample>" + repositoryInfo.getSamplePID() + "</PID-sample>");
+          pw.write("</repositoryPID>");
+          pw.write("<repositoryOAI-identifier>");
+          pw.write("    <OAI-namespaceIdentifier>"
+            + repositoryInfo.getOAINamespace()
+            + "</OAI-namespaceIdentifier>");
+          pw.write("    <OAI-delimiter>" + ":"+ "</OAI-delimiter>");
+          pw.write("    <OAI-sample>" + repositoryInfo.getSampleOAIIdentifier() + "</OAI-sample>");
+          pw.write("</repositoryOAI-identifier>");
+          pw.write("<sampleSearch-URL>" + repositoryInfo.getSampleSearchURL() + "</sampleSearch-URL>");
+          pw.write("<sampleAccess-URL>" + repositoryInfo.getSampleAccessURL() + "</sampleAccess-URL>");
+          pw.write("<sampleOAI-URL>" + repositoryInfo.getSampleOAIURL() + "</sampleOAI-URL>");
+          String[] emails = repositoryInfo.getAdminEmailList();
+          for (int i=0; i<emails.length; i++)
+          {
+            pw.write("<adminEmail>" + emails[i] + "</adminEmail>");
+          }
+          pw.write("</fedoraRepository>");
           pw.flush();
           pw.close();
         } catch (IOException ioe) {
@@ -1397,6 +1569,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
         (ObjectMethodsDef[]) call.invoke( new Object[] { PID, asOfDateTime} );
     return objMethDefArray;
   }
+
    /**
     * <p>Gets a object profile for the specified object by
     * invoking the appropriate Fedora Access SOAP service.</p>
@@ -1427,6 +1600,34 @@ public class FedoraAccessSoapServlet extends HttpServlet
     objProfile =
         (ObjectProfile) call.invoke( new Object[] { PID, asOfDateTime} );
     return objProfile;
+  }
+
+/**
+  * <p>Gets repository information for the server by
+  * invoking the appropriate Fedora Access SOAP service.</p>
+  *
+  * @return A repository information data structure.
+  * @throws Exception If an error occurs in communicating with the Fedora
+  *         Access SOAP service.
+  */
+  public RepositoryInfo describeRepository() throws Exception
+  {
+    RepositoryInfo repositoryInfo = null;
+    Service service = new Service();
+    Call call = (Call) service.createCall();
+    call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
+    QName qn = new QName(FEDORA_TYPE_URI, "RepositoryInfo");
+    call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
+
+    // Any Fedora-defined types required by the SOAP service must be registered
+    // prior to invocation so the SOAP service knows the appropriate
+    // serializer/deserializer to use for these types.
+    call.registerTypeMapping(RepositoryInfo.class, qn,
+        new BeanSerializerFactory(RepositoryInfo.class, qn),
+        new BeanDeserializerFactory(RepositoryInfo.class, qn));
+    repositoryInfo =
+        (RepositoryInfo) call.invoke( new Object[] {} );
+    return repositoryInfo;
   }
 
   /**
@@ -1686,8 +1887,13 @@ public class FedoraAccessSoapServlet extends HttpServlet
         out.println(html.toString());
         isValid = false;
       }
+    } else if (action != null && (action.equalsIgnoreCase(DESCRIBE_REPOSITORY)))
+    {
+      System.out.println("Validated DESCRIBE_REPOSITORY as good request w/no parms");
+      isValid = true;
     } else
     {
+      System.out.println("Unknown API-A request encountered.");
       // Unknown Fedora service has been requested.
       response.setContentType(CONTENT_TYPE_HTML);
       html.append("<html>");

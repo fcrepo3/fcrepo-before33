@@ -162,4 +162,13 @@ public interface Access
   public FieldSearchResult resumeFindObjects(Context context,
           String sessionToken) throws ServerException;
 
+  /**
+   * <p>Gets information that describes the repository.</p>
+   *
+   * @param content the context of this request
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public RepositoryInfo describeRepository(Context context) throws ServerException;
+
 }

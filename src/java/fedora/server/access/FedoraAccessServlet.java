@@ -68,7 +68,7 @@ import fedora.server.utilities.DateUtility;
  *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
  * <li>GetObjectProfile URL syntax:
- * http://hostname:port/PID[/dateTime][?xml=BOOLEAN]
+ * http://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]
  * This syntax requests an object profile for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -161,7 +161,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     String action = null;
     Property[] userParms = null;
     long servletStartTime = new Date().getTime();
-    boolean isGetObjectMethodsRequest = false;
+    //boolean isGetObjectMethodsRequest = false;
     boolean isGetObjectProfileRequest = false;
     boolean isGetDisseminationRequest = false;
     boolean xml = false;
@@ -268,7 +268,8 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       if (isGetObjectProfileRequest && name.equalsIgnoreCase("xml"))
       {
         xml = new Boolean(request.getParameter(name)).booleanValue();
-      } else
+      }
+      else
       {
         String value = decoder.decode(request.getParameter(name), "UTF-8");
         h_userParms.put(name,value);
@@ -404,6 +405,99 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   }
 
   /**
+   * <p>This method calls the Fedora Access Subsystem to retrieve a MIME-typed
+   * stream corresponding to the dissemination request.</p>
+   *
+   * @param context The read only context of the request.
+   * @param PID The persistent identifier of the Digital Object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The method name.
+   * @param userParms An array of user-supplied method parameters.
+   * @param asOfDateTime The version datetime stamp of the digital object.
+   * @param response The servlet response.
+   * @throws IOException If an error occurrs with an input or output operation.
+   * @throws ServerException If an error occurs in the Access Subsystem.
+   */
+  public void getDissemination(Context context, String PID, String bDefPID, String methodName,
+      Property[] userParms, Calendar asOfDateTime, HttpServletResponse response)
+      throws IOException, ServerException
+  {
+    ServletOutputStream out = null;
+    MIMETypedStream dissemination = null;
+    dissemination =
+        s_access.getDissemination(context, PID, bDefPID, methodName,
+                                  userParms, asOfDateTime);
+    if (dissemination != null)
+    {
+      // Dissemination was successful;
+      // Return MIMETypedStream back to browser client
+      if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect"))
+      {
+        // A MIME type of application/fedora-redirect signals that the
+        // MIMETypedStream returned from the dissemination is a special
+        // Fedora-specific MIME type. In this case, the Fedora server will
+        // not proxy the datastream, but instead perform a simple redirect to
+        // the URL contained within the body of the MIMETypedStream. This
+        // special MIME type is used primarily for streaming media where it
+        // is more efficient to stream the data directly between the streaming
+        // server and the browser client rather than proxy it through the
+        // Fedora server.
+
+        // RLW: change required by conversion fom byte[] to InputStream
+        BufferedReader br = new BufferedReader(
+            new InputStreamReader(dissemination.getStream()));
+        //BufferedReader br = new BufferedReader(
+        //    new InputStreamReader(
+        //        new ByteArrayInputStream(dissemination.stream)));
+        // RLW: change required by conversion fom byte[] to InputStream
+        StringBuffer sb = new StringBuffer();
+        String line = null;
+        while ((line = br.readLine()) != null)
+        {
+          sb.append(line);
+        }
+
+        response.sendRedirect(sb.toString());
+      } else
+      {
+        response.setContentType(dissemination.MIMEType);
+        out = response.getOutputStream();
+        long startTime = new Date().getTime();
+        int byteStream = 0;
+        // RLW: change required by conversion fom byte[] to InputStream
+        //ByteArrayInputStream dissemResult =
+        //    new ByteArrayInputStream(dissemination.stream);
+        InputStream dissemResult = dissemination.getStream();
+        // RLW: change required by conversion fom byte[] to InputStream
+        /*while ((byteStream = dissemResult.read()) != -1)
+        {
+          out.write(byteStream);
+        }*/
+        byte[] buffer = new byte[255];
+        while ((byteStream = dissemResult.read(buffer)) != -1)
+        {
+          out.write(buffer, 0, byteStream);
+        }
+        buffer = null;
+        dissemResult.close();
+        dissemResult = null;
+        long stopTime = new Date().getTime();
+        long interval = stopTime - startTime;
+        logFiner("[FedoraAccessServlet] Read InputStream "
+            + interval + " milliseconds.");
+      }
+    } else
+    {
+      // Dissemination request failed; echo back request parameter.
+      String message = "[FedoraAccessServlet] No Dissemination Result "
+          + " was returned.";
+      showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
+                  response, message);
+      logInfo(message);
+    }
+  }
+
+  /**
    * <p> A Thread to serialize an ObjectProfile object into XML.</p>
    *
    */
@@ -502,100 +596,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           }
         }
       }
-    }
-  }
-
-
-  /**
-   * <p>This method calls the Fedora Access Subsystem to retrieve a MIME-typed
-   * stream corresponding to the dissemination request.</p>
-   *
-   * @param context The read only context of the request.
-   * @param PID The persistent identifier of the Digital Object.
-   * @param bDefPID The persistent identifier of the Behavior Definition object.
-   * @param methodName The method name.
-   * @param userParms An array of user-supplied method parameters.
-   * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param response The servlet response.
-   * @throws IOException If an error occurrs with an input or output operation.
-   * @throws ServerException If an error occurs in the Access Subsystem.
-   */
-  public void getDissemination(Context context, String PID, String bDefPID, String methodName,
-      Property[] userParms, Calendar asOfDateTime, HttpServletResponse response)
-      throws IOException, ServerException
-  {
-    ServletOutputStream out = null;
-    MIMETypedStream dissemination = null;
-    dissemination =
-        s_access.getDissemination(context, PID, bDefPID, methodName,
-                                  userParms, asOfDateTime);
-    if (dissemination != null)
-    {
-      // Dissemination was successful;
-      // Return MIMETypedStream back to browser client
-      if (dissemination.MIMEType.equalsIgnoreCase("application/fedora-redirect"))
-      {
-        // A MIME type of application/fedora-redirect signals that the
-        // MIMETypedStream returned from the dissemination is a special
-        // Fedora-specific MIME type. In this case, the Fedora server will
-        // not proxy the datastream, but instead perform a simple redirect to
-        // the URL contained within the body of the MIMETypedStream. This
-        // special MIME type is used primarily for streaming media where it
-        // is more efficient to stream the data directly between the streaming
-        // server and the browser client rather than proxy it through the
-        // Fedora server.
-
-        // RLW: change required by conversion fom byte[] to InputStream
-        BufferedReader br = new BufferedReader(
-            new InputStreamReader(dissemination.getStream()));
-        //BufferedReader br = new BufferedReader(
-        //    new InputStreamReader(
-        //        new ByteArrayInputStream(dissemination.stream)));
-        // RLW: change required by conversion fom byte[] to InputStream
-        StringBuffer sb = new StringBuffer();
-        String line = null;
-        while ((line = br.readLine()) != null)
-        {
-          sb.append(line);
-        }
-
-        response.sendRedirect(sb.toString());
-      } else
-      {
-        response.setContentType(dissemination.MIMEType);
-        out = response.getOutputStream();
-        long startTime = new Date().getTime();
-        int byteStream = 0;
-        // RLW: change required by conversion fom byte[] to InputStream
-        //ByteArrayInputStream dissemResult =
-        //    new ByteArrayInputStream(dissemination.stream);
-        InputStream dissemResult = dissemination.getStream();
-        // RLW: change required by conversion fom byte[] to InputStream
-        /*while ((byteStream = dissemResult.read()) != -1)
-        {
-          out.write(byteStream);
-        }*/
-        byte[] buffer = new byte[255];
-        while ((byteStream = dissemResult.read(buffer)) != -1)
-        {
-          out.write(buffer, 0, byteStream);
-        }
-        buffer = null;
-        dissemResult.close();
-        dissemResult = null;
-        long stopTime = new Date().getTime();
-        long interval = stopTime - startTime;
-        logFiner("[FedoraAccessServlet] Read InputStream "
-            + interval + " milliseconds.");
-      }
-    } else
-    {
-      // Dissemination request failed; echo back request parameter.
-      String message = "[FedoraAccessServlet] No Dissemination Result "
-          + " was returned.";
-      showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
-                  response, message);
-      logInfo(message);
     }
   }
 

@@ -387,6 +387,36 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     return null;
   }
 
+  /**
+   * <p>Gets key information about the repository.</p>
+   *
+   * @return The repository info data structure.
+   * @throws java.rmi.RemoteException
+   */
+  public fedora.server.types.gen.RepositoryInfo
+      describeRepository() throws java.rmi.RemoteException
+  {
+    Context context=getContext();
+    try
+    {
+      fedora.server.access.RepositoryInfo repositoryInfo =
+          s_access.describeRepository(context);
+      fedora.server.types.gen.RepositoryInfo genRepositoryInfo =
+          TypeUtility.convertReposInfoToGenReposInfo(repositoryInfo);
+      return genRepositoryInfo;
+    } catch (ServerException se)
+    {
+      logStackTrace(se);
+      AxisUtility.throwFault(se);
+    } catch (Exception e) {
+      logStackTrace(e);
+      AxisUtility.throwFault(
+          new ServerInitializationException(e.getClass().getName() + ": "
+          + e.getMessage()));
+    }
+    return null;
+  }
+
   private void logStackTrace(Exception e)
   {
     StackTraceElement[] ste = e.getStackTrace();

@@ -8,6 +8,10 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -481,6 +485,61 @@ public class DefaultAccess extends Module implements Access
           String sessionToken) throws ServerException {
       m_ipRestriction.enforce(context);
       return m_manager.resumeFindObjects(context, sessionToken);
+  }
+
+  /**
+   * <p>Gets information that describes the repository.</p>
+   *
+   * @param content the context of this request
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   */
+  public RepositoryInfo describeRepository(Context context) throws ServerException
+  {
+    RepositoryInfo repositoryInfo = new RepositoryInfo();
+    repositoryInfo.repositoryName = getServer().getParameter("repositoryName");
+    repositoryInfo.repositoryBaseURL = getReposBaseURL() + "/fedora";
+    repositoryInfo.repositoryVersion =
+      getServer().VERSION_MAJOR + "." + getServer().VERSION_MINOR;
+    Module domgr = getServer().getModule("fedora.server.storage.DOManager");
+    repositoryInfo.repositoryPIDNamespace = domgr.getParameter("pidNamespace");
+    repositoryInfo.OAINamespace = "fedora.info";
+    repositoryInfo.adminEmailList = getAdminEmails();
+    repositoryInfo.samplePID = repositoryInfo.repositoryPIDNamespace + ":100";
+    repositoryInfo.sampleOAIIdentifer = "oai:" + repositoryInfo.OAINamespace
+      + ":" + repositoryInfo.samplePID;
+    repositoryInfo.sampleSearchURL = repositoryInfo.repositoryBaseURL
+      + "/search";
+    repositoryInfo.sampleAccessURL = repositoryInfo.repositoryBaseURL
+      + "/get/" + "demo:5";
+    repositoryInfo.sampleOAIURL = repositoryInfo.repositoryBaseURL
+      + "/oai?verb=Identify";
+    return repositoryInfo;
+  }
+
+  private String[] getAdminEmails()
+  {
+    String emailsCSV = convertToCSV(getServer().getParameter("adminEmailList"));
+    Vector emails = new Vector();
+    StringTokenizer st = new StringTokenizer(emailsCSV, ",");
+    while (st.hasMoreElements())
+    {
+      emails.add(st.nextElement());
+    }
+    return (String[])emails.toArray(new String[0]);
+  }
+
+  private String convertToCSV(String list)
+  {
+    // make sure values in the list are comma delimited
+    String original = list.trim();
+    Pattern spaces = Pattern.compile(" ++");
+    Matcher m = spaces.matcher(original);
+    String interim = m.replaceAll(",");
+    Pattern multcommas = Pattern.compile(",++");
+    Matcher m2 = multcommas.matcher(interim);
+    String csv = m2.replaceAll(",");
+    return csv;
   }
 
   /**

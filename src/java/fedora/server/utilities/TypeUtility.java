@@ -38,7 +38,7 @@ import java.util.TimeZone;
 public abstract class TypeUtility
 {
 
-    public static fedora.server.types.gen.Datastream 
+    public static fedora.server.types.gen.Datastream
             convertDatastreamToGenDatastream(
             fedora.server.storage.types.Datastream in) {
         fedora.server.types.gen.Datastream out=
@@ -773,6 +773,32 @@ public abstract class TypeUtility
       genObjectProfile.setObjDissIndexViewURL(objectProfile.dissIndexViewURL);
       genObjectProfile.setObjItemIndexViewURL(objectProfile.itemIndexViewURL);
       return genObjectProfile;
+    } else
+    {
+      return null;
+    }
+  }
+
+  public static fedora.server.types.gen.RepositoryInfo
+      convertReposInfoToGenReposInfo(
+      fedora.server.access.RepositoryInfo repositoryInfo)
+  {
+    if (repositoryInfo != null)
+    {
+      fedora.server.types.gen.RepositoryInfo genRepositoryInfo =
+          new fedora.server.types.gen.RepositoryInfo();
+      genRepositoryInfo.setRepositoryName(repositoryInfo.repositoryName);
+      genRepositoryInfo.setRepositoryBaseURL(repositoryInfo.repositoryBaseURL);
+      genRepositoryInfo.setRepositoryVersion(repositoryInfo.repositoryVersion);
+      genRepositoryInfo.setRepositoryPIDNamespace(repositoryInfo.repositoryPIDNamespace);
+      genRepositoryInfo.setOAINamespace(repositoryInfo.OAINamespace);
+      genRepositoryInfo.setAdminEmailList(repositoryInfo.adminEmailList);
+      genRepositoryInfo.setSamplePID(repositoryInfo.samplePID);
+      genRepositoryInfo.setSampleOAIIdentifier(repositoryInfo.sampleOAIIdentifer);
+      genRepositoryInfo.setSampleSearchURL(repositoryInfo.sampleSearchURL);
+      genRepositoryInfo.setSampleAccessURL(repositoryInfo.sampleAccessURL);
+      genRepositoryInfo.setSampleOAIURL(repositoryInfo.sampleOAIURL);
+      return genRepositoryInfo;
     } else
     {
       return null;
