@@ -3,13 +3,12 @@ package fedora.client;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.net.*;
-import javax.help.*;
+import java.util.ResourceBundle;
+
 import javax.help.Map.ID;
 import javax.swing.*;
 
 import fedora.swing.jhelp.SimpleHelpBroker;
-import fedora.swing.jhelp.SimpleContentViewerUI;
 import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
 
@@ -22,7 +21,6 @@ import fedora.client.bmech.BMechBuilder;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
 import fedora.client.export.ExportDialog;
-import fedora.client.utility.export.Export;
 import fedora.client.ingest.IngestDialog;
 import fedora.client.search.Search;
 import fedora.client.batch.BatchModify;
@@ -96,6 +94,11 @@ public class Administrator extends JFrame {
     public static FedoraAPIM APIM=null;
     public static File BASE_DIR;
     public static Administrator INSTANCE=null;
+    
+    private static ResourceBundle s_const =
+        ResourceBundle.getBundle("fedora.client.resources.Client");
+    public static String VERSION=s_const.getString("version");
+    public static String RELEASE_DATE=s_const.getString("releaseDate");
 
     public Administrator(String host, int port, String user, String pass) {
         super("Fedora Administrator");
@@ -135,11 +138,9 @@ public class Administrator extends JFrame {
                 + "basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.<p>"
                 + "See the License for the specific language governing rights and<p>"
                 + "limitations under the License.<p>"
-                + "<p>"
-                + "Version: 1.2.1<p>Release Date: "
-                + "April 19, 2004<p>"
-                + "See http://www.fedora.info/ for "
-                + "more information.");
+                + "<p>Version: " + VERSION
+                + "<p>Release Date: " + RELEASE_DATE
+                + "<p>See http://www.fedora.info/ for more information.");
 
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();

@@ -29,6 +29,7 @@
     
     <!-- get the version of Fedora -->
     <property name="fedora.version"     value="${version.major}.${version.minor}"/>
+    <property name="fedora.releaseDate" value="${version.releaseDate}"/>
     
     <!-- 
         The following pattern of <pathconvert> and <fileset> declarations 
@@ -426,6 +427,14 @@
 		<copy todir="temp/client">
 			<fileset dir="inc/client/jar"/>
 		</copy>
+ 
+        <copy todir="temp/client">
+            <fileset dir="src/properties/client"/>
+            <filterset>
+                <filter token="version"     value="${fedora.version}"/>
+                <filter token="releaseDate" value="${fedora.releaseDate}"/>
+            </filterset>
+        </copy>
 	</target>
 	<!--
   <target name="docs"

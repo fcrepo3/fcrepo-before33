@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -74,7 +75,7 @@ public class LoginDialog
     private String m_lastServer="localhost:8080";
     private HashMap m_usernames;
     private HashMap m_servers;
-
+    
     public LoginDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Login", true);
 
@@ -254,18 +255,12 @@ public class LoginDialog
             Administrator.APIA=APIAStubFactory.getStub(host, port, user, pass);
             Administrator.APIM=APIMStubFactory.getStub(host, port, user, pass);
             RepositoryInfo info=Administrator.APIA.describeRepository();
-            if (!info.getRepositoryVersion().equals("2.0")) {
+            if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
                 throw new IOException("Server is version "
                         + info.getRepositoryVersion() + ", but this"
-                        + " client only works with version 2.0");
+                        + " client only works with version" +  Administrator.VERSION);
             }
-/*
-			if (!info.getRepositoryVersion().equals("1.2.1")) {
-				throw new IOException("Server is version "
-						+ info.getRepositoryVersion() + ", but this"
-						+ " client only works with version 1.2.1");
-			}
-*/
+
             // do a simple API-M call, and if it doesn't come back
             // unauthorized, assume all is ok.
             try {
