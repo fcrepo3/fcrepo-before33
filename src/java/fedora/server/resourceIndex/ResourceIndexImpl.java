@@ -976,14 +976,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     /**
      * 
      * @param date
-     * @return UTC Date as ISO 8601 formatted string (e.g. 2004-04-20T16:20:00Z)
+     * @return UTC Date as ISO 8601 formatted string (e.g. 2004-04-20T16:20:00.000Z)
      */
     private static String getDate(Date date) {
         if (date == null) {
             return null;
         } else {
-    	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-    	    df.setTimeZone(TimeZone.getTimeZone("GMT"));
+    	    DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    	    //SDP: commented out set time zone since the date is already in UTC
+    	    //df.setTimeZone(TimeZone.getTimeZone("GMT"));
     	    return df.format(date);
         }
     }
