@@ -1,0 +1,532 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>Resource Index Guide</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+    <style type="text/css">
+        .boxed {
+            margin: 10px 5px 10px 5px;
+            border: thin solid black;
+            padding: 5px 30px 5px 5px;
+        }
+        
+        ul.parameter {
+            list-style-type: disc;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+        }
+        ul.domain {
+            list-style-type: circle;
+            font-family: monospace, Courier, Courier New;
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        li.optional {
+            font-style: italic;
+        }
+        
+        .description {
+            font-family: serif;
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        .reference {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <a href="../../index.html" id="logo"></a>
+    <div id="title">
+        <h1>Resource Index Guide</h1>
+        <h2>Fedora Release 2.0</h2>
+    </div>
+</div>
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#impl">Implementation</a>
+                <ol>
+                    <li>System Relationships</li>
+                    <li>User-defined Relationships</li>
+                    <li>Services</li>
+                </ol>
+            </li>
+            <li><a href="#config">Configuration</a>
+                <ol>
+                    <li><a href="#config.module">Module Configuration</a></li>
+                    <li><a href="#config.datastore">Datastore Configuration</a></li>
+                </ol>
+            </li>
+            <li><a href="#demo">Demo</a></li>
+            <li>Search Interface</li>
+            <li>References</li>
+        </ol>
+    </div>
+</div>
+
+<div id="introduction">
+<h2><a name="intro" />1. Introduction</h2>
+<p>The latest release of Fedora includes the Resource Index, a service which 
+provides the infrastructure for expressing relationships among objects and their 
+components. Examples of relationships between digital objects include well-known 
+management relationships such as the part-whole links between individual 
+chapters and a book, and semantic relationships useful in digital library 
+organization such as those expressed within the Functional Requirements for 
+Bibliographic Records (FRBR).</p>
+
+<p>Fedora expresses relationships by defining a base relationship ontology using 
+RDFS and provides a slot in the digital object abstraction for RDF expression of 
+relationships based on this ontology. Assertions from other ontologies may also 
+be included along with the base Fedora relationships. All relationships are 
+represented as a graph that can be queried using an RDF query language. The 
+query interface to the Resource Index is exposed as a web service, providing a 
+rich information foundation for external services 
+[<a href="#ref.1" class="reference">1</a>].</p>
+</div>
+
+<div class="sect">
+<h2><a name="impl" />2. Implementation</h2>
+<p>The Fedora object model can be abstractly viewed as a directed 
+graph, consisting of <em>internal</em> arcs that relate digital object nodes to 
+their dissemination nodes and <em>external</em> arcs between digital objects. 
+The Resource Index is a Fedora service that allows storage and query of this 
+graph.</p>
+
+<p>The Resource Index builds on the RDF primitives build within the semantic 
+web community. Fedora supplies a base relationship ontology (defining a core set 
+of internal and external relationships) that can co-exist with domain-specific 
+relationship ontologies from other namespaces. Each digital object's external 
+relationships to other digital objects are expressing in RDF/XML within a 
+reserved datastream in the respective object. A relationship graph over the 
+digital objects in the repository can then be derived by merging the internal 
+relationships implied by the Fedora object model with the external 
+relationships explicitly stated in their relationship datastreams.</p>
+
+<div class="subsect">
+<h3><a name="impl.system">A. System Relationships</a></h3>
+<p>The Fedora base ontology describes such relations and properties as the behavior 
+definition implemented, behavior mechanism used, creation date, state, and 
+mime-type.</p>
+
+<p>The most rudimentary of digital objects as represented in the Resource Index is
+shown below:</p>
+<img src="images/system-basic.png" height="158" width="604" alt="" />
+
+
+</div>
+
+<div class="subsect">
+<h3><a name="impl.user">B. User-defined Relationships</a></h3>
+
+Please consult <a href="../../digitalobjects/introRelsExt.html">Fedora Metadata 
+for Object-to-Object Relationships</a> for more information. 
+<div class="boxed">
+    
+</div>
+</div>
+What it does, Kowari, etc.
+
+indexing
+RELS-EXT
+object properties
+DC
+</div>
+
+<div class="sect">
+<h2><a name="config" />3. Configuration</h2>
+<p>Please note that many configuration changes require a full dump-and-load of 
+the Fedora repository to ensure consistency. 
+For example, turning the Resource Index Module off and on again will result in 
+an inconsistent state, as the Resource Index will know nothing about the digital 
+objects created or modified while the module was not loaded. In general, the 
+only safe configuration changes to make on a running repository are limited to 
+the performance-related pool, buffer and flush parameters. In all cases, 
+configuration changes require a restart of the Fedora server before taking 
+effect.</p>
+
+<p>A utility to manage configuration changes that will not require a full dump-
+and-load of the repository is planned for the next release of Fedora.</p>
+
+<p>The Resource Index is configured within two sections of fedora.fcfg, module and 
+datastore.</p>
+
+<div class="subsect">
+<h3><a name="config.module" />A. Module Configuration</h3>
+    
+<p>An example of the module configuration within fedora.fcfg: </p>
+
+<div class="code"><pre>
+&lt;module role="fedora.server.resourceIndex.ResourceIndex" 
+        class="fedora.server.resourceIndex.ResourceIndexModule"&gt;
+  &lt;param name="level" value="1"/&gt;
+  &lt;param name="datastore" value="localKowariTriplestore"/&gt;
+&lt;/module&gt;</pre></div>
+
+<p>An explanation of the parameters and their possible values: </p>
+<div class="boxed">
+<ul class="parameter">
+    <li>level
+        <div class="description">
+            Sets the operating level of the Resource Index.
+        </div>
+        <ul class="domain">
+            <li>0
+                <div class="description">
+                    Off: the Resource Index will not load at server startup.
+                </div>
+            </li>
+            <li>1
+                <div class="description">
+                    On: the Resource Index will index system properties, inter 
+                    &amp; intra-object relationships, and user-defined 
+                    relationships.  
+                </div>
+            </li>
+            <li>2
+                <div class="description">
+                    Same as 1, but adds indexing of parameterized methods, where 
+                    the parameters have a finite domain (e.g., the method 
+                    <code>getImage</code> with parameter <code>size</code>, 
+                    whose domain is {small, large}). 
+                    Because calculating method parameters may result in a 
+                    combinatorial explosion of statements in the Resource Index 
+                    (depending on the design of a particular repository's 
+                    Behavior Definition Objects), this level of indexing must be 
+                    explicitly set.
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>datastore
+        <div class="description">
+            The id of the datastore to use with the Resource Index. The 
+            referenced datastore must assert a <code>connectorClassName</code> 
+            parameter with a valid Trippi Connector class.
+        </div>
+    </li>
+</ul>        
+</div>
+</div>
+
+<div class="subsect">
+<h3><a name="config.datastore" />B. Datastore Configuration</h3>
+<p>The example datastore configuration below (with the path parameter modified 
+for the installation environment) would provide a local Kowari triplestore that 
+buffers up to 20,000 triples in memory at a time or waits for 5 seconds of 
+buffer inactivity before flushing them to disk. Because writing triples to disk 
+is a relatively expensive operation, the buffer takes advantage of Kowari's 
+bulk update handler to ingest a mass of triples at a time. The performance gain 
+is significant during a bulk ingest of objects. The size or inactivity interval 
+of the buffer may be adjusted according to performance needs and physical 
+memory capacity.</p>
+<div class="code"><pre>
+&lt;datastore id="localKowariTriplestore"&gt;
+  &lt;param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/&gt;
+  &lt;param name="remote" value="false"/&gt;
+  &lt;param name="path" value="/opt/fedora/store/resourceIndex"/&gt;
+  &lt;param name="serverName" value="fedora"/&gt;
+  &lt;param name="modelName" value="ri"/&gt;
+  &lt;param name="poolInitialSize" value="3"/&gt;
+  &lt;param name="poolMaxGrowth" value="-1"/&gt;
+  &lt;param name="readOnly" value="false"/&gt;
+  &lt;param name="autoCreate" value="true"/&gt;
+  &lt;param name="autoTextIndex" value="false"/&gt;
+  &lt;param name="memoryBuffer" value="true"/&gt;
+  &lt;param name="autoFlushDormantSeconds" value="5"/&gt;
+  &lt;param name="autoFlushBufferSize" value="20000"/&gt;
+  &lt;param name="bufferSafeCapacity" value="40000"/&gt;
+  &lt;param name="bufferFlushBatchSize" value="20000"/&gt;
+&lt;/datastore&gt;</pre></div>
+
+<p>An explanation of the parameters and their possible values follows. Certain 
+parameters require other parameters, as indicated in the hierarchy below. 
+Optional parameters are also indicated below. As noted previously, many of these 
+parameters, with the exception of the pool, buffer, and flush parameters, cannot 
+be changed on a running repository without a full dump-and-load of the 
+repository.</p>
+
+<div class="boxed">
+<ul class="parameter">
+    <li>connectorClassName
+        <div class="description">
+            The name of the Trippi Connector class used to communicate with the 
+            triplestore. In this initial release, the only Connector
+            implementation is for Kowari.
+        </div>
+        <ul class="domain">
+            <li>org.trippi.impl.kowari.KowariConnector</li>
+        </ul>
+    </li>
+    <li>remote
+        <div class="description">
+            Tells the connector to communicate with Kowari in remote or local mode.
+        </div>
+        <ul class="domain">
+            <li>true
+                <div class="description">
+                    If remote is true, the host parameter must be specified.
+                </div>
+                <ul class="parameter">
+                    <li>host
+                        <div class="description">
+                            The hostname where Kowari is running.
+                        </div>
+                    </li>
+                    <li class="optional">port
+                        <div class="description">
+                            The rmi port Kowari is running on (default is 1099).
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            <li>false
+                <div class="description">
+                    If remote is false, path parameter must be specified.
+                </div>
+                <ul class="parameter">
+                    <li>path
+                        <div class="description">
+                            The local path to the main triplestore directory.
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li>serverName
+        <div class="description">
+            The server name for rmi binding.
+        </div>
+    </li>
+    <li>modelName
+        <div class="description">
+            The name of the model to use.
+        </div>
+    </li>
+    <li>poolInitialSize
+        <div class="description">
+            The initial size of the session pool used for queries.
+        </div>
+    </li>
+    <li>poolMaxGrowth
+        <div class="description">
+            Maximum number of additional sessions the pool may add. 
+            If specified as -1, no limit will be placed on pool growth.
+        </div>
+    </li>
+    <li class="optional">poolSpareSessions
+        <div class="description">
+            The number of spare sessions to proactively make available.
+            If unspecified, this defaults to 0, which means that additional 
+            sessions will only be created as needed.  Note that if poolMaxGrowth 
+            is 0, the value of this parameter is inconsequential.
+        </div>
+    </li>
+    <li>readOnly
+        <div class="description">
+            Whether the triplestore should be read-only. 
+            Most Fedora repositories will set this to false.
+        </div>
+        <ul class="domain">
+            <li>true
+                <div class="description">
+                    No additional parameters need to be set if readOnly is true.
+                </div>
+            </li>
+            <li>false
+                <div class="description">
+                    The following parameters must also be set if readOnly is false.
+                </div>
+                <ul class="parameter">
+                    <li>autocreate
+                        <div class="description">
+                            Whether to create the model if it doesn't already exist.
+                            At startup, the model will be automatically created. 
+                            In addition, an XML schema datatyped model named 
+                            "xsd" will also be automatically created.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    <li>autoTextIndex
+                        <div class="description">
+                            Whether to propogate adds/deletes to a fulltext 
+                            model automatically.
+                            If true, the text model will be named modelName-fullText. 
+                            Note that if this is true and autoCreate is true, 
+                            the text model will also be created if it doesn't 
+                            already exist.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    <li>memoryBuffer
+                        <div class="description">
+                            Whether to use a memory buffer or a database buffer 
+                            for write operations.
+                            The buffer is where triples are stored before they're 
+                            actually written. Normally, a memory buffer will be 
+                            sufficient.  However, in certain server environments, 
+                            a database buffer is the better option, offering 
+                            higher capacity and persistence.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false
+                                <ul class="parameter">
+                                    <li>dbDriver
+                                        <div class="description">
+                                            The JDBC driver class name.
+                                            This must be in the classpath.  
+                                        </div>
+                                        <ul class="domain">
+                                            <li>com.mysql.jdbc.Driver</li>
+                                            <li>com.mckoi.JDBCDriver</li>
+                                            <li>oracle.jdbc.driver.OracleDriver</li>
+                                        </ul>
+                                    </li>
+                                    <li>dbURL
+                                        <div class="description">
+                                            The JDBC URL for the database.
+                                            Examples: For MySQL, 
+                                            <code>jdbc:mysql://localhost/mydb</code> 
+                                            would use the local database named 
+                                            mydb. For McKoi, 
+                                            <code>jdbc:mckoi://localhost:9157/</code> 
+                                            would use the local database at port 
+                                            9157.  For oracle, 
+                                            <code>jdbc:oracle:thin:@localhost:1521:mydb</code> 
+                                            would use the thin driver to connect 
+                                            to the local database named mydb at 
+                                            port 1521.
+                                        </div>
+                                    </li>
+                                    <li>dbUsername
+                                        <div class="description">
+                                            The database username.
+                                        </div>
+                                    </li>
+                                    <li>dbPassword
+                                        <div class="description">
+                                            The password for the db user.
+                                        </div>
+                                    </li>
+                                    <li>dbTableName
+                                        <div class="description">
+                                            The table for buffered triple updates.
+                                            This table must already exist with 
+                                            the following five columns: 
+                                            <code>num</code> (a large numeric type), 
+                                            <code>action</code> (char(1)), 
+                                            <code>subject</code>, 
+                                            <code>predicate</code>, and 
+                                            <code>object</code> (all 
+                                            large varchar or text types).
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>autoFlushDormantSeconds
+                        <div class="description">
+                            Seconds of buffer inactivity that will trigger an 
+                            auto-flush.
+                            If this threshold is reached, flushing will occur in 
+                            the background, during which time the buffer is still 
+                            available for writing.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    <li>autoFlushBufferSize
+                        <div class="description">
+                            The size at which the buffer should be auto-flushed.
+                            If this threshold is reached, flushing will occur in 
+                            the background, during which time the buffer is still 
+                            available for writing.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    <li>bufferSafeCapacity
+                        <div class="description">
+                            The maximum size the buffer can reach before being 
+                            forcibly flushed.
+                            If this threshold is reached, flushing will occur in 
+                            the foreground and the buffer will be locked for 
+                            writing until it is finished. This should be larger 
+                            than autoFlushBufferSize.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    <li>bufferFlushBatchSize
+                        <div class="description">
+                            The number of updates to send to the triplestore at 
+                            a time. This should be the same size as, or smaller 
+                            than autoFlushBufferSize.
+                        </div>
+                        <ul class="domain">
+                            <li>true</li>
+                            <li>false</li>
+                        </ul>
+                    </li>
+                    
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>        
+</div>
+</div>
+</div>
+
+<div id="references">
+    <h2>References</h2>
+    <dl>
+        <dt><a href="http://www.arxiv.org/pdf/cs.DL/0501012">Fedora: An 
+        Architecture for Complex Objects and their Relationships</a></dt>
+        <dd>Carl Lagoze, Sandy Payette, Edwin Shin, and Chris Wilper, 2004.</dd>
+    </dl>
+</div>
+
+<div id="footer">
+    <div id="copyright">
+        Copyright &copy; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
+    
+</body>
+</html>
