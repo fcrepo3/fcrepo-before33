@@ -10,9 +10,7 @@
 
 <body>
 <div id="header">
-    <div id="logo">
-        <a href="../index.html"><img src="../images/fedora_logo108x150.jpg" alt="Fedora logo"/></a>
-    </div>
+    <a href="../index.html" id="logo"></a>
     <div id="title">
     	<h1>Fedora Metadata for Object-to-Object Relationships</h1>
         <h2>Fedora Release 2.0</h2>
@@ -39,7 +37,7 @@
     <h2><a name="WHAT">1.  What are Object-to-Object Relationships?</a></h2>
     <p>
       Fedora digital objects can be related to other Fedora objects in many ways.  For example there may be a Fedora object that represents a collection and other objects that are members of that collection.  Also, it may be the case that one object is considered a part of another object, a derivation of another object, a description of another object, or even equivalent to another object.</p>
-    <p>Object-to-Object relationship metadata is a way of asserting these various kinds of relationships for Fedora objects.    A default set of common relationships is defined in the <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology<a/>, although other community or user-defined relationships may also be asserted.   Relationships are asserted from the perspective of one object to another object as in the following general pattern:
+    <p>Object-to-Object relationship metadata is a way of asserting these various kinds of relationships for Fedora objects.    A default set of common relationships is defined in the <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a>, although other community or user-defined relationships may also be asserted.   Relationships are asserted from the perspective of one object to another object as in the following general pattern:
     </p>
       <div class="code">&lt;subjectFedoraObject&gt;&nbsp;&nbsp;&lt;relationshipProperty&gt;&nbsp;&nbsp;&lt;targetFedoraObject&gt;<br/></div>
       <p>The first Fedora object is considered the &quot;subject&quot; of the relationship assertion.  The relationship, itself, is considered a property of the subject.  The target Fedora object is the related object.  Thus, a valid relationship assertion as an English-language sentence might be:</p>
@@ -72,7 +70,7 @@
  <div class="sec1">
     <h2><a name="HOW">4.  How is Object-to-Object Metadata Encoded?</a></h2>
     <p>Fedora object-to-object metadata is encoded in XML using the <a href="http://www.w3.org/TR/rdf-primer/">Resource Description Language (RDF)</a>.   The relationship metadata must follow a prescribed RDF/XML authoring style where the subject is encoded using &lt;rdf:Description&gt;, the relationship is a property of the subject, and the target object is bound to the relationship property using the rdf:resource attribute.   The subject and target of a relationship assertion must be URIs that identify Fedora digital objects.  These URIs are based on Fedora object PIDs and conform to the syntax described for the <a href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">fedora &quot;info&quot; URI scheme.</a>  The syntax for asserting relationships in RDF is as follows: </p>
-	<div class="code">&ltrdf:RDF<br/>
+	<div class="code">&lt;rdf:RDF<br/>
        &nbsp;xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" <br/>
        &nbsp;xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"<br/> 
        &nbsp;xmlns:fedora="info:fedora/fedora-system:def/relations-external#"<br/>
