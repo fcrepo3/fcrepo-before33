@@ -41,10 +41,8 @@
 		<!-- setup for demo object datastream content (put in localhost staging area) -->
 		<mkdir dir="dist/server/tomcat41/webapps/ROOT/demo"/>
 		<copy todir="dist/server/tomcat41/webapps/ROOT/demo">
-			<fileset dir="src/jpg/demo"/>
-			<fileset dir="src/xsl/demo"/>
+			<fileset dir="src/demo-content"/>
 		</copy>
-		<copy file="src/wsdl/Fedora-API-A.wsdl" todir="dist/server/tomcat41/webapps/ROOT/demo"/>
 		<!-- end setup for demo objects -->
 		<mkdir dir="dist/client/client"/>
 		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
@@ -564,6 +562,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.92  2003/03/06 20:14:26  payette
+  dir change for demo content
+
   Revision 1.91  2003/03/06 00:38:45  rlw
   added copy for viewObjectProfile in soap client webapp
 
