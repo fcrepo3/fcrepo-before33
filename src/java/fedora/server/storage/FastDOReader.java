@@ -79,7 +79,7 @@ import fedora.server.utilities.DateUtility;
  */
 public class FastDOReader implements DisseminatingDOReader
 {
-  private static boolean debug = true;
+  private static boolean debug;
   private static ConnectionPool connectionPool = null;
   private static Server s_server = null;
   private boolean isFoundInFastStore = false;
@@ -94,6 +94,9 @@ public class FastDOReader implements DisseminatingDOReader
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      Boolean B1 = new Boolean(s_server.getParameter("debug"));
+      debug = B1.booleanValue();
+      System.out.println("Debug: "+debug);
     } catch (InitializationException ie) {
       System.err.println(ie.getMessage());
     }
