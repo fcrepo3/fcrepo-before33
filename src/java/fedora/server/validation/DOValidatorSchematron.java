@@ -79,9 +79,11 @@ public class DOValidatorSchematron
       System.out.println("DOValidatorSchematraon caught ServerException in main().");
       System.out.println("Suppressing message since not attached to Server.");
     }
-    catch (Exception e)
+    catch (Throwable th)
     {
-      System.err.println("DOValidatorSchematron says Exception in main(): " + e.getMessage());
+      System.out.println("DOValidatorSchematron returned error in main(). "
+                + "The underlying error was a " + th.getClass().getName()
+                + "The message was "  + "\"" + th.getMessage() + "\"");
     }
   }
 
