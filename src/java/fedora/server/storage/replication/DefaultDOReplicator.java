@@ -148,6 +148,8 @@ public class DefaultDOReplicator
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
+
+            // get db ID for the digital object
             results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
                     + "doPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
@@ -157,6 +159,8 @@ public class DefaultDOReplicator
             }
             int doDbID=results.getInt("doDbID");
             results.close();
+
+            // check if any mods to datastreams for this digital object
             results=logAndExecuteQuery(st, "SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState "
                     + "FROM dsBind WHERE doDbID=" + doDbID);
             ArrayList updates=new ArrayList();
@@ -196,51 +200,161 @@ public class DefaultDOReplicator
             } else {
                 logFinest("No datastream labels or locations changed.");
             }
-/* this section not tested yet.....
-            results=logAndExecuteQuery(st, "SELECT dissDbID FROM do,doDissAssoc WHERE "
-                    + "do.doPID='" + reader.GetObjectPID() + "' AND do.doDbID=doDissAssoc.doDbID");
-            if (!results.next()) {
+
+            // check if any mods to disseminators for this object...
+            // first get a list of disseminator db IDs
+            results=logAndExecuteQuery(st, "SELECT dissDbID FROM doDissAssoc WHERE "
+                    + "doDbID="+doDbID+";");
+            HashSet dissDbIDs = new HashSet();
+            while (results.next()) {
+              dissDbIDs.add(new Integer(results.getInt("dissDbID")));
+            }
+            if (dissDbIDs.size()==0) {
                 logFinest("DefaultDOReplication.updateComponents: Object is "
-                        + "new; components dont need updating.");
+                        + "new (has no disseminators); components dont need updating.");
                 return false;
             }
-            int dissDbID=results.getInt("dissDbID");
             results.close();
-            results=logAndExecuteQuery(st, "SELECT bDefDbID, bMechDbID, dissID, dissLabel, dissState "
-                    + "FROM diss WHERE dissDbID=" + dissDbID);
-            updates=new ArrayList();
-            while (results.next()) {
-                int bDefDbID = results.getInt("bDefDbID");
-                int bMechDbID = results.getInt("bMechDbID");
-                String dissID=results.getString("dissID");
-                String dissLabel=results.getString("dsLabel");
-                String dissState=results.getString("dissState");
-                // compare the latest version of the datastream to what's in the db...
-                // if different, add to update list
-                Disseminator diss=reader.GetDisseminator(dissID, null);
-                if (!diss.dissLabel.equals(dissLabel)
-                        || !diss.dissState.equals(dissState)) {
-                    updates.add("UPDATE diss SET dissLabel='"
-                            + SQLUtility.aposEscape(diss.dissLabel)
-                            + "', dissID='" + diss.dissID + "', "
-                            + "dissState='" + diss.dissState + "' "
-                            + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID + " AND bMechDbID=" + bMechDbID);
+
+            Iterator dissIter = dissDbIDs.iterator();
+            // Iterate over disseminators to check if any have been modified
+            while(dissIter.hasNext()) {
+              Integer dissDbID = (Integer) dissIter.next();
+              logFinest("Iterating, dissDbID: "+dissDbID);
+
+              // get disseminator info for this disseminator
+              results=logAndExecuteQuery(st, "SELECT diss.bDefDbID, diss.bMechDbID, bmech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState "
+                  + "FROM diss,bmech WHERE bmech.bMechDbID=diss.bMechDbID AND diss.dissDbID=" + dissDbID);
+              updates=new ArrayList();
+              int bDefDbID = 0;
+              int bMechDbID = 0;
+              String dissID=null;
+              String dissLabel=null;
+              String dissState=null;
+              String bMechPID=null;
+              while(results.next()) {
+                bDefDbID = results.getInt("bDefDbID");
+                bMechDbID = results.getInt("bMechDbID");
+                dissID=results.getString("dissID");
+                dissLabel=results.getString("dissLabel");
+                dissState=results.getString("dissState");
+                bMechPID=results.getString("bMechPID");
+              }
+              results.close();
+
+              // compare the latest version of the disseminator with what's in the db...
+              // replace what's in db if they are different
+              Disseminator diss=reader.GetDisseminator(dissID, null);
+              if (!diss.dissLabel.equals(dissLabel)
+                  || !diss.bMechID.equals(bMechPID)
+                  || !diss.dissState.equals(dissState)) {
+                logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
+                    + SQLUtility.aposEscape(diss.dissLabel)
+                    + "', dissID='" + diss.dissID + "', "
+                    + "dissState='" + diss.dissState + "' "
+                    + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID + " AND bMechDbID=" + bMechDbID);
+              }
+
+              // compare the latest version of the disseminator's bindMap with what's in the db
+              // and replace what's in db if they are different
+              results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE "
+                  + "dsBind.doDbID=" + doDbID + " AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID "
+                  + "AND dsBindMap.bMechDbID="+bMechDbID+";");
+              String origDSBindMapID=null;
+              int origDSBindMapDbID=0;
+              while (results.next()) {
+                origDSBindMapID=results.getString("dsBindMapID");
+                origDSBindMapDbID=results.getInt("dsBindMapDbID");
+              }
+              results.close();
+              String newDSBindMapID=diss.dsBindMapID;
+              if (!newDSBindMapID.equals(origDSBindMapID)) {
+                // dsBindingMap was modified so remove existing bindingMap
+                int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
+                logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
+                rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID=" + origDSBindMapDbID + ";");
+                logFinest("deleted "+rowCount+" rows from dsBindMapDbID");
+
+                // now add back new dsBindMap for this disseminator
+                DSBindingMapAugmented[] allBindingMaps;
+                Disseminator disseminators[];
+                String bDefDBID;
+                String bindingMapDBID;
+                String bMechDBID;
+                String dissDBID;
+                String doDBID;
+                String doPID;
+                String doLabel;
+                String dsBindingKeyDBID;
+                allBindingMaps = reader.GetDSBindingMaps(null);
+                for (int i=0; i<allBindingMaps.length; ++i) {
+                  // only update bindingMap that was modified
+                  if (allBindingMaps[i].dsBindMapID.equals(newDSBindMapID)) {
+                    bMechDBID = lookupBehaviorMechanismDBID(connection,
+                        allBindingMaps[i].dsBindMechanismPID);
+                    if (bMechDBID == null) {
+                      throw new ReplicationException("BehaviorMechanism row "
+                          + "doesn't exist for PID: "
+                          + allBindingMaps[i].dsBindMechanismPID);
+                    }
+
+                    // Insert dsBindMap row if it doesn't exist.
+                    bindingMapDBID = lookupDataStreamBindingMapDBID(connection,
+                        bMechDBID, allBindingMaps[i].dsBindMapID);
+                    if (bindingMapDBID == null) {
+                      // DataStreamBinding row doesn't exist, add it.
+                      insertDataStreamBindingMapRow(connection, bMechDBID,
+                          allBindingMaps[i].dsBindMapID,
+                          allBindingMaps[i].dsBindMapLabel);
+                          bindingMapDBID = lookupDataStreamBindingMapDBID(
+                              connection,bMechDBID,allBindingMaps[i].dsBindMapID);
+                          if (bindingMapDBID == null) {
+                            throw new ReplicationException(
+                                "lookupdsBindMapDBID row "
+                                + "doesn't exist for bMechDBID: " + bMechDBID
+                                + ", dsBindingMapID: "
+                                + allBindingMaps[i].dsBindMapID);
+                          }
+                    }
+                    logFinest("augmentedlength: "+allBindingMaps[i].dsBindingsAugmented.length);
+                    for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length;
+                         ++j) {
+                      logFinest("j: "+j);
+                      dsBindingKeyDBID = lookupDataStreamBindingSpecDBID(
+                          connection, bMechDBID,
+                          allBindingMaps[i].dsBindingsAugmented[j].
+                          bindKeyName);
+                      if (dsBindingKeyDBID == null) {
+                        throw new ReplicationException(
+                            "lookupDataStreamBindingDBID row doesn't "
+                            + "exist for bMechDBID: " + bMechDBID
+                            + ", bindKeyName: " + allBindingMaps[i].
+                            dsBindingsAugmented[j].bindKeyName + "i=" + i
+                            + " j=" + j);
+                      }
+
+                      // Insert DataStreamBinding row
+                      insertDataStreamBindingRow(connection, new Integer(doDbID).toString(),
+                          dsBindingKeyDBID,
+                          bindingMapDBID,
+                          allBindingMaps[i].dsBindingsAugmented[j].seqNo,
+                          allBindingMaps[i].dsBindingsAugmented[j].
+                          datastreamID,
+                          allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
+                          allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
+                          // sdp - local.fedora.server conversion
+                          encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
+                          allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
+                          allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
+                          "1",
+                          "A");
+
+                    }
+                  }
                 }
+              }
             }
-            results.close();
-            // do any required updates via a transaction
-            if (updates.size()>0) {
-                connection.setAutoCommit(false);
-                triedUpdate=true;
-                for (int i=0; i<updates.size(); i++) {
-                    String update=(String) updates.get(i);
-                    logAndExecuteUpdate(st, update);
-                }
-                connection.commit();
-            } else {
-                logFinest("No datastream labels or locations changed.");
-            }
-*/
+
         } catch (SQLException sqle) {
             failed=true;
             throw new ReplicationException("An error has occurred during "
@@ -251,6 +365,8 @@ public class DefaultDOReplicator
             throw new ReplicationException("An error has occurred during "
                 + "Replication. The error was \" " + se.getClass().getName()
                 + " \". The cause was \" " + se.getMessage());
+        } catch (Exception e) {
+          e.printStackTrace();
         } finally {
             if (connection!=null) {
                 try {
