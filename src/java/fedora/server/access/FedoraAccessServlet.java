@@ -53,13 +53,16 @@ import fedora.server.utilities.DateUtility;
  * <p>Description: Implements Fedora Access LITE (API-A-LITE) interface using a
  * java servlet front end. The syntax defined by API-A-LITE has two bindings:
  * <ol>
- * <li>http://hostname:port/PID/bDefPID/methodName[/dateTime][?parmArray] - this
- *     syntax requests a dissemination of the specified object using the
- *     specified method of the associated behavior definition object. The result
- *     is returned as a MIME-typed stream.</li>
+ * <li>GetDissemination URL syntax:
+ * http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]
+ * This syntax requests a dissemination of the specified object using the
+ * specified method of the associated behavior definition object. The result
+ * is returned as a MIME-typed stream.</li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
+ * <li>fedora - required name of the Fedora access service.</li>
+ * <li>get - required verb of the Fedora service.</li>
  * <li>PID - required persistent idenitifer of the digital object.</li>
  * <li>bDefPID - required persistent identifier of the behavior definition
  *               object to which the digital object subscribes.</li>
@@ -70,23 +73,26 @@ import fedora.server.utilities.DateUtility;
  * <li>parmArray - optional array of method parameters consisting of
  *     name/value pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
- * <li>http://hostname:port/PID[/dateTime][?xmlEncode=BOOLEAN] - this syntax
- *     requests a list all methods associated with the specified digital
- *     object. The xmlEncode parameter determines the type of output returned.
- *     If the parameter is omitted or has a value of "no", a MIME-typed stream
- *     consisting of an html table is returned providing a browser-savvy means
- *     of browsing the object's methods. If the value specified is "yes", then
- *     a MIME-typed stream consisting of XML is returned.</li>
+ * <li>GetObjectProfile URL syntax:
+ * http://hostname:port/PID[/dateTime][?xml=BOOLEAN]
+ * This syntax requests an object profile for the specified digital object.
+ * The xml parameter determines the type of output returned.
+ * If the parameter is omitted or has a value of "no", a MIME-typed stream
+ * consisting of an html table is returned providing a browser-savvy means
+ * of viewing the object profile. If the value specified is "yes", then
+ * a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
+ * <li>fedora - required name of the Fedora access service.</li>
+ * <li>get - required verb of the Fedora service.</li>
  * <li>PID - required persistent identifier of the digital object.</li>
  * <li>dateTime - optional dateTime value indicating dissemination of a
  *                version of the digital object at the specified point in time.
  *                (NOT implemented in release 1.0.)
- * <li>xmlEncode - an optional parameter indicating the requested output format.
+ * <li>xml - an optional parameter indicating the requested output format.
  *                 A value of "yes" indicates a return type of text/xml; the
- *                 absence of the xmlEncode parameter or a value of "no"
+ *                 absence of the xml parameter or a value of "no"
  *                 indicates format is to be text/html.</li>
  * </ul>
  *
@@ -183,7 +189,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
           return;
         }
       }
-      logFinest("[FedoraAccessServlet] GetObjectMethods Syntax "
+      logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
           + "Encountered: "+ requestURI);
       logFinest("PID: " + PID + " bDefPID: "
           + " asOfDate: " + versDateTime);
@@ -253,13 +259,13 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     // Separate out servlet parameters from method parameters
     Hashtable h_userParms = new Hashtable();
-    String xmlEncode = "no";
+    String xml = "no";
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
     {
       String name = (String)e.nextElement();
-      if (name.equalsIgnoreCase("xmlEncode"))
+      if (name.equalsIgnoreCase("xml"))
       {
-        xmlEncode = request.getParameter(name);
+        xml = request.getParameter(name);
       } else
       {
         String value = request.getParameter(name);
@@ -282,21 +288,9 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
 
     try
     {
-/*
-      if (isGetObjectMethodsRequest)
-      {
-        getObjectMethods(context, PID, asOfDateTime, xmlEncode, request, response);
-        long stopTime = new Date().getTime();
-        long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
-            + "GetObjectMethods: " + interval + " milliseconds.");
-        logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-            + "GetObjectMethods: " + interval + " milliseconds.");
-      }
-*/
       if (isGetObjectProfileRequest)
       {
-        getObjectProfile(context, PID, asOfDateTime, xmlEncode, request, response);
+        getObjectProfile(context, PID, asOfDateTime, xml, request, response);
         long stopTime = new Date().getTime();
         long interval = stopTime - servletStartTime;
         System.out.println("[FedoraAccessServlet] Servlet Roundtrip "
@@ -329,7 +323,7 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   }
 
   public void getObjectProfile(Context context, String PID, Calendar asOfDateTime,
-      String xmlEncode, HttpServletRequest request,
+      String xml, HttpServletRequest request,
       HttpServletResponse response) throws ServerException
   {
 
@@ -347,10 +341,10 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
       objProfile = s_access.getObjectProfile(context, PID, asOfDateTime);
       if (objProfile != null)
       {
-        // Object Methods found.
-        // Deserialize ObjectmethodsDef datastructure into XML
+        // Object Profile found.
+        // Serialize the ObjectProfile object into XML
         new ProfileSerializerThread(PID, objProfile, versDateTime, pw).start();
-        if (xmlEncode.equalsIgnoreCase(YES))
+        if (xml.equalsIgnoreCase(YES))
         {
           // Return results as raw XML
           response.setContentType(CONTENT_TYPE_XML);
@@ -508,216 +502,6 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     }
   }
 
-
-  /**
-   * <p>This method calls the Fedora Access Subsystem to retrieve an array
-   * of object method definitions for the digital object with the specified PID.
-   * The array is then deserialized into XML. If the value of the xmlEncode
-   * variable is set to "yes", the raw XML is returned. If the value of the
-   * xmlEncode variable is   * set to "no" or is omitted in the URL request,
-   * the XML is transformed by an XLT stylesheet into a web form.</p>
-   *
-   * @param context The read only context of the request.
-   * @param PID The persistent identifier of the Digital Object.
-   * @param asOfDateTime The version datetime stamp of the digital object.
-   * @param xmlEncode The control flag that signals output format; Value of
-   *        "yes" signals output is of MIME type text/xml; Value of "no" or
-   *        omitted signals output as MIME type text/html.
-   * @param request The servlet request.
-   * @param response The servlet response.
-   * @throws IOException If an error occurrs with an input or output operation.
-   * @throws ServerException If an error occurs in the Access Subsystem.
-   */
-  public void getObjectMethods(Context context, String PID, Calendar asOfDateTime,
-      String xmlEncode, HttpServletRequest request,
-      HttpServletResponse response) throws ServerException
-  {
-
-    PrintWriter out = null;
-    Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
-    ObjectMethodsDef[] objMethDefArray = null;
-    PipedWriter pw = null;
-    PipedReader pr = null;
-
-    try
-    {
-      pw = new PipedWriter();
-      pr = new PipedReader(pw);
-      objMethDefArray = s_access.getObjectMethods(context, PID, asOfDateTime);
-      if (objMethDefArray != null)
-      {
-        // Object Methods found.
-        // Deserialize ObjectmethodsDef datastructure into XML
-        new SerializerThread(PID, objMethDefArray, versDateTime, pw).start();
-        if (xmlEncode.equalsIgnoreCase(YES))
-        {
-          // Return results as raw XML
-          response.setContentType(CONTENT_TYPE_XML);
-          out = response.getWriter();
-          int bytestream = 0;
-          while ( (bytestream = pr.read()) >= 0)
-          {
-            out.write(bytestream);
-          }
-        } else
-        {
-          // Transform results into an html table
-          response.setContentType(CONTENT_TYPE_HTML);
-          out = response.getWriter();
-          File xslFile = new File(s_server.getHomeDir(), "access/objectmethods.xslt");
-          TransformerFactory factory = TransformerFactory.newInstance();
-          Templates template = factory.newTemplates(new StreamSource(xslFile));
-          Transformer transformer = template.newTransformer();
-          Properties details = template.getOutputProperties();
-          transformer.transform(new StreamSource(pr), new StreamResult(out));
-        }
-        pr.close();
-
-      } else
-      {
-        // Object Methods Definition request returned nothing.
-        String message = "[FedoraAccessServlet] No Object Method Definitions "
-            + "returned.";
-        logInfo(message);
-        showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
-      }
-    } catch (Throwable th)
-    {
-      String message = "[FedoraAccessServlet] An error has occured. "
-                     + " The error was a \" "
-                     + th.getClass().getName()
-                     + " \". Reason: "  + th.getMessage();
-      logWarning(message);
-      th.printStackTrace();
-      throw new GeneralException(message);
-    } finally
-    {
-      try
-      {
-        if (pr != null) pr.close();
-      } catch (Throwable th)
-      {
-        String message = "[FedoraAccessServlet] An error has occured. "
-                       + " The error was a \" "
-                       + th.getClass().getName()
-                     + " \". Reason: "  + th.getMessage();
-        throw new StreamIOException(message);
-      }
-    }
-  }
-
-  /**
-   * <p> A Thread to serialize an ObjectMethodsDef object into XML.</p>
-   *
-   */
-  public class SerializerThread extends Thread
-  {
-    private PipedWriter pw = null;
-    private String PID = null;
-    private ObjectMethodsDef[] objMethDefArray = new ObjectMethodsDef[0];
-    private Date versDateTime = null;
-
-    /**
-     * <p> Constructor for SerializeThread.</p>
-     *
-     * @param PID The persistent identifier of the specified digital object.
-     * @param objMethDefArray An array of object mtehod definitions.
-     * @param versDateTime The version datetime stamp of the request.
-     * @param pw A PipedWriter to which the serialization info is written.
-     */
-    public SerializerThread(String PID, ObjectMethodsDef[] objMethDefArray,
-                        Date versDateTime, PipedWriter pw)
-    {
-      this.pw = pw;
-      this.PID = PID;
-      this.objMethDefArray = objMethDefArray;
-      this.versDateTime = versDateTime;
-    }
-
-    /**
-     * <p> This method executes the thread.</p>
-     */
-    public void run()
-    {
-      if (pw != null)
-      {
-        try
-        {
-          pw.write("<?xml version=\"1.0\"?>");
-          if (versDateTime == null || DateUtility.
-              convertDateToString(versDateTime).equalsIgnoreCase(""))
-          {
-            pw.write("<object "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
-          } else
-          {
-            pw.write("<object "
-                + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-                + " pid=\"" + PID + "\""
-                + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
-                + "\" >");
-            pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
-                + " location=\"objectmethods.xsd\"/>");
-          }
-          String nextBdef = "null";
-          String currentBdef = "";
-          for (int i=0; i<objMethDefArray.length; i++)
-          {
-            currentBdef = objMethDefArray[i].bDefPID;
-            if (!currentBdef.equalsIgnoreCase(nextBdef))
-            {
-              if (i != 0) pw.write("</bdef>");
-              pw.write("<bdef pid=\"" + objMethDefArray[i].bDefPID + "\" >");
-            }
-            pw.write("<method name=\"" + objMethDefArray[i].methodName + "\" >");
-            MethodParmDef[] methodParms = objMethDefArray[i].methodParmDefs;
-            for (int j=0; j<methodParms.length; j++)
-            {
-              pw.write("<parm parmName=\"" + methodParms[j].parmName
-                  + "\" parmDefaultValue=\"" + methodParms[j].parmDefaultValue
-                  + "\" parmRequired=\"" + methodParms[j].parmRequired
-                  + "\" parmType=\"" + methodParms[j].parmType
-                  + "\" parmLabel=\"" + methodParms[j].parmLabel + "\" >");
-              if (methodParms[j].parmDomainValues.length > 0 )
-              {
-                pw.write("<parmDomainValues>");
-                for (int k=0; k<methodParms[j].parmDomainValues.length; k++)
-                {
-                  pw.write("<value>" + methodParms[j].parmDomainValues[k]
-                      + "</value>");
-                }
-                pw.write("</parmDomainValues>");
-              }
-              pw.write("</parm>");
-            }
-
-            pw.write("</method>");
-            nextBdef = currentBdef;
-          }
-          pw.write("</bdef>");
-          pw.write("</object>");
-          pw.flush();
-          pw.close();
-        } catch (IOException ioe) {
-          System.err.println("WriteThread IOException: " + ioe.getMessage());
-        } finally
-        {
-          try
-          {
-            if (pw != null) pw.close();
-          } catch (IOException ioe)
-          {
-            System.err.println("WriteThread IOException: " + ioe.getMessage());
-          }
-        }
-      }
-    }
-  }
 
   /**
    * <p>This method calls the Fedora Access Subsystem to retrieve a MIME-typed
