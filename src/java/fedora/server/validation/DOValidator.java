@@ -49,7 +49,7 @@ public interface DOValidator {
    *        "store" = the object is in the authoritative format for the final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-    public void validate(InputStream in, int validationLevel, String workFlowPhase)
+    public void validate(InputStream in, String format, int validationLevel, String workFlowPhase)
         //throws ObjectValidityException, GeneralException;
         throws ServerException;
 
@@ -68,7 +68,7 @@ public interface DOValidator {
    *        "store" = the object is in the authoritative format for the final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-    public void validate(File in, int validationLevel, String workFlowPhase)
+    public void validate(File in, String format, int validationLevel, String workFlowPhase)
         //throws ObjectValidityException, GeneralException;
         throws ServerException;
 

@@ -118,11 +118,11 @@ public class DOValidatorModule extends Module implements DOValidator
    *                  final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-  public void validate(InputStream objectAsStream, int validationLevel,
+  public void validate(InputStream objectAsStream, String format, int validationLevel,
     String workFlowPhase)
     throws ServerException
   {
-    dov.validate(objectAsStream, validationLevel, workFlowPhase);
+    dov.validate(objectAsStream, format, validationLevel, workFlowPhase);
     logFiner("[DOValidatorModule] Successful object validation at level: "
               + validationLevel);
   }
@@ -145,11 +145,11 @@ public class DOValidatorModule extends Module implements DOValidator
    *                  final storage phase
    * @throws ServerException If validation fails for any reason.
    */
-  public void validate(File objectAsFile, int validationLevel,
+  public void validate(File objectAsFile, String format, int validationLevel,
     String workFlowPhase)
     throws ServerException
   {
-      dov.validate(objectAsFile, validationLevel, workFlowPhase);
+      dov.validate(objectAsFile, format, validationLevel, workFlowPhase);
       logFiner("[DOValidatorModule] Completed object validation at level: "
               + validationLevel);
   }

@@ -195,10 +195,16 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
    * @throws ObjectValidityException If validation fails for any reason.
    * @throws GeneralException If validation fails for any reason.
    */
-    public void validate(InputStream objectAsStream, int validationLevel,
+    public void validate(InputStream objectAsStream, String format, int validationLevel,
       String workFlowPhase)
       throws ObjectValidityException, GeneralException
     {
+    	System.out.println("LOOK VALIDATE: format is " + format);
+    	// FIXIT:  temporary bypass of validation for FOXML
+    	if (format.equals("foxml")) {
+    		return;
+    	}
+    	
       // FIXIT!!: We need to use the object Inputstream twice, once for XML
       // Schema validation and once for Schematron validation.
       // We may want to consider implementing some form of a rewindable
@@ -207,7 +213,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
       try
       {
         File objectAsFile = streamtoFile(tempDir, objectAsStream);
-        validate(objectAsFile, validationLevel, workFlowPhase);
+        validate(objectAsFile, format, validationLevel, workFlowPhase);
       }
       catch (ObjectValidityException e)
       {
@@ -242,10 +248,16 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
    * @throws ObjectValidityException If validation fails for any reason.
    * @throws GeneralException If validation fails for any reason.
    */
-    public void validate(File objectAsFile, int validationLevel,
+    public void validate(File objectAsFile, String format, int validationLevel,
       String workFlowPhase)
       throws ObjectValidityException, GeneralException
     {
+		System.out.println("LOOK VALIDATE: format is " + format);
+		// FIXIT:  temporary bypass of validation for FOXML
+		if (format.equals("foxml")) {
+			return;
+		}
+		
       logFinest("Object valiation for lifecycle phase: " + workFlowPhase);
       switch ( validationLevel )
       {
