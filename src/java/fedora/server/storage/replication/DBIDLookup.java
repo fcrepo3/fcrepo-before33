@@ -1,10 +1,10 @@
 package fedora.server.storage.replication;
 
 /**
- * <p>Title: DBIDLookup.java</p>
- * <p>Description: Database DBID lookup code.
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
+ * Title: DBIDLookup.java
+ * Description: Database DBID lookup code.
+ * Copyright: Copyright (c) 2002
+ * Company: 
  * @author Paul Charlton
  * @version 1.0
  */
@@ -15,7 +15,7 @@ import java.io.*;
 
 
 /**
-* <p>
+* 
 * Description: Looks up and returns the DBID for a row that matches the column
 * values passed in for that particular row.
 *
@@ -25,40 +25,40 @@ import java.io.*;
 public class DBIDLookup {   
 
         /**
-        * <p>
+        * 
         * Looks up a BehaviorDefinition DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param bDefPID Behavior definition PID
         *
         * @return The DBID of the specified Behavior Definition row.
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupBehaviorDefinitionDBID(DbmsConnection db, String bDefPID) throws SQLException {
-		return lookupDBID1(db, "BDEF_DBID", "BehaviorDefinition", "BDEF_PID", bDefPID);
+	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws SQLException {
+		return lookupDBID1(connection, "BDEF_DBID", "BehaviorDefinition", "BDEF_PID", bDefPID);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a BehaviorMechanism DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param bMechPID Behavior mechanism PID
         *
         * @return The DBID of the specified Behavior Mechanism row.
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupBehaviorMechanismDBID(DbmsConnection db, String bMechPID) throws SQLException {
-		return lookupDBID1(db, "BMECH_DBID", "BehaviorMechanism", "BMECH_PID", bMechPID);
+	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws SQLException {
+		return lookupDBID1(connection, "BMECH_DBID", "BehaviorMechanism", "BMECH_PID", bMechPID);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a DataStreamBindingMap DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param bMechDBID Behavior mechanism DBID
         * @param dsBindingMapID Data stream binding map ID
         *
@@ -66,15 +66,15 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDataStreamBindingMapDBID(DbmsConnection db, String bMechDBID, String dsBindingMapID) throws SQLException {
-		return lookupDBID2(db, "BindingMap_DBID", "DataStreamBindingMap", "BMECH_DBID", bMechDBID, "DSBindingMap_ID", dsBindingMapID);
+	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws SQLException {
+		return lookupDBID2(connection, "BindingMap_DBID", "DataStreamBindingMap", "BMECH_DBID", bMechDBID, "DSBindingMap_ID", dsBindingMapID);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a DataStreamBindingSpec DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param bMechDBID Behavior mechanism DBID
         * @param dsBindingSpecName Data stream binding spec name
         *
@@ -82,30 +82,30 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDataStreamBindingSpecDBID(DbmsConnection db, String bMechDBID, String dsBindingSpecName) throws SQLException {
-		return lookupDBID2(db, "DSBindingKey_DBID", "DataStreamBindingSpec", "BMECH_DBID", bMechDBID, "DSBindingSpec_Name", dsBindingSpecName);
+	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws SQLException {
+		return lookupDBID2(connection, "DSBindingKey_DBID", "DataStreamBindingSpec", "BMECH_DBID", bMechDBID, "DSBindingSpec_Name", dsBindingSpecName);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a DigitalObject DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param doPID Data object PID
         *
         * @return The DBID of the specified DigitalObject row.
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDigitalObjectDBID(DbmsConnection db, String doPID) throws SQLException {
-		return lookupDBID1(db, "DO_DBID", "DigitalObject", "DO_PID", doPID);
+	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws SQLException {
+		return lookupDBID1(connection, "DO_DBID", "DigitalObject", "DO_PID", doPID);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a Disseminator DBID.
         *
-        * @param db database Connection object
+        * @param connection JDBC DBMS connection
         * @param bDefDBID Behavior definition DBID
         * @param bMechDBID Behavior mechanism DBID
         * @param dissID Disseminator ID
@@ -114,7 +114,7 @@ public class DBIDLookup {
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDisseminatorDBID(DbmsConnection db, String bDefDBID, String bMechDBID, String dissID) throws SQLException {
+	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws SQLException {
 		String query;
 		String ID = null;
 		Statement statement;
@@ -126,7 +126,7 @@ public class DBIDLookup {
 		query += "DISS_ID = '" + dissID + "';";
 System.out.println("lookupDisseminator, query = " + query);
 
-		statement = db.connection.createStatement();
+		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
 
 		while (rs.next()) 
@@ -139,10 +139,10 @@ System.out.println("lookupDisseminator, query = " + query);
 	}
 
         /**
-        * <p>
+        * 
         * Looks up a Method DBID.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param bDefDBID Behavior definition DBID
         * @param methName Method name
         *
@@ -150,15 +150,15 @@ System.out.println("lookupDisseminator, query = " + query);
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupMethodDBID(DbmsConnection db, String bDefDBID, String methName) throws SQLException {
-		return lookupDBID2(db, "METH_DBID", "Method", "BDEF_DBID", bDefDBID, "METH_Name", methName);
+	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws SQLException {
+		return lookupDBID2(connection, "METH_DBID", "Method", "BDEF_DBID", bDefDBID, "METH_Name", methName);
 	}
 
         /**
-        * <p>
+        * 
         * General JDBC lookup method with 1 lookup column value.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param DBIDName DBID column name
         * @param tableName Table name
         * @param lookupColumnName Lookup column name
@@ -168,7 +168,7 @@ System.out.println("lookupDisseminator, query = " + query);
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDBID1(DbmsConnection db, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws SQLException {
+	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws SQLException {
 		String query;
 		String ID = null;
 		Statement statement;
@@ -178,7 +178,7 @@ System.out.println("lookupDisseminator, query = " + query);
 		query += lookupColumnName + " = '" + lookupColumnValue + "';";
 System.out.println("lookupDBID1, query = " + query);
 
-		statement = db.connection.createStatement();
+		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
 
 		while (rs.next()) 
@@ -191,10 +191,10 @@ System.out.println("lookupDBID1, query = " + query);
 	}
 
         /**
-        * <p>
+        * 
         * General JDBC lookup method with 2 lookup column values.
         *
-        * @param db Database connection object
+        * @param connection JDBC DBMS connection
         * @param DBIDName DBID Column name
         * @param tableName Table name
         * @param lookupColumnName1 First lookup column name
@@ -206,7 +206,7 @@ System.out.println("lookupDBID1, query = " + query);
         *
         * @exception SQLException JDBC, SQL error
         */
-	public String lookupDBID2(DbmsConnection db, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
+	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws SQLException {
 		String query;
 		String ID = null;
 		Statement statement;
@@ -217,7 +217,7 @@ System.out.println("lookupDBID1, query = " + query);
 		query += lookupColumnName2 + " = '" + lookupColumnValue2 + "';";
 System.out.println("lookupDBID2, query = " + query);
 
-		statement = db.connection.createStatement();
+		statement = connection.createStatement();
 		rs = statement.executeQuery(query); 
 
 		while (rs.next()) 
@@ -230,7 +230,7 @@ System.out.println("lookupDBID2, query = " + query);
 	}
 
         /**
-        * <p>
+        * 
         * Used for unit testing and demonstration purposes.
         *
         * @param args program arguments
@@ -240,19 +240,22 @@ System.out.println("lookupDBID2, query = " + query);
         public static void main(String[] args) throws Exception {
 		int rc;
 		String returnString;
+		Connection connection;
 
 		DbmsConnection db = new DbmsConnection();
-		db.connectDatabase();
+		connection = db.getConnection();
 
 		DBIDLookup dl = new DBIDLookup();
 		/*
 		returnString = lookupDBID("DO_DBID", "DigitalObject", "DO_PID", "1007.lib.dl.test/image/iva/archerp01");
 
-		returnString = dl.lookupDBID(db, args[0], args[1], args[2], args[3]);
+		returnString = dl.lookupDBID(connection, args[0], args[1], args[2], args[3]);
 		System.out.println("lookupDBID returns: " + returnString);
 		*/
 
-		returnString = dl.lookupDigitalObjectDBID(db, args[0]);
+		returnString = dl.lookupDigitalObjectDBID(connection, args[0]);
 		System.out.println("lookupDigitalObjectDBID returns: " + returnString);
+
+		db.freeConnection(connection);
 	}
 }
