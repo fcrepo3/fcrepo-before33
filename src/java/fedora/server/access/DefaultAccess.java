@@ -27,7 +27,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
-import fedora.server.security.IPRestriction;
+import fedora.server.security.Authorization;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
@@ -82,9 +82,6 @@ public class DefaultAccess extends Module implements Access
   /** OAI Provider domain name, for the describe request's identifier info. */
   private String m_repositoryDomainName;
 
-  /** IP Restriction for the Access subsystem. */
-  private IPRestriction m_ipRestriction;
-
   /** Dynamic Access Module */
   // FIXIT!! is this the right way to associate the dynamic access module???
   private DynamicAccessModule m_dynamicAccess;
@@ -94,6 +91,8 @@ public class DefaultAccess extends Module implements Access
   private String fedoraServerHost = null;
 
   private String fedoraServerPort = null;
+  
+  private Authorization m_authorizationModule;
 
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -125,15 +124,6 @@ public class DefaultAccess extends Module implements Access
     {
         throw new ModuleInitializationException(
             "doMediateDatastreams parameter must be specified.", getRole());
-    }
-    String allowHosts=getParameter("allowHosts");
-    String denyHosts=getParameter("denyHosts");
-    try {
-        m_ipRestriction=new IPRestriction(allowHosts, denyHosts);
-    } catch (ServerException se) {
-        throw new ModuleInitializationException("Error setting IP restriction "
-                + "for Access subsystem: " + se.getClass().getName() + ": "
-                + se.getMessage(), getRole());
     }
   }
 
@@ -167,6 +157,11 @@ public class DefaultAccess extends Module implements Access
       throw new ModuleInitializationException("DefaultAccess module requires that the OAIProvider "
           + "module has the repositoryDomainName parameter specified.", getRole());
     }
+    
+    m_authorizationModule = (Authorization) getServer().getModule("fedora.server.security.Authorization");
+    if (m_authorizationModule == null) {
+        throw new ModuleInitializationException("Can't get an Authorization module (in default access) from Server.getModule", getRole());
+    }
 
   }
 
@@ -195,6 +190,11 @@ public class DefaultAccess extends Module implements Access
     }
   }
 
+  private static final Hashtable accessActionAttributes = new Hashtable();
+  static {
+  	accessActionAttributes.put("api","apia");
+  }  
+
   /**
    * <p>Disseminates the content produced by executing the specified method
    * of the associated Behavior Mechanism object of the specified digital
@@ -216,10 +216,12 @@ public class DefaultAccess extends Module implements Access
       Date asOfDateTime) throws ServerException
   {
     PID = Server.getPID(PID).toString();
-    m_ipRestriction.enforce(context);
     bDefPID = Server.getPID(bDefPID).toString();
     long initStartTime = new Date().getTime();
     long startTime = new Date().getTime();
+       
+    m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime);
+        
     DOReader reader = m_manager.getReader(context, PID);
 
 
@@ -357,7 +359,7 @@ public class DefaultAccess extends Module implements Access
   {
     long startTime = new Date().getTime();
     PID = Server.getPID(PID).toString();
-    m_ipRestriction.enforce(context);
+    m_authorizationModule.enforceListMethods(context, PID, asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -392,8 +394,8 @@ public class DefaultAccess extends Module implements Access
       Date asOfDateTime) throws ServerException
   {
     long startTime = new Date().getTime();
-    m_ipRestriction.enforce(context);
     PID = Server.getPID(PID).toString();
+    m_authorizationModule.enforceListDatastreams(context, PID, asOfDateTime);
     DOReader reader =
         m_manager.getReader(context, PID);
 
@@ -421,6 +423,7 @@ public class DefaultAccess extends Module implements Access
     Date asOfDateTime) throws ServerException
   {
     PID = Server.getPID(PID).toString();
+    m_authorizationModule.enforceGetObjectProfile(context, PID, asOfDateTime);
     DOReader reader = m_manager.getReader(context, PID);
 
     // Check data object state
@@ -456,7 +459,7 @@ public class DefaultAccess extends Module implements Access
   public FieldSearchResult findObjects(Context context,
           String[] resultFields, int maxResults, FieldSearchQuery query)
           throws ServerException {
-      m_ipRestriction.enforce(context);
+      m_authorizationModule.enforceFindObjects(context);
       return m_manager.findObjects(context, resultFields, maxResults, query);
   }
 
@@ -472,7 +475,7 @@ public class DefaultAccess extends Module implements Access
    */
   public FieldSearchResult resumeFindObjects(Context context,
           String sessionToken) throws ServerException {
-      m_ipRestriction.enforce(context);
+      m_authorizationModule.enforceFindObjects(context);
       return m_manager.resumeFindObjects(context, sessionToken);
   }
 
@@ -486,6 +489,7 @@ public class DefaultAccess extends Module implements Access
    */
   public RepositoryInfo describeRepository(Context context) throws ServerException
   {
+    m_authorizationModule.enforceDescribeRepository(context);
     RepositoryInfo repositoryInfo = new RepositoryInfo();
     repositoryInfo.repositoryName = getServer().getParameter("repositoryName");
     repositoryInfo.repositoryBaseURL = getReposBaseURL() + "/fedora";
@@ -524,7 +528,7 @@ public class DefaultAccess extends Module implements Access
   public String[] getObjectHistory(Context context, String PID) throws ServerException
   {
     PID = Server.getPID(PID).toString();
-    m_ipRestriction.enforce(context);
+    m_authorizationModule.enforceGetObjectHistory(context, PID);
     DOReader reader = m_manager.getReader(context, PID);
 
     // Check data object state
@@ -598,7 +602,6 @@ public class DefaultAccess extends Module implements Access
   {
     PID = Server.getPID(PID).toString();
     bDefPID = Server.getPID(bDefPID).toString();
-    m_ipRestriction.enforce(context);
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
     StringBuffer sb = new StringBuffer();
@@ -830,8 +833,8 @@ public class DefaultAccess extends Module implements Access
   public MIMETypedStream getDatastreamDissemination(Context context, String PID,
           String dsID, Date asOfDateTime) throws ServerException {
       PID = Server.getPID(PID).toString();
-      m_ipRestriction.enforce(context);
-      MIMETypedStream mimeTypedStream = null;
+      m_authorizationModule.enforceGetDatastreamDissemination(context, PID, dsID, asOfDateTime);
+      MIMETypedStream mimeTypedStream = null;      
       long startTime = new Date().getTime();
       DOReader reader = m_manager.getReader(context, PID);
 
