@@ -6,6 +6,7 @@ import java.awt.Container;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -77,39 +78,50 @@ public class DatastreamPane
 
             // NORTH: commonPane(state, mimeType, controlGroup, infoType)
 
-                // LEFT: labels
-                JLabel stateLabel=new JLabel("State");
-                JLabel mimeTypeLabel=new JLabel("MIME Type");
-                JLabel controlGroupLabel=new JLabel("Control Group");
-                JLabel infoTypeLabel=new JLabel("Info Type");
-                JLabel[] commonLabels=new JLabel[] {stateLabel,
-                        mimeTypeLabel, controlGroupLabel, infoTypeLabel};
+                    // LEFT: labels
+                    JLabel stateLabel=new JLabel("State");
+                    JLabel mimeTypeLabel=new JLabel("MIME Type");
+                    JLabel controlGroupLabel=new JLabel("Control Group");
+                    JLabel infoTypeLabel=new JLabel("Info Type");
+                    JLabel[] leftCommonLabels=new JLabel[] {stateLabel, mimeTypeLabel};
+                    JLabel[] rightCommonLabels=new JLabel[] {controlGroupLabel, infoTypeLabel};
 
-                // RIGHT: values
-                String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
-                m_stateComboBox=new JComboBox(comboBoxStrings);
-                if (mostRecent.getState().equals("A")) {
-                    m_stateComboBox.setSelectedIndex(0);
-                } else if (mostRecent.getState().equals("I")) {
-                    m_stateComboBox.setSelectedIndex(1);
-                } else {
-                    m_stateComboBox.setSelectedIndex(2);
-                }
-                m_stateComboBox.addActionListener(dataChangeListener);
-                JLabel mimeTypeValueLabel=new JLabel(mostRecent.getMIMEType());
-                JLabel controlGroupValueLabel=new JLabel(
-                        getControlGroupString(
-                                mostRecent.getControlGroup().toString())
-                        );
-                JLabel infoTypeValueLabel=new JLabel(mostRecent.getInfoType());
-                JComponent[] commonValues=new JComponent[] {m_stateComboBox,
-                        mimeTypeValueLabel, controlGroupValueLabel, 
-                        infoTypeValueLabel};
+                    // RIGHT: values
+                    String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
+                    m_stateComboBox=new JComboBox(comboBoxStrings);
+                    if (mostRecent.getState().equals("A")) {
+                        m_stateComboBox.setSelectedIndex(0);
+                    } else if (mostRecent.getState().equals("I")) {
+                        m_stateComboBox.setSelectedIndex(1);
+                    } else {
+                        m_stateComboBox.setSelectedIndex(2);
+                    }
+                    m_stateComboBox.addActionListener(dataChangeListener);
+                    JLabel mimeTypeValueLabel=new JLabel(mostRecent.getMIMEType());
+                    JLabel controlGroupValueLabel=new JLabel(
+                            getControlGroupString(
+                                    mostRecent.getControlGroup().toString())
+                            );
+                    JLabel infoTypeValueLabel=new JLabel(mostRecent.getInfoType());
+                    JComponent[] leftCommonValues=new JComponent[] {m_stateComboBox, mimeTypeValueLabel};
+                    JComponent[] rightCommonValues=new JComponent[] {controlGroupValueLabel, infoTypeValueLabel};
+    
+                JPanel leftCommonPane=new JPanel();
+                GridBagLayout leftCommonGridBag=new GridBagLayout();
+                leftCommonPane.setLayout(leftCommonGridBag);
+                addLabelValueRows(leftCommonLabels, leftCommonValues, 
+                        leftCommonGridBag, leftCommonPane);
+            
+                JPanel rightCommonPane=new JPanel();
+                GridBagLayout rightCommonGridBag=new GridBagLayout();
+                rightCommonPane.setLayout(rightCommonGridBag);
+                addLabelValueRows(rightCommonLabels, rightCommonValues, 
+                        rightCommonGridBag, rightCommonPane);
 
             JPanel commonPane=new JPanel();
-            GridBagLayout commonGridBag=new GridBagLayout();
-            commonPane.setLayout(commonGridBag);
-            addLabelValueRows(commonLabels, commonValues, commonGridBag, commonPane);
+            commonPane.setLayout(new FlowLayout());
+            commonPane.add(leftCommonPane);
+            commonPane.add(rightCommonPane);
 
             // CENTER: versionPane(m_versionSlider, m_valuePane)
 
@@ -236,7 +248,7 @@ public class DatastreamPane
            state="D";
         // how we save it depends on the control group
         // and whether the content has been edited
-        // X = by value, and we always send the content along with it
+        // X = by value
 //        Administrator.APIM.modifyObject(m_pid, state, 
 //                m_labelTextField.getText(), logMessage);
     }
@@ -282,27 +294,61 @@ public class DatastreamPane
         private Datastream m_ds;
         private JTextField m_labelTextField;
 
+private ContentEditor ed;
+
         public CurrentVersionPane(Datastream ds) {
             m_ds=ds;
-            m_labelTextField=new JTextField(ds.getLabel());
+            // How we set this JPanel up depends on:
+            // Its datastream control group
+            // Its mime type
+/*            m_labelTextField=new JTextField(ds.getLabel());
             m_labelTextField.getDocument().addDocumentListener(
                     dataChangeListener);
             add(m_labelTextField);
+                    */
+            setLayout(new BorderLayout());
+            if (ds.getControlGroup().toString().equals("X")) {
+                // try an editor!
+                try {
+                new TextContentEditor();  // causes it to be registered if not already
+                if (ContentHandlerFactory.hasEditor("text/xml")) {
+                    ed=ContentHandlerFactory.getEditor("text/xml", new ByteArrayInputStream(ds.getContentStream()));
+                    ed.setContentChangeListener(dataChangeListener);
+                    add(ed.getComponent(), BorderLayout.CENTER);
+                } else {
+                    if (ContentHandlerFactory.hasViewer("text/xml")) {
+                        ContentViewer viewer=ContentHandlerFactory.getViewer("text/xml", new ByteArrayInputStream(ds.getContentStream()));
+                        add(viewer.getComponent(), BorderLayout.CENTER);
+                    } else {
+                        System.out.println("ERROR: No xml editor or viewer");
+                    }
+                }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("ERROR: " + e.getMessage());
+                }
+            }
+        }
+
+        public Datastream getDatastream() {
+            return m_ds;
         }
 
         public boolean isDirty() {
-            if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
-                return true;
-            }
-            return false;
+   //         if (!m_ds.getLabel().equals(m_labelTextField.getText())) {
+    //            return true;
+     //       }
+            return ed.isDirty();
         }
 
         public void changesSaved() {
-            m_ds.setLabel(m_labelTextField.getText());
+          //  m_ds.setLabel(m_labelTextField.getText());
+            ed.changesSaved();
         }
 
         public void undoChanges() {
-            m_labelTextField.setText(m_ds.getLabel());
+          //  m_labelTextField.setText(m_ds.getLabel());
+            ed.undoChanges();
         }
     }
 
@@ -315,5 +361,10 @@ public class DatastreamPane
             m_ds=ds;
             add(new JButton(ds.getVersionID()));
         }
+
+        public Datastream getDatastream() {
+            return m_ds;
+        }
+
     }
 }

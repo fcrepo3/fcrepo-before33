@@ -1,0 +1,130 @@
+package fedora.client.objecteditor;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.JTextComponent;
+
+/**
+ * A general-purpose text editor/viewer with XML pretty-printing.
+ */
+public class TextContentEditor
+        extends ContentEditor 
+        implements DocumentListener {
+
+    /** This class handles all the common text MIME types by default. */
+    public static String[] s_types=new String[] {
+            "text/xml", "text/plain", "text/html", "text/css", "text/html", 
+            "text/sgml", "text/tab-separated-values", 
+            "text/xml-external-parsed-entity" };
+
+    protected boolean m_dirty;
+    protected ActionListener m_dataChangeListener;
+    protected JTextComponent m_editor;
+    protected JScrollPane m_component;
+    protected boolean m_xml=false;
+    protected String m_origContent;
+
+    private static boolean s_registered=false;
+
+    public TextContentEditor() {
+        if (!s_registered) {
+            ContentHandlerFactory.register(this);
+            s_registered=true;
+        }
+    }
+
+    public String[] getTypes() {
+        return s_types;
+    }
+
+    public void init(String type, InputStream data, boolean viewOnly) 
+            throws IOException {
+        if (type.endsWith("xml")) {
+            m_xml=true;
+        }
+        m_editor=new JTextArea();
+        m_editor.setFont(new Font("monospaced", Font.PLAIN, 12));
+        setContent(data);
+        m_editor.setEditable(!viewOnly);
+        m_component=new JScrollPane(m_editor);
+    }
+
+    public void setContent(InputStream data) 
+            throws IOException {
+        // get a string from the inputstream, assume it's UTF-8
+        if (m_xml) {
+            System.out.println("FIXME: Because this is XML, it should be pretty-printed into the JTextArea");
+        }
+        StringBuffer out=new StringBuffer();
+        BufferedReader in=new BufferedReader(new InputStreamReader(data));
+        String thisLine;
+        while ((thisLine=in.readLine())!=null) {
+            out.append(thisLine + "\n");
+        }
+        in.close();
+        m_origContent=out.toString();
+        m_editor.setText(m_origContent);
+        m_editor.setCaretPosition(0);
+    }
+
+    public JComponent getComponent() {
+        return m_component;
+    }
+
+    public void changesSaved() {
+        m_origContent=m_editor.getText();
+        dataChanged();
+    }
+
+    public void undoChanges() {
+        m_editor.setText(m_origContent);
+        m_editor.setCaretPosition(0);
+        dataChanged();
+    }
+
+    public boolean isDirty() {
+        return (!m_origContent.equals(m_editor.getText()));
+    }
+
+    public void setContentChangeListener(ActionListener listener) {
+        m_dataChangeListener=listener;
+        m_editor.getDocument().addDocumentListener(this);
+    }
+
+    public InputStream getContent() {
+        try {
+            return new ByteArrayInputStream(m_editor.getText().getBytes("UTF-8"));
+        } catch (Exception e) { return null; } // never happens
+    }
+
+    // Forward DocumentListener's events to the passed-in ActionListener
+    public void changedUpdate(DocumentEvent e) {
+        dataChanged();
+    }
+
+    public void insertUpdate(DocumentEvent e) {
+        dataChanged();
+    }
+
+    public void removeUpdate(DocumentEvent e) {
+        dataChanged();
+    }
+
+    private void dataChanged() {
+        if (m_dataChangeListener!=null) 
+            m_dataChangeListener.actionPerformed(new ActionEvent(this, 0, "dataChanged"));
+    }
+
+}
