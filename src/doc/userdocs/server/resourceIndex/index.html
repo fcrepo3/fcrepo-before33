@@ -118,30 +118,28 @@ their relationship datastreams.</p>
 behavior definition implemented, behavior mechanism used, creation date, state, 
 and mime-type.</p>
 
-<img src="images/system-basic.png" height="300" width="460" alt="" />
+<p>In the figure below, the graph (abbreviated for clarity) represents three 
+objects in the repository. <code>demo:SmileyStuff</code> uses the behavior 
+mechanism <code>demo:dualResImageCollection</code>, which in turn implements the 
+behavior definition <code>demo:Collection</code>.</p>
+
+<img src="images/system-basic.png" height="300" width="460" alt="System Relationships" />
 
 <p>Dublic Core statement, as shown in the figure below, are automatically 
 extracted from an object's DC datastream and inserted into the Resource Index.
 datastream, as shown in the figure below: </p>
-<img src="images/system-dc.png" height="183" width="600" alt="" />
+<img src="images/system-dc.png" height="183" width="600" alt="DC properties" />
 
 </div>
 
 <div class="subsect">
 <h3><a name="impl.user">B. User-defined Relationships</a></h3>
-
-Please consult <a href="../../digitalobjects/introRelsExt.html">Fedora Metadata 
-for Object-to-Object Relationships</a> for more information. 
-<div class="boxed">
-    
+<p>The Resource Index will automatically index object-to-object relationships 
+defined in the RELS-EXT datastream. Please consult 
+<a href="../../digitalobjects/introRelsExt.html">Fedora Metadata for 
+Object-to-Object Relationships</a> for more information.</p> 
 </div>
-</div>
-What it does, Kowari, etc.
 
-indexing
-RELS-EXT
-object properties
-DC
 </div>
 
 <div class="sect">
@@ -150,11 +148,13 @@ DC
 the Fedora repository to ensure consistency. 
 For example, turning the Resource Index Module off and on again will result in 
 an inconsistent state, as the Resource Index will know nothing about the digital 
-objects created or modified while the module was not loaded. In general, the 
-only safe configuration changes to make on a running repository are limited to 
-the performance-related pool, buffer and flush parameters. In all cases, 
-configuration changes require a restart of the Fedora server before taking 
-effect.</p>
+objects created or modified while the module was not loaded. Similarly, enabling 
+full-text indexing [<a href="#ref.fullText">Full-Text</a>] after the repository 
+has already been populated will only add new objects to the full-text model. In 
+general, the only safe configuration changes to make on a running repository are 
+limited to the performance-related pool, buffer and flush parameters. In all 
+cases, configuration changes require a restart of the Fedora server before 
+taking effect.</p>
 
 <p>A utility to manage configuration changes that will not require a full dump-
 and-load of the repository is planned for the next release of Fedora.</p>
@@ -364,8 +364,11 @@ repository.</p>
                     </li>
                     <li>autoTextIndex
                         <div class="description">
-                            Whether to propogate adds/deletes to a fulltext 
-                            model automatically.
+                            Whether to propagate adds/deletes to a full-text 
+                            [<a href="#ref.fullText">Full-Text</a>] model 
+                            automatically. While a very useful feature, enabling 
+                            full-text indexing adds significantly to object 
+                            ingest times.
                             If true, the text model will be named modelName-fullText. 
                             Note that if this is true and autoCreate is true, 
                             the text model will also be created if it doesn't 
@@ -521,6 +524,9 @@ repository.</p>
         <dd><a href="http://www.arxiv.org/pdf/cs.DL/0501012">Fedora: An 
             Architecture for Complex Objects and their Relationships</a>, Carl 
             Lagoze, Sandy Payette, Edwin Shin, and Chris Wilper, 2004.</dd>
+        
+        <dt><a name="ref.fullText">[Full-Text]</a></dt>
+        <dd><a href="http://www.kowari.org/257.htm">Kowari Full-Text Models</a></dd>
         
         <dt><a name="ref.rels-ext">[RELS-EXT]</a></dt>
         <dd><a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora Relationship Ontology</a></dd>
