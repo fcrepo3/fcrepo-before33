@@ -289,7 +289,7 @@ public class BMechBuilder extends JInternalFrame
 		{
 		  if (tabs[i].getName().equalsIgnoreCase("GeneralTab"))
 		  {
-		  	  System.out.println("updateBMechTemplate: GeneralTab");
+		  	  //System.out.println("updateBMechTemplate: GeneralTab");
 			  GeneralPane gp = (GeneralPane)tabs[i];
 			  if (gp.rb_chosen.equalsIgnoreCase("retainPID"))
 			  {
@@ -306,14 +306,14 @@ public class BMechBuilder extends JInternalFrame
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("ProfileTab"))
 		  {
-			System.out.println("updateBMechTemplate: ProfileTab");
+			//System.out.println("updateBMechTemplate: ProfileTab");
 			  // set the datastream input rules
 			  ServiceProfilePane spp = (ServiceProfilePane)tabs[i];
 			  newBMech.setServiceProfile(spp.getServiceProfile());
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("MethodsTab"))
 		  {
-			System.out.println("updateBMechTemplate: MethodsTab");
+			//System.out.println("updateBMechTemplate: MethodsTab");
 			  MethodsPane mp = (MethodsPane)tabs[i];
 			  newBMech.setHasBaseURL(mp.hasBaseURL());
 			  if (mp.hasBaseURL())
@@ -358,14 +358,14 @@ public class BMechBuilder extends JInternalFrame
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DSInputTab"))
 		  {
-			System.out.println("updateBMechTemplate: DSInputTab");
+			//System.out.println("updateBMechTemplate: DSInputTab");
 			  // set the datastream input rules
 			  DatastreamInputPane dsp = (DatastreamInputPane)tabs[i];
 			  newBMech.setDSInputSpec(dsp.getDSInputRules());
 		  }
 		  else if (tabs[i].getName().equalsIgnoreCase("DocumentsTab"))
 		  {
-			System.out.println("updateBMechTemplate: DocumentsTab");
+			//System.out.println("updateBMechTemplate: DocumentsTab");
 			  DocumentsPane docp = (DocumentsPane)tabs[i];
 			  newBMech.setDocDatastreams(docp.getDocDatastreams());
 		  }
