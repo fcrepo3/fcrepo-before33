@@ -49,6 +49,11 @@ import fedora.client.export.AutoExporter;
 import fedora.client.ingest.AutoIngestor;
 import fedora.client.purge.AutoPurger;
 
+// wdn >
+import fedora.client.BatchBuildGUI;
+import fedora.client.BatchIngestGUI;
+// < wdn
+
 public class Administrator extends JFrame {
 
     private static MDIDesktopPane s_desktop;
@@ -285,7 +290,26 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             }
         });
         toolsMenu.add(toolsAccess);
-        
+	
+	//wdn >
+        JMenuItem toolsBatchBuild=new JMenuItem("Build Batch"/*, KeyEvent.VK_A*/);
+        toolsBatchBuild.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBatchBuildConsole();
+            }
+        });
+        toolsMenu.add(toolsBatchBuild);
+	
+        JMenuItem toolsBatchIngest=new JMenuItem("Ingest Batch"/*, KeyEvent.VK_A*/);
+        toolsBatchIngest.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                createBatchIngestConsole();
+            }
+        });
+        toolsMenu.add(toolsBatchIngest);
+	
+        // < wdn
+	
         menuBar.add(toolsMenu);
         
         
@@ -483,6 +507,25 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             frame.setSelected(true);
         } catch (java.beans.PropertyVetoException e) {}
     }
+    
+    // wdn >
+    protected void createBatchBuildConsole() {
+        BatchBuildGUI frame=new BatchBuildGUI(this);
+        frame.setVisible(true);
+        s_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }    
+    protected void createBatchIngestConsole() {
+        BatchIngestGUI frame=new BatchIngestGUI(this);
+        frame.setVisible(true);
+        s_desktop.add(frame);
+        try {
+            frame.setSelected(true);
+        } catch (java.beans.PropertyVetoException e) {}
+    }        
+    // < wdn
     
     public Point getCenteredPos(int xSize, int ySize) {
         Dimension screenSize=getToolkit().getScreenSize();

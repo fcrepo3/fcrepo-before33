@@ -1,0 +1,239 @@
+package fedora.client;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Calendar;
+import fedora.client.Administrator;
+import java.io.File;
+import javax.swing.JFileChooser;
+import fedora.client.batch.BatchTool;
+import java.util.Properties;
+import java.io.FileInputStream;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.FontMetrics;
+import javax.swing.Box;
+import javax.swing.JFrame;
+import java.awt.Component;
+import javax.swing.JComponent;
+
+public class BatchBuildGUI
+        extends JInternalFrame {
+        
+        private static File s_lastDir;	
+	private JTextField m_templateField=new JTextField("*", 10);
+	private JTextField m_specsField=new JTextField("*", 10);
+	private JTextField m_objectsField=new JTextField("*", 10);	
+    
+    
+	private Dimension unitDimension = null;    
+	private Dimension browseMin = null;    
+	private Dimension browsePref = null;
+	private Dimension browseMax = null;
+	private Dimension textMin = null;
+	private Dimension textPref = null;
+	private Dimension textMax = null;
+	private Dimension okMin = null;    
+	private Dimension okPref = null;
+	private Dimension okMax = null;	
+	
+    public BatchBuildGUI(JFrame parent) {
+        super("Batch Build",
+              true, //resizable
+              true, //closable
+              true, //maximizable
+              true);//iconifiable
+
+        JButton btn=new JButton("Build this batch");
+        btn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                buildBatch();
+            }
+        });
+        JPanel entryPanel=new JPanel();
+        entryPanel.setLayout(new BorderLayout());
+        entryPanel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
+        entryPanel.add(new JLabel("Build Criteria"), BorderLayout.NORTH);
+        JPanel labelPanel=new JPanel();
+        labelPanel.setLayout(new GridLayout(0, 3));
+
+	Graphics graphicsTemp = parent.getGraphics();
+	FontMetrics fmTemp = graphicsTemp.getFontMetrics();
+	int maxWidth = 0; {
+		int[] temp = fmTemp.getWidths();
+		for (int i = 0; i < temp.length; i++) {
+			if (temp[i] > maxWidth) {
+				maxWidth = temp[i];
+			}
+		}
+	}
+	unitDimension = new Dimension((new Float(1.5 * maxWidth)).intValue(),fmTemp.getHeight());
+	browseMin = new Dimension(9*unitDimension.width,unitDimension.height);		
+	browseMax = new Dimension(2 * browseMin.width,2 * browseMin.height);
+	browsePref = browseMin;
+	
+	textMin = new Dimension(22*unitDimension.width,unitDimension.height);	
+	textMax = new Dimension(2 * textMin.width,2 * textMin.height);
+	textPref = textMin;
+	
+	okMin = new Dimension(9*unitDimension.width,unitDimension.height);		
+	okMax = new Dimension((new Float(1.5 * okMin.width)).intValue() , (new Float(1.5 * okMin.height)).intValue());
+	okPref = okMax;
+	
+	
+        labelPanel.add(new JLabel("METS template (input file)"));
+	labelPanel.add(sized (m_templateField, textMin, textPref, textMax));
+
+        JButton templateBtn=new JButton("browse...");
+        templateBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                templateAction();
+            }
+        });
+	labelPanel.add(sized (templateBtn, browseMin, browsePref, browseMax));
+	
+        labelPanel.add(new JLabel("XML specs (input directory)"));
+	labelPanel.add(sized (m_specsField, textMin, textPref, textMax));	
+	
+        JButton specsBtn=new JButton("browse...");
+        specsBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                specsAction();
+            }
+        });
+	labelPanel.add(sized (specsBtn, browseMin, browsePref, browseMax));
+
+        labelPanel.add(new JLabel("METS objects (output directory)"));
+	labelPanel.add(sized (m_objectsField, textMin, textPref, textMax));	
+	
+        JButton objectsBtn=new JButton("browse...");
+        objectsBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                objectsAction();
+            }
+        });
+	labelPanel.add(sized (objectsBtn, browseMin, browsePref, browseMax));
+
+        entryPanel.add(labelPanel, BorderLayout.WEST);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(entryPanel, BorderLayout.CENTER);
+        getContentPane().add(sized (btn, okMin, okPref, okMax, true), BorderLayout.SOUTH);
+	
+	
+        setFrameIcon(new ImageIcon(this.getClass().getClassLoader().getResource("images/standard/general/New16.gif")));
+
+        setSize(400,400); 
+
+    }
+
+    private final void sizeIt (JComponent jc, Dimension min, Dimension pref, Dimension max) {
+	jc.setMinimumSize(min);
+	jc.setPreferredSize(pref);
+	jc.setMaximumSize(max);
+    }    
+    
+    private final Box sized (JComponent jc, Dimension min, Dimension pref, Dimension max, boolean centered) {
+	sizeIt(jc,min,pref,max);
+	Box box = Box.createHorizontalBox();	
+	if (centered) {
+		box.add(Box.createGlue());
+	}
+	box.add(jc);
+	if (centered) {
+		box.add(Box.createGlue());
+	}	
+	return box;	    
+    } 
+    private final Box sized (JComponent jc, Dimension min, Dimension pref, Dimension max) {
+	return sized (jc, min, pref, max, false);
+    }         
+    
+    
+    private static final Properties nullProperties = new Properties();
+    public void buildBatch() {
+	try {
+        //String templatePattern=null;
+        if (!m_templateField.getText().equals("*")
+		&& !m_specsField.getText().equals("*")
+		&& !m_objectsField.getText().equals("*")		
+	) {
+	    Properties properties; {
+		    Properties defaults = new Properties(); {
+			    String defaultsPath = System.getProperty("fedora.home") + "\\..\\batch\\default.properties";
+			    defaults.load(new FileInputStream(defaultsPath));
+		    }
+		    properties = new Properties(defaults);
+	    }
+	    properties.setProperty("merge-objects","yes");
+	    properties.setProperty("template",m_templateField.getText());
+	    properties.setProperty("specifics",m_specsField.getText());
+	    properties.setProperty("objects",m_objectsField.getText());	    
+	 
+	    BatchTool batchTool = new BatchTool(properties,nullProperties,nullProperties);
+	    batchTool.prep();
+	    batchTool.process();	    
+        }
+	} catch (Exception e) {
+	}
+    }
+    
+    protected File selectFile (File lastDir, boolean directoriesOnly) throws Exception {
+	    File selection = null; 
+	    JFileChooser browse;
+            if (lastDir==null) {
+                browse=new JFileChooser();
+            } else {
+                browse=new JFileChooser(lastDir);
+            }
+	    if (directoriesOnly) {
+		    browse.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    }
+            int returnVal = browse.showOpenDialog(this);
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+                selection = browse.getSelectedFile();		    
+                s_lastDir=selection.getParentFile(); // remember the dir for next time
+	    }
+	    return selection;
+    }
+    
+    protected void templateAction () {
+	try {
+		   File temp = selectFile(s_lastDir,false);
+		   if (temp != null) {
+			   m_templateField.setText(temp.getPath());
+		   }
+	} catch (Exception e) {
+			   m_templateField.setText("");
+	}
+    }    
+    protected void specsAction () {
+	try {
+		   File temp = selectFile(s_lastDir,true);
+		   if (temp != null) {
+			   m_specsField.setText(temp.getPath());
+		   }
+	} catch (Exception e) {
+			   m_specsField.setText("");
+	}
+    }   
+    protected void objectsAction () {
+	try {
+		   File temp = selectFile(s_lastDir,true);
+		   if (temp != null) {
+			   m_objectsField.setText(temp.getPath());
+		   }
+	} catch (Exception e) {
+			   m_objectsField.setText("");
+	}
+    }             
+
+}
