@@ -1,32 +1,35 @@
 package fedora.server.test;
 
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2002</p>
- * <p>Company: </p>
- * @author Ross Wayland
- * @version 1.0
- */
-
-
-import javax.xml.namespace.QName;
-import org.apache.axis.client.Service;
-import org.apache.axis.client.Call;
 import java.util.Calendar;
 import java.io.ByteArrayInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
 
+import org.apache.axis.client.Service;
+import org.apache.axis.client.Call;
+
+/**
+ * <p>Title: TestClientAPIA.java</p>
+ * <p>Description: Provides a client for testing the Fedora Access SOAP
+ * service.</p>
+ *
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Ross Wayland
+ * @version 1.0
+ */
 public class TestClientAPIA
 {
 
-  public TestClientAPIA()
-  {
-  }
-
+  /**
+   * <p> Tests the Fedora Access SOAP service by making calls to each of
+   * the supported services.</p>
+   *
+   * @param args An array of command line arguments.
+   */
   public static void main(String[] args)
   {
     String PID = "uva-lib:1225";
@@ -75,12 +78,6 @@ public class TestClientAPIA
       System.out.println("\n\n*****GETBEHAVIORMETHODS RESULTS*****");
       for (int i=0; i<methodDefs.length; i++)
       {
-        //System.out.println("httpBindingAddress :"+
-        //    methodDefs[i].getHttpBindingAddress());
-        //System.out.println("httpBindingOperationLocation :"+
-        //    methodDefs[i].getHttpBindingOperationLocation());
-        //System.out.println("httpBindingURL :"+
-        //    methodDefs[i].getHttpBindingURL());
         System.out.println("methodLabel :"+
             methodDefs[i].getMethodLabel());
         System.out.println("methodName :"+

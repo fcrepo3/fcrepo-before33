@@ -9,7 +9,6 @@ package fedora.server.errors;
  * @author Ross Wayland
  * @version 1.0
  */
-
 public class MethodNotFoundException extends StorageException
 {
 

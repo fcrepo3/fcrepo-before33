@@ -1,5 +1,8 @@
 package fedora.server.storage.types;
 
+import java.util.Date;
+import fedora.server.storage.types.MethodDef;
+
 /**
  * <p>Title: ObjectMethodsDef.java</p>
  * <p>Description: Data structure to contain all method definitions for
@@ -10,18 +13,10 @@ package fedora.server.storage.types;
  * @author Ross Wayland
  * @version 1.0
  */
-import java.util.Date;
-import fedora.server.storage.types.MethodDef;
-
 public class ObjectMethodsDef
 {
   public String PID = null;
   public String bDefPID = null;
   public String methodName = null;
   public Date asOfDate = null;
-
-  public ObjectMethodsDef()
-  {
-  }
-
 }

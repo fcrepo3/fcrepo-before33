@@ -1,21 +1,17 @@
 package fedora.server.storage.types;
 
 /**
- * <p>Title: </p>
- * <p>Description: </p>
+ * <p>Title: Property.java</p>
+ * <p>Description: A data structure for holding user-supplied method
+ * parameters consisting of name/value pairs.</p>
+ *
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: </p>
- * @author unascribed
+ * @author Ross Wayland
  * @version 1.0
  */
-
 public class Property
 {
-
   public String Name;
   public String Value;
-
-  public Property()
-  {
-  }
 }
