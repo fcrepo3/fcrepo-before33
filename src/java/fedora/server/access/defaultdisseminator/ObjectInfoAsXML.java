@@ -140,7 +140,7 @@ public class ObjectInfoAsXML
         out.append("</objectProfile>");
         return out.toString();
     }
-    
+
 	public String getItemIndex(String reposBaseURL, DOReader reader, Date versDateTime)
 			throws ServerException {
 		Datastream[] datastreams = reader.GetDatastreams(versDateTime, null);
@@ -512,7 +512,7 @@ public class ObjectInfoAsXML
         }
         return itemIndexURL;
     }
-    
+
 	private String getItemDissURL(String reposBaseURL, String PID,
 		String datastreamID, Date versDateTime)
 	{
@@ -521,18 +521,22 @@ public class ObjectInfoAsXML
 		if (versDateTime == null)
 		{
 		  itemDissURL = reposBaseURL + "/fedora/get/"
-			+ PID + '/' + datastreamID;
+			+ PID
+                        + "/"
+                        + datastreamID;
 		}
 		else
 		{
 			itemDissURL = reposBaseURL + "/fedora/get/"
-			  + PID + "/fedora-system:3/getItem/"
-			  + DateUtility.convertDateToString(versDateTime)
-			  + "/?itemID=" + datastreamID;
+			  + PID
+                          + "/"
+                          + datastreamID
+                          + "/"
+			  + DateUtility.convertDateToString(versDateTime);
 		}
 		return itemDissURL;
 	}
-    
+
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
         SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");

@@ -248,6 +248,8 @@ public class DisseminationService
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
       throws ServerException
   {
+    long initStartTime = new Date().getTime();
+    long startTime = new Date().getTime();
     String protocolType = null;
     DisseminationBindingInfo dissBindInfo = null;
     String dissURL = null;
@@ -518,7 +520,7 @@ public class DisseminationService
       s_server.logFinest("[DisseminationService] ProtocolType: "+protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
-        long startTime = new Date().getTime();
+
         if (isRedirect)
         {
           // The dsControlGroupType of Redirect("R") is a special control type
@@ -544,6 +546,10 @@ public class DisseminationService
             s_server.logFinest(message);
             throw new GeneralException(message);
           }
+          long stopTime = new Date().getTime();
+          long interval = stopTime - startTime;
+          s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
+              + interval + " milliseconds.");
           dissemination = new MIMETypedStream("application/fedora-redirect",is, null);
         } else
         {
@@ -551,11 +557,13 @@ public class DisseminationService
           // the MIMETypedStream resulting from the dissemination request.
           ExternalContentManager externalContentManager = (ExternalContentManager)
               s_server.getModule("fedora.server.storage.ExternalContentManager");
+          long stopTime = new Date().getTime();
+          long interval = stopTime - startTime;
+          s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
+              + interval + " milliseconds.");
           if (fedora.server.Debug.DEBUG) System.out.println("URL: "+dissURL);
           dissemination = externalContentManager.getExternalContent(dissURL);
         }
-        long stopTime = new Date().getTime();
-        long interval = stopTime - startTime;
 
       } else if (protocolType.equalsIgnoreCase("soap"))
       {
@@ -765,8 +773,8 @@ public class DisseminationService
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
           if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
           dsLocation = "http://"+fedoraServerHost+":"+fedoraServerPort
-              +"/fedora/get/"+s[0]+"/fedora-system:3/getItem/"
-              +DateUtility.convertDateToString(d.DSCreateDT)+"?itemID="+s[1];
+              +"/fedora/get/"+s[0]+"/"+s[1]+"/"
+              +DateUtility.convertDateToString(d.DSCreateDT);
       } else
       {
         String message = "[DisseminationService] An error has occurred. "
