@@ -64,7 +64,37 @@ public class Ingest {
                     }
                 }
             } else if (kind==ONE_FROM_REPOS) {
+                SourceRepoDialog sdlg=new SourceRepoDialog();
+                if (sdlg.getAPIA()!=null) {
+                    String pid=JOptionPane.showInputDialog("Enter the PID of the object to ingest.");
+                    if (pid!=null && !pid.equals("")) {
+                       pid=oneFromRepository(sdlg.getAPIM(), 
+                                             pid, 
+                                             Administrator.APIM,
+                                             null);
+                       JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                               "Ingest succeeded.  PID=" + pid);
+                    }
+                }
             } else if (kind==MULTI_FROM_REPOS) {
+                SourceRepoDialog sdlg=new SourceRepoDialog();
+                if (sdlg.getAPIA()!=null) {
+                    FTypeDialog dlg=new FTypeDialog();
+                    if (dlg.getResult()!=null) {
+                        // looks ok... do the request
+                        String fTypes=dlg.getResult();
+                        long st=System.currentTimeMillis();
+                        String[] pids=multiFromRepository(sdlg.getAPIA(),
+                                                          sdlg.getAPIM(),
+                                                          fTypes,
+                                                          Administrator.APIM,
+                                                          null);
+                        long et=System.currentTimeMillis();
+                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
+                            "Ingest of " + pids.length + " objects finished.\n"
+                            + "Time elapsed: " + getDuration(et-st));  
+                    }
+                }
             }
         } catch (Exception e) {
             String msg=e.getMessage();
@@ -224,6 +254,15 @@ public class Ingest {
                                                         sourcePort,
                                                         sourceUser,
                                                         sourcePass);
+        return multiFromRepository(sourceAccess, sourceRepos, fTypes, targetRepos, logMessage);
+   }
+   
+   public static String[] multiFromRepository(FedoraAPIA sourceAccess,
+                                              FedoraAPIM sourceRepos,
+                                              String fTypes,
+                                              FedoraAPIM targetRepos,
+                                              String logMessage)
+            throws Exception {
         String tps=fTypes.toUpperCase();
         Set pidSet=new HashSet();
         if (tps.indexOf("D")!=-1) {
