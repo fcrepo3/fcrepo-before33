@@ -12,6 +12,7 @@ package fedora.server.storage.service;
 import fedora.server.errors.*;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
+import java.lang.Boolean;
 import java.io.InputStream;
 import java.util.Vector;
 import java.util.Hashtable;
@@ -162,6 +163,14 @@ class MmapParser extends DefaultHandler
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = attrs.getValue("passBy");
         methodMapParm.parmType = MethodParmDef.DATASTREAM_INPUT;
+        if (attrs.getValue("required") == null)
+        {
+          methodMapParm.parmRequired = true;
+        }
+        else
+        {
+          methodMapParm.parmRequired = new Boolean(attrs.getValue("required")).booleanValue();
+        }
         methodMapParm.parmDefaultValue = null;
         methodMapParm.parmDomainValues = new String[0];
       }
@@ -173,6 +182,14 @@ class MmapParser extends DefaultHandler
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = MethodParmDef.PASS_BY_VALUE;
         methodMapParm.parmType = MethodParmDef.DEFAULT_INPUT;
+        if (attrs.getValue("required") == null)
+        {
+          methodMapParm.parmRequired = true;
+        }
+        else
+        {
+          methodMapParm.parmRequired = new Boolean(attrs.getValue("required")).booleanValue();
+        }
         methodMapParm.parmDefaultValue = attrs.getValue("defaultValue");
         methodMapParm.parmDomainValues = new String[0];
       }
@@ -185,6 +202,14 @@ class MmapParser extends DefaultHandler
         methodMapParm.parmLabel = "fix me";
         methodMapParm.parmPassBy = MethodParmDef.PASS_BY_VALUE;
         methodMapParm.parmType = MethodParmDef.USER_INPUT;
+        if (attrs.getValue("required") == null)
+        {
+          methodMapParm.parmRequired = true;
+        }
+        else
+        {
+          methodMapParm.parmRequired = new Boolean(attrs.getValue("required")).booleanValue();
+        }
         methodMapParm.parmDefaultValue = attrs.getValue("defaultValue");
       }
       else if (inUserInputParm)
