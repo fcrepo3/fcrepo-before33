@@ -18,5 +18,6 @@ public class ObjectMethodsDef
   public String PID = null;
   public String bDefPID = null;
   public String methodName = null;
+  public MethodParmDef[] methodParmDefs = null;
   public Date asOfDate = null;
 }

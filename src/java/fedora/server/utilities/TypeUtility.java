@@ -238,6 +238,7 @@ public abstract class TypeUtility
       genMethodParmDef.setParmLabel(methodParmDef.parmLabel);
       genMethodParmDef.setParmDefaultValue(methodParmDef.parmDefaultValue);
       genMethodParmDef.setParmRequired(methodParmDef.parmRequired);
+      genMethodParmDef.setParmType(methodParmDef.parmType);
       return genMethodParmDef;
 
     } else
@@ -297,7 +298,9 @@ public abstract class TypeUtility
       methodParmDef.parmName = genMethodParmDef.getParmName();
       methodParmDef.parmLabel = genMethodParmDef.getParmLabel();
       methodParmDef.parmDefaultValue = genMethodParmDef.getParmDefaultValue();
+      methodParmDef.parmDomainValues = genMethodParmDef.getParmDomainValues();
       methodParmDef.parmRequired = genMethodParmDef.isParmRequired();
+      methodParmDef.parmType = genMethodParmDef.getParmType();
       return methodParmDef;
 
     } else

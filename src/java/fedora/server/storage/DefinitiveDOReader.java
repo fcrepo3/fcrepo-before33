@@ -560,6 +560,53 @@ public class DefinitiveDOReader implements DOReader
       return(instream);
     }
 
+    /**
+     * Gets list of method definitions that are available on a particular
+     * Disseminator. This is done by reflecting on the Disseminator
+     * that subscribes to the Behavior Definition that is specified in the
+     * method input parameter.  Then, by reflecting on that Disseminator,
+     * the PID of the Behavior Mechanism object can be obtained.
+     * Finally, method implementation information can be found in the
+     * Behavior Mechanism object to which that Disseminator refers.
+     *
+     * @param bDefPID The PID of a Behavior Definition to which the object subscribes
+     * @param versDateTime The date-time stamp to get appropriate version
+     * @throws GeneralException If there was any misc exception that we want to
+     *         catch and re-throw as a Fedora exception. Extends ServerException.
+     */
+    public MethodParmDef[] GetBMechMethodParms(String bDefPID,
+        String methodName, Date versDateTime)
+        throws GeneralException, ServerException
+    {
+      // TODO! dateTime filter not implemented in this release!!
+
+      // FIXIT! Put some code in to report default methods of the internal fedora
+      // bootstrap mechanism which is not stored as digital object!  The bootstrap
+      // mechanism enables a client to get disseminations of the actual contents
+      // of a behavior mechanism object (e.g., get WSDL, get programmer guides).
+      if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
+      {
+        System.out.println("GetBMechMethodParms: Suppressing report of methods for bootstrap mechanism!");
+        return null;
+      }
+
+      if (debug)
+      {
+        System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
+      }
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
+      MethodParmDef[] methodParms = null;
+      for (int i=0; i<methods.length; i++)
+      {
+        if (methods[i].methodName.equalsIgnoreCase(methodName))
+        {
+          methodParms = methods[i].methodParms;
+        }
+      }
+      return(methodParms);
+    }
+
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws GeneralException
     {

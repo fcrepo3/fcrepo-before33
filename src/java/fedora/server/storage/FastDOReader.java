@@ -18,6 +18,8 @@ import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageException;
+import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.Disseminator;
@@ -214,6 +216,9 @@ public class FastDOReader implements DisseminatingDOReader
   {
     Vector queryResults = new Vector();
     String[] behaviorDefs = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -233,12 +238,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetBehaviorDefsQuery: " + query);
-      ResultSet rs = null;
       String results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -257,15 +261,29 @@ public class FastDOReader implements DisseminatingDOReader
           behaviorDefs[rowCount] = (String)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
+
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -299,12 +317,15 @@ public class FastDOReader implements DisseminatingDOReader
    * @throws GeneralException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
-  public MethodParmDef[] GetBMechMethodParm(String bDefPID, String methodName,
+  public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
       Date versDateTime) throws GeneralException
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
     Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
 
     if (isFoundInFastStore && versDateTime == null)
     {
@@ -314,8 +335,10 @@ public class FastDOReader implements DisseminatingDOReader
           "SELECT DISTINCT "
           + "PARM_Name,"
           + "PARM_Default_Value,"
+          + "PARM_Domain_Values,"
           + "PARM_Required_Flag,"
-          + "PARM_Label "
+          + "PARM_Label,"
+          + "PARM_Type "
           + " FROM "
           + "DigitalObject,"
           + "BehaviorDefinition,"
@@ -337,10 +360,10 @@ public class FastDOReader implements DisseminatingDOReader
       if(debug) s_server.logFinest("GetBMechMethodParmQuery=" + query);
       try
       {
-        Connection connection = connectionPool.getConnection();
+        connection = connectionPool.getConnection();
         if(debug) s_server.logFinest("connectionPool = " + connectionPool);
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(query);
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
 
@@ -355,9 +378,20 @@ public class FastDOReader implements DisseminatingDOReader
           }
           methodParm.parmName = results[0];
           methodParm.parmDefaultValue = results[1];
-          Boolean B = new Boolean(results[2]);
+          methodParm.parmDomainValues = results[2].split(",");
+          Boolean B = new Boolean(results[3]);
           methodParm.parmRequired = B.booleanValue();
-          methodParm.parmLabel = results[3];
+          methodParm.parmLabel = results[4];
+          methodParm.parmType = results[5];
+            s_server.logFinest("methodParms: " + methodParm.parmName
+                + "label: " + methodParm.parmLabel
+                + "default: " + methodParm.parmDefaultValue
+                + "required: " + methodParm.parmRequired
+                + "type: " + methodParm.parmType);
+            for (int j=0; j<methodParm.parmDomainValues.length; j++)
+            {
+              s_server.logFinest("domain: " + methodParm.parmDomainValues[j]);
+            }
           queryResults.addElement(methodParm);
         }
         methodParms = new MethodParmDef[queryResults.size()];
@@ -367,15 +401,28 @@ public class FastDOReader implements DisseminatingDOReader
           methodParms[rowCount] = (MethodParmDef)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -385,11 +432,150 @@ public class FastDOReader implements DisseminatingDOReader
       {
         if (doReader == null)
         {
-          doReader = m_manager.getReader(m_context, bDefPID);
+          doReader = m_manager.getReader(m_context, PID);
         }
+        methodParms = doReader.GetBMechMethodParms(bDefPID, methodName,
+            versDateTime);
+      } catch (Throwable th)
+      {
+        throw new GeneralException("Definitive reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
+      }
+    }
+    return methodParms;
+  }
 
-        // FIXME!! - code to get method parameters directly from the
-        // XML objects NOT implemented yet.
+  /**
+   * <p>Gets method parameters associated with the specified method name.</p>
+   *
+   * @param bDefPID The persistent identifer of Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param versDateTime The versioning datetime stamp.
+   * @return An array of method parameter definitions.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
+   */
+  public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID, String methodName,
+      Date versDateTime) throws GeneralException
+  {
+    MethodParmDef[] methodParms = null;
+    MethodParmDef methodParm = null;
+    Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
+
+    if (isFoundInFastStore && versDateTime == null)
+    {
+      // Requested object exists in Fast storage area and is NOT versioned;
+      // query relational database
+      String query =
+          "SELECT DISTINCT "
+          + "DEFPARM_Name,"
+          + "DEFPARM_Default_Value,"
+          + "DEFPARM_Domain_Values,"
+          + "DEFPARM_Required_Flag,"
+          + "DEFPARM_Label,"
+          + "DEFPARM_Type "
+          + " FROM "
+          + "DigitalObject,"
+          + "BehaviorDefinition,"
+          + "BehaviorMechanism,"
+          + "MechanismImpl,"
+          + "Method,"
+          + "MechDefaultParameter "
+          + " WHERE "
+          + "BehaviorMechanism.BMECH_DBID=MechDefaultParameter.BMECH_DBID AND "
+          //+ "Method.BDEF_DBID=MechDefaultParameter.BDEF_DBID AND "
+          + "Method.METH_DBID=MechDefaultParameter.METH_DBID AND "
+          + "BehaviorMechanism.BDEF_DBID=Method.BDEF_DBID AND "
+          + "MechanismImpl.METH_DBID=Method.METH_DBID AND "
+          + "BehaviorMechanism.BDEF_DBID=BehaviorDefinition.BDEF_DBID AND "
+          + "DigitalObject.DO_PID=\'" + PID + "\' AND "
+          + "BehaviorDefinition.BDEF_PID='" + bDefPID + "' AND "
+          + "Method.METH_Name='"  + methodName + "' ";
+
+      if(debug) s_server.logFinest("GetBMechDefaultMethodParmQuery=" + query);
+      try
+      {
+        connection = connectionPool.getConnection();
+        if(debug) s_server.logFinest("connectionPool = " + connectionPool);
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
+        ResultSetMetaData rsMeta = rs.getMetaData();
+        int cols = rsMeta.getColumnCount();
+
+        // Note: a row is returned for each method parameter
+        while (rs.next())
+        {
+          methodParm = new MethodParmDef();
+          String[] results = new String[cols];
+          for (int i=1; i<=cols; i++)
+          {
+            results[i-1] = rs.getString(i);
+          }
+          methodParm.parmName = results[0];
+          methodParm.parmDefaultValue = results[1];
+          methodParm.parmDomainValues = results[2].split(",");
+          Boolean B = new Boolean(results[3]);
+          methodParm.parmRequired = B.booleanValue();
+          methodParm.parmLabel = results[4];
+          methodParm.parmType = results[5];
+            System.out.println("methodParms: " + methodParm.parmName
+                + "label: " + methodParm.parmLabel
+                + "default: " + methodParm.parmDefaultValue
+                + "required: " + methodParm.parmRequired
+                + "type: " + methodParm.parmType);
+            for (int j=0; j<methodParm.parmDomainValues.length; j++)
+            {
+              System.out.println("domain: " + methodParm.parmDomainValues[j]);
+            }
+          queryResults.addElement(methodParm);
+        }
+        methodParms = new MethodParmDef[queryResults.size()];
+        int rowCount = 0;
+        for (Enumeration e = queryResults.elements(); e.hasMoreElements();)
+        {
+          methodParms[rowCount] = (MethodParmDef)e.nextElement();
+          rowCount++;
+        }
+      } catch (Throwable th)
+      {
+        throw new GeneralException("Fast reader returned error. The "
+                                   + "underlying error was a "
+                                   + th.getClass().getName() + "The message "
+                                   + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
+    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    {
+      // Requested object exists in Definitive storage area or is versioned;
+      // query Definitive storage area.
+      try
+      {
+        if (doReader == null)
+        {
+          doReader = m_manager.getReader(m_context, PID);
+        }
+        methodParms = doReader.GetBMechMethodParms(bDefPID, methodName,
+            versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("Definitive reader returned error. The "
@@ -428,6 +614,9 @@ public class FastDOReader implements DisseminatingDOReader
     MethodDef[] methodDefs = null;
     MethodDef methodDef = null;
     Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -459,12 +648,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetBMechMethodsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -480,7 +668,7 @@ public class FastDOReader implements DisseminatingDOReader
           methodDef.methodLabel = results[1];
           try
           {
-            methodDef.methodParms = this.GetBMechMethodParm(bDefPID,
+            methodDef.methodParms = this.GetBMechMethodParms(bDefPID,
                 methodDef.methodName, versDateTime);
           } catch (Throwable th)
           {
@@ -500,15 +688,28 @@ public class FastDOReader implements DisseminatingDOReader
           methodDefs[rowCount] = (MethodDef)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -586,6 +787,9 @@ public class FastDOReader implements DisseminatingDOReader
     Vector queryResults = new Vector();
     Datastream[] datastreams = null;
     Datastream datastream = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -604,12 +808,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDatastreamQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -633,9 +836,6 @@ public class FastDOReader implements DisseminatingDOReader
         {
           datastream = (Datastream)e.nextElement();
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         // Problem with the relational database or query
@@ -643,6 +843,22 @@ public class FastDOReader implements DisseminatingDOReader
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -680,6 +896,9 @@ public class FastDOReader implements DisseminatingDOReader
     Vector queryResults = new Vector();
     Datastream[] datastreamArray = null;
     Datastream datastream = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -697,12 +916,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDatastreamsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -726,15 +944,28 @@ public class FastDOReader implements DisseminatingDOReader
           datastreamArray[rowCount] = (Datastream)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -778,6 +1009,9 @@ public class FastDOReader implements DisseminatingDOReader
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
     Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -791,6 +1025,9 @@ public class FastDOReader implements DisseminatingDOReader
           + "MechanismImpl.MECHImpl_Operation_Location,"
           + "MechanismImpl.MECHImpl_Protocol_Type,"
           + "DataStreamBinding.DSBinding_DS_Location, "
+          + "DataStreamBinding.DSBinding_DS_Control_Group_Type, "
+          + "DataStreamBinding.DSBinding_DS_ID, "
+          + "DataStreamBinding.DSBinding_DS_Current_Version_ID, "
           + "DataStreamBindingSpec.DSBindingSpec_Name "
           + " FROM "
           + "DigitalObject,"
@@ -824,11 +1061,11 @@ public class FastDOReader implements DisseminatingDOReader
       try
       {
         // execute database query and retrieve results
-        Connection connection = connectionPool.getConnection();
+        connection = connectionPool.getConnection();
         if(debug) s_server.logFinest("DisseminationConnectionPool: "+
                                      connectionPool);
-        Statement statement = connection.createStatement();
-        ResultSet rs = statement.executeQuery(query);
+        statement = connection.createStatement();
+        rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         String[] results = null;
         int cols = rsMeta.getColumnCount();
@@ -846,11 +1083,14 @@ public class FastDOReader implements DisseminatingDOReader
           dissBindInfo.AddressLocation = results[3];
           dissBindInfo.OperationLocation = results[4];
           dissBindInfo.ProtocolType = results[5];
-          dissBindInfo.DSLocation = results[6];
-          dissBindInfo.DSBindKey = results[7];
+          dissBindInfo.dsLocation = results[6];
+          dissBindInfo.dsControlGroupType = results[7];
+          dissBindInfo.dsID = results[8];
+          dissBindInfo.dsVersionID = results[9];
+          dissBindInfo.DSBindKey = results[10];
           try
           {
-            dissBindInfo.methodParms = this.GetBMechMethodParm(results[1],
+            dissBindInfo.methodParms = this.GetBMechMethodParms(results[1],
                 results[2], versDateTime);
           } catch (GeneralException ge)
           {
@@ -867,15 +1107,28 @@ public class FastDOReader implements DisseminatingDOReader
                              e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -914,6 +1167,9 @@ public class FastDOReader implements DisseminatingDOReader
       throws GeneralException
   {
     Disseminator disseminator = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -941,12 +1197,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDisseminatorQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -963,15 +1218,28 @@ public class FastDOReader implements DisseminatingDOReader
           disseminator.bMechID = results[2];
           disseminator.dsBindMapID = results[3];
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -1009,6 +1277,9 @@ public class FastDOReader implements DisseminatingDOReader
     Disseminator[] disseminatorArray = null;
     Disseminator disseminator = null;
     Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore && versDateTime == null)
     {
       // Requested object exists in the Fast storage area and is NOT versioned;
@@ -1035,12 +1306,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("GetDisseminatorsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -1065,15 +1335,28 @@ public class FastDOReader implements DisseminatingDOReader
           disseminatorArray[rowCount] = (Disseminator)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
@@ -1156,6 +1439,9 @@ public class FastDOReader implements DisseminatingDOReader
     ObjectMethodsDef[] objectMethodsDefArray = null;
     ObjectMethodsDef objectMethodsDef = null;
     Vector queryResults = new Vector();
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
 
     if (isFoundInFastStore && versDateTime == null)
     {
@@ -1185,12 +1471,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("getObjectMethodsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -1214,16 +1499,29 @@ public class FastDOReader implements DisseminatingDOReader
           objectMethodsDefArray[rowCount] = (ObjectMethodsDef)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
      } catch (Throwable th)
      {
        throw new GeneralException("Fast reader returned error. The "
                                   + "underlying error was a "
                                   + th.getClass().getName() + "The message "
                                   + "was \"" + th.getMessage() + "\"");
-     }
+     } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
     } else if (isFoundInDefinitiveStore || versDateTime != null)
     {
       // Requested object exists in Definitive storage area or is versioned;
@@ -1357,6 +1655,9 @@ public class FastDOReader implements DisseminatingDOReader
     Vector queryResults = new Vector();
     String[] datastreamIDs = null;
     Datastream datastream = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -1372,12 +1673,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("ListDatastreamIDsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -1399,15 +1699,28 @@ public class FastDOReader implements DisseminatingDOReader
           datastreamIDs[rowCount] = (String)e.nextElement();
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1448,6 +1761,9 @@ public class FastDOReader implements DisseminatingDOReader
     Vector queryResults = new Vector();
     Disseminator disseminator = null;
     String[] disseminatorIDs = null;
+    Connection connection = null;
+    Statement statement = null;
+    ResultSet rs = null;
     if (isFoundInFastStore)
     {
       // Requested object exists in Fast storage area and is NOT versioned;
@@ -1465,12 +1781,11 @@ public class FastDOReader implements DisseminatingDOReader
           + "DigitalObject.DO_PID=\'" + PID + "\';";
 
       if (debug) s_server.logFinest("ListDisseminatorIDsQuery: " + query);
-      ResultSet rs = null;
       String[] results = null;
       try
       {
-        Connection connection = connectionPool.getConnection();
-        Statement statement = connection.createStatement();
+        connection = connectionPool.getConnection();
+        statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
         int cols = rsMeta.getColumnCount();
@@ -1493,15 +1808,28 @@ public class FastDOReader implements DisseminatingDOReader
           disseminatorIDs[rowCount] = disseminator.dissID;
           rowCount++;
         }
-        connectionPool.free(connection);
-        connection.close();
-        statement.close();
       } catch (Throwable th)
       {
         throw new GeneralException("Fast reader returned error. The "
                                    + "underlying error was a "
                                    + th.getClass().getName() + "The message "
                                    + "was \"" + th.getMessage() + "\"");
+      } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
       }
     } else if (isFoundInDefinitiveStore)
     {
@@ -1542,6 +1870,8 @@ public class FastDOReader implements DisseminatingDOReader
    */
   public String locatePID(String PID) throws GeneralException, ServerException
   {
+    Connection connection = null;
+    Statement statement = null;
     ResultSet rs = null;
     String  query =
         "SELECT "
@@ -1554,25 +1884,38 @@ public class FastDOReader implements DisseminatingDOReader
 
     try
     {
-      Connection connection = connectionPool.getConnection();
+      connection = connectionPool.getConnection();
       if(debug) s_server.logFinest("LocatePIDConnectionPool: "
                                    + connectionPool);
-      Statement statement = connection.createStatement();
+      statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
       {
         doLabel = rs.getString(1);
       }
-      connectionPool.free(connection);
-      connection.close();
-      statement.close();
     } catch (Throwable th)
     {
       throw new GeneralException("Fast reader returned error. The "
                                  + "underlying error was a "
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
-    }
+    } finally
+      {
+        if (connection != null)
+        {
+          try
+          {
+            rs.close();
+            statement.close();
+            connectionPool.free(connection);
+            connection.close();
+          } catch (SQLException sqle)
+          {
+            throw new GeneralException("Unexpected error from SQL "
+                + "database. The error was: " + sqle.getMessage());
+          }
+        }
+      }
     if (doLabel == null || doLabel.equalsIgnoreCase(""))
     {
       // Empty result means that the digital object could not be found in the

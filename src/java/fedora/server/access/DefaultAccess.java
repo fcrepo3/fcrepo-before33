@@ -5,11 +5,14 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
 import java.util.Map;
 
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
@@ -191,8 +194,35 @@ public class DefaultAccess extends Module implements Access
       Calendar asOfDateTime) throws ServerException
   {
     Date versDateTime = DateUtility.convertCalendarToDate(asOfDateTime);
+    Hashtable h_userParms = new Hashtable();
+    MIMETypedStream dissemination = null;
+    MethodParmDef[] defaultMethodParms = null;
     DisseminatingDOReader reader =
         m_manager.getDisseminatingReader(context, PID);
+
+    // Put any user-supplied method parameters into hash table
+    if (userParms != null)
+    {
+      for (int i=0; i<userParms.length; i++)
+      {
+        h_userParms.put(userParms[i].name, userParms[i].value);
+      }
+    }
+
+    // Validate user-supplied parameters
+    validateUserParms(context, PID, bDefPID, methodName,
+                      h_userParms, versDateTime);
+
+    // Add any default method parameters to validated user parm list
+    defaultMethodParms = reader.GetBMechDefaultMethodParms(bDefPID,
+        methodName, versDateTime);
+    for (int i=0; i<defaultMethodParms.length; i++)
+    {
+      System.out.println("addedName: "+defaultMethodParms[i].parmName);
+      System.out.println("addedValue: "+defaultMethodParms[i].parmDefaultValue);
+      h_userParms.put(defaultMethodParms[i].parmName,
+                      defaultMethodParms[i].parmDefaultValue);
+    }
 
     // Get dissemination binding info.
     DisseminationBindingInfo[] dissBindInfo =
@@ -200,8 +230,8 @@ public class DefaultAccess extends Module implements Access
 
     // Assemble and execute the dissemination request from the binding info.
     DisseminationService dissService = new DisseminationService();
-    MIMETypedStream dissemination =
-        dissService.assembleDissemination(userParms, dissBindInfo);
+    dissemination =
+        dissService.assembleDissemination(PID, h_userParms, dissBindInfo);
     return dissemination;
   }
 
@@ -226,5 +256,201 @@ public class DefaultAccess extends Module implements Access
     ObjectMethodsDef[] methodDefs =
         reader.getObjectMethods(PID, versDateTime);
     return methodDefs;
+  }
+
+  /**
+   * <p>Validates user-supplied method parameters against values
+   * in the corresponding Behavior Definition object. The method will validate
+   * for:</p>
+   * <ol>
+   * <li> Valid name - each name must match a valid method parameter name</li>
+   * <li> DefaultValue - any specified parameters with valid default values
+   * will have the default value substituted if the user-supplied value is null
+   * </li>
+   * <li> Required name - each required method parameter name must be present
+   * </ol>
+   *
+   * @param context The context of this request.
+   * @param PID The persistent identifier of the digital object.
+   * @param bDefPID The persistent identifier of the Behavior Definition object.
+   * @param methodName The name of the method.
+   * @param h_userParms A hashtable of user-supplied method parameter
+   *        name/value pairs.
+   * @param versDateTime The version datetime stamp of the digital object.
+   * @throws ServerException If any type of error occurred fulfilling the
+   *         request.
+   *
+   */
+  private void validateUserParms(Context context, String PID, String bDefPID,
+      String methodName, Hashtable h_userParms, Date versDateTime)
+      throws ServerException
+  {
+    DisseminatingDOReader fdor = null;
+    MethodParmDef[] methodParms = null;
+    MethodParmDef methodParm = null;
+    StringBuffer sb = new StringBuffer();
+    Hashtable h_validParms = new Hashtable();
+    boolean isValid = true;
+
+    DisseminatingDOReader reader =
+      m_manager.getDisseminatingReader(context, PID);
+    methodParms = reader.GetBMechMethodParms(bDefPID,
+        methodName, versDateTime);
+
+    // Put valid method parameters and their attributes into hashtable
+    if (methodParms != null)
+    {
+      for (int i=0; i<methodParms.length; i++)
+      {
+        methodParm = methodParms[i];
+        h_validParms.put(methodParm.parmName,methodParm);
+        System.out.println("methodParms[" + i + "]: " + methodParms[i].parmName
+            + "label: " + methodParms[i].parmLabel
+            + "default: " + methodParms[i].parmDefaultValue
+            + "required: " + methodParms[i].parmRequired
+            + "type: " + methodParms[i].parmType);
+        for (int j=0; j<methodParms[i].parmDomainValues.length; j++)
+        {
+          System.out.println("domain: " + methodParms[i].parmDomainValues[j]);
+        }
+      }
+    }
+
+    // Check if there are any user supplied parameters
+    if (!h_userParms.isEmpty())
+    {
+      // Iterate over each user supplied parameter name
+      Enumeration parmNames = h_userParms.keys();
+      while (parmNames.hasMoreElements())
+      {
+        String parmName = (String)parmNames.nextElement();
+        if (h_validParms.isEmpty())
+        {
+          // This is an error. There are no method parameters defined for
+          // this method and user parameters are specified in the
+          // dissemination request.
+          sb.append("The method parameter \"" + parmName
+                    + "\" is not valid for the method \""
+                    + methodName + "\"."
+                    + "The method \"" + methodName
+                    + "\" defines no method parameters.");
+          throw new InvalidUserParmException("[Invalid User Parameters] "
+              + sb.toString());
+        }
+        methodParm = (MethodParmDef)h_validParms.get(parmName);
+        if (methodParm != null && methodParm.parmName != null)
+        {
+          // Method has one or more parameters defined
+          if (methodParm.parmRequired)
+          {
+            // Method parm is required
+            if (h_userParms.get(methodParm.parmName) == null)
+            {
+              // This is a fatal error. A required method parameter does not
+              // appear in the list of user supplied parameters.
+              sb.append("The required parameter \""
+                  + methodParm.parmName + "\" was not found in the "
+                  + "user-supplied parameter list.");
+              isValid = false;
+            }
+          }
+
+          // Check for default value if user-supplied value is null or empty
+          String value = (String)h_userParms.get(methodParm.parmName);
+          if (value == null && value.equalsIgnoreCase(""))
+          {
+            // Value of user-supplied parameter is  null or empty
+            if(methodParm.parmDefaultValue != null)
+            {
+              // Default value is specified for this parameter.
+              // Substitute default value.
+              h_userParms.put(methodParm.parmName, methodParm.parmDefaultValue);
+              System.out.println("SET DEFAULT VALUE: "+
+                                 methodParm.parmDefaultValue);
+            } else
+            {
+              // This is a non-fatal error. There is no default specified
+              // for this parameter and the user has supplied no value for
+              // the parameter. The value of the empty string will be used
+              // as the value of the parameter.
+              this.getServer().logWarning("The method parameter \""
+                  + methodParm.parmName
+                  + "\" has no default value and no "
+                  + "value was specified by the user.  "
+                  + "The value of the empty string has "
+                  + "been assigned to this parameter.");
+            }
+          } else
+          {
+            // Value of user-supplied parameter contains a value.
+            // Validate the supplied value against the parmDomainValues list.
+            String[] parmDomainValues = methodParm.parmDomainValues;
+            if (!parmDomainValues[0].equalsIgnoreCase(""))
+            {
+              boolean isValidValue = false;
+              String userValue = (String)h_userParms.get(methodParm.parmName);
+              System.out.println("userValue: "+userValue);
+              for (int i=0; i<parmDomainValues.length; i++)
+              {
+                System.out.println("parmDomain: "+parmDomainValues[i]);
+                if (userValue.equalsIgnoreCase(parmDomainValues[i]))
+                {
+                  isValidValue = true;
+                }
+              }
+              if (!isValidValue)
+              {
+                // This is a fatal error. The value supplied for this method
+                // parameter does not match any of the values specified by
+                // this method.
+                sb.append("The method parameter \""
+                          + methodParm.parmName
+                          + "\" with a value of \""
+                          + (String)h_userParms.get(methodParm.parmName)
+                          + "\" is not allowed for the method \""
+                          + methodName + "\".");
+                isValid = false;
+              }
+            }
+          }
+        } else
+        {
+          // This is a fatal error. A user-supplied parameter name does
+          // not match any valid parameter names for this method.
+          sb.append("The method parameter \"" + parmName
+                    + "\" is not valid for the method \""
+                    + methodName + "\".");
+          isValid = false;
+        }
+      }
+    } else
+    {
+      // There were no user supplied parameters.
+      // Check if this method has any required parameters.
+      if (methodParms != null)
+      {
+        for (int i=0; i<methodParms.length; i++)
+        {
+          methodParm = methodParms[i];
+          if (methodParm.parmRequired)
+          {
+            // This is a fatal error. A required method parameter was not
+            // supplied.
+            sb.append("The method parameter \""
+                + methodParm.parmName
+                + "\" is required by the method \""
+                + methodName + "\".");
+            isValid = false;
+          }
+        }
+      }
+    }
+
+    if (!isValid)
+    {
+      throw new InvalidUserParmException("[Invalid User Parameter] "
+          + sb.toString());
+    }
+    return;
   }
 }

@@ -1,8 +1,9 @@
 package fedora.server.storage;
 
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
+import java.net.URLConnection;
 import java.net.URL;
 import java.util.Map;
 
@@ -88,7 +89,7 @@ public class DefaultExternalContentManager extends Module
       MIMETypedStream httpContent = null;
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       URL url = new URL(URL);
-      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+      URLConnection connection = (URLConnection)url.openConnection();
       String contentType = connection.getContentType();
       InputStream is = connection.getInputStream();
       int byteStream = 0;
@@ -96,13 +97,20 @@ public class DefaultExternalContentManager extends Module
       {
         baos.write(byteStream);
       }
+      System.err.println("beforeextContentManagerURL: "+URL);
+      System.err.println("beforeextContentManagerMIME: "+contentType);
+      if(contentType == null) contentType=connection.guessContentTypeFromStream(connection.getInputStream());
+      System.err.println("afterextContentManagerURL: "+URL);
+      System.err.println("afterextContentManagerMIME: "+contentType);
       httpContent = new MIMETypedStream(contentType, baos.toByteArray());
       return(httpContent);
 
     } catch (Throwable th)
     {
-      throw new HttpServiceNotFoundException("ExternalContentManager ERROR: "
-          + th.getClass().getName() + th.getMessage());
+      throw new HttpServiceNotFoundException("ExternalContentManager "
+          + "returned an error.\nThe underlying error was a "
+          + th.getClass().getName() + "\nThe message "
+          + "was \"" + th.getMessage() + "\" .");
     }
   }
 

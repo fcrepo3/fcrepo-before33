@@ -19,7 +19,7 @@ public interface DOReader
 {
 
     public static int FEDORA_OBJECT=0;
-    public static int FEDORA_BDEF_OBJECT=1;    
+    public static int FEDORA_BDEF_OBJECT=1;
     public static int FEDORA_BMECH_OBJECT=2;
 
     /**
@@ -192,6 +192,44 @@ public interface DOReader
      *         request.
      */
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime) throws ServerException;
+
+    /**
+     * Gets list of method parameter definitions that are available on a
+     * particular method. This is done by reflecting on the Disseminator
+     * that subscribes to the Behavior Definition that is specified in the
+     * method input parameter.  Then, by reflecting on that Disseminator,
+     * the PID of the Behavior Mechanism object can be obtained.
+     * Finally, method implementation information can be found in the
+     * Behavior Mechanism object to which that Disseminator refers.
+     *
+     * @param bDefPID The PID of a Behavior Definition to which the object
+     *        subscribes
+     * @param methodName The name of the method.
+     * @param versDateTime The date-time stamp to get appropriate version
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public MethodParmDef[] GetBMechMethodParms(String bDefPID, String methodName,
+        Date versDateTime) throws ServerException;
+
+    /**
+     * Gets list of default method parameters that are available on a particular
+     * method. This is done by reflecting on the Disseminator
+     * that subscribes to the Behavior Definition that is specified in the
+     * method input parameter.  Then, by reflecting on that Disseminator,
+     * the PID of the Behavior Mechanism object can be obtained.
+     * Finally, method implementation information can be found in the
+     * Behavior Mechanism object to which that Disseminator refers.
+     *
+     * @param bDefPID The PID of a Behavior Definition to which the object
+     *        subscribes
+     * @param methodName The name of the method.
+     * @param versDateTime The date-time stamp to get appropriate version
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public MethodParmDef[] GetBMechDefaultMethodParms(String bDefPID,
+        String methodName, Date versDateTime) throws ServerException;
 
     public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
           throws ServerException;

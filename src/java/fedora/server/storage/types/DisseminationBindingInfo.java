@@ -16,7 +16,10 @@ public class DisseminationBindingInfo
 {
   public String DSBindKey = null;
   public MethodParmDef[] methodParms = null;
-  public String DSLocation = null;
+  public String dsLocation = null;
+  public String dsControlGroupType = null;
+  public String dsID = null;
+  public String dsVersionID = null;
   public String AddressLocation = null;
   public String OperationLocation = null;
   public String ProtocolType = null;
