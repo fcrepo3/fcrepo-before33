@@ -144,13 +144,19 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			}
 			path = buffer.toString();
 		}
+       Connection conn=null;
 		try {
-            SQLUtility.replaceInto(connectionPool.getConnection(),
+            conn=connectionPool.getConnection();
+            SQLUtility.replaceInto(conn,
                     getRegistryName(), new String[] {"token", "path"},
                     new String[] {pid, path}, "token");
 		} catch (SQLException e1) {
 			throw new ObjectNotInLowlevelStorageException("put into db registry failed for [" + pid + "]", e1);
-		}
+		} finally {
+           if (conn!=null) {
+               connectionPool.free(conn);
+           }
+       }
 	}
 
 	public void remove (String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {

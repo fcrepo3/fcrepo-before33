@@ -138,17 +138,20 @@ public class DefaultDOReplicator
             }
             connection.commit();
         } catch (ReplicationException re) {
-            re.printStackTrace();
             throw re;
         } catch (ServerException se) {
-            se.printStackTrace();
             throw new ReplicationException("Replication exception caused by "
                     + "ServerException - " + se.getMessage());
         } finally {
             if (connection!=null) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                m_pool.free(connection);
+                try {
+                    connection.rollback();
+                } catch (Throwable th) {
+                    logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                } finally {
+                    connection.setAutoCommit(true);
+                    m_pool.free(connection);
+                }
             }
         }
     }
@@ -344,9 +347,14 @@ public class DefaultDOReplicator
                     + se.getMessage());
         } finally {
             if (connection!=null) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                m_pool.free(connection);
+                try {
+                    connection.rollback();
+                } catch (Throwable th) {
+                    logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                } finally {
+                    connection.setAutoCommit(true);
+                    m_pool.free(connection);
+                }
             }
         }
     }
@@ -510,9 +518,14 @@ System.out.println("insert dsbinding");
                 + " \". The cause was \" " + se.getMessage());
         } finally {
             if (connection!=null) {
-                connection.rollback();
-                connection.setAutoCommit(true);
-                m_pool.free(connection);
+                try {
+                    connection.rollback();
+                } catch (Throwable th) {
+                    logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                } finally {
+                    connection.setAutoCommit(true);
+                    m_pool.free(connection);
+                }
             }
         }
     }

@@ -550,9 +550,11 @@ public class DefaultDOManager
                 // FIXME: also remove from temp storage if this is successful
                 removeReplicationJob(obj.getPid());
             } catch (ServerException se) {
+              System.out.println("Error while replicating: " + se.getClass().getName() + ": " + se.getMessage());
               se.printStackTrace();
                 throw se;
             } catch (Throwable th) {
+              System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
               th.printStackTrace();
                 throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
             }

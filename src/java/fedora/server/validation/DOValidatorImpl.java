@@ -432,6 +432,9 @@ public class DOValidatorImpl implements DOValidator
         cleanUp(objectAsFile);
         throw new GeneralException(e.getMessage());
       }
+      finally {
+        connectionPool.free(dbConnection);
+      }
       System.out.println("Level 3 Validation OK (INTEGRITY).");
       return;
     }
