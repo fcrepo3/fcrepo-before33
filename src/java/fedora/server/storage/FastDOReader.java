@@ -350,6 +350,9 @@ private static final String dbPropsFile = "db.properties";
         }
         queryResults.add(results);
       }
+      connectionPool.free(connection);
+      connection.close();
+      statement.close();
     } catch (SQLException sqle)
     {
       // Problem with the SQL database or query
