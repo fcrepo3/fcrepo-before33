@@ -129,17 +129,24 @@ public class DefinitiveDOReader implements DOReader
   }
   public DefinitiveDOReader(String objectPID) throws ServerException
   {
-    // FOR TESTING:
-    // Read the digital object xml from test storage
-    //File doFile = locateObject(objectPID);
-    //if (debug) System.out.println("object filepath = " + doFile.getPath());
-
     InputSource doXML = null;
+
+    // FOR TESTING ONLY:
+    // Read the digital object xml from test storage using fake registry
     try
     {
-      //FOR TESTING:
-      //InputSource doXML = new InputSource(new FileInputStream(doFile));
+      File doFile = locateObject(objectPID);
+      if (debug) System.out.println("object filepath = " + doFile.getPath());
+      doXML = new InputSource(new FileInputStream(doFile));
+    }
+    catch (Exception e)
+    {
+      System.out.println("ERROR in Constructor: " + e);
+    }
 
+    /*
+    try
+    {
       // LLSTORE: call to low level storage layer to retrieve object
       doXML = new InputSource(FileSystemLowlevelStorage.getPermanentStore().retrieve(objectPID));
     }
@@ -151,7 +158,7 @@ public class DefinitiveDOReader implements DOReader
     {
       throw ERROR_MISC;
     }
-
+    */
     try
     {
       doErrorHandler = new DOReaderSAXErrorHandler();
@@ -170,7 +177,8 @@ public class DefinitiveDOReader implements DOReader
     }
     catch (SAXException e)
     {
-      throw ERROR_DESERIALIZING_OBJECT;
+      System.out.println("ERROR in Constructor: " + e);
+      //throw ERROR_DESERIALIZING_OBJECT;
     }
     catch (Exception e)
     {
@@ -895,7 +903,10 @@ public class DefinitiveDOReader implements DOReader
             h_datastream.DSVersionID = attrs.getValue("ID");
             h_datastream.DSCreateDT = convertDate(attrs.getValue("CREATED"));
             try {
-            h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
+            if (attrs.getValue("SIZE") != null)
+            {
+              h_datastream.DSSize = Long.parseLong(attrs.getValue("SIZE"));
+            }
             } catch (NumberFormatException nfe) {
                 throw new SAXException("If specified, a datastream's SIZE "
                         + "attribute must be an xsd:long value.");
