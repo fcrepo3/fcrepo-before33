@@ -101,7 +101,8 @@ public interface DOReader
      * Gets a list of Datastream identifiers for all Datastreams in the digital
      * object.  Will take a state parameter to specify that only Datastreams
      * that are in a particular state should be listed (e.g., only active
-     * Datastreams with a state value of "A").
+     * Datastreams with a state value of "A").  If state is given
+     * as null, all datastream ids will be returned, regardless of state.
      *
      * @param state The state of the Datastreams to be listed.
      * @throws ServerException If any type of error occurred fulfilling the
@@ -110,9 +111,12 @@ public interface DOReader
     public String[] ListDatastreamIDs(String state) throws ServerException;
 
     /**
-     * Gets the Datastreams in the digital object.  This method will take a date/time
-     * parameter to be able to retrieve only particular versions of Datastreams
-     * (i.e., gets the version of the Datastreams as of the specified date/time).
+     * Gets all datastreams as of a certain date.
+     * This iterates through all datastreams in the object and
+     * returns only those that existed at the given date/time,
+     * regardless of state.
+     * If the date/time given is null, the most recent version of
+     * each datastream is obtained.
      *
      * @param state The date-time stamp to get appropriate Datastream versions
      * @throws ServerException If any type of error occurred fulfilling the
@@ -121,10 +125,11 @@ public interface DOReader
     public Datastream[] GetDatastreams(Date versDateTime) throws ServerException;
 
    /**
-     * Gets a particular Datastream in the digital object.  This method will
-     * take a date/time parameter to be able to retrieve only a particular
-     * version of the Datastream.
-     * (i.e., gets the version of the Datastream as of the specified date/time).
+     * Gets a particular Datastream in the digital object.
+     * If the date given is null, the most recent version of the datastream is 
+     * given.  If the date is non-null, the closest version of the Datastream 
+     * to the specified date/time (without going over) is given.
+     * If no datastreams match the given criteria, null is returned.
      *
      * @param datastreamID The Datastream identifier
      * @param state The date-time stamp to get appropriate Datastream version
@@ -134,9 +139,7 @@ public interface DOReader
     public Datastream GetDatastream(String datastreamID, Date versDateTime) throws ServerException;
 
    /**
-     * Gets the Disseminators in the digital object.  This method will take a date/time
-     * parameter to be able to retrieve only particular versions of Disseminators
-     * (i.e., gets the version of the Disseminators as of the specified date/time).
+     * Same as getDatastreams, but for disseminators.
      *
      * @param state The date-time stamp to get appropriate Disseminator version
      * @throws ServerException If any type of error occurred fulfilling the
@@ -145,10 +148,7 @@ public interface DOReader
     public Disseminator[] GetDisseminators(Date versDateTime) throws ServerException;
 
    /**
-     * Gets a list of Disseminator identifiers for all Disseminators in the digital
-     * object.  Will take a state parameter to specify that only Disseminators
-     * that are in a particular state should be listed (e.g., only active
-     * Disseminators with a state value of "A").
+     * Same as listDatastreamIds, but for disseminators.
      *
      * @param state The state of the Disseminators to be listed.
      * @throws ServerException If any type of error occurred fulfilling the
@@ -157,10 +157,7 @@ public interface DOReader
     public String[] ListDisseminatorIDs(String state) throws ServerException;
 
    /**
-     * Gets a particular Disseminator in the digital object.  This method will
-     * take a date/time parameter to be able to retrieve only a particular
-     * version of the Disseminator.
-     * (i.e., gets the version of the Disseminator as of the specified date/time).
+     * Same as getDatastream, but for disseminators.
      *
      * @param disseminatorID The Disseminator identifier
      * @param state The date-time stamp to get appropriate Disseminator version
@@ -173,6 +170,10 @@ public interface DOReader
      * Gets PIDs of Behavior Definitions to which object subscribes.  This is
      * done by looking at all the Disseminators for the object, and reflecting
      * on what Behavior Definitions objects the Disseminators refer to.
+     * The given date is used to query for disseminators.  The disseminators
+     * as they existed during the given date are used.  If the date
+     * is given as null, the most recent version of each disseminator
+     * is used.
      *
      * @param versDateTime The date-time stamp to get appropriate version
      * @throws ServerException If any type of error occurred fulfilling the
@@ -189,19 +190,22 @@ public interface DOReader
      * Finally, method implementation information can be found in the
      * Behavior Mechanism object to which that Disseminator refers.
      *
-     * @param bDefPID The PID of a Behavior Definition to which the object subscribes
-     * @param versDateTime The date-time stamp to get appropriate version
+     * @param bDefPID The PID of a Behavior Definition to which the object 
+     *        subscribes.  If this is the special bootstrap bdef,
+     *        this method returns null.
+     * @param versDateTime The date-time stamp to get appropriate version.
+     *        If this is given as null, the most recent version is used.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
     public MethodDef[] GetBMechMethods(String bDefPID, Date versDateTime) throws ServerException;
 
     /**
-     * Gets list of method definitions that are available on a particular
-     * Disseminator. Works like method GetBMechMethods, except the method
-     * definitions are returned as XML in accordance with the WSDL schema.
+     * Same as GetBMechMethods, except it's returned as WSDL.
      *
-     * @param bDefPID The PID of a Behavior Definition to which the object subscribes
+     * @param bDefPID The PID of a Behavior Definition to which the object 
+     *        subscribes.  If this is the special bootstrap bdef,
+     *        this method returns null.
      * @param versDateTime The date-time stamp to get appropriate version
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
@@ -218,7 +222,8 @@ public interface DOReader
      * Behavior Mechanism object to which that Disseminator refers.
      *
      * @param bDefPID The PID of a Behavior Definition to which the object
-     *        subscribes
+     *        subscribes.  If this is the special bootstrap bdef,
+     *        this method returns null.
      * @param methodName The name of the method.
      * @param versDateTime The date-time stamp to get appropriate version
      * @throws ServerException If any type of error occurred fulfilling the
