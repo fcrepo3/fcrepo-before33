@@ -55,6 +55,8 @@
 		<sch:rule context="foxml:datastream">
 			<sch:assert test="string(@ID)">Datastream must have  a datastream id.  (foxml:datastream: value of ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (foxml:datastream ID)</sch:assert>
+			<sch:report test="contains(@ID, '+')">Datastream ID must not contain a plus sign (+) (foxml:datastream ID)</sch:report>
+			<sch:report test="contains(@ID, ':')">Datastream ID must not contain a colon (:) (foxml:datastream ID)</sch:report>
 			<sch:assert test="@CONTROL_GROUP='R' or @CONTROL_GROUP= 'E' or @CONTROL_GROUP= 'M' or @CONTROL_GROUP= 'X' or @CONTROL_GROUP= 'B'">Datastream control group type must be "E" for External-Ref, "M" for Managed-Content, "R" for Redirected, or "X" for Inline-XML-Metadata.  (foxml:datastream: CONTROL_GROUP)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:contentLocation">
@@ -63,6 +65,8 @@
 		<sch:rule context="foxml:datastreamVersion">
 			<sch:assert test="string(@ID)">Datastream version must have a datastream id.   (foxml:datastreamVersion: value of ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream version ID must not exceed length of 64 (foxml:datastreamVersion ID)</sch:assert>
+			<sch:report test="contains(@ID, '+')">Datastream version ID must not contain a plus sign (+) (foxml:datastreamVersion ID)</sch:report>
+			<sch:report test="contains(@ID, ':')">Datastream version ID must not contain a colon (:) (foxml:datastreamVersion ID)</sch:report>
 		</sch:rule>
 		<sch:rule context="foxml:disseminator">
 			<sch:assert test="string(@ID)">Disseminator must have a disseminator id.   (foxml:disseminator: value of ID is missing)</sch:assert>

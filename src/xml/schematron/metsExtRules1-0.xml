@@ -73,10 +73,14 @@
 		</sch:rule>
 		<sch:rule context="METS:fileGrp">
 			<sch:assert test="@ID">Every Datastream must have a DatastreamID (mets:fileGrp: ID is missing)</sch:assert>
+			<sch:report test="contains(@ID, '+')">Datastream ID must not contain a plus sign (+) (mets:fileGrp: ID)</sch:report>
+			<sch:report test="contains(@ID, ':')">Datastream ID must not contain a colon (:) (mets:fileGrp: ID)</sch:report>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (mets:fileGrp ID)</sch:assert>
 		</sch:rule>
 		<sch:rule context="METS:file">
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:file: ID is missing)</sch:assert>
+			<sch:report test="contains(@ID, '+')">Datastream version ID must not contain a plus sign (+) (mets:file: ID)</sch:report>
+			<sch:report test="contains(@ID, ':')">Datastream version ID must not contain a colon (:) (mets:file: ID)</sch:report>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Version ID must not exceed length of 64 (mets:file ID)</sch:assert>
 			<sch:assert test="string(@OWNERID)">Datastream control group must be recorded (mets:file: OWNERID missing or empty)</sch:assert>
 			<sch:assert test="@OWNERID='R' or @OWNERID = 'E' or @OWNERID = 'M' or @OWNERID = 'X'">Datastream control group must be "E" for External-Ref, "M" for Managed-Content, "R" for Redirect, or "X" for Inline-XML-Metadata.  (mets:file: OWNERID)</sch:assert>
