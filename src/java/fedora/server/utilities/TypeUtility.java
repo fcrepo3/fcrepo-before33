@@ -908,29 +908,22 @@ public abstract class TypeUtility
 
   public static fedora.server.types.gen.Disseminator
           convertDisseminatorToGenDisseminator(
-          fedora.server.storage.types.Disseminator in) {
+          fedora.server.storage.types.Disseminator in)
+  {
       fedora.server.types.gen.Disseminator out=
               new fedora.server.types.gen.Disseminator();
-      //String group=in.DSControlGrp;
-      //out.setControlGroup(fedora.server.types.gen.DatastreamControlGroup.fromValue(group));
-      //        if (group.equals("R") || group.equals("E")) {
-                  // only given location if it's a redirect or external datastream
-      //    out.setLocation(in.DSLocation);
-      //        }
       java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
       cal.setTime(in.dissCreateDT);
       out.setBDefLabel(in.bDefLabel);
       out.setBDefPID(in.bDefID);
       out.setBMechLabel(in.bMechLabel);
       out.setBMechPID(in.bMechID);
-      out.setDissCreateDT(cal);
-      out.setDissID(in.dissID);
-      out.setDissLabel(in.dissLabel);
-      out.setDissState(in.dissState);
-      out.setDissVersionID(in.dissVersionID);
+      out.setCreateDT(cal);
+      out.setID(in.dissID);
+      out.setLabel(in.dissLabel);
+      out.setState(in.dissState);
+      out.setVersionID(in.dissVersionID);
       out.setDsBindMap(convertDSBindingMapToGenDatastreamBindingMap(in.dsBindMap));
-      out.setDsBindMapID(in.dsBindMapID);
-      out.setParentPID(in.parentPID);
       return out;
     }
 
@@ -938,6 +931,7 @@ public abstract class TypeUtility
         convertGenDisseminatorToDisseminator(
         fedora.server.types.gen.Disseminator genDisseminator)
     {
+
       fedora.server.storage.types.Disseminator diss =
             new fedora.server.storage.types.Disseminator();
       if (genDisseminator != null)
@@ -946,21 +940,20 @@ public abstract class TypeUtility
         diss.bDefID = genDisseminator.getBDefPID();
         diss.bMechLabel = genDisseminator.getBMechLabel();
         diss.bMechID = genDisseminator.getBMechPID();
-        diss.dissCreateDT = genDisseminator.getDissCreateDT().getTime();
-        diss.dissID = genDisseminator.getDissID();
-        diss.dissLabel = genDisseminator.getDissLabel();
-        diss.dissState = genDisseminator.getDissState();
-        diss.dissVersionID = genDisseminator.getDissVersionID();
+        diss.dissCreateDT = genDisseminator.getCreateDT().getTime();
+        diss.dissID = genDisseminator.getID();
+        diss.dissLabel = genDisseminator.getLabel();
+        diss.dissState = genDisseminator.getState();
+        diss.dissVersionID = genDisseminator.getVersionID();
         diss.dsBindMap = convertGenDatastreamBindingMapToDSBindingMap(genDisseminator.getDsBindMap());
-        diss.dsBindMapID = genDisseminator.getDsBindMapID();
-        diss.parentPID = genDisseminator.getParentPID();
       }
       return diss;
   }
 
     public static fedora.server.types.gen.DatastreamBindingMap
             convertDSBindingMapToGenDatastreamBindingMap(
-            fedora.server.storage.types.DSBindingMap in) {
+            fedora.server.storage.types.DSBindingMap in)
+    {
         fedora.server.types.gen.DatastreamBindingMap out=
                 new fedora.server.types.gen.DatastreamBindingMap();
         java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
@@ -994,7 +987,8 @@ public abstract class TypeUtility
 
     public static fedora.server.types.gen.DatastreamBinding
             convertDSBindingToGenDatastreamBinding(
-            fedora.server.storage.types.DSBinding in) {
+            fedora.server.storage.types.DSBinding in)
+    {
         fedora.server.types.gen.DatastreamBinding out=
                 new fedora.server.types.gen.DatastreamBinding();
         java.util.GregorianCalendar cal=new java.util.GregorianCalendar();
@@ -1009,6 +1003,7 @@ public abstract class TypeUtility
         convertGenDatastreamBindingToDSBinding(
         fedora.server.types.gen.DatastreamBinding genDatastreamBinding)
     {
+
       fedora.server.storage.types.DSBinding dsBinding =
             new fedora.server.storage.types.DSBinding();
       if (genDatastreamBinding != null)
@@ -1025,6 +1020,7 @@ public abstract class TypeUtility
         convertDSBindingArrayToGenDatastreamBindingArray(
         fedora.server.storage.types.DSBinding[] dsBindings)
     {
+
       if (dsBindings != null && dsBindings.length > 0)
       {
         fedora.server.types.gen.DatastreamBinding[] genDatastreamBindings =
