@@ -2,6 +2,9 @@ package fedora.server.storage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -62,6 +65,7 @@ import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
+import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
 import fedora.server.validation.DOValidator;
@@ -234,11 +238,7 @@ public class DefaultDOManager
         // get ref to pidgenerator
         m_pidGenerator=(PIDGenerator) getServer().
                 getModule("fedora.server.management.PIDGenerator");
-        // get the permanent and temporary storage handles
-        // m_permanentStore=FileSystemLowlevelStorage.getObjectStore();
-        // m_tempStore=FileSystemLowlevelStorage.getTempStore();
-        // moved above to getPerm and getTemp (lazy instantiation) because of
-        // multi-instance problem due to s_server.getInstance occurring while another is running
+        // note: permanent and temporary storage handles are lazily instantiated
 
         // get ref to translator and derive storageFormat default if not given
         m_translator=(DOTranslator) getServer().
@@ -465,12 +465,6 @@ public class DefaultDOManager
               }
             }
 
-            // remove from temp *and* definitive store
-            try {
-                getTempStore().remove(obj.getPid());
-            } catch (ObjectNotInLowlevelStorageException onilse) {
-                logWarning("Object wasn't found in temporary low level store, but that might be ok...continuing with purge.");
-            }
             // remove from definitive storage
             try {
                 getObjectStore().remove(obj.getPid());
@@ -817,14 +811,8 @@ public class DefaultDOManager
     public synchronized DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException {
         getServer().logFinest("Entered DefaultDOManager.getIngestWriter(Context, InputStream, String, String, boolean)");
-        // temporary, unique handle for file storage of inputstream
-        String tempHandle="temp-ingest-" + in.hashCode();
-        getServer().logFinest("Using temporary handle: " + tempHandle);
 
-        String permPid=null;
-        boolean wroteTempIngest=false;
-        boolean inPermanentStore=false;
-        boolean inTempStore=false;
+        File tempFile = null;
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
@@ -833,17 +821,15 @@ public class DefaultDOManager
             	// and object components (if they are not already there).
 				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
 				
-                // write ingest input stream to temp, as "tempHandle"
-                logFinest("Adding and retrieving from temp store...");
-                getTempStore().add(tempHandle, in);
-                wroteTempIngest=true;
-                InputStream in2=getTempStore().retrieve(tempHandle);
+                // write ingest input stream to temp file
+                tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
+                logFinest("Adding and retrieving from temp file: " + tempFile.toString());
+                StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
 
                 // VALIDATION: perform initial validation of the ingest submission file
                 logFinest("Getting another handle from temp store for validation...");
-                InputStream inV=getTempStore().retrieve(tempHandle);
                 logFinest("Validating (ingest phase)...");
-				m_validator.validate(inV, format, 0, "ingest");
+				m_validator.validate(tempFile, format, 0, "ingest");
 
                 // deserialize the ingest input stream into a digital object
                 BasicDigitalObject obj=new BasicDigitalObject();
@@ -852,7 +838,7 @@ public class DefaultDOManager
 				obj.setNew(true);
 				if (fedora.server.Debug.DEBUG) System.out.println("LOOK! Deserializing from format: " + format);
                 logFinest("Deserializing from format: " + format);
-                m_translator.deserialize(in2, obj, format, encoding, 
+                m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
                 	DOTranslationUtility.DESERIALIZE_INSTANCE);
                 	
                 // set state...
@@ -925,34 +911,12 @@ public class DefaultDOManager
                 }
                 
                 // validate PID...
-                // it must be a valid format and it can't already exist
-                
-                // FIXME: need to take out urn: assumption from following func and re-calc length limits.
-                // assertValidPid(obj.getPid());
+                // it must be a valid format 
+                assertWellFormedPID(obj.getPid());
+                // and it can't already exist
                 if (objectExists(obj.getPid())) {
                     throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
                 }
-
-                // FIXME: I don't think sending to perm store is needed in the normal
-                // case (i.e. where the serializer is used throughout), but it doesn't
-                // hurt here for now... if it's decided that this isn't necessary,
-                // and this is removed, be sure to change the .replace(...) call
-                // to .add(...) in doCommit()
-                //InputStream in3=getTempStore().retrieve(tempHandle);
-                //getObjectStore().add(obj.getPid(), in3);
-
-                permPid=obj.getPid();
-                inPermanentStore=true; // signifies successful perm store addition
-                logFinest("Retrieving temporary copy from permanent store to add to temp store with real PID...");
-                InputStream in4=getTempStore().retrieve(tempHandle);
-
-                // now add it to the temporary working area with the *known* pid
-                getTempStore().add(obj.getPid(), in4);
-                inTempStore=true; // signifies successful perm store addition
-
-                // signify that the object is new,
-                // sdp: moved to above deserialization where it belongs.
-				//obj.setNew(true);
 
                 // get a digital object writer configured with
                 // the DEFAULT export format.
@@ -1018,21 +982,19 @@ public class DefaultDOManager
                 // so make a record of it in the registry
                 registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context), obj.getLabel(), obj.getContentModelId(), obj.getCreateDate(), obj.getLastModDate());
                 return w;
-            } catch (ServerException se) {
-                // remove from temp store if anything failed
-                if (permPid!=null) {
-                    if (inTempStore) {
-                        getTempStore().remove(permPid);
+            } catch (IOException e) {
+                String message = e.getMessage();
+                if (message == null) message = e.getClass().getName();
+                throw new GeneralException("Error reading/writing temporary ingest file: " + message);
+            } finally {
+                if (tempFile != null) {
+                    logFinest("Finally, removing temp file...");
+                    try {
+                        tempFile.delete();
+                    } catch (Exception e) {
+                        // don't worry if it doesn't exist
                     }
                 }
-                throw se; // re-throw it so the client knows what's up
-            } finally {
-                if (wroteTempIngest) {
-                    logFinest("Finally, removing temp copy from temp store...");
-                    // remove this in any case
-                    getTempStore().remove(tempHandle);
-                }
-                System.gc();
             }
         }
     }
@@ -1057,8 +1019,6 @@ public class DefaultDOManager
             }
             getServer().logFiner("Generated PID: " + p);
             obj.setPid(p);
-// FIXME: uncomment the following after lv0 test
-//          assertValidPid(obj.getPid());
             if (objectExists(obj.getPid())) {
                 throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
             }
@@ -1086,117 +1046,14 @@ public class DefaultDOManager
     }
 
     /**
-     * FIXME: This is no longer valid given the decision not to start pids with "urn:"
-     *
-     * Throws an exception if the PID is invalid.
-     * <pre>
-     * Basically:
-     * ----------
-     * The implementation's limit for the namespace
-     * id is 17 characters.
-     *
-     * The limit for object id is 10 characters,
-     * representing any decimal # between zero and
-     * 2147483647 (2.14 billion)
-     *
-     * This does not necessarily mean a particular
-     * installation can handle 2.14 billion objects.
-     * The max number of objects is practically
-     * limited by:
-     *   - disk storage limits
-     *   - OS filesystem impl. limits
-     *   - database used (max rows in a table, etc.)
-     *
-     * How prantical length limits were derived:
-     * -----------------------------------------
-     * The type for dbid's on objects in the db is int.
-     *
-     * MySQL and McKoi both impose a max of 2.14Billion (10
-     * decimal digits) on INT. (for oracle it's higher, but
-     * unknown).  Some dbs have a higher-prcision int type
-     * (like bigint), but it's likely a limit in number of
-     * rows would be reached before the int type is
-     * exhausted.
-     *
-     * So for PIDs, which use URN syntax, the NSS part (in
-     * our case, a decimal number [see spec section
-     * 8.3.1(3)]) can be *practically* be between 1 and 10
-     * (decimal) digits.
-     *
-     * Additionally, where PIDs are stored in the db, we
-     * impose a max length of 32 chars.
-     *
-     * Given the urn-syntax-imposed 5 chars ('urn:' and ':'),
-     * the storage system's int-type limit of 10 chars for
-     * row ids, and the storage system's imposed limit of 32
-     * chars for the total pid, this leaves 17 characters for
-     * the namespace id.
-     *
-     * urn:17maxChars-------:10maxChars
-     * ^                              ^
-     * |-------- 32 chars max --------|
-     * </pre>
+     * Validate the format of a PID.
      */
-    private void assertValidPid(String pid)
+    private void assertWellFormedPID(String pid)
             throws MalformedPidException {
         if (pid.length()>32) {
             throw new MalformedPidException("Pid is too long.  Max total length is 32 chars.");
         }
-        String[] parts=pid.split(":");
-        if (parts.length!=3) {
-            throw new MalformedPidException("Pid must have two ':' characters, as in urn:nsid:1234");
-        }
-        if (!parts[0].equalsIgnoreCase("urn")) {
-            throw new MalformedPidException("Pids must use the urn scheme, as in urn:nsid:1234");
-        }
-        if (parts[1].length()>17) {
-            throw new MalformedPidException("Namespace id part of pid must be less than 18 chars.");
-        }
-        if (parts[1].length()==0) {
-            throw new MalformedPidException("Namespace id part of pid must be at least 1 char.");
-        }
-        // check for valid chars in namespace id part
-        StringBuffer badChars=new StringBuffer();
-        for (int i=0; i<parts[1].length(); i++) {
-            char c=parts[1].charAt(i);
-            boolean invalid=true;
-            if (c>='0' && c<='9') {
-                invalid=false;
-            } else if (c>='a' && c<='z') {
-                invalid=false;
-            } else if (c>='A' && c<='Z') {
-                invalid=false;
-            } else if (c=='-') {
-                invalid=false;
-            }
-            if (invalid) {
-                badChars.append(c);
-            }
-        }
-        if (badChars.toString().length()>0) {
-            throw new MalformedPidException("Pid namespace id part contains "
-                    + "invalid character(s) '" + badChars.toString() + "'");
-        }
-        if (parts[2].length()>10) {
-            throw new MalformedPidException("Pid object id part must be "
-                    + "less than 11 chars.");
-        }
-        if (parts[2].length()==0) {
-            throw new MalformedPidException("Pid object id part must be "
-                    + "at least 1 char.");
-        }
-        try {
-            long lng=Long.parseLong(parts[2]);
-            if (lng>2147483647) {
-                throw new NumberFormatException("");
-            }
-            if (lng<0) {
-                throw new NumberFormatException("");
-            }
-        } catch (NumberFormatException nfe) {
-            throw new MalformedPidException("Pid object id part must be "
-                    + "an integer between 0 and 2.147483647 billion.");
-        }
+        // FIXME: Do other PID syntax validation here
     }
 
     /**
