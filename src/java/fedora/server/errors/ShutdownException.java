@@ -5,10 +5,6 @@ package fedora.server.errors;
  * <p><b>Title:</b> ShutdownException.java</p>
  * <p><b>Description:</b> Superclass for shutdown-related exceptions.</p>
  *
- * <p>Note that this class cannot be instantiated from outside this
- * package, so when creating a shutdown exception, you must
- * choose either a ServerShutdownException or a ModuleShutdownException.</p>
- *
  * -----------------------------------------------------------------------------
  *
  * <p><b>License and Copyright: </b>The contents of this file are subject to the
@@ -30,16 +26,25 @@ package fedora.server.errors;
  * @version $Id$
  */
 public class ShutdownException
-        extends Exception {
+        extends ServerException {
 
     /**
-     * Creates a ShutdownException.
+     * Creates an ShutdownException.
      *
      * @param message An informative message explaining what happened and
      *                (possibly) how to fix it.
      */
-    protected ShutdownException(String message) {
-        super(message);
+    public ShutdownException(String message) {
+        super(null, message, null, null, null);
+    }
+
+    public ShutdownException(String message, Throwable cause) {
+        super(null, message, null, null, cause);
+    }
+
+    public ShutdownException(String bundleName, String code,
+            String[] replacements, String[] details, Throwable cause) {
+        super(bundleName, code, replacements, details, cause);
     }
 
 }

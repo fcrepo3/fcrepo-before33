@@ -44,6 +44,11 @@ public class ModuleInitializationException
         m_role=role;
     }
 
+    public ModuleInitializationException(String message, String role, Throwable cause) {
+        super(null, message, null, null, cause);
+        m_role=role;
+    }
+
     /**
      * Gets the role of the module in which the error occurred.
      *

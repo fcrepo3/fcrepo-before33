@@ -15,6 +15,10 @@ public class ResourceIndexException extends ServerException {
         super(null, message, null, null, null);
     }
 	
+    public ResourceIndexException(String message, Throwable cause) {
+        super(null, message, null, null, cause);
+    }
+	
 	/**
 	 * @param bundleName The bundle in which the message resides.
      * @param code The identifier for the message in the bundle, aka the key.
