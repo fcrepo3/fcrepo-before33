@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='ISO-8859-1'  ?>
+<!DOCTYPE toc
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/toc_1_0.dtd">
+<toc version="1.0">
+  <tocitem text="Fedora Manual" target="top">
+    <tocitem text="User Guide" target="ug">
+      <tocitem text="Overview" target="ug_overview">
+        <tocitem text="Background" target="ug_overview_background"/>
+        <tocitem text="Concepts" target="ug_overview_concepts"/>
+      </tocitem>
+      <tocitem text="Fedora Repository Server" target="ug_server">
+        <tocitem text="Overview" target="ug_server_overview"/>
+        <tocitem text="Installation" target="ug_server_installation"/>
+      </tocitem>
+      <tocitem text="Fedora Administrator" target="ug_admin">
+        <tocitem text="Overview" target="ug_admin_overview"/>
+        <tocitem text="Installation" target="ug_admin_installation"/>
+        <tocitem text="Menus" target="ug_admin_menus">
+          <tocitem text="File" target="ug_admin_menus_file"/>
+          <tocitem text="Edit" target="ug_admin_menus_edit"/>
+          <tocitem text="View" target="ug_admin_menus_view"/>
+          <tocitem text="Tools" target="ug_admin_menus_tools"/>
+          <tocitem text="Window" target="ug_admin_menus_window"/>
+          <tocitem text="Help" target="ug_admin_menus_help"/>
+        </tocitem>
+        <tocitem text="Toolbar" target="ug_admin_toolbar"/>
+        <tocitem text="Object Editor" target="ug_admin_objedit">
+          <tocitem text="Object Tab" target="ug_admin_objedit_object"/>
+          <tocitem text="Datastreams Tab" target="ug_admin_objedit_ds">
+            <tocitem text="Attributes" target="ug_admin_objedit_ds_attr"/>
+            <tocitem text="Data" target="ug_admin_objedit_ds_data"/>
+            <tocitem text="Associations" target="ug_admin_objedit_ds_assoc"/>
+          </tocitem>
+          <tocitem text="Disseminations Tab" target="ug_admin_objedit_dis">
+            <tocitem text="Add" target="ug_admin_objedit_dis_add"/>
+            <tocitem text="Modify Binding" target="ug_admin_objedit_dis_mod"/>
+            <tocitem text="Delete" target="ug_admin_objedit_dis_del"/>
+            <tocitem text="Preview" target="ug_admin_objedit_dis_prev"/>
+          </tocitem>
+        </tocitem>
+        <tocitem text="Mechanism Editor" target="ug_admin_mechedit"/>
+        <tocitem text="How do I..." target="ug_admin_tasks"/>
+      </tocitem>
+    </tocitem>
+    <tocitem text="Technical Guide" target="tg">
+      <tocitem text="Fedora Architecture" target="tg_arch"/>
+      <tocitem text="Extending Fedora Administrator" target="tg_extadmin">
+        <tocitem text="Plug-In API" target="tg_extadmin_plug"/>
+        <tocitem text="Datastream Editor API" target="tg_extadmin_dsedit"/>
+      </tocitem>
+      <tocitem text="Writing a Client" target="tg_writeclient">
+        <tocitem text="For Repository Management" target="tg_writeclient_api1"/>
+        <tocitem text="For Repository Access" target="tg_writeclient_api2"/>
+      </tocitem>
+    </tocitem>
+    <tocitem text="Appendices" target="appendices">
+      <tocitem text="Glossary" target="glossary"/>
+      <tocitem text="Standards Conformance" target="conformance"/>
+      <tocitem text="References" target="references"/>
+      <tocitem text="Release Notes" target="relnotes"/>
+      <tocitem text="Legal Information" target="legal"/>
+    </tocitem>
+  </tocitem>
+</toc>
