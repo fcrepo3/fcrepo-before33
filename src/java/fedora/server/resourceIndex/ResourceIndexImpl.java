@@ -116,8 +116,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         addQueue(false);
 
 		// handle type specific duties
-		// TODO: if it turns out rdfType is the only "special" thing to do,
-		// then we may as well use a getRDFType(fedoraObjectType) method instead
 		int fedoraObjectType = digitalObject.getFedoraObjectType();
 		String rdfType;
 		switch (fedoraObjectType) {
@@ -160,7 +158,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        datastreamURI = doURI + "/" + datastreamID;
 	    }
         
-        // TODO new datastream attribute
+        // TODO new datastream attribute -- need a predicate!
         //String[] altIDs = ds.DatastreamAltIDs;
         
         // Volatile Datastreams: False for datastreams that are locally managed 
@@ -221,7 +219,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
                      queueTriple(doIdentifier, HAS_REPRESENTATION_URI, rep);
-                     // TODO mimetype as URI...what form???
                      queuePlainLiteralTriple(rep, 
                                              DISSEMINATION_MEDIA_TYPE_URI, 
                                              mimeType);
@@ -315,8 +312,23 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
-        // FIXME handle special case datastreams, e.g. WSDL, METHODMAP
-		
+        
+        // handle special system datastreams: DC, METHODMAP, RELS-EXT
+        if (datastreamID.equalsIgnoreCase("DC")) {
+            deleteDublinCoreDatastream(digitalObject, ds);
+        } else if (datastreamID.equalsIgnoreCase("DSINPUTSPEC")) { // which objs have this?
+            deleteDSInputSpecDatastream(ds);   
+        } else if (datastreamID.equalsIgnoreCase("EXT_PROPERTIES")) { // props
+            deleteExtPropertiesDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("METHODMAP")) { 
+            deleteMethodMapDatastream(digitalObject, ds);
+        } else if (datastreamID.equalsIgnoreCase("RELS-EXT")) {
+            deleteRelsDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("SERVICE-PROFILE")) { 
+            deleteServiceProfileDatastream(ds);
+        } else if (datastreamID.equalsIgnoreCase("WSDL")) { 
+            deleteWSDLDatastream(digitalObject, ds);
+        }
 	}
 
 	/* (non-Javadoc)
@@ -503,17 +515,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	        return;
 	    }
         
-        List permutations = new ArrayList();
-        String bDefPid = digitalObject.getPid();
         String doURI = getDOURI(digitalObject);
-	    DatastreamXMLMetadata mmapDS = (DatastreamXMLMetadata)ds;
-	    ServiceMapper serviceMapper = new ServiceMapper(bDefPid);
-	    MethodDef[] mdef;
-	    try {
-	        mdef = serviceMapper.getMethodDefs(new InputSource(new ByteArrayInputStream(mmapDS.xmlContent)));
-	    } catch (Throwable t) {
-	        throw new ResourceIndexException(t.getMessage());
-	    }
+        String bDefPid = digitalObject.getPid();
+	    MethodDef[] mdef = getMethodDefs(bDefPid, ds);
+        List permutations = new ArrayList();
 	    
 	    String methodName;
 	    boolean noRequiredParms;
@@ -524,9 +529,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
             insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
         } catch (SQLException se) {
-            // TODO Auto-generated catch block
-            se.printStackTrace();
-            throw new ResourceIndexException(se.getMessage());
+            throw new ResourceIndexException(se.getMessage(), se);
         }
         
 	    for (int i = 0; i < mdef.length; i++) {
@@ -578,9 +581,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 permutations.clear();
             
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new ResourceIndexException(e.getMessage());
+                throw new ResourceIndexException(e.getMessage(), e);
             }
 
 	    	// FIXME do we need passby and type in the graph?
@@ -595,9 +596,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             insertMethod.executeBatch();
             insertPermutation.executeBatch();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            throw new ResourceIndexException(e.getMessage());
+            throw new ResourceIndexException(e.getMessage(), e);
         }
 	}
 	
@@ -692,17 +691,89 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 insertMethodImpl.executeBatch();
                 insertMethodMimeType.executeBatch();
             } catch (SQLException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-                throw new ResourceIndexException(e.getMessage());
+                throw new ResourceIndexException(e.getMessage(), e);
             }
             
         } catch (WSDLException e) {
-            e.printStackTrace();
-            throw new ResourceIndexException("WSDLException: " + e.getMessage());
+            throw new ResourceIndexException(e.getMessage(), e);
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+    
+    private void deleteDublinCoreDatastream(DigitalObject digitalObject, Datastream ds) {
+        
+    }
+    
+    private void deleteDSInputSpecDatastream(Datastream ds) {
+        // placeholder
+    }
+
+    private void deleteExtPropertiesDatastream(Datastream ds) {
+        
+    }
+
+    private void deleteMethodMapDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
+        if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BDEF_OBJECT) {
+            return;
+        }
+        
+        String bDefPid = digitalObject.getPid();
+        String selectPermutation = "SELECT riMethodPermutation.permutationId FROM riMethodPermutation, riMethod WHERE riMethodPermutation.methodId = riMethod.methodId AND bDefPid = '" + bDefPid + "'";
+        String deleteMethod = "DELETE FROM riMethod WHERE bDefPid = '" + bDefPid + "'";
+        
+        PreparedStatement deletePermutation;
+
+        try {
+            Statement stmt = m_conn.createStatement();
+            ResultSet rs = stmt.executeQuery(selectPermutation);
+            deletePermutation = m_conn.prepareStatement("DELETE FROM riMethodPermutation WHERE permutationId = ?");
+            
+            while (rs.next()) {
+                deletePermutation.setString(1, rs.getString("permutationId"));
+                deletePermutation.addBatch();
+            }
+            deletePermutation.executeBatch();
+            stmt.execute(deleteMethod);
+        } catch (SQLException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
+
+    private void deleteRelsDatastream(Datastream ds) {
+        // FIXME
+        
+        // see RIOTripleWriter to iterate triples from rdf/xml
+    }
+
+    private void deleteServiceProfileDatastream(Datastream ds) {
+        // placeholder
+    }
+
+    private void deleteWSDLDatastream(DigitalObject digitalObject, Datastream ds) throws ResourceIndexException {
+        if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
+            return;
+        }
+        
+        String bMechPid = digitalObject.getPid();
+        String selectMimeType = "SELECT riMethodMimeType.mimeTypeId FROM riMethodMimeType, riMethodImpl WHERE riMethodMimeType.methodImplId = riMethodImpl.methodImplId AND riMethodImpl.bMechPid = '" + bMechPid + "'";
+        String deleteMethodImpl = "DELETE FROM riMethodImpl WHERE bMechPid = '" + bMechPid + "'";
+        
+        PreparedStatement deleteMimeType;
+
+        try {
+            Statement stmt = m_conn.createStatement();
+            ResultSet rs = stmt.executeQuery(selectMimeType);
+            deleteMimeType = m_conn.prepareStatement("DELETE FROM riMethodMimeType WHERE mimeTypeId = ?");
+            
+            while (rs.next()) {
+                deleteMimeType.setInt(1, rs.getInt("mimeTypeId"));
+                deleteMimeType.addBatch();
+            }
+            deleteMimeType.executeBatch();
+            stmt.execute(deleteMethodImpl);
+        } catch (SQLException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
         }
     }
     
