@@ -17,7 +17,7 @@ import org.trippi.TriplestoreConnector;
 
 import fedora.common.Constants;
 import fedora.server.Parameterized;
-import fedora.server.TestLogging;
+import fedora.server.DummyLogging;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.translation.METSLikeDODeserializer;
@@ -68,23 +68,23 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         String cpURL = (String)cpP.get("jdbcURL");
         String cpDriver = (String)cpP.get("jdbcDriverClass");
         String cpDDLConverter = (String)cpP.get("ddlConverter");
-        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
-        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
-        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
-        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
-        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
-        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
-        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
-        boolean cpTestOnBorrow = Boolean.getBoolean(cpDC.getParameter("testOnBorrow").getValue());
-        boolean cpTestOnReturn = Boolean.getBoolean(cpDC.getParameter("testOnReturn").getValue());
-        boolean cpTestWhileIdle = Boolean.getBoolean(cpDC.getParameter("testWhileIdle").getValue());
-        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());        
+        int cpMaxActive = Integer.parseInt((String)cpP.get("maxActive"));
+        int cpMaxIdle = Integer.parseInt((String)cpP.get("maxIdle"));
+        long cpMaxWait = Long.parseLong((String)cpP.get("maxWait")); 
+        int cpMinIdle = Integer.parseInt((String)cpP.get("minIdle"));
+        long cpMinEvictableIdleTimeMillis = Long.parseLong((String)cpP.get("minEvictableIdleTimeMillis"));
+        int cpNumTestsPerEvictionRun = Integer.parseInt((String)cpP.get("numTestsPerEvictionRun"));
+        long cpTimeBetweenEvictionRunsMillis = Long.parseLong((String)cpP.get("timeBetweenEvictionRunsMillis"));
+        boolean cpTestOnBorrow = Boolean.getBoolean((String)cpP.get("testOnBorrow"));
+        boolean cpTestOnReturn = Boolean.getBoolean((String)cpP.get("testOnReturn"));
+        boolean cpTestWhileIdle = Boolean.getBoolean((String)cpP.get("testWhileIdle"));
+        byte cpWhenExhaustedAction = Byte.parseByte((String)cpP.get("whenExhaustedAction"));        
         DDLConverter ddlConverter=null;
         if (cpDDLConverter != null) {
             ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
         }
         
-        m_cPool = new ConnectionPool(cpDriver, cpURL, cpUsername, 
+        m_cPool = new ConnectionPool(cpDriver, cpURL, cpUserName, 
                 cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
                 cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
                 cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
@@ -96,7 +96,7 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
             throw new IOException("Cannot find required "
                 + "resource: " + dbSpec);
         }
-        SQLUtility.createNonExistingTables(m_cPool, specIn, new TestLogging());
+        SQLUtility.createNonExistingTables(m_cPool, specIn, new DummyLogging());
         
         Parameterized tsConf = cl.getDatastoreConfig(datastore);
         Map tsP = tsConf.getParameters();
@@ -136,7 +136,6 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         }
         if (m_cPool != null) {
             deleteRITables();
-            m_cPool.closeAllConnections();
             m_cPool = null;
         }
         m_ri = null;
@@ -199,7 +198,8 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
         Connection conn = m_cPool.getConnection();
         Statement stmt = conn.createStatement();
         String[] drop = {"DROP TABLE riMethodMimeType", "DROP TABLE riMethodImpl", 
-                         "DROP TABLE riMethodPermutation", "DROP TABLE riMethod"};
+                         "DROP TABLE riMethodPermutation", "DROP TABLE riMethod", 
+                         "DROP TABLE riMethodImplBinding"};
         for (int i = 0; i < drop.length; i++) {
             stmt.execute(drop[i]);
         }
