@@ -499,7 +499,7 @@ public abstract class Server
      * Holds an instance of a <code>Server</code> for each distinct
      * <code>File</code> given as a parameter to <code>getInstance(...)</code>
      */
-    private static HashMap s_instances=new HashMap();
+    protected static HashMap s_instances=new HashMap();
 
     /**
      * The server's home directory.
@@ -743,6 +743,16 @@ public abstract class Server
         }
     }
 
+    protected boolean overrideModuleRole(String moduleRole)
+    {
+        return(false);
+    }
+    
+    protected String overrideModuleClass(String moduleClass)
+    {
+        return(null);
+    }
+    
     /**
      * Builds and returns a <code>Map</code> of parameter name-value pairs
      * defined as children of the given <code>Element</code>, according to the
@@ -846,6 +856,10 @@ public abstract class Server
                                 throw new ServerInitializationException(
                                         INIT_CONFIG_SEVERE_NOROLEGIVEN);
                             }
+                            if (overrideModuleRole(moduleRole))
+                            {
+                                continue;
+                            }
                             HashMap moduleImplHash=(HashMap) ((ArrayList)
                                     params.get(null)).get(1);
                             if (moduleImplHash.get(moduleRole)!=null) {
@@ -866,6 +880,10 @@ public abstract class Server
                                 }
                             }
                             String moduleClass=classNode.getNodeValue();
+                            if (overrideModuleClass(moduleClass) != null)
+                            {
+                                moduleClass = overrideModuleClass(moduleClass);
+                            }
                             if (moduleClass.equals("")) {
                                 throw new ServerInitializationException(
                                         INIT_CONFIG_SEVERE_NOCLASSGIVEN);
