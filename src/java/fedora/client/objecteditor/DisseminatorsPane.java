@@ -30,7 +30,7 @@ import fedora.server.types.gen.Disseminator;
  * @version $Id$
  */
 public class DisseminatorsPane
-        extends JPanel 
+        extends JPanel
         implements PotentiallyDirty {
 
     private String m_pid;
@@ -47,8 +47,8 @@ public class DisseminatorsPane
         Disseminator[] currentVersions=Administrator.APIM.
                     getDisseminators(pid, null, null);
         for (int i=0; i<currentVersions.length; i++) {
-            JLabel a=new JLabel(currentVersions[i].getDissLabel());
-            m_tabbedPane.add(currentVersions[i].getDissID(), a);
+            JLabel a=new JLabel(currentVersions[i].getLabel());
+            m_tabbedPane.add(currentVersions[i].getID(), a);
         }
         m_tabbedPane.add("New...", new JLabel("not implemented"));
 
