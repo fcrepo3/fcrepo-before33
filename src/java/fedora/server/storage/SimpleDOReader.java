@@ -197,6 +197,18 @@ public class SimpleDOReader
     }
 
     // returns null if can't find
+	public Datastream getDatastream(String dsID, String versionID) {
+	    List allVersions=m_obj.datastreams(dsID);
+        for (int i=0; i<allVersions.size(); i++) {
+		    Datastream ds=(Datastream) allVersions.get(i);
+			if (ds.DSVersionID.equals(versionID)) {
+			    return ds;
+			}
+		}
+		return null;
+	}
+
+    // returns null if can't find
     public Datastream GetDatastream(String datastreamID, Date versDateTime) {
         List allVersions=m_obj.datastreams(datastreamID);
         if (allVersions.size()==0) {

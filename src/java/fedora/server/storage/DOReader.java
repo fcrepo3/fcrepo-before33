@@ -208,6 +208,21 @@ public interface DOReader
      */
     public Datastream GetDatastream(String datastreamID, Date versDateTime) throws ServerException;
 
+    /**
+	 * Gets a particular datastream in the digital object.
+	 * This is an alternative to retrieving a datastream if all that is known
+	 * is the version id (and not the date).
+	 * The datastream id and version id must match actual ids of an existing
+	 * datastream in the object.  Otherwise, null will be returned.
+	 *
+	 * @param datastreamID The datastream identifier
+	 * @param versionID The identifier of the particular version
+	 * @return a particular Datastream in the digital object
+	 * @throws ServerException If any time of error occurred fulfilling the
+	 *         request.
+	 */
+    public Datastream getDatastream(String datastreamID, String versionID) throws ServerException;
+
    /**
      * Same as getDatastreams, but for disseminators.
      *

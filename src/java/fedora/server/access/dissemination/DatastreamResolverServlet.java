@@ -239,9 +239,8 @@ public class DatastreamResolverServlet extends HttpServlet implements Logging
         logFinest("[DatastreamResolverServlet] PID: " + PID
             + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
         DOReader doReader =  m_manager.getReader(m_context, PID);
-        // FIXME!! Need to deal with datastream versioning; ignored for now.
         Datastream d =
-            (Datastream) doReader.GetDatastream(dsID, null);
+            (Datastream) doReader.getDatastream(dsID, dsVersionID);
         logFinest("[DatastreamResolverServlet] Got datastream: "
             + d.DatastreamID);
         InputStream is = d.getContentStream();
