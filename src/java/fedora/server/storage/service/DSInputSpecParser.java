@@ -1,5 +1,18 @@
 package fedora.server.storage.service;
 
+/**
+ * <p>Title: DSInputSpecParser.java</p>
+ * <p>Description: A class for parsing the special XML format in Fedora
+ * for a Datastream Input Specification (DSInputSpec).  A DSInputSpec exists
+ * within a Behavior Mechanism Object (bmech), and is used to define the "data contract"
+ * between the service represented by the bmech and a data object.</p>
+ *
+ * <p>Copyright: Copyright (c) 2002</p>
+ * <p>Company: </p>
+ * @author Sandy Payette
+ * @version 1.0
+ */
+
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.types.BMechDSBindSpec;
@@ -35,6 +48,7 @@ public class DSInputSpecParser extends DefaultHandler
   // Fedora Datastream Binding Spec objects
   private BMechDSBindSpec dsInputSpec;
   private BMechDSBindRule dsInputRule;
+  private String BMechPID;
 
   // Working variables...
   private Vector tmp_InputRules;
@@ -42,16 +56,18 @@ public class DSInputSpecParser extends DefaultHandler
   /**
    *   Constructor to enable another class to initiate the parsing
    */
-  public DSInputSpecParser()
+  public DSInputSpecParser(String parentPID)
   {
+    BMechPID = parentPID;
   }
 
   /**
    *   Constructor allows this class to initiate the parsing
    */
-  public DSInputSpecParser(InputStream in)
+  public DSInputSpecParser(String parentPID, InputStream in)
     throws RepositoryConfigurationException, ObjectIntegrityException
   {
+      BMechPID = parentPID;
       XMLReader xmlReader = null;
       try
       {
@@ -145,7 +161,9 @@ public class DSInputSpecParser extends DefaultHandler
     {
       inDSInputSpec = true;
       dsInputSpec.bDefPID = attrs.getValue("bDefPID");
-      dsInputSpec.bMechPID = attrs.getValue("bMechPID");
+      //SDP: bMechPID no longer embedded within DSBindingSpec inline metadata.
+      //dsInputSpec.bMechPID = attrs.getValue("bMechPID");
+      dsInputSpec.bMechPID = BMechPID;
       dsInputSpec.bindSpecLabel = attrs.getValue("label");
     }
     else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInput"))
