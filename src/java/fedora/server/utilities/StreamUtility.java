@@ -1,5 +1,9 @@
 package fedora.server.utilities;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Static utility methods useful when working with character-based
  * or raw sequences of data.
@@ -69,6 +73,27 @@ public abstract class StreamUtility {
         } else {
             out.append(in);
         }
+    }
+
+    /**
+     * Copies the contents of an InputStream to an OutputStream, then closes
+     * both.
+     *
+     * @param in The source stream.
+     * @param out The target stram.
+     * @param bufSize Number of bytes to attempt to copy at a time.
+     * @throws IOException If any sort of read/write error occurs on either 
+     *         stream.
+     */
+    public static void pipeStream(InputStream in, OutputStream out, int bufSize) 
+            throws IOException {
+        byte[] buf = new byte[bufSize];
+        int len;
+        while ( ( len = in.read( buf ) ) != -1 ) {
+            out.write( buf, 0, len );
+        }
+        in.close();
+        out.close();
     }
 
 }
