@@ -228,15 +228,7 @@
 			<arg path="temp/wsdl2java/Fedora-API-A.wsdl"/>
 		</exec>
 	</target>
-	<target name="testdeploy">
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar"/>
-			<arg value="org.apache.axis.client.AdminClient"/>
-			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-			<arg value="dist/server/config/deploy.wsdd"/>
-		</exec>
-	</target>
+	<target name="testdeploy" depends="testdeployM,testdeployA"/>
 	<target name="testclient">
 		<exec executable="java">
 			<arg value="-classpath"/>
@@ -251,6 +243,15 @@
 			<arg value="org.apache.axis.client.AdminClient"/>
 			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
 			<arg value="dist/server/config/deployAPI-A.wsdd"/>
+		</exec>
+	</target>
+	<target name="testdeployM">
+		<exec executable="java">
+			<arg value="-classpath"/>
+			<arg path="inc/server/tomcat41/common/lib/axis.jar;inc/server/tomcat41/common/lib/commons-logging.jar;inc/server/tomcat41/common/lib/jaxrpc.jar;inc/server/tomcat41/common/lib/wsdl4j.jar;inc/server/tomcat41/common/lib/tt-bytecode.jar;inc/server/tomcat41/common/lib/saaj.jar;inc/server/tomcat41/common/lib/commons-discovery.jar;dist/server/tomcat41/webapps/fedora/WEB-INF/classes"/>
+			<arg value="org.apache.axis.client.AdminClient"/>
+			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
+			<arg value="dist/server/config/deploy.wsdd"/>
 		</exec>
 	</target>
 	<target name="server" depends="serverclasses" description="Server distribution">
@@ -326,6 +327,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.36  2002/09/24 22:22:26  cwilper
+  testdeploy target now deploys both API-A and API-M services
+
   Revision 1.35  2002/09/23 07:07:19  cwilper
   added more jar includes for the client distribution
 
