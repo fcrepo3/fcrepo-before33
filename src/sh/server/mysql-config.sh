@@ -12,12 +12,19 @@
 #
 # 1) An empty database. The name used must agree with the name used in the Fedora
 #    fedora.fcfg configuratino file. The default name in the configuration file
-#    is "fedora12". The database must initially be empty and then Fedora will
+#    is "fedora20". The database must initially be empty and then Fedora will
 #    automatically generate the required tables.
 # 2) A MySQL username and password with dba privileges on the Fedora database must 
 #    exist for the specified database. The username and password must agree with
 #    those in the Fedora fedora.fcfg file. The default username and password in the
 #    configuration file are "fedoraAdmin" and "fedoraAdmin".
+#
+# 3) NOTE: If using MySQL 4.1.x, you must also specify the default character
+#    set for the Fedora database as "utf8" and the default collation as
+#    "utf8_general_ci". To set these parameters with the script, you must
+#    include the MySQL 4.1 flag which is the 7th optional argument. Any
+#    value may be used since the script just checks to see if there are
+#    six or seven arguments present.
 # 
 # The script expects the following input arguments:
 #
@@ -28,11 +35,11 @@
 # arg 4 - the name of MySQL user admin for Fedora database (e.g., fedoraAdmin)
 # arg 5 - the password of MySQL user admin for Fedora database (e.g., fedoraAdmin)
 # arg 6 - the name of the Fedora database (e.g., fedora12)
+# arg 7 - optional MySQL 4.1 flag. Any string value will indicate that
+#         you are running MySQL 4.1.x.
 #
-
-# check for six input arguments
-
-if [ "$#" != 6 ]; then
+# check for six or seven input arguments
+if [ "$#" -lt 6 ] || [ "$#" -gt 7 ]; then
   echo
   echo "Usage: mysqlConfig.sh mysql_home mysql_dba_user mysql_dba_pass fedora_dba_user fedora_dba_pass fedora_db_name"
   echo "mysql_home      - the path where MySQL is installed (e.g., /usr/local/mysql)"
@@ -41,8 +48,13 @@ if [ "$#" != 6 ]; then
   echo "fedoradba_user  - the name of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
   echo "fedora_dba_pass - the password of MySQL user admin for Fedora database (e.g., fedoraAdmin)"
   echo "mysql_db_name   - the name of the Fedora database (e.g., fedora12)"
+  echo "mysql_version   - the version of MySQL server (must be 3.23, 4.0, or 4.1)"
   echo
   exit 1
+elif [ "$#" = 6 ]; then
+  mysql_version=""
+else
+  mysql_version=$7
 fi
 
 echo
@@ -52,6 +64,11 @@ echo "Mysql dba password: $3"
 echo "Fedora dba username: $4"
 echo "Fedora dba password: $5"
 echo "Fedora database name:$6"
+if [ "$mysql_version" = "" ]; then
+  echo "MySQL 4.1 flag is: OFF"
+else
+  echo "MySQL 4.1 flag is: ON"
+fi
 echo
 
 echo
@@ -60,7 +77,7 @@ echo
 
 # Create Fedora database using specified database name
 
-(exec $1/bin/mysqladmin -u $2 -p$3 -h localhost create $6)
+(exec $1/bin/mysqladmin -u $2 -p$3 -h localhost -S /tmp/mysql41.sock create $6)
 
 # Generate MySQL commands to assign username and password to Fedora database
 # The commands are written to the file mysqlConfig.sql in the current directory.
@@ -79,13 +96,34 @@ echo "#" >>mysqlConfig.sql
 echo "select * from user;" >>mysqlConfig.sql
 echo "select * from db;" >>mysqlConfig.sql
 
+if [ "$mysql_version" != "" ]; then
+  echo
+  echo "MySQL 4.1 flag is ON."
+  echo "Adding default character set and collation changes for MySQL 4.1.x databases:"
+  echo
+  echo "Fedora database $6 DEFAULT CHARACTER SET: utf8"
+  echo "Fedora database $6 DEFAULT COLLATION: utf8_general_ci"
+  echo
+  echo "#" >>mysqlConfig.sql
+  echo "# Adding default character set and collation changes for MySQL 4.1.x databases:" >>mysqlConfig.sql
+  echo "#" >>mysqlConfig.sql
+  echo "# Fedora database $6 DEFAULT CHARACTER SET: utf8" >>mysqlConfig.sql
+  echo "# Fedora database $6 DEFAULT COLLATION: utf8_general_ci" >>mysqlConfig.sql
+  echo "#" >>mysqlConfig.sql
+  echo "alter database $6 default character set utf8;" >>mysqlConfig.sql
+  echo "alter database $6 default collate utf8_general_ci;" >>mysqlConfig.sql
+  echo "#" >>mysqlConfig.sql
+  echo "# Show Fedora database character set" >>mysqlConfig.sql
+  echo "show create database $6;" >>mysqlConfig.sql
+fi
+
 echo
 echo "Assigning username and passwords for Fedora database"
 echo
 
 # Assign specified username and password for Fedora database
 
-(exec $1/bin/mysql -u $2 -p$3 -h localhost -D mysql <mysqlConfig.sql)
+(exec $1/bin/mysql -u $2 -p$3 -h localhost -D mysql -S /tmp/mysql41.sock <mysqlConfig.sql)
 
 echo
 echo "Database initialization complete!"
