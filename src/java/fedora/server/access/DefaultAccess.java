@@ -12,6 +12,7 @@ import java.util.Map;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
+import fedora.server.access.dissemination.DisseminationService;
 import fedora.server.errors.InvalidUserParmException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.GeneralException;
