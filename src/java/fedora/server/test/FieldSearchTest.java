@@ -47,8 +47,8 @@ public class FieldSearchTest
         
     public FieldSearchTest(String fedoraHome, String label) {
         super(label);
-        m_repoDir=new File(new File(fedoraHome), "demo");
-        m_existDir=new File(new File(fedoraHome), "exist09");
+        m_repoDir=new File(new File(fedoraHome), "server/demo");
+        m_existDir=new File(new File(fedoraHome), "server/exist09");
     }
     
     public void setUp() {

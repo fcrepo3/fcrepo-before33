@@ -537,7 +537,7 @@ public abstract class Server
             m_initialized=false;
             m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
             m_loadedModules=new HashMap();
-            m_homeDir=homeDir;
+            m_homeDir=new File(homeDir, "server");
             File logDir=new File(homeDir, LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdir(); // try to create dir if doesn't exist
@@ -1169,7 +1169,8 @@ public abstract class Server
             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);
             DocumentBuilder builder=factory.newDocumentBuilder();
-            configFile=new File(homeDir + File.separator + CONFIG_DIR 
+            configFile=new File(homeDir + File.separator + "server"
+                    + File.separator + CONFIG_DIR 
                     + File.separator + CONFIG_FILE);
             // suck it in
             Element rootElement=builder.parse(configFile).getDocumentElement();

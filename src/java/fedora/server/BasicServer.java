@@ -154,15 +154,15 @@ public class BasicServer
     public static void main(String[] args) throws Exception {
         // prepare for an in-tomcat-instance run of the server by
         // reading the adminPassword and fedoraServerPort from fedora.fcfg,
-        // and sending it to <FEDORA_HOME>/tomcat41/config/
+        // and sending it to <FEDORA_HOME>/server/tomcat41/config/
         String fedoraHome=System.getProperty("fedora.home");
         if (fedoraHome==null || fedoraHome.equals("")) {
             System.out.println("ERROR: fedora.home property not set.");
         } else {
-            File fedoraHomeDir=new File(fedoraHome);
-            File fcfgFile=new File(fedoraHomeDir, "config/fedora.fcfg");
+            File fedoraServerHomeDir=new File(new File(fedoraHome), "server");
+            File fcfgFile=new File(fedoraServerHomeDir, "config/fedora.fcfg");
             if (!fcfgFile.exists()) {
-                System.out.println("ERROR: fedora.fcfg not found in config/ -- is fedora.home set properly?");
+                System.out.println("ERROR: fedora.fcfg not found in FEDORA_HOME/server/config/ -- is fedora.home set properly?");
             } else {
                 String adminPassword="fedoraAdmin";
                 String fedoraServerPort="8080";
@@ -180,9 +180,9 @@ public class BasicServer
                         adminPassword=valueNode.getNodeValue();
                     }
                 }
-                File serverTemplate=new File(fedoraHome, "tomcat41/conf/server_template.xml");
+                File serverTemplate=new File(fedoraHome, "server/tomcat41/conf/server_template.xml");
                 BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
-                FileWriter out=new FileWriter(new File(fedoraHome, "tomcat41/conf/server.xml"));
+                FileWriter out=new FileWriter(new File(fedoraHome, "server/tomcat41/conf/server.xml"));
                 String nextLine="";
                 while (nextLine!=null) {
                     nextLine=in.readLine();
@@ -205,9 +205,9 @@ public class BasicServer
                 in.close();
                 out.close();
 
-                File usersTemplate=new File(fedoraHome, "tomcat41/conf/tomcat-users_template.xml");
+                File usersTemplate=new File(fedoraHome, "server/tomcat41/conf/tomcat-users_template.xml");
                 in=new BufferedReader(new FileReader(usersTemplate));
-                out=new FileWriter(new File(fedoraHome, "tomcat41/conf/tomcat-users.xml"));
+                out=new FileWriter(new File(fedoraHome, "server/tomcat41/conf/tomcat-users.xml"));
                 nextLine="";
                 while (nextLine!=null) {
                     nextLine=in.readLine();

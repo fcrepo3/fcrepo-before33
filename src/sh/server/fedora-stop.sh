@@ -5,9 +5,9 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/config/fedora.fcfg" ]; then
+if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
   echo "ERROR: FEDORA_HOME does not appear correctly set."
-  echo "Configuration cannot be found at $FEDORA_HOME/config/fedora.fcfg"
+  echo "Configuration cannot be found at $FEDORA_HOME/server/config/fedora.fcfg"
   exit 1
 fi
 
@@ -34,7 +34,7 @@ if [ ! -f "$THIS_JAVA_HOME/bin/orbd" ]; then
   exit 1
 fi
 
-TC=$FEDORA_HOME/tomcat41
+TC=$FEDORA_HOME/server/tomcat41
 export TC
 OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME

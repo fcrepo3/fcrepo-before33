@@ -3,8 +3,8 @@
 goto checkEnv
 :envOk
 
-if not exist %FEDORA_HOME%\mckoi094\mckoidb.jar goto mckoiNotFound
-if not exist %FEDORA_HOME%\mckoi094\data\DefaultDatabase.sf goto mckoiNotInitialized
+if not exist %FEDORA_HOME%\server\mckoi094\mckoidb.jar goto mckoiNotFound
+if not exist %FEDORA_HOME%\server\mckoi094\data\DefaultDatabase.sf goto mckoiNotInitialized
 
 echo Starting McKoi DB...
 
@@ -14,11 +14,11 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
-start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+start /B %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
 goto :doneRunning
 
 :runMinimized
-start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\mckoi094\db.conf
+start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\server\mckoi094\gnu-regexp-1.1.4.jar -jar %FEDORA_HOME%\server\mckoi094\mckoidb.jar -conf %FEDORA_HOME%\server\mckoi094\db.conf
 
 :doneRunning
 set JAVA_HOME=%OLD_JAVA_HOME%
@@ -28,7 +28,7 @@ echo To stop the server, use mckoi-stop.
 goto end
 
 :mckoiNotFound
-echo ERROR: No mckoidb.jar found in %FEDORA_HOME%\mckoi094\
+echo ERROR: No mckoidb.jar found in %FEDORA_HOME%\server\mckoi094\
 goto end
 
 :mckoiNotInitialized
@@ -37,7 +37,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\config\fedora.fcfg goto configNotFound
+if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
@@ -56,7 +56,7 @@ goto end
 
 :configNotFound
 echo ERROR: FEDORA_HOME does not appear correctly set.
-echo Configuration cannot be found at %FEDORA_HOME%\config\fedora.fcfg
+echo Configuration cannot be found at %FEDORA_HOME%\server\config\fedora.fcfg
 goto end
 
 :noJavaHome

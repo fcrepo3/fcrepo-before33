@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  $Id$
-
-  TODO: Add optimized targets (separate output area)
-        Finish doc targets
-        Add server targets, similar to client, pulling off common classes
--->
+<!-- $Id$ -->
 <project name="Fedora" default="all" basedir=".">
 	<property name="javaClassDebug" value="on"/>
 	<property name="javaClassOptimize" value="off"/>
@@ -16,9 +10,7 @@
 			<fileset dir="dist/client"/>
 		</copy>
 	</target>
-	<target name="serverandclient" depends="server,client,localservices,copyclient" description="builds both client and server in dist\server">
-		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
-		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
+	<target name="serverandclient" depends="server,client,localservices" description="builds both client and server in dist\server">
 	</target>
 	<target name="serverdist" depends="serverandclient,userdocs,serverdocs" description="a distribution of client and server, with documentation (suitable for release)">
 		<mkdir dir="dist/server/doc"/>
@@ -36,34 +28,31 @@
 		<copy todir="dist/client/bin">
 			<fileset dir="src/sh/client"/>
 		</copy>
+		 <!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
+		<chmod dir="dist/client/bin" perm="u+x" includes="**/*"/>
 		<!-- begin setup for demo objects -->
 		<mkdir dir="dist/client/demo"/>
 		<copy todir="dist/client/demo">
 			<fileset dir="src/mets/demo"/>
 		</copy>
-		<!-- setup for demo object datastream content (put in localhost staging area) -->
-		<mkdir dir="dist/server/tomcat41/webapps/ROOT/demo"/>
-		<copy todir="dist/server/tomcat41/webapps/ROOT/demo">
-			<fileset dir="src/demo-content"/>
-		</copy>
-		<!-- end setup for demo objects -->
-		<mkdir dir="dist/client/client"/>
-		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
-		<mkdir dir="dist/client/client/lib"/>
-		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
-		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/client/lib"/>
-		<copy file="lib/common/saxon6.5.jar" todir="dist/client/client/lib"/>
-		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/client/lib"/>
-		<!--<copy todir="temp/client">
-      <fileset dir="inc/client/dist"/>
-    </copy>-->
+
+		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
+		<mkdir dir="dist/client/lib"/>
+		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
+		<copy file="lib/client/gnu-getopt-1.0.9.jar" todir="dist/client/lib"/>
+		<copy file="lib/common/saxon6.5.jar" todir="dist/client/lib"/>
+		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
 		<!-- begin additions -->
+<!--
+Commented out... I'm not sure the command-line batch stuff is
+current anymore... I think it's just in the gui.  Delete this
+if you can confirm.
 		<mkdir dir="dist/batch"/>
 		<copy file="src/doc/batch/batch.doc" todir="dist/batch"/>
 		<copy file="src/properties/batch/default.properties" todir="dist/batch"/>
@@ -92,14 +81,10 @@
 		<copy todir="dist/server/tomcat41/webapps/ROOT/beta1-demo">
 			<fileset dir="src/jpg/batch/beta1-demo"/>
 		</copy>
-		<!-- data demos => dist -->
+-->
+		<!-- data demos to dist -->
 		<!-- end additions -->
-		<echo message="Finished building client distribution in dist/client/client"/>
-	</target>
-	<target name="runclient" depends="client" description="run the client">
-		<exec dir="dist/client/client" executable="java">
-			<arg line="-jar client.jar"/>
-		</exec>
+		<echo message="Finished building client distribution in dist/client"/>
 	</target>
 	<target name="prep" description="Prepare a temporary build area for targets">
 		<mkdir dir="temp"/>
@@ -509,6 +494,12 @@
 		<copy todir="dist/server/tomcat41/webapps/ROOT">
 			<fileset dir="src/xsd"/>
 		</copy>
+   		<!-- setup for demo object datastream content (put in localhost staging area) -->
+		<mkdir dir="dist/server/tomcat41/webapps/ROOT/demo"/>
+		<copy todir="dist/server/tomcat41/webapps/ROOT/demo">
+			<fileset dir="src/demo-content"/>
+		</copy>
+		<!-- end setup for demo objects -->
 		<mkdir dir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/resources"/>
 		<copy todir="dist/server/tomcat41/webapps/fedora/WEB-INF/classes">
 			<fileset dir="src/properties/server"/>
@@ -520,6 +511,8 @@
 			<fileset dir="src/bat/server"/>
 			<fileset dir="src/sh/server"/>
 		</copy>
+		 <!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
+		<chmod dir="dist/server/bin" perm="u+x" includes="**/*"/>
 		<copy file="lib/common/junit.jar" todir="dist/server/tomcat41/webapps/fedora/WEB-INF/lib"/>
 		<copy file="lib/common/xerces2-2.0.2.jar" todir="dist/server/tomcat41/common/lib"/>
 		<!-- Saxon for use with Schematron validation -->
@@ -690,6 +683,14 @@
 </project>
 <!--
   $Log$
+  Revision 1.107  2003/05/09 03:25:48  cwilper
+  Swapped old distribution directory structure, where client was inside
+  server dir, to a separated one.  Each dir is self-contained.
+  With this change, FEDORA_HOME/server is where the server lives,
+  and FEDORA_HOME/client is where the client lives.
+  Also commented out some command-line batch building stuff
+  because I'm not sure it's used... I think it's all gui at this point.
+
   Revision 1.106  2003/05/07 23:28:27  rlw
   fixed typo
 

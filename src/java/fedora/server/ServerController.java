@@ -122,7 +122,7 @@ public class ServerController
         URL url=null;
         try {
             File fedoraHomeDir=new File(fedoraHome);
-            File fcfgFile=new File(fedoraHomeDir, "config/fedora.fcfg");
+            File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
             String port="8080";
             DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
             factory.setNamespaceAware(true);

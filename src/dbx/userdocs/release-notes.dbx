@@ -160,7 +160,7 @@ The functionality to create and ingest batches of objects has been moved under t
 		<section>
 			<title>New Demo Objects</title>
 			<para>
-This includes new demonstration objects. These objects can be loaded into the repository in one of two ways. The xml source files can be "ingested" into the repository via the Fedora Admin GUI client (from the command prompt, run: fedora-admin). Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-demoall [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory: [FEDORA_HOME]/dist/server/demo
+This includes new demonstration objects. These objects can be loaded into the repository in one of two ways. The xml source files can be "ingested" into the repository via the Fedora Admin GUI client (from the command prompt, run: fedora-admin). Otherwise, they can be loaded with all other demos by running the demo load script (from the command prompt, run: fedora-demoall [hostname] [port] [username] [password]). The demo object source xml files for the demo objects can be found in the following directory: [FEDORA_HOME]/server/demo
             </para>
 			<para>
 There are two categories of demonstrations:

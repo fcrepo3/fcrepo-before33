@@ -5,15 +5,15 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/mckoi094/mckoidb.jar" ]; then
-  echo "ERROR: No mckoidb.jar found in $FEDORA_HOME/mckoi094/"
+if [ ! -f "$FEDORA_HOME/server/mckoi094/mckoidb.jar" ]; then
+  echo "ERROR: No mckoidb.jar found in $FEDORA_HOME/server/mckoi094/"
   echo "Make sure FEDORA_HOME is set correctly."
   exit 1
 fi
 
-if [ -f "$FEDORA_HOME/mckoi094/data/DefaultDatabase.sf" ]; then
+if [ -f "$FEDORA_HOME/server/mckoi094/data/DefaultDatabase.sf" ]; then
   echo "ERROR: McKoi database already initialized.  "
-  echo "Remove $FEDORA_HOME/mckoi094/data to delete."
+  echo "Remove $FEDORA_HOME/server/mckoi094/data to delete."
   exit 1
 fi
 
@@ -25,7 +25,7 @@ fi
 
 echo "Initializing McKoi DB... "
 
-(exec java -cp $FEDORA_HOME/mckoi094/gnu-regexp-1.1.4.jar -jar $FEDORA_HOME/mckoi094/mckoidb.jar -conf $FEDORA_HOME/mckoi094/db.conf -create "$1" "$2")
+(exec java -cp $FEDORA_HOME/server/mckoi094/gnu-regexp-1.1.4.jar -jar $FEDORA_HOME/server/mckoi094/mckoidb.jar -conf $FEDORA_HOME/server/mckoi094/db.conf -create "$1" "$2")
 
 echo "Finished."
 

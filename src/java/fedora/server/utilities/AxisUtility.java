@@ -130,7 +130,7 @@ public abstract class AxisUtility {
                                throw new IOException("fedora.home system property is not set, but it's required.");
                            }
                            File fedoraHomeDir=new File(fedoraHome);
-                           File fcfgFile=new File(fedoraHomeDir, "config/fedora.fcfg");
+                           File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
                            String port="8080";
                            DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
                            factory.setNamespaceAware(true);
@@ -171,7 +171,7 @@ public abstract class AxisUtility {
                            System.out.println("Error: timeout_seconds " + args[2] + " is not an integer.");
                            showDeployUsage();
                        } catch (Exception e) {
-                           System.out.println("Error trying to read <FEDORA_HOME>/config/fedora.fcfg: " + e.getClass().getName() + ": " + e.getMessage());
+                           System.out.println("Error trying to read <FEDORA_HOME>/server/config/fedora.fcfg: " + e.getClass().getName() + ": " + e.getMessage());
                            showDeployUsage();
                        }
                    }

@@ -5,9 +5,9 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/config/fedora.fcfg" ]; then
+if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
   echo "ERROR: FEDORA_HOME does not appear correctly set."
-  echo "Configuration cannot be found at $FEDORA_HOME/config/fedora.fcfg"
+  echo "Configuration cannot be found at $FEDORA_HOME/server/config/fedora.fcfg"
   exit 1
 fi
 
@@ -37,14 +37,14 @@ fi
 
 echo "Starting Fedora server..."
 
-TC=$FEDORA_HOME/tomcat41
+TC=$FEDORA_HOME/server/tomcat41
 export TC
 OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-if [ -f "$FEDORA_HOME/logs/startup.log" ]; then
-  mkdir $FEDORA_HOME/logs
+if [ -f "$FEDORA_HOME/server/logs/startup.log" ]; then
+  mkdir $FEDORA_HOME/server/logs
 fi
 
 (exec $JAVA_HOME/bin/java -cp $TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME fedora.server.BasicServer)
@@ -61,11 +61,11 @@ export CP
 
 echo "Deploying API-M and API-A..."
 
-(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/config/deployAPI-A.wsdd 15)
+(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/server/config/deployAPI-A.wsdd 15)
 
 trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 
-(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/config/deploy.wsdd 15)
+(exec $JAVA_HOME/bin/java -cp $CP:$TC/webapps/fedora/WEB-INF/classes -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy $FEDORA_HOME/server/config/deploy.wsdd 15)
 
 trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 

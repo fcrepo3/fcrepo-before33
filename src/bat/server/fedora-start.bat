@@ -5,12 +5,12 @@ goto checkEnv
 
 echo Starting Fedora server...
 
-set TC=%FEDORA_HOME%\tomcat41
+set TC=%FEDORA_HOME%\server\tomcat41
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
-if exist %FEDORA_HOME%\logs\startup.log goto logDirExists
-mkdir %FEDORA_HOME%\logs > NUL
+if exist %FEDORA_HOME%\server\logs\startup.log goto logDirExists
+mkdir %FEDORA_HOME%\server\logs > NUL
 
 :logDirExists
 if "%OS%" == "" goto runMinimized
@@ -38,10 +38,10 @@ start /m %JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Djavax
 set C=%TC%\common\lib
 set CP=%C%\xerces2-2.0.2.jar;%C%\saaj.jar;%C%\commons-discovery.jar;%C%\axis.jar;%C%\commons-logging.jar;%C%\jaxrpc.jar;%C%\wsdl4j.jar;%C%\tt-bytecode.jar
 echo Deploying API-M and API-A...
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deployAPI-A.wsdd 15
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deployAPI-A.wsdd 15
 if errorlevel 1 goto deployError
 
-%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\config\deploy.wsdd 15
+%JAVA_HOME%\bin\java -cp %CP%;%TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.server.utilities.AxisUtility deploy %FEDORA_HOME%\server\config\deploy.wsdd 15
 if errorlevel 1 goto deployError
 
 echo Initializing Fedora Server instance...
@@ -60,7 +60,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\config\fedora.fcfg goto configNotFound
+if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
@@ -79,7 +79,7 @@ goto end
 
 :configNotFound
 echo ERROR: FEDORA_HOME does not appear correctly set.
-echo Configuration cannot be found at %FEDORA_HOME%\config\fedora.fcfg
+echo Configuration cannot be found at %FEDORA_HOME%\server\config\fedora.fcfg
 goto end
 
 :noJavaHome
