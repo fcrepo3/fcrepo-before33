@@ -23,7 +23,7 @@ public class TestResourceIndexLevels extends TestResourceIndex {
     }
     
     public void testLevelOff() throws Exception {
-        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_OFF, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_OFF, m_conn, m_cPool, null, null);
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
@@ -47,7 +47,7 @@ public class TestResourceIndexLevels extends TestResourceIndex {
     }
     
     public void testLevelOn() throws Exception {
-        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_ON, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_ON, m_conn, m_cPool, null, null);
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
         assertEquals(17, m_ri.countTriples(null, null, null, 0));
@@ -70,7 +70,7 @@ public class TestResourceIndexLevels extends TestResourceIndex {
     }
     
     public void testLevelWithPermutations() throws Exception {
-        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_PERMUTATIONS, m_conn, m_cPool, null);
+        m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_PERMUTATIONS, m_conn, m_cPool, null, null);
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
