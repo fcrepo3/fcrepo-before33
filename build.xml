@@ -210,7 +210,7 @@
 		<mkdir dir="dist/definitions/1/0"/>
 		<mkdir dir="dist/definitions/1/0/javadoc"/>
 		<copy todir="dist/definitions/1/0/javadoc">
-			<fileset dir="dist/serverdocs"/>
+			<fileset dir="dist/userdocs/server/serverdocs"/>
 		</copy>
 	</target>
 	<target name="serverdocs" depends="serverclasses" description="Generate user and developer docs in dist/server/serverdocs">
@@ -489,22 +489,22 @@
 			<arg path="res/docbook-xsl/html/docbook.xsl"/>
 		</exec>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/apim/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>		
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/search/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/soapclient/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/distribution/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/images/"/>	
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/fop/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/admin-gui/batch/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/apialite/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/oai/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/browser/search/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/client/servlet/soapclient/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/distribution/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/images/"/>
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/fop/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/imagemanip/images/"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/saxon/images/"/>	
+		<copy file="src/jpg/server/newlogo2.jpg" todir="dist/userdocs/server/localservices/saxon/images/"/>
 		<copy todir="dist/server/tomcat41/webapps/userdocs">
 			<fileset dir="dist/userdocs"/>
 		</copy>
@@ -903,6 +903,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.125  2003/05/16 11:35:29  rlw
+  missed a place in definitions where serverdocs directory location changed
+
   Revision 1.124  2003/05/15 22:33:24  rlw
   restructures userdocs directory structure
 
