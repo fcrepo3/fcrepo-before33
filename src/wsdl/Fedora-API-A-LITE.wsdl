@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Fedora-API-A-LITE:  This is the WSDL definition for Fedora API-A-LITE which is a simple HTTP-oriented service definition for the Fedora Access web service. -->
+<!-- Version:  1.0 -->
+<!-- Author:  Sandy Payette,  payette@cs.cornell.edu -->
+<!-- Author:  Ross Wayland,  rlw@virginia.edu -->
+<!-- Author:  Chris Wilper,  cwilper@cs.cornell.edu -->
+<!-- Description:  Fedora API-A-LITE is a  URI-oriented service definition that is intended to support a REST style binding to the Fedora Access web service (in contrast to a traditional SOAP web service binding).  This means that we define a simple URL syntax that can be used to issue service requests to the Fedora Access service. API-A-Lite does not provide service bindings for all of the operations defined in the complete Fedora Access web service (see Fedora-API-A).  API-A-Lite only provides bindings for GetDissemination and GetObjectProfile.  The result of the GetDissemination request is a MIME-typed stream.  The result of the GetObjectProfile request is either HTML or XML, whichever the client requested. The main purpose of defining API-A-Lite is to provide a simple way to run Fedora disseminations via a URL. -->
+<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-LITE-WSDL">
+	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
+	<types>
+		<documentation>
+			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
+			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
+			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
+		</documentation>
+	</types>
+	<message name="GetObjectProfileRequest">
+		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
+		<part name="PID" type="xsd:string">
+			<documentation>the persistent identifier of the object.</documentation>
+		</part>
+		<part name="DATETIME" type="xsd:string">
+			<documentation>the date/time stamp specifying the desired view of the 
+			      object.  If this part is not present in the request, or if it is empty,  the current 
+			      view of the object (the most recent time) is assumed.
+			</documentation>
+		</part>
+		<part name="ENCODE_XML" type="xsd:string">
+			<documentation>a string value of "yes" or "no" indicating that the list of object methods should be XML encoded. 
+				Fedora will assume a default of "no" if the ENCODE_XML part is not specified.
+			</documentation>
+		</part>
+	</message>
+	<message name="GetObjectProfileResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation> The object profile response contains key metadata about the object
+				and URLs for the object's Dissemination Index and Item Index.  The object
+				profile will be returns as either XML or HTML.
+			</documentation>
+		</part>
+	</message>
+	<message name="GetDisseminationRequest">
+		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
+		<part name="PID" type="xsd:string">
+			<documentation>the persistent identifier of the object.</documentation>
+		</part>
+		<part name="BDEF_PID" type="xsd:string">
+			<documentation>the persistent identifier of the behavior definition.</documentation>
+		</part>
+		<part name="METHODNAME" type="xsd:string">
+			<documentation>the name of the behavior method to invoke.</documentation>
+		</part>
+		<part name="DATETIME" type="xsd:string">
+			<documentation>the date/time stamp specifying that the dissemination should reflect
+				what the object looked like at a certain date and time.  If this part is not present 
+				in the request, or if it is empty,  the current view of the object (the most recent time)
+				 is assumed.
+			</documentation>
+		</part>
+		<part name="PARMS" type="xsd:string">
+			<documentation>a set of name-value pairs that are parameters to the behavior method.</documentation>
+		</part>
+	</message>
+	<message name="GetDisseminationResponse">
+		<part name="response" type="fedora-types:MIMETypedStream">
+			<documentation>the desired view of the object as a mime-typed stream.</documentation>
+		</part>
+	</message>
+	<portType name="Fedora-API-A-LITE">
+		<documentation>  This is a simple URI-oriented service definition for the Access service 
+			of a Fedora repository.  It is intended to support a REST-like style of access to the 
+			Fedora Access web service (in contrast to a traditional SOAP web service definition).  
+			This means that we define a simple URL syntax that can be used to issue service requests.
+			API-A-Lite does not provide service bindings for all of the operations defined in Fedora's full
+			Access service (API-A).  API-A-Lite only provides bindings for GetDissemination and GetObjectProfile. 
+			The result of the GetDissemination request is a MIME-typed stream.  The result of the GetObjectProfile 
+			request is either HTML or XML, whichever the client requested. This is consistent with the main purpose
+			of defining API-A-Lite which is to provide a simple way to run Fedora disseminations via a URL.
+		</documentation>
+		<operation name="GetObjectProfile">
+			<documentation> Gets a profile of the digital object, which contains
+				key metadata elements about the object, and URLs for the object's
+				Dissemination Index and Item Index.  The object profile is a sort of
+				"home base" for the object from which the object can be investigated.
+				The object profile can be returned as XML data or as an HTML presentation.
+			</documentation>
+			<input message="fedora-api:GetObjectProfileRequest"/>
+			<output message="fedora-api:GetObjectProfileResponse"/>
+		</operation>
+		<operation name="GetDissemination">
+			<documentation>Gets a MIME-typed view of the digital object, given the 
+				behavior definition id, the behavior method name and any parameters to the 
+				behavior method. The GetDissemination request hides from the client the details
+				of how a behavior method is fulfilled by the Fedora Access service  (i.e., it does
+				not require the client to know about the behavior mechanism that performs the work, 
+				or how the request is invoked upon the behavior mechanism).  The client need only
+				specify an abstract behavior definition information in the request.
+			</documentation>
+			<input message="fedora-api:GetDisseminationRequest"/>
+			<output message="fedora-api:GetDisseminationResponse"/>
+		</operation>
+	</portType>
+	<service name="Fedora-API-A-LITE">
+		<port name="Fedora-API-A-LITE-Port" binding="fedora-api:Fedora-API-A-LITE-Binding">
+			<http:address location="http://localhost:8080/fedora/"/>
+		</port>
+	</service>
+	<binding name="Fedora-API-A-LITE-Binding" type="fedora-api:Fedora-API-A-LITE">
+		<http:binding verb="GET"/>
+		<operation name="GetObjectProfile">
+			<http:operation location="get/(PID)[/(DATETIME)][?xml=(ENCODE_XML)]"/>
+			<input>
+				<urlReplacement/>
+				<documentation>  This URL replacement syntax is used to request the object profile.
+					When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(PID)" 
+					should be replaced with an actual PID of an object for which the client wants 
+					to get information about (e.g. uva-lib:10).	Parts of the operation location URL that
+					are surrounded by brackets ("[ ]") are optional.  To construct a proper URL the
+					client must replace the following variables with real information:
+						- PID : a required parameter. Client must provide the persistent identifier of the object.
+					 	- DATETIME : an optional parameter.  Client can specifiy a dateTime value 
+					 	  indicating that the client wants the object profile to reflect how the object looked 
+					 	  as of a particular date and time.   (NOT implemented in release 1.0.)
+					 	- ENCODE_XML : an optional parameter.  Client can specify that the output of 
+					 	  the operation be HTML or XML.   A value of "yes" indicates a return type of 
+					 	  text/xml; the absence of the ENCODE_XML parameter or a value of "no" indicates 
+					 	  format is to be text/html.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="text/xml"/>
+				<mime:content type="text/html"/>
+			</output>
+		</operation>
+		<operation name="GetDissemination">
+			<http:operation location="get/(PID)/(BDEF_PID)/(METHODNAME)[/(DATETIME)][?(PARMS)]"/>
+			<input>
+				<urlReplacement/>
+				<documentation>  This URL replacement syntax is used to request a dissemination of the object.
+					When putting together a proper URL, the client should replace parenthesized
+					parts of the operation location URL with actual values.  For example, "(PID)" 
+					should be replaced with an actual PID of an object that the client wants to request a
+					dissemination of (for example a PID value of "uva-lib:10").  Those parts of the operation 
+					location syntax that are surrounded by brackets ("[ ]") are optional.  
+					To construct a proper URL the client must replace the following variables with real information:
+						- PID : a required parameter. Client must provide the persistent identifier of the digital object.
+						- BDEF_PID : a required parameter. Client must provide the persistent identifier of the 
+						  behavior definition object to which the digital object subscribes.
+						- METHODNAME - a required parameter.  Client must provide the name of the behavior
+						  method to be executed.  A behavior method is also known as a dissemination method.
+						- DATETIME : an optional parameter.  Client can specifiy a dateTime value 
+					 	  indicating that the client wants the object profile to reflect how the object looked 
+					 	  as of a particular date and time.   (NOT implemented in release 1.0.)
+						- PARMS - an optional array of parameters to the behavior method.  The parameter array
+						  must begin with a question mark to delimit it from the rest of the URL.  Then, the
+						  parameters follow as a set of name/value pairs separated by ampersands. 
+						  Each name and value is connected by an equal sign. This is in accordance with normal
+						  URL syntax for encoding parameters.
+				</documentation>
+			</input>
+			<output>
+				<mime:content type="*/*"/>
+			</output>
+		</operation>
+	</binding>
+</definitions>
