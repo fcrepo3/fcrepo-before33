@@ -305,9 +305,17 @@
             Name of the triplestore to use.
             WARNING: changing the triplestore requires a full dump-and-load
             of the repository.
+          - aliases (optional)
+            Aliases that can be used for queries.
+            The param name of an alias starts with the string "alias:"
+            and is followed by the name of the alias (shortcut) for the
+            value, which is a URI prefix.
+            For example: name="alias:test" value="http://example.org/terms#" will allow
+            a query to use test:apple instead of http://example.org/terms#apple
         </comment>
 		<param name="level" value="1"/>
 		<param name="datastore" value="localKowariTriplestore"/>
+    <param name="alias:test" value="http://example.org/terms#"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>
