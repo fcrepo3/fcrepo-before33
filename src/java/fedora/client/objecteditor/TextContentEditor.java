@@ -72,6 +72,10 @@ public class TextContentEditor
         m_component=new JScrollPane(m_editor);
     }
 
+    public void setXML(boolean isXML) {
+        m_xml=isXML;
+    }
+
     public void setContent(InputStream data) 
             throws IOException {
         // get a string from the inputstream, assume it's UTF-8
