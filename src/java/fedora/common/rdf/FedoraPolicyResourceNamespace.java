@@ -25,7 +25,15 @@ import fedora.common.Constants;
 public class FedoraPolicyResourceNamespace extends RDFNamespace {
 
 	// Properties
+	public final RDFName AS_OF_DATE;
 	public final RDFName DATASTREAM_ID;
+	public final RDFName DATASTREAM_LOCATION;
+	public final RDFName CONTROL_GROUP;
+	public final RDFName DISSEMINATOR_ID;
+	public final RDFName DISSEMINATOR_PID;
+	public final RDFName DISSEMINATOR_NAMESPACE;
+	public final RDFName DISSEMINATOR_STATE;
+
 
     // Values
 	
@@ -36,7 +44,15 @@ public class FedoraPolicyResourceNamespace extends RDFNamespace {
         this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "/policy-resource#";
 
         // Properties
+    	this.AS_OF_DATE = new RDFName(this, "asOfDate");
     	this.DATASTREAM_ID = new RDFName(this, "datastreamId");
+    	this.DATASTREAM_LOCATION = new RDFName(this, "datastreamLocation");
+    	this.CONTROL_GROUP = new RDFName(this, "controlGroup");
+    	this.DISSEMINATOR_ID = new RDFName(this, "disseminatorId");
+    	this.DISSEMINATOR_PID = new RDFName(this, "disseminatorPid");
+    	this.DISSEMINATOR_NAMESPACE = new RDFName(this, "disseminatorNamespace");
+    	this.DISSEMINATOR_STATE = new RDFName(this, "disseminatorState");
+
 
     	// Values
     }

@@ -27,7 +27,16 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
 	// Properties
 	public final RDFName API;
 	public final RDFName CONTEXT_ID;
-	public final RDFName NEW_OBJECT_STATE;
+	public final RDFName OBJECT_NEW_STATE;
+	public final RDFName DATASTREAM_NEW_STATE;
+	public final RDFName DATASTREAM_NEW_LOCATION;
+	public final RDFName DISSEMINATOR_NEW_STATE;
+	public final RDFName BMECH_NEW_PID;
+	public final RDFName BMECH_NEW_NAMESPACE;
+	public final RDFName N_NEW_PIDS;
+	public final RDFName BDEF_PID;
+	public final RDFName BDEF_NAMESPACE;
+	public final RDFName DISSEMINATOR_METHOD;
 
     // Values of API
 	public final RDFName APIM;
@@ -57,7 +66,8 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
 	public final RDFName SET_DATASTREAM_STATE;	
 	public final RDFName SET_DISSEMINATOR_STATE;	
 	public final RDFName DESCRIBE_REPOSITORY;	
-	public final RDFName FIND_OBJECTS;	
+	public final RDFName FIND_OBJECTS;
+	public final RDFName RI_FIND_OBJECTS;	
 	public final RDFName GET_DATASTREAM_DISSEMINATION;	
 	public final RDFName GET_DISSEMINATION;	
 	public final RDFName GET_OBJECT_HISTORY;	
@@ -75,8 +85,17 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
         // Properties
     	this.API = new RDFName(this, "api");
     	this.CONTEXT_ID = new RDFName(this, "context-id");
-    	this.NEW_OBJECT_STATE = new RDFName(this, "newObjectState");
-
+    	this.OBJECT_NEW_STATE = new RDFName(this, "objectNewState");
+    	this.DATASTREAM_NEW_STATE = new RDFName(this, "datastreamNewState");
+    	this.DATASTREAM_NEW_LOCATION = new RDFName(this, "datastreamNewLocation");
+       	this.DISSEMINATOR_NEW_STATE = new RDFName(this, "disseminatorNewState");    	
+    	this.BMECH_NEW_PID = new RDFName(this, "bmechNewPid");
+    	this.BMECH_NEW_NAMESPACE = new RDFName(this, "bmechNewNamespace");
+    	this.N_NEW_PIDS = new RDFName(this, "nNewPids");
+    	this.BDEF_PID = new RDFName(this, "bdefPid");
+    	this.BDEF_NAMESPACE = new RDFName(this, "bdefNamespace");
+    	this.DISSEMINATOR_METHOD = new RDFName(this, "disseminatorMethod");
+    	
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	
         // Values of API
@@ -110,6 +129,7 @@ public class FedoraPolicyActionNamespace extends RDFNamespace {
     	this. SET_DISSEMINATOR_STATE               = new RDFName(this, "setDisseminatorState");	
     	this. DESCRIBE_REPOSITORY               = new RDFName(this, "describeRepository");	
     	this. FIND_OBJECTS               = new RDFName(this, "findObjects");	
+    	this. RI_FIND_OBJECTS               = new RDFName(this, "riFindObjects");	
     	this. GET_DATASTREAM_DISSEMINATION               = new RDFName(this, "getDatastreamDissemination");	
     	this. GET_DISSEMINATION               = new RDFName(this, "getDissemination");	
     	this. GET_OBJECT_HISTORY               = new RDFName(this, "getObjectHistory");	
