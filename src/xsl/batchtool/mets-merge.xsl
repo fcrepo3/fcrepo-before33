@@ -79,7 +79,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 	</xsl:template>
 
 	<!-- substitute xform param date for @CREATED -->
-	<xsl:template match="METS:techMD|METS:rightsMD|METS:sourceMD|METS:digiprovMD|METS:descMD|METS:file|METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
+	<xsl:template match="METS:techMD|METS:rightsMD|METS:sourceMD|METS:digiprovMD|METS:descMD|METS:serviceBinding" xmlns:METS="http://www.loc.gov/METS/">
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:if test="$date">
@@ -105,6 +105,14 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 					<xsl:apply-templates select="node()"/>
 				</xsl:otherwise>
 			</xsl:choose>		
+			<xsl:choose>
+				<xsl:when test="$substitutions/input/datastreams/datastream[@ID=$metadataID]/xmlContent">
+					<xsl:apply-templates select="$substitutions/input/datastreams/datastream[@ID=$metadataID]/xmlContent/node()" />
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="node()"/>
+				</xsl:otherwise>
+			</xsl:choose>				
     		</xsl:copy>
 	</xsl:template>
 
@@ -120,6 +128,42 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@LABEL" />
 				</xsl:attribute>
 			</xsl:if>
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@LABEL" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@LABEL" />
+				</xsl:attribute>
+			</xsl:if>				
+			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@MIMETYPE" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@MIMETYPE" />
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@MIMETYPE" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@MIMETYPE" />
+				</xsl:attribute>
+			</xsl:if>				
+			<xsl:apply-templates select="node()"/>			
+    		</xsl:copy>
+	</xsl:template>	
+
+	<!-- substitute MIMETYPE for non-metadata datastreams -->
+	<!-- /METS:mets/METS:dmdSecFedora/*/METS:mdWrap|/METS:mets/METS:amdSec/*/METS:mdWrap -->
+	<xsl:template match="METS:file" 
+		xmlns:METS="http://www.loc.gov/METS/">
+		<xsl:copy>
+			<xsl:apply-templates select="@*"/>
+			<xsl:variable name="datastreamID" select="../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->			
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@MIMETYPE" >
+				<xsl:attribute name="LABEL">
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@MIMETYPE" />
+				</xsl:attribute>
+			</xsl:if>		
+			<xsl:if test="$date">
+				<xsl:attribute name="CREATED">
+					<xsl:value-of select="$date"/>
+				</xsl:attribute>
+			</xsl:if>					
 			<xsl:apply-templates select="node()"/>			
     		</xsl:copy>
 	</xsl:template>	
