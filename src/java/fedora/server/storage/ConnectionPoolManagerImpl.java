@@ -117,9 +117,9 @@ public class ConnectionPoolManagerImpl extends Module
         } catch (SQLException sqle)
         {
           System.out.println("Unable to initialize connection pool: " +
-                             poolNames[i]);
+                             poolNames[i] + ": " + sqle.getMessage());
           s_server.logWarning("Unable to initialize connection pool: " +
-                              poolNames[i]);
+                              poolNames[i] + ": " + sqle.getMessage());
         }
       }
 
