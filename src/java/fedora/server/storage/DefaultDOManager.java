@@ -1,5 +1,7 @@
 package fedora.server.storage;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -20,13 +22,23 @@ import fedora.server.Module;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.InvalidContextException;
+import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ObjectExistsException;
+import fedora.server.errors.ObjectLockedException;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
+import fedora.server.management.PIDGenerator;
+import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
+import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.DigitalObject;
+import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableCreatingConnection;
 import fedora.server.utilities.TableSpec;
 
@@ -38,9 +50,14 @@ import fedora.server.utilities.TableSpec;
 public class DefaultDOManager 
         extends Module implements DOManager {
         
+    private String m_pidNamespace;
     private String m_storagePool;
     private String m_storageFormat;
     private String m_storageCharacterEncoding;
+    private PIDGenerator m_pidGenerator;
+    private DOTranslator m_translator;
+    private ILowlevelStorage m_permanentStore;
+    private ILowlevelStorage m_tempStore;
     
     private ConnectionPool m_connectionPool;
     private Connection m_connection;
@@ -58,7 +75,39 @@ public class DefaultDOManager
     /**
      * Gets initial param values.
      */
-    public void initModule() {
+    public void initModule() 
+            throws ModuleInitializationException {
+        // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-')
+        m_pidNamespace=getParameter("pidNamespace");
+        if (m_pidNamespace==null) {
+            throw new ModuleInitializationException(
+                    "pidNamespace parameter must be specified.", getRole());
+        }
+        if ( (m_pidNamespace.length() > 17) || (m_pidNamespace.length() < 1) ) {
+            throw new ModuleInitializationException(
+                    "pidNamespace parameter must be 1-17 chars long", getRole());
+        }
+        StringBuffer badChars=new StringBuffer();
+        for (int i=0; i<m_pidNamespace.length(); i++) {
+            char c=m_pidNamespace.charAt(i);
+            boolean invalid=true;
+            if (c>='0' && c<='9') {
+                invalid=false;
+            } else if (c>='a' && c<='z') {
+                invalid=false;
+            } else if (c>='A' && c<='Z') {
+                invalid=false;
+            } else if (c=='-') {
+                invalid=false;
+            }
+            if (invalid) {
+                badChars.append(c);
+            }
+        }
+        if (badChars.toString().length()>0) {
+            throw new ModuleInitializationException("pidNamespace contains "
+                    + "invalid character(s) '" + badChars.toString() + "'", getRole());
+        }
         // storagePool (optional, default=ConnectionPoolManager's default pool)
         m_storagePool=getParameter("storagePool");
         if (m_storagePool==null) {
@@ -83,6 +132,22 @@ public class DefaultDOManager
     
     public void postInitModule() 
             throws ModuleInitializationException {
+        // get ref to pidgenerator
+        m_pidGenerator=(PIDGenerator) getServer().
+                getModule("fedora.server.management.PIDGenerator");
+        // get the permanent and temporary storage handles
+        // m_permanentStore=FileSystemLowlevelStorage.getPermanentStore();
+        // m_tempStore=FileSystemLowlevelStorage.getTempStore();
+        // moved above to getPerm and getTemp (lazy instantiation) because of 
+        // multi-instance problem due to s_server.getInstance occurring while another is running
+        
+        // get ref to translator and derive storageFormat default if not given
+        m_translator=(DOTranslator) getServer().
+                getModule("fedora.server.storage.DOTranslator");
+        if (m_storageFormat==null) {
+            m_storageFormat=m_translator.getDefaultFormat();
+        }
+        // now get the connectionpool
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
                 getModule("fedora.server.storage.ConnectionPoolManager");
         if (cpm==null) {
@@ -195,237 +260,455 @@ public class DefaultDOManager
                 }
             }
         }
-/*        
-        
-        TableCreatingConnection connection=m_connectionPool.
-                getTableCreatingConnection();
-        if (connection==null) {
-            boolean 
-        }
-        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().getModule("fedora.server.storage.ConnectionPoolManager");
-        try {
-            if (m_osrPoolName.length()==0) {
-                m_connectionPool=cpm.getPool();
-            } else {
-                m_connectionPool=cpm.getPool(m_osrPoolName);
-            }
-        } catch (ConnectionPoolNotFoundException cpnfe) {
-            throw new ModuleInitializationException("Couldn't get required connection pool...wasn't found", getRole());
-        }
-        try {
-            m_connection=m_connectionPool.getConnection();
-        } catch (SQLException sqle) {
-            throw new ModuleInitializationException("Couldn't get required connection: " + sqle.getMessage(), getRole());
-        }
-        int numRows=0;
-        try {
-            // this simultaneously counts rows and checks if the table's there...
-            // it would be better if it used database metadata to check for the
-            // table instead... so these operations would be separate, but this works
-            // for now...
-            Statement selectCount=m_connection.createStatement();
-            ResultSet results=selectCount.executeQuery("SELECT DO_PID FROM " 
-                    + m_osrTableName);
-            while (results.next()) {
-                numRows++;
-            }
-            results.close();
-        } catch (SQLException sqle) {
-            getServer().logConfig("object_state_registry table count(*) query failed (message was: " + sqle.getMessage() + ")... attempting to create table because this might be the first run of this module.");
-            try {
-                m_connection.setAutoCommit(false);
-                Statement createTable=m_connection.createStatement();
-                createTable.executeUpdate("CREATE TABLE " + m_osrTableName 
-                        + " (DO_PID varchar(255) NOT NULL, State char(1) NOT NULL, LockingUser varchar(16))");
-                m_connection.commit();
-                getServer().logConfig("Table created successfully.");
-            } catch (java.sql.SQLException sqle2) {
-                throw new ModuleInitializationException("Table creation failed:" + sqle2.getMessage(), getRole());
-            }
-        }
-        getServer().logConfig("object_state_registry table (" + m_osrTableName + ") has " + numRows + " rows.");
-        try {
-            // set default commit behavior--auto
-            m_connection.setAutoCommit(true);
-        } catch (SQLException sqle) {
-            throw new ModuleInitializationException("Couldn't set autocommit=true on the object_state_registry db connection.", getRole());
-        }
-        */
+    }
+
+    public void releaseWriter(DOWriter writer) {
+        writer.invalidate();
+        // remove pid from tracked list...m_writers.remove(writer);
+    }
+
+    public ILowlevelStorage getPermanentStore() {
+        return FileSystemLowlevelStorage.getPermanentStore();
+
+//        return m_permanentStore;
+    }
+    
+    public ILowlevelStorage getTempStore() {
+        return FileSystemLowlevelStorage.getTempStore();
+//        return m_tempStore;
+    }
+    
+    public ConnectionPool getConnectionPool() {
+        return m_connectionPool;
     }
     
     public String[] getRequiredModuleRoles() {
-        return new String[] {"fedora.server.storage.ConnectionPoolManager"};
+        return new String[] {
+                "fedora.server.management.PIDGenerator",
+                "fedora.server.storage.ConnectionPoolManager",
+                "fedora.server.storage.DOTranslator" };
     }
     
+    public String getStorageFormat() {
+        return m_storageFormat;
+    }
+
     public String getStorageCharacterEncoding() {
         return m_storageCharacterEncoding;
     }
 
-    /** pid will always be non-null, context will always be non-null */
+    public DOTranslator getTranslator() {
+        return m_translator;
+    }
+
+    /**
+     * Tells whether the context indicates that cached objects are required.
+     */
+    private static boolean cachedObjectRequired(Context context) {
+        String c=context.get("useCachedObject");
+        if (c!=null && c.equalsIgnoreCase("true")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public DOReader getReader(Context context, String pid)
             throws ServerException {
-        if (context.get("application").equals("apim")) {
-            return null;
-        } else if (context.get("application").equals("apia")) {
-            return null;
+        if (cachedObjectRequired(context)) {
+            return new FastDOReader(pid);
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+            return new DefinitiveDOReader(pid);
         }
     }
     
     public DisseminatingDOReader getDisseminatingReader(Context context, String pid) 
             throws ServerException {
-        if (context.get("application").equals("??")) {
-            return null;
-        } else if (context.get("application").equals("??")) {
-            return null;
+        if (cachedObjectRequired(context)) {
+            return new FastDOReader(pid);
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be ...??");
+            throw new InvalidContextException("A DisseminatingDOReader is unavailable in a non-cached context.");
         }
     }
 
     public BMechReader getBMechReader(Context context, String pid)
             throws ServerException {
-        if (context.get("application").equals("??")) {
-            return null;
-        } else if (context.get("application").equals("??")) {
-            return null;
+        if (cachedObjectRequired(context)) {
+            throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be ...??");
+            return new DefinitiveBMechReader(pid);
         }
     }
 
     public BDefReader getBDefReader(Context context, String pid)
             throws ServerException {
-        if (context.get("application").equals("??")) {
-            return null;
-        } else if (context.get("application").equals("??")) {
-            return null;
+        if (cachedObjectRequired(context)) {
+            throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be ...??");
+            return new DefinitiveBDefReader(pid);
         }
     }
 
-    /** nulls not allowed */
+    protected void doUnlock(String pid, boolean commit) {
+    }
+
+    /**
+     * Requests a lock on the object.
+     *
+     * If the lock is already owned by the user in the context, that's ok.
+     *
+     * @param context The current context.
+     * @param pid The pid of the object.
+     * @throws ObjectNotFoundException If the object does not exist. 
+     * @throws ObjectLockedException If the object is already locked by someone else.
+     */
+    protected void obtainLock(Context context, String pid) 
+            throws ObjectLockedException, ObjectNotFoundException, 
+            StorageDeviceException, InvalidContextException {
+        Connection conn=null;
+        try {
+            String query="SELECT LockingUser "
+                       + "FROM ObjectRegistry "
+                       + "WHERE DO_PID='" + pid + "'";
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            ResultSet results=s.executeQuery(query);
+            if (!results.next()) {
+                throw new ObjectNotFoundException("The requested object doesn't exist.");
+            }
+            String lockingUser=results.getString("LockingUser");
+            if (lockingUser==null) {
+                // get the lock
+                s.executeUpdate("UPDATE ObjectRegistry SET LockingUser='" 
+                    + getUserId(context) + "' WHERE DO_PID='" + pid + "'");
+            }
+            if (!lockingUser.equals(getUserId(context))) {
+                throw new ObjectLockedException("The object is locked by " + lockingUser);
+            }
+            // if we got here, the lock is already owned by current user, ok
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
+
+    /**
+     * Gets a writer on an an existing object.
+     *
+     * If the object is locked, it must be by the current user.
+     * If the object is not locked, a lock is obtained automatically.
+     *
+     * The object must be locked by the user identified in the context.
+     */
     public DOWriter getWriter(Context context, String pid)
-            throws ServerException {
-        if (context.get("application").equals("apim")) {
-            return null;
-        } else if (context.get("application").equals("apia")) {
-            return null;
+            throws ServerException, ObjectLockedException {
+        if (cachedObjectRequired(context)) {
+            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
-        }
-            // create a new, empty object, giving it a DEFAULT_STATE
-//            DefinitiveDOWriter writer=new DefinitiveDOWriter(newPid, DEFAULT_STATE,
+            // ensure we've got a lock
+            obtainLock(context, pid);
             
-/*
-    public DefinitiveDOWriter(String pid, TestStreamStorage storage, 
-            TestStreamStorage tempStorage, StreamValidator validator,
-            DODeserializer importDeserializer, DOSerializer storageSerializer,
-            DODeserializer storageDeserializer, DOSerializer exportSerializer,
-            InputStream initialContent, boolean useContentPid) 
-*/
-
- //           );
+            // TODO: make sure there's no session lock on a writer for the pid
+            
+            BasicDigitalObject obj=new BasicDigitalObject();
+            m_translator.deserialize(getPermanentStore().retrieve(pid), obj, 
+                    m_storageFormat, m_storageCharacterEncoding);
+            DOWriter w=new DefinitiveDOWriter(this, obj);
+            // add to internal list...somehow..think...
+            return w;
+        }
     }
-    
-    /** nulls not allowed */
+
+    /**
+     * Gets a writer on a new, imported object.
+     *
+     * A new object is created in the system, locked by the current user.
+     * The incoming stream must represent a valid object.
+     */
     public DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid) 
             throws ServerException {
-        if (context.get("application").equals("apim")) {
-            return null;
-        } else if (context.get("application").equals("apia")) {
-            return null;
+        getServer().logFinest("Entered DefaultDOManager.newWriter(Context, InputStream, String, String, boolean)");
+        if (cachedObjectRequired(context)) {
+            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
+            // deserialize it first
+            BasicDigitalObject obj=new BasicDigitalObject();
+            m_translator.deserialize(in, obj, format, encoding);
+            // do we need to generate a pid?
+            if (newPid) {
+               getServer().logFinest("Ingesting client wants a new PID.");
+               // yes... so do that, then set it in the obj.
+               String p=null;
+               try {
+                   p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
+               } catch (Exception e) {
+                   throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: (" 
+                           + e.getClass().getName() + ") - " + e.getMessage());
+               }
+               getServer().logFiner("Generated PID: " + p);
+               obj.setPid(p);
+            } else {
+               getServer().logFinest("Ingesting client wants to use existing PID.");
+            }
+            // now check the pid.. 1) it must be a valid pid and 2) it can't already exist
+            
+            
+// FIXME: uncomment the following after lv0 test
+//            assertValidPid(obj.getPid());
+
+            if (objectExists(obj.getPid())) {
+                throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+            }
+            // make a record of it in the registry
+            registerObject(obj.getPid(), getUserId(context));
+            
+            // serialize to disk, then validate.. if that's ok, go on.. else unregister it! 
+            ByteArrayOutputStream out=new ByteArrayOutputStream();
+            m_translator.serialize(obj, out, m_storageFormat, m_storageCharacterEncoding);
+            ByteArrayInputStream newIn=new ByteArrayInputStream(out.toByteArray());
+            getPermanentStore().add(obj.getPid(), newIn); 
+            
+             
+            // then get the writer
+            DOWriter w=new DefinitiveDOWriter(this, obj);
+            // add to internal list...somehow..think...
+            return w;
         }
     }
-    
-    /** nulls not allowed */
+
+    /**
+     * Gets a writer on a new, empty object.
+     */
     public DOWriter newWriter(Context context) 
             throws ServerException {
-        if (context.get("application").equals("apim")) {
-            return null;
-        } else if (context.get("application").equals("apia")) {
-            return null;
+        getServer().logFinest("Entered DefaultDOManager.newWriter(Context)");
+        if (cachedObjectRequired(context)) {
+            throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
-            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
-        }
-    }
-    public String[] listObjectPIDs(Context context, String state) 
-{return null;}/*            throws StorageDeviceException, InvalidContextException {
-        if ( (!context.get("application").equals("apim")) 
-                && (!context.get("application").equals("apia")) ) {
-            throw new InvalidContextException("Error in context: 'application' must be 'apim' or 'apia'");
-        }
-        String wherePredicate;
-        if (state==null) {
-            wherePredicate="";
-        } else {
-            wherePredicate=" WHERE State='" + state + "'";
-        }
-        try {
-            synchronized (m_connection) {
-                Statement selectCount=m_connection.createStatement();
-                ResultSet results=selectCount.executeQuery("SELECT DO_PID FROM " 
-                        + m_osrTableName + wherePredicate);
-                ArrayList pids=new ArrayList();
-                while (results.next()) {
-                    pids.add(results.getString(1));
-                }
-                results.close();
-                String[] out=new String[pids.size()];
-                Iterator pidIter=pids.iterator();
-                int i=0;
-                while (pidIter.hasNext()) {
-                    out[i++]=(String) pidIter.next();
-                }
-                return out;
+            BasicDigitalObject obj=new BasicDigitalObject();
+            getServer().logFinest("Creating object, need a new PID.");
+            String p=null;
+            try {
+                p="urn:" + m_pidGenerator.generatePID(m_pidNamespace);
+            } catch (Exception e) {
+                throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: (" 
+                        + e.getClass().getName() + ") - " + e.getMessage());
             }
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Problem querying db for object ids: " + sqle.getMessage());
+            getServer().logFiner("Generated PID: " + p);
+            obj.setPid(p);
+// FIXME: uncomment the following after lv0 test
+//          assertValidPid(obj.getPid());
+            if (objectExists(obj.getPid())) {
+                throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+            }
+            // make a record of it in the registry
+            registerObject(obj.getPid(), getUserId(context));
+            
+            // serialize to disk, then validate.. if that's ok, go on.. else unregister it! 
         }
+        return null;
     }
-    */
 
-    // meant to be called by DOReader and DOWriter instances... this
-    // is just an artifact of how this DOManager is written... and
-    // how DigitalObject has no current facility for holding this info
-    // at the moment
     /**
-     * Gets the name of the user who has locked the given object.
-     * 
-     * @param return The name of the user, or null if the object doesn't exist
-     *               or isn't locked.
+     * Gets the userId property from the context... if it's not
+     * populated, throws an InvalidContextException.
      */
-     /*
-    public String getLockingUser(String pid) 
-            throws StorageDeviceException {
-        String wherePredicate=" WHERE State='L' AND DO_PID='" + pid + "'";
-        try {
-            synchronized (m_connection) {
-                Statement selectCount=m_connection.createStatement();
-                ResultSet results=selectCount.executeQuery("SELECT LockingUser FROM " 
-                        + m_osrTableName + wherePredicate);
-                String out=null;
-                while (results.next()) {
-                    out=results.getString(1);
-                }
-                results.close();
-                return out;
-            }
-        } catch (SQLException sqle) {
-            throw new StorageDeviceException("Problem querying db for locking user: " + sqle.getMessage());
+    private String getUserId(Context context)
+            throws InvalidContextException {
+        String ret=context.get("userId");
+        if (ret==null) {
+            throw new InvalidContextException("The context identifies no userId, but a user must be identified for this operation.");
         }
-    } */
-
-    // called internally when obj created, and by DOWriters
-    public void updateObject(String pid, String state, String lockingUser) {
+        return ret;
     }
     
-    // called by a DOWriter
-    public void dropObject(String pid) {
+    /**
+     * Throws an exception if the PID is invalid.
+     * <pre>
+     * Basically:
+     * ----------
+     * The implementation's limit for the namespace 
+     * id is 17 characters.
+     *
+     * The limit for object id is 10 characters,
+     * representing any decimal # between zero and
+     * 2147483647 (2.14 billion)
+     *
+     * This does not necessarily mean a particular
+     * installation can handle 2.14 billion objects.
+     * The max number of objects is practically 
+     * limited by:
+     *   - disk storage limits
+     *   - OS filesystem impl. limits
+     *   - database used (max rows in a table, etc.)
+     *
+     * How prantical length limits were derived:
+     * -----------------------------------------
+     * The type for dbid's on objects in the db is int.
+     *
+     * MySQL and McKoi both impose a max of 2.14Billion (10
+     * decimal digits) on INT. (for oracle it's higher, but
+     * unknown).  Some dbs have a higher-prcision int type
+     * (like bigint), but it's likely a limit in number of
+     * rows would be reached before the int type is
+     * exhausted.
+     * 
+     * So for PIDs, which use URN syntax, the NSS part (in
+     * our case, a decimal number [see spec section
+     * 8.3.1(3)]) can be *practically* be between 1 and 10
+     * (decimal) digits.
+     * 
+     * Additionally, where PIDs are stored in the db, we
+     * impose a max length of 32 chars.  
+     * 
+     * Given the urn-syntax-imposed 5 chars ('urn:' and ':'),
+     * the storage system's int-type limit of 10 chars for
+     * row ids, and the storage system's imposed limit of 32
+     * chars for the total pid, this leaves 17 characters for
+     * the namespace id.
+     * 
+     * urn:17maxChars-------:10maxChars
+     * ^                              ^
+     * |-------- 32 chars max --------|
+     * </pre>
+     */
+    private void assertValidPid(String pid)
+            throws MalformedPidException {
+        if (pid.length()>32) {
+            throw new MalformedPidException("Pid is too long.  Max total length is 32 chars.");
+        }
+        String[] parts=pid.split(":");
+        if (parts.length!=3) {
+            throw new MalformedPidException("Pid must have two ':' characters, as in urn:nsid:1234");
+        }
+        if (!parts[0].equalsIgnoreCase("urn")) {
+            throw new MalformedPidException("Pids must use the urn scheme, as in urn:nsid:1234");
+        }
+        if (parts[1].length()>17) {
+            throw new MalformedPidException("Namespace id part of pid must be less than 18 chars.");
+        }
+        if (parts[1].length()==0) {
+            throw new MalformedPidException("Namespace id part of pid must be at least 1 char.");
+        }
+        // check for valid chars in namespace id part
+        StringBuffer badChars=new StringBuffer();
+        for (int i=0; i<parts[1].length(); i++) {
+            char c=parts[1].charAt(i);
+            boolean invalid=true;
+            if (c>='0' && c<='9') {
+                invalid=false;
+            } else if (c>='a' && c<='z') {
+                invalid=false;
+            } else if (c>='A' && c<='Z') {
+                invalid=false;
+            } else if (c=='-') {
+                invalid=false;
+            }
+            if (invalid) {
+                badChars.append(c);
+            }
+        }
+        if (badChars.toString().length()>0) {
+            throw new MalformedPidException("Pid namespace id part contains "
+                    + "invalid character(s) '" + badChars.toString() + "'");
+        }
+        if (parts[2].length()>10) {
+            throw new MalformedPidException("Pid object id part must be "
+                    + "less than 11 chars.");
+        }
+        if (parts[2].length()==0) {
+            throw new MalformedPidException("Pid object id part must be "
+                    + "at least 1 char.");
+        }
+        try {
+            long lng=Long.parseLong(parts[2]);
+            if (lng>2147483647) {
+                throw new NumberFormatException("");
+            }
+            if (lng<0) {
+                throw new NumberFormatException("");
+            }
+        } catch (NumberFormatException nfe) {
+            throw new MalformedPidException("Pid object id part must be "
+                    + "an integer between 0 and 2.147483647 billion.");
+        }
+    }
+    
+    /**
+     * Checks the object registry for the given object.
+     */
+    public boolean objectExists(String pid) 
+            throws StorageDeviceException {
+        Connection conn=null;
+        try {
+            String query="SELECT DO_PID "
+                       + "FROM ObjectRegistry "
+                       + "WHERE DO_PID='" + pid + "'";
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            ResultSet results=s.executeQuery(query);
+            return results.next(); // 'true' if match found, else 'false'
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
+    
+    /**
+     * Adds a new, locked object.
+     */
+    private void registerObject(String pid, String userId) 
+            throws StorageDeviceException {
+        Connection conn=null;
+        try {
+            String query="INSERT INTO ObjectRegistry (DO_PID, LockingUser) "
+                       + "VALUES ('" + pid + "', '"+ userId +"')";
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            s.executeUpdate(query);
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
+    }
+    
+    public String[] listObjectPIDs(Context context, String state) 
+            throws StorageDeviceException {
+        ArrayList pidList=new ArrayList();
+        Connection conn=null;
+        try {
+            String query="SELECT DO_PID "
+                       + "FROM ObjectRegistry "
+                       + "WHERE SystemVersion > 0"; // <- ignore new,uncommitted
+            conn=m_connectionPool.getConnection();
+            Statement s=conn.createStatement();
+            ResultSet results=s.executeQuery(query);
+            while (results.next()) {
+                pidList.add(results.getString("DO_PID"));
+            }
+            String[] ret=new String[pidList.size()];
+            Iterator pidIter=pidList.iterator();
+            int i=0;
+            while (pidIter.hasNext()) {
+                ret[i++]=(String) pidIter.next();
+            }
+            return ret;
+        } catch (SQLException sqle) {
+            throw new StorageDeviceException("Unexpected error from SQL database: " + sqle.getMessage());
+        } finally {
+            if (conn!=null) {
+                m_connectionPool.free(conn);
+            }
+        }
     }
 
 }
