@@ -140,7 +140,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 			throws ServerException {
 				
 		super(logTarget);
-		logFinest("[DOValidatorImpl]: Initializing object validation...");
+		logFinest("VALIDATE: Initializing object validation...");
 		m_xmlSchemaMap=xmlSchemaMap;
 		m_ruleSchemaMap=ruleSchemaMap;
 		if (tempDir==null) {
@@ -219,7 +219,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
       	throws ObjectValidityException, GeneralException {
 		
 	  if (fedora.server.Debug.DEBUG) System.out.println("Validation phase=" + phase + " format=" + format);		
-      logFinest("[DOValidatorImpl]: Initiating validation: " 
+      logFinest("VALIDATE: Initiating validation: " 
       		+ " phase=" + phase	+ " format=" + format);
       
       if (validationType==VALIDATE_ALL) {
@@ -232,10 +232,10 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 			validateByRules(objectAsFile, (String)m_ruleSchemaMap.get(format),
 				schematronPreprocessorPath, phase);
       } else {
-			String msg = "[DOValidatorImpl]: ERROR - missing or invalid validationType";
+			String msg = "VALIDATE: ERROR - missing or invalid validationType";
 			logFiner(msg);
 			cleanUp(objectAsFile);
-			throw new GeneralException(msg + ":" + validationType);
+			throw new GeneralException("[DOValidatorImpl] " + msg + ":" + validationType);
       }
       cleanUp(objectAsFile);
     }
@@ -253,16 +253,16 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 	    DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaPath);
 	    xsv.validate(objectAsFile);
 	  } catch (ObjectValidityException e){
-		    logFiner("[DOValidatorImpl]: ERROR - failed XML Schema validation.");
+		    logFiner("VALIDATE: ERROR - failed XML Schema validation.");
 		    cleanUp(objectAsFile);
 		    throw e;
 	  } catch (Exception e){
-			logFiner("[DOValidatorImpl]: ERROR - failed XML Schema validation.");
+			logFiner("VALIDATE: ERROR - failed XML Schema validation.");
 		    cleanUp(objectAsFile);
 			throw new ObjectValidityException("[DOValidatorImpl]: validateXMLSchema. " 
 				+ e.getMessage());
 	  }
-	  logFinest("[DOValidatorImpl]: SUCCESS - passed XML Schema validation.");
+	  logFinest("VALIDATE: SUCCESS - passed XML Schema validation.");
 	}
 
     /**
@@ -287,17 +287,18 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
           new DOValidatorSchematron(ruleSchemaPath, preprocessorPath, phase);
 		schtron.validate(objectAsFile);
       } catch (ObjectValidityException e){
-			logFiner("[DOValidatorImpl]: ERROR - failed Schematron rules validation.");
+			logFiner("VALIDATE: ERROR - failed Schematron rules validation.");
 	        cleanUp(objectAsFile);
 	        throw e;
 	  } catch (Exception e){
-			logFiner("[DOValidatorImpl]: ERROR - failed Schematron fules validation.");
+			logFiner("VALIDATE: ERROR - failed Schematron fules validation.");
 			cleanUp(objectAsFile);
 			e.printStackTrace();
-			throw new ObjectValidityException("[DOValidatorImpl]: validate_L2. " 
+			throw new ObjectValidityException("[DOValidatorImpl]: "
+				+ "failed Schematron rules validation. " 
 				+ e.getMessage());
       }
-	  logFiner("[DOValidatorImpl]: SUCCESS - passed Schematron rules validation.");
+	  logFiner("VALIDATE: SUCCESS - passed Schematron rules validation.");
     }
 
     private void streamCopy(InputStream in, OutputStream out)
