@@ -21,6 +21,7 @@ import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
 
 import fedora.client.bmech.data.*;
@@ -71,17 +72,6 @@ public class BMechMETSSerializer
   public BMechMETSSerializer(BMechTemplate bMechData, Element dsInputSpec,
     Element methodMap, Element wsdl) throws BMechBuilderException
   {
-    try
-    {
-      File file = new File("bmechtest.xml");
-      out = new PrintWriter(new BufferedWriter(new FileWriter(file)));
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-      throw new BMechBuilderException("BMechMETSSerializer: " +
-        " IO Exception initializing PrintWriter in constructor.");
-    }
     initializeTree();
     genMETS(bMechData, dsInputSpec, methodMap, wsdl);
     finalizeTree();
@@ -262,7 +252,7 @@ public class BMechMETSSerializer
     bdef.setAttributeNS(XLINK, "xlink:href", "fedora-system:1");
     serviceBinding.appendChild(bdef);
 
-    Element bmech = document.createElementNS(METS, "METS:serviceBindingMD");
+    Element bmech = document.createElementNS(METS, "METS:serviceBindMD");
     bmech.setAttribute("LABEL", "Bootstrap Behavior Mechanism");
     bmech.setAttribute("LOCTYPE", "URN");
     bmech.setAttributeNS(XLINK, "xlink:href", "fedora-system:2");
@@ -366,5 +356,41 @@ public class BMechMETSSerializer
     {
       e.printStackTrace();
     }
+  }
+
+  public void writeMETSFile(File file) throws BMechBuilderException
+  {
+    try
+    {
+      XMLWriter w = new XMLWriter(document);
+      w.writeXMLToFile(file);
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      throw new BMechBuilderException("BMechMETSSerializer: " +
+        " IO or parser exception writing BMech METS file." +
+        " Underlying exception was: " +
+        e.getMessage());
+    }
+  }
+
+  public InputStream writeMETSStream() throws BMechBuilderException
+  {
+    InputStream in = null;
+    try
+    {
+      XMLWriter w = new XMLWriter(document);
+      in = w.writeXMLToStream();
+    }
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      throw new BMechBuilderException("BMechMETSSerializer: " +
+        " IO or parser exception writing BMech METS to stream." +
+        " Underlying exception was: " +
+        e.getMessage());
+    }
+    return in;
   }
 }
