@@ -1,33 +1,24 @@
 package fedora.server.access;
 
-//import java.io.ByteArrayInputStream;
-//import java.io.ByteArrayOutputStream;
-//import java.io.IOException;
 import java.io.File;
-//import java.io.FileInputStream;
-//import java.io.FileOutputStream;
-//import java.io.FileWriter;
-//import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-//import java.sql.ResultSetMetaData;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fedora.server.Server;
-//import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
-//import fedora.server.errors.GeneralException;
-//import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
@@ -35,14 +26,8 @@ import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
-//import fedora.server.storage.DefaultExternalContentManager;
-//import fedora.server.storage.DisseminatingDOReader;
 import fedora.server.storage.types.MIMETypedStream;
-//import fedora.server.storage.types.MethodParmDef;
-//import fedora.server.storage.types.Property;
-//import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
-//import fedora.server.storage.lowlevel.ILowlevelStorage;
-//import fedora.server.utilities.DateUtility;
+import fedora.server.storage.types.DatastreamMediation;
 
 /**
  * <p>Title: DisseminationService.java</p>
@@ -79,6 +64,14 @@ public class DisseminationService
   /** The expiration limit in minutes for removing entries from the database. */
   private static int datastreamExpirationLimit = 0;
 
+  /** The hashtable containing information required for datastream mediation */
+  public static Hashtable dsRegistry = new Hashtable(100);
+
+  /** An incremental counter used to insure uniqueness of tempIDs used for
+   * datastream mediation.
+   */
+  private static int counter = 0;
+
   /** Make sure we have a server instance for error logging purposes. */
   static
   {
@@ -93,7 +86,6 @@ public class DisseminationService
       } else
       {
           s_server = Server.getInstance(new File(fedoraHome));
-          System.out.println("fedoraServerPort: "+fedoraServerPort);
       }
     } catch (InitializationException ie)
     {
@@ -234,7 +226,8 @@ public class DisseminationService
           nextKey = dissBindInfoArray[i+1].DSBindKey;
           s_server.logFinest("nextKey: '" + nextKey + "'");
         }
-
+s_server.logFinest("currentKey: '" + currentKey + "'");
+s_server.logFinest("nextKey: '" + nextKey + "'");
         // In most cases, there is only a single datastream that matches a
         // given DSBindingKey so the substitution process is to just replace
         // the occurence of (BINDING_KEY) with the value of the datastream
@@ -270,52 +263,16 @@ public class DisseminationService
         {
           // Case where binding keys are equal which means that multiple
           // datastreams matched the same binding key.
-          if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("E"))
-          {
-            // Datastreams of type Referenced External Content are not
-            // disguised and are sent with the real physical location of
-            // the datastream.
-            replaceString = dissBindInfo.dsLocation
-                          + "+(" + dissBindInfo.DSBindKey + ")";
-          } else
-          {
-            // Invoke datastream proxy to hide physical locations of datastreams
-            // with a type of Protected Referenced External Content. Datastreams
-            // with a type of Referenced External Content are sent out with the
-            // real physical locations of the datastreams to the mechanism
-            // services. All other datastream types use the proxy.
-            replaceString = fedoraServerAddress
-                          + registerDatastreamLocation(PID,
-                          dissBindInfo.dsLocation,
-                          dissBindInfo.dsControlGroupType,
-                          dissBindInfo.dsID,
-                          dissBindInfo.dsVersionID)
-                          + "+(" + dissBindInfo.DSBindKey + ")";
-          }
-
+          replaceString = fedoraServerAddress
+              + registerDatastreamLocation(dissBindInfo.dsLocation,
+                                           dissBindInfo.dsControlGroupType)
+              + "+(" + dissBindInfo.DSBindKey + ")";
         } else
         {
           // Case where there are multiple binding keys.
-          if (dissBindInfo.dsControlGroupType.equalsIgnoreCase("E"))
-          {
-            // Datastreams of type Referenced External Content are not
-            // disguised and are sent with the real physical location of
-            // the datastream.
-            replaceString = dissBindInfo.dsLocation;
-          } else
-          {
-            // Invoke datastream proxy to hide physical locations of datastreams
-            // with a type of Protected Referenced External Content. Datastreams
-            // with a type of Referenced External Content are sent out with the
-            // real physical locations of the datastreams to the mechanism
-            // services. All other datastream types use the proxy.
-            replaceString = fedoraServerAddress
-                          + registerDatastreamLocation(PID,
-                          dissBindInfo.dsLocation,
-                          dissBindInfo.dsControlGroupType,
-                          dissBindInfo.dsID,
-                          dissBindInfo.dsVersionID);
-          }
+          replaceString = fedoraServerAddress
+              + registerDatastreamLocation(dissBindInfo.dsLocation,
+                                           dissBindInfo.dsControlGroupType);
         }
         dissURL = substituteString(dissURL, bindingKeyPattern, replaceString);
         s_server.logFinest("replaced dissURL: "
@@ -370,228 +327,129 @@ public class DisseminationService
     return dissemination;
   }
 
+
   /**
    * <p>Datastream locations are considered privileged information by the
    * Fedora repository. To prevent disclosing physical datastream locations
-   * to external mechanism services, a temporary ID is passed to the mechanism
-   * service. This method generates a temporary ID corresponding to the
+   * to external mechanism services, a proxy is used to disguise the datastream
+   * locations. This method generates a temporary ID that maps to the
    * physical datastream location and registers this information in a
-   * database for subsequent resolution of the physical datastream location.</p>
+   * memory resident hashtable for subsequent resolution of the physical
+   * datastream location. The servlet <code>DatastreamResolverServlet</code>
+   * provides the proxy resolution service for datastreams.</p>
+   * <p></p>
+   * <p>The format of the tempID is derived from <code>java.sql.Timestamp</code>
+   * with an arbitrary counter appended to the end to insure uniqueness. The
+   * syntax is of the form:
+   * <ul>
+   * <p>YYYY-MM-DDThh:mm:ss.mmm:dddddd where</p>
+   * <ul>
+   * <li>YYYY - year (1970-2037)</li>
+   * <li>MM - month (01-12)</li>
+   * <li>DD - day (01-31)</li>
+   * <li>hh - hours (0-23)</li>
+   * <li>mm - minutes (0-59)</li>
+   * <li>ss - seconds (0-59)</li>
+   * <li>mmm - milliseconds (0-999)</li>
+   * <li>dddddd - incremental counter (0-999999)</li>
+   * </ul>
+   * </ul>
+   * <p>The "T" character between the date and time is added to avoid having a
+   * blank in the URL
    *
-   * <p><i>Disclosure is only an issue for Referenced External Datastreams which
-   * are not under the custodianship of the Fedora repository. All other
-   * datastream types are under the direct control of the Fedora repository
-   * and physical datastream locations are always hidden. Only Referenced
-   * External Content datastreams with the type of Protected make use of this
-   * proxy service to hide the physical datastream location.</i></p>
-   *
-   * @param PID The persistent identifier for the data object.
    * @param dsLocation The physical location of the datastream.
    * @param dsControlGroupType The type of the datastream.
-   * @param dsID The identifier for the datastream.
-   * @param dsVersionID The datastream version identifer.
    * @return A temporary ID used to reference the physical location of the
    *         specified datastream
    * @throws ServerException If an error occurs in connecting or updating the
    *         database or an illegal Control Group Type is encountered.
    */
-  public String registerDatastreamLocation(String PID, String dsLocation,
-      String dsControlGroupType, String dsID, String dsVersionID)
-      throws ServerException
+  public String registerDatastreamLocation(String dsLocation,
+      String dsControlGroupType) throws ServerException
   {
 
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet rs = null;
-    StringBuffer sb = new StringBuffer();
     String tempID = null;
-    System.out.println("ControlGroup: "+dsControlGroupType);
-    System.out.println("dsID: "+dsID);
-    System.out.println("dsVersionID: "+dsVersionID);
-    Timestamp timeStamp = new Timestamp(new Date().getTime());
+    Timestamp timeStamp = null;
+    if (counter > 999999) counter = 0;
+    long currentTime = new Timestamp(new Date().getTime()).getTime();
+    long expireLimit = currentTime -
+                       (long)datastreamExpirationLimit*1000;
 
     try
     {
-      // Remove expired datastreams from database.
-      removeExpiredDatastreams(timeStamp);
 
-      // For Protected External Content datastreams, construct tempID
-      // using PID:dsID:dsVersionID; otherwise use datastream location.
-      if ( dsControlGroupType.equalsIgnoreCase("P"))
+      // Remove any datastream registrations that have expired.
+      // The expiration limit can be adjusted using the Fedora config parameter
+      // named "datastreamExpirationLimit" which is in seconds.
+      for ( Enumeration e = dsRegistry.keys(); e.hasMoreElements(); )
       {
-        sb.append(PID+":"+dsID+":"+dsVersionID);
-
-      } else if (dsControlGroupType.equalsIgnoreCase("M") ||
-                 dsControlGroupType.equalsIgnoreCase("X"))
-      {
-        sb.append(dsLocation);
-      } else
-      {
-        s_server.logWarning("Unknown dsControlGroupType: "
-                            + dsControlGroupType);
-        throw new DisseminationException("registerDatastreamLocation returned "
-            + "an error." + " The underlying error was a "
-            + "unknown value for dsControlGroupType: "
-            + dsControlGroupType);
-      }
-      tempID = sb.toString();
-
-      // Add new tempID to database if it doesn't already exist.
-      if (!isTempIDRegistered(tempID))
-      {
-        String query = "INSERT INTO DatastreamLocation VALUES ('"
-                     + tempID + "', '" + dsLocation + "', '"
-                     + dsControlGroupType + "', '" + dsID + "', '"
-                     + dsVersionID + "', '" + timeStamp.toString() + "');";
-        System.out.println("DatastreamResolverQuery: "+query);
-        s_server.logFinest("DatastreamResolverQuery: "+query);
-        connection = connectionPool.getConnection();
-        statement = connection.createStatement();
-        rs = statement.executeQuery(query);
-      }
-    } catch (SQLException sqle)
-    {
-      throw new DisseminationException("registerDatastreamLocation returned an "
-          + "error.\n The underlying error was a "
-          + sqle.getClass().getName() + "\n The message "
-          + "was \"" + sqle.getMessage() + "\" .");
-    } finally
-    {
-      if (connection != null)
-      {
-        try
+        String key = (String)e.nextElement();
+        timeStamp = timeStamp.valueOf(extractTimestamp(key));
+        if (expireLimit > timeStamp.getTime())
         {
-          rs.close();
-          statement.close();
-          connectionPool.free(connection);
-          connection.close();
-        } catch (SQLException sqle)
-        {
-          throw new DisseminationException("Unexpected error from SQL "
-              + "database. The error was: " + sqle.getMessage());
+          dsRegistry.remove(key);
+          s_server.logFinest("DatastreamMediationKey removed from Hash: "+key);
         }
       }
+
+      // Check if datastream is already registered.
+/*    for ( Enumeration e = dsRegistry.keys(); e.hasMoreElements(); )
+      {
+        String key = (String)e.nextElement();
+        DatastreamMediation dm = (DatastreamMediation)dsRegistry.get(key);
+        if (dm.dsLocation.equalsIgnoreCase(dsLocation))
+        {
+          timeStamp = timeStamp.valueOf(extractTimestamp(key).replaceAll("T"," "));
+          tempID = key;
+          System.out.println("DatastreamMediation already in Hash: "+tempID);
+          s_server.logFinest("DatastreamMediationValue already in Hash: "+tempID);
+        }
+      }
+*/
+
+      // Register datastream if not already registered.
+      if (tempID == null)
+      {
+        timeStamp = new Timestamp(new Date().getTime());
+        tempID = timeStamp.toString()+":"+counter++;
+        DatastreamMediation dm = new DatastreamMediation();
+        dm.mediatedDatastreamID = tempID;
+        dm.dsLocation = dsLocation;
+        dm.dsControlGroupType = dsControlGroupType;
+        dsRegistry.put(tempID, dm);
+        s_server.logFinest("DatastreammediationKey added to Hash: "+tempID);
+      }
+
+    } catch(Throwable th)
+    {
+      throw new DisseminationException("[DisseminationService]register"
+          + "DatastreamLocation: "
+          + "returned an error.\nThe underlying error was a "
+          + th.getClass().getName() + "\nThe message "
+          + "was \"" + th.getMessage() + "\" .");
     }
-    return tempID;
+
+    // Since the tempID will eventually appear in a URL, escape any blanks with
+    // a plus sign.
+    return tempID.replaceAll(" ","T");
   }
 
   /**
-   * <p>Verify if the specified temporary identifier is already in the database.
-   * If the identifier exists, return true; otherwise return false.</p>
+   * <p>The tempID that is used for datastream mediation consists of a <code>
+   * Timestamp</code> plus a counter appended to the end to insure uniqueness.
+   * This method is a utility method used to extract the Timestamp portion
+   * from the tempID by stripping off the arbitrary counter at the end of
+   * the string.</p>
    *
-   * @param tempID The temporary ID of the datastream.
-   * @return True if the temporary ID exists; false otherwise.
-   * @throws SQLException If there is a problem in connecting or
-   *         reading from the database.
+   * @param tempID The tempID to be extracted.
+   * @return The extracted Timestamp value as a string.
    */
-  public boolean isTempIDRegistered(String tempID)
-      throws SQLException
+  public String extractTimestamp(String tempID)
   {
-    Connection connection = null;
-    Statement statement = null;
-    ResultSet rs = null;
-    String query = "SELECT DS_Temp_ID FROM DatastreamLocation "
-                 + "WHERE DS_Temp_ID = '" + tempID + "';";
-    System.out.println("DatastreamResolverQuery: " + query);
-    s_server.logFinest("DatastreamResolverQuery: "+query);
-
-    try
-    {
-      connection = connectionPool.getConnection();
-      statement = connection.createStatement();
-      rs = statement.executeQuery(query);
-
-      if (!rs.next())
-      {
-        return false;
-      } else
-      {
-        while (rs.next())
-        {
-          tempID = rs.getString(1);
-        }
-        return true;
-
-    }
-    } catch (SQLException sqle)
-    {
-      throw new SQLException("isTempIDRegistered returned an error. "
-          + " The underlying error was a " + sqle.getClass().getName()
-          + " The message was \"" + sqle.getMessage() + "\" .");
-    } finally
-    {
-      if (connection != null)
-      {
-        try
-        {
-          rs.close();
-          statement.close();
-          connectionPool.free(connection);
-          connection.close();
-        } catch (SQLException sqle)
-        {
-          throw new SQLException("Unexpected error from SQL "
-              + "database. The error was: " + sqle.getMessage());
-        }
-      }
-    }
-  }
-
-  /**
-   * <p>Removes datastream entries in the database that have expired.
-   * The time specified for expiration is controlled by the Fedora config
-   * parameter named <code>datastreamExpirationLimit</code> which is in
-   * minutes. Any database entries older than datastreamExpirationLimit
-   * minutes are deleted from the database to keep the table size to
-   * a minimum. The expiration limit can be adjusted as needed for
-   * optimum performance.</p>
-   *
-   * @param currentTime The current date and time.
-   * @throws SQLException If there is an error in connecting or
-   *         deleting rows from the database.
-   */
-  public void removeExpiredDatastreams(Timestamp currentTime)
-      throws SQLException
-  {
-
-    Connection connection = null;
-    Statement statement = null;
-    System.out.println("time: "+currentTime);
-    long expireLimit = currentTime.getTime() -
-                       (long)datastreamExpirationLimit*60000;
-    Timestamp expireTime = new Timestamp(expireLimit);
-    System.out.println("expireTime: "+expireTime);
-    String query = "DELETE FROM DatastreamLocation "
-                 + "WHERE DS_Date_Time < '" + expireTime + "';";
-    System.out.println("deleteQuery: "+query);
-    s_server.logFinest("deleteQuery: "+query);
-    try
-    {
-      connection = connectionPool.getConnection();
-      statement = connection.createStatement();
-      statement.executeUpdate(query);
-
-    } catch (SQLException sqle)
-    {
-      throw new SQLException("removeExpiredDatastreams returned an "
-          + "error. The underlying error was a " + sqle.getClass().getName()
-          + " The message was \"" + sqle.getMessage() + "\" .");
-    } finally
-    {
-      if (connection != null)
-      {
-        try
-        {
-          statement.close();
-          connectionPool.free(connection);
-          connection.close();
-        } catch (SQLException sqle)
-        {
-          throw new SQLException("Unexpected error from SQL "
-              + "database. The error was: " + sqle.getMessage());
-        }
-      }
-    }
+    StringBuffer sb = new StringBuffer();
+    sb.append(tempID);
+    sb.replace(tempID.lastIndexOf(":"),tempID.length(),"");
+    return sb.toString();
   }
 
   /**
