@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import fedora.client.ingest.AutoIngestor;
+import fedora.client.utility.ingest.AutoIngestor;
 import fedora.oai.sample.RandomDCMetadataFactory;
 
 /**

@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
-import fedora.client.ingest.AutoIngestor;
+import fedora.client.utility.ingest.AutoIngestor;
 
 /**
  *

@@ -8,7 +8,7 @@ import java.util.Properties;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import fedora.client.ingest.AutoIngestor;
+import fedora.client.utility.ingest.AutoIngestor;
 
 /**
  *
