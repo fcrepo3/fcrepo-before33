@@ -115,7 +115,9 @@ public class BatchTool {
 			String pidsPath = batchIngestValues.getProperty(BatchTool.PIDSPATH);
 
 			String pidsFormat = miscProperties.getProperty(BatchTool.PIDSFORMAT);
+			String templateFormat = miscProperties.getProperty(BatchTool.TEMPLATEFORMAT);
 			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err;
+			out.println("template: "+templateFormat);
 
 //System.out.println("pidsFormat = [" + pidsFormat + "]");
 			if (pidsFormat.equals("xml")) {
@@ -210,6 +212,7 @@ public class BatchTool {
 	private static final String EAT = "ingest";
 	static final String PIDSPATH = "ingested-pids";
 	static final String PIDSFORMAT = "pids-format";
+	static final String TEMPLATEFORMAT = "template-format";
 
 	static final boolean argOK(String value) {
 		return (value != null) && ! value.equals("");

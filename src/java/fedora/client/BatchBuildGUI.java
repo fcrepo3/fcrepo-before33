@@ -63,7 +63,10 @@ public class BatchBuildGUI
 	private JRadioButton m_xmlMap = new JRadioButton("xml");
 	private JRadioButton m_textMap = new JRadioButton("text");
 	private ButtonGroup buttonGroup = new ButtonGroup();
-
+	
+	private JRadioButton m_foxmlMap = new JRadioButton("foxml");
+	private JRadioButton m_metsMap = new JRadioButton("mets");
+	private ButtonGroup templateButtonGroup = new ButtonGroup();
 
 	private Dimension unitDimension = null;
 	private Dimension browseMin = null;
@@ -124,7 +127,8 @@ public class BatchBuildGUI
 	okMax = new Dimension((new Float(1.5 * okMin.width)).intValue() , (new Float(1.5 * okMin.height)).intValue());
 	okPref = okMax;
 
-
+	/*
+	
         labelPanel.add(new JLabel("METS template (input file)"));
 	labelPanel.add(sized (m_templateField, textMin, textPref, textMax));
 
@@ -135,7 +139,28 @@ public class BatchBuildGUI
             }
         });
 	labelPanel.add(sized (templateBtn, browseMin, browsePref, browseMax));
+*/
+	
+	templateButtonGroup.add(m_foxmlMap);
+	m_foxmlMap.setSelected(true);
+	templateButtonGroup.add(m_metsMap);
+	JPanel templatePanel = new JPanel();
 
+	templatePanel.setLayout(new BorderLayout());
+	templatePanel.add(m_foxmlMap, BorderLayout.WEST);
+	templatePanel.add(new JLabel("FOXML or METS Template file(input file)"), BorderLayout.NORTH);
+	templatePanel.add(m_metsMap, BorderLayout.CENTER);
+	labelPanel.add(sized (templatePanel, browseMin, browsePref, browseMax));
+
+        labelPanel.add(sized (m_templateField, textMin, textPref, textMax));
+        JButton templateBtn=new JButton("browse...");
+        templateBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                templateAction();
+            }
+        });
+	labelPanel.add(sized (templateBtn, browseMin, browsePref, browseMax));	
+	
         labelPanel.add(new JLabel("XML specs (input directory)"));
 	labelPanel.add(sized (m_specsField, textMin, textPref, textMax));
 
@@ -147,7 +172,7 @@ public class BatchBuildGUI
         });
 	labelPanel.add(sized (specsBtn, browseMin, browsePref, browseMax));
 
-        labelPanel.add(new JLabel("METS objects (output directory)"));
+        labelPanel.add(new JLabel("Fedora objects (output directory)"));
 	labelPanel.add(sized (m_objectsField, textMin, textPref, textMax));
 
         JButton objectsBtn=new JButton("browse...");
@@ -236,6 +261,7 @@ public class BatchBuildGUI
 	    properties.setProperty("objects",m_objectsField.getText());
 	    properties.setProperty("ingested-pids",m_pidsField.getText());
 	    properties.setProperty("pids-format",m_xmlMap.isSelected()? "xml" : "text");
+	    properties.setProperty("template-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    
 	    batchOutput.setDirectoryPath(properties.getProperty("ingested-pids")); //2003.12.03 niebel -- duplicate output to file
 

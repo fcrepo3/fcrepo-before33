@@ -132,7 +132,7 @@ public class BatchIngestGUI
 	okPref = okMax;
 
 
-        labelPanel.add(new JLabel("METS objects (input directory)"));
+        labelPanel.add(new JLabel("Fedora objects (input directory)"));
 	labelPanel.add(sized (m_objectsField, textMin, textPref, textMax));
         JButton objectsBtn=new JButton("browse...");
         objectsBtn.addActionListener(new ActionListener() {

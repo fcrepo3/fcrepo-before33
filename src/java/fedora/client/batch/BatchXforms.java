@@ -59,7 +59,17 @@ class BatchXforms {
       private Transformer transformer = null;
 
       BatchXforms(Properties optValues) throws Exception {
-		xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
+		//xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
+    // The template format controls which xsl stylesheet is to be applied
+    // Valid values are "metslikefedora1" and "foxml1.0"
+    if(optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("foxml1.0")) {
+        xformPath = System.getProperty("fedora.home") + "/client/lib/foxml-merge.xsl";
+    } else if (optValues.getProperty(BatchTool.TEMPLATEFORMAT).equalsIgnoreCase("metslikefedora1")) {
+        xformPath = System.getProperty("fedora.home") + "/client/lib/merge.xsl";
+    } else {
+        System.err.println("Unknown template format: "+optValues.getProperty(BatchTool.TEMPLATEFORMAT));
+  			throw new Exception();
+    }
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		modelPath = optValues.getProperty(BatchTool.CMODEL);
@@ -155,6 +165,9 @@ class BatchXforms {
 
 		//System.err.println("after tfactory.newTransformer(); is transformer null? " + (transformer == null));
 
+						// As of Fedora 2.0, CREATEDATE attribute should be omitted and allow Fedora server to assign
+		        // creation dates at time of object ingest.
+						/*
 						GregorianCalendar calendar = new GregorianCalendar();
 						String year = Integer.toString(calendar.get(Calendar.YEAR));
 						String month = leftPadded(1+ calendar.get(Calendar.MONTH),2);
@@ -165,6 +178,7 @@ class BatchXforms {
 						transformer.setParameter("date",
 						year + "-" + month + "-" + dayOfMonth +
 						"T" + hourOfDay + ":" + minute + ":" + second);
+						*/
 						//"2002-05-20T06:32:00"
 						//System.err.println("about to xform " + count++);
 //System.err.println(">>>>>>>>>>>>" + files[i].getPath());

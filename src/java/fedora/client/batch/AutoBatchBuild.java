@@ -32,7 +32,7 @@ public class AutoBatchBuild {
     private Properties batchProperties = new Properties();
 
     public AutoBatchBuild(String objectTemplate, String objectSpecificDir,
-        String objectDir, String logFile, String logFormat) throws Exception {
+        String objectDir, String logFile, String logFormat, String templateFormat) throws Exception {
 
         this.batchProperties.setProperty("template", objectTemplate);
         this.batchProperties.setProperty("merge-objects", "yes");
@@ -40,6 +40,7 @@ public class AutoBatchBuild {
         this.batchProperties.setProperty("objects", objectDir);
         this.batchProperties.setProperty("pids-format", logFormat);
         this.batchProperties.setProperty("ingested-pids", logFile);
+        this.batchProperties.setProperty("template-format", templateFormat);
 
         BatchTool batchTool = new BatchTool(this.batchProperties, null, null);
         batchTool.prep();
@@ -48,7 +49,7 @@ public class AutoBatchBuild {
 
     public static final void main(String[] args) throws Exception {
         boolean errors = false;
-        if (args.length == 5) {
+        if (args.length == 6) {
             if (!new File(args[0]).exists() && !new File(args[0]).isFile()) {
                 System.out.println("Specified object template file path: \""
                                    + args[0] + "\" does not exist.");
@@ -69,18 +70,25 @@ public class AutoBatchBuild {
                                    + "\"xml\"  or  \"txt\"");
                 errors = true;
             }
+            if (!args[5].equals("foxml1.0") && !args[4].equals("metslikefedora1")) {
+                System.out.println("Format for template file must must be either: \""
+                                   + "\"foxml1.0\"  or  \"metslikefedora1\"");
+                errors = true;
+            }            
             if (!errors) {
-                AutoBatchBuild autoBatch = new AutoBatchBuild(args[0], args[1], args[2], args[3], args[4]);
+                AutoBatchBuild autoBatch = new AutoBatchBuild(args[0], args[1], args[2], args[3], args[4], args[5]);
             }
         } else {
             System.out.println("\n**** Wrong Number of Arguments *****\n");
-            System.out.println("AutoBatchBuild requires 5 arguments.");
+            System.out.println("AutoBatchBuild requires 6 arguments.");
             System.out.println("merge-objects=yes");
             System.out.println("(1) - full path to object template file");
             System.out.println("(2) - full path to object specific directory");
             System.out.println("(3) - full path to object directory");
             System.out.println("(4) - full path to log file");
-            System.out.println("(5) - format of log file (xml or text)\n");
+            System.out.println("(5) - format of log file (xml or text)");
+            System.out.println("(6) - format of template file (foxml1.0 or metslikefedora1)\n");
+            
         }
     }
 }
