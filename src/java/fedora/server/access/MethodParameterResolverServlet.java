@@ -102,7 +102,6 @@ public class MethodParameterResolverServlet
     while (parms.hasMoreElements())
     {
       String name = new String((String)parms.nextElement());
-      String value = new String(request.getParameter(name));
       if (name.equals("PID"))
       {
         PID = (String)request.getParameter(name);

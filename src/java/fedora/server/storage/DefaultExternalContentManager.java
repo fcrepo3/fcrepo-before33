@@ -3,7 +3,7 @@ package fedora.server.storage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
@@ -13,6 +13,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
+import fedora.server.errors.StreamIOException;
 
 /**
  * <p>Title: DefaultExternalContentManager.java</p>
@@ -91,7 +92,15 @@ public class DefaultExternalContentManager extends Module
     try
     {
       URL url = new URL(URL);
-      URLConnection connection = (URLConnection)url.openConnection();
+      HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+      if (connection.getResponseCode()!=HttpURLConnection.HTTP_OK)
+      {
+          throw new StreamIOException(
+                  "Server returned a non-200 response code ("
+                  + connection.getResponseCode() + ") from GET request of URL: "
+                  + URL);
+      }
+      connection.setInstanceFollowRedirects(true);
       String contentType = connection.getContentType();
       inStream = connection.getInputStream();
       int byteStream = 0;
@@ -102,26 +111,26 @@ public class DefaultExternalContentManager extends Module
       if(contentType == null) contentType =
           connection.guessContentTypeFromStream(connection.getInputStream());
       httpContent = new MIMETypedStream(contentType, baos.toByteArray());
+      baos = null;
       return(httpContent);
 
     } catch (Throwable th)
     {
       throw new HttpServiceNotFoundException("[DefaultExternalContentManager] "
-          + "returned an error.\nThe underlying error was a "
-          + th.getClass().getName() + "\nThe message "
-          + "was \"" + th.getMessage() + "\" .");
+          + "returned an error.  The underlying error was a "
+          + th.getClass().getName() + "  The message "
+          + "was  \"" + th.getMessage() + "\"  .  ");
     } finally
     {
       try
       {
         if (inStream != null) inStream.close();
-        if (baos != null) baos.close();
       } catch (IOException ioe)
       {
         throw new GeneralException("[DefaultExternalContentManager]"
-            + " unable to close IO stream.\nThe underlying error was a "
-            + ioe.getClass().getName() + "\nThe message "
-          + "was \"" + ioe.getMessage() + "\" .");
+            + " unable to close IO stream.  The underlying error was a "
+            + ioe.getClass().getName() + "  The message "
+          + "was  \"" + ioe.getMessage() + "\"  .  ");
       }
     }
   }
