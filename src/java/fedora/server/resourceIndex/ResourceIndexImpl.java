@@ -87,9 +87,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     
     // For the database
     private ConnectionPool m_cPool;
-    private Connection m_conn;
-    private Statement m_statement;
-    private ResultSet m_resultSet;
+    //private Connection m_conn;
+    //private Statement m_statement;
+    //private ResultSet m_resultSet;
     
     // Triplestore (Trippi)
     private TriplestoreConnector m_connector;
@@ -117,23 +117,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         m_connector = connector;
         m_reader = m_connector.getReader();
         m_writer = m_connector.getWriter();
+        m_cPool = cPool;
         try {
             m_reader.setAliasMap(namespaces);
             m_writer.setAliasMap(namespaces);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
-        }
-        m_cPool = cPool;
-        try {
-            m_conn = m_cPool.getConnection();
-        } catch (SQLException e) {
-            if (m_cPool != null && m_conn != null) {
-                try {
-                    m_cPool.free(m_conn);
-                } catch (Exception e2) {}
-            }
-            throw new ResourceIndexException("ResourceIndex Connection Pool " +
-                                             "was unable to get a connection", e);
         }
     }
 
@@ -284,10 +273,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
                            "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
+            Connection conn = null;
             Statement select = null;
             ResultSet rs = null;
             try {
-                 select = m_conn.createStatement();
+                 conn = m_cPool.getConnection();
+                 select = conn.createStatement();
                  rs = select.executeQuery(query);
                  String permutation, mimeType, rep, repType;
                  while (rs.next()) {
@@ -312,8 +303,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     if (select != null) {
                         select.close();
                     }
-                    if (m_conn != null) {
-                        m_cPool.free(m_conn);
+                    if (conn != null) {
+                        m_cPool.free(conn);
                     }
                 } catch(SQLException e2) {
                     throw new ResourceIndexException(e2.getMessage(), e2);
@@ -444,18 +435,20 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                            "FROM riMethodPermutation, riMethodImpl " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
+            Connection conn = null;
             Statement select = null;
             ResultSet rs = null;
             
             try {
-                 select = m_conn.createStatement();
-                 rs = select.executeQuery(query);
-                 String permutation, rep;
-                 while (rs.next()) {
-                     permutation = rs.getString("permutation");
-                     rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     m_writer.delete(m_reader.findTriples(TripleMaker.createResource(rep), null, null, 0), false);
-                 }
+                conn = m_cPool.getConnection();
+                select = conn.createStatement();
+                rs = select.executeQuery(query);
+                String permutation, rep;
+                while (rs.next()) {
+                    permutation = rs.getString("permutation");
+                    rep = doIdentifier + "/" + bDefPID + "/" + permutation;
+                    m_writer.delete(m_reader.findTriples(TripleMaker.createResource(rep), null, null, 0), false);
+                }
             } catch (SQLException e) {
                 throw new ResourceIndexException(e.getMessage(), e);
             } catch (IOException e) {
@@ -470,8 +463,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     if (select != null) {
                         select.close();
                     }
-                    if (m_conn != null) {
-                        m_cPool.free(m_conn);
+                    if (conn != null) {
+                        m_cPool.free(conn);
                     }
                 } catch(SQLException e2) {
                     throw new ResourceIndexException(e2.getMessage(), e2);
@@ -646,10 +639,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String methodName;
 	    boolean noRequiredParms;
         int optionalParms;
+        Connection conn = null;
         PreparedStatement insertMethod = null, insertPermutation = null;
         try {
-            insertMethod = m_conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
-            insertPermutation = m_conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
+            conn = m_cPool.getConnection();
+            insertMethod = conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
+            insertPermutation = conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
 
     	    for (int i = 0; i < mdef.length; i++) {
     	    	methodName = mdef[i].methodName;
@@ -718,8 +713,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (insertPermutation != null) {
                     insertPermutation.close();
                 }
-                if (m_conn != null) {
-                    m_cPool.free(m_conn);
+                if (conn != null) {
+                    m_cPool.free(conn);
                 }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
@@ -769,6 +764,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String bMechPid = digitalObject.getPid();
         DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)ds;
         Map bindings;
+        Connection conn = null;
         PreparedStatement insertMethodImpl = null;
         PreparedStatement insertMethodMimeType = null;
         
@@ -784,8 +780,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             Iterator it = bindingKeys.iterator();
             
             String methodName, mimeType;
-            insertMethodImpl = m_conn.prepareStatement("INSERT INTO riMethodImpl (methodImplId, bMechPid, methodId) VALUES (?, ?, ?)");
-            insertMethodMimeType = m_conn.prepareStatement("INSERT INTO riMethodMimeType (methodImplId, mimeType) VALUES (?, ?)");
+            conn = m_cPool.getConnection();
+            insertMethodImpl = conn.prepareStatement("INSERT INTO riMethodImpl (methodImplId, bMechPid, methodId) VALUES (?, ?, ?)");
+            insertMethodMimeType = conn.prepareStatement("INSERT INTO riMethodMimeType (methodImplId, mimeType) VALUES (?, ?)");
             String riMethodImplPK, riMethodFK;
             QName mimeContentQName = new QName("http://schemas.xmlsoap.org/wsdl/mime/", "content");
             while (it.hasNext()) {
@@ -835,8 +832,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (insertMethodMimeType != null) {
                     insertMethodMimeType.close();
                 }
-                if (m_conn != null) {
-                    m_cPool.free(m_conn);
+                if (conn != null) {
+                    m_cPool.free(conn);
                 }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
@@ -874,9 +871,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                           "WHERE methodId LIKE '" + bDefPid + "/%'";
         String deleteM = "DELETE FROM riMethod WHERE riMethod.bDefPid = '" + bDefPid + "'";
         
+        Connection conn = null;
         Statement stmt = null;
         try {
-            stmt = m_conn.createStatement();
+            conn = m_cPool.getConnection();
+            stmt = conn.createStatement();
             stmt.execute(deleteMP);
             stmt.execute(deleteM);
         } catch (SQLException e) {
@@ -886,8 +885,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (m_cPool != null) {
-                    m_cPool.free(m_conn);
+                if (conn != null) {
+                    m_cPool.free(conn);
                 }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
@@ -935,9 +934,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String deleteMI = "DELETE FROM riMethodImpl " +
                           "WHERE riMethodImpl.bMechPid = '" + bMechPid + "'";
         
+        Connection conn = null;
         Statement stmt = null;
         try {
-            stmt = m_conn.createStatement();
+            conn = m_cPool.getConnection();
+            stmt = conn.createStatement();
             stmt.execute(deleteMMT);
             stmt.execute(deleteMI);
         } catch (SQLException e) {
@@ -947,8 +948,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 if (stmt != null) {
                     stmt.close();
                 }
-                if (m_cPool != null) {
-                    m_cPool.free(m_conn);
+                if (conn != null) {
+                    m_cPool.free(conn);
                 }
             } catch(SQLException e2) {
                 throw new ResourceIndexException(e2.getMessage(), e2);
