@@ -243,7 +243,12 @@ public class DisseminationService
                         String key=parts[x].substring(0, rightParenPos);
                         String val=(String) h_userParms.get(key);
                         if (val!=null) {
-                            replaced.append(val);
+                            // We have a match... so insert the urlencoded value.
+                            try {
+                                replaced.append(URLEncoder.encode(val, "UTF-8"));
+                            } catch (UnsupportedEncodingException uee) {
+                                // won't happen: java always supports UTF-8
+                            }
                             if (rightParenPos<parts[x].length()) {
                                 replaced.append(parts[x].substring(rightParenPos+1));
                             }
