@@ -375,6 +375,11 @@ public class DefinitiveDOWriter
         return m_obj.getState();
     }
     
+    public String getLockingUser() 
+            throws StorageDeviceException, ObjectNotFoundException {
+        return m_mgr.getLockingUser(m_obj.getPid());
+    }
+    
     public Date getCreateDate()
             throws ObjectIntegrityException {
         assertNotRemoved();

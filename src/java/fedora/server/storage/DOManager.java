@@ -105,13 +105,4 @@ public interface DOManager {
             Calendar lastModDateMin, Calendar lastModDateMax) 
             throws ServerException;
 
-    /**
-     * Gets the userId of the user who has a lock on the given object.
-     * 
-     * @return The userId, or null if the object is not locked.
-     * @throws ServerException If anything went wrong.
-     */
-    public abstract String getLockingUser(Context context, String pid)
-            throws ServerException;
-    
 }

@@ -60,6 +60,20 @@ public interface DigitalObject {
     public void setState(String state);
 
     /**
+     * Gets the userid of the user with a write lock on the object.
+     *
+     * @return The userid, or null if the object is not locked.
+     */
+    public String getLockingUser();
+
+    /**
+     * Sets the userid of the user with a write lock on the object.
+     *
+     * @param user The userid.
+     */
+    public void setLockingUser(String user);
+
+    /**
      * Gets the label.
      *
      * @return The label, or null if it hasn't been set.

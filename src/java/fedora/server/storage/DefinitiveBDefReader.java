@@ -39,7 +39,7 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     try
     {
       // FOR TESTING...
-      DefinitiveBDefReader doReader = new DefinitiveBDefReader(args[1]);
+      DefinitiveBDefReader doReader = new DefinitiveBDefReader(null, args[1]);
       doReader.GetObjectPID();
       doReader.GetObjectLabel();
       doReader.ListDatastreamIDs("A");
@@ -66,9 +66,9 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
     }
   }
 
-  public DefinitiveBDefReader(String objectPID) throws ServerException
+  public DefinitiveBDefReader(DefaultDOManager mgr, String objectPID) throws ServerException
   {
-    super(objectPID);
+    super(mgr, objectPID);
   }
 
   public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException

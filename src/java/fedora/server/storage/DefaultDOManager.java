@@ -348,7 +348,7 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             return new FastDOReader(context, pid);
         } else {
-            return new DefinitiveDOReader(pid);
+            return new DefinitiveDOReader(this, pid);
         }
     }
 
@@ -366,7 +366,7 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
-            return new DefinitiveBMechReader(pid);
+            return new DefinitiveBMechReader(this, pid);
         }
     }
 
@@ -375,7 +375,7 @@ public class DefaultDOManager
         if (cachedObjectRequired(context)) {
             throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
-            return new DefinitiveBDefReader(pid);
+            return new DefinitiveBDefReader(this, pid);
         }
     }
 
@@ -480,19 +480,19 @@ public class DefaultDOManager
             try {
                 if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                     logInfo("Attempting replication as bdef object: " + obj.getPid());
-                    DefinitiveBDefReader reader=new DefinitiveBDefReader(obj.getPid());
+                    DefinitiveBDefReader reader=new DefinitiveBDefReader(this, obj.getPid());
                     logInfo("Got a definitiveBDefReader...");
                     m_replicator.replicate(reader);
                     logInfo("Finished replication as bdef object: " + obj.getPid());
                 } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                     logInfo("Attempting replication as bmech object: " + obj.getPid());
-                    DefinitiveBMechReader reader=new DefinitiveBMechReader(obj.getPid());
+                    DefinitiveBMechReader reader=new DefinitiveBMechReader(this, obj.getPid());
                     logInfo("Got a definitiveBMechReader...");
                     m_replicator.replicate(reader);
                     logInfo("Finished replication as bmech object: " + obj.getPid());
                 } else {
                     logInfo("Attempting replication as normal object: " + obj.getPid());
-                    DefinitiveDOReader reader=new DefinitiveDOReader(obj.getPid());
+                    DefinitiveDOReader reader=new DefinitiveDOReader(this, obj.getPid());
                     logInfo("Got a definitiveDOReader...");
                     m_replicator.replicate(reader);
                     logInfo("Finished replication as normal object: " + obj.getPid());
@@ -918,7 +918,7 @@ public class DefaultDOManager
         }
     }
     
-    public String getLockingUser(Context context, String pid)
+    public String getLockingUser(String pid)
             throws StorageDeviceException, ObjectNotFoundException {
         Connection conn=null;
         try {

@@ -46,7 +46,7 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     try
     {
       // FOR TESTING...
-      DefinitiveBMechReader doReader = new DefinitiveBMechReader(args[1]);
+      DefinitiveBMechReader doReader = new DefinitiveBMechReader(null, args[1]);
       doReader.GetObjectPID();
       doReader.GetObjectLabel();
       doReader.ListDatastreamIDs("A");
@@ -73,9 +73,9 @@ public class DefinitiveBMechReader extends DefinitiveDOReader implements BMechRe
     }
   }
 
-  public DefinitiveBMechReader(String objectPID) throws ServerException
+  public DefinitiveBMechReader(DefaultDOManager mgr, String objectPID) throws ServerException
   {
-    super(objectPID);
+    super(mgr, objectPID);
   }
 
   /**

@@ -79,6 +79,7 @@ public class DefinitiveDOReader implements DOReader
   private String PID = null;
   private String doLabel = null;
   private String doState = null;
+  private String doLockingUser = null;
   private String doContentModelId = null;
   private String doFedoraObjectType = null;
   private Date doCreateDate = null;
@@ -86,6 +87,7 @@ public class DefinitiveDOReader implements DOReader
   protected Hashtable datastreamTbl = new Hashtable();
   private Hashtable disseminatorTbl = new Hashtable();
   private Hashtable dissbDefTobMechTbl = new Hashtable();
+  private DefaultDOManager m_mgr = null;
 
 
   public static void main(String[] args)
@@ -103,7 +105,7 @@ public class DefinitiveDOReader implements DOReader
       try
       {
         // FOR TESTING...
-        DefinitiveDOReader doReader = new DefinitiveDOReader(args[1]);
+        DefinitiveDOReader doReader = new DefinitiveDOReader(null, args[1]);
         doReader.GetObjectPID();
         doReader.GetObjectLabel();
         doReader.GetObjectState();
@@ -130,9 +132,10 @@ public class DefinitiveDOReader implements DOReader
   public DefinitiveDOReader() throws ServerException
   {
   }
-  public DefinitiveDOReader(String objectPID) throws ServerException
+  public DefinitiveDOReader(DefaultDOManager mgr, String objectPID) throws ServerException
   {
     InputSource doXML = null;
+    m_mgr=mgr;
 
     // FOR TESTING ONLY:
     // Read the digital object xml from test storage using fake registry
@@ -205,6 +208,11 @@ public class DefinitiveDOReader implements DOReader
 
     public Date getLastModDate() {
         return doLastModDate;
+    }
+    
+    public String getLockingUser() 
+            throws StorageDeviceException, ObjectNotFoundException {
+        return m_mgr.getLockingUser(PID);
     }
 
    /**
@@ -550,7 +558,7 @@ public class DefinitiveDOReader implements DOReader
       {
         System.out.println("GetBMechMethods for BDEF: " + bDefPID);
       }
-      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.GetBehaviorMethods(null);
       return(methods);
     }
@@ -574,7 +582,7 @@ public class DefinitiveDOReader implements DOReader
         return null;
       }
       // TODO! dateTime filter not implemented in this release!!
-      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       InputStream instream = mechRead.GetBehaviorMethodsWSDL(null);
       return(instream);
     }
@@ -613,7 +621,7 @@ public class DefinitiveDOReader implements DOReader
       {
         System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
       }
-      DefinitiveBDefReader defRead = new DefinitiveBDefReader((String)dissbDefTobMechTbl.get(bDefPID));
+      DefinitiveBDefReader defRead = new DefinitiveBDefReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = defRead.GetBehaviorMethods(null);
       MethodParmDef[] methodParms = null;
       for (int i=0; i<methods.length; i++)
@@ -660,7 +668,7 @@ public class DefinitiveDOReader implements DOReader
       {
         System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
       }
-      DefinitiveBMechReader mechRead = new DefinitiveBMechReader((String)dissbDefTobMechTbl.get(bDefPID));
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
       MethodDef[] methods = mechRead.GetBehaviorMethods(null);
       MethodParmDef[] methodParms = null;
       for (int i=0; i<methods.length; i++)

@@ -38,6 +38,11 @@ public interface DOReader
      * Gets the date of the last modification of this object.
      */
     public Date getLastModDate() throws ServerException;
+    
+    /**
+     * Gets the userid of the user with a write lock on this object.
+     */
+    public String getLockingUser() throws ServerException;
 
     /**
      * Gets the content of the entire digital object as XML.  The object will

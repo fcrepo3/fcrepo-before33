@@ -17,6 +17,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageException;
 import fedora.server.errors.StorageDeviceException;
@@ -1654,6 +1655,14 @@ public class FastDOReader implements DisseminatingDOReader
                                  + th.getClass().getName() + "The message "
                                  + "was \"" + th.getMessage() + "\"");
     }
+  }
+  
+  public String getLockingUser()
+          throws ServerException, StorageDeviceException, ObjectNotFoundException {
+      if (doReader==null) {
+          doReader=m_manager.getReader(m_context, PID);
+      }
+      return doReader.getLockingUser();
   }
 
   /**

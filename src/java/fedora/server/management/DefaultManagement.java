@@ -145,7 +145,7 @@ public class DefaultManagement
         inf.setFoType(r.getFedoraObjectType());
         inf.setContentModelId(r.getContentModelId());
         inf.setState(r.GetObjectState());
-        String lockedBy=m_manager.getLockingUser(context, pid);
+        String lockedBy=r.getLockingUser();
         if (lockedBy==null) {
             inf.setLockedBy("");
         } else {
