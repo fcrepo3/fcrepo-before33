@@ -12,6 +12,7 @@ import fedora.server.management.Management;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
+import fedora.common.Constants;
 
 import java.io.File;
 import java.io.ByteArrayInputStream;
@@ -90,7 +91,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        return ReadOnlyContext.getContext("soap", req, false);
+        return ReadOnlyContext.getContext(Constants.POLICY_ENVIRONMENT.SOAP.uri, req, false);
     }
 
     private void logStackTrace(Exception e) {
