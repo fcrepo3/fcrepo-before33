@@ -1,5 +1,10 @@
 package fedora.server.utilities;
 
+import java.text.SimpleDateFormat;
+import java.text.ParsePosition;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * <p>Title: DateUtility.java</p>
  * <p>Description: A collection of utility methods for performing</p>
@@ -9,12 +14,6 @@ package fedora.server.utilities;
  * @author Ross Wayland
  * @version 1.0
  */
-
-import java.text.SimpleDateFormat;
-import java.text.ParsePosition;
-import java.util.Calendar;
-import java.util.Date;
-
 public abstract class DateUtility
 {
   private static final boolean debug = true; //Testing
