@@ -7,10 +7,10 @@
 <p><font color="#000000">where:</font></p>
 <ul>
   <li><font color="#008040">&lt;hostname&gt;</font><font color="#000000"> The 
-    hostname of the Fedora server; default is localhost.</font></li>
+    hostname of the Fedora server.</font></li>
   <li><font color="#008040">&lt;port-number&gt;</font><font color="#000000"> The 
-    port number on which the Fedora server is running; default 8080.</font></li>
-  <li><font color="#008040">&lt;url-of-image&gt;</font><font color="#000000"> The URL of the image to open. Supported formats currently are gif, jpg, jpeg, tif, tiff</font></li>
+    port number on which the Fedora server is running.</font></li>
+  <li><font color="#008040">&lt;url-of-image&gt;</font><font color="#000000"> The URL of the image to open. Supported formats currently are gif, jpg, tiff, png, and bmp</font></li>
   <li><font color="#008040">&lt;parameters&gt;</font><font color="#000000"> 
     Optional parameters that can be used to manipulate the image:
 			<ul>
@@ -39,14 +39,14 @@
 				Crops an image, starting from (crop-x,crop-y) coordinate, and crops to the optional (crop-width,crop-height) coordinate if supplied, or just to the lower-right corner of the image. All values are measured in pixels.
 				</li>
 				<li><b>Convert:</b>&nbsp;&nbsp;&nbsp;
-				<b>convertTo=&lt;format&gt;</b><br />
-				Converts an image that can be opened (see formats above) to another format. Currently supported formats are: gif, jpg, jpeg.</li>
+				<b>op=convert&amp;convertTo=&lt;format&gt;</b><br />
+				Converts an image to another format. Currently supported formats are: gif, jpg, tiff, png, and bmp.</li>
 			</ul>
 		</font></li>
 </ul>
 <p><font color="#000000">Examples:</font></p>
-<p><font color="#000000"><a href="http://localhost:8080/imagemanip/ImageManipulation?url=http://rsb.info.nih.gov/ij/images/FluorescentCells.jpg&op=zoom&zoomAmt=2.5">http://localhost:8080/imagemanip/ImageManipulation?url=http://rsb.info.nih.gov/ij/images/FluorescentCells.jpg&op=zoom&zoomAmt=2.5</a></font></p>
-<p><font color="#000000"><a href="http://localhost:8080/imagemanip/ImageManipulation?url=http://rsb.info.nih.gov/ij/images/FluorescentCells.jpg&convertTo=gif">http://localhost:8080/imagemanip/ImageManipulation?url=http://rsb.info.nih.gov/ij/images/FluorescentCells.jpg&convertTo=gif</a></font></p>
+<p><font color="#000000"><a href="/imagemanip/ImageManipulation?url=http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&op=zoom&zoomAmt=2.5">/imagemanip/ImageManipulation?url=http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&op=zoom&zoomAmt=2.5</a></font></p>
+<p><font color="#000000"><a href="/imagemanip/ImageManipulation?url=http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&op=convert&convertTo=gif">/imagemanip/ImageManipulation?url=http://www.explore.cornell.edu/tour_landmarks/img/frosty_tower02.jpg&op=convert&convertTo=gif</a></font></p>
 <p>&nbsp;</p>
 <p><cite>* This service uses the ImageJ API from Wayne Rasband which is free to use in the public domain. For additonal information regarding the ImageJ API, please refer to 
   the ImageJ project web site at: <a href="http://rsb.info.nih.gov/ij/">http://rsb.info.nih.gov/ij</a>.</cite></p>
