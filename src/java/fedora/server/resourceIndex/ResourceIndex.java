@@ -16,39 +16,38 @@ import java.io.OutputStream;
  * @author Edwin Shin
  */
 public interface ResourceIndex extends TriplestoreReader {
+    // Index Levels
+    public static final int INDEX_LEVEL_OFF = 0;
     public static final int INDEX_LEVEL_OBJECT_FIELDS = 1;
     public static final int INDEX_LEVEL_DISSEMINATIONS = 2;
     public static final int INDEX_LEVEL_DEPENDENCIES = 3;
     
-	public static final String RDF_TYPE_URI = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-	public static final String BDEF_RDF_TYPE_URI = "http://www.fedora.info/definitions/ontology#bdef";
-	public static final String BMECH_RDF_TYPE_URI = "http://www.fedora.info/definitions/ontology#bmech";
-	public static final String DATA_OBJECT_RDF_TYPE_URI = "http://www.fedora.info/definitions/ontology#dataobject";
+    // RDF Namespaces
+    public static final String NS_DC        = "http://purl.org/dc/elements/1.1/";
+    public static final String NS_FEDORA    = "http://www.fedora.info/definitions/ontology#";
+    public static final String NS_RDF       = "http://www.w3.org/1999/02/22-rdf-syntax-ns#";
+    
+	public static final String RDF_TYPE                = NS_RDF + "type";
 	
-	public static final String HAS_REPRESENTATION_URI = "http://www.fedora.info/definitions/ontology#hasRepresentation"; // ds, diss, bdefpid/methodname
-	
-	public static final String OWNER_ID_URI = "http://www.fedora.info/definitions/ontology#ownerID";
-	public static final String CONTENT_MODEL_ID_URI = "http://www.fedora.info/definitions/ontology#contentModelID";
-	public static final String LABEL_URI = "http://www.fedora.info/definitions/ontology#label";
-	
-	public static final String IMPLEMENTS_BDEF_URI = "http://www.fedora.info/definitions/ontology#implementsBDef";
-	public static final String USES_BMECH_URI = "http://www.fedora.info/definitions/ontology#usesBMech";
-	public static final String DEFINES_METHOD_URI = "http://www.fedora.info/definitions/ontology#definesMethod";
-	
-	public static final String DISSEMINATION_DIRECT_URI = "http://www.fedora.info/definitions/ontology#direct";
-	public static final String DATE_CREATED_URI = "http://www.fedora.info/definitions/ontology#dateCreated";
-	public static final String DATE_LAST_MODIFIED_URI = "http://www.fedora.info/definitions/ontology#dateLastModified";
-	public static final String DISSEMINATION_MEDIA_TYPE_URI = "http://www.fedora.info/definitions/ontology#media-type";
-	public static final String STATE_URI = "http://www.fedora.info/definitions/ontology#state";
-	public static final String STATE_ACTIVE_URI = "http://www.fedora.info/definitions/ontology#active";
-	public static final String STATE_INACTIVE_URI = "http://www.fedora.info/definitions/ontology#inactive";
-	public static final String DISSEMINATION_TYPE_URI = "http://www.fedora.info/definitions/ontology#dissType";
-	public static final String DISSEMINATION_VOLATILE_URI = "http://www.fedora.info/definitions/ontology#volatile";
-	
-	public static final String IS_MEMBER_OF = "http://www.fedora.info/definitions/ontology#isMemberOf";
-	
-	public static final String OAI_ITEM_ID = "http://www.openarchives.org/OAI/2.0/itemID";
-	
+	public static final String FEDORA_BDEF             = NS_FEDORA + "bdef";
+    public static final String FEDORA_BMECH            = NS_FEDORA + "bmech";
+	public static final String FEDORA_CMODEL           = NS_FEDORA + "contentModelID";
+    public static final String FEDORA_DATAOBJECT       = NS_FEDORA + "dataobject";
+    public static final String FEDORA_DATE_CREATED     = NS_FEDORA + "dateCreated";
+    public static final String FEDORA_DATE_MODIFIED    = NS_FEDORA + "dateLastModified";
+    public static final String FEDORA_DEFINES_METHOD   = NS_FEDORA + "definesMethod";
+    public static final String FEDORA_DIRECT           = NS_FEDORA + "direct";
+    public static final String FEDORA_DISS_TYPE        = NS_FEDORA + "dissType";
+    public static final String FEDORA_IMPLEMENTS       = NS_FEDORA + "implementsBDef";
+	public static final String FEDORA_LABEL            = NS_FEDORA + "label";
+    public static final String FEDORA_MEDIATYPE        = NS_FEDORA + "media-type";
+    public static final String FEDORA_OWNER_ID         = NS_FEDORA + "ownerID";
+    public static final String FEDORA_REPRESENTATION   = NS_FEDORA + "hasRepresentation";
+    public static final String FEDORA_STATE            = NS_FEDORA + "state";
+    public static final String FEDORA_STATE_ACTIVE     = NS_FEDORA + "active";
+    public static final String FEDORA_STATE_INACTIVE   = NS_FEDORA + "inactive";
+    public static final String FEDORA_USES_BMECH       = NS_FEDORA + "usesBMech";
+    public static final String FEDORA_VOLATILE         = NS_FEDORA + "volatile";
 	
 	public int getIndexLevel();
 	

@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     //		- subsequent insert/edits/deletes
     //		- changes in levels
     //		- distinct levels or discrete mix & match (e.g., combinations of DC, REP & REP-DEP, RELS, etc.)
+    
     private int m_indexLevel;
 	private static final String FEDORA_URI_SCHEME = "info:fedora/";
     
@@ -83,15 +85,28 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     private TriplestoreWriter m_writer;
     private List m_tQueue;
     
+    // RDF Prefix and Namespaces
+    private Map namespaces;
+    
     public ResourceIndexImpl(int indexLevel, 
                              TriplestoreConnector connector, 
                              ConnectionPool cPool, 
                              Logging target) throws ResourceIndexException {
         super(target);
         m_indexLevel = indexLevel;
+        namespaces = new HashMap();
+        namespaces.put("dc", NS_DC);
+        namespaces.put("fedora", NS_FEDORA);
+        namespaces.put("rdf", NS_RDF);
         m_connector = connector;
-        m_writer = m_connector.getWriter();
         m_reader = m_connector.getReader();
+        m_writer = m_connector.getWriter();
+        try {
+            m_reader.setAliasMap(namespaces);
+            m_writer.setAliasMap(namespaces);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
         m_tQueue = new ArrayList();
         m_cPool = cPool;
         try {
@@ -102,6 +117,21 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         } finally {
             m_cPool.free(m_conn);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see fedora.server.resourceIndex.ResourceIndex#getIndexLevel()
+     * 
+     * Levels:
+     *  B
+     *  R
+     *  P
+     *  D
+     * 
+     * Marking for latent indexing
+     */
+    public int getIndexLevel() {
+        return m_indexLevel;
     }
 
 	/* (non-Javadoc)
@@ -116,15 +146,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
-        queuePlainLiteralTriple(doIdentifier, LABEL_URI, digitalObject.getLabel());
-        queuePlainLiteralTriple(doIdentifier, DATE_CREATED_URI, getDate(digitalObject.getCreateDate()));
-        queueTypedLiteralTriple(doIdentifier, DATE_LAST_MODIFIED_URI, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
+        queuePlainLiteralTriple(doIdentifier, FEDORA_LABEL, digitalObject.getLabel());
+        queuePlainLiteralTriple(doIdentifier, FEDORA_DATE_CREATED, getDate(digitalObject.getCreateDate()));
+        queueTypedLiteralTriple(doIdentifier, FEDORA_DATE_MODIFIED, getDate(digitalObject.getLastModDate()), "http://www.w3.org/2001/XMLSchema#date");
 		
 		if (digitalObject.getOwnerId() != null) {
-		    queuePlainLiteralTriple(doIdentifier, OWNER_ID_URI, digitalObject.getOwnerId());
+		    queuePlainLiteralTriple(doIdentifier, FEDORA_OWNER_ID, digitalObject.getOwnerId());
 		}
-		queuePlainLiteralTriple(doIdentifier, CONTENT_MODEL_ID_URI, digitalObject.getContentModelId());
-		queuePlainLiteralTriple(doIdentifier, STATE_URI, digitalObject.getState());
+		queuePlainLiteralTriple(doIdentifier, FEDORA_CMODEL, digitalObject.getContentModelId());
+		queuePlainLiteralTriple(doIdentifier, FEDORA_STATE, digitalObject.getState());
 		
         addQueue(false);
 
@@ -158,7 +188,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		}
 	}
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see fedora.server.resourceIndex.ResourceIndex#addDatastream(fedora.server.storage.types.Datastream)
 	 */
 	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
@@ -182,10 +212,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // (have a control group "M" or "I").
         String isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("I")) ? "true" : "false";
 
-        queueTriple(doURI, HAS_REPRESENTATION_URI, datastreamURI);
-        queueTypedLiteralTriple(datastreamURI, DATE_LAST_MODIFIED_URI, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
-        queuePlainLiteralTriple(datastreamURI, DISSEMINATION_DIRECT_URI, "true");
-        queuePlainLiteralTriple(datastreamURI, DISSEMINATION_VOLATILE_URI, isVolatile);
+        queueTriple(doURI, FEDORA_REPRESENTATION, datastreamURI);
+        queueTypedLiteralTriple(datastreamURI, FEDORA_DATE_MODIFIED, getDate(ds.DSCreateDT), "http://www.w3.org/2001/XMLSchema#date");
+        queuePlainLiteralTriple(datastreamURI, FEDORA_DIRECT, "true");
+        queuePlainLiteralTriple(datastreamURI, FEDORA_VOLATILE, isVolatile);
         addQueue(false);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
@@ -218,10 +248,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
         
-        queueTriple(doIdentifier, USES_BMECH_URI, getDOURI(bMechPID));
+        queueTriple(doIdentifier, FEDORA_USES_BMECH, getDOURI(bMechPID));
 	    DSBindingMap m = diss.dsBindMap; // is this needed???
 	    String bDefPID = diss.bDefID;
-        String dissState = diss.dissState.equalsIgnoreCase("A") ? STATE_ACTIVE_URI : STATE_INACTIVE_URI;
+        String dissState = diss.dissState.equalsIgnoreCase("A") ? FEDORA_STATE_ACTIVE : FEDORA_STATE_INACTIVE;
 	    String dissCreateDT = getDate(diss.dissCreateDT);
         
 	    // insert representations
@@ -241,16 +271,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                      permutation = rs.getString("permutation");
                      mimeType = rs.getString("mimeType");
                      rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     queueTriple(doIdentifier, HAS_REPRESENTATION_URI, rep);
-                     queueTriple(rep, STATE_URI, dissState);
+                     queueTriple(doIdentifier, FEDORA_REPRESENTATION, rep);
+                     queueTriple(rep, FEDORA_STATE, dissState);
                      queuePlainLiteralTriple(rep, 
-                                             DISSEMINATION_MEDIA_TYPE_URI, 
+                                             FEDORA_MEDIATYPE, 
                                              mimeType);
                      queuePlainLiteralTriple(rep, 
-                                             DISSEMINATION_DIRECT_URI, 
+                                             FEDORA_DIRECT, 
                                              "false"); 
                      queueTypedLiteralTriple(rep, 
-                                             DATE_LAST_MODIFIED_URI, 
+                                             FEDORA_DATE_MODIFIED, 
                                              dissCreateDT,
                                              "http://www.w3.org/2001/XMLSchema#date"); 
                  }
@@ -262,8 +292,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    }
 
 	    // TODO
-        //m_store.insert(disseminatorIdentifier, DISSEMINATION_TYPE_URI, diss.?);
-        //m_store.insert(disseminatorIdentifier, DISSEMINATION_VOLATILE_URI, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
+        //m_store.insert(disseminatorIdentifier, FEDORA_DISS_TYPE, diss.?);
+        //m_store.insert(disseminatorIdentifier, FEDORA_VOLATILE, diss.?); // redirect, external, based on diss that depends on red/ext (true/false)
         addQueue(false);
     }
 
@@ -395,7 +425,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // delete bMech reference: 
         try {
             m_writer.delete(m_reader.findTriples(TripleFactory.createResource(doIdentifier), 
-                                                 TripleFactory.createResource(USES_BMECH_URI), 
+                                                 TripleFactory.createResource(FEDORA_USES_BMECH), 
                                                  TripleFactory.createResource(getDOURI(bMechPID)), 
                                                  0), 
                             true);
@@ -433,15 +463,34 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             }
         }	
 	}
+    
+    /**
+     * 
+     * @param out
+     * @param format
+     * @throws IOException
+     * @throws TrippiException
+     */
+    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
+        try {
+            TripleIterator it = m_reader.findTriples(null, null, null, 0);
+            it.setAliasMap(namespaces);
+            //it.toStream(out, RDFFormat.RDF_XML);
+            
+            it.toStream(out, RDFFormat.TURTLE);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException(e.getMessage(), e);
+        }
+    }
 
 	private void addBDef(DigitalObject bDef) throws ResourceIndexException {
 		String doURI = getDOURI(bDef);
-        queueTriple(doURI, RDF_TYPE_URI, BDEF_RDF_TYPE_URI);
+        queueTriple(doURI, RDF_TYPE, FEDORA_BDEF);
 		
 		Datastream ds = getLatestDatastream(bDef.datastreams("METHODMAP"));
 		MethodDef[] mdef = getMethodDefs(bDef.getPid(), ds);
 		for (int i = 0; i < mdef.length; i++) {
-            queuePlainLiteralTriple(doURI, DEFINES_METHOD_URI, mdef[i].methodName);
+            queuePlainLiteralTriple(doURI, FEDORA_DEFINES_METHOD, mdef[i].methodName);
 	        // m_store.insertLiteral(doIdentifier, "foo:methodLabel", mdef[i].methodLabel);
 	    }
         addQueue(false);
@@ -449,16 +498,16 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
 	private void addBMech(DigitalObject bMech) throws ResourceIndexException {
 		String doURI = getDOURI(bMech);
-        queueTriple(doURI, RDF_TYPE_URI, BMECH_RDF_TYPE_URI);
+        queueTriple(doURI, RDF_TYPE, FEDORA_BMECH);
 	
 		String bDefPid = getBDefPid(bMech);
-		queueTriple(doURI, IMPLEMENTS_BDEF_URI, getDOURI(bDefPid));
+		queueTriple(doURI, FEDORA_IMPLEMENTS, getDOURI(bDefPid));
 		addQueue(false);	
 	}
 	
 	private void addDataObject(DigitalObject digitalObject) throws ResourceIndexException {
 		String identifier = getDOURI(digitalObject);
-        queueTriple(identifier, RDF_TYPE_URI, DATA_OBJECT_RDF_TYPE_URI);	
+        queueTriple(identifier, RDF_TYPE, FEDORA_DATAOBJECT);	
         addQueue(false);
 	}
 	
@@ -466,7 +515,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String doURI = getDOURI(digitalObject);
 	    DatastreamXMLMetadata dc = (DatastreamXMLMetadata)ds;
 		DCFields dcf;
-        final String DC_URI_PREFIX = "http://purl.org/dc/elements/1.1/";
         
 		try {
 			dcf = new DCFields(dc.getContentStream());
@@ -476,63 +524,63 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		Iterator it;
 		it = dcf.titles().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "title", (String)it.next());
+            queuePlainLiteralTriple(doURI, NS_DC + "title", (String)it.next());
 		}
 		it = dcf.creators().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "creator", (String)it.next());
+            queuePlainLiteralTriple(doURI, NS_DC + "creator", (String)it.next());
 		}
 		it = dcf.subjects().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "subject", (String)it.next());
+            queuePlainLiteralTriple(doURI, NS_DC + "subject", (String)it.next());
 		}
 		it = dcf.descriptions().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "description", (String)it.next());
+            queuePlainLiteralTriple(doURI, NS_DC + "description", (String)it.next());
 		}
 		it = dcf.publishers().iterator();
 		while (it.hasNext()) {
-            queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "publisher", (String)it.next());
+            queuePlainLiteralTriple(doURI, NS_DC + "publisher", (String)it.next());
 		}
 		it = dcf.contributors().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "contributor", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "contributor", (String)it.next());
 		}
 		it = dcf.dates().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "date", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "date", (String)it.next());
 		}
 		it = dcf.types().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "type", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "type", (String)it.next());
 		}
 		it = dcf.formats().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "format", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "format", (String)it.next());
 		}
 		it = dcf.identifiers().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "identifier", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "identifier", (String)it.next());
 		}
 		it = dcf.sources().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "source", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "source", (String)it.next());
 		}
 		it = dcf.languages().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "language", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "language", (String)it.next());
 		}
 		it = dcf.relations().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "relation", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "relation", (String)it.next());
 		}
 		it = dcf.coverages().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "coverage", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "coverage", (String)it.next());
 		}
 		it = dcf.rights().iterator();
 		while (it.hasNext()) {
-			queuePlainLiteralTriple(doURI, DC_URI_PREFIX + "rights", (String)it.next());
+			queuePlainLiteralTriple(doURI, NS_DC + "rights", (String)it.next());
 		}
         addQueue(false);
 	}
@@ -1037,21 +1085,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         return dsBindSpec.bDefPID;
     }
 
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#getIndexLevel()
-     * 
-     * Levels:
-     *  B
-     *  R
-     *  P
-     *  D
-     * 
-     * Marking for latent indexing
-     */
-    public int getIndexLevel() {
-        return m_indexLevel;
-    }
-    
     /**
      * 
      * Case insensitive sort by parameter name
@@ -1199,22 +1232,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                             int limit,
                             boolean distinct) throws TrippiException {
         return m_reader.countTriples(queryLang, tripleQuery, tripleTemplate, limit, distinct);
-    }
-
-    /**
-     * 
-     * @param out
-     * @param format
-     * @throws IOException
-     * @throws TrippiException
-     */
-    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
-        try {
-            m_reader.findTriples(null, null, null, 0)
-            .toStream(out, RDFFormat.RDF_XML);
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
     }
 
     /* (non-Javadoc)
