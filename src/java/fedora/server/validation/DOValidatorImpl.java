@@ -136,18 +136,6 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 
   /**
    * <p>Constructs a new DOValidatorImpl to support all forms of
-   * digital object validation, using defaults for all configuration
-   * values.</p>
-   *
-   * @throws ServerException If construction fails for any reason.
-   */
-    public DOValidatorImpl() throws ServerException
-    {
-      super(null);
-    }
-
-  /**
-   * <p>Constructs a new DOValidatorImpl to support all forms of
    * digital object validation, using specified values for
    * configuration values.</p>
    * <p>
@@ -402,10 +390,6 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 			logFiner("[DOValidatorImpl]: ERROR in Level 3 (integrity validation)");
 	        cleanUp(objectAsFile);
 	        throw e;
-      //} catch (GeneralException e) {
-	//		logFiner("[DOValidatorImpl]: ERROR in Level 3 (integrity validation)");
-	//        cleanUp(objectAsFile);
-	//        throw e;
       } catch (Exception e) {
 			logFiner("[DOValidatorImpl]: ERROR in Level 3 (integrity validation)");
 	        cleanUp(objectAsFile);
