@@ -11,27 +11,43 @@
 	<property name="javaClassOptimize" value="off"/>
 	<property name="javaSourceDir" value="src/java"/>
 	<property name="docDir" value="apidoc"/>
-	<target name="all" depends="client" description="Build all distributions"/>
+        <target name="serverdist" depends="server,client" description="builds both client and server in dist\server, in a package suitable for distribution">
+            <copy todir="dist/server">
+                <fileset dir="dist/client"/>
+            </copy>
+        </target>
 	<target name="client" depends="clientclasses,clienthelp,clientimages,clientjarincludes" description="Client distribution">
 		<mkdir dir="dist"/>
 		<mkdir dir="dist/client"/>
-		<jar jarfile="dist/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
-		<mkdir dir="dist/client/lib"/>
-		<copy file="lib/client/jhbasic.jar" todir="dist/client/lib"/>
-		<copy file="lib/client/rms.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/lib"/>
-		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/lib"/>
+		<mkdir dir="dist/client/bin"/>
+                <copy todir="dist/client/bin">
+                    <fileset dir="src/bat/client"/>
+                </copy>
+                <copy todir="dist/client/bin">
+                    <fileset dir="src/sh/client"/>
+                </copy>
+                <mkdir dir="dist/client/demo"/>     
+                <copy todir="dist/client/demo">
+                    <fileset dir="src/mets/test/demo"/>
+                </copy>
+		<mkdir dir="dist/client/client"/>
+		<jar jarfile="dist/client/client/client.jar" basedir="temp/client" manifest="src/mfs/client.mfs"/>
+		<mkdir dir="dist/client/client/lib"/>
+		<copy file="lib/client/jhbasic.jar" todir="dist/client/client/lib"/>
+		<copy file="lib/client/rms.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/wsdl4j.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/axis.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/jaxrpc.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-discovery.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/commons-logging.jar" todir="dist/client/client/lib"/>
+		<copy file="inc/server/tomcat41/common/lib/saaj.jar" todir="dist/client/client/lib"/>
 		<!--<copy todir="temp/client">
       <fileset dir="inc/client/dist"/>
     </copy>-->
-		<echo message="Finished building client distribution in dist/client"/>
+		<echo message="Finished building client distribution in dist/client/client"/>
 	</target>
 	<target name="runclient" depends="client" description="run the client">
-		<exec dir="dist/client" executable="java">
+		<exec dir="dist/client/client" executable="java">
 			<arg line="-jar client.jar"/>
 		</exec>
 	</target>
@@ -341,6 +357,11 @@
 </project>
 <!--
   $Log$
+  Revision 1.45  2002/10/30 15:29:20  cwilper
+  client dist now goes in dist/client/client, and includes bat files and demo objects.
+  and there is a new serverdist target (use this one!)
+  which brings the client and server dists together under the dist/server directory.
+
   Revision 1.44  2002/10/28 17:12:12  cwilper
   for deployment, moved saxon to webapps\fedora\web-inf\lib so it doesn't conflict with tomcat
 
