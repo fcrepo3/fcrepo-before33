@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.axis.encoding.Base64;
+
 /**
  *
  * <p><b>Title:</b> StreamUtility.java</p>
@@ -115,5 +117,9 @@ public abstract class StreamUtility {
         in.close();
         out.close();
     }
+
+    public static byte[] decodeBase64(String data) {
+	    return Base64.decode(data);
+	}
 
 }

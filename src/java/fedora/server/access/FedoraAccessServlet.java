@@ -42,6 +42,7 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
 
 /**
  * <p><b>Title: </b>FedoraAccessServlet.java</p>
@@ -140,6 +141,40 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
+  /**
+   * Get the userId if the provided base64-encoded user:pass string
+   * provides a correct user-to-password match.  Otherwise, return null.
+   *
+   * @param basicAuthString base64-encoder user:pass string.
+   * @return the user id.
+   */
+  private String getAuthenticatedUser(String basicAuthString) {
+    String authUser=null;
+	if (basicAuthString!=null) {
+		String userAndPass=new String(StreamUtility.decodeBase64(basicAuthString.substring(6).trim()));
+		int i=userAndPass.indexOf(":");
+		if (i>0) {
+		    String user=userAndPass.substring(0, i);
+		    String pass=userAndPass.substring(i+1);
+			if (isUserPassword(user, pass)) {
+			    authUser=user;
+			}
+		}
+	}
+	return authUser;
+  }
+
+  /**
+   * Tell whether the password is the user's password.
+   * 
+   * @param user the userId.
+   * @param user the possible password.
+   * @return true if the password is correct, false otherwise.
+   */
+  private boolean isUserPassword(String user, String pass) {
+    // currently only recognizes fedoraAdmin.
+    return (user.equals("fedoraAdmin") && pass.equals(s_server.getParameter("adminPassword")));
+  }
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -170,7 +205,16 @@ public class FedoraAccessServlet extends HttpServlet implements Logging
     HashMap h=new HashMap();
     h.put("application", "apia");
     h.put("useCachedObject", "true");
-    h.put("userId", "fedoraAdmin");
+	String authenticatedUser=getAuthenticatedUser(request.getHeader("Authorization"));
+	if (authenticatedUser!=null) {
+        h.put("userId", authenticatedUser);
+		// add permissions to context, based on userId.
+		// FIXME:
+		// For now, fedoraAdmin has all important permissions.  How to do this 
+		// eventually is to-be-decided, but for now it's hardcoded.
+		h.put("canUseInactiveDatastream", "true");
+		h.put("canUseDeletedDatastream", "true");
+	}
     h.put("host", request.getRemoteAddr());
     ReadOnlyContext context = new ReadOnlyContext(h);
 

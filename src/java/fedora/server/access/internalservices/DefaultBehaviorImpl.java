@@ -345,7 +345,10 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
         // Can never occur since Java fully supports UTF-8
       }
       return new MIMETypedStream("application/fedora-redirect",in);
-    } else if (ds.DSState.equals("D"))
+    } else if ( ds.DSState.equals("D") && 
+                ( context.get("canUseDeletedDatastream")==null 
+                  || (!context.get("canUseDeletedDatastream").equals("true")) ) 
+              )
     {
       // Datastream has been flagged for deletion so it is no longer accessible.
       StringBuffer deleteText = new StringBuffer();
@@ -386,7 +389,10 @@ public class DefaultBehaviorImpl extends InternalService implements DefaultBehav
       }
       return new MIMETypedStream("text/html",in);
 
-    } else if (ds.DSState.equals("W"))
+    } else if ( ds.DSState.equals("W") && 
+                ( context.get("canUseInactiveDatastream")==null 
+                  || (!context.get("canUseInactiveDatastream").equals("true")) ) 
+              )
     {
       // Datastream has been withdrawn so it is no longer accessible.
       StringBuffer withdrawText = new StringBuffer();
