@@ -614,7 +614,7 @@ public class DefaultDOManager
                 logFinest("Serializing for validation...");
                     m_translator.serialize(obj, out, m_defaultStorageFormat, m_storageCharacterEncoding, false);
                     ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-                logFinest("Validating...");
+                logFinest("Validating (storage phase)...");
                     m_validator.validate(inV, m_defaultStorageFormat, 0, "store");
                     // TODO: DELTA-MODULE:
                     // After validating for storage, but before saving to definitive store, 
@@ -630,7 +630,7 @@ public class DefaultDOManager
                     }
                     */
                     // if ok, write change to perm store here...right before db stuff
-                    logFinest("Passed validation.  Storing...");
+                    logFinest("Passed validation.  Storing object...");
                     if (obj.isNew()) {
                         getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                     } else {
@@ -826,6 +826,9 @@ public class DefaultDOManager
             throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
         } else {
             try {
+            	// Get the current time to use for created dates on object
+            	// and object components (if they are not already there).
+				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 // write it to temp, as "tempHandle"
                 logFinest("Adding and retrieving from temp store...");
                 getTempStore().add(tempHandle, in);
@@ -835,8 +838,7 @@ public class DefaultDOManager
                 // perform initial validation of the ingest submission format
                 logFinest("Getting another handle from temp store for validation...");
                 InputStream inV=getTempStore().retrieve(tempHandle);
-                //m_validator.validate(inV, format, 0, "ingest");
-                logFinest("Validating (ingest)...");
+                logFinest("Validating (ingest phase)...");
 				m_validator.validate(inV, format, 0, "ingest");
 
                 // deserialize it first
@@ -859,6 +861,10 @@ public class DefaultDOManager
                     List dsList=(List) obj.datastreams((String) dsIter.next());
                     for (int i=0; i<dsList.size(); i++) {
                         Datastream ds=(Datastream) dsList.get(i);
+                        // Set any dates to UTC if not already there!
+						if (ds.DSCreateDT==null || ds.DSCreateDT.equals("")) {
+							ds.DSCreateDT=nowUTC;
+						}
 						if (ds.DSState==null || ds.DSState.equals("")) {
                             ds.DSState="A";
 						}
@@ -944,7 +950,7 @@ public class DefaultDOManager
                         m_defaultExportFormat,
                         m_storageCharacterEncoding, obj, this);
 
-                Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+                //Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
                 // ...set the create and last modified dates as the current
                 // server date/time... in UTC (considering the local timezone
                 // and whether it's in daylight savings)
