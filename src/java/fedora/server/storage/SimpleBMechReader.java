@@ -9,6 +9,7 @@ import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
@@ -28,7 +29,7 @@ public class SimpleBMechReader
             String longExportFormat, String currentFormat,
             String encoding, InputStream serializedObject, Logging logTarget) 
             throws ObjectIntegrityException, StreamIOException,
-            UnsupportedTranslationException {
+            UnsupportedTranslationException, ServerException {
         super(context, repoReader, translator, shortExportFormat, 
                 longExportFormat, currentFormat, encoding, serializedObject,
                 logTarget);

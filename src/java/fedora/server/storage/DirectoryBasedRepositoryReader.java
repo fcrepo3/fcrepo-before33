@@ -13,6 +13,7 @@ import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
@@ -60,7 +61,8 @@ public class DirectoryBasedRepositoryReader
             String shortExportFormat, String longExportFormat, String storageFormat,
             String encoding, Logging logTarget) 
             throws StorageDeviceException, ObjectIntegrityException, 
-            StreamIOException, UnsupportedTranslationException {
+            StreamIOException, UnsupportedTranslationException,
+            ServerException {
         super(logTarget);
         m_directory=directory;
         m_translator=translator;
@@ -95,7 +97,7 @@ public class DirectoryBasedRepositoryReader
         
     public DOReader getReader(Context context, String pid) 
             throws ObjectIntegrityException, ObjectNotFoundException, 
-            StreamIOException, UnsupportedTranslationException {
+            StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleDOReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
@@ -103,7 +105,7 @@ public class DirectoryBasedRepositoryReader
             
     public BMechReader getBMechReader(Context context, String pid) 
             throws ObjectIntegrityException, ObjectNotFoundException, 
-            StreamIOException, UnsupportedTranslationException {
+            StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBMechReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
@@ -111,7 +113,7 @@ public class DirectoryBasedRepositoryReader
 
     public BDefReader getBDefReader(Context context, String pid)
             throws ObjectIntegrityException, ObjectNotFoundException, 
-            StreamIOException, UnsupportedTranslationException {
+            StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBDefReader(null, this, m_translator,
                 m_shortExportFormat, m_longExportFormat, m_storageFormat,
                 m_encoding, getStoredObjectInputStream(pid), this);
