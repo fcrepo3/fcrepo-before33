@@ -2,6 +2,9 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import fedora.common.PID;
 import fedora.server.storage.types.DigitalObject;
@@ -42,7 +45,7 @@ public class TestResourceIndexImpl extends TestResourceIndex {
                 + "/dataobjects/demo_ri1000.xml"));
         m_ri.addDigitalObject(obj);
         m_ri.commit();
-        assertEquals(4, m_ri.countTriples(null, null, null, 0));
+        assertEquals(3, m_ri.countTriples(null, null, null, 0));
         TripleIterator it = m_ri.findTriples(TripleMaker.createResource(PID.toURI(obj.getPid())), 
                                              null, null, 0);
         Triple t;

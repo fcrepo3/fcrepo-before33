@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.trippi.TriplestoreConnector;
@@ -28,7 +27,7 @@ import junit.framework.TestCase;
  * @author Edwin Shin
  */
 public abstract class TestResourceIndex extends TestCase implements Constants {
-    protected static final String DEMO_OBJECTS_ROOT_DIR = "src/test/fedora/server/resourceIndex/foxmlTestObjects";
+    protected static final String DEMO_OBJECTS_ROOT_DIR = "src/test/junit/foxmlTestObjects";
     
     protected static String m_triplestorePath;
     protected static String m_fedoraHome = System.getProperty("fedora.home");

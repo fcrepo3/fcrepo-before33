@@ -1,18 +1,13 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.jrdf.graph.SubjectNode;
-import org.jrdf.graph.PredicateNode;
-import org.jrdf.graph.ObjectNode;
-import org.jrdf.graph.Node;
 
-import org.trippi.RDFFormat;
 import org.trippi.TupleIterator;
 
 import fedora.server.storage.types.DigitalObject;
@@ -94,7 +89,7 @@ public class TestResourceIndexQueries extends TestResourceIndex {
     }
     
     public void testCount() throws Exception {
-        assertEquals(94, m_ri.countTriples(null, null, null, 0));
+        assertEquals(78, m_ri.countTriples(null, null, null, 0));
         //m_ri.export(new FileOutputStream("/tmp/out.rdf"), RDFFormat.RDF_XML);
     }
     
@@ -103,9 +98,9 @@ public class TestResourceIndexQueries extends TestResourceIndex {
                        "WHERE  (?subject ?predicate ?object)";
         TupleIterator it;
         it = m_ri.findTuples("rdql", query, 0, true);
-        assertEquals(90, it.count());
+        assertEquals(74, it.count());
         it = m_ri.findTuples("rdql", query, 0, false);
-        assertEquals(94, it.count());
+        assertEquals(78, it.count());
         
     }
     
