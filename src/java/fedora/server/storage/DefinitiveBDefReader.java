@@ -10,6 +10,7 @@ package fedora.server.storage;
  */
 
 import fedora.server.storage.types.*;
+import fedora.server.storage.service.ServiceMapper;
 import fedora.server.errors.*;
 import java.util.Date;
 import java.util.Vector;
@@ -25,6 +26,7 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
 {
 
   private MethodDef[] methodDefs;
+  private ServiceMapper serviceMapper;
 
   public static void main(String[] args)
   {
@@ -53,8 +55,8 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
       doReader.GetBMechMethods(d.bDefID, null);
       doReader.GetDSBindingMaps(null);
       // Bdef reader methods
-      doReader.GetBehaviorMethods(null);
-      doReader.GetBehaviorMethodsWSDL(null);
+      doReader.getAbstractMethods(null);
+      doReader.getAbstractMethodsXML(null);
     }
     catch (ServerException e)
     {
@@ -69,42 +71,26 @@ public class DefinitiveBDefReader extends DefinitiveDOReader implements BDefRead
   public DefinitiveBDefReader(DefaultDOManager mgr, String objectPID) throws ServerException
   {
     super(mgr, objectPID);
+    serviceMapper = new ServiceMapper();
   }
 
-  public MethodDef[] GetBehaviorMethods(Date versDateTime) throws GeneralException
+  public MethodDef[] getAbstractMethods(Date versDateTime)
+    throws ObjectIntegrityException, RepositoryConfigurationException, GeneralException
   {
-    try
-    {
-      DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)datastreamTbl.get("WSDL");
-      InputSource wsdlXML = new InputSource(new ByteArrayInputStream(wsdlDS.xmlContent));
-
-      // reset the xmlreader of superclass to the specical WSDLEventHandler
-      WSDLBehaviorDeserializer wsdl = new WSDLBehaviorDeserializer();
-      xmlreader.setContentHandler(wsdl);
-      xmlreader.setFeature("http://xml.org/sax/features/namespaces", false);
-      xmlreader.setFeature("http://xml.org/sax/features/namespace-prefixes", false);
-      xmlreader.parse(wsdlXML);
-      methodDefs = wsdl.methodDefs;
-      if (debug) printBehaviorMethods();
-    }
-    catch (Exception e)
-    {
-      System.err.println("DefinitiveBDefReader: " + e.toString());
-      throw new GeneralException("DefinitiveBDefReader.GetBehaviorMethods: " + e.getMessage());
-    }
-    return(methodDefs);
+    return serviceMapper.getMethodDefs(
+      new InputSource(new ByteArrayInputStream(
+          ((DatastreamXMLMetadata)datastreamTbl.get("METHODMAP")).xmlContent)));
   }
 
-  public InputStream GetBehaviorMethodsWSDL(Date versDateTime) throws GeneralException
+  public InputStream getAbstractMethodsXML(Date versDateTime) throws GeneralException
   {
-    DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)datastreamTbl.get("WSDL");
-    InputStream wsdl = new ByteArrayInputStream(wsdlDS.xmlContent);
-    return(wsdl);
+    return(new ByteArrayInputStream(
+      ((DatastreamXMLMetadata)datastreamTbl.get("METHODMAP")).xmlContent));
   }
 
-  private void printBehaviorMethods()
+  private void printMethods(MethodDef[] methodDefs)
   {
-    System.out.println("Printing Behavior Methods...");
+    System.out.println("Printing Abstract Methods...");
     for (int i = 0; i < methodDefs.length; i++)
     {
       System.out.println("METHOD: " + i);

@@ -44,25 +44,12 @@ public class DefinitiveDOReader implements DOReader
   private static Hashtable fakeDORegistry;
   private static final String [][] testObjects =
   {
-      {"uva-lib:1225", "image-w.xml"},
-      {"uva-lib:1220", "image-test.xml"},
-      {"uva-bdef-image-w:101", "photo-w-bdef.xml"},
-      {"uva-bmech-image-w:112", "photo-w-mech.xml"},
-      {"uva-bdef-stdimg:8", "std-img-bdef.xml"},
-      {"uva-bmech-stdimg:10", "std-img-mech.xml"},
-      {"uva-bmech-test:00", "testmech.xml"},
-      {"uva-lib:99", "testobj.xml"},
-      {"test:1", "demo/std-img-bdef.xml"},
-      {"test:2", "demo/std-img-mech.xml"},
-      {"test:3", "demo/image-vanilla.xml"},
-      {"test:4", "demo/sizer-img-mech.xml"},
-      {"test:5", "demo/mrsid-img-mech.xml"},
-      {"test:6", "demo/image-sized.xml"},
-      {"test:7", "demo/imageMrSID-level0.xml"},
-      {"test:8", "demo/uva-mrsid-img-mech.xml"},
-      {"test:9", "demo/image-uva-mrsid.xml"},
-      {"test:10", "demo/zoom-img-bdef.xml"},
-      {"test:11", "demo/zoom-img-mrsid-mech.xml"},
+      {"test:13", "demo/bdef-mrsid-image-picksize.xml"},
+      {"test:14", "demo/bmech-mrsid-image-picksize.xml"},
+      {"test:15", "demo/obj-mrsid-image-picksize.xml"},
+      {"test:20", "demo/bdef-mrsid-image-NEWFORMAT.xml"},
+      {"test:21", "demo/bmech-mrsid-image-NEWFORMAT.xml"},
+      {"test:22", "demo/obj-mrsid-image-NEWFORMAT.xml"}
   };
   // TEMPORARY: static method to load the Fake DO Registry
   static
@@ -106,14 +93,14 @@ public class DefinitiveDOReader implements DOReader
       {
         // FOR TESTING...
         DefinitiveDOReader doReader = new DefinitiveDOReader(null, args[1]);
-        doReader.GetObjectPID();
-        doReader.GetObjectLabel();
-        doReader.GetObjectState();
-        doReader.ListDatastreamIDs("A");
-        doReader.ListDisseminatorIDs("A");
+        //doReader.GetObjectPID();
+        //doReader.GetObjectLabel();
+        //doReader.GetObjectState();
+        //doReader.ListDatastreamIDs("A");
+        //doReader.ListDisseminatorIDs("A");
         Datastream[] dsArray = doReader.GetDatastreams(null);
-        doReader.GetDatastream(dsArray[0].DatastreamID, null);
-        doReader.GetDisseminators(null);
+        //doReader.GetDatastream(dsArray[0].DatastreamID, null);
+        //doReader.GetDisseminators(null);
         String[] bdefArray = doReader.GetBehaviorDefs(null);
         doReader.GetBMechMethods(bdefArray[0], null);
         doReader.GetDSBindingMaps(null);
@@ -136,10 +123,9 @@ public class DefinitiveDOReader implements DOReader
   {
     InputSource doXML = null;
     m_mgr=mgr;
-
+/*
     // FOR TESTING ONLY:
     // Read the digital object xml from test storage using fake registry
-    /*
     try
     {
       File doFile = locateObject(objectPID);
@@ -151,8 +137,7 @@ public class DefinitiveDOReader implements DOReader
       System.out.println("DefinitiveDOReader: ERROR in Constructor: " + e);
       throw new GeneralException("DefinitiveDOReader: " + e.getMessage());
     }
-    */
-
+*/
     try
     {
       // LLSTORE: call to low level storage layer to retrieve object
@@ -559,31 +544,32 @@ public class DefinitiveDOReader implements DOReader
         System.out.println("GetBMechMethods for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
-      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
+      MethodDef[] methods = mechRead.getServiceMethods(null);
       return(methods);
     }
 
     /**
      * Gets list of method definitions that are available on a particular
      * Disseminator. Works like method GetBMechMethods, except the method
-     * definitions are returned as XML in accordance with the WSDL schema.
+     * definitions are returned as XML in accordance with the Fedora
+     * Method Map schema.
      *
      * @param bDefPID The PID of a Behavior Definition to which the object subscribes
      * @param versDateTime The date-time stamp to get appropriate version
      * @throws GeneralException If there was any misc exception that we want to
      *         catch and re-throw as a Fedora exception. Extends ServerException.
      */
-    public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime)
+    public InputStream GetBMechMethodsXML(String bDefPID, Date versDateTime)
       throws GeneralException, ServerException
     {
       if (bDefPID.equalsIgnoreCase("uva-bdef-bootstrap:1"))
       {
-        System.out.println("GetBMechMethodsWSDL: Suppressing report of WSDL for bootstrap mechanism!");
+        System.out.println("GetBMechMethodsXML: Suppressing report of methods for bootstrap mechanism!");
         return null;
       }
       // TODO! dateTime filter not implemented in this release!!
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
-      InputStream instream = mechRead.GetBehaviorMethodsWSDL(null);
+      InputStream instream = mechRead.getServiceMethodsXML(null);
       return(instream);
     }
 
@@ -621,8 +607,8 @@ public class DefinitiveDOReader implements DOReader
       {
         System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
       }
-      DefinitiveBDefReader defRead = new DefinitiveBDefReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
-      MethodDef[] methods = defRead.GetBehaviorMethods(null);
+      DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
+      MethodDef[] methods = mechRead.getServiceMethods(null);
       MethodParmDef[] methodParms = null;
       for (int i=0; i<methods.length; i++)
       {
@@ -669,7 +655,7 @@ public class DefinitiveDOReader implements DOReader
         System.out.println("GetBMechMethodParms for BDEF: " + bDefPID);
       }
       DefinitiveBMechReader mechRead = new DefinitiveBMechReader(m_mgr, (String)dissbDefTobMechTbl.get(bDefPID));
-      MethodDef[] methods = mechRead.GetBehaviorMethods(null);
+      MethodDef[] methods = mechRead.getServiceMethods(null);
       MethodParmDef[] methodParms = null;
       for (int i=0; i<methods.length; i++)
       {
@@ -725,7 +711,7 @@ public class DefinitiveDOReader implements DOReader
 
       if (debug)
       {
-          System.out.println("GetDSBindingMaps: AUGMENTED BEHAVIOR DEFS:");
+          System.out.println("GetDSBindingMaps: AUGMENTED DS BINDINGS:");
           for (int k = 0; k < allBindingMaps.length; k++)
           {
             System.out.println("  >>dsBindMapID[" + k + "]= " + allBindingMaps[k].dsBindMapID);
@@ -826,7 +812,7 @@ public class DefinitiveDOReader implements DOReader
       private String h_xmlData;
       private StringWriter h_xmlstream;
       //rlw
-      boolean isRootXMLDatastreamElement;
+      private boolean isRootXMLDatastreamElement;
       Hashtable h_namespaceTbl;
 
       private final Pattern ampRegexp = Pattern.compile("&");
@@ -844,7 +830,7 @@ public class DefinitiveDOReader implements DOReader
         h_dsBindMapTbl = new Hashtable();
         //rlw
         h_namespaceTbl = new Hashtable();
-        isRootXMLDatastreamElement = true;
+        //isRootXMLDatastreamElement = true;
       }
 
       public void endDocument() throws SAXException
@@ -890,8 +876,8 @@ public class DefinitiveDOReader implements DOReader
       {
         if (isXMLDatastream && getAsStream)
         {
-          // FIXIT! DO THE STRING REPLACEMENT THING FOR ENTITY REFS LIKE &amp; &lt; !!!!!
-          // The parser will resolve these, and we want to write them out unresolved.
+          // Do String replacement for entity refs like &amp; &lt; !!!!!
+          // The parser will resolve these, and we must write them out unresolved.
 
           String s = new String(ch, start, length);
           s = stringReplace(s, ampRegexp, "&amp;");
@@ -918,7 +904,7 @@ public class DefinitiveDOReader implements DOReader
 
       public void startPrefixMapping(String prefix, String uri)
       {
-        System.out.println("Mapping prefix: "+prefix+" mapping URI: "+uri);
+        //System.out.println("Mapping prefix: "+prefix+" mapping URI: "+uri);
         h_namespaceTbl.put(prefix,uri);
       }
 
@@ -940,26 +926,30 @@ public class DefinitiveDOReader implements DOReader
 
         if (isXMLDatastream && getAsStream)
         {
-          //rlw - insert xml declaration and namespace info only for root element
+          h_xmlstream.write("<" + qName);
+
           if(isRootXMLDatastreamElement)
-          {
-            System.out.println("namespace: "+namespaceURI);
-            System.out.println("qName: "+qName);
-            String prefix = qName.substring(0,qName.indexOf(":"));
-            System.out.println("prefix: "+prefix);
-            String uri = (String)h_namespaceTbl.get(prefix);
-            System.out.println("uri: "+uri);
-            String ns = "<"+qName+" xmlns:"+prefix+"=\""+uri+"\" ";
-            System.out.println("ns: "+ns);
-            //h_xmlstream.write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            h_xmlstream.write(ns);
+            {
+            // FIXIT!!  the namespace table has ALL mappings encountered in the
+            // METS document, not just the ones pertaining to the latest inline
+            // xml datastream.  Is this a problem?  It might be that the inline
+            // xml datastreams get some extra namespace declarations on their
+            // root element.
+
+            Set prefixSet = h_namespaceTbl.keySet();
+            Iterator itp = prefixSet.iterator();
+            while (itp.hasNext())
+            {
+              String prefix = (String)itp.next();
+              String URI = (String)h_namespaceTbl.get(prefix);
+              h_xmlstream.write(" " + "xmlns:" + prefix + "=\"" + URI + "\"");
+            }
             isRootXMLDatastreamElement = false;
-          } else
-          {
-            h_xmlstream.write("<" + qName);
           }
 
-          // Do the string replace thing on the attribute values
+          // Do String replacement for entity refs like &amp; &lt; !!!!!
+          // The parser will resolve these, and we must write them out unresolved.
+
           int attrCount = attrs.getLength();
           for (int i = 0; i < attrCount; i++)
           {
@@ -969,7 +959,8 @@ public class DefinitiveDOReader implements DOReader
             s = stringReplace(s, gtRegexp, "&gt;");
             s = stringReplace(s, quotRegexp, "&quot;");
             s = stringReplace(s, aposRegexp, "&apos;");
-            h_xmlstream.write(" " + attrs.getLocalName(i) + "=\"" + s + "\"");
+            h_xmlstream.write(" " + attrs.getQName(i) + "=\"" + s + "\"");
+            //h_xmlstream.write(" " + attrs.getLocalName(i) + "=\"" + s + "\"");
           }
           h_xmlstream.write(">");
         }
@@ -1071,6 +1062,7 @@ public class DefinitiveDOReader implements DOReader
           {
             h_xmlstream = new StringWriter();
             getAsStream = true;
+            isRootXMLDatastreamElement = true;
           }
         }
         else if (qName.equalsIgnoreCase("METS:fileSec"))
@@ -1230,15 +1222,19 @@ public class DefinitiveDOReader implements DOReader
         {
           inDMDSec = false;
           if (isXMLDatastream)
+          {
             isXMLDatastream = false;
-            isRootXMLDatastreamElement = true;
+          }
+            //isRootXMLDatastreamElement = true;
         }
         else if (qName.equalsIgnoreCase("METS:amdSec") && inAMDSec)
         {
           inAMDSec = false;
           if (isXMLDatastream)
+          {
             isXMLDatastream = false;
-            isRootXMLDatastreamElement = true;
+          }
+            //isRootXMLDatastreamElement = true;
         }
         else if (qName.equalsIgnoreCase("METS:techMD") ||
                  qName.equalsIgnoreCase("METS:rightsMD") ||
