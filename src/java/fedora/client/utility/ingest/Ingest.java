@@ -64,7 +64,7 @@ public class Ingest {
                                               throws Exception {
         String tps=fTypes.toUpperCase();
         Set toIngest;
-        HashSet pidSet=new HashSet();
+        LinkedHashSet pidSet=new LinkedHashSet();
         if (tps.indexOf("D")!=-1) {
             toIngest=getFiles(dir, "FedoraBDefObject");
             System.out.println("Found " + toIngest.size() + " behavior definitions.");
@@ -272,7 +272,7 @@ public class Ingest {
         if (!dir.isDirectory()) {
             throw new IOException("Not a directory: " + dir.getPath());
         }
-        HashSet set=new HashSet();
+        LinkedHashSet set=new LinkedHashSet();
         File[] files=dir.listFiles();
         for (int i=0; i<files.length; i++) {
             if (files[i].isDirectory()) {
