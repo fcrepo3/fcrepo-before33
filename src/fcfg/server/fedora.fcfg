@@ -80,6 +80,10 @@
 	</comment>
 	<param name="fedoraServerPort" value="8080"/>
 	<comment>Defines the port number on which the Fedora server runs; default is 8080.</comment>
+	<param name="fedoraShutdownPort" value="8005"/>
+	<comment>Defines the port number used to shutdown the Fedora sever; default is 8005.</comment>
+	<param name="fedoraRedirectPort" value="8443"/>
+	<comment>Defines the redirect port of the Fedora sever; default is 8443.</comment>
 	<param name="fedoraServerHost" value="localhost"/>
 	<comment>Defines the host name for the Fedora server, as seen from the outside world.</comment>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
