@@ -153,6 +153,13 @@ public class Administrator extends JFrame {
         JMenuItem fileExit=new JMenuItem("Exit",KeyEvent.VK_X);
         fileExit.setToolTipText("Quits the FEDORA Administrator application");
         
+        fileExit.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose();
+                System.exit(0);
+            }
+        });
+        
         fileMenu.add(fileNew); 
         fileMenu.add(fileOpen); 
         fileMenu.add(fileClose); 
