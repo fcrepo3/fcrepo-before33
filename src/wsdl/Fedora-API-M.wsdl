@@ -37,20 +37,20 @@
 			<documentation>the PID of the newly created object.</documentation>
 		</part>
 	</message>
-        <message name="modifyObjectRequest">
-            <part name="pid" type="xsd:string">
-                <documentation>the PID of the object.</documentation>
-            </part>
-            <part name="label" type="xsd:string">
-                <documentation>the new label.  Null means leave unchanged.</documentation>
-            </part>
-            <part name="state" type="xsd:string">
-                <documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
-            </part>
-            <part name="logMessage" type="xsd:string">
-                <documentation>a log message.</documentation>
-            </part>
-        </message>
+	<message name="modifyObjectRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="label" type="xsd:string">
+			<documentation>the new label.  Null means leave unchanged.</documentation>
+		</part>
+		<part name="state" type="xsd:string">
+			<documentation>the new state, A, I or D.  Null means leave unchanged.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a log message.</documentation>
+		</part>
+	</message>
 	<message name="getObjectXMLRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -168,7 +168,7 @@
 		</part>
 		<part name="dsState" type="xsd:string">
 			<documentation>the state of the datastream.</documentation>
-		</part>		
+		</part>
 	</message>
 	<message name="modifyDatastreamByValueRequest">
 		<part name="PID" type="xsd:string">
@@ -188,6 +188,34 @@
 		</part>
 		<part name="dsState" type="xsd:string">
 			<documentation>the state of the datastream.</documentation>
+		</part>
+	</message>
+	<message name="setDatastreamStateRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="datastreamID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="dsState" type="xsd:string">
+			<documentation>the state to be set on the datastream.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+	</message>
+	<message name="setDisseminatorStateRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="disseminatorID" type="xsd:string">
+			<documentation>the ID of the disseminator.</documentation>
+		</part>
+		<part name="dissState" type="xsd:string">
+			<documentation>the state to be set on the disseminator.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
 	<message name="purgeDatastreamRequest">
@@ -227,24 +255,24 @@
 			<documentation>the datastream.</documentation>
 		</part>
 	</message>
-  <message name="getDatastreamsRequest">
-    <part name="PID" type="xsd:string">
-      <documentation>the PID of the object.</documentation>
-    </part>
-    <part name="asOfDateTime" type="xsd:dateTime">
-      <documentation>the date/time stamp specifying the desired view of the 
+	<message name="getDatastreamsRequest">
+		<part name="PID" type="xsd:string">
+			<documentation>the PID of the object.</documentation>
+		</part>
+		<part name="asOfDateTime" type="xsd:dateTime">
+			<documentation>the date/time stamp specifying the desired view of the 
       object.  If null, the current view of the object (the most recent time) 
       is assumed.</documentation>
-    </part>
-    <part name="state" type="xsd:string">
-      <documentation>the state of the datastreams to get, null for all states.</documentation>
-    </part>
-  </message>
-  <message name="getDatastreamsResponse">
-    <part name="response" type="fedora-types:ArrayOfDatastream">
-      <documentation>the datastreams.</documentation>
-    </part>
-  </message>
+		</part>
+		<part name="state" type="xsd:string">
+			<documentation>the state of the datastreams to get, null for all states.</documentation>
+		</part>
+	</message>
+	<message name="getDatastreamsResponse">
+		<part name="response" type="fedora-types:ArrayOfDatastream">
+			<documentation>the datastreams.</documentation>
+		</part>
+	</message>
 	<message name="getDatastreamHistoryRequest">
 		<part name="PID" type="xsd:string">
 			<documentation>the PID of the object.</documentation>
@@ -399,10 +427,10 @@
 			<input message="fedora-api:ingestObjectRequest"/>
 			<output message="fedora-api:ingestObjectResponse"/>
 		</operation>
-                <operation name="modifyObject">
-                    <documentation>Changes the state and/or label of the object.</documentation>
-                    <input message="fedora-api:modifyObjectRequest"/>
-                </operation>
+		<operation name="modifyObject">
+			<documentation>Changes the state and/or label of the object.</documentation>
+			<input message="fedora-api:modifyObjectRequest"/>
+		</operation>
 		<operation name="getObjectXML">
 			<documentation>Gets the XML portion of the entire METS-encoded 
       digital object for external use (viewing, editing, moving to another 
@@ -472,6 +500,14 @@
 			<documentation>Modifies an existing datastream in an object, by value.</documentation>
 			<input message="fedora-api:modifyDatastreamByValueRequest"/>
 		</operation>
+		<operation name="setDatastreamState">
+			<documentation>Sets the state of a datastream to the specified state value.</documentation>
+			<input message="fedora-api:setDatastreamStateRequest"/>
+		</operation>
+		<operation name="setDisseminatorState">
+			<documentation>Sets the state of a disseminator to the specified value.</documentation>
+			<input message="fedora-api:setDisseminatorStateRequest"/>
+		</operation>
 		<operation name="purgeDatastream">
 			<documentation>Permanently removes one or more versions of a datastream 
       from an object.</documentation>
@@ -491,11 +527,11 @@
 			<input message="fedora-api:getDatastreamRequest"/>
 			<output message="fedora-api:getDatastreamResponse"/>
 		</operation>
-    <operation name="getDatastreams">
-      <documentation>Gets all the datastreams in an object as of a certain date/time and in a certain state.</documentation>
-      <input message="fedora-api:getDatastreamsRequest"/>
-      <output message="fedora-api:getDatastreamsResponse"/>
-    </operation>
+		<operation name="getDatastreams">
+			<documentation>Gets all the datastreams in an object as of a certain date/time and in a certain state.</documentation>
+			<input message="fedora-api:getDatastreamsRequest"/>
+			<output message="fedora-api:getDatastreamsResponse"/>
+		</operation>
 		<operation name="getDatastreamHistory">
 			<documentation>Gets the creation dates of each version of a datastream.</documentation>
 			<input message="fedora-api:getDatastreamHistoryRequest"/>
@@ -546,13 +582,12 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-                <operation name="modifyObject">
+		<operation name="modifyObject">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#modifyObject"/>
-                     
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
-                </operation>
+		</operation>
 		<operation name="getObjectXML">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectXML"/>
 			<input>
@@ -647,6 +682,18 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>
 		</operation>
+		<operation name="setDatastreamState">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>
+		<operation name="setDisseminatorState">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDisseminatorState"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+		</operation>				
 		<operation name="purgeDatastream">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#purgeDatastream"/>
 			<input>
@@ -665,20 +712,15 @@
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
 		</operation>
-    <operation name="getDatastreams">
-      <soap:operation style="rpc" 
-          soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
-      <input>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </input>
-      <output>
-        <soap:body use="encoded" 
-            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" 
-            namespace="http://www.fedora.info/definitions/1/0/api/"/>
-      </output>
-    </operation>
+		<operation name="getDatastreams">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreams"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
 		<operation name="getDatastreamHistory">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamHistory"/>
 			<input>
