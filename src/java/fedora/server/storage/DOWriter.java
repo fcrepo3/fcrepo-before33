@@ -84,6 +84,7 @@ public interface DOWriter
 
     public void setDatastreamAltIDs(String id, String[] altIDs) throws ServerException;
     public void setDatastreamFormatURI(String id, String formatURI) throws ServerException;
+    public void setDatastreamVersionable(String id, boolean versionable) throws ServerException;    
 
     /**
      * Sets the state for all versions of the specified disseminator.

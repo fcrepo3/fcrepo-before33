@@ -156,6 +156,20 @@ public class SimpleDOWriter
       }
     }
 
+    public void setDatastreamVersionable(String datastreamID, boolean versionable)
+    throws ServerException {
+        assertNotInvalidated();
+        assertNotPendingRemoval();
+        List allVersions = m_obj.datastreams(datastreamID);
+        Iterator dsIter = allVersions.iterator();
+
+        // Set all versions of this datastreamID to the specified versionable status
+        while (dsIter.hasNext()) {
+            Datastream ds = (Datastream) dsIter.next();
+            ds.DSVersionable = versionable;
+        }
+    }      
+    
     public void setDisseminatorState(String disseminatorID, String dissState)
            throws ServerException {
       assertNotInvalidated();
