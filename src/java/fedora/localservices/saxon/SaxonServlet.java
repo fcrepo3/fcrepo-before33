@@ -35,7 +35,7 @@ import java.util.Properties;
  * reserved. The current project homepage for Saxon may be found at:
  * <a href="http://saxon.sourceforge.net/">http://saxon.sourceforge.net/</a>.</p>
  *
- * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002, 2003
+ * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002-2004
  * by The Rector and Visitors of the University of Virginia and Cornell
  * University. All rights reserved."</p>
  *

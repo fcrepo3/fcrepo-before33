@@ -33,7 +33,7 @@ import fedora.server.utilities.TableCreatingConnection;
  * reserved. The current project homepage for the original code may be found at:
  * <a href="http://www.coreservlets.com/">http://www.coreservlets.com/</a>.</p>
  *
- * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002, 2003
+ * <p>Portions created for the Fedora Repository System are Copyright &copy; 2002-2004
  * by The Rector and Visitors of the University of Virginia and Cornell
  * University. All rights reserved."</p>
  *

@@ -56,7 +56,7 @@ import javax.help.Map.ID;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>Copyright &copy; 2002, 2003 by The Rector and Visitors of the University of
+ * <p>Copyright &copy; 2002-2004 by The Rector and Visitors of the University of
  * Virginia and Cornell University. All rights reserved.
  * Portions created by Sun Microsystems are Copyright &copy;
  * Sun Microsystems, originally made available at java.sun.com</p>

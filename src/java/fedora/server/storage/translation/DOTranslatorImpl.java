@@ -29,7 +29,7 @@ import fedora.server.storage.types.DigitalObject;
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.</p>
  *
- * <p>The entire file consists of original code.  Copyright &copy; 2002, 2003 by The
+ * <p>The entire file consists of original code.  Copyright &copy; 2002-2004 by The
  * Rector and Visitors of the University of Virginia and Cornell University.
  * All rights reserved.</p>
  *
