@@ -193,12 +193,22 @@
       <arg path="res/saxon-6.5/saxon.jar"/>
       <arg value="com.icl.saxon.StyleSheet"/>
       <arg value="-o"/>
+      <arg path="temp/wsdldoc/Fedora-API-A.html"/>
+      <arg path="src/wsdl/Fedora-API-A.wsdl"/>
+      <arg path="res/wsdl-documentor/document.xsl"/>
+    </exec>
+    <echo message="Doing API-M..."/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="res/saxon-6.5/saxon.jar"/>
+      <arg value="com.icl.saxon.StyleSheet"/>
+      <arg value="-o"/>
       <arg path="temp/wsdldoc/Fedora-API-M.html"/>
       <arg path="src/wsdl/Fedora-API-M.wsdl"/>
       <arg path="res/wsdl-documentor/document.xsl"/>
     </exec>
   </target>
-
+  
   <target name="server"
           depends="serverclasses"
           description="Server distribution">
@@ -243,6 +253,9 @@
 
 <!--
   $Log$
+  Revision 1.10  2002/07/17 21:23:25  cwilper
+  Added API-A to document-wsdl target
+
   Revision 1.9  2002/07/16 16:20:42  cwilper
   added namespace.dbx translation to html to devdocs target
 
