@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 <xsl:output method="html" indent="yes"/> 
-<xsl:template match="/">
+<xsl:template match="objectMethods">
 	<html>
 		<head>
 			<title>Object Methods HTML Table View</title>
@@ -27,7 +27,7 @@
 	</html>
 </xsl:template>
 
-<xsl:template match="object">
+<xsl:template match="objectMethods">
 	<hr/>
 	<font size="+1" color="blue">Object Identifier (PID):   </font>
 	<font size="+1"><xsl:value-of select="@pid"/></font>
