@@ -40,7 +40,6 @@ public interface DOSerializer {
 
     public void serialize(DigitalObject obj, OutputStream out, 
     	String encoding, int transContext) 
-    	//boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException;
 

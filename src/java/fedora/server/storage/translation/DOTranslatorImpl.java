@@ -73,7 +73,6 @@ public class DOTranslatorImpl
 
     public void serialize(DigitalObject in, OutputStream out,
 			String format, String encoding, int transContext)
-            //String format, String encoding, boolean encodeForExport)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {

@@ -100,11 +100,9 @@ public class DOTranslatorModule
     }
 
     public void serialize(DigitalObject in, OutputStream out,
-            //String format, String encoding, boolean encodeForExport)
 			String format, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        //m_wrappedTranslator.serialize(in, out, format, encoding, encodeForExport);
 		m_wrappedTranslator.serialize(in, out, format, encoding, transContext);
     }
 
