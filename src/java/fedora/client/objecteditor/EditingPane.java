@@ -93,7 +93,7 @@ public abstract class EditingPane
                         }
                     }
                 });
-                m_saveButton.setLabel("Save Changes...");
+                m_saveButton.setText("Save Changes...");
                 Administrator.constrainHeight(m_saveButton);
                 m_saveButton.setEnabled(false);
                 m_undoButton=new JButton(new AbstractAction() {
@@ -102,7 +102,7 @@ public abstract class EditingPane
                         updateButtonVisibility();
                     }
                 });
-                m_undoButton.setLabel("Undo Changes");
+                m_undoButton.setText("Undo Changes");
                 Administrator.constrainHeight(m_undoButton);
                 m_undoButton.setEnabled(false);
 

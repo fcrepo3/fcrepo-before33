@@ -2,10 +2,7 @@ package fedora.client.ingest;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.util.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
@@ -92,7 +89,7 @@ public class SourceRepoDialog
         JButton okButton=new JButton(new AbstractAction() {
             public void actionPerformed(ActionEvent evt) {
                 // construct apia and apim after doing some field validation
-                if (m_passwordField.getText().equals("") || m_usernameField.getText().equals("")) {
+                if (m_passwordField.getPassword().length == 0 || m_usernameField.getText().equals("")) {
                     JOptionPane.showMessageDialog(Administrator.getDesktop(),
                         "Username and password must both be non-empty",
                         "Error",
@@ -108,17 +105,17 @@ public class SourceRepoDialog
                             m_apia=APIAStubFactory.getStub(host, 
                                                            port, 
                                                            m_usernameField.getText(),
-                                                           m_passwordField.getText());
+                                                           new String(m_passwordField.getPassword()));
                             m_apim=APIMStubFactory.getStub(host, 
                                                            port, 
                                                            m_usernameField.getText(),
-                                                           m_passwordField.getText());
+                                                           new String(m_passwordField.getPassword()));
                             try {
                                 m_repositoryInfo=m_apia.describeRepository();
                                 m_userInfo=m_apim.describeUser(m_usernameField.getText());
                                 s_lastServer=host + ":" + port;
                                 s_lastUsername=m_usernameField.getText();
-                                s_lastPassword=m_passwordField.getText();
+                                s_lastPassword=new String(m_passwordField.getPassword());
                                 dispose();
                             } catch (Exception e) {
                                 // earlier repositories won't support these
@@ -145,7 +142,7 @@ public class SourceRepoDialog
                                     // version of fedora, which is ok.
                                     s_lastServer=host + ":" + port;
                                     s_lastUsername=m_usernameField.getText();
-                                    s_lastPassword=m_passwordField.getText();
+                                    s_lastPassword=new String(m_passwordField.getPassword());
                                     dispose();
                                 } else {
                                     e.printStackTrace();

@@ -3,7 +3,6 @@ package fedora.client;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -33,7 +32,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import fedora.client.Administrator;
-import fedora.client.APIAStubFactory;
 import fedora.client.APIAStubFactory;
 
 import fedora.server.access.FedoraAPIA;
@@ -296,7 +294,7 @@ public class LoginDialog
         }
 
         public void dataChanged() {
-            if (m_passField.getText().equals("")) {
+        	if (m_passField.getPassword().length == 0) { 
                 m_loginButton.setEnabled(false);
             } else {
                 m_loginButton.setEnabled(true);
@@ -347,7 +345,7 @@ public class LoginDialog
                     if (username.equals("")) {
                         throw new IOException("No username provided.");
                     }
-                    String pass=m_passwordField.getText();
+                    String pass = new String(m_passwordField.getPassword());
                     tryLogin(host, port, username, pass);
                     // all looks ok...just save stuff and exit now
                     m_lastServer=host + ":" + port;
