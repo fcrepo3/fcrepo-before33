@@ -1,7 +1,12 @@
 package fedora.server.test;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.PipedReader;
+import java.io.PipedWriter;
 import java.io.PrintWriter;
 import java.net.URL;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +18,16 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.transform.Templates;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+
+import com.icl.saxon.expr.StringValue;
 
 import fedora.server.types.gen.MethodDef;
 import fedora.server.types.gen.MethodParmDef;
@@ -159,6 +174,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
     String clearCache = null;
     String methodName = null;
     String PID = null;
+    String xmlEncode = "";
     Property[] userParms = null;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
@@ -196,6 +212,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (parm.equals("clearCache_"))
       {
         clearCache = request.getParameter(parm);
+      } else if (parm.equals("xmlEncode_"))
+      {
+        xmlEncode = request.getParameter(parm);
       } else
       {
         // Any remaining parameters are assumed to be user-supplied method
@@ -510,15 +529,37 @@ public class FedoraAccessSoapServlet extends HttpServlet
               // In a nonbrowser-based environment, one would use the returned
               // data structure directly and most likely forgo this
               // transformation step.
-              response.setContentType(dissemination.getMIMEType());
-              int byteStream = 0;
-              ByteArrayInputStream dissemResult =
-                  new ByteArrayInputStream(dissemination.getStream());
-              while ((byteStream = dissemResult.read()) >= 0)
+              //
+              if (dissemination.getMIMEType().equalsIgnoreCase("application/fedora-redirect"))
               {
-                out.write(byteStream);
+                // A MIME type of application/fedora-redirect signals that the
+                // MIMETypedStream returned from the dissemination is a special
+                // Fedora-specific MIME type. In this case, teh Fedora server will
+                // not proxy the stream, but instead perform a simple redirect to
+                // the URL contained within the body of the MIMETypedStream. This
+                // special MIME type is used primarily for streaming media.
+                BufferedReader br = new BufferedReader(
+                    new InputStreamReader(
+                    new ByteArrayInputStream(dissemination.getStream())));
+                StringBuffer sb = new StringBuffer();
+                String line = null;
+                while ((line = br.readLine()) != null)
+                {
+                  sb.append(line);
+                }
+                response.sendRedirect(sb.toString());
+              } else
+              {
+                response.setContentType(dissemination.getMIMEType());
+                int byteStream = 0;
+                ByteArrayInputStream dissemResult =
+                    new ByteArrayInputStream(dissemination.getStream());
+                while ((byteStream = dissemResult.read()) >= 0)
+                {
+                  out.write(byteStream);
+                }
+                dissemResult.close();
               }
-              dissemResult.close();
             } else
             {
               // Dissemination request returned nothing.
@@ -548,7 +589,145 @@ public class FedoraAccessSoapServlet extends HttpServlet
       } else if (action.equals(GET_OBJECT_METHODS))
       {
         ObjectMethodsDef[] objMethDefArray = null;
+        PipedWriter pw = new PipedWriter();
+        PipedReader pr = new PipedReader(pw);
+
         try
+        {
+          objMethDefArray = getObjectMethods(PID, asOfDateTime);
+          if (objMethDefArray != null)
+          {
+            // Object Methods found.
+            // Deserialize ObjectmethodsDef datastructure into XML
+            pw.write("<?xml version=\"1.0\"?>");
+            if (versDateTime == null || DateUtility.
+                convertDateToString(versDateTime).equalsIgnoreCase(""))
+            {
+              pw.write("<object "
+                  + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                  + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                  + " pid=\"" + PID + "\" >");
+              pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                  + " location=\"objectmethods.xsd\"/>");
+            } else
+            {
+              pw.write("<object "
+                  + " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                  + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                  + " pid=\"" + PID + "\""
+                  + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
+                  + "\" >");
+              pw.write("<import namespace=\"http://www.fedora.info/definitions/1/0/access/\""
+                  + " location=\"objectmethods.xsd\"/>");
+
+            }
+            String nextBdef = "null";
+            String currentBdef = "";
+            for (int i=0; i<objMethDefArray.length; i++)
+            {
+              currentBdef = objMethDefArray[i].getBDefPID();
+              if (!currentBdef.equalsIgnoreCase(nextBdef))
+              {
+                if (i != 0) pw.write("</bdef>");
+                pw.write("<bdef pid=\"" + objMethDefArray[i].getBDefPID() + "\" >");
+              }
+              pw.write("<method name=\"" + objMethDefArray[i].getMethodName() + "\" >");
+              MethodParmDef[] methodParms = objMethDefArray[i].getMethodParmDefs();
+              for (int j=0; j<methodParms.length; j++)
+              {
+                pw.write("<parm parmName=\"" + methodParms[j].getParmName()
+                    + "\" parmDefaultValue=\"" + methodParms[j].getParmDefaultValue()
+                    + "\" parmRequired=\"" + methodParms[j].isParmRequired()
+                    + "\" parmType=\"" + methodParms[j].getParmType()
+                    + "\" parmLabel=\"" + methodParms[j].getParmLabel() + "\" >");
+                if (!methodParms[j].getParmDomainValues()[0].equalsIgnoreCase("null"))
+                {
+                  pw.write("<parmDomainValues>");
+                  for (int k=0; k<methodParms[j].getParmDomainValues().length; k++)
+                  {
+                    pw.write("<value>" + methodParms[j].getParmDomainValues()[k]
+                        + "</value>");
+                  }
+                  pw.write("</parmDomainValues>");
+                }
+                pw.write("</parm>");
+              }
+
+              pw.write("</method>");
+              nextBdef = currentBdef;
+            }
+            pw.write("</bdef>");
+            pw.write("</object>");
+            pw.close();
+            if (xmlEncode.equalsIgnoreCase(YES))
+            {
+              // Return results as raw XML
+              response.setContentType(CONTENT_TYPE_XML);
+              int c = 0;
+              while ( (c = pr.read()) >= 0)
+              {
+                out.write(c);
+              }
+              pr.close();
+            } else
+            {
+              // Transform results into an html table
+              response.setContentType(CONTENT_TYPE_HTML);
+              File xslFile = new File("dist/server/access/objectmethods2.xslt");
+              TransformerFactory factory = TransformerFactory.newInstance();
+              Templates template = factory.newTemplates(new StreamSource(xslFile));
+              Transformer transformer = template.newTransformer();
+              Properties details = template.getOutputProperties();
+              transformer.transform(new StreamSource(pr), new StreamResult(out));
+              pr.close();
+            }
+          } else
+          {
+            // Object Methods Definition request returned nothing.
+            String message = "[FedoraAccessServlet] No Object Method Definitions "
+                + "returned.";
+            System.out.println(message);
+            showURLParms(action, PID, "", "", asOfDateTime, new Property[0], "", response, message);
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            response.sendError(response.SC_NO_CONTENT, message);
+          }
+          long stopTime = new Date().getTime();
+          long interval = stopTime - servletStartTime;
+          System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
+            + "GetObjectMethods: " + interval + " milliseconds.");
+        } catch (TransformerException te)
+        {
+          String message = "[FedoraAccessServlet] An error has occured in "
+                         + "transforming the deserialized XML from getObjectMethods"
+                         + " into html. The "
+                         + "error was a \" "
+                         + te.getClass().getName()
+                         + " \". Reason: "  + te.getMessage();
+          System.out.println(message);
+          te.printStackTrace();
+          response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+          response.sendError(response.SC_INTERNAL_SERVER_ERROR, message);
+        } catch (Exception e)
+        {
+          // FIXME!! Needs more refined Exception handling
+          String message = "FedoraSoapServlet: No Object Method Definitions "
+                         + "result returned. <br> Exception: "
+                         + e.getClass().getName()
+                         + " <br> Reason: "  + e.getMessage();
+          System.err.println(message);
+          e.printStackTrace();
+          showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
+                       userParms, clearCache, response, message);
+      } finally
+      {
+        if (pw != null) pw.close();
+        if (pr != null) pr.close();
+      }
+        out.close();
+      }
+    }
+  }
+/*        try
         {
           // Call Fedora Access SOAP service to request Object Methods.
           objMethDefArray = getObjectMethods(PID, asOfDateTime);
@@ -681,26 +860,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
             System.err.println(message);
             showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
                          userParms, clearCache, response, message);
-          }
-        } catch (Exception e)
-        {
-          // FIXME!! Needs more refined Exception handling
-          String message = "FedoraSoapServlet: No Object Method Definitions "
-                         + "result returned. <br> Exception: "
-                         + e.getClass().getName()
-                         + " <br> Reason: "  + e.getMessage();
-          System.err.println(message);
-          e.printStackTrace();
-          showURLParms(action, PID, bDefPID, methodName, asOfDateTime,
-                       userParms, clearCache, response, message);
-        }
-        long stopTime = new Date().getTime();
-        long interval = stopTime - servletStartTime;
-        System.out.println("[FedoraAccessSOAPServlet] Roundtrip "
-            + "GetObjectMethods: " + interval + " milliseconds.");
-      }
-    }
-  }
+          }*/
+
 
   /**
    * <p>For now, treat a HTTP POST request just like a GET request.</p>
