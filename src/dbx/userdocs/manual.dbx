@@ -56,11 +56,12 @@
         and the Warwick Framework [<ulink
         url="http://www.dlib.org/dlib/july96/lagoze/07lagoze.html">view paper</ulink>].</para>
 
-        <para>Over the last several years, Cornell University and The
-        University of Virginia have created promising prototypes of their own.
-        This open-source implementation, indended for public release, is the
-        result of a collaborative effort between Cornell and UVA. The project
-        is funded by a grant from the Andrew W. Mellon foundation.</para>
+        <para>Since its inception, the architecture has seen multiple
+        implementations. Over the last several years, Cornell University and
+        The University of Virginia have created promising prototypes of their
+        own. This open-source implementation, indended for public release, is
+        the result of a collaborative effort between Cornell and UVA. The
+        project is funded by a grant from the Andrew W. Mellon foundation.</para>
 
         <para>More information about the project and its history can be found
         at <ulink url="http://www.fedora.info/">http://www.fedora.info/</ulink>.</para>
@@ -68,6 +69,12 @@
 
       <sect1>
         <title>Concepts</title>
+
+        <para>A good understanding of the ideas behind Fedora can be gathered
+        by reading the <ulink url="http://www.fedora.info/pubs.shtml">related
+        publications</ulink> and the <ulink
+        url="http://www.fedora.info/techdoc.shtml">technical specification</ulink>.
+        Briefly:</para>
 
         <para>In Fedora, a <emphasis>digital object</emphasis> is a data
         structure with a <emphasis>PID</emphasis> (a unique, persistent
@@ -77,17 +84,17 @@
         enabling the repository to provide disseminations of the object. A
         dissemination is simply a representation of an object.</para>
 
-        <para>A behavior mechanism represents a service that performs
-        functions on datastreams. It is the means by which a disseminator
-        binds to a service. A behavior mechanism specifies the datastream
-        input constraints of the service it describes. It also adheres to a
-        contract that is specified by its behavior definition.</para>
+        <para>A <emphasis>behavior mechanism</emphasis> represents a service
+        that performs functions on datastreams. It is the means by which a
+        disseminator binds to a service. A behavior mechanism specifies the
+        datastream input constraints of the service it describes. It also
+        adheres to a contract that is specified by its behavior definition.</para>
 
-        <para>A behavior definition specifies the names of methods that
-        subscribing mechanisms must implement. It also specifies the user
-        parameters that implementing services must accept. These are the same
-        user parameters that are used by the disseminating party in the
-        request to the Fedora repository.</para>
+        <para>A <emphasis>behavior definition</emphasis> specifies the names
+        of methods that subscribing mechanisms must implement. It also
+        specifies the user parameters that implementing services must accept.
+        These are the same user parameters that are used by the disseminating
+        party in the request to the Fedora repository.</para>
       </sect1>
     </chapter>
 
@@ -99,7 +106,7 @@
       of content and metadata that physically reside inside the repository or
       outside the repository.</para></listitem><listitem><para><emphasis>Parameterized
       disseminators</emphasis> - User options may be provided at dissemination
-      time.</para></listitem><listitem><para><emphasis>Object Field Search</emphasis>
+      time.</para></listitem><listitem><para><emphasis>Object search</emphasis>
       - A few standard, key metadata fields are indexed along with the primary
       dublin core datastream for each object. The software provides an
       interface for a freetext and field-specific queries across these fields.</para></listitem><listitem><para><emphasis>OAI-PMH
@@ -182,7 +189,22 @@
         <sect2>
           <title>Requirements</title>
 
-          <para>Requirements text</para>
+          <para>Fedora will run on any system that has a java runtime
+          environment (JRE) v1.4 or greater. It has been tested using
+          Sun&#39;s 1.4 JRE on recent versions of Windows, Linux, and Solaris.</para>
+
+          <para>Disk space requirements vary depending on the complexity and
+          number of objects you want to store, thus it&#39;s impossible to
+          give an accurate estimate of what you should expect to use. A rough
+          guide follows.</para>
+
+          <para>You should have at least 100MB to hold the software and log
+          files, and 75-100MB per thousand objects containing 10-15kb of
+          metadata. This estimate includes database tables and indexes. If
+          your objects have managed content, more space will be required. For
+          example, a repository with 100,000 objects, where all objects
+          contain 10-15kb of metadata and 20% of them contain 50kb of managed
+          content would require from 8.5GB to 11GB of free space.</para>
         </sect2>
 
         <sect2>
