@@ -231,7 +231,7 @@ public abstract class DOTranslationUtility {
 		output=convertRelativeToFedoraLocalURLs(output);		
 		// Now, make absolute URLs out of all instances of the Fedora local URL syntax ...		
 		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
-		System.out.println("makeFedoraAbsoluteURLs: AFTER output=" + output);
+		//System.out.println("makeFedoraAbsoluteURLs: AFTER output=" + output);
 		return output;
 	}
 
@@ -281,7 +281,7 @@ public abstract class DOTranslationUtility {
 			output=s_localhostUrlStartWithoutPort.matcher(output).replaceAll(
 				s_fedoraLocalPattern.pattern());
 		}
-		System.out.println("makeFedoraLocalURLs: AFTER output=" + output);
+		//System.out.println("makeFedoraLocalURLs: AFTER output=" + output);
 		return output;		
 	}
 		
@@ -338,7 +338,7 @@ public abstract class DOTranslationUtility {
 			output=s_relativeSearchPatternAsParm.matcher(output).replaceAll(
 				"=" + s_fedoraLocalPattern.pattern() + s_relativeSearchPattern.pattern());	
 		}
-		System.out.println("convertRelativeToFedoraLocalURLs: AFTER output=" + output);
+		//System.out.println("convertRelativeToFedoraLocalURLs: AFTER output=" + output);
 		return output;		
 	}
 	
@@ -363,10 +363,6 @@ public abstract class DOTranslationUtility {
 	 * @return
 	 */
 	public static Datastream normalizeDSLocationURLs(String PID, Datastream ds, int transContext) {
-
-		//System.out.println("normalizeDSLocationURLs: ds.DatastreamID=" + ds.DatastreamID);	
-		//System.out.println("normalizeDSLocationURLs: ds.DSControlGrp=" + ds.DSControlGrp);
-		//System.out.println("normalizeDSLocationURLs: BEFORE DSLocation=" + ds.DSLocation);
 			
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
@@ -420,9 +416,7 @@ public abstract class DOTranslationUtility {
 				// MAKE INTERNAL IDENTIFIERS (PID+DSID+DSVersionID)
 				ds.DSLocation = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
 			}
-		}
-		//System.out.println("normalizeDSLocationURLs: AFTER DSLocation=" + ds.DSLocation);
-		//System.out.println("normalizeDSLocationURLs: ==================================");	
+		}	
 		return ds;
 	}
 
@@ -539,8 +533,9 @@ public abstract class DOTranslationUtility {
 					otherType=ds.DSInfoType;
 				}
 				ds.DSFormatURI = 
-					"info:fedora/format:xml:mets:" 
-					+ mdClassName + ":" + mdType + ":" + otherType;
+					//"info:fedora/format:xml:mets:" 
+					"info:fedora/fedora-system:format/xml.mets."
+					+ mdClassName + "." + mdType + "." + otherType;
 			}
 		}
 		return ds;
