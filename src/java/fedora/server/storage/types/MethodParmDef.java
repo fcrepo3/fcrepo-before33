@@ -13,7 +13,9 @@ public class MethodParmDef
 {
 
     public String parmName;
+    public String parmType;
     public String parmDefaultValue;
+    public String[] parmDomainValues;
     public boolean parmRequired;
     public String parmLabel;
 
