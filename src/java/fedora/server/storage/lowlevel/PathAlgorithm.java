@@ -50,7 +50,13 @@ abstract class PathAlgorithm implements IPathAlgorithm {
 
 	private static final String encode(String unencoded) throws LowlevelStorageException {
         try {
-    		return Server.getPID(unencoded).toFilename();
+            int i = unencoded.indexOf("+");
+            if (i != -1) {
+                return Server.getPID(unencoded.substring(0, i-1)).toFilename() 
+                        + unencoded.substring(i);
+            } else {
+    		    return Server.getPID(unencoded).toFilename();
+            }
         } catch (MalformedPidException e) {
             throw new LowlevelStorageException(true, e.getMessage(), e);
         }
@@ -58,7 +64,13 @@ abstract class PathAlgorithm implements IPathAlgorithm {
 
 	public static final String decode(String encoded) throws LowlevelStorageException {
         try {
-    		return Server.pidFromFilename(encoded).toString();
+            int i = encoded.indexOf("+");
+            if (i != -1) {
+    		    return Server.pidFromFilename(encoded.substring(0, i-1)).toString() 
+    		            + encoded.substring(i);
+            } else {
+    		    return Server.pidFromFilename(encoded).toString();
+            }
         } catch (MalformedPidException e) {
             throw new LowlevelStorageException(true, e.getMessage(), e);
         }
