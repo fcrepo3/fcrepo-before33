@@ -377,12 +377,12 @@ public class DefaultManagement
             }
         }
     }
-	public String addDisseminator(Context context, 
-									String pid, 
+	public String addDisseminator(Context context,
+									String pid,
 									String bDefPid,
-									String bMechPid, 
-									String dissLabel, 
-									String bDefLabel, 
+									String bMechPid,
+									String dissLabel,
+									String bDefLabel,
 									String bMechLabel,
 									DSBindingMap bindingMap,
 									String dissState) throws ServerException {
@@ -867,9 +867,9 @@ public class DefaultManagement
         }
     }
 
-    public Calendar[] purgeDisseminator(Context context, String pid, 
-            String disseminatorID, Calendar endDT) 
-            throws ServerException { 
+    public Calendar[] purgeDisseminator(Context context, String pid,
+            String disseminatorID, Calendar endDT)
+            throws ServerException {
         m_ipRestriction.enforce(context);
         DOWriter w=null;
         try {
@@ -880,12 +880,6 @@ public class DefaultManagement
                 end=endDT.getTime();
             }
             Date[] deletedDates=w.removeDisseminator(disseminatorID, start, end);
-            if (w.GetDisseminator(disseminatorID, null)==null) {
-                // FIXME: Purging an entire disseminator is disabled;
-                //        the replication code needs to be updated first.
-                //        To re-enable this for API-M, remove this check.
-                throw new GeneralException("Server code for full disseminator purging not implemented yet.");
-            }
             // make a log messsage explaining what happened
             String logMessage=getPurgeLogMessage("disseminator", disseminatorID,
                     start, end, deletedDates);
