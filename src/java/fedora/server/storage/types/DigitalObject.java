@@ -68,6 +68,20 @@ public interface DigitalObject {
      * @param pid The pid.
      */
     public void setPid(String pid);
+    
+	/**
+	 * Gets the object URI.
+	 *
+	 * @return The URI, or null if it hasn't been set.
+	 */
+	public String getURI();
+
+	/**
+	 * Sets the object URI.
+	 *
+	 * @param uri The URI.
+	 */
+	public void setURI(String uri);
 
     /**
      * Gets the state.
@@ -247,5 +261,26 @@ public interface DigitalObject {
      * Generate a unique id for an audit record.
      */
     public String newAuditRecordID();
+    
+	/**
+	 * Sets an extended property on the object.
+	 *
+	 * @param propName The extende property name, either a string, or URI as string.
+	 */
+	public void setProperty(String propName, String propValue);
 
+	/**
+	 * Gets an extended property value, given the property name.
+	 *
+	 * @return The property value.
+	 */
+	public String getProperty(String propName);
+
+	/**
+	 * Gets a Map containing all of the extended properties
+	 * on the object.  Map key is property name.
+	 *
+	 * @return The property Map.
+	 */	
+	public Map getProperties();
 }
