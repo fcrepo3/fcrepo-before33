@@ -137,7 +137,7 @@
                           initialized.</para>
                 </listitem>
                 <listitem>
-                    <para><emphasis>OPTIONAL:</emphasis> Create a private/public
+                    <para><emphasis>SUGGESTED:</emphasis> Create a private/public
                           RSA key pair if you don't already have one, and upload
                           your public key to SourceForge.</para>
                     <para>This allows you to run CVS actions over the network
@@ -173,7 +173,11 @@
                           be used by the putty ssh client (plink).  It runs in
                           the background.  Bring the pageant window to the
                           foreground and select "add key", then select your
-                          private key file.  Note: this step is not necessary
+                          private key file.  <emphasis>You must do this each time you
+                          start pageant unless you automatically invoke
+                          pageant with the first parameter being the location
+                          of your private key.</emphasis>
+                          Note: this step is not necessary
                           for Unix users because by default, ssh(1) looks in a
                           standard place for your private key whenever it is
                           invoked.</para>
@@ -507,6 +511,10 @@
     <para>Here is the revision history of this guide:</para>
     <literallayout>
     $Log$
+    Revision 1.10  2002/09/11 11:44:58  cwilper
+    updated as per bill's suggestion -- suggested key pair, and added
+    note on adding key pair to pageant.
+
     Revision 1.9  2002/05/17 20:02:00  cwilper
     Added section on the fedora-codewatch mailing list (automatic updates for project code-related events)
 
