@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Hashtable;
 import java.util.Map;
+import java.io.File;
 import java.lang.Class;
 import java.lang.reflect.*;
 
@@ -43,6 +44,7 @@ public class DynamicAccessImpl
 
   private ServiceMethodDispatcher dispatcher;
   private String reposBaseURL = null;
+  private File reposHomeDir = null;
   public Hashtable dynamicBDefToMech = null;
 
   /**
@@ -56,10 +58,11 @@ public class DynamicAccessImpl
    * @throws ModuleInitializationException If initilization values are
    *         invalid or initialization fails for some other reason.
    */
-  public DynamicAccessImpl(String repositoryBaseURL)
+  public DynamicAccessImpl(String repositoryBaseURL, File repositoryHomeDir)
   {
     dispatcher = new ServiceMethodDispatcher();
     reposBaseURL = repositoryBaseURL;
+    reposHomeDir = repositoryHomeDir;
   }
 
   /**
@@ -151,7 +154,7 @@ public class DynamicAccessImpl
     if (bDefPID.equalsIgnoreCase("fedora-system:3"))
     {
       Object result = dispatcher.invokeMethod(
-          new DefaultBehaviorImpl(reader, reposBaseURL), methodName, userParms);
+          new DefaultBehaviorImpl(reader, reposBaseURL, reposHomeDir), methodName, userParms);
       if (result.getClass().getName().equalsIgnoreCase(
         "fedora.server.storage.types.MIMETypedStream"))
       {

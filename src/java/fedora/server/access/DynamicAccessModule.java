@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.File;
 
 // Fedora imports
 import fedora.server.errors.ServerException;
@@ -53,6 +54,7 @@ public class DynamicAccessModule extends Module implements Access
   private IPRestriction m_ipRestriction;
 
   private String reposBaseURL = null;
+  private File reposHomeDir = null;
 
 
   /**
@@ -111,9 +113,10 @@ public class DynamicAccessModule extends Module implements Access
       }
       String fedoraServerPort = getServer().getParameter("fedoraServerPort");
       reposBaseURL = "http://" + hostIP.getHostAddress() + ":" + fedoraServerPort;
+      reposHomeDir = getServer().getHomeDir();
 
       // get ref to the Dynamic Access implementation class
-      da = new DynamicAccessImpl(reposBaseURL);
+      da = new DynamicAccessImpl(reposBaseURL, reposHomeDir);
       da.dynamicBDefToMech = new Hashtable();
       try
       {

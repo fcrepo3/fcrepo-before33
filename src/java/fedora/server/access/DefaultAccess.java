@@ -363,8 +363,30 @@ public class DefaultAccess extends Module implements Access
     {
       methodList.add(dynamicMethodDefs[j]);
     }
-    return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
-    //return methodDefs;
+System.out.println("EXAMINE OBJECT METHODS DEF: (before return from DefaultAccess)");
+ObjectMethodsDef[] methods = (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
+System.out.println(">>>>> CNT METHOD ARRAY: " + methods.length);
+for (int k=0; k<methods.length; k++)
+{
+  System.out.println(">> PID= " + methods[k].PID);
+  System.out.println(">> bdefpid= " + methods[k].bDefPID);
+  System.out.println(">> asOfDate= " + methods[k].asOfDate);
+  System.out.println(">> methodname= " + methods[k].methodName);
+  System.out.println(">>>>> CNT PARM ARRAY: " + methods[k].methodParmDefs.length);
+  for (int m=0; m<methods[k].methodParmDefs.length; m++)
+  {
+    System.out.println(">> parmName = " + methods[k].methodParmDefs[m].parmName);
+    System.out.println(">> parmLabel = " + methods[k].methodParmDefs[m].parmLabel);
+    System.out.println(">> parmDefVal = " + methods[k].methodParmDefs[m].parmDefaultValue);
+    System.out.println(">>>>> CNT DOM VAL ARRAY: " + methods[k].methodParmDefs[m].parmDomainValues.length);
+    System.out.println(">> parmDomVal[] = " + methods[k].methodParmDefs[m].parmDomainValues);
+    System.out.println(">> parmPassby = " + methods[k].methodParmDefs[m].parmPassBy);
+    System.out.println(">> parmReq = " + methods[k].methodParmDefs[m].parmRequired);
+    System.out.println(">> parmType = " + methods[k].methodParmDefs[m].parmType);
+  }
+}
+return methods;
+    //return (ObjectMethodsDef[])methodList.toArray(new ObjectMethodsDef[0]);
   }
 
   public List search(Context context, String[] resultFields,
