@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -437,10 +438,14 @@ public class DefaultAccess extends Module implements Access
     profile.objectCreateDate = reader.getCreateDate();
     profile.objectLastModDate = reader.getLastModDate();
     profile.objectType = reader.getFedoraObjectType();
-    profile.dissIndexViewURL = getDissIndexViewURL(getReposBaseURL(),
-        reader.GetObjectPID(), versDateTime);
-    profile.itemIndexViewURL = getItemIndexViewURL(getReposBaseURL(),
-        reader.GetObjectPID(), versDateTime);
+
+    String reposBaseURL = getReposBaseURL(
+    	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+			? "https" : "http",
+		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+	);
+    profile.dissIndexViewURL = getDissIndexViewURL(reposBaseURL, reader.GetObjectPID(), versDateTime);
+    profile.itemIndexViewURL = getItemIndexViewURL(reposBaseURL, reader.GetObjectPID(), versDateTime);
       return profile;
   }
 
@@ -492,7 +497,12 @@ public class DefaultAccess extends Module implements Access
     m_authorizationModule.enforceDescribeRepository(context);
     RepositoryInfo repositoryInfo = new RepositoryInfo();
     repositoryInfo.repositoryName = getServer().getParameter("repositoryName");
-    repositoryInfo.repositoryBaseURL = getReposBaseURL() + "/fedora";
+    String reposBaseURL = getReposBaseURL(
+        	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+    			? "https" : "http",
+    		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+    	);    
+    repositoryInfo.repositoryBaseURL = reposBaseURL + "/fedora";
     repositoryInfo.repositoryVersion =
       Server.VERSION_MAJOR + "." + Server.VERSION_MINOR;
     Module domgr = getServer().getModule("fedora.server.storage.DOManager");
@@ -806,7 +816,7 @@ public class DefaultAccess extends Module implements Access
       return itemIndexURL;
   }
 
-  private String getReposBaseURL()
+  private String getReposBaseURL(String protocol, String port)
   {
     String reposBaseURL = null;
     InetAddress hostIP = null;

@@ -78,7 +78,6 @@ public class DynamicAccessModule extends Module implements Access
   private Access m_access;
 
   private Hashtable dynamicBDefToMech = null;
-  private String reposBaseURL = null;
   private File reposHomeDir = null;
 
 
@@ -144,12 +143,10 @@ public class DynamicAccessModule extends Module implements Access
             + uhe.getClass().getName() + "The message "
             + "was \"" + uhe.getMessage() + "\"");
       }
-      String fedoraServerPort = getServer().getParameter("fedoraServerPort");
       String fedoraServerHost = getServer().getParameter("fedoraServerHost");
       if (fedoraServerHost==null || fedoraServerHost.equals("")) {
           fedoraServerHost=hostIP.getHostName();
       }
-      reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
       reposHomeDir = getServer().getHomeDir();
 
       // FIXIT!! In the future, we want to read the repository configuration
@@ -170,7 +167,7 @@ public class DynamicAccessModule extends Module implements Access
       }
 
       // get ref to the Dynamic Access implementation class
-      da = new DynamicAccessImpl(m_access, reposBaseURL, reposHomeDir, dynamicBDefToMech);
+      da = new DynamicAccessImpl(m_access, reposHomeDir, dynamicBDefToMech);
   }
 
   /**

@@ -7,8 +7,13 @@ import java.util.Hashtable;
 import java.io.File;
 import java.lang.Class;
 import java.lang.reflect.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
+import fedora.common.Constants;
 import fedora.server.Context;
+import fedora.server.Module;
+import fedora.server.Server;
 import fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl;
 import fedora.server.access.defaultdisseminator.ServiceMethodDispatcher;
 import fedora.server.errors.MethodNotFoundException;
@@ -67,16 +72,13 @@ public class DynamicAccessImpl
 
   private Access m_access;
   private ServiceMethodDispatcher dispatcher;
-  private String reposBaseURL = null;
   private File reposHomeDir = null;
   private Hashtable dynamicBDefToMech = null;
 
-  public DynamicAccessImpl(Access m_access, String reposBaseURL,
-    File reposHomeDir, Hashtable dynamicBDefToMech)
+  public DynamicAccessImpl(Access m_access, File reposHomeDir, Hashtable dynamicBDefToMech)
   {
     dispatcher = new ServiceMethodDispatcher();
     this.m_access = m_access;
-    this.reposBaseURL = reposBaseURL;
     this.reposHomeDir = reposHomeDir;
     this.dynamicBDefToMech = dynamicBDefToMech;
   }
@@ -164,6 +166,13 @@ public class DynamicAccessImpl
     return null;
   }
 
+  private String getReposBaseURL(String protocol, String port) {
+    String reposBaseURL = null;
+    String fedoraServerHost = ((Module)m_access).getServer().getParameter("fedoraServerHost");
+    reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
+    return reposBaseURL;
+  }  
+  
   /**
    * Perform a dissemination for a behavior method that belongs to a
    * dynamic disseminator that is associate with the digital object.  The
@@ -187,9 +196,16 @@ public class DynamicAccessImpl
     {
       // FIXIT!! Use lookup to dynamicBDefToMech table to get class for
       // DefaultDisseminatorImpl and construct via Java reflection.
+    	
+        String reposBaseURL = getReposBaseURL(
+            	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+        			? "https" : "http",
+        		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+        	);    
+    	
       Object result = dispatcher.invokeMethod(
-          new DefaultDisseminatorImpl(context, asOfDateTime,
-            reader, m_access, reposBaseURL, reposHomeDir), methodName, userParms);
+          new DefaultDisseminatorImpl(context, asOfDateTime, reader, m_access, 
+			reposBaseURL, reposHomeDir), methodName, userParms);
       if (result.getClass().getName().equalsIgnoreCase(
         "fedora.server.storage.types.MIMETypedStream"))
       {
