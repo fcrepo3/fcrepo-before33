@@ -89,7 +89,7 @@ public class ViewObjectXML
                 try {
                     String pid=(String) pidIter.next();
                     ByteArrayOutputStream out=new ByteArrayOutputStream();
-                    exporter.export(pid, out, true);
+                    exporter.export(pid, null, out, true);
                     JTextComponent textEditor=new JTextArea();
                     textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
                     textEditor.setText(new String(out.toByteArray()));
