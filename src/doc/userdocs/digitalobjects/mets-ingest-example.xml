@@ -1,136 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<METS:mets LABEL="FOXML Reference Example" OBJID="demo:999" PROFILE="TEST_IMAGE" TYPE="FedoraObject"
-  xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#"
-  xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xlink="http://www.w3.org/TR/xlink"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">
-  <METS:metsHdr CREATEDATE="2004-12-10T00:21:58.000Z" LASTMODDATE="2005-01-21T16:37:14.621Z" RECORDSTATUS="A"/>
-  <METS:amdSec ID="AUDIT" STATUS="A">
-    <METS:digiprovMD CREATED="2005-01-20T22:46:07.428Z" ID="AUDREC1">
-      <METS:mdWrap
-        LABEL="Audit record for 'modifyDatastreamByReference' action by fedoraAdmin at 2005-01-20T22:46:07.428Z"
-        MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="FEDORA-AUDIT">
-        <METS:xmlData>
-          <audit:record>
-            <audit:process type="Fedora API-M"/>
-            <audit:action>modifyDatastreamByReference</audit:action>
-            <audit:componentID>DRAWING-ICON</audit:componentID>
-            <audit:responsibility>fedoraAdmin</audit:responsibility>
-            <audit:date>2005-01-20T22:46:07.428Z</audit:date>
-            <audit:justification>changed the datastream label and added an alternate identifier.</audit:justification>
-          </audit:record>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:digiprovMD>
-  </METS:amdSec>
-  <METS:amdSec ID="RELS-EXT" STATUS="A">
-    <METS:techMD CREATED="2004-12-10T00:21:58.000Z" ID="RELS-EXT.0">
-      <METS:mdWrap LABEL="Fedora Object-to-Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/"
-            xmlns:fedora="info:fedora/fedora-system:def/relations-external#"
-            xmlns:myns="http://www.nsdl.org/ontologies/relationships#"
-            xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/"
-            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
-            <rdf:Description rdf:about="info:fedora/demo:999">
-              <fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection1"/>
-              <fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection2"/>
-              <myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
-            </rdf:Description>
-          </rdf:RDF>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
-  <METS:amdSec ID="DC" STATUS="A">
-    <METS:techMD CREATED="2004-12-10T00:21:58.000Z" ID="DC.0">
-      <METS:mdWrap LABEL="Default Dublin Core Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
-            <dc:title>FOXML Reference Object</dc:title>
-            <dc:creator>Sandy Payette</dc:creator>
-            <dc:subject>Fedora documentation</dc:subject>
-            <dc:description>FOXML showing how a digital object is encoded for persistent storage in a Fedora repository</dc:description>
-            <dc:publisher>Cornell CIS</dc:publisher>
-            <dc:identifier>demo:999</dc:identifier>
-          </oai_dc:dc>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
-  <METS:amdSec ID="UVATECH" STATUS="A">
-    <METS:techMD CREATED="2004-12-10T00:21:58.000Z" ID="UVATECH.0">
-      <METS:mdWrap LABEL="UVA Technical Metadata Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
-            <uvalibadmin:technical>
-              <uvalibadmin:format>image/jpeg</uvalibadmin:format>
-              <uvalibadmin:compression>LZW</uvalibadmin:compression>
-              <uvalibadmin:bitDepth BITS=""/>
-              <uvalibadmin:colorSpace/>
-              <uvalibadmin:colorProfile CPFILE="" CPLOCAT=""/>
-              <uvalibadmin:resolution>600</uvalibadmin:resolution>
-            </uvalibadmin:technical>
-          </uvalibadmin:admin>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
-  <METS:amdSec ID="RELS-INT" STATUS="A">
-    <METS:techMD CREATED="2004-12-10T00:21:58.000Z" ID="RELS-INT.0">
-      <METS:mdWrap LABEL="Fedora Internal Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
-        <METS:xmlData>
-          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-            xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:relsint="info:fedora/fedora-system:def/relations-internal#">
-            <relsint:Datastream rdf:about="info:fedora/demo:999/UVATECH">
-              <relsint:adminMetadataFor rdf:resource="info:fedora/demo:999/DRAWING"/>
-            </relsint:Datastream>
-          </rdf:RDF>
-        </METS:xmlData>
-      </METS:mdWrap>
-    </METS:techMD>
-  </METS:amdSec>
-  <METS:fileSec>
-    <METS:fileGrp ID="DATASTREAMS">
-      <METS:fileGrp ID="IMAGE" STATUS="A">
-        <METS:file CREATED="2004-12-10T00:21:58.000Z" ID="IMAGE.0" MIMETYPE="image/x-mrsid-image" OWNERID="E" SIZE="0">
-          <METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Image of Pavilion III, University of Virginia"/>
-        </METS:file>
-      </METS:fileGrp>
-      <METS:fileGrp ID="DRAWING-BETTER" STATUS="A">
-        <METS:file CREATED="2005-01-21T16:37:14.230Z" ID="DS2.0" MIMETYPE="image/jpeg" OWNERID="M" SIZE="0">
-          <METS:FLocat LOCTYPE="URL"
-            xlink:href="http://localhost:8080/fedora/get/demo:999/DRAWING-BETTER/2005-01-21T16:37:14.230Z" xlink:title="Architectural Drawing Pavilion III (med res)"/>
-        </METS:file>
-      </METS:fileGrp>
-      <METS:fileGrp ID="DRAWING-ICON" STATUS="A">
-        <METS:file CREATED="2004-12-10T00:21:58.000Z" ID="DRAWING-ICON.0" MIMETYPE="image/jpeg" OWNERID="M" SIZE="0">
-          <METS:FLocat LOCTYPE="URL"
-            xlink:href="http://localhost:8080/fedora/get/demo:999/DRAWING-ICON/2004-12-10T00:21:58.000Z" xlink:title="Architectural Drawing Pavilion III"/>
-        </METS:file>
-        <METS:file CREATED="2005-01-20T22:46:07.428Z" ID="DRAWING-ICON.1" MIMETYPE="image/jpeg" OWNERID="M" SIZE="0">
-          <METS:FLocat LOCTYPE="URL"
-            xlink:href="http://localhost:8080/fedora/get/demo:999/DRAWING-ICON/2005-01-20T22:46:07.428Z" xlink:title="Architectural Drawing Pavilion III (thumbnail icon)"/>
-        </METS:file>
-      </METS:fileGrp>
-      <METS:fileGrp ID="DRAWING_BEST" STATUS="A">
-        <METS:file CREATED="2004-12-10T00:21:58.000Z" ID="DRAWING.0" MIMETYPE="image/jpeg" OWNERID="R" SIZE="0">
-          <METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" xlink:title="Architectural Drawing Pavilion III (veryhigh res)"/>
-        </METS:file>
-      </METS:fileGrp>
-    </METS:fileGrp>
-  </METS:fileSec>
-  <METS:structMap ID="DISS1.0b" TYPE="fedora:dsBindingMap">
-    <METS:div TYPE="demo:9">
-      <METS:div LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0" TYPE="MRSID">
-        <METS:fptr FILEID="IMAGE"/>
-      </METS:div>
-    </METS:div>
-  </METS:structMap>
-  <METS:behaviorSec ID="DISS1" STATUS="A">
-    <METS:serviceBinding BTYPE="demo:8" CREATED="2004-12-10T00:21:58.000Z" ID="DISS1.0"
-      LABEL="Disseminator to provide dynamic views of a MRSID image" STRUCTID="DISS1.0b">
-      <METS:interfaceMD LOCTYPE="URN" xlink:href="demo:8"/>
-      <METS:serviceBindMD LOCTYPE="URN" xlink:href="demo:9"/>
-    </METS:serviceBinding>
-  </METS:behaviorSec>
+<METS:mets LABEL="FOXML Reference Example" OBJID="demo:999" PROFILE="TEST_IMAGE" TYPE="FedoraObject" xmlns:METS="http://www.loc.gov/METS/" xmlns:audit="info:fedora/fedora-system:def/audit#" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.loc.gov/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd">
+	<METS:metsHdr RECORDSTATUS="A"/>
+	<METS:amdSec ID="DC" STATUS="A">
+		<METS:techMD ID="DC.0">
+			<METS:mdWrap LABEL="Default Dublin Core Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+				<METS:xmlData>
+					<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+						<dc:title>FOXML Reference Object</dc:title>
+						<dc:creator>Sandy Payette</dc:creator>
+						<dc:subject>Fedora documentation</dc:subject>
+						<dc:description>FOXML showing how a digital object is encoded for persistent storage in a Fedora repository</dc:description>
+						<dc:publisher>Cornell CIS</dc:publisher>
+						<dc:identifier>demo:999</dc:identifier>
+					</oai_dc:dc>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="RELS-EXT" STATUS="A">
+		<METS:techMD ID="RELS-EXT.0">
+			<METS:mdWrap LABEL="Fedora Object-to-Object Relationship Metadata" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+				<METS:xmlData>
+					<rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+						<rdf:Description rdf:about="info:fedora/demo:999">
+							<fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection1"/>
+							<fedora:isMemberOfCollection rdf:resource="info:fedora/test:collection2"/>
+							<myns:isPartOf rdf:resource="info:fedora/mystuff:100"/>
+						</rdf:Description>
+					</rdf:RDF>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:amdSec ID="UVATECH" STATUS="A">
+		<METS:techMD ID="UVATECH.0">
+			<METS:mdWrap LABEL="UVA Technical Metadata Record" MDTYPE="OTHER" MIMETYPE="text/xml" OTHERMDTYPE="UNSPECIFIED">
+				<METS:xmlData>
+					<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
+						<uvalibadmin:technical>
+							<uvalibadmin:format>image/jpeg</uvalibadmin:format>
+							<uvalibadmin:compression>LZW</uvalibadmin:compression>
+							<uvalibadmin:bitDepth BITS=""/>
+							<uvalibadmin:colorSpace/>
+							<uvalibadmin:colorProfile CPFILE="" CPLOCAT=""/>
+							<uvalibadmin:resolution>600</uvalibadmin:resolution>
+						</uvalibadmin:technical>
+					</uvalibadmin:admin>
+				</METS:xmlData>
+			</METS:mdWrap>
+		</METS:techMD>
+	</METS:amdSec>
+	<METS:fileSec>
+		<METS:fileGrp ID="DATASTREAMS">
+			<METS:fileGrp ID="IMAGE" STATUS="A">
+				<METS:file ID="IMAGE.0" MIMETYPE="image/x-mrsid-image" OWNERID="E">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" xlink:title="Image of Pavilion III, University of Virginia"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DRAWING-ICON" STATUS="A">
+				<METS:file ID="DRAWING-ICON.0" MIMETYPE="image/jpeg" OWNERID="M">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05small.jpg" xlink:title="Architectural Drawing Pavilion III"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DRAWING-BETTER" STATUS="A">
+				<METS:file ID="DRAWING-BETTER.0" MIMETYPE="image/jpeg" OWNERID="M">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" xlink:title="Architectural Drawing Pavilion III (med res)"/>
+				</METS:file>
+			</METS:fileGrp>
+			<METS:fileGrp ID="DRAWING_BEST" STATUS="A">
+				<METS:file ID="DRAWING_BEST.0" MIMETYPE="image/jpeg" OWNERID="R">
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://icarus.lib.virginia.edu/images/iva/archerd05high.jpg" xlink:title="Architectural Drawing Pavilion III (veryhigh res)"/>
+				</METS:file>
+			</METS:fileGrp>
+		</METS:fileGrp>
+	</METS:fileSec>
+	<METS:structMap ID="DISS1.0b" TYPE="fedora:dsBindingMap">
+		<METS:div TYPE="demo:9">
+			<METS:div LABEL="The IMAGE datastream serves as input to the MRSID service" ORDER="0" TYPE="MRSID">
+				<METS:fptr FILEID="IMAGE"/>
+			</METS:div>
+		</METS:div>
+	</METS:structMap>
+	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<METS:serviceBinding BTYPE="demo:8" ID="DISS1.0" LABEL="Disseminator to provide dynamic views of a MRSID image" STRUCTID="DISS1.0b">
+			<METS:interfaceMD LOCTYPE="URN" xlink:href="demo:8"/>
+			<METS:serviceBindMD LOCTYPE="URN" xlink:href="demo:9"/>
+		</METS:serviceBinding>
+	</METS:behaviorSec>
 </METS:mets>
