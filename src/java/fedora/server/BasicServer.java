@@ -8,6 +8,11 @@ import fedora.server.storage.DOManager;
 
 import java.io.IOException;
 import java.io.File;
+import java.util.logging.FileHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.XMLFormatter;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
@@ -18,6 +23,27 @@ public class BasicServer
             throws ServerInitializationException,
                    ModuleInitializationException {
         super(rootElement, fedoraHomeDir);
+    }
+    
+    public void initServer() 
+            throws ServerInitializationException {
+        Logger logger=Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.FINEST);
+        File logDir=new File(getHomeDir(), Server.LOG_DIR);
+        String logPattern=logDir.getAbsolutePath() + "/server-log-%g.jxl";
+        int maxSize=1024*1024;
+        int maxFiles=5;
+        FileHandler fh=null;
+        try {
+            fh=new FileHandler(logPattern, maxSize, maxFiles, false);
+        } catch (IOException ioe) {
+            throw new ServerInitializationException("IO Problem initializing loghandler: " + ioe.getMessage());
+        }
+        fh.setFormatter(new XMLFormatter());
+        logger.addHandler(fh);
+        setLogger(logger);
+        logInfo("Here's my first log message");
     }
 
     /**
@@ -32,10 +58,6 @@ public class BasicServer
     
     public DOManager getManager(String name) {
         return null;
-    }
-    
-    public String getHelp() {
-        return "This can be configured such and such a way...etc..";
     }
     
 }
