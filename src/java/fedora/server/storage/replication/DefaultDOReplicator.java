@@ -999,9 +999,11 @@ public class DefaultDOReplicator
             throws SQLException {
         logFinest("Entered DefaultDOReplicator.deleteDigitalObject");
         Statement st=null;
+        Statement st2=null;
         ResultSet results=null;
         try {
 		     st=connection.createStatement();
+                     st2 = connection.createStatement();
             //
             // READ
             //
@@ -1056,13 +1058,14 @@ public class DefaultDOReplicator
                   ResultSet rs = null;
                   logFinest("Getting associated bMechDbID(s) that are unique "
                         + "for this object in diss table...");
-                  rs=logAndExecuteQuery(st, "SELECT bMechDbID from "
+                  rs=logAndExecuteQuery(st2, "SELECT bMechDbID from "
                     + "diss WHERE dissDbID=" + id);
                   while (rs.next())
                   {
                     bMechIds.add(new Integer(rs.getInt("bMechDbID")));
                   }
                   rs.close();
+                  st2.close();
                 }
               }
               results.close();
@@ -1123,6 +1126,7 @@ public class DefaultDOReplicator
         } finally {
             if (results != null) results.close();
             if (st!=null) st.close();
+            if (st2!=null) st2.close();
             logFinest("Exiting DefaultDOReplicator.deleteDigitalObject");
         }
     }
