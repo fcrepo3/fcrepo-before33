@@ -23,6 +23,7 @@ import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ListSession;
 import fedora.server.types.gen.ObjectFields;
+import fedora.server.types.gen.RepositoryInfo;
 
 /**
  * Functionality to do object exports from a Fedora server.
@@ -49,7 +50,7 @@ public class Export {
     public static int ONE=0;
     public static int MULTI=1;
 
-    // launch interactively
+    // launch interactively via Administrator.java
     public Export(int kind) {
         try {
             JFileChooser browse=new JFileChooser(Administrator.getLastDir());
@@ -59,12 +60,12 @@ public class Export {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = browse.getSelectedFile();
                 Administrator.setLastDir(file.getParentFile());
-				ObjectFormatDialog fmtDialog = new ObjectFormatDialog();
+				ObjectFormatDialog fmtDialog = new ObjectFormatDialog("Select XML format for Export");
 				if (fmtDialog.getSelection()!=null) {
 	                if (kind==ONE) {
 	                    String pid=JOptionPane.showInputDialog("Enter the PID of the object to export.");
 	                    if (pid!=null && !pid.equals("")) {
-	                        one(Administrator.APIM, pid, file, fmtDialog.getSelection());
+	                        one(Administrator.APIA, Administrator.APIM, pid, fmtDialog.getSelection(), file);
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                            "Export succeeded.  PID='" + pid + "'.");
 	                    }
@@ -75,9 +76,9 @@ public class Export {
 	                        long st=System.currentTimeMillis();
 	                        String[] pids=multi(Administrator.APIA, 
 	                                            Administrator.APIM, 
-	                                            fTypes, 
-	                                            file,
-												fmtDialog.getSelection());
+	                                            fTypes,
+												fmtDialog.getSelection(), 
+	                                            file);
 	                        long et=System.currentTimeMillis();
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
 	                            "Export of " + pids.length + " objects finished.\n"
@@ -121,22 +122,16 @@ public class Export {
         return out.toString();
     }
 
-    public static void one(FedoraAPIM apim, String pid, File dir, String format)
+    public static void one(FedoraAPIA apia, FedoraAPIM apim, String pid, String format, File dir)
             throws Exception {
-        validateFormat(format);
         String fName=pid.replaceAll(":", "_") + ".xml";
         File file=new File(dir, fName);
         System.out.println("Exporting " + pid + " to " + file.getPath());
-        AutoExporter.export(apim, pid, format, new FileOutputStream(file), false);
+        AutoExporter.export(apia, apim, pid, format, new FileOutputStream(file), false);
     }
     
-    public static String[] multi(FedoraAPIA apia, 
-                                 FedoraAPIM apim,
-                                 String fTypes,
-                                 File dir,
-                                 String format)
+    public static String[] multi(FedoraAPIA apia, FedoraAPIM apim, String fTypes, String format, File dir)
             throws Exception {
-		validateFormat(format);
         String tps=fTypes.toUpperCase();
         Set toExport=new HashSet();
         Set pidSet=new HashSet();
@@ -160,7 +155,7 @@ public class Export {
         int i=0;
         while (iter.hasNext()) {
             String pid=(String) iter.next();
-            one(apim, pid, dir, format);
+            one(apia, apim, pid, format, dir);
             pids[i++]=pid;
         }
         return pids;
@@ -202,26 +197,17 @@ public class Export {
         }
         return set;
     }
-    
-    public static void validateFormat(String format)
-    	throws Exception {
-    		if (!format.equals("foxml1.0") && !format.equals("metsf1.0")) {
-    			throw new Exception("Invalid export format. Valid FORMAT values: foxml1.0' | metsf1.0");
-    		}
-    	}
 
     /**
      * Print error message and show usage for command-line interface.
      */
     public static void badArgs(String msg) {
-        System.err.println("Error  : " + msg);
-        System.err.println();
         System.err.println("Command: fedora-export");
         System.err.println();
         System.err.println("Summary: Exports one or more objects from a Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS PATH FORMAT");
+        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT PATH");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST    is the repository's hostname.");
@@ -232,18 +218,21 @@ public class Export {
         System.err.println("  FTYPS  is any combination of the characters O, D, and M, specifying");
         System.err.println("         which Fedora object type(s) should be exported. O=data objects,");
         System.err.println("         D=behavior definitions, and M=behavior mechanisms.");
-        System.err.println("  PATH   is the directory to export to.");
-		System.err.println("  FORMAT is the XML format to export (foxml1.0 or metsf1.0).");
+		System.err.println("  FORMAT is the XML format to export ");
+		System.err.println("         ('foxml1.0', 'metslikefedora1', or 'default')");
+		System.err.println("  PATH   is the directory to export the object.");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin changeme:1 . foxml1.0");
+        System.err.println("fedora-export myrepo.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 .");
         System.err.println();
-        System.err.println("  Exports changeme:1 in FOXML from example.com:80 to the current directory.");
+        System.err.println("  Exports changeme:1 in FOXML from myrepo.com:80 to the current directory.");
         System.err.println();
-        System.err.println("fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO /tmp/fedoradump metsf1.0");
+        System.err.println("fedora-export myrepo.com:80 fedoraAdmin fedoraAdmin DMO default /tmp/fedoradump");
         System.err.println();
-        System.err.println("  Exports all objects in METS-Fedora format from example.com:80 to /tmp/fedoradump");
+        System.err.println("  Exports all objects in from myrepo.com:80 to /tmp/fedoradump ");
+		System.err.println("  in the default export format.");
         System.err.println();
+		System.err.println("ERROR  : " + msg);
         System.exit(1);
     }
 
@@ -252,28 +241,49 @@ public class Export {
      */
     public static void main(String[] args) {
         try {
-			// USAGE: fedora-export HST:PRT USR PSS PID|FTYPS PATH FORMAT
-            if (args.length!=6) {
+			// USAGE: fedora-export HST:PRT USR PSS PID|FTYPS FORMAT PATH
+			if (args.length!=6) {
                 Export.badArgs("Wrong number of arguments.");
             }
             String[] hp=args[0].split(":");
             if (hp.length!=2) {
                 Export.badArgs("First arg must be of the form 'host:portnum'");
             }
+            
+			FedoraAPIA sourceRepoAPIA=
+					APIAStubFactory.getStub(hp[0],
+											Integer.parseInt(hp[1]),
+											args[1],
+											args[2]);
+			FedoraAPIM sourceRepoAPIM=
+					APIMStubFactory.getStub(hp[0],
+											Integer.parseInt(hp[1]),
+											args[1],
+											args[2]);
+				
+			String exportFormat = args[4];
+			if ((!exportFormat.equals("metslikefedora1")) &&
+			    (!exportFormat.equals("foxml1.0")) &&
+				(!exportFormat.equals("default"))) {
+					Export.badArgs("FORMAT arg must be 'metslikefedora1', 'foxml1.0, or 'default'");			   
+				}
+            if (exportFormat.equals("default")){
+            	exportFormat=null;           	
+            }
+            
+			RepositoryInfo repoinfo = sourceRepoAPIA.describeRepository();
+			StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+			if (new Integer(stoken.nextToken()).intValue() < 2 // pre-2.0 repo
+				&&	!exportFormat.equals("metslikefedora1")){
+					Export.badArgs("FORMAT arg must be 'metslikefedora1' for pre-2.0 repositories.");				
+			}
             if (args[3].indexOf(":")==-1) {
                 // assume args[3] is FTYPS... so multi-export
-                String[] pids=Export.multi(
-                        APIAStubFactory.getStub(hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[1],
-                                                args[2]),
-                        APIMStubFactory.getStub(hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[1],
-                                                args[2]),
-                        args[3],
-                        new File(args[4]),
-                        args[5]);
+                String[] pids=Export.multi(sourceRepoAPIA,
+										   sourceRepoAPIM,
+					                       args[3], // FTYPS
+					                       args[4], //format
+					                       new File(args[5])); // path
                 System.out.print("Exported ");
                 for (int i=0; i<pids.length; i++) {
                     if (i>0) System.out.print(", ");
@@ -282,13 +292,19 @@ public class Export {
                 System.out.println();
             } else {
                 // assume args[3] is a PID...they only want to export one object
-                Export.one(APIMStubFactory.getStub(hp[0],
-                                                   Integer.parseInt(hp[1]),
-                                                   args[1],
-                                                   args[2]),
-                           args[3],
-                           new File(args[4]),
-						   args[5]);
+                Export.one(APIAStubFactory.getStub(
+                				hp[0],
+								Integer.parseInt(hp[1]),
+								args[1],
+								args[2]),
+							APIMStubFactory.getStub(
+								hp[0],
+                            	Integer.parseInt(hp[1]),
+                                args[1],
+                                args[2]),
+                           	args[3], // PID
+							args[4], //format
+							new File(args[5])); // path
                 System.out.println("Exported " + args[3]);
             }
         } catch (Exception e) {

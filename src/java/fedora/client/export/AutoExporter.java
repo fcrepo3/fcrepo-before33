@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.util.StringTokenizer;
 
 import javax.xml.rpc.ServiceException;
 import javax.xml.parsers.DocumentBuilder;
@@ -21,13 +22,16 @@ import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 
 import fedora.client.APIMStubFactory;
+import fedora.client.APIAStubFactory;
 import fedora.server.management.FedoraAPIM;
+import fedora.server.access.FedoraAPIA;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.types.gen.RepositoryInfo;
 
 /**
  *
  * <p><b>Title:</b> AutoExporter.java</p>
- * <p><b>Description:</b> </p>
+ * <p><b>Description: Utility class to make API-M export calls to a repository.</b> </p>
  *
  * -----------------------------------------------------------------------------
  *
@@ -52,26 +56,41 @@ import fedora.server.utilities.StreamUtility;
 public class AutoExporter {
 
     private FedoraAPIM m_apim;
+	private FedoraAPIA m_apia;
 
     public AutoExporter(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
+		m_apia=APIAStubFactory.getStub(host, port, user, pass);
         m_apim=APIMStubFactory.getStub(host, port, user, pass);
     }
     
 	public void export(String pid, String format, 
 			OutputStream outStream, boolean internal) 
 			throws RemoteException, IOException {
-		export(m_apim, pid, format, outStream, internal);
+		export(m_apia, m_apim, pid, format, outStream, internal);
 	}
 	
-    public static void export(FedoraAPIM skeleton, String pid, String format,
+    public static void export(FedoraAPIA apia, FedoraAPIM apim, String pid, String format,
             OutputStream outStream, boolean internal)
             throws RemoteException, IOException {
+            	
+		RepositoryInfo repoinfo=apia.describeRepository();
+				
         byte[] bytes;
         if (internal) {
-            bytes=skeleton.getObjectXML(pid);
+            bytes=apim.getObjectXML(pid);
         } else {
-            bytes=skeleton.export(pid, format);
+        	// For backward compatibility:
+        	// For pre-2.0 repositories, use the "exportObject" APIM method
+        	// and assume the export format of "metslikefedora1".
+        	// For 2.0+ repositories use the "export" method which takes a format.
+			StringTokenizer stoken = new StringTokenizer(repoinfo.getRepositoryVersion(), ".");
+			if (new Integer(stoken.nextToken()).intValue() < 2){
+				bytes=apim.exportObject(pid);
+			} else {
+				validateFormat(format);				
+				bytes=apim.export(pid, format);
+			}
         }
         try {
             // use xerces to pretty print the xml, assuming it's well formed
@@ -93,6 +112,14 @@ public class AutoExporter {
         }
     }
 
+	public static void validateFormat(String format)
+		throws IOException {
+			if (!format.equals("foxml1.0") && !format.equals("metslikefedora1")) {
+				throw new IOException("Invalid export format. Valid FORMAT values are: 'foxml1.0' or 'metslikefedora1'");
+			}
+		}
+
+/*
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
@@ -124,5 +151,5 @@ public class AutoExporter {
                 + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
         }
     }
-
+*/
 }
