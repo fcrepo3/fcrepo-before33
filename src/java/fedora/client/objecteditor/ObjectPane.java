@@ -13,7 +13,7 @@ import fedora.client.actions.ViewObjectXML;
 
 /**
  * Displays an object's attributes, allowing the editing of some.
- * Also provides buttons for performing object-wide operations, 
+ * Also provides buttons for performing object-wide operations,
  * such as viewing and exporting XML.
  *
  * -----------------------------------------------------------------------------
@@ -146,7 +146,7 @@ public class ObjectPane
                     JButton exportButton=new JButton(new ExportObject(pid));
                     exportButton.setText("Export...");
                     Administrator.constrainHeight(exportButton);
-                    JButton purgeButton=new JButton(new PurgeObject(pid));
+                    JButton purgeButton=new JButton(new PurgeObject(owner, pid));
                     purgeButton.setText("Purge...");
                     Administrator.constrainHeight(purgeButton);
 
@@ -173,7 +173,7 @@ public class ObjectPane
         return false;
     }
 
-    public void saveChanges(String logMessage) 
+    public void saveChanges(String logMessage)
             throws Exception {
         String state=null;
         int i=m_stateComboBox.getSelectedIndex();
@@ -183,7 +183,7 @@ public class ObjectPane
            state="I";
         if (i==2)
            state="D";
-        Administrator.APIM.modifyObject(m_pid, state, 
+        Administrator.APIM.modifyObject(m_pid, state,
                 m_labelTextField.getText(), logMessage);
     }
 

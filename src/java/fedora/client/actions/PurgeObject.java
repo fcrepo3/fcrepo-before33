@@ -9,6 +9,7 @@ import javax.swing.JOptionPane;
 
 import fedora.client.Administrator;
 import fedora.client.purge.AutoPurger;
+import fedora.client.objecteditor.ObjectEditorFrame;
 
 import fedora.server.utilities.StringUtility;
 
@@ -42,21 +43,29 @@ public class PurgeObject
 
     private Set m_pids;
     private boolean m_prompt;
+    private ObjectEditorFrame m_parent;
 
     public PurgeObject() {
         super("Purge Object...");
         m_prompt=true;
     }
 
-    public PurgeObject(String pid) {
+    public PurgeObject(ObjectEditorFrame parent, String pid) {
         super("Purge Object");
         m_pids=new HashSet();
         m_pids.add(pid);
+        m_parent=parent;
     }
 
     public PurgeObject(Set pids) {
         super("Purge Objects");
         m_pids=pids;
+    }
+
+    public PurgeObject(String pid) {
+      super("Purge Object");
+      m_pids=new HashSet();
+      m_pids.add(pid);
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -97,6 +106,7 @@ public class PurgeObject
                     if (!failed) {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
                                 "Purge succeeded.");
+                        m_parent.dispose();
                     }
                 }
             } else {
