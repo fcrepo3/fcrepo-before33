@@ -435,7 +435,7 @@
 		<operation name="ingest">
 			<documentation>Creates a new digital object in the repository, given the 
       data in the provided XML document, and a format indentifier for the XML document format.  
-      The valid formats are currently: "foxml" and "metslikefedora1".  The object's initial 
+      The valid formats are currently: "foxml1.0" and "metsf1.0".  The object's initial 
       state will be A (active).   If the XML document does not specify a PID in the 
       OBJID attribute of the  root element, the repository will generate and return a new PID 
       for the object resulting from this request.  That PID will have the namespace of 
