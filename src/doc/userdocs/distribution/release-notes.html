@@ -1220,9 +1220,26 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
           varchar(1) instead of char(1) everywhere in the db
           schema.</p>
         </li>
+        <li>
+          <b>Object label containing ampersand character throws
+          Exception when attempting to disseminate getObjectProfile
+          method (bugzilla #86)</b>
+
+          <p>It was observed that creating an object with a label
+          containing the ampersand character would later cause the
+          dissemination of the getObjectProfile method to fail. This
+          resulted from special characters, like the ampersand 
+          character, not being properly escaped when written to
+          dynamically generated xml served by Fedora. XML special
+          characters are now properly escaped before being written
+          to the outgoing xml stream so ampersands and other special
+          xml characters can safely be included in object labels.</p>
+        </li>        
       </ol>
     </div>
-  </div><!-- Inserted Release Notes from Fedora 1.2.1 -->
+  </div>
+  
+  <!-- Inserted Release Notes from Fedora 1.2.1 -->
 
   <div>
     <h2 class="title" style="clear: both"><a name="rel1.2.1" id=
