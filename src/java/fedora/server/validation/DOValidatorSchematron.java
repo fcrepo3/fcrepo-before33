@@ -111,10 +111,12 @@ public class DOValidatorSchematron
    * Constructs a DOValidatorSchematron instance with a Schematron preprocessor
    * that is provided by the calling class.  This will allow the DOValidator module
    * to pass in the preprocessor that is configured with the Fedora repository.
+   *
    * @param schemaID  the URL of the Schematron schema
    * @param preprocessorID the location of the Schematron preprocessor
-   * @param workFlowPhase  the phase in the fedora object lifecycle to which
-   * validation should pertain.  (Currently options are "ingest" and "store"
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
    * @throws ObjectValidityException
    */
   public DOValidatorSchematron(String schemaID, String preprocessorID, String workFlowPhase)
@@ -126,9 +128,11 @@ public class DOValidatorSchematron
   /**
    * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
    * that is set as default in this class.
+   *
    * @param schemaID  the URL of the Schematron schema
-   * @param workFlowPhase  the phase in the fedora object lifecycle to which
-   * validation should pertain.  (Currently options are "ingest" and "store"
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
    * @throws ObjectValidityException
    */
   public DOValidatorSchematron(String schemaID, String workFlowPhase)
@@ -141,9 +145,11 @@ public class DOValidatorSchematron
    * Constructs a DOValidatorSchematron instance and use the Schematron preprocessor
    * that is set as default in this class.  Constructor also allows
    * the Schematron schema to be passed in as InputStream.
-   * @param schemaID  the URL of the Schematron schema
-   * @param workFlowPhase  the phase in the fedora object lifecycle to which
-   * validation should pertain.  (Currently options are "ingest" and "store"
+   *
+   * @param schema  the URL of the Schematron schema
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
    * @throws ObjectValidityException
    */
   public DOValidatorSchematron(InputStream schema, String workFlowPhase)
@@ -154,6 +160,7 @@ public class DOValidatorSchematron
 
   /**
    * Run the Schematron validation on a Fedora object.
+   *
    * @param objectAsFile  the Fedora object as a File
    * @throws ServerException
    */
@@ -164,6 +171,7 @@ public class DOValidatorSchematron
 
   /**
    * Run the Schematron validation on a Fedora object.
+   *
    * @param objectAsStream  the Fedora object as an Inputstream
    * @throws ServerException
    */
@@ -174,7 +182,8 @@ public class DOValidatorSchematron
 
   /**
    * Run the Schematron validation on a Fedora object.
-   * @param objectAsSource  the Fedora object as an StreamSource
+   *
+   * @param objectSource  the Fedora object as an StreamSource
    * @throws ServerException
    */
   public void validate(StreamSource objectSource) throws ServerException
@@ -228,10 +237,13 @@ public class DOValidatorSchematron
   /**
    * Run setup to prepare for Schematron validation.  This entails dynamically
    * creating the validating stylesheet using the preprocessor and the schema.
-   * @param preprocessorID
-   * @param fedoraSchemaID
-   * @param workFlowPhase
-   * @return
+   *
+   * @param preprocessorID the location of the Schematron preprocessor
+   * @param fedoraSchemaID the URL of the Schematron schema
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
+   * @return StreamSource
    * @throws ObjectValidityException
    */
   private StreamSource setUp(String preprocessorID, String fedoraSchemaID, String workFlowPhase)
@@ -245,10 +257,12 @@ public class DOValidatorSchematron
   /**
    * Run setup to prepare for Schematron validation.  This entails dynamically
    * creating the validating stylesheet using the preprocessor and the schema.
-   * @param preprocessorID
-   * @param fedoraSchema
-   * @param workFlowPhase
-   * @return
+   * @param preprocessorID the location of the Schematron preprocessor
+   * @param fedoraSchema the URL of the Schematron schema
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
+   * @return StreamSource
    * @throws ObjectValidityException
    */
   private StreamSource setUp(String preprocessorID, InputStream fedoraSchema, String workFlowPhase)
@@ -269,10 +283,12 @@ public class DOValidatorSchematron
    * different phases of the object lifecycle.  Some rules are applied when
    * an object is first being ingested into the repository.  Other rules apply
    * before the object is put into permanent storage.
-   * @param rulesSource
-   * @param preprocessorSource
-   * @param workFlowPhase
-   * @return
+   * @param rulesSource the location of the rules
+   * @param preprocessorSource the location of the Schematron preprocessor
+   * @param workFlowPhase the phase in the fedora object lifecycle to which
+   *                      validation should pertain.  (Currently options are
+   *                      "ingest" and "store"
+   * @return StreamSource
    * @throws ObjectValidityException
    */
   private StreamSource createValidatingStyleSheet(

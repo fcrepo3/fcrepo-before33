@@ -856,6 +856,14 @@ public class FastDOReader implements DOReader
   /**
    * Gets the dissemination binding info necessary to perform a particular
    * dissemination.
+   *
+   * @param bDefPID The identifier for behavior definition object.
+   * @param methodName The name of the method.
+   * @param versDateTime The versioning DateTime stamp.
+   * @return the dissemination binding info necessary to perform a particular
+   *         dissemination.
+   * @throws GeneralException If there was any misc exception that we want to
+   *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,
           String methodName, Date versDateTime)
@@ -1261,7 +1269,6 @@ public class FastDOReader implements DOReader
    * attempts to find the object in the Definitive storage area. If the object
    * cannot be found, <code>ObjectNotFoundException</code> is thrown.</p>
    *
-   * @param PID persistent identifier for the digital object
    * @param versDateTime The versioning datetime stamp.
    * @return ObjectMethodsDef containing all object methods
    * @throws GeneralException If there was any misc exception that we want to

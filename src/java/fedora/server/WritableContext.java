@@ -35,7 +35,7 @@ public class WritableContext
     /**
      * Creates and initializes the <code>WritableContext</code>.
      * <p></p>
-     * @param contextParameters A pre-loaded Map of name-value pairs
+     * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
     public WritableContext(Map parameters) {

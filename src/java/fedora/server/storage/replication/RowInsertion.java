@@ -56,7 +56,7 @@ public class RowInsertion {
         *
         * @param connection JDBC DBMS connection
         * @param bDefDbID Behavior definition DBID
-        * @param bMechDbID Behavior mechanism DBID
+        * @param bMechPID Behavior mechanism PID
         * @param bMechLabel Behavior mechanism label
         *
         * @exception SQLException JDBC, SQL error
@@ -73,7 +73,7 @@ public class RowInsertion {
         * Inserts a DataStreamBindingRow row.
         *
         * @param connection JDBC DBMS connection
-        * @param doPID Digital object PID
+        * @param doDbID Digital object DBID
         * @param dsBindKeyDbID Datastream binding key DBID
         * @param dsBindMapDbID Binding map DBID
         * @param dsBindKeySeq Datastream binding key sequence number
@@ -81,6 +81,8 @@ public class RowInsertion {
         * @param dsLabel Datastream label
         * @param dsMIME Datastream mime type
         * @param dsLocation Datastream location
+        * @param dsControlGroupType Datastream type.
+        * @param dsCurrentVersionID Datastream current version ID.
         * @param policyDbID Policy DBID
         *
         * @exception SQLException JDBC, SQL error
@@ -246,6 +248,7 @@ public class RowInsertion {
         * @param bdefDBID The behavior Definition object database ID.
         * @param parmName the parameter name.
         * @param parmDefaultValue A default value for the parameter.
+        * @param parmDomainValues A list of possible values for the parameter.
         * @param parmRequiredFlag A boolean flag indicating whether the
         *        parameter is required or not.
         * @param parmLabel The parameter label.
@@ -273,9 +276,10 @@ public class RowInsertion {
          *
          * @param connection An SQL Connection.
          * @param methDBID The method database ID.
-         * @param bdefDBID The behavior Definition object database ID.
+         * @param bmechDBID The behavior Mechanism object database ID.
          * @param parmName the parameter name.
          * @param parmDefaultValue A default value for the parameter.
+         * @param parmDomainValues A list of possible values for the parameter.
          * @param parmRequiredFlag A boolean flag indicating whether the
          *        parameter is required or not.
          * @param parmLabel The parameter label.

@@ -38,26 +38,46 @@ public interface DOReader
     /**
      * Gets the type of fedora object (O=FEDORA_OBJECT, D=FEDORA_BDEF_OBJECT,
      * M=FEDORA_BMECH_OBJECT) this is a handle on.
+     *
+     * @return the type of Fedora object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public String getFedoraObjectType() throws ServerException;
 
     /**
      * Gets the content model of the object.
+     *
+     * @return the content model of the object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public String getContentModelId() throws ServerException;
 
     /**
      * Gets the date of creation of this object.
+     *
+     * @return the date of creation of this object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public Date getCreateDate() throws ServerException;
 
     /**
      * Gets the date of the last modification of this object.
+     *
+     * @return the date of the last modification of this object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public Date getLastModDate() throws ServerException;
 
     /**
      * Gets the userid of the user with a write lock on this object.
+     *
+     * @return the userid of the user with a write lock on this object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public String getLockingUser() throws ServerException;
 
@@ -65,6 +85,10 @@ public interface DOReader
      * Gets the entire list of audit records for the object.
      *
      * Changes to the list affect the underlying object if this is DOWriter.
+     *
+     * @return the entire list of audit records for the object.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
      */
     public List getAuditRecords() throws ServerException;
 
@@ -72,8 +96,9 @@ public interface DOReader
      * Gets the content of the entire digital object as XML.  The object will
      * be returned exactly as it is stored in the repository.
      *
+     * @return the content of the entire digital object as XML.
      * @throws ServerException If there object could not be found or there was
-     *        was a failure in accessing the object for any reason.
+     *         was a failure in accessing the object for any reason.
      */
     public InputStream GetObjectXML() throws ServerException;
 
@@ -89,14 +114,18 @@ public interface DOReader
      * its datastream content, except in cases where the datastream content is
      * not actually stored within the repository system.
      *
+     * @return the content of the entire digital object as XML, with datastream
+     *         content included for those datastreams that are under the
+     *         custodianship of the repository.
      * @throws ServerException If there object could not be found or there was
-     *        was a failure in accessing the object for any reason.
+     *         was a failure in accessing the object for any reason.
      */
     public InputStream ExportObject() throws ServerException;
 
     /**
      * Gets the PID of the digital object.
      *
+     * @return the PID of the digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -105,6 +134,7 @@ public interface DOReader
    /**
      * Gets the label of the digital object.
      *
+     * @return the label of the digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -116,6 +146,7 @@ public interface DOReader
      * A=Active, W=Withdrawn, C=Marked for Deletion, D=Pending Deletion.
      * New states may be defined in the future.
      *
+     * @return the state of the digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -129,6 +160,8 @@ public interface DOReader
      * as null, all datastream ids will be returned, regardless of state.
      *
      * @param state The state of the Datastreams to be listed.
+     * @return a list of Datastream identifiers for all Datastreams in the
+     *         digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -142,7 +175,8 @@ public interface DOReader
      * If the date/time given is null, the most recent version of
      * each datastream is obtained.
      *
-     * @param state The date-time stamp to get appropriate Datastream versions
+     * @param versDateTime The date-time stamp to get appropriate Datastream versions
+     * @return all datastreams as of a certain date.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -156,7 +190,8 @@ public interface DOReader
      * If no datastreams match the given criteria, null is returned.
      *
      * @param datastreamID The Datastream identifier
-     * @param state The date-time stamp to get appropriate Datastream version
+     * @param versDateTime The date-time stamp to get appropriate Datastream version
+     * @return a particular Datastream in the digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -165,7 +200,8 @@ public interface DOReader
    /**
      * Same as getDatastreams, but for disseminators.
      *
-     * @param state The date-time stamp to get appropriate Disseminator version
+     * @param versDateTime The date-time stamp to get appropriate Disseminator version
+     * @return all Disseminators as of a certain date.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -175,6 +211,8 @@ public interface DOReader
      * Same as listDatastreamIds, but for disseminators.
      *
      * @param state The state of the Disseminators to be listed.
+     * @return a list of Disseminator identifiers for all Disseminators in the
+     *         digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -184,7 +222,8 @@ public interface DOReader
      * Same as getDatastream, but for disseminators.
      *
      * @param disseminatorID The Disseminator identifier
-     * @param state The date-time stamp to get appropriate Disseminator version
+     * @param versDateTime The date-time stamp to get appropriate Disseminator version
+     * @return a particular Disseminator in the digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -200,6 +239,7 @@ public interface DOReader
      * is used.
      *
      * @param versDateTime The date-time stamp to get appropriate version
+     * @return a list of PIDs of Behavior Definitions to which object subscribes.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -219,6 +259,8 @@ public interface DOReader
      *        this method returns null.
      * @param versDateTime The date-time stamp to get appropriate version.
      *        If this is given as null, the most recent version is used.
+     * @return a list of method definitions that are available on a particular
+     *         Disseminator.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -233,6 +275,8 @@ public interface DOReader
      *
      * @param versDateTime The date-time stamp to get appropriate version.
      *        If this is given as null, the most recent version is used.
+     * @return a list of ALL method definitions that are available on a particular
+     *         digital object.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -248,6 +292,7 @@ public interface DOReader
      *        subscribes.  If this is the special bootstrap bdef,
      *        this method returns null.
      * @param versDateTime The date-time stamp to get appropriate version
+     * @return a particular method definition (filtered using bDefPID) as XML.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -267,6 +312,8 @@ public interface DOReader
      *        this method returns null.
      * @param methodName The name of the method.
      * @param versDateTime The date-time stamp to get appropriate version
+     * @return a list of method parameter definitions that are available on a
+     *         particular method.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
@@ -290,6 +337,8 @@ public interface DOReader
      * @param bDefPID the behavior definition pid
      * @param methodName the method name
      * @param versDateTime versioning datetime stamp
+     * @return the dissemination binding info necessary to perform a particular
+     *         dissemination.
      * @throws ServerException If anything went wrong
      */
     public DisseminationBindingInfo[] getDisseminationBindingInfo(String bDefPID,

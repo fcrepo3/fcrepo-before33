@@ -38,7 +38,7 @@ public class RowDeletion {
         * Deletes BehaviorDefinition database rows.
         *
         * @param connection JDBC DBMS connection
-        * @param bDefPID BehaviorDefinition DBID
+        * @param bDefDBID BehaviorDefinition DBID
         *
         * @exception SQLException JDBC, SQL error
         */

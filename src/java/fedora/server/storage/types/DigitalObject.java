@@ -145,7 +145,7 @@ public interface DigitalObject {
     /**
      * Sets the date the object was last modified.
      *
-     * @param date The date.
+     * @param lastModDate The date.
      */
     public void setLastModDate(Date lastModDate);
 

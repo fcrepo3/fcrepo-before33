@@ -279,10 +279,9 @@ public class FastBmechReader extends FastDOReader implements BMechReader
    * In such a case, only those methods implemented in the mechanism
    * will be returned.</p>
    *
-   * @param bDefPID The persistent identifier of Behavior Definition object.
    * @param versDateTime The versioning datetime stamp.
    * @return An array of method definitions.
-   * @throws GeneralException If there was any misc exception that we want to
+   * @throws ServerException If there was any misc exception that we want to
    *         catch and re-throw as a Fedora exception. Extends ServerException.
    */
   public MethodDef[] getServiceMethods(Date versDateTime) throws ServerException

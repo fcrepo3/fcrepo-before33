@@ -46,10 +46,10 @@ public class PIDGeneration implements PIDGenerator {
    * the most recent log file.  These values are stored in static variables for use by
    * this object and later object instantiations.
    *
-   * @param pidLogDir
-   * @exception ClassNotFoundException class processing error
-   * @exception FileNotFoundException properties or log file processing error
-   * @exception IOException properties or log file processing error
+   * @param pidLogDir the pid log directory pathname.
+   * @throws ClassNotFoundException class processing error
+   * @throws FileNotFoundException properties or log file processing error
+   * @throws IOException properties or log file processing error
    */
         public PIDGeneration(String pidLogDir) throws ClassNotFoundException, FileNotFoundException, IOException {
        String lastPID;
@@ -90,9 +90,9 @@ try{               // Retrieve the last PID generated from the
    *
    * @return the generated PID string
    *
-   * @exception IOException properties or log file processing error
+   * @throws IOException properties or log file processing error
    */
-        public String generatePID(String NamespaceID) throws IOException {
+        public String generatePID(String namespaceID) throws IOException {
                 String newPID;
 
        // Single threaded per class here.
@@ -102,7 +102,7 @@ try{               // Retrieve the last PID generated from the
                         lastObjectID = lastObjectID.add(BigInteger.ONE);
 
            // Format the new PID from the namespace ID and the object ID.
-                        newPID = NamespaceID + ":" + lastObjectID;
+                        newPID = namespaceID + ":" + lastObjectID;
 
            // Write the new PID to the log file.
                         putNewPID(newPID);
@@ -117,7 +117,7 @@ try{               // Retrieve the last PID generated from the
    *
    * @return the retrieved PID string
    *
-   * @exception IOException log file processing error
+   * @throws IOException log file processing error
    */
         public String getLastPID() throws IOException {
        // Single threaded per class here.
@@ -134,7 +134,7 @@ try{               // Retrieve the last PID generated from the
    *
    * @return the retrieved PID string
    *
-   * @exception IOException log file processing error
+   * @throws IOException log file processing error
    */
         private String getLastPIDNoLock() throws IOException {
         	File dir;
@@ -176,7 +176,8 @@ try{               // Retrieve the last PID generated from the
    * <p>
    * Appends the newly created PID to the current log file.
    *
-   * @exception IOException log file processing error
+   * @param pid the identifier for the digital object.
+   * @throws IOException log file processing error
    */
         private void putNewPID(String pid) throws IOException {
        Date date;
@@ -207,7 +208,7 @@ try{               // Retrieve the last PID generated from the
    *
    * @param args program arguments
    *
-   * @exception Exception exceptions that are thrown from called methods
+   * @throws Exception exceptions that are thrown from called methods
    */
     	static public void main (String[] args) throws Exception {
        PIDGeneration pidg = new PIDGeneration(".");

@@ -44,7 +44,7 @@ public class DatastoreConfig
      * When the server is starting up, this is invoked as part of the
      * initialization process.
      *
-     * @param componentParameters A pre-loaded Map of name-value pairs
+     * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the intended configuration for the datastore.
      */
     public DatastoreConfig(Map parameters) {

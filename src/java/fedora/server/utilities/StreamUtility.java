@@ -49,7 +49,7 @@ public abstract class StreamUtility {
      * StringBuffer.
      *
      * @param in The String to encode.
-     * @param buf The StringBuffer to write to.
+     * @param out The StringBuffer to write to.
      */
     public static void enc(String in, StringBuffer out) {
         for (int i=0; i<in.length(); i++) {

@@ -229,7 +229,7 @@ public class DOValidatorImpl implements DOValidator
   /**
    * <p>Validates a digital object.</p>
    *
-   * @param in The digital object provided as a bytestream.
+   * @param objectAsStream The digital object provided as a bytestream.
    * @param validationLevel The level of validation to perform on the digital object.
    *        This is an integer from 0-3 with the following meanings:
    *        0 = do all validation levels
@@ -241,7 +241,8 @@ public class DOValidatorImpl implements DOValidator
    *        "ingest" = the object is in the submission format for the ingest stage phase
    *        "store" = the object is in the authoritative format for the final storage phase
    *
-   * @throws ServerException If validation fails for any reason.
+   * @throws ObjectValidityException If validation fails for any reason.
+   * @throws GeneralException If validation fails for any reason.
    */
     public void validate(InputStream objectAsStream, int validationLevel, String workFlowPhase)
       throws ObjectValidityException, GeneralException
@@ -274,7 +275,7 @@ public class DOValidatorImpl implements DOValidator
   /**
    * <p>Validates a digital object.</p>
    *
-   * @param in The digital object provided as a file.
+   * @param objectAsFile The digital object provided as a file.
    * @param validationLevel The level of validation to perform on the digital object.
    *        This is an integer from 0-3 with the following meanings:
    *        0 = do all validation levels
@@ -284,7 +285,8 @@ public class DOValidatorImpl implements DOValidator
    * @param workFlowPhase The stage in the work flow for which the validation should be contextualized.
    *        "ingest" = the object is in the submission format for the ingest stage phase
    *        "store" = the object is in the authoritative format for the final storage phase
-   * @throws ServerException If validation fails for any reason.
+   * @throws ObjectValidityException If validation fails for any reason.
+   * @throws GeneralException If validation fails for any reason.
    */
     public void validate(File objectAsFile, int validationLevel, String workFlowPhase)
       throws ObjectValidityException, GeneralException
@@ -337,9 +339,9 @@ public class DOValidatorImpl implements DOValidator
     /**
      * Do the Level 1 validation of a Fedora object.  Level 1 is XML Schema
      * validation using the Fedora extension of the METS XML schema.
-     * @param objectAsFile
-     * @throws ObjectValidityException
-     * @throws GeneralException
+     * @param objectAsFile The digital object provided as a file.
+     * @throws ObjectValidityException If validation fails for any reason.
+     * @throws GeneralException If validation fails for any reason.
      */
     private void validate_L1(File objectAsFile)
       throws ObjectValidityException, GeneralException
@@ -375,12 +377,13 @@ public class DOValidatorImpl implements DOValidator
      * validation using a set of rules expressed in a Schematron schema for
      * Fedora objects.
      *
-     * @param objectAsFile
-     * @param schemaID
-     * @param preprocessorID
-     * @param phase
-     * @throws ObjectValidityException
-     * @throws GeneralException
+     * @param objectAsFile The digital object provided as a file.
+     * @param schemaID Local location of Fedora Schematron rules.
+     * @param preprocessorID Local location of Schematron rules-to-stylesheet
+     *                       stylesheet
+     * @param phase The validation phase.
+     * @throws ObjectValidityException If validation fails for any reason.
+     * @throws GeneralException If validation fails for any reason.
      */
     private void validate_L2(File objectAsFile, String schemaID,
       String preprocessorID, String phase)
@@ -419,9 +422,9 @@ public class DOValidatorImpl implements DOValidator
      * a data object references behavior definition and mechanisms objects
      * that already exist in the repository.  Other checks will be implemented
      * in the future.
-     * @param objectAsFile
-     * @throws ObjectValidityException
-     * @throws GeneralException
+     * @param objectAsFile The digital object provided as a file.
+     * @throws ObjectValidityException If validation fails for any reason.
+     * @throws GeneralException If validation fails for any reason.
      */
     private void validate_L3(File objectAsFile)
       throws ObjectValidityException, GeneralException

@@ -58,6 +58,7 @@ public interface FieldSearch {
      * Remove an object from the search indexes.
      *
      * @param pid the unique id of the object whose info should be removed
+     * @return true if object successfully removed; false otherwise.
      * @throws ServerException if anything went wrong
      */
     public boolean delete(String pid)
@@ -80,7 +81,7 @@ public interface FieldSearch {
      * Resume an in-progress search across specific fields and return the
      * desired fields.
      *
-     * @param sessiontoken the token of the session in which the remaining
+     * @param sessionToken the token of the session in which the remaining
      *        results can be found
      * @return FieldSearchResult the results
      * @throws ServerException if anything went wrong

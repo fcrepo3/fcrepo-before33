@@ -492,7 +492,8 @@ public class DefaultAccess extends Module implements Access
   /**
    * <p>Gets information that describes the repository.</p>
    *
-   * @param content the context of this request
+   * @param context the context of this request
+   * @return information that describes the repository.
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */

@@ -83,6 +83,10 @@ public class DefaultDOReplicator
      *     foreach $id in @ids
      *         ds=reader.getDatastream(id, null)
      *         update dsBind set dsLabel='mylabel', dsLocation='' where dsID='$id'
+     *
+     * @param reader a digital object reader.
+     * @return true is successful update; false oterhwise.
+     * @throws ReplicationException if replication fails for any reason.
      */
     private boolean updateComponents(DOReader reader)
             throws ReplicationException {
@@ -174,6 +178,10 @@ public class DefaultDOReplicator
      *
      * Currently bdef components cannot be updated, so this will
      * simply return true if the bDef has already been replicated.
+     *
+     * @param reader a behavior definitionobject reader.
+     * @return true if bdef update successful; false otherwise.
+     * @throws ReplicationException if replication fails for any reason.
      */
     private boolean updateComponents(BDefReader reader)
             throws ReplicationException {
@@ -232,6 +240,10 @@ public class DefaultDOReplicator
      *
      * Currently bmech components cannot be updated, so this will
      * simply return true if the bMech has already been replicated.
+     *
+     * @param reader a behavior mechanism object reader.
+     * @return true if bmech update successful; false otherwise.
+     * @throws ReplicationException if replication fails for any reason.
      */
     private boolean updateComponents(BMechReader reader)
             throws ReplicationException {
@@ -773,6 +785,10 @@ public class DefaultDOReplicator
      * <p></p>
      * If the set doesn't contain any items, returns a condition that
      * always evaluates to false, <b>1=2</b>.
+     *
+     * @param column value of the column.
+     * @param integers set of integers.
+     * @return string suitable for SQL WHERE clause.
      */
     private String inIntegerSetWhereConditionString(String column,
             Set integers) {
@@ -807,6 +823,8 @@ public class DefaultDOReplicator
      * WHERE bDefDbID=$bDefDbID
      * </pre></ul>
      *
+     * @param connection a database connection.
+     * @param pid the idenitifer of a digital object.
      * @throws SQLException If something totally unexpected happened.
      */
     private void deleteBehaviorDefinition(Connection connection, String pid)
@@ -871,6 +889,8 @@ public class DefaultDOReplicator
      * mechImpl
      * </pre></ul>
      *
+     * @param connection a database connection.
+     * @param pid the identifier of a digital object.
      * @throws SQLException If something totally unexpected happened.
      */
     private void deleteBehaviorMechanism(Connection connection, String pid)
@@ -971,6 +991,8 @@ public class DefaultDOReplicator
      * dsBindMap WHERE dsBindMapDbID in @BMAPIDS
      * </pre></ul>
      *
+     * @param connection a databae connection.
+     * @param pid the identifier for a digital object.
      * @throws SQLException If something totally unexpected happened.
      */
     private void deleteDigitalObject(Connection connection, String pid)
@@ -1173,10 +1195,10 @@ public class DefaultDOReplicator
         *
         * @param connection JDBC DBMS connection
         * @param bDefDbID Behavior definition DBID
-        * @param bMechDbID Behavior mechanism DBID
+        * @param bMechPID Behavior mechanism DBID
         * @param bMechLabel Behavior mechanism label
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws SQLException JDBC, SQL error
         */
 	public void insertBehaviorMechanismRow(Connection connection, String bDefDbID, String bMechPID, String bMechLabel) throws SQLException {
 
@@ -1190,7 +1212,7 @@ public class DefaultDOReplicator
         * Inserts a DataStreamBindingRow row.
         *
         * @param connection JDBC DBMS connection
-        * @param doPID Digital object PID
+        * @param doDbID Digital object DBID
         * @param dsBindKeyDbID Datastream binding key DBID
         * @param dsBindMapDbID Binding map DBID
         * @param dsBindKeySeq Datastream binding key sequence number
@@ -1198,6 +1220,8 @@ public class DefaultDOReplicator
         * @param dsLabel Datastream label
         * @param dsMIME Datastream mime type
         * @param dsLocation Datastream location
+        * @param dsControlGroupType Datastream type
+        * @param dsCurrentVersionID Datastream current version ID
         * @param policyDbID Policy DBID
         *
         * @exception SQLException JDBC, SQL error
@@ -1363,6 +1387,7 @@ public class DefaultDOReplicator
         * @param bdefDBID The behavior Definition object database ID.
         * @param parmName the parameter name.
         * @param parmDefaultValue A default value for the parameter.
+        * @param parmDomainValues A list of possible values for the parameter.
         * @param parmRequiredFlag A boolean flag indicating whether the
         *        parameter is required or not.
         * @param parmLabel The parameter label.
@@ -1390,11 +1415,12 @@ public class DefaultDOReplicator
          *
          * @param connection An SQL Connection.
          * @param methDBID The method database ID.
-         * @param bdefDBID The behavior Definition object database ID.
+         * @param bmechDBID The behavior Mechanism object database ID.
          * @param parmName the parameter name.
          * @param parmDefaultValue A default value for the parameter.
          * @param parmRequiredFlag A boolean flag indicating whether the
          *        parameter is required or not.
+         * @param parmDomainValues A list of possible values for the parameter.
          * @param parmLabel The parameter label.
          * @param parmType The parameter type.
          * @throws SQLException JDBC, SQL error
@@ -1445,7 +1471,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified Behavior Definition row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupBehaviorDefinitionDBID(Connection connection, String bDefPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "bDefDbID", "bDef", "bDefPID", bDefPID);
@@ -1460,7 +1486,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified Behavior Mechanism row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupBehaviorMechanismDBID(Connection connection, String bMechPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "bMechDbID", "bMech", "bMechPID", bMechPID);
@@ -1476,7 +1502,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified dsBindMap row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDataStreamBindingMapDBID(Connection connection, String bMechDBID, String dsBindingMapID) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "dsBindMapDbID", "dsBindMap", "bMechDbID", bMechDBID, "dsBindMapID", dsBindingMapID);
@@ -1492,7 +1518,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified dsBindSpec row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDataStreamBindingSpecDBID(Connection connection, String bMechDBID, String dsBindingSpecName) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "dsBindKeyDbID", "dsBindSpec", "bMechDbID", bMechDBID, "dsBindSpecName", dsBindingSpecName);
@@ -1507,7 +1533,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified DigitalObject row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws StorageDeviceException {
 		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
@@ -1524,7 +1550,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified Disseminator row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDisseminatorDBID(Connection connection, String bDefDBID, String bMechDBID, String dissID) throws StorageDeviceException {
             Statement statement = null;
@@ -1578,7 +1604,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified method row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupMethodDBID(Connection connection, String bDefDBID, String methName) throws StorageDeviceException {
 		return lookupDBID2FirstNum(connection, "methodDbID", "method", "bDefDbID", bDefDBID, "methodName", methName);
@@ -1596,7 +1622,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDBID1(Connection connection, String DBIDName, String tableName, String lookupColumnName, String lookupColumnValue) throws StorageDeviceException {
 		String query = null;
@@ -1654,7 +1680,7 @@ public class DefaultDOReplicator
         *
         * @return The DBID of the specified row.
         *
-        * @exception SQLException JDBC, SQL error
+        * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDBID2(Connection connection, String DBIDName, String tableName, String lookupColumnName1, String lookupColumnValue1, String lookupColumnName2, String lookupColumnValue2) throws StorageDeviceException {
 		String query = null;

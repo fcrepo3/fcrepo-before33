@@ -56,6 +56,9 @@ public interface DOManager
      * This is used to guarantee that the same user can't get more than one
      * handle (DOWriter) on the same underlying object.  To release the
      * session lock, a DOWriter user calls this method.
+     *
+     * @param writer an instance of a digital object writer.
+     * @throws ServerException if an error occurs in obtaining a writer.
      */
     public abstract void releaseWriter(DOWriter writer)
             throws ServerException;
@@ -76,7 +79,6 @@ public interface DOManager
      * a DOWriter on it.  The initial state will be "L" (locked).
      *
      * @param context The context of this request.
-     * @param pid The PID of the object.
      * @return A writer.
      * @throws ServerException If anything went wrong.
      */
@@ -90,8 +92,10 @@ public interface DOManager
      * @param context The context of this request.
      * @param in A serialization of the digital object.
      * @param format The format of the serialization.
+     * @param encoding The character encoding.
      * @param newPid Whether a new PID should be generated or the one indicated
      *        by the InputStream should be used.
+     * @return a writer.
      * @throws ServerException If anything went wrong.
      */
     public abstract DOWriter newWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
@@ -101,6 +105,20 @@ public interface DOManager
      * Gets a list of object PIDs (accessible in the given context) with the
      * given criteria.  Any parameter whose name ends with "Pattern" may
      * use the * and ? wildcards.  A parameter given as null means "any".
+     *
+     * @param context The context of this request.
+     * @param pidPattern The pid pattern.
+     * @param foType The Fedora object type.
+     * @param lockedByPattern The lockedBy pattern.
+     * @param state The object state.
+     * @param labelPattern The label pattern.
+     * @param contentModelIdPattern The content model pattern.
+     * @param createDateMin The object creation date beginning range.
+     * @param createDateMax The object creation date ending range.
+     * @param lastModDateMin The object modification date beginning range.
+     * @param lastModDateMax The object modification date ending range.
+     * @return a list of object PIDs.
+     * @throws ServerException if an error occurs in getting the list of PIDs.
      */
     public String[] listObjectPIDs(Context context, String pidPattern,
             String foType, String lockedByPattern, String state,

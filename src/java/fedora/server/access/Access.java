@@ -142,7 +142,9 @@ public interface Access
    * @param context the context of this request
    * @param resultFields the names of the fields to return
    * @param maxResults the maximum number of results to return at a time
-   * @param the query
+   * @param query the query
+   * @return the specified fields of each object matching the given
+   *         criteria.
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
@@ -153,9 +155,11 @@ public interface Access
   /**
    * <p>Resumes an in-progress listing of object fields.</p>
    *
-   * @param content the context of this request
+   * @param context the context of this request
    * @param sessionToken the token of the session in which the remaining
    *        results can be obtained
+   * @return the remaining specified fields of each object matching the given
+   *         criteria.
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */
@@ -165,7 +169,8 @@ public interface Access
   /**
    * <p>Gets information that describes the repository.</p>
    *
-   * @param content the context of this request
+   * @param context the context of this request
+   * @return information that describes the repository.
    * @throws ServerException If any type of error occurred fulfilling the
    *         request.
    */

@@ -56,6 +56,8 @@ public class TableSpec {
      * @param name The table name.
      * @param columnSpecs ColumnSpec objects describing columns in the table.
      * @param primaryColumnName The column that is the primary key for the table.
+     * @throws InconsistentTableSpecException if inconsistencies are detected in
+     *         table specifications.
      */
     public TableSpec(String name, List columnSpecs, String primaryColumnName)
             throws InconsistentTableSpecException {
@@ -77,6 +79,9 @@ public class TableSpec {
      * @param name The table name.
      * @param columnSpecs ColumnSpec objects describing columns in the table.
      * @param primaryColumnName The column that is the primary key for the table.
+     * @param type The table type.
+     * @throws InconsistentTableSpecException if inconsistencies are detected in
+     *         table specifications.
      */
     public TableSpec(String name, List columnSpecs, String primaryColumnName, String type)
             throws InconsistentTableSpecException {
@@ -144,8 +149,11 @@ public class TableSpec {
      *        This value is not checked for validity.
      * </ul>
      *
-     * @param InputStream The xml-encoded table specs.
+     * @param in The xml-encoded table specs.
      * @return TableSpec objects.
+     * @throws InconsistentTableSpecException if inconsistencies are detected in
+     *         table specifications.
+     * @throws IOException if an IO error occurs.
      */
     public static List getTableSpecs(InputStream in)
             throws InconsistentTableSpecException,

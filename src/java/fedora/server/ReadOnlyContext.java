@@ -37,7 +37,7 @@ public class ReadOnlyContext
     /**
      * Creates and initializes the <code>Context</code>.
      *
-     * @param contextParameters A pre-loaded Map of name-value pairs
+     * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
     public ReadOnlyContext(Map parameters) {
