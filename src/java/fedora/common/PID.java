@@ -84,13 +84,8 @@ public class PID {
      */
     public static String normalize(String pidString) 
             throws MalformedPIDException {
-        // First, do null & length checks
         if (pidString == null) {
             throw new MalformedPIDException("PID is null.");
-        }
-        if (pidString.length() > MAX_LENGTH) {
-            throw new MalformedPIDException("PID length exceeds " 
-                    + MAX_LENGTH + ".");
         }
 
         // Then normalize while checking syntax
@@ -148,6 +143,7 @@ public class PID {
         String outString = out.toString();
         if (outString.startsWith(":")) throw new MalformedPIDException("PID namespace-id cannot be empty.");
         if (outString.length() < 3) throw new MalformedPIDException("PID object-id cannot be empty.");
+        if (outString.length() > MAX_LENGTH) throw new MalformedPIDException("PID length exceeds " + MAX_LENGTH + ".");
 
         // If we got here, it's well-formed, so return it.
         return outString;
