@@ -500,21 +500,28 @@ public class METSLikeDOSerializer
     }
     
     private void appendDisseminators(DigitalObject obj, StringBuffer buf)
-    { /*        throws ObjectIntegrityException {
-        dissIdIter=obj.disseminatorIdIterator();
+            throws ObjectIntegrityException {
+        Iterator dissIdIter=obj.disseminatorIdIterator();
         while (dissIdIter.hasNext()) {
             String did=(String) dissIdIter.next();
             Iterator dissIter=obj.disseminators(did).iterator();
-            while (dissIter.hasNext()) {
-                Disseminator diss=(Disseminator) dissIter.next();
-                buf.append("  <METS:behaviorSec ID=\"");
+            Disseminator diss=(Disseminator) obj.disseminators(did).get(0);
+            if (diss.dissState==null || diss.dissState.equals("")) {
+                throw new ObjectIntegrityException("Object's disseminator must have a state.");
+            }
+            buf.append("<" + METS_PREFIX + ":behaviorSec ID=\"" + did 
+                    + "\" STATUS=\"" + diss.dissState + "\">\n");
+            for (int i=0; i<obj.disseminators(did).size(); i++) {
+                diss=(Disseminator) obj.disseminators(did).get(i);
+                buf.append("<" + METS_PREFIX + ":serviceBinding ID=\"");
+// TODO:Resume here
                 buf.append(diss.dissVersionID);
                 buf.append("\" STRUCTID=\"");
                 buf.append(diss.dsBindMapID);
                 buf.append("\" BTYPE=\"");
                 buf.append(diss.bDefID);
                 buf.append("\" CREATED=\"");
-                String strDate=DateUtility.convertDateToString(diss.dissCreateDT);
+                String strDate=m_formatter.format(diss.dissCreateDT);
                 buf.append(strDate);
                 buf.append("\" LABEL=\"");
                 buf.append(diss.dissLabel);
@@ -523,19 +530,20 @@ public class METSLikeDOSerializer
                 buf.append("\" STATUS=\"");
                 buf.append(diss.dissState);
                 buf.append("\">\n");
-                buf.append("    <METS:interfaceDef LABEL=\"");
+                buf.append("<METS:interfaceDef LABEL=\"");
                 buf.append(diss.bDefLabel);
                 buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
                 buf.append(diss.bDefID);
                 buf.append("\"/>\n");
-                buf.append("    <METS:mechanism LABEL=\"");
+                buf.append("<METS:mechanism LABEL=\"");
                 buf.append(diss.bMechLabel);
                 buf.append("\" LOCTYPE=\"URN\" xlink:href=\"");
                 buf.append(diss.bMechID);
                 buf.append("\"/>\n");
-                buf.append("  </METS:behaviorSec>\n");
+                buf.append("</" + METS_PREFIX + ":serviceBinding>\n");
             }
-        } */
+            buf.append("</" + METS_PREFIX + ":behaviorSec>\n");
+        } 
     }
     
     private void appendRootElementEnd(StringBuffer buf) {
