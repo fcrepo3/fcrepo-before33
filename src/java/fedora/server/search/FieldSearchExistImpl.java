@@ -134,6 +134,7 @@ public class FieldSearchExistImpl
                     + " has a DC datastream, but it's not inline XML.");
         }
         if (dcmd!=null) {
+            logFine("Had DC Metadata datastream for this object.");
             InputStream in=dcmd.getContentStream();
             DCFields dc=new DCFields(in);
             for (int i=0; i<dc.titles().size(); i++) {
@@ -218,6 +219,8 @@ public class FieldSearchExistImpl
                 out.append((String) dc.rights().get(i));
                 out.append("</rights>\n");
             }
+        } else {
+            logFine("Did not have DC Metadata datastream for this object.");
         }
         out.append("</fields>");
         logFinest("Writing to XML DB: " + out.toString());
