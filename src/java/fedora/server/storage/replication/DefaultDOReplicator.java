@@ -104,8 +104,8 @@ public class DefaultDOReplicator
             if (fedoraServerHost==null || fedoraServerHost.equals("")) {
                 fedoraServerHost=hostIP.getHostName();
             }
-            hostPattern = Pattern.compile(fedoraServerHost);
-            hostPortPattern = Pattern.compile(fedoraServerHost+":"+fedoraServerPort);
+            hostPattern = Pattern.compile("http://"+fedoraServerHost+"/");
+            hostPortPattern = Pattern.compile("http://"+fedoraServerHost+":"+fedoraServerPort+"/");
             serializedLocalURLPattern = Pattern.compile("local.fedora.server");
             //System.out.println("Replicator: hostPattern is " + hostPattern.pattern());
             //System.out.println("Replicator: hostPortPattern is " + hostPortPattern.pattern());
