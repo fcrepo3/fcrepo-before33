@@ -202,7 +202,51 @@
 		</blockquote>
 		<para>
            A convenient script to ingest all included demo objects for a new Fedora installation.
-           See the Demo guide for descriptions of these objects.
+           See the Demo guide for descriptions of these objects.  Note: This script should not be
+		   run until you have ensured that the hostname and port numbers in the demo objects have
+		   been corrected (with the fedora-convert-demos script) to use the actual hostname and port of your 
+		   Fedora server.
+       </para>
+	</sect1>
+	<sect1>
+		<title>fedora-convert-demos</title>
+		<blockquote>
+			<para>														 
+				<emphasis role="bold">fedora-convert-demos</emphasis> &#091;fromHostName&#093; &#091;fromPortNum&#093; &#091;toHostName&#093; &#091;toHostNum&#093; &#091;fedoraHomeDir&#093;</para>
+		</blockquote>
+		<para>Where:</para>
+		<itemizedlist>
+			<listitem>
+				<para>&#091;fromHostName&#093; - The hostname currently being used in the demo object files.</para>
+			</listitem>
+			<listitem>
+				<para>&#091;fromPortNum&#093; - The port number currently being used in the demo object files.</para>
+			</listitem>
+			<listitem>
+				<para>&#091;toHostName&#093; - The hostname of the repository.</para>
+			</listitem>
+			<listitem>
+				<para>&#091;toPortNum&#093; - The port number of the repository.</para>
+			</listitem>
+		</itemizedlist>
+		<para>Example:</para>
+		<blockquote>
+			<para>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-1.1</para>
+		</blockquote>
+		<para>
+           Converts URLs in the demo objects from one host/port combination to another.
+		   After running this script with your repository's hostname, the demo objects can successfully be
+		   ingested.
+	    </para>
+		<para>
+           <emphasis>Background:</emphasis> The demo objects that come with the Fedora client have embedded URLs inside them
+		   that assume the server is running on a machine called localhost on port number 8080.
+		   Those URLs must be changed to reflect the actual host and port the server is running on.
+		   Rather than search through all the demo files and change the references by hand, you can
+		   just run this script.  It is not necessary to run this script if you have already run
+		   fedora-ingest-demos succcessfully and wish to change the hostname and port of the
+		   Fedora server, as the demo objects are already in the repository and the references
+		   inside them will automatically be corrected by the server.
        </para>
 	</sect1>
 	<sect1>
