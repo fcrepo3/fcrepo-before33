@@ -274,6 +274,7 @@ public class Administrator extends JFrame {
         JMenu fileNew=new JMenu("New");
         fileNew.setMnemonic(KeyEvent.VK_N);
         JMenuItem fileNewObject=new JMenuItem("Object", KeyEvent.VK_O);
+        fileNewObject.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, ActionEvent.CTRL_MASK));
         fileNewObject.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new NewObjectDialog();
@@ -316,6 +317,8 @@ public class Administrator extends JFrame {
             }
         });
         JMenuItem fileIngestOneFromRepository=new JMenuItem("From Repository...", KeyEvent.VK_R);
+        fileIngestOneFromRepository.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I,
+                ActionEvent.CTRL_MASK));
         fileIngestOneFromRepository.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new Ingest(Ingest.ONE_FROM_REPOS);
@@ -451,6 +454,7 @@ public class Administrator extends JFrame {
             }
         });
         toolsBatchSubMenu.add(toolsBatchIngest);
+        toolsMenu.addSeparator();
         toolsMenu.add(toolsBatchSubMenu);
         // < wdn
 
@@ -496,7 +500,7 @@ public class Administrator extends JFrame {
         buildersMenu.setMnemonic(KeyEvent.VK_B);
         buildersMenu.setToolTipText("Tools to build objects");
 
-        JMenuItem buildersBDef=new JMenuItem("BDef Builder",KeyEvent.VK_D);
+        JMenuItem buildersBDef=new JMenuItem("Behavior Definition Builder",KeyEvent.VK_D);
         buildersBDef.setToolTipText("Create a new Behavior Definition Object");
         buildersBDef.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -505,7 +509,7 @@ public class Administrator extends JFrame {
         });
         buildersMenu.add(buildersBDef);
 
-        JMenuItem buildersBMech=new JMenuItem("BMech Builder",KeyEvent.VK_M);
+        JMenuItem buildersBMech=new JMenuItem("Behavior Mechanism Builder",KeyEvent.VK_M);
         buildersBMech.setToolTipText("Create a new Behavior Mechanism Object");
         buildersBMech.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
