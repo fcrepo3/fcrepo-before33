@@ -9,7 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -71,7 +71,7 @@ public class DefaultManagement
     private int m_uploadStorageMinutes;
     private int m_lastId;
     private File m_tempDir;
-    private HashMap m_uploadStartTime;
+    private Hashtable m_uploadStartTime;
 
     /**
      * Creates and initializes the Management Module.
@@ -124,7 +124,7 @@ public class DefaultManagement
     		    m_tempDir.mkdirs();
     		}
 			// put leftovers in hash, while saving highest id as m_lastId
-			m_uploadStartTime=new HashMap();
+			m_uploadStartTime=new Hashtable();
 			String[] fNames=m_tempDir.list();
 			Long leftoverStartTime=new Long(System.currentTimeMillis());
             m_lastId=0;
@@ -645,9 +645,7 @@ public class DefaultManagement
 				    logWarning("Could not remove expired uploaded file '" + id
 				            + "'.  Check existence/permissions in management/upload/ directory.");
 				}
-                synchronized (m_uploadStartTime) {
-    				m_uploadStartTime.remove(id);
-                }
+  				m_uploadStartTime.remove(id);
 			}
 		}
         // then generate an id
@@ -661,9 +659,7 @@ public class DefaultManagement
 		// if we got this far w/o an exception, add to hash with current time
 		// and return the identifier-that-looks-like-a-url
 		long now=System.currentTimeMillis();
-        synchronized (m_uploadStartTime) {
-		    m_uploadStartTime.put("" + id, new Long(now));
-        }
+	    m_uploadStartTime.put("" + id, new Long(now));
 		return "uploaded://" + id;
 	}
 
@@ -679,9 +675,7 @@ public class DefaultManagement
 		    String internalId=id.substring(11);
 			if (m_uploadStartTime.get(internalId)!=null) {
 			    // found... remove from hash and return inputstream
-			    synchronized (m_uploadStartTime) {
-			        m_uploadStartTime.remove(internalId);
-                }
+		        m_uploadStartTime.remove(internalId);
 				try {
 			        return new FileInputStream(new File(m_tempDir, internalId));
 				} catch (Exception e) {

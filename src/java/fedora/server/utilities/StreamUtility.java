@@ -112,7 +112,7 @@ public abstract class StreamUtility {
         try {
             byte[] buf = new byte[bufSize];
             int len;
-            while ( ( len = in.read( buf ) ) != -1 ) {
+            while ( ( len = in.read( buf ) ) > 0 ) {
                 out.write( buf, 0, len );
             }
         } finally {
