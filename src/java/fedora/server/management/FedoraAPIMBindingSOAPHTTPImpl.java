@@ -149,7 +149,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public void modifyObject(String PID, String state, String label, 
+    public void modifyObject(String PID, String state, String label,
             String logMessage)
             throws RemoteException {
         assertInitialized();
@@ -266,6 +266,28 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             s_management.modifyDatastreamByValue(getContext(), PID,
                     datastreamID, dsLabel, logMessage, new ByteArrayInputStream(dsContent), dsState);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+
+    public void setDatastreamState(String PID, String datastreamID, String dsState, String logMessage) throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            s_management.setDatastreamState(getContext(), PID,
+                    datastreamID, dsState, logMessage);
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        }
+    }
+
+    public void setDisseminatorState(String PID, String disseminatorID, String dissState, String logMessage) throws java.rmi.RemoteException {
+        assertInitialized();
+        try {
+            s_management.setDisseminatorState(getContext(), PID,
+                    disseminatorID, dissState, logMessage);
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

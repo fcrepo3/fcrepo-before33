@@ -100,6 +100,35 @@ public class SimpleDOWriter
         m_obj.setState(state);
     }
 
+    public void setDatastreamState(String datastreamID, String dsState)
+            throws ServerException {
+      assertNotInvalidated();
+      assertNotPendingRemoval();
+      List allVersions = m_obj.datastreams(datastreamID);
+      Iterator dsIter = allVersions.iterator();
+
+      // Set all versions of this datastreamID to the specified state
+      while (dsIter.hasNext()) {
+          Datastream ds = (Datastream) dsIter.next();
+          ds.DSState=dsState;
+        }
+    }
+
+    public void setDisseminatorState(String disseminatorID, String dissState)
+           throws ServerException {
+      assertNotInvalidated();
+      assertNotPendingRemoval();
+      List allVersions = m_obj.disseminators(disseminatorID);
+      Iterator dissIter = allVersions.iterator();
+
+      // Set all versions of this disseminatorID to the specified state
+      while (dissIter.hasNext()) {
+          Disseminator diss = (Disseminator) dissIter.next();
+          diss.dissState=dissState;
+      }
+
+    }
+
     public void setLabel(String label)
             throws ObjectIntegrityException {
         assertNotInvalidated();
@@ -132,14 +161,6 @@ public class SimpleDOWriter
         assertNotInvalidated();
         assertNotPendingRemoval();
         m_obj.datastreams(datastream.DatastreamID).add(datastream);
-        List allVersions = m_obj.datastreams(datastream.DatastreamID);
-        Iterator dsIter = allVersions.iterator();
-
-        // iterate over all versions of this dsID
-        while (dsIter.hasNext()) {
-            Datastream ds = (Datastream) dsIter.next();
-            ds.DSState=datastream.DSState;
-        }
     }
 
     /**

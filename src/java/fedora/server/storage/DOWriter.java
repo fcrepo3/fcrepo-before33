@@ -63,6 +63,26 @@ public interface DOWriter
     public void setState(String state) throws ServerException;
 
     /**
+     * Sets the state for all versions of the specified datastream.
+     *
+     * @param id The datastream id.
+     * @param state The state.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public void setDatastreamState(String id, String state) throws ServerException;
+
+    /**
+     * Sets the state for all versions of the specified disseminator.
+     *
+     * @param id The disseminator id.
+     * @param state The state.
+     * @throws ServerException If any type of error occurred fulfilling the
+     *         request.
+     */
+    public void setDisseminatorState(String id, String state) throws ServerException;
+
+    /**
      * Sets the label of the digital object.
      *
      * @param label The label.

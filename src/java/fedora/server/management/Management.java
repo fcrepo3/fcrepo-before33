@@ -6,6 +6,7 @@ import java.util.Calendar;
 import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DSBindingMap;
 
 /**
  *
@@ -70,7 +71,9 @@ public interface Management {
 
 //    public String addDisseminator(Context context, String pid, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
 
-//    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DatastreamBindingMap bindingMap) throws ServerException;
+    public void modifyDisseminator(Context context, String pid, String disseminatorId, String bMechPid, String dissLabel, DSBindingMap bindingMap, String logMessage, String dissState) throws ServerException;
+
+//    public void deleteDisseminator(Context context, String pid, String disseminatorId) throws ServerException;
 
 //    public Calendar[] purgeDisseminator(Context context, String pid, String disseminatorId, Calendar startDateTime, Calendar endDateTime) throws ServerException;
 
@@ -83,5 +86,9 @@ public interface Management {
     public String putTempStream(InputStream in) throws ServerException;
 
     public InputStream getTempStream(String id) throws ServerException;
+
+    public void setDatastreamState(Context context, String pid, String id, String state, String logMessage) throws ServerException;
+
+    public void setDisseminatorState(Context context, String pid, String id, String state, String logMessage) throws ServerException;
 
 }
