@@ -23,6 +23,16 @@
 			</xsd:restriction>
 		</xsd:complexContent>
 	</xsd:complexType>
+	<xsd:complexType name="ArrayOfCondition">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of Conditions for searching, with the implied AND boolean operator.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:Condition[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
 	<xsd:complexType name="ArrayOfDatastream">
 		<xsd:annotation>
 			<xsd:documentation>an ordered list of Datastreams</xsd:documentation>
@@ -103,6 +113,16 @@
 			</xsd:restriction>
 		</xsd:complexContent>
 	</xsd:complexType>
+	<xsd:complexType name="ArrayOfObjectFields">
+		<xsd:annotation>
+			<xsd:documentation>an ordered list of ObjectFields records.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexContent>
+			<xsd:restriction base="soapenc:Array">
+				<xsd:attribute ref="soapenc:arrayType" wsdl:arrayType="fedora-types:ObjectFields[]"/>
+			</xsd:restriction>
+		</xsd:complexContent>
+	</xsd:complexType>
 	<xsd:complexType name="ArrayOfProperty">
 		<xsd:annotation>
 			<xsd:documentation>an ordered list of Properties.</xsd:documentation>
@@ -136,6 +156,19 @@
 			<xsd:element name="justification" type="string"/>
 		</xsd:sequence>
 	</xsd:complexType>
+    <xsd:simpleType name="ComparisonOperator">
+		<xsd:annotation>
+			<xsd:documentation>An operator for comparing a property to a value.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="has"/>
+			<xsd:enumeration value="eq"/>
+			<xsd:enumeration value="lt"/>
+			<xsd:enumeration value="le"/>
+			<xsd:enumeration value="gt"/>
+			<xsd:enumeration value="ge"/>
+        </xsd:restriction>
+    </xsd:simpleType>
 	<xsd:simpleType name="ComponentInfo">
 		<xsd:annotation>
 			<xsd:documentation>data about a datastream or disseminator.
@@ -143,6 +176,16 @@
 		</xsd:annotation>
 		<xsd:restriction base="string"/>
 	</xsd:simpleType>
+    <xsd:complexType name="Condition">
+        <xsd:annotation>
+            <xsd:documentation>A property,operator,value expression that evaluates to true or false.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="property" type="string"/>
+            <xsd:element name="operator" type="fedora-types:ComparisonOperator"/>
+            <xsd:element name="value" type="string"/>
+        </xsd:sequence>
+    </xsd:complexType>
 	<xsd:complexType name="Datastream">
 		<xsd:annotation>
 			<xsd:documentation>content stream of a digital object</xsd:documentation>
@@ -316,6 +359,38 @@
 			<xsd:element name="stream" type="base64Binary"/>
 		</xsd:sequence>
 	</xsd:complexType>
+    <xsd:complexType name="ObjectFields">
+        <xsd:annotation>
+            <xsd:documentation>a summary of a digital object that includes
+            zero or one of each of the repository key metadata fields, 
+            and any number of each of the 15 dublin core elements.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:sequence>
+            <xsd:element name="pid" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="label" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="fType" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cModel" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="state" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="locker" type="string" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="cDate" type="dateTime" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="mDate" type="dateTime" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="creator" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="subject" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="description" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="publisher" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="contributor" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="date" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="type" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="format" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="identifier" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="source" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="language" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="relation" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="coverage" type="string" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="rights" type="string" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
 	<xsd:complexType name="ObjectInfo">
 		<xsd:annotation>
 			<xsd:documentation>a Fedora data structure containing key information about a digital object</xsd:documentation>
