@@ -59,4 +59,6 @@ public interface DOReader
     // Overloaded method: returns InputStream as alternative
     public InputStream GetBMechMethodsWSDL(String bDefPID, Date versDateTime);
 
+    public DSBindingMapAugmented[] GetDSBindingMaps(Date versDateTime)
+
 }
