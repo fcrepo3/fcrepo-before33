@@ -1,15 +1,122 @@
-<html><head>
-        <title>Fedora Local Services User Documentation</title></head><body><div><div><div><h1 class="title"><a name="d0e2"></a>
-			<img src="../../images/fedora_logo108x150.jpg">
-		</h1></div>
-    <div> 
-      <h1><a name="d0e2"></a> Fedora&#153; Local Services User Documentation</h1>
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang=
+"en-US">
+<head>
+  <meta name="generator" content=
+  "HTML Tidy for Solaris (vers 1st January 2004), see www.w3.org" />
+
+  <title>Fedora Identifiers</title>
+  <link rel="stylesheet" type="text/css" href=
+  "../../docstyle.css" />
+</head>
+
+<body>
+  <div id="header">
+    <a href="../../index.html" id="logo"></a>
+
+    <div id="title">
+      <h1>Fedora Local Services</h1>
+
+      <h2>Fedora Release 2.0</h2>
     </div>
-    <div> 
-      <h3> Fedora&#153; Development Team</h3>
-    </div><div>
-      <p>Copyright &copy; 2002-2005 The Rector and Visitors of The University 
-        of Virginia and Cornell University</p>
-    </div><hr></div><div class="toc"><p><b>Table of Contents</b></p><dl><dt><a href="#d0e45">Introduction</a></dt></dl></div><div class="sect1"><div class="titlepage"><div><h2 class="title" style="clear: both"><a name="d0e45"></a>Introduction</h2></div></div><p>The Fedora repository provides access to data objects by leveraging tools and services that are described by the behavior objects. These services can exist as services on a remote host or they can also be included as part of the Fedora repository. Services that are under the custodianship of the Fedora repository are referred to as <span class="emphasis"><em>Local Services.</em></span> The Fedora repository comes bundled with three local services.
-		</p><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e53"></a>Saxon XSLT Processor Local Service</h3></div></div><p>The <a href="saxon/index.html" target="_top">Saxon XSLT Processor Local Service</a> uses the Saxon XSLT Processor written by Michael Kay to provide an XSLT transformation service. The service is implemented as a java servlet that accepts as input a XML source document and XSLT stylesheet enabling the transformation of XML documents into a variety of different formats.</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e61"></a>The FOP Local Service</h3></div></div><p>The <a href="fop/index.html" target="_top">FOP Local Service</a> uses the FOP formatter from Apache Software to provide a PDF transformation service. The service is implemented as a java servlet and accepts as input an XML-FO source file which is transformed into PDF.</p></div><div class="sect2"><div class="titlepage"><div><h3 class="title"><a name="d0e69"></a>The Image Manipulation Local Service</h3></div></div><p>The <a href="imagemanip/index.html" target="_top">Image Manipulation Local Service</a> uses the ImageJ API from Wayne Rasband to provide an image manipulation service. The service is implemented as a java servlet and accepts as input the source image and a series of parameters used to manipulate the image.
-		</p></div></div></div></body></html>
+  </div>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+
+    <div class="tocbox">
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec1">
+      <div class="titlepage">
+        <div>
+          <h2 class="title" style="clear: both"><a name="intro" id=
+          "intro"></a>Introduction</h2>
+        </div>
+      </div>
+
+      <p>The Fedora repository provides access to data objects by
+      leveraging tools and services that are described by the
+      behavior objects. These services can exist as services on a
+      remote host or they can also be included as part of the
+      Fedora repository. Services that are under the custodianship
+      of the Fedora repository are referred to as <span class=
+      "emphasis"><em>Local Services.</em></span> The Fedora
+      repository comes bundled with three local services.</p>
+
+      <div class="sec2">
+        <div class="titlepage">
+          <div>
+            <h3 class="title"><a name="d0e53" id="d0e53"></a>Saxon
+            XSLT Processor Local Service</h3>
+          </div>
+        </div>
+
+        <p>The <a href="saxon/index.html" target="_top">Saxon XSLT
+        Processor Local Service</a> uses the Saxon XSLT Processor
+        written by Michael Kay to provide an XSLT transformation
+        service. The service is implemented as a java servlet that
+        accepts as input a XML source document and XSLT stylesheet
+        enabling the transformation of XML documents into a variety
+        of different formats.</p>
+      </div>
+
+      <div class="sec2">
+        <div class="titlepage">
+          <div>
+            <h3 class="title"><a name="d0e61" id="d0e61"></a>The
+            FOP Local Service</h3>
+          </div>
+        </div>
+
+        <p>The <a href="fop/index.html" target="_top">FOP Local
+        Service</a> uses the FOP formatter from Apache Software to
+        provide a PDF transformation service. The service is
+        implemented as a java servlet and accepts as input an
+        XML-FO source file which is transformed into PDF.</p>
+      </div>
+
+      <div class="sec2">
+        <div class="titlepage">
+          <div>
+            <h3 class="title"><a name="d0e69" id="d0e69"></a>The
+            Image Manipulation Local Service</h3>
+          </div>
+        </div>
+
+        <p>The <a href="imagemanip/index.html" target="_top">Image
+        Manipulation Local Service</a> uses the ImageJ API from
+        Wayne Rasband to provide an image manipulation service. The
+        service is implemented as a java servlet and accepts as
+        input the source image and a series of parameters used to
+        manipulate the image.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+  </div>
+</body>
+</html>
