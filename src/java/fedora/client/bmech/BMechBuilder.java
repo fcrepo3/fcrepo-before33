@@ -668,9 +668,23 @@ public class BMechBuilder extends JInternalFrame
         helptxt.setLineWrap(true);
         helptxt.setWrapStyleWord(true);
         helptxt.setBounds(0,0,550,20);
-        helptxt.append("insert methods help\n\n");
-        helptxt.append("\n\n");
-        helptxt.append("\n\n");
+        helptxt.append("There are three types of service bindings that can"
+          + " be set up in a Behavior Mechanism:\n\n"
+          + " 1. Service with a Base URL: there is one base URL that all of"
+          + " the methods of the service are relative to.\n\n"
+          + " 2. Multi-Server Service: there is not a single base URL that"
+          + " all of the methods are relative to.  Different methods may run"
+          + " off different servers.  However from the Fedora perspective"
+          + " several methods may be aggregated together in one Behavior"
+          + " Mechanism object to fulfill a behavior contract of a"
+          + " Behavior Definition Object.\n\n"
+          + " 2. Fedora LOCAL HTTP Resolver:  there is no independent service"
+          + " that Fedora calls upon to run a behavior method.  Instead,"
+          + " Fedora will just resolve the URL of a datastream in a Data"
+          + " object that uses this Behavior Mechanism.  This is kind of like"
+          + " a 'non-service' since the Fedora repository system will know"
+          + " what how to just return the datastreams when the behavior"
+          + " method is called at runtime.");
 
         JOptionPane.showMessageDialog(
           this, helptxt, "Help for Service Methods Tab",
