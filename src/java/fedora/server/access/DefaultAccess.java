@@ -218,8 +218,8 @@ public class DefaultAccess extends Module implements Access
         methodName, versDateTime);
     for (int i=0; i<defaultMethodParms.length; i++)
     {
-      System.out.println("addedDefaultName: "+defaultMethodParms[i].parmName);
-      System.out.println("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
+      this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
+      this.getServer().logFinest("addedDefaultValue: "+defaultMethodParms[i].parmDefaultValue);
       h_userParms.put(defaultMethodParms[i].parmName,
                       defaultMethodParms[i].parmDefaultValue);
     }
@@ -304,14 +304,16 @@ public class DefaultAccess extends Module implements Access
       {
         methodParm = methodParms[i];
         h_validParms.put(methodParm.parmName,methodParm);
-        System.out.println("methodParms[" + i + "]: " + methodParms[i].parmName
+        this.getServer().logFinest("methodParms[" + i + "]: "
+            + methodParms[i].parmName
             + "\nlabel: " + methodParms[i].parmLabel
             + "\ndefault: " + methodParms[i].parmDefaultValue
             + "\nrequired: " + methodParms[i].parmRequired
             + "\ntype: " + methodParms[i].parmType);
         for (int j=0; j<methodParms[i].parmDomainValues.length; j++)
         {
-          System.out.println("domainValues: " + methodParms[i].parmDomainValues[j]);
+          this.getServer().logFinest("domainValues: "
+              + methodParms[i].parmDomainValues[j]);
         }
       }
     }
@@ -373,7 +375,6 @@ public class DefaultAccess extends Module implements Access
             // Value of user-supplied parameter contains a value.
             // Validate the supplied value against the parmDomainValues list.
             String[] parmDomainValues = methodParm.parmDomainValues;
-            System.out.println("parmDomainSize: "+parmDomainValues.length);
             if (!parmDomainValues[0].equalsIgnoreCase("null"))
             {
               boolean isValidValue = false;
