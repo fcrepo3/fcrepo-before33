@@ -34,7 +34,7 @@
 		<column name="DSBindingKey_DBID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="BMECH_DBID" type="int(11)" notNull="true" default="0" index="BMECH_DBID"/>
 		<column name="DSBindingSpec_Name" type="varchar(32)" notNull="true" default="" index="DSBindingSpec_Name"/>
-		<column name="DSBindingSpec_Ordinality_Flag" type="char(1)" notNull="true" default="N" index="DSBindingSpec_Ordinality_Flag"/>
+		<column name="DSBindingSpec_Ordinality_Flag" type="varchar(5)" notNull="true" default="N" index="DSBindingSpec_Ordinality_Flag"/>
 		<column name="DSBindingSpec_Cardinality" type="smallint(6)" notNull="true" default="1" index="DSBindingSpec_Cardinality"/>
 		<column name="DSBindingSpec_Label" type="varchar(255)" notNull="true" default="" index="DSBindingSpec_Label"/>
 	</table>
