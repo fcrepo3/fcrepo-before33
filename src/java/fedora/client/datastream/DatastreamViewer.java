@@ -4,6 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.ByteArrayInputStream;
@@ -327,16 +330,34 @@ public class DatastreamViewer
                     }
 
             JPanel saveButtonPanel=new JPanel();
-            saveButtonPanel.setLayout(new BorderLayout());
+            //saveButtonPanel.setLayout(new BorderLayout());
+            GridBagLayout gridbag = new GridBagLayout();
+            GridBagConstraints c = new GridBagConstraints();
+            saveButtonPanel.setLayout(gridbag);
 
                     // CENTER: saveButton
-            saveButtonPanel.add(saveButton, BorderLayout.CENTER);
+            //saveButtonPanel.add(saveButton, BorderLayout.CENTER);
+            c.gridx=0; // column 1
+            c.gridy=0; // row 1
+            c.gridwidth=GridBagConstraints.REMAINDER; // one column wide
+            c.insets = new Insets(10,10,10,0); // pad top and bottom
+            c.fill=GridBagConstraints.HORIZONTAL;
+            gridbag.setConstraints(saveButton, c);
+            saveButtonPanel.add(saveButton);
 
                     // NORTH: withdrawButton
-            saveButtonPanel.add(withdrawButton, BorderLayout.NORTH);
+            //saveButtonPanel.add(withdrawButton, BorderLayout.NORTH);
+            c.gridx=0; // column 1
+            c.gridy=1; // row 2
+            gridbag.setConstraints(withdrawButton, c);
+            saveButtonPanel.add(withdrawButton);
 
                     // SOUTH: deleteButton
-            saveButtonPanel.add(deleteButton, BorderLayout.SOUTH);
+            //saveButtonPanel.add(deleteButton, BorderLayout.SOUTH);
+            c.gridx=0; // column 1
+            c.gridy=2; // row 3
+            gridbag.setConstraints(deleteButton, c);
+            saveButtonPanel.add(deleteButton);
 
             setLayout(new BorderLayout());
             setBorder(BorderFactory.createEmptyBorder(6,6,6,6));
