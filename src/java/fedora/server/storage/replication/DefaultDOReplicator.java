@@ -93,7 +93,7 @@ public class DefaultDOReplicator
                     "BehaviorDefinition row doesn't exist for PID: "
                     + bDefPID);
             }
-            behaviorDefs = bDefReader.GetBehaviorMethods(null);
+            behaviorDefs = bDefReader.getAbstractMethods(null);
             for (int i=0; i<behaviorDefs.length; ++i) {
                 m_ri.insertMethodRow(connection, bDefDBID,
                         behaviorDefs[i].methodName,
@@ -165,7 +165,7 @@ public class DefaultDOReplicator
         Connection connection=null;
         try {
             BMechDSBindSpec dsBindSpec;
-            MethodDef behaviorBindings[];
+            MethodDefOperationBind behaviorBindings[];
             MethodDefOperationBind behaviorBindingsEntry;
             String bDefDBID;
             String bDefPID;
@@ -183,7 +183,7 @@ public class DefaultDOReplicator
             connection.setAutoCommit(false);
 
             // Insert Behavior Mechanism row
-            dsBindSpec = bMechReader.GetDSBindingSpec(null);
+            dsBindSpec = bMechReader.getServiceDSInputSpec(null);
             bDefPID = dsBindSpec.bDefPID;
 
             bDefDBID = m_dl.lookupBehaviorDefinitionDBID(connection, bDefPID);
@@ -240,12 +240,14 @@ public class DefaultDOReplicator
               }
             }
 
-            behaviorBindings = bMechReader.GetBehaviorMethods(null);
-
             // Insert mechImpl rows
+
+            behaviorBindings = bMechReader.getServiceMethodBindings(null);
+
             for (int i=0; i<behaviorBindings.length; ++i) {
                 behaviorBindingsEntry =
                         (MethodDefOperationBind)behaviorBindings[i];
+
                 if (!behaviorBindingsEntry.protocolType.equals("HTTP")) {
 
                   // For the time being, ignore bindings other than HTTP.
@@ -265,7 +267,8 @@ public class DefaultDOReplicator
                   MethodParmDef[] methodParmDefs =
                       new MethodParmDef[behaviorBindings[i].methodParms.length];
                   methodParmDefs = behaviorBindings[i].methodParms;
-                  if (methodParmDefs[j].parmType.equalsIgnoreCase("fedora:defaultInputType"))
+                  //if (methodParmDefs[j].parmType.equalsIgnoreCase("fedora:defaultInputType"))
+                  if (methodParmDefs[j].parmType.equalsIgnoreCase(MethodParmDef.DEFAULT_INPUT))
                   {
                   parmRequired =
                            methodParmDefs[j].parmRequired ? "true" : "false";
@@ -287,6 +290,7 @@ public class DefaultDOReplicator
                   {
                     if (sb.length() == 0) sb.append("null");
                   }
+
                   m_ri.insertMechDefaultMethodParmRow(connection, methodDBID, bMechDBID,
                           methodParmDefs[j].parmName,
                           methodParmDefs[j].parmDefaultValue,
