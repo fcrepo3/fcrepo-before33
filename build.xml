@@ -475,6 +475,15 @@
 		<copy file="lib/server/avalon-framework.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/batik.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
 		<copy file="lib/server/fop.jar" todir="dist/server/tomcat41/webapps/fop/WEB-INF/lib"/>
+
+		<!-- imagemanip service -->
+		<copy todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/classes/fedora/localservices/imagemanip">
+			<fileset dir="temp/localservices/classes/fedora/localservices/imagemanip"/>
+		</copy>
+		<copy file="src/web-app/fedora/localservices/imagemanip/web.xml" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF"/>
+		<copy file="src/web-app/fedora/localservices/imagemanip/index.html" todir="dist/server/tomcat41/webapps/imagemanip"/>
+		<copy file="lib/server/ij.jar" todir="dist/server/tomcat41/webapps/imagemanip/WEB-INF/lib"/>
+
 		<!-- soap client -->
 		<copy todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/classes">
 			<fileset dir="temp/soapclient/classes"/>
@@ -564,7 +573,7 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
+		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpath="inc/server/tomcat41/common/lib/servlet.jar;lib/common/saxon6.5.jar;lib/server/avalon-framework.jar;lib/server/batik.jar;lib/server/fop.jar;lib/server/ij.jar" optimize="${javaClassOptimize}" debug="${javaClassDebug}"/>
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
@@ -598,6 +607,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.102  2003/05/02 20:22:07  cwilper
+  changes for imagemanipulation localservice
+
   Revision 1.101  2003/04/18 19:38:34  rlw
   added xerces-2.0.2.jar  to dist/client/lib and dist/server/client/lib
   This is needed to insure that both client and server use same parser
