@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ "$FEDORA_HOME" = "" ]; then
+  echo "ERROR: Environment variable FEDORA_HOME must be set."
+  exit 1
+fi
+
+(exec java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME fedora.client.test.MassIngest $1 $2 $3 $4 $5 $6 $7)
+
+exit 0
