@@ -31,7 +31,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     /** The Fedora Server instance */
     private static Server s_server;
 
-    /** The Fedora Server instance */
+    /** Whether the service has initialized... true if we got a good Server instance. */
     private static boolean s_initialized;
 
     /** The exception indicating that initialization failed. */
@@ -63,7 +63,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public java.lang.String createObject() throws java.rmi.RemoteException {
+    public String createObject() throws java.rmi.RemoteException {
         assertInitialized();
         return "This would be a PID if this operation implementation wasn't "
                 + "a stub.  BTW, the scope of this service (as defined by the "
@@ -72,7 +72,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         //return null;
     }
 
-    public java.lang.String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
+    public String ingestObject(byte[] METSXML) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             String pid="1234";
@@ -101,7 +101,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public byte[] getObjectXML(java.lang.String PID) throws java.rmi.RemoteException {
+    public byte[] getObjectXML(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             InputStream in=w.GetObjectXML();
@@ -137,7 +137,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public byte[] exportObject(java.lang.String PID) throws java.rmi.RemoteException {
+    public byte[] exportObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             InputStream in=w.ExportObject();
@@ -152,19 +152,19 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public void withdrawObject(java.lang.String PID) throws java.rmi.RemoteException {
+    public void withdrawObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void deleteObject(java.lang.String PID) throws java.rmi.RemoteException {
+    public void deleteObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void purgeObject(java.lang.String PID) throws java.rmi.RemoteException {
+    public void purgeObject(String PID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void obtainLock(java.lang.String PID) throws java.rmi.RemoteException {
+    public void obtainLock(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             ByteArrayInputStream testInputStream=new ByteArrayInputStream(PID.getBytes());
@@ -174,7 +174,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public void releaseLock(java.lang.String PID, java.lang.String logMessage, boolean commit) throws java.rmi.RemoteException {
+    public void releaseLock(String PID, String logMessage, boolean commit) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             if (commit=false) {
@@ -189,7 +189,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    public java.lang.String getLockingUser(java.lang.String PID) throws java.rmi.RemoteException {
+    public String getLockingUser(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         StringBuffer pNames=new StringBuffer();
         pNames.append("Server parameter names: ");
@@ -205,86 +205,86 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return pNames.toString();
     }
 
-    public java.lang.String getObjectState(java.lang.String PID) throws java.rmi.RemoteException {
+    public String getObjectState(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.util.Calendar getObjectCreateDate(java.lang.String PID) throws java.rmi.RemoteException {
+    public java.util.Calendar getObjectCreateDate(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.util.Calendar getObjectLastModDate(java.lang.String PID) throws java.rmi.RemoteException {
+    public java.util.Calendar getObjectLastModDate(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(java.lang.String PID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.AuditRecord[] getObjectAuditTrail(String PID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String[] listObjectPIDs(java.lang.String state) throws java.rmi.RemoteException {
+    public String[] listObjectPIDs(String state) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String addDatastreamExternal(java.lang.String PID, java.lang.String dsLabel, java.lang.String dsLocation) throws java.rmi.RemoteException {
+    public String addDatastreamExternal(String PID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String addDatastreamManagedContent(java.lang.String PID, java.lang.String dsLabel, java.lang.String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
+    public String addDatastreamManagedContent(String PID, String dsLabel, String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String addDatastreamXMLMetadata(java.lang.String PID, java.lang.String dsLabel, java.lang.String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
+    public String addDatastreamXMLMetadata(String PID, String dsLabel, String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public void modifyDatastreamExternal(java.lang.String PID, java.lang.String datastreamID, java.lang.String dsLabel, java.lang.String dsLocation) throws java.rmi.RemoteException {
+    public void modifyDatastreamExternal(String PID, String datastreamID, String dsLabel, String dsLocation) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void modifyDatastreamManagedContent(java.lang.String PID, java.lang.String datastreamID, java.lang.String dsLabel, java.lang.String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
+    public void modifyDatastreamManagedContent(String PID, String datastreamID, String dsLabel, String MIMEType, byte[] dsContent) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void modifyDatastreamXMLMetadata(java.lang.String PID, java.lang.String datastreamID, java.lang.String dsLabel, java.lang.String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
+    public void modifyDatastreamXMLMetadata(String PID, String datastreamID, String dsLabel, String MDType, byte[] dsInlineMetadata) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void withdrawDatastream(java.lang.String PID, java.lang.String datastreamID) throws java.rmi.RemoteException {
+    public void withdrawDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void withdrawDisseminator(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
+    public void withdrawDisseminator(String PID, String disseminatorID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void deleteDatastream(java.lang.String PID, java.lang.String datastreamID) throws java.rmi.RemoteException {
+    public void deleteDatastream(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public java.util.Calendar[] purgeDatastream(java.lang.String PID, java.lang.String datastreamID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public fedora.server.types.gen.Datastream getDatastream(java.lang.String PID, java.lang.String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public java.util.Calendar[] purgeDatastream(String PID, String datastreamID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public fedora.server.types.gen.Datastream[] getDatastreams(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream getDatastream(String PID, String datastreamID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String[] listDatastreamIDs(java.lang.String PID, java.lang.String state) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Datastream[] getDatastreams(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+        assertInitialized();
+        return null;
+    }
+
+    public String[] listDatastreamIDs(String PID, String state) throws java.rmi.RemoteException {
         assertInitialized();
         try {
             return w.ListDatastreamIDs(state);
@@ -296,45 +296,45 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         return null;
     }
 
-    public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(java.lang.String PID, java.lang.String datastreamID) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.ComponentInfo[] getDatastreamHistory(String PID, String datastreamID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String addDisseminator(java.lang.String PID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+    public String addDisseminator(String PID, String bMechPID, String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public void modifyDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.lang.String bMechPID, java.lang.String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
+    public void modifyDisseminator(String PID, String disseminatorID, String bMechPID, String dissLabel, fedora.server.types.gen.DatastreamBindingMap bindingMap) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public void deleteDisseminator(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
+    public void deleteDisseminator(String PID, String disseminatorID) throws java.rmi.RemoteException {
         assertInitialized();
     }
 
-    public java.util.Calendar[] purgeDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
-        assertInitialized();
-        return null;
-    }
-
-    public fedora.server.types.gen.Disseminator getDisseminator(java.lang.String PID, java.lang.String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public java.util.Calendar[] purgeDisseminator(String PID, String disseminatorID, java.util.Calendar startDT, java.util.Calendar endDT) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public fedora.server.types.gen.Disseminator[] getDisseminators(java.lang.String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Disseminator getDisseminator(String PID, String disseminatorID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public java.lang.String[] listDisseminatorIDs(java.lang.String PID, java.lang.String state) throws java.rmi.RemoteException {
+    public fedora.server.types.gen.Disseminator[] getDisseminators(String PID, java.util.Calendar asOfDateTime) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
 
-    public fedora.server.types.gen.ComponentInfo[] getDisseminatorHistory(java.lang.String PID, java.lang.String disseminatorID) throws java.rmi.RemoteException {
+    public String[] listDisseminatorIDs(String PID, String state) throws java.rmi.RemoteException {
+        assertInitialized();
+        return null;
+    }
+
+    public fedora.server.types.gen.ComponentInfo[] getDisseminatorHistory(String PID, String disseminatorID) throws java.rmi.RemoteException {
         assertInitialized();
         return null;
     }
