@@ -142,12 +142,16 @@
  <!--     <arg value="saxon.extensions=true"/>
       <arg value="chunk.section.depth=1"/> -->
     </exec>
- <!--   <move todir="dist/devdocs/devguide">
-      <fileset dir=".">
-        <include name="*.html"/>
-      </fileset>
-    </move>
-    -->
+    <echo message="Translating namespaces.dbx to html"/>
+    <exec executable="java">
+      <arg value="-classpath"/>
+      <arg path="res/saxon-6.5/saxon.jar;res/docbook-xsl/extensions/saxon65.jar"/>
+      <arg value="com.icl.saxon.StyleSheet"/>
+      <arg value="-o"/>
+      <arg path="dist/devdocs/namespaces.html"/>
+      <arg path="src/dbx/devdocs/namespaces.dbx"/>
+      <arg path="res/docbook-xsl/html/docbook.xsl"/>
+    </exec>
   </target>
   
   <target name="debug-wsdl"
@@ -239,6 +243,9 @@
 
 <!--
   $Log$
+  Revision 1.9  2002/07/16 16:20:42  cwilper
+  added namespace.dbx translation to html to devdocs target
+
   Revision 1.8  2002/07/16 14:25:40  cwilper
   added target for server
 
