@@ -218,7 +218,8 @@ public class DefaultDOReplicator
 
             if (dissDbIDs.size()==0 || reader.GetDisseminators(null, null).length!=dissDbIDs.size()) {
                 logFinest("DefaultDOReplication.updateComponents: Object "
-                        + "has no disseminators; components dont need updating.");
+                        + "either has no disseminators or a new disseminator"
+                        + "has been added; components dont need updating.");
                 return false;
             }
             results.close();
