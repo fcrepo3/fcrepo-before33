@@ -15,6 +15,8 @@
 	<param name="temp_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
 	<param name="disseminationCacheSize" value="100"/>
 	<param name="debug" value="true"/>
+	<param name="datastreamExpirationLimit" value="5"/>
+	<param name="fedoraServerPort" value="8080"/>
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
 		<comment>
         Description:
@@ -129,7 +131,7 @@
 	</module>
 	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
 		<comment>This module facilitates obtaining external content via HTTP</comment>
-	</module>	
+	</module>
 	<datastore id="remoteMySQLPool">
 		<comment>MySQL database on UVA test host (known to work)</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
