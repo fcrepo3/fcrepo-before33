@@ -2,6 +2,7 @@ package fedora.client.search;
 
 import java.io.*;
 import java.net.MalformedURLException;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -83,7 +84,7 @@ public class AutoFinder {
             throws Exception {
         String firstPart="http://" + host + ":" + port + "/fedora/search?xml=true";
         Downloader dLoader=new Downloader(host, port, "na", "na");
-        String url=firstPart + "&pid=true&query=" + fieldQuery;
+        String url=firstPart + "&pid=true&query=" + URLEncoder.encode(fieldQuery, "UTF-8");
         InputStream in=dLoader.get(url);
         String token="";
         SearchResultParser resultParser;
