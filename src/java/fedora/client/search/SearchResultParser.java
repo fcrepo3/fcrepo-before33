@@ -26,7 +26,7 @@ import org.xml.sax.helpers.*;
  *
  * -----------------------------------------------------------------------------
  */
-class SearchResultParser
+public class SearchResultParser
         extends DefaultHandler {
 
     private boolean READING_PID;
