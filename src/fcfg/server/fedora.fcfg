@@ -297,7 +297,7 @@
             of the repository.
         </comment>
 		<param name="level" value="1"/>
-		<param name="datastoreId" value="localKowariTriplestore"/>
+		<param name="datastore" value="localKowariTriplestore"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>

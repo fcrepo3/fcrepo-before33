@@ -92,21 +92,21 @@ public class ResourceIndexModule extends Module
                     + "connectionPool.", getRole());
         }
         
-        String datastoreId = getParameter("datastoreId");
-        if (datastoreId == null || datastoreId.equals("")) {
+        String datastore = getParameter("datastore");
+        if (datastore == null || datastore.equals("")) {
             throw new ModuleInitializationException(
-                      "datastoreId parameter must be specified.", getRole());
+                      "datastore parameter must be specified.", getRole());
         }
-        Parameterized conf = getServer().getDatastoreConfig(datastoreId);
+        Parameterized conf = getServer().getDatastoreConfig(datastore);
         if (conf == null) {
             throw new ModuleInitializationException(
-                      "No such datastore: " + datastoreId, getRole());
+                      "No such datastore: " + datastore, getRole());
         }
         Map map = conf.getParameters();
         String connectorClassName = (String) map.get("connectorClassName");
         if (connectorClassName == null || connectorClassName.equals("")) {
             throw new ModuleInitializationException(
-                      "Datastore \"" + datastoreId + "\" must specify a "
+                      "Datastore \"" + datastore + "\" must specify a "
                       + "connectorClassName", getRole());
         }
         // params ok, let's init the triplestore
