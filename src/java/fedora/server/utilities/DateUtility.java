@@ -32,7 +32,7 @@ public abstract class DateUtility
   public static Calendar convertStringToCalendar(String dateTime)
   {
     Calendar calendar = null;
-    if (!dateTime.equalsIgnoreCase("") && !(dateTime == null))
+    if (!(dateTime == null) && !dateTime.equalsIgnoreCase(""))
     {
       calendar = Calendar.getInstance();
       ParsePosition pos = new ParsePosition(0);
@@ -54,7 +54,7 @@ public abstract class DateUtility
   public static Date convertStringToDate(String dateTime)
   {
     Date date = null;
-    if (!dateTime.equalsIgnoreCase("") && !(dateTime == null))
+    if (!(dateTime == null) && !dateTime.equalsIgnoreCase(""))
     {
       ParsePosition pos = new ParsePosition(0);
       date = formatter.parse(dateTime, pos);
