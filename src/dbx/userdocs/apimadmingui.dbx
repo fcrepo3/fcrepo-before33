@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSPY v5 rel. 4 U (http://www.xmlspy.com) by Ronda A. Grizzle (University of Virginia) -->
 <!-- <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
 "http://www.altova.com/schemas/docbook/docbookx.dtd">
 <?xmlspysps http://www.altova.com/sps/template/publishing/docbook.sps?>
@@ -255,7 +256,7 @@
 					<title>One Object</title>
 					<mediaobject>
 						<imageobject>
-							<imagedata fileref="images/ingestdirdialog.jpg"/>
+							<imagedata fileref="images/fileingestdirdialog.jpg"/>
 						</imageobject>
 					</mediaobject>
 					<para>Choosing Ingest One Object from File, the user is prompted to select the file name from a dialog box or browse on the local drive(s) for the file to be ingested. Clicking open will cause the file to be ingested. If the repository has been set to retain PIDs on ingest in the fedora.fcfg file, the PID in the object XML will be maintained. Otherwise, the PID will be overwritten. If the PID of the new object matches the PID of an existing object, the existing object will be overwritten.</para>
@@ -387,7 +388,7 @@
 					<para>The Advanced Search query enables users to refine their repository search by searching specific fields for specific values provided in the query. </para>
 					<mediaobject>
 						<imageobject>
-							<imagedata fileref="images/search_adv_cond_dialog.jpg"/>
+							<imagedata fileref="images/srch_adv_cond_dialog.jpg"/>
 						</imageobject>
 					</mediaobject>
 					<para>The search conditions can be modified by clicking the Add button, which opens the Enter Condition dialog.  The user selects the field to be defined from the drop down menu, selects the condition to be matched, and enters the text to be matched, if appropriate. Clicking OK saves the condition. Once all conditions are entered, clicking Search will retrieve a list of objects in which the conditions are met.</para>
