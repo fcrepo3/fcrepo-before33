@@ -64,7 +64,7 @@
 		<copy file="src/mets/batch/beta1-demo1/beta1-demo1.xml" todir="dist/batch/beta1-demo1"/>
 		<mkdir dir="dist/batch/beta1-demo2"/>
 		<copy file="src/mets/batch/beta1-demo2/beta1-demo2.xml" todir="dist/batch/beta1-demo2"/>
-		<copy file="src/mets/batch/beta1-demo2/beta1-demo2-extended.xml" todir="dist/batch/beta1-demo2"/>		
+		<copy file="src/mets/batch/beta1-demo2/beta1-demo2-extended.xml" todir="dist/batch/beta1-demo2"/>
 		<copy todir="dist/batch/beta1-demo1">
 			<fileset dir="src/properties/batch/beta1-demo1"/>
 		</copy>
@@ -448,6 +448,7 @@
 		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/lib"/>
 		<copy file="src/xsl/soapclient/objectmethods.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/xsl/access/viewObjectProfile.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
+		<copy file="src/xsl/soapclient/behaviordefs.xslt" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF/xsl"/>
 		<copy file="src/properties/soapclient/soapclient.properties" todir="dist/server/tomcat41/webapps/soapclient/WEB-INF"/>
 		<copy file="src/web-app/fedora/soapclient/index.html" todir="dist/server/tomcat41/webapps/soapclient"/>
 	</target>
@@ -556,6 +557,9 @@
 </project>
 <!--
   $Log$
+  Revision 1.89  2003/03/05 22:30:42  rlw
+  added copy for new behaviordefs.xslt stylesheet
+
   Revision 1.88  2003/03/05 17:24:48  wdn5e
   copying example.xml to dist
 
