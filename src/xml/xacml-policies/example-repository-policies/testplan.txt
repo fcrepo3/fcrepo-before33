@@ -1,2 +1,0 @@
-1. access to an object, but not to an object there referenced
-

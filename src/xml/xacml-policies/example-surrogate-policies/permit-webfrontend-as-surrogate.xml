@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        PolicyId="permit-surrogate"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <Description>note that other policies may provide exceptions to this broad policy</Description>
+  <Target>
+    <Subjects>
+      <Subject>
+        <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <SubjectAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="webfrontend" MustBePresent="false"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        </SubjectMatch>
+      </Subject>
+    </Subjects>
+    <Actions>
+      <Action>
+        <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:actAsSurrogateFor</AttributeValue>
+        </ActionMatch>
+        <!-- this or similar would limit subjects represented
+        ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="urn:fedora:names:fedora:2.1:action:subjectRepresented"/>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">wdn5e</AttributeValue>
+        </ActionMatch-->
+      </Action>
+    </Actions>    
+    <Resources>
+      <AnyResource/>
+    </Resources>
+  </Target>
+  <Rule RuleId="1" Effect="Permit"/>
+</Policy>
