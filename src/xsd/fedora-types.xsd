@@ -329,7 +329,8 @@
 		<xsd:sequence>
 			<xsd:element name="PID" type="string"/>
 			<xsd:element name="bDefPID" type="string"/>
-			<xsd:element name="MethodName" type="string"/>
+			<xsd:element name="methodName" type="string"/>
+			<xsd:element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
 			<xsd:element name="asOfDate" type="dateTime"/>
 		</xsd:sequence>
 	</xsd:complexType>
