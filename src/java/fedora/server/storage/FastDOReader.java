@@ -356,7 +356,6 @@ public class FastDOReader implements DOReader
           + "parmLabel,"
           + "parmType "
           + " FROM "
-          + "do,"
           + "bDef,"
           + "bMech,"
           + "mechImpl,"
@@ -369,7 +368,6 @@ public class FastDOReader implements DOReader
           + "bMech.bDefDbID=method.bDefDbID AND "
           + "mechImpl.methodDbID=method.methodDbID AND "
           + "bMech.bDefDbID=bDef.bDefDbID AND "
-          + "do.doPID=\'" + PID + "\' AND "
           + "bDef.bDefPID='" + bDefPID + "' AND "
           + "method.methodName='"  + methodName + "' ";
 
