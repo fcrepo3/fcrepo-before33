@@ -562,27 +562,6 @@ public class DefaultDOManager
                             }
                         }
 
-                        // Make new audit record.
-
-                        /*
-                        // SDP: commented out since audit record id is not yet
-                        // auto-incremented and we get XML validation error when
-                        // there are multiple managed content datastreams (we get
-                        // duplicate ID elements in the XML)
-                        a = new AuditRecord();
-                        int numAuditRecs = obj.getAuditRecords().size() + 1;
-                        a.id = "REC-" + numAuditRecs;
-                        a.processType = "API-M";
-                        a.action = "Added a ManagedContent datastream for the first "
-                            + "time. Copied remote content stored at \""
-                            + dmc.DSLocation + "\" and stored it in the Fedora "
-                            + "permanentStore under the id: " + id;
-                        a.responsibility = getUserId(context);
-                        a.date = new Date();
-                        a.justification = logMessage;
-                        obj.getAuditRecords().add(a);
-                        */
-
                         // Reset dsLocation in object to new internal location.
                         dmc.DSLocation = id;
                         logInfo("Replacing ManagedContent datastream with "
@@ -862,6 +841,21 @@ public class DefaultDOManager
                     List dsList=(List) obj.datastreams((String) dsIter.next());
                     for (int i=0; i<dsList.size(); i++) {
                         Datastream ds=(Datastream) dsList.get(i);
+                        // Ensure that the most important required fields are there.
+                        // This is covered by validation later, but if
+                        // we catch it here we can guarantee from this point
+                        // on these things exist
+                        String g = ds.DSControlGrp;
+                        if ( g == null || !(g.equals("M") || g.equals("X") || g.equals("E") || g.equals("R")) ) {
+                            throw new GeneralException("Datastream control group must be M, X, E, or R.");
+                        }
+                        if ( ds.DatastreamID == null || ds.DatastreamID.equals("") ) {
+                            throw new GeneralException("Datastream ID must be set");
+                        }
+                        if ( ds.DSLocation == null || ds.DSLocation.equals("") ) {
+                            throw new GeneralException("Datastream location must be set");
+                        }
+
                         // Set any dates to UTC if not already there!
 						if (ds.DSCreateDT==null || ds.DSCreateDT.equals("")) {
 							ds.DSCreateDT=nowUTC;
@@ -992,6 +986,22 @@ public class DefaultDOManager
                 String message = e.getMessage();
                 if (message == null) message = e.getClass().getName();
                 throw new GeneralException("Error reading/writing temporary ingest file: " + message);
+            } catch (Exception e) {
+                // something failed.  Before throwing the exception, which
+                // may not be informative enough, do a basic validation
+                // of the object (which would throw an exception if it failed)
+                // and if it succeeds, re-throw the original exception
+                if (tempFile != null) {
+				    m_validator.validate(tempFile, format, 0, "ingest");
+                }
+                // since validation succeeded, just re-throw the exception
+                if (e instanceof ServerException) {
+                    ServerException se = (ServerException) e;
+                    throw se;
+                }
+                String message = e.getMessage();
+                if (message == null) message = e.getClass().getName();
+                throw new GeneralException("Ingest failed: " + message);
             } finally {
                 if (tempFile != null) {
                     logFinest("Finally, removing temp file...");
@@ -1053,11 +1063,26 @@ public class DefaultDOManager
 
     /**
      * Validate the format of a PID.
+     *
+     * PIDs are formatted like:
+     *  - namespace-part ":" identifier-part
+     * The PID may not exceed 64 characters, total.
+     * The namespace part:
+     *   - is case sensitive
+     *   - must begin with an alpha character
+     *   - must end with an alpha or numeric character
+     *   - may contain "-" or "."
+     *   - unlike the identifier part, may NOT contain "%"
+     * The identifier part:
+     *   - is case sensitive
+     *   - may only consist of [A-Za-z0-9], "-", "." in any position
+     *   - may also use "%", but "%" must be followed by two hex (0-9A-F)
+     *     characters in normalized form.
      */
     private void assertWellFormedPID(String pid)
             throws MalformedPidException {
-        if (pid.length()>32) {
-            throw new MalformedPidException("Pid is too long.  Max total length is 32 chars.");
+        if (pid.length()>64) {
+            throw new MalformedPidException("Pid is too long.  Max total length is 64 chars.");
         }
         // FIXME: Do other PID syntax validation here
     }
