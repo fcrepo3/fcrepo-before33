@@ -42,7 +42,6 @@
         fedora.server.management.ShutdownServlet
     </servlet-class>
 	</servlet>
-    
 	<!-- Testing servlet to experiment with soap access via a java servlet -->
 	<servlet>
 		<servlet-name>FedoraAccessSoapServlet</servlet-name>
@@ -52,6 +51,13 @@
 		</servlet-class>
 	</servlet>
 	<!-- end test -->
+	<servlet>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<display-name>Fedora Access Datastream Locator</display-name>
+		<servlet-class>
+			fedora.server.storage.DatastreamResolverServlet
+		</servlet-class>
+	</servlet>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/*</url-pattern>
@@ -70,6 +76,10 @@
 		<url-pattern>/access/soapservlet</url-pattern>
 	</servlet-mapping>
 	<!-- end test -->
+	<servlet-mapping>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<url-pattern>/getDS</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>*.jws</url-pattern>
