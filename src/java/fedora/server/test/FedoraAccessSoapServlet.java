@@ -83,7 +83,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
   private static final String CONTENT_TYPE_XML  = "text/xml";
 
   /** Debug toggle for testing */
-  private static final boolean debug = true;
+  private static final boolean debug = false;
 
   /** Dissemination cache size. */
   private static final int DISS_CACHE_SIZE = 100;
