@@ -918,7 +918,7 @@ public abstract class TypeUtility
       out.setBDefPID(in.bDefID);
       out.setBMechLabel(in.bMechLabel);
       out.setBMechPID(in.bMechID);
-      out.setCreateDT(cal);
+      out.setCreateDate(cal);
       out.setID(in.dissID);
       out.setLabel(in.dissLabel);
       out.setState(in.dissState);
@@ -940,7 +940,7 @@ public abstract class TypeUtility
         diss.bDefID = genDisseminator.getBDefPID();
         diss.bMechLabel = genDisseminator.getBMechLabel();
         diss.bMechID = genDisseminator.getBMechPID();
-        diss.dissCreateDT = genDisseminator.getCreateDT().getTime();
+        diss.dissCreateDT = genDisseminator.getCreateDate().getTime();
         diss.dissID = genDisseminator.getID();
         diss.dissLabel = genDisseminator.getLabel();
         diss.dissState = genDisseminator.getState();
