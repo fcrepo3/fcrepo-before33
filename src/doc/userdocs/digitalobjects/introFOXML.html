@@ -1,21 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-
 <head>
   <title>Introduction to Fedora Object XML (FOXML)</title>
-  <meta name="robots" content="all"/>
-  <link href="docstyle.css" rel="stylesheet" type="text/css"/>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
-  <div class="title">
-    <h1>Introduction to Fedora Object XML (FOXML)</h1>
-  </div>
-    <br/>
-  <!-- A sec1 is a top-level section -->
-  <div class="sec1">
-    <h2>1.  What is FOXML? </h2>
+<div id="header">
+    <div id="logo">
+        <a href="../index.html"><img src="../images/fedora_logo108x150.jpg" alt="Fedora logo"/></a>
+    </div>
+    <div id="title">
+    	<h1>Introduction to Fedora Object XML (FOXML)</h1>
+        <h2>Fedora Release 2.0</h2>
+    </div>
+</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+           <ol>
+               	<li><a href="#WHAT">What is FOXML?</a></li>
+               	<li><a href="#WHY">Why FOXML? </a></li>
+               	<li><a href="#EXAMPLE">What does a FOXML instance document look like?</a></li>
+               		<ol  type="square">
+	                 		<li><a href="foxml_reference_example.xml">FOXML Reference Example</a></li>
+	            		</ol>
+                	<li><a href="#SCHEMA"> Where is the FOXML XML schema? </a></li>
+                		<ol  type="square">
+	                 		<li><a href="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">FOXML XML Schema</a></li>
+	            		</ol>
+               	<li><a href="#OTHERXML"> Are other XML Formats supported by Fedora?</a></li>
+           </ol>
+    </div>
+</div>
+
+<div class="sec1">
+    <h2><a name="WHAT">1.  What is FOXML?</a></h2>
     <p>
       FOXML is a simple XML format that directly expresses the <strong>Fedora digital object model</strong>.  As of Fedora 2.0, digital objects will be <em>stored</em> internally in a Fedora repository in the FOXML format.  In addition, FOXML can be used for ingesting and exporting objects to/from Fedora repositories.  The Fedora extension of METS will continue to be supported as an ingest and export format.  In upcoming releases, Fedora will also support other formats for ingest and export such as METS 1.4 and MPEG21/DIDL.</p>
     <p>At the highest level, the FOXML XML schema defines elements that correspond directly to the fundamental Fedora digital object components (see recent <A HREF="http://www.arxiv.org/abs/cs.DL/0501012">paper</A> on Fedora).  Below is a brief sketch of these elements.
@@ -42,23 +66,27 @@
   &lt;/digitalObject&gt;<br/>
       </div>
  </div>
+ 
  <div class="sec1">
-    <h2>2.  Why FOXML? </h2>
+    <h2><a name="WHY">2.  Why FOXML?</a> </h2>
     <p>The introduction of FOXML was motivated by several requirements: (1) simplicity, (2) optimization and performance, and (3) flexibility in evolving Fedora.  Regarding simplicity, user feedback called for a conceptually easy mapping of the Fedora concepts to an XML format.  Users wanted an obvious sense of how to create Fedora ingest files, especially those who are not familiar with formats such as METS and MPEG21/DIDL.  Regarding optimization and performance, the FOXML schema was designed to improve repository performance, both at ingest and during disseminations.  Overall ingest performance has been positively affected with FOXML, especially in the validation phases.  Regarding flexibility, establishing FOXML as the internal storage format for Fedora objects enables easier evolution of functionality in the Fedora repository, without requiring ongoing extensions to other community formats.  </p>
  </div>
+ 
   <div class="sec1">
-    <h2>3.  What does a FOXML instance document look like?   </h2>
+    <h2><a name="EXAMPLE">3.  What does a FOXML instance document look like?  </a>  </h2>
     <p>An example is worth a thousand words.  Therefore, we have provided a fully-annotated digital object encoded in FOXML.  This example is presented from the perspective of how a digital object looks when it is stored inside a Fedora repository.  However, the documentation also indicates how to encode an object in FOXML for ingesting into the repository.  There are certain data attributes that can be omitted in ingest files since the Fedora repository service assigns them.</p>
 
 <p>To learn more, please consult the FOXML <A HREF="foxml_reference_example.xml">reference example</A> now! </p>
  </div>
+ 
  <div class="sec1">
-    <h2>4.  Where is the FOXML XML schema?</h2>
+    <h2><a name="SCHEMA">4.  Where is the FOXML XML schema?</a> </h2>
     <p>
 An offical published version of the <A HREF="http://www.fedora.info/definitions/1/0/foxml1-0.xsd">FOXML XML schema</A> is also published on the Fedora web site.  Also, a copy of the schema is provided with the Fedora open-source distribution.   The Fedora repository service validates all Fedora objects against this schema before objects are permanently stored in the repository.</p>
  </div>
+ 
  <div class="sec1">
-     <h2>5.  Are other XML Formats supported by Fedora?</h2>
+     <h2><a name="OTHERXML">5.   Are other XML Formats supported by Fedora?</a></h2>
     	<p>Yes!  The Fedora repository service is designed to be able to accommodate different XML formats for encoding digital objects through its ingest and export operations, available via the Fedora management service interface (API-M).</p>
 	<p>Currently, Fedora supports ingest and export of the new FOXML format as well as the Fedora extension of the Metadata Encoding and Transmission Standard (METS).  Prior to Fedora 2.0, the METS extension format was the only XML format supported by Fedora.   As of Fedora 2.0, the system is moving in a direction where FOXML will be the preferred internal storage format of Fedora objects, but the repository will accept objects encoded in other formats and will export objects encoded in other formats.   The table below shows existing and planned formats that Fedora will support.</p>
 <TABLE border="1"
@@ -81,5 +109,20 @@ An offical published version of the <A HREF="http://www.fedora.info/definitions/
 	</TR>
 </TABLE>
  </div>
+ 
+ <div id="footer">
+    <div id="copyright">
+        Copyright &#xA9; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
 </body>
 </html>

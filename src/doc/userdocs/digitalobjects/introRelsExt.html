@@ -1,22 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
-
 <head>
-  <title>Fedora Metadata for Object-to-Object Relationships (RELS-EXT)</title>
-  <meta name="robots" content="all"/>
-  <link href="docstyle.css" rel="stylesheet" type="text/css"/>
+  	<title>Fedora Metadata for Object-to-Object Relationships</title>
+    <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
-  <div class="title">
-    <h1>Fedora Metadata for Object-to-Object Relationships (RELS-EXT)</h1>
-  </div>
-    <br/>
-    <br/>
-  <!-- A sec1 is a top-level section -->
+<div id="header">
+    <div id="logo">
+        <a href="../index.html"><img src="../images/fedora_logo108x150.jpg" alt="Fedora logo"/></a>
+    </div>
+    <div id="title">
+    	<h1>Fedora Metadata for Object-to-Object Relationships</h1>
+        <h2>Fedora Release 2.0</h2>
+    </div>
+</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+           <ol>
+               	<li><a href="#WHAT">What are Object-to-Object Relationships?</a></li>
+	               	<ol  type="square">
+	                 		<li><a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora Relationship Ontology (RDFS)</a></li>
+	            		</ol>
+               	<li><a href="#WHY">Why are Fedora Object-to-Object Relationships Important? </a></li>
+               	<li><a href="#WHERE">Where is Object-to-Object Relationship Metadata Stored?</a></li>
+                	<li><a href="#HOW">How is Object-to-Object Metadata Encoded? </a></li>
+               	<li><a href="#INDEXED"> Is the Object-to-Object Relationship Metadata Indexed in Fedora?</a></li>
+           </ol>
+    </div>
+</div>
+
   <div class="sec1">
-    <h2>1.  What are Object-to-Object Relationships? </h2>
+    <h2><a name="WHAT">1.  What are Object-to-Object Relationships?</a></h2>
     <p>
       Fedora digital objects can be related to other Fedora objects in many ways.  For example there may be a Fedora object that represents a collection and other objects that are members of that collection.  Also, it may be the case that one object is considered a part of another object, a derivation of another object, a description of another object, or even equivalent to another object.</p>
     <p>Object-to-Object relationship metadata is a way of asserting these various kinds of relationships for Fedora objects.    A default set of common relationships is defined in the <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology<a/>, although other community or user-defined relationships may also be asserted.   Relationships are asserted from the perspective of one object to another object as in the following general pattern:
@@ -26,8 +46,9 @@
       <div class="code">&lt;MyCatVideo&gt; &lt;is a member of the collection&gt;  &lt;GreatCatVideos&gt;.<br/></div>
  </div>
   <br/> <br/>
+  
  <div class="sec1">
-    <h2>2.  Why are Fedora Object-to-Object Relationships Important? </h2>
+    <h2><a name="WHY">2.  Why are Fedora Object-to-Object Relationships Important?</a></h2>
     <p>The creation of Fedora object-to-object relationship metadata is the basis for enabling advanced access and management functionality driven from metadata that is managed within the repository.  Examples of the uses of relationship metadata include: </p>
       <div class="sec3">
         <ul>
@@ -40,15 +61,16 @@
         </ul>
  </div>
   <br/> <br/>
+  
   <div class="sec1">
-    <h2>3.  Where is Object-to-Object Relationship Metadata Stored? </h2>
+    <h2><a name="WHERE">3.  Where is Object-to-Object Relationship Metadata Stored?</a> </h2>
     <p>Object-to-Object relationships are stored as metadata in digital objects within a special datastream. This datastream is known by the reserved datastream identifier of &quot;RELS-EXT&quot; (which stands for &quot;Relationships-External&quot;).  Each digital object can have one RELS-EXT datastream which is used exclusively for asserting object-to-object relationships.</p>
 <p>A RELS-EXT datastream can be provided as part of a Fedora ingest file.  Alternatively, it can be added to an existing digital object via component operations of the Fedora management service interface (i.e., addDatastream).   Refer to the <A HREF="foxml_reference_example.xml">FOXML reference example</A> to see an example of the RELS-EXT datastream in context.  Modifications to the RELS-EXT datastream are made via the Fedora management interface (i.e., modifyDatastream). </p>
 <p>In Fedora 2.0, the RELS-EXT datastream should be encoded as an Inline XML datastream, meaning that the relationships metadata is expressed directly as XML within the digital object XML file (as opposed the relationship metadata existing in a separate XML file that the digital object points to by reference). </p>
  </div>
   <br/> <br/>
  <div class="sec1">
-    <h2>4.  How is Object-to-Object Metadata Encoded?</h2>
+    <h2><a name="HOW">4.  How is Object-to-Object Metadata Encoded?</a></h2>
     <p>Fedora object-to-object metadata is encoded in XML using the <a href="http://www.w3.org/TR/rdf-primer/">Resource Description Language (RDF)</a>.   The relationship metadata must follow a prescribed RDF/XML authoring style where the subject is encoded using &lt;rdf:Description&gt;, the relationship is a property of the subject, and the target object is bound to the relationship property using the rdf:resource attribute.   The subject and target of a relationship assertion must be URIs that identify Fedora digital objects.  These URIs are based on Fedora object PIDs and conform to the syntax described for the <a href="http://info-uri.info/registry/OAIHandler?verb=GetRecord&metadataPrefix=reg&identifier=info:fedora/">fedora &quot;info&quot; URI scheme.</a>  The syntax for asserting relationships in RDF is as follows: </p>
 	<div class="code">&ltrdf:RDF<br/>
        &nbsp;xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" <br/>
@@ -75,8 +97,22 @@
  </div>
   <br/> <br/>
  <div class="sec1">
-     <h2>5.  Is the Object-to-Object Relationship Metadata Indexed in Fedora?</h2>
+     <h2><a name="INDEXED">5.  Is the Object-to-Object Relationship Metadata Indexed in Fedora?</a></h2>
     	<p>Yes!  The Fedora repository service automatically indexes the RELS-EXT datastreams for all objects as part of the RDF-based Resource Index.   This provides a unified &quot;graph&quot; of all the objects in the repository and their relationships to each other.  The Resource Index graph can be queried using RDQL or ITQL which are SQL-like query languages for RDF.  The Fedora repository service exposes an web service interface to search the Resource Index.  Please refer to the Resource Index documentation for details.</p>
  </div>
+  <div id="footer">
+    <div id="copyright">
+        Copyright &#xA9; 2005 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
 </body>
 </html>
