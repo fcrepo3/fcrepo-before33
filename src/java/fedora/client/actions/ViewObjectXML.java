@@ -26,7 +26,6 @@ public class ViewObjectXML
     
     public ViewObjectXML() {
         super("View Object XML...");
-        m_pids=new HashSet();
         m_prompt=true;
     }
 
@@ -43,7 +42,12 @@ public class ViewObjectXML
     
     public void actionPerformed(ActionEvent ae) {
         if (m_prompt) {
-            m_pids.add(JOptionPane.showInputDialog("Enter the PID."));
+            String pid=JOptionPane.showInputDialog("Enter the PID.");
+            if (pid==null) {
+                return;
+            }
+            m_pids=new HashSet();
+            m_pids.add(pid);
         }
         AutoExporter exporter=null;
         try {
@@ -67,7 +71,7 @@ public class ViewObjectXML
                     textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
                     textEditor.setText(new String(out.toByteArray()));
                     viewFrame.getContentPane().add(new JScrollPane(textEditor));
-                    viewFrame.setSize(300,300);
+                    viewFrame.setSize(600,400);
                     viewFrame.setVisible(true);
                     Administrator.getDesktop().add(viewFrame);
                     try {

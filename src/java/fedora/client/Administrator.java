@@ -41,6 +41,7 @@ import edu.cornell.dlrg.swing.mdi.MDIDesktopPane;
 import edu.cornell.dlrg.swing.mdi.WindowMenu;
 
 import fedora.client.actions.ExportObject;
+import fedora.client.actions.PurgeObject;
 import fedora.client.actions.ViewObjectXML;
 import fedora.client.console.access.AccessConsole;
 import fedora.client.console.management.ManagementConsole;
@@ -199,15 +200,11 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
         fileExport.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E,
                 ActionEvent.CTRL_MASK));
         fileExport.setToolTipText("Exports a serialized Digitial Object to disk.");
-        JMenuItem filePurge=new JMenuItem("Purge...",KeyEvent.VK_P);
+        JMenuItem filePurge=new JMenuItem(new PurgeObject());
+        filePurge.setMnemonic(KeyEvent.VK_P);
         filePurge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
                 ActionEvent.CTRL_MASK));
         filePurge.setToolTipText("Permanently removes a Digitial Object from the repository.");
-        filePurge.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                filePurgeAction();
-            }
-        });
         
         JMenuItem fileSave=new JMenuItem("Save",KeyEvent.VK_S);
         fileSave.setToolTipText("Saves the current Digital Object to the Repository it was opened from");
@@ -452,29 +449,6 @@ try {URL urlObject = new URL("http://www.google.ca/search?q=dog&hl=en&ie=UTF-8&o
             JOptionPane.showMessageDialog(this,
                     e.getClass().getName() + ": " + e.getMessage(),
                     "Export Failure",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }
-    
-    protected void filePurgeAction() {
-        try {
-            String pid=JOptionPane.showInputDialog("Enter the PID."); 
-            if (pid!=null) {
-            String reason=JOptionPane.showInputDialog("Why are you permanently removing this object?"); 
-            if (reason!=null) {
-            String host;
-            int port;
-            host=s_host;
-            port=s_port;
-            AutoPurger purger=new AutoPurger(host, port);
-            purger.purge(pid, reason);
-            JOptionPane.showMessageDialog(this,
-                        "Purge succeeded.");
-            } }
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Purge Failure",
                     JOptionPane.ERROR_MESSAGE);
         }
     }

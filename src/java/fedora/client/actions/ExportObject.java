@@ -21,7 +21,6 @@ public class ExportObject
     
     public ExportObject() {
         super("Export Object...");
-        m_pids=new HashSet();
         m_prompt=true;
     }
 
@@ -48,7 +47,12 @@ public class ExportObject
         }
         if (exporter!=null) {
             if (m_prompt) {
-                m_pids.add(JOptionPane.showInputDialog("Enter the PID."));
+                String pid=JOptionPane.showInputDialog("Enter the PID.");
+                if (pid==null) {
+                   return;
+                }
+                m_pids=new HashSet();
+                m_pids.add(pid);
             }
             Iterator pidIter=m_pids.iterator();
             if (m_pids.size()==1) {
