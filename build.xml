@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- $Id$ -->
-<project name="Fedora" default="all" basedir=".">
+<project name="Fedora" default="serverdist" basedir=".">
 	<property name="fedoraVersion" value="1.1.1"/>
 	<property name="javaClassDebug" value="on"/>
 	<property name="javaClassOptimize" value="off"/>
