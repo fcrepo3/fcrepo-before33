@@ -59,5 +59,15 @@ public abstract class AxisUtility {
         fault.setFaultDetailString(buf.toString());
         return fault;
     }
+    
+    public static void main(String args[]) {
+        if (args.length>0) {
+           if (args[0].equals("deploy")) {
+               System.out.println("TODO");
+           } else {
+               System.out.println("Unrecognized command: " + args[0]);
+           }
+        }
+    }
 
 }
