@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- ************************************************************************************************************ -->
 <!-- This is a sample modify directives file that performs a variety of modfications on the                    -->
-<!-- datastreams of demo object demo:32.  In general, one should always validate a modify              -->
-<!-- directives file against the modifyBatch schema prior to running to catch syntax errors.  Parsing  -->
-<!-- will halt if the file is not valid. Refer to the modifyBatch.xsd schema file for details on the syntax  -->
-<!-- for this file.                                                                                                                                                -->
-<!-- NOTE: The object obj-empty.xml (demo:32) must be ingested into the repository prior to            -->
-<!-- processing this directives file since it requires. If you have not ingested the demo objects,          -->
-<!-- you need to do so prior to running the modiy batch example.                                                            -->
+<!-- datastreams and disseminators of a new demo object (demo:32) that the script will create.       -->
+<!-- In general, one should always validate a modify directives file against the modifyBatch schema -->
+<!-- prior to running to catch syntax errors.  Parsing  will halt if the file is not valid and a log is             -->
+<!-- generated. Refer to the modifyBatch.xsd schema file for details on the syntax  for this file.           -->                                                                                                                                              
 <!-- ************************************************************************************************************ -->
 <fbm:batchModify xmlns:fbm="http://www.fedora.info/definitions/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchModify.xsd">
 
