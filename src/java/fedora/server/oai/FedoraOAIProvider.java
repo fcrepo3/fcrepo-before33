@@ -390,6 +390,7 @@ public class FedoraOAIProvider
     public List getSets(String resumptionToken)
             throws BadResumptionTokenException,
             NoSetHierarchyException, RepositoryException {
+        // no resumptionTokens are currently used on getSets since it's always so small
         throw new BadResumptionTokenException("Not a known resumptionToken.");
     }
     

@@ -77,9 +77,31 @@ public class FedoraOAIProviderModule
                 }
             }
         }
-        long maxSets=100;
-        long maxRecords=50;
-        long maxHeaders=150;
+        FieldSearch fieldSearch=(FieldSearch) getServer().getModule("fedora.server.search.FieldSearch");
+        if (fieldSearch==null) {
+            throw new ModuleInitializationException("FieldSearch module was not loaded, but is required.", getRole());
+        }
+        Module fsModule=(Module) getServer().getModule("fedora.server.search.FieldSearch");
+        
+        if (fsModule.getParameter("maxResults")==null) {
+            throw new ModuleInitializationException(
+                "maxResults parameter must be specified in FieldSearch module's configuration.", getRole());
+        }
+        int maxResults=0;
+        try {
+            maxResults=Integer.parseInt(fsModule.getParameter("maxResults"));
+            if (maxResults<1) {
+                throw new NumberFormatException("");
+            }
+        } catch (NumberFormatException nfe) {
+            throw new ModuleInitializationException(
+                "maxResults specified in FieldSearch module's configuration must be a positive integer.", getRole());
+        }
+        
+        long maxSets=100; // unused for now, but passed in the constructor anyway
+        long maxRecords=maxResults;
+        long maxHeaders=maxResults;
+/* unused for now
         String maxSetsString=getParameter("maxSets");
         if (maxSetsString!=null) {
             try {
@@ -88,10 +110,15 @@ public class FedoraOAIProviderModule
                 throw new ModuleInitializationException("maxSets value is invalid.", getRole());
             }
         }
+*/
         String maxRecordsString=getParameter("maxRecords");
         if (maxRecordsString!=null) {
             try {
                 maxRecords=Long.parseLong(maxRecordsString);
+                if (maxRecords>maxResults) {
+                    logWarning("maxRecords was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
+                    maxRecords=maxResults;
+                }
             } catch (NumberFormatException nfe) {
                 throw new ModuleInitializationException("maxRecords value is invalid.", getRole());
             }
@@ -100,13 +127,13 @@ public class FedoraOAIProviderModule
         if (maxHeadersString!=null) {
             try {
                 maxHeaders=Long.parseLong(maxHeadersString);
+                if (maxHeaders>maxResults) {
+                    logWarning("maxHeaders was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
+                    maxHeaders=maxResults;
+                }
             } catch (NumberFormatException nfe) {
                 throw new ModuleInitializationException("maxHeaders value is invalid.", getRole());
             }
-        }
-        FieldSearch fieldSearch=(FieldSearch) getServer().getModule("fedora.server.search.FieldSearch");
-        if (fieldSearch==null) {
-            throw new ModuleInitializationException("FieldSearch module was not loaded, but is required.", getRole());
         }
         m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
                 "http://" + host + ":" + port + "/fedora/oai", adminEmails, 

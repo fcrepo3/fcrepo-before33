@@ -275,6 +275,7 @@ public class FieldSearchSQLImpl
         while (iter.hasNext()) {
             FieldSearchResultSQLImpl r=(FieldSearchResultSQLImpl) iter.next();
             if (r.isExpired()) {
+                logFine("listSession " + r.getToken() + " expired; will forget it.");
                 m_currentResults.remove(r.getToken());
             }
         }

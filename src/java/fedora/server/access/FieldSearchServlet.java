@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +20,9 @@ import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
+import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
+import fedora.server.utilities.StreamUtility;
 
 public class FieldSearchServlet 
         extends HttpServlet 
@@ -42,8 +45,21 @@ public class FieldSearchServlet
             ReadOnlyContext context = new ReadOnlyContext(h);
 
             String[] fieldsArray=request.getParameterValues("fields");
+            HashSet fieldHash=new HashSet();
+            if (fieldsArray!=null) {
+                for (int i=0; i<fieldsArray.length; i++) {
+                    fieldHash.add(fieldsArray[i]);
+                }
+            }
             String terms=request.getParameter("terms");
             String query=request.getParameter("query");
+            
+            String sessionToken=request.getParameter("sessionToken");
+            
+            // FIXME: It would be nice if this were user-controlled..
+            // but for now you get 25 or less at a time.
+            int maxResults=25;
+            
             String xmlOutput=request.getParameter("xml");
             boolean xml=false;
             if ( (xmlOutput!=null) 
@@ -54,37 +70,37 @@ public class FieldSearchServlet
             StringBuffer xmlBuf=new StringBuffer(); 
             StringBuffer html=new StringBuffer();
             if (!xml) {
-                html.append("<form method=\"get\" action=\"/fedora/search\">");
+                html.append("<form method=\"post\" action=\"/fedora/search\">");
                 html.append("<center><table border=0 cellpadding=8>\n");
                 html.append("<tr><td width=18% valign=top>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"pid\"> Pid<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"label\"> Label<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"fType\"> Fedora Object Type<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cModel\"> Content Model<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"state\"> State<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"locker\"> Locking User<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cDate\"> Creation Date<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"mDate\"> Last Modified Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"pid\"" + (fieldHash.contains("pid") ? " checked" : "") + "> Pid<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"label\"" + (fieldHash.contains("label") ? " checked" : "") + "> Label<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"fType\"" + (fieldHash.contains("fType") ? " checked" : "") + "> Fedora Object Type<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cModel\"" + (fieldHash.contains("cModel") ? " checked" : "") + "> Content Model<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"state\"" + (fieldHash.contains("state") ? " checked" : "") + "> State<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"locker\"" + (fieldHash.contains("locker") ? " checked" : "") + "> Locking User<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"cDate\"" + (fieldHash.contains("cDate") ? " checked" : "") + "> Creation Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"mDate\"" + (fieldHash.contains("mDate") ? " checked" : "") + "> Last Modified Date<br>");
                 html.append("</td><td width=18% valign=top>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"title\"> Title<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"creator\"> Creator<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"subject\"> Subject<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"description\"> Description<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"publisher\"> Publisher<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"contributor\"> Contributor<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"date\"> Date<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"type\"> Type<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"format\"> Format<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"identifier\"> Identifier<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"source\"> Source<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"language\"> Language<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"relation\"> Relation<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"coverage\"> Coverage<br>");
-                html.append("<input type=\"checkbox\" name=\"fields\" value=\"rights\"> Rights<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"title\"" + (fieldHash.contains("title") ? " checked" : "") + "> Title<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"creator\"" + (fieldHash.contains("creator") ? " checked" : "") + "> Creator<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"subject\"" + (fieldHash.contains("subject") ? " checked" : "") + "> Subject<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"description\"" + (fieldHash.contains("description") ? " checked" : "") + "> Description<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"publisher\"" + (fieldHash.contains("publisher") ? " checked" : "") + "> Publisher<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"contributor\"" + (fieldHash.contains("contributor") ? " checked" : "") + "> Contributor<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"date\"" + (fieldHash.contains("date") ? " checked" : "") + "> Date<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"type\"" + (fieldHash.contains("type") ? " checked" : "") + "> Type<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"format\"" + (fieldHash.contains("format") ? " checked" : "") + "> Format<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"identifier\"" + (fieldHash.contains("identifier") ? " checked" : "") + "> Identifier<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"source\"" + (fieldHash.contains("source") ? " checked" : "") + "> Source<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"language\"" + (fieldHash.contains("language") ? " checked" : "") + "> Language<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"relation\"" + (fieldHash.contains("relation") ? " checked" : "") + "> Relation<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"coverage\"" + (fieldHash.contains("coverage") ? " checked" : "") + "> Coverage<br>");
+                html.append("<input type=\"checkbox\" name=\"fields\" value=\"rights\"" + (fieldHash.contains("rights") ? " checked" : "") + "> Rights<br>");
                 //html.append("Fields: <input type=\"text\" name=\"fields\" size=\"15\"> ");
                 html.append("</td><td width=64% valign=top>");
-                html.append("Simple Query: <input type=\"text\" name=\"terms\" size=\"15\"><p> ");
-                html.append("Advanced Query: <input type=\"text\" name=\"query\" size=\"15\"><p>&nbsp;<p> ");
+                html.append("Simple Query: <input type=\"text\" name=\"terms\" size=\"15\" value=\"" + (terms==null ? "" : StreamUtility.enc(terms)) + "\"><p> ");
+                html.append("Advanced Query: <input type=\"text\" name=\"query\" size=\"15\" value=\"" + (query==null ? "" : StreamUtility.enc(query)) + "\"><p>&nbsp;<p> ");
                 html.append("<input type=\"submit\" value=\"Search\"><p> ");
                 html.append("<font size=-1>Choose the fields you want returned by checking the appropriate boxes.");
                 html.append(" For simple queries, fill in the Simple Query box and press Search.  ");
@@ -99,18 +115,21 @@ public class FieldSearchServlet
                 html.append("</form>");
                 html.append("<hr size=\"1\">");
             }
-            if (fieldsArray!=null && fieldsArray.length>0) {
-                List searchResults;
-                if ((terms!=null) && (terms.length()!=0)) {
-                    // FIXME: use max from..params? instead of hardcoding 100
-                    searchResults=s_access.listObjectFields(context, fieldsArray, 
-                            100, new FieldSearchQuery(terms)).objectFieldsList();
+            FieldSearchResult fsr=null;
+            if ((fieldsArray!=null && fieldsArray.length>0)) {
+                if (sessionToken!=null) {
+                    fsr=s_access.resumeListObjectFields(context, sessionToken);
                 } else {
-                    // FIXME: use max from..params? instead of hardcoding 100
-                    searchResults=s_access.listObjectFields(context, fieldsArray,
-                            100, new FieldSearchQuery(Condition.getConditions(
-                            query))).objectFieldsList();
+                    if ((terms!=null) && (terms.length()!=0)) {
+                        fsr=s_access.listObjectFields(context, fieldsArray, 
+                                maxResults, new FieldSearchQuery(terms));
+                    } else {
+                        fsr=s_access.listObjectFields(context, fieldsArray, 
+                                maxResults, new FieldSearchQuery(
+                                Condition.getConditions(query)));
+                    }
                 }
+                List searchResults=fsr.objectFieldsList();
                 if (!xml) {
                     html.append("<center><table width=\"90%\" border=\"0\" cellpadding=\"4\">\n");
                     html.append("<tr>");
@@ -125,7 +144,7 @@ public class FieldSearchServlet
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
                     if (xml) {
-		        xmlBuf.append("  <result>\n");
+		        xmlBuf.append("  <objectFields>\n");
                         for (int j=0; j<fieldsArray.length; j++) {
                             String l=fieldsArray[j];
                             if (l.equalsIgnoreCase("pid")) {
@@ -176,7 +195,7 @@ public class FieldSearchServlet
 			        appendXML(l, f.rights(), xmlBuf);
                             }                        
 			 }
-		         xmlBuf.append("  </result>\n");
+		         xmlBuf.append("  </objectFields>\n");
 		    } else {
                         html.append("<tr>");
                         for (int j=0; j<fieldsArray.length; j++) {
@@ -248,7 +267,45 @@ public class FieldSearchServlet
                     }
                 }
                 if (!xml) {
-                    html.append("</table></center>\n");
+                    html.append("</table>");
+                    if (fsr!=null && fsr.getToken()!=null) {
+                        if (fsr.getCursor()!=-1) {
+                            long viewingStart=fsr.getCursor()+1;
+                            long viewingEnd=fsr.objectFieldsList().size() + viewingStart - 1;
+                            html.append("<p>Viewing results " + viewingStart + " to " + viewingEnd);
+                            if (fsr.getCompleteListSize()!=-1) {
+                                html.append(" of " + fsr.getCompleteListSize());
+                            }
+                            html.append("</p>\n");
+                        }
+                        html.append("<form method=\"post\" action=\"/fedora/search\">");
+                        if (fieldHash.contains("pid")) html.append("<input type=\"hidden\" name=\"fields\" value=\"pid\">");
+                        if (fieldHash.contains("label")) html.append("<input type=\"hidden\" name=\"fields\" value=\"label\">");
+                        if (fieldHash.contains("fType")) html.append("<input type=\"hidden\" name=\"fields\" value=\"fType\">");
+                        if (fieldHash.contains("cModel")) html.append("<input type=\"hidden\" name=\"fields\" value=\"cModel\">");
+                        if (fieldHash.contains("state")) html.append("<input type=\"hidden\" name=\"fields\" value=\"state\">");
+                        if (fieldHash.contains("locker")) html.append("<input type=\"hidden\" name=\"fields\" value=\"locker\">");
+                        if (fieldHash.contains("cDate")) html.append("<input type=\"hidden\" name=\"fields\" value=\"cDate\">");
+                        if (fieldHash.contains("mDate")) html.append("<input type=\"hidden\" name=\"fields\" value=\"mDate\">");
+                        if (fieldHash.contains("title")) html.append("<input type=\"hidden\" name=\"fields\" value=\"title\">");
+                        if (fieldHash.contains("creator")) html.append("<input type=\"hidden\" name=\"fields\" value=\"creator\">");
+                        if (fieldHash.contains("subject")) html.append("<input type=\"hidden\" name=\"fields\" value=\"subject\">");
+                        if (fieldHash.contains("description")) html.append("<input type=\"hidden\" name=\"fields\" value=\"description\">");
+                        if (fieldHash.contains("publisher")) html.append("<input type=\"hidden\" name=\"fields\" value=\"publisher\">");
+                        if (fieldHash.contains("contributor")) html.append("<input type=\"hidden\" name=\"fields\" value=\"contributor\">");
+                        if (fieldHash.contains("date")) html.append("<input type=\"hidden\" name=\"fields\" value=\"date\">");
+                        if (fieldHash.contains("type")) html.append("<input type=\"hidden\" name=\"fields\" value=\"type\">");
+                        if (fieldHash.contains("format")) html.append("<input type=\"hidden\" name=\"fields\" value=\"format\">");
+                        if (fieldHash.contains("identifier")) html.append("<input type=\"hidden\" name=\"fields\" value=\"identifier\">");
+                        if (fieldHash.contains("source")) html.append("<input type=\"hidden\" name=\"fields\" value=\"source\">");
+                        if (fieldHash.contains("language")) html.append("<input type=\"hidden\" name=\"fields\" value=\"language\">");
+                        if (fieldHash.contains("relation")) html.append("<input type=\"hidden\" name=\"fields\" value=\"relation\">");
+                        if (fieldHash.contains("coverage")) html.append("<input type=\"hidden\" name=\"fields\" value=\"coverage\">");
+                        if (fieldHash.contains("rights")) html.append("<input type=\"hidden\" name=\"fields\" value=\"rights\">");
+                        html.append("\n<input type=\"hidden\" name=\"sessionToken\" value=\"" + fsr.getToken() + "\">\n");
+                        html.append("<input type=\"submit\" value=\"More Results &gt;\"></form>");
+                    }
+                    html.append("</center>\n");
                 }
             }
             if (!xml) {
@@ -262,9 +319,25 @@ public class FieldSearchServlet
                 response.setContentType("text/xml");
                 PrintWriter out=response.getWriter();
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-		out.println("<results>");
+		out.println("<result>");
+       if ((fsr!=null) && (fsr.getToken()!=null)) {
+           out.println("  <listSession>");
+           out.println("    <token>" + fsr.getToken() + "</token>");
+           if (fsr.getCursor()!=-1) {
+               out.println("    <cursor>" + fsr.getCursor() + "</cursor>");
+           }
+           if (fsr.getCompleteListSize()!=-1) {
+               out.println("    <completeListSize>" + fsr.getCompleteListSize() + "</completeListSize>");
+           }
+           if (fsr.getExpirationDate()!=null) {
+               out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
+           }
+           out.println("  </listSession>");
+       }
+		out.println("<resultList>");
 		out.println(xmlBuf.toString());
-		out.println("</results>");
+		out.println("</resultList>");
+		out.println("</result>");
             }
         } catch (ServerException se) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

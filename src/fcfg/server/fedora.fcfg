@@ -196,17 +196,42 @@
           - connectionPool (optional, default=ConnectionPoolManager's default)
             The connectionPool providing the connection to the database to
             be used.
+         Warning:
+            When setting these values, keep in mind that while a session 
+            is not timed out (maxSecondsPerSession seconds haven't elapsed,
+            and not all results have been requested), a connection from the
+            pool is tied up.  Therefore, the connectionPool should be at least
+            of size n, large enough to accomodate n simultaneous search
+            sessions.  The longer maxSecondsPerSession is, the more chance
+            you have of tying up all available connections from the pool.
+            Therefore, keep maxSecondsPerSession fairly low, but still
+            reasonable for an automated program or user to serially get
+            a long list of results, and make sure you have a connectionPool
+            large enough to accomodate your users.
         </comment>
 		<param name="maxResults" value="100"/>
 		<param name="maxSecondsPerSession" value="100"/>
 		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool" icarusvalue="remoteMySQLPool"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
-		<comment>Exposes the repository for OAI harvesters.</comment>
+		<comment>
+        Description:
+          Exposes the repository for OAI harvesters.</comment>
+        Parameters:
+          - repositoryName (required)
+            The name of the repository, to be given to OAI harvesters.
+          - adminEmails (required)
+            One or more space-separated email addresses, to be given to OAI harvesters.
+          - friends (optional)
+            A space-separated list of URLs to known OAI provider baseURLs.
+            This is OAI's provider discovery enabler.  Harvesters can use these to crawl OAI providers.
+          - maxRecords (optional, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
+            The maximum number of results to return at a time for ListRecords requests.
+          - maxHeaders (optional, default=FieldSearch:maxResults, imposed maximum=FieldSearch:maxResults)
+            The maximum number of results to return at a time for ListIdentifiers requests.
 		<param name="repositoryName" value="Your Fedora Repository Name Here"/>
 		<param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
 		<param name="friends" value="http://arXiv.org/oai2 http://memory.loc.gov/cgi-bin/oai2_0"/>
-		<param name="maxSets" value="100"/>
 		<param name="maxRecords" value="100"/>
 		<param name="maxHeaders" value="100"/>
 	</module>

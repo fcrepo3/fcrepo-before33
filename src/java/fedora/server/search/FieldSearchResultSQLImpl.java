@@ -276,7 +276,7 @@ public class FieldSearchResultSQLImpl
     }
     
     protected boolean isExpired() {
-        long passedSeconds=System.currentTimeMillis() - m_startMillis;
+        long passedSeconds=(System.currentTimeMillis() - m_startMillis)/1000;
         m_expired=(passedSeconds > m_maxSeconds);
         if (m_expired) {
             // clean up
@@ -305,7 +305,7 @@ public class FieldSearchResultSQLImpl
         // for up to maxResults objects, or until the result set is
         // empty, whichever comes first.
         try {
-            while (m_resultSet.next() && resultCount<=m_maxResults) {
+            while (m_resultSet.next() && resultCount<m_maxResults) {
                 resultCount++;
                 // add the current object from the resultSet to m_objectFields
                 String pid=m_resultSet.getString("pid");
