@@ -201,7 +201,7 @@ public class FieldSearchServlet
                     }
                     html.append("</tr>");
                 }
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 for (int i=0; i<searchResults.size(); i++) {
                     ObjectFields f=(ObjectFields) searchResults.get(i);
                     if (xml) {
@@ -385,7 +385,7 @@ public class FieldSearchServlet
                         out.println("    <completeListSize>" + fsr.getCompleteListSize() + "</completeListSize>");
                     }
                     if (fsr.getExpirationDate()!=null) {
-                        out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
+                        out.println("    <expirationDate>" + new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(fsr.getExpirationDate()) + "</expirationDate>");
                     }
                     out.println("  </listSession>");
                 }

@@ -43,7 +43,7 @@ public class DatastreamPane
         implements ChangeListener {
 
     private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
 
     private String m_pid;
     private Datastream m_mostRecent;
@@ -302,7 +302,7 @@ public class DatastreamPane
         buf.append("/fedora-system:3/getItem");
         if (withDate) {
             buf.append('/');
-            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             buf.append(formatter.format(ds.getCreateDate().getTime()));
         }
         buf.append("?itemID=");

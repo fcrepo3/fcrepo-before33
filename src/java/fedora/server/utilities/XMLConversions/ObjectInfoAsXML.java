@@ -102,7 +102,7 @@ public class ObjectInfoAsXML
     public String getMethodIndex(String reposBaseURL, String PID, ObjectMethodsDef[] methods)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
         out.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         out.append("<object "
@@ -249,7 +249,7 @@ public class ObjectInfoAsXML
     public String getSearchFields(DOReader reader)
             throws ServerException {
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         out.append("<fields>\n");
         out.append("<pid>" + reader.GetObjectPID() + "</pid>\n");
         String label=reader.GetObjectLabel();
@@ -417,7 +417,7 @@ public class ObjectInfoAsXML
     }
     // returns -1 if can't parse as date
     private long parseDateAsNum(String str) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         try {
             Date d=formatter.parse(str);
             return d.getTime();

@@ -536,7 +536,7 @@ public class DisseminationService
    * with an arbitrary counter appended to the end to insure uniqueness. The
    * syntax is of the form:
    * <ul>
-   * <p>YYYY-MM-DD hh:mm:ss.mmm:dddddd where</p>
+   * <p>YYYY-MM-DD HH:mm:ss.mmm:dddddd where</p>
    * <ul>
    * <li>YYYY - year (1900-8099)</li>
    * <li>MM - month (01-12)</li>

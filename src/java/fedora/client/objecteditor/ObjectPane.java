@@ -40,7 +40,7 @@ public class ObjectPane
         extends EditingPane {
 
     private static SimpleDateFormat s_formatter=
-            new SimpleDateFormat("yyyy-MM-dd' at 'hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd' at 'HH:mm:ss");
 
     private String m_pid;
     private String m_state;

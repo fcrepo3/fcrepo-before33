@@ -68,7 +68,7 @@ public class METSLikeDOSerializer
     private String m_XLinkPrefix="xlink";
     private String m_fedoraAuditPrefix="fedora-auditing";
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private static Pattern s_localServerUrlStartWithPort; // "http://actual.hostname:8080/"
     private static Pattern s_localServerUrlStartWithoutPort; // "http://actual.hostname/"

@@ -71,7 +71,7 @@ public class SimpleDOReader
     private String m_encoding;
 
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public SimpleDOReader(Context context, RepositoryReader repoReader,
             DOTranslator translator, String shortExportFormat,

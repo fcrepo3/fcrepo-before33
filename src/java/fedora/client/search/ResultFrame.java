@@ -85,7 +85,7 @@ public class ResultFrame
     private JSortTable m_table;
     private String[] m_rowPids;
     private JButton m_moreButton;
-    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     private static AutoFinder s_finder=null;
 

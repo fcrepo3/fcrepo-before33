@@ -44,7 +44,7 @@ import fedora.server.types.gen.Datastream;
 public class DatastreamConduit {
 
     private FedoraAPIM m_apim;
-    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+    public static SimpleDateFormat FORMATTER=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public DatastreamConduit(String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {

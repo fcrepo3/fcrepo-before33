@@ -709,7 +709,7 @@ public class DefaultManagement
                 // this datastream.
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
-                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+                SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 ArrayList usedList=new ArrayList();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
@@ -781,7 +781,7 @@ public class DefaultManagement
 
     private String getPurgeLogMessage(String kindaThing, String id, Date start,
             Date end, Date[] deletedDates) {
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         StringBuffer buf=new StringBuffer();
         buf.append("Purged ");
         buf.append(kindaThing);

@@ -61,7 +61,7 @@ public class ObjectFields
     private StringBuffer m_currentContent;
     private boolean[] m_want=new boolean[26];
     private SimpleDateFormat m_formatter=
-            new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public final static int PID=0;
     public final static int LABEL=1;

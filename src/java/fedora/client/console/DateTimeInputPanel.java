@@ -14,7 +14,7 @@ import fedora.server.utilities.DateUtility;
  * <p><b>Description:</b> Creates an input panel for entering datetime stamps.
  * The input format must be of the form:</p>
  * <ul>
- * YYYY-MM-DDThh:mm:ss
+ * YYYY-MM-DDTHH:mm:ss
  * </ul>
  * <p>where</p>
  * <ul>

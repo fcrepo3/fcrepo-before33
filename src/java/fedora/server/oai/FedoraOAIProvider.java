@@ -381,7 +381,7 @@ public class FedoraOAIProvider
             return "";
         }
         StringBuffer out=new StringBuffer();
-        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
+        SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         if (from!=null) {
             out.append(" dcmDate>='");
             out.append(formatter.format(from));
