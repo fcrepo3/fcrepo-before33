@@ -219,6 +219,17 @@ best practices:
 7. it's better to fulfill expectations than to simplify a policy and break an expectation
 (if most policies are single-effect, try to have all of them be single-effect, paid for by small policy
 complication)
+8. place AttributeValue before xAttributeDesignator as in the following snippet (xacml silently does this reordering,
+leading to unexpected results, due to bad coding near the end of its TargetMatch.getInstance() method; I'll report
+this bug, but for now, following this best practice will result in expected results, if perhaps harder to 
+understand conditions) 
+<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:dateTime-less-than">
+  <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#dateTime">2004-12-07T20:22:26.705Z</AttributeValue>
+  <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:lastModifiedDate" 
+    DataType="http://www.w3.org/2001/XMLSchema#dateTime"/>
+</ResourceMatch>
+9. avoid using two xAttributeDesignators (without any AttributeValues), until we clarify with Sun how they'll fix
+this.
 
 
 surrogate representing end-user
