@@ -7,16 +7,12 @@ import java.net.URL;
 import java.net.HttpURLConnection;
 import java.util.Date;
 import java.util.Properties;
-
 import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 
+import fedora.server.errors.AuthzOperationalException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 
 /**
@@ -96,6 +92,17 @@ public abstract class AxisUtility {
                 se.getCode()), se.getMessage(), SOAP_ULTIMATE_RECEIVER,
                 null);
         fault.setFaultDetailString(buf.toString());
+        return fault;
+    }
+    
+    public static AxisFault getFault(NotAuthorizedException e) {
+        AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE, e.getCode()), 
+				e.getMessage(), SOAP_ULTIMATE_RECEIVER,
+                null);
+    	String reason = (e instanceof AuthzOperationalException) 
+			? "Operational Failure while Authorizing"
+			: "Not Authorized";
+    	fault.addFaultDetail(new QName("Authz"), reason);
         return fault;
     }
 
