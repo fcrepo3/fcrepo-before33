@@ -72,29 +72,18 @@ public class ServerController
                 }
             }            
         } else if (action.equals("shutdown")) {
-        	System.err.println("shutdown 1");
             if (Server.hasInstance(new File(System.getProperty("fedora.home")))) {
-            	System.err.println("shutdown 2");            	
                 try {
-                	System.err.println("shutdown 3");                	
                     s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-                	System.err.println("shutdown 4");                    
                     s_server.logInfo(requestInfo);
-                	System.err.println("shutdown 5");                    
                 	Context context 
 					= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
-                	System.err.println("shutdown 6");                	
                     s_server.shutdown(context);
-                	System.err.println("shutdown 7");                    
                     lineResponse = "OK";
-                	System.err.println("shutdown 8");                    
                 } catch (Throwable t) {
-                	System.err.println("shutdown 9");                	
                     lineResponse = "ERROR";
-                	System.err.println("shutdown 10");                    
                     System.err.println("Error shutting down Fedora server: " + t.getClass().getName() + ": " + t.getMessage());
                 }
-            	System.err.println("shutdown 11");
             }
         } else if (action.equals("status")) {
         	Context context 
@@ -127,54 +116,6 @@ public class ServerController
 
     public void destroy() {
     }
-
-    /*
-    public static final String FEDORA_SERVER_HOST = "fedoraServerHost";
-    public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
-    public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
-    public static final String ADMIN_USER = "adminUser";
-    public static final String ADMIN_PASSWORD = "adminPassword";
-    public static final Properties getServerProperties(String protocol) 
-    	throws Exception {
-       	Properties properties = new Properties();    	
-        String fedoraHome=System.getProperty("fedora.home");
-        if (fedoraHome==null) {
-        	throw new Exception("ERROR: fedora.home system property not set.");            	
-        }        	
-        File fedoraHomeDir=new File(fedoraHome);
-        File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
-        DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        DocumentBuilder builder=factory.newDocumentBuilder();
-        Element rootElement=builder.parse(fcfgFile).getDocumentElement();
-        NodeList params=rootElement.getElementsByTagName("param");
-        for (int i=0; i<params.getLength(); i++) {
-            Node nameNode=params.item(i).getAttributes().getNamedItem("name");
-            Node valueNode=params.item(i).getAttributes().getNamedItem("value");
-    		if (("http".equals(protocol) && FEDORA_SERVER_PORT.equals(nameNode.getNodeValue()))
-            ||  ("https".equals(protocol) && FEDORA_REDIRECT_PORT.equals(nameNode.getNodeValue()))
-            ||  FEDORA_SERVER_HOST.equals(nameNode.getNodeValue())
-            ||  ADMIN_USER.equals(nameNode.getNodeValue())
-            ||  ADMIN_PASSWORD.equals(nameNode.getNodeValue())) {
-        		properties.put(nameNode.getNodeValue(),valueNode.getNodeValue());            			
-    		}
-        }
-        if ((! properties.containsKey(FEDORA_SERVER_HOST))) {
-        	throw new Exception("fedora.fcfg missing " + "http host");            	
-        }                
-        if ((! properties.containsKey(FEDORA_SERVER_PORT)) 
-        &&  (! properties.containsKey(FEDORA_REDIRECT_PORT))) {
-        	throw new Exception("fedora.fcfg missing " + "http port");            	
-        }
-        if ((! properties.containsKey(ADMIN_USER))) {
-        	throw new Exception("fedora.fcfg missing " + "admin user");            	
-        }
-        if ((! properties.containsKey(ADMIN_PASSWORD))) {
-        	throw new Exception("fedora.fcfg missing " + "admin passwd");            	
-        }            
-    	return properties;
-    }
-    */
 
     //private static final String USAGE = "ERROR: Need one argument: 'startup', 'shutdown', or 'status'";
     private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
