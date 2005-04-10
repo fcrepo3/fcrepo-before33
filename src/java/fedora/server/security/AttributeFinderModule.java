@@ -1,5 +1,7 @@
 package fedora.server.security;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.net.URI;
@@ -8,9 +10,14 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import com.sun.xacml.EvaluationCtx;
+import com.sun.xacml.ParsingException;
 import com.sun.xacml.attr.AttributeValue;
 import com.sun.xacml.attr.BagAttribute;
+import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
+import com.sun.xacml.attr.DateAttribute;
+import com.sun.xacml.attr.TimeAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
 
@@ -92,7 +99,7 @@ import com.sun.xacml.ctx.Status;
 		return this.getClass().getName();
 	}
 	
-	protected final Object getAttributeFromEvaluationCtx(EvaluationResult attribute /*URI type, URI id, URI category, EvaluationCtx context*/) {
+	protected final Object getAttributeFromEvaluationResult(EvaluationResult attribute /*URI type, URI id, URI category, EvaluationCtx context*/) {
 		if (attribute.indeterminate()) {
 			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "indeterminate");
 			return null;			
@@ -254,22 +261,87 @@ import com.sun.xacml.ctx.Status;
 		Set set = new HashSet();
 		if (temp instanceof String) {
 			log("AttributeFinder:findAttribute" + " will return a " + "String " + iAm());
-			set.add(new StringAttribute((String)temp));			
+			if (attributeType.toString().equals(StringAttribute.identifier)) {
+				set.add(new StringAttribute((String)temp));				
+			} else if (attributeType.toString().equals(DateTimeAttribute.identifier)) {
+				DateTimeAttribute tempDateTimeAttribute;
+				try {
+					tempDateTimeAttribute = DateTimeAttribute.getInstance((String)temp);
+					set.add(tempDateTimeAttribute); 
+				} catch (Throwable t) {
+				}				
+			} else if (attributeType.toString().equals(DateAttribute.identifier)) {
+				DateAttribute tempDateAttribute;
+				try {
+					tempDateAttribute = DateAttribute.getInstance((String)temp);
+					set.add(tempDateAttribute); 
+				} catch (Throwable t) {
+				}				
+			} else if (attributeType.toString().equals(TimeAttribute.identifier)) {
+				TimeAttribute tempTimeAttribute;
+				try {
+					tempTimeAttribute = TimeAttribute.getInstance((String)temp);
+					set.add(tempTimeAttribute); 
+				} catch (Throwable t) {
+				}
+			} else if (attributeType.toString().equals(IntegerAttribute.identifier)) {
+				IntegerAttribute tempIntegerAttribute;
+				try {
+					tempIntegerAttribute = IntegerAttribute.getInstance((String)temp);
+					set.add(tempIntegerAttribute); 
+				} catch (Throwable t) {
+				}
+			}  //xacml fixup
+			//was set.add(new StringAttribute((String)temp));			
 		} else if (temp instanceof String[]) {
 			log("AttributeFinder:findAttribute" + " will return a " + "String[] " + iAm());
 			for (int i = 0; i < ((String[])temp).length; i++) {
-				set.add(new StringAttribute(((String[])temp)[i]));			
+				if (attributeType.toString().equals(StringAttribute.identifier)) {
+					set.add(new StringAttribute(((String[])temp)[i]));				
+				} else if (attributeType.toString().equals(DateTimeAttribute.identifier)) {
+log("USING AS DATETIME:" + ((String[])temp)[i]);
+					DateTimeAttribute tempDateTimeAttribute;
+					try {
+						tempDateTimeAttribute = DateTimeAttribute.getInstance(((String[])temp)[i]);
+						set.add(tempDateTimeAttribute); 
+					} catch (Throwable t) {
+					}
+				} else if (attributeType.toString().equals(DateAttribute.identifier)) {
+					log("USING AS DATE:" + ((String[])temp)[i]);
+					DateAttribute tempDateAttribute;
+					try {
+						tempDateAttribute = DateAttribute.getInstance(((String[])temp)[i]);
+						set.add(tempDateAttribute); 
+					} catch (Throwable t) {
+					}
+				} else if (attributeType.toString().equals(TimeAttribute.identifier)) {
+					log("USING AS TIME:" + ((String[])temp)[i]);
+					TimeAttribute tempTimeAttribute;
+					try {
+						tempTimeAttribute = TimeAttribute.getInstance(((String[])temp)[i]);
+						set.add(tempTimeAttribute); 
+					} catch (Throwable t) {
+					}
+				} else if (attributeType.toString().equals(IntegerAttribute.identifier)) {
+					log("USING AS INTEGER:" + ((String[])temp)[i]);
+					IntegerAttribute tempIntegerAttribute;
+					try {
+						tempIntegerAttribute = IntegerAttribute.getInstance(((String[])temp)[i]);
+						set.add(tempIntegerAttribute); 
+					} catch (Throwable t) {
+					}					
+				}  //xacml fixup				
+//was set.add(new StringAttribute(((String[])temp)[i]));			
 			}
 		} 
-		return new EvaluationResult(new BagAttribute(attributeType, set));
-				
+		return new EvaluationResult(new BagAttribute(attributeType, set));				
 	}
 	
 	protected final URI STRING_ATTRIBUTE_URI;
 	
 	abstract protected Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context);
 	
-	public static boolean log = false; 
+	public static boolean log = true; 
 	
 	protected final void log(String msg) {
 		if (! log) return;

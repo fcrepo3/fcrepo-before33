@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,11 +29,16 @@ import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.ParsingException;
 import com.sun.xacml.Policy;
 import com.sun.xacml.PolicySet;
+import com.sun.xacml.attr.AttributeValue;
+import com.sun.xacml.attr.BagAttribute;
+import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.combine.PolicyCombiningAlgorithm;
+import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
 import com.sun.xacml.finder.PolicyFinder;
 import com.sun.xacml.finder.PolicyFinderResult;
 import fedora.server.ReadOnlyContext;
+import fedora.common.Constants;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
@@ -286,13 +292,88 @@ System.err.println(">>>>>>>>filepath=" + filepath);
     	ERROR_CODE_LIST.add(Status.STATUS_PROCESSING_ERROR);    	
     }
     
+    /*copy of code in AttributeFinderModule; consider refactoring*/
+	protected final Object getAttributeFromEvaluationResult(EvaluationResult attribute /*URI type, URI id, URI category, EvaluationCtx context*/) {
+		if (attribute.indeterminate()) {
+			return null;			
+		}
+
+		if ((attribute.getStatus() != null) && ! Status.STATUS_OK.equals(attribute.getStatus())) { 
+			return null;
+		} // (resourceAttribute.getStatus() == null) == everything is ok
+
+		AttributeValue attributeValue = attribute.getAttributeValue();
+		if (! (attributeValue instanceof BagAttribute)) {
+			return null;
+		}
+
+		BagAttribute bag = (BagAttribute) attributeValue;
+		if (1 != bag.size()) {
+			return null;
+		} 
+			
+		Iterator it = bag.iterator();
+		Object element = it.next();
+		
+		if (element == null) {
+			return null;
+		}
+		
+		if (it.hasNext()) {
+			log(element.toString());
+			while(it.hasNext()) {
+				log((it.next()).toString());									
+			}
+			return null;
+		}
+		
+		return element;
+	}
+    
+    private final String getPid(EvaluationCtx context) {
+		URI resourceIdType = null;
+		URI resourceIdId = null;
+		try {
+			resourceIdType = new URI(StringAttribute.identifier);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			resourceIdId = new URI(Constants.OBJECT.PID.uri);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		EvaluationResult attribute = context.getResourceAttribute(resourceIdType, resourceIdId, null);    
+		Object element = getAttributeFromEvaluationResult(attribute);
+		if (element == null) {
+			log("PolicyFinderModule:getPid" + " exit on " + "can't get contextId on request callback");
+			return null;
+		}
+
+		if (! (element instanceof StringAttribute)) {
+			log("PolicyFinderModule:getPid" + " exit on " + "couldn't get contextId from xacml request " + "non-string returned");
+			return null;			
+		}
+ 
+		String pid = ((StringAttribute) element).getValue();			
+		
+		if (pid == null) {
+			log("PolicyFinderModule:getPid" + " exit on " + "null contextId");
+			return null;			
+		}
+
+		return pid;				
+    }
+    
     /* return a deny-biased policy set which includes all repository-wide and any object-specific policies
      */
     public PolicyFinderResult findPolicy(EvaluationCtx context) {
 		PolicyFinderResult policyFinderResult = null;
 		try {
 	    	List policies = new Vector(repositoryPolicies);
-			String pid = context.getResourceId().encode();
+			String pid = getPid(context);
 			if ((pid != null) && ! "".equals(pid)) {
 		    	AbstractPolicy objectPolicyFromObject = getObjectPolicyFromObject(pid);
 		    	if (objectPolicyFromObject != null) {

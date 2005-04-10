@@ -36,57 +36,6 @@ public class DefaultAuthorization extends Module implements Authorization {
 	boolean enforceListObjectInFieldSearchResults = true;
 	boolean enforceListObjectInResourceIndexResults = true;
 
-
-	
-
-	/*
-	private final URI ACTION_NEW_STATE_URI;
-	private final URI ACTION_DATASTREAM_NEW_STATE_URI;
-	private final URI ACTION_DISSEMINATOR_NEW_STATE_URI;
-	
-
-	//private final URI RESOURCE_PID_URI;	
-	private final URI RESOURCE_AS_OF_DATE_URI;
-	//private final URI RESOURCE_STATE_URI;
-	private final URI RESOURCE_DATASTREAM_ID_URI;	
-	//private final URI RESOURCE_DATASTREAM_NAMESPACE_URI;	
-	private final URI RESOURCE_DATASTREAM_STATE_URI;
-	private final URI RESOURCE_DATASTREAM_LOCATION_URI;
-	private final URI RESOURCE_DATASTREAM_CONTROL_GROUP_URI;
-	private final URI RESOURCE_BDEF_PID_URI;
-	private final URI RESOURCE_BDEF_NAMESPACE_URI;
-	private final URI RESOURCE_BMECH_PID_URI;	
-	private final URI RESOURCE_BMECH_NAMESPACE_URI;
-	private final URI RESOURCE_DISSEMINATOR_PID_URI;
-	private final URI RESOURCE_DISSEMINATOR_NAMESPACE_URI;
-	private final URI RESOURCE_DISSEMINATOR_STATE_URI;
-	private final URI RESOURCE_DISSEMINATOR_METHOD_URI;
-	//private final URI RESOURCE_DISSEMINATED_PID_URI;
-	//private final URI RESOURCE_DISSEMINATED_NAMESPACE_URI;
-	private final URI RESOURCE_N_NEW_PIDS_URI;
-	
-
-	private final URI ENVIRONMENT_CURRENT_DATETIME_URI;
-	private final URI ENVIRONMENT_CURRENT_DATE_URI;
-	private final URI ENVIRONMENT_CURRENT_TIME_URI;
-	private final URI ENVIRONMENT_REQUEST_PROTOCOL_URI;
-	private final URI ENVIRONMENT_REQUEST_SCHEME_URI;
-	private final URI ENVIRONMENT_REQUEST_SECURITY_URI;
-	private final URI ENVIRONMENT_REQUEST_AUTHTYPE_URI;
-	private final URI ENVIRONMENT_REQUEST_METHOD_URI;	
-	private final URI ENVIRONMENT_REQUEST_SESSION_ENCODING_URI;	
-	private final URI ENVIRONMENT_REQUEST_SESSION_STATUS_URI;		
-	private final URI ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI;
-	private final URI ENVIRONMENT_REQUEST_CONTENT_TYPE_URI;
-	private final URI ENVIRONMENT_REQUEST_SOAP_OR_REST_URI;
-	private final URI ENVIRONMENT_CLIENT_FQDN_URI;
-	private final URI ENVIRONMENT_CLIENT_IP_URI;
-	private final URI ENVIRONMENT_SERVER_FQDN_URI;
-	private final URI ENVIRONMENT_SERVER_IP_URI;	
-	private final URI ENVIRONMENT_SERVER_PORT_URI;		
-	//private final URI RESOURCE_STATE_URI; 
-	 */
-
 	private String surrogatePoliciesDirectory = "";
 	private String repositoryPoliciesDirectory = "";
 	private String objectPoliciesDirectory = "";
@@ -148,65 +97,6 @@ public class DefaultAuthorization extends Module implements Authorization {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE);
     }
 	System.err.println("DefaultAuthorization constructor end");
- /*
-	try {
-		ACTION_NEW_STATE_URI = new URI(ACTION_NEW_STATE_URI_STRING);		
-		ACTION_DATASTREAM_NEW_STATE_URI = new URI(ACTION_DATASTREAM_NEW_STATE_URI_STRING);		
-		ACTION_DISSEMINATOR_NEW_STATE_URI = new URI(ACTION_DISSEMINATOR_NEW_STATE_URI_STRING);	
-
-		//RESOURCE_ID_URI = new URI(RESOURCE_ID_URI_STRING);		
-		//RESOURCE_NAMESPACE_URI = new URI(RESOURCE_NAMESPACE_URI_STRING);
-		RESOURCE_AS_OF_DATE_URI = new URI(Constants.RESOURCE.AS_OF_DATE.uri);
-		//RESOURCE_STATE_URI = new URI(RESOURCE_STATE_URI_STRING);
-		
-		RESOURCE_DATASTREAM_ID_URI = new URI(Constants.RESOURCE.DATASTREAM_ID.uri);
-		//RESOURCE_DATASTREAM_NAMESPACE_URI = new URI(RESOURCE_DATASTREAM_NAMESPACE_URI_STRING);
-		RESOURCE_DATASTREAM_STATE_URI = new URI(Constants.RESOURCE.DATASTREAM_ID.uri);
-		RESOURCE_DATASTREAM_LOCATION_URI = new URI(RESOURCE_DATASTREAM_LOCATION_URI_STRING);
-		RESOURCE_DATASTREAM_CONTROL_GROUP_URI = new URI(RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING);
-
-		RESOURCE_BDEF_PID_URI = new URI(RESOURCE_BDEF_PID_URI_STRING);
-		RESOURCE_BDEF_NAMESPACE_URI = new URI(RESOURCE_BDEF_NAMESPACE_URI_STRING);
-
-		RESOURCE_BMECH_PID_URI = new URI(RESOURCE_BMECH_PID_URI_STRING);
-		RESOURCE_BMECH_NAMESPACE_URI = new URI(RESOURCE_BMECH_NAMESPACE_URI_STRING);
-		
-		RESOURCE_DISSEMINATOR_PID_URI = new URI(RESOURCE_DISSEMINATOR_PID_URI_STRING);		
-		RESOURCE_DISSEMINATOR_NAMESPACE_URI = new URI(RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING);		
-		RESOURCE_DISSEMINATOR_STATE_URI = new URI(RESOURCE_DISSEMINATOR_STATE_URI_STRING);		
-		RESOURCE_DISSEMINATOR_METHOD_URI = new URI(RESOURCE_DISSEMINATOR_METHOD_URI_STRING);	
-		//RESOURCE_DISSEMINATED_PID_URI = new URI(RESOURCE_DISSEMINATED_PID_URI_STRING);		
-		//RESOURCE_DISSEMINATED_NAMESPACE_URI = new URI(RESOURCE_DISSEMINATED_NAMESPACE_URI_STRING);		
-		
-		//RESOURCE_PID_URI = new URI(RESOURCE_PID_URI_STRING);
-
-		RESOURCE_N_NEW_PIDS_URI = new URI(RESOURCE_N_NEW_PIDS_URI_STRING);
-
-		ENVIRONMENT_CURRENT_DATETIME_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_DATE_TIME.uri);
-		ENVIRONMENT_CURRENT_DATE_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_DATE.uri);
-		ENVIRONMENT_CURRENT_TIME_URI = new URI(Constants.POLICY_ENVIRONMENT.CURRENT_TIME.uri);		
-		ENVIRONMENT_REQUEST_PROTOCOL_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_PROTOCOL.uri);
-		ENVIRONMENT_REQUEST_SCHEME_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SCHEME.uri);
-		ENVIRONMENT_REQUEST_SECURITY_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SECURITY.uri);
-		ENVIRONMENT_REQUEST_AUTHTYPE_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_AUTHTYPE.uri);
-		ENVIRONMENT_REQUEST_METHOD_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_METHOD.uri);	
-		ENVIRONMENT_REQUEST_SESSION_ENCODING_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_ENCODING.uri);	
-		ENVIRONMENT_REQUEST_SESSION_STATUS_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SESSION_STATUS.uri);		
-		ENVIRONMENT_REQUEST_CONTENT_LENGTH_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_LENGTH.uri);
-		ENVIRONMENT_REQUEST_CONTENT_TYPE_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CONTENT_TYPE.uri);
-		ENVIRONMENT_REQUEST_SOAP_OR_REST_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_MESSAGE_PROTOCOL.uri);
-		ENVIRONMENT_CLIENT_FQDN_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_FQDN.uri);		
-		ENVIRONMENT_CLIENT_IP_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_CLIENT_IP_ADDRESS.uri);
-		ENVIRONMENT_SERVER_FQDN_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_FQDN.uri);
-		ENVIRONMENT_SERVER_IP_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_IP_ADDRESS.uri);	
-		ENVIRONMENT_SERVER_PORT_URI = new URI(Constants.POLICY_ENVIRONMENT.REQUEST_SERVER_PORT.uri);	
-		//RESOURCE_STATE_URI = new URI(RESOURCE_STATE);
-
-	} catch (URISyntaxException e) {
-    	System.err.println("ERROR ON MAKING URIs");
-		throw new ModuleInitializationException("couldn't make URIs", getRole(), e);
-	}
-	*/
   }
 
   
@@ -245,9 +135,6 @@ public class DefaultAuthorization extends Module implements Authorization {
         Transom.getInstance().setSurrogatePolicyDirectory(surrogatePolicyDirectoryFile);
     }
   }
-
-	//private static final boolean enforceResourceIndexList = true;
-  	//private static final boolean enforceSearchList = true;
   
 	private final String extractNamespace(String pid) {
 		String namespace = "";
@@ -258,11 +145,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 		return namespace;
 	}
 	
-
-	
-	// private final Set wrapResources(String resourceId) {} no such method :. all resource attributes in context
-	
-	public final void enforceAddDatastream(Context context, String pid, String dsId, String dsLocation, String controlGroup, String dsState) 
+	public final void enforceAddDatastream(Context context, String pid, String dsId, 
+			String[] altIDs, //how to handle altIDs?
+			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState)
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.ADD_DATASTREAM.uri;
 		log("enforcing " + target);
@@ -270,10 +155,12 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap resourceAttributes = new MultiValueMap();
 		String name = "";
 		try {
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.MIME_TYPE.uri, MIMEType);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.FORMAT_URI.uri, formatURI);			
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.STATE.uri, dsState);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, dsId);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.LOCATION.uri, dsLocation);
-			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_CONTROL_GROUP.uri, controlGroup);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.CONTROL_GROUP.uri, controlGroup);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -282,20 +169,40 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
-	public final void enforceAddDisseminator(Context context, String pid) 
+	public final void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState)
 	throws NotAuthorizedException { 
 		String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
-		context.setResourceAttributes(null);
+		MultiValueMap resourceAttributes = new MultiValueMap();
+		String name = "";
+		try {
+			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.BDEF_PID.uri, bDefPid);
+			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.BMECH_PID.uri, bMechPid);			
+			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.STATE.uri, dissState);
+		} catch (Exception e) {
+			context.setResourceAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 		
-	public final void enforceExportObject(Context context, String pid) 
+	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String encoding)
 	throws NotAuthorizedException { 
 		String target = Constants.ACTION.EXPORT_OBJECT.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
+		MultiValueMap actionAttributes = new MultiValueMap();
+		String name = "";
+		try { 
+			name = actionAttributes.setReturn(Constants.ACTION.FORMAT_URI.uri, format);
+			name = actionAttributes.setReturn(Constants.ACTION.EXPORT_CONTEXT.uri, exportContext);			
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);
+		} catch (Exception e) {
+			context.setResourceAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}			
@@ -337,7 +244,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", namespace, context);
 	}	
 
-	public final void enforceGetDatastream(Context context, String pid, String datastreamId) 
+	public final void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) 
 	throws NotAuthorizedException { 
 		String target = Constants.ACTION.GET_DATASTREAM.uri;
 		log("enforcing " + target);
@@ -346,6 +253,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, asOfDateTime);			
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -455,20 +363,37 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
-	public final void enforceGetObjectXML(Context context, String pid) 
+	public final void enforceGetObjectXML(Context context, String pid, String encoding) 
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.GET_OBJECT_XML.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
+		MultiValueMap actionAttributes = new MultiValueMap();
+		String name = "";
+		try {
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);	
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);		
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}		
 	
-	public final void enforceIngestObject(Context context, String pid) 
+	public final void enforceIngestObject(Context context, String pid, String format, String encoding)
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.INGEST_OBJECT.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
+		MultiValueMap actionAttributes = new MultiValueMap();
+		String name = "";
+		try {
+			name = actionAttributes.setReturn(Constants.ACTION.FORMAT_URI.uri, format);	
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);			
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
@@ -495,17 +420,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 	}
 
-	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String datastreamNewLocation, String datastreamNewState) 
+	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, 
+			String[] altIDs, // how to handle? 
+			String datastreamNewMimeType, String datastreamNewFormatURI, String datastreamNewLocation, String datastreamNewState) //x
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
+		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_MIME_TYPE.uri, datastreamNewMimeType);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_FORMAT_URI.uri, datastreamNewFormatURI);			
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_LOCATION.uri, datastreamNewLocation);			
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
+		
+		MultiValueMap resourceAttributes = new MultiValueMap();
+		name = "";
+		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
-			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_LOCATION.uri, datastreamNewLocation);			
-			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -514,16 +451,27 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
-	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String newDatastreamState) 
+	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, 
+			String[] altIDs, // how to handle?
+			String newDatastreamMimeType, String newDatastreamFormatURI, String newDatastreamState)
 	throws NotAuthorizedException { 
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_VALUE.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
+		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_MIME_TYPE.uri, newDatastreamMimeType);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_FORMAT_URI.uri, newDatastreamFormatURI);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, newDatastreamState);
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
+		MultiValueMap resourceAttributes = new MultiValueMap();
+		name = "";
+		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
-			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, newDatastreamState);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -570,13 +518,21 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
-	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId) 
+	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.PURGE_DATASTREAM.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
+		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
+		try {
+			name = actionAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, endDT);	
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
+		MultiValueMap resourceAttributes = new MultiValueMap();
+		name = "";
 		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);	
 		} catch (Exception e) {
@@ -587,13 +543,21 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 
-	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId) 
+	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT)
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
 		log("enforcing " + target);
-		context.setActionAttributes(null);
-		MultiValueMap resourceAttributes = new MultiValueMap();
+		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
+		try {
+			name = actionAttributes.setReturn(Constants.DISSEMINATOR.AS_OF_DATETIME.uri, endDT);	
+		} catch (Exception e) {
+			context.setActionAttributes(null);		
+			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+		}
+		context.setActionAttributes(actionAttributes);
+		MultiValueMap resourceAttributes = new MultiValueMap();
+		name = "";
 		try {
 			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.ID.uri, disseminatorId);	
 		} catch (Exception e) {
@@ -852,7 +816,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
-	  private boolean log = false;
+	  private boolean log = true;
 	  
 	  private final void log(String msg) {
 	  	if (log) {

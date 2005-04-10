@@ -70,17 +70,18 @@ public interface Authorization {
 
 	//APIM 
 
-	public void enforceAddDatastream(Context context, String pid, String dsId, String dsLocation, String controlGroup, String dsState) 
-	throws NotAuthorizedException;
-
-	public void enforceAddDisseminator(Context context, String pid) 
+	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
+			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState) 
 	throws NotAuthorizedException;
 	
-	public void enforceExportObject(Context context, String pid) 
+	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
+	throws NotAuthorizedException;
+	
+	public void enforceExportObject(Context context, String pid, String format, String exportContext, String encoding) 
 	throws NotAuthorizedException;
 
-	public void enforceGetDatastream(Context context, String pid, String datastreamId) 
-	throws NotAuthorizedException;
+	public void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) //x 
+	throws NotAuthorizedException; 
 
 	public void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
 	throws NotAuthorizedException;
@@ -103,10 +104,10 @@ public interface Authorization {
 	public void enforceGetObjectProperties(Context context, String pid) 
 	throws NotAuthorizedException;
 	
-	public void enforceGetObjectXML(Context context, String pid) 
+	public void enforceGetObjectXML(Context context, String pid, String encoding) 
 	throws NotAuthorizedException;
 
-	public void enforceIngestObject(Context context, String pid) 
+	public void enforceIngestObject(Context context, String pid, String format, String encoding) 
 	throws NotAuthorizedException;
 	
 	public void enforceListObjectInFieldSearchResults(Context context, String pid) 
@@ -115,10 +116,12 @@ public interface Authorization {
 	public void enforceListObjectInResourceIndexResults(Context context, String pid) 
 	throws NotAuthorizedException;
 
-	public void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String datastreamLocation, String datastreamState) 
+	public void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String[] altIDs, 
+			String mimeType, String formatURI, String datastreamNewLocation, String datastreamNewState)
 	throws NotAuthorizedException;
-	
-	public void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String datastreamState) 
+
+	public void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String[] altIDs, 
+			String mimeType, String formatURI, String newDatastreamState)
 	throws NotAuthorizedException;
 	
 	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
@@ -127,10 +130,10 @@ public interface Authorization {
 	public void enforceModifyObject(Context context, String pid, String objectState) 
 	throws NotAuthorizedException;
 	
-	public void enforcePurgeDatastream(Context context, String pid, String datastreamId) 
+	public void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
 	throws NotAuthorizedException;
 
-	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId) 
+	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT) //x
 	throws NotAuthorizedException;
 
 	public void enforcePurgeObject(Context context, String pid) 

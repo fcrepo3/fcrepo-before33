@@ -5,6 +5,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
+import com.sun.xacml.attr.DateAttribute;
+import com.sun.xacml.attr.IntegerAttribute;
+import com.sun.xacml.attr.TimeAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 
@@ -31,23 +35,23 @@ import fedora.server.Context;
 			registerSupportedDesignatorType(AttributeDesignator.RESOURCE_TARGET); //<<?????
 			registerSupportedDesignatorType(AttributeDesignator.ENVIRONMENT_TARGET);
 
-			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, StringAttribute.identifier);
-			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.ENVIRONMENT.CURRENT_TIME.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.HTTP_REQUEST.PROTOCOL.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.SCHEME.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.SECURITY.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.AUTHTYPE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.METHOD.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.HTTP_REQUEST.SESSION_STATUS.uri, StringAttribute.identifier);		
-			registerAttribute(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.HTTP_REQUEST.SERVER_FQDN.uri, StringAttribute.identifier);
-			registerAttribute(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, StringAttribute.identifier);	
-			registerAttribute(Constants.HTTP_REQUEST.SERVER_PORT.uri, StringAttribute.identifier);				
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, Constants.ENVIRONMENT.CURRENT_DATE_TIME.datatype);
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_DATE.uri, Constants.ENVIRONMENT.CURRENT_DATE.datatype);
+			registerAttribute(Constants.ENVIRONMENT.CURRENT_TIME.uri, Constants.ENVIRONMENT.CURRENT_TIME.datatype);	
+			registerAttribute(Constants.HTTP_REQUEST.PROTOCOL.uri, Constants.HTTP_REQUEST.PROTOCOL.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.SCHEME.uri, Constants.HTTP_REQUEST.SCHEME.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.SECURITY.uri, Constants.HTTP_REQUEST.SECURITY.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.AUTHTYPE.uri, Constants.HTTP_REQUEST.AUTHTYPE.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.METHOD.uri, Constants.HTTP_REQUEST.METHOD.datatype);	
+			registerAttribute(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, Constants.HTTP_REQUEST.SESSION_ENCODING.datatype);	
+			registerAttribute(Constants.HTTP_REQUEST.SESSION_STATUS.uri, Constants.HTTP_REQUEST.SESSION_STATUS.datatype);		
+			registerAttribute(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, Constants.HTTP_REQUEST.CONTENT_LENGTH.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, Constants.HTTP_REQUEST.CONTENT_TYPE.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, Constants.HTTP_REQUEST.CLIENT_FQDN.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.datatype);	
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_FQDN.uri, Constants.HTTP_REQUEST.SERVER_FQDN.datatype);
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.datatype);	
+			registerAttribute(Constants.HTTP_REQUEST.SERVER_PORT.uri, Constants.HTTP_REQUEST.SERVER_PORT.datatype);				
 
 			attributesDenied.add(PolicyEnforcementPoint.XACML_SUBJECT_ID);
 			attributesDenied.add(PolicyEnforcementPoint.XACML_ACTION_ID);
@@ -84,7 +88,7 @@ import fedora.server.Context;
 		log("ContextAttributeFinder:findAttribute" + " about to call getAttributeFromEvaluationCtx");
 
 		EvaluationResult attribute = context.getActionAttribute(contextIdType, contextIdId, null);
-		Object element = getAttributeFromEvaluationCtx(attribute);
+		Object element = getAttributeFromEvaluationResult(attribute);
 		if (element == null) {
 			log("ContextAttributeFinder:getContextId" + " exit on " + "can't get contextId on request callback");
 			return null;
@@ -209,6 +213,7 @@ import fedora.server.Context;
 						case 1: 
 							values = new String[1];
 							((String[])values)[0] = context.getEnvironmentValue(attributeId); 
+System.err.println("RETURNING " + context.getEnvironmentValue(attributeId) + " for " + attributeId);							
 							break;
 						default:
 							values = context.getEnvironmentValues(attributeId);
