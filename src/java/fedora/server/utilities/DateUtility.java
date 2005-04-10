@@ -64,6 +64,50 @@ public abstract class DateUtility {
             return df.format(date);
         }
     }
+    
+    
+    /**
+     * <p>
+     * Converts an instance of java.util.Date into a String using the date
+     * format: yyyy-MM-ddZ.
+     * </p>
+     * 
+     * @param date
+     *            Instance of java.util.Date.
+     * @return Corresponding date string (returns null if Date argument is
+     *         null).
+     */
+    public static String convertDateToDateString(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+            DateFormat df = new SimpleDateFormat(
+                    "yyyy-MM-dd'Z'");
+            return df.format(date);
+        }
+    }
+    
+    
+    /**
+     * <p>
+     * Converts an instance of java.util.Date into a String using the date
+     * format: mm:ss.SSSZ.
+     * </p>
+     * 
+     * @param date
+     *            Instance of java.util.Date.
+     * @return Corresponding time string (returns null if Date argument is
+     *         null).
+     */
+    public static String convertDateToTimeString(Date date) {
+        if (date == null) {
+            return null;
+        } else {
+            DateFormat df = new SimpleDateFormat(
+                    "HH:mm:ss.SSS'Z'");
+            return df.format(date);
+        }
+    }    
 
     public static Date convertLocalDateToUTCDate(Date localDate) {
         // figure out the time zone offset of this machine (in millisecs)
@@ -131,6 +175,10 @@ public abstract class DateUtility {
         System.out.println("\nDateString: " + dateTimeString
                 + "\nConvertDateToString: " + convertDateToString(date));
         System.out.println("\nDate: " + convertDateToString(date)
-                + "\nConvertDateT0String: " + convertDateToString(date));
+                + "\nConvertDateToString: " + convertDateToString(date));
+        System.out.println("\nDate: " + convertDateToDateString(date)
+                + "\nConvertDateToDateString: " + convertDateToDateString(date));
+        System.out.println("\nDate: " + convertDateToTimeString(date)
+                + "\nConvertDateToTimeString: " + convertDateToTimeString(date));        
     }
 }
