@@ -1,5 +1,7 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.StringAttribute;
+
 public class SubjectNamespace extends XacmlNamespace {
 	
 	// Properties
@@ -11,7 +13,7 @@ public class SubjectNamespace extends XacmlNamespace {
     	super(parent, localName);
 
         // Properties
-    	this.LOGIN_ID = addName(new XacmlName(this, "login-id")); 
+    	this.LOGIN_ID = addName(new XacmlName(this, "login-id", StringAttribute.identifier)); 
 
     	// Values
     	

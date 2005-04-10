@@ -1,5 +1,8 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.DateTimeAttribute;
+import com.sun.xacml.attr.StringAttribute;
+
 public class ResourceNamespace extends XacmlNamespace {
 	
 	// Properties
@@ -8,7 +11,7 @@ public class ResourceNamespace extends XacmlNamespace {
     private ResourceNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
         // Properties
-    	this.AS_OF_DATE = new XacmlName(this, "asOfDate");        	
+    	this.AS_OF_DATE = new XacmlName(this, "asOfDate", DateTimeAttribute.identifier);        	
 
     }
 

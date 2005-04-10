@@ -1,5 +1,8 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.AnyURIAttribute;
+import com.sun.xacml.attr.StringAttribute;
+
 public class BDefNamespace extends XacmlNamespace {
 
 	// Properties
@@ -13,9 +16,9 @@ public class BDefNamespace extends XacmlNamespace {
     	super(parent, localName);
 
         // Properties
-    	ID = addName(new XacmlName(this, "id")); 
-    	STATE = addName(new XacmlName(this, "state")); 
-    	LOCATION = addName(new XacmlName(this, "location"));    	
+    	ID = addName(new XacmlName(this, "id", StringAttribute.identifier)); 
+    	STATE = addName(new XacmlName(this, "state", StringAttribute.identifier)); 
+    	LOCATION = addName(new XacmlName(this, "location", AnyURIAttribute.identifier));    	
 
     	// Values
     	

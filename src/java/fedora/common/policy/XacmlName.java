@@ -29,19 +29,25 @@ public class XacmlName implements URIReference {
 
     public XacmlNamespace parent;
     public String localName;
+    public String datatype;
     public String uri;
 
     private URI m_uri;
 
-    public XacmlName(XacmlNamespace parent, String localName) {
+    public XacmlName(XacmlNamespace parent, String localName, String datatype) {
         try {
             this.parent = parent;
             this.localName = localName;
+            this.datatype = datatype;
             this.uri = parent.uri + ":" + localName;
             m_uri = new URI(this.uri);
         } catch (URISyntaxException e) {
             throw new RuntimeException("Bad URI Syntax", e);
         }
+    }
+    
+    public XacmlName(XacmlNamespace parent, String localName) {
+    	this(parent, localName, "");
     }
 
     /**
@@ -77,7 +83,7 @@ public class XacmlName implements URIReference {
     }
 
     public String toString() {
-        return this.uri;
+        return this.uri + "\t" + this.datatype;
     }
 
 }

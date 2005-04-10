@@ -1,5 +1,8 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.IntegerAttribute;
+import com.sun.xacml.attr.StringAttribute;
+
 public class HttpRequestNamespace extends XacmlNamespace {
 	
 	// Properties
@@ -34,20 +37,20 @@ public class HttpRequestNamespace extends XacmlNamespace {
     	// Properties
     	MESSAGE_PROTOCOL = addName(new XacmlName(this, "message-protocol"));
     	
-    	PROTOCOL = addName(new XacmlName(this, "protocol"));
-    	SCHEME = addName(new XacmlName(this, "scheme"));
-    	SECURITY = addName(new XacmlName(this, "security"));
-    	AUTHTYPE = addName(new XacmlName(this, "authtype"));
-    	METHOD = addName(new XacmlName(this, "method"));	
-    	SESSION_ENCODING = addName(new XacmlName(this, "session-encoding"));	
-    	SESSION_STATUS = addName(new XacmlName(this, "session-status"));		
-    	CONTENT_LENGTH = addName(new XacmlName(this, "content-length"));
-    	CONTENT_TYPE = addName(new XacmlName(this, "content-type"));
-    	CLIENT_FQDN = addName(new XacmlName(this, "client-fqdn"));
-    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "client-ip-address"));	
-    	SERVER_FQDN = addName(new XacmlName(this, "server-fqdn"));
-    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "server-ip-address"));	
-    	SERVER_PORT = addName(new XacmlName(this, "server-port"));
+    	PROTOCOL = addName(new XacmlName(this, "protocol", StringAttribute.identifier));
+    	SCHEME = addName(new XacmlName(this, "scheme", StringAttribute.identifier));
+    	SECURITY = addName(new XacmlName(this, "security", StringAttribute.identifier));
+    	AUTHTYPE = addName(new XacmlName(this, "authtype", StringAttribute.identifier));
+    	METHOD = addName(new XacmlName(this, "method", StringAttribute.identifier));	
+    	SESSION_ENCODING = addName(new XacmlName(this, "session-encoding", StringAttribute.identifier));	
+    	SESSION_STATUS = addName(new XacmlName(this, "session-status", StringAttribute.identifier));		
+    	CONTENT_LENGTH = addName(new XacmlName(this, "content-length", IntegerAttribute.identifier));
+    	CONTENT_TYPE = addName(new XacmlName(this, "content-type", StringAttribute.identifier));
+    	CLIENT_FQDN = addName(new XacmlName(this, "client-fqdn", StringAttribute.identifier));
+    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "client-ip-address", "urn:oasis:names:tc:xacml:1.0:data-type:ipAddress"));	
+    	SERVER_FQDN = addName(new XacmlName(this, "server-fqdn", StringAttribute.identifier));
+    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "server-ip-address", "urn:oasis:names:tc:xacml:1.0:data-type:ipAddress"));	
+    	SERVER_PORT = addName(new XacmlName(this, "server-port", StringAttribute.identifier));
 
     	// Values of MESSAGE_PROTOCOL	 
     	SOAP               = addName(new XacmlName(this, "soap"));

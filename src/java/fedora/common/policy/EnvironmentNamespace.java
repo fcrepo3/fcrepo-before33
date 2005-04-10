@@ -1,5 +1,9 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.DateAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
+import com.sun.xacml.attr.TimeAttribute;
+
 public class EnvironmentNamespace extends XacmlNamespace {
 	
 	// Properties
@@ -13,9 +17,9 @@ public class EnvironmentNamespace extends XacmlNamespace {
     	super(Release2_1Namespace.getInstance(), "environment");
 
         // Properties
-    	CURRENT_DATE_TIME = addName(new XacmlName(this, "current-date-time"));
-    	CURRENT_DATE = addName(new XacmlName(this, "current-date"));
-    	CURRENT_TIME = addName(new XacmlName(this, "current-time"));	
+    	CURRENT_DATE_TIME = addName(new XacmlName(this, "current-date-time", DateTimeAttribute.identifier));
+    	CURRENT_DATE = addName(new XacmlName(this, "current-date", DateAttribute.identifier));
+    	CURRENT_TIME = addName(new XacmlName(this, "current-time", TimeAttribute.identifier));	
 
     	// Values
 

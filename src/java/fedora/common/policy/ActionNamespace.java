@@ -1,5 +1,11 @@
 package fedora.common.policy;
 
+import com.sun.xacml.attr.AnyURIAttribute;
+import com.sun.xacml.attr.IntegerAttribute;
+import com.sun.xacml.attr.StringAttribute;
+
+import fedora.common.Constants;
+
 public class ActionNamespace extends XacmlNamespace { 
 	
 	// Properties
@@ -8,8 +14,6 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName CONTEXT_ID;
 	public final XacmlName OBJECT_NEW_STATE;
 	public final XacmlName DATASTREAM_CONTROL_GROUP;	
-	public final XacmlName DATASTREAM_NEW_STATE;
-	public final XacmlName DATASTREAM_NEW_LOCATION;
 	public final XacmlName DISSEMINATOR_NEW_STATE;
 	public final XacmlName BMECH_NEW_PID;
 	public final XacmlName BMECH_NEW_NAMESPACE;
@@ -62,28 +66,41 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName SERVER_SHUTDOWN;
 	public final XacmlName SERVER_STATUS;
 	public final XacmlName OAI;	
+	public final XacmlName FORMAT_URI;	
+	public final XacmlName EXPORT_CONTEXT;	
+	public final XacmlName ENCODING;	
+	public final XacmlName DATASTREAM_NEW_MIME_TYPE;	
+	public final XacmlName DATASTREAM_NEW_FORMAT_URI;	
+	public final XacmlName DATASTREAM_NEW_LOCATION;	
+	public final XacmlName DATASTREAM_NEW_STATE;	
+	
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
         //this.uri = Constants.FEDORA_SYSTEM_DEF_URI + "action:";
 
         // Properties
-    	ID = addName(new XacmlName(this, "id"));
-    	API = addName(new XacmlName(this, "api"));
-    	CONTEXT_ID = addName(new XacmlName(this, "context-id"));
-    	OBJECT_NEW_STATE = addName(new XacmlName(this, "objectNewState"));
-    	DATASTREAM_CONTROL_GROUP = addName(new XacmlName(this, "datastreamControlGroup"));
-    	DATASTREAM_NEW_STATE = addName(new XacmlName(this, "datastreamNewState"));
-    	DATASTREAM_NEW_LOCATION = addName(new XacmlName(this, "datastreamNewLocation"));
-       	DISSEMINATOR_NEW_STATE = addName(new XacmlName(this, "disseminatorNewState"));    	
-    	BMECH_NEW_PID = addName(new XacmlName(this, "bmechNewPid"));
-    	BMECH_NEW_NAMESPACE = addName(new XacmlName(this, "bmechNewNamespace"));
-    	N_NEW_PIDS = addName(new XacmlName(this, "nNewPids"));
-    	BDEF_PID = addName(new XacmlName(this, "bdefPid"));
-    	BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace"));
-    	DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod"));    	
-    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented"));    	
-    	
+    	ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
+    	API = addName(new XacmlName(this, "api", StringAttribute.identifier));
+    	CONTEXT_ID = addName(new XacmlName(this, "context-id", StringAttribute.identifier));
+    	OBJECT_NEW_STATE = addName(new XacmlName(this, "objectNewState", StringAttribute.identifier));
+    	DATASTREAM_CONTROL_GROUP = addName(new XacmlName(this, "datastreamControlGroup", StringAttribute.identifier));
+    	DATASTREAM_NEW_STATE = addName(new XacmlName(this, "datastreamNewState", StringAttribute.identifier));
+    	DATASTREAM_NEW_LOCATION = addName(new XacmlName(this, "datastreamNewLocation", AnyURIAttribute.identifier));
+       	DISSEMINATOR_NEW_STATE = addName(new XacmlName(this, "disseminatorNewState", StringAttribute.identifier));    	
+    	BMECH_NEW_PID = addName(new XacmlName(this, "bmechNewPid", StringAttribute.identifier));
+    	BMECH_NEW_NAMESPACE = addName(new XacmlName(this, "bmechNewNamespace", StringAttribute.identifier));
+    	N_NEW_PIDS = addName(new XacmlName(this, "nNewPids", IntegerAttribute.identifier));
+    	BDEF_PID = addName(new XacmlName(this, "bdefPid", StringAttribute.identifier));
+    	BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace", StringAttribute.identifier));
+    	DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod", StringAttribute.identifier));    	
+    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented", StringAttribute.identifier));    	
+    	FORMAT_URI = addName(new XacmlName(this, "formatUri", AnyURIAttribute.identifier));
+    	EXPORT_CONTEXT = addName(new XacmlName(this, "exportContext", StringAttribute.identifier));    	
+    	ENCODING = addName(new XacmlName(this, "encoding", StringAttribute.identifier));    	
+    	DATASTREAM_NEW_MIME_TYPE = addName(new XacmlName(this, "datastreamNewMimeType", StringAttribute.identifier));    	
+    	DATASTREAM_NEW_FORMAT_URI = addName(new XacmlName(this, "datastreamNewFormatUri", AnyURIAttribute.identifier));    	
+    	    	
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	
         // Values of API
