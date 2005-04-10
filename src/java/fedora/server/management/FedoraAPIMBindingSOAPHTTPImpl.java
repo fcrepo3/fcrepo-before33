@@ -5,6 +5,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StorageDeviceException;
@@ -111,7 +112,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
 	// DEPRECATED. This remains in Fedora 2.0 for backward compatibility.  
-	// It assumes METS-Fedora as the ingest format.  It will be remove in a future version.
+	// It assumes METS-Fedora as the ingest format.  It will be removed in a future version.
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
 		return ingest(METSXML, "metslikefedora1", logMessage);
@@ -138,6 +139,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		  // or other prefix that is configured in the retainPIDs parameter of fedora.fcfg
 			return s_management.ingestObject(getContext(),
 					new ByteArrayInputStream(XML), logMessage, format, "UTF-8", true);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 			
 		} catch (ServerException se) {
 			logStackTrace(se);
 			throw AxisUtility.getFault(se);
@@ -155,6 +158,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             return DateUtility.convertDateToString(
                     s_management.modifyObject(
                             getContext(), PID, state, label, logMessage));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -172,6 +177,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 					s_management.getObjectProperties(
 							getContext(), PID);
 			return TypeUtility.convertPropertyArrayToGenPropertyArray(properties);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 			
 		} catch (ServerException se) {
 			logStackTrace(se);
 			throw AxisUtility.getFault(se);
@@ -186,6 +193,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     	Context context = getContext();
     	try {
 			s_management.adminPing(context);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 			
 		} catch (ServerException e) {
             throw AxisUtility.getFault(new GeneralException("Unrecognized user: " + id));			
 		}
@@ -211,6 +220,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);     
         } catch (ServerException se) {
             throw AxisUtility.getFault(se);
         } catch (Exception e) {
@@ -226,6 +237,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             throw AxisUtility.getFault(se);
         } catch (Exception e) {
@@ -241,6 +254,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 			ByteArrayOutputStream out=new ByteArrayOutputStream();
 			pipeStream(in, out);
 			return out.toByteArray();
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 			
 		} catch (ServerException se) {
 			throw AxisUtility.getFault(se);
 		} catch (Exception e) {
@@ -279,6 +294,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                              PID, 
                                              logMessage,
                                              force));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -310,6 +327,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                  controlGroup,
                                                  dsState,
                                                  logMessage);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -344,6 +363,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             dsState,
                             logMessage, 
                             force));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -381,6 +402,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                          dsState,
                                                          logMessage, 
                                                          force));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -399,6 +422,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                     datastreamID, 
                                                     dsState, 
                                                     logMessage));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -417,6 +442,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                       disseminatorID, 
                                                       dissState, 
                                                       logMessage));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -439,6 +466,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(endDT),
                             logMessage,
                             force));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -468,6 +497,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             datastreamID, 
                             DateUtility.convertStringToDate(asOfDateTime));
             return TypeUtility.convertDatastreamToGenDatastream(ds);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -489,6 +520,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(asOfDateTime),
                             state);
             return getGenDatastreams(intDatastreams);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -529,6 +562,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             PID,
                             datastreamID);
             return getGenDatastreams(intDatastreams);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -556,6 +591,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                     TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap), 
                     dissState,
                     logMessage);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a); 			
 		} catch (ServerException se) {
 			logStackTrace(se);
 			throw AxisUtility.getFault(se);
@@ -576,6 +613,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             disseminatorID, 
                             DateUtility.convertStringToDate(endDT),
                             logMessage));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -595,6 +634,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                           PID,
                           disseminatorID);
           return getGenDisseminators(intDisseminators);
+      } catch (NotAuthorizedException a) {
+          throw AxisUtility.getFault(a);           
       } catch (ServerException se) {
           logStackTrace(se);
           throw AxisUtility.getFault(se);
@@ -616,6 +657,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             disseminatorID, 
                             DateUtility.convertStringToDate(asOfDateTime));
             return TypeUtility.convertDisseminatorToGenDisseminator(diss);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -637,6 +680,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(asOfDateTime),
                             dissState);
             return getGenDisseminators(intDisseminators);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -667,6 +712,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             dissState,
                             logMessage,
                             force));
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
@@ -680,6 +727,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             if(numPIDs==null) numPIDs=new NonNegativeInteger("1");
             return s_management.getNextPID(getContext(), numPIDs.intValue(), namespace);
+        } catch (NotAuthorizedException a) {
+            throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);

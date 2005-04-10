@@ -12,6 +12,7 @@ import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.types.gen.FieldSearchQuery;
@@ -43,7 +44,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   private static Access s_access;
 
   /** Context for cached objects. */
-  private static ReadOnlyContext context;
+  //private static ReadOnlyContext context;
 
   /** Debug toggle for testing. */
   private static boolean debug = false;
@@ -107,6 +108,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         }
       }
       return bDefs;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       s_server.logFinest("ServerException: " + se.getMessage());
@@ -158,6 +161,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -190,6 +195,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -214,6 +221,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                   TypeUtility.convertGenFieldSearchQueryToFieldSearchQuery(
                   query));
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
+      } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);          
       } catch (ServerException se) {
           logStackTrace(se);
           throw AxisUtility.getFault(se);
@@ -247,6 +256,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           fedora.server.search.FieldSearchResult result=s_access.
                   resumeFindObjects(context, sessionToken);
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
+      } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);          
       } catch (ServerException se) {
           logStackTrace(se);
           throw AxisUtility.getFault(se);
@@ -310,6 +321,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
           objectMethodDefs);
       return genObjectMethodDefs;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -337,6 +350,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertDatastreamDefArrayToGenDatastreamDefArray(
           datastreamDefs);
       return genDatastreamDefs;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -374,6 +389,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectProfileToGenObjectProfile(
           objectProfile);
       return genObjectProfile;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
@@ -404,6 +421,8 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       fedora.server.types.gen.RepositoryInfo genRepositoryInfo =
           TypeUtility.convertReposInfoToGenReposInfo(repositoryInfo);
       return genRepositoryInfo;
+    } catch (NotAuthorizedException a) {
+        throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
       logStackTrace(se);
