@@ -8,12 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import fedora.common.HttpClient;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
 import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
@@ -208,18 +203,28 @@ public class ServerController
             	optionalUsername = args[2];
             	optionalPassword = args[3];
             }
-            Properties serverProperties = ServerUtility.getServerProperties(protocol);            
-        	String response = HttpClient.getLineResponse(
-        			protocol,
-          			serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST),
-          			serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),								
-          			(optionalUsername == null) ? serverProperties.getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
-          			(optionalPassword == null) ? serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword,
-                  	"/management/control?action=" + action);        	
+            Properties serverProperties = ServerUtility.getServerProperties(protocol);           
+      		HttpClient client = new HttpClient(protocol, 
+      				serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST), 
+      				serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT), 
+      				(optionalUsername == null) ? serverProperties.getProperty(ServerUtility.ADMIN_USER) : optionalUsername, 
+      				(optionalPassword == null) ? serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword, 
+      				"/management/control?action=" + action);
+      		String response = client.getLineResponseUrl();
             System.out.println(response);        	
     	} catch (Exception e) {
     	    System.err.println(e.getMessage());
             System.exit(1);
     	}
     }
+    
+    private static boolean log = false;
+    
+    private static final void slog(String msg) {
+    	if (log) {
+  	  	System.err.println(msg);	  		
+    	}
+    }
+    
+    
 }
