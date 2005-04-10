@@ -152,10 +152,8 @@ public class GeneralPane extends JPanel
 		}
 		catch (Exception e)
 		{
-			JOptionPane.showMessageDialog(Administrator.getDesktop(),
-					e.getMessage() + "\nError getting behavior definitions from repository!",
-					"Contact system administrator.",
-					JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Contact system administrator.", 
+        			e.getMessage() + "\nError getting behavior definitions from repository!", e);			
 		}
 		Map bDefLabels=new HashMap();
 		Iterator iter=allBDefLabels.keySet().iterator();
@@ -193,11 +191,8 @@ public class GeneralPane extends JPanel
 						bDefLabel=parts[1];
 					}
 				} catch (Exception e) {
-					JOptionPane.showMessageDialog(
-							Administrator.getDesktop(),
-							e.getMessage(),
-							"Error getting behavior definition",
-							JOptionPane.ERROR_MESSAGE);
+		        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error getting behavior definition", 
+		        			e.getMessage(), e);
 				}
 				if (bDefPID != null)
 				{

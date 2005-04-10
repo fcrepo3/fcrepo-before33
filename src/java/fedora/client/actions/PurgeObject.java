@@ -82,10 +82,8 @@ public class PurgeObject
         try {
             purger=new AutoPurger(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
-                    "Purge Failure",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge Failure", 
+        		StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null), e);
         }
         if (purger!=null) {
             Iterator pidIter=m_pids.iterator();
@@ -97,10 +95,8 @@ public class PurgeObject
                     try {
                         purger.purge(pid, reason, false); // DEFAULT_FORCE_PURGE
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
-                                "Purge Failure",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge Failure", 
+                    			StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null), e);
                         failed=true;
                     }
                     if (!failed) {
@@ -119,10 +115,8 @@ public class PurgeObject
                             String pid=(String) pidIter.next();
                             purger.purge(pid, reason, false); // DEFAULT_FORCE_PURGE
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null),
-                                    "Purge Failure",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge Failure", 
+                        			StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null), e);
                             failed=true;
                         }
                     }

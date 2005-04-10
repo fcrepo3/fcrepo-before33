@@ -6,6 +6,11 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
+import javax.xml.namespace.QName;
+
+import org.apache.axis.AxisFault;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import fedora.client.Administrator;
 import fedora.client.utility.export.AutoExporter;
@@ -78,10 +83,8 @@ public class ViewObjectXML
         try {
             exporter=new AutoExporter(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "View Failure",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "View Failure", 
+        			e.getClass().getName() + ": " + e.getMessage(), e);
         }
         if (exporter!=null) {
             Iterator pidIter=m_pids.iterator();
@@ -112,10 +115,8 @@ public class ViewObjectXML
                         m_viewPane.validate();
                     }
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            e.getClass().getName() + ": " + e.getMessage(),
-                            "View Failure",
-                            JOptionPane.ERROR_MESSAGE);
+                	Administrator.showErrorDialog(Administrator.getDesktop(), "View Failure", 
+                			e.getClass().getName() + ": " + e.getMessage(), e);
                 }
             }
         }

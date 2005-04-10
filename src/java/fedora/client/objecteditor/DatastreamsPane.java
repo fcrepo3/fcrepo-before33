@@ -162,10 +162,8 @@ public class DatastreamsPane
             setDirty(dsID, false);
             fireDatastreamModified(versions[0]);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getMessage() + "\nTry re-opening the object viewer.",
-                    "Error while refreshing",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error while refreshing", 
+        			e.getMessage() + "\nTry re-opening the object viewer.", e);
         }
     }
 
@@ -453,9 +451,8 @@ public class DatastreamsPane
                               msg = "Imported text does not contain valid XML.\n"
                                   + "Inline XML Metadata datastreams must contain valid XML.";
                             }
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    msg, "Import Error",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Import Error", 
+                        			msg, e);
                         }
                     }
                 }
@@ -506,9 +503,8 @@ public class DatastreamsPane
                             // lastly, set the file we're importing
                             m_managedFile=imp.file;
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Import Error",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Import Error", 
+                        			e.getMessage(), e);
                         }
                     }
                 }
@@ -547,9 +543,8 @@ public class DatastreamsPane
                         m_erPane.add(m_erViewer.getComponent(), BorderLayout.CENTER);
                         m_erPane.validate();
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getMessage(), "View error",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "View error", 
+                    			e.getMessage(), e);
                     }
                 }
             });
@@ -671,9 +666,8 @@ public class DatastreamsPane
                       msg = "Text entered is not valid XML.\n"
                           + "Internal XML Metadata datastreams must contain valid XML.";
                     }
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            msg, "Error saving new datastream",
-                            JOptionPane.ERROR_MESSAGE);
+                	Administrator.showErrorDialog(Administrator.getDesktop(), "Error saving new datastream", 
+                			msg, e);
                 }
             }
         }

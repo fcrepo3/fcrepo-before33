@@ -123,17 +123,13 @@ public class SourceRepoDialog
                                 // a connection or authentication problem
                                 boolean retry=false;
                                 if (e.getMessage().indexOf("Unauthorized")!=-1 || e.getMessage().indexOf("Unrecognized")!=-1) {
-                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                        "Bad username or password.",
-                                        "Connection Error",
-                                        JOptionPane.ERROR_MESSAGE);
+                                	Administrator.showErrorDialog(Administrator.getDesktop(), "Connection Error", 
+                                			"Bad username or password.", e);
                                     retry=true;
                                 }
                                 if (e.getMessage().indexOf("java.net")!=-1) {
-                                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                        "Can't connect to " + host + ":" + port,
-                                        "Connection Error",
-                                        JOptionPane.ERROR_MESSAGE);
+                                	Administrator.showErrorDialog(Administrator.getDesktop(), "Connection Error", 
+                                			"Can't connect to " + host + ":" + port, e);
                                     retry=true;
                                 }
                                 if (!retry) {
@@ -149,15 +145,11 @@ public class SourceRepoDialog
                                 }
                             }
                         } catch (NumberFormatException nfe) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                "Server port must be numeric",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error", 
+                        			"Server port must be numeric", nfe);
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                "Malformed host information",
-                                "Error",
-                                JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error", 
+                        			"Malformed host information", e);
                         }
                     } else {
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),

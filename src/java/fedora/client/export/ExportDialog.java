@@ -83,10 +83,8 @@ public class ExportDialog {
             if (msg==null) {
                 msg=e.getClass().getName();
             }
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    msg,
-                    "Export Failure",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Export Failure", 
+        			msg, e);
         }
     }      
 }

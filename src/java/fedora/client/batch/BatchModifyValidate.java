@@ -83,11 +83,9 @@ public class BatchModifyValidate
                 }
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                e.getClass().getName()
-                + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()),
-                "Error Parsing Directives File.",
-                JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error Parsing Directives File.", 
+        			e.getClass().getName()
+	                + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()), e);        	
         } finally {
             try {
                 if (in != null)
@@ -143,11 +141,9 @@ public class BatchModifyValidate
                 }
             } catch (Exception e) {
             	e.printStackTrace();
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName()
-                    + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+            	Administrator.showErrorDialog(Administrator.getDesktop(), "Error", 
+            			e.getClass().getName()
+	                    + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()), e);            	
             }
         }
     }

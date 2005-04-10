@@ -23,6 +23,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,6 +31,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+
+import org.apache.axis.AxisFault;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
@@ -355,10 +360,7 @@ public class LoginDialog
                     Administrator.INSTANCE.setLoginInfo(host, port, username, pass);
                     m_loginDialog.dispose();
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(m_loginDialog,
-                        e.getMessage(),
-                        "Login Error",
-                        JOptionPane.ERROR_MESSAGE);
+                	Administrator.showErrorDialog(m_loginDialog, "Login Error", e.getMessage(), e);           	
                     Administrator.APIA=oldAPIA;
                     Administrator.APIM=oldAPIM;
                 }

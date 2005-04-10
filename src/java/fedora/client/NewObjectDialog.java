@@ -233,10 +233,7 @@ public class NewObjectDialog
           } catch (Exception e) {
               String msg=e.getMessage();
               if (msg==null) msg=e.getClass().getName();
-              JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                  msg,
-                  "Error Creating Object",
-                  JOptionPane.ERROR_MESSAGE);
+              Administrator.showErrorDialog(Administrator.getDesktop(), "Error Creating Object", msg, e);                
           }
       }
 

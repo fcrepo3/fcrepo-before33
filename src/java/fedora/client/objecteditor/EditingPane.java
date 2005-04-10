@@ -84,10 +84,8 @@ public abstract class EditingPane
                             } catch (Exception ex) {
                                 String msg=ex.getMessage();
                                 if (msg==null) msg=ex.getClass().getName();
-                                JOptionPane.showMessageDialog(
-                                        Administrator.getDesktop(), 
-                                        msg, "Save Error",
-                                        JOptionPane.ERROR_MESSAGE);
+                            	Administrator.showErrorDialog(Administrator.getDesktop(), "Save Error", 
+                            			msg, ex);
                             }
                             updateButtonVisibility();
                         }

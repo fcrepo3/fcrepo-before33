@@ -555,9 +555,8 @@ public class DatastreamPane
                         try {
                         startEditor();
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Content Edit Error",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Content Edit Error", 
+                        			e.getMessage(), e);
                         }
                     }
                 });
@@ -574,9 +573,8 @@ public class DatastreamPane
                             try {
                                 startSeparateViewer();
                             } catch (Exception e) {
-                                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                        e.getMessage(), "Content View Error",
-                                        JOptionPane.ERROR_MESSAGE);
+                            	Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Error", 
+                            			e.getMessage(), e);
                             }
                         }
                     });
@@ -590,9 +588,8 @@ public class DatastreamPane
                         try {
                         startViewer();
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Content View Error",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Error", 
+                        			e.getMessage(), e);
                         }
                     }
                 });
@@ -664,9 +661,8 @@ public class DatastreamPane
                                 remove(m_viewer.getComponent());
                                 m_viewer=null;
                             }
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Content Import Failure",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Content Import Failure", 
+                        			e.getMessage(), e);
                         }
                     }
                 });
@@ -993,9 +989,8 @@ public class DatastreamPane
                             btn.setEnabled(false);
                             validate();
                         } catch (Exception e) {
-                            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                    e.getMessage(), "Content View Failure",
-                                    JOptionPane.ERROR_MESSAGE);
+                        	Administrator.showErrorDialog(Administrator.getDesktop(), "Content View Failure", 
+                        			e.getMessage(), e);
                         }
                     }
                 });
@@ -1093,9 +1088,8 @@ public class DatastreamPane
                             m_done=true;
                         }
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getMessage(), "Purge error",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge error", 
+                    			e.getMessage(), e);
                     }
                 }
             }
@@ -1128,9 +1122,8 @@ public class DatastreamPane
                             new FileOutputStream(file));
                 }
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        e.getMessage(), "Content Export Failure",
-                        JOptionPane.ERROR_MESSAGE);
+            	Administrator.showErrorDialog(Administrator.getDesktop(), "Content Export Failure", 
+            			e.getMessage(), e);
             }
         }
     }

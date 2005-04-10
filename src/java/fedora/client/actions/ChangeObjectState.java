@@ -70,10 +70,8 @@ public class ChangeObjectState
                 if (message==null) {
                      message=e.getClass().getName();
                 }
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        message,
-                        "Failure Changing State",
-                        JOptionPane.ERROR_MESSAGE);
+            	Administrator.showErrorDialog(Administrator.getDesktop(), "Failure Changing State", 
+            			message, e);
             }
         }
     }

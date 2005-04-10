@@ -681,9 +681,8 @@ public class DisseminatorPane
                             m_done=true;
                         }
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                e.getMessage(), "Purge error",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge error", 
+                    			e.getMessage(), e);
                     }
                 }
             }

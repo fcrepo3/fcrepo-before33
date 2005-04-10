@@ -67,11 +67,9 @@ public class ExportObject
         try {
             exporter=new AutoExporter(Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Export Failure",
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Export Failure", 
+        			e.getClass().getName() + ": " + e.getMessage(), e);
+         }
         if (exporter!=null) {
             if (m_prompt) {
                 String pid=JOptionPane.showInputDialog("Enter the PID.");
@@ -108,10 +106,8 @@ public class ExportObject
 						}
                     }
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            e.getClass().getName() + ": " + e.getMessage(),
-                            "Export Failure",
-                            JOptionPane.ERROR_MESSAGE);
+                	Administrator.showErrorDialog(Administrator.getDesktop(), "Export Failure", 
+                		e.getClass().getName() + ": " + e.getMessage(), e);
                 }
             } else {
                 // If there are multiple pids, select a directory first.
@@ -155,10 +151,8 @@ public class ExportObject
 						}
                     }
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            e.getClass().getName() + ": " + e.getMessage(),
-                            "Export Failure",
-                            JOptionPane.ERROR_MESSAGE);
+                	Administrator.showErrorDialog(Administrator.getDesktop(), "Export Failure", 
+                			e.getClass().getName() + ": " + e.getMessage(), e);
                 }
             }
         }

@@ -79,10 +79,8 @@ public class ViewObject
                 editor.setSelected(true);
             } catch (Exception e) {
                 e.printStackTrace();
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                        e.getClass().getName() + ": " + e.getMessage(),
-                        "Error Opening Object",
-                        JOptionPane.ERROR_MESSAGE);
+            	Administrator.showErrorDialog(Administrator.getDesktop(), "Error Opening Object", 
+            			e.getClass().getName() + ": " + e.getMessage(), e);                
             }
         }
     }

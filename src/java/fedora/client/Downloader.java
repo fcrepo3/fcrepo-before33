@@ -165,7 +165,7 @@ public class Downloader {
                 if (Administrator.INSTANCE!=null) {
                     d=Administrator.PROGRESS.getSize();
                     // if they're using Administrator, tell them we're downloading...
-                    Administrator.PROGRESS.setString("Dowloading " + url + " . . .");
+                    Administrator.PROGRESS.setString("Downloading " + url + " . . .");
                     Administrator.PROGRESS.setValue(100);
                     Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
                 }

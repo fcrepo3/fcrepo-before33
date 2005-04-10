@@ -108,10 +108,8 @@ public class DisseminatorsPane
             colorTabForState(dissID, versions[0].getState());
             setDirty(dissID, false);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getMessage() + "\nTry re-opening the object viewer.", 
-                    "Error while refreshing",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Error while refreshing", 
+        			e.getMessage() + "\nTry re-opening the object viewer.", e);
         }
     }
 
@@ -321,11 +319,8 @@ public class DisseminatorsPane
                         mechInputPanel.setBDef(m_bDefPID);
                         m_behaviorDescriptionPane.setBDef(m_bDefPID);
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(
-                                Administrator.getDesktop(),
-                                e.getMessage(), 
-                                "Error getting behavior definition",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Error getting behavior definition", 
+                    			e.getMessage(), e);
                     }
                 }
             });
@@ -404,11 +399,8 @@ public class DisseminatorsPane
                         addDisseminatorTab(newID);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(
-                                Administrator.getDesktop(),
-                                e.getMessage(), 
-                                "Error saving new disseminator",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Error saving new disseminator", 
+                    			e.getMessage(), e);
                     }
                 }
             });

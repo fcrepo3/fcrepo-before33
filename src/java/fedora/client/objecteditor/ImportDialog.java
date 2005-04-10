@@ -205,10 +205,8 @@ public class ImportDialog
 				}
                 dispose();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(m_importDialog,
-                    e.getMessage(),
-                    "Import Error",
-                    JOptionPane.ERROR_MESSAGE);
+            	Administrator.showErrorDialog(Administrator.getDesktop(), "Import Error", 
+            			e.getMessage(), e);
             }
         }
     }

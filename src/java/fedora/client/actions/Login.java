@@ -41,10 +41,8 @@ public class Login
         try {
             LoginDialog ld=new LoginDialog();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    e.getClass().getName() + ": " + e.getMessage(),
-                    "Login Error",
-                    JOptionPane.ERROR_MESSAGE);
+        	Administrator.showErrorDialog(Administrator.getDesktop(), "Login Error", 
+        			e.getClass().getName() + ": " + e.getMessage(), e);
         }
     }
 

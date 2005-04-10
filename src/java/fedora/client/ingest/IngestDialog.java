@@ -182,10 +182,7 @@ public class IngestDialog {
                 msg=e.getClass().getName();
             }
             e.printStackTrace();
-            JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    msg,
-                    "Ingest Failure",
-                    JOptionPane.ERROR_MESSAGE);
+           	Administrator.showErrorDialog(Administrator.getDesktop(), "Ingest Failure", msg, e);
         } finally {
             try {
                 if (log!=null && wasMultiple) {
@@ -216,10 +213,8 @@ public class IngestDialog {
                     }
                 }
             } catch (Exception ex) {
-                JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                    ex.getMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+               	Administrator.showErrorDialog(Administrator.getDesktop(), "Error", 
+               			ex.getMessage(), ex);
             }
         }
     }

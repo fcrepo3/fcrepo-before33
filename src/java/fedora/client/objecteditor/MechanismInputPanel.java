@@ -192,11 +192,8 @@ public class MechanismInputPanel
                         bindingPanel.setBMech(pid);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(
-                                Administrator.getDesktop(),
-                                e.getMessage(), 
-                                "Error getting bmech info",
-                                JOptionPane.ERROR_MESSAGE);
+                    	Administrator.showErrorDialog(Administrator.getDesktop(), "Error getting bmech info", 
+                    			e.getMessage(), e);                        
                     }
                 }
             });
