@@ -145,7 +145,7 @@ public class DefaultManagement
             w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
             String pid=w.GetObjectPID();
             
-            m_fedoraXACMLModule.enforceIngestObject(context, pid);
+            m_fedoraXACMLModule.enforceIngestObject(context, pid, format, encoding);
 
             w.commit(logMessage);
             return pid;
@@ -249,7 +249,7 @@ public class DefaultManagement
         try {
             logFinest("Entered DefaultManagement.getObjectXML");
             
-            m_fedoraXACMLModule.enforceGetObjectXML(context, pid);
+            m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
             DOReader reader=m_manager.getReader(context, pid);
             InputStream instream=reader.GetObjectXML();
@@ -268,7 +268,7 @@ public class DefaultManagement
         try {
             logFinest("Entered DefaultManagement.exportObject");
             
-            m_fedoraXACMLModule.enforceExportObject(context, pid);
+            m_fedoraXACMLModule.enforceExportObject(context, pid, format, exportContext, encoding);
                         
             DOReader reader=m_manager.getReader(context, pid);
             InputStream instream=reader.ExportObject(format,exportContext);
@@ -323,7 +323,8 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.addDatastream");
-			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  dsLocation, controlGroup, dsState);
+			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
+					formatURI, dsLocation, controlGroup, dsState);
             w=m_manager.getWriter(context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
@@ -433,8 +434,8 @@ public class DefaultManagement
 			try {
                 getServer().logFinest("Entered DefaultManagement.addDisseminator");
     			
-    			m_fedoraXACMLModule.enforceAddDisseminator(context, pid);
-    			
+    			m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
+    					bDefPid, bMechPid, dissState);
 				w=m_manager.getWriter(context, pid);
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
@@ -499,7 +500,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
-			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, dsLocation, dsState);
+			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, dsState);
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 			Date nowUTC; // variable for ds modified date
@@ -650,7 +651,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
             
-			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, dsState);
+			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, dsState);
 
             w=m_manager.getWriter(context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
@@ -915,7 +916,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.purgeDatastream");
             
-			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID);
+			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID, endDT);
 
             w=m_manager.getWriter(context, pid);
             Date start=null;
@@ -1043,7 +1044,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.getDatastream");
             
-			m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID);
+			m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID, asOfDateTime);
 
             
             DOReader r=m_manager.getReader(context, pid);
@@ -1122,7 +1123,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.purgeDisseminator");
             
-			m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID);
+			m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID, endDT);
             
             w=m_manager.getWriter(context, pid);
             Date start=null;
