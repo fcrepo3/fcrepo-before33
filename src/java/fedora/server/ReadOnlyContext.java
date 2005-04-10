@@ -10,10 +10,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.catalina.realm.GenericPrincipal;
 
+import com.sun.xacml.attr.DateAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
+import com.sun.xacml.attr.TimeAttribute;
+
 import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.security.Authorization;
+import fedora.server.utilities.DateUtility;
 
 /**
  *
@@ -266,8 +271,17 @@ if (request != null) {
 }
       
   	MultiValueMap environmentMap = new MultiValueMap();
-  	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
   	try {
+  	  	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
+  		Date now = new Date();
+		/*DateTimeAttribute tempDateTimeAttribute = new DateTimeAttribute(now, 0, 0, 0);  		
+		DateAttribute tempDateAttribute = new DateAttribute(now, 0, 0);  		
+		TimeAttribute tempTimeAttribute = new TimeAttribute(now, 0, 0, 0);
+		*/
+  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, DateUtility.convertDateToString(now));
+  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE.uri, DateUtility.convertDateToDateString(now));
+  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_TIME.uri, DateUtility.convertDateToTimeString(now));
+  		
   		environmentMap.set(Constants.HTTP_REQUEST.PROTOCOL.uri, request.getProtocol());
   		environmentMap.set(Constants.HTTP_REQUEST.SCHEME.uri, request.getScheme());
   		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, 
