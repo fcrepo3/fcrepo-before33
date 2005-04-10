@@ -1,10 +1,8 @@
 package fedora.server.storage.types;
 
+import fedora.common.HttpClient;
 import fedora.server.errors.StreamIOException;
-
 import java.io.InputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.net.HttpURLConnection;
 
 /**
@@ -55,6 +53,41 @@ public class DatastreamReferencedContent
      */
     public InputStream getContentStream()
             throws StreamIOException {
+      	InputStream contentStream = null;
+      	try {
+      		HttpClient client = new HttpClient(DSLocation);
+      		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
+      			log("in getContentStream(), got bad code=" + client.getStatusCode());
+      			throw new StreamIOException(
+                    "Server returned a non-200 response code ("
+                    + client.getStatusCode() + ") from GET request of URL: "
+                    + DSLocation);
+      		}          
+      		log("in getContentStream(), got 200");
+      		contentStream = client.getGetMethod().getResponseBodyAsStream();
+      		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream.
+      		int contentLength = 0;
+      		if (client.getGetMethod().getResponseHeader("Content-Length") != null) {
+      			contentLength = Integer.parseInt(client.getGetMethod().getResponseHeader("Content-Length").getValue());
+      		}      		
+            if (contentLength > -1) {
+                DSSize = contentLength;
+            }      		
+      	} catch (Throwable th) {
+      		th.printStackTrace();
+      		throw new StreamIOException("[DatastreamReferencedContent] "
+      			+ "returned an error.  The underlying error was a "
+    			+ th.getClass().getName() + "  The message "
+    			+ "was  \"" + th.getMessage() + "\"  .  ");
+      	} finally {
+      		log("in getContentStream(), in finally");     	
+      	}    	
+    	return(contentStream);
+
+      		
+      		
+      		
+    	/* begin "was"
         try {
             HttpURLConnection conn=(HttpURLConnection)
                     new URL(DSLocation).openConnection();
@@ -75,14 +108,13 @@ public class DatastreamReferencedContent
             // SDP: removed because some web servers will reset the mime type
             // to unpredictable things.  We'll keep the mime type originally
             // recorded with the datastream.
-            /*
             // If Content-type available, set DSMIME.
-            DSMIME=conn.getContentType();
-            if (DSMIME==null) {
-                DSMIME=HttpURLConnection.guessContentTypeFromName(
-                        DSLocation);
-            }
-            */
+            //DSMIME=conn.getContentType();
+            //if (DSMIME==null) {
+            //    DSMIME=HttpURLConnection.guessContentTypeFromName(
+            //            DSLocation);
+            //}
+            
             return ret;
         } catch (IOException ioe) {
             throw new StreamIOException("Can't get InputStream from URL: "
@@ -90,5 +122,16 @@ public class DatastreamReferencedContent
         } catch (ClassCastException cce) {
             throw new StreamIOException("Non-http URLs not supported.");
         }
+        end "was" */
     }
+    
+    
+    private boolean log = false;
+    
+    private final void log(String msg) {
+    	if (log) {
+  	  	System.err.println(msg);	  		
+    	}
+    }    
+    
 }
