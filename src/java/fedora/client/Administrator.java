@@ -8,6 +8,10 @@ import java.util.ResourceBundle;
 import javax.help.Map.ID;
 import javax.swing.*;
 
+import org.apache.axis.AxisFault;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import fedora.swing.jhelp.SimpleHelpBroker;
 import fedora.swing.mdi.MDIDesktopPane;
 import fedora.swing.mdi.WindowMenu;
@@ -99,7 +103,29 @@ public class Administrator extends JFrame {
         ResourceBundle.getBundle("fedora.client.resources.Client");
     public static String VERSION=s_const.getString("version");
     public static String RELEASE_DATE=s_const.getString("releaseDate");
-
+    
+    public static final void showErrorDialog(Component parent, String title, String explanation, Exception e) {
+    	if (e instanceof AxisFault) {
+        	StringBuffer authzDetail = new StringBuffer("");                		
+        	org.w3c.dom.Element[] getFaultDetails = ((AxisFault)e).getFaultDetails();
+        	if (getFaultDetails != null) {
+				for (int i = 0; i < getFaultDetails.length; i++) {	
+					org.w3c.dom.Element detail = getFaultDetails[i];
+					if ("Authz".equals(detail.getLocalName()) && detail.hasChildNodes()) {
+						NodeList nodeList = getFaultDetails[i].getChildNodes();
+						for (int j = 0; j < nodeList.getLength(); j++) {
+							authzDetail.append(nodeList.item(j).getNodeValue());
+						}
+					}
+				}                    		
+        	}
+        	if (authzDetail.length() > 0) {
+        		explanation = authzDetail.toString();
+        	}
+    	}
+        JOptionPane.showMessageDialog(parent, explanation, title, JOptionPane.ERROR_MESSAGE);
+    }
+ 
     public Administrator(String host, int port, String user, String pass) {
         super("Fedora Administrator");
         INSTANCE=this;
@@ -110,6 +136,7 @@ public class Administrator extends JFrame {
         s_maxButtonHeight=new JTextField("test").getPreferredSize().height;
         BACKGROUND_COLOR=new JPanel().getBackground();
 
+        /*
         if (host!=null) {
             // already must have passed through non-interactive login
             try {
@@ -118,6 +145,7 @@ public class Administrator extends JFrame {
             setLoginInfo(host, port, user, pass);
             } catch (Exception e) { APIA=null; APIM=null; }
         }
+        */
         if (System.getProperty("fedora.home")!=null) {
             File f=new File(System.getProperty("fedora.home"));
             if (f.exists() && f.isDirectory()) {
@@ -738,11 +766,12 @@ public class Administrator extends JFrame {
         WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
         PrintStream sysOut=System.out;
         PrintStream sysErr=System.err;
-        try {
+        //try {
         String host=null;
         int port=0;
         String user=null;
         String pass=null;
+        /*
         if (args.length==4) {
             host=args[0];
             port=Integer.parseInt(args[1]);
@@ -752,17 +781,17 @@ public class Administrator extends JFrame {
             System.setOut(watchOut);
             System.setErr(watchOut);
             LoginDialog.tryLogin(host, port, user, pass);
-        } else {
-            System.setOut(watchOut);
-            System.setErr(watchOut);
-        }
+        } else { */
+        System.setOut(watchOut);
+        System.setErr(watchOut);
+        //}
         Administrator administrator=new Administrator(host, port, user, pass);
         System.out.println("Started Fedora Administrator.");
-        } catch (Exception e) {
+        /*} catch (Exception e) { */
             System.setOut(sysOut);
             System.setOut(sysErr);
-            System.out.println("FAILED!" + "\n" + e.getMessage());
-        }
+        /*    System.out.println("FAILED!" + "\n" + e.getMessage());
+        } */
     }
 
 
