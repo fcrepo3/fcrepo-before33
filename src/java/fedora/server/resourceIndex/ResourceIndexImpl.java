@@ -211,6 +211,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         tripleQ.queueDissemination(doURI, datastreamURI);
         tripleQ.queueLastModifiedDate(datastreamURI, ds.DSCreateDT);
+        tripleQ.queueState(datastreamURI, ds.DSState);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
 		if (datastreamID.equalsIgnoreCase("DC")) {
@@ -278,6 +279,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                          tripleQ.queueMimeType(rep, mimeType);
                          tripleQ.queueIsDirect(rep, "false"); 
                          tripleQ.queueLastModifiedDate(rep, diss.dissCreateDT);
+                         // disseminator's state is propagated to all its disseminations
+                         tripleQ.queueState(rep, diss.dissState);
                      }
                      
                      // Dependencies
