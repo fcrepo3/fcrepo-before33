@@ -47,9 +47,10 @@ public class HttpRequestNamespace extends XacmlNamespace {
     	CONTENT_LENGTH = addName(new XacmlName(this, "content-length", IntegerAttribute.identifier));
     	CONTENT_TYPE = addName(new XacmlName(this, "content-type", StringAttribute.identifier));
     	CLIENT_FQDN = addName(new XacmlName(this, "client-fqdn", StringAttribute.identifier));
-    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "client-ip-address", "urn:oasis:names:tc:xacml:1.0:data-type:ipAddress"));	
+    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "client-ip-address", StringAttribute.identifier));	
     	SERVER_FQDN = addName(new XacmlName(this, "server-fqdn", StringAttribute.identifier));
-    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "server-ip-address", "urn:oasis:names:tc:xacml:1.0:data-type:ipAddress"));	
+    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "server-ip-address", StringAttribute.identifier));
+    	//urn:oasis:names:tc:xacml:1.0:data-type:ipAddress
     	SERVER_PORT = addName(new XacmlName(this, "server-port", StringAttribute.identifier));
 
     	// Values of MESSAGE_PROTOCOL	 
