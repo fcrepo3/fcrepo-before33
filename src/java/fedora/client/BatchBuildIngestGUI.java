@@ -290,22 +290,35 @@ public class BatchBuildIngestGUI
 	    // Verify format of template file to see if it is a METS or FOXML template
 	    BufferedReader br = new BufferedReader(new FileReader(m_templateField.getText()));
 	    String line;
-	    String templateFormat = "metslikefedora1";
+	    String objectFormat = null;
 	    while ((line=br.readLine()) != null) {
-	        System.out.println(line);
-	        if(line.indexOf("<foxml")!=-1) {
-	            templateFormat = "foxml1.0";
+	        if(line.indexOf("<foxml:")!=-1) {
+	            objectFormat = "foxml1.0";
 	        		break;
 	        }
+	        if(line.indexOf("<METS:")!=-1) {
+	            objectFormat = "metslikefedora1";
+	        		break;
+	        }      		        
 	    }
 	    br.close();
 	    br=null;
+	    
+	    // Verify that object format of template file is either foxml or mets.
+	    // If objectFormat is null, format could not be determined from the template file.
+	    if (objectFormat==null) {
+	        JOptionPane.showMessageDialog(Administrator.getDesktop(), "Template "
+	  	            + "object file format not recognized as either \"foxml1.0\" or \"metslikefedora1\".\n"
+	  	            + "Please verify contents of template file.","Unknown Object Format",
+	  	            JOptionPane.OK_OPTION);
+	  	    throw new Exception("Unknown object format in template file.");	        
+	    }	    
       
-	    // Set template format property based on template file format.
+	    // Set object format property based on template file format.
 	    // Query user to be sure they have selected the correct template file.
-	    properties.setProperty("object-format",templateFormat);
+	    properties.setProperty("object-format",objectFormat);
 	    int n = JOptionPane.showConfirmDialog(Administrator.getDesktop(), "Based on template, "
-	            + "generated objects will be in "+formatMap.get(templateFormat)+" format. Is this correct?","Generated Object Format",
+	            + "generated objects will be in "+formatMap.get(objectFormat)+" format. Is this correct?","Generated Object Format",
 	            JOptionPane.YES_NO_CANCEL_OPTION);
 	    if (n == JOptionPane.YES_OPTION) {	    
 	    
