@@ -200,14 +200,6 @@ public class DisseminationService
           + datastreamResolverServletURL + " .");
     }
 
-    /*
-    // Initialize context.
-     HashMap h = new HashMap();
-     h.put("application", "apia");
-     h.put("useCachedObject", "false");
-     h.put("userId", "fedoraAdmin");
-     m_context = ReadOnlyContext.getContext(h);
-     */
   }
 
   public void checkState(Context context, String state, String dsID, String PID)
