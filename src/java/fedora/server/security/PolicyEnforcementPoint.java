@@ -139,12 +139,17 @@ public class PolicyEnforcementPoint {
 System.err.println("about to set contextAttributeFinder in original");
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
 	} catch(Throwable t) {
+		this.enforceMode = ENFORCE_MODE_DENY_ALL_REQUESTS;
 		System.err.println ("***caught throwable in initPep");	
 		System.err.println(t.getMessage());
 		if (t.getCause() != null) {
 			System.err.println(t.getCause().getMessage());		
 		}
 		System.err.println ("***that was it");
+		if (t instanceof Exception) {
+			throw (Exception) t;
+		}
+		throw new Exception("wrapped",t);
 	}
 
 System.err.println("just set contextAttributeFinder=" + contextAttributeFinder);
