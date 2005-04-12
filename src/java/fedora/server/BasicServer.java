@@ -3,6 +3,7 @@ package fedora.server;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.utilities.ServerUtility;
 
 import fedora.logging.DatingFileHandler;
 import fedora.logging.SimpleXMLFormatter;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -231,28 +233,7 @@ public class BasicServer
             if (!fcfgFile.exists()) {
                 System.out.println("ERROR: fedora.fcfg not found in FEDORA_HOME/server/config/ -- is fedora.home set properly?");
             } else {
-                String adminPassword="fedoraAdmin";
-                String fedoraServerPort="8080";
-                String fedoraShutdownPort="8005";
-                String fedoraRedirectPort="8443";
-                DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-                factory.setNamespaceAware(true);
-                DocumentBuilder builder=factory.newDocumentBuilder();
-                Element rootElement=builder.parse(fcfgFile).getDocumentElement();
-                NodeList params=rootElement.getElementsByTagName("param");
-                for (int i=0; i<params.getLength(); i++) {
-                    Node nameNode=params.item(i).getAttributes().getNamedItem("name");
-                    Node valueNode=params.item(i).getAttributes().getNamedItem("value");
-                    if (nameNode.getNodeValue().equals("fedoraServerPort")) {
-                        fedoraServerPort=valueNode.getNodeValue();
-                    } else if (nameNode.getNodeValue().equals("adminPassword")) {
-                        adminPassword=valueNode.getNodeValue();
-                    } else if (nameNode.getNodeValue().equals("fedoraShutdownPort")) {
-                        fedoraShutdownPort=valueNode.getNodeValue();
-                    } else if (nameNode.getNodeValue().equals("fedoraRedirectPort")) {
-                        fedoraRedirectPort=valueNode.getNodeValue();
-                    }
-                }
+           		Properties serverProperties = ServerUtility.getServerProperties(true, true);            	
                 File serverTemplate=new File(fedoraHome, tomcatConfDir + "server_fedoraTemplate.xml");
                 BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
                 FileWriter out=new FileWriter(new File(fedoraHome, tomcatConfDir + "server.xml"));
@@ -261,13 +242,13 @@ public class BasicServer
                     nextLine=in.readLine();
                     if (nextLine!=null) {
                         if (nextLine.indexOf("#1")>0) {
-                            nextLine = nextLine.replaceAll("#1",fedoraServerPort);
+                            nextLine = nextLine.replaceAll("#1", serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT));
                         }
                         if (nextLine.indexOf("#2")>0) {
-                            nextLine = nextLine.replaceAll("#2",fedoraShutdownPort);
+                            nextLine = nextLine.replaceAll("#2", serverProperties.getProperty(ServerUtility.FEDORA_SHUTDOWN_PORT));
                         }
                         if (nextLine.indexOf("#3")>0) {
-                            nextLine = nextLine.replaceAll("#3",fedoraRedirectPort);
+                            nextLine = nextLine.replaceAll("#3", serverProperties.getProperty(ServerUtility.FEDORA_REDIRECT_PORT));
                         }
                         out.write(nextLine+"\n");
                     }
@@ -288,7 +269,9 @@ public class BasicServer
                             for (int i=0; i<nextLine.length(); i++) {
                                 char c=nextLine.charAt(i);
                                 if (c=='#') {
-                                    out.write(adminPassword);
+                                    out.write(serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD));
+                                } else if (c=='%') {
+                                    out.write(serverProperties.getProperty(ServerUtility.ADMIN_USER));                                	
                                 } else {
                                     out.write(c);
                                 }
