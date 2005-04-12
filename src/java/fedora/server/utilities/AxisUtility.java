@@ -158,30 +158,7 @@ public abstract class AxisUtility {
                        showDeployUsage();
                    } else {
                        try {
-                       		Properties serverProperties = ServerUtility.getServerProperties("http");
-                       		/*
-                           // figure out port from fedora.fcfg... and use it here
-                           String fedoraHome=System.getProperty("fedora.home");
-                           if ((fedoraHome==null) || (fedoraHome.equals(""))) {
-                               throw new IOException("fedora.home system property is not set, but it's required.");
-                           }
-                           File fedoraHomeDir=new File(fedoraHome);
-                           File fcfgFile=new File(fedoraHomeDir, "server/config/fedora.fcfg");
-                           String port="8080";
-                           DocumentBuilderFactory factory=DocumentBuilderFactory.newInstance();
-                           factory.setNamespaceAware(true);
-                           DocumentBuilder builder=factory.newDocumentBuilder();
-                           Element rootElement=builder.parse(fcfgFile).getDocumentElement();
-                           NodeList params=rootElement.getElementsByTagName("param");
-                           for (int i=0; i<params.getLength(); i++) {
-                               Node nameNode=params.item(i).getAttributes().getNamedItem("name");
-                               Node valueNode=params.item(i).getAttributes().getNamedItem("value");
-                               if (nameNode.getNodeValue().equals("fedoraServerPort")) {
-                                   port=valueNode.getNodeValue();
-                               }
-                           }
-//fixup for xacml  */
-
+                       		Properties serverProperties = ServerUtility.getServerProperties(true, false);
                        	   StringBuffer url=new StringBuffer("http://localhost:" 
                        	   		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) 
 								+ "/fedora/AdminService");

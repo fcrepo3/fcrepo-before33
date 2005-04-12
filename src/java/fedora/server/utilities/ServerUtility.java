@@ -13,9 +13,10 @@ public class ServerUtility {
     public static final String FEDORA_SERVER_HOST = "fedoraServerHost";
     public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
     public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
+    public static final String FEDORA_SHUTDOWN_PORT = "fedoraShutdownPort";
     public static final String ADMIN_USER = "adminUser";
     public static final String ADMIN_PASSWORD = "adminPassword";
-    public static final Properties getServerProperties(String protocol) 
+    public static final Properties getServerProperties(boolean httpRequired, boolean httpsRequired) 
     	throws Exception {
        	Properties properties = new Properties();    	
         String fedoraHome=System.getProperty("fedora.home");
@@ -32,8 +33,9 @@ public class ServerUtility {
         for (int i=0; i<params.getLength(); i++) {
             Node nameNode=params.item(i).getAttributes().getNamedItem("name");
             Node valueNode=params.item(i).getAttributes().getNamedItem("value");
-    		if (("http".equals(protocol) && FEDORA_SERVER_PORT.equals(nameNode.getNodeValue()))
-            ||  ("https".equals(protocol) && FEDORA_REDIRECT_PORT.equals(nameNode.getNodeValue()))
+    		if (FEDORA_SERVER_PORT.equals(nameNode.getNodeValue())
+            ||  FEDORA_REDIRECT_PORT.equals(nameNode.getNodeValue())
+            ||  FEDORA_SHUTDOWN_PORT.equals(nameNode.getNodeValue())			
             ||  FEDORA_SERVER_HOST.equals(nameNode.getNodeValue())
             ||  ADMIN_USER.equals(nameNode.getNodeValue())
             ||  ADMIN_PASSWORD.equals(nameNode.getNodeValue())) {
@@ -43,10 +45,15 @@ public class ServerUtility {
         if ((! properties.containsKey(FEDORA_SERVER_HOST))) {
         	throw new Exception("fedora.fcfg missing " + "http host");            	
         }                
-        if ((! properties.containsKey(FEDORA_SERVER_PORT)) 
-        &&  (! properties.containsKey(FEDORA_REDIRECT_PORT))) {
+        if (httpRequired && ! properties.containsKey(FEDORA_SERVER_PORT)) {
+        	throw new Exception("fedora.fcfg missing " + "http port");        	
+        }
+        if (httpsRequired && ! properties.containsKey(FEDORA_REDIRECT_PORT)) {
         	throw new Exception("fedora.fcfg missing " + "http port");            	
         }
+        if (! properties.containsKey(FEDORA_SHUTDOWN_PORT)) {
+        	throw new Exception("fedora.fcfg missing " + "shutdown port");            	
+        }        
         if ((! properties.containsKey(ADMIN_USER))) {
         	throw new Exception("fedora.fcfg missing " + "admin user");            	
         }
