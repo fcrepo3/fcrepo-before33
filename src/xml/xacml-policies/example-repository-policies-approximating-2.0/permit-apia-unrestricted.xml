@@ -13,7 +13,7 @@
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
             AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:apia</AttributeValue>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-a</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>    

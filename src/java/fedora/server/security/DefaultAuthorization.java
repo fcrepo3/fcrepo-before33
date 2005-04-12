@@ -188,7 +188,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 		
-	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String encoding)
+	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding)
 	throws NotAuthorizedException { 
 		String target = Constants.ACTION.EXPORT_OBJECT.uri;
 		log("enforcing " + target);
@@ -196,8 +196,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try { 
 			name = actionAttributes.setReturn(Constants.ACTION.FORMAT_URI.uri, format);
-			name = actionAttributes.setReturn(Constants.ACTION.EXPORT_CONTEXT.uri, exportContext);			
-			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);
+			name = actionAttributes.setReturn(Constants.ACTION.CONTEXT.uri, exportContext);			
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, exportEncoding);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -235,7 +235,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try {
 			String nNewPidsAsString = Integer.toString(nNewPids);
-			name = resourceAttributes.setReturn(Constants.ACTION.N_NEW_PIDS.uri, nNewPidsAsString);
+			name = resourceAttributes.setReturn(Constants.ACTION.N_PIDS.uri, nNewPidsAsString);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -363,7 +363,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}	
 	
-	public final void enforceGetObjectXML(Context context, String pid, String encoding) 
+	public final void enforceGetObjectXML(Context context, String pid, String objectXmlEncoding) 
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.GET_OBJECT_XML.uri;
 		log("enforcing " + target);
@@ -371,7 +371,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);	
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, objectXmlEncoding);	
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -380,7 +380,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}		
 	
-	public final void enforceIngestObject(Context context, String pid, String format, String encoding)
+	public final void enforceIngestObject(Context context, String pid, String format, String ingestEncoding)
 	throws NotAuthorizedException {
 		String target = Constants.ACTION.INGEST_OBJECT.uri;
 		log("enforcing " + target);
@@ -388,7 +388,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try {
 			name = actionAttributes.setReturn(Constants.ACTION.FORMAT_URI.uri, format);	
-			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, encoding);			
+			name = actionAttributes.setReturn(Constants.ACTION.ENCODING.uri, ingestEncoding);			
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -429,10 +429,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_MIME_TYPE.uri, datastreamNewMimeType);
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_FORMAT_URI.uri, datastreamNewFormatURI);			
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_LOCATION.uri, datastreamNewLocation);			
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_MIME_TYPE.uri, datastreamNewMimeType);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_FORMAT_URI.uri, datastreamNewFormatURI);			
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_LOCATION.uri, datastreamNewLocation);			
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_STATE.uri, datastreamNewState);	
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -460,9 +460,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_MIME_TYPE.uri, newDatastreamMimeType);
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_FORMAT_URI.uri, newDatastreamFormatURI);
-			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, newDatastreamState);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_MIME_TYPE.uri, newDatastreamMimeType);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_FORMAT_URI.uri, newDatastreamFormatURI);
+			name = actionAttributes.setReturn(Constants.ACTION.DATASTREAM_STATE.uri, newDatastreamState);
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -490,9 +490,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.PID.uri, disseminatorPid);
 			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NAMESPACE.uri, extractNamespace(disseminatorPid));
-			name = resourceAttributes.setReturn(Constants.ACTION.BMECH_NEW_PID.uri, bmechNewPid);	
-			name = resourceAttributes.setReturn(Constants.ACTION.BMECH_NEW_NAMESPACE.uri, extractNamespace(bmechNewPid));		
-			name = resourceAttributes.setReturn(Constants.ACTION.DISSEMINATOR_NEW_STATE.uri, extractNamespace(disseminatorNewState));		
+			name = resourceAttributes.setReturn(Constants.ACTION.BMECH_PID.uri, bmechNewPid);	
+			name = resourceAttributes.setReturn(Constants.ACTION.BMECH_NAMESPACE.uri, extractNamespace(bmechNewPid));		
+			name = resourceAttributes.setReturn(Constants.ACTION.DISSEMINATOR_STATE.uri, extractNamespace(disseminatorNewState));		
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -509,7 +509,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap resourceAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = resourceAttributes.setReturn(Constants.ACTION.OBJECT_NEW_STATE.uri, objectNewState);	
+			name = resourceAttributes.setReturn(Constants.ACTION.OBJECT_STATE.uri, objectNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -586,7 +586,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);	
-			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_NEW_STATE.uri, datastreamNewState);	
+			name = resourceAttributes.setReturn(Constants.ACTION.DATASTREAM_STATE.uri, datastreamNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -605,7 +605,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		try {
 			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.PID.uri, disseminatorId);	
 			name = resourceAttributes.setReturn(Constants.DISSEMINATOR.NAMESPACE.uri, extractNamespace(disseminatorId));			
-			name = resourceAttributes.setReturn(Constants.ACTION.DISSEMINATOR_NEW_STATE.uri, disseminatorNewState);	
+			name = resourceAttributes.setReturn(Constants.ACTION.DISSEMINATOR_STATE.uri, disseminatorNewState);	
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	

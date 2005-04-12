@@ -33,36 +33,28 @@ public class HttpRequestNamespace extends XacmlNamespace {
 	
     private HttpRequestNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
-
-    	// Properties
-    	MESSAGE_PROTOCOL = addName(new XacmlName(this, "message-protocol"));
-    	
-    	PROTOCOL = addName(new XacmlName(this, "protocol", StringAttribute.identifier));
-    	SCHEME = addName(new XacmlName(this, "scheme", StringAttribute.identifier));
-    	SECURITY = addName(new XacmlName(this, "security", StringAttribute.identifier));
-    	AUTHTYPE = addName(new XacmlName(this, "authtype", StringAttribute.identifier));
+    	AUTHTYPE = addName(new XacmlName(this, "authType", StringAttribute.identifier));
+    	CLIENT_FQDN = addName(new XacmlName(this, "clientFqdn", StringAttribute.identifier));
+    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "clientIpAddress", StringAttribute.identifier));	    	
+    	CONTENT_LENGTH = addName(new XacmlName(this, "contentLength", IntegerAttribute.identifier));
+    	CONTENT_TYPE = addName(new XacmlName(this, "contentType", StringAttribute.identifier));
+    	MESSAGE_PROTOCOL = addName(new XacmlName(this, "messageProtocol"));
+    	SOAP               = addName(new XacmlName(this, "messageProtocol-soap"));
+    	REST               = addName(new XacmlName(this, "messageProtocol-rest"));    	
     	METHOD = addName(new XacmlName(this, "method", StringAttribute.identifier));	
-    	SESSION_ENCODING = addName(new XacmlName(this, "session-encoding", StringAttribute.identifier));	
-    	SESSION_STATUS = addName(new XacmlName(this, "session-status", StringAttribute.identifier));		
-    	CONTENT_LENGTH = addName(new XacmlName(this, "content-length", IntegerAttribute.identifier));
-    	CONTENT_TYPE = addName(new XacmlName(this, "content-type", StringAttribute.identifier));
-    	CLIENT_FQDN = addName(new XacmlName(this, "client-fqdn", StringAttribute.identifier));
-    	CLIENT_IP_ADDRESS = addName(new XacmlName(this, "client-ip-address", StringAttribute.identifier));	
-    	SERVER_FQDN = addName(new XacmlName(this, "server-fqdn", StringAttribute.identifier));
-    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "server-ip-address", StringAttribute.identifier));
-    	//urn:oasis:names:tc:xacml:1.0:data-type:ipAddress
-    	SERVER_PORT = addName(new XacmlName(this, "server-port", StringAttribute.identifier));
-
-    	// Values of MESSAGE_PROTOCOL	 
-    	SOAP               = addName(new XacmlName(this, "soap"));
-    	REST               = addName(new XacmlName(this, "rest"));    	
-    	
-    	// Values of SECURITY	 
-    	SECURE               = addName(new XacmlName(this, "secure"));
-    	INSECURE               = addName(new XacmlName(this, "insecure"));     	
+    	PROTOCOL = addName(new XacmlName(this, "protocol", StringAttribute.identifier));
+    	SCHEME = addName(new XacmlName(this, "scheme", StringAttribute.identifier));    	
+    	SECURITY = addName(new XacmlName(this, "security", StringAttribute.identifier));	 
+    	SECURE               = addName(new XacmlName(this, "security-secure"));
+    	INSECURE               = addName(new XacmlName(this, "security-insecure"));     	
+    	SERVER_FQDN = addName(new XacmlName(this, "serverFqdn", StringAttribute.identifier));
+    	SERVER_IP_ADDRESS = addName(new XacmlName(this, "serverIpAddress", StringAttribute.identifier));
+    	SERVER_PORT = addName(new XacmlName(this, "serverPort", StringAttribute.identifier));
+    	SESSION_ENCODING = addName(new XacmlName(this, "sessionEncoding", StringAttribute.identifier));	
+    	SESSION_STATUS = addName(new XacmlName(this, "sessionStatus", StringAttribute.identifier));
     }
 
-	public static HttpRequestNamespace onlyInstance = new HttpRequestNamespace(EnvironmentNamespace.getInstance(), "http-request");
+	public static HttpRequestNamespace onlyInstance = new HttpRequestNamespace(EnvironmentNamespace.getInstance(), "httpRequest");
 	
 	public static final HttpRequestNamespace getInstance() {
 		return onlyInstance;

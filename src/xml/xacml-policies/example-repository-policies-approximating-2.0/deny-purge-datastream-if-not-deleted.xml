@@ -12,9 +12,9 @@
       <Action>
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
-            AttributeId="urn:fedora:names:fedora:2.1:action:action-id"/>
+            AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"
-            >urn:fedora:names:fedora:2.1:action:purgeDatastream</AttributeValue>
+            >urn:fedora:names:fedora:2.1:action:id-purgeDatastream</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>

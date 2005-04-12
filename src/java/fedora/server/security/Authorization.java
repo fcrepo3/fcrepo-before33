@@ -6,42 +6,6 @@ import fedora.server.errors.NotAuthorizedException;
 
 public interface Authorization {
 	
-	/*
-	public void enforceResourceIndexVisibility(Context context, String pid) 
-	throws NotAuthorizedException;
-	public void enforceSearchVisibility(Context context, String pid) 
-	throws NotAuthorizedException;
-	*/
-	
-	/* newly deleted, we are gathered here...
-	  
-	public static final String RESOURCE_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-namespace";
-	public static final String RESOURCE_AS_OF_DATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-asOfDate";
-
-	 
-	public static final String UNDEFINED = "UNDEFINED";
-	//public static final String SUBJECT_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:subject:subject-id";
-	//public static final String ACTION_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:action-id";
-	//public static final String ACTION_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-newState";	
-	//public static final String ACTION_DATASTREAM_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-datastreamNewState";
-	//public static final String ACTION_DISSEMINATOR_NEW_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:action:fedora-disseminatorNewState";
-	//public static final String RESOURCE_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:resource-id";
-	//public static final String RESOURCE_DATASTREAM_LOCATION_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamLocation";
-	//public static final String RESOURCE_DATASTREAM_CONTROL_GROUP_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastreamControlGroup";
-	//public static final String RESOURCE_BDEF_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefPid";
-	//public static final String RESOURCE_BDEF_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bdefNamespace";
-	//public static final String RESOURCE_BMECH_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechPid";
-	//public static final String RESOURCE_BMECH_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-bmechNamespace";
-	//public static final String RESOURCE_DISSEMINATOR_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorId";
-	//public static final String RESOURCE_DISSEMINATOR_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorNamespace";	
-	//public static final String RESOURCE_DISSEMINATOR_STATE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorState";
-	//public static final String RESOURCE_DISSEMINATOR_METHOD_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatorMethod";
-	//public static final String RESOURCE_DISSEMINATED_PID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedPid";
-	//public static final String RESOURCE_DISSEMINATED_NAMESPACE_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-disseminatedNamespace";
-	//public static final String RESOURCE_N_NEW_PIDS_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-nNewPids";
-
-	
-	*	*/
 
 	//subject
 	public static final String SUBJECT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:subject";
@@ -51,24 +15,13 @@ public interface Authorization {
 	public static final String ACTION_CATEGORY = "urn:oasis:names:tc:xacml:1.0:action";
 	public static final String ACTION_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:action-category:access-action";
 
-
-
 	//resource
 	public static final String RESOURCE_CATEGORY = "urn:oasis:names:tc:xacml:1.0:resource";
 	public static final String RESOURCE_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:resource-category:access-resource";
 	
-	//pid is given as resource-id
-	
-	//public static final String RESOURCE_OBJECT_STATE_URI_STRING = "info:fedora/fedora-system:def/model#state";
-	//public static final String RESOURCE_DATASTREAM_ID_URI_STRING = "urn:oasis:names:tc:xacml:1.0:resource:fedora-datastream-id";	
-	// no namespace for datastream id, which is not a pid	
-	//public static final String RESOURCE_DATASTREAM_STATE_URI_STRING = "info:fedora/fedora-system:def/model:datastream-state"; // <<feed back	
-	
 	//environment
 	public static final String ENVIRONMENT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:environment";
 	public static final String ENVIRONMENT_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:environment-category:access-environment";
-
-	//APIM 
 
 	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState) 
@@ -77,7 +30,7 @@ public interface Authorization {
 	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
 	throws NotAuthorizedException;
 	
-	public void enforceExportObject(Context context, String pid, String format, String exportContext, String encoding) 
+	public void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding) 
 	throws NotAuthorizedException;
 
 	public void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) //x 
@@ -104,10 +57,10 @@ public interface Authorization {
 	public void enforceGetObjectProperties(Context context, String pid) 
 	throws NotAuthorizedException;
 	
-	public void enforceGetObjectXML(Context context, String pid, String encoding) 
+	public void enforceGetObjectXML(Context context, String pid, String objectXmlEncoding) 
 	throws NotAuthorizedException;
 
-	public void enforceIngestObject(Context context, String pid, String format, String encoding) 
+	public void enforceIngestObject(Context context, String pid, String format, String ingestEncoding) 
 	throws NotAuthorizedException;
 	
 	public void enforceListObjectInFieldSearchResults(Context context, String pid) 
@@ -185,4 +138,8 @@ public interface Authorization {
 
 	public void enforceOAIRespond(Context context)
 	throws NotAuthorizedException;	
+
 }
+
+
+

@@ -22,19 +22,14 @@ public class DisseminatorNamespace extends XacmlNamespace {
 	
     private DisseminatorNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
-
-        // Properties
-    	ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
-    	PID = addName(new XacmlName(this, "pid", StringAttribute.identifier));
-    	NAMESPACE = addName(new XacmlName(this, "namespace", StringAttribute.identifier));
-    	STATE = addName(new XacmlName(this, "state", StringAttribute.identifier));    	
-    	METHOD = addName(new XacmlName(this, "method", StringAttribute.identifier));    	
-    	BDEF_PID = addName(new XacmlName(this, "bdefPid", StringAttribute.identifier));    	
-    	BMECH_PID = addName(new XacmlName(this, "bmechPid", StringAttribute.identifier));    
     	AS_OF_DATETIME = addName(new XacmlName(this, "asOfDateTime", DateTimeAttribute.identifier));       	
-
-    	// Values
-    	
+    	BDEF_PID = addName(new XacmlName(this, "bdefPid", StringAttribute.identifier));    	
+    	BMECH_PID = addName(new XacmlName(this, "bmechPid", StringAttribute.identifier));      	
+    	ID = addName(new XacmlName(this, "id", StringAttribute.identifier));
+    	METHOD = addName(new XacmlName(this, "method", StringAttribute.identifier));    	
+    	NAMESPACE = addName(new XacmlName(this, "namespace", StringAttribute.identifier));
+    	PID = addName(new XacmlName(this, "pid", StringAttribute.identifier));
+    	STATE = addName(new XacmlName(this, "state", StringAttribute.identifier));    	
     }
 
 	public static DisseminatorNamespace onlyInstance = new DisseminatorNamespace(ResourceNamespace.getInstance(), "disseminator");

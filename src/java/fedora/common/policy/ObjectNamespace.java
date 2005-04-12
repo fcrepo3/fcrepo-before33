@@ -5,18 +5,15 @@ import com.sun.xacml.attr.StringAttribute;
 
 public class ObjectNamespace extends XacmlNamespace {
 	
-	// Properties
-	public final XacmlName PID;
-	public final XacmlName NAMESPACE; //not a "patterning" error; this is the pid prefix, part before ":"	
-	public final XacmlName STATE;	
+	public final XacmlName CONTENT_MODEL;
 	public final XacmlName CONTROL_GROUP;	
-	public final XacmlName OWNER;
-	public final XacmlName CONTENT_MODEL;	
 	public final XacmlName CREATED_DATETIME;	
 	public final XacmlName LAST_MODIFIED_DATETIME;	
+	public final XacmlName NAMESPACE; //not a "patterning" error; this is the pid prefix, part before ":"	
 	public final XacmlName OBJECT_TYPE;	
-	
-    // Values
+	public final XacmlName OWNER;
+	public final XacmlName PID;	
+	public final XacmlName STATE;	
 	
     private ObjectNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);

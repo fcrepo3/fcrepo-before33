@@ -13,7 +13,7 @@
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
             AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:apim</AttributeValue>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-m</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>
@@ -24,7 +24,7 @@
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
-        <EnvironmentAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        <EnvironmentAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress" DataType="http://www.w3.org/2001/XMLSchema#string"/>
         <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127.0.0.1</AttributeValue>
         </Apply>

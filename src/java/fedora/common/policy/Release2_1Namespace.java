@@ -2,6 +2,8 @@ package fedora.common.policy;
 
 import java.util.Vector;
 
+import fedora.common.Constants;
+
 public class Release2_1Namespace extends XacmlNamespace {
 
     private Release2_1Namespace(XacmlNamespace parent, String localName) {
@@ -25,11 +27,10 @@ public class Release2_1Namespace extends XacmlNamespace {
 		Vector list = new Vector();
 		instance.flatRep(list);
 		for (int i=0; i<list.size(); i++) {
-			System.out.println(list.get(i));
+			if (! ((String)list.get(i)).startsWith(Constants.ACTION.CONTEXT_ID.uri)) {
+				System.out.println(list.get(i));
+			}
 		} 
 	}
-	
-	//C:\fedora\mellon\dist>
-	//java -cp server\jakarta-tomcat-5.0.28\webapps\fedora\WEB-INF\classes;client\lib\jrdf-0.3.3.jar fedora.common.policy.Release2_1Namespace
 
 }
