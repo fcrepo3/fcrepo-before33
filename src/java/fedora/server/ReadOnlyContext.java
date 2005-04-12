@@ -8,6 +8,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.axis.MessageContext;
+import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.catalina.realm.GenericPrincipal;
 
 import com.sun.xacml.attr.DateAttribute;
@@ -53,6 +55,20 @@ public class ReadOnlyContext
     private MultiValueMap m_resourceAttributes;
     
     private String password;
+    
+    public static Context getCachedContext() {
+        HttpServletRequest req=(HttpServletRequest) MessageContext.
+                getCurrentContext().getProperty(
+                HTTPConstants.MC_HTTP_SERVLETREQUEST);
+      return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, true);
+    }
+
+    public static Context getUncachedContext() {
+        HttpServletRequest req=(HttpServletRequest) MessageContext.
+                getCurrentContext().getProperty(
+                HTTPConstants.MC_HTTP_SERVLETREQUEST);
+        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
+    }
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -397,7 +413,11 @@ System.err.println("in context, adding subject attr " + parts[0] + "=" + parts[1
 
       return temp;
     }
-
+    
+    public final void setUseCachedObject(boolean useCachedObject) {
+    	setParameter("useCachedObject", "" + useCachedObject);  
+    }
+    
   	public static final String[] parseRole (String role) {
   		String[] parts = null;
   		if ((role == null) || (role.length() == 0)) {
