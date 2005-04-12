@@ -96,7 +96,7 @@ public class DefaultExternalContentManager extends Module
   	log("in getExternalContent(), url=" + url);
   	MIMETypedStream httpContent = null;
   	try {  		
-  		HttpClient client = new HttpClient(url); 
+  		HttpClient client = new HttpClient(url, "backendClient", ""); 
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
   			throw new StreamIOException(
