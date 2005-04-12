@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 // Fedora imports
+import fedora.common.Constants;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.Context;
@@ -256,13 +257,13 @@ public class DynamicAccessModule extends Module implements Access
     // SimpleDOReader will be instantiated and the dissemination will be
     // performed by reading information directly from the XML objects.
 
-    HashMap h=new HashMap();
-    h.put("application", "apia");
-    h.put("useCachedObject", "false");
-    h.put("userId", "fedoraAdmin");
-    ReadOnlyContext newContext = ReadOnlyContext.getContext(h);
+  	if (context instanceof ReadOnlyContext) {
+  	    ((ReadOnlyContext)context).setUseCachedObject(false);
+  	} else {
+    	setParameter("useCachedObject", "" + false); 		
+  	}
     return da.getDissemination(context, PID, bDefPID, methodName, userParms,
-      asOfDateTime, m_manager.getReader(newContext, PID));
+      asOfDateTime, m_manager.getReader(context, PID));
   }
 
   /**
