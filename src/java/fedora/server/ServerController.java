@@ -80,6 +80,8 @@ public class ServerController
 					= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
                     s_server.shutdown(context);
                     lineResponse = "OK";
+        		} catch (NotAuthorizedException na) {
+        			response.sendError(HttpServletResponse.SC_FORBIDDEN);                    
                 } catch (Throwable t) {
                     lineResponse = "ERROR";
                     System.err.println("Error shutting down Fedora server: " + t.getClass().getName() + ": " + t.getMessage());
@@ -101,7 +103,7 @@ public class ServerController
 				} catch (ModuleInitializationException e) {
 					//since 2nd parm above is "false", this is unexpected
 				} catch (NotAuthorizedException e) {
-					//don't tell
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);			
 				}
             }
         } else {
@@ -144,7 +146,7 @@ public class ServerController
             	optionalUsername = args[2];
             	optionalPassword = args[3];
             }
-            Properties serverProperties = ServerUtility.getServerProperties(protocol);           
+       		Properties serverProperties = ServerUtility.getServerProperties("http".equals(protocol), "https".equals(protocol));           
       		HttpClient client = new HttpClient(protocol, 
       				serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST), 
       				serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT), 
