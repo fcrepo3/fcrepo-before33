@@ -77,24 +77,12 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
     }
   }
 
-  private Context getCachedContext() {
-      HttpServletRequest req=(HttpServletRequest) MessageContext.
-              getCurrentContext().getProperty(
-              HTTPConstants.MC_HTTP_SERVLETREQUEST);
-    return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, true);
-  }
 
-  private Context getUncachedContext() {
-      HttpServletRequest req=(HttpServletRequest) MessageContext.
-              getCurrentContext().getProperty(
-              HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
-  }
 
   public java.lang.String[] getObjectHistory(java.lang.String PID)
           throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=ReadOnlyContext.getCachedContext();
     assertInitialized();
     try
     {
@@ -145,7 +133,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                   String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=ReadOnlyContext.getCachedContext();
     try
     {
       fedora.server.storage.types.Property[] properties =
@@ -182,7 +170,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                   String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getUncachedContext();
+    Context context=ReadOnlyContext.getUncachedContext();
     try
     {
 
@@ -213,7 +201,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public FieldSearchResult findObjects(String[] resultFields,
           NonNegativeInteger maxResults, FieldSearchQuery query)
           throws RemoteException {
-      Context context=getCachedContext();
+      Context context=ReadOnlyContext.getCachedContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
@@ -250,7 +238,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
 
   public FieldSearchResult resumeFindObjects(String sessionToken)
           throws java.rmi.RemoteException {
-      Context context=getCachedContext();
+      Context context=ReadOnlyContext.getCachedContext();
       assertInitialized();
       try {
           fedora.server.search.FieldSearchResult result=s_access.
@@ -310,7 +298,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                                                      String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=ReadOnlyContext.getCachedContext();
     try
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
@@ -339,7 +327,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public fedora.server.types.gen.DatastreamDef[] listDatastreams(String PID, String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getUncachedContext();
+    Context context=ReadOnlyContext.getUncachedContext();
     try
     {
       fedora.server.storage.types.DatastreamDef[] datastreamDefs =
@@ -378,7 +366,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                                                                 String asOfDateTime)
       throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=ReadOnlyContext.getCachedContext();
     try
     {
       fedora.server.access.ObjectProfile objectProfile =
@@ -413,7 +401,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
   public fedora.server.types.gen.RepositoryInfo
       describeRepository() throws java.rmi.RemoteException
   {
-    Context context=getCachedContext();
+    Context context=ReadOnlyContext.getCachedContext();
     try
     {
       fedora.server.access.RepositoryInfo repositoryInfo =
