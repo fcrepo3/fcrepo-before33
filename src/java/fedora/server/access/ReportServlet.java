@@ -19,6 +19,7 @@ import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.QueryParseException;
 import fedora.server.errors.ServerException;
 
@@ -95,11 +96,13 @@ public class ReportServlet
 		
 		String dateRange = request.getParameter("dateRange");
 
-		Report report;
+		Report report = null;
 		try {
 		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
 			report = Report.getInstance(context, remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
 					prefix, dateRange);
+		} catch (NotAuthorizedException na) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);						
 		} catch (QueryParseException e1) {
 			throw new ServletException("bad query parm", e1);
 		} catch (ServerException e1) {

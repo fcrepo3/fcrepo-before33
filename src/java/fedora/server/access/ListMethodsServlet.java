@@ -28,6 +28,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.ObjectMethodsDef;
@@ -194,7 +195,8 @@ public class ListMethodsServlet extends HttpServlet
               logger.logFiner("[ListMethodsServlet] Servlet Roundtrip "
                   + "listMethods: " + interval + " milliseconds.");
           }
-
+		} catch (NotAuthorizedException na) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);			
           } catch (Throwable th)
           {
               String message = "[ListMethodsServlet] An error has occured in "

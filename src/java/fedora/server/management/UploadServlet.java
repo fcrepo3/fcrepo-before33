@@ -12,9 +12,13 @@ import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.Part;
 
+import fedora.common.Constants;
+import fedora.server.Context;
 import fedora.server.Logging;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 
 /**
@@ -69,6 +73,7 @@ public class UploadServlet
     public void doPost(HttpServletRequest request, 
             HttpServletResponse response) 
             throws IOException {
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 		try {
             MultipartParser parser=new MultipartParser(request, 
                 Long.MAX_VALUE, true, null);
@@ -76,7 +81,7 @@ public class UploadServlet
 			if (part!=null && part.isFile()) {
 			    if (part.getName().equals("file")) {
                     sendResponse(HttpServletResponse.SC_CREATED, 
-                            saveAndGetId((FilePart) part), response);
+                            saveAndGetId(context, (FilePart) part), response);
 				} else {
                     sendResponse(HttpServletResponse.SC_BAD_REQUEST,
                             "Content must be named \"file\"", response);
@@ -90,6 +95,8 @@ public class UploadServlet
 			                "No extra parameters allowed", response);
 				}
 			}
+		} catch (NotAuthorizedException na) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);			
 		} catch (Exception e) {
                     e.printStackTrace();
 		    sendResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -122,9 +129,9 @@ public class UploadServlet
         }
     }
 
-    private String saveAndGetId(FilePart filePart)
+    private String saveAndGetId(Context context, FilePart filePart)
 	        throws ServerException, IOException {
-		return s_management.putTempStream(filePart.getInputStream());
+		return s_management.putTempStream(context, filePart.getInputStream()); 
 	}
 
     /**

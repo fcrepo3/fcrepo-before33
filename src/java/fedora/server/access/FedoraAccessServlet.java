@@ -31,6 +31,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.DOManager;
@@ -375,6 +376,8 @@ public class FedoraAccessServlet extends HttpServlet
           logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDatastreamDissemination: " + interval + " milliseconds.");
       }
+	} catch (NotAuthorizedException na) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);			      
     } catch (Throwable th)
       {
         String message = "[FedoraAccessServlet] An error has occured in "
@@ -447,6 +450,8 @@ public class FedoraAccessServlet extends HttpServlet
         logger.logInfo(message);
         showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
       }
+	} catch (NotAuthorizedException na) {
+		throw na;
     } catch (Throwable th)
     {
       String message = "[FedoraAccessServlet] An error has occured. "

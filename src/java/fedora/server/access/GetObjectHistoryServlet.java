@@ -27,6 +27,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.utilities.Logger;
@@ -133,6 +134,8 @@ public class GetObjectHistoryServlet extends HttpServlet
     Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
     try {
         getObjectHistory(context, PID, xml, response);
+	} catch (NotAuthorizedException na) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);			        
     } catch (Throwable th)
       {
         String message = "[GetObjectHistoryServlet] An error has occured in "

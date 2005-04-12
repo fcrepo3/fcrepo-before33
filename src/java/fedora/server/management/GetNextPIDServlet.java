@@ -26,6 +26,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 
@@ -129,6 +130,8 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     try
     {
       getNextPID(context, numPIDs, namespace, xml, response);
+	} catch (NotAuthorizedException na) {
+		response.sendError(HttpServletResponse.SC_FORBIDDEN);			      
     } catch (Throwable th)
       {
         String message = "[GetNextPIDServlet] An error has occured in "

@@ -15,10 +15,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+import fedora.common.Constants;
+import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
@@ -98,14 +101,9 @@ public class FieldSearchServlet
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HashMap h=new HashMap();
-            h.put("application", "apia");
-            h.put("useCachedObject", "true");
-            h.put("userId", "fedoraAdmin");
-            h.put("host", request.getRemoteAddr());
-            ReadOnlyContext context = ReadOnlyContext.getContext(h);
+		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);            
 
-            String[] fieldsArray=getFieldsArray(request);
+		    String[] fieldsArray=getFieldsArray(request);
             HashSet fieldHash=new HashSet();
             if (fieldsArray!=null) {
                 for (int i=0; i<fieldsArray.length; i++) {
@@ -396,6 +394,8 @@ public class FieldSearchServlet
                 out.println("</result>");
                 out.flush(); out.close();
             }
+		} catch (NotAuthorizedException na) {
+			response.sendError(HttpServletResponse.SC_FORBIDDEN);			            
         } catch (ServerException se) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.setContentType("text/html");
