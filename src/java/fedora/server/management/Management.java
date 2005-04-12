@@ -168,7 +168,7 @@ public interface Management {
                                                  String pid, 
                                                  String disseminatorID) throws ServerException;
 
-    public String putTempStream(InputStream in) throws ServerException;
+    public String putTempStream(Context context, InputStream in) throws ServerException;
 
     public InputStream getTempStream(String id) throws ServerException;
 
