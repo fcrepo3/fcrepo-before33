@@ -89,7 +89,7 @@ start() {
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
-	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
+	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
 				fedora.server.ServerController startup)
 	restoreJavaHome
@@ -151,7 +151,7 @@ debug() {
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
-	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
+	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
 				fedora.server.ServerController startup)
     echo "Starting jdb..."
@@ -161,7 +161,7 @@ debug() {
 
 stop() {
 	echo "Stopping the Fedora Server..."
-	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_CONTROLLER_LIBS" \
+	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 	                          -Dfedora.home="$FEDORA_HOME" \
 	                          fedora.server.ServerController shutdown)
 
