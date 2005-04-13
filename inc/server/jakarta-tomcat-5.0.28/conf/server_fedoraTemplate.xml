@@ -2,7 +2,7 @@
   <Service name="Fedora-Server">
 	<!-- enableLookups="true" supports client dns/fqdn in xacml authz policies -->
 	<!-- set independently in the 2 Connector elements below -->
-	<!-- not needed for ip decisions in xacml authz policies -->
+	<!-- not needed for ip-based decisions in example xacml authz policies -->
     <Connector port="#1"
                enableLookups="true" redirectPort="#3" acceptCount="15"
                maxThreads="300" maxSpareThreads="75" minSpareThreads="6"
@@ -13,7 +13,7 @@
                port="#3" minProcessors="5" maxProcessors="75"
                enableLookups="true"
                acceptCount="10" debug="4" scheme="https" secure="true"
-               useURIValidationHack="false">
+               useURIValidationHack="false" keystoreFile="conf/.keystore">
       <Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
