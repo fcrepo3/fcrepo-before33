@@ -27,8 +27,11 @@ public class Release2_1Namespace extends XacmlNamespace {
 		Vector list = new Vector();
 		instance.flatRep(list);
 		for (int i=0; i<list.size(); i++) {
-			if (! ((String)list.get(i)).startsWith(Constants.ACTION.CONTEXT_ID.uri)) {
-				System.out.println(list.get(i));
+			if (list.get(i) instanceof XacmlName) {
+				if (! ((XacmlName)list.get(i)).toString().startsWith(Constants.ACTION.CONTEXT_ID.uri)) {
+					System.out.println(list.get(i));
+				}
+				
 			}
 		} 
 	}
