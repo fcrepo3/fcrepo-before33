@@ -33,23 +33,6 @@ import fedora.server.storage.types.Disseminator;
  * <p>The read methods of DOWriter reflect on the composition of the object in
  * the context of the current transaction.</p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
- *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
@@ -73,6 +56,7 @@ public class SimpleDOWriter
 
     private boolean m_pendingRemoval=false;
     private boolean m_invalidated=false;
+    private boolean m_committed=false;
 
     public SimpleDOWriter(Context context, DefaultDOManager mgr,
             DOTranslator translator,
@@ -335,6 +319,7 @@ public class SimpleDOWriter
             throws ServerException {
         assertNotInvalidated();
         m_mgr.doCommit(m_context, m_obj, logMessage, m_pendingRemoval);
+        m_committed=true;
         invalidate();
     }
 
@@ -394,5 +379,13 @@ public class SimpleDOWriter
             throws ObjectIntegrityException {
         if (m_invalidated)
             throw ERROR_INVALIDATED;
+    }
+    
+    public boolean isCommitted() {
+        return m_committed;
+    }
+    
+    public boolean isNew() {
+        return m_obj.isNew();
     }
 }

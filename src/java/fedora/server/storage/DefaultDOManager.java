@@ -57,23 +57,6 @@ import fedora.server.validation.RelsExtValidator;
  * object ingest process and the object replication process.
  * </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
- *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
@@ -282,6 +265,20 @@ public class DefaultDOManager
     }
 
     public void releaseWriter(DOWriter writer) {
+        
+        // If this is a new object, but object was not successfully committed
+        // need to backout object registration.
+        if (writer.isNew() && !writer.isCommitted()) {
+            try {
+                unregisterObject(writer.GetObjectPID());
+            } catch (Exception e) {
+                try {
+                    logWarning("Error unregistering object: " + writer.GetObjectPID());
+                } catch (Exception e2) {
+                    logWarning("Error unregistering object; Unable to obtain pid from writer.");
+                }
+            }
+        }        
         writer.invalidate();
         // remove pid from tracked list...m_writers.remove(writer);
     }
