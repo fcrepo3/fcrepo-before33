@@ -831,12 +831,19 @@ public class DefaultAccess extends Module implements Access
           + uhe.getClass().getName() + "The message "
           + "was \"" + uhe.getMessage() + "\"");
     }
-    String fedoraServerPort = getServer().getParameter("fedoraServerPort");
+    
+    // SDP: Comment out configured port.  
+    // Now obtained from context object of incoming request.
+    // String fedoraServerPort = getServer().getParameter("fedoraServerPort");
+    
     String fedoraServerHost = getServer().getParameter("fedoraServerHost");
     if (fedoraServerHost==null || fedoraServerHost.equals("")) {
         fedoraServerHost=hostIP.getHostName();
     }
-    reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
+    // SDP: repository base URL now constructed using protocol and port
+    // from context object for incoming request.
+    // reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
+	reposBaseURL = protocol + fedoraServerHost + ":" + port;
     return reposBaseURL;
   }
 
