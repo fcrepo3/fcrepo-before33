@@ -47,22 +47,6 @@ import fedora.server.types.gen.UserInfo;
 /**
  * Launch a dialog for logging into a Fedora repository.
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -72,26 +56,37 @@ public class LoginDialog
         extends JDialog {
 
     private JComboBox m_serverComboBox;
+	private JComboBox m_protocolComboBox;
     private JComboBox m_usernameComboBox;
     private JPasswordField m_passwordField;
 
     private String m_lastUsername="fedoraAdmin";
     private String m_lastServer="localhost:8080";
+	private String m_lastProtocol="http";
     private HashMap m_usernames;
     private HashMap m_servers;
+	private HashMap m_protocols;
     
     public LoginDialog() {
         super(JOptionPane.getFrameForComponent(Administrator.getDesktop()), "Login", true);
+        
+        System.out.println("entered login diaglog");
 
         m_servers=new HashMap();
+        m_protocols=new HashMap();
+        m_protocols.put("http", "");
+        m_protocols.put("https", "");
         m_usernames=new HashMap();
 
         JLabel serverLabel=new JLabel("Fedora Server");
+		JLabel protocolLabel=new JLabel("Protocol");
         JLabel usernameLabel=new JLabel("Username");
         JLabel passwordLabel=new JLabel("Password");
 
         m_serverComboBox=new JComboBox();
         m_serverComboBox.setEditable(true);
+		m_protocolComboBox=new JComboBox();
+		m_protocolComboBox.setEditable(true);
         m_usernameComboBox=new JComboBox();
         m_usernameComboBox.setEditable(true);
         m_passwordField=new JPasswordField();
@@ -116,8 +111,8 @@ public class LoginDialog
                 ));
         GridBagLayout gridBag=new GridBagLayout();
         inputPane.setLayout(gridBag);
-        addLabelValueRows(new JLabel[] {serverLabel, usernameLabel, passwordLabel}, 
-                new JComponent[] {m_serverComboBox, m_usernameComboBox, m_passwordField}, 
+        addLabelValueRows(new JLabel[] {serverLabel, protocolLabel, usernameLabel, passwordLabel}, 
+                new JComponent[] {m_serverComboBox, m_protocolComboBox, m_usernameComboBox, m_passwordField}, 
                 gridBag, inputPane);
 
         JButton cancelButton=new JButton(new AbstractAction() {
@@ -153,6 +148,7 @@ public class LoginDialog
         try {
             Properties props=new Properties();
             props.setProperty("lastServer", m_lastServer);
+			props.setProperty("lastProtocol", m_lastProtocol);
             props.setProperty("lastUsername", m_lastUsername);
             Iterator iter;
             int i;
@@ -163,6 +159,13 @@ public class LoginDialog
                 props.setProperty("server" + i, name);
                 i++;
             }
+			iter=m_protocols.keySet().iterator();
+			i=0;
+			while (iter.hasNext()) {
+				String name=(String) iter.next();
+				props.setProperty("protocol" + i, name);
+				i++;
+			}
             iter=m_usernames.keySet().iterator();
             i=0;
             while (iter.hasNext()) {
@@ -187,10 +190,14 @@ public class LoginDialog
                 String prop=(String) names.nextElement();
                 if (prop.equals("lastServer")) {
                     m_lastServer=props.getProperty(prop);
+				} else if (prop.equals("lastProtocol")) {
+					m_lastProtocol=props.getProperty(prop);
                 } else if (prop.equals("lastUsername")) {
                     m_lastUsername=props.getProperty(prop);
                 } else if (prop.startsWith("server")) {
                     m_servers.put(props.getProperty(prop), "");
+				} else if (prop.startsWith("protocol")) {
+					m_protocols.put(props.getProperty(prop), "");
                 } else if (prop.startsWith("username")) {
                     m_usernames.put(props.getProperty(prop), "");
                 }
@@ -208,6 +215,16 @@ public class LoginDialog
             }
         }
         m_servers.put(m_lastServer, "");
+        
+		m_protocolComboBox.addItem(m_lastProtocol);
+		Iterator protocolIter=m_protocols.keySet().iterator();
+		while (protocolIter.hasNext()) {
+			String a=(String) protocolIter.next();
+			if (!a.equals(m_lastProtocol)) {
+				m_protocolComboBox.addItem(a);
+			}
+		}
+		m_protocols.put(m_lastProtocol, "");
 
         m_usernameComboBox.addItem(m_lastUsername);
         Iterator uIter=m_usernames.keySet().iterator();
@@ -224,6 +241,7 @@ public class LoginDialog
                 m_serverComboBox.getPreferredSize().width+20,
                 m_serverComboBox.getPreferredSize().height);
         m_serverComboBox.setPreferredSize(newSize);
+		m_protocolComboBox.setPreferredSize(newSize);
         m_usernameComboBox.setPreferredSize(newSize);
         m_passwordField.setPreferredSize(newSize);
     }
@@ -254,10 +272,10 @@ public class LoginDialog
     }
 
         // sets Administrator.APIA/M if success, throws Exception if fails.
-        public static void tryLogin(String host, int port, String user, String pass) 
+        public static void tryLogin(String protocol, String host, int port, String user, String pass) 
                 throws Exception {
-            Administrator.APIA=APIAStubFactory.getStub(host, port, user, pass);
-            Administrator.APIM=APIMStubFactory.getStub(host, port, user, pass);
+            Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+            Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
             RepositoryInfo info=Administrator.APIA.describeRepository();
             if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
                 throw new IOException("Server is version "
@@ -347,17 +365,23 @@ public class LoginDialog
                     } catch (NumberFormatException nfe) {
                         throw new IOException("Server port must be an integer.");
                     }
+					String protocol=(String) m_protocolComboBox.getSelectedItem();
+					if (protocol.equals("")) {
+						throw new IOException("No protocol provided.");
+					}
                     String username=(String) m_usernameComboBox.getSelectedItem();
                     if (username.equals("")) {
                         throw new IOException("No username provided.");
                     }
                     String pass = new String(m_passwordField.getPassword());
-                    tryLogin(host, port, username, pass);
+                    
+                    tryLogin(protocol, host, port, username, pass);
                     // all looks ok...just save stuff and exit now
                     m_lastServer=host + ":" + port;
+                    m_lastProtocol=protocol;
                     m_lastUsername=username;
                     m_loginDialog.saveProperties();
-                    Administrator.INSTANCE.setLoginInfo(host, port, username, pass);
+                    Administrator.INSTANCE.setLoginInfo(protocol, host, port, username, pass);
                     m_loginDialog.dispose();
                 } catch (Exception e) {
                 	Administrator.showErrorDialog(m_loginDialog, "Login Error", e.getMessage(), e);           	
