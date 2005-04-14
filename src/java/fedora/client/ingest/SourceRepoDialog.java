@@ -18,22 +18,6 @@ import fedora.server.types.gen.UserInfo;
  * getAPIA() and getAPIM() will return non-null if login information
  * is entered.
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -43,6 +27,7 @@ public class SourceRepoDialog
         extends JDialog {
         
     private JTextField m_serverField;
+	private JTextField m_protocolField;
     private JTextField m_usernameField;
     private JPasswordField m_passwordField;
     
@@ -53,9 +38,11 @@ public class SourceRepoDialog
     private UserInfo m_userInfo;
     
     private static String s_lastServer;
+	private static String s_lastProtocol;
     private static String s_lastUsername;
     private static String s_lastPassword;
 
+	private String m_protocol;
     private String m_host;
     private int m_port;
         
@@ -74,16 +61,19 @@ public class SourceRepoDialog
         GridBagLayout gridBag=new GridBagLayout();
         inputPane.setLayout(gridBag);
         JLabel serverLabel=new JLabel("Fedora Server");
+		JLabel protocolLabel=new JLabel("Protocol");
         JLabel usernameLabel=new JLabel("Username");
         JLabel passwordLabel=new JLabel("Password");
         if (s_lastServer==null) s_lastServer="hostname:portnumber";
         m_serverField=new JTextField(s_lastServer);
+		if (s_lastProtocol==null) s_lastProtocol="http";
+		m_protocolField=new JTextField(s_lastProtocol);
         if (s_lastUsername==null) s_lastUsername="fedoraAdmin";
         m_usernameField=new JTextField(s_lastUsername);
         if (s_lastPassword==null) s_lastPassword="";
         m_passwordField=new JPasswordField(s_lastPassword);
-        addLabelValueRows(new JLabel[] {serverLabel, usernameLabel, passwordLabel}, 
-                new JComponent[] {m_serverField, m_usernameField, m_passwordField}, 
+        addLabelValueRows(new JLabel[] {serverLabel, protocolLabel, usernameLabel, passwordLabel}, 
+                new JComponent[] {m_serverField, m_protocolField, m_usernameField, m_passwordField}, 
                 gridBag, inputPane);
 
         JButton okButton=new JButton(new AbstractAction() {
@@ -95,6 +85,7 @@ public class SourceRepoDialog
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
                 } else {
+					
                     String[] hp=m_serverField.getText().split(":");
                     if (hp.length==2) {
                         try {
@@ -102,11 +93,13 @@ public class SourceRepoDialog
                             m_host=host;
                             int port=Integer.parseInt(hp[1]);
                             m_port=port;
-                            m_apia=APIAStubFactory.getStub(host, 
+                            m_apia=APIAStubFactory.getStub(m_protocolField.getText(),
+                            							   host, 
                                                            port, 
                                                            m_usernameField.getText(),
                                                            new String(m_passwordField.getPassword()));
-                            m_apim=APIMStubFactory.getStub(host, 
+                            m_apim=APIMStubFactory.getStub(m_protocolField.getText(),
+                            							   host, 
                                                            port, 
                                                            m_usernameField.getText(),
                                                            new String(m_passwordField.getPassword()));
@@ -114,6 +107,7 @@ public class SourceRepoDialog
                                 m_repositoryInfo=m_apia.describeRepository();
                                 m_userInfo=m_apim.describeUser(m_usernameField.getText());
                                 s_lastServer=host + ":" + port;
+								s_lastProtocol=m_protocolField.getText();
                                 s_lastUsername=m_usernameField.getText();
                                 s_lastPassword=new String(m_passwordField.getPassword());
                                 dispose();
@@ -129,7 +123,7 @@ public class SourceRepoDialog
                                 }
                                 if (e.getMessage().indexOf("java.net")!=-1) {
                                 	Administrator.showErrorDialog(Administrator.getDesktop(), "Connection Error", 
-                                			"Can't connect to " + host + ":" + port, e);
+                                			"Can't connect to " + m_protocolField.getText() + "://" + host + ":" + port, e);
                                     retry=true;
                                 }
                                 if (!retry) {
@@ -137,6 +131,7 @@ public class SourceRepoDialog
                                     // of an unimplemented method on a prior
                                     // version of fedora, which is ok.
                                     s_lastServer=host + ":" + port;
+									s_lastProtocol=m_protocolField.getText();
                                     s_lastUsername=m_usernameField.getText();
                                     s_lastPassword=new String(m_passwordField.getPassword());
                                     dispose();
@@ -184,6 +179,10 @@ public class SourceRepoDialog
         return m_apia;
     }
 
+	public String getProtocol() {
+		return m_protocol;
+	}
+	
     public String getHost() {
         return m_host;
     }
