@@ -18,6 +18,7 @@ import fedora.client.utility.ingest.AutoIngestor;
  */
 class BatchIngest {
 
+	String protocol = null;  //http or https
 	String host = null; //"localhost";
 	int port = 0; //8080;
 	String username;
@@ -33,6 +34,7 @@ class BatchIngest {
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		pidsPath = optValues.getProperty(BatchTool.PIDSPATH);
 		pidsFormat = optValues.getProperty(BatchTool.PIDSFORMAT);
+		protocol = optValues.getProperty(BatchTool.SERVERPROTOCOL);
 		host = optValues.getProperty(BatchTool.SERVERFQDN);
 		String serverPortAsString = optValues.getProperty(BatchTool.SERVERPORT);
 		username = optValues.getProperty(BatchTool.USERNAME);
@@ -96,7 +98,7 @@ class BatchIngest {
     		//System.err.println("in BatchIngest.process()");
 		pidMaps = new Hashtable();
 		keys = new Vector();
-		AutoIngestor autoIngestor = new AutoIngestor(host, port, username, password);
+		AutoIngestor autoIngestor = new AutoIngestor(protocol, host, port, username, password);
 
 		//get files from batchDirectory
 		File[] files = null; {
