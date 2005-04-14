@@ -1412,6 +1412,7 @@ public class BatchModifyParser extends DefaultHandler
 
     public static void main(String[] args)
     {
+        String protocol = "http";
         String host = "localhost";
         int port = 8080;
         String user = "fedoraAdmin";
@@ -1423,8 +1424,8 @@ public class BatchModifyParser extends DefaultHandler
         try {
             UPLOADER=new Uploader(host, port, user, pass);
             logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
-            APIM = fedora.client.APIMStubFactory.getStub(host, port, user, pass);
-            APIA = fedora.client.APIAStubFactory.getStub(host, port, user, pass);
+            APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
+            APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
             InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
             BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
             file.close();
