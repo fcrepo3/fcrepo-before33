@@ -19,22 +19,6 @@ import fedora.server.types.gen.RepositoryInfo;
  * <p><b>Description: A utility class to initiate ingest of one or more objects.
  * This class provides static utility methods, and it is also called by
  * command line utilities.
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  */
 public class Ingest {
 
@@ -134,7 +118,8 @@ public class Ingest {
                                             realLogMessage);
     }
 
-   public static String[] multiFromRepository(String sourceHost,
+   public static String[] multiFromRepository(String sourceProtocol,
+   											  String sourceHost,
                                               int sourcePort,
                                               FedoraAPIA sourceRepoAPIA,
                                               FedoraAPIM sourceRepoAPIM,
@@ -149,6 +134,7 @@ public class Ingest {
         Set pidSet=new HashSet();
         if (tps.indexOf("D")!=-1) {
             pidSet.addAll(ingestAllFromRepository(
+                                sourceProtocol,
                                 sourceHost,
                                 sourcePort,
                                 sourceRepoAPIA,
@@ -161,6 +147,7 @@ public class Ingest {
         }
         if (tps.indexOf("M")!=-1) {
             pidSet.addAll(ingestAllFromRepository(
+								sourceProtocol,
                                 sourceHost,
                                 sourcePort,
                                 sourceRepoAPIA,
@@ -173,6 +160,7 @@ public class Ingest {
         }
         if (tps.indexOf("O")!=-1) {
             pidSet.addAll(ingestAllFromRepository(
+								sourceProtocol,
                                 sourceHost,
                                 sourcePort,
                                 sourceRepoAPIA,
@@ -218,7 +206,8 @@ public class Ingest {
         return set;
     }
     
-    public static Set ingestAllFromRepository(String sourceHost,
+    public static Set ingestAllFromRepository(String sourceProtocol,
+    							 String sourceHost,
                                  int sourcePort,
                                  FedoraAPIA sourceRepoAPIA,
                                  FedoraAPIM sourceRepoAPIM,
@@ -233,7 +222,7 @@ public class Ingest {
         // then singleFromRepository(sourceRepos, pid, targetRepos, logMessage)
         // for each, then return the set
         HashSet set=new HashSet();
-        String[] res=AutoFinder.getPIDs(sourceHost, sourcePort, "fType=" + fType);
+        String[] res=AutoFinder.getPIDs(sourceProtocol, sourceHost, sourcePort, "fType=" + fType);
         for (int i=0; i<res.length; i++) set.add(res[i]);
         String friendlyName="data objects";
         if (fType.equals("D"))
@@ -333,9 +322,9 @@ public class Ingest {
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
-        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
@@ -349,19 +338,20 @@ public class Ingest {
         System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
         System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
         System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
+		System.err.println("  PROTOCOL   is the protocol to communicate with repository (http or https)");
         System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
         System.err.println("             will indicate the source filename or repository of the object(s).");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw");
+        System.err.println("fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https");
         System.err.println();
         System.err.println("  Ingests obj1.xml (encoded in foxml1.0 format) from the");
         System.err.println("  current directory into the repository at myrepo.com:80");
-        System.err.println("  as user 'jane' with password 'jpw'.");
+        System.err.println("  as user 'jane' with password 'jpw' using the secure https protocol (SSL).");
         System.err.println("  The logmessage will be system-generated, indicating");
         System.err.println("  the source path+filename.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive foxml1.0 M myrepo.com:80 jane janepw \"\"");
+        System.err.println("fedora-ingest d c:\\archive foxml1.0 M myrepo.com:80 jane janepw http \"\"");
         System.err.println();
         System.err.println("  Traverses entire directory structure of c:\\archive, and ingests ");
         System.err.println("  any file that looks like a behavior mechanism object (M). ");
@@ -369,11 +359,11 @@ public class Ingest {
         System.err.println("  and will fail on ingests of files that are not of this format.");
         System.err.println("  All log messages will be the quoted string.");
         System.err.println();
-        System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw \"for jane\"");
+        System.err.println("fedora-ingest d c:\\archive foxml1.0 ODM myrepo.com:80 jane janepw http \"for jane\"");
         System.err.println();
         System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
         System.err.println();
-        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw \"\"");
+        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw http \"\"");
         System.err.println();
         System.err.println("  Ingests the object whose pid is 'demo:1' from the source repository");
         System.err.println("  'srcrepo.com:8081' into the target repository 'myrepo.com:80'.");
@@ -381,7 +371,7 @@ public class Ingest {
         System.err.println("  export format configured at the source." );
         System.err.println("  All log messages will be empty.");
 		System.err.println();
-		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw \"\"");
+		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw http \"\"");
 		System.err.println();
 		System.err.println("  Same as above, but ingests all data objects (type O).");
 		System.err.println();
@@ -405,26 +395,32 @@ public class Ingest {
 			counter.successes=0; 
             char kind=args[0].toLowerCase().charAt(0);
             if (kind=='f') {
-                // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]
-                if (args.length<6 || args.length>7) {
+                // USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                if (args.length<7 || args.length>8) {
                     Ingest.badArgs("Wrong number of arguments for file ingest.");
                     System.out.println(
-                    "USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS [LOG]");
+                    "USAGE: fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
                 }
                 File f=new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage=null;
-                if (args.length==7) {
-                    logMessage=args[6];
+                if (args.length==8) {
+                    logMessage=args[7];
                 }
+				//SDP - HTTPS  
+				//FIXME: must still make this an argument
+				String protocol=args[6];
+				
                 String[] hp=args[3].split(":");
                 FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(hp[0],
+                        APIAStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
                 FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(hp[0],
+                        APIMStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[4],
                                                 args[5]);
@@ -435,26 +431,31 @@ public class Ingest {
                     System.out.println("Ingested PID: " + pid);                    
                 }
             } else if (kind=='d') {
-                // USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]
-                if (args.length<7 || args.length>8) {
+                // USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                if (args.length<8 || args.length>9) {
                     Ingest.badArgs("Wrong number of arguments for directory ingest.");
                     System.out.println(
-                        "USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS [LOG]");
+                        "USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
                 } 
                 File d=new File(args[1]);
                 String ingestFormat = args[2];
                 String logMessage=null;
-                if (args.length==8) {
-                    logMessage=args[7];
+                if (args.length==9) {
+                    logMessage=args[8];
                 }
+				//SDP - HTTPS  
+				String protocol=args[7];
+				
                 String[] hp=args[4].split(":");
                 FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(hp[0],
+                        APIAStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[5],
                                                 args[6]);
                 FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(hp[0],
+                        APIMStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[5],
                                                 args[6]);
@@ -481,36 +482,45 @@ public class Ingest {
                 System.out.println();
                 System.out.println("A detailed log is at " + logFile.getPath());
             } else if (kind=='r') {
-                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS [LOG]
-                if (args.length<8 || args.length>9) {
+                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]
+                if (args.length<9 || args.length>10) {
                     Ingest.badArgs("Wrong number of arguments for repository ingest.");
                 }
                 String logMessage=null;
-                if (args.length==9) {
-                    logMessage=args[8];
+                if (args.length==10) {
+                    logMessage=args[9];
                 }
+				//SDP - HTTPS  
+				//FIXME: must still make this an argument
+				String protocol=args[8];
+				
                 String[] hp=args[1].split(":");
                 FedoraAPIA sourceRepoAPIA=
-                        APIAStubFactory.getStub(hp[0],
+                        APIAStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[2],
                                                 args[3]);
                 FedoraAPIM sourceRepoAPIM=
-                        APIMStubFactory.getStub(hp[0],
+                        APIMStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[2],
                                                 args[3]);
                 hp=args[5].split(":");
                 FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(hp[0],
+                        APIAStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[6],
                                                 args[7]);
                 FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(hp[0],
+                        APIMStubFactory.getStub(protocol,
+                        						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[6],
                                                 args[7]);
+                
                 // First, determine the default export format of the source repo.
                 // For backward compatibility with pre-2.0 repositories, 
                 // assume the "metslikefedora1" format.
@@ -549,7 +559,9 @@ public class Ingest {
 					logFile = IngestLogger.newLogFile(logRootName);
 					log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
 					IngestLogger.openLog(log, logRootName);
-                    String[] pids=Ingest.multiFromRepository(hp[0],
+                    String[] pids=Ingest.multiFromRepository(
+                    								  protocol,
+                    								  hp[0],
                                                       Integer.parseInt(hp[1]),
                                                       sourceRepoAPIA,
                                                       sourceRepoAPIM,
