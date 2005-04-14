@@ -38,22 +38,6 @@ import fedora.server.management.FedoraAPIM;
  * <p><b>Title:</b> Administrator.java</p>
  * <p><b>Description:</b> </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -78,6 +62,7 @@ public class Administrator extends JFrame {
     private static Administrator s_instance;
     private JLabel m_aboutPic;
     private JLabel m_aboutText;
+	private static String s_protocol;
     private static String s_host;
     private static int s_port;
     private static String s_user;
@@ -126,7 +111,7 @@ public class Administrator extends JFrame {
         JOptionPane.showMessageDialog(parent, explanation, title, JOptionPane.ERROR_MESSAGE);
     }
  
-    public Administrator(String host, int port, String user, String pass) {
+    public Administrator(String protocol, String host, int port, String user, String pass) {
         super("Fedora Administrator");
         INSTANCE=this;
         WATCH_AREA=new JTextArea();
@@ -240,7 +225,8 @@ public class Administrator extends JFrame {
         return s_desktop;
     }
 
-    public void setLoginInfo(String host, int port, String user, String pass) {
+    public void setLoginInfo(String protocol, String host, int port, String user, String pass) {
+		s_protocol=protocol;
         s_host=host;
         s_port=port;
         s_user=user;
@@ -585,14 +571,14 @@ public class Administrator extends JFrame {
         JMenuItem helpContents=new JMenuItem("Documentation",KeyEvent.VK_D);
         String portPart="";
         if (getPort()!=80) portPart=":" + getPort();
-        String documentationURL="http://" + getHost() + portPart + "/userdocs/";
+        String documentationURL=getProtocol() + getHost() + portPart + "/userdocs/";
         helpContents.setToolTipText("See " + documentationURL);
 
         helpContents.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
               String portPart="";
               if (getPort()!=80) portPart=":" + getPort();
-              String documentationURL="http://" + getHost() + portPart + "/userdocs/";
+              String documentationURL=getProtocol() + getHost() + portPart + "/userdocs/";
               JOptionPane.showMessageDialog(getDesktop(),
                       "For documentation, see " + documentationURL,
                       "Fedora Documentation",
@@ -657,7 +643,7 @@ public class Administrator extends JFrame {
     }
 
     protected void createBDefBuilder() {
-        BDefBuilder frame = new BDefBuilder(
+        BDefBuilder frame = new BDefBuilder(s_protocol,
           s_host, s_port, s_user, s_pass, s_lastDir);
         frame.setVisible(true);
         s_desktop.add(frame);
@@ -667,7 +653,7 @@ public class Administrator extends JFrame {
     }
 
     protected void createBMechBuilder() {
-        BMechBuilder frame = new BMechBuilder(
+        BMechBuilder frame = new BMechBuilder(s_protocol,
           s_host, s_port, s_user, s_pass, s_lastDir);
         frame.setVisible(true);
         s_desktop.add(frame);
@@ -745,6 +731,10 @@ public class Administrator extends JFrame {
         return new Point(prefXPos, prefYPos);
     }
 
+	public static String getProtocol() {
+		return s_protocol;
+	}
+	
     public static String getHost() {
         return s_host;
     }
@@ -767,6 +757,7 @@ public class Administrator extends JFrame {
         PrintStream sysOut=System.out;
         PrintStream sysErr=System.err;
         //try {
+        String protocol=null;
         String host=null;
         int port=0;
         String user=null;
@@ -785,7 +776,7 @@ public class Administrator extends JFrame {
         System.setOut(watchOut);
         System.setErr(watchOut);
         //}
-        Administrator administrator=new Administrator(host, port, user, pass);
+        Administrator administrator=new Administrator(protocol, host, port, user, pass);
         System.out.println("Started Fedora Administrator.");
         /*} catch (Exception e) { */
             System.setOut(sysOut);
