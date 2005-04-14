@@ -3,7 +3,7 @@
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!-- Note: Sample Template Object used with Batch Utility -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template:  object PID" TYPE="FedoraObject" LABEL="template: object label" PROFILE="UVA_STD_IMG">
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template:  object PID" TYPE="FedoraObject" LABEL="template: object label" PROFILE="UVA_STD_IMG">
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
@@ -140,7 +140,7 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--This is the THUMBNAIL sized image -->
-				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="M" STATUS="A">
+				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="template: url of THUMBNAIL jpg image" xlink:title="template: THUMBNAIL jpg image"/>
 				</METS:file>
 			</METS:fileGrp>
