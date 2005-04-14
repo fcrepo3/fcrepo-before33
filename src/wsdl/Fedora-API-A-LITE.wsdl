@@ -74,7 +74,7 @@
 				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
-	</message>	
+	</message>
 	<message name="listDatastreamsRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -92,8 +92,8 @@
 				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
-	</message>		
-    <message name="getDatastreamDisseminationRequest">
+	</message>
+	<message name="getDatastreamDisseminationRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
@@ -106,8 +106,8 @@
 				in the request, or if it is empty,  the current view of the object (the most recent time)
 				 is assumed.
 			</documentation>
-		</part>		
-    </message>
+		</part>
+	</message>
 	<message name="getDatastreamDisseminationResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>the datastream as a mime-typed stream.</documentation>
@@ -277,7 +277,7 @@
 			<documentation> Provides a list of timestamps indicating when a component of the object was created or modified.  These timestamps can be used to request timestamped disseminations of the object to view the object as it appeared on a specific date and to indicate the change history of the object.The list of timestamps will be returned as either XML or HTML.
 			</documentation>
 		</part>
-	</message>	
+	</message>
 	<portType name="Fedora-API-A-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Access service 
 			of a Fedora repository.  It is intended to support a REST-like style of access to the 
@@ -298,7 +298,7 @@
 				or as an HTML presentation.</p>
 				<p>URL Syntax:</p>
 				<p>
-					<b>http://<font color="#22cc22">host:port</font>/fedora/describe?{<font color="#22cc22">xml=boolean</font>}</b>
+					<b>http(s)://<font color="#22cc22">host:port</font>/fedora/describe?{<font color="#22cc22">xml=boolean</font>}</b>
 				</p>
 				<p> A complete example URL conforming to this syntax is:</p>
 				<p>
@@ -325,7 +325,7 @@
 			</documentation>
 			<input message="fedora-api:listMethodsRequest"/>
 			<output message="fedora-api:listMethodsResponse"/>
-		</operation>		
+		</operation>
 		<operation name="listDatastreams">
 			<documentation>Inquires upon all object Datastreams to obtain datastreams contained
 				by a digital object.  This returns a set of datastream locations
@@ -333,7 +333,7 @@
 			</documentation>
 			<input message="fedora-api:listDatastreamsRequest"/>
 			<output message="fedora-api:listDatastreamsResponse"/>
-		</operation>				
+		</operation>
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of the digital object, given the 
 				behavior definition id, the behavior method name and any parameters to the 
@@ -346,10 +346,10 @@
 			<input message="fedora-api:getDisseminationRequest"/>
 			<output message="fedora-api:getDisseminationResponse"/>
 		</operation>
-        <operation name="getDatastreamDissemination">
-            <documentation>Gets a datastream in the digital object.  This is
+		<operation name="getDatastreamDissemination">
+			<documentation>Gets a datastream in the digital object.  This is
             a shorter, convenience method for getDissemination 
-            http://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
+            http(s)://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
             Note that if a particular date/timestamped view of a datastream is
             needed, getDissemination still must be used.  When making direct 
             links to datastreams within web pages or applications, this
@@ -357,7 +357,7 @@
             </documentation>
 			<input message="fedora-api:getDatastreamDisseminationRequest"/>
 			<output message="fedora-api:getDatastreamDisseminationResponse"/>
-        </operation>
+		</operation>
 		<operation name="findObjects">
 			<documentation>
 				<p>Gets the requested ObjectFields on all objects in the 
@@ -366,7 +366,7 @@
             metadata.</p>
 				<p>URL Syntax:</p>
 				<p>
-					<b>http://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br/>
+					<b>http(s)://<font color="#22cc22">host:port</font>/fedora/search?{<font color="#22cc22">terms=TERMS</font>|<font color="#22cc22">query=QUERY</font>}<font color="#cc2222">&amp;maxResults=MAXRESULTS<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;xml=true&amp;pid=true&amp;label=true&amp;fType=true&amp;cModel=true&amp;state=true&amp;ownerId=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;cDate=true&amp;mDate=true&amp;dcmDate=true&amp;bDef=true&amp;bMech=true&amp;title=true<br/>
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&amp;creator=true&amp;subject=true&amp;description=true&amp;publisher=true&amp;contributor=true<br/>
@@ -439,18 +439,21 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			</documentation>
 			<input message="fedora-api:getObjectHistoryRequest"/>
 			<output message="fedora-api:getObjectHistoryResponse"/>
-		</operation>		
+		</operation>
 	</portType>
 	<service name="Fedora-API-A-LITE">
 		<port name="Fedora-API-A-LITE-Port" binding="fedora-api:Fedora-API-A-LITE-Binding">
 			<http:address location="http://localhost:8080/fedora/"/>
+		</port>
+		<port name="Fedora-API-A-LITE-Port-SSL" binding="fedora-api:Fedora-API-A-LITE-Binding">
+			<http:address location="https://localhost:8443/fedora/"/>
 		</port>
 	</service>
 	<binding name="Fedora-API-A-LITE-Binding" type="fedora-api:Fedora-API-A-LITE">
 		<http:binding verb="GET"/>
 		<operation name="describeRepository">
 			<http:operation location="describe[?xml=(boolean)]"/>
-			<input>			
+			<input>
 				<documentation>  This URL replacement syntax is used to request a description
 					of the Fedora repository server.  The request will return key metadata elements
 					about the repository server including repository name, version, baseURL,
@@ -524,7 +527,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/xml"/>
 				<mime:content type="text/html"/>
 			</output>
-		</operation>		
+		</operation>
 		<operation name="listDatastreams">
 			<http:operation location="listDatastreams/(pid)[/(asOfDateTime)][?xml=(boolean)]"/>
 			<input>
@@ -551,20 +554,20 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/xml"/>
 				<mime:content type="text/html"/>
 			</output>
-		</operation>				
-	     <operation name="getDatastreamDissemination">
+		</operation>
+		<operation name="getDatastreamDissemination">
 			<http:operation location="get/(pid)/(dsID)"/>
-            	<input>
-               	<documentation>
+			<input>
+				<documentation>
                   		- pid : a required parameter.  The pid of the digital object.
                   		- dsID : a required parameter.  The ID of the datastream in the object.
                 	</documentation>
 				<http:urlReplacement/>
-            	</input>
+			</input>
 			<output>
 				<mime:content type="*/*"/>
-            	</output>
-        	</operation>
+			</output>
+		</operation>
 		<operation name="getDissemination">
 			<http:operation location="get/(pid)/(bDefPid)/(methodName)[/(asOfDateTime)][?(parameters)]"/>
 			<input>
@@ -604,7 +607,7 @@ It asks for up to 50 results at a time from the server, and requests that the re
                value of the named parameter.  Square brackets indicate optional text.
                Descriptions of each named parameter can be found in the appropriate message part documentation above.
 			</documentation>
-			<http:urlReplacement/>
+				<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
@@ -616,8 +619,8 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			<input>
 				<documentation>This operation is used to resume a findObjects operation.  
                	The sessionToken value comes from the previous response.  The URL replacement 
-               	uses the same syntax conventions as the findObjects operation.</documentation>			
-				<http:urlReplacement/>			
+               	uses the same syntax conventions as the findObjects operation.</documentation>
+				<http:urlReplacement/>
 			</input>
 			<output>
 				<mime:content type="text/xml"/>
@@ -646,6 +649,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
 				<mime:content type="text/xml"/>
 				<mime:content type="text/html"/>
 			</output>
-		</operation>		
+		</operation>
 	</binding>
 </definitions>

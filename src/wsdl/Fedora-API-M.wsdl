@@ -119,11 +119,11 @@
 			<documentation>whether to force the change even if it would break a dependency.</documentation>
 		</part>
 	</message>
-    <message name="purgeObjectResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="purgeObjectResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="addDatastreamRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -132,9 +132,9 @@
 			<documentation>the ID of the datastream (64 characters max).  
 			If given as null, Fedora will generate an id for you.</documentation>
 		</part>
-        <part name="altIDs" type="fedora-types:ArrayOfString">
-            <documentation>alternate identifiers for the datastream, if any.</documentation>
-        </part>
+		<part name="altIDs" type="fedora-types:ArrayOfString">
+			<documentation>alternate identifiers for the datastream, if any.</documentation>
+		</part>
 		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
@@ -211,9 +211,9 @@
 		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
-        <part name="altIDs" type="fedora-types:ArrayOfString">
-            <documentation>alternate identifiers for the datastream, if any.</documentation>
-        </part>
+		<part name="altIDs" type="fedora-types:ArrayOfString">
+			<documentation>alternate identifiers for the datastream, if any.</documentation>
+		</part>
 		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
@@ -241,11 +241,11 @@
 			<documentation>whether to force the change even if it would break a data contract.</documentation>
 		</part>
 	</message>
-    <message name="modifyDatastreamByReferenceResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDatastreamByReferenceResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="modifyDatastreamByValueRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -253,9 +253,9 @@
 		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
-        <part name="altIDs" type="fedora-types:ArrayOfString">
-            <documentation>alternate identifiers for the datastream, if any.</documentation>
-        </part>
+		<part name="altIDs" type="fedora-types:ArrayOfString">
+			<documentation>alternate identifiers for the datastream, if any.</documentation>
+		</part>
 		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
@@ -284,11 +284,11 @@
 			<documentation>whether to force the change even if it would break a data contract.</documentation>
 		</part>
 	</message>
-    <message name="modifyDatastreamByValueResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDatastreamByValueResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="modifyDisseminatorRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -315,11 +315,11 @@
 			<documentation>whether to force the change even if it would break a data contract.</documentation>
 		</part>
 	</message>
-    <message name="modifyDisseminatorResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="modifyDisseminatorResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="setDatastreamStateRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -334,11 +334,11 @@
 			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
-    <message name="setDatastreamStateResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="setDatastreamStateResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="setDisseminatorStateRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -353,11 +353,11 @@
 			<documentation>a message about the change.</documentation>
 		</part>
 	</message>
-    <message name="setDisseminatorStateResponse">
-        <part name="response" type="xsd:string">
-            <documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
-        </part>
-    </message>
+	<message name="setDisseminatorStateResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
 	<message name="getDatastreamRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -899,6 +899,9 @@
 	<service name="Fedora-API-M-Service">
 		<port name="Fedora-API-M-Port-SOAPHTTP" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
 			<soap:address location="http://localhost:8080/fedora/services/management"/>
+		</port>
+		<port name="Fedora-API-M-Port-SOAPHTTPS" binding="fedora-api:Fedora-API-M-Binding-SOAPHTTP">
+			<soap:address location="https://localhost:8443/fedora/services/management"/>
 		</port>
 	</service>
 </definitions>

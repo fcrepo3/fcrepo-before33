@@ -59,14 +59,14 @@
 			      is assumed.
 			</documentation>
 		</part>
-	</message>	
+	</message>
 	<message name="listMethodsResponse">
 		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
 			<documentation>A set of method definitions that represent 
 				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
-	</message>					
+	</message>
 	<message name="listDatastreamsRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -77,15 +77,15 @@
 			      is assumed.
 			</documentation>
 		</part>
-	</message>		
+	</message>
 	<message name="listDatastreamsResponse">
 		<part name="response" type="fedora-types:ArrayOfDatastreamDef">
 			<documentation>A set of method definitions that represent 
 				all possible disseminations that can be run on the object.
 			</documentation>
 		</part>
-	</message>		
-    <message name="getDatastreamDisseminationRequest">
+	</message>
+	<message name="getDatastreamDisseminationRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
@@ -98,13 +98,13 @@
 				in the request, or if it is empty,  the current view of the object (the most recent time)
 				 is assumed.
 			</documentation>
-		</part>		
-    </message>
+		</part>
+	</message>
 	<message name="getDatastreamDisseminationResponse">
 		<part name="response" type="fedora-types:MIMETypedStream">
 			<documentation>the datastream as a mime-typed stream.</documentation>
 		</part>
-	</message>    
+	</message>
 	<message name="getDisseminationRequest">
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
@@ -162,12 +162,12 @@
 		<part name="pid" type="xsd:string">
 			<documentation>the pid of the object.</documentation>
 		</part>
-	</message>	
+	</message>
 	<message name="getObjectHistoryResponse">
 		<part name="response" type="fedora-types:ArrayOfString">
 			<documentation>a list of timestamps indicating when components in the object were created or modified.</documentation>
 		</part>
-	</message>	
+	</message>
 	<portType name="Fedora-API-A">
 		<documentation>The Fedora Access service defines an open interface for
 		    accessing digital objects.  The access operations include methods to do
@@ -217,8 +217,8 @@
 			<input message="fedora-api:listDatastreamsRequest"/>
 			<output message="fedora-api:listDatastreamsResponse"/>
 		</operation>
-        <operation name="getDatastreamDissemination">
-            <documentation>Gets a datastream in the digital object.  This is
+		<operation name="getDatastreamDissemination">
+			<documentation>Gets a datastream in the digital object.  This is
             a shorter, convenience method for getDissemination 
             http://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
             Note that if a particular date/timestamped view of a datastream is
@@ -228,7 +228,7 @@
             </documentation>
 			<input message="fedora-api:getDatastreamDisseminationRequest"/>
 			<output message="fedora-api:getDatastreamDisseminationResponse"/>
-        </operation>		
+		</operation>
 		<operation name="getDissemination">
 			<documentation>Gets a MIME-typed view of a digital object,
 				given the behavior definition id, a behavior method name, and any behavior 
@@ -263,7 +263,7 @@
 			</documentation>
 			<input message="fedora-api:getObjectHistoryRequest"/>
 			<output message="fedora-api:getObjectHistoryResponse"/>
-		</operation>		
+		</operation>
 	</portType>
 	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
 		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
@@ -293,7 +293,7 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>		
+		</operation>
 		<operation name="listDatastreams">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreams"/>
 			<input>
@@ -302,7 +302,7 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>				
+		</operation>
 		<operation name="getDatastreamDissemination">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamDissemination"/>
 			<input>
@@ -311,7 +311,7 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>		
+		</operation>
 		<operation name="getDissemination">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
 			<input>
@@ -347,11 +347,14 @@
 			<output>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</output>
-		</operation>		
+		</operation>
 	</binding>
 	<service name="Fedora-API-A-Service">
 		<port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
 			<soap:address location="http://localhost:8080/fedora/services/access"/>
+		</port>
+		<port name="Fedora-API-A-Port-SOAPHTTPS" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
+			<soap:address location="https://localhost:8443/fedora/services/access"/>
 		</port>
 	</service>
 </definitions>
