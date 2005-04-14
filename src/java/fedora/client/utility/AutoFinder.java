@@ -23,22 +23,6 @@ import fedora.server.types.gen.ObjectFields;
  * <p><b>Title:</b> AutoFinder.java</p>
  * <p><b>Description:</b> </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -47,9 +31,9 @@ public class AutoFinder {
 
     private FedoraAPIA m_apia;
 
-    public AutoFinder(String host, int port, String user, String pass)
+    public AutoFinder(String protocol, String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
-        m_apia=APIAStubFactory.getStub(host, port, user, pass);
+        m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
     }
 
     public FieldSearchResult findObjects(String[] resultFields,
@@ -78,9 +62,9 @@ public class AutoFinder {
 
     // fieldQuery is the syntax used by API-A-Lite,
     // such as "fType=O pid~demo*".  Leave blank to match all.
-    public static String[] getPIDs(String host, int port, String fieldQuery)
+    public static String[] getPIDs(String protocol, String host, int port, String fieldQuery)
             throws Exception {
-        String firstPart="http://" + host + ":" + port + "/fedora/search?xml=true";
+        String firstPart=protocol + host + ":" + port + "/fedora/search?xml=true";
         Downloader dLoader=new Downloader(host, port, "na", "na");
         String url=firstPart + "&pid=true&query=" + URLEncoder.encode(fieldQuery, "UTF-8");
         InputStream in=dLoader.get(url);
@@ -109,12 +93,13 @@ public class AutoFinder {
 
     public static void showUsage(String message) {
         System.err.println(message);
-        System.err.println("Usage: fedora-find host port fields phrase");
+        System.err.println("Usage: fedora-find host port fields phrase protocol");
         System.err.println("");
         System.err.println("    hostname - The Fedora server host or ip address.");
         System.err.println("        port - The Fedora server port.");
         System.err.println("      fields - Space-delimited list of fields.");
         System.err.println("      phrase - Phrase to search for in any field (with ? and * wildcards)");
+		System.err.println("    protocol - The protocol to communication with the Fedora server (http|https)");
     }
 
     public static void printValue(String name, String value) {
@@ -133,7 +118,7 @@ public class AutoFinder {
         if (args.length==3) {
             // just list all pids
             System.out.println("Doing query...");
-            String[] pids=AutoFinder.getPIDs(args[0], Integer.parseInt(args[1]), args[2]);
+            String[] pids=AutoFinder.getPIDs(args[4], args[0], Integer.parseInt(args[1]), args[2]);
             System.out.println("All PIDs in " + args[0] + ":" + Integer.parseInt(args[1]) + " with field query " + args[2]);
             for (int i=0; i<pids.length; i++) {
                 System.out.println(pids[i]);
@@ -141,11 +126,12 @@ public class AutoFinder {
             System.out.println(pids.length + " total.");
             System.exit(0);
         }
-        if (args.length!=4) {
-            AutoFinder.showUsage("Four arguments required.");
+        if (args.length!=5) {
+            AutoFinder.showUsage("Five arguments required.");
         }
         try {
-            AutoFinder finder=new AutoFinder(args[0], Integer.parseInt(args[1]),
+            AutoFinder finder=new AutoFinder(
+            		args[4], args[0], Integer.parseInt(args[1]),
                     null, null);
             FieldSearchQuery query=new FieldSearchQuery();
             query.setTerms(args[3]);

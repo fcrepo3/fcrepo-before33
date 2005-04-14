@@ -13,22 +13,6 @@ import fedora.server.management.FedoraAPIM;
  * <p><b>Title:</b> AutoPurger.java</p>
  * <p><b>Description:</b> </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -37,9 +21,9 @@ public class AutoPurger {
 
     private FedoraAPIM m_apim;
 
-    public AutoPurger(String host, int port, String user, String pass)
+    public AutoPurger(String protocol, String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
-        m_apim=APIMStubFactory.getStub(host, port, user, pass);
+        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
     }
 
     public void purge(String pid, 
@@ -65,7 +49,7 @@ public class AutoPurger {
 		System.err.println("Summary: Purges an object from the Fedora repository.");
 		System.err.println();
 		System.err.println("Syntax:");
-		System.err.println("  fedora-purge HST:PRT USR PSS PID [LOG]");
+		System.err.println("  fedora-purge HST:PRT USR PSS PID PROTOCOL [LOG]");
 		System.err.println();
 		System.err.println("Where:");
 		System.err.println("  HST  is the target repository hostname.");
@@ -73,13 +57,14 @@ public class AutoPurger {
 		System.err.println("  USR  is the id of the target repository user.");
 		System.err.println("  PSS  is the password of the target repository user.");
 		System.err.println("  PID  is the id of the object to purge from the target repository.");
+		System.err.println("  PROTOCOL  is the protocol to communicate with repository (http or https)");
 		System.err.println("  LOG  is a log message.");
 		System.err.println();
 		System.err.println("Example:");
-		System.err.println("fedora-purge myrepo.com:80 jane janepw demo:5 \"my message\"");
+		System.err.println("fedora-purge myrepo.com:8443 jane janepw demo:5 https \"my message\"");
 		System.err.println();
 		System.err.println("  Purges the object whose PID is demo:5 from the");
-		System.err.println("  target repository at myrepo.com:80");
+		System.err.println("  target repository at myrepo.com:8443 using the secure https protocol (SSL)");
 		System.err.println();
 		System.err.println("ERROR  : " + msg);
 		System.exit(1);
@@ -87,15 +72,16 @@ public class AutoPurger {
 
     public static void main(String[] args) {
         try {
-            if (args.length!=5) {
-                AutoPurger.showUsage("You must provide five arguments.");
+            if (args.length!=6) {
+                AutoPurger.showUsage("You must provide six arguments.");
             } else {
 				String[] hp=args[0].split(":");
                 String hostName=hp[0];
                 int portNum=Integer.parseInt(hp[1]);
                 String pid=args[3];
-                String logMessage=args[4];
-                AutoPurger a=new AutoPurger(hostName, portNum, args[1], args[2]);
+                String protocol=args[4];
+				String logMessage=args[5];
+                AutoPurger a=new AutoPurger(protocol, hostName, portNum, args[1], args[2]);
                 a.purge(pid, logMessage, false); // DEFAULT_FORCE_PURGE
             }
         } catch (Exception e) {
