@@ -3,34 +3,23 @@ package fedora.server.management;
 /**
  *
  * <p><b>Title:</b> FedoraAPIMServiceLocator.java</p>
- * <p><b>Description:</b> This file was auto-generated from WSDL
- * by the Apache Axis WSDL2Java emitter</p>
+ * <p><b>Description:</b> This file was originally auto-generated from the API-M WSDL
+ * by the Apache Axis WSDL2Java emitter.  The generated file was then modified
+ * so that it has a constructor that takes username and password, so that 
+ * the service stub class can have username and passord.  
+ * The following methods were modified:
+ * 	getFedoraAPIMPortSOAPHTTP - custom stub (fedora.server.management.FedoraAPIM)</p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service implements fedora.server.management.FedoraAPIMService {
 
-    // Use to get a proxy class for FedoraAPIMPortSOAPHTTP
+	// Use to get a proxy class for FedoraAPIMPortSOAPHTTP and FedoraAPIMPortSOAPHTTPS (secure)
     private final java.lang.String FedoraAPIMPortSOAPHTTP_address = "http://localhost:8080/fedora/services/management";
-
+	private final java.lang.String FedoraAPIMPortSOAPHTTPS_address = "https://localhost:8443/fedora/services/management";
+	
     private String username=null;
     private String password=null;
 
@@ -75,7 +64,46 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
             return null; // ???
         }
     }
+    
+    //SDP - HTTPS
 
+	public java.lang.String getFedoraAPIMPortSOAPHTTPSAddress() {
+		return FedoraAPIMPortSOAPHTTPS_address;
+	}
+
+	// The WSDD service name defaults to the port name.
+	private java.lang.String FedoraAPIMPortSOAPHTTPSWSDDServiceName = "FedoraAPIMPortSOAPHTTPS";
+
+	public java.lang.String getFedoraAPIMPortSOAPHTTPSWSDDServiceName() {
+		return FedoraAPIMPortSOAPHTTPSWSDDServiceName;
+	}
+
+	public void setFedoraAPIMPortSOAPHTTPSWSDDServiceName(java.lang.String name) {
+		FedoraAPIMPortSOAPHTTPSWSDDServiceName = name;
+	}
+
+	public fedora.server.management.FedoraAPIM getFedoraAPIMPortSOAPHTTPS() throws javax.xml.rpc.ServiceException {
+	   java.net.URL endpoint;
+		try {
+			endpoint = new java.net.URL(FedoraAPIMPortSOAPHTTPS_address);
+		}
+		catch (java.net.MalformedURLException e) {
+			return null; // unlikely as URL was validated in WSDL2Java
+		}
+		return getFedoraAPIMPortSOAPHTTPS(endpoint);
+	}
+
+	public fedora.server.management.FedoraAPIM getFedoraAPIMPortSOAPHTTPS(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+		try {
+			fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(portAddress, this, username, password);
+			_stub.setPortName(getFedoraAPIMPortSOAPHTTPSWSDDServiceName());
+			return _stub;
+		}
+		catch (org.apache.axis.AxisFault e) {
+			return null; // ???
+		}
+	}
+	
     /**
      * For the given interface, get the stub implementation.
      * If this service has no port for the given interface,
@@ -88,6 +116,12 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
                 _stub.setPortName(getFedoraAPIMPortSOAPHTTPWSDDServiceName());
                 return _stub;
             }
+            //SDP - HTTPS (added second port for https)
+			if (fedora.server.management.FedoraAPIM.class.isAssignableFrom(serviceEndpointInterface)) {
+				fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(new java.net.URL(FedoraAPIMPortSOAPHTTPS_address), this, username, password);
+				_stub.setPortName(getFedoraAPIMPortSOAPHTTPSWSDDServiceName());
+				return _stub;
+			}
         }
         catch (Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
@@ -101,9 +135,29 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
      * then ServiceException is thrown.
      */
     public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
-        java.rmi.Remote _stub = getPort(serviceEndpointInterface);
-        ((org.apache.axis.client.Stub) _stub).setPortName(portName);
-        return _stub;
+        
+		//SDP - HTTPS
+		//commented out old code in lieu of newly generated code for two ports.
+        //java.rmi.Remote _stub = getPort(serviceEndpointInterface);
+        //((org.apache.axis.client.Stub) _stub).setPortName(portName);
+        //return _stub;
+        
+        //
+		if (portName == null) {
+			return getPort(serviceEndpointInterface);
+		}
+		String inputPortName = portName.getLocalPart();
+		if ("FedoraAPIMPortSOAPHTTPS".equals(inputPortName)) {
+			return getFedoraAPIMPortSOAPHTTPS();
+		}
+		else if ("FedoraAPIMPortSOAPHTTP".equals(inputPortName)) {
+			return getFedoraAPIMPortSOAPHTTP();
+		}
+		else  {
+			java.rmi.Remote _stub = getPort(serviceEndpointInterface);
+			((org.apache.axis.client.Stub) _stub).setPortName(portName);
+			return _stub;
+		}
     }
 
     public javax.xml.namespace.QName getServiceName() {
@@ -116,6 +170,7 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
         if (ports == null) {
             ports = new java.util.HashSet();
             ports.add(new javax.xml.namespace.QName("FedoraAPIMPortSOAPHTTP"));
+			ports.add(new javax.xml.namespace.QName("FedoraAPIMPortSOAPHTTPS"));
         }
         return ports.iterator();
     }
