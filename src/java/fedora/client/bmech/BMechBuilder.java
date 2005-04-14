@@ -56,6 +56,7 @@ public class BMechBuilder extends JInternalFrame
     protected JTabbedPane tabpane;
     protected BMechTemplate newBMech;
     private int selectedTabPane;
+	private String s_protocol = null;
     private String s_host = null;
     private int s_port = 0;
     private String s_user = null;
@@ -73,15 +74,16 @@ public class BMechBuilder extends JInternalFrame
 
       File dir = null;
       frame.getContentPane().add(
-        new BMechBuilder("localhost", 8080, "test", "test", dir),
+        new BMechBuilder("http", "localhost", 8080, "test", "test", dir),
           BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
   }
 
-    public BMechBuilder(String host, int port, String user, String pass, File dir)
+    public BMechBuilder(String protocol, String host, int port, String user, String pass, File dir)
     {
         super("Behavior Mechanism Builder");
+		s_protocol = protocol;
         s_host = host;
         s_port = port;
         s_user = user;
@@ -224,7 +226,7 @@ public class BMechBuilder extends JInternalFrame
         }
         try
         {
-          AutoIngestor ingestor = new AutoIngestor(s_host, s_port, s_user, s_pass);
+          AutoIngestor ingestor = new AutoIngestor(s_protocol, s_host, s_port, s_user, s_pass);
           pid = ingestor.ingestAndCommit(in, "ingest bmech object via BMechBuilder tool");
         }
         catch (Exception e)

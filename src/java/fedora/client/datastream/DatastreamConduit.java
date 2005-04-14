@@ -13,22 +13,6 @@ import fedora.server.types.gen.Datastream;
  * <p><b>Title:</b> DatastreamConduit.java</p>
  * <p><b>Description:</b> </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -37,9 +21,9 @@ public class DatastreamConduit {
 
     private FedoraAPIM m_apim;
 
-    public DatastreamConduit(String host, int port, String user, String pass)
+    public DatastreamConduit(String protocol, String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
-        m_apim=APIMStubFactory.getStub(host, port, user, pass);
+        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
     }
 
     public static Datastream getDatastream(FedoraAPIM skeleton, String pid,
@@ -203,20 +187,22 @@ public class DatastreamConduit {
     public static void showUsage(String errMessage) {
         System.out.println("Error: " + errMessage);
         System.out.println("");
-        System.out.println("Usage: fedora-dsinfo host port username password pid");
+        System.out.println("Usage: fedora-dsinfo host port username password pid protocol");
+		System.out.println("Note: protocol must be either http or https.");
     }
 
     public static void main(String[] args) {
         try {
-            if (args.length!=5) {
-                DatastreamConduit.showUsage("You must provide five arguments.");
+            if (args.length!=6) {
+                DatastreamConduit.showUsage("You must provide six arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
                 String username=args[2];
                 String password=args[3];
                 String pid=args[4];
-                DatastreamConduit c=new DatastreamConduit(hostName, portNum, username, password);
+				String protocol=args[5];
+                DatastreamConduit c=new DatastreamConduit(protocol, hostName, portNum, username, password);
                 Datastream[] datastreams=c.getDatastreams(pid, null, null);
                 for (int i=0; i<datastreams.length; i++) {
                     System.out.println("   Datastream : " + datastreams[i].getID());

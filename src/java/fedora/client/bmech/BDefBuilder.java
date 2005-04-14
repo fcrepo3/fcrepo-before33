@@ -56,6 +56,7 @@ public class BDefBuilder extends JInternalFrame
     private JTabbedPane tabpane;
     protected BObjTemplate newBDef;
     private int selectedTabPane;
+	private String s_protocol = null;
     private String s_host = null;
     private int s_port = 0;
     private String s_user = null;
@@ -73,15 +74,16 @@ public class BDefBuilder extends JInternalFrame
       });
       File dir = null;
       frame.getContentPane().add(
-        new BDefBuilder("localhost", 8080, "test", "test", dir),
+        new BDefBuilder("http", "localhost", 8080, "test", "test", dir),
           BorderLayout.CENTER);
       frame.setSize(700, 500);
       frame.setVisible(true);
   }
 
-    public BDefBuilder(String host, int port, String user, String pass, File dir)
+    public BDefBuilder(String protocol, String host, int port, String user, String pass, File dir)
     {
         super("Behavior Definition Builder");
+        s_protocol = protocol;
         s_host = host;
         s_port = port;
         s_user = user;
@@ -210,7 +212,7 @@ public class BDefBuilder extends JInternalFrame
         }
         try
         {
-          AutoIngestor ingestor = new AutoIngestor(s_host, s_port, s_user, s_pass);
+          AutoIngestor ingestor = new AutoIngestor(s_protocol, s_host, s_port, s_user, s_pass);
           pid = ingestor.ingestAndCommit(in, "ingest bdef object via BDefBuilder tool");
         }
         catch (Exception e)

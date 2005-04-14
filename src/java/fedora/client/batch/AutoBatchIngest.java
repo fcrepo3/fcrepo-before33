@@ -15,7 +15,7 @@ public class AutoBatchIngest {
     private Properties batchProperties = new Properties();
 
     public AutoBatchIngest(String objectDir, String logFile, String logFormat, String objectFormat,
-        String host, String port, String username, String password) throws Exception {
+        String host, String port, String username, String password, String protocol) throws Exception {
 
         this.batchProperties.setProperty("ingest", "yes");
         this.batchProperties.setProperty("objects", objectDir);
@@ -26,6 +26,7 @@ public class AutoBatchIngest {
         this.batchProperties.setProperty("server-port", port);
         this.batchProperties.setProperty("username", username);
         this.batchProperties.setProperty("password", password);
+		this.batchProperties.setProperty("server-protocol", protocol);
 
         BatchTool batchTool = new BatchTool(this.batchProperties, null, null);
         batchTool.prep();
@@ -34,7 +35,7 @@ public class AutoBatchIngest {
 
     public static final void main(String[] args) throws Exception {
         boolean errors = false;
-        if (args.length == 7) {
+        if (args.length == 8) {
             if (!new File(args[0]).isDirectory()) {
                 System.out.println("Specified object directory: \""
                                    + args[0] + "\" is not a directory.");
@@ -56,12 +57,17 @@ public class AutoBatchIngest {
                                    + "port number: \"" + args[4] + "\" .");
                 errors = true;
             }
+			if (!args[7].equals("http") && !args[7].equals("https")) {
+				System.out.println("Protocl must be either: \""
+								   + "\"http\"  or  \"https\"");
+				errors = true;
+			}
             if (!errors) {
-                AutoBatchIngest autoBatch = new AutoBatchIngest(args[0], args[1], args[2], args[3], server[0], server[1], args[5], args[6]);
+                AutoBatchIngest autoBatch = new AutoBatchIngest(args[0], args[1], args[2], args[3], server[0], server[1], args[5], args[6], args[7]);
             }
         } else {
             System.out.println("\n**** Wrong Number of Arguments *****\n");
-            System.out.println("AutoBatchIngest requires 7 arguments.");
+            System.out.println("AutoBatchIngest requires 8 arguments.");
             System.out.println("(1) - full path to object directory");
             System.out.println("(2) - full path to log file");
             System.out.println("(3) - format of log file (xml or text)");
@@ -69,6 +75,7 @@ public class AutoBatchIngest {
             System.out.println("(5) - host name and port of Fedora server (host:port)");
             System.out.println("(6) - admin username of Fedora server");
             System.out.println("(7) - password for admin user of Fedora server\n");
+			System.out.println("(8) - protocol to communicate with Fedora server (http or https)");
         }
 
     }

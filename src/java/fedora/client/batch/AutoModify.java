@@ -63,12 +63,12 @@ public class AutoModify
    * @throws IOException - If an error occurs in creating an instance of the
    *                       Uploader.
    */
-  public AutoModify(String host, int port, String user, String pass)
+  public AutoModify(String protocol, String host, int port, String user, String pass)
       throws MalformedURLException, ServiceException, IOException
   {
 
-      AutoModify.s_APIM=APIMStubFactory.getStub(host, port, user, pass);
-      AutoModify.s_APIA=APIAStubFactory.getStub(host, port, user, pass);
+      AutoModify.s_APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+      AutoModify.s_APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
       AutoModify.s_UPLOADER = new Uploader(host, port, user, pass);
 
   }
@@ -280,7 +280,8 @@ public class AutoModify
         System.out.println("Error: " + errMessage);
         System.out.println("");
         System.out.println("Usage: AutoModify host:port username password "
-            + "directives-filepath log-filepath [validate-only-option]");
+            + "directives-filepath log-filepath protocol [validate-only-option]");
+		System.out.println("Note: protocol must be either http or https.");
     }
 
 
@@ -288,6 +289,7 @@ public class AutoModify
 
         String logFilePath = null;
         String directivesFilePath = null;
+		String protocol = null;
         String hostName = null;
         String username = null;
         String password = null;
@@ -295,9 +297,10 @@ public class AutoModify
         boolean isValidateOnly = true;
 
         try {
-            if (args.length < 5 || args.length > 6) {
-                AutoModify.showUsage("You must provide either 5 or 6 arguments.");
+            if (args.length < 6 || args.length > 7) {
+                AutoModify.showUsage("You must provide either 6 or 7 arguments.");
             } else {
+				
                 String[] hostPort = args[0].split(":");
                 if (hostPort.length!=2) {
                     AutoModify.showUsage("First argument must contain target"
@@ -310,14 +313,15 @@ public class AutoModify
                 password = args[2];
                 directivesFilePath = args[3];
                 logFilePath = args[4];
-                if (args.length == 5) {
+				protocol = args[5];
+                if (args.length == 6) {
                     isValidateOnly = false;
                 } else {
                     isValidateOnly = true;
                 }
                 if (new File(directivesFilePath).exists()) {
                     System.out.println("\nCONNECTING to Fedora server....");
-                    AutoModify am = new AutoModify(hostName, portNum, username,
+                    AutoModify am = new AutoModify(protocol, hostName, portNum, username,
                             password);
                     if (isValidateOnly) {
                         System.out.println("\n----- VALIDATING DIRECTIVES FILE ONLY -----\n");

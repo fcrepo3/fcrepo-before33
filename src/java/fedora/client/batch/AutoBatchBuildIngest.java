@@ -18,7 +18,7 @@ public class AutoBatchBuildIngest {
 
     public AutoBatchBuildIngest(String objectTemplate, String objectSpecificDir,
         String objectDir, String logFile, String logFormat, String objectFormat, String host,
-        String port, String username, String password) throws Exception {
+        String port, String username, String password, String protocol) throws Exception {
 
         this.batchProperties.setProperty("merge-objects", "yes");
         this.batchProperties.setProperty("ingest", "yes");
@@ -32,6 +32,7 @@ public class AutoBatchBuildIngest {
         this.batchProperties.setProperty("server-port", port);
         this.batchProperties.setProperty("username", username);
         this.batchProperties.setProperty("password", password);
+		this.batchProperties.setProperty("server-protocol", protocol);
 
         BatchTool batchTool = new BatchTool(this.batchProperties, null, null);
         batchTool.prep();
@@ -41,7 +42,7 @@ public class AutoBatchBuildIngest {
     public static final void main(String[] args) throws Exception {
         boolean errors = false;
         String objectFormat = null;
-        if (args.length == 8) {
+        if (args.length == 9) {
             if (!new File(args[0]).exists() && !new File(args[0]).isFile()) {
                 System.out.println("Specified object template file path: \""
                                    + args[0] + "\" does not exist.");
@@ -68,6 +69,13 @@ public class AutoBatchBuildIngest {
                                    + "port number: \"" + args[5] + "\" .");
                 errors = true;
             }
+            
+			if (!args[8].equals("http") && !args[8].equals("https")) {
+				System.out.println("Protocl must be either: \""
+								   + "\"http\"  or  \"https\"");
+				errors = true;
+			}
+			
       	    // Verify format of template file to see if it is a METS or FOXML template
       	    BufferedReader br = new BufferedReader(new FileReader(args[0]));
       	    String line;
@@ -90,15 +98,15 @@ public class AutoBatchBuildIngest {
       	    }            
             if (!errors) {
                 System.out.println("\n*** Format of template files is: "+objectFormat+" . Generated objects will be in "+objectFormat+" format.\n");
-                AutoBatchBuildIngest autoBatch = new AutoBatchBuildIngest(args[0], args[1], args[2], args[3], args[4], objectFormat, server[0], server[1], args[6], args[7]);
+                AutoBatchBuildIngest autoBatch = new AutoBatchBuildIngest(args[0], args[1], args[2], args[3], args[4], objectFormat, server[0], server[1], args[6], args[7], args[8]);
             }
         } else {
-            if (objectFormat==null && args.length==8) {
+            if (objectFormat==null && args.length==9) {
                 System.out.println("\nUnknown format for template file.\n"
                         + "Template file must either be METS or FOXML.\n");                
             } else {
 		            System.out.println("\n**** Wrong Number of Arguments *****\n");
-		            System.out.println("AutoBatchBuildIngest requires 8 arguments.");
+		            System.out.println("AutoBatchBuildIngest requires 9 arguments.");
 		            System.out.println("(1) - full path to object template file");
 		            System.out.println("(2) - full path to object specific directory");
 		            System.out.println("(3) - full path to object directory");
@@ -107,6 +115,7 @@ public class AutoBatchBuildIngest {
 		            System.out.println("(6) - host name and port of Fedora server (host:port)");
 		            System.out.println("(7) - admin username of Fedora server");
 		            System.out.println("(8) - password for admin user of Fedora server\n");
+					System.out.println("(9) - protocol to communicate with Fedora server (http or https)");
         		}
         }
     }
