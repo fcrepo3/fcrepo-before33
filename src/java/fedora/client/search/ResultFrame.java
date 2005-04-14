@@ -57,7 +57,8 @@ public class ResultFrame
     public ResultFrame(String frameTitle, String[] displayFields, String sessionToken) {
         super(frameTitle, true, true, true, true);
         try {
-            m_finder=new AutoFinder(Administrator.getHost(),
+            m_finder=new AutoFinder(
+            		Administrator.getProtocol(), Administrator.getHost(),
                     Administrator.getPort(), Administrator.getUser(),
                     Administrator.getPass());
             searchAndDisplay(m_finder.resumeFindObjects(sessionToken),
@@ -95,7 +96,8 @@ public class ResultFrame
             }
         }
         try {
-            if (m_finder==null) m_finder=new AutoFinder(Administrator.getHost(),
+            if (m_finder==null) m_finder=new AutoFinder(
+            	Administrator.getProtocol(), Administrator.getHost(),
                 Administrator.getPort(), Administrator.getUser(),
                 Administrator.getPass());
             searchAndDisplay(m_finder.findObjects(resultFields, maxResults,
