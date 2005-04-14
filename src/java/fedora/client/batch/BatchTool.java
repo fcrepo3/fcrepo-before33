@@ -188,6 +188,7 @@ public class BatchTool {
 
 	static final String OBJECTSPATH = "objects";
 
+	static final String SERVERPROTOCOL = "server-protocol";
 	static final String SERVERFQDN = "server-fqdn";
 	static final String SERVERPORT = "server-port";
 	static final String USERNAME = "username";
