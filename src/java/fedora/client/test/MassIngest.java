@@ -14,22 +14,6 @@ import fedora.oai.sample.RandomDCMetadataFactory;
  * <p><b>Title:</b> MassIngest.java</p>
  * <p><b>Description:</b> </p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -80,13 +64,13 @@ public class MassIngest {
     public static void showUsage(String message) {
         System.out.println("ERROR: " + message);
         System.out.println(
-			"Usage: MassIngest host port username password templateFile dictionaryFile format numTimes");
+			"Usage: MassIngest host port username password templateFile dictionaryFile format numTimes protocol");
     }
 
     public static void main(String[] args) throws Exception {
         try {
-            if (args.length!=7) {
-                MassIngest.showUsage("You must provide six arguments.");
+            if (args.length!=9) {
+                MassIngest.showUsage("You must provide nine arguments.");
             } else {
                 String hostName=args[0];
                 int portNum=Integer.parseInt(args[1]);
@@ -96,7 +80,8 @@ public class MassIngest {
                 String format=args[6];
                 // third arg==file... must exist
                 File f=new File(args[4]);
-                AutoIngestor a=new AutoIngestor(hostName, portNum, username, password);
+                String protocol=args[8];
+                AutoIngestor a=new AutoIngestor(protocol, hostName, portNum, username, password);
                 MassIngest m=new MassIngest(a, f, dictFile, format, Integer.parseInt(args[7]));
             }
         } catch (Exception e) {

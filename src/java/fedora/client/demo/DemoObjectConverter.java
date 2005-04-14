@@ -18,22 +18,6 @@ import java.io.OutputStreamWriter;
  * function correctly when the Fedora server is configured to run on a
  * port other than 8080 and a sername other thanlocalhost.</p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author rlw@virginia.edu
  * @version $Id$
@@ -41,8 +25,10 @@ import java.io.OutputStreamWriter;
 public class DemoObjectConverter
 {
   private static String fedoraHome = "";
+  private static String fromProtocol = "http";
   private static String fromHostName = "localhost";
   private static String fromPortNum = "8080";
+  private static String toProtocol = "http";
   private static String toHostName = "localhost";
   private static String toPortNum = "8080";
   private static String fromName = "localhost:8080";
@@ -52,34 +38,26 @@ public class DemoObjectConverter
    * <p> Constructor for DemoObjectConverter. Initializes class variables for
    * hostname, port number and fedoraHome.</p>
    *
+   * @param fromProtocol The protocol for the URL to be changed from.
    * @param fromHostName The host name to be changed from.
    * @param fromPortNum The port number to be changed from.
+   * @param toProtocol The protocol for the URL to be changed to.
    * @param toHostName The host name to be changed to.
    * @param toPortNum The port number ot be changed to.
    * @param fedoraHome The installation directory for Fedora.
    */
-  public DemoObjectConverter(String fromHostName, String fromPortNum,
-      String toHostName, String toPortNum, String fedoraHome)
+  public DemoObjectConverter(String fromProtocol, String fromHostName, String fromPortNum,
+      String toProtocol, String toHostName, String toPortNum, String fedoraHome)
   {
+	DemoObjectConverter.toProtocol = toProtocol;
     DemoObjectConverter.toHostName = toHostName;
     DemoObjectConverter.toPortNum = toPortNum;
+	DemoObjectConverter.fromProtocol = fromProtocol;
     DemoObjectConverter.fromHostName = fromHostName;
     DemoObjectConverter.fromPortNum = fromPortNum;
     DemoObjectConverter.fedoraHome = fedoraHome;
     DemoObjectConverter.fromName = fromHostName+":"+fromPortNum;
     DemoObjectConverter.toName = toHostName+":"+toPortNum;
-  }
-
-  /**
-   * <p> Shows argument list for application.</p>
-   *
-   * @param errMessage The message to be included with usage information.
-   */
-  public static void showUsage(String errMessage) {
-      System.out.println("Error: " + errMessage);
-      System.out.println("");
-      System.out.println("Usage: DemoObjectConverter fromHostName fromPortNum "
-          + "toHostName toPortNum fedoraHome");
   }
 
   /**
@@ -142,26 +120,34 @@ public class DemoObjectConverter
       OutputStreamWriter out = new OutputStreamWriter(os, "UTF-8");
       String nextLine="";
       String newUrlStart;
-      if ((toPortNum.equals("")) || (toPortNum.equals("80")))
+      if (toProtocol.equalsIgnoreCase("http") && ((toPortNum.equals("")) || (toPortNum.equals("80"))))
       {
-        newUrlStart="http://" + toHostName + "/";
+        newUrlStart= "http://" + toHostName + "/";
+      } else if (toProtocol.equalsIgnoreCase("https") && ((toPortNum.equals("")) || (toPortNum.equals("443"))))
+      {
+		  newUrlStart= "https://" + toHostName + "/";
       } else
       {
-        newUrlStart="http://" + toHostName + ":" + toPortNum + "/";
+        newUrlStart= toProtocol + toHostName + ":" + toPortNum + "/";
       }
-      String a="http://" + fromHostName;
+      String a= fromProtocol + fromHostName;
       String urlStartNoPort=a + "/";
       String urlStartPort80=a + ":80" + "/";
+	  String urlStartPort443=a + ":443" + "/";
       String urlStartWithPort=a + ":" + fromPortNum + "/";
       while (nextLine!=null)
       {
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-          if ((fromPortNum.equals("")) || (fromPortNum.equals("80")) )
+          if (fromProtocol.equalsIgnoreCase("http") && ((fromPortNum.equals("")) || (fromPortNum.equals("80"))))
           {
             nextLine = nextLine.replaceAll(urlStartNoPort, newUrlStart);
             nextLine = nextLine.replaceAll(urlStartPort80, newUrlStart);
+          } else if (fromProtocol.equalsIgnoreCase("https") && ((fromPortNum.equals("")) || (fromPortNum.equals("443"))))
+          {
+			  nextLine = nextLine.replaceAll(urlStartNoPort, newUrlStart);
+			  nextLine = nextLine.replaceAll(urlStartPort443, newUrlStart);
           } else
           {
             nextLine = nextLine.replaceAll(urlStartWithPort, newUrlStart);
@@ -194,21 +180,35 @@ public class DemoObjectConverter
     }
   }
 
+  /**
+   * <p> Shows argument list for application.</p>
+   *
+   * @param errMessage The message to be included with usage information.
+   */
+  public static void showUsage(String errMessage) {
+	  System.out.println("Error: " + errMessage);
+	  System.out.println("");
+	  System.out.println("Usage: DemoObjectConverter fromProtocol fromHostName fromPortNum "
+		  + "toProtocol toHostName toPortNum fedoraHome");
+  }
+
   public static void main(String[] args)
   {
     try
     {
       if (args.length!=5)
       {
-        DemoObjectConverter.showUsage("You must provide five arguments.");
+        DemoObjectConverter.showUsage("You must provide seven arguments.");
       } else
       {
-        String fromHostName=args[0];
-        String fromPortNum=args[1];
-        String toHostName=args[2];
-        String toPortNum=args[3];
-        String fedoraHome=args[4];
-        DemoObjectConverter doc=new DemoObjectConverter(fromHostName, fromPortNum, toHostName, toPortNum, fedoraHome);
+		String fromProtocol=args[0];
+        String fromHostName=args[1];
+        String fromPortNum=args[2];
+		String toProtocol=args[3];
+        String toHostName=args[4];
+        String toPortNum=args[5];
+        String fedoraHome=args[6];
+        DemoObjectConverter doc=new DemoObjectConverter(fromProtocol, fromHostName, fromPortNum, toProtocol, toHostName, toPortNum, fedoraHome);
         DemoObjectConverter.convert(fedoraHome);
       }
     } catch (Exception e)

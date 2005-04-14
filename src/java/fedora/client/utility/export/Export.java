@@ -26,22 +26,6 @@ import fedora.server.types.gen.RepositoryInfo;
  * 
  * This class calls AutoExporter.class which is reponsible for making
  * the API-M SOAP calls for the export.
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2005 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  */
 
 public class Export {
@@ -157,7 +141,7 @@ public class Export {
         System.err.println("Summary: Exports one or more objects from a Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH");
+        System.err.println("  fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  HST    is the repository hostname.");
@@ -174,14 +158,16 @@ public class Export {
 		System.err.println("         the output should be prepared for.");
 		System.err.println("         ('public', 'migrate', 'archive' or 'default')");
 		System.err.println("  PATH   is the directory to export the object.");
+		System.err.println("  PROTOCOL is the how to connect to repository, either http or https.");
         System.err.println();
         System.err.println("Examples:");
-        System.err.println("fedora-export myrepo.com:80 user pw demo:1 foxml1.0 migrate .");
+        System.err.println("fedora-export myrepo.com:8443 user pw demo:1 foxml1.0 migrate . https");
         System.err.println();
         System.err.println("  Exports demo:1 for migration in FOXML format ");
+		System.err.println("  using the secure https protocol (SSL).");
         System.err.println("  (from myrepo.com:80 to the current directory).");
         System.err.println();
-        System.err.println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump");
+        System.err.println("fedora-export myrepo.com:80 user pw DMO default default /tmp/fedoradump http");
         System.err.println();
         System.err.println("  Exports all objects in the default export format and context ");
         System.err.println("  (from myrepo.com:80 to directory /tmp/fedoradump).");
@@ -195,22 +181,30 @@ public class Export {
      */
     public static void main(String[] args) {
         try {
-			// USAGE: fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH
-			if (args.length!=7) {
+			// USAGE: fedora-export HST:PRT USR PSS PID|FTYPS FORMAT ECONTEXT PATH PROTOCOL
+			if (args.length!=8) {
                 Export.badArgs("Wrong number of arguments.");
             }
             String[] hp=args[0].split(":");
             if (hp.length!=2) {
                 Export.badArgs("First arg must be of the form 'host:portnum'");
             }
-            
+            //SDP - HTTPS
+            String protocol=args[7];
+			if ((!protocol.equals("http")) &&
+				(!protocol.equals("https"))) {
+					Export.badArgs("PROTOCOL arg must be 'http' or 'https'");			   
+			}
+           
 			FedoraAPIA sourceRepoAPIA=
-					APIAStubFactory.getStub(hp[0],
+					APIAStubFactory.getStub(protocol,
+											hp[0],
 											Integer.parseInt(hp[1]),
 											args[1],
 											args[2]);
 			FedoraAPIM sourceRepoAPIM=
-					APIMStubFactory.getStub(hp[0],
+					APIMStubFactory.getStub(protocol,
+											hp[0],
 											Integer.parseInt(hp[1]),
 											args[1],
 											args[2]);
@@ -261,11 +255,13 @@ public class Export {
             } else {
                 // assume args[3] is a PID...they only want to export one object
                 Export.one(APIAStubFactory.getStub(
+                				protocol,
                 				hp[0],
 								Integer.parseInt(hp[1]),
 								args[1],
 								args[2]),
 							APIMStubFactory.getStub(
+								protocol,
 								hp[0],
                             	Integer.parseInt(hp[1]),
                                 args[1],
