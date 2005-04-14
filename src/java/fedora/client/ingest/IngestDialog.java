@@ -158,7 +158,9 @@ public class IngestDialog {
 						logFile = IngestLogger.newLogFile(logRootName);
 						log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
 						IngestLogger.openLog(log, logRootName);
-                        String[] pids=Ingest.multiFromRepository(sdlg.getHost(),
+                        String[] pids=Ingest.multiFromRepository(
+														  sdlg.getProtocol(),
+                        								  sdlg.getHost(),
                                                           sdlg.getPort(),
                                                           sdlg.getAPIA(),
                                                           sdlg.getAPIM(),
