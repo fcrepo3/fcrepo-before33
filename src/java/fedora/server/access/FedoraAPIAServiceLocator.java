@@ -3,34 +3,23 @@ package fedora.server.access;
 /**
  *
  * <p><b>Title:</b> FedoraAPIAServiceLocator.java</p>
- * <p><b>Description:</b> This file was auto-generated from WSDL
- * by the Apache Axis WSDL2Java emitter</p>
+ * <p><b>Description:</b> This file was originally auto-generated from the API-A WSDL
+ * by the Apache Axis WSDL2Java emitter.  The generated file was then modified
+ * so that it has a constructor that takes username and password, so that 
+ * the service stub class can have username and passord.  
+ * The following methods were modified:
+ * 	getFedoraAPIAPortSOAPHTTP - custom stub (fedora.server.access.FedoraAPIA)</p>
  *
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Mozilla Public License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.mozilla.org/MPL">http://www.mozilla.org/MPL/.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2004 by The
- * Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service implements fedora.server.access.FedoraAPIAService {
 
-    // Use to get a proxy class for FedoraAPIAPortSOAPHTTP
+    // Use to get a proxy class for FedoraAPIAPortSOAPHTTP and FedoraAPIAPortSOAPHTTPS (secure)
     private final java.lang.String FedoraAPIAPortSOAPHTTP_address = "http://localhost:8080/fedora/services/access"; //wdn5e:wdn5e@
-
+	private final java.lang.String FedoraAPIAPortSOAPHTTPS_address = "https://localhost:8443/fedora/services/access"; //SDP
+	
     private String username=null;
     private String password=null;
 
@@ -50,7 +39,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
 
     // The WSDD service name defaults to the port name.
     private java.lang.String FedoraAPIAPortSOAPHTTPWSDDServiceName = "FedoraAPIAPortSOAPHTTP";
-
+    
     public java.lang.String getFedoraAPIAPortSOAPHTTPWSDDServiceName() {
         return FedoraAPIAPortSOAPHTTPWSDDServiceName;
     }
@@ -58,7 +47,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
     public void setFedoraAPIAPortSOAPHTTPWSDDServiceName(java.lang.String name) {
         FedoraAPIAPortSOAPHTTPWSDDServiceName = name;
     }
-
+    
     public fedora.server.access.FedoraAPIA getFedoraAPIAPortSOAPHTTP() throws javax.xml.rpc.ServiceException {
        java.net.URL endpoint;
         try {
@@ -69,6 +58,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
         }
         return getFedoraAPIAPortSOAPHTTP(endpoint);
     }
+
 
     public fedora.server.access.FedoraAPIA getFedoraAPIAPortSOAPHTTP(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
         try {
@@ -81,6 +71,49 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
             return null; // ???
         }
     }
+
+	//SDP - HTTPS    
+	public java.lang.String getFedoraAPIAPortSOAPHTTPSAddress() {
+		return FedoraAPIAPortSOAPHTTPS_address;
+	}
+	
+	//SDP - HTTPS
+	private java.lang.String FedoraAPIAPortSOAPHTTPSWSDDServiceName = "FedoraAPIAPortSOAPHTTPS";
+	
+	//SDP - HTTPS
+	public java.lang.String getFedoraAPIAPortSOAPHTTPSWSDDServiceName() {
+		return FedoraAPIAPortSOAPHTTPSWSDDServiceName;
+	}
+	
+	//SDP - HTTPS
+	public void setFedoraAPIAPortSOAPHTTPSWSDDServiceName(java.lang.String name) {
+		FedoraAPIAPortSOAPHTTPSWSDDServiceName = name;
+	}
+	
+	//SDP - HTTPS    
+	public fedora.server.access.FedoraAPIA getFedoraAPIAPortSOAPHTTPS() throws javax.xml.rpc.ServiceException {
+	   java.net.URL endpoint;
+		try {
+			endpoint = new java.net.URL(FedoraAPIAPortSOAPHTTPS_address);
+		}
+		catch (java.net.MalformedURLException e) {
+			return null; // unlikely as URL was validated in WSDL2Java
+		}
+		return getFedoraAPIAPortSOAPHTTPS(endpoint);
+	}
+	
+	//SDP - HTTPS     
+	public fedora.server.access.FedoraAPIA getFedoraAPIAPortSOAPHTTPS(java.net.URL portAddress) throws javax.xml.rpc.ServiceException {
+		try {
+			fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(portAddress, this, username, password);
+			_stub.setPortName(getFedoraAPIAPortSOAPHTTPSWSDDServiceName());
+			// _stub._setProperty("httpclient.authentication.preemptive","true");
+			return _stub;
+		}
+		catch (org.apache.axis.AxisFault e) {
+			return null; // ???
+		}
+	}
 
     /**
      * For the given interface, get the stub implementation.
@@ -95,6 +128,13 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
                 // _stub._setProperty("httpclient.authentication.preemptive","true");                
                 return _stub;
             }
+            //SDP - HTTPS (added second port for https)
+			if (fedora.server.access.FedoraAPIA.class.isAssignableFrom(serviceEndpointInterface)) {
+				fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(new java.net.URL(FedoraAPIAPortSOAPHTTPS_address), this, username, password);
+				_stub.setPortName(getFedoraAPIAPortSOAPHTTPSWSDDServiceName());
+				// _stub._setProperty("httpclient.authentication.preemptive","true");                
+				return _stub;
+			}
         }
         catch (Throwable t) {
             throw new javax.xml.rpc.ServiceException(t);
@@ -108,23 +148,43 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
      * then ServiceException is thrown.
      */
     public java.rmi.Remote getPort(javax.xml.namespace.QName portName, Class serviceEndpointInterface) throws javax.xml.rpc.ServiceException {
-        java.rmi.Remote _stub = getPort(serviceEndpointInterface);
-        ((org.apache.axis.client.Stub) _stub).setPortName(portName);
-        return _stub;
+        
+        //SDP - HTTPS
+        //commented out old code in lieu of newly generated code for two ports.
+        //java.rmi.Remote _stub = getPort(serviceEndpointInterface);
+        //((org.apache.axis.client.Stub) _stub).setPortName(portName);
+        //return _stub;
+
+		if (portName == null) {
+			return getPort(serviceEndpointInterface);
+		}
+		String inputPortName = portName.getLocalPart();
+		if ("FedoraAPIAPortSOAPHTTP".equals(inputPortName)) {
+			return getFedoraAPIAPortSOAPHTTP();
+		}
+		else if ("FedoraAPIAPortSOAPHTTPS".equals(inputPortName)) {
+			return getFedoraAPIAPortSOAPHTTPS();
+		}
+		else  {
+			java.rmi.Remote _stub = getPort(serviceEndpointInterface);
+			((org.apache.axis.client.Stub) _stub).setPortName(portName);
+			return _stub;
+		}
     }
 
     public javax.xml.namespace.QName getServiceName() {
-        return new javax.xml.namespace.QName("http://www.fedora.info/definitions/1/0/api/", "Fedora-API-M-Service");
+		return new javax.xml.namespace.QName("http://www.fedora.info/definitions/1/0/api/", "Fedora-API-A-Service");
     }
 
     private java.util.HashSet ports = null;
 
     public java.util.Iterator getPorts() {
-        if (ports == null) {
-            ports = new java.util.HashSet();
-            ports.add(new javax.xml.namespace.QName("FedoraAPIAPortSOAPHTTP"));
-        }
-        return ports.iterator();
+		if (ports == null) {
+			ports = new java.util.HashSet();
+			ports.add(new javax.xml.namespace.QName("FedoraAPIAPortSOAPHTTP"));
+			ports.add(new javax.xml.namespace.QName("FedoraAPIAPortSOAPHTTPS"));
+		}
+		return ports.iterator();
     }
 
 }
