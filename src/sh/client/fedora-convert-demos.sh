@@ -41,7 +41,7 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-(exec $JAVA_HOME/bin/java -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar fedora.client.demo.DemoObjectConverter $1 $2 $3 $4 $5)
+(exec $JAVA_HOME/bin/java -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar fedora.client.demo.DemoObjectConverter $1 $2 $3 $4 $5 $6 $7)
 
 echo ""
 echo "Finished Converting Demo Objects"

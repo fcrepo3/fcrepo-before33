@@ -20,7 +20,7 @@ echo "Starting Fedora Administrative Client..."
               -Dfedora.home=$FEDORA_HOME \
               -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
               -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-              -jar $FEDORA_HOME/client/client.jar $1 $2 $3 $4)
+              -jar $FEDORA_HOME/client/client.jar $1 $2 $3 $4 $5)
 
 restoreJavaHome
 exit 0
