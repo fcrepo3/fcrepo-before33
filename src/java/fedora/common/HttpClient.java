@@ -33,12 +33,13 @@ public class HttpClient {
     */
 	public GetMethod doNoAuthnGet(int millisecondsWait, int redirectDepth) 
 	throws Exception {
+    	System.err.println("doNoAuthnGet.../ ");
 			return doAuthnGet(millisecondsWait, redirectDepth, null, null);
     }    
 	
     public GetMethod doAuthnGet(int millisecondsWait, int redirectDepth, String username, String password) 
     throws Exception {
-    	System.err.println("doing get for " + this.relativePath + "for " + username + " " + password + 
+    	System.err.println("doAuthnGet... " + this.relativePath + "for " + username + " " + password + 
     			" " );
 	  	getMethod = null;
 	  	try {
@@ -69,7 +70,9 @@ public class HttpClient {
 	  			workingPath = null;
 	  			System.err.println("doAuthnGet(), got GetMethod object=" + getMethod);
 	  			getMethod.setFollowRedirects(true);
+	  	    	System.err.println("just setFollowRedirects(true)"); 
 	  			resultCode = apacheCommonsClient.executeMethod(getMethod);
+	  	    	System.err.println("resultCode=" + resultCode); 
 	  			if (300 <= resultCode && resultCode <= 399) {
 	  				workingPath=getMethod.getResponseHeader("Location").getValue();
 	  				System.err.println("doAuthnGet(), got redirect, new url=" + workingPath);
@@ -79,9 +82,9 @@ public class HttpClient {
 	  		if (getMethod != null) {
 	  			getMethod.releaseConnection();
 	  		}
-	  		System.err.println("x " + th.getMessage());
+	  		System.err.println("doAuthnGet " + th.getMessage());
 	  		if (th.getCause() != null) {
-		  		System.err.println("x " + th.getCause().getMessage());	  			
+		  		System.err.println("doAuthnGet " + th.getCause().getMessage());	  			
 	  		}
 	  		throw new Exception("failed connection");
 	    }
@@ -182,7 +185,7 @@ public class HttpClient {
         			} else {
         				System.err.println("unsupported protocol");
         			}
-    				System.err.println("matched with portout " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
+    				System.err.println("matched without port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
         		} else {
     				System.err.println("didn't match");        			
     				System.err.println("captureWithPort="+captureWithPort);        			
@@ -190,8 +193,8 @@ public class HttpClient {
         		}
     		}
     	} else {
-    		relativePath = "/fedora" + path;
-        	absoluteUrl = HttpClient.makeUrl(protocol, host, port, path);
+    		relativePath = path;
+        	absoluteUrl = HttpClient.makeUrl(protocol, host, port, relativePath);
 			System.err.println("not matched " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
     	}
 		System.err.println("protocol="+protocol);
@@ -258,7 +261,7 @@ public class HttpClient {
     public static String makeUrl(String protocol, String host, String port, String more) {
     	String url = protocol + "://" + host 
 		+ (((port != null) && ! "".equals(port)) ? (":" + port) : "") 
-		+ "/fedora" + more;
+		+ more;
     	return url;
     }
     

@@ -84,6 +84,7 @@ public class ServerController
                     s_server.shutdown(context);
                     lineResponse = "OK";
         		} catch (NotAuthorizedException na) {
+                    System.err.println("Authz Error shutting down Fedora server: " + na.getClass().getName() + ": " + na.getMessage());        			
         			response.sendError(HttpServletResponse.SC_FORBIDDEN);                    
                 } catch (Throwable t) {
                     lineResponse = "ERROR";
@@ -105,7 +106,8 @@ public class ServerController
 					//we can do no more
 				} catch (ModuleInitializationException e) {
 					//since 2nd parm above is "false", this is unexpected
-				} catch (NotAuthorizedException e) {
+				} catch (NotAuthorizedException na) {
+                    System.err.println("Authz Error getting Fedora server status: " + na.getClass().getName() + ": " + na.getMessage());        			
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);			
 				}
             }
@@ -154,7 +156,7 @@ public class ServerController
       		HttpClient client = new HttpClient(protocol, 
       				serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST), 
       				serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
-      				"/management/control?action=" + action
+      				"/fedora/management/control?action=" + action
       				);
        		System.err.println("...SC:call HttpClient()"); 
        		System.err.println("SC:call HttpClient.doAuthnGet()...");        		
