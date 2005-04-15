@@ -58,6 +58,7 @@ public class DemoObjectConverter
     DemoObjectConverter.fedoraHome = fedoraHome;
     DemoObjectConverter.fromName = fromHostName+":"+fromPortNum;
     DemoObjectConverter.toName = toHostName+":"+toPortNum;
+    
   }
 
   /**
@@ -135,6 +136,23 @@ public class DemoObjectConverter
       String fromURLStartPort80=a + ":80" + "/";
 	  String fromURLStartPort443=a + ":443" + "/";
       String fromURLStartWithPort=a + ":" + fromPortNum + "/";
+
+	  if (fromProtocol.equalsIgnoreCase("http") && (fromPortNum.equals("") || fromPortNum.equals("80")))
+	  {
+		System.out.println("searching for " + fromURLStartNoPort);
+		System.out.println("searching for " + fromURLStartPort80);
+		System.out.println("replacing with " + newUrlStart);
+	  } else if (fromProtocol.equalsIgnoreCase("https") && (fromPortNum.equals("") || fromPortNum.equals("443")))
+	  {
+		System.out.println("searching for " + fromURLStartNoPort);
+		System.out.println("searching for " + fromURLStartPort443);
+		System.out.println("replacing with " + newUrlStart);
+	  } else
+	  {
+		System.out.println("searching for " + fromURLStartWithPort);
+		System.out.println("replacing with " + newUrlStart);
+	  }
+      
       while (nextLine!=null)
       {
         nextLine=in.readLine();
@@ -146,12 +164,10 @@ public class DemoObjectConverter
             nextLine = nextLine.replaceAll(fromURLStartPort80, newUrlStart);
           } else if (fromProtocol.equalsIgnoreCase("https") && (fromPortNum.equals("") || fromPortNum.equals("443")))
           {
-			  nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
-			  nextLine = nextLine.replaceAll(fromURLStartPort443, newUrlStart);
+			nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
+			nextLine = nextLine.replaceAll(fromURLStartPort443, newUrlStart);
           } else
           {
-          	System.out.println("searching for from: " + fromURLStartWithPort);
-			System.out.println("replace with: " + newUrlStart);
             nextLine = nextLine.replaceAll(fromURLStartWithPort, newUrlStart);
           }
           out.write(nextLine+"\n");
@@ -198,8 +214,9 @@ public class DemoObjectConverter
   {
     try
     {
-      if (args.length!=7)
-      {
+      
+	  if (args.length!=7) 
+	  {
         DemoObjectConverter.showUsage("You must provide seven arguments.");
       } else
       {
@@ -210,6 +227,7 @@ public class DemoObjectConverter
         String toHostName=args[4];
         String toPortNum=args[5];
         String fedoraHome=args[6];
+        
         DemoObjectConverter doc=new DemoObjectConverter(fromProtocol, fromHostName, fromPortNum, toProtocol, toHostName, toPortNum, fedoraHome);
         DemoObjectConverter.convert(fedoraHome);
       }
