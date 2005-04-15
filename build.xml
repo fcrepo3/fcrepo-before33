@@ -752,7 +752,8 @@
 		</java>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
-				<exclude name="org/**"/>
+				<!--was exclude name="org/**"/-->
+				<exclude name="org/apache/catalina/**"/><!-- don't copy tomcat replacement classes into fedora webapp -->
 				<exclude name="fedora/server/security/ReducedPolicyEnforcementPoint.class"/>
 				<exclude name="fedora/server/security/ReducedPolicyFinderModule.class"/>
 				<exclude name="fedora/server/security/Transom.class"/>				
@@ -828,7 +829,8 @@
 				<include name="fedora/server/Parameterized.class"/>
 				<include name="fedora/common/**"/>
 				<include name="fedora/server/security/ContextAttributeFinderModule.class"/>	
-				<include name="fedora/server/security/AttributeFinderModule.class"/>					
+				<include name="fedora/server/security/AttributeFinderModule.class"/>				
+				<include name="org/apache/commons/httpclient/contrib/ssl/**"/>
 			</fileset>
 		</copy>
 		<java classname="fedora.common.policy.Release2_1Namespace" 
