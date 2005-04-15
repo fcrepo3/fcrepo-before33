@@ -322,9 +322,9 @@ public class Ingest {
         System.err.println("         the local filesystem or another Fedora repository.");
         System.err.println();
         System.err.println("Syntax:");
-        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS PROTOCOL [LOG]");
-        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
-        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
+        System.err.println("  fedora-ingest f[ile] INPATH FORMAT THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS TPROTOCOL [LOG]");
+        System.err.println("  fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]");
         System.err.println();
         System.err.println("Where:");
         System.err.println("  INPATH     is the local file or directory name that is ingest source.");
@@ -338,7 +338,8 @@ public class Ingest {
         System.err.println("  SPRT/TPRT  is the source or target repository's port number.");
         System.err.println("  SUSR/TUSR  is the id of the source or target repository user.");
         System.err.println("  SPSS/TPSS  is the password of the source or target repository user.");
-		System.err.println("  PROTOCOL   is the protocol to communicate with repository (http or https)");
+		System.err.println("  SPROTOCOL  is the protocol to communicate with source repository (http or https)");
+		System.err.println("  TPROTOCOL  is the protocol to communicate with target repository (http or https)");
         System.err.println("  LOG        is the optional log message.  If unspecified, the log message");
         System.err.println("             will indicate the source filename or repository of the object(s).");
         System.err.println();
@@ -363,7 +364,7 @@ public class Ingest {
         System.err.println();
         System.err.println("  Same as above, but ingests all three types of objects (O,D,M).");
         System.err.println();
-        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw http \"\"");
+        System.err.println("fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:8443 jane jpw http https \"\"");
         System.err.println();
         System.err.println("  Ingests the object whose pid is 'demo:1' from the source repository");
         System.err.println("  'srcrepo.com:8081' into the target repository 'myrepo.com:80'.");
@@ -371,7 +372,7 @@ public class Ingest {
         System.err.println("  export format configured at the source." );
         System.err.println("  All log messages will be empty.");
 		System.err.println();
-		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw http \"\"");
+		System.err.println("fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:8443 jane jpw http https \"\"");
 		System.err.println();
 		System.err.println("  Same as above, but ingests all data objects (type O).");
 		System.err.println();
@@ -482,40 +483,40 @@ public class Ingest {
                 System.out.println();
                 System.out.println("A detailed log is at " + logFile.getPath());
             } else if (kind=='r') {
-                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]
-                if (args.length<9 || args.length>10) {
+                // USAGE: fedora-ingest r[epos] SHST:SPRT SUSR SPSS PID|FTYPS THST:TPRT TUSR TPSS SPROTOCOL TPROTOCOL [LOG]
+                if (args.length<10 || args.length>11) {
                     Ingest.badArgs("Wrong number of arguments for repository ingest.");
                 }
                 String logMessage=null;
-                if (args.length==10) {
-                    logMessage=args[9];
+                if (args.length==11) {
+                    logMessage=args[10];
                 }
 				//SDP - HTTPS  
-				//FIXME: must still make this an argument
-				String protocol=args[8];
+				String source_protocol=args[8];
+				String target_protocol=args[9];
 				
                 String[] hp=args[1].split(":");
                 FedoraAPIA sourceRepoAPIA=
-                        APIAStubFactory.getStub(protocol,
+                        APIAStubFactory.getStub(source_protocol,
                         						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[2],
                                                 args[3]);
                 FedoraAPIM sourceRepoAPIM=
-                        APIMStubFactory.getStub(protocol,
+                        APIMStubFactory.getStub(source_protocol,
                         						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[2],
                                                 args[3]);
                 hp=args[5].split(":");
                 FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(protocol,
+                        APIAStubFactory.getStub(target_protocol,
                         						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[6],
                                                 args[7]);
                 FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(protocol,
+                        APIMStubFactory.getStub(target_protocol,
                         						hp[0],
                                                 Integer.parseInt(hp[1]),
                                                 args[6],
@@ -560,7 +561,7 @@ public class Ingest {
 					log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
 					IngestLogger.openLog(log, logRootName);
                     String[] pids=Ingest.multiFromRepository(
-                    								  protocol,
+                    								  source_protocol,
                     								  hp[0],
                                                       Integer.parseInt(hp[1]),
                                                       sourceRepoAPIA,
