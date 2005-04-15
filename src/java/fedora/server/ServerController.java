@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+
+import org.apache.commons.httpclient.methods.GetMethod;
+
 import fedora.common.HttpClient;
 import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
@@ -146,14 +149,21 @@ public class ServerController
             	optionalUsername = args[2];
             	optionalPassword = args[3];
             }
-       		Properties serverProperties = ServerUtility.getServerProperties("http".equals(protocol), "https".equals(protocol));           
+       		Properties serverProperties = ServerUtility.getServerProperties("http".equals(protocol), "https".equals(protocol));
+       		System.err.println("SC:call HttpClient()...");
       		HttpClient client = new HttpClient(protocol, 
       				serverProperties.getProperty(ServerUtility.FEDORA_SERVER_HOST), 
       				serverProperties.getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
-      				"/management/control?action=" + action,
-      				(optionalUsername == null) ? serverProperties.getProperty(ServerUtility.ADMIN_USER) : optionalUsername, 
-      				(optionalPassword == null) ? serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword
+      				"/management/control?action=" + action
       				);
+       		System.err.println("...SC:call HttpClient()"); 
+       		System.err.println("SC:call HttpClient.doAuthnGet()...");        		
+      		GetMethod getMethod = client.doAuthnGet(20000, 25,
+      			(optionalUsername == null) ? serverProperties.getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
+      			(optionalPassword == null) ? serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword
+      		);
+       		System.err.println("...SC:call HttpClient.doAuthnGet()");		      		
+       		System.err.println("SC:call HttpClient.getLineResponse()...");
       		String response = client.getLineResponseUrl();
             System.out.println(response);        	
     	} catch (Exception e) {

@@ -13,6 +13,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Property;
+import fedora.server.utilities.ServerUtility;
 import fedora.common.HttpClient;
 
 /**
@@ -96,7 +97,8 @@ public class DefaultExternalContentManager extends Module
   	log("in getExternalContent(), url=" + url);
   	MIMETypedStream httpContent = null;
   	try {  		
-  		HttpClient client = new HttpClient(url, "backendClient", ""); 
+  		HttpClient client = new HttpClient(url); 
+  		client.doAuthnGet(20000, 25, "backendClient", "");
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
   			throw new StreamIOException(
