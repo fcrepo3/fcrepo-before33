@@ -128,29 +128,31 @@ public class DemoObjectConverter
 		  newUrlStart= "https://" + toHostName + "/";
       } else
       {
-        newUrlStart= toProtocol + toHostName + ":" + toPortNum + "/";
+        newUrlStart= toProtocol + "://" + toHostName + ":" + toPortNum + "/";
       }
-      String a= fromProtocol + fromHostName;
-      String urlStartNoPort=a + "/";
-      String urlStartPort80=a + ":80" + "/";
-	  String urlStartPort443=a + ":443" + "/";
-      String urlStartWithPort=a + ":" + fromPortNum + "/";
+      String a= fromProtocol + "://" + fromHostName;
+      String fromURLStartNoPort=a + "/";
+      String fromURLStartPort80=a + ":80" + "/";
+	  String fromURLStartPort443=a + ":443" + "/";
+      String fromURLStartWithPort=a + ":" + fromPortNum + "/";
       while (nextLine!=null)
       {
         nextLine=in.readLine();
         if (nextLine!=null)
         {
-          if (fromProtocol.equalsIgnoreCase("http") && ((fromPortNum.equals("")) || (fromPortNum.equals("80"))))
+          if (fromProtocol.equalsIgnoreCase("http") && (fromPortNum.equals("") || fromPortNum.equals("80")))
           {
-            nextLine = nextLine.replaceAll(urlStartNoPort, newUrlStart);
-            nextLine = nextLine.replaceAll(urlStartPort80, newUrlStart);
-          } else if (fromProtocol.equalsIgnoreCase("https") && ((fromPortNum.equals("")) || (fromPortNum.equals("443"))))
+            nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
+            nextLine = nextLine.replaceAll(fromURLStartPort80, newUrlStart);
+          } else if (fromProtocol.equalsIgnoreCase("https") && (fromPortNum.equals("") || fromPortNum.equals("443")))
           {
-			  nextLine = nextLine.replaceAll(urlStartNoPort, newUrlStart);
-			  nextLine = nextLine.replaceAll(urlStartPort443, newUrlStart);
+			  nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
+			  nextLine = nextLine.replaceAll(fromURLStartPort443, newUrlStart);
           } else
           {
-            nextLine = nextLine.replaceAll(urlStartWithPort, newUrlStart);
+          	System.out.println("searching for from: " + fromURLStartWithPort);
+			System.out.println("replace with: " + newUrlStart);
+            nextLine = nextLine.replaceAll(fromURLStartWithPort, newUrlStart);
           }
           out.write(nextLine+"\n");
         }
