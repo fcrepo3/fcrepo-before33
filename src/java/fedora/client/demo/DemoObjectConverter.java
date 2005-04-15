@@ -196,7 +196,7 @@ public class DemoObjectConverter
   {
     try
     {
-      if (args.length!=5)
+      if (args.length!=7)
       {
         DemoObjectConverter.showUsage("You must provide seven arguments.");
       } else
