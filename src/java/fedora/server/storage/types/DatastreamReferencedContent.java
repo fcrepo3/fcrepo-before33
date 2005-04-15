@@ -5,6 +5,8 @@ import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+import org.apache.commons.httpclient.methods.GetMethod;
+
 /**
  *
  * <p><b>Title:</b> DatastreamReferencedContent.java</p>
@@ -56,6 +58,7 @@ public class DatastreamReferencedContent
       	InputStream contentStream = null;
       	try {
       		HttpClient client = new HttpClient(DSLocation);
+      		GetMethod getMethod = client.doNoAuthnGet(20000, 25);
       		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
       			log("in getContentStream(), got bad code=" + client.getStatusCode());
       			throw new StreamIOException(
@@ -64,11 +67,11 @@ public class DatastreamReferencedContent
                     + DSLocation);
       		}          
       		log("in getContentStream(), got 200");
-      		contentStream = client.getGetMethod().getResponseBodyAsStream();
+      		contentStream = getMethod.getResponseBodyAsStream();
       		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream.
       		int contentLength = 0;
       		if (client.getGetMethod().getResponseHeader("Content-Length") != null) {
-      			contentLength = Integer.parseInt(client.getGetMethod().getResponseHeader("Content-Length").getValue());
+      			contentLength = Integer.parseInt(getMethod.getResponseHeader("Content-Length").getValue());
       		}      		
             if (contentLength > -1) {
                 DSSize = contentLength;
