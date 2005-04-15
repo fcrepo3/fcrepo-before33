@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.security.Security;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -33,6 +34,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import org.apache.axis.AxisFault;
+import org.apache.axis.AxisProperties;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -276,13 +278,38 @@ public class LoginDialog
                 throws Exception {
             Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
             Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+           /*
+            Enumeration enum = AxisProperties.propertyNames();
+        	System.err.println("1 are there any AxisProperties?=" + enum.hasMoreElements());
+            while(enum.hasMoreElements()) {
+            	String name = (String) enum.nextElement();
+            	System.err.println("another axis property = " + name);
+            }
+            
+            AxisProperties.setProperty("axis.socketSecureFactory", 
+    		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
+            enum = AxisProperties.propertyNames();
+        	System.err.println("2 are there any AxisProperties?=" + enum.hasMoreElements());
+            while(enum.hasMoreElements()) {
+            	String name = (String) enum.nextElement();
+            	System.err.println("another axis property = " + name);
+            }
+		*/  
             RepositoryInfo info=Administrator.APIA.describeRepository();
             if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
                 throw new IOException("Server is version "
                         + info.getRepositoryVersion() + ", but this"
                         + " client only works with version" +  Administrator.VERSION);
             }
-
+/*
+            System.setProperty("axis.socketSecureFactory", 
+            		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
+            		"axis.socketSecureFactory" system property to "org.apache.axis.components.net.FakeTrustSocketFactory"          
+          
+            System.setProperty("javax.net.ssl.trustStore","c:\\j2sdk1.4.2_03\\jre\\lib\\security\\cacerts");
+            System.setProperty("java.protocol.handler.pkgs","com.sun.net.ssl.internal.www.protocol");       
+            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());   
+*/
             // do a simple API-M call, and if it doesn't come back
             // unauthorized, assume all is ok.
             try {
