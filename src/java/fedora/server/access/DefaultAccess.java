@@ -843,7 +843,7 @@ public class DefaultAccess extends Module implements Access
     // SDP: repository base URL now constructed using protocol and port
     // from context object for incoming request.
     // reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
-	reposBaseURL = protocol + fedoraServerHost + ":" + port;
+	reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
     return reposBaseURL;
   }
 
