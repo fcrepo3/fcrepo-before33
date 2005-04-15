@@ -21,7 +21,7 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:object:state"
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:state"
             MustBePresent="false" 
             DataType="http://www.w3.org/2001/XMLSchema#string"/>
           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
