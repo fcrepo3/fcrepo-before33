@@ -1,5 +1,6 @@
 package fedora.server.validation;
 
+import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
@@ -7,6 +8,7 @@ import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -21,20 +23,23 @@ import org.xml.sax.helpers.DefaultHandler;
  * <p><b>Description: This class will validate relationship metadata that
  * may exist in a digital object.  The validator will SAX parse the content 
  * of the RELS-EXT datastream which must be an RDF stream that asserts 
- * object-to-object relationships for a digital object.  The validator will
+ * relationships for a digital object.  The validator will
  * enforce the following restrictions on the RDF stream:
  * 
  *   1. The RDF must follow a prescribed RDF/XML authoring style where 
  *      there is ONE subject encoded as an RDF <Description> with an
  *      RDF 'about' attribute containing a digital object URI.
  *      The sub-elements are the relationship properties of the subject.
- *      Each relationship refers to another digital object URI via an 
- *      RDF 'resource' attribute.  Relationship assertions can be from
- *      the default Fedora relationship ontology, or from other namespaces.
+ *      Each relationship may refer to any resource (identified by URI) via an 
+ *      RDF 'resource' attribute, or a literal.
+ *      Relationship assertions can be from the default Fedora relationship 
+ *      ontology, or from other namespaces.
  *      For example: 
  *         <rdf:Description about="info:fedora/demo:5">
- *             <fedora:isMemberOfCollection resource="info:fedora/demo:100">
- *             <nsdl:isAugmentedBy resource="info:fedora/demo:333">
+ *             <fedora:isMemberOfCollection resource="info:fedora/demo:100"/>
+ *             <nsdl:isAugmentedBy resource="info:fedora/demo:333"/>
+ *             <example:source resource="http://example.org/bsmith/article1.html"/>
+ *             <example:primaryAuthor>Bob Smith</example:primaryAuthor>
  *         </rdf:Description>
  * 
  *   2.  There must be only ONE RDF <Description> in the RELS-EXT datastream.
@@ -48,10 +53,10 @@ import org.xml.sax.helpers.DefaultHandler;
  *       of the digital object in which the RELS-EXT datastream resides.  This
  *       means that all relationships are FROM "this" object to other objects.
  * 
- *   5.  The RDF 'resource' attribute of a relationship assertion
- *       must be the URI of another Fedora digital object.  This is because 
- *       the RELS-EXT datastream is for object-to-object relationships.
- * 
+ *   5.  If the target of the statement is a resource (identified by a URI), 
+ *       the RDF 'resource' attribute must specify a syntactically valid,
+ *       absolute URI.
+ *
  *   6.  The RDF 'resource' attribute of a relationship assertion must NOT
  *       be the URI of the digital object that is the subject of the
  *       relationships.  In other words, NO SELF-REFERENTIAL relationships.
@@ -82,6 +87,8 @@ public class RelsExtValidator
 	private boolean m_rootRDFFound;
 	private boolean m_descriptionFound;
 	private int m_depth;
+    private String m_literalType;
+    private StringBuffer m_literalValue;
     
 	// SAX parser
 	private SAXParser m_parser;
@@ -154,7 +161,20 @@ public class RelsExtValidator
 					m_depth++;
 					checkDepth(m_depth, qName);
 					checkBadAssertion(nsURI, localName, qName);
-					checkResourceURI(grab(a, RDF, "resource"), qName);       		
+                    String resourceURI = grab(a, RDF, "resource");
+                    if (resourceURI.length() > 0) {
+					    checkResourceURI(resourceURI, qName);
+                        m_literalType = null;
+                        m_literalValue = null;
+                    } else {
+                        String datatypeURI = grab(a, RDF, "datatype");
+                        if (datatypeURI.length() == 0) {
+                            m_literalType = null;
+                        } else {
+                            m_literalType = datatypeURI;
+                        }
+                        m_literalValue = new StringBuffer();
+                    }
         	} else {
 				throw new SAXException("RelsExtValidator:"
 					+ " Invalid element " + localName 
@@ -164,17 +184,31 @@ public class RelsExtValidator
         	}
         } else {
 			throw new SAXException("RelsExtValidator:"
-				+ " The 'RDF' root element was not found " 
+				
+			    + " The 'RDF' root element was not found " 
 				+ " in the RELS-EXT datastream.\n"
 				+ " Relationship metadata must be encoded using RDF/XML.");
         }
 	}
 
-	public void endElement(String nsURI, String localName, String qName) {
+    public void characters(char[] ch,
+                           int start,
+                           int length) {
+        if (m_literalValue != null) {
+            m_literalValue.append(ch, start, length);
+        }
+    }
+
+	public void endElement(String nsURI, String localName, String qName) throws SAXException {
     	
 		if (m_rootRDFFound && m_descriptionFound) {
 			m_depth--;
 		}
+        if (m_literalType != null && m_literalValue != null) {
+            checkTypedValue(m_literalType, m_literalValue.toString(), qName);
+        }
+        m_literalType = null;
+        m_literalValue = null;
 	}
 
 	private static String grab(Attributes a, String namespace,
@@ -266,25 +300,28 @@ public class RelsExtValidator
 	}
 
 	/**
-	 * checkResourceURI: ensure that relationship assertions within 
-	 * the RDF <Description> refer to proper Fedora object URIs of
-	 * OTHER Fedora digital objects.
+	 * checkResourceURI: ensure that the target resource is a proper URI
+     * and is not self-referential.
 	 * @param resourceURI - the URI value of the RDF 'resource' attribute
 	 * @param relName - the name of the relationship property being evaluated
 	 * @throws SAXException
 	 */		
 	private void checkResourceURI(String resourceURI, String relName) throws SAXException {
 
-		if (resourceURI==null || resourceURI.equals("")){
-			throw new SAXException("RelsExtValidator:"
-				+ " Error in relationship '" + relName + "'"
-				+ " within the RELS-EXT datastream.\n"
-				+ " All properties (sub-elements) of RDF <Description>"
-				+ " must be valid relationship assertions.\n"
-				+ " These relationships MUST have an RDF 'resource'"
-				+ " attribute whose value is the URI of a related"
-				+ " digital object.");
-		}
+        URI uri;
+        try {
+            uri = new URI(resourceURI);
+        } catch (Exception e) {
+            throw new SAXException("RelsExtValidator:"
+                + "Error in relationship '" + relName + "'."
+                + " The RDF 'resource' is not a valid URI.");
+        }
+
+        if (!uri.isAbsolute()) {
+            throw new SAXException("RelsExtValidator:"
+                + "Error in relationship '" + relName + "'."
+                + " The specified RDF 'resource' is not an absolute URI.");
+        }
 
 		if (resourceURI.equals(m_doURI)) {
 			throw new SAXException("RelsExtValidator:"
@@ -298,36 +335,58 @@ public class RelsExtValidator
 				+ " to the URIs of OTHER digital objects.");	
 		} 
 				
-		String[] partsOfURI = resourceURI.split("/");
-		if (partsOfURI.length!=2) {
-			throw new SAXException("RelsExtValidator:"
-				+ " Error in relationship '" + relName + "'."
-				+ " The RELS-EXT datastream has an improper URI specified"
-				+ " in the RDF 'resource' attribute.\n"
-				+ " The URI must contain a digital object URI that begins"
-				+ " with 'info:fedora', followed by a forward slash ('/'),\n"
-				+ " followed by a valid Fedora PID." 
-				+ " (e.g., info:fedora/demo:100).");	
-		} 
-		
-		if (!partsOfURI[0].equals("info:fedora")) {
-			throw new SAXException("RelsExtValidator:"
-				+ " Error in relationship '" + relName + "'."
-				+ " The RELS-EXT datastream has an improper URI specified"
-				+ " in the RDF 'resource' attribute.\n"
-				+ " The URI must use the 'info:' URI scheme for Fedora"
-				+ " (e.g., info:fedora/demo:100).");	
-		} 
-		
-		if (partsOfURI[1].split(":").length!=2) {
-			throw new SAXException("RelsExtValidator:"
-				+ " Error in relationship '" + relName + "'."
-				+ " The RELS-EXT datastream has an improper URI specified"
-				+ " in the RDF 'resource' attribute.\n"
-				+ " The URI must contain a valid Fedora PID with ONE"
-				+ " colon (':') separating the Fedora PID namespace from"
-				+ " the identifier string." 
-				+ " (e.g., info:fedora/demo:100).");	
-		} 
 	}
+
+	/**
+	 * checkTypedValue: ensure that the datatype of a literal is one
+     * of the supported types and that it's a valid value for that type.
+	 * @param datatypeURI - the URI value of the RDF 'datatype' attribute
+	 * @param value - the value
+	 * @param relName - the name of the property being evaluated
+	 * @throws SAXException
+	 */		
+	private void checkTypedValue(String datatypeURI, 
+	                             String value,
+	                             String relName) throws SAXException {
+        if (datatypeURI.equals(Constants.XSD.INT.uri)) {
+            try {
+                Integer.parseInt(value);
+            } catch (Exception e) {
+    			throw new SAXException("RelsExtValidator:"
+    				+ " The value specified for " + relName 
+    				+ " is not a valid 'int' value");
+            }
+        } else if (datatypeURI.equals(Constants.XSD.LONG.uri)) {
+            try {
+                Long.parseLong(value);
+            } catch (Exception e) {
+    			throw new SAXException("RelsExtValidator:"
+    				+ " The value specified for " + relName 
+    				+ " is not a valid 'long' value");
+            }
+        } else if (datatypeURI.equals(Constants.XSD.FLOAT.uri)) {
+            try {
+                Float.parseFloat(value);
+            } catch (Exception e) {
+    			throw new SAXException("RelsExtValidator:"
+    				+ " The value specified for " + relName 
+    				+ " is not a valid 'float' value");
+            }
+        } else if (datatypeURI.equals(Constants.XSD.DOUBLE.uri)) {
+            try {
+                Double.parseDouble(value);
+            } catch (Exception e) {
+    			throw new SAXException("RelsExtValidator:"
+    				+ " The value specified for " + relName 
+    				+ " is not a valid 'double' value");
+            }
+        } else {
+			throw new SAXException("RelsExtValidator:"
+				+ " Error in relationship '" + relName + "'.\n"
+				+ " The RELS-EXT datastream does not support the specified"
+				+ " datatype.\n"
+                + "If specified, the RDF 'datatype' must be the URI of one of\n"
+                + "the following W3C XML Schema data types: int, long, float, double");
+        }
+    }
 }
