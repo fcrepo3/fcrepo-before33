@@ -15,12 +15,7 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
 import fedora.common.Constants;
 
-import java.io.File;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.rmi.RemoteException;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
@@ -89,6 +84,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     private void logStackTrace(Exception e) {
+        StringWriter trace = new StringWriter();
+        e.printStackTrace(new PrintWriter(trace));
+        s_server.logFiner("Error carried up to API-M level:\n" + trace.toString());
+/*
         StackTraceElement[] els=e.getStackTrace();
         StringBuffer lines=new StringBuffer();
         boolean skip=false;
@@ -102,6 +101,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             }
         }
         s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
+*/
     }
 
 	// DEPRECATED. This remains in Fedora 2.0 for backward compatibility.  
@@ -455,6 +455,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             logMessage,
                             force));
         } catch (NotAuthorizedException a) {
+            logStackTrace(a);
             throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
             logStackTrace(se);
