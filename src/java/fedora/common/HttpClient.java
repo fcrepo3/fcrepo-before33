@@ -61,7 +61,7 @@ public class HttpClient {
 	  		}
 	  		System.err.println("doAuthnGet(), after setup");
 	  		int resultCode = -1;
-	  		String workingPath = relativePath;
+	  		String workingPath = absoluteUrl;
 	  		for (int loops = 0; (workingPath != null) && (loops < redirectDepth); loops++) {
 	  			getMethod = new GetMethod(workingPath);
 	  			System.err.println("doAuthnGet(), getMethod=" + getMethod + " relpath="+workingPath);	  			
