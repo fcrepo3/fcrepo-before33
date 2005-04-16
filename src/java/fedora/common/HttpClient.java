@@ -144,10 +144,10 @@ public class HttpClient {
     //private static final String host = "localhost";
     private static final boolean allowSelfSignedCertificates = true;
    
-    private static final String captureProtocol = "(https?)://";
-    private static final String captureHostWithPort = "([^:]+):(\\d+?)";
-    private static final String captureHostWithoutPort = "([^/]+)";
-    private static final String capturePath = "/(\\.*)";
+    private static final String captureProtocol = "([^:]+?)://";
+    private static final String captureHostWithPort = "([^:]+?):([^/]+?)";
+    private static final String captureHostWithoutPort = "([^/]+?)";
+    private static final String capturePath = "/(.*)";
     private static final String captureWithPort = captureProtocol + captureHostWithPort + capturePath;
     private static final String captureWithoutPort = captureProtocol + captureHostWithoutPort + capturePath;
     private static final Pattern patternWithPort = Pattern.compile(captureWithPort);
@@ -163,7 +163,7 @@ public class HttpClient {
     	||   (host == null) || "".equals(host)
     	||   (port == null) || "".equals(port) ) {
     		absoluteUrl = path;
-			System.err.println("parsing");
+			System.err.println("parsing " + absoluteUrl + " against " + patternWithPort);
     		//parse url as absolute url into components
     		Matcher matcherWithPort = patternWithPort.matcher(absoluteUrl);
     		if (matcherWithPort.matches()) {
@@ -173,6 +173,7 @@ public class HttpClient {
     			relativePath = matcherWithPort.group(4);    
 				System.err.println("matched with port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
     		} else {
+    			System.err.println("parsing " + absoluteUrl + " against " + patternWithoutPort);    			
         		Matcher matcherWithoutPort = patternWithoutPort.matcher(absoluteUrl);
         		if (matcherWithoutPort.matches()) {
         			protocol = matcherWithoutPort.group(1);
