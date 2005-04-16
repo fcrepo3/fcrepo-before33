@@ -132,10 +132,6 @@ public abstract class APIAStubFactory {
 	
 		// Use the path, query, and fragment from the original URL
 		// Otherwise, if an alternate path is provided, use it to complete the service URL
-		path=path.trim();
-		if (!path.startsWith("/")){
-			path="/" + path;
-		}
 		if (path==null || path.equals(""))
 		{
 			nurl.append(ourl.getPath());
@@ -148,6 +144,10 @@ public abstract class APIAStubFactory {
 				nurl.append(ourl.getRef());
 			}
 		} else {
+    		path=path.trim();
+    		if (!path.startsWith("/")){
+    			path="/" + path;
+    		}
 			nurl.append(path);
 		}
 		if (fedora.server.Debug.DEBUG) {
