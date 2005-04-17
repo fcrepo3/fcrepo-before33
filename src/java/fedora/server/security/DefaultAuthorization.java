@@ -253,7 +253,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		String name = "";
 		try {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
-			name = resourceAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, asOfDateTime);			
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, ensureDate (asOfDateTime, context));			
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -525,7 +525,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = actionAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, endDT);	
+			System.err.println("actionAttributes="+actionAttributes);
+			System.err.println("Constants.DATASTREAM.AS_OF_DATETIME.uri="+Constants.DATASTREAM.AS_OF_DATETIME.uri);
+			System.err.println("endDT="+endDT);
+			name = actionAttributes.setReturn(Constants.DATASTREAM.AS_OF_DATETIME.uri, ensureDate (endDT, context));	
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -550,7 +553,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		MultiValueMap actionAttributes = new MultiValueMap();
 		String name = "";
 		try {
-			name = actionAttributes.setReturn(Constants.DISSEMINATOR.AS_OF_DATETIME.uri, endDT);	
+			name = actionAttributes.setReturn(Constants.DISSEMINATOR.AS_OF_DATETIME.uri, ensureDate (endDT, context));	
 		} catch (Exception e) {
 			context.setActionAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -755,7 +758,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
 	}
 	
 	public void enforceServerStatus(Context context)
@@ -764,7 +767,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
 	}	
 
 	public void enforceOAIRespond(Context context)
