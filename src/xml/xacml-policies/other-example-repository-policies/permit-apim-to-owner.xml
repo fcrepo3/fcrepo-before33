@@ -13,7 +13,7 @@
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
           <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
             AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:apim</AttributeValue>
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-m</AttributeValue>
         </ActionMatch>
       </Action>
     </Actions>
@@ -25,7 +25,7 @@
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
       <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:owner" MustBePresent="false"
         DataType="http://www.w3.org/2001/XMLSchema#string"/>
-	  <SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:login-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+	  <SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:loginId" DataType="http://www.w3.org/2001/XMLSchema#string"/>
     </Condition>
   </Rule>
 </Policy>
