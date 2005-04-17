@@ -210,6 +210,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         tripleQ.queueIsVolatile(datastreamURI, isVolatile);
         
         tripleQ.queueDissemination(doURI, datastreamURI);
+        tripleQ.queueDisseminationType(datastreamURI, getDisseminationType(datastreamID));
         tripleQ.queueLastModifiedDate(datastreamURI, ds.DSCreateDT);
         tripleQ.queueState(datastreamURI, ds.DSState);
         
@@ -1026,6 +1027,10 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     
     private String getDisseminationType(String bDefPID, String permutation) {
         return FEDORA.uri + "*" + "/" + bDefPID + "/" + permutation;
+    }
+
+    private String getDisseminationType(String dsID) {
+        return FEDORA.uri + "*" + "/" + dsID;
     }
 
     private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
