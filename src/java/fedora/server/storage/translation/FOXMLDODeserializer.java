@@ -88,17 +88,9 @@ public class FOXMLDODeserializer
 	/** SAX parser */
     private SAXParser m_parser;
 
-/* OLDWAY (replaced by m_prefixMap and m_prefixList below) {
-    // URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
-    private HashMap m_URIToPrefix;
-    private HashMap m_prefixToURI;
-} */
-
-// NEWWAY {
     // Namespace prefix-to-URI mapping info from SAX2 startPrefixMapping events.
     private HashMap m_prefixMap;
     private ArrayList m_prefixList;
-// }
 
 	// temporary variables and state variables
 	private int m_queryBehavior;
@@ -106,9 +98,6 @@ public class FOXMLDODeserializer
     private boolean m_rootElementFound;
 	private String m_objPropertyName;
 	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
-/* OLDWAY (we no longer care if its the first element) {
-	private boolean m_firstInlineXMLElement;
-} */
 	private boolean m_inXMLMetadata;	
 	// Indicator for FOXML within FOXML (inline XML datastream contains FOXML)
 	private int m_xmlDataLevel;
@@ -135,14 +124,6 @@ public class FOXMLDODeserializer
 	private HashMap m_dsAdmIds; // key=dsId, value=List of datastream ids (strings)
 	private String[] m_dsDmdIds; // key=dsId, value=List of datastream ids (strings)
 
-/* OLDWAY (replaced by m_prefixMap and m_prefixList above) {
-	// URI-to-namespace prefix mapping for inline XML Datastreams
-	private HashMap m_inlinePrefixToURI;
-	private HashMap m_inlineURIToPrefix;
-	private ArrayList m_inlinePrefixList;
-} */
-
-    	
 	// temporary variables for processing disseminators
 	private Disseminator m_diss;
 	private String m_dissID;
@@ -166,9 +147,6 @@ public class FOXMLDODeserializer
 	// buffers for reading content
 	private StringBuffer m_elementContent; // single element
     private StringBuffer m_dsXMLBuffer; // chunks of inline XML metadata
-/* OLDWAY (we no longer buffer the first element separately) {
-    private StringBuffer m_dsFirstElementBuffer;
-} */
     
     /**
      * Never query web server for content size and MIME type
@@ -261,41 +239,19 @@ public class FOXMLDODeserializer
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
             	" The digitalObject root element was not detected.");
         }       
-/* OLDWAY (not sure if a replacement is even needed yet) {
-        obj.setNamespaceMapping(m_URIToPrefix);
-} */
-// NEWWAY (under what circumstances could this matter?) {
         obj.setNamespaceMapping(new HashMap());
-// }
     }
 
     public void startPrefixMapping(String prefix, String uri) {
-/* OLDWAY (replaced by keeping a prefixMap throughout, and an up-to-date list while in xml metadata, see below) {
-        // save a forward and backward hash of namespace prefix-to-uri mapping
-        // for namespaces declared within in a block of inline XML.
-        if (m_inXMLMetadata) {
-			m_inlineURIToPrefix.put(uri, prefix);
-			m_inlinePrefixToURI.put(prefix, uri);
-        } else {
-			// save a forward and backward hash of namespace prefix-to-uri
-			// mapping for namespaces declared on the root element
-			m_URIToPrefix.put(uri, prefix);
-			m_prefixToURI.put(prefix, uri);        	
-        }
-} */
-// NEWWAY {
         m_prefixMap.put(prefix, uri);
         if (m_inXMLMetadata) {
             m_prefixList.add(prefix);
         }
-// }
     }
 
-// NEWWAY (used to not remove these from the map) {
     public void endPrefixMapping(String prefix) {
         m_prefixMap.remove(prefix);
     }
-// }
 
     public void startElement(String uri, String localName, String qName,
             Attributes a) throws SAXException {
@@ -410,17 +366,8 @@ public class FOXMLDODeserializer
 			// xmlContent (inline xml), contentLocation (a reference) or binaryContent
 			} else if (localName.equals("xmlContent")) {
 				m_dsXMLBuffer=new StringBuffer();
-/* OLDWAY (now we init map and list in constructor) {
-				m_dsFirstElementBuffer=new StringBuffer();
-				m_inlinePrefixList=new ArrayList();
-				m_inlineURIToPrefix=new HashMap();
-				m_inlinePrefixToURI=new HashMap();
-} */
 				m_xmlDataLevel=0;
 				m_inXMLMetadata=true;
-/* OLDWAY (no longer use this information) {
-				m_firstInlineXMLElement=true;
-} */
             } else if (localName.equals("contentLocation")) {
                 String dsLocation=grab(a,F,"REF");
                 if (dsLocation==null || dsLocation.equals("")) {
@@ -520,70 +467,7 @@ public class FOXMLDODeserializer
             if (m_inXMLMetadata) {
                 // we are inside an xmlContent element.
                 // just output it, remembering the number of foxml:xmlContent elements we see,
-
-/* OLDWAY (replaced by writeElementStart call, below) {
-				// First, use the element URI to get the namespace prefix
-				// given that it was declared locally within the inline XML...
-				String prefix=(String) m_inlineURIToPrefix.get(uri);
-				if (prefix==null || prefix.equals("")) {
-					// if not declared locally, try to get the prefix
-					// from declarations on the FOXML root element
-					prefix=(String) m_URIToPrefix.get(uri);
-				}
-                if (m_firstInlineXMLElement) {
-                // write first element with appropriate prefix... 
-                // buffer it separately so we can ddd namespace 
-                // declarations later.
-                    m_firstInlineXMLElement=false;
-                    m_dsFirstElementBuffer.append('<');
-                    if (prefix!=null && !prefix.equals("")) {
-                    	// hold on to prefixes used in this inline XML
-                        if (!m_inlinePrefixList.contains(prefix)) {
-                            m_inlinePrefixList.add(prefix);
-                        }
-                        // write the prefix
-                        m_dsFirstElementBuffer.append(prefix);
-                        m_dsFirstElementBuffer.append(':');
-                    }
-                    m_dsFirstElementBuffer.append(localName);
-                } else {
-                // write non-root elements with appropriate prefix
-                    m_dsXMLBuffer.append('<');
-                    if (prefix!=null && !prefix.equals("")) {
-						// hold on to prefixes used in this inline XML
-                        if (!m_inlinePrefixList.contains(prefix)) {
-                                m_inlinePrefixList.add(prefix);
-                        }
-                        // write the prefix
-                        m_dsXMLBuffer.append(prefix);
-                        m_dsXMLBuffer.append(':');
-                    }
-                    m_dsXMLBuffer.append(localName);
-                }
-                // write attributes with appropriate prefix
-                for (int i=0; i<a.getLength(); i++) {
-                    m_dsXMLBuffer.append(' ');
-                    String aPrefix=(String) m_inlineURIToPrefix.get(a.getURI(i));
-                    if (aPrefix!=null && !aPrefix.equals("")) {
-						// hold on to prefixes used in this inline XML
-                        if (!m_inlinePrefixList.contains(aPrefix)) {
-                                m_inlinePrefixList.add(aPrefix);
-                        }
-                        // write the prefix
-                        m_dsXMLBuffer.append(aPrefix);
-                        m_dsXMLBuffer.append(':');
-                    }
-                    m_dsXMLBuffer.append(a.getLocalName(i));
-                    m_dsXMLBuffer.append("=\"");
-                    // re-encode decoded standard entities (&, <, >, ", ')
-                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i)));
-                    m_dsXMLBuffer.append("\"");
-                }
-                m_dsXMLBuffer.append('>');
-*/
-// NEWWAY {
                 appendElementStart(uri, localName, qName, a, m_dsXMLBuffer);
-// } NEWWAY
                 
                 // FOXML INSIDE FOXML! we have an inline XML datastream 
                 // that is itself FOXML.  We do not want to parse this!
@@ -702,81 +586,15 @@ public class FOXMLDODeserializer
 				// ALL OTHER INLINE XML...
 				//========================
 				} else {					
-/* OLDWAY (we no longer deal with a "first element buffer") {
-					// Append namespace declarations for the inline XML...
-					
-					// First, write all the namespaces that were already 
-					// declared on the root element of the inline XML					
-					Iterator iter = m_inlineURIToPrefix.keySet().iterator();
-					while (iter.hasNext()) {
-						String URI =(String) iter.next();
-						String prefix=(String) m_inlineURIToPrefix.get(URI);
-						if (!prefix.equals("") && prefix!=null) {
-							m_dsFirstElementBuffer.append(" xmlns:");
-							m_dsFirstElementBuffer.append(prefix);
-						} else {
-							m_dsFirstElementBuffer.append(" xmlns");
-						}
-						m_dsFirstElementBuffer.append("=\"");
-						m_dsFirstElementBuffer.append(URI);
-						m_dsFirstElementBuffer.append("\"");
-						// remove the prefix from the list of prefixes
-						// that we actually encountered within this inline XML block.
-						if (m_inlinePrefixList.contains(prefix)){
-							m_inlinePrefixList.remove(prefix);
-						}
-					}					
-					// Then, see if there are any prefixes left over in the list
-					// for which local namespace declarations were not made.
-					// Look to the root FOXML element to find declaration
-					// and put it on the inline XML root element too.
-					// (This ensures that the inline XML can stand alone 
-					// outside the context of the FOXML object.
-					for (int i=0; i<m_inlinePrefixList.size(); i++) {
-						// get a prefix from the list
-						String prefix=(String) m_inlinePrefixList.get(i);
-						// get URI for prefix by inquiring into set of
-						// prefixes defined within this block of inline XML
-						String URI=(String) m_prefixToURI.get(prefix);
-						if (!prefix.equals("") && prefix!=null) {
-							m_dsFirstElementBuffer.append(" xmlns:");
-							m_dsFirstElementBuffer.append(prefix);
-						} else {
-							m_dsFirstElementBuffer.append(" xmlns");
-						}
-						m_dsFirstElementBuffer.append("=\"");
-						m_dsFirstElementBuffer.append(URI);
-						m_dsFirstElementBuffer.append("\"");
-					}
-} */
+                    // Create the right kind of datastream and add to the object
 					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
 					instantiateXMLDatastream(ds);
-					m_inXMLMetadata=false; // other stuff is re-initted upon
-										   // startElement for next xml metadata
-										   // element
+					m_inXMLMetadata=false;
 				}
             } else {
-                // finish an element within the inline xml metadata... print end tag,
-                m_dsXMLBuffer.append("</");
-				// Put prefix on end element tag.
-				// First, see if the namespace prefix was declared locally
-				// in the inline XML.
-/* OLDWAY (using the map and list now) {
-				String prefix=(String) m_inlineURIToPrefix.get(uri);
-				if (prefix==null || prefix.equals("")) {
-					// if not, try the declarations on the root element
-					prefix=(String) m_URIToPrefix.get(uri);
-				}
-                if (prefix!=null && !prefix.equals("")) {
-                    m_dsXMLBuffer.append(prefix);
-                    m_dsXMLBuffer.append(':');
-                }
-                m_dsXMLBuffer.append(localName);
-} */
-// NEWWAY {
-                m_dsXMLBuffer.append(qName);
-// }
-                m_dsXMLBuffer.append(">");
+                // finished an element within inline xml metadata
+                m_dsXMLBuffer.append("</" + qName + ">");
+                // make sure we know when to pay attention to FOXML again
                 if (uri.equals(F) && localName.equals("xmlContent")) {
                     m_xmlDataLevel--;
                 }					
@@ -916,12 +734,7 @@ public class FOXMLDODeserializer
 		
 		// now set the xml content stream itself...
 		try {
-/* OLDWAY {
-			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
-} */
-// NEWWAY {
-			String combined = m_dsXMLBuffer.toString();
-// }
+			String xmlString = m_dsXMLBuffer.toString();
 		
 			// Relative Repository URL processing... 
 			// For selected inline XML datastreams look for relative repository URLs
@@ -930,10 +743,10 @@ public class FOXMLDODeserializer
 				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
 					ds.xmlContent=
 						(DOTranslationUtility.normalizeInlineXML(
-							combined, m_transContext))
+							xmlString, m_transContext))
 							.getBytes(m_characterEncoding);
 			} else {
-				ds.xmlContent=combined.getBytes(m_characterEncoding);
+				ds.xmlContent = xmlString.getBytes(m_characterEncoding);
 			}
 			//LOOK! this sets bytes, not characters.  Do we want to set this?
 			ds.DSSize=ds.xmlContent.length;
@@ -996,18 +809,9 @@ public class FOXMLDODeserializer
 		m_rootElementFound=false;
 		m_objPropertyName="";
 		m_readingBinaryContent=false; // indicates reading base64-encoded content
-/* OLDWAY	{
-        m_firstInlineXMLElement=false;
-} */
 		m_inXMLMetadata=false;
-/* OLDWAY {
-		m_URIToPrefix=new HashMap();
-		m_prefixToURI=new HashMap();
-} */
-// NEWWAY {
         m_prefixMap = new HashMap();
         m_prefixList = new ArrayList();
-// }
 
 		// temporary variables for processing datastreams		
 		m_dsId="";
@@ -1027,10 +831,6 @@ public class FOXMLDODeserializer
 		m_dsMDClass=0;
 		m_dsLabel="";
 		m_dsXMLBuffer=null;
-/* OLDWAY {
-		m_inlineURIToPrefix=new HashMap();
-		m_inlinePrefixToURI=new HashMap();
-} */
 		
 		// temporary variables for processing disseminators
 		m_diss=null;

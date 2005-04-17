@@ -104,20 +104,9 @@ public class METSLikeDODeserializer
     /** The object to deserialize to. */
     private DigitalObject m_obj;
 
-    /**
-     * Namespace prefix and URI mapping for METS root element.
-     * Populated via SAX2 startPrefixMapping events.
-     */
-    private HashMap m_URIToPrefix;
-    private HashMap m_prefixToURI;
-    
-	/** 
-	 *  Namespace Prefix and URI mapping for inline XML Datastreams. 
-	 *  Populated via SAX2 startPrefixMapping events.
-	 */
-	private HashMap m_inlinePrefixToURI;
-	private HashMap m_inlineURIToPrefix;
-	private ArrayList m_inlinePrefixList;
+    /** Namespace prefix-to-URI mapping info from SAX2 startPrefixMapping events. */
+    private HashMap m_prefixMap;
+    private ArrayList m_prefixList;
 
 	/** Variables to parse into */
     private boolean m_rootElementFound;
@@ -139,12 +128,9 @@ public class METSLikeDODeserializer
     private String m_dsControlGrp;
 
     private StringBuffer m_dsXMLBuffer;
-    private StringBuffer m_dsFirstElementBuffer;
 
     // are we reading binary in an FContent element? (base64-encoded)
     private boolean m_readingContent;
-
-    private boolean m_firstInlineXMLElement;
 
     /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
@@ -280,7 +266,7 @@ public class METSLikeDODeserializer
             throw new ObjectIntegrityException("METS root element not found :"
             	+ " Must have 'mets' element in namespace " + M + " as root element.");
         }
-        m_obj.setNamespaceMapping(m_URIToPrefix);
+        m_obj.setNamespaceMapping(new HashMap());
         
         // POST-PROCESSING...
         // convert audit records to contain component ids
@@ -300,19 +286,17 @@ public class METSLikeDODeserializer
     }
    
 	public void startPrefixMapping(String prefix, String uri) {
-
-		// save a forward and backward hash of namespace prefix-to-uri mapping
-		// for namespaces declared in a block of inline XML.
-		if (m_inXMLMetadata) {
-			m_inlineURIToPrefix.put(uri, prefix);
-			m_inlinePrefixToURI.put(prefix, uri);
-		} else {
-			// save a forward and backward hash of namespace prefix-to-uri
-			// mapping for namespaces declared on the root element
-			m_URIToPrefix.put(uri, prefix);
-			m_prefixToURI.put(prefix, uri);        	
-		}
+        // Keep the prefix map up-to-date throughout the entire parse,
+        // and maintain a list of newly mapped prefixes on a per-element basis.
+        m_prefixMap.put(prefix, uri);
+        if (m_inXMLMetadata) {
+            m_prefixList.add(prefix);
+        }
 	}
+
+    public void endPrefixMapping(String prefix) {
+        m_prefixMap.remove(prefix);
+    }
 
     public void startElement(String uri, String localName, String qName,
             Attributes a) throws SAXException {
@@ -376,13 +360,8 @@ public class METSLikeDODeserializer
                 m_dsMimeType=grab(a, M, "MIMETYPE");
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
-                m_dsFirstElementBuffer=new StringBuffer();
-                m_inlinePrefixList=new ArrayList();
-				m_inlineURIToPrefix=new HashMap();
-				m_inlinePrefixToURI=new HashMap();
                 m_xmlDataLevel=0;
                 m_inXMLMetadata=true;
-                m_firstInlineXMLElement=true;
             } else if (localName.equals("fileGrp")) {
                 m_dsId=grab(a, M, "ID");
                 // reset the values for the next file
@@ -579,65 +558,10 @@ public class METSLikeDODeserializer
             if (m_inXMLMetadata) {
                 // must be in xmlData... just output it, remembering the number
                 // of METS:xmlData elements we see
-              
-				// First, use the element URI to get the namespace prefix
-				// given that it was declared locally within the inline XML...
-				String prefix=(String) m_inlineURIToPrefix.get(uri);
-				if (prefix==null || prefix.equals("")) {
-					// if not declared locally, try to get the prefix
-					// from declarations on the FOXML root element
-					prefix=(String) m_URIToPrefix.get(uri);
-				}
-                if (m_firstInlineXMLElement) {
-					// write first element with appropriate prefix... 
-					// buffer it separately so we can ddd namespace 
-					// declarations later.
-                    m_firstInlineXMLElement=false;
-                    m_dsFirstElementBuffer.append('<');
-                    if (prefix!=null && !prefix.equals("")) {
-						// hold on to prefixes used in this inline XML
-						if (!m_inlinePrefixList.contains(prefix)) {
-							m_inlinePrefixList.add(prefix);
-						}
-						// write the prefix
-                        m_dsFirstElementBuffer.append(prefix);
-                        m_dsFirstElementBuffer.append(':');
-                    }
-                    m_dsFirstElementBuffer.append(localName);
-                } else {
-					// write non-root elements with appropriate prefix
-                    m_dsXMLBuffer.append('<');
-                    if (prefix!=null && !prefix.equals("")) {
-						// hold on to prefixes used in this inline XML
-						if (!m_inlinePrefixList.contains(prefix)) {
-								m_inlinePrefixList.add(prefix);
-						}
-						// write the prefix
-                        m_dsXMLBuffer.append(prefix);
-                        m_dsXMLBuffer.append(':');
-                    }
-                    m_dsXMLBuffer.append(localName);
-                }
-				// write attributes with appropriate prefix
-                for (int i=0; i<a.getLength(); i++) {
-                    m_dsXMLBuffer.append(' ');
-                    String aPrefix=(String) m_inlineURIToPrefix.get(a.getURI(i));
-                    if (aPrefix!=null && !aPrefix.equals("")) {
-						// hold on to prefixes used in this inline XML
-						if (!m_inlinePrefixList.contains(aPrefix)) {
-								m_inlinePrefixList.add(aPrefix);
-						}
-						// write the prefix
-                        m_dsXMLBuffer.append(aPrefix);
-                        m_dsXMLBuffer.append(':');
-                    }
-                    m_dsXMLBuffer.append(a.getLocalName(i));
-                    m_dsXMLBuffer.append("=\"");
-                    // re-encode decoded standard entities (&, <, >, ", ')
-                    m_dsXMLBuffer.append(StreamUtility.enc(a.getValue(i)));
-                    m_dsXMLBuffer.append("\"");
-                }
-                m_dsXMLBuffer.append('>');
+                appendElementStart(uri, localName, qName, a, m_dsXMLBuffer);
+
+                // METS INSIDE METS! we have an inline XML datastream 
+                // that is itself METS.  We do not want to parse this!
                 if (uri.equals(M) && localName.equals("xmlData")) {
                     m_xmlDataLevel++;
                 }
@@ -662,6 +586,27 @@ public class METSLikeDODeserializer
                 // ignore all else
             }
         }
+    }
+
+    private void appendElementStart(String uri,
+                                    String localName,
+                                    String qName,
+                                    Attributes a,
+                                    StringBuffer out) {
+        out.append("<" + qName);
+        // do we have any newly-mapped namespaces?
+        while (m_prefixList.size() > 0) {
+            String prefix = (String) m_prefixList.remove(0);
+            out.append(" xmlns");
+            if (prefix.length() > 0) {
+                out.append(":");
+            }
+            out.append(prefix + "=\"" + StreamUtility.enc((String) m_prefixMap.get(prefix)) + "\"");
+        }
+        for (int i = 0; i < a.getLength(); i++) {
+            out.append(" " + a.getQName(i) + "=\"" + StreamUtility.enc(a.getValue(i)) + "\"");
+        }
+        out.append(">");
     }
 
     public void characters(char[] ch, int start, int length) {
@@ -705,53 +650,7 @@ public class METSLikeDODeserializer
 										   // startElement for next xml metadata
 										   // element
                 } else {  
-					// Append namespace declarations for the inline XML...
-
-					// First, write all the namespaces that were already 
-					// declared on the root element of the inline XML					
-					Iterator iter = m_inlineURIToPrefix.keySet().iterator();
-					while (iter.hasNext()) {
-						String URI =(String) iter.next();
-						String prefix=(String) m_inlineURIToPrefix.get(URI);
-						if (!prefix.equals("") && prefix!=null) {
-							m_dsFirstElementBuffer.append(" xmlns:");
-							m_dsFirstElementBuffer.append(prefix);
-						} else {
-							m_dsFirstElementBuffer.append(" xmlns");
-						}
-						m_dsFirstElementBuffer.append("=\"");
-						m_dsFirstElementBuffer.append(URI);
-						m_dsFirstElementBuffer.append("\"");
-						// remove the prefix from the list of prefixes
-						// that we actually encountered within this inline XML block.
-						if (m_inlinePrefixList.contains(prefix)){
-							m_inlinePrefixList.remove(prefix);
-						}
-					}					
-					// Then, see if there are any prefixes left over in the list
-					// for which local namespace declarations were not made.
-					// Look to the root FOXML element to find declaration
-					// and put it on the inline XML root element too.
-					// (This ensures that the inline XML can stand alone 
-					// outside the context of the FOXML object.
-					for (int i=0; i<m_inlinePrefixList.size(); i++) {
-						// get a prefix from the list
-						String prefix=(String) m_inlinePrefixList.get(i);
-						// get URI for prefix by inquiring into set of
-						// prefixes defined within this block of inline XML
-						String URI=(String) m_prefixToURI.get(prefix);
-						if (!prefix.equals("") && prefix!=null) {
-							m_dsFirstElementBuffer.append(" xmlns:");
-							m_dsFirstElementBuffer.append(prefix);
-						} else {
-							m_dsFirstElementBuffer.append(" xmlns");
-						}
-						m_dsFirstElementBuffer.append("=\"");
-						m_dsFirstElementBuffer.append(URI);
-						m_dsFirstElementBuffer.append("\"");
-					}					
-                    
-					// create the right kind of datastream and add it to m_obj
+                    // Create the right kind of datastream and add to the object
 					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
 					instantiateXMLDatastream(ds);
 					m_inXMLMetadata=false; // other stuff is re-initted upon
@@ -759,25 +658,9 @@ public class METSLikeDODeserializer
 										   // element
                 }
             } else {
-                // finished an element in xml metadata... print end tag,
-                // subtracting the level of METS:xmlData elements we're at
-                // if needed
-                m_dsXMLBuffer.append("</");
-                
-                // Put prefix on end element tag.
-                // First, see if the namespace prefix was declared locally
-                // in the inline XML.
-				String prefix=(String) m_inlineURIToPrefix.get(uri);
-				if (prefix==null || prefix.equals("")) {
-					// if not, try the declarations on the root element
-					prefix=(String) m_URIToPrefix.get(uri);
-				}
-                if (prefix!=null && !prefix.equals("")) {
-                    m_dsXMLBuffer.append(prefix);
-                    m_dsXMLBuffer.append(':');
-                }
-                m_dsXMLBuffer.append(localName);
-                m_dsXMLBuffer.append(">");
+                // finished an element within inline xml metadata
+                m_dsXMLBuffer.append("</" + qName + ">");
+                // make sure we know when to pay attention to METS again
                 if (uri.equals(M) && localName.equals("xmlData")) {
                     m_xmlDataLevel--;
                 }
@@ -871,7 +754,7 @@ public class METSLikeDODeserializer
 		
 		// now set the xml content stream itself...
 		try {
-			String combined=m_dsFirstElementBuffer.toString() + m_dsXMLBuffer.toString();
+			String xmlString = m_dsXMLBuffer.toString();
 		
 			// Relative Repository URL processing... 
 			// For selected inline XML datastreams look for relative repository URLs
@@ -880,10 +763,10 @@ public class METSLikeDODeserializer
 				 (m_dsId.equals("SERVICE-PROFILE") || m_dsId.equals("WSDL")) ) {
 					ds.xmlContent=
 						(DOTranslationUtility.normalizeInlineXML(
-							combined, m_transContext))
+							xmlString, m_transContext))
 							.getBytes(m_characterEncoding);
 			} else {
-				ds.xmlContent=combined.getBytes(m_characterEncoding);
+				ds.xmlContent = xmlString.getBytes(m_characterEncoding);
 			}
 			//LOOK! this sets bytes, not characters.  Do we want to set this?
 			ds.DSSize=ds.xmlContent.length;
@@ -1130,10 +1013,9 @@ public class METSLikeDODeserializer
 		m_rootElementFound=false;
 		//m_objPropertyName="";
 		//m_readingBinaryContent=false; // future
-		m_firstInlineXMLElement=false;
 		m_inXMLMetadata=false;
-		m_URIToPrefix=new HashMap();
-		m_prefixToURI=new HashMap();
+        m_prefixMap = new HashMap();
+        m_prefixList = new ArrayList();
 
 		// temporary variables for processing datastreams		
 		m_dsId="";
@@ -1154,8 +1036,6 @@ public class METSLikeDODeserializer
 		m_dsMDClass=0;
 		m_dsLabel="";
 		m_dsXMLBuffer=null;
-		m_inlineURIToPrefix=new HashMap();
-		m_inlinePrefixToURI=new HashMap();
 		m_dsADMIDs=new HashMap();
 		m_dsDMDIDs=new HashMap();
 		
