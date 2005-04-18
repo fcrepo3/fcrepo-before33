@@ -1,10 +1,10 @@
-<%@ page info="403==forbidden response; xacml indicates that authorization should be denied" %>
+<%@ page info="100==continue response; use to signal authz success w/o performing action" %>
 <%
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.addHeader("Content-Type", "text/html; charset=UTF8");
+        response.setStatus(HttpServletResponse.SC_CONTINUE);
+        response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora:  403 Authz Error</title></head>
+      <title>Fedora:  100 Authz Success</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">
@@ -12,8 +12,8 @@
                <td height="134" valign="top" width="141"><img src="/images/newlogo2.jpg" height="134" width="141"></td>
                <td valign="top" width="643">
                   <center>
-                     <h2>Fedora Security Error</h2>
-                     <h3>authorization failed</h3>
+                     <h2>Fedora Security Info</h2>
+                     <h3>authorization would have succeeded</h3>
                   </center>
                </td>
             </tr>

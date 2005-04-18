@@ -1,4 +1,4 @@
-<%@ page info="a hello world example" %>
+<%@ page info="401==unauthorized response; tomcat didn't get user credentials where web.xml says they are needed " %>
 <%
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
