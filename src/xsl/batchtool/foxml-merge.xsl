@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- foxml-merge.xsl
 	substitute per-object XML data into per-batch FOXML1.0 XML template
@@ -6,7 +6,6 @@
 
 <xsl:transform xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0" 
 xmlns:xsi="http://www.w3.org/2000/10/XMLSchema-instance" 
-xmlns:fedoraAudit="http://fedora.comm.nsdlib.org/audit" 
 xmlns:xlink="http://www.w3.org/TR/xlink" 
 xmlns:foxml="info:fedora/fedora-system:def/foxml#"
 >
@@ -68,26 +67,32 @@ xmlns:foxml="info:fedora/fedora-system:def/foxml#"
 	<xsl:template match="foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#createdDate']" >
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
+<!--			
 			<xsl:if test="$date">
 				<xsl:attribute name="VALUE">
 					<xsl:value-of select="$date"/>
 				</xsl:attribute>
 			</xsl:if>
+-->			
 			<xsl:apply-templates select="node()"/>
     		</xsl:copy>
+		<xsl:apply-templates select="node()"/>    		
 	</xsl:template>
 	
 	<!-- substitute per-object xform param date for lastModifiedDate -->
 	<xsl:template match="foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']" >
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
+<!--			
 			<xsl:if test="$date">
 				<xsl:attribute name="VALUE">
 					<xsl:value-of select="$date"/>
 				</xsl:attribute>
 			</xsl:if>
+-->			
 			<xsl:apply-templates select="node()"/>
     		</xsl:copy>
+		<xsl:apply-templates select="node()"/>
 	</xsl:template>	
 
 	<!-- substitute xform param date for @CREATED -->
@@ -187,12 +192,24 @@ xmlns:foxml="info:fedora/fedora-system:def/foxml#"
 				<xsl:attribute name="FORMAT_URI">
 					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@FORMAT_URI" />
 				</xsl:attribute>
-			</xsl:if>			
+			</xsl:if>		
+			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$datastreamID]/@ALT_IDS" >
+				<xsl:attribute name="ALT_IDS">
+					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$datastreamID]/@ALT_IDS" />
+				</xsl:attribute>
+			</xsl:if>
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@ALT_IDS" >
+				<xsl:attribute name="ALT_IDS">
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@ALT_IDS" />
+				</xsl:attribute>
+			</xsl:if>	
+<!--										
 			<xsl:if test="$date">
 				<xsl:attribute name="CREATED">
 					<xsl:value-of select="$date"/>
 				</xsl:attribute>
 			</xsl:if>						
+-->
 			<xsl:apply-templates select="node()"/>			
     		</xsl:copy>
 	</xsl:template>	
