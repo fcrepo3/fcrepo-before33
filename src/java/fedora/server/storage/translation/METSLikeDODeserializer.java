@@ -106,6 +106,7 @@ public class METSLikeDODeserializer
 
     /** Namespace prefix-to-URI mapping info from SAX2 startPrefixMapping events. */
     private HashMap m_prefixMap;
+    private HashMap m_localPrefixMap;
     private ArrayList m_prefixList;
 
 	/** Variables to parse into */
@@ -290,12 +291,16 @@ public class METSLikeDODeserializer
         // and maintain a list of newly mapped prefixes on a per-element basis.
         m_prefixMap.put(prefix, uri);
         if (m_inXMLMetadata) {
+            m_localPrefixMap.put(prefix, uri);
             m_prefixList.add(prefix);
         }
 	}
 
     public void endPrefixMapping(String prefix) {
         m_prefixMap.remove(prefix);
+        if (m_inXMLMetadata) {
+            m_localPrefixMap.remove(prefix);
+        }
     }
 
     public void startElement(String uri, String localName, String qName,
@@ -594,6 +599,18 @@ public class METSLikeDODeserializer
                                     Attributes a,
                                     StringBuffer out) {
         out.append("<" + qName);
+        // add the current qName's namespace to m_localPrefixMap
+        // and m_prefixList if it's not already in m_localPrefixMap
+        // This ensures that all namespaces used in inline XML are declared within,
+        // since it's supposed to be a standalone chunk.
+        String[] parts = qName.split(":");
+        if (parts.length == 2) {
+            String nsuri = (String) m_localPrefixMap.get(parts[0]);
+            if (nsuri == null) {
+                m_localPrefixMap.put(parts[0], parts[1]);
+                m_prefixList.add(parts[0]);
+            }
+        }
         // do we have any newly-mapped namespaces?
         while (m_prefixList.size() > 0) {
             String prefix = (String) m_prefixList.remove(0);
@@ -653,9 +670,8 @@ public class METSLikeDODeserializer
                     // Create the right kind of datastream and add to the object
 					DatastreamXMLMetadata ds=new DatastreamXMLMetadata();
 					instantiateXMLDatastream(ds);
-					m_inXMLMetadata=false; // other stuff is re-initted upon
-										   // startElement for next xml metadata
-										   // element
+					m_inXMLMetadata=false;
+                    m_localPrefixMap.clear();
                 }
             } else {
                 // finished an element within inline xml metadata
@@ -1015,6 +1031,7 @@ public class METSLikeDODeserializer
 		//m_readingBinaryContent=false; // future
 		m_inXMLMetadata=false;
         m_prefixMap = new HashMap();
+        m_localPrefixMap = new HashMap();
         m_prefixList = new ArrayList();
 
 		// temporary variables for processing datastreams		
