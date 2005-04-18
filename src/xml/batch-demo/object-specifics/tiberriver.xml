@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<input OBJID="demo:3017" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<input OBJID="demo:3017" xmlns:xlink="http://www.w3.org/TR/xlink">
 	<datastreams>
 		<datastream ID="DC">
 			<xmlContent>
@@ -11,7 +11,7 @@
 		</datastream>
 		<datastream ID="DESC">
 			<xmlContent>
-				<uvalibdesc:desc>
+				<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 					<uvalibdesc:identifier scheme="URN">uva-lib:2</uvalibdesc:identifier>
 					<uvalibdesc:rights type="use">unrestricted</uvalibdesc:rights>
 					<uvalibdesc:subject scheme="other" othertype="keyword">Rivers -- Italy</uvalibdesc:subject>
@@ -39,7 +39,7 @@
 		</datastream>
 		<datastream ID="TECH1">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -50,7 +50,7 @@
 		</datastream>
 		<datastream ID="SOURCE1">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -62,7 +62,7 @@
 		</datastream>
 		<datastream ID="DIGIPROV1">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -73,7 +73,7 @@
 		</datastream>
 		<datastream ID="RIGHTS1">			
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -85,7 +85,7 @@
 		</datastream>
 		<datastream ID="TECH2">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -96,7 +96,7 @@
 		</datastream>
 		<datastream ID="SOURCE2">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -108,7 +108,7 @@
 		</datastream>
 		<datastream ID="DIGIPROV2">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -119,7 +119,7 @@
 		</datastream>
 		<datastream ID="RIGHTS2">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -131,7 +131,7 @@
 		</datastream>
 		<datastream ID="TECH3">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -142,7 +142,7 @@
 		</datastream>
 		<datastream ID="SOURCE3">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -154,7 +154,7 @@
 		</datastream>
 		<datastream ID="DIGIPROV3">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -165,7 +165,7 @@
 		</datastream>
 		<datastream ID="RIGHTS3">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -177,7 +177,7 @@
 		</datastream>
 		<datastream ID="TECH4">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -188,7 +188,7 @@
 		</datastream>
 		<datastream ID="SOURCE4">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -200,7 +200,7 @@
 		</datastream>
 		<datastream ID="DIGIPROV4">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -211,7 +211,7 @@
 		</datastream>
 		<datastream ID="RIGHTS4">
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>

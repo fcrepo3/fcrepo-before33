@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<input OBJID="demo:3010" LABEL="American Academy" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd" xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
+<?xml version="1.0" encoding="utf-8"?>
+<input OBJID="demo:3010" LABEL="American Academy" xmlns:xlink="http://www.w3.org/TR/xlink">
 	<comment>***testing:  comment for american academy***</comment>
 	<datastreams>
 		<datastream ID="DC">
@@ -13,7 +13,7 @@
 		<datastream ID="DESC">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR DESC *** -->
 			<xmlContent>
-				<uvalibdesc:desc>
+				<uvalibdesc:desc xmlns:uvalibdesc="http://dl.lib.virginia.edu/bin/dtd/descmeta/descmeta.dtd">
 					<uvalibdesc:time>
 						<uvalibdesc:date type="created" era="ad">1913</uvalibdesc:date>
 					</uvalibdesc:time>
@@ -50,7 +50,7 @@
 		<datastream ID="TECH1">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH1 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -62,7 +62,7 @@
 		<datastream ID="SOURCE1" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE1 ***">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE1 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -75,7 +75,7 @@
 		<datastream ID="DIGIPROV1">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV1 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -87,7 +87,7 @@
 		<datastream ID="RIGHTS1">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS1 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -100,7 +100,7 @@
 		<datastream ID="TECH2">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH2 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -112,7 +112,7 @@
 		<datastream ID="SOURCE2" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE2 ***">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE2 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -125,7 +125,7 @@
 		<datastream ID="DIGIPROV2">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV2 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -137,7 +137,7 @@
 		<datastream ID="RIGHTS2">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS2 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -150,7 +150,7 @@
 		<datastream ID="TECH3">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH3 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -162,7 +162,7 @@
 		<datastream ID="SOURCE3" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE3 ***">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE3 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -175,7 +175,7 @@
 		<datastream ID="DIGIPROV3">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV3 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -187,7 +187,7 @@
 		<datastream ID="RIGHTS3">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS3 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
@@ -200,7 +200,7 @@
 		<datastream ID="TECH4">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR TECH4 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:technical>
 						<uvalibadmin:images>
 							<uvalibadmin:compression method="JPEG"/>
@@ -212,7 +212,7 @@
 		<datastream ID="SOURCE4" LABEL="*** TESTING:  SUBSTITUTING LABEL FOR SOURCE4 ***">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR SOURCE4 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:source>
 						<uvalibadmin:identifier/>
 						<uvalibadmin:mediatype type="image">
@@ -225,7 +225,7 @@
 		<datastream ID="DIGIPROV4">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR DIGIPROV4 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:digiprov>
 						<uvalibadmin:date>20010901</uvalibadmin:date>
 						<uvalibadmin:agent type="persname">Thorny Staples</uvalibadmin:agent>
@@ -237,7 +237,7 @@
 		<datastream ID="RIGHTS4">
 			<!-- *** TESTING:  SUBSTITUTING METADATA FOR RIGHTS4 *** -->
 			<xmlContent>
-				<uvalibadmin:admin>
+				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
 						<uvalibadmin:policy>
 							<uvalibadmin:access>unrestricted</uvalibadmin:access>
