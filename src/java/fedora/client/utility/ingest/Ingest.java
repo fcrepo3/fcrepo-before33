@@ -434,7 +434,7 @@ public class Ingest {
             } else if (kind=='d') {
                 // USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]
                 if (args.length<8 || args.length>9) {
-                    Ingest.badArgs("Wrong number of arguments for directory ingest.");
+                    Ingest.badArgs("Wrong number of arguments (" + args.length + ") for directory ingest.");
                     System.out.println(
                         "USAGE: fedora-ingest d[ir] INPATH FORMAT FTYPS THST:TPRT TUSR TPSS PROTOCOL [LOG]");
                 } 
