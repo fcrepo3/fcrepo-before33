@@ -16,6 +16,7 @@ import fedora.oai.OAIResponder;
 import fedora.oai.RepositoryException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.NotAuthorizedException;
 
 /**
@@ -66,12 +67,14 @@ public abstract class OAIProviderServlet
             	getResponder().respond(context, params, out);
             } catch (NotAuthorizedException e) {
             	request.getRequestDispatcher("/403.jsp").forward(request, response);
+            } catch (AuthzException e) {
+            	request.getRequestDispatcher("/100.jsp").forward(request, response);            	
             }
             try {
                 response.setContentType("text/xml; charset=UTF-8");
                 response.getWriter().print(new String(out.toByteArray(), "UTF-8"));
             } catch (UnsupportedEncodingException uee) {
-                // won't happen, since all java impls support UTF-8
+                // won't happen, since all java impls support UTF-8           	
             }
         } catch (RepositoryException re) {
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, getMessage(re));
@@ -108,6 +111,8 @@ public abstract class OAIProviderServlet
 			getResponder().respond(context,getAsParameterMap(args), out);
 		} catch (NotAuthorizedException e) {
 	        System.out.println("403");
+		} catch (AuthzException e) {
+	        System.out.println("100");	        
 		}
         System.out.println(new String(out.toByteArray()));
     }

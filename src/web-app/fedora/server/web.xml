@@ -31,7 +31,8 @@
 		should we change it?  any implications?
 		3. the servlet names (labels) and display names could be regularized; may be too late/messy now.
 		4. /mgmt/getNextPID not formed generally, e.g., /management/upload; should we use /management/getNextPID ?
-		5. note:  the explicit login servlet has become essentially an upfront authentication ping.
+		5. note:  the explicit login servlet has become essentially an upfront authentication ping.  xacml authz is 
+		not involved, as servlet does not call fedora internals
 	-->
 
 	<!-- lock down (no access to any roles) as default case -->
@@ -177,7 +178,7 @@
 		<auth-constraint>
 			<!-- note that xacml authz requires started server, 
 			so server start must be protected here, if at all-->
-			<role-name>administrator</role-name>
+			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>	
 
@@ -517,6 +518,14 @@
 		</auth-constraint>
 	</security-constraint>
 	<error-page>
+		<error-code>100</error-code>
+		<location>/100.jsp</location>
+	</error-page>	
+	<error-page>
+		<error-code>400</error-code>
+		<location>/400.jsp</location>
+	</error-page>	
+	<error-page>
 		<error-code>401</error-code>
 		<location>/401.jsp</location>
 	</error-page>		
@@ -524,6 +533,10 @@
 		<error-code>403</error-code>
 		<location>/403.jsp</location>
 	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/500.jsp</location>
+	</error-page>	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>

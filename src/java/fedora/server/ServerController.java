@@ -13,6 +13,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 import fedora.common.HttpClient;
 import fedora.common.Constants;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerInitializationException;
@@ -54,15 +55,11 @@ public class ServerController
         String action=request.getParameter("action");
         String requestInfo="Got controller '" + action + "' request from " + request.getRemoteAddr();
         if (fedora.server.Debug.DEBUG) System.out.println(requestInfo);
-        PrintWriter out = response.getWriter();
-        response.setContentType("text/plain");
-    	String lineResponse = "UNKNOWN";
+    	String lineResponse = null;
         if (action==null) {
             System.err.println("Error in controller request: action was not specified.");
             lineResponse = "ERROR";
-            //fixup for xacml
         } else if (action.equals("startup")) {
-            //the trouble with startup -- fixup for xacml
             if (Server.hasInstance(new File(System.getProperty("fedora.home")))) {
                 lineResponse = "ERROR";
             } else {
@@ -84,8 +81,11 @@ public class ServerController
                     s_server.shutdown(context);
                     lineResponse = "OK";
         		} catch (NotAuthorizedException na) {
-                    System.err.println("Authz Error shutting down Fedora server: " + na.getClass().getName() + ": " + na.getMessage());        			
+                    System.err.println("Authz Error 403 shutting down Fedora server: " + na.getClass().getName() + ": " + na.getMessage());        			
         			response.sendError(HttpServletResponse.SC_FORBIDDEN);                    
+				} catch (AuthzException na) {
+                    System.err.println("Authz Error 100 shutting down Fedora server: " + na.getClass().getName() + ": " + na.getMessage());        			
+                    response.sendError(HttpServletResponse.SC_CONTINUE);					    			
                 } catch (Throwable t) {
                     lineResponse = "ERROR";
                     System.err.println("Error shutting down Fedora server: " + t.getClass().getName() + ": " + t.getMessage());
@@ -102,20 +102,27 @@ public class ServerController
 				try {
 					server = Server.getInstance(fedoraHome, false);
 					lineResponse = server.status(context);
-				} catch (ServerInitializationException e) {
-					//we can do no more
-				} catch (ModuleInitializationException e) {
-					//since 2nd parm above is "false", this is unexpected
 				} catch (NotAuthorizedException na) {
-                    System.err.println("Authz Error getting Fedora server status: " + na.getClass().getName() + ": " + na.getMessage());        			
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);			
+                    System.err.println("Authz Error 403 getting Fedora server status: " + na.getClass().getName() + ": " + na.getMessage());        			
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);		
+				} catch (AuthzException na) {
+                    System.err.println("Authz Error 100 getting Fedora server status: " + na.getClass().getName() + ": " + na.getMessage());        			
+                    response.sendError(HttpServletResponse.SC_CONTINUE);		
+				} catch (Throwable t) {
+                    System.err.println("other error: " + t.getMessage());        			
+                    response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);							
 				}
             }
         } else {
             System.err.println("Error in controller request: action '" + action + "' was not recognized.");
             lineResponse = "ERROR";
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST);            
         }
-        out.write(lineResponse);
+        if (lineResponse != null) {
+            PrintWriter out = response.getWriter();
+            response.setContentType("text/plain");        
+            out.write(lineResponse);
+        }
     }
 
     public void init() {

@@ -2,6 +2,7 @@ package fedora.server;
 
 import fedora.common.*;  // PID, MalformedPIDException
 import fedora.common.policy.XacmlName;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
@@ -1183,7 +1184,7 @@ public abstract class Server
         return (s_instances.get(homeDir)!=null);
     }
     
-    public final String status(Context context) throws NotAuthorizedException {
+    public final String status(Context context) throws AuthzException {
 		((Authorization)getModule("fedora.server.security.Authorization")).enforceServerStatus(context);
         return "RUNNING";
     }
@@ -1433,7 +1434,7 @@ public abstract class Server
      *         occurred.
      */
     public final void shutdown(Context context)
-            throws ServerShutdownException, ModuleShutdownException, NotAuthorizedException {
+            throws ServerShutdownException, ModuleShutdownException, AuthzException {
     	if (context != null) { // fixup for xacml
     		((Authorization)getModule("fedora.server.security.Authorization")).enforceServerShutdown(context);
     	}

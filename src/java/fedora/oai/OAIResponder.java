@@ -21,6 +21,7 @@ import com.sun.corba.se.internal.core.Constant;
 import fedora.server.Context;
 import fedora.common.Constants;
 import fedora.server.Server;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
@@ -64,7 +65,7 @@ public class OAIResponder {
     }
 
     public void respond(Context context, Map args, OutputStream outStream)
-            throws RepositoryException, NotAuthorizedException {
+            throws RepositoryException, AuthzException {
     	if (m_authorization == null) {
             Server server;
 			try {
