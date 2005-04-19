@@ -1,17 +1,20 @@
 package fedora.common;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.security.Security;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
+
+import fedora.server.errors.StreamIOException;
 
 public class HttpClient {
 
@@ -288,6 +291,43 @@ public class HttpClient {
   			close();
         }
         return textResponse;
+    }
+    
+    public InputStream getStreamResponse() throws StreamIOException {
+    	InputStream streamResponse = null;
+  		if (getStatusCode() != HttpURLConnection.HTTP_OK) { 
+  			throw new StreamIOException(
+                "Server returned a non-200 response code ("
+                + getStatusCode() + ") from GET request of URL: "
+                + absoluteUrl);
+  		}   
+      	try {
+      		streamResponse = getMethod.getResponseBodyAsStream();
+      	} catch (Throwable th) {
+      		th.printStackTrace();
+      		throw new StreamIOException("[DatastreamReferencedContent] "
+      			+ "returned an error.  The underlying error was a "
+    			+ th.getClass().getName() + "  The message "
+    			+ "was  \"" + th.getMessage() + "\"  .  ");
+      	}    	
+    	return streamResponse;
+    }
+    
+    public int getContentLength() throws Throwable {
+  		if (getStatusCode() != HttpURLConnection.HTTP_OK) {
+  			throw new Exception(
+                "Server returned a non-200 response code ("
+                + getStatusCode() + ") from GET request of URL: "
+                + absoluteUrl);
+  		}       	
+  		int contentLength = 0;
+    	try {
+  			contentLength = Integer.parseInt(getMethod.getResponseHeader("Content-Length").getValue());    		
+    	} catch (Throwable t) {
+    		log("HttpClient.getContentLength() " + t.getMessage());
+    		throw t;
+    	}
+    	return contentLength;
     }
  
     private boolean log = false;

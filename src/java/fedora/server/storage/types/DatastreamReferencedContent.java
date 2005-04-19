@@ -59,23 +59,9 @@ public class DatastreamReferencedContent
       	try {
       		HttpClient client = new HttpClient(DSLocation);
       		GetMethod getMethod = client.doNoAuthnGet(20000, 25);
-      		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
-      			log("in getContentStream(), got bad code=" + client.getStatusCode());
-      			throw new StreamIOException(
-                    "Server returned a non-200 response code ("
-                    + client.getStatusCode() + ") from GET request of URL: "
-                    + DSLocation);
-      		}          
-      		log("in getContentStream(), got 200");
+      		DSSize = client.getContentLength();
       		contentStream = getMethod.getResponseBodyAsStream();
       		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream.
-      		int contentLength = 0;
-      		if (client.getGetMethod().getResponseHeader("Content-Length") != null) {
-      			contentLength = Integer.parseInt(getMethod.getResponseHeader("Content-Length").getValue());
-      		}      		
-            if (contentLength > -1) {
-                DSSize = contentLength;
-            }      		
       	} catch (Throwable th) {
       		th.printStackTrace();
       		throw new StreamIOException("[DatastreamReferencedContent] "
@@ -86,46 +72,6 @@ public class DatastreamReferencedContent
       		log("in getContentStream(), in finally");     	
       	}    	
     	return(contentStream);
-
-      		
-      		
-      		
-    	/* begin "was"
-        try {
-            HttpURLConnection conn=(HttpURLConnection)
-                    new URL(DSLocation).openConnection();
-            if (conn.getResponseCode()!=HttpURLConnection.HTTP_OK) {
-                throw new StreamIOException(
-                        "Server returned a non-200 response code ("
-                        + conn.getResponseCode() + ") from GET request of URL: "
-                        + DSLocation.toString());
-            }
-            // Ensure the stream is available before setting any fields.
-            InputStream ret=conn.getInputStream();
-            // If content-length available, set DSSize.
-            int reportedLength=conn.getContentLength();
-            if (reportedLength>-1) {
-                DSSize=reportedLength;
-            }
-
-            // SDP: removed because some web servers will reset the mime type
-            // to unpredictable things.  We'll keep the mime type originally
-            // recorded with the datastream.
-            // If Content-type available, set DSMIME.
-            //DSMIME=conn.getContentType();
-            //if (DSMIME==null) {
-            //    DSMIME=HttpURLConnection.guessContentTypeFromName(
-            //            DSLocation);
-            //}
-            
-            return ret;
-        } catch (IOException ioe) {
-            throw new StreamIOException("Can't get InputStream from URL: "
-                    + DSLocation.toString());
-        } catch (ClassCastException cce) {
-            throw new StreamIOException("Non-http URLs not supported.");
-        }
-        end "was" */
     }
     
     
