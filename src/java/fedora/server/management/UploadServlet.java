@@ -17,6 +17,7 @@ import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
@@ -80,8 +81,8 @@ public class UploadServlet
 			Part part=parser.readNextPart();
 			if (part!=null && part.isFile()) {
 			    if (part.getName().equals("file")) {
-                    sendResponse(HttpServletResponse.SC_CREATED, 
-                            saveAndGetId(context, (FilePart) part), response);
+			    	String temp = saveAndGetId(context, (FilePart) part);
+                    sendResponse(HttpServletResponse.SC_CREATED, temp, response);
 				} else {
                     sendResponse(HttpServletResponse.SC_BAD_REQUEST,
                             "Content must be named \"file\"", response);
@@ -97,6 +98,8 @@ public class UploadServlet
 			}
 		} catch (NotAuthorizedException na) {
 			response.sendError(HttpServletResponse.SC_FORBIDDEN);			
+		} catch (AuthzException az) {
+            response.sendError(HttpServletResponse.SC_CONTINUE);					
 		} catch (Exception e) {
                     e.printStackTrace();
 		    sendResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
@@ -130,7 +133,7 @@ public class UploadServlet
     }
 
     private String saveAndGetId(Context context, FilePart filePart)
-	        throws ServerException, IOException {
+	        throws ServerException, IOException { 
 		return s_management.putTempStream(context, filePart.getInputStream()); 
 	}
 

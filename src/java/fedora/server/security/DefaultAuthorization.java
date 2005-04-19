@@ -779,6 +779,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
 	}	
+	
+	public void enforceUpload(Context context)
+	throws AuthzException {
+		String target = Constants.ACTION.UPLOAD.uri;
+		log("enforcing " + target);
+		context.setActionAttributes(null);
+		context.setResourceAttributes(null);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+	}	
 
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);

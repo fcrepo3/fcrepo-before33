@@ -65,7 +65,8 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName SERVER_SHUTDOWN;
 	public final XacmlName SERVER_STATUS;
 	public final XacmlName OAI;	
-
+	public final XacmlName UPLOAD;	
+	
 	public final XacmlName FORMAT_URI;
 	public final XacmlName CONTEXT;	
 	public final XacmlName ENCODING;	
@@ -121,6 +122,8 @@ public class ActionNamespace extends XacmlNamespace {
     	SERVER_SHUTDOWN = addName(new XacmlName(this, "id-serverShutdown")); 
     	SERVER_STATUS = addName(new XacmlName(this, "id-serverStatus"));    
     	OAI = addName(new XacmlName(this, "id-oai"));     	
+    	UPLOAD = addName(new XacmlName(this, "id-upload"));     	
+    	
     	
     	DATASTREAM_FORMAT_URI = addName(new XacmlName(this, "datastreamFormatUri", AnyURIAttribute.identifier));    	
     	DATASTREAM_LOCATION = addName(new XacmlName(this, "datastreamLocation", AnyURIAttribute.identifier));

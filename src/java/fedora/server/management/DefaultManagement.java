@@ -1254,7 +1254,8 @@ public class DefaultManagement
     }
 
     public String putTempStream(Context context, InputStream in)
-    	    throws StreamWriteException {
+    	    throws StreamWriteException, AuthzException {
+    	m_fedoraXACMLModule.enforceUpload(context);
 		// first clean up after old stuff
 		long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
                 ArrayList removeList=new ArrayList();

@@ -140,6 +140,9 @@ public interface Authorization {
 	public void enforceOAIRespond(Context context)
 	throws AuthzException;	
 
+	public void enforceUpload(Context context)
+	throws AuthzException;		
+	
 }
 
 
