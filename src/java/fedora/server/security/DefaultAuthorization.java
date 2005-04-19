@@ -14,6 +14,7 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
 import fedora.server.Server;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
@@ -148,7 +149,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	public final void enforceAddDatastream(Context context, String pid, String dsId, 
 			String[] altIDs, //how to handle altIDs?
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.ADD_DATASTREAM.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -165,12 +166,12 @@ public class DefaultAuthorization extends Module implements Authorization {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
-		context.setResourceAttributes(resourceAttributes);
+		context.setResourceAttributes(resourceAttributes); 
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
 	}
 	
 	public final void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState)
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -189,7 +190,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 		
 	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding)
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.EXPORT_OBJECT.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -209,7 +210,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	
 	
 	public final void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorId) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_DISSEMINATOR_HISTORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -227,7 +228,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public final void enforceGetNextPid(Context context, String namespace, int nNewPids) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_NEXT_PID.uri;	
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -245,7 +246,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public final void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) 
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.GET_DATASTREAM.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -263,7 +264,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_DATASTREAM_HISTORY.uri;		
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -293,7 +294,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceGetDatastreams(Context context, String pid, Date asOfDate, String datastreamState) 
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.GET_DATASTREAMS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -318,7 +319,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public final void enforceGetDisseminator(Context context, String pid, String disseminatorPid, Date asOfDate) 
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.GET_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -337,7 +338,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 	
 	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.GET_DISSEMINATORS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -355,7 +356,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceGetObjectProperties(Context context, String pid) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_OBJECT_PROPERTIES.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -364,7 +365,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 	
 	public final void enforceGetObjectXML(Context context, String pid, String objectXmlEncoding) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_OBJECT_XML.uri;
 		log("enforcing " + target);
 		context.setResourceAttributes(null);
@@ -381,7 +382,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}		
 	
 	public final void enforceIngestObject(Context context, String pid, String format, String ingestEncoding)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.INGEST_OBJECT.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -399,7 +400,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceListObjectInFieldSearchResults(Context context, String pid) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri;
 		log("enforcing " + target);
 		if (enforceListObjectInFieldSearchResults) {
@@ -410,7 +411,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 	
 	public final void enforceListObjectInResourceIndexResults(Context context, String pid) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri;
 		log("enforcing " + target);
 		if (enforceListObjectInResourceIndexResults) {
@@ -423,7 +424,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, 
 			String[] altIDs, // how to handle? 
 			String datastreamNewMimeType, String datastreamNewFormatURI, String datastreamNewLocation, String datastreamNewState) //x
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -454,7 +455,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, 
 			String[] altIDs, // how to handle?
 			String newDatastreamMimeType, String newDatastreamFormatURI, String newDatastreamState)
-	throws NotAuthorizedException { 
+	throws AuthzException { 
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_VALUE.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -481,7 +482,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorPid, String bmechNewPid, String disseminatorNewState) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.MODIFY_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -502,7 +503,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 	
 	public final void enforceModifyObject(Context context, String pid, String objectNewState) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.MODIFY_OBJECT.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -519,7 +520,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.PURGE_DATASTREAM.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -547,7 +548,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -572,7 +573,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 	
 	public final void enforcePurgeObject(Context context, String pid) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.PURGE_OBJECT.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -581,7 +582,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public final void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.SET_DATASTREAM_STATE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -599,7 +600,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.SET_DISSEMINATOR_STATE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -618,7 +619,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceDescribeRepository(Context context) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.DESCRIBE_REPOSITORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -627,7 +628,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceFindObjects(Context context) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.FIND_OBJECTS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -637,7 +638,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceRIFindObjects(Context context) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.RI_FIND_OBJECTS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -646,7 +647,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_DATASTREAM_DISSEMINATION.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -664,7 +665,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceGetDissemination(Context context, String pid, String bDefPid, String methodName, Date asOfDate) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_DISSEMINATION.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -684,7 +685,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceGetObjectHistory(Context context, String pid) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_OBJECT_HISTORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -693,7 +694,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceGetObjectProfile(Context context, String pid, Date asOfDate) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.GET_OBJECT_PROFILE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -710,7 +711,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceListDatastreams(Context context, String pid, Date asOfDate) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.LIST_DATASTREAMS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -727,7 +728,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public void enforceListMethods(Context context, String pid, Date asOfDate) 
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.LIST_METHODS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -744,7 +745,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceAdminPing(Context context)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.ADMIN_PING.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -753,7 +754,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceServerShutdown(Context context)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.SERVER_SHUTDOWN.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -762,7 +763,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public void enforceServerStatus(Context context)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.SERVER_STATUS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -771,7 +772,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}	
 
 	public void enforceOAIRespond(Context context)
-	throws NotAuthorizedException {
+	throws AuthzException {
 		String target = Constants.ACTION.OAI.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);

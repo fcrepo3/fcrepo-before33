@@ -56,6 +56,8 @@ public class ReadOnlyContext
     
     private String password;
     
+    private final boolean noOp = false; 
+    
     public static Context getCachedContext() {
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
@@ -444,6 +446,10 @@ System.err.println("in context, adding subject attr " + parts[0] + "=" + parts[1
   	
     public String getPassword() {
     	return password;
+    }
+    
+    public boolean getNoOp() {
+    	return noOp;
     }
   	
 	public static boolean log = false; 

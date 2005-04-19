@@ -2,6 +2,7 @@ package fedora.server.security;
 
 import java.util.Date;
 import fedora.server.Context;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.NotAuthorizedException;
 
 public interface Authorization {
@@ -25,119 +26,119 @@ public interface Authorization {
 
 	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) //x 
-	throws NotAuthorizedException; 
+	throws AuthzException; 
 
 	public void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetDatastreams(Context context, String pid, Date asOfDate, String state) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceGetDisseminator(Context context, String pid, String disseminatorId, Date asOfDateTime) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorPid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceGetNextPid(Context context, String namespace, int nNewPids) 
-	throws NotAuthorizedException; 
+	throws AuthzException; 
 	
 	public void enforceGetObjectProperties(Context context, String pid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceGetObjectXML(Context context, String pid, String objectXmlEncoding) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceIngestObject(Context context, String pid, String format, String ingestEncoding) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceListObjectInFieldSearchResults(Context context, String pid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceListObjectInResourceIndexResults(Context context, String pid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String[] altIDs, 
 			String mimeType, String formatURI, String datastreamNewLocation, String datastreamNewState)
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String[] altIDs, 
 			String mimeType, String formatURI, String newDatastreamState)
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceModifyObject(Context context, String pid, String objectState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT) //x
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforcePurgeObject(Context context, String pid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	//APIA
 
 	public void enforceDescribeRepository(Context context) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceFindObjects(Context context) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceRIFindObjects(Context context) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceGetDissemination(Context context, String pid, String bDefPID, String methodName, Date asOfDate) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetObjectHistory(Context context, String pid) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceGetObjectProfile(Context context, String pid, Date asOfDate) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceListDatastreams(Context context, String pid, Date asOfDate) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceListMethods(Context context, String pid, Date ofAsDate) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceAdminPing(Context context) 
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceServerShutdown(Context context)
-	throws NotAuthorizedException;
+	throws AuthzException;
 	
 	public void enforceServerStatus(Context context)
-	throws NotAuthorizedException;
+	throws AuthzException;
 
 	public void enforceOAIRespond(Context context)
-	throws NotAuthorizedException;	
+	throws AuthzException;	
 
 }
 

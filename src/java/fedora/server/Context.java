@@ -76,4 +76,6 @@ public interface Context {
     
     public Date now();
     
+    public boolean getNoOp();
+    
 }

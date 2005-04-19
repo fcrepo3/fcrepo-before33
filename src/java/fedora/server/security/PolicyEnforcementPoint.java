@@ -22,6 +22,7 @@ import com.sun.xacml.finder.PolicyFinder;
 
 import fedora.common.Constants;
 import fedora.server.Context;
+import fedora.server.errors.AuthzException;
 import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.GeneralException;
@@ -354,7 +355,7 @@ System.err.println("***debugging CombinedPolicyModule");
 
 	private final Set NULL_SET = new HashSet();
 
-	public final void enforce(String subjectId, String action, String api, String pid, String namespace, Context context)  throws NotAuthorizedException {
+	public final void enforce(String subjectId, String action, String api, String pid, String namespace, Context context) throws AuthzException {
 		if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
 			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
@@ -426,6 +427,9 @@ System.err.println("about to ref contextAttributeFinder=" + contextAttributeFind
 			if (! denyBiasedAuthz(response.getResults())) {
 				throw new NotAuthorizedException("");
 			}			
+		}	
+		if (context.getNoOp()) {
+			throw new AuthzException("noOp");
 		}		
 	}
 	

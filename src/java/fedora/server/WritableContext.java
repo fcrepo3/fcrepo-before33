@@ -44,7 +44,9 @@ public class WritableContext
     private MultiValueMap m_resourceAttributes;
     
     private String password;
-
+    
+    private final boolean noOp = false; 
+    
     /**
      * Creates and initializes the <code>WritableContext</code>.
      * <p></p>
@@ -176,6 +178,10 @@ public class WritableContext
     
     public Date now() {
     	return now;
+    }
+    
+    public boolean getNoOp() {
+    	return noOp;
     }
     
     public String getPassword() {
