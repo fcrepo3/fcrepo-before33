@@ -93,6 +93,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         namespaces.put("fedora-rels-ext", RELS_EXT.uri);
         namespaces.put("fedora-view", VIEW.uri);
         namespaces.put("rdf", RDF.uri);
+        namespaces.put("tucana", TUCANA.uri);
         namespaces.put("xml-schema", XSD.uri);
         m_connector = connector;
         m_reader = m_connector.getReader();
