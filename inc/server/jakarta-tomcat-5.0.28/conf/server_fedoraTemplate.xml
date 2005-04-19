@@ -13,7 +13,7 @@
                port="#3" minProcessors="5" maxProcessors="75"
                enableLookups="true"
                acceptCount="10" debug="4" scheme="https" secure="true"
-               useURIValidationHack="false" keystoreFile="conf/.keystore">
+               useURIValidationHack="false" keystoreFile="conf/keystore">
       <Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
