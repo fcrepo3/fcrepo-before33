@@ -133,12 +133,12 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 				</xsl:attribute>
 			</xsl:if>				
 			<xsl:if test="$substitutions/input/metadata/metadata[@ID=$metadataID]/@MIMETYPE" >
-				<xsl:attribute name="LABEL">
+				<xsl:attribute name="MIMETYPE">
 					<xsl:value-of select="$substitutions/input/metadata/metadata[@ID=$metadataID]/@MIMETYPE" />
 				</xsl:attribute>
 			</xsl:if>
 			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@MIMETYPE" >
-				<xsl:attribute name="LABEL">
+				<xsl:attribute name="MIMETYPE">
 					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$metadataID]/@MIMETYPE" />
 				</xsl:attribute>
 			</xsl:if>				
@@ -154,7 +154,7 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="datastreamID" select="../@ID" /><!-- e.g., DESC1, from METS:dmdSecFedora element -->			
 			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@MIMETYPE" >
-				<xsl:attribute name="LABEL">
+				<xsl:attribute name="MIMETYPE">
 					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@MIMETYPE" />
 				</xsl:attribute>
 			</xsl:if>	
@@ -172,24 +172,29 @@ xmlns:xlink="http://www.w3.org/TR/xlink"
 	<!-- substitute per-datastream @xlink:title and @xlink:href -->
 	<!-- /METS:mets/METS:fileSec/METS:fileGrp/METS:fileGrp/METS:file/METS:FLocat -->
  	<xsl:template match="METS:FLocat" xmlns:METS="http://www.loc.gov/METS/">
-		<xsl:variable name="datastream" select="../../@ID" />
+		<xsl:variable name="datastreamID" select="../../@ID" />
 		<xsl:copy>
 			<xsl:apply-templates select="@*"/>
 			<xsl:variable name="prefix" select="concat('$substitutions/input/datastreams/datastream[@id=&quot;',
-				$datastream,
+				$datastreamID,
 				'&quot;]/')" />
 			<xsl:variable name="title_ptr" select="concat($prefix,'@title')" />
 			<xsl:variable name="href_ptr" select="concat($prefix,'@href')" />
-			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:title" >
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@xlink:title" >
 				<xsl:attribute name="xlink:title">
-					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:title" />
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@xlink:title" />
 				</xsl:attribute>
 			</xsl:if>
-			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:href" >
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@xlink:href" >
 				<xsl:attribute name="xlink:href">
-					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastream]/@xlink:href" />
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@xlink:href" />
 				</xsl:attribute>
 			</xsl:if>
+			<xsl:if test="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@LABEL" >
+				<xsl:attribute name="xlink:title">
+					<xsl:value-of select="$substitutions/input/datastreams/datastream[@ID=$datastreamID]/@LABEL" />
+				</xsl:attribute>
+			</xsl:if>				
 			<!-- processing terminals here, so no need to xsl:apply-templates select="node()" -->
     		</xsl:copy>
 	</xsl:template>
