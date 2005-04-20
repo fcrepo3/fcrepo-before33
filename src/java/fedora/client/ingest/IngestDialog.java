@@ -121,9 +121,8 @@ public class IngestDialog {
                     }
                     String pid=JOptionPane.showInputDialog("Enter the PID of the object to ingest.");
                     if (pid!=null && !pid.equals("")) {
-                       pid=Ingest.oneFromRepository(sdlg.getHost(),
-                                             sdlg.getPort(),
-                                             sdlg.getAPIA(),
+						pid=Ingest.oneFromRepository(
+											 sdlg.getAPIA(),
                                              sdlg.getAPIM(),
                                              sourceExportFormat,
                                              pid,
