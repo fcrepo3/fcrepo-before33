@@ -571,14 +571,14 @@ public class Administrator extends JFrame {
         JMenuItem helpContents=new JMenuItem("Documentation",KeyEvent.VK_D);
         String portPart="";
         if (getPort()!=80) portPart=":" + getPort();
-        String documentationURL=getProtocol() + getHost() + portPart + "/userdocs/";
+        String documentationURL=getProtocol() + "://" + getHost() + portPart + "/userdocs/";
         helpContents.setToolTipText("See " + documentationURL);
 
         helpContents.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
               String portPart="";
               if (getPort()!=80) portPart=":" + getPort();
-              String documentationURL=getProtocol() + getHost() + portPart + "/userdocs/";
+              String documentationURL=getProtocol() + "://" + getHost() + portPart + "/userdocs/";
               JOptionPane.showMessageDialog(getDesktop(),
                       "For documentation, see " + documentationURL,
                       "Fedora Documentation",

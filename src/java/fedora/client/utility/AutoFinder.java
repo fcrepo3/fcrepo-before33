@@ -64,7 +64,7 @@ public class AutoFinder {
     // such as "fType=O pid~demo*".  Leave blank to match all.
     public static String[] getPIDs(String protocol, String host, int port, String fieldQuery)
             throws Exception {
-        String firstPart=protocol + host + ":" + port + "/fedora/search?xml=true";
+        String firstPart=protocol + "://" + host + ":" + port + "/fedora/search?xml=true";
         Downloader dLoader=new Downloader(host, port, "na", "na");
         String url=firstPart + "&pid=true&query=" + URLEncoder.encode(fieldQuery, "UTF-8");
         InputStream in=dLoader.get(url);
