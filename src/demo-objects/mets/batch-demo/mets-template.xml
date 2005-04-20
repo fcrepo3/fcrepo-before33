@@ -3,12 +3,28 @@
 <!-- SAMPLE FEDORA DIGITAL OBJECT ENCODED USING METS -->
 <!-- Note: Sample Template Object used with Batch Utility -->
 <!---************************************************************************-->
-<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/"  xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template:  object PID" TYPE="FedoraObject" LABEL="template: object label" PROFILE="UVA_STD_IMG">
-	<METS:metsHdr CREATEDATE="2002-01-01T00:00:00.000Z" LASTMODDATE="2003-01-01T00:00:00.000Z"/>
+<METS:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:METS="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.loc.gov/standards/METS/ http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd" OBJID="template:objectPid" TYPE="FedoraObject" LABEL="template: Object Label" PROFILE="UVA_STD_IMG">
+	<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATEDATE attribute on     -->
+	<!-- the METS:metsHdr element is not present in the object being ingested. Therefore, it is recommended that the METS:metsHdr      -->
+	<!-- element be omitted from the object template so this date will be assigned dynamically by the Fedora server. If included in the        -->
+	<!-- template file, this value will be carried through to the built objects and will result in the specified static date being used at ingest     -->
+	<!-- time by the Fedora server rather than dynamically assigning createdDate at ingest time.                                                                       -->
+	<!--                                                                                                                                                                                                                              -->
+	<!-- Uncomment the next line only if you want all objects built with this template to retain the specified creation date after ingest.            -->
+	<!-- <METS:metsHdr CREATEDATE="2005-03-15T12:57:07.241Z"/>                                                                                                           -->
 	<!---*******************************************************************************************************************************************-->
 	<!---User-Defined XML METADATA DATASTREAMS-->
 	<!---*******************************************************************************************************************************************-->
 	<METS:dmdSecFedora ID="DC" STATUS="A">
+		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
+		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
+		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
+		<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
+		<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
+		<!--                                                                                                                                                                                                                             -->
+		<!-- Uncomment the the following line if you want the DC datastream for all abjects built with this template to retain the specified         -->
+		<!-- createdDate after ingest.                                                                                                                                                                                -->
+		<!-- <METS:descMD CREATED="2005-03-15T12:57:07.241Z" ID="DC.0">                                                                                              -->
 		<METS:descMD ID="DC.0">
 			<METS:mdWrap MIMETYPE="text/xml" MDTYPE="OTHER" LABEL="template: Dublin Core Metadata">
 				<METS:xmlData/>
@@ -140,6 +156,15 @@
 	<METS:fileSec>
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
+				<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
+				<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
+				<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
+				<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
+				<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
+				<!--                                                                                                                                                                                                                             -->
+				<!-- Uncomment the the following line if you want the DC datastream for all abjects built with this template to retain the specified         -->
+				<!-- createdDate after ingest.                                                                                                                                                                                -->
+				<!-- <METS:file CREATED="2005-03-15T12:57:07.241Z" ID="DS1.0" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A"> -->
 				<!--This is the THUMBNAIL sized image -->
 				<METS:file ID="DS1.0" MIMETYPE="image/jpeg" ADMID="TECH1 DIGIPROV1 SOURCE1 RIGHTS1" OWNERID="E" STATUS="A">
 					<METS:FLocat LOCTYPE="URL" xlink:href="template: url of THUMBNAIL jpg image" xlink:title="template: THUMBNAIL jpg image"/>
@@ -195,6 +220,15 @@
 	<!--- THE UVA STANDARD IMAGE DISSEMINATOR -->
 	<!---*******************************************************************************************************************************************-->
 	<METS:behaviorSec ID="DISS1" STATUS="A">
+		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
+		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
+		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
+		<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
+		<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
+		<!--                                                                                                                                                                                                                             -->
+		<!-- Uncomment the the following line if you want the DC datastream for all abjects built with this template to retain the specified         -->
+		<!-- createdDate after ingest.                                                                                                                                                                                -->
+		<!-- <METS:serviceBinding CREATED="2005-03-15T12:57:07.241Z" ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Std Image Behaviors"> -->
 		<METS:serviceBinding ID="DISS1.0" STRUCTID="S1" BTYPE="demo:1" LABEL="UVA Std Image Behaviors">
 			<!-- Use xlink to point to a Fedora Behavior Definition object which is stored as a separate METS object.-->
 			<!--The Behavior Definition object stores WSDL interface descriptions that formally define the set methods to which -->

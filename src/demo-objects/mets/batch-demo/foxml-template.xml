@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foxml:digitalObject PID="demo:3010" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd" xmlns:xlink="http://www.w3.org/TR/xlink">
+<foxml:digitalObject PID="template:objectPid" xmlns:foxml="info:fedora/fedora-system:def/foxml#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd" xmlns:xlink="http://www.w3.org/TR/xlink">
 	<foxml:objectProperties>
 		<foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="*** TESTING:  SUBSTITUTING LABEL FOR OBJECT ***"/>
-		<foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-03-15T12:57:07.241Z"/>
+		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="template:Object Label"/>
+		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the createdDate property is not      -->
+		<!-- present in the object being ingested. Therefore, it is recommended that this property be omitted from the object template so this   -->
+		<!-- date will be assigned dynamically by the Fedora server. If included in the template file, this value will be carried through to the        -->
+		<!-- built objects and will result in the specified static date being used at ingest time by the Fedora server rather than dynamically         -->
+		<!-- assigning createdDate at ingest time. The same is true for object components like datastreams and disseminators. The                -->
+		<!-- datastreamVersion and disseminatorVersion elements contain an optional CREATED attribute that defines a createdDate for     -->
+		<!-- these components. If the CREATED attribute is omitted, a createdDate is assinged dynamically at ingest time. If included in the   -->
+		<!-- template object, the specified values will be carried through to all built objects resulting in the specified static dates being used     -->
+		<!-- rather than than the Fedora server assigning component createdDates.                                                                                                   -->
+		<!--                                                                                                                                                                                                                              -->
+		<!-- Uncomment the next line only if you want all objects built with this template to retain the specified creation date after ingest.            -->
+		<!-- <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-03-15T12:57:07.241Z"/>                   -->
 		<foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-03-15T12:57:07.702Z"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="UVA_STD_IMAGE"/>
 	</foxml:objectProperties>
 	<foxml:datastream CONTROL_GROUP="X" ID="DC" STATE="A" VERSIONABLE="true">
+		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
+		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
+		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
+		<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
+		<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
+		<!--                                                                                                                                                                                                                             -->
+		<!-- Uncomment the the following line if you want the DC datastream for all abjects built with this template to retain the specified         -->
+		<!-- createdDate after ingest.                                                                                                                                                                                -->
+		<!-- <foxml:datastreamVersion CREATED="2005-03-15T12:57:07.241Z" ID="DC.0" LABEL="template: Dublin Core Metadata" MIMETYPE="text/xml"> -->
 		<foxml:datastreamVersion ID="DC.0" LABEL="template: Dublin Core Metadata" MIMETYPE="text/xml">
 			<foxml:xmlContent/>
 		</foxml:datastreamVersion>
@@ -119,6 +139,15 @@
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
+		<!-- Note: The value for createdDate is assigned dynamically by the Fedora server at ingest time if the CREATED attribute is not        -->
+		<!-- present on the component in the object being ingested. Therefore, it is recommended that this attribute be omitted from the          -->
+		<!-- object template so this date will be assigned dynamically by the Fedora server. If included in the template file, this value will be    -->
+		<!-- carried through to the built objects and will result in the specified static date being used at ingest time by the Fedora server          -->
+		<!-- rather than dynamically assigning createdDate at ingest time.                                                                                                                   -->
+		<!--                                                                                                                                                                                                                             -->
+		<!-- Uncomment the the following line if you want the DISS1 disseminator for all abjects built with this template to retain the specified         -->
+		<!-- createdDate after ingest.                                                                                                                                                                                -->
+		<!-- <foxml:disseminatorVersion CREATED="2005-03-15T12:57:07.241Z" BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors"> -->
 		<foxml:disseminatorVersion BMECH_SERVICE_PID="demo:2" ID="DISS1.0" LABEL="UVA Std Image Behaviors">
 			<foxml:serviceInputMap>
 				<foxml:datastreamBinding DATASTREAM_ID="DS1" KEY="THUMBRES_IMG" LABEL="THUMBNAIL res jpg image" ORDER="0"/>
