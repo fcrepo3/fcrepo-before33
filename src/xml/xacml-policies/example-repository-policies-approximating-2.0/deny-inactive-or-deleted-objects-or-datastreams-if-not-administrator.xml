@@ -15,30 +15,30 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>      
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Inactive</AttributeValue>
         </ResourceMatch>
       </Resource>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>        
           <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:state" 
             DataType="http://www.w3.org/2001/XMLSchema#string" MustBePresent="false"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">Deleted</AttributeValue>
         </ResourceMatch>
       </Resource>
     </Resources>

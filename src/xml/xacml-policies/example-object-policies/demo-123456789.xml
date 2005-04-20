@@ -19,9 +19,9 @@
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:123456789</AttributeValue>        
            <ResourceAttributeDesignator AttributeId="urn:oasis:names:tc:xacml:1.0:resource:object:pid" 
              DataType="http://www.w3.org/2001/XMLSchema#string"/>
-           <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:123456789</AttributeValue>
         </ResourceMatch>
       </Resource>
     </Resources>

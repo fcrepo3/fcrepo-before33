@@ -10,8 +10,8 @@
     <Subjects>
       <Subject><!-- require attribute to be present -->
         <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>        
           <SubjectAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:subject:login-id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </SubjectMatch>
       </Subject>
       <AnySubject/>
