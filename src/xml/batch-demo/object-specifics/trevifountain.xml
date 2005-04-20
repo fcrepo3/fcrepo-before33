@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<input OBJID="demo:3018" xmlns:xlink="http://www.w3.org/TR/xlink">
+<input 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/TR/xlink" xsi:schemaLocation="http://www.fedora.info/definitions/ http://www.fedora.info/definitions/1/0/api/batchMerge.xsd" xmlns="http://www.fedora.info/definitions/" 
+OBJID="demo:3018">
 	<datastreams>
 		<datastream ID="DC">
 			<xmlContent>
@@ -81,7 +83,7 @@
 				</uvalibadmin:admin>
 			</xmlContent>
 		</datastream>
-		<datastream ID="RIGHTS1">			
+		<datastream ID="RIGHTS1">
 			<xmlContent>
 				<uvalibadmin:admin xmlns:uvalibadmin="http://dl.lib.virginia.edu/bin/dtd/admin/admin.dtd">
 					<uvalibadmin:adminrights>
@@ -114,7 +116,7 @@
 						</uvalibadmin:mediatype>
 					</uvalibadmin:source>
 				</uvalibadmin:admin>
-			</xmlContent>			
+			</xmlContent>
 		</datastream>
 		<datastream ID="DIGIPROV2">
 			<xmlContent>
@@ -125,7 +127,7 @@
 						<uvalibadmin:description>creation</uvalibadmin:description>
 					</uvalibadmin:digiprov>
 				</uvalibadmin:admin>
-			</xmlContent>			
+			</xmlContent>
 		</datastream>
 		<datastream ID="RIGHTS2">
 			<xmlContent>
@@ -230,7 +232,7 @@
 					</uvalibadmin:adminrights>
 				</uvalibadmin:admin>
 			</xmlContent>
-		</datastream>		
+		</datastream>
 		<datastream ID="DS1" xlink:href="http://www.fedora.info/demo/batch-demo/thumb/trevifountain.jpg"/>
 		<datastream ID="DS2" xlink:href="http://www.fedora.info/demo/batch-demo/medium/trevifountain.jpg"/>
 		<datastream ID="DS3" xlink:href="http://www.fedora.info/demo/batch-demo/high/trevifountain.jpg"/>
