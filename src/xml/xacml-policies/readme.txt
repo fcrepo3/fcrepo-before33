@@ -84,6 +84,9 @@ For now, there is no Fedora-based xacml schema checking of policies.  Some polic
 with console errors; with repository-policies, this would be at server startup, with object-policies, 
 only on access to that specific object.  
 
+on schema validation:
+http://sunxacml.sourceforge.net/guide.html#using-validating
+
 
 FEDORA
 
@@ -231,6 +234,9 @@ understand conditions)
 9. avoid using two xAttributeDesignators (without any AttributeValues), until we clarify with Sun how they'll fix
 this.
 
+
+2005/04/20:  added second repository policy directory for programmatically generated policies
+A policy in this directory is treated by Fedora authz code just like those in the original repository policy directory.
 
 surrogate representing end-user
 
