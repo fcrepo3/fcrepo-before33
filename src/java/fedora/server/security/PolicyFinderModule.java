@@ -61,12 +61,15 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 	private File schemaFile = null;
 	private DOManager doManager;
 
-	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager) throws GeneralException {
+	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryPolicyGeneratedDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager) throws GeneralException {
 		this.combiningAlgorithm = combiningAlgorithm;
 		List filelist = new ArrayList();
 		System.err.println("before building file list");
 		buildRepositoryPolicyFileList(new File(repositoryPolicyDirectoryPath),  filelist);
 		System.err.println("after building file list");
+		System.err.println("before building (generated) file list");
+		buildRepositoryPolicyFileList(new File(repositoryPolicyGeneratedDirectoryPath),  filelist);
+		System.err.println("after building (generated) file list");		
 		System.err.println("before getting repo policies");
 		repositoryPolicies = getRepositoryPolicies(filelist);
 		
@@ -267,7 +270,9 @@ System.err.println(">>>>>>>>filepath=" + filepath);
 				buildRepositoryPolicyFileList(file, filelist);
 			} else {
 				String temp = file.getAbsolutePath();
-				filelist.add(temp);
+				if (temp.endsWith(".xml")) {
+					filelist.add(temp);					
+				}
 			}				
 		}
 	}

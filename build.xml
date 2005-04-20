@@ -728,6 +728,8 @@
 		<mkdir dir="dist/server/config/xacml-policies/active"/>		
 		<mkdir dir="dist/server/config/xacml-policies/active/surrogate-policies"/>		
 		<mkdir dir="dist/server/config/xacml-policies/active/repository-policies"/>
+		<mkdir dir="dist/server/config/xacml-policies/active/repository-policies-generated"/>
+		<copy file="src/xml/xacml-policies/readme-generated-policies.txt" todir="dist/server/config/xacml-policies/active/repository-policies-generated"/>		
 		<mkdir dir="dist/server/config/xacml-policies/active/object-policies"/>
 		<mkdir dir="dist/server/config/xacml-policies/examples"/>
 		<copy todir="dist/server/config/xacml-policies/examples/surrogate-policies">

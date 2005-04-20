@@ -94,6 +94,7 @@
         </comment>
         <param name="SURROGATE-POLICIES-DIRECTORY" value="config/xacml-policies/active/surrogate-policies"/>
         <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies"/>
+        <param name="REPOSITORY-GENERATED-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies-generated"/>        
         <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/active/object-policies"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
         <param name="ENFORCE-MODE" value="enforce-policies"/>

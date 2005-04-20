@@ -39,12 +39,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 
 	private String surrogatePoliciesDirectory = "";
 	private String repositoryPoliciesDirectory = "";
+	private String repositoryGeneratedPoliciesDirectory = "";	
 	private String objectPoliciesDirectory = "";
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
 
 	private final String SURROGATE_POLICIES_DIRECTORY = "SURROGATE-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICIES_DIRECTORY = "REPOSITORY-POLICIES-DIRECTORY";
+	private final String REPOSITORY_GENERATED_POLICIES_DIRECTORY = "REPOSITORY-GENERATED-POLICIES-DIRECTORY";	
 	private final String OBJECT_POLICIES_DIRECTORY = "OBJECT-POLICIES-DIRECTORY";
 	private final String COMBINING_ALGORITHM = "XACML-COMBINING-ALGORITHM";
 	private final String ENFORCE_MODE = "ENFORCE-MODE";
@@ -85,6 +87,12 @@ public class DefaultAuthorization extends Module implements Authorization {
 		+ (String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY);
     	System.err.println("repositoryPoliciesDirectory=" + repositoryPoliciesDirectory);
     }
+    if (moduleParameters.containsKey(REPOSITORY_GENERATED_POLICIES_DIRECTORY)) {
+    	repositoryGeneratedPoliciesDirectory = 
+    		((String) moduleParameters.get(REPOSITORY_GENERATED_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
+		+ (String) moduleParameters.get(REPOSITORY_GENERATED_POLICIES_DIRECTORY);
+    	System.err.println("repositoryGeneratedPoliciesDirectory=" + repositoryGeneratedPoliciesDirectory);
+    }    
     if (moduleParameters.containsKey(OBJECT_POLICIES_DIRECTORY)) {
     	objectPoliciesDirectory =
     		((String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY)).startsWith(File.separator) ? "" : serverHome 
@@ -123,7 +131,7 @@ public class DefaultAuthorization extends Module implements Authorization {
       	System.err.println("in DefaultAuthorization.postInitModule() 5");
         xacmlPep = PolicyEnforcementPoint.getInstance();
       	System.err.println("in DefaultAuthorization.postInitModule() 6");
-        xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, objectPoliciesDirectory, m_manager);
+        xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, repositoryGeneratedPoliciesDirectory, objectPoliciesDirectory, m_manager);
       	System.err.println("in DefaultAuthorization.postInitModule() 7");
     } catch (Throwable e1) {
       	System.err.println("in DefaultAuthorization.postInitModule() 8");

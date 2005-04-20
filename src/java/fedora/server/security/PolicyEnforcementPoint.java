@@ -114,7 +114,7 @@ public class PolicyEnforcementPoint {
 	
 	private ContextAttributeFinderModule contextAttributeFinder;
 	
-	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String localPolicyConfig, DOManager manager
+	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalGeneratedPolicyConfig, String localPolicyConfig, DOManager manager
 	) throws Exception {
 		System.err.println ("***initPep()");
 		destroy();
@@ -171,7 +171,7 @@ System.err.println("before building policy finder");
 		PolicyFinderModule combinedPolicyModule = null;
 		try {
 			System.err.println("***before constucting fedora policy finder module");
-			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, localPolicyConfig, manager);
+			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalGeneratedPolicyConfig, localPolicyConfig, manager);
 			
 			System.err.println("after constucting fedora policy finder module");
 		} catch (GeneralException e) {
