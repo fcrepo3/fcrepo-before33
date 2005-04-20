@@ -91,23 +91,52 @@ public class SourceRepoDialog
                         try {
                             String host=hp[0];
                             m_host=host;
+                            m_protocol=m_protocolField.getText();
                             int port=Integer.parseInt(hp[1]);
                             m_port=port;
-                            m_apia=APIAStubFactory.getStub(m_protocolField.getText(),
-                            							   host, 
-                                                           port, 
-                                                           m_usernameField.getText(),
-                                                           new String(m_passwordField.getPassword()));
-                            m_apim=APIMStubFactory.getStub(m_protocolField.getText(),
-                            							   host, 
-                                                           port, 
-                                                           m_usernameField.getText(),
-                                                           new String(m_passwordField.getPassword()));
+                            
+                            // Get SOAP stubs for the source repository.
+                            // NOTE! For backward compatibility with Fedora 2.0
+                            // we will immediately try a describe repository
+                            // request on the API-A stub to see if it works.  If it
+                            // fails, we will try obtaining a stub with the OLD
+                            // SOAP URL syntax.  This is because the path in the 
+                            // SOAP URLs were changed in Fedora 2.1 to be more standard.
+                            
+                            try {
+                            	//System.out.println("Getting stubs with default path...");
+								m_apia=APIAStubFactory.getStub(m_protocol,
+															   host, 
+															   port, 
+															   m_usernameField.getText(),
+															   new String(m_passwordField.getPassword()));
+								m_repositoryInfo=m_apia.describeRepository();
+								m_apim=APIMStubFactory.getStub(m_protocol,
+															   host, 
+															   port, 
+															   m_usernameField.getText(),
+															   new String(m_passwordField.getPassword()));
+							} catch (Exception e) {
+								//System.out.println("Fallback: getting stubs with OLD path...");
+								m_apia=APIAStubFactory.getStubAltPath(m_protocol,
+															   host, 
+															   port,
+															   "/fedora/access/soap", 
+															   m_usernameField.getText(),
+															   new String(m_passwordField.getPassword()));
+								m_apim=APIMStubFactory.getStubAltPath(m_protocol,
+															   host, 
+															   port,
+															   "/fedora/management/soap",  
+															   m_usernameField.getText(),
+															   new String(m_passwordField.getPassword()));
+                            }
+
                             try {
                                 m_repositoryInfo=m_apia.describeRepository();
                                 m_userInfo=m_apim.describeUser(m_usernameField.getText());
                                 s_lastServer=host + ":" + port;
-								s_lastProtocol=m_protocolField.getText();
+								s_lastProtocol=m_protocol;
                                 s_lastUsername=m_usernameField.getText();
                                 s_lastPassword=new String(m_passwordField.getPassword());
                                 dispose();
@@ -123,7 +152,7 @@ public class SourceRepoDialog
                                 }
                                 if (e.getMessage().indexOf("java.net")!=-1) {
                                 	Administrator.showErrorDialog(Administrator.getDesktop(), "Connection Error", 
-                                			"Can't connect to " + m_protocolField.getText() + "://" + host + ":" + port, e);
+                                			"Can't connect to " + m_protocol + "://" + host + ":" + port, e);
                                     retry=true;
                                 }
                                 if (!retry) {
@@ -131,7 +160,7 @@ public class SourceRepoDialog
                                     // of an unimplemented method on a prior
                                     // version of fedora, which is ok.
                                     s_lastServer=host + ":" + port;
-									s_lastProtocol=m_protocolField.getText();
+									s_lastProtocol=m_protocol;
                                     s_lastUsername=m_usernameField.getText();
                                     s_lastPassword=new String(m_passwordField.getPassword());
                                     dispose();

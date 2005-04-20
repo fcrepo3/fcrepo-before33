@@ -80,9 +80,7 @@ public class Ingest {
     }
     
     // if logMessage is null, will make informative one up
-    public static String oneFromRepository(String sourceHost,
-                                           int sourcePort,
-                                           FedoraAPIA sourceRepoAPIA,
+	public static String oneFromRepository(FedoraAPIA sourceRepoAPIA,
                                            FedoraAPIM sourceRepoAPIM,
                                            String sourceExportFormat,
                                            String pid,
@@ -235,9 +233,7 @@ public class Ingest {
         while (iter.hasNext()) {
             String pid=(String) iter.next();
             try {
-                String newPID=oneFromRepository(sourceHost,
-                                                sourcePort,
-                                                sourceRepoAPIA,
+				String newPID=oneFromRepository(sourceRepoAPIA,
                                                 sourceRepoAPIM,
                                                 sourceExportFormat,
                                                 pid,
@@ -491,36 +487,76 @@ public class Ingest {
                 if (args.length==11) {
                     logMessage=args[10];
                 }
-				//SDP - HTTPS  
+				//Source repository
+				String[] shp=args[1].split(":");
+				String source_host = shp[0];
+				String source_port = shp[1];
+				String source_user = args[2];
+				String source_password = args[3];  
 				String source_protocol=args[8];
-				String target_protocol=args[9];
+				               
+				FedoraAPIA sourceRepoAPIA;
+				FedoraAPIM sourceRepoAPIM;
 				
-                String[] hp=args[1].split(":");
-                FedoraAPIA sourceRepoAPIA=
-                        APIAStubFactory.getStub(source_protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[2],
-                                                args[3]);
-                FedoraAPIM sourceRepoAPIM=
-                        APIMStubFactory.getStub(source_protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[2],
-                                                args[3]);
-                hp=args[5].split(":");
+				// Get SOAP stubs for the source repository.
+				// NOTE! For backward compatibility with Fedora 2.0
+				// we will immediately try a describe repository
+				// request on the API-A stub to see if it works.  If it
+				// fails, we will try obtaining a stub with the OLD
+				// SOAP URL syntax.  This is because the path in the 
+				// SOAP URLs were changed in Fedora 2.1 to be more standard.
+                try {
+					//System.out.println("Getting stubs with default path for source repo...");
+					sourceRepoAPIA=
+							APIAStubFactory.getStub(source_protocol,
+													source_host,
+													Integer.parseInt(source_port),
+													source_user,
+													source_password);
+					sourceRepoAPIM=
+							APIMStubFactory.getStub(source_protocol,
+													source_host,
+													Integer.parseInt(source_port),
+													source_user,
+													source_password);
+                	
+				} catch (Exception e) {
+					//System.out.println("Fallback: getting stubs with OLD path for 2.0 source repo...");
+					sourceRepoAPIA=APIAStubFactory.getStubAltPath(source_protocol,
+													source_host, 
+												   	Integer.parseInt(source_port),
+												   	"/fedora/access/soap", 
+													source_user,
+													source_password);
+												   
+					sourceRepoAPIM=APIMStubFactory.getStubAltPath(source_protocol,
+													source_host, 
+													Integer.parseInt(source_port),
+												   	"/fedora/management/soap",  
+													source_user,
+													source_password);
+				}
+
+				//Target repository
+				String[] thp=args[5].split(":");
+				String target_host = thp[0];
+				String target_port = thp[1];
+				String target_user = args[6];
+				String target_password = args[7];  
+				String target_protocol=args[9];
+
                 FedoraAPIA targetRepoAPIA=
                         APIAStubFactory.getStub(target_protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[6],
-                                                args[7]);
+												target_host,
+                                                Integer.parseInt(target_port),
+												target_user,
+												target_password);
                 FedoraAPIM targetRepoAPIM=
                         APIMStubFactory.getStub(target_protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[6],
-                                                args[7]);
+												target_host,
+                                                Integer.parseInt(target_port),
+												target_user,
+												target_password);
                 
                 // First, determine the default export format of the source repo.
                 // For backward compatibility with pre-2.0 repositories, 
@@ -539,9 +575,8 @@ public class Ingest {
                 
                 if (args[4].indexOf(":")!=-1) {
                     // single object
-                    String successfulPID = Ingest.oneFromRepository(hp[0],
-                                                       Integer.parseInt(hp[1]),
-                                                       sourceRepoAPIA,
+					String successfulPID = Ingest.oneFromRepository(
+													   sourceRepoAPIA,
                                                        sourceRepoAPIM,
                                                        sourceExportFormat,
                                                        args[4],
@@ -555,15 +590,15 @@ public class Ingest {
                     }
                 } else {
                     // multi-object
-                    hp=args[1].split(":");
+                    //hp=args[1].split(":");
 					logRootName="ingest-from-repository";
 					logFile = IngestLogger.newLogFile(logRootName);
 					log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
 					IngestLogger.openLog(log, logRootName);
                     String[] pids=Ingest.multiFromRepository(
                     								  source_protocol,
-                    								  hp[0],
-                                                      Integer.parseInt(hp[1]),
+                    								  source_host,
+                                                      Integer.parseInt(source_port),
                                                       sourceRepoAPIA,
                                                       sourceRepoAPIM,
                                                       sourceExportFormat,
