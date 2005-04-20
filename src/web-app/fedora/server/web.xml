@@ -422,7 +422,8 @@
 		</auth-constraint>
 	</security-constraint>		
 	
-	<servlet>
+	<!--servlet MAP THIS OUT; I DON'T THINK IT'S NEEDED ANY LONGER; DELETE THIS COMMENT BEFORE 2.1 RELEASE, 
+	ALSO DELETE LOGINSERVLET.JAVA, ITSELF.
 		<servlet-name>LoginServlet</servlet-name>
 		<display-name>Prompts the user for login info</display-name>
 		<servlet-class>
@@ -432,7 +433,7 @@
 	<servlet-mapping>
 		<servlet-name>LoginServlet</servlet-name>
 		<url-pattern>/login</url-pattern>
-	</servlet-mapping>
+	</servlet-mapping-->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
