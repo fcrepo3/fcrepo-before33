@@ -208,18 +208,21 @@ public class FedoraAccessServlet extends HttpServlet
                 if (versDateTime == null) {
                     String message = "ObjectProfile Request Syntax Error: DateTime value "
                       + "of \"" + URIArray[6] + "\" is not a valid DateTime format. "
-                      + " ----- The expected format for DateTime is \""
+                      + " <br></br> The expected format for DateTime is \""
                       + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-                      + " ----- The expected syntax for "
+                      + " <br></br> The expected syntax for "
                       + "ObjectProfile requests is: \""
                       + URIArray[0] + "//" + URIArray[2] + "/"
                       + URIArray[3] + "/" + URIArray[4]
                       + "/PID[/dateTime] \"  ."
-                      + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                      + " <br></br> Submitted request was: \"" + requestURI + "\"  .  ";
                     logger.logWarning(message);
+                    throw new ServletException("from FedoraAccessServlet" + message);
+                    /* commented out for exception.jsp test
                     response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                     return;
+                    commented out for exception.jsp test */
                 }
                 asOfDateTime=versDateTime;
                 isGetObjectProfileRequest = true;
@@ -240,17 +243,20 @@ public class FedoraAccessServlet extends HttpServlet
             if (versDateTime == null) {
                 String message = "GetDatastreamDissemination Request Syntax Error: DateTime value "
                     + "of \"" + URIArray[7] + "\" is not a valid DateTime format. "
-                    + " ----- The expected format for DateTime is \""
+                    + " <br></br> The expected format for DateTime is \""
                     + "YYYY-MM-DDTHH:MM:SS.SSSZ\".  "
-                    + " ----- The expected syntax for GetDatastreamDissemination requests is: \""
+                    + " <br></br> The expected syntax for GetDatastreamDissemination requests is: \""
                     + URIArray[0] + "//" + URIArray[2] + "/"
                     + URIArray[3] + "/" + URIArray[4]
                     + "/PID/dsID[/dateTime] \"  "
-                    + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                    + " <br></br> Submitted request was: \"" + requestURI + "\"  .  ";
                 logger.logWarning(message);
+                              throw new ServletException("from FedoraAccessServlet" + message);
+              /* commented out for exception.jsp test
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
                 return;
+              commented out for exception.jsp test */                
             }
             asOfDateTime=versDateTime;
             isGetDatastreamDisseminationRequest = true;
@@ -262,17 +268,20 @@ public class FedoraAccessServlet extends HttpServlet
           if (versDateTime == null) {
               String message = "Dissemination Request Syntax Error: DateTime value "
                   + "of \"" + URIArray[8] + "\" is not a valid DateTime format. "
-                  + " ----- The expected format for DateTime is \""
+                  + " <br></br> The expected format for DateTime is \""
                   + "YYYY-MM-DDTHH:MM:SS.SSS\".  "
-                  + " ----- The expected syntax for Dissemination requests is: \""
+                  + " <br></br> The expected syntax for Dissemination requests is: \""
                   + URIArray[0] + "//" + URIArray[2] + "/"
                   + URIArray[3] + "/" + URIArray[4]
                   + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-                  + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+                  + " <br></br> Submitted request was: \"" + requestURI + "\"  .  ";
               logger.logWarning(message);
+              throw new ServletException("from FedoraAccessServlet" + message);
+              /* commented out for exception.jsp test
               response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
               response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
               return;
+              commented out for exception.jsp test */
           }
           asOfDateTime=versDateTime;
           isGetDisseminationRequest = true;
@@ -283,11 +292,14 @@ public class FedoraAccessServlet extends HttpServlet
             + URIArray[0] + "//" + URIArray[2] + "/"
             + URIArray[3] + "/" + URIArray[4]
             + "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
-            + " ----- Submitted request was: \"" + requestURI + "\"  .  ";
+            + " <br></br> Submitted request was: \"" + requestURI + "\"  .  ";
         logger.logWarning(message);
+        throw new ServletException("from FedoraAccessServlet" + message);
+        /* commented out for exception.jsp test
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
         return;
+        commented out for exception.jsp test */
       }
     } else
     {
@@ -387,9 +399,12 @@ public class FedoraAccessServlet extends HttpServlet
             + "  Input Request was: \"" + request.getRequestURL().toString();
 
         //logger.logWarning(message);
+        /* commented out for exception.jsp test
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+        commented out for exception.jsp test */
         th.printStackTrace();
+        throw new ServletException("from FedoraAccessServlet", th);
     }
   }
 
