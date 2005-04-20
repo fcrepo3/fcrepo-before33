@@ -158,6 +158,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 			String[] altIDs, //how to handle altIDs?
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered DefaultAuthorization.enforceAddDatastream");
 		String target = Constants.ACTION.ADD_DATASTREAM.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -176,10 +178,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes); 
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceAddDatastream");
+	}
 	}
 	
 	public final void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState)
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered DefaultAuthorization.enforceAddDisseminator");		
 		String target = Constants.ACTION.ADD_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -195,10 +202,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceAddDisseminator");
+	}
 	}
 		
 	public final void enforceExportObject(Context context, String pid, String format, String exportContext, String exportEncoding)
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceExportObject");		
 		String target = Constants.ACTION.EXPORT_OBJECT.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -214,11 +226,16 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setActionAttributes(actionAttributes);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}			
+	} finally {
+        getServer().logFinest("Exiting enforceExportObject");
+	}
+	}
 	
 	
 	public final void enforceGetDisseminatorHistory(Context context, String pid, String disseminatorId) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetDisseminatorHistory");		
 		String target = Constants.ACTION.GET_DISSEMINATOR_HISTORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -233,10 +250,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetDisseminatorHistory");
+	}
+	}
 
 	public final void enforceGetNextPid(Context context, String namespace, int nNewPids) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetNextPid");		
 		String target = Constants.ACTION.GET_NEXT_PID.uri;	
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -251,10 +273,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", namespace, context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetNextPid");
+	}
+	}
 
 	public final void enforceGetDatastream(Context context, String pid, String datastreamId, Date asOfDateTime) 
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceGetDatastream");		
 		String target = Constants.ACTION.GET_DATASTREAM.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -269,10 +296,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetDatastream");
+	}
 	}
 	
 	public final void enforceGetDatastreamHistory(Context context, String pid, String datastreamId) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetDatastreamHistory");		
 		String target = Constants.ACTION.GET_DATASTREAM_HISTORY.uri;		
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -286,7 +318,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetDatastreamHistory");
+	}
+	}
 	
 	private final String ensureDate (Date date, Context context) throws AuthzOperationalException {
 		if (date == null) {
@@ -303,6 +338,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	
 	public final void enforceGetDatastreams(Context context, String pid, Date asOfDate, String datastreamState) 
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceGetDatastreams");		
 		String target = Constants.ACTION.GET_DATASTREAMS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -324,10 +361,15 @@ public class DefaultAuthorization extends Module implements Authorization {
         System.err.println("in enforceGetDatastreams, after setting resourceAttributes");
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
         System.err.println("in enforceGetDatastreams, after calling global enforce");
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetDatastreams");
+	}
+	}
 
 	public final void enforceGetDisseminator(Context context, String pid, String disseminatorPid, Date asOfDate) 
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceGetDisseminator");		
 		String target = Constants.ACTION.GET_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -343,10 +385,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);		
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetDisseminator");
+	}
+	}
 	
 	public final void enforceGetDisseminators(Context context, String pid, Date asOfDate, String disseminatorState) 
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceGetDisseminators");		
 		String target = Constants.ACTION.GET_DISSEMINATORS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -361,19 +408,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetDisseminators");
+	}
 	}
 	
 	public final void enforceGetObjectProperties(Context context, String pid) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetObjectProperties");		
 		String target = Constants.ACTION.GET_OBJECT_PROPERTIES.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceGetObjectProperties");
+	}
+	}
 	
 	public final void enforceGetObjectXML(Context context, String pid, String objectXmlEncoding) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetObjectXML");		
 		String target = Constants.ACTION.GET_OBJECT_XML.uri;
 		log("enforcing " + target);
 		context.setResourceAttributes(null);
@@ -387,10 +444,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setActionAttributes(actionAttributes);		
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}		
+	} finally {
+        getServer().logFinest("Exiting enforceGetObjectXML");
+	}
+	}
 	
 	public final void enforceIngestObject(Context context, String pid, String format, String ingestEncoding)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceIngestObject");		
 		String target = Constants.ACTION.INGEST_OBJECT.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -405,10 +467,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		context.setActionAttributes(actionAttributes);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceIngestObject");
+	}
 	}
 	
 	public final void enforceListObjectInFieldSearchResults(Context context, String pid) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceListObjectInFieldSearchResults");		
 		String target = Constants.ACTION.LIST_OBJECT_IN_FIELD_SEARCH_RESULTS.uri;
 		log("enforcing " + target);
 		if (enforceListObjectInFieldSearchResults) {
@@ -416,10 +483,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 			context.setResourceAttributes(null);
 			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceListObjectInFieldSearchResults");
+	}
+	}
 	
 	public final void enforceListObjectInResourceIndexResults(Context context, String pid) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceListObjectInResourceIndexResults");		
 		String target = Constants.ACTION.LIST_OBJECT_IN_RESOURCE_INDEX_RESULTS.uri;
 		log("enforcing " + target);
 		if (enforceListObjectInResourceIndexResults) {
@@ -427,12 +499,17 @@ public class DefaultAuthorization extends Module implements Authorization {
 			context.setResourceAttributes(null);
 			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
 		}
+	} finally {
+        getServer().logFinest("Exiting enforceListObjectInResourceIndexResults");
+	}
 	}
 
 	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, 
 			String[] altIDs, // how to handle? 
 			String datastreamNewMimeType, String datastreamNewFormatURI, String datastreamNewLocation, String datastreamNewState) //x
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceModifyDatastreamByReference");		
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_REFERENCE.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -458,12 +535,17 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceModifyDatastreamByReference");
+	}
 	}
 	
 	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, 
 			String[] altIDs, // how to handle?
 			String newDatastreamMimeType, String newDatastreamFormatURI, String newDatastreamState)
 	throws AuthzException { 
+	try {
+        getServer().logFinest("Entered enforceModifyDatastreamByValue");		
 		String target = Constants.ACTION.MODIFY_DATASTREAM_BY_VALUE.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -487,10 +569,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceModifyDatastreamByValue");
+	}
+	}
 
 	public final void enforceModifyDisseminator(Context context, String pid, String disseminatorPid, String bmechNewPid, String disseminatorNewState) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceModifyDisseminator");		
 		String target = Constants.ACTION.MODIFY_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -508,10 +595,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceModifyDisseminator");
+	}
+	}
 	
 	public final void enforceModifyObject(Context context, String pid, String objectNewState) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceModifyObject");		
 		String target = Constants.ACTION.MODIFY_OBJECT.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -525,10 +617,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceModifyObject");
+	}
 	}
 
 	public final void enforcePurgeDatastream(Context context, String pid, String datastreamId, Date endDT) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforcePurgeDatastream");		
 		String target = Constants.ACTION.PURGE_DATASTREAM.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -553,10 +650,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforcePurgeDatastream");
+	}
 	}
 
 	public final void enforcePurgeDisseminator(Context context, String pid, String disseminatorId, Date endDT)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforcePurgeDisseminator");		
 		String target = Constants.ACTION.PURGE_DISSEMINATOR.uri;
 		log("enforcing " + target);
 		MultiValueMap actionAttributes = new MultiValueMap();
@@ -578,19 +680,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforcePurgeDisseminator");
+	}
+	}
 	
 	public final void enforcePurgeObject(Context context, String pid) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforcePurgeObject");		
 		String target = Constants.ACTION.PURGE_OBJECT.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforcePurgeObject");
+	}
+	}
 
 	public final void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceSetDatastreamState");		
 		String target = Constants.ACTION.SET_DATASTREAM_STATE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -605,10 +717,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceSetDatastreamState");
+	}
 	}
 	
 	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceSetDisseminatorState");		
 		String target = Constants.ACTION.SET_DISSEMINATOR_STATE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -624,38 +741,58 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);	
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceSetDisseminatorState");
+	}
 	}
 	
 	public void enforceDescribeRepository(Context context) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceDescribeRepository");		
 		String target = Constants.ACTION.DESCRIBE_REPOSITORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, "", "", context);
+	} finally {
+        getServer().logFinest("Exiting enforceDescribeRepository");
+	}
 	}
 
 	public void enforceFindObjects(Context context) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceFindObjects");		
 		String target = Constants.ACTION.FIND_OBJECTS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		System.err.println("enforceFindObjects, subject (from context)=" + context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri));
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, "", "", context);
+	} finally {
+        getServer().logFinest("Exiting enforceFindObjects");
+	}
 	}
 	
 	public void enforceRIFindObjects(Context context) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceRIFindObjects");		
 		String target = Constants.ACTION.RI_FIND_OBJECTS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, "", "", context);
+	} finally {
+        getServer().logFinest("Exiting enforceRIFindObjects");
+	}
 	}
 
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetDatastreamDissemination");		
 		String target = Constants.ACTION.GET_DATASTREAM_DISSEMINATION.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -670,10 +807,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);			
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetDatastreamDissemination");
+	}
 	}
 	
 	public void enforceGetDissemination(Context context, String pid, String bDefPid, String methodName, Date asOfDate) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetDissemination");		
 		String target = Constants.ACTION.GET_DISSEMINATION.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -690,19 +832,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);			
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetDissemination");
+	}
 	}
 
 	public void enforceGetObjectHistory(Context context, String pid) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetObjectHistory");		
 		String target = Constants.ACTION.GET_OBJECT_HISTORY.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetObjectHistory");
+	}
 	}
 
 	public void enforceGetObjectProfile(Context context, String pid, Date asOfDate) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceGetObjectProfile");		
 		String target = Constants.ACTION.GET_OBJECT_PROFILE.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -716,10 +868,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceGetObjectProfile");
+	}
 	}
 
 	public void enforceListDatastreams(Context context, String pid, Date asOfDate) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceListDatastreams");		
 		String target = Constants.ACTION.LIST_DATASTREAMS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -733,10 +890,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceListDatastreams");
+	}
 	}
 
 	public void enforceListMethods(Context context, String pid, Date asOfDate) 
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceListMethods");		
 		String target = Constants.ACTION.LIST_METHODS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
@@ -750,52 +912,80 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		context.setResourceAttributes(resourceAttributes);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, pid, extractNamespace(pid), context);
+	} finally {
+        getServer().logFinest("Exiting enforceListMethods");
+	}
 	}
 	
 	public void enforceAdminPing(Context context)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceAdminPing");		
 		String target = Constants.ACTION.ADMIN_PING.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", "", context);
+	} finally {
+        getServer().logFinest("Exiting enforceAdminPing");
+	}
 	}
 	
 	public void enforceServerShutdown(Context context)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceServerShutdown");		
 		String target = Constants.ACTION.SERVER_SHUTDOWN.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+	} finally {
+        getServer().logFinest("Exiting enforceServerShutdown");
+	}
 	}
 	
 	public void enforceServerStatus(Context context)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceServerStatus");		
 		String target = Constants.ACTION.SERVER_STATUS.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceServerStatus");
+	}
+	}
 
 	public void enforceOAIRespond(Context context)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceOAIRespond");		
 		String target = Constants.ACTION.OAI.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceOAIRespond");
+	}
+	}
 	
 	public void enforceUpload(Context context)
 	throws AuthzException {
+	try {
+        getServer().logFinest("Entered enforceUpload");		
 		String target = Constants.ACTION.UPLOAD.uri;
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
-	}	
+	} finally {
+        getServer().logFinest("Exiting enforceUpload");
+	}
+	}
 
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);
