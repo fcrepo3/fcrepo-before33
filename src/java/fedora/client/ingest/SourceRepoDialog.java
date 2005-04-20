@@ -89,11 +89,9 @@ public class SourceRepoDialog
                     String[] hp=m_serverField.getText().split(":");
                     if (hp.length==2) {
                         try {
-                            String host=hp[0];
-                            m_host=host;
                             m_protocol=m_protocolField.getText();
-                            int port=Integer.parseInt(hp[1]);
-                            m_port=port;
+							m_host=hp[0];
+							m_port=Integer.parseInt(hp[1]);
                             
                             // Get SOAP stubs for the source repository.
                             // NOTE! For backward compatibility with Fedora 2.0
@@ -106,27 +104,32 @@ public class SourceRepoDialog
                             try {
                             	//System.out.println("Getting stubs with default path...");
 								m_apia=APIAStubFactory.getStub(m_protocol,
-															   host, 
-															   port, 
+															   m_host, 
+															   m_port, 
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
-								m_repositoryInfo=m_apia.describeRepository();
+								
 								m_apim=APIMStubFactory.getStub(m_protocol,
-															   host, 
-															   port, 
+															   m_host, 
+															   m_port, 
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
+															   
+								// try a request to see if things work ok
+								m_repositoryInfo=m_apia.describeRepository();
+								
 							} catch (Exception e) {
+								// If request on default stub fails, try the old URL path for the service
 								//System.out.println("Fallback: getting stubs with OLD path...");
 								m_apia=APIAStubFactory.getStubAltPath(m_protocol,
-															   host, 
-															   port,
+															   m_host, 
+															   m_port,
 															   "/fedora/access/soap", 
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
 								m_apim=APIMStubFactory.getStubAltPath(m_protocol,
-															   host, 
-															   port,
+															   m_host, 
+															   m_port,
 															   "/fedora/management/soap",  
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
@@ -135,7 +138,7 @@ public class SourceRepoDialog
                             try {
                                 m_repositoryInfo=m_apia.describeRepository();
                                 m_userInfo=m_apim.describeUser(m_usernameField.getText());
-                                s_lastServer=host + ":" + port;
+                                s_lastServer=m_host + ":" + m_port;
 								s_lastProtocol=m_protocol;
                                 s_lastUsername=m_usernameField.getText();
                                 s_lastPassword=new String(m_passwordField.getPassword());
@@ -152,14 +155,14 @@ public class SourceRepoDialog
                                 }
                                 if (e.getMessage().indexOf("java.net")!=-1) {
                                 	Administrator.showErrorDialog(Administrator.getDesktop(), "Connection Error", 
-                                			"Can't connect to " + m_protocol + "://" + host + ":" + port, e);
+                                			"Can't connect to " + m_protocol + "://" + m_host + ":" + m_port, e);
                                     retry=true;
                                 }
                                 if (!retry) {
                                     // the exception must have been the result
                                     // of an unimplemented method on a prior
                                     // version of fedora, which is ok.
-                                    s_lastServer=host + ":" + port;
+                                    s_lastServer=m_host + ":" + m_port;
 									s_lastProtocol=m_protocol;
                                     s_lastUsername=m_usernameField.getText();
                                     s_lastPassword=new String(m_passwordField.getPassword());
