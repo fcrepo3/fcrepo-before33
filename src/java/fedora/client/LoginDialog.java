@@ -276,8 +276,53 @@ public class LoginDialog
         // sets Administrator.APIA/M if success, throws Exception if fails.
         public static void tryLogin(String protocol, String host, int port, String user, String pass) 
                 throws Exception {
-            Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-            Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+                	
+			// Get SOAP stubs for the source repository.
+			// NOTE! For backward compatibility with Fedora 2.0
+			// we will immediately try a describe repository
+			// request on the API-A stub to see if it works.  If it
+			// fails, we will try obtaining a stub with the OLD
+			// SOAP URL syntax.  This is because the path in the 
+			// SOAP URLs were changed in Fedora 2.1 to be more standard.
+			RepositoryInfo info = null;        
+			try {
+				//System.out.println("Getting stubs with default path...");
+            	Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+            	Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+				info=Administrator.APIA.describeRepository();
+			} catch (Exception e) {
+				// As a fallback, try the old SOAP URL syntax
+				// (different path in Fedora 2.0 and prior releases).
+				//System.out.println("Fallback: getting stubs with OLD path...");
+				Administrator.APIA=APIAStubFactory.getStubAltPath(
+											   	protocol,
+											   	host, 
+											   	port,
+											   	"/fedora/access/soap", 
+											   	user,
+											   	pass);
+				Administrator.APIM=APIMStubFactory.getStubAltPath(
+												protocol,
+											   	host, 
+											   	port,
+											   	"/fedora/management/soap",  
+											   	user,
+											   	pass);
+				try {
+					info=Administrator.APIA.describeRepository();
+				} catch (Exception e2) {
+					throw new IOException("Server connection failed on describeRepository for target: "
+							+ protocol + "://" + host + ":" + port + " (with alternate path).");
+				}
+				//System.out.println("server version = " + info.getRepositoryVersion());
+				//System.out.println("client version = " + Administrator.VERSION);
+				if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
+					throw new IOException("Server is version "
+							+ info.getRepositoryVersion() + ", but this"
+							+ " client only works with version" +  Administrator.VERSION);
+				}
+			}
+			
            /*
             Enumeration enum = AxisProperties.propertyNames();
         	System.err.println("1 are there any AxisProperties?=" + enum.hasMoreElements());
@@ -295,12 +340,7 @@ public class LoginDialog
             	System.err.println("another axis property = " + name);
             }
 		*/  
-            RepositoryInfo info=Administrator.APIA.describeRepository();
-            if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
-                throw new IOException("Server is version "
-                        + info.getRepositoryVersion() + ", but this"
-                        + " client only works with version" +  Administrator.VERSION);
-            }
+
 /*
             System.setProperty("axis.socketSecureFactory", 
             		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
