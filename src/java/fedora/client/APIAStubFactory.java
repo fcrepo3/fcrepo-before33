@@ -149,10 +149,6 @@ public abstract class APIAStubFactory {
     			path="/" + path;
     		}
 			nurl.append(path);
-		}
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println("OLD APIA Service URL = " + ourl);
-			System.out.println("NEW APIA Service URL = " + nurl);
 		}	
 	
 		return new URL(nurl.toString());

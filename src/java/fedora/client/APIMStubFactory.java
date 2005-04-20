@@ -148,10 +148,6 @@ public abstract class APIMStubFactory {
     			path="/" + path;
     		}
 			nurl.append(path);
-		}
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println("OLD APIM Service URL = " + ourl);
-			System.out.println("NEW APIM Service URL = " + nurl);
 		}	
 
 		return new URL(nurl.toString());
