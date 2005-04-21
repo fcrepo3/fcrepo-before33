@@ -60,7 +60,7 @@ public class Downloader {
      */
     public Downloader(String host, int port, String user, String pass)
             throws IOException {
-        m_fedoraUrlStart="http://" + host + ":" + port + "/fedora/get/";
+        m_fedoraUrlStart=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/get/";
         m_host=host;
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
