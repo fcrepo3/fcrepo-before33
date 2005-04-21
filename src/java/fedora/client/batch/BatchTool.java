@@ -100,7 +100,6 @@ public class BatchTool {
 			String pidsFormat = miscProperties.getProperty(BatchTool.PIDSFORMAT);
 			String objectFormat = miscProperties.getProperty(BatchTool.OBJECTFORMAT);
 			PrintStream out = new PrintStream(new FileOutputStream(pidsPath)); //= System.err;
-			out.println("template: "+objectFormat);
 
 //System.out.println("pidsFormat = [" + pidsFormat + "]");
 			if (pidsFormat.equals("xml")) {

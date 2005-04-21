@@ -268,6 +268,7 @@ public class BatchBuildIngestGUI
 	    properties.setProperty("server-port",port);
 	    properties.setProperty("username",user);
 	    properties.setProperty("password",pass);
+	    properties.setProperty("server-protocol",Administrator.getProtocol());
 	    //properties.setProperty("object-format",m_foxmlMap.isSelected()? "foxml1.0" : "metslikefedora1");
 	    
 	    // Verify format of template file to see if it is a METS or FOXML template
@@ -296,7 +297,6 @@ public class BatchBuildIngestGUI
 	  	            JOptionPane.OK_OPTION);
 	  	    throw new Exception("Unknown object format in template file.");	        
 	    }	    
-      
 	    // Set object format property based on template file format.
 	    // Query user to be sure they have selected the correct template file.
 	    properties.setProperty("object-format",objectFormat);
@@ -325,7 +325,7 @@ public class BatchBuildIngestGUI
 					}
 				    batchThread.setProperties(properties);
 				    batchThread.start();
-			        }
+			 }
      }
 	} catch (Exception e) {
 		System.err.println("BatchBuildIngestGUI" + " general error " + e.getMessage());

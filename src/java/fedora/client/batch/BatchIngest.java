@@ -74,6 +74,10 @@ class BatchIngest {
 				System.err.println("template format required");
 				throw new Exception();
 		}
+		if (! BatchTool.argOK(protocol)) {
+				System.err.println("server protocol required");
+				throw new Exception();
+		}		
 
 	}
 
