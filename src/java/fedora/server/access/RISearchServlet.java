@@ -8,9 +8,6 @@ import org.trippi.server.http.*;
 
 import fedora.server.*;
 
-/**
- *
- */
 public class RISearchServlet extends TrippiServlet {
 
     public TriplestoreReader getReader() throws ServletException {
