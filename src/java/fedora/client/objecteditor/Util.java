@@ -110,14 +110,20 @@ public abstract class Util {
             throws IOException {
         HashMap hash=new HashMap();
         hash.put("itemID", "DSINPUTSPEC");
-        return DatastreamInputSpec.parse(
+        /*return DatastreamInputSpec.parse(
                 Administrator.DOWNLOADER.getDissemination(
                         bMechPID,
                         "fedora-system:3",
                         "getItem",
                         hash,
                         null)
-                );
+                );*/
+        return DatastreamInputSpec.parse(
+                Administrator.DOWNLOADER.getDatastreamDissemination(
+                        bMechPID,
+                        "DSINPUTSPEC",
+                        null)
+                );        
 
     }
 
@@ -129,12 +135,16 @@ public abstract class Util {
             throws IOException {
         HashMap parms=new HashMap();
         parms.put("itemID", "METHODMAP");
-        return MethodDefinition.parse(
+        /*return MethodDefinition.parse(
                 Administrator.DOWNLOADER.getDissemination(bDefPID, 
                                                           "fedora-system:3",
                                                           "getItem", 
                                                           parms, 
-                                                          null));
+                                                          null));*/
+        return MethodDefinition.parse(
+                Administrator.DOWNLOADER.getDatastreamDissemination(bDefPID, 
+                                                          "METHODMAP", 
+                                                          null));        
     }
 
     /**
