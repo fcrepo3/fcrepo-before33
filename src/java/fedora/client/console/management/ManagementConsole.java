@@ -73,13 +73,13 @@ public class ManagementConsole
         JPanel hostPanel=new JPanel();
         hostPanel.setLayout(new BorderLayout());
         hostPanel.add(new JLabel("Host : "), BorderLayout.WEST);
-        m_hostTextField=new JTextField("localhost", 13);
+        m_hostTextField=new JTextField(Administrator.getHost(), 13);
         hostPanel.add(m_hostTextField, BorderLayout.EAST);
 
         JPanel portPanel=new JPanel();
         portPanel.setLayout(new BorderLayout());
         portPanel.add(new JLabel("  Port : "), BorderLayout.WEST);
-        m_portTextField=new JTextField("8080", 4);
+        m_portTextField=new JTextField(new Integer(Administrator.getPort()).toString(), 4);
         portPanel.add(m_portTextField, BorderLayout.EAST);
 
         hostPortPanel.add(hostPanel, BorderLayout.WEST);
@@ -151,7 +151,7 @@ public class ManagementConsole
         try {
             URL ourl=new URL(m_locator.getFedoraAPIMPortSOAPHTTPAddress());
             StringBuffer nurl=new StringBuffer();
-            nurl.append("http://");
+            nurl.append(Administrator.getProtocol()+"://");
             nurl.append(hostString);
             nurl.append(':');
             nurl.append(portString);
