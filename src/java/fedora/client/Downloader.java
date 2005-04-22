@@ -71,14 +71,22 @@ public class Downloader {
         return get(buf.toString());
     }
 
-    public void getDissemination(String pid, String bDef, String method, 
+    /*public void getDissemination(String pid, String bDef, String method, 
             Map parms, String asOfDateTime, OutputStream out) 
             throws IOException {
         InputStream in=getDissemination(pid, bDef, method, parms, asOfDateTime);
         StreamUtility.pipeStream(in, out, 4096);
-    }
+    }*/
 
-    public InputStream getDissemination(String pid, String bDef, String method, 
+    
+    public void getDatastreamDissemination(String pid, String dsId, 
+            String asOfDateTime, OutputStream out) 
+            throws IOException {
+        InputStream in=getDatastreamDissemination(pid, dsId, asOfDateTime);
+        StreamUtility.pipeStream(in, out, 4096);
+    }    
+    
+    /*public InputStream getDissemination(String pid, String bDef, String method, 
             Map parms, String asOfDateTime) 
             throws IOException {
         StringBuffer buf=new StringBuffer();
@@ -113,9 +121,27 @@ public class Downloader {
                 i++;
             }
         }
+        System.err.println("URL: "+buf.toString());
         return get(buf.toString());
-    }
+    }*/
 
+    
+    public InputStream getDatastreamDissemination(String pid, String dsId, 
+            String asOfDateTime) 
+            throws IOException {
+        StringBuffer buf=new StringBuffer();
+        buf.append(m_fedoraUrlStart);
+        buf.append(pid);
+        buf.append('/');
+        buf.append(dsId);
+        if (asOfDateTime!=null) {
+            buf.append('/');
+            buf.append(asOfDateTime);
+        }
+        System.err.println("URL: "+buf.toString());
+        return get(buf.toString());
+    }    
+    
     /**
      * Get data via HTTP and write it to an OutputStream, following redirects, 
      * and supplying credentials if the host is the Fedora server.
