@@ -278,6 +278,15 @@ public class FedoraAccessSoapServlet extends HttpServlet
 
   /** Port number on which the Fedora server is running. **/
   private static String fedoraServerPort = null;
+  
+  /** Authenticated username to connect to Fedora server **/
+  private static String fedoraServerUsername = null;
+  
+  /** Authenitcated user password to connecto to Fedora server **/
+  private static String fedoraServerPassword = null;
+  
+  /** Protocol to use in connecting to Fedora server **/
+  private static String fedoraServerProtocol;
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -304,6 +313,16 @@ public class FedoraAccessSoapServlet extends HttpServlet
     boolean xml = false;
     long servletStartTime = new Date().getTime();
     h_userParms = new Hashtable();
+    String requestURL = request.getRequestURL().toString();
+    String requestProtocol = requestURL.substring(0,requestURL.indexOf(":"));
+    if (!fedoraServerProtocol.equals((request.getRequestURL().toString()).substring(0,requestURL.indexOf(":"))) ) {
+        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "The protocol specified in the SoapClient "
+            + "properties file specifies the Fedora server protocol is: \""+fedoraServerProtocol+"\". The protocol "
+            + "of this request is: \""+(request.getRequestURL().toString()).substring(0,requestURL.indexOf(":"))+"\". "
+            + "The protocol of the initiating request must match that specified for the Fedora server. Either change "
+            + "the protocol of the initiating request or change the protocol specified in the SoapClient properties "
+            + "file so that the protocols agree.");
+    }
 
     // Get servlet input parameters.
     Enumeration URLParms = request.getParameterNames();
@@ -1522,6 +1541,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
   {
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);    
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
     call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_HISTORY) );
     String[] objectHistory = (String[]) call.invoke(new Object[] { PID });
@@ -1550,6 +1571,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     MIMETypedStream dissemination = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);    
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
     call.setOperationName(new QName(FEDORA_API_URI, GET_DISSEMINATION) );
     QName qn =  new QName(FEDORA_TYPE_URI, "MIMETypedStream");
@@ -1577,6 +1600,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
      MIMETypedStream dsDissemination = null;
      Service service = new Service();
      Call call = (Call) service.createCall();
+     call.setUsername(fedoraServerUsername);
+     call.setPassword(fedoraServerPassword);     
      call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
      call.setOperationName(new QName(FEDORA_API_URI, GET_DATASTREAM_DISSEMINATION) );
      QName qn =  new QName(FEDORA_TYPE_URI, "MIMETypedStream");
@@ -1609,6 +1634,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     ObjectMethodsDef[] objMethDefArray = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);    
     call.setOperationName(new QName(FEDORA_API_URI, LIST_METHODS) );
     QName qn = new QName(FEDORA_TYPE_URI, "ObjectMethodsDef");
     QName qn2 = new QName(FEDORA_TYPE_URI, "MethodParmDef");
@@ -1644,6 +1671,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     DatastreamDef[] datastreamDefArray = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);    
     call.setOperationName(new QName(FEDORA_API_URI, LIST_DATASTREAMS) );
     QName qn = new QName(FEDORA_TYPE_URI, "DatastreamDef");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1675,6 +1704,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     ObjectProfile objProfile = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);    
     call.setOperationName(new QName(FEDORA_API_URI, GET_OBJECT_PROFILE) );
     QName qn = new QName(FEDORA_TYPE_URI, "ObjectProfile");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1703,6 +1734,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
     RepositoryInfo repositoryInfo = null;
     Service service = new Service();
     Call call = (Call) service.createCall();
+    call.setUsername(fedoraServerUsername);
+    call.setPassword(fedoraServerPassword);
     call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
     QName qn = new QName(FEDORA_TYPE_URI, "RepositoryInfo");
     call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1736,6 +1769,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
       FieldSearchResult fieldSearchResult = null;
       Service service = new Service();
       Call call = (Call) service.createCall();
+      call.setUsername(fedoraServerUsername);
+      call.setPassword(fedoraServerPassword);      
       call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
       QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
       QName qn2 = new QName(FEDORA_TYPE_URI, "FieldSearchQuery");
@@ -1771,6 +1806,8 @@ public class FedoraAccessSoapServlet extends HttpServlet
      FieldSearchResult fieldSearchResult = null;
      Service service = new Service();
      Call call = (Call) service.createCall();
+     call.setUsername(fedoraServerUsername);
+     call.setPassword(fedoraServerPassword);     
      call.setOperationName(new QName(FEDORA_API_URI, DESCRIBE_REPOSITORY) );
      QName qn = new QName(FEDORA_TYPE_URI, "FieldSearchResult");
      call.setTargetEndpointAddress( new URL(FEDORA_ACCESS_ENDPOINT) );
@@ -1803,18 +1840,25 @@ public class FedoraAccessSoapServlet extends HttpServlet
       FEDORA_ACCESS_ENDPOINT = p.getProperty("fedoraEndpoint");
       SOAP_CLIENT_SERVLET_PATH = p.getProperty("soapClientServletPath");
       METHOD_PARM_RESOLVER_SERVLET_PATH = p.getProperty("soapClientMethodParmResolverServletPath");
+      fedoraServerUsername = p.getProperty("fedoraServerUsername");
+      fedoraServerPassword = p.getProperty("fedoraServerPassword");
       System.out.println("FedoraEndpoint: " + FEDORA_ACCESS_ENDPOINT);
       System.out.println("soapClientServletPath: " + SOAP_CLIENT_SERVLET_PATH);
       System.out.println("soapClientMethodParmResolverServletPath: " + METHOD_PARM_RESOLVER_SERVLET_PATH);
+      System.out.println("fedoraServerUsername: " + fedoraServerUsername);
+      System.out.println("fedoraServerPassword: " + fedoraServerPassword);
       // Locations of the internal Fedora XML schemas are local to the Fedora server so it is
       // the Fedora server hostname and port number are extracted from the
       // FEDORA_ACCESS_ENDPOINT string for easier access within the servlet.
       int i = FEDORA_ACCESS_ENDPOINT.indexOf(":",8);
       int j = FEDORA_ACCESS_ENDPOINT.indexOf("/",i);
-      fedoraServerHost = FEDORA_ACCESS_ENDPOINT.substring(7,i);
+      int k = FEDORA_ACCESS_ENDPOINT.indexOf(":");
+      fedoraServerHost = FEDORA_ACCESS_ENDPOINT.substring(k+3,i);
       fedoraServerPort = FEDORA_ACCESS_ENDPOINT.substring(i+1,j);
+      fedoraServerProtocol = FEDORA_ACCESS_ENDPOINT.substring(0,k);
       System.out.println("fedoraServerHost: "+fedoraServerHost);
       System.out.println("fedoraServerPort: "+fedoraServerPort);
+      System.out.println("fedoraServerProtocol: "+fedoraServerProtocol);
 
     } catch (Throwable th)
     {
