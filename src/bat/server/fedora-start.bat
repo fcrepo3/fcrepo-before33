@@ -52,7 +52,7 @@ if errorlevel 1 goto deployError
 if errorlevel 1 goto deployError
 
 echo Initializing Fedora Server instance...
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\webapps\fedora\WEB-INF\lib\commons-httpclient-2.0.1.jar;%TC%\webapps\fedora\WEB-INF\lib\commons-logging.jar;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.ServerUtility startup
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\webapps\fedora\WEB-INF\lib\commons-httpclient-2.0.1.jar;%TC%\webapps\fedora\WEB-INF\lib\commons-logging.jar;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.utilities.ServerUtility startup
 
 echo Finished.  To stop the server, use fedora-stop.
 goto finish

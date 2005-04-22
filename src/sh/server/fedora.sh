@@ -91,7 +91,7 @@ start() {
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerUtility startup)
+				fedora.server.utilities.ServerUtility startup)
 	restoreJavaHome
 }
 
@@ -153,7 +153,7 @@ debug() {
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerController startup)
+				fedora.server.utilities.ServerUtility startup)
     echo "Starting jdb..."
     (exec "$JAVA_HOME/bin/jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
 	restoreJavaHome
@@ -163,7 +163,7 @@ stop() {
 	echo "Stopping the Fedora Server..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 	                          -Dfedora.home="$FEDORA_HOME" \
-	                          fedora.server.ServerController shutdown)
+	                          fedora.server.utilities.ServerUtility shutdown)
 
 	# Stop Tomcat
     (exec "$JAVA" -cp "$TC"/bin/bootstrap.jar \
