@@ -3,7 +3,6 @@ package fedora.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Properties;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,9 +13,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import fedora.common.HttpClient;
 import fedora.common.Constants;
 import fedora.server.errors.AuthzException;
-import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
-import fedora.server.errors.ServerInitializationException;
 import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 

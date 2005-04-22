@@ -1,8 +1,6 @@
 package fedora.server.utilities;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -11,13 +9,8 @@ import org.apache.commons.httpclient.methods.GetMethod;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
-import fedora.server.Server;
-
 import fedora.common.HttpClient;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.ServerInitializationException;
 
 public class ServerUtility {
     public static final String FINE = "fine";
@@ -97,32 +90,6 @@ public class ServerUtility {
     public static final String HTTP = "http";
     public static final String HTTPS = "https";
     
-    /*
-    public static final String getPort(String preferredProtocol, String fallbackProtocol) 
-    throws GeneralException {
-    	String port = null;
-    	if (! HTTP.equals(preferredProtocol) && ! HTTPS.equals(preferredProtocol)) {
-    		throw new GeneralException("bad preferredProtocol parm");
-    	}
-    	if (! HTTP.equals(fallbackProtocol) && ! HTTPS.equals(fallbackProtocol) && (fallbackProtocol != null)) {
-    		throw new GeneralException("bad fallbackProtocol parm");
-    	}
-    	if (HTTP.equals(preferredProtocol) && serverProperties.contains(FEDORA_SERVER_PORT)) {	
-    		port = (String) serverProperties.get(FEDORA_SERVER_PORT);
-    	} 
-    	if ((port == null) && HTTPS.equals(preferredProtocol) && serverProperties.contains(FEDORA_REDIRECT_PORT)) {	
-    		port = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
-    	} 
-    	if ((port == null) && HTTP.equals(fallbackProtocol) && serverProperties.contains(FEDORA_SERVER_PORT)) {	
-    		port = (String) serverProperties.get(FEDORA_SERVER_PORT);
-    	}     	
-    	if ((port == null) && HTTPS.equals(fallbackProtocol) && serverProperties.contains(FEDORA_REDIRECT_PORT)) {	
-    		port = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
-    	} 
-    	return port;
-    }
-    */
-    
     public static final String getPort(String protocol) throws GeneralException {
     	String port = null;
     	if (! HTTP.equals(protocol) && ! HTTPS.equals(protocol)) {
@@ -162,12 +129,6 @@ public class ServerUtility {
     	System.err.println("protocol="+protocol+"port="+port);
     	return new ProtocolPort(protocol, port);
     }
-
-    /*
-    public static boolean fedoraServerPingsOk(String path) throws GeneralException {
-    	return fedoraServerPingsOk(path, 20);
-    }
-    */
     
     public static boolean pingServletContainer(String path, int secondsTimeout, int maxConnectionAttemptsPerUrl) throws GeneralException {
         boolean pingsOk = false;
