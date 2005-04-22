@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection; //for response status codes
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.httpclient.DefaultMethodRetryHandler;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -17,7 +14,6 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.protocol.Protocol;
-
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.utilities.ServerUtility;
@@ -384,7 +380,6 @@ public class HttpClient {
 			System.err.println("ping="+ServerUtility.pingServletContainerStartup("/", 2));
 			System.err.println("ping="+ServerUtility.pingServletContainerRunning("/", 2));
 		} catch (GeneralException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
     	HttpClient httpClient = null;

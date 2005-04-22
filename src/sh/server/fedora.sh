@@ -91,7 +91,7 @@ start() {
 	echo "Initializing Fedora Server instance..."
 	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
 				-Dfedora.home="$FEDORA_HOME" \
-				fedora.server.ServerController startup)
+				fedora.server.ServerUtility startup)
 	restoreJavaHome
 }
 

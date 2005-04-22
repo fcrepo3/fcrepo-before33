@@ -6,8 +6,6 @@ import java.util.*;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
-
-import fedora.server.ServerController;
 import fedora.server.config.*;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -66,7 +64,7 @@ public class Rebuild {
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
             if (ServerUtility.pingServletContainerRunning("/fedora/describe", 20) && rebuilder.shouldStopServer()) {
             	ProtocolPort protocolPort = ServerUtility.getProtocolPort(ServerUtility.HTTP, ServerUtility.HTTPS); 
-            	ServerController.shutdown(protocolPort.getProtocol());
+            	ServerUtility.shutdown(protocolPort.getProtocol());
             }
             if (options != null) {
                 System.out.println();

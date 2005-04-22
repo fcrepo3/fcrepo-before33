@@ -93,25 +93,25 @@ public class ServerUtility {
     public static final String getPort(String protocol) throws GeneralException {
     	String port = null;
     	if (! HTTP.equals(protocol) && ! HTTPS.equals(protocol)) {
-        	System.err.println("bad protocol parm = "+protocol);
+        	slog(FINEST, "bad protocol parm = "+protocol);
     		throw new GeneralException("bad protocol parm");    	
     	}
-    	System.err.println("serverProperties = "+serverProperties);
-    	System.err.println("HTTP.equals(protocol) = "+HTTP.equals(protocol));    	
-    	System.err.println("HTTPS.equals(protocol) = "+HTTPS.equals(protocol));    	
-    	System.err.println("FEDORA_SERVER_PORT = "+FEDORA_SERVER_PORT);    	
-    	System.err.println("FEDORA_REDIRECT_PORT = "+FEDORA_REDIRECT_PORT); 
-    	System.err.println("serverProperties.containsKey(FEDORA_SERVER_PORT) = "+serverProperties.containsKey(FEDORA_SERVER_PORT));    	
-    	System.err.println("serverProperties.containsKey(FEDORA_REDIRECT_PORT) = "+serverProperties.containsKey(FEDORA_REDIRECT_PORT));    	
+    	slog(FINEST, "serverProperties = "+serverProperties);
+    	slog(FINEST, "HTTP.equals(protocol) = "+HTTP.equals(protocol));    	
+    	slog(FINEST, "HTTPS.equals(protocol) = "+HTTPS.equals(protocol));    	
+    	slog(FINEST, "FEDORA_SERVER_PORT = "+FEDORA_SERVER_PORT);    	
+    	slog(FINEST, "FEDORA_REDIRECT_PORT = "+FEDORA_REDIRECT_PORT); 
+    	slog(FINEST, "serverProperties.containsKey(FEDORA_SERVER_PORT) = "+serverProperties.containsKey(FEDORA_SERVER_PORT));    	
+    	slog(FINEST, "serverProperties.containsKey(FEDORA_REDIRECT_PORT) = "+serverProperties.containsKey(FEDORA_REDIRECT_PORT));    	
     	if (HTTP.equals(protocol) && serverProperties.containsKey(FEDORA_SERVER_PORT)) {	
     		port = (String) serverProperties.get(FEDORA_SERVER_PORT);
     	} else if (HTTPS.equals(protocol) && serverProperties.containsKey(FEDORA_REDIRECT_PORT)) {	
     		port = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
     	} else {
-        	System.err.println("specified port not configured");
+        	slog(FINEST, "specified port not configured");
     		throw new GeneralException("specified port not configured");    		
     	}
-    	System.err.println(protocol+"=>"+port);
+    	slog(FINEST, protocol+"=>"+port);
     	return port;
     }
     
@@ -126,7 +126,7 @@ public class ServerUtility {
         		protocol = fallbackProtocol;
         	}
     	}    	
-    	System.err.println("protocol="+protocol+"port="+port);
+    	slog(FINEST, "protocol="+protocol+"port="+port);
     	return new ProtocolPort(protocol, port);
     }
     
@@ -163,9 +163,94 @@ public class ServerUtility {
     }
 
     
+    private static final void serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
+   		slog(FINEST, "SC:call HttpClient()...");
+  		HttpClient client = new HttpClient(protocol, 
+  				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
+  				ServerUtility.getServerProperties().getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
+  				"/fedora/management/control?action=" + action
+  				);
+   		slog(FINEST, "...SC:call HttpClient()"); 
+   		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
+  		client.doAuthnGet(20000, 25,
+  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
+  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword, 
+  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
+  		);
+   		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		
+   		slog(FINEST, "SC:call HttpClient.getLineResponse()...");
+  		String response = client.getLineResponseUrl();
+        System.out.println(response);    	
+    }
+    
+    private static final String STARTUP = "startup";
+    private static final String SHUTDOWN = "shutdown";
+    private static final String STATUS = "status";
+    
+    public static final void startup(String protocol) throws Exception {
+    	startup(protocol, null, null);
+    }
+
+    public static final void shutdown(String protocol) throws Exception {
+    	shutdown(protocol, null, null);
+    }
+    
+    public static final void status(String protocol) throws Exception {
+    	status(protocol, null, null);
+    }
+    
+    public static final void startup(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	serverAction (STARTUP, protocol, optionalUsername, optionalPassword);    	
+    }
+
+    public static final void shutdown(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	serverAction (SHUTDOWN, protocol, optionalUsername, optionalPassword);    	
+    }
+
+    public static final void status(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	serverAction (STATUS, protocol, optionalUsername, optionalPassword);    	
+    }    
+    
+    private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
+
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1) {
+        	throw new Exception(USAGE);
+        }
+        String action = args[0];
+        String protocol = args.length > 1 ? args[1] : "http";        
+        if (! "http".equals(protocol) && ! "https".equals(protocol)) {
+        	throw new Exception(USAGE);
+        }
+        String optionalUsername = null;
+        String optionalPassword = null;            
+        if (args.length > 2) {
+        	if (args.length == 3) {
+            	throw new Exception(USAGE);
+        	}
+        	optionalUsername = args[2];
+        	optionalPassword = args[3];
+        }
+        if (STARTUP.equals(action)) {
+        	startup(protocol, optionalUsername, optionalPassword);
+        } else if (SHUTDOWN.equals(action)) {
+        	shutdown(protocol, optionalUsername, optionalPassword);
+        } else if (STATUS.equals(action)) {
+        	status(protocol, optionalUsername, optionalPassword);
+        } else {
+        	throw new Exception(USAGE);            	
+        }
+    }    
+    
+    private static boolean slog = false;
+
     public static final String slog(String level, String msg) {
-		System.err.println(level + ": " + msg);
+    	if (slog) {
+    		System.err.println(level + ": " + msg);
+    	}
 		return msg;
     }
     
+
+
 }

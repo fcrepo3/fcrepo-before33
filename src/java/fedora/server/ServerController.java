@@ -7,14 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
-
-import org.apache.commons.httpclient.methods.GetMethod;
-
-import fedora.common.HttpClient;
 import fedora.common.Constants;
 import fedora.server.errors.AuthzException;
 import fedora.server.errors.NotAuthorizedException;
-import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 
 /**
@@ -110,95 +105,5 @@ public class ServerController
 
     public void destroy() {
     }
-
-    private static final void serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
-   		//Properties serverProperties = ServerUtility.getServerProperties("http".equals(protocol), "https".equals(protocol));
-   		System.err.println("SC:call HttpClient()...");
-  		HttpClient client = new HttpClient(protocol, 
-  				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
-  				ServerUtility.getServerProperties().getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
-  				"/fedora/management/control?action=" + action
-  				);
-   		System.err.println("...SC:call HttpClient()"); 
-   		System.err.println("SC:call HttpClient.doAuthnGet()...");        		
-  		GetMethod getMethod = client.doAuthnGet(20000, 25,
-  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
-  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword, 
-  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
-  		);
-   		System.err.println("...SC:call HttpClient.doAuthnGet()");		      		
-   		System.err.println("SC:call HttpClient.getLineResponse()...");
-  		String response = client.getLineResponseUrl();
-        System.out.println(response);    	
-    }
-    
-    private static final String STARTUP = "startup";
-    private static final String SHUTDOWN = "shutdown";
-    private static final String STATUS = "status";
-    
-    public static final void startup(String protocol) throws Exception {
-    	startup(protocol, null, null);
-    }
-
-    public static final void shutdown(String protocol) throws Exception {
-    	shutdown(protocol, null, null);
-    }
-    
-    public static final void status(String protocol) throws Exception {
-    	status(protocol, null, null);
-    }
-    
-    public static final void startup(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (STARTUP, protocol, optionalUsername, optionalPassword);    	
-    }
-
-    public static final void shutdown(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (SHUTDOWN, protocol, optionalUsername, optionalPassword);    	
-    }
-
-    public static final void status(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (STATUS, protocol, optionalUsername, optionalPassword);    	
-    }
-
-    //private static final String USAGE = "ERROR: Need one argument: 'startup', 'shutdown', or 'status'";
-    private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
-    
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-        	throw new Exception(USAGE);
-        }
-        String action = args[0];
-        String protocol = args.length > 1 ? args[1] : "http";        
-        if (! "http".equals(protocol) && ! "https".equals(protocol)) {
-        	throw new Exception(USAGE);
-        }
-        String optionalUsername = null;
-        String optionalPassword = null;            
-        if (args.length > 2) {
-        	if (args.length == 3) {
-            	throw new Exception(USAGE);
-        	}
-        	optionalUsername = args[2];
-        	optionalPassword = args[3];
-        }
-        if (STARTUP.equals(action)) {
-        	startup(protocol, optionalUsername, optionalPassword);
-        } else if (SHUTDOWN.equals(action)) {
-        	shutdown(protocol, optionalUsername, optionalPassword);
-        } else if (STATUS.equals(action)) {
-        	status(protocol, optionalUsername, optionalPassword);
-        } else {
-        	throw new Exception(USAGE);            	
-        }
-    }
-    
-    private static boolean log = false;
-    
-    private static final void slog(String msg) {
-    	if (log) {
-  	  	System.err.println(msg);	  		
-    	}
-    }
-    
     
 }
