@@ -56,12 +56,12 @@ public class DemoSOAPClient {
 	private FedoraAPIA APIA;
     private static HashMap s_repoInfo=new HashMap();
 
-    public DemoSOAPClient(String host, int port, String user, String pass)
+    public DemoSOAPClient(String protocol, String host, int port, String user, String pass)
             throws MalformedURLException, ServiceException {
             	
         // get SOAP stubs to connect to the repository web services
-	APIA = APIAStubFactory.getStub(host, port, user, pass);
-        APIM = APIMStubFactory.getStub(host, port, user, pass);
+	APIA = APIAStubFactory.getStub(protocol, host, port, user, pass);
+        APIM = APIMStubFactory.getStub(protocol, host, port, user, pass);
     }
     
 
@@ -207,95 +207,109 @@ public class DemoSOAPClient {
 			
 			// instantiate the client which will set up connection stubs for
 			// making SOAP requests on API-A and API-M		
-			DemoSOAPClient caller = new DemoSOAPClient(
-				"localhost", 8080, 
-				"fedoraAdmin", "fedoraAdmin");
-				
-			//******** STEP 1 : get info about the repository
-			System.out.println("Test describeRepository...");
-			RepositoryInfo repoinfo = caller.describeRepository();
-				
-			//******** STEP 2: ingest the demo object
-			System.out.println("Test ingest...");
-			File ingestFile=new File("TestIngestFiles/obj_test_100.xml");		
-			FileInputStream inStream=null;
-			try {
-				inStream=new FileInputStream(ingestFile);
-			} catch (IOException ioe) {
-					System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
-					ioe.printStackTrace();
-			}
-			String ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of demo object");
-			
-			//******** STEP 3: add a datastream to the object
-			System.out.println("Test add datastream...");
-			String[] altIDs = new String[] {"id1", "id2", "id3"};
-			String datastreamID = caller.addDatastream(
-				ingestPID, // the object pid
-				"MY-DS",   // user-assigned datastream name or id
-				altIDs,
-				"Add my test datastream",  // user-assigned label
-				true, // in version 2.0 always set datastream versioning to true
-				"image/gif", // mime type of the datastream content
-				"info:fedora/format/myformat", // an optional format URI
-				"http://www.cs.cornell.edu/payette/images/sjcomp.gif", // URL for content
-				"E",  // type E for External Referenced Datastream
-				"A",  // datastream state is A for Active
-				"added new datastream MY-DS");  // log message
-			
-			// modify the datastream using null to indicate which attributes should stay the same.
-			System.out.println("First test of modify datastream ...");
-			String modDSID = caller.modifyDatastreamByReference(
-				ingestPID, // the object pid
-				"MY-DS",   // user-assigned datastream name or id
-				null, // altIDs (no change)
-				"modify-1 of my test datastream",  // new user-assigned label
-				true, // versionable
-				null, // MIME type (no change)
-				null, // new formatURI (no change)
-				null, // new URL for content (no change)
-				null, // ds state (no change)
-				"first modify to change label only", // an optional log message about the change
-				 false);  // do not force changes that break ref integrity
-
-			// again, modify the datastream and test setting attributes to empty strings.
-			// NOTE:  attempt to set system required attribute to empty will default to no change.
-			System.out.println("Second test of modify datastream...");
-			modDSID = caller.modifyDatastreamByReference(
-				ingestPID, // the object pid
-				"MY-DS",   // user-assigned datastream name or id
-				new String[0], // altIDs (empty array)
-				"",  // new user-assigned label
-				true, // versionable
-				"", // MIME type (empty)
-				"", // new formatURI (empty)
-				"", // new URL for content (no change since required field cannot be emptied)
-				"", // ds state (no change since required field cannot be emptied)
-				"second modify to empty all non-required fields", // an optional log message about the change
-				 false);  // do not force changes that break ref integrity
-			
-			// get datastream history
-			
-			// purge a datastream in the demo object
-			
-			// add a disseminator to the demo object
-			
-			//******** STEP X: export the demo object
-			File exportFile = new File("demo-export.xml");
-			FileOutputStream outStream = null;
-			try {
-				outStream = new FileOutputStream(exportFile);
-			} catch (IOException ioe) {
-					System.out.println("Error on export output stream: " + ioe.getMessage());
-					ioe.printStackTrace();
-			}		
-			byte[] objectXML = caller.export(ingestPID, "foxml1.0", null, outStream);
-			
-		} catch (Exception e) {
-			System.out.println("Exception in main: " +  e.getMessage());
-			e.printStackTrace();
-		}
-
+		  if (args.length==5) {
+		      
+		      if (!args[0].equals("http") && !args[0].equals("https")) {
+		          throw new Exception("Protocol must be either \"http\" or \"https\". Value specified was: \""+args[0]+"\".");
+		      }
+		      
+		      System.out.println("\nProtocol: " + args[0]);
+		      System.out.println("Host: " + args[1]);
+		      System.out.println("Port: " + args[2]);
+		      System.out.println("Username: " + args[3]);
+		      System.out.println("Password: " + args[4] + "\n");
+					DemoSOAPClient caller = new DemoSOAPClient(args[0], 
+									args[1], new Integer(args[2]).intValue(),
+									args[3], args[4]);
+									
+					//******** STEP 1 : get info about the repository
+					System.out.println("Test describeRepository...");
+					RepositoryInfo repoinfo = caller.describeRepository();
+						
+					//******** STEP 2: ingest the demo object
+					System.out.println("Test ingest...");
+					File ingestFile=new File("TestIngestFiles/obj_test_100.xml");		
+					FileInputStream inStream=null;
+					try {
+						inStream=new FileInputStream(ingestFile);
+					} catch (IOException ioe) {
+							System.out.println("Error on ingest file inputstream: " + ioe.getMessage());
+							ioe.printStackTrace();
+					}
+					String ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of demo object");
+					
+					//******** STEP 3: add a datastream to the object
+					System.out.println("Test add datastream...");
+					String[] altIDs = new String[] {"id1", "id2", "id3"};
+					String datastreamID = caller.addDatastream(
+						ingestPID, // the object pid
+						"MY-DS",   // user-assigned datastream name or id
+						altIDs,
+						"Add my test datastream",  // user-assigned label
+						true, // in version 2.0 always set datastream versioning to true
+						"image/gif", // mime type of the datastream content
+						"info:fedora/format/myformat", // an optional format URI
+						"http://www.cs.cornell.edu/payette/images/sjcomp.gif", // URL for content
+						"E",  // type E for External Referenced Datastream
+						"A",  // datastream state is A for Active
+						"added new datastream MY-DS");  // log message
+					
+					// modify the datastream using null to indicate which attributes should stay the same.
+					System.out.println("First test of modify datastream ...");
+					String modDSID = caller.modifyDatastreamByReference(
+						ingestPID, // the object pid
+						"MY-DS",   // user-assigned datastream name or id
+						null, // altIDs (no change)
+						"modify-1 of my test datastream",  // new user-assigned label
+						true, // versionable
+						null, // MIME type (no change)
+						null, // new formatURI (no change)
+						null, // new URL for content (no change)
+						null, // ds state (no change)
+						"first modify to change label only", // an optional log message about the change
+						 false);  // do not force changes that break ref integrity
+		
+					// again, modify the datastream and test setting attributes to empty strings.
+					// NOTE:  attempt to set system required attribute to empty will default to no change.
+					System.out.println("Second test of modify datastream...");
+					modDSID = caller.modifyDatastreamByReference(
+						ingestPID, // the object pid
+						"MY-DS",   // user-assigned datastream name or id
+						new String[0], // altIDs (empty array)
+						"",  // new user-assigned label
+						true, // versionable
+						"", // MIME type (empty)
+						"", // new formatURI (empty)
+						"", // new URL for content (no change since required field cannot be emptied)
+						"", // ds state (no change since required field cannot be emptied)
+						"second modify to empty all non-required fields", // an optional log message about the change
+						 false);  // do not force changes that break ref integrity
+					
+					// get datastream history
+					
+					// purge a datastream in the demo object
+					
+					// add a disseminator to the demo object
+					
+					//******** STEP X: export the demo object
+					File exportFile = new File("demo-export.xml");
+					FileOutputStream outStream = null;
+					try {
+						outStream = new FileOutputStream(exportFile);
+					} catch (IOException ioe) {
+							System.out.println("Error on export output stream: " + ioe.getMessage());
+							ioe.printStackTrace();
+					}		
+					byte[] objectXML = caller.export(ingestPID, "foxml1.0", null, outStream);
+		      
+		  } else {
+		      System.out.println("Number of arguments must be equal to 5.");
+		      System.out.println("Usage: run-demo-soapclient protocol host port username password");
+		  }
+			} catch (Exception e) {
+			    System.out.println("Exception in main: " +  e.getMessage());
+			    e.printStackTrace();
+			}		  
 	}
 	
 

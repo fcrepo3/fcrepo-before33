@@ -10,7 +10,7 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 echo JAVA_HOME is %JAVA_HOME%
 echo FEDORA_HOME is %FEDORA_HOME%
 
-"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%;%FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar;%FEDORA_HOME%\client\lib\xercesImpl.jar;%FEDORA_HOME%\client\lib\axis.jar;%FEDORA_HOME%\client\lib\jaxrpc.jar;%FEDORA_HOME%\client\lib\commons-discovery.jar;%FEDORA_HOME%\client\lib\commons-logging.jar;%FEDORA_HOME%\client\lib\saaj.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% demo.soapclient.DemoSOAPClient
+"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%;%FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar;%FEDORA_HOME%\client\lib\xercesImpl.jar;%FEDORA_HOME%\client\lib\axis.jar;%FEDORA_HOME%\client\lib\jaxrpc.jar;%FEDORA_HOME%\client\lib\commons-discovery.jar;%FEDORA_HOME%\client\lib\commons-logging.jar;%FEDORA_HOME%\client\lib\saaj.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% demo.soapclient.DemoSOAPClient %1 %2 %3 %4 %5
 
 
 echo Finished run of demo soap client.
