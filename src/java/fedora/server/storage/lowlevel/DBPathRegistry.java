@@ -16,6 +16,7 @@ import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.utilities.SQLUtility;
+import fedora.server.utilities.ServerUtility;
 
 /**
  *
@@ -34,9 +35,22 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	static {
 		if (Configuration.getTestConfig()) {
 			try {
-				commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
-					"jdbc:mysql://localhost/fedora20",
-					"fedoraAdmin", "fedoraAdmin", 100, 10, -1, 0, 1800000, 3, -1, true, true, true, new Byte("1").byteValue() );
+				if ((! ServerUtility.getServerProperties().containsKey(ServerUtility.REGISTRY_USERNAME_KEY))
+				||  (! ServerUtility.getServerProperties().containsKey(ServerUtility.REGISTRY_PASSWORD_KEY))
+				||  (ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY) == null)								
+				||  ("".equals(ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY)))				
+				||  (ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_PASSWORD_KEY)) == null) {
+					staticException = new LowlevelStorageException(true,
+							"Lowlevel storage can't get registry credentials.", null); 					
+				} else {
+					String registryUsername = (String) ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY);
+					String registryPassword = (String) ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_PASSWORD_KEY);
+	
+					commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
+							"jdbc:mysql://localhost/fedora20",
+							registryUsername, registryPassword, 
+							100, 10, -1, 0, 1800000, 3, -1, true, true, true, new Byte("1").byteValue() );
+				}
 			} catch (SQLException sqlException) {
 				System.out.println("\n*****didn't make connectionPool*****[[[[[");
 				System.out.println(sqlException.getMessage() + "\n]]]]]*****");

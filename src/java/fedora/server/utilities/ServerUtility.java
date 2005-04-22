@@ -26,6 +26,10 @@ public class ServerUtility {
     public static final String FEDORA_SHUTDOWN_PORT = "fedoraShutdownPort";
     public static final String ADMIN_USER = "adminUser";
     public static final String ADMIN_PASSWORD = "adminPassword";
+    public static final String REGISTRY_USERNAME_KEY = "adminUser";
+    public static final String REGISTRY_PASSWORD_KEY = "adminPassword";
+
+    
     private static final Properties readServerProperties(boolean httpRequired, boolean httpsRequired) 
     	throws Exception {
        	Properties properties = new Properties();    	
