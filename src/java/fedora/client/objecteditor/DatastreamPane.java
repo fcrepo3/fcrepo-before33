@@ -287,7 +287,7 @@ public class DatastreamPane
 
     protected String getFedoraURL(Datastream ds, boolean withDate) {
         StringBuffer buf=new StringBuffer();
-        buf.append("http://");
+        buf.append(Administrator.getProtocol());
         buf.append(Administrator.getHost());
         if (Administrator.getPort()!=80) {
             buf.append(':');

@@ -37,7 +37,7 @@ public class Uploader {
      */
     public Uploader(String host, int port, String user, String pass)
             throws IOException {
-        m_uploadURL="http://" + host + ":" + port + "/fedora/management/upload";
+        m_uploadURL=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/management/upload";
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
 
