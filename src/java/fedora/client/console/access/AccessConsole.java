@@ -39,7 +39,7 @@ public class AccessConsole
         implements Console {
 
     private Administrator m_mainFrame;
-    private static FedoraAPIAServiceLocator m_locator=new FedoraAPIAServiceLocator();
+    private FedoraAPIAServiceLocator m_locator;
     private JTextArea m_outputArea;
     private JTextField m_hostTextField;
     private JTextField m_portTextField;
@@ -52,6 +52,7 @@ public class AccessConsole
               true, //maximizable
               true);//iconifiable
         m_mainFrame=mainFrame;
+        m_locator=new FedoraAPIAServiceLocator(Administrator.getUser(), Administrator.getPass());
 
 
         m_outputArea = new JTextArea();
@@ -72,13 +73,13 @@ public class AccessConsole
         JPanel hostPanel=new JPanel();
         hostPanel.setLayout(new BorderLayout());
         hostPanel.add(new JLabel("Host : "), BorderLayout.WEST);
-        m_hostTextField=new JTextField("localhost", 13);
+        m_hostTextField=new JTextField(Administrator.getHost(), 13);
         hostPanel.add(m_hostTextField, BorderLayout.EAST);
 
         JPanel portPanel=new JPanel();
         portPanel.setLayout(new BorderLayout());
         portPanel.add(new JLabel("  Port : "), BorderLayout.WEST);
-        m_portTextField=new JTextField("8080", 4);
+        m_portTextField=new JTextField(new Integer(Administrator.getPort()).toString(), 4);
         portPanel.add(m_portTextField, BorderLayout.EAST);
 
         hostPortPanel.add(hostPanel, BorderLayout.WEST);
@@ -150,7 +151,7 @@ public class AccessConsole
         try {
             URL ourl=new URL(m_locator.getFedoraAPIAPortSOAPHTTPAddress());
             StringBuffer nurl=new StringBuffer();
-            nurl.append("http://");
+            nurl.append(Administrator.getProtocol()+"://");
             nurl.append(hostString);
             nurl.append(':');
             nurl.append(portString);
@@ -163,6 +164,7 @@ public class AccessConsole
                 nurl.append('#');
                 nurl.append(ourl.getRef());
             }
+            System.out.println("NURL: "+nurl.toString());
             return m_locator.getFedoraAPIAPortSOAPHTTP(new URL(nurl.toString()));
         } catch (MalformedURLException murle) {
             throw new InvocationTargetException(murle, "Badly formed URL");
