@@ -216,7 +216,7 @@ public class BasicServer
             if (!fcfgFile.exists()) {
                 System.out.println("ERROR: fedora.fcfg not found in FEDORA_HOME/server/config/ -- is fedora.home set properly?");
             } else {
-           		Properties serverProperties = ServerUtility.getServerProperties(true, true);            	
+           		Properties serverProperties = ServerUtility.getServerProperties();            	
                 File serverTemplate=new File(fedoraHome, tomcatConfDir + "server_fedoraTemplate.xml");
                 BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
                 FileWriter out=new FileWriter(new File(fedoraHome, tomcatConfDir + "server.xml"));

@@ -1,16 +1,17 @@
 package fedora.server.utilities.rebuild;
 
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.Socket;
-import java.net.URL;
+//import java.net.HttpURLConnection;
+//import java.net.MalformedURLException;
+//import java.net.Socket;
+//import java.net.URL;
 import java.util.*;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
+import fedora.server.ServerController;
 import fedora.server.config.*;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -19,6 +20,8 @@ import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.utilities.ProtocolPort;
+import fedora.server.utilities.ServerUtility;
 
 /**
  * Entry-point for rebuilding various aspects of the repository.
@@ -65,9 +68,12 @@ public class Rebuild {
             System.out.println(rebuilder.getAction());
             System.out.println();
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
-            if (isServerRunning(serverConfig) && rebuilder.shouldStopServer())
+            //if (isServerRunning(serverConfig) && rebuilder.shouldStopServer())
+            if (ServerUtility.pingServletContainerRunning("/fedora/describe", 20) && rebuilder.shouldStopServer())            	
             {
-                shutDownServer(serverConfig);
+                //shutDownServer(serverConfig);
+            	ProtocolPort protocolPort = ServerUtility.getProtocolPort(ServerUtility.HTTP, ServerUtility.HTTPS); 
+            	ServerController.shutdown(protocolPort.getProtocol());
             }
             if (options != null) {
                 System.out.println();
@@ -371,7 +377,7 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         }
     }
     
-    
+    /*
     public static boolean isServerRunning(ServerConfiguration serverConfig)
     {
         boolean running = false;
@@ -391,12 +397,15 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         } 
         return(running);
     }
+    */
+    
+    
     /**
      * The shutdown command string we are looking for.
      */
-    private static String shutdown = "SHUTDOWN";
+    //private static String shutdown = "SHUTDOWN";
 
-    
+    /*
     public static void shutDownServer(ServerConfiguration serverConfig)
     {
         try
@@ -445,7 +454,9 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         }
 
     }
+    */
     
+    /*
     public static String getResponse(URL url) 
     {
         try {
@@ -467,7 +478,7 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
             return "ERROR: can't connect to control servlet.";
         }
     }
-
+*/
 
 
 }

@@ -1,11 +1,11 @@
 package fedora.server.utilities;
 
-import java.io.IOException;
+//import java.io.IOException;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.HttpURLConnection;
-import java.util.Date;
+//import java.net.MalformedURLException;
+//import java.net.URL;
+//import java.net.HttpURLConnection;
+//import java.util.Date;
 import java.util.Properties;
 import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
@@ -101,7 +101,7 @@ public abstract class AxisUtility {
         System.out.println("Usage:");
         System.out.println("    AxisUtility deploy wsdd_file timeout_seconds [finished_url] [username] [passwd]");
     }
-
+/*
     private static boolean serverActive(URL url, int timeoutSeconds) {
         long startms=new Date().getTime();
         long timeoutms=startms+(1000*timeoutSeconds);
@@ -128,7 +128,7 @@ public abstract class AxisUtility {
         long total=endms-startms;
         return false;
     }
-
+*/
     public static void main(String args[]) {
         if (args.length>0) {
            if (args[0].equals("deploy")) {
@@ -141,13 +141,17 @@ public abstract class AxisUtility {
                        showDeployUsage();
                    } else {
                        try {
-                       		Properties serverProperties = ServerUtility.getServerProperties(true, false);
-                       	   StringBuffer url=new StringBuffer("http://localhost:" 
+                       	System.err.println("a");
+                       		Properties serverProperties = ServerUtility.getServerProperties();
+                           	System.err.println("b");
+                       	   StringBuffer adminUrl=new StringBuffer("http://localhost:" 
                        	   		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) 
 								+ "/fedora/AdminService");
-                           URL adminUrl=new URL(url.toString());
-                           URL mainUrl=new URL("http://localhost:" 
-                           		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) + "/");
+                          	System.err.println("c");
+                           //URL adminUrl=new URL(url.toString());
+                           //URL mainUrl=new URL("http://localhost:" + serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) + "/");
+                           String mainUrl = "http://localhost:" + serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) + "/";
+                          	System.err.println("d");
                            //String[] parms = null;
                            /*
                            if (args.length < 5) {
@@ -156,30 +160,39 @@ public abstract class AxisUtility {
                            String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
                                		"-u" + serverProperties.getProperty(ServerUtility.ADMIN_USER), 
 									"-w" + serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD)}; 
-                           	
+                          	System.err.println("e");
                            //}
                            //http://ws.apache.org/axis/java/install.html#RunTheAdminClient
                            int timeoutSeconds=Integer.parseInt(args[2]);
-                           if (serverActive(mainUrl, timeoutSeconds)) {
+                          	System.err.println("f");
+                           //if (serverActive(mainUrl, timeoutSeconds)) {
+                           if (ServerUtility.pingServletContainerStartup("/", timeoutSeconds)) {
+                           	System.err.println("g");
                                AdminClient.main(parms);
+                              	System.err.println("h");
                                for (int i=0; i<args.length; i++) {
                                	System.err.println("audit parms " + args[i]);
                                }
                                if ((3 < args.length) && (args[3] != null) && ! "".equals(args[3])) {
+                               		ServerUtility.pingServletContainerRunning(args[3], 2);
+/*
                                    try {
-                                       serverActive(new URL(args[3]), 2);
+                                       //serverActive(new URL(args[3]), 2);
                                    } catch (MalformedURLException murle) {
                                        System.out.println("finished_url " + args[3] + " was malformed.");
                                        System.exit(1);
                                    }
+                                   */
                                }
                            } else {
                                System.out.println("Giving up deployment... no response from server after " + timeoutSeconds + " seconds.");
                                System.exit(1);
                            }
+                           /*
                        } catch (MalformedURLException murle) {
                            System.out.println("Error: malformed url.");
                            showDeployUsage();
+                           */
                        } catch (NumberFormatException nfe) {
                            System.out.println("Error: timeout_seconds " + args[2] + " is not an integer.");
                            showDeployUsage();

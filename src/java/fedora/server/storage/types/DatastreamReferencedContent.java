@@ -41,7 +41,7 @@ public class DatastreamReferencedContent
       	InputStream contentStream = null;
       	try {
       		HttpClient client = new HttpClient(DSLocation);
-      		GetMethod getMethod = client.doNoAuthnGet(20000, 25);
+      		GetMethod getMethod = client.doNoAuthnGet(20000, 25, 1);
       		DSSize = client.getContentLength();
       		contentStream = getMethod.getResponseBodyAsStream();
       		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream.
