@@ -35,16 +35,16 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	static {
 		if (Configuration.getTestConfig()) {
 			try {
-				if ((! ServerUtility.getServerProperties().containsKey(ServerUtility.REGISTRY_USERNAME_KEY))
-				||  (! ServerUtility.getServerProperties().containsKey(ServerUtility.REGISTRY_PASSWORD_KEY))
-				||  (ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY) == null)								
-				||  ("".equals(ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY)))				
-				||  (ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_PASSWORD_KEY)) == null) {
+				if ((! ServerUtility.getServerProperties().containsKey(ServerUtility.DB_USERNAME_KEY))
+				||  (! ServerUtility.getServerProperties().containsKey(ServerUtility.DB_PASSWORD_KEY))
+				||  (ServerUtility.getServerProperties().get(ServerUtility.DB_USERNAME_KEY) == null)								
+				||  ("".equals(ServerUtility.getServerProperties().get(ServerUtility.DB_USERNAME_KEY)))				
+				||  (ServerUtility.getServerProperties().get(ServerUtility.DB_PASSWORD_KEY)) == null) {
 					staticException = new LowlevelStorageException(true,
 							"Lowlevel storage can't get registry credentials.", null); 					
 				} else {
-					String registryUsername = (String) ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_USERNAME_KEY);
-					String registryPassword = (String) ServerUtility.getServerProperties().get(ServerUtility.REGISTRY_PASSWORD_KEY);
+					String registryUsername = (String) ServerUtility.getServerProperties().get(ServerUtility.DB_USERNAME_KEY);
+					String registryPassword = (String) ServerUtility.getServerProperties().get(ServerUtility.DB_PASSWORD_KEY);
 	
 					commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
 							"jdbc:mysql://localhost/fedora20",

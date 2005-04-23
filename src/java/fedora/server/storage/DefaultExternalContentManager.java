@@ -2,6 +2,7 @@ package fedora.server.storage;
 
 import java.net.HttpURLConnection;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.commons.httpclient.Header;
 import fedora.server.Context;
@@ -98,7 +99,17 @@ public class DefaultExternalContentManager extends Module
   	MIMETypedStream httpContent = null;
   	try {  		
   		HttpClient client = new HttpClient(url); 
-  		client.doAuthnGet(20000, 25, "backendClient", "", 1);
+  		
+		Properties serverProperties = ServerUtility.getServerProperties();
+		String backendUsername = "";
+		if (serverProperties.containsKey(ServerUtility.BACKEND_USERNAME_KEY)) {
+			backendUsername = serverProperties.getProperty(ServerUtility.BACKEND_USERNAME_KEY);
+		}
+		String backendPassword = "";
+		if (serverProperties.containsKey(ServerUtility.BACKEND_PASSWORD_KEY)) {
+			backendPassword = serverProperties.getProperty(ServerUtility.BACKEND_PASSWORD_KEY);
+		}		
+  		client.doAuthnGet(20000, 25, backendUsername, backendPassword, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
   			throw new StreamIOException(

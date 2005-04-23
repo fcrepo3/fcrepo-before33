@@ -24,10 +24,12 @@ public class ServerUtility {
     public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
     public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
     public static final String FEDORA_SHUTDOWN_PORT = "fedoraShutdownPort";
-    public static final String ADMIN_USER = "adminUser";
-    public static final String ADMIN_PASSWORD = "adminPassword";
-    public static final String REGISTRY_USERNAME_KEY = "adminUser";
-    public static final String REGISTRY_PASSWORD_KEY = "adminPassword";
+    public static final String ADMIN_USERNAME_KEY = "adminUsername";
+    public static final String ADMIN_PASSWORD_KEY = "adminPassword";
+    public static final String BACKEND_USERNAME_KEY = "backendUsername";
+    public static final String BACKEND_PASSWORD_KEY = "backendPassword";    
+    public static final String DB_USERNAME_KEY = "dbUsername";
+    public static final String DB_PASSWORD_KEY = "dbPassword";
 
     
     private static final Properties readServerProperties(boolean httpRequired, boolean httpsRequired) 
@@ -51,8 +53,12 @@ public class ServerUtility {
             ||  FEDORA_REDIRECT_PORT.equals(nameNode.getNodeValue())
             ||  FEDORA_SHUTDOWN_PORT.equals(nameNode.getNodeValue())			
             ||  FEDORA_SERVER_HOST.equals(nameNode.getNodeValue())
-            ||  ADMIN_USER.equals(nameNode.getNodeValue())
-            ||  ADMIN_PASSWORD.equals(nameNode.getNodeValue())) {
+            ||  ADMIN_USERNAME_KEY.equals(nameNode.getNodeValue())
+            ||  ADMIN_PASSWORD_KEY.equals(nameNode.getNodeValue())
+            ||  BACKEND_USERNAME_KEY.equals(nameNode.getNodeValue())
+            ||  BACKEND_PASSWORD_KEY.equals(nameNode.getNodeValue())			
+            ||  DB_USERNAME_KEY.equals(nameNode.getNodeValue())			
+            ||  DB_PASSWORD_KEY.equals(nameNode.getNodeValue())) {
         		properties.put(nameNode.getNodeValue(),valueNode.getNodeValue());            			
     		}
         }
@@ -68,10 +74,10 @@ public class ServerUtility {
         if (! properties.containsKey(FEDORA_SHUTDOWN_PORT)) {
         	throw new Exception("fedora.fcfg missing " + "shutdown port");            	
         }        
-        if ((! properties.containsKey(ADMIN_USER))) {
+        if ((! properties.containsKey(ADMIN_USERNAME_KEY))) {
         	throw new Exception("fedora.fcfg missing " + "admin user");            	
         }
-        if ((! properties.containsKey(ADMIN_PASSWORD))) {
+        if ((! properties.containsKey(ADMIN_PASSWORD_KEY))) {
         	throw new Exception("fedora.fcfg missing " + "admin passwd");            	
         }            
     	return properties;
@@ -177,8 +183,8 @@ public class ServerUtility {
    		slog(FINEST, "...SC:call HttpClient()"); 
    		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
   		client.doAuthnGet(20000, 25,
-  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USER) : optionalUsername,
-  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD) : optionalPassword, 
+  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY) : optionalUsername,
+  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
   			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
   		);
    		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		

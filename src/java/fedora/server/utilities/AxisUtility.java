@@ -112,8 +112,8 @@ public abstract class AxisUtility {
                        	   		+ serverProperties.getProperty(ServerUtility.FEDORA_SERVER_PORT) 
 								+ "/fedora/AdminService");
                            String[] parms=new String[] {"-l" + adminUrl, wsddFile.toString(), 
-                               		"-u" + serverProperties.getProperty(ServerUtility.ADMIN_USER), 
-									"-w" + serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD)}; 
+                               		"-u" + serverProperties.getProperty(ServerUtility.ADMIN_USERNAME_KEY), 
+									"-w" + serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD_KEY)}; 
                            //http://ws.apache.org/axis/java/install.html#RunTheAdminClient
                            int timeoutSeconds=Integer.parseInt(args[2]);
                            if (ServerUtility.pingServletContainerStartup("/", timeoutSeconds)) {

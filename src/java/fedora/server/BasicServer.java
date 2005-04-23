@@ -246,23 +246,25 @@ public class BasicServer
                 while (nextLine!=null) {
                     nextLine=in.readLine();
                     if (nextLine!=null) {
-                        if (nextLine.indexOf("#")==-1) {
-                            out.write(nextLine);
-                        } else {
-                            for (int i=0; i<nextLine.length(); i++) {
-                                char c=nextLine.charAt(i);
-                                if (c=='#') {
-                                    out.write(serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD));
-                                } else if (c=='%') {
-                                    out.write(serverProperties.getProperty(ServerUtility.ADMIN_USER));                                	
-                                } else {
-                                    out.write(c);
-                                }
-                            }
+                        if (nextLine.indexOf("#1")>0) {
+                            nextLine = nextLine.replaceAll("#1", serverProperties.getProperty(ServerUtility.BACKEND_USERNAME_KEY));
                         }
-                        out.write("\n");
+                        if (nextLine.indexOf("#2")>0) {
+                        	String backendPassword = "";
+                        	if (serverProperties.containsKey(ServerUtility.BACKEND_PASSWORD_KEY))  {
+                        		backendPassword = serverProperties.getProperty(ServerUtility.BACKEND_PASSWORD_KEY);
+                        	}
+                            nextLine = nextLine.replaceAll("#2", backendPassword);
+                        }
+                        if (nextLine.indexOf("#3")>0) {
+                            nextLine = nextLine.replaceAll("#3", serverProperties.getProperty(ServerUtility.ADMIN_USERNAME_KEY));
+                        }                                              
+                        if (nextLine.indexOf("#4")>0) {
+                            nextLine = nextLine.replaceAll("#4", serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD_KEY));
+                        }
+                        out.write(nextLine+"\n");
                     }
-                }
+                }                
                 in.close();
                 out.close();
             }
