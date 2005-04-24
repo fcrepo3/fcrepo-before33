@@ -42,7 +42,7 @@ import fedora.server.utilities.StreamUtility;
  * LITE (API-A-LITE) interface using a java servlet front end.
  * <ol>
  * <li>ListDatastreams URL syntax:
- * <p>http://hostname:port/fedora/listDatastreams/PID[/dateTime][?xml=BOOLEAN]</p>
+ * <p>protocol://hostname:port/fedora/listDatastreams/PID[/dateTime][?xml=BOOLEAN]</p>
  * <p>This syntax requests a list of datastreams for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -50,6 +50,7 @@ import fedora.server.utilities.StreamUtility;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</p></li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -88,14 +89,14 @@ public class ListDatastreamsServlet extends HttpServlet
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
   /** Instance of Logger to log servlet events in Fedora server log */
   private static Logger logger = null;
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -118,7 +119,7 @@ public class ListDatastreamsServlet extends HttpServlet
       boolean isListDatastreamsRequest = false;
       boolean xml = false;
  
-      requestURI = request.getRequestURL().toString() + "?" + request.getQueryString();
+      requestURI = request.getRequestURL().toString() + "?" + request.getQueryString(); 
 
       // Parse servlet URL.
       String[] URIArray = request.getRequestURL().toString().split("/");
@@ -188,7 +189,7 @@ public class ListDatastreamsServlet extends HttpServlet
 
       try {
           if (isListDatastreamsRequest) {    
-              Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+              Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);              
               listDatastreams(context, PID, asOfDateTime, xml, request, response);
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;
@@ -228,7 +229,7 @@ public class ListDatastreamsServlet extends HttpServlet
 
           // Object Profile found.
           // Serialize the ObjectProfile object into XML
-          new DatastreamDefSerializerThread(PID, dsDefs, versDateTime, pw).start();
+          new DatastreamDefSerializerThread(context, PID, dsDefs, versDateTime, pw).start();
           if (xml)
           {
               // Return results as raw XML
@@ -293,6 +294,9 @@ public class ListDatastreamsServlet extends HttpServlet
       private String PID = null;
       private DatastreamDef[] dsDefs = null;
       private Date versDateTime = null;
+      private String fedoraServerProtocol = null;
+      private String fedoraServerHost = null;
+      private String fedoraServerPort = null;
 
       /**
        * <p> Constructor for ProfileSerializeThread.</p>
@@ -302,13 +306,20 @@ public class ListDatastreamsServlet extends HttpServlet
        * @param versDateTime The version datetime stamp of the request.
        * @param pw A PipedWriter to which the serialization info is written.
        */
-      public DatastreamDefSerializerThread(String PID, DatastreamDef[] dsDefs,
+      public DatastreamDefSerializerThread(Context context, String PID, DatastreamDef[] dsDefs,
               Date versDateTime, PipedWriter pw)
       {
           this.pw = pw;
           this.PID = PID;
           this.dsDefs = dsDefs;
           this.versDateTime = versDateTime;
+          fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+          fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);
+          if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+              fedoraServerProtocol = HTTPS;
+          } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+              fedoraServerProtocol = HTTP;
+          }
       }
 
       /**
@@ -328,9 +339,9 @@ public class ListDatastreamsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listDatastreams.xsd\"" + " pid=\"" + PID + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
                           + ">");
                   } else
                   {
@@ -338,10 +349,10 @@ public class ListDatastreamsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listDatastreams.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
                           + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
                           + ">");
                   }
 
@@ -395,8 +406,6 @@ public class ListDatastreamsServlet extends HttpServlet
       try
       {
           s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-          fedoraServerHost = s_server.getParameter("fedoraServerHost");
-          fedoraServerPort = s_server.getParameter("fedoraServerPort");
           s_access = (Access) s_server.getModule("fedora.server.access.Access");
           logger = new Logger();
           } catch (InitializationException ie)
