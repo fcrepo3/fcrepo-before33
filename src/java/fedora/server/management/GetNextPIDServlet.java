@@ -38,7 +38,7 @@ import fedora.server.errors.StreamIOException;
  * a list of the next available PIDs has the following binding:
  * <ol>
  * <li>getNextPID URL syntax:
- * http://hostname:port/fedora/management/getNextPID[?numPIDs=NUMPIDS&namespace=NAMESPACE&xml=BOOLEAN]
+ * protocol://hostname:port/fedora/management/getNextPID[?numPIDs=NUMPIDS&namespace=NAMESPACE&xml=BOOLEAN]
  * This syntax requests a list of next available PIDS. The parameter numPIDs
  * determines the number of requested PIDS to generate. If omitted, numPIDs
  * defaults to 1. The namespace parameter determines the namespace to be used in
@@ -50,6 +50,7 @@ import fedora.server.errors.StreamIOException;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -85,9 +86,12 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
 
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
-
-  private static String s_serverHost = null;
-  private static String s_serverPort = null;
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process the Fedora API-M-LITE request to generate a list of next
@@ -106,6 +110,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     boolean xml = false;
     int numPIDs = 1;
     String namespace = null;
+    String requestURL = request.getRequestURL().toString();
 
     Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
 
@@ -175,7 +180,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
       {
         // Repository info obtained.
         // Serialize the RepositoryInfo object into XML
-        new GetNextPIDSerializerThread(pidList, pw).start();
+        new GetNextPIDSerializerThread(context, pidList, pw).start();
         if (xml)
         {
           // Return results as raw XML
@@ -245,6 +250,9 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
   {
     private PipedWriter pw = null;
     private String[] pidList = null;
+    private String fedoraServerProtocol = null;
+    private String fedoraServerHost = null;
+    private String fedoraServerPort = null;
 
     /**
      * <p> Constructor for GetNextPIDSerializerThread.</p>
@@ -252,10 +260,17 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
      * @param pidList An array of the requested next available PIDs.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public GetNextPIDSerializerThread(String[] pidList, PipedWriter pw)
+    public GetNextPIDSerializerThread(Context context, String[] pidList, PipedWriter pw)
     {
       this.pw = pw;
       this.pidList = pidList;
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTPS;
+      } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTP;
+      }            
     }
 
     /**
@@ -271,8 +286,8 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
           pw.write("<pidList "
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/"
-              + " http://" + s_serverHost + ":" + s_serverPort
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/ "
+              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
               + "/getNextPIDInfo.xsd\">\n");
 
           // PID array serialization
@@ -323,8 +338,6 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
       s_management = (Management) s_server.getModule("fedora.server.management.Management");
-      s_serverHost = s_server.getParameter("fedoraServerHost");
-      s_serverPort = s_server.getParameter("fedoraServerPort");
     } catch (InitializationException ie)
     {
       throw new ServletException("Unable to get Fedora Server instance."

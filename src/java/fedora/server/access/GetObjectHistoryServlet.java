@@ -40,7 +40,7 @@ import fedora.server.utilities.Logger;
  * a description of the repository has the following binding:
  * <ol>
  * <li>getObjectHistory URL syntax:
- * http://hostname:port/fedora/getObjectHistory/pid[?xml=BOOLEAN]
+ * protocol://hostname:port/fedora/getObjectHistory/pid[?xml=BOOLEAN]
  * This syntax requests information about the repository.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -48,6 +48,7 @@ import fedora.server.utilities.Logger;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -79,14 +80,14 @@ public class GetObjectHistoryServlet extends HttpServlet
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
   /** Instance of Logger to log servlet events in Fedora server log */
   private static Logger logger = null;
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -102,7 +103,7 @@ public class GetObjectHistoryServlet extends HttpServlet
       throws ServletException, IOException
   {
     String PID = null;
-    boolean xml = false;
+    boolean xml = false;      
 
     // Parse servlet URL.
     String[] URIArray = request.getRequestURL().toString().split("/");
@@ -166,7 +167,7 @@ public class GetObjectHistoryServlet extends HttpServlet
       {
         // Object history.
         // Serialize the ObjectHistory object into XML
-        new ObjectHistorySerializerThread(objectHistory, PID, pw).start();
+        new ObjectHistorySerializerThread(context, objectHistory, PID, pw).start();
         if (xml)
         {
           // Return results as raw XML
@@ -236,6 +237,9 @@ public class GetObjectHistoryServlet extends HttpServlet
     private PipedWriter pw = null;
     private String[] objectHistory = new String[0];
     private String PID = null;
+    private String fedoraServerProtocol = null;
+    private String fedoraServerHost = null;
+    private String fedoraServerPort = null;
 
     /**
      * <p> Constructor for ObjectHistorySerializerThread.</p>
@@ -244,11 +248,18 @@ public class GetObjectHistoryServlet extends HttpServlet
      * @param PID The pid of the digital object.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public ObjectHistorySerializerThread(String[] objectHistory, String PID, PipedWriter pw)
+    public ObjectHistorySerializerThread(Context context, String[] objectHistory, String PID, PipedWriter pw)
     {
       this.pw = pw;
       this.objectHistory = objectHistory;
       this.PID = PID;
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTPS;
+      } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTP;
+      }            
     }
 
     /**
@@ -264,8 +275,8 @@ public class GetObjectHistoryServlet extends HttpServlet
           pw.write("<fedoraObjectHistory "
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://" + fedoraServerHost + ":" + fedoraServerPort
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraObjectHistory.xsd\" pid=\"" + PID + "\" >");
 
           // Object History Serialization
@@ -316,8 +327,6 @@ public class GetObjectHistoryServlet extends HttpServlet
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
       logger = new Logger();
     } catch (InitializationException ie)

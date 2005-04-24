@@ -43,7 +43,7 @@ import fedora.server.utilities.StreamUtility;
  * LITE (API-A-LITE) interface using a java servlet front end.
  * <ol>
  * <li>ListMethods URL syntax:
- * <p>http://hostname:port/fedora/listMethods/PID[/dateTime][?xml=BOOLEAN]</p>
+ * <p>protocol://hostname:port/fedora/listMethods/PID[/dateTime][?xml=BOOLEAN]</p>
  * <p>This syntax requests a list of methods for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -51,6 +51,7 @@ import fedora.server.utilities.StreamUtility;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</p></li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -89,14 +90,14 @@ public class ListMethodsServlet extends HttpServlet
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
   /** Instance of Logger to log servlet events in Fedora server log */
   private static Logger logger = null;
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -118,7 +119,7 @@ public class ListMethodsServlet extends HttpServlet
       long servletStartTime = new Date().getTime();
       boolean isListMethodsRequest = false;
       boolean xml = false;
-      requestURI = request.getRequestURL().toString() + "?" + request.getQueryString();
+      requestURI = request.getRequestURL().toString() + "?" + request.getQueryString();      
 
       // Parse servlet URL.
       String[] URIArray = request.getRequestURL().toString().split("/");
@@ -228,7 +229,7 @@ public class ListMethodsServlet extends HttpServlet
 
           // Object Profile found.
           // Serialize the ObjectProfile object into XML
-          new ObjectMethodsDefSerializerThread(PID, methodDefs, versDateTime, pw).start();
+          new ObjectMethodsDefSerializerThread(context, PID, methodDefs, versDateTime, pw).start();
           if (xml)
           {
               // Return results as raw XML
@@ -293,6 +294,9 @@ public class ListMethodsServlet extends HttpServlet
       private String PID = null;
       private ObjectMethodsDef[] methodDefs = null;
       private Date versDateTime = null;
+      private String fedoraServerProtocol = null;
+      private String fedoraServerHost = null;
+      private String fedoraServerPort = null;
 
       /**
        * <p> Constructor for ProfileSerializeThread.</p>
@@ -302,13 +306,20 @@ public class ListMethodsServlet extends HttpServlet
        * @param versDateTime The version datetime stamp of the request.
        * @param pw A PipedWriter to which the serialization info is written.
        */
-      public ObjectMethodsDefSerializerThread(String PID, ObjectMethodsDef[] methodDefs,
+      public ObjectMethodsDefSerializerThread(Context context, String PID, ObjectMethodsDef[] methodDefs,
               Date versDateTime, PipedWriter pw)
       {
           this.pw = pw;
           this.PID = PID;
           this.methodDefs = methodDefs;
           this.versDateTime = versDateTime;
+          fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+          fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);          
+          if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+              fedoraServerProtocol = HTTPS;
+          } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+              fedoraServerProtocol = HTTP;
+          }                
       }
 
       /**
@@ -328,9 +339,9 @@ public class ListMethodsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/fedora/\" >");
                   } else
                   {
@@ -338,10 +349,10 @@ public class ListMethodsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
                           + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\""
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\""
                           + " >");
                   }
 
@@ -425,8 +436,6 @@ public class ListMethodsServlet extends HttpServlet
       try
       {
           s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-          fedoraServerHost = s_server.getParameter("fedoraServerHost");
-          fedoraServerPort = s_server.getParameter("fedoraServerPort");
           s_access = (Access) s_server.getModule("fedora.server.access.Access");
           logger = new Logger();
           } catch (InitializationException ie)

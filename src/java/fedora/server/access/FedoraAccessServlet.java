@@ -49,11 +49,12 @@ import fedora.server.utilities.StreamUtility;
  * these methods:
  * <ol>
  * <li>GetDissemination URL syntax:
- * <p>http://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]</p>
+ * <p>protocol://hostname:port/fedora/get/PID/bDefPID/methodName[/dateTime][?parmArray]</p>
  * <p>This syntax requests a dissemination of the specified object using the
  * specified method of the associated behavior definition object. The result
  * is returned as a MIME-typed stream.</p></li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required path name for the Fedora access service.</li>
@@ -68,7 +69,7 @@ import fedora.server.utilities.StreamUtility;
  *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
  * <li>GetObjectProfile URL syntax:
- * <p>http://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]</p>
+ * <p>protocol://hostname:port/fedora/get/PID[/dateTime][?xml=BOOLEAN]</p>
  * <p>This syntax requests an object profile for the specified digital object.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -76,6 +77,7 @@ import fedora.server.utilities.StreamUtility;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</p></li>
  * <ul>
+ * <li>protocol - either http or https</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -89,10 +91,11 @@ import fedora.server.utilities.StreamUtility;
  *           indicates format is to be text/html.</li>
  * </ul>
  * <li>GetDatastreamDissemination URL syntax:
- * <p>http://hostname:port/fedora/get/PID/DSID[/dateTime]</p>
+ * <p>protocol://hostname:port/fedora/get/PID/DSID[/dateTime]</p>
  * This syntax requests a datastream dissemination for the specified digital
  * object. It is used to return the contents of a datastream.<p></li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -136,14 +139,17 @@ public class FedoraAccessServlet extends HttpServlet
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
   /** Instance of Logger to log servlet events in Fedora server log */
   public Logger logger = null;
+  
+  /** Fedora server protocl **/
+  private String fedoraServerProtocol = null;
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -174,6 +180,8 @@ public class FedoraAccessServlet extends HttpServlet
 
     requestURI = request.getRequestURL().toString() + "?"
         + request.getQueryString();
+    fedoraServerProtocol = requestURI.substring(0,requestURI.indexOf(":"));
+    System.out.println("*****************************PROTOCOL1: "+fedoraServerProtocol+"  PROTOCOL2: "+request.isSecure());
 
     // Parse servlet URL.
     // For the Fedora API-A-LITE "get" syntax, valid entries include:
@@ -428,7 +436,7 @@ public class FedoraAccessServlet extends HttpServlet
       {
         // Object Profile found.
         // Serialize the ObjectProfile object into XML
-        new ProfileSerializerThread(PID, objProfile, versDateTime, pw).start();
+        new ProfileSerializerThread(context, PID, objProfile, versDateTime, pw).start();
         if (xml)
         {
           // Return results as raw XML
@@ -704,6 +712,9 @@ public class FedoraAccessServlet extends HttpServlet
     private String PID = null;
     private ObjectProfile objProfile = null;
     private Date versDateTime = null;
+    private String fedoraServerProtocol = null;
+    private String fedoraServerHost = null;
+    private String fedoraServerPort = null;
 
     /**
      * <p> Constructor for ProfileSerializeThread.</p>
@@ -713,13 +724,20 @@ public class FedoraAccessServlet extends HttpServlet
      * @param versDateTime The version datetime stamp of the request.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public ProfileSerializerThread(String PID, ObjectProfile objProfile,
+    public ProfileSerializerThread(Context context, String PID, ObjectProfile objProfile,
                         Date versDateTime, PipedWriter pw)
     {
       this.pw = pw;
       this.PID = PID;
       this.objProfile = objProfile;
       this.versDateTime = versDateTime;
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTPS;
+      } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTP;
+      }       
     }
 
     /**
@@ -739,7 +757,7 @@ public class FedoraAccessServlet extends HttpServlet
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" >");
           } else
           {
@@ -747,7 +765,7 @@ public class FedoraAccessServlet extends HttpServlet
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + fedoraServerProtocol + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");
@@ -820,8 +838,6 @@ public class FedoraAccessServlet extends HttpServlet
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
       logger = new Logger();

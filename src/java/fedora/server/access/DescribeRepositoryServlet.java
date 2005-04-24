@@ -38,7 +38,7 @@ import fedora.server.utilities.Logger;
  * a description of the repository has the following binding:
  * <ol>
  * <li>describeRepository URL syntax:
- * http://hostname:port/fedora/describe[?xml=BOOLEAN]
+ * protocol://hostname:port/fedora/describe[?xml=BOOLEAN]
  * This syntax requests information about the repository.
  * The xml parameter determines the type of output returned.
  * If the parameter is omitted or has a value of "false", a MIME-typed stream
@@ -46,6 +46,7 @@ import fedora.server.utilities.Logger;
  * of viewing the object profile. If the value specified is "true", then
  * a MIME-typed stream consisting of XML is returned.</li>
  * <ul>
+ * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>fedora - required name of the Fedora access service.</li>
@@ -76,14 +77,14 @@ public class DescribeRepositoryServlet extends HttpServlet
   /** Instance of URLDecoder */
   private URLDecoder decoder = new URLDecoder();
 
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
   /** Instance of Logger to log servlet events in Fedora server log */
-  private static Logger logger = null;
+  private static Logger logger = null;  
+  
+  /** HTTP protocol **/
+  private static String HTTP = "http";
+  
+  /** HTTPS protocol **/
+  private static String HTTPS = "https";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -98,7 +99,7 @@ public class DescribeRepositoryServlet extends HttpServlet
   public void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException
   {
-    boolean xml = false;
+    boolean xml = false;  
 
     logger.logFinest("[DescribeRepositoryServlet] Describe Repository Syntax "
         + "Encountered: "+ request.getRequestURL().toString() + "?"
@@ -151,7 +152,7 @@ public class DescribeRepositoryServlet extends HttpServlet
       {
         // Repository info obtained.
         // Serialize the RepositoryInfo object into XML
-        new ReposInfoSerializerThread(repositoryInfo, pw).start();
+        new ReposInfoSerializerThread(context, repositoryInfo, pw).start();
         if (xml)
         {
           // Return results as raw XML
@@ -220,6 +221,9 @@ public class DescribeRepositoryServlet extends HttpServlet
   {
     private PipedWriter pw = null;
     private RepositoryInfo repositoryInfo = null;
+    private String fedoraServerProtocol = null;
+    private String fedoraServerHost = null;
+    private String fedoraServerPort = null;
 
     /**
      * <p> Constructor for ReposInfoSerializerThread.</p>
@@ -227,10 +231,17 @@ public class DescribeRepositoryServlet extends HttpServlet
      * @param repositoryInfo A repository info data structure.
      * @param pw A PipedWriter to which the serialization info is written.
      */
-    public ReposInfoSerializerThread(RepositoryInfo repositoryInfo, PipedWriter pw)
+    public ReposInfoSerializerThread(Context context, RepositoryInfo repositoryInfo, PipedWriter pw)
     {
       this.pw = pw;
       this.repositoryInfo = repositoryInfo;
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTPS;
+      } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+          fedoraServerProtocol = HTTP;
+      }      
     }
 
     /**
@@ -246,8 +257,8 @@ public class DescribeRepositoryServlet extends HttpServlet
           pw.write("<fedoraRepository "
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://" + fedoraServerHost + ":" + fedoraServerPort
+              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraRepository.xsd\">");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
@@ -324,8 +335,6 @@ public class DescribeRepositoryServlet extends HttpServlet
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      fedoraServerPort = s_server.getParameter("fedoraServerPort");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
       logger = new Logger();
     } catch (InitializationException ie)
