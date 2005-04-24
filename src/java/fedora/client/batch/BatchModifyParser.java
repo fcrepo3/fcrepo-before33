@@ -1409,30 +1409,40 @@ public class BatchModifyParser extends DefaultHandler
         }
     }
 
-
+    /**
+     * <p> Main method for testing only.</p>
+     * 
+     * @param args Array of input parms consisting of hostname, port, username, password, protocol, directives, log.
+     */
     public static void main(String[] args)
     {
-        String protocol = "http";
-        String host = "localhost";
-        int port = 8080;
-        String user = "fedoraAdmin";
-        String pass = "fedoraAdmin";
-        PrintStream logFile;
-        FedoraAPIM APIM;
-        FedoraAPIA APIA;
-
-        try {
-            UPLOADER=new Uploader(host, port, user, pass);
-            logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
-            APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
-            APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
-            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
-            BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
-            file.close();
-            logFile.close();
-        } catch (Exception e) {
-            System.out.println("ERROR: "+e.getClass().getName()
-                               + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
+        
+        if (args.length == 5) {
+		        String host = args[0];
+		        int port = new Integer(args[1]).intValue();
+		        String user = args[2];
+		        String pass = args[3];
+		        String protocol = args[4];
+		        
+		        PrintStream logFile;
+		        FedoraAPIM APIM;
+		        FedoraAPIA APIA;
+		
+		        try {
+		            UPLOADER=new Uploader(host, port, user, pass);
+		            logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
+		            APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
+		            APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
+		            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
+		            BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
+		            file.close();
+		            logFile.close();
+		        } catch (Exception e) {
+		            System.out.println("ERROR: "+e.getClass().getName()
+		                               + " - " + (e.getMessage()==null ? "(no detail provided)" : e.getMessage()));
+		        }
+        } else {
+            System.out.println("Enter args for: host port user pass protocol");
         }
     }
 
