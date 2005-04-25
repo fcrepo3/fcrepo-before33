@@ -51,28 +51,12 @@ public class DisseminationService
   /** An instance of DO manager */
   private static DOManager m_manager;
 
-  /** The current context */
-  //private static Context m_context;
-
   /** Signifies the special type of address location known as LOCAL.
    *  An address location of LOCAL implies that no remote host name is
    *  required for the address location and that the contents of the
    *  operation location are sufficient to execute the associated mechanism.
    */
   private static final String LOCAL_ADDRESS_LOCATION = "LOCAL";
-
-  /** Port number on which the Fedora server is running; determined from
-   * fedora.fcfg config file.
-   */
-  private static String fedoraServerPort = null;
-
-  /** Hostname of the Fedora server determined from
-   * fedora.fcfg config file, or (fallback) by hostIP.getHostName()
-   */
-  private static String fedoraServerHost = null;
-
-  /** URL of the DatastreamResolverServlet; built dynamically.*/
-  private static String datastreamResolverServletURL = null;
 
   /** The expiration limit in minutes for removing entries from the database. */
   private static int datastreamExpirationLimit = 0;
@@ -81,9 +65,6 @@ public class DisseminationService
    * datastream mediation.
    */
   private static int counter = 0;
-
-  /** The IP address of the local host; determined dynamically. */
-  private static InetAddress hostIP = null;
 
   /** Datastream Mediation control flag. */
   private static boolean doDatastreamMediation;
@@ -103,16 +84,6 @@ public class DisseminationService
       {
         s_server = Server.getInstance(new File(fedoraHome));
         m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
-        hostIP = null;
-        fedoraServerPort = s_server.getParameter("fedoraServerPort");
-        s_server.logFinest("fedoraServerPort: " + fedoraServerPort);
-        hostIP = InetAddress.getLocalHost();
-        fedoraServerHost = s_server.getParameter("fedoraServerHost");
-        if (fedoraServerHost==null || fedoraServerHost.equals("")) {
-            fedoraServerHost=hostIP.getHostName();
-        }
-        s_server.logFinest("[DisseminationService] "
-            + "datastreamResolverServletURL: " + datastreamResolverServletURL);
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
         {
@@ -141,15 +112,6 @@ public class DisseminationService
     } catch (InitializationException ie)
     {
         System.err.println(ie.getMessage());
-
-    } catch (UnknownHostException uhe)
-    {
-      System.err.println("[DisseminationService] was unable to "
-          + "resolve the IP address of the Fedora Server: "
-          + datastreamResolverServletURL + "."
-          + " The underlying error was a "
-          + uhe.getClass().getName() + "The message "
-          + "was \"" + uhe.getMessage() + "\"");
     }
   }
 
@@ -162,28 +124,9 @@ public class DisseminationService
    * The port number is obtained from the Fedora server config file and the IP
    * address of the server is obtained dynamically. These variables are needed
    * to perform the datastream proxy service for datastream requests.</p>
-   *
-   * @throws ServerException If the port number or the IP address of the Fedora
-   *         server cannot be obtained.
    */
-  public DisseminationService() throws ServerException
-  {
-
-    if (DisseminationService.fedoraServerPort == null || fedoraServerPort.equalsIgnoreCase(""))
-    {
-      throw new DisseminationException("[DisseminationService] was unable to "
-          + "resolve the port number of the Fedora Server: "
-          + datastreamResolverServletURL + "from the configuration file. This "
-          + "information is required by the Dissemination Service.");
-    }
-    if (DisseminationService.hostIP == null)
-    {
-      throw new DisseminationException("[DisseminationService] was unable to "
-          + "resolve the IP address of the Fedora Server: "
-          + datastreamResolverServletURL + " .");
-    }
-
-  }
+  public DisseminationService()
+  {  }
 
   public void checkState(Context context, String state, String dsID, String PID)
       throws ServerException
@@ -224,9 +167,18 @@ public class DisseminationService
    *         reason.
    */
   public MIMETypedStream assembleDissemination(Context context, String PID,
-      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray)
+      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, String reposBaseURL)
       throws ServerException
   {
+
+    if (reposBaseURL == null || reposBaseURL.equals(""))
+    {
+      throw new DisseminationException("[DisseminationService] was unable to "
+          + "resolve the base URL of the Fedora Server. The URL specified was: \""
+          + reposBaseURL + "\". This information is required by the Dissemination Service.");
+    }
+    
+    String datastreamResolverServletURL = reposBaseURL + "/fedora/getDS?id=";
     if (fedora.server.Debug.DEBUG) {
         printBindingInfo(dissBindInfoArray);
     }
@@ -264,8 +216,9 @@ public class DisseminationService
         // datastream's URL is dependent on user parameters, such
         // as when the datastream is actually a dissemination that
         // takes parameters.
-        if (dissBindInfo.dsLocation!=null
-                && dissBindInfo.dsLocation.startsWith("http://")) {
+        if (dissBindInfo.dsLocation!=null && 
+                ( dissBindInfo.dsLocation.startsWith("http://") 
+                  || dissBindInfo.dsLocation.startsWith("https://") )  ) {
             String[] parts=dissBindInfo.dsLocation.split("=\\("); // regex for =(
             if (parts.length>1) {
                 StringBuffer replaced=new StringBuffer();
@@ -322,8 +275,6 @@ public class DisseminationService
           {
             dissURL = dissBindInfo.AddressLocation+dissBindInfo.OperationLocation;
           }
-          datastreamResolverServletURL = "http://" + fedoraServerHost
-              + ":" + fedoraServerPort + "/fedora/getDS?id=";
           protocolType = dissBindInfo.ProtocolType;
         }
         String currentKey = dissBindInfo.DSBindKey;
@@ -390,7 +341,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID)
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, reposBaseURL)
                         + "+(" + dissBindInfo.DSBindKey + ")";;
             } else {
                 replaceString =
@@ -409,7 +360,7 @@ public class DisseminationService
             // Use Datastream Mediation (except for Redirected datastreams)
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
-                      dissBindInfo.dsControlGroupType);
+                      dissBindInfo.dsControlGroupType);          
           } else
           {
             // Bypass Datastream Mediation.
@@ -419,7 +370,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID);
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, reposBaseURL);
             } else
             {
                 replaceString = dissBindInfo.dsLocation;
@@ -646,7 +597,7 @@ public class DisseminationService
         DatastreamMediation dm = new DatastreamMediation();
         dm.mediatedDatastreamID = tempID;
         dm.dsLocation = dsLocation;
-        dm.dsControlGroupType = dsControlGroupType;
+        dm.dsControlGroupType = dsControlGroupType; 
         dsRegistry.put(tempID, dm);
         s_server.logFinest("[DisseminationService] DatastreammediationKey "
             + "added to Hash: " + tempID);
@@ -744,17 +695,24 @@ public class DisseminationService
    * @throws ServerException - If anything goes wrong during the conversion attempt.
    */
   private String resolveInternalDSLocation(Context context, String internalDSLocation,
-      String PID) throws ServerException
+      String PID, String reposBaseURL) throws ServerException
   {
+      
+      if (reposBaseURL == null || reposBaseURL.equals(""))
+      {
+        throw new DisseminationException("[DisseminationService] was unable to "
+            + "resolve the base URL of the Fedora Server. The URL specified was: \""
+            + reposBaseURL + "\". This information is required by the Dissemination Service.");
+      }  
+      
       String[] s = internalDSLocation.split("\\+");
       String dsLocation = null;
-
       if (s.length == 3)
       {
           DOReader doReader =  m_manager.getReader(context, PID);
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
           if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
-          dsLocation = "http://"+fedoraServerHost+":"+fedoraServerPort
+          dsLocation = reposBaseURL
               +"/fedora/get/"+s[0]+"/"+s[1]+"/"
               +DateUtility.convertDateToString(d.DSCreateDT);
       } else
@@ -792,28 +750,7 @@ public class DisseminationService
         for (int k = 0; k < def.parmDomainValues.length; k++) {
           System.out.println("    parmDomainValue  : " + def.parmDomainValues[k]);
         }
-        /*
-            public String parmName = null;
-    public String parmType = null;
-    public String parmDefaultValue = null;
-    public String[] parmDomainValues = new String[0];
-    public boolean parmRequired = true;
-    public String parmLabel = null;
-    public String parmPassBy = null;
-        */
       }
     }
-    /*
-  public String DSBindKey = null;
-  public MethodParmDef[] methodParms = null;
-  public String dsLocation = null;
-  public String dsControlGroupType = null;
-  public String dsID = null;
-  public String dsVersionID = null;
-  public String AddressLocation = null;
-  public String OperationLocation = null;
-  public String ProtocolType = null;
-  public String dsState = null;
-    */
   }
 }
