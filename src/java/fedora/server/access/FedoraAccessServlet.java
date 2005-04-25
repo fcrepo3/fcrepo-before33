@@ -181,7 +181,6 @@ public class FedoraAccessServlet extends HttpServlet
     requestURI = request.getRequestURL().toString() + "?"
         + request.getQueryString();
     fedoraServerProtocol = requestURI.substring(0,requestURI.indexOf(":"));
-    System.out.println("*****************************PROTOCOL1: "+fedoraServerProtocol+"  PROTOCOL2: "+request.isSecure());
 
     // Parse servlet URL.
     // For the Fedora API-A-LITE "get" syntax, valid entries include:
@@ -756,16 +755,16 @@ public class FedoraAccessServlet extends HttpServlet
             pw.write("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" >");
           } else
           {
             pw.write("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + fedoraServerProtocol + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
                 + "\" >");

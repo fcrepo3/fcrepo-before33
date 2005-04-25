@@ -339,9 +339,9 @@ public class ListDatastreamsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
+                          + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
                           + "/listDatastreams.xsd\"" + " pid=\"" + PID + "\" "
-                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort) + "/fedora/\" "
                           + ">");
                   } else
                   {
@@ -349,10 +349,10 @@ public class ListDatastreamsServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
+                          + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
                           + "/listDatastreams.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
                           + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
-                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort) + "/fedora/\" "
                           + ">");
                   }
 

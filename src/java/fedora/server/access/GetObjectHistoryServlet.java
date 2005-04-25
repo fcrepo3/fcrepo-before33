@@ -31,6 +31,7 @@ import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.utilities.Logger;
+import fedora.server.utilities.StreamUtility;
 
 /**
  * <p><b>Title: </b>GetObjectHistoryServlet.java</p>
@@ -276,7 +277,7 @@ public class GetObjectHistoryServlet extends HttpServlet
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
+              + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
               + "/fedoraObjectHistory.xsd\" pid=\"" + PID + "\" >");
 
           // Object History Serialization
