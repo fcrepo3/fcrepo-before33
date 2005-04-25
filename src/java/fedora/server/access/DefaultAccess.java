@@ -322,9 +322,14 @@ public class DefaultAccess extends Module implements Access
         reader.getDisseminationBindingInfo(bDefPID, methodName, versDateTime);
 
     // Assemble and execute the dissemination request from the binding info.
+    String reposBaseURL = getReposBaseURL(
+          	context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri).equals(Constants.HTTP_REQUEST.SECURE.uri) 
+      			? "https" : "http",
+      		context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri)
+      	);
     DisseminationService dissService = new DisseminationService();
     dissemination =
-        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo);
+        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, reposBaseURL);
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
