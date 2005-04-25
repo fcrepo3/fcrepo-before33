@@ -1,14 +1,11 @@
 package fedora.server.access.defaultdisseminator;
 
-import java.io.File;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import fedora.server.Server;
 import fedora.server.access.ObjectProfile;
-import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOReader;
@@ -40,30 +37,6 @@ import fedora.server.utilities.DCFields;
 public class ObjectInfoAsXML
 {
 
-  /** Fedora server instance */
-  private static Server s_server = null;
-
-  /** Host name of the Fedora server **/
-  private static String fedoraServerHost = null;
-
-  /** Port number on which the Fedora server is running. **/
-  private static String fedoraServerPort = null;
-
-  /** Make sure we have a server instance. */
-  static
-  {
-    try
-    {
-      s_server =
-          Server.getInstance(new File(System.getProperty("fedora.home")));
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      fedoraServerPort = s_server.getParameter("fedoraServerPort");
-    } catch (InitializationException ie)
-    {
-      System.err.println(ie.getMessage());
-    }
-  }
-
     public ObjectInfoAsXML()
     {
     }
@@ -78,16 +51,16 @@ public class ObjectInfoAsXML
             out.append("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(reposBaseURL)
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\" >");
         } else
         {
             out.append("<objectProfile "
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(reposBaseURL)
                 + "/objectProfile.xsd\"" + " pid=\"" + StreamUtility.enc(objProfile.PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" >");
         }
@@ -122,6 +95,7 @@ public class ObjectInfoAsXML
 
 	public String getItemIndex(String reposBaseURL, DOReader reader, Date versDateTime)
 			throws ServerException {
+	    try {
 		Datastream[] datastreams = reader.GetDatastreams(versDateTime, null);
 		StringBuffer out = new StringBuffer();
 
@@ -133,8 +107,9 @@ public class ObjectInfoAsXML
 				+ " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
 				+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 				+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-				+ " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
+				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+				+ StreamUtility.enc(reposBaseURL)
+				+ "/objectItemIndex.xsd\""
 				+ " PID=\"" + StreamUtility.enc(reader.GetObjectPID()) + "\">\n");
 		} else
 		{
@@ -142,11 +117,13 @@ public class ObjectInfoAsXML
 				+ " targetNamespace=\"http://www.fedora.info/definitions/1/0/access/\""
 				+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
 				+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-				+ " http://www.fedora.info/definitions/1/0/access/objectItemIndex.xsd\""
+				+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+				+ StreamUtility.enc(reposBaseURL)
+				+ "/objectItemIndex.xsd\""
 				+ " PID=\"" + StreamUtility.enc(reader.GetObjectPID()) + "\""
 				+ " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">\n");
 		}
+
 
 		for (int i=0; i<datastreams.length; i++)
 		{
@@ -163,6 +140,10 @@ public class ObjectInfoAsXML
 		}
 		out.append("</objectItemIndex>");
 		return out.toString();
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        throw new ObjectIntegrityException(e.getMessage());
+	    }
 	}
 
     public String getMethodIndex(String reposBaseURL, String PID, ObjectMethodsDef[] methods,
@@ -177,14 +158,14 @@ public class ObjectInfoAsXML
         {
             out.append("<objectMethods "
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(reposBaseURL)
                 + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\">");
         } else {
             out.append("<objectMethods "
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
+                + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
+                + StreamUtility.enc(reposBaseURL)
                 + "/objectMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\">");
         }
