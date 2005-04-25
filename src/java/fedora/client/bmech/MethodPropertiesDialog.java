@@ -632,9 +632,9 @@ public class MethodPropertiesDialog extends JDialog
             assertMethodPropertiesMsg("You must enter an HTTP binding URL for method!");
             return false;
           }
-          else if (mp.methodRelativeURL.startsWith("http://"))
+          else if (mp.methodRelativeURL.startsWith("http://") || mp.methodRelativeURL.startsWith("https://"))
           {
-            assertMethodPropertiesMsg("A relative URL cannot begin with http://");
+            assertMethodPropertiesMsg("A relative URL cannot begin with http:// or https://");
             return false;
           }
           else if (!(parmsInURL(mp.methodFullURL, mp.methodParms)))
