@@ -10,30 +10,6 @@
 	<security-role>
 		<role-name>administrator</role-name>
 	</security-role>
-	
-	<!-- changes made for 2.1
-		1. rearranged to bring together sections related to same Fedora function
-		2. little or no change to servlet and servlet-mapping sections
-		3. much change to security-constraints to tighten container security for those urls and methods
-		not otherwise specifically declared
-		4. several security-constraints may still be at odds with client code not yet 
-		sending credentials; see to-do below 
-	-->
-	
-	<!-- to do: 
-		1. implement basic auth in client code which accesses some urls.
-		Fedora < 2.1 has credentials passed and detected in a variety of ad hoc ways, 
-		including writing and reading password in querystring,
-		reading http headers directly (web.xml wasn't correct to force tomcat to do this for POSTs),
-		user=fedoraAdmin assumed (hardcoded) at server.
-		2. we have only one web resource name == Fedora Management Interface.
-		having only one seems appropriate, but the chosen name is misleadingly specific;
-		should we change it?  any implications?
-		3. the servlet names (labels) and display names could be regularized; may be too late/messy now.
-		4. /mgmt/getNextPID not formed generally, e.g., /management/upload; should we use /management/getNextPID ?
-		5. note:  the explicit login servlet has become essentially an upfront authentication ping.  xacml authz is 
-		not involved, as servlet does not call fedora internals
-	-->
 
 	<!-- lock down (no access to any roles) as default case -->
 	<security-constraint>
@@ -421,32 +397,7 @@
 			<role-name>*</role-name>
 		</auth-constraint>
 	</security-constraint>		
-	
-	<!--servlet MAP THIS OUT; I DON'T THINK IT'S NEEDED ANY LONGER; DELETE THIS COMMENT BEFORE 2.1 RELEASE, 
-	ALSO DELETE LOGINSERVLET.JAVA, ITSELF.
-		<servlet-name>LoginServlet</servlet-name>
-		<display-name>Prompts the user for login info</display-name>
-		<servlet-class>
-			fedora.server.access.LoginServlet
-		</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>LoginServlet</servlet-name>
-		<url-pattern>/login</url-pattern>
-	</servlet-mapping-->
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/login</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-		<auth-constraint>
-			<role-name>*</role-name>
-		</auth-constraint>
-	</security-constraint>		
-	
+		
 	<servlet>
 		<servlet-name>MethodParameterResolverServlet</servlet-name>
 		<display-name>Fedora Access Datastream Locator</display-name>
