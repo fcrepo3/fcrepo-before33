@@ -45,7 +45,7 @@ public abstract class OAIProviderServlet
                 params.put(name, request.getParameter(name));
             }
             ByteArrayOutputStream out=new ByteArrayOutputStream();
-            Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
+            Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
             try {
             	getResponder().respond(context, params, out);
             } catch (NotAuthorizedException e) {
@@ -89,7 +89,7 @@ public abstract class OAIProviderServlet
     public void test(String[] args)
             throws OAIException, RepositoryException {
         ByteArrayOutputStream out=new ByteArrayOutputStream();
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, null, false);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, null);
         try {
 			getResponder().respond(context,getAsParameterMap(args), out);
 		} catch (NotAuthorizedException e) {

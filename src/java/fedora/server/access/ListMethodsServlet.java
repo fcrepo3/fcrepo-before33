@@ -189,7 +189,7 @@ public class ListMethodsServlet extends HttpServlet
 
       try {
           if (isListMethodsRequest) {
-              Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+              Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
               listMethods(context, PID, asOfDateTime, xml, request, response);
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;

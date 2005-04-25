@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import fedora.server.Context;
+import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.BMechDSBindSpec;
@@ -236,7 +237,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       {
         if (bMechReader == null)
         {
-          bMechReader = m_manager.getBMechReader(m_context, bMechPID);
+          bMechReader = m_manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, bMechPID);
         }
         methodParms = bMechReader.getServiceMethodParms(methodName, versDateTime);
       } catch (Throwable th)
@@ -368,7 +369,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       {
         if (bMechReader == null)
         {
-          bMechReader = m_manager.getBMechReader(m_context, PID);
+          bMechReader = m_manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, PID);
         }
         return bMechReader.getServiceMethods(versDateTime);
       } catch (ServerException se)
@@ -391,7 +392,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     {
       if (bMechReader == null)
       {
-        bMechReader = m_manager.getBMechReader(m_context, PID);
+        bMechReader = m_manager.getBMechReader(Server.GLOBAL_CHOICE, m_context, PID);
       }
       return bMechReader.getServiceMethodBindings(versDateTime);
     } catch (ServerException se)
@@ -425,7 +426,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     {
       if (bMechReader == null)
       {
-        bMechReader = m_manager.getBMechReader(m_context, PID);
+        bMechReader = m_manager.getBMechReader(Server.GLOBAL_CHOICE, m_context, PID);
       }
       return bMechReader.getServiceMethodsXML(versDateTime);
     } catch (ServerException se)
@@ -446,7 +447,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     {
       if (bMechReader == null)
       {
-        bMechReader = m_manager.getBMechReader(m_context, PID);
+        bMechReader = m_manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, PID);
       }
       return bMechReader.getServiceDSInputSpec(versDateTime);
     } catch (ServerException se)
@@ -532,11 +533,11 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       // Definitive storage area.
       try
       {
-        if (doReader == null)
+        if (definitiveDOReader == null)
         {
-          doReader = m_manager.getReader(m_context, bMechPID);
+        	definitiveDOReader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, bMechPID);
         }
-        bMechLabel = doReader.GetObjectLabel();
+        bMechLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
         s_server.logFinest("[FastBmechReader] BMECH OBJECT FOUND IN DEFINITIVE "
             + "STORE: " + bMechPID);

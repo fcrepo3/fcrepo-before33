@@ -13,6 +13,7 @@ import com.sun.xacml.cond.EvaluationResult;
 import fedora.common.Constants;
 import fedora.common.policy.XacmlName;
 import fedora.server.ReadOnlyContext;
+import fedora.server.Server;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
@@ -176,7 +177,7 @@ import fedora.server.utilities.DateUtility;
 		DOReader reader = null;
 		try {
 			log("pid="+pid);			
-			reader = doManager.getReader(ReadOnlyContext.EMPTY, pid);
+			reader = doManager.getReader(Server.USE_CACHE, ReadOnlyContext.EMPTY, pid);
 		} catch (ServerException e) {
 			log("couldn't get object reader");
 			return null;

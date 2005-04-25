@@ -57,7 +57,7 @@ public class UploadServlet
     public void doPost(HttpServletRequest request, 
             HttpServletResponse response) 
             throws IOException {
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
 		try {
             MultipartParser parser=new MultipartParser(request, 
                 Long.MAX_VALUE, true, null);

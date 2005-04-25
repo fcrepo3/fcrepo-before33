@@ -23,13 +23,13 @@ public interface RepositoryReader {
      * @return A reader.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOReader getReader(Context context, String pid)
+    public abstract DOReader getReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException;
 
-    public abstract BMechReader getBMechReader(Context context, String pid)
+    public abstract BMechReader getBMechReader(boolean cachedObjectRequired,  Context context, String pid)
             throws ServerException;
 
-    public abstract BDefReader getBDefReader(Context context, String pid)
+    public abstract BDefReader getBDefReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException;
 
     /**

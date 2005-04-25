@@ -38,6 +38,7 @@ import com.sun.xacml.ctx.Status;
 import com.sun.xacml.finder.PolicyFinder;
 import com.sun.xacml.finder.PolicyFinderResult;
 import fedora.server.ReadOnlyContext;
+import fedora.server.Server;
 import fedora.common.Constants;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
@@ -207,7 +208,7 @@ System.err.println("is NOT a directory");
 		AbstractPolicy objectPolicyFromObject = null;
 		DOReader reader = null;
 		try {
-			reader = doManager.getReader(ReadOnlyContext.EMPTY, pid);
+			reader = doManager.getReader(Server.USE_CACHE, ReadOnlyContext.EMPTY, pid);
 		} catch (ObjectNotInLowlevelStorageException ee) {
 			// nonexistent object is not an error (action is to create the object)			
 		} catch (Throwable e) {

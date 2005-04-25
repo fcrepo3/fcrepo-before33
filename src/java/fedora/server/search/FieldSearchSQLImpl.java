@@ -8,6 +8,7 @@ import java.util.*;
 
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
+import fedora.server.Server;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
@@ -56,13 +57,6 @@ public class FieldSearchSQLImpl
 
     // a hash of token-keyed FieldSearchResultSQLImpls
     private HashMap m_currentResults=new HashMap();
-
-    private static ReadOnlyContext s_nonCachedContext;
-    static {
-        HashMap h=new HashMap();
-        h.put("useCachedObject", "false");
-        s_nonCachedContext=ReadOnlyContext.getContext(h);
-    }
 
     /**
      * Construct a FieldSearchSQLImpl.
@@ -130,8 +124,8 @@ public class FieldSearchSQLImpl
             }
             if (dbRowValues[2].equals("m")) {
                 // get it as a BMechReader and add the bDefPID
-                BMechReader mechReader=m_repoReader.getBMechReader(
-                        s_nonCachedContext,
+                BMechReader mechReader=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE,
+                        ReadOnlyContext.EMPTY,
                         reader.GetObjectPID());
                 bDefs.add(mechReader.getServiceDSInputSpec(null).bDefPID);
             }

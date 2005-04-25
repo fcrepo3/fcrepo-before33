@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import junit.framework.TestCase;
 
+import fedora.server.Server;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DirectoryBasedRepositoryReader;
@@ -62,7 +63,7 @@ public class RepositoryReaderTest
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
-                DOReader r=m_repoReader.getReader(null, pids[i]);
+                DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                 System.out.println(r.GetObjectPID() + " found via DOReader.");
             }
         } catch (Exception e) {
@@ -74,9 +75,9 @@ public class RepositoryReaderTest
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
-                DOReader r=m_repoReader.getReader(null, pids[i]);
+                DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                 if (r.getFedoraObjectType().equals("D")) {
-                    BDefReader dr=m_repoReader.getBDefReader(null, pids[i]);
+                    BDefReader dr=m_repoReader.getBDefReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                     System.out.println(dr.GetObjectPID() + " found via getBDefReader.");
                 }
             }
@@ -89,9 +90,9 @@ public class RepositoryReaderTest
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
-                DOReader r=m_repoReader.getReader(null, pids[i]);
+                DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                 if (r.getFedoraObjectType().equals("M")) {
-                    BMechReader mr=m_repoReader.getBMechReader(null, pids[i]);
+                    BMechReader mr=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                     System.out.println(mr.GetObjectPID() + " found via getBMechReader.");
                 }
             }

@@ -19,6 +19,9 @@ public class WritableContext
 	private final Date now = new Date();
 	
     private MultiValueMap m_environmentAttributes;
+    public final MultiValueMap getEnvironmentAttributes() {
+    	return m_environmentAttributes;
+    }    
 
     private MultiValueMap m_subjectAttributes;
     
@@ -170,6 +173,10 @@ public class WritableContext
     public String getPassword() {
     	return password;
     }
-
+    /*
+    public final boolean useCachedObject() {
+    	return "true".equalsIgnoreCase(this.get("useCachedObject"));
+    }
+*/
 
 }

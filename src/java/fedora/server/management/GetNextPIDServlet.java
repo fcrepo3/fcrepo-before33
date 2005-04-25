@@ -113,7 +113,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     String namespace = null;
     String requestURL = request.getRequestURL().toString();
 
-    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
 
     // Get optional supplied parameters.
     for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)

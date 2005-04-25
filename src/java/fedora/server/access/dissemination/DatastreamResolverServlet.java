@@ -207,7 +207,7 @@ public class DatastreamResolverServlet extends HttpServlet
             "fedora.server.storage.ExternalContentManager");
         mimeTypedStream =
             externalContentManager.getExternalContent(dsPhysicalLocation,
-            ReadOnlyContext.getContext("", request, false)); //"", false are really don't-cares
+            ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request));
         outStream = response.getOutputStream();
         response.setContentType(mimeTypedStream.MIMEType);
         Property[] headerArray = mimeTypedStream.header;
@@ -249,8 +249,8 @@ public class DatastreamResolverServlet extends HttpServlet
         dsVersionID = s[2];
         logger.logFinest("[DatastreamResolverServlet] PID: " + PID
             + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
-        DOReader doReader =  m_manager.getReader(context, PID);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
+        DOReader doReader =  m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
         Datastream d =
             (Datastream) doReader.getDatastream(dsID, dsVersionID);
         logger.logFinest("[DatastreamResolverServlet] Got datastream: "

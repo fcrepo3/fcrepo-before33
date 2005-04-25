@@ -11,6 +11,7 @@ import java.sql.SQLException;
 
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
+import fedora.server.Server;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -43,13 +44,6 @@ import fedora.server.utilities.MD5Utility;
 public class FieldSearchResultSQLImpl
         extends StdoutLogging
         implements FieldSearchResult {
-
-    private static ReadOnlyContext s_nonCachedContext;
-    static {
-        HashMap h=new HashMap();
-        h.put("useCachedObject", "false");
-        s_nonCachedContext=ReadOnlyContext.getContext(h);
-    }
 
     /* fields supporting public accessors */
     private ArrayList m_objectFields;
@@ -414,7 +408,7 @@ public class FieldSearchResultSQLImpl
             throws UnrecognizedFieldException, ObjectIntegrityException,
             RepositoryConfigurationException, StreamIOException,
             ServerException {
-        DOReader r=m_repoReader.getReader(s_nonCachedContext, pid);
+        DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, ReadOnlyContext.EMPTY, pid);
         ObjectFields f;
         // If there's a DC record available, use SAX to parse the most
         // recent version of it into f.
@@ -474,8 +468,8 @@ public class FieldSearchResultSQLImpl
                 // also, if the object is a bMech, add the bDefs
                 // it implements!
                 if (r.getFedoraObjectType().equals("M")) {
-                    BMechReader mechReader=m_repoReader.getBMechReader(
-                            s_nonCachedContext, pid);
+                    BMechReader mechReader=m_repoReader.getBMechReader(Server.USE_DEFINITIVE_STORE, 
+                    		ReadOnlyContext.EMPTY, pid);
                     f.bDefs().add(mechReader.getServiceDSInputSpec(null).bDefPID);
                 }
             }

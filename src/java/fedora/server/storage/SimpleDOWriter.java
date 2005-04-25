@@ -7,6 +7,7 @@ import java.util.List;
 
 import fedora.server.Context;
 import fedora.server.Logging;
+import fedora.server.Server;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.DefaultDOManager;
@@ -318,7 +319,7 @@ public class SimpleDOWriter
     public void commit(String logMessage)
             throws ServerException {
         assertNotInvalidated();
-        m_mgr.doCommit(m_context, m_obj, logMessage, m_pendingRemoval);
+        m_mgr.doCommit(Server.USE_DEFINITIVE_STORE, m_context, m_obj, logMessage, m_pendingRemoval);
         m_committed=true;
         invalidate();
     }

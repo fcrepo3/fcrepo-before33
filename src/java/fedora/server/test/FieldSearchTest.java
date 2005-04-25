@@ -11,6 +11,7 @@ import java.util.List;
 import junit.framework.TestCase;
 
 import fedora.oai.sample.RandomDCMetadataFactory;
+import fedora.server.Server;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchSQLImpl;
@@ -92,7 +93,7 @@ public class FieldSearchTest
         try {
             String[] pids=m_repoReader.listObjectPIDs(null);
             for (int i=0; i<pids.length; i++) {
-                DOReader r=m_repoReader.getReader(null, pids[i]);
+                DOReader r=m_repoReader.getReader(Server.USE_DEFINITIVE_STORE, null, pids[i]);
                 m_fieldSearch.update(r);
             }
         } catch (Exception e) {

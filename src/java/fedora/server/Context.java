@@ -17,6 +17,8 @@ public interface Context {
 
     public abstract Iterator names();
     
+    public MultiValueMap getEnvironmentAttributes();
+    
     public Iterator environmentAttributes();
 
     public int nEnvironmentValues(String name);
@@ -60,5 +62,7 @@ public interface Context {
     public Date now();
     
     public boolean getNoOp();
+    
+    //public boolean useCachedObject();
     
 }

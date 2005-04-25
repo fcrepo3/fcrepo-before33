@@ -709,7 +709,7 @@ public class DisseminationService
       String dsLocation = null;
       if (s.length == 3)
       {
-          DOReader doReader =  m_manager.getReader(context, PID);
+          DOReader doReader =  m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
           if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
           dsLocation = reposBaseURL

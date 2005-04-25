@@ -42,7 +42,7 @@ public interface DOManager
      * @return A writer, or null if the pid didn't point to an accessible object.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOWriter getWriter(Context context, String pid)
+    public abstract DOWriter getWriter(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException;
 
     /**
@@ -71,7 +71,7 @@ public interface DOManager
      * @return a writer.
      * @throws ServerException If anything went wrong.
      */
-    public abstract DOWriter getIngestWriter(Context context, InputStream in, String format, String encoding, boolean newPid)
+    public abstract DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format, String encoding, boolean newPid)
             throws ServerException;
 
     public FieldSearchResult findObjects(Context context,

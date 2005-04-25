@@ -11,6 +11,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import fedora.server.Context;
+import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ServerException;
 import fedora.server.storage.types.MethodParmDef;
@@ -209,7 +210,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
       {
         if (bDefReader == null)
         {
-          bDefReader = m_manager.getBDefReader(m_context, PID);
+          bDefReader = m_manager.getBDefReader(Server.USE_DEFINITIVE_STORE, m_context, PID);
         }
         methodDefs = bDefReader.getAbstractMethods(versDateTime);
       } catch (Throwable th)
@@ -241,7 +242,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
     {
       if (bDefReader == null)
       {
-        bDefReader = m_manager.getBDefReader(m_context, PID);
+        bDefReader = m_manager.getBDefReader(Server.GLOBAL_CHOICE, m_context, PID);
       }
       return bDefReader.getAbstractMethodsXML(versDateTime);
     } catch (ServerException se)
@@ -372,7 +373,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
       {
         if (bDefReader == null)
         {
-          bDefReader = m_manager.getBDefReader(m_context, bDefPID);
+          bDefReader = m_manager.getBDefReader(Server.USE_DEFINITIVE_STORE, m_context, bDefPID);
         }
         methodParms = bDefReader.getObjectMethodParms(bDefPID, methodName,
             versDateTime);
@@ -456,11 +457,11 @@ public class FastBdefReader extends FastDOReader implements BDefReader
       // Definitive storage area.
       try
       {
-        if (doReader == null)
+        if (definitiveDOReader == null)
         {
-          doReader = m_manager.getReader(m_context, bDefPID);
+        	definitiveDOReader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, bDefPID);
         }
-        bDefLabel = doReader.GetObjectLabel();
+        bDefLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
         s_server.logFinest("[FastBdefReader] BDEF OBJECT FOUND IN DEFINITIVE "
             + "STORE: " + bDefPID);

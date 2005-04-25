@@ -314,8 +314,10 @@ public class JAASRealm
     			}
     			if (rpep != null) {
             		System.err.println("in conditional 2a");
-    				fedora.server.Context context = fedora.server.ReadOnlyContext.getContext("", httpServletRequest, false,
-    						username, null, roles);
+    				fedora.server.Context context 
+					// = fedora.server.ReadOnlyContext.getContext("surrogate", httpServletRequest, username, null, roles);
+					= fedora.server.ReadOnlyContext.getContext("surrogate", httpServletRequest);
+
     				String target = "urn:fedora:names:fedora:2.1:action:actAsSurrogateFor";            		
             		MultiValueMap actionAttributes = new MultiValueMap();
             		String name = "";

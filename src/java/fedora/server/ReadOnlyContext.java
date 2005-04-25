@@ -38,15 +38,31 @@ public class ReadOnlyContext
 	public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
 
 	
-    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, null, "");
+    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "");
     static {
     	EMPTY.setActionAttributes(null);
     	EMPTY.setResourceAttributes(null);
     }
     
+    /*
+    public final boolean useCachedObject() {
+    	//announce a call which you missed replacing
+    		try {
+				throw new Exception("REMNANT CALL TO CONTEXT.USECACHEDOBJECT()");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}    	
+    	return "true".equalsIgnoreCase(this.get("useCachedObject"));
+    }
+*/
+    
+    
     private final Date now = new Date();
     
     private MultiValueMap m_environmentAttributes;
+    public final MultiValueMap getEnvironmentAttributes() {
+    	return m_environmentAttributes;
+    }
 
     private MultiValueMap m_subjectAttributes;
     
@@ -58,19 +74,15 @@ public class ReadOnlyContext
     
     private final boolean noOp = false; 
     
-    public static Context getCachedContext() {
-        HttpServletRequest req=(HttpServletRequest) MessageContext.
-                getCurrentContext().getProperty(
-                HTTPConstants.MC_HTTP_SERVLETREQUEST);
-      return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, true);
-    }
 
+    /*
     public static Context getUncachedContext() {
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
         return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
     }
+    */
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -78,8 +90,8 @@ public class ReadOnlyContext
      * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
-    private ReadOnlyContext(Map parameters, MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password) {
-        super(parameters);
+    private ReadOnlyContext(MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password) {
+        //super(parameters);
         m_environmentAttributes=environmentAttributes;
         if (m_environmentAttributes==null) {
             m_environmentAttributes=new MultiValueMap();
@@ -96,9 +108,17 @@ public class ReadOnlyContext
         this.password = password;
     }
     
+    /*
     private ReadOnlyContext(Map parameters) {
-        this(parameters, null, null, "");
+        this(parameters, null, null, "");    	
+    	//announce a call which you missed replacing
+		try {
+			throw new Exception("REMNANT CALL TO CONTEXT.USECACHEDOBJECT()");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}    	
     }
+    */
 
     public static ReadOnlyContext getCopy(Context source) {
         HashMap params=new HashMap();
@@ -109,7 +129,7 @@ public class ReadOnlyContext
             params.put(k, source.get(k));
         }
         //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-        ReadOnlyContext temp = new ReadOnlyContext(params, null, null, source.getPassword());
+        ReadOnlyContext temp = new ReadOnlyContext(null, null, source.getPassword());
         temp.setActionAttributes(null);
         temp.setResourceAttributes(null);
         return temp;
@@ -149,7 +169,7 @@ public class ReadOnlyContext
                     params.put(k, b.get(k));
                 }
                 //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-                ReadOnlyContext temp = new ReadOnlyContext(params, null, null, a.getPassword());
+                ReadOnlyContext temp = new ReadOnlyContext(null, null, a.getPassword());
                 temp.setActionAttributes(null);
                 temp.setResourceAttributes(null);
                 return temp;
@@ -157,8 +177,16 @@ public class ReadOnlyContext
             }
         }
     }
-
+ 
     public String get(String name) {
+    	//if (("useCachedObject".equals(name)) ||  ("userId".equals(name)) || ("application".equals(name))) {    		
+    	//announce a call which you missed replacing
+    		try {
+				throw new Exception("REMNANT CALL TO CONTEXT.GET(" + name +")");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+    	//}
         return getParameter(name);
     }
 
@@ -261,164 +289,238 @@ public class ReadOnlyContext
     public Date now() {
     	return now;
     }
-    
+
+    /*
     public static final ReadOnlyContext getContext(Map parameters) {
+    	//announce a call which you missed replacing
+		try {
+			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(MAP)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}       	
     	if (parameters == null) {
     		parameters = new Hashtable();
     	}
         return new ReadOnlyContext(parameters);
     }
+    */
 
-    
+    /*
     public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
+    	//announce a call which you missed replacing
+		try {
+			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(String soapOrRest, HttpServletRequest request, boolean useCachedObject)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     	return getContext(soapOrRest, request, useCachedObject, null, null, null);
     }
+    */
+
+    /* was so.  delete after refactoring
+    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, 
+    		String subjectId, String password, String[] roles) {
+    	return getContext(soapOrRest, request, false, subjectId, password, roles);
+    }
+    */
     
+    /*
+    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean temp,
+    		String subjectId, String password, String[] roles) {
+    	//announce a call which you missed replacing
+		try {
+			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(6)");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}     	
+    	return getContext(soapOrRest, request, subjectId, password, roles);
+    }
+    */
+    
+    private static final MultiValueMap beginEnvironmentMap(String messageProtocol) throws Exception {
+    	MultiValueMap environmentMap = new MultiValueMap();
+  	    environmentMap.set(Constants.HTTP_REQUEST.MESSAGE_PROTOCOL.uri, messageProtocol);
+		Date now = new Date();
+		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, DateUtility.convertDateToString(now));
+		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE.uri, DateUtility.convertDateToDateString(now));
+		environmentMap.set(Constants.ENVIRONMENT.CURRENT_TIME.uri, DateUtility.convertDateToTimeString(now));
+		return environmentMap;
+    }
+
+    public static Context getSoapContext() {
+        HttpServletRequest req=(HttpServletRequest) MessageContext.
+                getCurrentContext().getProperty(
+                HTTPConstants.MC_HTTP_SERVLETREQUEST);
+      return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req);
+    }
+
+    
+    public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles) {
+  		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles);
+    }
+    
+    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles) {
+    	MultiValueMap subjectMap = new MultiValueMap(); 
+      	try {		
+      		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, (subjectId == null) ? "" : subjectId);
+      		for (int i = 0; (roles != null) && (i < roles.length); i++) {
+      			String[] parts = parseRole(roles[i]);
+     			if ((parts != null) && parts.length == 2) {
+    				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
+     			}
+      		}
+      	} catch (Exception e) {	
+      		log("caught exception building subjectMap " + e.getMessage());
+      		if (e.getCause() != null) {
+      			log(e.getCause().getMessage());
+      		}
+      	} finally {
+      		subjectMap.lock();
+      	}
+      	return new ReadOnlyContext(environmentMap, subjectMap, (password == null) ? "" : password);
+    }
+
+    // needed for, e.g., rebuild
+    public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles) throws Exception {
+    	MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
+  		environmentMap.lock(); 
+  		return getContext(environmentMap, subjectId, password, roles);
+    }
+
+
+    
+    /* needed?
+    public static final ReadOnlyContext getContext(String messageProtocol) {
+		MultiValueMap environmentMap = null;
+	  	try {
+	  		environmentMap = beginEnvironmentMap(messageProtocol);  			
+	  	} catch (Exception e) {
+	  	} finally {
+	  		environmentMap.lock();
+	  	}
+  	  	if (subjectId == null) {
+  	  		subjectId = "";
+  	  	}
+  	  	if (password == null) {
+  	  		password = "";
+  	  	}
+  	  	if (roles == null) {
+  	  		roles = new String[0];
+  	  	}  	  	
+  	  	return getContext(environmentMap, subjectId, password, roles);
+    }
+    */
+        
     /*
      * Gets a Context appropriate for the request, and whether it is ok
      * to use the dissemination cache or not.
      */
-    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject,
-    		String subjectId, String password, String[] roles) {
-System.err.println("in context, handling roles parm =" + roles);	
-if (roles != null) {
-	System.err.println("in context, role parm length=" + roles.length);	
-}	
-if (request != null) {
-	System.err.println(request.getMethod() + request.getRequestURI());
-}
-      
-  	MultiValueMap environmentMap = new MultiValueMap();
-  	try {
-  	  	//h.put(Authorization.ENVIRONMENT_CURRENT_DATETIME_URI_STRING, "2005-01-26T16:42:00Z");  //does xacml engine provide this?
-  		Date now = new Date();
-		/*DateTimeAttribute tempDateTimeAttribute = new DateTimeAttribute(now, 0, 0, 0);  		
-		DateAttribute tempDateAttribute = new DateAttribute(now, 0, 0);  		
-		TimeAttribute tempTimeAttribute = new TimeAttribute(now, 0, 0, 0);
-		*/
-  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri, DateUtility.convertDateToString(now));
-  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_DATE.uri, DateUtility.convertDateToDateString(now));
-  		environmentMap.set(Constants.ENVIRONMENT.CURRENT_TIME.uri, DateUtility.convertDateToTimeString(now));
-  		
-  		environmentMap.set(Constants.HTTP_REQUEST.PROTOCOL.uri, request.getProtocol());
-  		environmentMap.set(Constants.HTTP_REQUEST.SCHEME.uri, request.getScheme());
-  		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, 
-  				(request.isSecure()) ? Constants.HTTP_REQUEST.SECURE.uri : Constants.HTTP_REQUEST.INSECURE.uri);
-  	
-  	    if (request.getAuthType() != null) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.AUTHTYPE.uri, request.getAuthType());  
-  	    }
-  	
-  	    environmentMap.set(Constants.HTTP_REQUEST.METHOD.uri, request.getMethod());	
-  	    if (request.isRequestedSessionIdFromCookie()) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, "cookie");    	
-  	    } else if (request.isRequestedSessionIdFromURL()) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, "url");    	
-  	    }
-  	    environmentMap.set(Constants.HTTP_REQUEST.SESSION_STATUS.uri, request.isRequestedSessionIdValid() ? "valid" : "invalid"   );
-  	    if (request.getContentLength() > -1) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, "" + request.getContentLength());    	
-  	    }
-  	    if (request.getContentType() != null) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, request.getContentType());
-  	    }
-  	    environmentMap.set(Constants.HTTP_REQUEST.MESSAGE_PROTOCOL.uri, soapOrRest);
-  	    if (! request.getRemoteHost().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {	    
-  	    	environmentMap.set(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, request.getRemoteHost().toLowerCase());        
-  	    }
-  	    environmentMap.set(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, request.getRemoteAddr());
-  	    if (! request.getLocalName().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
-  	    	environmentMap.set(Constants.HTTP_REQUEST.SERVER_FQDN.uri, request.getLocalName().toLowerCase());
-  	    }
-  	    environmentMap.set(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, request.getLocalAddr());
-  	    environmentMap.set(Constants.HTTP_REQUEST.SERVER_PORT.uri, "" + request.getLocalPort());
-  	} catch (Exception e) {
-  	} finally {
-  		environmentMap.lock();
-  	}
+    //form context from optional servlet request, overriding request for added parms    
+    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
+		MultiValueMap environmentMap = null;
+	  	try {
+	  		environmentMap = beginEnvironmentMap(messageProtocol);  			
+	  		
+	  		environmentMap.set(Constants.HTTP_REQUEST.SECURITY.uri, 
+	  				(request.isSecure()) ? Constants.HTTP_REQUEST.SECURE.uri : Constants.HTTP_REQUEST.INSECURE.uri);
+	  	    environmentMap.set(Constants.HTTP_REQUEST.SESSION_STATUS.uri, 
+	  	    		request.isRequestedSessionIdValid() ? "valid" : "invalid"   );
 
-  	if (subjectId == null) {
-  		subjectId = request.getRemoteUser();
-  	}
+	  	    String sessionEncoding = null;
+	  	    if (request.isRequestedSessionIdFromCookie()) {
+	  	    	sessionEncoding =  "cookie";    	
+	  	    } else if (request.isRequestedSessionIdFromURL()) {
+	  	    	sessionEncoding =  "url";    	
+	  	    }
 
-  	//roles are available through xacml "attribute finder" callback and so are not stored here 
-  	//as subject attrs
-  	
-  	MultiValueMap subjectMap = new MultiValueMap();
-  	//authn might not have been required by web.xml
-  	if (subjectId == null) {
-  		subjectId = "";
-  	}
-  	if (request.getUserPrincipal() != null) {
-  	  	log("request.getUserPrincipal().getName()=" + request.getUserPrincipal().getName());
-  	}
-  	
-  	if (request.getUserPrincipal() == null) {
-System.err.println("in context, no principal to grok roles from!!");				
-  	} else {
-			if (request.getUserPrincipal() instanceof GenericPrincipal) {
-				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
-			} else {
+	  	    if (request.getContentLength() > -1) {
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_LENGTH.uri, "" + request.getContentLength());    	
+	  	    }
+	  	    if (request.getLocalPort() > -1) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.SERVER_PORT.uri, "" + request.getLocalPort());
+	  	    }
+
+	  	    if (request.getProtocol() != null) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.PROTOCOL.uri, request.getProtocol());
+	  	    }
+	  	    if (request.getScheme() != null) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.SCHEME.uri, request.getScheme());
+	  	    }
+	  	    if (request.getAuthType() != null) {
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.AUTHTYPE.uri, request.getAuthType());  
+	  	    }
+	  	    if (request.getMethod() != null) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.METHOD.uri, request.getMethod());	
+	  	    }
+	  	    if (sessionEncoding != null) {
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.SESSION_ENCODING.uri, sessionEncoding);    		  	    	
+	  	    }
+	  	    if (request.getContentType() != null) {
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.CONTENT_TYPE.uri, request.getContentType());
+	  	    }
+	  	    if (request.getLocalAddr() != null) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.SERVER_IP_ADDRESS.uri, request.getLocalAddr());
+	  	    }
+	  	    if (request.getRemoteAddr() != null) {  			
+	  	    	environmentMap.set(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri, request.getRemoteAddr());
+	  	    }
+
+	  	    if (request.getRemoteHost() != null) {  			
+	  	    	if (! request.getRemoteHost().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {	    
+	  	    		environmentMap.set(Constants.HTTP_REQUEST.CLIENT_FQDN.uri, request.getRemoteHost().toLowerCase());        
+	  	    	}
+	  	    }
+	  	    if (request.getLocalName() != null) {  			
+	  	    	if (! request.getLocalName().matches("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}")) {
+	  	    		environmentMap.set(Constants.HTTP_REQUEST.SERVER_FQDN.uri, request.getLocalName().toLowerCase());
+	  	    	}
+	  	    }
+	  	} catch (Exception e) {
+	  	} finally {
+	  		environmentMap.lock();
+	  	}
+	  	
+  	  	String subjectId = request.getRemoteUser();
+  	  	String password = null;
+  	  	String[] roles = null;
+  	  	if (request.getUserPrincipal() == null) {
+  	  		System.err.println("in context, no principal to grok roles from!!");				
+  	  	} else {
+			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
 				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
+			} else {
+				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
+  	  	  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
+  	  	  	  		if (password == null) {
+  	  	  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
+  	  	  	  		}
+  	  	  	  		if (password == null) {
+  	  	  	  			password = "";
+  	  	  	  		}
+  	  	  	  	}
+  	  	  	  	if (roles == null) {
+  	  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	  	  	  	}  					
 			}
-  	}
-  	
-  	if ((request.getUserPrincipal() != null) && (request.getUserPrincipal() instanceof GenericPrincipal)) {		
-  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
-  	  		if (password == null) {
-  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
-  	  		}
-  	  		if (password == null) {
-  	  			password = "";
-  	  		}
+  	  	}
+  	  	if (subjectId == null) {
+  	  		subjectId = "";
+  	  	}
+  	  	if (password == null) {
+  	  		password = "";
   	  	}
   	  	if (roles == null) {
-  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	  		roles = new String[0];
   	  	}
-  	}
-  	try {		
-  		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, subjectId);
-  		for (int i = 0; (roles != null) && (i < roles.length); i++) {
-  			String[] parts = parseRole(roles[i]);
- 			if ((parts != null) && parts.length == 2) {
-				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
-System.err.println("in context, adding subject attr " + parts[0] + "=" + parts[1]);				
- 			}
-  		}
-  	} catch (Exception e) {	
-  		log("caught exception building subjectMap " + e.getMessage());
-  		if (e.getCause() != null) {
-  			log(e.getCause().getMessage());
-  		}
-  	} finally {
-  		subjectMap.lock();
-  	}
-
-  	HashMap commonParams = new HashMap();
-  	commonParams.put("useCachedObject", "" + useCachedObject);    
-  	commonParams.put("userId", subjectMap.getString(Constants.SUBJECT.LOGIN_ID.uri)); //to do: change referring code to access Authorization.SUBJECT_ID, then delete this line   
-  	commonParams.put("host", environmentMap.getString(Constants.HTTP_REQUEST.CLIENT_IP_ADDRESS.uri)); //to do:  as above, vis-a-vis Authorization.ENVIRONMENT_CLIENT_IP
-      ReadOnlyContext temp = new ReadOnlyContext(commonParams, environmentMap, subjectMap, password);
-
-      /*
-    String fromHeader = request.getHeader("From");
-	if ((fromHeader != null) && ("".equals(fromHeader))) {
-	    if (authorizationModule == null) {
-			throw new NotAuthorizedException("no authorizationModule");	
-	    }
-	    authorizationModule.enforceGetDissemination(temp, PID, bDefPID, methodName, asOfDateTime);
-		subjectId = fromHeader;
-	}	
-			subjectMap.lock();
-
-*/
-
-      return temp;
+  	  	
+  	return getContext(environmentMap, subjectId, password, roles);
     }
     
+    /*
     public final void setUseCachedObject(boolean useCachedObject) {
     	setParameter("useCachedObject", "" + useCachedObject);  
     }
+    */
     
   	public static final String[] parseRole (String role) {
   		String[] parts = null;

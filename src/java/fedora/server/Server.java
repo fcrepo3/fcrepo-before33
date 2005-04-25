@@ -154,6 +154,10 @@ public abstract class Server
         extends Pluggable
         implements Logging {
 
+	public static final boolean USE_CACHE = true;
+	public static final boolean USE_DEFINITIVE_STORE = false;
+	public static final boolean GLOBAL_CHOICE = false;	
+	
     /**
      * The ResourceBundle that provides access to constants from
      * fedora/server/resources/Server.properties.

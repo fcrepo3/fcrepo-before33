@@ -206,7 +206,7 @@ public class DefaultAccess extends Module implements Access
        
     m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime);
         
-    DOReader reader = m_manager.getReader(context, PID);
+    DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
 
 
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
@@ -226,7 +226,7 @@ public class DefaultAccess extends Module implements Access
     checkState(context, "Data", reader.GetObjectState(), PID);
 
     // Check associated bdef object state
-    BDefReader bDefReader = m_manager.getBDefReader(context, bDefPID);
+    BDefReader bDefReader = m_manager.getBDefReader(asOfDateTime == null, context, bDefPID);
     checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
 
     // SDP: get a bmech reader to get information that is specific to
@@ -240,7 +240,7 @@ public class DefaultAccess extends Module implements Access
       if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
       {
         checkState(context, "disseminator (\""+dissSet[i].dissID+"\") for the data ", dissSet[i].dissState, PID);
-        bmechreader = m_manager.getBMechReader(context, dissSet[i].bMechID);
+        bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, dissSet[i].bMechID);
         break;
       }
     }
@@ -350,7 +350,7 @@ public class DefaultAccess extends Module implements Access
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceListMethods(context, PID, asOfDateTime);
     DOReader reader =
-        m_manager.getReader(context, PID);
+        m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
     // Check data object state
     checkState(context, "Data", reader.GetObjectState(), PID);
@@ -386,7 +386,7 @@ public class DefaultAccess extends Module implements Access
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceListDatastreams(context, PID, asOfDateTime);
     DOReader reader =
-        m_manager.getReader(context, PID);
+        m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
     // Check data object state
     checkState(context, "Data", reader.GetObjectState(), PID);
@@ -413,7 +413,7 @@ public class DefaultAccess extends Module implements Access
   {
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceGetObjectProfile(context, PID, asOfDateTime);
-    DOReader reader = m_manager.getReader(context, PID);
+    DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
 
     // Check data object state
     checkState(context, "Data", reader.GetObjectState(), PID);
@@ -527,7 +527,7 @@ public class DefaultAccess extends Module implements Access
   {
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceGetObjectHistory(context, PID);
-    DOReader reader = m_manager.getReader(context, PID);
+    DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
     // Check data object state
     checkState(context, "Data", reader.GetObjectState(), PID);
@@ -607,7 +607,7 @@ public class DefaultAccess extends Module implements Access
     boolean isValid = true;
 
     DOReader reader =
-      m_manager.getReader(context, PID);
+      m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
     methodParms = reader.getObjectMethodParms(bDefPID,
         methodName, versDateTime);
 
@@ -841,7 +841,7 @@ public class DefaultAccess extends Module implements Access
       m_authorizationModule.enforceGetDatastreamDissemination(context, PID, dsID, asOfDateTime);
       MIMETypedStream mimeTypedStream = null;      
       long startTime = new Date().getTime();
-      DOReader reader = m_manager.getReader(context, PID);
+      DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
       // Check data object state
       checkState(context, "Data", reader.GetObjectState(), PID);

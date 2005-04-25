@@ -235,18 +235,22 @@ public class DynamicAccessModule extends Module implements Access
     // NOTE!! We must reset the context to NOT use a cached reader
     // (e.g., FastDOReader) because the current implementation of the cached
     // reader does not support dissemination of inline xml datastreams.
-    // We thus set the context to useCachedObject-false, so that DOManager
+    // So we ensure that DOManager
     // will provide a reader on the XML object storage.  In this case,
     // SimpleDOReader will be instantiated and the dissemination will be
     // performed by reading information directly from the XML objects.
 
+  	/*
   	if (context instanceof ReadOnlyContext) {
   	    ((ReadOnlyContext)context).setUseCachedObject(false);
-  	} else {
-    	setParameter("useCachedObject", "" + false); 		
-  	}
+  	} else { 
+  	*/
+  	
+    setParameter("useCachedObject", "" + false); //<<<STILL REQUIRED?
+  	
+    	//}
     return da.getDissemination(context, PID, bDefPID, methodName, userParms,
-      asOfDateTime, m_manager.getReader(context, PID));
+      asOfDateTime, m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID));
   }
 
   /**

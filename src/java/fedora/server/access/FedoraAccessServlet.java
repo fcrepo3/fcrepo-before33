@@ -354,8 +354,7 @@ public class FedoraAccessServlet extends HttpServlet
             + "Encountered: "+ requestURI);
         logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
         
-        boolean useCachedObject = (asOfDateTime == null);
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, useCachedObject);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
         getObjectProfile(context, PID, asOfDateTime, xml, request, response);
         
         long stopTime = new Date().getTime();
@@ -371,8 +370,7 @@ public class FedoraAccessServlet extends HttpServlet
         logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
             + " methodName: " + methodName + " asOfDate: " + versDateTime);
         
-        boolean useCachedObject = (asOfDateTime == null);
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, useCachedObject);
+        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
         getDissemination(context, PID, bDefPID, methodName, userParms, asOfDateTime, response, request);
         
         long stopTime = new Date().getTime();
@@ -387,7 +385,7 @@ public class FedoraAccessServlet extends HttpServlet
           logger.logFinest("PID: " + PID + " dsID: " + dsID
               + " asOfDate: " + versDateTime);
 
-          Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.DO_NOT_USE_CACHED_OBJECT);
+          Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
           getDatastreamDissemination(context, PID, dsID, asOfDateTime, response, request);
           
           long stopTime = new Date().getTime();

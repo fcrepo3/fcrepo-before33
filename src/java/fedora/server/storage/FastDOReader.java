@@ -101,10 +101,10 @@ public class FastDOReader implements DOReader
   protected String PID = null;
 
   /** Instance of DOReader... used to get definitive readers. */
-  protected DOReader doReader = null;
+  protected DOReader definitiveDOReader = null;
 
   /** Context for uncached objects. */
-  protected static Context m_context = null;
+  //protected static Context m_context = null;
 
   /** Host name of the Fedora server **/
   protected static String fedoraServerHost = null;
@@ -126,16 +126,26 @@ public class FastDOReader implements DOReader
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager = (DOManager) s_server.getModule(
           "fedora.server.storage.DOManager");
+      /*
       HashMap h = new HashMap();
       h.put("application", "apia");
       h.put("useCachedObject", "false");
       h.put("userId", "fedoraAdmin");
       m_context = ReadOnlyContext.getContext(h);
+      */
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
     }
   }
+  
+  private final void loadDefinitiveReaderIfRequired(DOManager manager, Context context, String PID) throws ServerException {
+  	if (definitiveDOReader == null) {
+  		definitiveDOReader = manager.getReader(false, context, PID); //this factors out useCachedObject==false, formerly in context  	
+  	}
+  }
+  
+  protected Context m_context;
 
   /**
    * <p>Constructs a new <code>FastDOReader</code> for the specified digital
@@ -158,6 +168,7 @@ public class FastDOReader implements DOReader
           s_server.getModule("fedora.server.storage.ConnectionPoolManager");
       connectionPool = poolManager.getPool();
 
+      m_context = context;
       // Attempt to find object in either Fast or Definitive store
       this.doLabel = locatePID(objectPID);
       this.PID = objectPID;
@@ -195,11 +206,8 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      if (doReader == null)
-      {
-        doReader =  m_manager.getReader(m_context, PID);
-      }
-      return(doReader.ExportObject(format,exportContext));
+      loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.ExportObject(format, exportContext);
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -210,31 +218,23 @@ public class FastDOReader implements DOReader
   }
 
   public String getContentModelId() throws ServerException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getContentModelId();
+      loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getContentModelId();
   }
 
   public String getFedoraObjectType() throws ServerException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getFedoraObjectType();
+    loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getFedoraObjectType();
   }
 
   public Date getCreateDate() throws ServerException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getCreateDate();
+    loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getCreateDate();
   }
 
   public Date getLastModDate() throws ServerException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getLastModDate();
+    loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getLastModDate(); 
   }
 
   /**
@@ -324,11 +324,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        behaviorDefs = doReader.GetBehaviorDefs(versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        behaviorDefs = definitiveDOReader.GetBehaviorDefs(versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -463,11 +460,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        methodParms = doReader.getObjectMethodParms(bDefPID, methodName,
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        methodParms = definitiveDOReader.getObjectMethodParms(bDefPID, methodName,
             versDateTime);
       } catch (Throwable th)
       {
@@ -605,11 +599,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        methodDefs = doReader.listMethods(bDefPID, versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        methodDefs = definitiveDOReader.listMethods(bDefPID, versDateTime); //2.1 means  
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -720,11 +711,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        datastream = doReader.GetDatastream(datastreamID, versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        datastream = definitiveDOReader.GetDatastream(datastreamID, versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -838,11 +826,8 @@ public class FastDOReader implements DOReader
       // Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        datastreamArray = doReader.GetDatastreams(versDateTime, null);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        datastreamArray = definitiveDOReader.GetDatastreams(versDateTime, null);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -856,10 +841,8 @@ public class FastDOReader implements DOReader
   public Datastream getDatastream(String dsID, String versionID)
           throws GeneralException {
       try {
-          if (doReader == null) {
-              doReader = m_manager.getReader(m_context, PID);
-          }
-          return doReader.getDatastream(dsID, versionID);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+          return definitiveDOReader.getDatastream(dsID, versionID);
       } catch (Throwable th) {
           throw new GeneralException("[FastDOReader] Definitive doReader returned "
                 + "error. The underlying error was a  \"" + th.getClass().getName()
@@ -872,11 +855,8 @@ public class FastDOReader implements DOReader
     Date[] createDateArray;
     try
     {
-      if (doReader == null)
-      {
-        doReader = m_manager.getReader(m_context, PID);
-      }
-      createDateArray = doReader.getDatastreamVersions(datastreamID);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      createDateArray = definitiveDOReader.getDatastreamVersions(datastreamID);
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -891,11 +871,8 @@ public class FastDOReader implements DOReader
     Date[] createDateArray;
     try
     {
-      if (doReader == null)
-      {
-        doReader = m_manager.getReader(m_context, PID);
-      }
-      createDateArray = doReader.getDisseminatorVersions(dissID);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      createDateArray = definitiveDOReader.getDisseminatorVersions(dissID);
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1061,11 +1038,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, GetObjectPID());
-        }
-        dissBindInfoArray=doReader.getDisseminationBindingInfo(bDefPID,
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        dissBindInfoArray=definitiveDOReader.getDisseminationBindingInfo(bDefPID,
                 methodName, versDateTime);
       } catch (Throwable th)
       {
@@ -1170,11 +1144,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        disseminator = doReader.GetDisseminator(disseminatorID, versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        disseminator = definitiveDOReader.GetDisseminator(disseminatorID, versDateTime);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1292,11 +1263,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        disseminatorArray = doReader.GetDisseminators(versDateTime, state);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        disseminatorArray = definitiveDOReader.GetDisseminators(versDateTime, state);
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1320,11 +1288,8 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      if (doReader == null)
-      {
-        doReader =  m_manager.getReader(m_context, PID);
-      }
-      return doReader.GetDSBindingMaps(versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.GetDSBindingMaps(versDateTime);
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1455,11 +1420,8 @@ public class FastDOReader implements DOReader
       // query Definitve storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, GetObjectPID());
-        }
-        objectMethodsDefArray=doReader.listMethods(versDateTime);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        objectMethodsDefArray=definitiveDOReader.listMethods(versDateTime);
       } catch (Throwable th)
       {
         th.printStackTrace();
@@ -1495,11 +1457,8 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      if (doReader == null)
-      {
-        doReader =  m_manager.getReader(m_context, PID);
-      }
-      return doReader.GetObjectState();
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.GetObjectState();
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1523,11 +1482,8 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      if (doReader == null)
-      {
-        doReader =  m_manager.getReader(m_context, PID);
-      }
-      return doReader.getObjectHistory(PID);
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getObjectHistory(PID);
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1538,18 +1494,14 @@ public class FastDOReader implements DOReader
 
   public String getOwnerId()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getOwnerId();
+    loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getOwnerId();
   }
 
   public List getAuditRecords()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
-      if (doReader==null) {
-          doReader=m_manager.getReader(m_context, PID);
-      }
-      return doReader.getAuditRecords();
+    loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return definitiveDOReader.getAuditRecords();
   }
 
   /**
@@ -1570,11 +1522,8 @@ public class FastDOReader implements DOReader
   {
     try
     {
-      if (doReader == null)
-      {
-        doReader = m_manager.getReader(m_context, PID);
-      }
-      return(doReader.GetObjectXML());
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+      return(definitiveDOReader.GetObjectXML());
     } catch (Throwable th)
     {
       throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1680,11 +1629,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        datastreamIDs = doReader.ListDatastreamIDs("");
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        datastreamIDs = definitiveDOReader.ListDatastreamIDs("");
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1793,11 +1739,8 @@ public class FastDOReader implements DOReader
       // query Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        disseminatorIDs = doReader.ListDisseminatorIDs("A");
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        disseminatorIDs = definitiveDOReader.ListDisseminatorIDs("A");
       } catch (Throwable th)
       {
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
@@ -1878,11 +1821,8 @@ public class FastDOReader implements DOReader
       // Definitive storage area.
       try
       {
-        if (doReader == null)
-        {
-          doReader = m_manager.getReader(m_context, PID);
-        }
-        doLabel = doReader.GetObjectLabel();
+        loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
+        doLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
         s_server.logFinest("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
       } catch (ServerException se)

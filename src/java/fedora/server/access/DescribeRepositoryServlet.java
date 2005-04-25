@@ -115,7 +115,7 @@ public class DescribeRepositoryServlet extends HttpServlet
       }
     }
 
-    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);
+    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
     try {
         describeRepository(context, xml, response);
 	} catch (NotAuthorizedException na) {

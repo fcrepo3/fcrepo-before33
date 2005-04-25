@@ -113,7 +113,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		try {
 		  // always gens pid, unless pid in stream starts with "test:" "demo:"
 		  // or other prefix that is configured in the retainPIDs parameter of fedora.fcfg
-			return s_management.ingestObject(ReadOnlyContext.getUncachedContext(),
+			return s_management.ingestObject(ReadOnlyContext.getSoapContext(),
 					new ByteArrayInputStream(XML), logMessage, format, "UTF-8", true);
         } catch (NotAuthorizedException a) {
             throw AxisUtility.getFault(a); 			
@@ -133,7 +133,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return DateUtility.convertDateToString(
                     s_management.modifyObject(
-                            ReadOnlyContext.getUncachedContext(), PID, state, label, logMessage));
+                            ReadOnlyContext.getSoapContext(), PID, state, label, logMessage));
         } catch (NotAuthorizedException a) {
             throw AxisUtility.getFault(a);             
         } catch (ServerException se) {
@@ -151,7 +151,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		try {
 			fedora.server.storage.types.Property[] properties=
 					s_management.getObjectProperties(
-							ReadOnlyContext.getUncachedContext(), PID);
+							ReadOnlyContext.getSoapContext(), PID);
 			return TypeUtility.convertPropertyArrayToGenPropertyArray(properties);
         } catch (NotAuthorizedException a) {
             throw AxisUtility.getFault(a); 			
@@ -166,7 +166,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public fedora.server.types.gen.UserInfo describeUser(String id)
             throws RemoteException {
-    	Context context = ReadOnlyContext.getUncachedContext();
+    	Context context = ReadOnlyContext.getSoapContext();
     	try {
 			s_management.adminPing(context);
         } catch (NotAuthorizedException a) {
@@ -187,7 +187,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-            InputStream in=s_management.getObjectXML(ReadOnlyContext.getUncachedContext(), PID, "UTF-8");
+            InputStream in=s_management.getObjectXML(ReadOnlyContext.getSoapContext(), PID, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
@@ -204,7 +204,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throws RemoteException {
         assertInitialized();
         try {
-			InputStream in=s_management.exportObject(ReadOnlyContext.getUncachedContext(), PID, null, null, "UTF-8");
+			InputStream in=s_management.exportObject(ReadOnlyContext.getSoapContext(), PID, null, null, "UTF-8");
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
@@ -221,7 +221,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 			throws RemoteException {
 		assertInitialized();
 		try {
-			InputStream in=s_management.exportObject(ReadOnlyContext.getUncachedContext(), PID, format, exportContext, "UTF-8");
+			InputStream in=s_management.exportObject(ReadOnlyContext.getSoapContext(), PID, format, exportContext, "UTF-8");
 			ByteArrayOutputStream out=new ByteArrayOutputStream();
 			pipeStream(in, out);
 			return out.toByteArray();
@@ -261,7 +261,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.purgeObject(ReadOnlyContext.getUncachedContext(), 
+                    s_management.purgeObject(ReadOnlyContext.getSoapContext(), 
                                              PID, 
                                              logMessage,
                                              force));
@@ -286,7 +286,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                 String logMessage) throws RemoteException {
         assertInitialized();
         try {
-            return s_management.addDatastream(ReadOnlyContext.getUncachedContext(), 
+            return s_management.addDatastream(ReadOnlyContext.getSoapContext(), 
                                                  pid, 
                                                  dsID,
                                                  altIds,
@@ -322,7 +322,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return DateUtility.convertDateToString(
                     s_management.modifyDatastreamByReference(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID,
                             datastreamID, 
                             altIDs,
@@ -361,7 +361,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 byteStream = new ByteArrayInputStream(dsContent);
             }
             return DateUtility.convertDateToString(
-                    s_management.modifyDatastreamByValue(ReadOnlyContext.getUncachedContext(), 
+                    s_management.modifyDatastreamByValue(ReadOnlyContext.getSoapContext(), 
                                                          PID,
                                                          datastreamID, 
                                                          altIDs,
@@ -388,7 +388,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.setDatastreamState(ReadOnlyContext.getUncachedContext(), 
+                    s_management.setDatastreamState(ReadOnlyContext.getSoapContext(), 
                                                     PID,
                                                     datastreamID, 
                                                     dsState, 
@@ -408,7 +408,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
-                    s_management.setDisseminatorState(ReadOnlyContext.getUncachedContext(), 
+                    s_management.setDisseminatorState(ReadOnlyContext.getSoapContext(), 
                                                       PID,
                                                       disseminatorID, 
                                                       dissState, 
@@ -431,7 +431,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return toStringArray(
                     s_management.purgeDatastream(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             datastreamID,
                             DateUtility.convertStringToDate(endDT),
@@ -464,7 +464,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             fedora.server.storage.types.Datastream ds=
                     s_management.getDatastream(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             datastreamID, 
                             DateUtility.convertStringToDate(asOfDateTime));
@@ -487,7 +487,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             fedora.server.storage.types.Datastream[] intDatastreams=
                     s_management.getDatastreams(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             DateUtility.convertStringToDate(asOfDateTime),
                             state);
@@ -530,7 +530,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             fedora.server.storage.types.Datastream[] intDatastreams=
                     s_management.getDatastreamHistory(
-                            ReadOnlyContext.getUncachedContext(),
+                            ReadOnlyContext.getSoapContext(),
                             PID,
                             datastreamID);
             return getGenDatastreams(intDatastreams);
@@ -555,7 +555,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		assertInitialized();
 		try {
 			return s_management.addDisseminator(
-			        ReadOnlyContext.getUncachedContext(), 
+			        ReadOnlyContext.getSoapContext(), 
 		            PID, 
 	                bDefPID, 
                     bMechPID, 
@@ -580,7 +580,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return toStringArray(
                     s_management.purgeDisseminator(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             disseminatorID, 
                             DateUtility.convertStringToDate(endDT),
@@ -602,7 +602,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
       try {
           fedora.server.storage.types.Disseminator[] intDisseminators=
                   s_management.getDisseminatorHistory(
-                          ReadOnlyContext.getUncachedContext(),
+                          ReadOnlyContext.getSoapContext(),
                           PID,
                           disseminatorID);
           return getGenDisseminators(intDisseminators);
@@ -624,7 +624,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             fedora.server.storage.types.Disseminator diss=
                     s_management.getDisseminator(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             disseminatorID, 
                             DateUtility.convertStringToDate(asOfDateTime));
@@ -647,7 +647,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             fedora.server.storage.types.Disseminator[] intDisseminators=
                     s_management.getDisseminators(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID, 
                             DateUtility.convertStringToDate(asOfDateTime),
                             dissState);
@@ -675,7 +675,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         try {
             return DateUtility.convertDateToString(
                     s_management.modifyDisseminator(
-                            ReadOnlyContext.getUncachedContext(), 
+                            ReadOnlyContext.getSoapContext(), 
                             PID,
                             disseminatorID, 
                             bMechPID, 
@@ -698,7 +698,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         assertInitialized();
         try {
             if(numPIDs==null) numPIDs=new NonNegativeInteger("1");
-            return s_management.getNextPID(ReadOnlyContext.getUncachedContext(), numPIDs.intValue(), namespace);
+            return s_management.getNextPID(ReadOnlyContext.getSoapContext(), numPIDs.intValue(), namespace);
         } catch (NotAuthorizedException a) {
             throw AxisUtility.getFault(a);             
         } catch (ServerException se) {

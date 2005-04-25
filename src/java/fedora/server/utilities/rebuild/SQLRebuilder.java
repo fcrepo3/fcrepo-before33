@@ -102,11 +102,13 @@ public class SQLRebuilder implements Rebuilder {
                         "ConnectionPoolManager not loaded.", "ConnectionPoolManager");
             }
             m_connectionPool = cpm.getPool();
+            /*
             HashMap h = new HashMap();
             h.put("application", "rebuild");
             h.put("useCachedObject", "false");
             h.put("userId", "fedoraAdmin");
-            m_context = ReadOnlyContext.getContext(h);
+            */
+            m_context = ReadOnlyContext.getContext("utility", "fedoraAdmin", "", null); 
             String registryClassTemp = s_server.getParameter("registry");
             String reason = "registry";
 
@@ -134,6 +136,11 @@ public class SQLRebuilder implements Rebuilder {
             System.err.println(ie.getMessage());
             System.err.flush();
         }        
+        catch (Exception e)
+        {
+            System.err.println(e.getMessage());
+            System.err.flush();
+        }              
     }
     
         
@@ -329,7 +336,7 @@ public class SQLRebuilder implements Rebuilder {
         // get an object writer configured with the DEFAULT export format
         s_server.logFinest("INGEST: Instantiating a SimpleDOWriter...");
         try {
-            DOWriter w = manager.getWriter(m_context, obj.getPid());
+            DOWriter w = manager.getWriter(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
         }
         catch (ServerException se)        
         {
@@ -372,7 +379,7 @@ public class SQLRebuilder implements Rebuilder {
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) 
             {
                 s_server.logInfo("COMMIT: Attempting replication as bdef object: " + obj.getPid());
-                BDefReader reader = manager.getBDefReader(m_context, obj.getPid());
+                BDefReader reader = manager.getBDefReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
                 s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
@@ -380,7 +387,7 @@ public class SQLRebuilder implements Rebuilder {
             else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) 
             {
                 s_server.logInfo("COMMIT: Attempting replication as bmech object: " + obj.getPid());
-                BMechReader reader = manager.getBMechReader(m_context, obj.getPid());
+                BMechReader reader = manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
                 s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
@@ -388,7 +395,7 @@ public class SQLRebuilder implements Rebuilder {
             else 
             {
                 s_server.logInfo("COMMIT: Attempting replication as normal object: " + obj.getPid());
-                DOReader reader = manager.getReader(m_context, obj.getPid());
+                DOReader reader = manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
                 s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);

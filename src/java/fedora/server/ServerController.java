@@ -52,7 +52,7 @@ public class ServerController
                     s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
                     s_server.logInfo(requestInfo);
                 	Context context 
-					= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
+					= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
                     s_server.shutdown(context);
                     lineResponse = "OK";
         		} catch (NotAuthorizedException na) {
@@ -68,7 +68,7 @@ public class ServerController
             }
         } else if (action.equals("status")) {
         	Context context 
-			= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, false);
+			= ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
         	File fedoraHome = new File(System.getProperty("fedora.home"));
             if (! Server.hasInstance(fedoraHome)) {
             	lineResponse = "STOPPED";

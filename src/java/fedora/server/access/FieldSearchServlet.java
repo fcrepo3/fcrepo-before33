@@ -84,7 +84,7 @@ public class FieldSearchServlet
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, ReadOnlyContext.USE_CACHED_OBJECT);            
+		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);            
 
 		    String[] fieldsArray=getFieldsArray(request);
             HashSet fieldHash=new HashSet();

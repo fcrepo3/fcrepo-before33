@@ -462,8 +462,8 @@ public class SimpleDOReader
         if (mechPid==null) {
             return null;
         }
-        MethodDef[] methods = m_repoReader.getBMechReader(m_context, mechPid).
-                getServiceMethods(versDateTime);
+        //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
+        MethodDef[] methods = m_repoReader.getBMechReader(false, m_context, mechPid).getServiceMethods(versDateTime); 
         // Filter out parms that are internal to the mechanism and not part
         // of the abstract method definition.  We just want user parms.
         for (int i=0; i<methods.length; i++)
@@ -486,8 +486,7 @@ public class SimpleDOReader
      * @throws MethodNotFoundException
      * @throws ServerException
      */
-    public MethodParmDef[] getObjectMethodParms(String bDefPID,
-            String methodName, Date versDateTime)
+    public MethodParmDef[] getObjectMethodParms(String bDefPID, String methodName, Date versDateTime)
             throws MethodNotFoundException, ServerException {
 
         if ( bDefPID.equalsIgnoreCase("fedora-system:1") ||
@@ -505,8 +504,9 @@ public class SimpleDOReader
         if (mechPid==null) {
             return null;
         }
-        MethodDef[] methods = m_repoReader.getBMechReader(m_context, mechPid).
-                getServiceMethods(versDateTime);
+        //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
+
+        MethodDef[] methods = m_repoReader.getBMechReader(false, m_context, mechPid).getServiceMethods(versDateTime);
         for (int i=0; i<methods.length; i++)
         {
           if (methods[i].methodName.equalsIgnoreCase(methodName))
@@ -648,7 +648,8 @@ public class SimpleDOReader
         int dsCount=dsBindings.length;
         bindingInfo=new DisseminationBindingInfo[dsCount];
         // The bmech reader provides information about the service and params.
-        BMechReader mech=m_repoReader.getBMechReader(m_context, diss.bMechID);
+        //wdn5e 2005.04.24 for 2.1 : using false here becuase of versDateTime
+        BMechReader mech=m_repoReader.getBMechReader(false, m_context, diss.bMechID);
         MethodParmDef[] methodParms=mech.getServiceMethodParms(methodName, versDateTime);
         // Find the operation bindings for the method in question
         MethodDefOperationBind[] opBindings=mech.getServiceMethodBindings(versDateTime);

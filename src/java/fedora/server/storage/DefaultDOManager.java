@@ -339,6 +339,7 @@ public class DefaultDOManager
     /**
      * Tells whether the context indicates that cached objects are required.
      */
+    /*
     private static boolean cachedObjectRequired(Context context) {
         String c=context.get("useCachedObject");
         if (c!=null && c.equalsIgnoreCase("true")) {
@@ -347,13 +348,14 @@ public class DefaultDOManager
             return false;
         }
     }
+    */
 
 	/**
 	 * Gets a reader on an an existing digital object.
 	 */
-    public DOReader getReader(Context context, String pid)
+    public DOReader getReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-        if (cachedObjectRequired(context)) {
+        if (cachedObjectRequired) {
             return new FastDOReader(context, pid);
         } else {
             return new SimpleDOReader(context, this, m_translator,
@@ -365,9 +367,9 @@ public class DefaultDOManager
 	/**
 	 * Gets a reader on an an existing behavior mechanism object.
 	 */
-    public BMechReader getBMechReader(Context context, String pid)
+    public BMechReader getBMechReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-        if (cachedObjectRequired(context)) {
+        if (cachedObjectRequired) {
             return new FastBmechReader(context, pid);
             //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
@@ -381,9 +383,9 @@ public class DefaultDOManager
 	/**
 	 * Gets a reader on an an existing behavior definition object.
 	 */
-    public BDefReader getBDefReader(Context context, String pid)
+    public BDefReader getBDefReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-        if (cachedObjectRequired(context)) {
+        if (cachedObjectRequired) {
             return new FastBdefReader(context, pid);
             //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
@@ -397,9 +399,9 @@ public class DefaultDOManager
 	/**
 	 * Gets a writer on an an existing object.
 	 */
-	public DOWriter getWriter(Context context, String pid)
+	public DOWriter getWriter(boolean cachedObjectRequired, Context context, String pid)
 			throws ServerException, ObjectLockedException {
-		if (cachedObjectRequired(context)) {
+		if (cachedObjectRequired) {
 			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
 		} else {
 			// TODO: make sure there's no SESSION lock on a writer for the pid
@@ -432,13 +434,13 @@ public class DefaultDOManager
 	 * @param newPid  true if the system should generate a new PID for the object
 	 *
 	 */
-	public synchronized DOWriter getIngestWriter(Context context, InputStream in, String format, 
+	public synchronized DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format, 
 		String encoding, boolean newPid)
 			throws ServerException {
 		getServer().logFinest("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
 
 		File tempFile = null;
-		if (cachedObjectRequired(context)) {
+		if (cachedObjectRequired) {
 			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
 		} else {
 			try {
@@ -706,7 +708,7 @@ public class DefaultDOManager
      * This happens as the result of a writer.commit() call.
      *
      */
-    public void doCommit(Context context, DigitalObject obj, String logMessage, boolean remove)
+    public void doCommit(boolean cachedObjectRequired, Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
         // OBJECT REMOVAL...
         if (remove) {
@@ -968,19 +970,19 @@ public class DefaultDOManager
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                         logInfo("COMMIT: Attempting replication as bdef object: " + obj.getPid());
-                        BDefReader reader=getBDefReader(context, obj.getPid());
+                        BDefReader reader=getBDefReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                         logInfo("COMMIT: Attempting replication as bmech object: " + obj.getPid());
-                        BMechReader reader=getBMechReader(context, obj.getPid());
+                        BMechReader reader=getBMechReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else {
                         logInfo("COMMIT: Attempting replication as normal object: " + obj.getPid());
-                        DOReader reader=getReader(context, obj.getPid());
+                        DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         logInfo("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
@@ -998,7 +1000,7 @@ public class DefaultDOManager
                 }
             } catch (ServerException se) {
                 if (obj.isNew()) {
-                    doCommit(context, obj, logMessage, true);
+                    doCommit(cachedObjectRequired, context, obj, logMessage, true);
                 }
                 throw se;
             }

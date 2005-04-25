@@ -22,6 +22,7 @@ import fedora.server.storage.types.*;
 import fedora.server.utilities.*;
 import fedora.server.validation.*;
 import fedora.server.security.Authorization;
+import fedora.common.Constants;
 
 /**
  * Implements API-M without regard to the transport/messaging protocol.
@@ -142,7 +143,7 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.ingestObject");
-            w=m_manager.getIngestWriter(context, serialization, format, encoding, newPid);
+            w=m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE, context, serialization, format, encoding, newPid);
             String pid=w.GetObjectPID();
             
             m_fedoraXACMLModule.enforceIngestObject(context, pid, format, encoding);
@@ -171,7 +172,7 @@ public class DefaultManagement
 
             m_fedoraXACMLModule.enforceModifyObject(context, pid, state); 
 
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             if (state!=null && !state.equals("")) {
                 if (!state.equals("A") && !state.equals("D") && !state.equals("I")) {
                   throw new InvalidStateException("The object state of \"" + state
@@ -203,7 +204,7 @@ public class DefaultManagement
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
             
 			ArrayList props = new ArrayList();
-			DOReader reader=m_manager.getReader(context, pid);
+			DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
 			
 			props.add(new Property(
 						"info:fedora/fedora-system:def/fType",
@@ -251,7 +252,7 @@ public class DefaultManagement
             
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
-            DOReader reader=m_manager.getReader(context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
             InputStream instream=reader.GetObjectXML();
             return instream;
         } finally {
@@ -270,7 +271,7 @@ public class DefaultManagement
             
             m_fedoraXACMLModule.enforceExportObject(context, pid, format, exportContext, encoding);
                         
-            DOReader reader=m_manager.getReader(context, pid);
+            DOReader reader=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             InputStream instream=reader.ExportObject(format,exportContext);
             return instream;
         } finally {
@@ -293,7 +294,7 @@ public class DefaultManagement
 
             m_fedoraXACMLModule.enforcePurgeObject(context, pid);
             
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.remove();
             w.commit(logMessage);
             return DateUtility.convertLocalDateToUTCDate(new Date());
@@ -325,7 +326,7 @@ public class DefaultManagement
             getServer().logFinest("Entered DefaultManagement.addDatastream");
 			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
 					formatURI, dsLocation, controlGroup, dsState);
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
                 ds=new DatastreamXMLMetadata();
@@ -406,7 +407,7 @@ public class DefaultManagement
             audit.processType="Fedora API-M";
             audit.action="addDatastream";
             audit.componentID=ds.DatastreamID;
-            audit.responsibility=context.get("userId");
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
@@ -436,7 +437,7 @@ public class DefaultManagement
     			
     			m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
     					bDefPid, bMechPid, dissState);
-				w=m_manager.getWriter(context, pid);
+				w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
 				diss.parentPID = pid;
@@ -464,7 +465,7 @@ public class DefaultManagement
 				audit.processType="Fedora API-M";
 				audit.action="addDisseminator";
 				audit.componentID=diss.dissID;
-				audit.responsibility=context.get("userId");
+				audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
 				audit.date=nowUTC;
 				audit.justification=logMessage;
 				w.getAuditRecords().add(audit);
@@ -501,7 +502,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
 			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, dsState);
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 			Date nowUTC; // variable for ds modified date
 
@@ -605,7 +606,7 @@ public class DefaultManagement
 			audit.processType="Fedora API-M";
 			audit.action="modifyDatastreamByReference";
 			audit.componentID=newds.DatastreamID;
-			audit.responsibility=context.get("userId");
+			audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
 			audit.date=nowUTC;
 			audit.justification=logMessage;
 			w.getAuditRecords().add(audit);						
@@ -653,7 +654,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, dsState);
 
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             
             // some forbidden scenarios...
@@ -757,7 +758,7 @@ public class DefaultManagement
             audit.processType="Fedora API-M";
             audit.action="modifyDatastreamByValue";
             audit.componentID=newds.DatastreamID;
-            audit.responsibility=context.get("userId");
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
@@ -795,7 +796,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
 			m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
             
             String oldValidationReport = null;
@@ -804,7 +805,7 @@ public class DefaultManagement
                                                                     w,
                                                                     orig.bMechID);
             }
-            r=m_manager.getReader(context,pid);  // FIXME: Unnecessary?  Is 
+            r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context,pid);  // FIXME: Unnecessary?  Is 
                                                  // there a reason "w" isn't 
                                                  // used for the call below?
             Date[] d=r.getDisseminatorVersions(disseminatorId);
@@ -876,7 +877,7 @@ public class DefaultManagement
             audit.processType="Fedora API-M";
             audit.action="modifyDisseminator";
             audit.componentID=newdiss.dissID;
-            audit.responsibility=context.get("userId");
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
@@ -918,7 +919,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID, endDT);
 
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDatastream(datastreamID, start, endDT);
             // check if there's at least one version with this id...
@@ -979,7 +980,7 @@ public class DefaultManagement
             audit.processType="Fedora API-M";
             audit.action="purgeDatastream";
             audit.componentID=datastreamID;
-            audit.responsibility=context.get("userId");
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date=nowUTC;
             audit.justification=logMessage;
             // Normally we associate an audit record with a specific version
@@ -1047,7 +1048,7 @@ public class DefaultManagement
 			m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID, asOfDateTime);
 
             
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
     		return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
             getServer().logFinest("Exiting DefaultManagement.getDatastream");
@@ -1066,7 +1067,7 @@ public class DefaultManagement
 			m_fedoraXACMLModule.enforceGetDatastreams(context, pid, asOfDateTime, state);
             System.err.println("in getDatastreams, after call to enforce");
            
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
     		return r.GetDatastreams(asOfDateTime, state);
         } finally {
             getServer().logFinest("Exiting DefaultManagement.getDatastream");
@@ -1082,7 +1083,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforceGetDatastreamHistory(context, pid, datastreamID);
 
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             Date[] versionDates=r.getDatastreamVersions(datastreamID);
             Datastream[] versions=new Datastream[versionDates.length];
             for (int i=0; i<versionDates.length; i++) {
@@ -1125,7 +1126,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID, endDT);
             
-            w=m_manager.getWriter(context, pid);
+            w=m_manager.getWriter(Server.GLOBAL_CHOICE, context, pid);
             Date start=null;
             Date[] deletedDates=w.removeDisseminator(disseminatorID, start, endDT);
             // add an explanation of what happened to the user-supplied message.
@@ -1145,7 +1146,7 @@ public class DefaultManagement
             audit.processType="Fedora API-M";
             audit.action="purgeDisseminator";
             audit.componentID=disseminatorID;
-            audit.responsibility=context.get("userId");
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
             audit.date=nowUTC;
             audit.justification=logMessage;
             // Normally we associate an audit record with a specific version
@@ -1175,7 +1176,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforceGetDisseminator(context, pid, disseminatorId, asOfDateTime);
             
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDisseminator(disseminatorId, asOfDateTime);
         } finally {
             getServer().logFinest("Exiting DefaultManagement.getDisseminator");
@@ -1192,7 +1193,7 @@ public class DefaultManagement
             System.err.println("in getDisseminators, before call to enforce");            
 			m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
             System.err.println("in getDisseminators, after call to enforce");            
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDisseminators(asOfDateTime, dissState);
         } finally {
             getServer().logFinest("Exiting DefaultManagement.getDisseminators");
@@ -1208,7 +1209,7 @@ public class DefaultManagement
 			m_fedoraXACMLModule.enforceGetDisseminatorHistory(context, 
 					pid, disseminatorID); 
 
-            DOReader r=m_manager.getReader(context, pid);
+            DOReader r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
             Disseminator[] versions=new Disseminator[versionDates.length];
             for (int i=0; i<versionDates.length; i++) {
@@ -1339,7 +1340,7 @@ public class DefaultManagement
           
           m_fedoraXACMLModule.enforceSetDatastreamState(context, pid, datastreamID, dsState); 
           
-          w=m_manager.getWriter(context, pid);
+          w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
           if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
               throw new InvalidStateException("The datastream state of \"" + dsState
                       + "\" is invalid. The allowed values for state are: "
@@ -1354,7 +1355,7 @@ public class DefaultManagement
           audit.processType="Fedora API-M";
           audit.action="setDatastreamState";
           audit.componentID=datastreamID;
-          audit.responsibility=context.get("userId");
+          audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
           Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
           audit.date=nowUTC;
           audit.justification=logMessage;
@@ -1382,7 +1383,7 @@ public class DefaultManagement
           getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
           m_fedoraXACMLModule.enforceSetDisseminatorState(context, pid, disseminatorID, dissState);  
 
-          w=m_manager.getWriter(context, pid);
+          w=m_manager.getWriter(Server.USE_CACHE, context, pid);
           if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
               throw new InvalidStateException("The disseminator state of \"" + dissState
                       + "\" is invalid. The allowed values for state are: "
@@ -1397,7 +1398,7 @@ public class DefaultManagement
           audit.processType="Fedora API-M";
           audit.action="setDisseminatorState";
           audit.componentID=disseminatorID;
-          audit.responsibility=context.get("userId");
+          audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
           Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
           audit.date=nowUTC;
           audit.justification=logMessage;
@@ -1479,7 +1480,7 @@ public class DefaultManagement
         }
 
         // load the bmech, then validate the bindings
-        BMechReader mReader = m_manager.getBMechReader(context, bMechPID);
+        BMechReader mReader = m_manager.getBMechReader(Server.USE_CACHE, context, bMechPID);
         BMechDSBindSpec spec = mReader.getServiceDSInputSpec(null);
         return spec.validate(augMap.dsBindingsAugmented);
     }
