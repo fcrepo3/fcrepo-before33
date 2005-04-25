@@ -15,6 +15,7 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -24,6 +25,7 @@ import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -127,7 +129,7 @@ public class DisseminationService
    */
   public DisseminationService()
   {  }
-
+/*
   public void checkState(Context context, String state, String dsID, String PID)
       throws ServerException
   {
@@ -151,6 +153,7 @@ public class DisseminationService
           + "by the repository administrator. ");
     }
   }
+  */
 
   /**
    * <p>Assembles a dissemination given an instance of <code>
@@ -203,11 +206,8 @@ public class DisseminationService
       // a single row.
       for (int i=0; i<dissBindInfoArray.length; i++)
       {
-        // Check state of datastreams in binding info
-        // If any datastreams have a state other than Inactive,
-        // the dissemination request is denied by throwing an
-        // Exception explaining the reason for denying the dissemination request.
-        checkState(context, dissBindInfoArray[i].dsState, dissBindInfoArray[i].dsID, PID);
+        ((Authorization)s_server.getModule("Authorization")).enforce_Internal_DSState(
+        		context, dissBindInfoArray[i].dsID, dissBindInfoArray[i].dsState);
         dissBindInfo = dissBindInfoArray[i];
 
         // Before doing anything, check whether we can replace any

@@ -31,11 +31,12 @@ import fedora.server.utilities.DateUtility;
  * @version $Id$
  */
 public class ReadOnlyContext
-        extends Parameterized implements Context {
+        //extends Parameterized 
+		implements Context {
 
-	public static final boolean USE_CACHED_OBJECT = true;
+	//public static final boolean USE_CACHED_OBJECT = true;
 
-	public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
+	//public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
 
 	
     public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "");
@@ -43,19 +44,6 @@ public class ReadOnlyContext
     	EMPTY.setActionAttributes(null);
     	EMPTY.setResourceAttributes(null);
     }
-    
-    /*
-    public final boolean useCachedObject() {
-    	//announce a call which you missed replacing
-    		try {
-				throw new Exception("REMNANT CALL TO CONTEXT.USECACHEDOBJECT()");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}    	
-    	return "true".equalsIgnoreCase(this.get("useCachedObject"));
-    }
-*/
-    
     
     private final Date now = new Date();
     
@@ -73,16 +61,6 @@ public class ReadOnlyContext
     private String password;
     
     private final boolean noOp = false; 
-    
-
-    /*
-    public static Context getUncachedContext() {
-        HttpServletRequest req=(HttpServletRequest) MessageContext.
-                getCurrentContext().getProperty(
-                HTTPConstants.MC_HTTP_SERVLETREQUEST);
-        return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req, false);
-    }
-    */
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -107,19 +85,8 @@ public class ReadOnlyContext
         }
         this.password = password;
     }
-    
-    /*
-    private ReadOnlyContext(Map parameters) {
-        this(parameters, null, null, "");    	
-    	//announce a call which you missed replacing
-		try {
-			throw new Exception("REMNANT CALL TO CONTEXT.USECACHEDOBJECT()");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}    	
-    }
-    */
-
+ 
+/*
     public static ReadOnlyContext getCopy(Context source) {
         HashMap params=new HashMap();
         Iterator iter;
@@ -177,7 +144,8 @@ public class ReadOnlyContext
             }
         }
     }
- 
+ */
+    /*
     public String get(String name) {
     	//if (("useCachedObject".equals(name)) ||  ("userId".equals(name)) || ("application".equals(name))) {    		
     	//announce a call which you missed replacing
@@ -189,10 +157,12 @@ public class ReadOnlyContext
     	//}
         return getParameter(name);
     }
+    
 
     public Iterator names() {
         return parameterNames();
     }
+    */
 
     public Iterator environmentAttributes() {
         return m_environmentAttributes.names();
@@ -290,52 +260,6 @@ public class ReadOnlyContext
     	return now;
     }
 
-    /*
-    public static final ReadOnlyContext getContext(Map parameters) {
-    	//announce a call which you missed replacing
-		try {
-			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(MAP)");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}       	
-    	if (parameters == null) {
-    		parameters = new Hashtable();
-    	}
-        return new ReadOnlyContext(parameters);
-    }
-    */
-
-    /*
-    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean useCachedObject) {
-    	//announce a call which you missed replacing
-		try {
-			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(String soapOrRest, HttpServletRequest request, boolean useCachedObject)");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-    	return getContext(soapOrRest, request, useCachedObject, null, null, null);
-    }
-    */
-
-    /* was so.  delete after refactoring
-    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, 
-    		String subjectId, String password, String[] roles) {
-    	return getContext(soapOrRest, request, false, subjectId, password, roles);
-    }
-    */
-    
-    /*
-    public static final ReadOnlyContext getContext(String soapOrRest, HttpServletRequest request, boolean temp,
-    		String subjectId, String password, String[] roles) {
-    	//announce a call which you missed replacing
-		try {
-			throw new Exception("REMNANT CALL TO CONTEXT.GETCONTEXT(6)");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}     	
-    	return getContext(soapOrRest, request, subjectId, password, roles);
-    }
-    */
     
     private static final MultiValueMap beginEnvironmentMap(String messageProtocol) throws Exception {
     	MultiValueMap environmentMap = new MultiValueMap();
@@ -388,29 +312,6 @@ public class ReadOnlyContext
     }
 
 
-    
-    /* needed?
-    public static final ReadOnlyContext getContext(String messageProtocol) {
-		MultiValueMap environmentMap = null;
-	  	try {
-	  		environmentMap = beginEnvironmentMap(messageProtocol);  			
-	  	} catch (Exception e) {
-	  	} finally {
-	  		environmentMap.lock();
-	  	}
-  	  	if (subjectId == null) {
-  	  		subjectId = "";
-  	  	}
-  	  	if (password == null) {
-  	  		password = "";
-  	  	}
-  	  	if (roles == null) {
-  	  		roles = new String[0];
-  	  	}  	  	
-  	  	return getContext(environmentMap, subjectId, password, roles);
-    }
-    */
-        
     /*
      * Gets a Context appropriate for the request, and whether it is ok
      * to use the dissemination cache or not.
@@ -515,12 +416,6 @@ public class ReadOnlyContext
   	  	
   	return getContext(environmentMap, subjectId, password, roles);
     }
-    
-    /*
-    public final void setUseCachedObject(boolean useCachedObject) {
-    	setParameter("useCachedObject", "" + useCachedObject);  
-    }
-    */
     
   	public static final String[] parseRole (String role) {
   		String[] parts = null;

@@ -301,11 +301,13 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
         // Can never occur since Java fully supports UTF-8
       }
       return new MIMETypedStream("application/fedora-redirect",in, null);
-    } else if ( ds.DSState.equals("D") &&
+    } else if ( false /* ds.DSState.equals("D") &&
                 ( context.get("canUseDeletedDatastream")==null
-                  || (!context.get("canUseDeletedDatastream").equals("true")) )
+                  || (!context.get("canUseDeletedDatastream").equals("true")) ) 
+                  doing this to avoid refactoring this deprecated method 
+                  (would need to pass in context to use xacml to protect I/D objects) */
               )
-    {
+    { 
       // Datastream has been flagged for deletion so it is no longer accessible.
       StringBuffer deleteText = new StringBuffer();
       deleteText.append("<html><title>Datastream Flagged For Deletion</title>");
@@ -345,9 +347,9 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
       }
       return new MIMETypedStream("text/html",in, null);
 
-    } else if ( ds.DSState.equals("I") &&
+    } else if ( false /* ds.DSState.equals("I") &&
                 ( context.get("canUseInactiveDatastream")==null
-                  || (!context.get("canUseInactiveDatastream").equals("true")) )
+                  || (!context.get("canUseInactiveDatastream").equals("true")) )*/
               )
     {
       // Datastream has been made inactive so it is no longer accessible.

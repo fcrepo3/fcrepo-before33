@@ -113,7 +113,8 @@ public interface Authorization {
 	public void enforceGetDatastreamDissemination(Context context, String pid, String datastreamId, Date asOfDate) 
 	throws AuthzException;
 	
-	public void enforceGetDissemination(Context context, String pid, String bDefPID, String methodName, Date asOfDate) 
+	public void enforceGetDissemination(Context context, String pid, String bDefPID, String methodName, Date asOfDate,
+			String authzAux_objState, String authzAux_bdefState, String authzAux_bmechPID, String authzAux_bmechState, String authzAux_dissState) 
 	throws AuthzException;
 
 	public void enforceGetObjectHistory(Context context, String pid) 
@@ -142,6 +143,9 @@ public interface Authorization {
 
 	public void enforceUpload(Context context)
 	throws AuthzException;		
+
+	public void enforce_Internal_DSState(Context context, String PID, String state)
+	throws AuthzException;
 	
 }
 

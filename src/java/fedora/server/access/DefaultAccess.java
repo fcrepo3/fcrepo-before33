@@ -149,6 +149,7 @@ public class DefaultAccess extends Module implements Access
 
   }
 
+  /*
   public void checkState(Context context, String objectType, String state, String PID)
       throws ServerException
   {
@@ -173,7 +174,8 @@ public class DefaultAccess extends Module implements Access
           + "by the repository administrator. ");
     }
   }
-
+*/
+  
   private static final Hashtable accessActionAttributes = new Hashtable();
   static {
   	accessActionAttributes.put("api","apia");
@@ -204,10 +206,7 @@ public class DefaultAccess extends Module implements Access
     long initStartTime = new Date().getTime();
     long startTime = new Date().getTime();
        
-    m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime);
-        
     DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
-
 
     // DYNAMIC!! If the behavior definition (bDefPID) is defined as dynamic, then
     // perform the dissemination via the DynamicAccess module.
@@ -222,13 +221,13 @@ public class DefaultAccess extends Module implements Access
     logFiner("[DefaultAccess] Roundtrip DynamicDisseminator: "
         + interval + " milliseconds.");
 
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
-    // Check associated bdef object state
+    String authzAux_objState = reader.GetObjectState();
+    
     BDefReader bDefReader = m_manager.getBDefReader(asOfDateTime == null, context, bDefPID);
-    checkState(context, "Behavior Definition", bDefReader.GetObjectState(), bDefPID);
+    String authzAux_bdefState = bDefReader.GetObjectState();
 
+    String authzAux_dissState = "unknown";
+    
     // SDP: get a bmech reader to get information that is specific to
     // a mechanism.
     Date versDateTime = asOfDateTime;
@@ -239,7 +238,7 @@ public class DefaultAccess extends Module implements Access
     {
       if (dissSet[i].bDefID.equalsIgnoreCase(bDefPID))
       {
-        checkState(context, "disseminator (\""+dissSet[i].dissID+"\") for the data ", dissSet[i].dissState, PID);
+      	authzAux_dissState = dissSet[i].dissState;
         bmechreader = m_manager.getBMechReader(asOfDateTime == null, context, dissSet[i].bMechID);
         break;
       }
@@ -263,8 +262,12 @@ public class DefaultAccess extends Module implements Access
               + interval + " milliseconds.");
 
     // Check bmech object state
-    checkState(context, "behavior mechanism", bmechreader.GetObjectState(), bmechreader.GetObjectPID());
+    String authzAux_bmechState = bmechreader.GetObjectState();
+    String authzAux_bmechPID = bmechreader.GetObjectPID();
 
+    m_authorizationModule.enforceGetDissemination(context, PID, bDefPID, methodName, asOfDateTime,
+    		authzAux_objState, authzAux_bdefState, authzAux_bmechPID, authzAux_bmechState, authzAux_dissState);
+	
     // Get method parms
     Hashtable h_userParms = new Hashtable();
     MIMETypedStream dissemination = null;
@@ -352,9 +355,6 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
     ObjectMethodsDef[] methodDefs =
         reader.listMethods(asOfDateTime);
     long stopTime = new Date().getTime();
@@ -388,9 +388,6 @@ public class DefaultAccess extends Module implements Access
     DOReader reader =
         m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
-
     Datastream[] datastreams = reader.GetDatastreams(asOfDateTime, null);
     DatastreamDef[] dsDefs = new DatastreamDef[datastreams.length];
     for (int i=0; i<datastreams.length; i++) {
@@ -414,9 +411,6 @@ public class DefaultAccess extends Module implements Access
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceGetObjectProfile(context, PID, asOfDateTime);
     DOReader reader = m_manager.getReader(asOfDateTime == null, context, PID);
-
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
 
     Date versDateTime = asOfDateTime;
     ObjectProfile profile = new ObjectProfile();
@@ -528,9 +522,6 @@ public class DefaultAccess extends Module implements Access
     PID = Server.getPID(PID).toString();
     m_authorizationModule.enforceGetObjectHistory(context, PID);
     DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
-
-    // Check data object state
-    checkState(context, "Data", reader.GetObjectState(), PID);
 
     return reader.getObjectHistory(PID);
   }
@@ -843,8 +834,6 @@ public class DefaultAccess extends Module implements Access
       long startTime = new Date().getTime();
       DOReader reader = m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
 
-      // Check data object state
-      checkState(context, "Data", reader.GetObjectState(), PID);
       Datastream ds = (Datastream) reader.GetDatastream(dsID, asOfDateTime);
       if (ds == null) {
           String message = "[DefaulAccess] No datastream could be returned. "

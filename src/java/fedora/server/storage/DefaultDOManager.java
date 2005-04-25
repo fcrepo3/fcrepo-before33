@@ -48,6 +48,7 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.DOValidator;
 import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.RelsExtValidator;
+import fedora.common.Constants;
 
 /**
  *
@@ -1073,7 +1074,7 @@ public class DefaultDOManager
      */
     private String getUserId(Context context)
             throws InvalidContextException {
-        String ret=context.get("userId");
+        String ret = context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
         if (ret==null) {
             throw new InvalidContextException("The context identifies no userId, but a user must be identified for this operation.");
         }

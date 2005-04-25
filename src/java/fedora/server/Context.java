@@ -13,9 +13,9 @@ import java.util.Iterator;
  */
 public interface Context {
 
-    public abstract String get(String name);
+    //public abstract String get(String name);
 
-    public abstract Iterator names();
+    //public abstract Iterator names();
     
     public MultiValueMap getEnvironmentAttributes();
     

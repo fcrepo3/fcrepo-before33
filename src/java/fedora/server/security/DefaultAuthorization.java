@@ -812,7 +812,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 	
-	public void enforceGetDissemination(Context context, String pid, String bDefPid, String methodName, Date asOfDate) 
+	public void enforceGetDissemination(Context context, String pid, String bDefPid, String methodName, Date asOfDate,
+			String authzAux_objState, String authzAux_bdefState, String authzAux_bmechPID, String authzAux_bmechState, String authzAux_dissState) 
 	throws AuthzException {
 	try {
         getServer().logFinest("Entered enforceGetDissemination");		
@@ -986,6 +987,30 @@ public class DefaultAuthorization extends Module implements Authorization {
         getServer().logFinest("Exiting enforceUpload");
 	}
 	}
+	
+	public void enforce_Internal_DSState(Context context, String id, String state)
+	throws AuthzException {
+		try {
+	        getServer().logFinest("Entered enforce_Internal_DSState");		
+			String target = Constants.ACTION.INTERNAL_DSSTATE.uri;
+			log("enforcing " + target);
+			context.setActionAttributes(null);
+			MultiValueMap resourceAttributes = new MultiValueMap();
+			String name = "";
+			try {
+				name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, id);
+				name = resourceAttributes.setReturn(Constants.DATASTREAM.STATE.uri, state);
+			} catch (Exception e) {
+				context.setResourceAttributes(null);		
+				throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+			}
+			context.setResourceAttributes(resourceAttributes);
+			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+		} finally {
+	        getServer().logFinest("Exiting enforceUpload");
+		}
+		}
+
 
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);
