@@ -110,13 +110,21 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ENFORCE_MODE)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE);
     }
+    System.err.println("looking for POLICY_SCHEMA_PATH");
     if (moduleParameters.containsKey(POLICY_SCHEMA_PATH)) {
+        System.err.println("found POLICY_SCHEMA_PATH");
     	policySchemaPath = 
     		(((String) moduleParameters.get(POLICY_SCHEMA_PATH)).startsWith(File.separator) ? "" : serverHome) 
 			+ (String) moduleParameters.get(POLICY_SCHEMA_PATH);
+        System.err.println("set it = " + policySchemaPath);
     }
+    System.err.println("looking for VALIDATE_REPOSITORY_POLICIES");
     if (moduleParameters.containsKey(VALIDATE_REPOSITORY_POLICIES)) {
-    	validateRepositoryPolicies = Boolean.getBoolean((String)moduleParameters.get(VALIDATE_REPOSITORY_POLICIES));
+        System.err.println("found VALIDATE_REPOSITORY_POLICIES");    
+        String temp = (String) moduleParameters.get(VALIDATE_REPOSITORY_POLICIES);
+        System.err.println("string vers = " + temp);
+    	validateRepositoryPolicies = (new Boolean( (String) moduleParameters.get(VALIDATE_REPOSITORY_POLICIES))).booleanValue();
+        System.err.println("set it = " + validateRepositoryPolicies);
     }
     if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_FILE)) {
     	validateObjectPoliciesFromFile = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_FILE));
@@ -162,7 +170,8 @@ public class DefaultAuthorization extends Module implements Authorization {
     try {
       	System.err.println("in DefaultAuthorization.postInitModule() 5");
         xacmlPep = PolicyEnforcementPoint.getInstance();
-      	System.err.println("in DefaultAuthorization.postInitModule() 6");
+      	System.err.println("in DefaultAuthorization.postInitModule() 6, policySchemaPath=" + policySchemaPath +
+      			" validateRepositoryPolicies=" + validateRepositoryPolicies);
         xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, repositoryGeneratedPoliciesDirectory, objectPoliciesDirectory, m_manager, 
        		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
       	System.err.println("in DefaultAuthorization.postInitModule() 7");

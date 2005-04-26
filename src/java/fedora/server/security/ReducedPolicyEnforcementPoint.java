@@ -148,14 +148,15 @@ System.err.println("before building policy finder");
 		Set policyModules = new HashSet();
 		System.err.println("just constructed policy module hashset"); 
 		ReducedPolicyFinderModule reducedPolicyModule = null;
-		try {
+		//try {
 			System.err.println("***before constucting fedora policy finder module");
 			reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory, validateSurrogatePolicies, schemaPath);
 			System.err.println("after constucting fedora policy finder module");
+			/*
 		} catch (Exception e) {
 System.err.println("***debugging CombinedPolicyModule");
 			e.printStackTrace();
-		}
+		}*/
 		System.err.println("before adding fedora policy finder module to policy finder hashset");
 		policyModules.add(reducedPolicyModule);
 		System.err.println("after adding fedora policy finder module to policy finder hashset");

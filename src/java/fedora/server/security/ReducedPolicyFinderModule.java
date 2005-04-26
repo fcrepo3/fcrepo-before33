@@ -58,6 +58,9 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 			this.validateSurrogatePolicies = validateSurrogatePolicies;
 			if (this.validateSurrogatePolicies) {
 				schemaFile = new File(schemaPath);
+				if (! schemaFile.canRead()) {
+					this.validateSurrogatePolicies = false;
+				}				
 			}
 		}
 		List filelist = new ArrayList();
@@ -149,10 +152,13 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
     				DocumentBuilder builder = getDocumentBuilder(null, validateSurrogatePolicies);
     				rootElement = builder.parse(file).getDocumentElement();
     			} catch (ParserConfigurationException e) {
+    				System.err.println("parser failure at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (SAXException e) {
+    				System.err.println("policy breaks schema at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (IOException e) {
+    				System.err.println("policy can't be read at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			}
             }
@@ -176,6 +182,7 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 		classErrors += methodErrors;
 		System.err.println("classErrors=" + classErrors);
 		if (classErrors != 0) {
+			repositoryPolicies.clear();
 			throw new Exception("problems loading repo-wide policies");			
 		}
 		return repositoryPolicies;

@@ -69,9 +69,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		String policySchemaPath
 	) throws GeneralException {
 		this.combiningAlgorithm = combiningAlgorithm;
-		this.validateRepositoryPolicies = validateRepositoryPolicies;
-		this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
-		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;			
 
 		List filelist = new ArrayList();
 		System.err.println("before building file list");
@@ -81,6 +78,28 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		buildRepositoryPolicyFileList(new File(repositoryPolicyGeneratedDirectoryPath),  filelist);
 		System.err.println("after building (generated) file list");		
 		System.err.println("before getting repo policies");
+		
+		//String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
+		System.err.println("XXpolicySchemaPath="+policySchemaPath);
+		if (policySchemaPath == null) {
+			this.validateRepositoryPolicies = false;
+			this.validateObjectPoliciesFromFile = false;
+			this.validateObjectPoliciesFromDatastream = false;
+		} else {
+			this.validateRepositoryPolicies = validateRepositoryPolicies;
+			this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
+			this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;			
+			if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromFile || this.validateObjectPoliciesFromDatastream) {
+				schemaFile = new File(policySchemaPath);
+				if (! schemaFile.canRead()) {
+					this.validateRepositoryPolicies = false;
+					this.validateObjectPoliciesFromFile = false;
+					this.validateObjectPoliciesFromDatastream = false;					
+				}
+			}
+		}
+		
+		
 		repositoryPolicies = getRepositoryPolicies(filelist);
 		
 		File objectPolicyDirectory = new File(objectPolicyDirectoryPath);
@@ -94,11 +113,7 @@ System.err.println("is NOT a directory");
 		
 		this.doManager = doManager;
 
-		//String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
-		System.err.println("policySchemaPath="+policySchemaPath);
-		if (policySchemaPath != null) {
-			schemaFile = new File(policySchemaPath);
-		}
+
 	}
 
 	public static final String POLICY_SCHEMA_PROPERTY = "com.sun.xacml.PolicySchema";
@@ -118,15 +133,16 @@ System.err.println("is NOT a directory");
 		// as of 1.2, we always are namespace aware
 		factory.setNamespaceAware(true);
 
-		System.err.println("schemaFile=" +schemaFile);
+		System.err.println("ZZschemaFile=" +schemaFile);
 		System.err.println("validate=" +validate);
 		if (schemaFile == null) {
 			factory.setValidating(false);
 			builder = factory.newDocumentBuilder();
 		} else {
 			factory.setValidating(validate);
-			System.err.println("VALIDATION ON");
+			System.err.println("VALIDATION ON? = " + validate);
 			factory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
+			System.err.println("schemaFile=" + schemaFile.isFile() + schemaFile.canRead());
 			factory.setAttribute(JAXP_SCHEMA_SOURCE, schemaFile);
 			builder = factory.newDocumentBuilder();
 			builder.setErrorHandler(handler);
@@ -184,13 +200,17 @@ System.err.println("is NOT a directory");
             if (methodErrors == 0) {
     			try {
     				System.err.println("GETTING A REPOSITORY POLICY = " + filepath);
-    				DocumentBuilder builder = getDocumentBuilder(null, validateRepositoryPolicies);
+    				System.err.println("schemaFile = " + schemaFile);
+    				DocumentBuilder builder = getDocumentBuilder(new SchemaErrorHandler(), validateRepositoryPolicies);
     				rootElement = builder.parse(file).getDocumentElement();
     			} catch (ParserConfigurationException e) {
+    				System.err.println("parser failure at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (SAXException e) {
+    				System.err.println("policy breaks schema at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (IOException e) {
+    				System.err.println("policy can't be read at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			}
             }
@@ -214,6 +234,7 @@ System.err.println("is NOT a directory");
 		classErrors += methodErrors;
 		System.err.println("classErrors=" + classErrors);
 		if (classErrors != 0) {
+			repositoryPolicies.clear();
 			throw new GeneralException("problems loading repo-wide policies");			
 		}
 		return repositoryPolicies;
@@ -244,6 +265,15 @@ System.err.println("is NOT a directory");
 					DocumentBuilder builder = getDocumentBuilder(null, validateObjectPoliciesFromDatastream);
 					Element rootElement = builder.parse(instream).getDocumentElement();
 					objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "object xml for " + pid);
+    			} catch (ParserConfigurationException e) {
+    				System.err.println("parser failure at " + pid);
+					throw e;
+    			} catch (SAXException e) {
+    				System.err.println("policy breaks schema at " + pid);
+					throw e;
+    			} catch (IOException e) {
+    				System.err.println("policy can't be read at " + pid);
+					throw e;
 				} catch (Throwable e) {
 					logger.log(Level.INFO, "error reading policy from xml for object " + pid);
 					throw e;
@@ -254,7 +284,7 @@ System.err.println("is NOT a directory");
 	}
 
 
-    private AbstractPolicy getPolicyFromFile(String filepath) throws GeneralException {
+    private AbstractPolicy getPolicyFromFile(String filepath) throws Exception {
 		AbstractPolicy objectPolicyFromObject = null;		
 		//String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
 System.err.println(">>>>>>>>filepath=" + filepath);
@@ -270,6 +300,15 @@ System.err.println(">>>>>>>>filepath=" + filepath);
 				DocumentBuilder builder = getDocumentBuilder(null, validateObjectPoliciesFromFile);
 				Element rootElement = builder.parse(file).getDocumentElement();
 				objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "policy file from xml at " + filepath);
+			} catch (ParserConfigurationException e) {
+				System.err.println("parser failure at " + filepath);
+				throw e;
+			} catch (SAXException e) {
+				System.err.println("policy breaks schema at " + filepath);
+				throw e;
+			} catch (IOException e) {
+				System.err.println("policy can't be read at " + filepath);
+				throw e;
 			} catch (Throwable e) {
 				String msg = "error reading policy from xml from xml at " + filepath; 
 				logger.log(Level.INFO, msg);

@@ -281,6 +281,7 @@ public class JAASRealm
         	allowSurrogates = false;
         	surrogatePoliciesDirectory = null; 
         	rpep = null;
+        	System.err.println("problem setting up surrogate -- likely a policy breaks the schema");
         } finally {
         	prepped = true;
         }
