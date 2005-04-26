@@ -1124,10 +1124,10 @@
       <echo message="Waiting 10 seconds for resource index flush"/>
       <sleep seconds="10"/>
       <echo message="Getting SmileyStuff DC"/>
-      <exec executable="wget" resultproperty="failedget">
+      <exec executable="wget" resultproperty="result.property">
         <arg value="--http-user=fedoraAdmin"/>
         <arg value="--http-passwd=fedoraAdmin"/>
-        <arg value="--output-file=/tmp/fedoraTest/SmileyStuffDC.xml"/>
+        <arg value="--output-document=/tmp/fedoraTest/SmileyStuffDC.xml"/>
         <arg value="http://localhost:8080/fedora/get/demo:SmileyStuff/DC"/>
       </exec>
       <echo message="Stopping Fedora...wait 10 seconds"/>
@@ -1138,6 +1138,11 @@
         <arg value="fedoraAdmin"/>
         <arg value="fedoraAdmin"/>
       </exec>
-      <fail if="failedget" message="Dissemination test failed."/>
+      <condition property="diss.failed">
+        <not>
+          <equals arg1="${result.property}" arg2="0"/>
+        </not>
+      </condition>
+      <fail if="diss.failed" message="Dissemination test failed."/>
     </target>
 </project>
