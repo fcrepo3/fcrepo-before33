@@ -28,9 +28,6 @@ public class ServerUtility {
     public static final String ADMIN_PASSWORD_KEY = "adminPassword";
     public static final String BACKEND_USERNAME_KEY = "backendUsername";
     public static final String BACKEND_PASSWORD_KEY = "backendPassword";    
-    public static final String DB_USERNAME_KEY = "dbUsername";
-    public static final String DB_PASSWORD_KEY = "dbPassword";
-
     
     private static final Properties readServerProperties(boolean httpRequired, boolean httpsRequired) 
     	throws Exception {
@@ -56,9 +53,7 @@ public class ServerUtility {
             ||  ADMIN_USERNAME_KEY.equals(nameNode.getNodeValue())
             ||  ADMIN_PASSWORD_KEY.equals(nameNode.getNodeValue())
             ||  BACKEND_USERNAME_KEY.equals(nameNode.getNodeValue())
-            ||  BACKEND_PASSWORD_KEY.equals(nameNode.getNodeValue())			
-            ||  DB_USERNAME_KEY.equals(nameNode.getNodeValue())			
-            ||  DB_PASSWORD_KEY.equals(nameNode.getNodeValue())) {
+            ||  BACKEND_PASSWORD_KEY.equals(nameNode.getNodeValue())) {			
         		properties.put(nameNode.getNodeValue(),valueNode.getNodeValue());            			
     		}
         }

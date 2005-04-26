@@ -1,11 +1,12 @@
 package fedora.server.security;
 
-import java.io.File;
 
 public class Transom { 	
 	
 	private Boolean allowSurrogate = null;
-	private File surrogatePolicyDirectory = null;
+	private String surrogatePolicyDirectory = null;
+	private Boolean validateSurrogatePolicies = null;
+	private String policySchemaPath = null;
 	
 	private Transom() {
 
@@ -17,28 +18,72 @@ public class Transom {
 		return singleton;
 	}
 	
-	public Boolean getAllowSurrogate() {
-		return allowSurrogate;
+	public boolean getAllowSurrogate() throws Exception {
+		if ((allowSurrogate == null) 
+		||  (surrogatePolicyDirectory == null) 
+		||  (validateSurrogatePolicies == null) 
+		||  (policySchemaPath == null)) {
+			throw new Exception("Transom not initialized");
+		}
+		return allowSurrogate.booleanValue();
 	}
 
-	public File getSurrogatePolicyDirectory() {
+	public String getSurrogatePolicyDirectory() throws Exception {
+		if ((allowSurrogate == null) 
+		||  (surrogatePolicyDirectory == null) 
+		||  (validateSurrogatePolicies == null) 
+		||  (policySchemaPath == null)) {
+			throw new Exception("Transom not initialized");
+		}
 		return surrogatePolicyDirectory;
 	}
 	
-	public void setAllowSurrogate(boolean allowSurrogate) {
-		if (this.allowSurrogate == null) {
-			if (allowSurrogate) {
-				this.allowSurrogate = Boolean.TRUE;
-			} else {
-				this.allowSurrogate = Boolean.FALSE;				
-			}
-		}
+	public String getPolicySchemaPath() throws Exception {
+		if ((allowSurrogate == null) 
+		||  (surrogatePolicyDirectory == null) 
+		||  (validateSurrogatePolicies == null) 
+		||  (policySchemaPath == null)) {
+			throw new Exception("Transom not initialized");
+		}		
+		return policySchemaPath;
 	}
 	
-	public void setSurrogatePolicyDirectory(File surrogatePolicyDirectory) {
-		if (this.surrogatePolicyDirectory == null) {
-			this.surrogatePolicyDirectory = surrogatePolicyDirectory;
+	public boolean getValidateSurrogatePolicies() throws Exception {
+		if ((allowSurrogate == null) 
+		||  (surrogatePolicyDirectory == null) 
+		||  (validateSurrogatePolicies == null) 
+		||  (policySchemaPath == null)) {
+			throw new Exception("Transom not initialized");
+		}		
+		return validateSurrogatePolicies.booleanValue();
+	}
+	
+	public void setAllowSurrogate(boolean allowSurrogate) throws Exception {
+		if (this.allowSurrogate != null) {
+			throw new Exception("Transom already initialized");			
 		}
+		this.allowSurrogate = new Boolean(allowSurrogate);
+	}
+	
+	public void setSurrogatePolicyDirectory(String surrogatePolicyDirectory) throws Exception {
+		if (this.surrogatePolicyDirectory != null) {
+			throw new Exception("Transom already initialized");			
+		}
+		this.surrogatePolicyDirectory = surrogatePolicyDirectory;
+	}
+	
+	public void setValidateSurrogatePolicies(boolean validateSurrogatePolicies) throws Exception {
+		if (this.validateSurrogatePolicies != null) {
+			throw new Exception("Transom already initialized");			
+		}
+		this.validateSurrogatePolicies = new Boolean(validateSurrogatePolicies);
+	}
+	
+	public void setPolicySchemaPath(String policySchemaPath) throws Exception {
+		if (this.policySchemaPath != null) {
+			throw new Exception("Transom already initialized");			
+		}
+		this.policySchemaPath = policySchemaPath;
 	}
 
 }

@@ -10,12 +10,8 @@
 	<comment>Defines the password for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="backendUsername" value="backendUser"/>
 	<comment>Defines the username for the backend calls from (and perhaps to) Fedora server; default is fedoraAdmin.</comment>
-	<!-- param name="backendPassword" value=""/ -->
+	<!-- param name="backendPassword" value=""/ code doesn't like 0-length strings -->
 	<comment>Defines the password for the backend calls from (and perhaps to) Fedora server; default is fedoraAdmin.</comment>
-	<param name="dbUsername" value="fedoraAdmin"/>
-	<comment>Defines the username for Fedora server access to backend dbms; default is fedoraAdmin.</comment>
-	<param name="dbPassword" value="fedoraAdmin"/>
-	<comment>Defines the password for Fedora server access to backend dbms; default is fedoraAdmin.</comment>		
 	<param name="log_max_size" value="5242880"/>
 	<comment>Defines the threshold at which a new log file is generated based on the size of the current log file in bytes; default is 5242880 bytes.</comment>
 	<param name="log_max_days" value="7"/>
@@ -100,6 +96,7 @@
 	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
 		<comment>Builds and manages Fedora's authorization structure.
         </comment>
+        <param name="ALLOW-SURROGATES" value="false"/>        
         <param name="SURROGATE-POLICIES-DIRECTORY" value="config/xacml-policies/active/surrogate-policies"/>
         <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies"/>
         <param name="REPOSITORY-GENERATED-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies-generated"/>        
@@ -108,6 +105,11 @@
         <param name="ENFORCE-MODE" value="enforce-policies" testvalue="permit-all-requests"/>
         <!-- param name="ENFORCE-MODE" value="permit-all-requests"/ -->
         <!-- param name="ENFORCE-MODE" value="deny-all-requests"/ -->
+        <param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-1.0.xsd"/>
+        <param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
+        <param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
+        <param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/>
+        <param name="VALIDATE-SURROGATE-POLICIES" value="false"/>
 	</module>
 	
 	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
@@ -382,6 +384,7 @@
 		Parameters:
 		  - xsd_metslikefedora1: this is local path for the Fedora-METS XML schema used to do XML schema validation of digital objects
 		  - xsd_foxml1.0: this is local path for the Fedora FOXML XML schema used to do XML schema validation of digital objects
+		  - xsd_xacml_policy1.0: this is local path for the OASIS XACML XML policy schema used to do XML schema validation of XACML policies		  
 		  - rules_metslikefedora1:  this is the local path to the Fedora Schematron Rules used to do Fedora-specific on Fedora-METS XML files.
 		  - rules_foxml1.0:  this is the local path to the Fedora Schematron Rules used to do Fedora-specific on FOXML XML files.
 		  - schtron_preprocessor:  this is the local path to the "skeleton" style sheet for schematron processing
@@ -390,6 +393,7 @@
         	</comment>
 		<param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd"/>
 		<param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd"/>
+		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd"/>
 		<param name="rules_metslikefedora1" value="schematron/metsExtRules1-0.xml"/>
 		<param name="rules_foxml1.0" value="schematron/foxmlRules1-0.xml"/>
 		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>

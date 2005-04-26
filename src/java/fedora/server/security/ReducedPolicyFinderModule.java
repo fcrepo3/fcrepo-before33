@@ -49,19 +49,23 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 	private File schemaFile = null;
 
 
-	public ReducedPolicyFinderModule(String combiningAlgorithm, File surrogatePolicyDirectory) throws Exception {
+	public ReducedPolicyFinderModule(String combiningAlgorithm, File surrogatePolicyDirectory, 
+			boolean validateSurrogatePolicies, String schemaPath) throws Exception {
 		this.combiningAlgorithm = combiningAlgorithm;
+		if (schemaPath == null) {
+			this.validateSurrogatePolicies = false;
+		} else {
+			this.validateSurrogatePolicies = validateSurrogatePolicies;
+			if (this.validateSurrogatePolicies) {
+				schemaFile = new File(schemaPath);
+			}
+		}
 		List filelist = new ArrayList();
 		System.err.println("before building file list");
 		buildRepositoryPolicyFileList(surrogatePolicyDirectory,  filelist);
 		System.err.println("after building file list");
 		System.err.println("before getting repo policies");
-		repositoryPolicies = getRepositoryPolicies(filelist);
-		
-		String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
-		if (schemaName != null) {
-			schemaFile = new File(schemaName);
-		}
+		repositoryPolicies = getRepositoryPolicies(filelist);		
 	}
 
 	public static final String POLICY_SCHEMA_PROPERTY = "com.sun.xacml.PolicySchema";
@@ -72,7 +76,7 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 
 	public static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
 	
-	private final DocumentBuilder getDocumentBuilder(ErrorHandler handler) throws ParserConfigurationException {
+	private final DocumentBuilder getDocumentBuilder(ErrorHandler handler, boolean validate) throws ParserConfigurationException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringComments(true);
 
@@ -85,7 +89,7 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 			factory.setValidating(false);
 			builder = factory.newDocumentBuilder();
 		} else {
-			factory.setValidating(true);
+			factory.setValidating(validate);
 			factory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
 			factory.setAttribute(JAXP_SCHEMA_SOURCE, schemaFile);
 			builder = factory.newDocumentBuilder();
@@ -142,7 +146,7 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
             Element rootElement = null;
             if (methodErrors == 0) {
     			try {
-    				DocumentBuilder builder = getDocumentBuilder(null);
+    				DocumentBuilder builder = getDocumentBuilder(null, validateSurrogatePolicies);
     				rootElement = builder.parse(file).getDocumentElement();
     			} catch (ParserConfigurationException e) {
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
@@ -177,30 +181,6 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 		return repositoryPolicies;
 	}
 
-    private AbstractPolicy getPolicyFromFile(String filepath) throws Exception {
-		AbstractPolicy objectPolicyFromObject = null;		
-		//String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
-System.err.println(">>>>>>>>filepath=" + filepath);
-		File file = new File(filepath);
-		if (file.exists()) {
-			if (!file.canRead()) {
-				String msg = "error reading policy from xml at " + filepath; 
-				logger.log(Level.INFO, msg);
-				throw new Exception(msg);			
-			}
-			try {
-				DocumentBuilder builder = getDocumentBuilder(null);
-				Element rootElement = builder.parse(file).getDocumentElement();
-				objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "policy file from xml at " + filepath);
-			} catch (Throwable e) {
-				String msg = "error reading policy from xml from xml at " + filepath; 
-				logger.log(Level.INFO, msg);
-				throw new Exception(msg);
-			}			
-		}
-		return objectPolicyFromObject;
-	}
-
 	
 	private static final void buildRepositoryPolicyFileList(File directory,  List filelist) {
 		String[] files = directory.list();
@@ -215,6 +195,8 @@ System.err.println(">>>>>>>>filepath=" + filepath);
 		}
 	}
 
+	private boolean validateSurrogatePolicies = false;
+	
 	/**
 	 * pass along an init() call to the various multiplexed PolicyFinderModules
 	 */

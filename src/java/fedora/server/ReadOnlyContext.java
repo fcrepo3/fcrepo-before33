@@ -30,14 +30,7 @@ import fedora.server.utilities.DateUtility;
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
-public class ReadOnlyContext
-        //extends Parameterized 
-		implements Context {
-
-	//public static final boolean USE_CACHED_OBJECT = true;
-
-	//public static final boolean DO_NOT_USE_CACHED_OBJECT = false;
-
+public class ReadOnlyContext implements Context {
 	
     public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "");
     static {
@@ -86,84 +79,6 @@ public class ReadOnlyContext
         this.password = password;
     }
  
-/*
-    public static ReadOnlyContext getCopy(Context source) {
-        HashMap params=new HashMap();
-        Iterator iter;
-        iter=source.names();
-        while (iter.hasNext()) {
-            String k=(String) iter.next();
-            params.put(k, source.get(k));
-        }
-        //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-        ReadOnlyContext temp = new ReadOnlyContext(null, null, source.getPassword());
-        temp.setActionAttributes(null);
-        temp.setResourceAttributes(null);
-        return temp;
-        //^^^^^ this fixup to allow compilation; needs extension for new fields ^^^^^
-    }
-
-    public static ReadOnlyContext getUnion(Context a, Context b) {
-        if (a==null) {
-            if (b==null) {
-                return EMPTY;
-            } else {
-                if (b.getClass().getName().equals("fedora.server.ReadOnlyContext")) {
-                    return (ReadOnlyContext) b;
-                } else {
-                    return getCopy(b);
-                }
-            }
-        } else {
-            if (b==null) {
-                if (a.getClass().getName().equals("fedora.server.ReadOnlyContext")) {
-                    return (ReadOnlyContext) a;
-                } else {
-                    return getCopy(a);
-                }
-            } else {
-                // read from a, then b, then create and return new ReadOnlyContext
-                HashMap params=new HashMap();
-                Iterator iter;
-                iter=a.names();
-                while (iter.hasNext()) {
-                    String k=(String) iter.next();
-                    params.put(k, a.get(k));
-                }
-                iter=b.names();
-                while (iter.hasNext()) {
-                    String k=(String) iter.next();
-                    params.put(k, b.get(k));
-                }
-                //vvvvv this fixup to allow compilation; needs extension for new fields vvvvv
-                ReadOnlyContext temp = new ReadOnlyContext(null, null, a.getPassword());
-                temp.setActionAttributes(null);
-                temp.setResourceAttributes(null);
-                return temp;
-                //^^^^^ this fixup to allow compilation; needs extension for new fields ^^^^^
-            }
-        }
-    }
- */
-    /*
-    public String get(String name) {
-    	//if (("useCachedObject".equals(name)) ||  ("userId".equals(name)) || ("application".equals(name))) {    		
-    	//announce a call which you missed replacing
-    		try {
-				throw new Exception("REMNANT CALL TO CONTEXT.GET(" + name +")");
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-    	//}
-        return getParameter(name);
-    }
-    
-
-    public Iterator names() {
-        return parameterNames();
-    }
-    */
-
     public Iterator environmentAttributes() {
         return m_environmentAttributes.names();
     }
@@ -259,7 +174,6 @@ public class ReadOnlyContext
     public Date now() {
     	return now;
     }
-
     
     private static final MultiValueMap beginEnvironmentMap(String messageProtocol) throws Exception {
     	MultiValueMap environmentMap = new MultiValueMap();
@@ -277,7 +191,6 @@ public class ReadOnlyContext
                 HTTPConstants.MC_HTTP_SERVLETREQUEST);
       return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req);
     }
-
     
     public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles) {
   		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles);

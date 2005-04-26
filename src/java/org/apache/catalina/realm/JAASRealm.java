@@ -251,31 +251,39 @@ public class JAASRealm
         }
     }
 
-
+	private boolean allowSurrogates = false;
     // --------------------------------------------------------- Public Methods
+	private boolean prepped = false;
     private ReducedPolicyEnforcementPoint rpep = null;
     private void initt() {
-        boolean allowSurrogate = false;
-        if ((Transom.getInstance().getAllowSurrogate() != null) 
-        &&  (Transom.getInstance().getSurrogatePolicyDirectory() != null)) {
-    		allowSurrogate = Transom.getInstance().getAllowSurrogate().booleanValue();
-    	}
+        boolean validate = false;
+        String schemaPath = null;
+        String surrogatePoliciesDirectoryPath = null;
         File surrogatePoliciesDirectory = null;
-        if (allowSurrogate) {
-        	surrogatePoliciesDirectory = Transom.getInstance().getSurrogatePolicyDirectory();
-            try {
-              	System.err.println("in initt() 5");
-                rpep = ReducedPolicyEnforcementPoint.getInstance();
-              	System.err.println("in initt() 6");
-              	if (rpep != null) {
-                    rpep.initPep("com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg", surrogatePoliciesDirectory);             		
-              	}
-              	System.err.println("in initt() 7");
-            } catch (Throwable e1) {
-              	System.err.println("in initt() 8");	        	
-            	rpep = null;
-            }
-        }    	
+        try {
+        	allowSurrogates = Transom.getInstance().getAllowSurrogate();
+        	validate = Transom.getInstance().getValidateSurrogatePolicies();
+        	surrogatePoliciesDirectoryPath = Transom.getInstance().getSurrogatePolicyDirectory();
+        	surrogatePoliciesDirectory = new File(surrogatePoliciesDirectoryPath);
+        	if (! surrogatePoliciesDirectory.isDirectory()) {
+        		throw new Exception("don't have surrogatePoliciesDirectory");
+        	}
+        	if (! surrogatePoliciesDirectory.canRead()) {
+        		throw new Exception("can't read surrogatePoliciesDirectory");
+        	}	
+        	schemaPath = Transom.getInstance().getPolicySchemaPath();
+            rpep = ReducedPolicyEnforcementPoint.getInstance();
+          	System.err.println("in initt() 6");
+          	if (rpep != null) {
+                rpep.initPep("com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg", surrogatePoliciesDirectory, validate, schemaPath);             		
+          	}
+        } catch (Exception e) {
+        	allowSurrogates = false;
+        	surrogatePoliciesDirectory = null; 
+        	rpep = null;
+        } finally {
+        	prepped = true;
+        }
     }
     
     /*package*/ static final String DONTCHECK = "@(y@+$y@+y@md0n++y@+";
@@ -309,10 +317,10 @@ public class JAASRealm
     		  		roles = ((GenericPrincipal) principal).getRoles();
     		  	}
     		  	principal = null;
-    			if (rpep == null) {
+    			if (! prepped) {
     				initt();
     			}
-    			if (rpep != null) {
+    			if (allowSurrogates && (rpep != null)) {
             		System.err.println("in conditional 2a");
     				fedora.server.Context context 
 					// = fedora.server.ReadOnlyContext.getContext("surrogate", httpServletRequest, username, null, roles);

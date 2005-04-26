@@ -114,7 +114,11 @@ public class PolicyEnforcementPoint {
 	
 	private ContextAttributeFinderModule contextAttributeFinder;
 	
-	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalGeneratedPolicyConfig, String localPolicyConfig, DOManager manager
+	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalGeneratedPolicyConfig, String localPolicyConfig, DOManager manager,
+		boolean validateRepositoryPolicies,
+		boolean validateObjectPoliciesFromFile,
+		boolean validateObjectPoliciesFromDatastream, 
+		String policySchemaPath
 	) throws Exception {
 		System.err.println ("***initPep()");
 		destroy();
@@ -164,15 +168,17 @@ System.err.println("just set contextAttributeFinder=" + contextAttributeFinder);
 
 		attrFinder.setModules(attrModules);		
 System.err.println("before building policy finder");
+
 		PolicyFinder policyFinder = new PolicyFinder();
+		
 		System.err.println("just constructed policy finder");
 		Set policyModules = new HashSet();
 		System.err.println("just constructed policy module hashset");
 		PolicyFinderModule combinedPolicyModule = null;
 		try {
 			System.err.println("***before constucting fedora policy finder module");
-			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalGeneratedPolicyConfig, localPolicyConfig, manager);
-			
+			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalGeneratedPolicyConfig, localPolicyConfig, manager,
+			validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
 			System.err.println("after constucting fedora policy finder module");
 		} catch (GeneralException e) {
 System.err.println("***debugging CombinedPolicyModule");

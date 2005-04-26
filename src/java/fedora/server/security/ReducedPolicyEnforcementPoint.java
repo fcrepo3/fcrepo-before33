@@ -114,9 +114,10 @@ public class ReducedPolicyEnforcementPoint {
 	
 	private ContextAttributeFinderModule contextAttributeFinder;
 	
-	public void initPep(String combiningAlgorithm, File surrogatePolicyDirectory) 
+	public void initPep(String combiningAlgorithm, File surrogatePolicyDirectory, boolean validateSurrogatePolicies, String schemaPath) 
 	throws Exception {
 		System.err.println ("***initReducedPep()");
+		
 		destroy();
 
 		AttributeFinder attrFinder = new AttributeFinder();
@@ -149,7 +150,7 @@ System.err.println("before building policy finder");
 		ReducedPolicyFinderModule reducedPolicyModule = null;
 		try {
 			System.err.println("***before constucting fedora policy finder module");
-			reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory);
+			reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory, validateSurrogatePolicies, schemaPath);
 			System.err.println("after constucting fedora policy finder module");
 		} catch (Exception e) {
 System.err.println("***debugging CombinedPolicyModule");

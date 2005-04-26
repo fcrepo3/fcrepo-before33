@@ -50,7 +50,12 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String OBJECT_POLICIES_DIRECTORY = "OBJECT-POLICIES-DIRECTORY";
 	private final String COMBINING_ALGORITHM = "XACML-COMBINING-ALGORITHM";
 	private final String ENFORCE_MODE = "ENFORCE-MODE";
-
+	private final String POLICY_SCHEMA_PATH = "POLICY-SCHEMA-PATH";
+	private final String VALIDATE_REPOSITORY_POLICIES = "VALIDATE-REPOSITORY-POLICIES";
+	private final String VALIDATE_OBJECT_POLICIES_FROM_FILE = "VALIDATE-OBJECT-POLICIES-FROM-FILE";
+	private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM = "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
+	private final String VALIDATE_SURROGATE_POLICIES = "VALIDATE-SURROGATE-POLICIES";
+	private final String ALLOW_SURROGATE_POLICIES = "ALLOW-SURROGATE-POLICIES";
 	
   /**
    * <p>Creates and initializes the Access Module. When the server is starting
@@ -105,6 +110,26 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ENFORCE_MODE)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE);
     }
+    if (moduleParameters.containsKey(POLICY_SCHEMA_PATH)) {
+    	policySchemaPath = 
+    		(((String) moduleParameters.get(POLICY_SCHEMA_PATH)).startsWith(File.separator) ? "" : serverHome) 
+			+ (String) moduleParameters.get(POLICY_SCHEMA_PATH);
+    }
+    if (moduleParameters.containsKey(VALIDATE_REPOSITORY_POLICIES)) {
+    	validateRepositoryPolicies = Boolean.getBoolean((String)moduleParameters.get(VALIDATE_REPOSITORY_POLICIES));
+    }
+    if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_FILE)) {
+    	validateObjectPoliciesFromFile = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_FILE));
+    }
+    if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM)) {
+    	validateObjectPoliciesFromDatastream = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM));
+    }
+    if (moduleParameters.containsKey(VALIDATE_SURROGATE_POLICIES)) {
+    	validateSurrogatePolicies = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_SURROGATE_POLICIES));
+    }
+    if (moduleParameters.containsKey(ALLOW_SURROGATE_POLICIES)) {
+    	allowSurrogatePolicies = Boolean.getBoolean((String) moduleParameters.get(ALLOW_SURROGATE_POLICIES));
+    }
 	System.err.println("DefaultAuthorization constructor end");
   }
 
@@ -117,7 +142,14 @@ public class DefaultAuthorization extends Module implements Authorization {
   public void initModule() throws ModuleInitializationException {
 	System.err.println("DefaultAuthorization.initModule()");
   }
-
+  
+	private String policySchemaPath = "";
+  	private boolean validateRepositoryPolicies = false;
+  	private boolean validateObjectPoliciesFromFile = false;
+  	private boolean validateObjectPoliciesFromDatastream = false;
+	private boolean validateSurrogatePolicies = false;
+	private boolean allowSurrogatePolicies = false;
+	
   public void postInitModule() throws ModuleInitializationException {
   	System.err.println("in DefaultAuthorization.postInitModule() 1");
     DOManager m_manager = (DOManager) getServer().getModule("fedora.server.storage.DOManager");
@@ -131,17 +163,17 @@ public class DefaultAuthorization extends Module implements Authorization {
       	System.err.println("in DefaultAuthorization.postInitModule() 5");
         xacmlPep = PolicyEnforcementPoint.getInstance();
       	System.err.println("in DefaultAuthorization.postInitModule() 6");
-        xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, repositoryGeneratedPoliciesDirectory, objectPoliciesDirectory, m_manager);
+        xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesDirectory, repositoryGeneratedPoliciesDirectory, objectPoliciesDirectory, m_manager, 
+       		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
       	System.err.println("in DefaultAuthorization.postInitModule() 7");
+        Transom.getInstance().setAllowSurrogate(allowSurrogatePolicies);
+        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesDirectory);
+        Transom.getInstance().setValidateSurrogatePolicies(validateSurrogatePolicies);
+        Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
     } catch (Throwable e1) {
       	System.err.println("in DefaultAuthorization.postInitModule() 8");
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole());
     	throw e2;
-    }
-    File surrogatePolicyDirectoryFile = new File(surrogatePoliciesDirectory);    
-    if (surrogatePolicyDirectoryFile.isDirectory() && surrogatePolicyDirectoryFile.canRead()) {
-        Transom.getInstance().setAllowSurrogate(true);
-        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePolicyDirectoryFile);
     }
   }
   
@@ -1005,9 +1037,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 				throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 			}
 			context.setResourceAttributes(resourceAttributes);
-			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, "", "", context);
 		} finally {
-	        getServer().logFinest("Exiting enforceUpload");
+	        getServer().logFinest("Exiting enforce_Internal_DSState");
 		}
 		}
 
