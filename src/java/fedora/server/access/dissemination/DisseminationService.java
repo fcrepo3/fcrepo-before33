@@ -206,7 +206,7 @@ public class DisseminationService
       // a single row.
       for (int i=0; i<dissBindInfoArray.length; i++)
       {
-        ((Authorization)s_server.getModule("Authorization")).enforce_Internal_DSState(
+        ((Authorization)s_server.getModule("fedora.server.security.Authorization")).enforce_Internal_DSState(
         		context, dissBindInfoArray[i].dsID, dissBindInfoArray[i].dsState);
         dissBindInfo = dissBindInfoArray[i];
 
