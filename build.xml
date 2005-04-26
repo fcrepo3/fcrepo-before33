@@ -1095,7 +1095,7 @@
 		<delete dir="temp"/>
 		<delete dir="${dist.dir}"/>
 		<delete dir="${build.dir}"/>
-	</target>
+	</target> 
     <target name="test" description="Automatic tests" depends="clean, serverandclient">
       <copy file="dist/server/config/test.fcfg" tofile="dist/server/config/fedora.fcfg" overwrite="true"/>
       <delete dir="/tmp/fedoraTest"/>
