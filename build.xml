@@ -1145,6 +1145,5 @@
         </not>
       </condition>
       <fail if="diss.failed" message="Dissemination test failed."/>
-      <fail message="Testing failure notification."/>
     </target>
 </project>
