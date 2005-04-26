@@ -1109,11 +1109,26 @@
       <echo message="Starting McKoi...wait 2 seconds"/>
       <exec executable="mckoi-start" spawn="true"/>
       <sleep seconds="2"/>
-      <echo message="Starting Fedora...wait 60 seconds"/>
+      <echo message="Starting Fedora...wait 45 seconds"/>
       <exec executable="fedora-start" spawn="true">
         <arg value="test"/>
       </exec>
-      <sleep seconds="60"/>
+      <sleep seconds="45"/>
+      <exec executable="fedora-ingest-demos">
+        <arg value="localhost"/>
+        <arg value="8080"/>
+        <arg value="fedoraAdmin"/>
+        <arg value="fedoraAdmin"/>
+        <arg value="http"/>
+      </exec>
+      <echo message="Waiting 10 seconds for resource index flush"/>
+      <sleep seconds="10"/>
+      <echo message="Getting SmileyStuff DC"/>
+      <exec executable="wget" resultproperty="failedget">
+        <arg value="--http-user=fedoraAdmin"/>
+        <arg value="--http-passwd=fedoraAdmin"/>
+        <arg value="http://localhost:8080/fedora/get/demo:SmileyStuff/DD"/>
+      </exec>
       <echo message="Stopping Fedora...wait 10 seconds"/>
       <exec executable="fedora-stop" spawn="true"/>
       <sleep seconds="10"/>
@@ -1122,5 +1137,6 @@
         <arg value="fedoraAdmin"/>
         <arg value="fedoraAdmin"/>
       </exec>
+      <fail if="failedget" message="Dissemination test failed."/>
     </target>
 </project>

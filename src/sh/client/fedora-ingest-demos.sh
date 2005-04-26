@@ -18,9 +18,9 @@ fi
 
 # Validate number of arguments
 if [ $# -lt 4 ]; then
-	echo "Usage: fedora-ingest-demos <hostname> <port> <username> <password>"
+	echo "Usage: fedora-ingest-demos <hostname> <port> <username> <password> <protocol>"
 	echo "Use the values in fedora.fcfg, e.g.:"
-	echo "    fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin"
+	echo "    fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin http"
 	exit 1
 fi
 
@@ -30,8 +30,8 @@ echo "Ingesting Demonstration Objects..."
 
 DO_FORMAT=foxml1.0
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/local-server-demos $DO_FORMAT DMO $1:$2 $3 $4 $5)
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/open-server-demos $DO_FORMAT DMO $1:$2 $3 $4 $5)
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/local-server-demos $DO_FORMAT DMO $1:$2 $3 $4 $5 "")
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar -Dfedora.home=$FEDORA_HOME -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/open-server-demos $DO_FORMAT DMO $1:$2 $3 $4 $5 "")
 
 echo "Finished."
 
