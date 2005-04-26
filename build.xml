@@ -1096,4 +1096,31 @@
 		<delete dir="${dist.dir}"/>
 		<delete dir="${build.dir}"/>
 	</target>
+    <target name="test" description="Automatic tests" depends="clean, serverandclient">
+      <delete dir="/tmp/fedoraTest"/>
+      <mkdir dir="/tmp"/>
+      <mkdir dir="/tmp/fedoraTest"/>
+      <echo message="Initializing McKoi...wait 5 seconds"/>
+      <exec executable="mckoi-init" spawn="true">
+        <arg value="fedoraAdmin"/>
+        <arg value="fedoraAdmin"/>
+      </exec>
+      <sleep seconds="5"/>
+      <echo message="Starting McKoi...wait 2 seconds"/>
+      <exec executable="mckoi-start" spawn="true"/>
+      <sleep seconds="2"/>
+      <echo message="Starting Fedora...wait 60 seconds"/>
+      <exec executable="fedora-start" spawn="true">
+        <arg value="test"/>
+      </exec>
+      <sleep seconds="60"/>
+      <echo message="Stopping Fedora...wait 10 seconds"/>
+      <exec executable="fedora-stop" spawn="true"/>
+      <sleep seconds="10"/>
+      <echo message="Stopping McKoi"/>
+      <exec executable="mckoi-stop">
+        <arg value="fedoraAdmin"/>
+        <arg value="fedoraAdmin"/>
+      </exec>
+    </target>
 </project>
