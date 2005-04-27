@@ -327,6 +327,7 @@ public class DatastreamResolverServlet extends HttpServlet
     {
       if (out != null) out.close();
       if (outStream != null) outStream.close();
+	  dsRegistry.remove(id);
     }
   }
 
