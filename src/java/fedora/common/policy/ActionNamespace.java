@@ -1,6 +1,7 @@
 package fedora.common.policy;
 
 import com.sun.xacml.attr.AnyURIAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
 
@@ -21,6 +22,7 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName BDEF_NAMESPACE;
 	public final XacmlName DISSEMINATOR_METHOD;
 	public final XacmlName USER_REPRESENTED;
+	public final XacmlName TICKET_ISSUED_DATETIME;
 
     // Values of API
 	public final XacmlName APIM;
@@ -67,6 +69,7 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName OAI;	
 	public final XacmlName UPLOAD;	
 	public final XacmlName INTERNAL_DSSTATE;
+	public final XacmlName RESOLVE_DATASTREAM;
 	
 	public final XacmlName FORMAT_URI;
 	public final XacmlName CONTEXT;	
@@ -125,6 +128,7 @@ public class ActionNamespace extends XacmlNamespace {
     	OAI = addName(new XacmlName(this, "id-oai"));     	
     	UPLOAD = addName(new XacmlName(this, "id-upload"));     	
     	INTERNAL_DSSTATE = addName(new XacmlName(this, "id-dsstate"));
+    	RESOLVE_DATASTREAM = addName(new XacmlName(this, "id-resolveDatastream"));    	
     	
     	DATASTREAM_FORMAT_URI = addName(new XacmlName(this, "datastreamFormatUri", AnyURIAttribute.identifier));    	
     	DATASTREAM_LOCATION = addName(new XacmlName(this, "datastreamLocation", AnyURIAttribute.identifier));
@@ -141,7 +145,8 @@ public class ActionNamespace extends XacmlNamespace {
     	FORMAT_URI = addName(new XacmlName(this, "formatUri", AnyURIAttribute.identifier));    	    	    	
     	OBJECT_STATE = addName(new XacmlName(this, "objectState", StringAttribute.identifier));
     	N_PIDS = addName(new XacmlName(this, "nPids", IntegerAttribute.identifier));
-    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented", StringAttribute.identifier));    	
+    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented", StringAttribute.identifier)); 
+    	TICKET_ISSUED_DATETIME = addName(new XacmlName(this, "ticketIssuedDateTime", DateTimeAttribute.identifier));
   	
     	CONTEXT_ID = addName(new XacmlName(this, "contextId", StringAttribute.identifier)); //internal callback support
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.

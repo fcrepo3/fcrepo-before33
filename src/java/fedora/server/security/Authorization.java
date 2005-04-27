@@ -146,6 +146,9 @@ public interface Authorization {
 
 	public void enforce_Internal_DSState(Context context, String PID, String state)
 	throws AuthzException;
+
+	public void enforceResolveDatastream(Context context, Date ticketDateTime)
+	throws AuthzException;
 	
 }
 

@@ -330,7 +330,8 @@ public class DisseminationService
             // Use Datastream Mediation (except for redirected datastreams).
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
-                                           dissBindInfo.dsControlGroupType)
+                                           dissBindInfo.dsControlGroupType,
+										   ReadOnlyContext.BACKEND_SERVICE) //this is generic should be made specific per service
                 + "+(" + dissBindInfo.DSBindKey + ")";
           } else
           {
@@ -360,7 +361,8 @@ public class DisseminationService
             // Use Datastream Mediation (except for Redirected datastreams)
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
-                      dissBindInfo.dsControlGroupType);          
+                      dissBindInfo.dsControlGroupType,
+					  ReadOnlyContext.BACKEND_SERVICE); //this is generic, should be made specific per service
           } else
           {
             // Bypass Datastream Mediation.
@@ -562,7 +564,7 @@ public class DisseminationService
    *         location.
    */
   public String registerDatastreamLocation(String dsLocation,
-      String dsControlGroupType) throws ServerException
+      String dsControlGroupType, String callbackRole) throws ServerException
   {
 
     String tempID = null;
@@ -598,6 +600,7 @@ public class DisseminationService
         dm.mediatedDatastreamID = tempID;
         dm.dsLocation = dsLocation;
         dm.dsControlGroupType = dsControlGroupType; 
+        dm.callbackRole = callbackRole;
         dsRegistry.put(tempID, dm);
         s_server.logFinest("[DisseminationService] DatastreammediationKey "
             + "added to Hash: " + tempID);

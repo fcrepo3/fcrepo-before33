@@ -19,6 +19,7 @@ import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.NotAuthorizedException;
 import fedora.server.storage.DOManager;
+import fedora.server.utilities.DateUtility;
 
 /**
  *
@@ -1050,8 +1051,31 @@ public class DefaultAuthorization extends Module implements Authorization {
 		} finally {
 	        getServer().logFinest("Exiting enforce_Internal_DSState");
 		}
-		}
+	}
+	
 
+	public void enforceResolveDatastream(Context context, Date ticketIssuedDateTime)
+	throws AuthzException {
+		try {
+	        getServer().logFinest("Entered enforceResolveDatastream");		
+			String target = Constants.ACTION.RESOLVE_DATASTREAM.uri;
+			log("enforcing " + target);
+			context.setResourceAttributes(null);
+			MultiValueMap actionAttributes = new MultiValueMap();
+			String name = "";
+			try {
+				String ticketIssuedDateTimeString = DateUtility.convertDateToString(ticketIssuedDateTime);
+				name = actionAttributes.setReturn(Constants.ACTION.TICKET_ISSUED_DATETIME.uri, ticketIssuedDateTimeString);
+			} catch (Exception e) {
+				context.setActionAttributes(null);		
+				throw new AuthzOperationalException(target + " couldn't set " + name, e);	
+			}
+			context.setActionAttributes(actionAttributes);
+			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+		} finally {
+	        getServer().logFinest("Exiting enforceResolveDatastream");
+		}
+	}
 
 	  private static final String pad(int n, int length) throws Exception {
 	  	String asString = Integer.toString(n);

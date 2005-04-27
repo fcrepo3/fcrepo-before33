@@ -5,6 +5,9 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.catalina.realm.GenericPrincipal;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
@@ -18,8 +21,10 @@ import java.util.Iterator;
 import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
+import fedora.server.errors.NotAuthorizedException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
+import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -27,6 +32,7 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.Property;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.Logger;
 
 /**
@@ -95,6 +101,17 @@ public class DatastreamResolverServlet extends HttpServlet
       th.printStackTrace();
       logger.logWarning(message);
     }
+  }
+  
+  private static final boolean contains(String[] array, String item) {
+  	boolean contains = false;
+  	for (int i = 0; i < array.length; i++) {
+  		if (array[i].equals(item)) {
+  			contains = true;
+  			break;
+  		}
+  	}
+  	return contains;
   }
 
   /**
@@ -185,6 +202,29 @@ public class DatastreamResolverServlet extends HttpServlet
         return;
       }
 
+      if (dm.callbackRole == null) {
+  		throw new NotAuthorizedException("no callbackRole for this ticket");
+      } 
+      String targetRole = dm.callbackRole; //restrict access to role of this ticket
+      String[] targetRoles = {targetRole};
+      Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
+      if (request.getRemoteUser() == null) {
+      	//non-authn:  must accept target role of ticket
+      } else {
+      	//authn:  check user roles for target role of ticket
+      	if  (((request.getUserPrincipal() != null) 
+      	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
+		&&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
+		&&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
+          	//user has target role
+      	} else {
+      		throw new NotAuthorizedException("wrong user for this ticket");
+      	}
+      }
+      
+      Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
+      authorization.enforceResolveDatastream(context, keyTimestamp);
+
       if (dsControlGroupType.equalsIgnoreCase("E"))
       {
         // testing to see what's in request header that might be of interest
@@ -249,7 +289,7 @@ public class DatastreamResolverServlet extends HttpServlet
         dsVersionID = s[2];
         logger.logFinest("[DatastreamResolverServlet] PID: " + PID
             + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
-        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
+
         DOReader doReader =  m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
         Datastream d =
             (Datastream) doReader.getDatastream(dsID, dsVersionID);

@@ -32,7 +32,7 @@ import fedora.server.utilities.DateUtility;
  */
 public class ReadOnlyContext implements Context {
 	
-    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "");
+    public static ReadOnlyContext EMPTY=new ReadOnlyContext(null, null, "", true);
     static {
     	EMPTY.setActionAttributes(null);
     	EMPTY.setResourceAttributes(null);
@@ -53,7 +53,13 @@ public class ReadOnlyContext implements Context {
     
     private String password;
     
-    private final boolean noOp = false; 
+    private static final String NOOP_PARAMETER_NAME = "noOp";
+    public static final boolean NO_OP = true;
+    public static final boolean DO_OP = false;
+    
+    public static final String BACKEND_SERVICE = "backendService";
+
+    private boolean noOp = false; 
 
     /**
      * Creates and initializes the <code>Context</code>.
@@ -61,7 +67,7 @@ public class ReadOnlyContext implements Context {
      * @param parameters A pre-loaded Map of name-value pairs
      *        comprising the context.
      */
-    private ReadOnlyContext(MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password) {
+    private ReadOnlyContext(MultiValueMap environmentAttributes, MultiValueMap subjectAttributes, String password, boolean noOp) {
         //super(parameters);
         m_environmentAttributes=environmentAttributes;
         if (m_environmentAttributes==null) {
@@ -77,6 +83,7 @@ public class ReadOnlyContext implements Context {
         	password = "";
         }
         this.password = password;
+        this.noOp = noOp;
     }
  
     public Iterator environmentAttributes() {
@@ -192,11 +199,11 @@ public class ReadOnlyContext implements Context {
       return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req);
     }
     
-    public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles) {
-  		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles);
+    public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles, boolean noOp) {
+  		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles, noOp);
     }
     
-    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles) {
+    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
       	try {		
       		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, (subjectId == null) ? "" : subjectId);
@@ -214,23 +221,17 @@ public class ReadOnlyContext implements Context {
       	} finally {
       		subjectMap.lock();
       	}
-      	return new ReadOnlyContext(environmentMap, subjectMap, (password == null) ? "" : password);
+      	return new ReadOnlyContext(environmentMap, subjectMap, (password == null) ? "" : password, noOp);
     }
 
     // needed for, e.g., rebuild
     public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles) throws Exception {
     	MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
   		environmentMap.lock(); 
-  		return getContext(environmentMap, subjectId, password, roles);
+  		return getContext(environmentMap, subjectId, password, roles, false);
     }
 
-
-    /*
-     * Gets a Context appropriate for the request, and whether it is ok
-     * to use the dissemination cache or not.
-     */
-    //form context from optional servlet request, overriding request for added parms    
-    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
+    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request, String[] overrideRoles) {
 		MultiValueMap environmentMap = null;
 	  	try {
 	  		environmentMap = beginEnvironmentMap(messageProtocol);  			
@@ -296,14 +297,13 @@ public class ReadOnlyContext implements Context {
 	  	
   	  	String subjectId = request.getRemoteUser();
   	  	String password = null;
-  	  	String[] roles = null;
   	  	if (request.getUserPrincipal() == null) {
-  	  		System.err.println("in context, no principal to grok roles from!!");				
+  	  		System.err.println("in context, no principal to grok password from!!");				
   	  	} else {
 			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
-				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
+				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking password from it!!");
 			} else {
-				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
+				System.err.println("in context, principal is GenericPrincipal, so I can grok password from it!!");
   	  	  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
   	  	  	  		if (password == null) {
   	  	  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
@@ -312,9 +312,6 @@ public class ReadOnlyContext implements Context {
   	  	  	  			password = "";
   	  	  	  		}
   	  	  	  	}
-  	  	  	  	if (roles == null) {
-  	  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
-  	  	  	  	}  					
 			}
   	  	}
   	  	if (subjectId == null) {
@@ -323,11 +320,47 @@ public class ReadOnlyContext implements Context {
   	  	if (password == null) {
   	  		password = "";
   	  	}
+  	  	if (overrideRoles == null) {
+  	  	overrideRoles = new String[0];
+  	  	}
+  	  	
+  	boolean noOp = true; //safest approach 
+  	try {
+  		noOp = (new Boolean(request.getParameter(NOOP_PARAMETER_NAME))).booleanValue();
+  	} catch (Exception e) {
+  	}
+  	return getContext(environmentMap, subjectId, password, overrideRoles, noOp);
+    }
+
+    /*
+     * Gets a Context appropriate for the request, and whether it is ok
+     * to use the dissemination cache or not.
+     */
+    //form context from optional servlet request, overriding request for added parms    
+    public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
+  	  	String[] roles = null;
+  	  	if (request.getUserPrincipal() == null) {
+  	  		System.err.println("in context, no principal to grok roles from!!");				
+  	  	} else {
+			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
+				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
+			} else {
+				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
+  	  	  	  	if (roles == null) {
+  	  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
+  	  	  	  	}  					
+			}
+  	  	}
   	  	if (roles == null) {
   	  		roles = new String[0];
   	  	}
   	  	
-  	return getContext(environmentMap, subjectId, password, roles);
+  	boolean noOp = true; //safest approach 
+  	try {
+  		noOp = (new Boolean(request.getParameter(NOOP_PARAMETER_NAME))).booleanValue();
+  	} catch (Exception e) {
+  	}
+  	return getContext(messageProtocol, request, roles);
     }
     
   	public static final String[] parseRole (String role) {

@@ -14,4 +14,5 @@ public class DatastreamMediation
   public String mediatedDatastreamID = null;
   public String dsLocation = null;
   public String dsControlGroupType = null;
+  public String callbackRole = null;
 }
