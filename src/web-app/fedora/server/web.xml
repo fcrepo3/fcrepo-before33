@@ -177,9 +177,9 @@
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<auth-constraint>
+		<!-- testing auth-constraint>
 			<role-name>*</role-name>
-		</auth-constraint>
+		</auth-constraint testing -->
 	</security-constraint>		
 
 	<servlet>
