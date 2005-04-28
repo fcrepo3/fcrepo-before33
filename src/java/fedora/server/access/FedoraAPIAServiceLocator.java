@@ -64,7 +64,6 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
         try {
             fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(portAddress, this, username, password);
             _stub.setPortName(getFedoraAPIAPortSOAPHTTPWSDDServiceName());
-            // _stub._setProperty("httpclient.authentication.preemptive","true");
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
