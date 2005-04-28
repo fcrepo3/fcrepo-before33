@@ -177,10 +177,23 @@
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<!-- testing auth-constraint>
-			<role-name>*</role-name>
-		</auth-constraint testing -->
 	</security-constraint>		
+	<servlet-mapping>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<url-pattern>/getDSAuthenticated</url-pattern>
+	</servlet-mapping>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Management Interface</web-resource-name>
+			<url-pattern>/getDSAuthenticated</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>	
 
 	<servlet>
 		<servlet-name>DescribeRepositoryServlet</servlet-name>
@@ -207,14 +220,14 @@
 	</security-constraint>
 
 	<servlet>
-		<servlet-name>FedoraAccessServlet</servlet-name>
+		<servlet-name>AccessServlet</servlet-name>
 		<display-name>Fedora Access Servlet</display-name>
 		<servlet-class>
 			fedora.server.access.FedoraAccessServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FedoraAccessServlet</servlet-name>
+		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/get/*</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
@@ -231,14 +244,14 @@
 	</security-constraint>
 
 	<servlet>
-		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<servlet-name>FieldSearchServlet</servlet-name>
 		<display-name>Fedora FieldSearch Servlet</display-name>
 		<servlet-class>
 			fedora.server.access.FieldSearchServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FedoraFieldSearchServlet</servlet-name>
+		<servlet-name>FieldSearchServlet</servlet-name>
 		<url-pattern>/search</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
@@ -255,14 +268,14 @@
 	</security-constraint>		
 
 	<servlet>
-		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<servlet-name>OAIProviderServlet</servlet-name>
 		<display-name>Fedora OAI Provider Servlet</display-name>
 		<servlet-class>
 			fedora.server.oai.FedoraOAIProviderServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FedoraOAIProviderServlet</servlet-name>
+		<servlet-name>OAIProviderServlet</servlet-name>
 		<url-pattern>/oai</url-pattern>
 	</servlet-mapping>
 	<security-constraint>
@@ -279,14 +292,14 @@
 	</security-constraint>		
 	
 	<servlet>
-		<servlet-name>FedoraReportServlet</servlet-name>
+		<servlet-name>ReportServlet</servlet-name>
 		<display-name>Fedora Report Servlet</display-name>
 		<servlet-class>
 			fedora.server.access.ReportServlet
 		</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FedoraReportServlet</servlet-name>
+		<servlet-name>ReportServlet</servlet-name>
 		<url-pattern>/report</url-pattern>
 	</servlet-mapping>	
 	<security-constraint>
@@ -311,12 +324,20 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GetNextPIDServlet</servlet-name>
-		<url-pattern>/mgmt/getNextPID</url-pattern>
+		<!-- this mapping is preferred beginning fedora 2.1; see additional mapping -->		
+		<url-pattern>/management/getNextPID</url-pattern>
 	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<!-- this mapping is deprecated beginning fedora 2.1
+		     and may be removed from default web.xml in later fedora releases -->
+		<url-pattern>/mgmt/getNextPID</url-pattern>
+	</servlet-mapping>	
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>Fedora Management Interface</web-resource-name>
-			<url-pattern>/mgmt/getNextPID</url-pattern>
+			<url-pattern>/management/getNextPID</url-pattern><!-- preferred -->
+			<url-pattern>/mgmt/getNextPID</url-pattern><!-- deprecated -->			
 			<http-method>GET</http-method>
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
@@ -474,22 +495,39 @@
 		<location>/100.jsp</location>
 	</error-page>	
 	<error-page>
+		<exception-type>fedora.server.errors.Exception100</exception-type>
+		<location>/100.jsp</location>
+	</error-page>		
+	<error-page>
 		<error-code>400</error-code>
 		<location>/400.jsp</location>
 	</error-page>	
+	<error-page>
+		<exception-type>fedora.server.errors.Exception400</exception-type>	
+		<location>/400.jsp</location>
+	</error-page>				
 	<error-page>
 		<error-code>401</error-code>
 		<location>/401.jsp</location>
 	</error-page>		
 	<error-page>
+		<exception-type>fedora.server.errors.Exception401</exception-type>	
+		<location>/401.jsp</location>
+	</error-page>				
+	<error-page>
 		<error-code>403</error-code>
 		<location>/403.jsp</location>
 	</error-page>
+	<error-page>
+		<exception-type>fedora.server.errors.Exception403</exception-type>	
+		<location>/403.jsp</location>
+	</error-page>			
 	<error-page>
 		<error-code>500</error-code>
 		<location>/500.jsp</location>
 	</error-page>	
 	<error-page>
+		<exception-type>fedora.server.errors.Exception500</exception-type>	
 		<exception-type>javax.servlet.ServletException</exception-type>
 		<location>/500.jsp</location>
 	</error-page>		
