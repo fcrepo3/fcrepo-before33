@@ -938,6 +938,7 @@
 		</copy>
 		<copy file="src/web-app/fedora/localservices/saxon/web.xml" todir="${tomcat.deploy.dir}/saxon/WEB-INF"/>
 		<copy file="${lib.saxon}" todir="${tomcat.deploy.dir}/saxon/WEB-INF/lib"/>
+		<copy file="${lib.commons-httpclient}" todir="${tomcat.deploy.dir}/saxon/WEB-INF/lib"/>
 		<!-- fop service -->
 		<copy todir="${tomcat.deploy.dir}/fop/WEB-INF/classes/fedora/localservices/fop">
 			<fileset dir="temp/localservices/classes/fedora/localservices/fop"/>
