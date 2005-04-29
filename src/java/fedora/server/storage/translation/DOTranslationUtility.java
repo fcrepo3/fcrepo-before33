@@ -118,29 +118,48 @@ public abstract class DOTranslationUtility {
 	 *  via the getObjectXML method of API-M.
 	 */
 	public static final int SERIALIZE_STORAGE_INTERNAL=3;
-
-	// RELATIVE REPOSITORY URL Patterns:
-	// Patterns for URLs that are based at the local Fedora repository server.
+	
+	// Fedora URL LOCALIZATION Pattern:
+	// Pattern that is used as the internal replacement syntax for URLs that
+	// refer back to the local repository.  This pattern virtualized the
+	// repository server address, so that if the host:port of the repository is
+	// changed, objects that have URLs that refer to the local repository won't break.
 	public static Pattern s_fedoraLocalPattern = Pattern.compile("http://local.fedora.server/");
+	
+	// RELATIVE URL Patterns:
+	// Relative URL paths that are based at the local Fedora repository server.	
 	public static Pattern s_relativePattern = Pattern.compile("fedora/");
 	public static Pattern s_relativeGetPattern = Pattern.compile("fedora/get/");
 	public static Pattern s_relativeSearchPattern = Pattern.compile("fedora/search/");
 	public static Pattern s_relativeGetPatternAsParm = Pattern.compile("=fedora/get/");
 	public static Pattern s_relativeSearchPatternAsParm = Pattern.compile("=fedora/search/");
 
-	// ABSOLUTE REPOSITORY URL Patterns:
-	// Patterns of the various ways that the local repository server address may be encoded.
-    private static Pattern s_localServerUrlStartWithPort; // "http://hostname:port/"
-    private static Pattern s_localServerUrlStartWithoutPort; // "http://hostname/"
-    private static Pattern s_localhostUrlStartWithPort; // "http://localhost:port/"
-    private static Pattern s_localhostUrlStartWithoutPort; // "http://localhost/"
 
-	// DEFAULT DISSEMINATION URL Pattern:
-	private static String s_localServerDissemUrlStart; // "http://hostname:port/fedora/get/"
+	// ABSOLUTE REPOSITORY URL Patterns:
+	// Patterns of how the protocol and repository server address may be encoded
+	// in a URL that points back to the local repository.
+	private static Pattern s_servernamePort; // "http://hostname:port/"
+	private static Pattern s_servername;     // "http://hostname/"
+	private static Pattern s_localhostPort;  // "http://localhost:port/"
+	private static Pattern s_localhost;      // "http://localhost/"
+    
+	private static Pattern s_servernamePortSSL; // "https://hostname:redirectport/"
+	private static Pattern s_servernameSSL;     // "https://hostname/"
+	private static Pattern s_localhostPortSSL;  // "https://localhost:redirectport/"
+	private static Pattern s_localhostSSL;      // "https://localhost/"
+
+	// CALLBACK DISSEMINATION URL Pattern (for M datastreams in export files):
+	// Pattern of how protocol, repository server address, and path is encoded
+	// for a callback dissemination URL to the local repository.
+	// This is used for encoding datastream location URLs for Managed Content
+	// datastreams inside an export file.  Internal Fedora identifiers for
+	// the Managed Content datastreams are replaced with public callback URLS.
+	private static String s_localDissemUrlStart; // "http://hostname:port/fedora/get/"
 
 	// The actual host and port of the Fedora repository server
 	private static String s_hostInfo = null;
-    private static boolean m_onPort80=false;
+	private static boolean m_serverOnPort80=false;
+	private static boolean m_serverOnRedirectPort443=false;
 
     // initialize static class with stuff that's used by all DO Serializerers
     static {
@@ -148,6 +167,15 @@ public abstract class DOTranslationUtility {
 			String fedoraHome=System.getProperty("fedora.home");
 			String fedoraServerHost=System.getProperty("fedoraServerHost");
 			String fedoraServerPort=System.getProperty("fedoraServerPort");
+			String fedoraServerPortSSL=System.getProperty("fedoraRedirectPort");		
+			//System.out.println("port=" + fedoraServerPort);
+			//System.out.println("redirect port=" + fedoraServerPortSSL);
+			if (fedoraServerPort.equals("80")) {
+				m_serverOnPort80=true;
+			}
+			if (fedoraServerPortSSL.equals("443")) {
+				m_serverOnRedirectPort443=true;
+			}
 			if (fedoraServerHost == null || fedoraServerPort == null) {
 				// if fedoraServerHost or fedoraServerPort system properties
                 // are not defined, assume we need to get a Server instance
@@ -156,8 +184,12 @@ public abstract class DOTranslationUtility {
 					Server s=Server.getInstance(new File(fedoraHome));
 					fedoraServerHost=s.getParameter("fedoraServerHost");
 					fedoraServerPort=s.getParameter("fedoraServerPort");
+					fedoraServerPortSSL=s.getParameter("fedoraRedirectPort");
 					if (fedoraServerPort.equals("80")) {
-						m_onPort80=true;
+						m_serverOnPort80=true;
+					}
+					if (fedoraServerPortSSL.equals("443")) {
+						m_serverOnRedirectPort443=true;
 					}
 				} catch (InitializationException ie) {
 					// can only possibly happen during failed testing, in which
@@ -168,21 +200,24 @@ public abstract class DOTranslationUtility {
 			}
 			// set the currently configured host:port of the repository
 			s_hostInfo="http://" + fedoraServerHost;
-			if (!fedoraServerPort.equals("80")) {
+			if (!fedoraServerPort.equals("80") && !fedoraServerPort.equals("443")) {
 				s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
 			}
 			s_hostInfo=s_hostInfo + "/";
 
-			// set the pattern for public dissemination URLs at local server
-			s_localServerDissemUrlStart= s_hostInfo + "fedora/get/";
+			// compile the pattern for public dissemination URLs at local server
+			s_localDissemUrlStart= s_hostInfo + "fedora/get/";
 
-			// set other patterns using the configured host and port
-			s_localServerUrlStartWithPort=Pattern.compile("http://"
-					+ fedoraServerHost + ":" + fedoraServerPort + "/");
-			s_localServerUrlStartWithoutPort=Pattern.compile("http://"
-					+ fedoraServerHost + "/");
-			s_localhostUrlStartWithoutPort=Pattern.compile("http://localhost/");
-			s_localhostUrlStartWithPort=Pattern.compile("http://localhost:" + fedoraServerPort + "/");
+			// compile other patterns using the configured host and port
+			s_servernamePort = Pattern.compile("http://" + fedoraServerHost + ":" + fedoraServerPort + "/");
+			s_servername = Pattern.compile("http://" + fedoraServerHost + "/");
+			s_localhostPort = Pattern.compile("http://localhost:" + fedoraServerPort + "/");
+			s_localhost = Pattern.compile("http://localhost/");
+			
+			s_servernamePortSSL = Pattern.compile("https://" + fedoraServerHost + ":" + fedoraServerPortSSL + "/");
+			s_servernameSSL = Pattern.compile("https://" + fedoraServerHost + "/");
+			s_localhostPortSSL = Pattern.compile("https://localhost:" + fedoraServerPortSSL + "/");
+			s_localhostSSL = Pattern.compile("https://localhost/");
     }
 
 	/**
@@ -211,14 +246,18 @@ public abstract class DOTranslationUtility {
 	 * @return  String with all relative repository URLs and Fedora local URLs
 	 *          converted to absolute URL syntax.
 	 */
-	private static String makeFedoraAbsoluteURLs(String input) {
+	private static String makeAbsoluteURLs(String input) {
 		String output=input;
 		// First, convert any relative Fedora URLs to the special
 		// Fedora local URL syntax (i.e., "http://local.fedora.server/...")
-		output=convertRelativeToFedoraLocalURLs(output);
+		//output=convertRelativeToFedoraLocalURLs(output);
+		
 		// Now, make absolute URLs out of all instances of the Fedora local URL syntax ...
 		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
-		//System.out.println("makeFedoraAbsoluteURLs: AFTER output=" + output);
+		if (fedora.server.Debug.DEBUG) {
+			System.out.println("makeAbsoluteURLs: input=" + input);
+			System.out.println("makeAbsoluteURLs: output=" + output + "\n");
+		}
 		return output;
 	}
 
@@ -238,7 +277,7 @@ public abstract class DOTranslationUtility {
 	 *        is converted to
 	 *        "http://local.fedora.server/fedora/get/demo:1/DS1"
 	 *
-	 * 	 "http://myrepo.com:8080/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
+	 * 	 "https://myrepo.com:8443/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
 	 *        is converted to
 	 * 	      "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
 	 *
@@ -255,20 +294,46 @@ public abstract class DOTranslationUtility {
 		// Fedora local URL syntax ("http://local.fedora.server/...")
 		// Note that relative Fedora URLs may have come in via ingest
 		// or via API-M methods (addDatastream or modifyDatastream).
-		output=convertRelativeToFedoraLocalURLs(output);
-		// Then, detect absolute URLs that reference the local
-		// repository and convert them to the Fedora local URL syntax
-		output=s_localServerUrlStartWithPort.matcher(output).replaceAll(
+		//output=convertRelativeToFedoraLocalURLs(output);
+		
+		// Detect any absolute URLs that reference the local
+		// repository and convert them to the Fedora LOCALIZATION URL syntax
+		// ("http://local.fedora.server/...")\
+		
+		// convert URLs that begin with http along with host and port
+		// explicitly configured for the repository
+		output=s_servernamePort.matcher(output).replaceAll(
 			s_fedoraLocalPattern.pattern());
-		output=s_localhostUrlStartWithPort.matcher(output).replaceAll(
+		output=s_localhostPort.matcher(output).replaceAll(
 			s_fedoraLocalPattern.pattern());
-		if (m_onPort80) {
-			output=s_localServerUrlStartWithoutPort.matcher(output).replaceAll(
+			
+		// convert URLs that begin with https along with the host and port
+		// explicitly configured for the repository
+		output=s_servernamePortSSL.matcher(output).replaceAll(
+			s_fedoraLocalPattern.pattern());
+		output=s_localhostPortSSL.matcher(output).replaceAll(
+			s_fedoraLocalPattern.pattern());
+			
+		if (m_serverOnPort80) {
+			// if the server is running on port 80, convert
+			// URLs that begin with "http://localhost/"
+			output=s_servername.matcher(output).replaceAll(
 				s_fedoraLocalPattern.pattern());
-			output=s_localhostUrlStartWithoutPort.matcher(output).replaceAll(
+			output=s_localhost.matcher(output).replaceAll(
 				s_fedoraLocalPattern.pattern());
 		}
-		//System.out.println("makeFedoraLocalURLs: AFTER output=" + output);
+		if (m_serverOnRedirectPort443) {
+			// if the server is running on port 443, convert
+			// URLs that begin with "https://localhost/"
+			output=s_servernameSSL.matcher(output).replaceAll(
+				s_fedoraLocalPattern.pattern());
+			output=s_localhostSSL.matcher(output).replaceAll(
+				s_fedoraLocalPattern.pattern());
+		}
+		if (fedora.server.Debug.DEBUG) {
+			System.out.println("makeFedoraLocalURLs: input=" + input);
+			System.out.println("makeFedoraLocalURLs: output=" + output + "\n");
+		}
 		return output;
 	}
 
@@ -325,7 +390,8 @@ public abstract class DOTranslationUtility {
 			output=s_relativeSearchPatternAsParm.matcher(output).replaceAll(
 				"=" + s_fedoraLocalPattern.pattern() + s_relativeSearchPattern.pattern());
 		}
-		//System.out.println("convertRelativeToFedoraLocalURLs: AFTER output=" + output);
+		//System.out.println("convertRelativeToFedoraLocalURLs: input=" + input);
+		//System.out.println("convertRelativeToFedoraLocalURLs: output=" + output);
 		return output;
 	}
 
@@ -354,21 +420,21 @@ public abstract class DOTranslationUtility {
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
 				// MAKE ABSOLUTE REPO URLs
-				ds.DSLocation = makeFedoraAbsoluteURLs(ds.DSLocation);
+				ds.DSLocation = makeAbsoluteURLs(ds.DSLocation);
 			}
 		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {
 				// MAKE ABSOLUTE REPO URLs
-				ds.DSLocation = makeFedoraAbsoluteURLs(ds.DSLocation);
+				ds.DSLocation = makeAbsoluteURLs(ds.DSLocation);
 			} else if (ds.DSControlGrp.equals("M")) {
 				// MAKE DISSEMINATION URLs
 				if (ds.DSCreateDT==null) {
-					ds.DSLocation = s_localServerDissemUrlStart
+					ds.DSLocation = s_localDissemUrlStart
 							+ PID
 							+ "/"
 							+ ds.DatastreamID;
 				} else {
-					ds.DSLocation = s_localServerDissemUrlStart
+					ds.DSLocation = s_localDissemUrlStart
 						+ PID
 						+ "/"
 						+ ds.DatastreamID
@@ -383,12 +449,12 @@ public abstract class DOTranslationUtility {
 			} else if (ds.DSControlGrp.equals("M")) {
 				// MAKE DISSEMINATION URLs
 				if (ds.DSCreateDT==null) {
-					ds.DSLocation = s_localServerDissemUrlStart
+					ds.DSLocation = s_localDissemUrlStart
 							+ PID
 							+ "/"
 							+ ds.DatastreamID;
 				} else {
-					ds.DSLocation = s_localServerDissemUrlStart
+					ds.DSLocation = s_localDissemUrlStart
 						+ PID
 						+ "/"
 						+ ds.DatastreamID
@@ -433,10 +499,10 @@ public abstract class DOTranslationUtility {
 	public static String normalizeInlineXML(String xml, int transContext) {
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			// MAKE ABSOLUTE REPO URLs
-			return makeFedoraAbsoluteURLs(xml);
+			return makeAbsoluteURLs(xml);
 		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC) {
 			// MAKE ABSOLUTE REPO URLs
-			return makeFedoraAbsoluteURLs(xml);
+			return makeAbsoluteURLs(xml);
 		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE) {
 			// MAKE FEDORA LOCAL REPO URLs
 			return makeFedoraLocalURLs(xml);
