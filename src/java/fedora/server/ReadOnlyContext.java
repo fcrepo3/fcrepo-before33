@@ -18,7 +18,6 @@ import com.sun.xacml.attr.TimeAttribute;
 
 import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.security.Authorization;
 import fedora.server.utilities.DateUtility;
 
@@ -192,6 +191,7 @@ public class ReadOnlyContext implements Context {
 		return environmentMap;
     }
 
+    //will need fixup for noOp 
     public static Context getSoapContext() {
         HttpServletRequest req=(HttpServletRequest) MessageContext.
                 getCurrentContext().getProperty(
@@ -199,9 +199,11 @@ public class ReadOnlyContext implements Context {
       return ReadOnlyContext.getContext(Constants.HTTP_REQUEST.SOAP.uri, req);
     }
     
-    public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles, boolean noOp) {
-  		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles, noOp);
+    /* i don't see any references.  needed? let's see . . .  
+    public static final ReadOnlyContext getContext(Context existingContext, String subjectId, String password, String[] roles) {
+  		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles, existingContext.getNoOp());
     }
+    */
     
     private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
@@ -225,10 +227,10 @@ public class ReadOnlyContext implements Context {
     }
 
     // needed for, e.g., rebuild
-    public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles) throws Exception {
+    public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles, boolean noOp) throws Exception {
     	MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
-  		environmentMap.lock(); 
-  		return getContext(environmentMap, subjectId, password, roles, false);
+  		environmentMap.lock(); // no request to grok more from 
+  		return getContext(environmentMap, subjectId, password, roles, noOp);
     }
 
     public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request, String[] overrideRoles) {
@@ -321,12 +323,16 @@ public class ReadOnlyContext implements Context {
   	  		password = "";
   	  	}
   	  	if (overrideRoles == null) {
-  	  	overrideRoles = new String[0];
+  	  		overrideRoles = new String[0];
   	  	}
   	  	
   	boolean noOp = true; //safest approach 
   	try {
   		noOp = (new Boolean(request.getParameter(NOOP_PARAMETER_NAME))).booleanValue();
+  		System.err.println("NOOP_PARAMETER_NAME="+NOOP_PARAMETER_NAME);
+  		System.err.println("request.getParameter(NOOP_PARAMETER_NAME)="+ request.getParameter(NOOP_PARAMETER_NAME));
+  		System.err.println("noOp="+ noOp);
+ 
   	} catch (Exception e) {
   	}
   	return getContext(environmentMap, subjectId, password, overrideRoles, noOp);
@@ -354,12 +360,6 @@ public class ReadOnlyContext implements Context {
   	  	if (roles == null) {
   	  		roles = new String[0];
   	  	}
-  	  	
-  	boolean noOp = true; //safest approach 
-  	try {
-  		noOp = (new Boolean(request.getParameter(NOOP_PARAMETER_NAME))).booleanValue();
-  	} catch (Exception e) {
-  	}
   	return getContext(messageProtocol, request, roles);
     }
     

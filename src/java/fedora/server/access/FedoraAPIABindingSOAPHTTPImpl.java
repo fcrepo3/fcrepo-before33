@@ -2,19 +2,14 @@ package fedora.server.access;
 
 import java.io.File;
 import java.rmi.RemoteException;
-import javax.servlet.http.HttpServletRequest;
-import org.apache.axis.MessageContext;
-import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.axis.types.NonNegativeInteger;
-
-import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.errors.authorization.AuthzException;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.utilities.AxisUtility;
@@ -96,7 +91,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         }
       }
       return bDefs;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -149,7 +144,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -183,7 +178,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -209,7 +204,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                   TypeUtility.convertGenFieldSearchQueryToFieldSearchQuery(
                   query));
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
-      } catch (NotAuthorizedException a) {
+      } catch (AuthzException a) {
         throw AxisUtility.getFault(a);          
       } catch (ServerException se) {
           logStackTrace(se);
@@ -244,7 +239,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           fedora.server.search.FieldSearchResult result=s_access.
                   resumeFindObjects(context, sessionToken);
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
-      } catch (NotAuthorizedException a) {
+      } catch (AuthzException a) {
         throw AxisUtility.getFault(a);          
       } catch (ServerException se) {
           logStackTrace(se);
@@ -309,7 +304,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
           objectMethodDefs);
       return genObjectMethodDefs;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -338,7 +333,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertDatastreamDefArrayToGenDatastreamDefArray(
           datastreamDefs);
       return genDatastreamDefs;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -377,7 +372,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectProfileToGenObjectProfile(
           objectProfile);
       return genObjectProfile;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {
@@ -409,7 +404,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       fedora.server.types.gen.RepositoryInfo genRepositoryInfo =
           TypeUtility.convertReposInfoToGenReposInfo(repositoryInfo);
       return genRepositoryInfo;
-    } catch (NotAuthorizedException a) {
+    } catch (AuthzException a) {
         throw AxisUtility.getFault(a);      
     } catch (ServerException se)
     {

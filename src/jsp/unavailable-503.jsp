@@ -1,12 +1,12 @@
-<%@ page info="500==internal-server-error response" %>
+<%@ page info="503==Unavailable" %>
 <%@page isErrorPage="true" %>
 <!-- http://java.sun.com/developer/EJTechTips/2003/tt0114.html -->
 <%
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(HttpServletResponse.SC_UNAVAILABLE);
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
-      <title>Fedora Server Exception</title></head>
+   <title>Fedora Unavailable</title></head>
    <body>
       <center>
          <table border="0" cellpadding="0" cellspacing="0" width="784">
@@ -14,8 +14,8 @@
                <td height="134" valign="top" width="141"><img src="/images/newlogo2.jpg" height="134" width="141"></td>
                <td valign="top" width="643">
                   <center>
-                     <h2>Fedora Error</h2>
-                     <h3>internal server error</h3>
+                     <h2>Fedora Unavailable</h2>
+                     <h3>detail follows</h3>
                   </center>
                   <% if (exception != null) { %>
                     <%= exception.getMessage() %>
@@ -41,3 +41,4 @@
          </tbody></table>
       </center>
    </body></html>
+

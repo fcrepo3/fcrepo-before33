@@ -16,8 +16,15 @@ import fedora.oai.OAIResponder;
 import fedora.oai.RepositoryException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
-import fedora.server.errors.AuthzException;
-import fedora.server.errors.NotAuthorizedException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
+import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
+import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
+import fedora.server.utilities.ServerUtility;
 
 /**
  *
@@ -34,9 +41,12 @@ public abstract class OAIProviderServlet
 
     public OAIProviderServlet() {
     }
+    
+    public static final String ACTION_LABEL = "OAI";
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	String actionLabel = "OAI request";
         try {
             HashMap params=new HashMap();
             Enumeration enum=request.getParameterNames();
@@ -48,24 +58,18 @@ public abstract class OAIProviderServlet
             Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
             try {
             	getResponder().respond(context, params, out);
-            } catch (NotAuthorizedException e) {
-            	request.getRequestDispatcher("/403.jsp").forward(request, response);
-            } catch (AuthzException e) {
-            	request.getRequestDispatcher("/100.jsp").forward(request, response);            	
+        	} catch (AuthzException ae) {            
+                throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);		   	    			
             }
-            try {
-                response.setContentType("text/xml; charset=UTF-8");
-                response.getWriter().print(new String(out.toByteArray(), "UTF-8"));
-            } catch (UnsupportedEncodingException uee) {
-                // won't happen, since all java impls support UTF-8           	
-            }
-        } catch (RepositoryException re) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, getMessage(re));
+            response.setContentType("text/xml; charset=UTF-8");
+            response.getWriter().print(new String(out.toByteArray(), "UTF-8"));
+        } catch (Throwable t) {
+        	throw new InternalError500Exception("", t, request, ACTION_LABEL, "", new String[0]);            
         }
     }
 
-    private static String getMessage(RepositoryException re) {
-        String msg=re.getMessage();
+    private static String getMessage(Throwable t) {
+        String msg=t.getMessage();
         if (msg==null) {
             msg="Unexpected repository error.";
         }
@@ -92,11 +96,15 @@ public abstract class OAIProviderServlet
         Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, null);
         try {
 			getResponder().respond(context,getAsParameterMap(args), out);
-		} catch (NotAuthorizedException e) {
+		} catch (AuthzOperationalException aoe) {
+	        System.out.println("403 - operational");
+		} catch (AuthzDeniedException ade) {
 	        System.out.println("403");
-		} catch (AuthzException e) {
-	        System.out.println("100");	        
-		}
+		} catch (AuthzPermittedException ape) {
+	        System.out.println("100");	 
+		} catch (AuthzException ae) {
+	        System.out.println("403 - general");	        
+        }			
         System.out.println(new String(out.toByteArray()));
     }
 

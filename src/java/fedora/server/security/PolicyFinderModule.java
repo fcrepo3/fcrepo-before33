@@ -166,6 +166,8 @@ System.err.println("is NOT a directory");
 		} catch (ParsingException e) {
 			String msg = "couldn't parse repo-wide policy in " + errorLabel;
 			logger.log(Level.INFO, msg);
+			System.err.println("HOW IT HAPPEN:");
+			e.printStackTrace();
 			throw new GeneralException(msg);
 		}
 		return abstractPolicy;

@@ -112,7 +112,7 @@ public class HttpClient {
 				  		log("doAuthnGet got --inner-- IOException: " + ioe.getMessage());	
 		  	    		Thread.currentThread().sleep(millisecondsSleep);
 		  	    	}
-		  	    	System.err.println("resultCode=" + resultCode); 
+		  	    	System.err.println("resultCode=" + resultCode + " absoluteUrl=" +absoluteUrl); 
 
 		  		}
 		  	} catch (HttpException httpe) {

@@ -2,6 +2,7 @@ package fedora.server.utilities;
 
 import java.io.File;
 import java.util.Properties;
+import java.net.HttpURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -82,7 +83,6 @@ public class ServerUtility {
     	return serverProperties;
     }
 
-    
     private static Properties serverProperties = null;
     static {
     	try {
@@ -167,8 +167,11 @@ public class ServerUtility {
     	return pingServletContainer(path, secondsTimeout, 1);
     }
 
+    public static final int shutdown (String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	return serverAction(SHUTDOWN, protocol, null, null);
+    }
     
-    private static final void serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    private static final int serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
    		slog(FINEST, "SC:call HttpClient()...");
   		HttpClient client = new HttpClient(protocol, 
   				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
@@ -177,21 +180,21 @@ public class ServerUtility {
   				);
    		slog(FINEST, "...SC:call HttpClient()"); 
    		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
-  		client.doAuthnGet(20000, 25,
+  		GetMethod getMethod = client.doAuthnGet(20000, 25,
   			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY) : optionalUsername,
   			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
   			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
   		);
    		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		
    		slog(FINEST, "SC:call HttpClient.getLineResponse()...");
-  		String response = client.getLineResponseUrl();
-        System.out.println(response);    	
+   		return getMethod.getStatusCode();
     }
     
     private static final String STARTUP = "startup";
     private static final String SHUTDOWN = "shutdown";
     private static final String STATUS = "status";
     
+    /*
     public static final void startup(String protocol) throws Exception {
     	startup(protocol, null, null);
     }
@@ -202,22 +205,97 @@ public class ServerUtility {
     
     public static final void status(String protocol) throws Exception {
     	status(protocol, null, null);
-    }
+      }
     
-    public static final void startup(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (STARTUP, protocol, optionalUsername, optionalPassword);    	
+    public static final int startup(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	return serverAction (STARTUP, protocol, optionalUsername, optionalPassword);    	
     }
 
-    public static final void shutdown(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (SHUTDOWN, protocol, optionalUsername, optionalPassword);    	
+    public static final int shutdown(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	int code = serverAction (SHUTDOWN, protocol, optionalUsername, optionalPassword);    	
+    	String line = "ERROR";
+    	if (code == HttpURLConnection.HTTP_OK) {
+    		line = "OK";
+    	}
+    	System.out.println(line);
     }
 
-    public static final void status(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	serverAction (STATUS, protocol, optionalUsername, optionalPassword);    	
+    public static final int status(String protocol, String optionalUsername, String optionalPassword) throws Exception {
+    	int code = serverAction (STATUS, protocol, optionalUsername, optionalPassword);    	
+      	String line = "STOPPED";
+    	if (code == HttpURLConnection.HTTP_OK) {
+    		line = "RUNNING";
+    	}
+    	System.out.println(line);    	
     }    
-    
+    */
     private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
 
+    public static final int CONTINUE = 100;
+ 
+    private static final String httpCodeString(int code) {
+    	String string;
+		switch (code) {
+			case CONTINUE:
+				string = "CONTINUE";
+				break;		
+			case HttpURLConnection.HTTP_OK:
+				string = "OK";
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+				string = "BAD REQUEST";
+				break;				
+			case HttpURLConnection.HTTP_UNAUTHORIZED:
+				string = "UNAUTHORIZED";
+				break;
+			case HttpURLConnection.HTTP_FORBIDDEN:
+				string = "FORBIDDEN";
+				break;
+			case HttpURLConnection.HTTP_UNAVAILABLE:
+				string = "UNAVAILABLE";
+				break;        			
+			default:
+				string = "SERVER RESPONSE WAS " + code;
+    	}
+    	return string;
+    }
+
+	private static final String serverControllerResponseString(int code) {
+		String string;
+		switch (code) {
+			case CONTINUE:
+				string = "AUTHORIZATION PERMITTED";
+				break;		
+			case HttpURLConnection.HTTP_OK:
+				string = httpCodeString(code);
+				break;				
+			case HttpURLConnection.HTTP_UNAUTHORIZED:
+				string = "AUTHENTICATION REQUIRED";
+				break;
+			case HttpURLConnection.HTTP_FORBIDDEN:
+				string = "AUTHORIZATION DENIED";
+				break;
+			default:
+				string = "ERROR";
+		}
+		return string;
+	}
+
+	private static final String serverStatusResponseString(int code) {
+		String string;
+		switch (code) {
+			case HttpURLConnection.HTTP_OK:
+				string = "RUNNING";
+				break;
+			case HttpURLConnection.HTTP_UNAVAILABLE:
+				string = "STOPPED";
+				break;        			
+			default:
+				string = serverControllerResponseString(code);
+		}
+		return string;
+	}
+	
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
         	throw new Exception(USAGE);
@@ -236,16 +314,21 @@ public class ServerUtility {
         	optionalUsername = args[2];
         	optionalPassword = args[3];
         }
-        if (STARTUP.equals(action)) {
-        	startup(protocol, optionalUsername, optionalPassword);
-        } else if (SHUTDOWN.equals(action)) {
-        	shutdown(protocol, optionalUsername, optionalPassword);
-        } else if (STATUS.equals(action)) {
-        	status(protocol, optionalUsername, optionalPassword);
+        if ((STARTUP.equals(action))
+        ||  (STATUS.equals(action))
+        ||  (SHUTDOWN.equals(action))) {
+        	int code = serverAction(action, protocol, optionalUsername, optionalPassword);
+        	String line = STATUS.equals(action) ? serverStatusResponseString(code) 
+        			: serverControllerResponseString(code);
+        	System.out.println(line);
         } else {
         	throw new Exception(USAGE);            	
         }
     }    
+    
+    public static final String msg2(String majorMessage, String minorMessage) {
+    	return majorMessage + "<br><br/>" + minorMessage;
+    }
     
     private static boolean slog = false;
 

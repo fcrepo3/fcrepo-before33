@@ -1,4 +1,6 @@
-package fedora.server.errors;
+package fedora.server.errors.authorization;
+
+import fedora.server.errors.ServerException;
 
 /**
  *
@@ -8,8 +10,10 @@ package fedora.server.errors;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-public class AuthzException
+public abstract class AuthzException
         extends ServerException {
+	
+	public static final String BRIEF_DESC = "Used for authorization signaling";
 
     public AuthzException(String message) {
         super(null, message, null, null, null);

@@ -22,10 +22,10 @@ import com.sun.xacml.finder.PolicyFinder;
 
 import fedora.common.Constants;
 import fedora.server.Context;
-import fedora.server.errors.AuthzException;
-import fedora.server.errors.AuthzOperationalException;
-import fedora.server.errors.NotAuthorizedException;
-import fedora.server.errors.GeneralException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
 import fedora.server.storage.DOManager;
 
 public class PolicyEnforcementPoint {
@@ -128,7 +128,7 @@ public class PolicyEnforcementPoint {
 		} else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
 		} else {
-			throw new NotAuthorizedException(log("invalid enforceMode from config"));
+			throw new AuthzOperationalException(log("invalid enforceMode from config"));
 		}
 
 		AttributeFinder attrFinder = new AttributeFinder();
@@ -367,10 +367,10 @@ System.err.println("***debugging CombinedPolicyModule");
 			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
 			log("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
-			throw new NotAuthorizedException("all requests are currently denied");	
+			throw new AuthzDeniedException("all requests are currently denied");	
 		} else if (! ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
 			log("denying request because enforceMode is invalid");
-			throw new NotAuthorizedException("invalid enforceMode from config");	
+			throw new AuthzOperationalException("invalid enforceMode from config");	
 		} else {
 			ResponseCtx response = null;
 			String contextIndex = null;
@@ -432,11 +432,11 @@ System.err.println("about to ref contextAttributeFinder=" + contextAttributeFind
 			}
 			System.err.println("in pep, before denyBiasedAuthz() called");
 			if (! denyBiasedAuthz(response.getResults())) {
-				throw new NotAuthorizedException("");
+				throw new AuthzDeniedException("");
 			}			
 		}	
 		if (context.getNoOp()) {
-			throw new AuthzException("noOp");
+			throw new AuthzPermittedException("noOp");
 		}		
 	}
 	

@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import javax.servlet.http.HttpServlet;
@@ -21,12 +20,20 @@ import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
+import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
+import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.search.ObjectFields;
+import fedora.server.utilities.ServerUtility;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -81,8 +88,11 @@ public class FieldSearchServlet
         return ret;
     }
 
+    public static final String ACTION_LABEL = "Field Search";
+    
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	String actionLabel = "Field Search";
         try {
 		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);            
 
@@ -377,19 +387,10 @@ public class FieldSearchServlet
                 out.println("</result>");
                 out.flush(); out.close();
             }
-		} catch (NotAuthorizedException na) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);			            
-        } catch (ServerException se) {
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("text/html");
-            PrintWriter out=response.getWriter();
-            out.print("<html><head><title>Fedora Error</title></head>");
-            out.print("<body><h2>Fedora Error</h2>");
-            out.print("<i>");
-            out.print(se.getClass().getName());
-            out.print("</i>: ");
-            out.print(se.getMessage());
-            out.print("</body>");
+    	} catch (AuthzException ae) {            
+            throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);		            
+        } catch (Throwable th) {
+        	throw new InternalError500Exception("", th, request, actionLabel, "", new String[0]);
         }
     }
 

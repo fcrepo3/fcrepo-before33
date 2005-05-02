@@ -21,7 +21,10 @@ import java.util.Iterator;
 import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.NotAuthorizedException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.security.Authorization;
@@ -32,7 +35,6 @@ import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.Property;
-import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.Logger;
 
 /**
@@ -49,7 +51,7 @@ import fedora.server.utilities.Logger;
  * within a finite time interval of the tempID's creation. This is to lessen
  * the risk of unauthorized access. The time interval within which a mechanism
  * must repond is set by the Fedora configuration parameter named
- * datastreamMediationLimit and is specified in milliseconds. If this parameter
+ * datastreamMediationLimit and is speci207fied in milliseconds. If this parameter
  * is not supplied it defaults to 5000 miliseconds.</p>
  *
  * @author rlw@virginia.edu
@@ -113,6 +115,8 @@ public class DatastreamResolverServlet extends HttpServlet
   	}
   	return contains;
   }
+  
+  public static final String ACTION_LABEL = "Resolve Datastream";
 
   /**
    * <p>Processes the servlet request and resolves the physical location of
@@ -203,7 +207,7 @@ public class DatastreamResolverServlet extends HttpServlet
       }
 
       if (dm.callbackRole == null) {
-  		throw new NotAuthorizedException("no callbackRole for this ticket");
+  		throw new AuthzOperationalException("no callbackRole for this ticket");
       } 
       String targetRole = dm.callbackRole; //restrict access to role of this ticket
       String[] targetRoles = {targetRole};
@@ -218,8 +222,27 @@ public class DatastreamResolverServlet extends HttpServlet
 		&&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
           	//user has target role
       	} else {
-      		throw new NotAuthorizedException("wrong user for this ticket");
+      		throw new AuthzDeniedException("wrong user for this ticket");
       	}
+      }
+
+      System.err.println("debugging backendService role");      
+      System.err.println("targetRole=" + targetRole);      	
+      int targetRolesLength = targetRoles.length;
+      System.err.println("targetRolesLength=" + targetRolesLength);
+      if (targetRolesLength > 0) {
+        System.err.println("targetRoles[0]=" + targetRoles[0]);      	
+      }
+      int nSubjectValues = context.nSubjectValues(targetRole);
+      System.err.println("nSubjectValues=" + nSubjectValues);
+      if (nSubjectValues > 0) {
+      	System.err.println("context.getSubjectValue(targetRole)=" + context.getSubjectValue(targetRole));   
+      }
+      Iterator it = context.subjectAttributes();
+      while (it.hasNext()) {
+      	String name = (String) it.next();
+      	String value = context.getSubjectValue(name);
+        System.err.println("another subject attribute from context " + name + "=" + value);            	
       }
       
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
@@ -315,6 +338,8 @@ public class DatastreamResolverServlet extends HttpServlet
         logger.logWarning("[DatastreamResolverServlet] Unknown "
             + "dsControlGroupType: " + dsControlGroupType);
       }
+	} catch (AuthzException ae) {            
+        throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	     
     } catch (Throwable th)
     {
       String message = "[DatastreamResolverServlet] returned an error. The "

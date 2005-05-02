@@ -46,7 +46,7 @@ import org.apache.catalina.Container;
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.NotAuthorizedException;
+//import fedora.server.errors.authorization.NotAuthorizedException;
 import fedora.server.security.PolicyEnforcementPoint;
 import fedora.server.security.ReducedPolicyEnforcementPoint;
 

@@ -1,4 +1,5 @@
-package fedora.server.errors;
+package fedora.server.errors.authorization;
+
 
 /**
  *
@@ -9,14 +10,16 @@ package fedora.server.errors;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-public class NotAuthorizedException
+public class AuthzDeniedException
         extends AuthzException {
+	
+	public static final String BRIEF_DESC = "Authorized Denied";
 
-    public NotAuthorizedException(String message) {
+    public AuthzDeniedException(String message) {
         super(null, message, null, null, null);
     }
 
-    public NotAuthorizedException(String bundleName, String code,
+    public AuthzDeniedException(String bundleName, String code,
             String[] replacements, String[] details, Throwable cause) {
         super(bundleName, code, replacements, details, cause);
     }

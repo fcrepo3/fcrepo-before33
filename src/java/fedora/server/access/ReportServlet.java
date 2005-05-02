@@ -19,9 +19,16 @@ import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.QueryParseException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
+import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
+import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
+import fedora.server.utilities.ServerUtility;
 
 /**
  *
@@ -56,6 +63,8 @@ public class ReportServlet
 	}
 	
 	private static final String ADDR_EXCEPTION = "couldn't get remoteAddr";
+	
+	public static final String ACTION_LABEL = "Report on Repository";
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -101,8 +110,8 @@ public class ReportServlet
 		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
 			report = Report.getInstance(context, remoteAddr, sessionToken, reportName, fieldsArray, query, xslt, maxResults, newBase,
 					prefix, dateRange);
-		} catch (NotAuthorizedException na) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);						
+    	} catch (AuthzException ae) {            
+            throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	  						
 		} catch (QueryParseException e1) {
 			throw new ServletException("bad query parm", e1);
 		} catch (ServerException e1) {

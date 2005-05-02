@@ -21,11 +21,10 @@ import com.sun.corba.se.internal.core.Constant;
 import fedora.server.Context;
 import fedora.common.Constants;
 import fedora.server.Server;
-import fedora.server.errors.AuthzException;
-import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.security.Authorization;
 
 

@@ -31,9 +31,11 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
@@ -345,6 +347,7 @@ public class FedoraAccessServlet extends HttpServlet
     }
 
     PID = URIArray[5];
+    String actionLabel = "Access";
 
     try
     {
@@ -393,23 +396,10 @@ public class FedoraAccessServlet extends HttpServlet
           logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDatastreamDissemination: " + interval + " milliseconds.");
       }
-	} catch (NotAuthorizedException na) {
-		response.sendError(HttpServletResponse.SC_FORBIDDEN);			      
-    } catch (Throwable th)
-      {
-        String message = "[FedoraAccessServlet] An error has occured in "
-            + "accessing the Fedora Access Subsystem. The error was \" "
-            + th.getClass().getName()
-            + " \". Reason: "  + th.getMessage()
-            + "  Input Request was: \"" + request.getRequestURL().toString();
-
-        //logger.logWarning(message);
-        /* commented out for exception.jsp test
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-        commented out for exception.jsp test */
-        th.printStackTrace();
-        throw new ServletException("from FedoraAccessServlet", th);
+    } catch (AuthzException ae) {          
+        throw RootException.getServletException(ae, request, actionLabel, new String[0]);   		
+    } catch (Throwable th) {
+    	throw new InternalError500Exception("", th, request, actionLabel, "", new String[0]);
     }
   }
 
@@ -470,8 +460,8 @@ public class FedoraAccessServlet extends HttpServlet
         logger.logInfo(message);
         showURLParms(PID, "", "", asOfDateTime, new Property[0], response, message);
       }
-	} catch (NotAuthorizedException na) {
-		throw na;
+	} catch (AuthzException ae) {
+		throw ae;
     } catch (Throwable th)
     {
       String message = "[FedoraAccessServlet] An error has occured. "

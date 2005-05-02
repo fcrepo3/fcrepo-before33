@@ -1,4 +1,5 @@
-package fedora.server.errors;
+package fedora.server.errors.authorization;
+
 
 /**
  *
@@ -10,7 +11,9 @@ package fedora.server.errors;
  * @version $Id$
  */
 public class AuthzOperationalException
-        extends NotAuthorizedException {
+        extends AuthzDeniedException {
+	
+	public static final String BRIEF_DESC = "Authorized Failed";
 
     public AuthzOperationalException(String message) {
         super(null, message, null, null, null);

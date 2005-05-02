@@ -28,9 +28,10 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
@@ -98,6 +99,8 @@ public class ListMethodsServlet extends HttpServlet
   
   /** HTTPS protocol **/
   private static String HTTPS = "https";
+  
+  private static final String ACTION_LABEL = "List Methods";
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -196,9 +199,9 @@ public class ListMethodsServlet extends HttpServlet
               logger.logFiner("[ListMethodsServlet] Servlet Roundtrip "
                   + "listMethods: " + interval + " milliseconds.");
           }
-		} catch (NotAuthorizedException na) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);			
-          } catch (Throwable th)
+  	} catch (AuthzException ae) {            
+        throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	
+      } catch (Throwable th)
           {
               String message = "[ListMethodsServlet] An error has occured in "
                              + "accessing the Fedora Access Subsystem. The error was \" "

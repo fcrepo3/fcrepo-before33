@@ -13,7 +13,7 @@
                <td valign="top" width="643">
                   <center>
                      <h2>Fedora Security Info</h2>
-                     <h3>authorization would have succeeded</h3>
+                     <h3>authorization succeeded</h3>
                   </center>
                </td>
             </tr>

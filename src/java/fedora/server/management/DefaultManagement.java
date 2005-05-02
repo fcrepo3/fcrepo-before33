@@ -17,6 +17,7 @@ import org.apache.xml.serialize.*;
 
 import fedora.server.*;
 import fedora.server.errors.*;
+import fedora.server.errors.authorization.AuthzException;
 import fedora.server.storage.*;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.*;

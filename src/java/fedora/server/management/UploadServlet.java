@@ -17,10 +17,16 @@ import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.errors.AuthzException;
 import fedora.server.errors.InitializationException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
+import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
+import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
+import fedora.server.utilities.ServerUtility;
 
 /**
  * Accepts and HTTP Multipart POST of a file from an authorized user, and if 
@@ -50,13 +56,16 @@ public class UploadServlet
 
     /** Instance of Management subsystem (for storing uploaded files). */
     private static Management s_management = null;
+    
+    public static final String ACTION_LABEL = "Upload";
 
     /**
      * The servlet entry point.  http://host:port/fedora/management/upload
      */
     public void doPost(HttpServletRequest request, 
             HttpServletResponse response) 
-            throws IOException {
+            throws ServletException, IOException {
+        String actionLabel = "uploading a file";    	
         Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
 		try {
             MultipartParser parser=new MultipartParser(request, 
@@ -79,10 +88,8 @@ public class UploadServlet
 			                "No extra parameters allowed", response);
 				}
 			}
-		} catch (NotAuthorizedException na) {
-			response.sendError(HttpServletResponse.SC_FORBIDDEN);			
-		} catch (AuthzException az) {
-            response.sendError(HttpServletResponse.SC_CONTINUE);					
+    	} catch (AuthzException ae) {            
+            throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	 				
 		} catch (Exception e) {
                     e.printStackTrace();
 		    sendResponse(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,

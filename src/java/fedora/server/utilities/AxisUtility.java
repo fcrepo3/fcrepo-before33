@@ -5,9 +5,11 @@ import java.util.Properties;
 import javax.xml.namespace.QName;
 import org.apache.axis.AxisFault;
 import org.apache.axis.client.AdminClient;
-import fedora.server.errors.AuthzOperationalException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
 
 /**
  *
@@ -72,13 +74,18 @@ public abstract class AxisUtility {
         return fault;
     }
     
-    public static AxisFault getFault(NotAuthorizedException e) {
+    public static AxisFault getFault(AuthzException e) {
         AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE, e.getCode()), 
 				e.getMessage(), SOAP_ULTIMATE_RECEIVER,
                 null);
-    	String reason = (e instanceof AuthzOperationalException) 
-			? "Operational Failure while Authorizing"
-			: "Not Authorized";
+    	String reason = "";
+    	if (e instanceof AuthzOperationalException) {
+    		reason = AuthzOperationalException.BRIEF_DESC;
+    	} else if (e instanceof AuthzDeniedException) {
+    		reason = AuthzDeniedException.BRIEF_DESC;
+    	} else if (e instanceof AuthzPermittedException) {
+    		reason = AuthzPermittedException.BRIEF_DESC;   		
+    	}
     	fault.addFaultDetail(new QName("Authz"), reason);
         return fault;
     }

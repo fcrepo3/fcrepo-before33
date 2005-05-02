@@ -64,7 +64,9 @@ public class Rebuild {
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
             if (ServerUtility.pingServletContainerRunning("/fedora/describe", 20) && rebuilder.shouldStopServer()) {
             	ProtocolPort protocolPort = ServerUtility.getProtocolPort(ServerUtility.HTTP, ServerUtility.HTTPS); 
-            	ServerUtility.shutdown(protocolPort.getProtocol());
+            	String username = ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY);
+            	String password = ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY);            	
+            	ServerUtility.shutdown(protocolPort.getProtocol(), username, password);
             }
             if (options != null) {
                 System.out.println();

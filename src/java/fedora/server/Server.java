@@ -1,14 +1,12 @@
 package fedora.server;
 
 import fedora.common.*;  // PID, MalformedPIDException
-import fedora.common.policy.XacmlName;
-import fedora.server.errors.AuthzException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
+import fedora.server.errors.authorization.AuthzException;
 import fedora.server.security.Authorization;
 
 import java.io.IOException;

@@ -25,10 +25,19 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.GeneralException;
-import fedora.server.errors.NotAuthorizedException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
+import fedora.server.errors.authorization.AuthzDeniedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzPermittedException;
+import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
+import fedora.server.errors.servletExceptionExtensions.DescribeRepository500Exception;
+import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
+import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
+import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.utilities.Logger;
+import fedora.server.utilities.ServerUtility;
 
 /**
  * <p><b>Title: </b>DescribeRepositoryServlet.java</p>
@@ -86,6 +95,8 @@ public class DescribeRepositoryServlet extends HttpServlet
   /** HTTPS protocol **/
   private static String HTTPS = "https";
 
+  String ACTION_LABEL = "describe repository";  
+  
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
    * parameters and then execute the specified request.</p>
@@ -114,24 +125,15 @@ public class DescribeRepositoryServlet extends HttpServlet
         xml = new Boolean(request.getParameter(name)).booleanValue();
       }
     }
-
     Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
     try {
         describeRepository(context, xml, response);
-	} catch (NotAuthorizedException na) {
-		response.sendError(HttpServletResponse.SC_FORBIDDEN);			        
-    } catch (Throwable th)
-      {
-        String message = "[DescribeRepositoryServlet] An error has occured in "
-            + "accessing the Fedora Access Subsystem. The error was \" "
-            + th.getClass().getName()
-            + " \". Reason: "  + th.getMessage()
-            + "  Input Request was: \"" + request.getRequestURL().toString();
-        //logger.logWarning(message);
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-        th.printStackTrace();
-    }
+	} catch (AuthzException ae) {            
+        throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);		            
+    } catch (Throwable th) {
+    	throw new InternalError500Exception("", th, request, ACTION_LABEL, "", new String[0]);
+    }    
+    
   }
 
   public void describeRepository(Context context, boolean xml,

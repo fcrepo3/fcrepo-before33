@@ -14,10 +14,10 @@ import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
 import fedora.server.Server;
-import fedora.server.errors.AuthzException;
-import fedora.server.errors.AuthzOperationalException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.NotAuthorizedException;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.errors.authorization.AuthzOperationalException;
+import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.storage.DOManager;
 import fedora.server.utilities.DateUtility;
 
