@@ -1133,7 +1133,10 @@
         <arg value="http://localhost:8082/fedora/get/demo:SmileyStuff/DC"/>
       </exec>
       <echo message="Stopping Fedora...wait 10 seconds"/>
-      <exec executable="fedora-stop" spawn="true"/>
+      <exec executable="fedora-stop" spawn="true">
+        <arg value="fedoraAdmin"/>
+        <arg value="fedoraAdmin"/>
+      </exec>
       <sleep seconds="10"/>
       <echo message="Stopping McKoi"/>
       <exec executable="mckoi-stop">
