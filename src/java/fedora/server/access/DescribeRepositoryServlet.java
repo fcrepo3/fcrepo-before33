@@ -190,6 +190,8 @@ public class DescribeRepositoryServlet extends HttpServlet
         String message = "[DescribeRepositoryServlet] No Repository Info returned.";
         logger.logInfo(message);
       }
+    } catch (AuthzException ae) {
+    	throw ae;
     } catch (Throwable th)
     {
       String message = "[DescribeRepositoryServlet] An error has occured. "
