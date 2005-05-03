@@ -70,7 +70,7 @@ public abstract class SQLUtility {
                 if (isNumeric==null || !isNumeric[i]) {
                     s.append("'");
                 }
-                s.append(values[i]);
+                s.append(slashEscaped(values[i]));
                 if (isNumeric==null || !isNumeric[i]) {
                     s.append("'");
                 }
@@ -118,7 +118,7 @@ public abstract class SQLUtility {
                         if (isNumeric==null || !isNumeric[x]) {
                             i.append("'");
                         }
-                        i.append(values[x]);
+                        i.append(slashEscaped(values[x]));
                         if (isNumeric==null || !isNumeric[x]) {
                             i.append("'");
                         }
@@ -141,6 +141,19 @@ public abstract class SQLUtility {
                 st=null;
             }
         }
+    }
+
+    public static String slashEscaped(String in) {
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == '\\') {
+                out.append("\\\\");  // slash slash
+            } else {
+                out.append(c);
+            }
+        }
+        return out.toString();
     }
 
     /**
