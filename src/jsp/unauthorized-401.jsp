@@ -2,7 +2,7 @@
 <%
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
-        response.addHeader("WWW-Authenticate", "BASIC realm=\"Fedora Management Interface\"");
+        response.addHeader("WWW-Authenticate", "BASIC realm=\"Fedora Repository Server\"");
 %>
 <html><head>
       <title>Fedora:  401 Authn Error</title></head>
