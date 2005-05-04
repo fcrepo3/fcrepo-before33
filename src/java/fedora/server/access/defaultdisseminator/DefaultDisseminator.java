@@ -57,18 +57,4 @@ public interface DefaultDisseminator
    */
   public MIMETypedStream viewDublinCore() throws ServerException;
 
-  /**
-   * <p>DEPRECATED in Fedora 2.0! Will be removed in Fedora 2.1.
-   * 
-   * Returns an particular item (datastream) in the object.
-   * The item will by a mime-typed stream of bytes.</p>
-   *
-   * @param  itemID  the unique identifier for the item in
-   * the object in the form of a DatastreamID.  The
-   * item identifer can be discovered via the results of the
-   * getItemIndex or viewItemIndex methods.
-   * @return
-   * @throws ServerException
-   */
-  public MIMETypedStream getItem(String itemID) throws ServerException;
 }
