@@ -102,6 +102,9 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
   private static String HTTPS = "https";
   
   public static final String ACTION_LABEL = "Get Pid";
+  
+  /** Configured Fedora server hostname */
+  private static String fedoraServerHost = null;
 
   /**
    * <p>Process the Fedora API-M-LITE request to generate a list of next
@@ -261,7 +264,6 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     private PipedWriter pw = null;
     private String[] pidList = null;
     private String fedoraServerProtocol = null;
-    private String fedoraServerHost = null;
     private String fedoraServerPort = null;
 
     /**
@@ -274,8 +276,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     {
       this.pw = pw;
       this.pidList = pidList;
-      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);   
       if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
           fedoraServerProtocol = HTTPS;
       } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
@@ -347,6 +348,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
       s_management = (Management) s_server.getModule("fedora.server.management.Management");
     } catch (InitializationException ie)
     {

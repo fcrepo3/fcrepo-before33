@@ -98,6 +98,9 @@ public class GetObjectHistoryServlet extends HttpServlet
   private static String HTTPS = "https";
   
   public static final String ACTION_LABEL = "Get Object History";
+  
+  /** Configured Fedora server hostname */
+  private static String fedoraServerHost = null;  
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -248,7 +251,6 @@ public class GetObjectHistoryServlet extends HttpServlet
     private String[] objectHistory = new String[0];
     private String PID = null;
     private String fedoraServerProtocol = null;
-    private String fedoraServerHost = null;
     private String fedoraServerPort = null;
 
     /**
@@ -263,8 +265,7 @@ public class GetObjectHistoryServlet extends HttpServlet
       this.pw = pw;
       this.objectHistory = objectHistory;
       this.PID = PID;
-      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri); 
       if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
           fedoraServerProtocol = HTTPS;
       } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
@@ -337,6 +338,7 @@ public class GetObjectHistoryServlet extends HttpServlet
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
       logger = new Logger();
     } catch (InitializationException ie)

@@ -87,6 +87,9 @@ public class DescribeRepositoryServlet extends HttpServlet
   
   /** HTTPS protocol **/
   private static String HTTPS = "https";
+  
+  /** Configured Fedora server hostname */
+  private static String fedoraServerHost = null;
 
   String ACTION_LABEL = "describe repository";  
   
@@ -219,7 +222,6 @@ public class DescribeRepositoryServlet extends HttpServlet
     private PipedWriter pw = null;
     private RepositoryInfo repositoryInfo = null;
     private String fedoraServerProtocol = null;
-    private String fedoraServerHost = null;
     private String fedoraServerPort = null;
 
     /**
@@ -232,8 +234,7 @@ public class DescribeRepositoryServlet extends HttpServlet
     {
       this.pw = pw;
       this.repositoryInfo = repositoryInfo;
-      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-      fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);      
+      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);     
       if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
           fedoraServerProtocol = HTTPS;
       } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
@@ -333,6 +334,7 @@ public class DescribeRepositoryServlet extends HttpServlet
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
       s_access = (Access) s_server.getModule("fedora.server.access.Access");
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
       logger = new Logger();
     } catch (InitializationException ie)
     {

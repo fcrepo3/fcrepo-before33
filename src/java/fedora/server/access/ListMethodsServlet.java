@@ -101,6 +101,9 @@ public class ListMethodsServlet extends HttpServlet
   private static String HTTPS = "https";
   
   private static final String ACTION_LABEL = "List Methods";
+  
+  /** Configured Fedora server hostname */
+  private static String fedoraServerHost = null;  
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -298,7 +301,6 @@ public class ListMethodsServlet extends HttpServlet
       private ObjectMethodsDef[] methodDefs = null;
       private Date versDateTime = null;
       private String fedoraServerProtocol = null;
-      private String fedoraServerHost = null;
       private String fedoraServerPort = null;
 
       /**
@@ -316,8 +318,7 @@ public class ListMethodsServlet extends HttpServlet
           this.PID = PID;
           this.methodDefs = methodDefs;
           this.versDateTime = versDateTime;
-          fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-          fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);          
+          fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);          
           if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
               fedoraServerProtocol = HTTPS;
           } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
@@ -439,6 +440,7 @@ public class ListMethodsServlet extends HttpServlet
       try
       {
           s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+          fedoraServerHost = s_server.getParameter("fedoraServerHost");
           s_access = (Access) s_server.getModule("fedora.server.access.Access");
           logger = new Logger();
           } catch (InitializationException ie)

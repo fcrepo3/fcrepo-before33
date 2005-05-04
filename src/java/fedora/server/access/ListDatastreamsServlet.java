@@ -100,6 +100,9 @@ public class ListDatastreamsServlet extends HttpServlet
   private static String HTTPS = "https";
   
   public static final String ACTION_LABEL = "List Datastreams";
+  
+  /** Configured Fedora server hostname */
+  private static String fedoraServerHost = null;  
 
   /**
    * <p>Process Fedora Access Request. Parse and validate the servlet input
@@ -298,7 +301,6 @@ public class ListDatastreamsServlet extends HttpServlet
       private DatastreamDef[] dsDefs = null;
       private Date versDateTime = null;
       private String fedoraServerProtocol = null;
-      private String fedoraServerHost = null;
       private String fedoraServerPort = null;
 
       /**
@@ -317,7 +319,6 @@ public class ListDatastreamsServlet extends HttpServlet
           this.dsDefs = dsDefs;
           this.versDateTime = versDateTime;
           fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
-          fedoraServerHost = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_FQDN.uri);
           if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
               fedoraServerProtocol = HTTPS;
           } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
@@ -409,6 +410,7 @@ public class ListDatastreamsServlet extends HttpServlet
       try
       {
           s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
+          fedoraServerHost = s_server.getParameter("fedoraServerHost");
           s_access = (Access) s_server.getModule("fedora.server.access.Access");
           logger = new Logger();
           } catch (InitializationException ie)
