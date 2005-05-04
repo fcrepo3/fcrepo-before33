@@ -13,9 +13,6 @@
         </SubjectMatch>
       </Subject>
     </Subjects>
-    <Actions>
-      <AnyAction/>
-    </Actions>
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
@@ -25,6 +22,9 @@
         </ResourceMatch>
       </Resource>
     </Resources>
+    <Actions>
+      <AnyAction/>
+    </Actions>    
   </Target>
   <Rule RuleId="1" Effect="Permit"/>
 </Policy>

@@ -8,12 +8,12 @@
     <Subjects>
       <AnySubject/>
     </Subjects>
+    <Resources>
+      <AnyResource/>
+    </Resources>    
     <Actions>
         <AnyAction/>
     </Actions>
-    <Resources>
-      <AnyResource/>
-    </Resources>
   </Target>
   <Rule RuleId="1" Effect="Permit"/>
 </Policy>

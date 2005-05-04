@@ -1,11 +1,6 @@
 package fedora.common.policy;
 
-import com.sun.xacml.attr.AnyURIAttribute;
-import com.sun.xacml.attr.DateTimeAttribute;
-import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
-
-import fedora.common.Constants;
 
 public class ActionNamespace extends XacmlNamespace { 
 	
@@ -13,16 +8,6 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName ID;	
 	public final XacmlName API;
 	public final XacmlName CONTEXT_ID;
-	public final XacmlName OBJECT_STATE;	
-	public final XacmlName DISSEMINATOR_STATE;
-	public final XacmlName BMECH_PID;
-	public final XacmlName BMECH_NAMESPACE;
-	public final XacmlName N_PIDS;
-	public final XacmlName BDEF_PID;
-	public final XacmlName BDEF_NAMESPACE;
-	public final XacmlName DISSEMINATOR_METHOD;
-	public final XacmlName USER_REPRESENTED;
-	public final XacmlName TICKET_ISSUED_DATETIME;
 
     // Values of API
 	public final XacmlName APIM;
@@ -70,15 +55,6 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName UPLOAD;	
 	public final XacmlName INTERNAL_DSSTATE;
 	public final XacmlName RESOLVE_DATASTREAM;
-	
-	public final XacmlName FORMAT_URI;
-	public final XacmlName CONTEXT;	
-	public final XacmlName ENCODING;	
-	public final XacmlName DATASTREAM_MIME_TYPE;	
-	public final XacmlName DATASTREAM_FORMAT_URI;	
-	public final XacmlName DATASTREAM_LOCATION;	
-	public final XacmlName DATASTREAM_STATE;	
-	
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -129,29 +105,9 @@ public class ActionNamespace extends XacmlNamespace {
     	UPLOAD = addName(new XacmlName(this, "id-upload"));     	
     	INTERNAL_DSSTATE = addName(new XacmlName(this, "id-dsstate"));
     	RESOLVE_DATASTREAM = addName(new XacmlName(this, "id-resolveDatastream"));    	
-    	
-    	DATASTREAM_FORMAT_URI = addName(new XacmlName(this, "datastreamFormatUri", AnyURIAttribute.identifier));    	
-    	DATASTREAM_LOCATION = addName(new XacmlName(this, "datastreamLocation", AnyURIAttribute.identifier));
-    	DATASTREAM_MIME_TYPE = addName(new XacmlName(this, "datastreamMimeType", StringAttribute.identifier));    	
-    	DATASTREAM_STATE = addName(new XacmlName(this, "datastreamState", StringAttribute.identifier));
-    	DISSEMINATOR_METHOD = addName(new XacmlName(this, "disseminatorMethod", StringAttribute.identifier));    	
-       	DISSEMINATOR_STATE = addName(new XacmlName(this, "disseminatorState", StringAttribute.identifier));    	
-       	BDEF_NAMESPACE = addName(new XacmlName(this, "bdefNamespace", StringAttribute.identifier));
-    	BDEF_PID = addName(new XacmlName(this, "bdefPid", StringAttribute.identifier));
-    	BMECH_NAMESPACE = addName(new XacmlName(this, "bmechNamespace", StringAttribute.identifier));    	
-       	BMECH_PID = addName(new XacmlName(this, "bmechPid", StringAttribute.identifier));
-    	CONTEXT = addName(new XacmlName(this, "context", StringAttribute.identifier));
-    	ENCODING = addName(new XacmlName(this, "encoding", StringAttribute.identifier));
-    	FORMAT_URI = addName(new XacmlName(this, "formatUri", AnyURIAttribute.identifier));    	    	    	
-    	OBJECT_STATE = addName(new XacmlName(this, "objectState", StringAttribute.identifier));
-    	N_PIDS = addName(new XacmlName(this, "nPids", IntegerAttribute.identifier));
-    	USER_REPRESENTED = addName(new XacmlName(this, "subjectRepresented", StringAttribute.identifier)); 
-    	TICKET_ISSUED_DATETIME = addName(new XacmlName(this, "ticketIssuedDateTime", DateTimeAttribute.identifier));
-  	
     	CONTEXT_ID = addName(new XacmlName(this, "contextId", StringAttribute.identifier)); //internal callback support
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	
-
     }
 
 	public static ActionNamespace onlyInstance = new ActionNamespace(Release2_1Namespace.getInstance(), "action");

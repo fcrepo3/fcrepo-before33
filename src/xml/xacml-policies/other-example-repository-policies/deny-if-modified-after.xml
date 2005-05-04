@@ -8,9 +8,6 @@
     <Subjects>
       <AnySubject/> 
     </Subjects>
-    <Actions>
-      <AnyAction/>
-    </Actions>
     <Resources>
       <Resource>
         <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:dateTime-less-than">
@@ -20,6 +17,9 @@
         </ResourceMatch>
       </Resource>
     </Resources>
+    <Actions>
+      <AnyAction/>
+    </Actions>    
   </Target>
   <Rule RuleId="1" Effect="Deny"/>
 </Policy>

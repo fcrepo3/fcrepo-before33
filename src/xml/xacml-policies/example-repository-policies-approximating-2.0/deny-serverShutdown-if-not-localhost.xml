@@ -8,6 +8,9 @@
     <Subjects>
       <AnySubject/>
     </Subjects>
+    <Resources>
+      <AnyResource/>
+    </Resources>    
     <Actions>
       <Action>
         <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
@@ -16,10 +19,7 @@
             AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
         </ActionMatch>
       </Action>
-    </Actions>    
-    <Resources>
-      <AnyResource/>
-    </Resources>
+    </Actions>
   </Target>
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">

@@ -9,12 +9,12 @@
     <Subjects>
       <AnySubject/>
     </Subjects>
+    <Resources>
+      <AnyResource/>
+    </Resources> 
     <Actions>
       <AnyAction/>
     </Actions>
-    <Resources>
-      <AnyResource/>
-    </Resources>
   </Target>
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">

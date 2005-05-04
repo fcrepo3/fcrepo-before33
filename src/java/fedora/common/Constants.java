@@ -1,5 +1,7 @@
 package fedora.common;
 
+import fedora.common.policy.BDefNamespace;
+import fedora.common.policy.BMechNamespace;
 import fedora.common.policy.HttpRequestNamespace;
 import fedora.common.policy.ActionNamespace;
 import fedora.common.policy.EnvironmentNamespace;
@@ -34,6 +36,8 @@ public interface Constants {
     public static final ObjectNamespace     OBJECT    = ObjectNamespace.getInstance();
     public static final DatastreamNamespace     DATASTREAM    = DatastreamNamespace.getInstance();
     public static final DisseminatorNamespace     DISSEMINATOR    = DisseminatorNamespace.getInstance();
+    public static final BDefNamespace     BDEF    = BDefNamespace.getInstance();
+    public static final BMechNamespace     BMECH    = BMechNamespace.getInstance();    
     public static final EnvironmentNamespace     ENVIRONMENT    = EnvironmentNamespace.getInstance();
     public static final HttpRequestNamespace     HTTP_REQUEST    = HttpRequestNamespace.getInstance();
 }
