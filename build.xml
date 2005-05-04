@@ -745,6 +745,7 @@
 			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
 		</copy>
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<copy file="src/web-app/fedora/server/web-secure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora">
 			<fileset dir="src/jsp"/>
