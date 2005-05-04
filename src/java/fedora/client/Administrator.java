@@ -762,27 +762,12 @@ public class Administrator extends JFrame {
         int port=0;
         String user=null;
         String pass=null;
-        /*
-        if (args.length==4) {
-            host=args[0];
-            port=Integer.parseInt(args[1]);
-            user=args[2];
-            pass=args[3];
-            System.out.println("Logging in first...");
-            System.setOut(watchOut);
-            System.setErr(watchOut);
-            LoginDialog.tryLogin(host, port, user, pass);
-        } else { */
         System.setOut(watchOut);
         System.setErr(watchOut);
-        //}
         Administrator administrator=new Administrator(protocol, host, port, user, pass);
         System.out.println("Started Fedora Administrator.");
-        /*} catch (Exception e) { */
-            System.setOut(sysOut);
-            System.setOut(sysErr);
-        /*    System.out.println("FAILED!" + "\n" + e.getMessage());
-        } */
+        System.setOut(sysOut);
+        System.setErr(sysErr);
     }
 
 
