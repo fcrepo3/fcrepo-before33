@@ -202,12 +202,13 @@ public class DisseminationService
     //String datastreamResolverServletURL = reposBaseURL + "/fedora/getDS?id=";
     String callbackHost = null;
     String callbackServletPath = null;
-    if (isBackendServiceBasicAuthEnabled(bMechPid)) {
+    Properties backendServiceProperties = getBackendServiceProperties();
+    if (isBackendServiceBasicAuthEnabled(backendServiceProperties, bMechPid)) {
         callbackServletPath = "/fedora/getDSAuthenticated?id=";
     } else {
         callbackServletPath = "/fedora/getDS?id=";
     }
-    if (isBackendServiceSSLEnabled(bMechPid)) {
+    if (isBackendServiceSSLEnabled(backendServiceProperties, bMechPid)) {
         callbackHost = "https://"+fedoraServerHost+":"+fedoraServerRedirectPort;
     } else {
         callbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
@@ -810,9 +811,8 @@ public class DisseminationService
       return null;
   }
   
-  public boolean isBackendServiceBasicAuthEnabled(String role) throws GeneralException {
+  public boolean isBackendServiceBasicAuthEnabled(Properties backendServiceProperties, String role) throws GeneralException {
       
-      Properties backendServiceProperties = getBackendServiceProperties();
       String basicAuth = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".basicAuth");
       
       if (basicAuth == null) {
@@ -836,8 +836,8 @@ public class DisseminationService
       }
   }
   
-  public boolean isBackendServiceSSLEnabled(String role) throws GeneralException {
-      Properties backendServiceProperties = getBackendServiceProperties();
+  public boolean isBackendServiceSSLEnabled(Properties backendServiceProperties, String role) throws GeneralException {
+
       String ssl = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".ssl");
       if (ssl == null) {
           // Role(key) was not found in backend services properties file
