@@ -226,15 +226,24 @@
 		<location>/100.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.Exception100</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Exception100</exception-type>
 		<location>/100.jsp</location>
 	</error-page>
+	<!-- this comment is here for clarity:  this element should not be uncommented. 
+	error-page>
+		<error-code>200</error-code>
+		<location>/ok-200.jsp</location>
+	</error-page -->	
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Ok200Exception</exception-type>
+		<location>/ok-200.jsp</location>
+	</error-page>		
 	<error-page>
 		<error-code>400</error-code>
 		<location>/400.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.Exception400</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Exception400</exception-type>
 		<location>/400.jsp</location>
 	</error-page>
 	<error-page>
@@ -242,7 +251,7 @@
 		<location>/401.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.Exception401</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Exception401</exception-type>
 		<location>/401.jsp</location>
 	</error-page>
 	<error-page>
@@ -250,7 +259,7 @@
 		<location>/403.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.Exception403</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Exception403</exception-type>
 		<location>/403.jsp</location>
 	</error-page>
 	<error-page>
@@ -258,7 +267,7 @@
 		<location>/500.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.Exception500</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Exception500</exception-type>
 		<location>/500.jsp</location>
 	</error-page>
 	<error-page>
