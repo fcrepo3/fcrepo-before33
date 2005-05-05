@@ -67,6 +67,13 @@
 		</servlet-class>
 	</servlet>
 	<servlet>
+		<servlet-name>BESecurityServlet</servlet-name>
+		<display-name>Fedora Backend Security Configuration Servlet</display-name>
+		<servlet-class>
+			fedora.server.management.BESecurityServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
 		<servlet-name>GetObjectHistoryServlet</servlet-name>
 		<display-name>Fedora Object History Servlet</display-name>
 		<servlet-class>
@@ -178,6 +185,10 @@
 		<!-- this mapping is deprecated beginning fedora 2.1
 		     and may be removed from default web.xml in later fedora releases -->
 		<url-pattern>/mgmt/getNextPID</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BESecurityServlet</servlet-name>
+		<url-pattern>/management/backendSecurity</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>ListDatastreamsServlet</servlet-name>
@@ -420,6 +431,18 @@
 			<!-- preferred -->
 			<url-pattern>/mgmt/getNextPID</url-pattern>
 			<!-- deprecated -->
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/management/backendSecurity</url-pattern>
 			<http-method>GET</http-method>
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
