@@ -2,7 +2,9 @@ package fedora.server.access.dissemination;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Properties;
 
 import fedora.common.Constants;
 import fedora.server.Context;
@@ -70,13 +73,24 @@ public class DisseminationService
 
   /** Datastream Mediation control flag. */
   private static boolean doDatastreamMediation;
+  
+  /** Configured Fedora server host */
+  private static String fedoraServerHost = null;
+  
+  /** Configured Fedora server port */
+  private static String fedoraServerPort = null;
+  
+  /** Configured Fedora redirect port */
+  private static String fedoraServerRedirectPort = null;
+  
+  private static String fedoraHome = null;
 
   /** Make sure we have a server instance for error logging purposes. */
   static
   {
     try
     {
-      String fedoraHome = System.getProperty("fedora.home");
+      fedoraHome = System.getProperty("fedora.home");
       if (fedoraHome == null)
       {
           throw new ServerInitializationException(
@@ -85,6 +99,9 @@ public class DisseminationService
       } else
       {
         s_server = Server.getInstance(new File(fedoraHome));
+        fedoraServerHost = s_server.getParameter("fedoraServerHost");
+        fedoraServerPort = s_server.getParameter("fedoraServerPort");
+        fedoraServerRedirectPort = s_server.getParameter("fedoraServerRedirectport");
         m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
@@ -170,7 +187,8 @@ public class DisseminationService
    *         reason.
    */
   public MIMETypedStream assembleDissemination(Context context, String PID,
-      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, String reposBaseURL)
+      Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, 
+      String reposBaseURL, String bMechPid)
       throws ServerException
   {
 
@@ -181,7 +199,21 @@ public class DisseminationService
           + reposBaseURL + "\". This information is required by the Dissemination Service.");
     }
     
-    String datastreamResolverServletURL = reposBaseURL + "/fedora/getDS?id=";
+    //String datastreamResolverServletURL = reposBaseURL + "/fedora/getDS?id=";
+    String callbackHost = null;
+    String callbackServletPath = null;
+    if (isBackendServiceBasicAuthEnabled(bMechPid)) {
+        callbackServletPath = "/fedora/getDSAuthenticated?id=";
+    } else {
+        callbackServletPath = "/fedora/getDS?id=";
+    }
+    if (isBackendServiceSSLEnabled(bMechPid)) {
+        callbackHost = "https://"+fedoraServerHost+":"+fedoraServerRedirectPort;
+    } else {
+        callbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
+    }    
+    String datastreamResolverServletURL = callbackHost + callbackServletPath;
+    System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);
     if (fedora.server.Debug.DEBUG) {
         printBindingInfo(dissBindInfoArray);
     }
@@ -331,7 +363,7 @@ public class DisseminationService
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType,
-										   ReadOnlyContext.BACKEND_SERVICE) //this is generic should be made specific per service
+										   bMechPid) //this is generic should be made specific per service
                 + "+(" + dissBindInfo.DSBindKey + ")";
           } else
           {
@@ -358,11 +390,11 @@ public class DisseminationService
           if (doDatastreamMediation &&
               !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
-            // Use Datastream Mediation (except for Redirected datastreams)
+            // Use Datastream Mediation (except for Redirected datastreams)              
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
-                      dissBindInfo.dsControlGroupType,
-					  ReadOnlyContext.BACKEND_SERVICE); //this is generic, should be made specific per service
+                  dissBindInfo.dsControlGroupType,
+            		  bMechPid); //this is generic, should be made specific per service                        
           } else
           {
             // Bypass Datastream Mediation.
@@ -756,4 +788,76 @@ public class DisseminationService
       }
     }
   }
+  
+  public Properties getBackendServiceProperties() {
+      
+      try {
+          
+          Properties backendServiceProperties = new Properties();
+          backendServiceProperties.load(new FileInputStream(new File(fedoraHome+"/server/config/beSecurity.properties")));
+          backendServiceProperties.list(System.out);
+          return backendServiceProperties;
+      } catch (Throwable th) {
+          String message = "[DisseminationService] An error has occured in "
+              + "accessing the Fedora Access Subsystem. The error was \" "
+              + th.getClass().getName()
+              + " \". Reason: "  + th.getMessage()
+              + "  The file location of the backend service configuration file "
+              + " could not be found. Location specified in fedora.fcfg was: \"" 
+              + s_server.getHomeDir()+"/access/backendServiceConfig.properties" + "\".";
+          s_server.logWarning(message);
+      }
+      return null;
+  }
+  
+  public boolean isBackendServiceBasicAuthEnabled(String role) throws GeneralException {
+      
+      Properties backendServiceProperties = getBackendServiceProperties();
+      String basicAuth = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".basicAuth");
+      
+      if (basicAuth == null) {
+          // Role(key) was not found in backend services properties file
+          // See if default exists for basicAuth
+          basicAuth = backendServiceProperties.getProperty("all.basicAuth");
+          if (basicAuth == null)
+              // No default was configured so set basicAuth to false
+              basicAuth = "false";
+      }
+      System.out.println("********************BASICAUTH: "+basicAuth+"   role: "+role);
+      if (basicAuth.equalsIgnoreCase("true")) {
+          return true;
+      } else if (basicAuth.equalsIgnoreCase("false")) {
+          return false;
+      } else {
+          throw new GeneralException("[DisseminationService] Backend service config "
+              + "parameter for basicAuth must be either \"true\" or \"false\". Value "
+              + "specified was: \"" + basicAuth + "\"  for backend service with role: \""
+              + role + "\".");
+      }
+  }
+  
+  public boolean isBackendServiceSSLEnabled(String role) throws GeneralException {
+      Properties backendServiceProperties = getBackendServiceProperties();
+      String ssl = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".ssl");
+      if (ssl == null) {
+          // Role(key) was not found in backend services properties file
+          // See if default exists for ssl          
+          ssl = backendServiceProperties.getProperty("all.ssl");
+          if (ssl == null)
+              // No default was configured so set ssl to false
+              ssl = "false";
+      }    
+      System.out.println("********************SSL: "+ssl+"   role: "+role);
+      if (ssl.equalsIgnoreCase("true")) {
+          return true;
+      } else if (ssl.equalsIgnoreCase("false")) {
+          return false;
+      } else {
+          throw new GeneralException("[DisseminationService] Backend service config "
+              + "parameter for ssl must be either \"true\" or \"false\". Value "
+              + "specified was: \"" + ssl + "\"  for backend service with role: \""
+              + role + "\".");
+      }
+  }  
+  
 }
