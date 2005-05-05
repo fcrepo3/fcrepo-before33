@@ -35,11 +35,6 @@ public class DefaultDOReplicator
     private ConnectionPool m_pool;
     private RowInsertion m_ri;
 
-    // sdp - local.fedora.server conversion
-    private Pattern hostPattern = null;
-    private Pattern hostPortPattern = null;
-    private Pattern serializedLocalURLPattern = null;
-
     /**
      * Server instance to work with in this module.
      */
@@ -54,9 +49,48 @@ public class DefaultDOReplicator
      * fedora.fcfg config file, or (fallback) by hostIP.getHostName()
      */
     private static String fedoraServerHost = null;
+    
+		/** SSL port number on which the Fedora server is running; determined from
+		 * fedora.fcfg config file.
+		 */
+		private static String fedoraServerPortSSL = null;	    
 
     /** The IP address of the local host; determined dynamically. */
     private static InetAddress hostIP = null;
+    
+  	// Fedora URL LOCALIZATION Pattern:
+  	// Pattern that is used as the internal replacement syntax for URLs that
+  	// refer back to the local repository.  This pattern virtualized the
+  	// repository server address, so that if the host:port of the repository is
+  	// changed, objects that have URLs that refer to the local repository won't break.
+  	public static Pattern s_fedoraLocalPattern = Pattern.compile("http://local.fedora.server/");
+  	
+  	// RELATIVE URL Patterns:
+  	// Relative URL paths that are based at the local Fedora repository server.	
+  	public static Pattern s_relativePattern = Pattern.compile("fedora/");
+  	public static Pattern s_relativeGetPattern = Pattern.compile("fedora/get/");
+  	public static Pattern s_relativeSearchPattern = Pattern.compile("fedora/search/");
+  	public static Pattern s_relativeGetPatternAsParm = Pattern.compile("=fedora/get/");
+  	public static Pattern s_relativeSearchPatternAsParm = Pattern.compile("=fedora/search/");
+
+
+  	// ABSOLUTE REPOSITORY URL Patterns:
+  	// Patterns of how the protocol and repository server address may be encoded
+  	// in a URL that points back to the local repository.
+  	private static Pattern s_servernamePort; // "http://hostname:port/"
+  	private static Pattern s_servername;     // "http://hostname/"
+  	private static Pattern s_localhostPort;  // "http://localhost:port/"
+  	private static Pattern s_localhost;      // "http://localhost/"
+      
+  	private static Pattern s_servernamePortSSL; // "https://hostname:redirectport/"
+  	private static Pattern s_servernameSSL;     // "https://hostname/"
+  	private static Pattern s_localhostPortSSL;  // "https://localhost:redirectport/"
+  	private static Pattern s_localhostSSL;      // "https://localhost/"
+
+  	// The actual host and port of the Fedora repository server
+  	private static String s_hostInfo = null;
+  	private static boolean m_serverOnPort80=false;
+  	private static boolean m_serverOnRedirectPort443=false;
 
 
     public DefaultDOReplicator(Map moduleParameters, Server server, String role)
@@ -79,17 +113,40 @@ public class DefaultDOReplicator
             hostIP = null;
             fedoraServerPort = getServer().getParameter("fedoraServerPort");
             getServer().logFinest("fedoraServerPort: " + fedoraServerPort);
+            fedoraServerPortSSL = getServer().getParameter("fedoraRedirectPort");
+            getServer().logFinest("fedoraServerPortSSL: " + fedoraServerPortSSL);            
             hostIP = InetAddress.getLocalHost();
             fedoraServerHost = getServer().getParameter("fedoraServerHost");
             if (fedoraServerHost==null || fedoraServerHost.equals("")) {
                 fedoraServerHost=hostIP.getHostName();
             }
-            hostPattern = Pattern.compile("http://"+fedoraServerHost+"/");
-            hostPortPattern = Pattern.compile("http://"+fedoraServerHost+":"+fedoraServerPort+"/");
-            serializedLocalURLPattern = Pattern.compile("http://local.fedora.server/");
-            //System.out.println("Replicator: hostPattern is " + hostPattern.pattern());
-            //System.out.println("Replicator: hostPortPattern is " + hostPortPattern.pattern());
-            //
+            getServer().logFinest("fedoraServerHost: " + fedoraServerHost);
+            
+  					if (fedoraServerPort.equals("80")) {
+  							m_serverOnPort80=true;
+  						}
+  					if (fedoraServerPortSSL.equals("443")) {
+  							m_serverOnRedirectPort443=true;
+  					}
+  					
+  					// set the currently configured host:port of the repository
+  					s_hostInfo="http://" + fedoraServerHost;
+  					if (!fedoraServerPort.equals("80") && !fedoraServerPort.equals("443")) {
+  						s_hostInfo=s_hostInfo + ":" + fedoraServerPort;
+  					}
+  					s_hostInfo=s_hostInfo + "/";
+
+  					// compile other patterns using the configured host and port
+  					s_servernamePort = Pattern.compile("http://" + fedoraServerHost + ":" + fedoraServerPort + "/");
+  					s_servername = Pattern.compile("http://" + fedoraServerHost + "/");
+  					s_localhostPort = Pattern.compile("http://localhost:" + fedoraServerPort + "/");
+  					s_localhost = Pattern.compile("http://localhost/");
+  					
+  					s_servernamePortSSL = Pattern.compile("https://" + fedoraServerHost + ":" + fedoraServerPortSSL + "/");
+  					s_servernameSSL = Pattern.compile("https://" + fedoraServerHost + "/");
+  					s_localhostPortSSL = Pattern.compile("https://localhost:" + fedoraServerPortSSL + "/");
+  					s_localhostSSL = Pattern.compile("https://localhost/");
+  					
         } catch (ServerException se) {
             throw new ModuleInitializationException(
                     "Error getting default pool: " + se.getMessage(),
@@ -168,7 +225,7 @@ public class DefaultDOReplicator
                 String dsCurrentVersionID=results.getString("dsCurrentVersionID");
                 String dsState=results.getString("dsState");
                 // sdp - local.fedora.server conversion
-                String dsLocation=unencodeLocalURL(results.getString("dsLocation"));
+                String dsLocation=makeAbsoluteURLs(results.getString("dsLocation"));
                 // compare the latest version of the datastream to what's in the db...
                 // if different, add to update list
                 Datastream ds=reader.GetDatastream(dsID, null);
@@ -179,7 +236,7 @@ public class DefaultDOReplicator
                     updates.add("UPDATE dsBind SET dsLabel='"
                             + SQLUtility.aposEscape(ds.DSLabel) + "', dsLocation='"
                             // sdp - local.fedora.server conversion
-                            + SQLUtility.aposEscape(encodeLocalURL(ds.DSLocation))
+                            + SQLUtility.aposEscape(makeFedoraLocalURLs(ds.DSLocation))
                             + "', dsCurrentVersionID='" + ds.DSVersionID + "', "
                             + "dsState='" + ds.DSState + "' "
                             + " WHERE doDbID=" + doDbID + " AND dsID='" + dsID + "'");
@@ -436,7 +493,7 @@ public class DefaultDOReplicator
                                         allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
                                         allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
                                         // sdp - local.fedora.server conversion
-                                        encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
+                                        makeFedoraLocalURLs(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
                                         allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
                                         allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
                                         "1",
@@ -1283,8 +1340,8 @@ public class DefaultDOReplicator
                                 bDefDBID, methodDBID, dsBindingKeyDBID,
                                 "http", "text/html",
                                 // sdp - local.fedora.server conversion
-                                encodeLocalURL(behaviorBindingsEntry.serviceBindingAddress),
-                                encodeLocalURL(behaviorBindingsEntry.operationLocation), "1");
+                                makeFedoraLocalURLs(behaviorBindingsEntry.serviceBindingAddress),
+                                makeFedoraLocalURLs(behaviorBindingsEntry.operationLocation), "1");
                           }
                         }
                     }
@@ -2537,51 +2594,107 @@ public class DefaultDOReplicator
                 }
                 return ID;
 	}
+        
+      	/**
+      	 * Make URLs that are relative to the local Fedora repository ABSOLUTE URLs.
+      	 * Look for all URLs that contain the special Fedora local URL syntax
+      	 * and replace instances of this string with the actual host:port configured for
+      	 * the repository.  This ensures that all forms of relative repository URLs
+      	 * are converted to proper absolute URLs that reference the hostname:port of the
+      	 * local Fedora repository.  Examples:
+      	 *
+      	 * 	 "http://local.fedora.server/fedora/get/demo:1/DS1"
+      	 *        is converted to
+      	 *        "http://myrepo.com:8080/fedora/get/demo:1/DS1"
+      	 *
+      	 * 	 "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
+      	 *        is converted to
+      	 * 	      "http://myrepo.com:8080/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
+      	 * @param input Input URL string to be converted.
+      	 * @return  String with all relative repository URLs and Fedora local URLs
+      	 *          converted to absolute URL syntax.
+      	 */
+      	private static String makeAbsoluteURLs(String input) {
+      		String output=input;
+      		
+      		// Make absolute URLs out of all instances of the Fedora local URL syntax ...
+      		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
+      		if (fedora.server.Debug.DEBUG) {
+      			System.out.println("makeAbsoluteURLs:  input=" + input);
+      			System.out.println("makeAbsoluteURLs: output=" + output + "\n");
+      		}
+      		return output;
+      	}        
 
-        private String encodeLocalURL(String locationString)
-        {
-          // Replace any occurences of the host:port of the local Fedora
-          // server with the internal serialization string "local.fedora.server."
-          // This will make sure that local URLs (self-referential to the
-          // local server) will be recognizable if the server host and
-          // port configuration changes after an object is stored in the
-          // repository.
-          if (fedoraServerPort.equalsIgnoreCase("80") &&
-              hostPattern.matcher(locationString).find())
-          {
-              //System.out.println("port is 80 and host-only pattern found - convert to l.f.s");
-              return hostPattern.matcher(
-                locationString).replaceAll("http://local.fedora.server/");
-          }
-          else
-          {
-              //System.out.println("looking for hostPort pattern to convert to l.f.s");
-              return hostPortPattern.matcher(
-                locationString).replaceAll("http://local.fedora.server/");
-          }
-        }
-
-        private String unencodeLocalURL(String storedLocationString)
-        {
-          // Replace any occurrences of the internal serialization string
-          // "local.fedora.server" with the current host and port of the
-          // local Fedora server.  This translates local URLs (self-referential
-          // to the local server) back into resolvable URLs that reflect
-          // the currently configured host and port for the server.
-
-          if (fedoraServerPort.equalsIgnoreCase("80"))
-          {
-            return serializedLocalURLPattern.matcher(
-              storedLocationString).replaceAll(fedoraServerHost);
-          }
-          else
-          {
-            return serializedLocalURLPattern.matcher(
-              storedLocationString).replaceAll(
-              fedoraServerHost+":"+fedoraServerPort);
-          }
-        }
-
+      	/**
+      	 * Detect all forms of URLs that point to the local Fedora repository and
+      	 * make sure they are encoded in the special Fedora local URL syntax
+      	 * (http://local.fedora.server/...").  Look for absolute URLs that have a 
+      	 * host:port equal to the host:port currently configured for the Fedora 
+      	 * repository and replace host:port with the special string. The special 
+      	 * Fedora relative URL string provides a consistent unique string be easily 
+      	 * searched for and either converted back to an absolute URL to the 
+      	 * repository. Examples:
+      	 *
+      	 * 	 "http://myrepo.com:8080/fedora/get/demo:1/DS1"
+      	 *        is converted to
+      	 *        "http://local.fedora.server/fedora/get/demo:1/DS1"
+      	 *
+      	 * 	 "https://myrepo.com:8443/fedora/get/demo:1/bdef:1/getFoo?in="http://myrepo.com:8080/fedora/get/demo:2/DC"
+      	 *        is converted to
+      	 * 	      "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in="http://local.fedora.server/fedora/get/demo:2/DC"
+      	 *
+      	 * 	 "http://myrepo.com:8080/saxon..." (internal service in bMech WSDL)
+      	 *        is converted to
+      	 * 	      "http://local.fedora.server/saxon..."
+      	 * @param input Input URL string to be converted
+      	 * @return  String with all forms of relative repository URLs converted to
+      	 *          the Fedora local URL syntax.
+      	 */
+      	private static String makeFedoraLocalURLs(String input) {
+      		String output=input;
+      		
+      		// Detect any absolute URLs that reference the local
+      		// repository and convert them to the Fedora LOCALIZATION URL syntax
+      		// ("http://local.fedora.server/...")\
+      		
+      		// convert URLs that begin with http along with host and port
+      		// explicitly configured for the repository
+      		output=s_servernamePort.matcher(output).replaceAll(
+      			s_fedoraLocalPattern.pattern());
+      		output=s_localhostPort.matcher(output).replaceAll(
+      			s_fedoraLocalPattern.pattern());
+      			
+      		// convert URLs that begin with https along with the host and port
+      		// explicitly configured for the repository
+      		output=s_servernamePortSSL.matcher(output).replaceAll(
+      			s_fedoraLocalPattern.pattern());
+      		output=s_localhostPortSSL.matcher(output).replaceAll(
+      			s_fedoraLocalPattern.pattern());
+      			
+      		if (m_serverOnPort80) {
+      			// if the server is running on port 80, convert
+      			// URLs that begin with "http://localhost/"
+      			output=s_servername.matcher(output).replaceAll(
+      				s_fedoraLocalPattern.pattern());
+      			output=s_localhost.matcher(output).replaceAll(
+      				s_fedoraLocalPattern.pattern());
+      		}
+      		if (m_serverOnRedirectPort443) {
+      			// if the server is running on port 443, convert
+      			// URLs that begin with "https://localhost/"
+      			output=s_servernameSSL.matcher(output).replaceAll(
+      				s_fedoraLocalPattern.pattern());
+      			output=s_localhostSSL.matcher(output).replaceAll(
+      				s_fedoraLocalPattern.pattern());
+      		}
+      		if (fedora.server.Debug.DEBUG) {
+      			System.out.println("makeFedoraLocalURLs: input=" + input);
+      			System.out.println("makeFedoraLocalURLs: output=" + output + "\n");
+      		}
+      		return output;
+      	}
+      	
 		private void addDisseminators(String doPID, Disseminator[] disseminators, DOReader doReader, Connection connection)
 			throws ReplicationException, SQLException, ServerException
 		{
@@ -2692,7 +2805,7 @@ public class DefaultDOReplicator
                                                 allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
                                                 allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
                                                 // sdp - local.fedora.server conversion
-                                                encodeLocalURL(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
+                                                makeFedoraLocalURLs(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
                                                 allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
                                                 allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
                                                 "1",
