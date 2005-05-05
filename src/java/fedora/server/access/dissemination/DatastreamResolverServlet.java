@@ -207,44 +207,46 @@ public class DatastreamResolverServlet extends HttpServlet
       }
 
       if (dm.callbackRole == null) {
-  		throw new AuthzOperationalException("no callbackRole for this ticket");
+          throw new AuthzOperationalException("no callbackRole for this ticket");
       } 
       String targetRole = dm.callbackRole; //restrict access to role of this ticket
       String[] targetRoles = {targetRole};
       Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
+      
       if (request.getRemoteUser() == null) {
       	//non-authn:  must accept target role of ticket
       } else {
       	//authn:  check user roles for target role of ticket
       	if  (((request.getUserPrincipal() != null) 
-      	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
-		&&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
-		&&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
-          	//user has target role
+          	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
+          	&&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
+          	&&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
+        //user has target role
       	} else {
       		throw new AuthzDeniedException("wrong user for this ticket");
       	}
       }
 
-      System.err.println("debugging backendService role");      
-      System.err.println("targetRole=" + targetRole);      	
-      int targetRolesLength = targetRoles.length;
-      System.err.println("targetRolesLength=" + targetRolesLength);
-      if (targetRolesLength > 0) {
-        System.err.println("targetRoles[0]=" + targetRoles[0]);      	
+      if (fedora.server.Debug.DEBUG) {
+          System.err.println("debugging backendService role");      
+          System.err.println("targetRole=" + targetRole);
+          int targetRolesLength = targetRoles.length;
+          System.err.println("targetRolesLength=" + targetRolesLength);
+          if (targetRolesLength > 0) {
+              System.err.println("targetRoles[0]=" + targetRoles[0]);      	
+          }
+          int nSubjectValues = context.nSubjectValues(targetRole);
+          System.err.println("nSubjectValues=" + nSubjectValues);
+          if (nSubjectValues > 0) {
+          	System.err.println("context.getSubjectValue(targetRole)=" + context.getSubjectValue(targetRole));   
+          }
+          Iterator it = context.subjectAttributes();
+          while (it.hasNext()) {
+          	String name = (String) it.next();
+          	String value = context.getSubjectValue(name);
+            System.err.println("another subject attribute from context " + name + "=" + value);            	
+          }          
       }
-      int nSubjectValues = context.nSubjectValues(targetRole);
-      System.err.println("nSubjectValues=" + nSubjectValues);
-      if (nSubjectValues > 0) {
-      	System.err.println("context.getSubjectValue(targetRole)=" + context.getSubjectValue(targetRole));   
-      }
-      Iterator it = context.subjectAttributes();
-      while (it.hasNext()) {
-      	String name = (String) it.next();
-      	String value = context.getSubjectValue(name);
-        System.err.println("another subject attribute from context " + name + "=" + value);            	
-      }
-      
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
       authorization.enforceResolveDatastream(context, keyTimestamp);
 
