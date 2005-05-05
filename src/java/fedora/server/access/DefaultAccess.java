@@ -332,7 +332,7 @@ public class DefaultAccess extends Module implements Access
       	);
     DisseminationService dissService = new DisseminationService();
     dissemination =
-        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, reposBaseURL);
+        dissService.assembleDissemination(context, PID, h_userParms, dissBindInfo, reposBaseURL, authzAux_bmechPID);
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
