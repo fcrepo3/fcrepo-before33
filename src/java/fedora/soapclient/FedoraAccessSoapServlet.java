@@ -97,11 +97,12 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  * <p>Example URLs</p>
  * <ol>
  * <li>GetDissemination URL syntax:
- * <p>http://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&bDefPID_=bdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action_=GetDissemination&PID_=pid&bDefPID_=bdefpid&methodName_=methodname[&asOfDateTime_=dateTime][?parmArray]</p>
  * <p>This syntax requests a dissemination of the specified object using the
  * specified method of the associated behavior definition object. The result
  * is returned as a MIME-typed stream.</p></li>
  * <ul>
+ * <li>protocol - either http  or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -117,10 +118,11 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *                 pairs in the form parm1=value1&parm2=value2...</li>
  * </ul>
  * <li>GetDatastreamDissemination URL syntax:
- * <p>http://hostname:port/soapclient/apia?action=GetDatastreamDissemination&PID_=pid&dsID_=dsid[&asOfDateTime_=dateTime]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action=GetDatastreamDissemination&PID_=pid&dsID_=dsid[&asOfDateTime_=dateTime]</p>
  * <p>This syntax requests a datastream dissemination for the specified digital
  * object. It is used to return the contents of a datastream.</p></li>
  * <ul>
+ * <li>protocol - either http  or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -132,9 +134,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *                version of the digital object at the specified point in time.
  * </ul>
  * <li>GetObjectProfile URL syntax:
- * <p>http://hostname:port/soapclient/apia?action_=GetObjectProfile&PID_=pid[&asOfDateTime_=dateTime][&xml=boolean]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action_=GetObjectProfile&PID_=pid[&asOfDateTime_=dateTime][&xml=boolean]</p>
  * <p>This syntax requests an object profile for the specified digital object.</p></li>
  * <ul>
+ * <li>protocol - either http  or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -145,9 +148,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *                version of the digital object at the specified point in time.
  * </ul>
  * <li>GetObjectHistory URL syntax:
- * <p>http://hostname:port/soapclient/apia?action_=GetObjectHistory&PID_=pid[&xml_=boolean]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action_=GetObjectHistory&PID_=pid[&xml_=boolean]</p>
  * <p>This syntax requests an object history for the specified digital object.</p></li>
  * <ul>
+ * <li>protocol - either http  or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -160,9 +164,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *               indicates format is to be text/html.</li>
  * </ul>
  * <li>DescribeRepository URL syntax:
- * <p>http://hostname:port/soapclient/apia?action_=DescribeRepository[&xml_=boolean]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action_=DescribeRepository[&xml_=boolean]</p>
  * <p>This syntax requests an object profile for the specified digital object.</p></li>
  * <ul>
+ * <li>protocol - either http  or  https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -174,9 +179,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *               indicates format is to be text/html.</li>
  * </ul>
  * <li>ListDatastreams URL syntax:
-  * <p>http://hostname:port/soapclient/apia?action_=ListDatastreams&PID_=pid[&asOfDateTime_=dateTime][&xml_=boolean]</p>
+  * <p>protocol://hostname:port/soapclient/apia?action_=ListDatastreams&PID_=pid[&asOfDateTime_=dateTime][&xml_=boolean]</p>
   * <p>This syntax requests a list of datastreams for the specified digital object.</p></li>
   * <ul>
+  * <li>protocol - either http  or  https.</li>
   * <li>hostname - required hostname of the Fedora server.</li>
   * <li>port - required port number on which the Fedora server is running.</li>
   * <li>soapclient - required name of the sample soap client.</li>
@@ -191,9 +197,10 @@ import org.apache.axis.encoding.ser.BeanDeserializerFactory;
  *               indicates format is to be text/html.</li>
  * </ul>
  * <li>ListMethods URL syntax:
- * <p>http://hostname:port/soapclient/apia?action_=ListMethods&PID_=pid[&asOfDateTime_=ateTime][xml_=boolean]</p>
+ * <p>protocol://hostname:port/soapclient/apia?action_=ListMethods&PID_=pid[&asOfDateTime_=ateTime][xml_=boolean]</p>
  * <p>This syntax requests a list of methods for the specified digital object.</p></li>
  * <ul>
+ * <li>protocol - either http  or  https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
  * <li>port - required port number on which the Fedora server is running.</li>
  * <li>soapclient - required name of the sample soap client.</li>
@@ -1091,9 +1098,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listDatastreams.xsd\"" + " pid=\"" + PID + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
                           + ">");
                   } else
                   {
@@ -1101,10 +1108,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listDatastreams.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
                           + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\" "
                           + ">");
                   }
 
@@ -1180,9 +1187,9 @@ public class FedoraAccessSoapServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/fedora/\" >");
                   } else
                   {
@@ -1190,10 +1197,10 @@ public class FedoraAccessSoapServlet extends HttpServlet
                           + "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" "
                           + "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" "
                           + "xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/ "
-                          + "http://" + fedoraServerHost + ":" + fedoraServerPort
+                          + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                           + "/listMethods.xsd\"" + " pid=\"" + StreamUtility.enc(PID) + "\" "
                           + "asOfDateTime=\"" + DateUtility.convertDateToString(versDateTime) + "\" "
-                          + "baseURL=\"http://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\""
+                          + "baseURL=\"" + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort + "/fedora/\""
                           + " >");
                   }
 
@@ -1298,7 +1305,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
                 + " pid=\"" + PID + "\" >");
           } else
@@ -1307,7 +1314,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
                 + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
                 + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
                 + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-                + " http://" + fedoraServerHost + ":" + fedoraServerPort
+                + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
                 + "/objectProfile.xsd\""
                 + " pid=\"" + PID + "\""
                 + " dateTime=\"" + DateUtility.convertDateToString(versDateTime)
@@ -1392,7 +1399,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://" + fedoraServerHost + ":" + fedoraServerPort
+              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraRepository.xsd\">");
 
           // REPOSITORY INFO FIELDS SERIALIZATION
@@ -1484,7 +1491,7 @@ public class FedoraAccessSoapServlet extends HttpServlet
               + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
               + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
               + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/access/"
-              + " http://" + fedoraServerHost + ":" + fedoraServerPort
+              + fedoraServerProtocol + "://" + fedoraServerHost + ":" + fedoraServerPort
               + "/fedoraObjectHistory.xsd\" "+"pid=\""+PID+"\" >");
           String nextBdef = "null";
           String currentBdef = "";
