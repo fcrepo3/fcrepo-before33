@@ -2,7 +2,6 @@ package fedora.server.search;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -354,7 +353,7 @@ public class FieldSearchResultSQLImpl
                 m_startMillis=now;
                 Date dt=new Date();
                 dt.setTime(m_startMillis + (1000 * m_maxSeconds));
-                m_expirationDate=DateUtility.convertLocalDateToUTCDate(dt);
+                m_expirationDate=dt;
             } else {
                 // no, so make sure the token is null and clean up
                 m_token=null;

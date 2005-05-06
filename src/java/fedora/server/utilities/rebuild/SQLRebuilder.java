@@ -34,7 +34,6 @@ import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
-import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.SQLUtility;
 
 /**
@@ -266,7 +265,7 @@ public class SQLRebuilder implements Rebuilder {
         // CURRENT TIME:
         // Get the current time to use for created dates on object
         // and object components (if they are not already there).
-        Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+        Date nowUTC=new Date();
 
         DOReplicator replicator=(DOReplicator) s_server.getModule("fedora.server.storage.replication.DOReplicator");
         DOManager manager=(DOManager) s_server.getModule("fedora.server.storage.DOManager");

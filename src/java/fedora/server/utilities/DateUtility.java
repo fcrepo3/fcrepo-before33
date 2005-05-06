@@ -50,17 +50,16 @@ public abstract class DateUtility {
      * format: yyyy-MM-ddTHH:mm:ss.SSSZ.
      * </p>
      * 
-     * @param date
-     *            Instance of java.util.Date.
-     * @return Corresponding datetime string (returns null if Date argument is
-     *         null).
+     * @param  date Instance of java.util.Date.
+     * @return      ISO 8601 String representation (yyyy-MM-ddTHH:mm:ss.SSSZ) 
+     *              of the Date argument or null if the Date argument is null.
      */
     public static String convertDateToString(Date date) {
         if (date == null) {
             return null;
         } else {
-            DateFormat df = new SimpleDateFormat(
-                    "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            df.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
     }
@@ -108,23 +107,6 @@ public abstract class DateUtility {
             return df.format(date);
         }
     }    
-
-    public static Date convertLocalDateToUTCDate(Date localDate) {
-        // figure out the time zone offset of this machine (in millisecs)
-        Calendar cal = Calendar.getInstance();
-        int tzOffset = cal.get(Calendar.ZONE_OFFSET);
-        // ...and account for daylight savings time, if applicable
-        TimeZone tz = cal.getTimeZone();
-        if (tz.inDaylightTime(localDate)) {
-            tzOffset += cal.get(Calendar.DST_OFFSET);
-        }
-        // now we have UTF offset in millisecs... so subtract it from
-        // localDate.millisecs
-        // and return a new Date object.
-        Date UTCDate = new Date();
-        UTCDate.setTime(localDate.getTime() - tzOffset);
-        return UTCDate;
-    }
 
     /**
      * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[.SSS][Z]]

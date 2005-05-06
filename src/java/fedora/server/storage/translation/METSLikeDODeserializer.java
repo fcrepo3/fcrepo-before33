@@ -940,7 +940,7 @@ public class METSLikeDODeserializer
 		ds.DSFormatURI="";   // FOXML only. In METS it's null;
 		ds.DSVersionID="RELS-INT.0";
 		ds.DSLabel="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.";
-		ds.DSCreateDT=DateUtility.convertLocalDateToUTCDate(new Date());
+		ds.DSCreateDT=new Date();
 		ds.DSMIME="text/xml";
 		// set the attrs specific to datastream version
 		ds.DSControlGrp="X";

@@ -298,7 +298,7 @@ public class DefaultManagement
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             w.remove();
             w.commit(logMessage);
-            return DateUtility.convertLocalDateToUTCDate(new Date());
+            return new Date();
         } finally {
             if (w != null) m_manager.releaseWriter(w);
             logFinest("Exiting DefaultManagement.purgeObject");
@@ -401,7 +401,7 @@ public class DefaultManagement
 			ds.DSFormatURI=formatURI;
 			ds.DatastreamAltIDs = altIDs;
 			ds.DSMIME=MIMEType;
-			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			Date nowUTC=new Date();
 			ds.DSCreateDT=nowUTC;
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -451,7 +451,7 @@ public class DefaultManagement
 				diss.dissLabel = dissLabel;
 				diss.bMechID = bMechPid;
 				diss.bDefID = bDefPid;
-				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+				Date nowUTC=new Date();
 				diss.dissCreateDT=nowUTC;
 				diss.dissID = w.newDisseminatorID();
 				diss.dissVersionID = diss.dissID + ".0";
@@ -583,7 +583,7 @@ public class DefaultManagement
 			newds.DSMIME = mimeType;
 			newds.DSFormatURI=formatURI;
 			newds.DatastreamAltIDs = altIDs;
-			nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			nowUTC=new Date();
 			newds.DSCreateDT=nowUTC;
 			//newds.DSSize will be computed later
             if (dsLocation != null) {
@@ -739,7 +739,7 @@ public class DefaultManagement
 			newds.DatastreamAltIDs=altIDs;
 			newds.DSMIME=mimeType;
 			newds.DSFormatURI=formatURI;
-			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			Date nowUTC=new Date();
 			newds.DSCreateDT=nowUTC;
 			
             // next, add the datastream via the object writer
@@ -820,7 +820,7 @@ public class DefaultManagement
             // make sure disseminator has a new version id
             newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
 			// make sure disseminator has a new version date
-			Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+			Date nowUTC=new Date();
 			newdiss.dissCreateDT=nowUTC;
            
             // for testing; null indicates a new (uninitialized) instance
@@ -975,7 +975,7 @@ public class DefaultManagement
                                              start, 
                                              endDT, 
                                              deletedDates);
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            Date nowUTC=new Date();
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
@@ -1141,7 +1141,7 @@ public class DefaultManagement
                                              start, 
                                              endDT, 
                                              deletedDates);
-            Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+            Date nowUTC=new Date();
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
@@ -1357,7 +1357,7 @@ public class DefaultManagement
           audit.action="setDatastreamState";
           audit.componentID=datastreamID;
           audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-          Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+          Date nowUTC=new Date();
           audit.date=nowUTC;
           audit.justification=logMessage;
           w.getAuditRecords().add(audit);
@@ -1400,7 +1400,7 @@ public class DefaultManagement
           audit.action="setDisseminatorState";
           audit.componentID=disseminatorID;
           audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-          Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+          Date nowUTC=new Date();
           audit.date=nowUTC;
           audit.justification=logMessage;
           w.getAuditRecords().add(audit);

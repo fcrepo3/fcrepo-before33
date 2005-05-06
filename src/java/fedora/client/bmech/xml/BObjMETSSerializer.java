@@ -61,8 +61,7 @@ public abstract class BObjMETSSerializer
     throws BMechBuilderException
   {
     this.bObjData = bObjData;
-    this.now = DateUtility.convertDateToString(
-            DateUtility.convertLocalDateToUTCDate(new Date()));
+    this.now = DateUtility.convertDateToString(new Date());
   }
 
   // The BDefMETSSerializer and BMechMETSSerializer will implement this to

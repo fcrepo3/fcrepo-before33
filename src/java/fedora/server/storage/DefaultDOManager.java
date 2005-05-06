@@ -41,7 +41,6 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.translation.DOTranslationUtility;
-import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
@@ -448,7 +447,7 @@ public class DefaultDOManager
 				// CURRENT TIME:
 				// Get the current time to use for created dates on object
 				// and object components (if they are not already there).
-				Date nowUTC=DateUtility.convertLocalDateToUTCDate(new Date());
+				Date nowUTC=new Date();
 				
 				// TEMP STORAGE:
 				// write ingest input stream to a temporary file
@@ -884,7 +883,7 @@ public class DefaultDOManager
 
                 // MODIFIED DATE:
                 // set digital object last modified date, in UTC
-                obj.setLastModDate(DateUtility.convertLocalDateToUTCDate(new Date()));
+                obj.setLastModDate(new Date());
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 				// FINAL XML SERIALIZATION:
