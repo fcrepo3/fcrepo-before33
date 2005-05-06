@@ -1,6 +1,7 @@
 package fedora.server.management;
 
 import java.io.*;
+import java.text.*;
 import java.util.*;
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -49,6 +50,7 @@ public class BESecurityServlet extends HttpServlet {
 
             // load the current backend security configuration
             Properties beConfiguration = new Properties();
+            Date lastModifiedUTC = getLastModifiedUTCDate(m_propsFile);
             beConfiguration.load(new FileInputStream(m_propsFile));
 
             String xml = req.getParameter("xml");
@@ -56,7 +58,7 @@ public class BESecurityServlet extends HttpServlet {
                 // just provide the xml
                 res.setContentType("text/xml; charset=UTF-8");
                 PrintWriter writer = res.getWriter();
-                writeXML(bMechLabels, beConfiguration, writer);
+                writeXML(bMechLabels, beConfiguration, lastModifiedUTC, writer);
                 writer.flush();
                 writer.close();
             } else {
@@ -74,12 +76,18 @@ public class BESecurityServlet extends HttpServlet {
             } catch (Exception ex) { }
         }
     }
+
+    private static Date getLastModifiedUTCDate(File file) {
+        return DateUtility.convertLocalDateToUTCDate(new Date(file.lastModified()));
+    }
     
     private void writeXML(Map bMechLabels,
                           Properties props,
+                          Date lastModifiedUTC,
                           PrintWriter out) {
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<beSecurity>");
+        out.println("<beSecurityConfig lastModified=\"" 
+                + DateUtility.convertDateToString(lastModifiedUTC) + "\">");
         Iterator pids = bMechLabels.keySet().iterator();
         while (pids.hasNext()) {
             String pid = (String) pids.next();
@@ -88,7 +96,7 @@ public class BESecurityServlet extends HttpServlet {
                     + " label=\"" + StreamUtility.enc(label) + "\"/>");
         }
         props.list(out);
-        out.println("</beSecurity>");
+        out.println("</beSecurityConfig>");
     }
 
     /**
