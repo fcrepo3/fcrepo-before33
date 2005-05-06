@@ -78,7 +78,7 @@ public class BESecurityServlet extends HttpServlet {
     }
 
     private static Date getLastModifiedUTCDate(File file) {
-        return DateUtility.convertLocalDateToUTCDate(new Date(file.lastModified()));
+        return new Date(file.lastModified());
     }
     
     private void writeXML(Map bMechLabels,
