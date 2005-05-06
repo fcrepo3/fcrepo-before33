@@ -4,23 +4,17 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Properties;
 
-import fedora.common.Constants;
 import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
@@ -188,18 +182,10 @@ public class DisseminationService
    */
   public MIMETypedStream assembleDissemination(Context context, String PID,
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, 
-      String reposBaseURL, String bMechPid)
+      String bMechPid)
       throws ServerException
   {
 
-    if (reposBaseURL == null || reposBaseURL.equals(""))
-    {
-      throw new DisseminationException("[DisseminationService] was unable to "
-          + "resolve the base URL of the Fedora Server. The URL specified was: \""
-          + reposBaseURL + "\". This information is required by the Dissemination Service.");
-    }
-    
-    //String datastreamResolverServletURL = reposBaseURL + "/fedora/getDS?id=";
     String callbackHost = null;
     String callbackServletPath = null;
     Properties backendServiceProperties = getBackendServiceProperties();
@@ -214,7 +200,10 @@ public class DisseminationService
         callbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
     }    
     String datastreamResolverServletURL = callbackHost + callbackServletPath;
-    System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);
+    if (fedora.server.Debug.DEBUG) {
+        System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);
+        System.out.println("******************callbackHost: "+callbackHost);
+    }
     if (fedora.server.Debug.DEBUG) {
         printBindingInfo(dissBindInfoArray);
     }
@@ -375,7 +364,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, reposBaseURL)
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, callbackHost)
                         + "+(" + dissBindInfo.DSBindKey + ")";;
             } else {
                 replaceString =
@@ -405,7 +394,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, reposBaseURL);
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, callbackHost);
             } else
             {
                 replaceString = dissBindInfo.dsLocation;
@@ -731,14 +720,14 @@ public class DisseminationService
    * @throws ServerException - If anything goes wrong during the conversion attempt.
    */
   private String resolveInternalDSLocation(Context context, String internalDSLocation,
-      String PID, String reposBaseURL) throws ServerException
+      String PID, String callbackHost) throws ServerException
   {
       
-      if (reposBaseURL == null || reposBaseURL.equals(""))
+      if (callbackHost == null || callbackHost.equals(""))
       {
         throw new DisseminationException("[DisseminationService] was unable to "
             + "resolve the base URL of the Fedora Server. The URL specified was: \""
-            + reposBaseURL + "\". This information is required by the Dissemination Service.");
+            + callbackHost + "\". This information is required by the Dissemination Service.");
       }  
       
       String[] s = internalDSLocation.split("\\+");
@@ -747,10 +736,12 @@ public class DisseminationService
       {
           DOReader doReader =  m_manager.getReader(Server.GLOBAL_CHOICE, context, PID);
           Datastream d = (Datastream) doReader.getDatastream(s[1], s[2]);
-          if (fedora.server.Debug.DEBUG) System.out.println("DSDate: "+DateUtility.convertDateToString(d.DSCreateDT));
-          dsLocation = reposBaseURL
+          dsLocation = 
+              callbackHost
               +"/fedora/get/"+s[0]+"/"+s[1]+"/"
               +DateUtility.convertDateToString(d.DSCreateDT);
+          if (fedora.server.Debug.DEBUG) System.out.println("resolveInternalDatastream DS: "+dsLocation);
+          
       } else
       {
         String message = "[DisseminationService] An error has occurred. "
@@ -823,7 +814,7 @@ public class DisseminationService
               // No default was configured so set basicAuth to false
               basicAuth = "false";
       }
-      System.out.println("********************BASICAUTH: "+basicAuth+"   role: "+role);
+      if (fedora.server.Debug.DEBUG) System.out.println("********************BASICAUTH: "+basicAuth+"   role: "+role);
       if (basicAuth.equalsIgnoreCase("true")) {
           return true;
       } else if (basicAuth.equalsIgnoreCase("false")) {
@@ -847,7 +838,7 @@ public class DisseminationService
               // No default was configured so set ssl to false
               ssl = "false";
       }    
-      System.out.println("********************SSL: "+ssl+"   role: "+role);
+      if (fedora.server.Debug.DEBUG) System.out.println("********************SSL: "+ssl+"   role: "+role);
       if (ssl.equalsIgnoreCase("true")) {
           return true;
       } else if (ssl.equalsIgnoreCase("false")) {
