@@ -744,14 +744,13 @@
 		<copy todir="dist/server/config/xacml-policies/examples/object-policies">
 			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
 		</copy>
-		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-secure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora">
 			<fileset dir="src/jsp"/>
 		</copy>
 		<java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
-			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/unrestricted-web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
+			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web-secure.xml src/xsl/security/remove-web-xml-security.xsl"/>
 		</java>
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
