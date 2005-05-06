@@ -19,6 +19,19 @@ public class BESecurityServlet extends HttpServlet {
     /**
      * Display the form or an xml document providing enough information to
      * construct the form (if xml=true).
+     *
+     * The xml document looks like this:
+     *
+     * <backendSecurityConfig lastModified="2005-10-10T10:10:10.123Z">
+     *   <defaultConfig>
+     *     <ip></ip>
+     *   </defaultConfig>
+     *   <service role="bDef:1" label="">
+     *     <callbackRequirements>
+     *       <use
+     *     </datastreamCallbackConfig>
+     *   </service>
+     * </backendSecurityConfig>
      */
     public void doGet(HttpServletRequest req,
                       HttpServletResponse res) throws ServletException {
@@ -50,7 +63,6 @@ public class BESecurityServlet extends HttpServlet {
 
             // load the current backend security configuration
             Properties beConfiguration = new Properties();
-            Date lastModifiedUTC = getLastModifiedUTCDate(m_propsFile);
             beConfiguration.load(new FileInputStream(m_propsFile));
 
             String xml = req.getParameter("xml");
@@ -58,7 +70,10 @@ public class BESecurityServlet extends HttpServlet {
                 // just provide the xml
                 res.setContentType("text/xml; charset=UTF-8");
                 PrintWriter writer = res.getWriter();
-                writeXML(bMechLabels, beConfiguration, lastModifiedUTC, writer);
+                writeXML(bMechLabels, 
+                         beConfiguration, 
+                         new Date(m_propsFile.lastModified()), 
+                         writer);
                 writer.flush();
                 writer.close();
             } else {
