@@ -225,7 +225,7 @@ public class FieldSearchResultSQLImpl
                         // property must be parsable as a date... if ok,
                         // do (cDate, mDate, dcmDate)
                         // or (date) <- dcDate from dcDates table
-                        Date dt=DateUtility.parseDate(cond.getValue());
+                        Date dt=DateUtility.parseDateAsUTC(cond.getValue());
                         if (dt==null) {
                             throw new QueryParseException("When using "
                                     + "equality or inequality operators "

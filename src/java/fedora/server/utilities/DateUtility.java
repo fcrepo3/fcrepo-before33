@@ -3,7 +3,6 @@ package fedora.server.utilities;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -41,7 +40,7 @@ public abstract class DateUtility {
      *         dateTime string argument is empty string or null)
      */
     public static Date convertStringToDate(String dateTime) {
-        return parseDate(dateTime);
+        return parseDateAsUTC(dateTime);
     }
 
     /**
@@ -59,7 +58,7 @@ public abstract class DateUtility {
             return null;
         } else {
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-            df.setTimeZone(java.util.TimeZone.getTimeZone("UTC"));
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
     }
@@ -82,6 +81,7 @@ public abstract class DateUtility {
         } else {
             DateFormat df = new SimpleDateFormat(
                     "yyyy-MM-dd'Z'");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
     }
@@ -90,7 +90,7 @@ public abstract class DateUtility {
     /**
      * <p>
      * Converts an instance of java.util.Date into a String using the date
-     * format: mm:ss.SSSZ.
+     * format: HH:mm:ss.SSSZ.
      * </p>
      * 
      * @param date
@@ -102,8 +102,8 @@ public abstract class DateUtility {
         if (date == null) {
             return null;
         } else {
-            DateFormat df = new SimpleDateFormat(
-                    "HH:mm:ss.SSS'Z'");
+            DateFormat df = new SimpleDateFormat("HH:mm:ss.SSS'Z'");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
     }    
@@ -116,39 +116,43 @@ public abstract class DateUtility {
      *            the date string to parse
      * @return Date the date, if parse was successful; null otherwise
      */
-    public static Date parseDate(String str) {
-        if (str == null || str.length() == 0)
+    public static Date parseDateAsUTC(String dateString) {
+        if (dateString == null || dateString.length() == 0) {
             return null;
-        if (str.indexOf("T") != -1) {
-            try {
-                return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                        .parse(str);
-            } catch (ParseException pe) {
-                try {
-                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS")
-                            .parse(str);
-                } catch (ParseException pe1) {
-                    try {
-                        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-                                .parse(str);
-                    } catch (ParseException pe2) {
-                        try {
-                            return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                                    .parse(str);
-                        } catch (ParseException pe3) {
-                            return null;
-                        }
-                    }
-                }
+        }
+        
+        SimpleDateFormat formatter = new SimpleDateFormat();
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        if (dateString.endsWith("Z")) {
+            if (dateString.length() == 11) {
+                formatter.applyPattern("yyyy-MM-dd'Z'");
+            } else if (dateString.length() == 20) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            } else if (dateString.length() == 22) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.S'Z'");
+            } else if (dateString.length() == 23) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS'Z'");
+            } else if (dateString.length() == 24) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             }
         } else {
-            try {
-                return new SimpleDateFormat("yyyy-MM-dd").parse(str);
-            } catch (ParseException pe3) {
-                return null;
+            if (dateString.length() == 10) {
+                formatter.applyPattern("yyyy-MM-dd");
+            } else if (dateString.length() == 19) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss");
+            } else if (dateString.length() == 21) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.S");
+            } else if (dateString.length() == 22) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS");
+            } else if (dateString.length() == 23) {
+                formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
             }
         }
-
+        try {
+            return formatter.parse(dateString);
+        } catch (ParseException e) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {

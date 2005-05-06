@@ -160,7 +160,7 @@ public class FieldSearchSQLImpl
                     if (i==0) {
                         wellFormedDates=new ArrayList();
                     }
-                    Date p=DateUtility.parseDate((String) dc.dates().get(i));
+                    Date p=DateUtility.parseDateAsUTC((String) dc.dates().get(i));
                     if (p!=null) {
                         wellFormedDates.add(p);
                     }
