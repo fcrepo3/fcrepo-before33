@@ -46,8 +46,8 @@
   <Rule RuleId="1" Effect="Deny">
     <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:not">
       <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
-        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>
-        <SubjectAttributeDesignator AttributeId="administrator" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>
+        <SubjectAttributeDesignator AttributeId="fedoraRole" DataType="http://www.w3.org/2001/XMLSchema#string"/>
       </Apply>
     </Condition>
   </Rule>

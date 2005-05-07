@@ -4,8 +4,7 @@
   you must define such a user - the username and password are arbitrary.
 -->
 <tomcat-users>
-  <user name="#1" password="#2" roles="backendService" /> 
-  <user name="#3" password="#4" roles="administrator" />
+  <user name="#1" password="#2" roles="fedoraRole=administrator" />
   <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
   <user name="guest" password="" roles="" />
 </tomcat-users>

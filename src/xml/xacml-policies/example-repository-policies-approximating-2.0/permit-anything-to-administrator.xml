@@ -8,8 +8,8 @@
     <Subjects>
       <Subject> 
         <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"/>        
-          <SubjectAttributeDesignator AttributeId="administrator" MustBePresent="false" 
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>        
+          <SubjectAttributeDesignator AttributeId="fedoraRole" MustBePresent="false" 
             DataType="http://www.w3.org/2001/XMLSchema#string"/>
         </SubjectMatch>
       </Subject>

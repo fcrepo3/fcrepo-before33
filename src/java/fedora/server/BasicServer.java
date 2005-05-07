@@ -247,20 +247,10 @@ public class BasicServer
                     nextLine=in.readLine();
                     if (nextLine!=null) {
                         if (nextLine.indexOf("#1")>0) {
-                            nextLine = nextLine.replaceAll("#1", serverProperties.getProperty(ServerUtility.BACKEND_USERNAME_KEY));
-                        }
-                        if (nextLine.indexOf("#2")>0) {
-                        	String backendPassword = "";
-                        	if (serverProperties.containsKey(ServerUtility.BACKEND_PASSWORD_KEY))  {
-                        		backendPassword = serverProperties.getProperty(ServerUtility.BACKEND_PASSWORD_KEY);
-                        	}
-                            nextLine = nextLine.replaceAll("#2", backendPassword);
-                        }
-                        if (nextLine.indexOf("#3")>0) {
-                            nextLine = nextLine.replaceAll("#3", serverProperties.getProperty(ServerUtility.ADMIN_USERNAME_KEY));
+                            nextLine = nextLine.replaceAll("#1", serverProperties.getProperty(ServerUtility.ADMIN_USERNAME_KEY));
                         }                                              
-                        if (nextLine.indexOf("#4")>0) {
-                            nextLine = nextLine.replaceAll("#4", serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD_KEY));
+                        if (nextLine.indexOf("#2")>0) {
+                            nextLine = nextLine.replaceAll("#2", serverProperties.getProperty(ServerUtility.ADMIN_PASSWORD_KEY));
                         }
                         out.write(nextLine+"\n");
                     }

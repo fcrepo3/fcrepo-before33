@@ -8,10 +8,6 @@
 	<comment>Defines the username for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="adminPassword" value="fedoraAdmin"/>
 	<comment>Defines the password for the Fedora server; default is fedoraAdmin.</comment>
-	<param name="backendUsername" value="backendUser"/>
-	<comment>Defines the generic username for the callbacks from backend services</comment>
-	<!-- param name="backendPassword" value=""/ code doesn't like 0-length strings -->
-	<comment>Defines the generic password for the callbacks from backend services</comment>
 	<param name="log_max_size" value="5242880"/>
 	<comment>Defines the threshold at which a new log file is generated based on the size of the current log file in bytes; default is 5242880 bytes.</comment>
 	<param name="log_max_days" value="7"/>
