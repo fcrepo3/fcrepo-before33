@@ -3,8 +3,13 @@ package fedora.server.management;
 import java.io.*;
 import java.text.*;
 import java.util.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import javax.xml.transform.stream.*;
+import javax.xml.transform.stream.*;
+import javax.xml.transform.*;
 
 import fedora.server.*;
 import fedora.server.errors.*;
@@ -15,6 +20,7 @@ public class BESecurityServlet extends HttpServlet {
     
     private FieldSearch m_fieldSearch;
     private File m_propsFile;
+    private File m_styleFile;
 
     /**
      * Display the form or an xml document providing enough information to
@@ -30,6 +36,7 @@ public class BESecurityServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest req,
                       HttpServletResponse res) throws ServletException {
+        PrintWriter writer = null;
         try {
             // get the pids and labels of all bMechs in the repository
             Map bMechLabels = new HashMap();
@@ -59,31 +66,49 @@ public class BESecurityServlet extends HttpServlet {
             // load the current backend security configuration
             Properties beConfiguration = new Properties();
             beConfiguration.load(new FileInputStream(m_propsFile));
+            Date configLastModified = new Date(m_propsFile.lastModified());
 
             String xml = req.getParameter("xml");
             if (xml != null && xml.equals("true")) {
                 // just provide the xml
                 res.setContentType("text/xml; charset=UTF-8");
-                PrintWriter writer = res.getWriter();
+                writer = res.getWriter();
                 writeXML(bMechLabels, 
                          beConfiguration, 
-                         new Date(m_propsFile.lastModified()), 
+                         configLastModified,
                          writer);
-                writer.flush();
-                writer.close();
             } else {
                 // get the xml and transform it
+                ByteArrayOutputStream memOut = new ByteArrayOutputStream();
+                PrintWriter pw = new PrintWriter(memOut);
+                writeXML(bMechLabels,
+                         beConfiguration,
+                         configLastModified,
+                         pw);
+                pw.flush();
+                Reader xmlReader = new InputStreamReader(
+                                       new ByteArrayInputStream(
+                                           memOut.toByteArray()));
+                Transformer transformer = TransformerFactory
+                                              .newInstance()
+                                              .newTemplates(new StreamSource(m_styleFile))
+                                              .newTransformer();
                 res.setContentType("text/html; charset=UTF-8");
-                PrintWriter writer = res.getWriter();
-                writer.println("transformation of xml not implemented yet");
-                writer.flush();
-                writer.close();
+                writer = res.getWriter();
+                transformer.transform(new StreamSource(xmlReader),
+                                      new StreamResult(res.getWriter()));
             }
         } catch (Exception e) {
             try {
+                e.printStackTrace();
                 res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                               e.getMessage());
             } catch (Exception ex) { }
+        } finally {
+            if (writer != null) {
+                try { writer.flush(); } catch (Exception e) { }
+                try { writer.close(); } catch (Exception e) { }
+            }
         }
     }
 
@@ -176,7 +201,7 @@ public class BESecurityServlet extends HttpServlet {
 
     /**
      * Initialize by getting a reference to the FieldSearch module
-     * and making sure the beSecurity.properties file exists.
+     * and making sure the beSecurity.properties and stylesheet files exist.
      */
     public void init() throws ServletException {
         try {
@@ -191,6 +216,12 @@ public class BESecurityServlet extends HttpServlet {
             if (!m_propsFile.exists()) {
                 throw new ServletException("Required file missing: " 
                         + m_propsFile.getPath());
+            }
+            m_styleFile = new File(fedoraHome,
+                                   "server/management/backendSecurityConfig.xslt");
+            if (!m_styleFile.exists()) {
+                throw new ServletException("Required file missing: " 
+                        + m_styleFile.getPath());
             }
         } catch (InitializationException e) {
             throw new ServletException("Unable to get server instance", e);
