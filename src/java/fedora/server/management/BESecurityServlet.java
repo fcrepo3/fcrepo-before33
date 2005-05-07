@@ -23,14 +23,9 @@ public class BESecurityServlet extends HttpServlet {
      * The xml document looks like this:
      *
      * <backendSecurityConfig lastModified="2005-10-10T10:10:10.123Z">
-     *   <defaultConfig>
-     *     <ip></ip>
-     *   </defaultConfig>
-     *   <service role="bDef:1" label="">
-     *     <callbackRequirements>
-     *       <use
-     *     </datastreamCallbackConfig>
-     *   </service>
+     *   <default basicAuth="false" ssl="false" ipList="127\.0\.0\.1"/>
+     *   <service role="bDef:1" label="My BDef" basicAuth="true" ssl="false" ipList="127.0.0.1"/>
+     *   <service role="bDef:2" basicAuth="default" ssl="default" ipList="default"/>
      * </backendSecurityConfig>
      */
     public void doGet(HttpServletRequest req,
@@ -101,17 +96,82 @@ public class BESecurityServlet extends HttpServlet {
                           Date lastModifiedUTC,
                           PrintWriter out) {
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<beSecurityConfig lastModified=\"" 
+        out.println("<backendSecurityConfig lastModified=\"" 
                 + DateUtility.convertDateToString(lastModifiedUTC) + "\">");
-        Iterator pids = bMechLabels.keySet().iterator();
-        while (pids.hasNext()) {
-            String pid = (String) pids.next();
-            String label = (String) bMechLabels.get(pid);
-            out.println("  <bMech pid=\"" + StreamUtility.enc(pid) + "\""
-                    + " label=\"" + StreamUtility.enc(label) + "\"/>");
+        writeXMLLine("default", 
+                     null, 
+                     null, 
+                     props.getProperty("all.basicAuth", "false"),
+                     props.getProperty("all.ssl", "false"),
+                     props.getProperty("all.iplist", ""),
+                     out);
+        //
+        // do all from properties, getting labels if available
+        //
+
+        // first determine the list of roles, ignoring "all"
+        List configuredRoles = new ArrayList();
+        Enumeration enum = props.propertyNames();
+        while (enum.hasMoreElements()) {
+            String propName = (String) enum.nextElement();
+            if (propName.indexOf(":") != -1) {
+                String roleName = propName.split("\\.")[0];
+                if (!configuredRoles.contains(roleName)) {
+                    configuredRoles.add(roleName);
+                }
+            }
         }
-        props.list(out);
-        out.println("</beSecurityConfig>");
+
+        // then write the configuration for each
+        for (int i = 0; i < configuredRoles.size(); i++) {
+            String role = (String) configuredRoles.get(i);
+            String label = (String) bMechLabels.get(role); // ok if null
+            String basicAuth = getValueOrDefault(props, role + ".basicAuth");
+            String ssl = getValueOrDefault(props, role + ".ssl");
+            String ipList = getValueOrDefault(props, role + ".iplist");
+            writeXMLLine("service", role, label, basicAuth, ssl, ipList, out);
+        }
+
+        // 
+        // do all remaining from existing map, except those in configuredRoles,
+        // giving them defaults for everything
+        // 
+        Iterator iter = bMechLabels.keySet().iterator();
+        while (iter.hasNext()) {
+            String role = (String) iter.next();
+            if (!configuredRoles.contains(role)) {
+                writeXMLLine("service", 
+                             role, 
+                             (String) bMechLabels.get(role), 
+                             "default", 
+                             "default", 
+                             "default", 
+                             out);
+            }
+        }
+        out.println("</backendSecurityConfig>");
+    }
+
+    private String getValueOrDefault(Properties props, String propName) {
+        String val = props.getProperty(propName, "default");
+        if (val.trim().length() == 0) val = "default";
+        return val;
+    }
+
+    private void writeXMLLine(String elementName,
+                              String role,
+                              String label,
+                              String basicAuth,
+                              String ssl,
+                              String ipList,
+                              PrintWriter out) {
+        out.print("  <" + elementName);
+        if (role != null) out.print(" role=\"" + role + "\"");
+        if (label != null) out.print(" label=\"" + StreamUtility.enc(label) + "\"");
+        out.print(" basicAuth=\"" + basicAuth + "\"");
+        out.print(" ssl=\"" + ssl + "\"");
+        out.print(" ipList=\"" + StreamUtility.enc(ipList) + "\"");
+        out.println("/>");
     }
 
     /**
