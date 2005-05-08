@@ -112,10 +112,124 @@ public class BESecurityServlet extends HttpServlet {
         }
     }
 
-    private static Date getLastModifiedUTCDate(File file) {
-        return new Date(file.lastModified());
+    public void doPost(HttpServletRequest req,
+                       HttpServletResponse res) throws ServletException {
+        PrintWriter writer = null;
+        try {
+            Map params = req.getParameterMap();
+
+            // TODO: Up-to-date check, plus validation
+            // (if these fail, execute doGet but with an error popup)
+
+            res.setContentType("text/plain; charset=UTF-8");
+            writer = res.getWriter();
+            writeConfig(params, writer);
+
+        } catch (Exception e) {
+            try {
+                e.printStackTrace();
+                res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
+                              e.getMessage());
+            } catch (Exception ex) { }
+        } finally {
+            if (writer != null) {
+                try { writer.flush(); } catch (Exception e) { }
+                try { writer.close(); } catch (Exception e) { }
+            }
+        }
     }
-    
+
+    private static String getParamValue(String name, Map params) {
+        String[] values = (String[]) params.get(name);
+        if (values == null || values.length == 0) return "";
+        return values[0];
+    }
+
+    private static void writeConfig(Map params,
+                                    PrintWriter out) {
+        // do the header
+        out.println("#");
+        out.println("# Configuration for backend services.");
+        out.println("#");
+        out.println("# This information is used to generate proper callback URLs when ");
+        out.println("# datastreams are passed by-reference to behavior mechanism ");
+        out.println("# services.  It is also used to generate policies that dictate ");
+        out.println("# whether a datastream callback request is honored.");
+        out.println("#");
+        String dateString = DateUtility.convertDateToString(new Date(System.currentTimeMillis()));
+        out.println("# Last Generated: " + dateString);
+        out.println("#");
+        out.println();
+
+        // then the defaults
+        out.println("# Defaults for unconfigured values");
+        String defaultBasicAuth = getParamValue("all.basicAuth", params);
+        if (!defaultBasicAuth.equals("true")) defaultBasicAuth = "false";
+        String defaultSSL = getParamValue("all.ssl", params);
+        if (!defaultSSL.equals("true")) defaultSSL = "false";
+        String defaultIPList = getParamValue("all.iplist", params);
+        out.println("all.basicAuth = " + defaultBasicAuth);
+        out.println("all.ssl       = " + defaultSSL);
+        out.println("# These are space-delimited regular expressions.  Here, an empty value allows any IP address.");
+        out.println("all.iplist    = " + defaultIPList);
+        out.println();
+
+        // construct the list of roles
+        List roles = new ArrayList();
+        Iterator iter = params.keySet().iterator();
+        while (iter.hasNext()) {
+            String name = (String) iter.next();
+            String[] parts = name.split("\\.");
+            if (parts.length == 2) {
+                String role = parts[0];
+                if (!role.equals("all") && !roles.contains(role)) roles.add(role);
+            }
+        }
+
+        // then output all the info for each, in sorted order
+        Collections.sort(roles);
+        iter = roles.iterator();
+        while (iter.hasNext()) {
+            String role = (String) iter.next();
+            String label = getParamValue(role + ".label", params);
+            String basicAuth = getParamValue(role + ".basicAuth", params);
+            String ssl = getParamValue(role + ".ssl", params);
+            String ipList = getParamValue(role + ".ipList", params);
+
+            String roleKey = role.replaceAll(":", "\\\\:");
+
+            // write the label as a comment
+            if (label.trim().length() == 0) label = role;
+            out.println("# " + label);
+
+            // write the basicAuth value (as a comment if default)
+            if (basicAuth.length() == 0 || basicAuth.equals("default")) {
+                basicAuth = defaultBasicAuth;
+                out.print("# (Using Default) ");
+            }
+            out.println(roleKey + ".basicAuth = " + basicAuth);
+
+            // write the ssl value (as a comment if default)
+            if (ssl.length() == 0 || ssl.equals("default")) {
+                ssl = defaultSSL;
+                out.print("# (Using Default) ");
+            }
+            out.println(roleKey + ".ssl       = " + ssl);
+
+            // write the iplist value (as a comment if default)
+            if (ipList.length() == 0 || ipList.equals("default")) {
+                ipList = defaultIPList;
+                out.print("# (Using Default) ");
+            }
+            out.println(roleKey + ".iplist    = " + ipList);
+
+            out.println();
+
+
+        }
+
+    }
+
     private void writeXML(Map bMechLabels,
                           Properties props,
                           Date lastModifiedUTC,

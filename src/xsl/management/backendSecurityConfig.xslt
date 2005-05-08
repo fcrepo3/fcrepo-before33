@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xmlspysamplexml C:\mellon\src\xsl\access\getItemList.xml?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="yes"/>
   <xsl:template match="/">
@@ -24,6 +23,7 @@
             </tr>
           </table>
           <hr/>
+          <form method="POST">
           <table border="1" cellpadding="4" cellspacing="0">
             <tr bgcolor="#aaaaaa">
               <td><nobr>Service</nobr></td>
@@ -36,6 +36,11 @@
                 <td valign="top">
                     <strong><xsl:value-of select="@role"/></strong><br/>
                     <em><xsl:value-of select="@label"/></em>
+                    <xsl:element name="input">
+                      <xsl:attribute name="type">hidden</xsl:attribute>
+                      <xsl:attribute name="name"><xsl:value-of select="@role"/>.label</xsl:attribute>
+                      <xsl:attribute name="value"><xsl:value-of select="@label"/></xsl:attribute>
+                    </xsl:element>
                 </td>
                 <td valign="top">
                   <xsl:element name="input">
@@ -57,7 +62,7 @@
                   <xsl:element name="input">
                     <xsl:attribute name="type">radio</xsl:attribute>
                     <xsl:attribute name="name"><xsl:value-of select="@role"/>.basicAuth</xsl:attribute>
-                    <xsl:attribute name="value">false</xsl:attribute>
+                    <xsl:attribute name="value">default</xsl:attribute>
                     <xsl:if test="@basicAuth = 'default'">
                       <xsl:attribute name="checked">checked</xsl:attribute>
                     </xsl:if>
@@ -89,10 +94,20 @@
                     </xsl:if>
                   </xsl:element>Use Default
                 </td>
-                <td valign="top"><xsl:value-of select="@ipList"/></td>
+                <td valign="top">
+                    <xsl:element name="input">
+                        <xsl:attribute name="type">text</xsl:attribute>
+                        <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList</xsl:attribute>
+                        <xsl:attribute name="value">
+                            <xsl:value-of select="@ipList"/>
+                        </xsl:attribute>
+                    </xsl:element>
+                </td>
               </tr>
             </xsl:for-each>
           </table>
+          <input type="submit"/>
+          </form>
         </center>
       </body>
     </html>
