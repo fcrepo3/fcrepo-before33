@@ -62,7 +62,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 	private File schemaFile = null;
 	private DOManager doManager;
 
-	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryPolicyGeneratedDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager,
+	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromFile,
 		boolean validateObjectPoliciesFromDatastream, 
@@ -71,12 +71,15 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		this.combiningAlgorithm = combiningAlgorithm;
 
 		List filelist = new ArrayList();
-		System.err.println("before building file list");
+		System.err.println("before building regular file list");
 		buildRepositoryPolicyFileList(new File(repositoryPolicyDirectoryPath),  filelist);
-		System.err.println("after building file list");
-		System.err.println("before building (generated) file list");
-		buildRepositoryPolicyFileList(new File(repositoryPolicyGeneratedDirectoryPath),  filelist);
-		System.err.println("after building (generated) file list");		
+		System.err.println("after building regular file list");
+		System.err.println("before building (backend generated) file list " + repositoryBackendPolicyDirectoryPath);
+		buildRepositoryPolicyFileList(new File(repositoryBackendPolicyDirectoryPath),  filelist);
+		System.err.println("after building (backend generated) file list");				
+		System.err.println("before building (pgt generated) file list " + repositoryPolicyGuiToolDirectoryPath);
+		buildRepositoryPolicyFileList(new File(repositoryPolicyGuiToolDirectoryPath),  filelist);
+		System.err.println("after building (pgt generated) file list");		
 		System.err.println("before getting repo policies");
 		
 		//String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);

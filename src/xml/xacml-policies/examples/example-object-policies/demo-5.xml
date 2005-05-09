@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        PolicyId="demo-5"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <Description> example limiting dissemination </Description>
+  <Target>
+    <Subjects>
+      <Subject> 
+        <SubjectMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">administrator</AttributeValue>        
+          <SubjectAttributeDesignator AttributeId="fedoraRole" MustBePresent="false" 
+            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        </SubjectMatch>
+      </Subject>
+    </Subjects>
+    <Resources>
+      <Resource> 
+        <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:5</AttributeValue>        
+          <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid"
+            DataType="http://www.w3.org/2001/XMLSchema#string"/>
+        </ResourceMatch>
+      </Resource>
+    </Resources>    
+    <Actions>
+      <Action>
+        <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDissemination</AttributeValue>
+          <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+        </ActionMatch>
+      </Action>
+    </Actions>    
+  </Target>  
+  <Rule RuleId="1" Effect="Permit"/>
+  <Rule RuleId="2" Effect="Deny">  
+    <Target>
+      <Subjects>
+        <AnySubject/> 
+      </Subjects>
+      <Resources>
+        <Resource> 
+          <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:5</AttributeValue>        
+            <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid"
+              DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          </ResourceMatch>
+          <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">getHigh</AttributeValue>        
+            <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:disseminator:method"
+               MustBePresent="false" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          </ResourceMatch>          
+        </Resource>
+        <Resource> 
+          <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:5</AttributeValue>        
+            <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid"
+              DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          </ResourceMatch>
+          <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">getVeryHigh</AttributeValue>        
+            <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:disseminator:method"
+               MustBePresent="false" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          </ResourceMatch>          
+        </Resource>        
+      </Resources>
+      <Actions>
+        <Action>
+          <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDissemination</AttributeValue>
+            <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+              AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+          </ActionMatch>
+        </Action>
+      </Actions>    
+    </Target>  
+  </Rule>    
+  <Rule RuleId="3" Effect="Permit">  
+    <Target>
+      <Subjects>
+        <AnySubject/> 
+      </Subjects>
+      <Resources>
+        <Resource> 
+          <ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:5</AttributeValue>        
+            <ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid"
+              DataType="http://www.w3.org/2001/XMLSchema#string"/>
+          </ResourceMatch>
+        </Resource>
+      </Resources>
+      <Actions>
+        <Action>
+          <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDissemination</AttributeValue>
+            <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+              AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+          </ActionMatch>
+        </Action>
+      </Actions>    
+    </Target>  
+  </Rule>    
+</Policy>

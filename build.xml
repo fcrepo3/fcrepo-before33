@@ -721,29 +721,35 @@
 		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
 		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
 		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+		
 		<!-- xacml:  set up policy directories -->
 		<mkdir dir="dist/server/config/xacml-policies"/>
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/config/xacml-policies"/>
 		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/config/xacml-policies"/>
-		<mkdir dir="dist/server/config/xacml-policies/active"/>		
-		<mkdir dir="dist/server/config/xacml-policies/active/surrogate-policies"/>		
-		<mkdir dir="dist/server/config/xacml-policies/active/repository-policies"/>
-		<mkdir dir="dist/server/config/xacml-policies/active/repository-policies-generated"/>
-		<copy file="src/xml/xacml-policies/readme-generated-policies.txt" todir="dist/server/config/xacml-policies/active/repository-policies-generated"/>		
-		<mkdir dir="dist/server/config/xacml-policies/active/object-policies"/>
+		<copy file="src/xml/xacml-policies/readme-policyguitool-generated-policies.txt" todir="dist/server/config/xacml-policies"/>		
+
+		<mkdir dir="dist/server/config/xacml-policies/default"/>
+		<copy todir="dist/server/config/xacml-policies/default/default-repository-policies-approximating-2.0">
+			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
+		</copy>
+		<copy todir="dist/server/config/xacml-policies/default/default-object-policies">
+			<fileset dir="src/xml/xacml-policies/default/default-object-policies"/>
+		</copy>
+
 		<mkdir dir="dist/server/config/xacml-policies/examples"/>
-		<copy todir="dist/server/config/xacml-policies/examples/surrogate-policies">
-			<fileset dir="src/xml/xacml-policies/example-surrogate-policies"/>
+		<copy todir="dist/server/config/xacml-policies/examples/example-repository-policies">
+			<fileset dir="src/xml/xacml-policies/examples/example-repository-policies"/>
 		</copy>		
-		<copy todir="dist/server/config/xacml-policies/examples/repository-policies-approximating-2.0">
-			<fileset dir="src/xml/xacml-policies/example-repository-policies-approximating-2.0"/>
+		<copy todir="dist/server/config/xacml-policies/examples/example-object-policies">
+			<fileset dir="src/xml/xacml-policies/examples/example-object-policies"/>
 		</copy>
-		<copy todir="dist/server/config/xacml-policies/examples/other-repository-policies">
-			<fileset dir="src/xml/xacml-policies/other-example-repository-policies"/>
+		<copy todir="dist/server/config/xacml-policies/examples/example-surrogate-policies">
+			<fileset dir="src/xml/xacml-policies/examples/example-surrogate-policies"/>
 		</copy>		
-		<copy todir="dist/server/config/xacml-policies/examples/object-policies">
-			<fileset dir="src/xml/xacml-policies/example-object-policies"/>
-		</copy>
+		
+		<mkdir dir="dist/server/config/xacml-policies/active/generated/backend-service-policies"/>
+		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/config/xacml-policies/active/generated"/>
+						
 		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>		
 		<copy file="src/web-app/fedora/server/web-secure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>

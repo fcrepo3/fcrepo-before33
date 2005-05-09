@@ -1,0 +1,75 @@
+bmech:1.basicAuth = true
+bmech:1.ssl = false
+bmech:1.iplist = 127.0.0.1 192.168.1.1
+bmech:2.basicAuth = true
+bmech:2.ssl = false
+bmech:2.iplist = 163.23.22.8
+
+#
+# When more strict setting are specified here, they override role-specific 
+# settings. These also act as defaults when the bmech does not match any of the above
+#
+all.basicAuth = false
+all.ssl = false
+
+# empty means "any" (no (further) restrictions)
+all.iplist = 
+
+
+<backendService role="bmech:1" security="secure" basicAuth="true">
+	<ip address="127.0.0.1"/>
+	<ip address="127.0.0.2"/>
+</backendService>
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        PolicyId="generic-backend-service"
+        RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable">
+  <Description> </Description>
+  <Target>
+    <Subjects>
+      <AnySubject/>
+    </Subjects>
+    <Resources>
+      <AnyResource/>
+    </Resources>    
+    <Actions>
+      <Action>
+        <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+          <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-resolveDatastream</AttributeValue>
+          <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+            AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+        </ActionMatch>
+      </Action>
+    </Actions>    
+  </Target>  
+  <Rule RuleId="1" Effect="Permit">
+    <Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of">
+      <EnvironmentAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+      <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-bag">
+        <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">127.0.0.1</AttributeValue>
+      </Apply>
+    </Condition>
+  </Rule>
+  <Rule RuleId="2" Effect="Deny">  
+    <Target>
+      <Subjects>
+        <AnySubject/>
+      </Subjects>
+      <Resources>
+        <AnyResource/>
+      </Resources>      
+      <Actions>
+        <Action>
+          <ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+            <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-resolveDatastream</AttributeValue>
+            <ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
+              AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+          </ActionMatch>
+        </Action>
+      </Actions>    
+    </Target>  
+  </Rule>    
+</Policy>

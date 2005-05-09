@@ -93,10 +93,10 @@
 		<comment>Builds and manages Fedora's authorization structure.
         </comment>
         <param name="ALLOW-SURROGATES" value="false"/>        
-        <param name="SURROGATE-POLICIES-DIRECTORY" value="config/xacml-policies/active/surrogate-policies"/>
-        <param name="REPOSITORY-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies"/>
-        <param name="REPOSITORY-GENERATED-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies-generated"/>        
-        <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/active/object-policies"/>
+        <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
+        <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-xacml-policies/object-policies"/>
+        <param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
+        <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
         <param name="ENFORCE-MODE" value="enforce-policies" testvalue="permit-all-requests"/>
         <!-- param name="ENFORCE-MODE" value="permit-all-requests"/ -->

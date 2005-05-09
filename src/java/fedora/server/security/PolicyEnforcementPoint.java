@@ -114,7 +114,7 @@ public class PolicyEnforcementPoint {
 	
 	private ContextAttributeFinderModule contextAttributeFinder;
 	
-	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalGeneratedPolicyConfig, String localPolicyConfig, DOManager manager,
+	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, String localPolicyConfig, DOManager manager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromFile,
 		boolean validateObjectPoliciesFromDatastream, 
@@ -177,7 +177,7 @@ System.err.println("before building policy finder");
 		PolicyFinderModule combinedPolicyModule = null;
 		//try {
 			System.err.println("***before constucting fedora policy finder module, policySchemaPath = " + policySchemaPath);
-			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalGeneratedPolicyConfig, localPolicyConfig, manager,
+			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, localPolicyConfig, manager,
 			validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
 			System.err.println("after constucting fedora policy finder module");
 			/*
