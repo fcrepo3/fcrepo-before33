@@ -18,7 +18,7 @@ if "%OS%" == "" goto runMinimized
 
 :run
 if "%1" == "" goto noFileError
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\common\lib\sunxacml.jar;\fedora\mellon\dist\server\jakarta-tomcat-5.0.28\common\lib\xercesImpl.jar;\fedora\mellon\dist\server\jakarta-tomcat-5.0.28\common\lib\xml-apis.jar -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR%  -Dcom.sun.xacml.PolicySchema=%FEDORA_HOME%\server\xsd\cs-xacml-schema-policy-01.xsd  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl  fedora.server.security.ValidatePolicy "%1"
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\common\lib\sunxacml.jar;%FEDORA_HOME%\server\jakarta-tomcat-5.0.28\common\lib\xercesImpl.jar;%FEDORA_HOME%\server\jakarta-tomcat-5.0.28\common\lib\xml-apis.jar -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR%  -Dcom.sun.xacml.PolicySchema=%FEDORA_HOME%\server\xsd\cs-xacml-schema-policy-01.xsd  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl  fedora.server.security.ValidatePolicy "%1"
 goto finish
 
 :noFileError
