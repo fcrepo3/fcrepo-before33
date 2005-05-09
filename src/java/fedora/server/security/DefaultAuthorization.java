@@ -244,19 +244,48 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw x;			
 		}
 	}
-
+	
+	private static void deldirfiles(String path) throws Exception {
+		System.err.println("deleting from " + path);
+		File srcDir = new File(path);
+		System.err.println("srcDir = " + srcDir);
+		System.err.println("exists?=" + srcDir.exists());
+		System.err.println("canRead?=" + srcDir.canRead());
+		String[] paths = srcDir.list();
+		System.err.println("paths = " + paths);		
+		System.err.println("copying " + paths.length + " files");
+		try {
+		for (int i=0; i<paths.length; i++) {
+			System.err.println("up = " + paths[i]);			
+			String absPath = path + File.separator + paths[i];
+			File f = new File(absPath);
+			f.delete();
+		}
+		} catch (Exception x) {
+			System.err.println("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
+			throw x;			
+		}
+	}
 
 	private final void generateBackendPolicies() throws Exception{
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
+		System.err.println("fedorahome=" + fedoraHome);			
+		deldirfiles(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY);
 		BackendPolicies backendPolicies = new BackendPolicies(fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);
+		System.err.println("fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);	
 		String[] tempfiles = backendPolicies.generateBackendPolicies();
+		System.err.println("tempfiles=" + tempfiles);					
+		System.err.println("tempfiles.length=" + tempfiles.length);							
 		TransformerFactory tfactory = TransformerFactory.newInstance();
 		for (int i=0; i<tempfiles.length; i++) {
+			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
 			File f = new File(fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION); //<<stylesheet location
 			StreamSource ss = new StreamSource(f);
 		    Transformer transformer = tfactory.newTransformer(ss); //xformPath
+			System.err.println("tempfiles[i]=" + tempfiles[i]);
 		    File infile = new File(tempfiles[i]);
 			FileInputStream fis = new FileInputStream(infile);
+			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
 			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());
 			transformer.transform(new StreamSource(fis), new StreamResult(fos));
 		}
@@ -275,7 +304,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		if (mkdir(objectPoliciesActiveDirectory)) {
 			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory);
 		}		
-		//generateBackendPolicies();
+		generateBackendPolicies();
 	}
 	
   public void postInitModule() throws ModuleInitializationException {

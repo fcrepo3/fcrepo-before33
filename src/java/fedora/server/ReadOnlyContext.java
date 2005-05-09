@@ -352,9 +352,7 @@ public class ReadOnlyContext implements Context {
 				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
 			} else {
 				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
-  	  	  	  	if (roles == null) {
-  	  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
-  	  	  	  	}  					
+  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
 			}
   	  	}
   	  	if (roles == null) {
