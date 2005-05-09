@@ -5,10 +5,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-import javax.swing.JOptionPane;
-
-import fedora.client.Administrator;
-
 /**
  *
  * <p><b>Title:</b> AutoBatchBuild.java</p>

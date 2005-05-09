@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.Security;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDesktopPane;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,11 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import org.apache.axis.AxisFault;
-import org.apache.axis.AxisProperties;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;

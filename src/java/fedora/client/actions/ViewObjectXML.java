@@ -6,12 +6,6 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
-import javax.xml.namespace.QName;
-
-import org.apache.axis.AxisFault;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import fedora.client.Administrator;
 import fedora.client.utility.export.AutoExporter;
 

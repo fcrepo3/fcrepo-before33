@@ -2,8 +2,6 @@ package fedora.client.actions;
 
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
-import javax.swing.JOptionPane;
-
 import fedora.client.Administrator;
 import fedora.client.LoginDialog;
 
