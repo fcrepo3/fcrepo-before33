@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
   <xsl:output method="html" indent="yes"/>
   <xsl:template match="/">
     <html>
@@ -20,6 +20,14 @@ function doSubmit() {
             var ipListValue = theForm.elements[role + ".ipListValue"][j].value;
             if (ipListValue != "custom") {
               theForm.elements[role + ".ipList"].value = ipListValue;
+            } else {
+              var spaceDelimitedList = "";
+              var zlist = theForm.elements[role + ".ipList.select"];
+              for (var k = 0; k < zlist.options.length; k++) {
+                if (k > 0) spaceDelimitedList = spaceDelimitedList + " ";
+                spaceDelimitedList = spaceDelimitedList + zlist.options[k].value;
+              }
+              theForm.elements[role + ".ipList"].value = spaceDelimitedList;
             }
           }
         }
@@ -27,6 +35,52 @@ function doSubmit() {
     }
     return true;
 }
+
+function doSelect(role) {
+  theForm.elements[role + ".ipList.deleteButton"].disabled = false;
+}
+
+function doAdd(role) {
+  var ip = prompt("Enter a new IP address pattern.\nThis will be used to match allowed hosts.", "");
+  if (ip == null || ip.length == 0) return;
+  var select = theForm.elements[role + ".ipList.select"];
+  select.options[select.options.length] = new Option(ip, ip);
+  if (select.options.length > 1) {
+    select.size = select.options.length;
+  }
+}
+
+function doDelete(role) {
+  var select = theForm.elements[role + ".ipList.select"];
+  var oldSelectedIndex = select.selectedIndex;
+  select.options[oldSelectedIndex] = null;
+  if (select.options.length > 0) {
+    if (select.options.length == oldSelectedIndex) {
+      select.selectedIndex = oldSelectedIndex - 1;
+    } else {
+      select.selectedIndex = oldSelectedIndex;
+    }
+  } else {
+    theForm.elements[role + ".ipList.deleteButton"].disabled = true;
+  }
+  if (select.options.length > 1) {
+    select.size = select.options.length;
+  }
+}
+
+function customSelected(role) {
+  var select = theForm.elements[role + ".ipList.select"];
+  select.disabled = false;
+  theForm.elements[role + ".ipList.addButton"].disabled = false;
+}
+
+function defaultSelected(role) {
+  var select = theForm.elements[role + ".ipList.select"];
+  select.selectedIndex = -1;
+  select.disabled = true;
+  theForm.elements[role + ".ipList.addButton"].disabled = true;
+}
+
 ]]>
         </script>
       </head>
@@ -42,7 +96,7 @@ function doSubmit() {
               <td valign="top">
                 <center>
                   <h3>Backend Security Configuration</h3>
-                  Instructions go here.
+  NOTE: IP address patterns are regular expressions, as defined at <a href="http://www.w3.org/TR/xpath-functions/#regex-syntax">http://www.w3.org/TR/xpath-functions/#regex-syntax</a>
                 </center>
               </td>
             </tr>
@@ -64,7 +118,7 @@ function doSubmit() {
               </td>
               <td bgcolor="#cccccc"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
               <td bgcolor="#cccccc"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
-              <td bgcolor="#cccccc"><nobr><strong><font color="#000000">Allowed IPs</font></strong></nobr></td>
+              <td bgcolor="#cccccc"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
             </tr>
               <tr bgcolor="#eeeeee">
                 <td bgcolor="#ddddff" valign="top">
@@ -209,64 +263,6 @@ function doSubmit() {
                  </nobr>
                 </td>
                 <td valign="top">
-                <!--
-                  <nobr>
-                   <xsl:element name="input">
-                      <xsl:attribute name="type">radio</xsl:attribute>
-                      <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipListValue</xsl:attribute>
-                      <xsl:attribute name="id"><xsl:value-of select="@role"/>.ipListValue.noRestrictions</xsl:attribute>
-                      <xsl:attribute name="value">.*</xsl:attribute>
-                      <xsl:if test="@ipList = '.*'">
-                        <xsl:attribute name="checked">checked</xsl:attribute>
-                      </xsl:if>
-                    </xsl:element>
-                    <xsl:element name="label">
-                      <xsl:attribute name="for"><xsl:value-of select="@role"/>.ipListValue.noRestrictions</xsl:attribute>
-                      All
-                    </xsl:element>
-                  </nobr>
-                  -->
-
-<!--
-
-<script language="javascript">
-
-function doAdd() {
-  var ip = prompt("Enter a new IP address regular expression", "");
-  document.theForm.theList.options[document.theForm.theList.options.length] = new Option(ip, 
-ip);
-  if (document.theForm.theList.options.length > 1) {
-    document.theForm.theList.size = document.theForm.theList.options.length;
-  }
-}
-
-function doDelete() {
-  var oldSelectedIndex = document.theForm.theList.selectedIndex;
-  document.theForm.theList.options[oldSelectedIndex] = null;
-  if (document.theForm.theList.options.length > 0) {
-    if (document.theForm.theList.options.length == oldSelectedIndex) {
-      document.theForm.theList.selectedIndex = oldSelectedIndex - 1;
-    } else {
-      document.theForm.theList.selectedIndex = oldSelectedIndex;
-    }
-  } else {
-    document.theForm.deleteButton.disabled = true;
-  }
-  if (document.theForm.theList.options.length > 1) {
-    document.theForm.theList.size = document.theForm.theList.options.length;
-  }
-}
-
-
-function doSelect() {
-  document.theForm.deleteButton.disabled = false;
-}
-
-</script>
-</head>
-<body onLoad="javascript:document.theForm.theList.selectedIndex=-1">
-
--->
 <table border="0" cellpadding="0" cellspacing="0">
 <tr>
 <td valign="top">
@@ -274,30 +270,67 @@ function doSelect() {
                       <xsl:attribute name="type">radio</xsl:attribute>
                       <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipListValue</xsl:attribute>
                       <xsl:attribute name="value">custom</xsl:attribute>
-                      <xsl:if test="@ipList != '.*' and @ipList != 'default'">
-                        <xsl:attribute name="checked">checked</xsl:attribute>
-                      </xsl:if>
+                        <xsl:if test="@ipList != 'default'">
+                          <xsl:attribute name="checked">checked</xsl:attribute>
+                        </xsl:if>
+                      <xsl:attribute name="onClick">javascript:customSelected('<xsl:value-of select="@role"/>')</xsl:attribute>
                     </xsl:element>
                     <xsl:element name="input">
                         <xsl:attribute name="type">hidden</xsl:attribute>
                         <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList</xsl:attribute>
-                        <xsl:attribute name="value">
-                          <xsl:if test="@ipList != '.*' and @ipList != 'default'">
-                            <xsl:value-of select="@ipList"/>
-                          </xsl:if>
-                        </xsl:attribute>
                     </xsl:element>
 </td>
 <td valign="top">
-<select name="theList" size="2" onChange="javascript:doSelect()" style="width: 100px;">
-<option>127.0.0.1</option>
-</select>
+  <xsl:variable name="ips">
+    <xsl:call-template name="tokenize">
+      <xsl:with-param name="string" select="@ipList"/>
+    </xsl:call-template>
+  </xsl:variable>
+<xsl:element name="select">
+  <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.select</xsl:attribute>
+  <xsl:choose>
+    <xsl:when test="count($ips/token) &gt; 2">
+      <xsl:attribute name="size">
+        <xsl:value-of select="count($ips/token)"/>
+      </xsl:attribute>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:attribute name="size">2</xsl:attribute>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:attribute name="onChange">javascript:doSelect('<xsl:value-of select="@role"/>')</xsl:attribute>
+  <xsl:attribute name="style">width: 150px;</xsl:attribute>
+                        <xsl:if test="@ipList = 'default'">
+                          <xsl:attribute name="disabled">disabled</xsl:attribute>
+                        </xsl:if>
+  <xsl:for-each select="$ips/token"> 
+      <xsl:if test=". != 'default'">
+    <option>
+      <xsl:value-of select="."/>
+    </option>
+      </xsl:if>
+  </xsl:for-each>
+</xsl:element>
 </td>
 <td valign="top">
-<input name="addButton" type="button" value="+" onClick="javascript:doAdd()" style="width: 
-25px; height: 20px;"/><br/>
-<input name="deleteButton" type="button" value="-" disabled="disabled" 
-onClick="javascript:doDelete()" style="width: 25px; height: 20px;"/>
+<xsl:element name="input">
+  <xsl:attribute name="type">button</xsl:attribute>
+  <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.addButton</xsl:attribute>
+  <xsl:attribute name="value">+</xsl:attribute>
+  <xsl:attribute name="onClick">javascript:doAdd('<xsl:value-of select="@role"/>')</xsl:attribute>
+  <xsl:attribute name="style">width: 25px; height:20px;</xsl:attribute>
+  <xsl:if test="@ipList = 'default'">
+    <xsl:attribute name="disabled">disabled</xsl:attribute>
+  </xsl:if>
+</xsl:element>
+<xsl:element name="input">
+  <xsl:attribute name="type">button</xsl:attribute>
+  <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.deleteButton</xsl:attribute>
+  <xsl:attribute name="value">-</xsl:attribute>
+  <xsl:attribute name="onClick">javascript:doDelete('<xsl:value-of select="@role"/>')</xsl:attribute>
+  <xsl:attribute name="style">width: 25px; height:20px;</xsl:attribute>
+  <xsl:attribute name="disabled">disabled</xsl:attribute>
+</xsl:element>
 </td>
 </tr>
 </table>
@@ -310,6 +343,7 @@ onClick="javascript:doDelete()" style="width: 25px; height: 20px;"/>
                       <xsl:if test="@ipList = 'default'">
                         <xsl:attribute name="checked">checked</xsl:attribute>
                       </xsl:if>
+                      <xsl:attribute name="onClick">javascript:defaultSelected('<xsl:value-of select="@role"/>')</xsl:attribute>
                     </xsl:element> 
                     <xsl:element name="label">
                       <xsl:attribute name="for"><xsl:value-of select="@role"/>.ipListValue.default</xsl:attribute>
@@ -331,4 +365,80 @@ onClick="javascript:doDelete()" style="width: 25px; height: 20px;"/>
       </body>
     </html>
   </xsl:template>
+
+
+<xsl:template name="tokenize">
+   <xsl:param name="string"
+              select="''" />
+   <xsl:param name="delimiters"
+              select="' &#x9;
+'" />
+   <xsl:choose>
+      <xsl:when test="not($string)" />
+      <xsl:when test="not($delimiters)">
+         <xsl:call-template name="_tokenize-characters">
+            <xsl:with-param name="string"
+                            select="$string" />
+         </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+         <xsl:call-template name="_tokenize-delimiters">
+            <xsl:with-param name="string"
+                            select="$string" />
+            <xsl:with-param name="delimiters"
+                            select="$delimiters" />
+         </xsl:call-template>
+      </xsl:otherwise>
+   </xsl:choose>
+</xsl:template>
+<xsl:template name="_tokenize-characters">
+   <xsl:param name="string" />
+   <xsl:if test="$string">
+      <token>
+         <xsl:value-of select="substring($string, 1, 1)" />
+      </token>
+      <xsl:call-template name="_tokenize-characters">
+         <xsl:with-param name="string"
+                         select="substring($string, 2)" />
+      </xsl:call-template>
+   </xsl:if>
+</xsl:template>
+<xsl:template name="_tokenize-delimiters">
+   <xsl:param name="string" />
+   <xsl:param name="delimiters" />
+   <xsl:variable name="delimiter"
+                 select="substring($delimiters, 1, 1)" />
+   <xsl:choose>
+      <xsl:when test="not($delimiter)">
+         <token>
+            <xsl:value-of select="$string" />
+         </token>
+      </xsl:when>
+      <xsl:when test="contains($string, $delimiter)">
+         <xsl:if test="not(starts-with($string, $delimiter))">
+            <xsl:call-template name="_tokenize-delimiters">
+               <xsl:with-param name="string"
+                               select="substring-before($string, $delimiter)" />
+               <xsl:with-param name="delimiters"
+                               select="substring($delimiters, 2)" />
+            </xsl:call-template>
+         </xsl:if>
+         <xsl:call-template name="_tokenize-delimiters">
+            <xsl:with-param name="string"
+                            select="substring-after($string, $delimiter)" />
+            <xsl:with-param name="delimiters"
+                            select="$delimiters" />
+         </xsl:call-template>
+      </xsl:when>
+      <xsl:otherwise>
+         <xsl:call-template name="_tokenize-delimiters">
+            <xsl:with-param name="string"
+                            select="$string" />
+            <xsl:with-param name="delimiters"
+                            select="substring($delimiters, 2)" />
+         </xsl:call-template>
+      </xsl:otherwise>
+   </xsl:choose>
+</xsl:template>
+
 </xsl:stylesheet>
