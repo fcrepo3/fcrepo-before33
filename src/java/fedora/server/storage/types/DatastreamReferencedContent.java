@@ -3,8 +3,6 @@ package fedora.server.storage.types;
 import fedora.common.HttpClient;
 import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-
 import org.apache.commons.httpclient.methods.GetMethod;
 
 /**

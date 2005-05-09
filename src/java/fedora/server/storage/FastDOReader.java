@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
 import java.util.Vector;
 
 import fedora.server.Context;
-import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;

@@ -16,7 +16,6 @@ import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.utilities.SQLUtility;
-import fedora.server.utilities.ServerUtility;
 
 /**
  *

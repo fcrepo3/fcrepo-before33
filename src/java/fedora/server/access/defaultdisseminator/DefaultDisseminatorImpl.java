@@ -17,7 +17,6 @@ import fedora.server.errors.DisseminationException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
