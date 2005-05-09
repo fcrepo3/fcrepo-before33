@@ -3,6 +3,7 @@ package fedora.server.security;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.io.File;
 import java.io.FileInputStream;
@@ -273,20 +274,22 @@ public class DefaultAuthorization extends Module implements Authorization {
 		deldirfiles(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY);
 		BackendPolicies backendPolicies = new BackendPolicies(fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);
 		System.err.println("fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);	
-		String[] tempfiles = backendPolicies.generateBackendPolicies();
+		Hashtable tempfiles = backendPolicies.generateBackendPolicies();
 		System.err.println("tempfiles=" + tempfiles);					
-		System.err.println("tempfiles.length=" + tempfiles.length);							
+		System.err.println("tempfiles.length=" + tempfiles.size());							
 		TransformerFactory tfactory = TransformerFactory.newInstance();
-		for (int i=0; i<tempfiles.length; i++) {
+		Iterator iterator = tempfiles.keySet().iterator();
+		while (iterator.hasNext()) {
 			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
 			File f = new File(fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION); //<<stylesheet location
 			StreamSource ss = new StreamSource(f);
 		    Transformer transformer = tfactory.newTransformer(ss); //xformPath
-			System.err.println("tempfiles[i]=" + tempfiles[i]);
-		    File infile = new File(tempfiles[i]);
+		    String key = (String) iterator.next();
+			System.err.println("key=" + key);
+		    File infile = new File((String)tempfiles.get(key));
 			FileInputStream fis = new FileInputStream(infile);
 			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
-			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());
+			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + key);
 			transformer.transform(new StreamSource(fis), new StreamResult(fos));
 		}
 	}

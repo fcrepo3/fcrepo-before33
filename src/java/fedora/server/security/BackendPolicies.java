@@ -71,9 +71,7 @@ public class BackendPolicies {
 				throw new Exception();
 			}
 			String key = raw.substring(0, i);
-			System.err.println("key=" + key);
 			key = key.replaceAll("\\:", ":");
-			System.err.println("\tkey=" + key);
 			String subkey = raw.substring(i+1);
 			System.err.println(key + " | " + subkey + "|" + data);			
 			if (! allowedSubkeys.contains(subkey)) {
@@ -118,7 +116,7 @@ public class BackendPolicies {
 		}
 	}
 	
-	public String[] generateBackendPolicies() throws Exception {
+	public Hashtable generateBackendPolicies() throws Exception {
 		readSpecs();
 		complete();
 		return writePolicies();
@@ -168,12 +166,12 @@ public class BackendPolicies {
 		defaults.put(ROLES, roles);
 	}
 	
-	private String[] writePolicies() throws Exception {
+	private Hashtable writePolicies() throws Exception {
 		StringBuffer sb = null;
 		StringBuffer sb2 = null;
-		String[] tempfiles = new String[policies.size()];
+		Hashtable tempfiles = new Hashtable();
 		Iterator it = policies.keySet().iterator();
-		for (int i=0; it.hasNext(); i++) {
+		while (it.hasNext()) {
 			sb = new StringBuffer();
 			sb2 = new StringBuffer();
 			String key = (String) it.next();
@@ -248,7 +246,7 @@ public class BackendPolicies {
 			} else {
 				outfile = new File(outFilePath + File.separator + filename + ".xml");
 			}
-			tempfiles[i] = outfile.getAbsolutePath();
+			tempfiles.put(filename + ".xml", outfile.getAbsolutePath());
 			PrintStream pos = new PrintStream(new FileOutputStream(outfile));
 			pos.println(sb);
 			pos.close();
