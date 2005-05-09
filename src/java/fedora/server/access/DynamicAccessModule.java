@@ -3,17 +3,13 @@ package fedora.server.access;
 import java.io.File;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.HashMap;
 import java.util.Map;
 
-// Fedora imports
-import fedora.common.Constants;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.ReadOnlyContext;
 import fedora.server.search.FieldSearchQuery;
 import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.DOManager;

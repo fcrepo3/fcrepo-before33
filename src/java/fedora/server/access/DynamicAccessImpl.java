@@ -7,13 +7,9 @@ import java.util.Hashtable;
 import java.io.File;
 import java.lang.Class;
 import java.lang.reflect.*;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
-import fedora.server.Server;
 import fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl;
 import fedora.server.access.defaultdisseminator.ServiceMethodDispatcher;
 import fedora.server.errors.MethodNotFoundException;
