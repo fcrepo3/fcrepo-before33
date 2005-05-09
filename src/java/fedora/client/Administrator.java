@@ -9,7 +9,6 @@ import javax.help.Map.ID;
 import javax.swing.*;
 
 import org.apache.axis.AxisFault;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import fedora.swing.jhelp.SimpleHelpBroker;
