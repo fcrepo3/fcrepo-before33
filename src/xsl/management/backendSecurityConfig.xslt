@@ -257,8 +257,8 @@ function defaultSelected(role) {
                     </xsl:if>
                   </xsl:element>
                   <xsl:element name="label">
-                    <xsl:attribute name="for"><xsl:value-of select="@role"/>.ssl.default</xsl:attribute>
-                    Use Default
+                    <xsl:attribute name="for"><xsl:value-of select="@role"/>.ssl.default</xsl:attribute> Use
+                    <acronym title="(Default is Optional)" style="border-bottom-style: solid; border-bottom-width: 1">Default</acronym>
                   </xsl:element>
                  </nobr>
                 </td>
