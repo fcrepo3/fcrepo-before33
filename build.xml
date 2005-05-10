@@ -757,9 +757,9 @@
 		<copy todir="${tomcat.deploy.dir}/fedora">
 			<fileset dir="src/jsp"/>
 		</copy>
-		<java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
+		<!--java classpath="${lib.md5}" jar="lib/saxon.jar" fork="true">
 			<arg line="-o ${tomcat.deploy.dir}/fedora/WEB-INF/web-unrestricted.xml ${tomcat.deploy.dir}/fedora/WEB-INF/web.xml src/xsl/security/remove-web-xml-security.xsl"/>
-		</java>
+		</java-->
 		<copy todir="${tomcat.deploy.dir}/fedora/WEB-INF/classes">
 			<fileset dir="temp/server/classes">
 				<!--was exclude name="org/**"/-->
