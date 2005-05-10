@@ -185,7 +185,7 @@ public class BESecurityServlet extends HttpServlet {
         if (!defaultBasicAuth.equals("true")) defaultBasicAuth = "false";
         String defaultSSL = getParamValue("all.ssl", params);
         if (!defaultSSL.equals("true")) defaultSSL = "false";
-        String defaultIPList = getParamValue("all.iplist", params);
+        String defaultIPList = getParamValue("all.ipList", params);
         out.println("all.basicAuth = " + defaultBasicAuth);
         out.println("all.ssl       = " + defaultSSL);
         out.println("# These are space-delimited regular expressions.  Here, an empty value allows any IP address.");
@@ -327,6 +327,7 @@ public class BESecurityServlet extends HttpServlet {
         if (label != null) out.print(" label=\"" + StreamUtility.enc(label) + "\"");
         out.print(" basicAuth=\"" + basicAuth + "\"");
         out.print(" ssl=\"" + ssl + "\"");
+        if (ipList.trim().length() == 0) ipList = ".*";
         out.print(" ipList=\"" + StreamUtility.enc(ipList) + "\"");
         out.println("/>");
     }

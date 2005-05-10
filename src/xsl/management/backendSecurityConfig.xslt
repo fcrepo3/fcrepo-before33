@@ -26,19 +26,24 @@ function doSubmit() {
             if (ipListValue != "custom") {
               document.theForm.elements[role + ".ipList"].value = ipListValue;
             } else {
-              var spaceDelimitedList = "";
-              var zlist = document.theForm.elements[role + ".ipList.select"];
-              for (var k = 0; k < zlist.options.length; k++) {
-                if (k > 0) spaceDelimitedList = spaceDelimitedList + " ";
-                spaceDelimitedList = spaceDelimitedList + zlist.options[k].text;
-              }
-              document.theForm.elements[role + ".ipList"].value = spaceDelimitedList;
+              setHiddenList(role);
             }
           }
         }
       }
     }
+    setHiddenList('all');
     return true;
+}
+
+function setHiddenList(role) {
+    var spaceDelimitedList = "";
+    var zlist = document.theForm.elements[role + ".ipList.select"];
+    for (var k = 0; k < zlist.options.length; k++) {
+      if (k > 0) spaceDelimitedList = spaceDelimitedList + " ";
+      spaceDelimitedList = spaceDelimitedList + zlist.options[k].text;
+    }
+    document.theForm.elements[role + ".ipList"].value = spaceDelimitedList;
 }
 
 function doSelect(role) {
@@ -103,11 +108,12 @@ function defaultSelected(role) {
               <td valign="top">
                 <center>
                   <h3>Backend Security Configuration</h3>
-                  <strong>TODO: Put general instructions here.  Also add ability to edit default config values.</strong>
-                  <p>
-  NOTE: IP address patterns are regular expressions, as defined at <a href="http://www.w3.org/TR/xpath-functions/#regex-syntax">http://www.w3.org/TR/xpath-functions/#regex-syntax</a>
-  </p>
                 </center>
+                  <p>
+                    Configure default and service-specific restrictions using
+                    the form below.</p>
+                  <p>Note: Host patterns are <a href="http://www.w3.org/TR/xpath-functions/#regex-syntax">regular expressions, as defined here</a>.
+  </p>
               </td>
             </tr>
           </table>
@@ -120,18 +126,166 @@ function defaultSelected(role) {
                 <xsl:value-of select="backendSecurityConfig/@lastModified"/>
             </xsl:attribute>
           </xsl:element>
+
+          <table border="0" cellpadding="4" cellspacing="0" width="85%">
+            <tr bgcolor="#ffffaa">
+              <td bgcolor="#ffff66" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 2; border-left-style: solid; border-left-color: black;">
+                <strong>Default Settings</strong>
+              </td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
+            </tr>
+            <tr bgcolor="#ffffdd">
+              <td bgcolor="#ffffdd" valign="top" style="border-left-width: 2; border-left-style: solid; border-left-color: black;">
+                These settings will be used for services
+                that have not been configured with specific values.
+              </td>
+              <td valign="top" style="border-left-width: 1; border-left-style: solid; border-left-color: black;">
+                  <xsl:element name="input">
+                    <xsl:attribute name="type">radio</xsl:attribute>
+                    <xsl:attribute name="name">all.basicAuth</xsl:attribute>
+                    <xsl:attribute name="id">all.basicAuth.optional</xsl:attribute>
+                    <xsl:attribute name="value">false</xsl:attribute>
+                    <xsl:if test="//default/@basicAuth = 'false'">
+                      <xsl:attribute name="checked">checked</xsl:attribute>
+                    </xsl:if>
+                  </xsl:element>
+                  <xsl:element name="label">
+                    <xsl:attribute name="for">all.basicAuth.optional</xsl:attribute>
+                    Optional
+                  </xsl:element><br/>
+                  <xsl:element name="input">
+                    <xsl:attribute name="type">radio</xsl:attribute>
+                    <xsl:attribute name="name">all.basicAuth</xsl:attribute>
+                    <xsl:attribute name="id">all.basicAuth.required</xsl:attribute>
+                    <xsl:attribute name="value">true</xsl:attribute>
+                    <xsl:if test="//default/@basicAuth = 'true'">
+                      <xsl:attribute name="checked">checked</xsl:attribute>
+                    </xsl:if>
+                  </xsl:element>
+                  <xsl:element name="label">
+                    <xsl:attribute name="for">all.basicAuth.required</xsl:attribute>
+                    Required
+                  </xsl:element>
+              </td>
+              <td valign="top" style="border-left-width: 1; border-left-style: solid; border-left-color: black;">
+                <nobr>
+                  <xsl:element name="input">
+                    <xsl:attribute name="type">radio</xsl:attribute>
+                    <xsl:attribute name="name">all.ssl</xsl:attribute>
+                    <xsl:attribute name="id">all.ssl.optional</xsl:attribute>
+                    <xsl:attribute name="value">false</xsl:attribute>
+                    <xsl:if test="//default/@ssl = 'false'">
+                      <xsl:attribute name="checked">checked</xsl:attribute>
+                    </xsl:if>
+                  </xsl:element>
+                  <xsl:element name="label">
+                    <xsl:attribute name="for">all.ssl.optional</xsl:attribute>
+                    Optional
+                  </xsl:element>
+                </nobr><br/>
+                <nobr>
+                  <xsl:element name="input">
+                    <xsl:attribute name="type">radio</xsl:attribute>
+                    <xsl:attribute name="name">all.ssl</xsl:attribute>
+                    <xsl:attribute name="id">all.ssl</xsl:attribute>
+                    <xsl:attribute name="value">true</xsl:attribute>
+                    <xsl:if test="//default/@ssl = 'true'">
+                      <xsl:attribute name="checked">checked</xsl:attribute>
+                    </xsl:if>
+                  </xsl:element>
+                  <xsl:element name="label">
+                    <xsl:attribute name="for">all.ssl.required</xsl:attribute>
+                    Required
+                  </xsl:element>
+                </nobr>
+              </td>
+              <td valign="top" style="border-left-width: 1; border-left-style: solid; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;">
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+<td valign="top">
+                    <xsl:element name="input">
+                        <xsl:attribute name="type">hidden</xsl:attribute>
+                        <xsl:attribute name="name">all.ipList</xsl:attribute>
+                        <xsl:attribute name="value"><xsl:value-of select="//default/@ipList"/></xsl:attribute>
+                    </xsl:element>
+</td>
+<td valign="top">
+  <xsl:variable name="ips">
+    <xsl:call-template name="tokenize">
+      <xsl:with-param name="string" select="//default/@ipList"/>
+    </xsl:call-template>
+  </xsl:variable>
+<xsl:element name="select">
+  <xsl:attribute name="name">all.ipList.select</xsl:attribute>
+  <xsl:choose>
+    <xsl:when test="count($ips/token) &gt; 2">
+      <xsl:attribute name="size">
+        <xsl:value-of select="count($ips/token)"/>
+      </xsl:attribute>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:attribute name="size">2</xsl:attribute>
+    </xsl:otherwise>
+  </xsl:choose>
+  <xsl:attribute name="onChange">javascript:doSelect('all')</xsl:attribute>
+  <xsl:attribute name="style">width: 150px;</xsl:attribute>
+                        <xsl:if test="//default/@ipList = 'default'">
+                          <xsl:attribute name="disabled">disabled</xsl:attribute>
+                        </xsl:if>
+  <xsl:for-each select="$ips/token"> 
+      <xsl:if test=". != 'default'">
+    <option>
+      <xsl:value-of select="."/>
+    </option>
+      </xsl:if>
+  </xsl:for-each>
+</xsl:element>
+</td>
+<td valign="top">
+<xsl:element name="input">
+  <xsl:attribute name="type">button</xsl:attribute>
+  <xsl:attribute name="name">all.ipList.addButton</xsl:attribute>
+  <xsl:attribute name="value">+</xsl:attribute>
+  <xsl:attribute name="onClick">javascript:doAdd('all')</xsl:attribute>
+  <xsl:attribute name="style">width: 25px; height:20px;</xsl:attribute>
+  <xsl:if test="//default/@ipList = 'default'">
+    <xsl:attribute name="disabled">disabled</xsl:attribute>
+  </xsl:if>
+</xsl:element><br/>
+<xsl:element name="input">
+  <xsl:attribute name="type">button</xsl:attribute>
+  <xsl:attribute name="name">all.ipList.deleteButton</xsl:attribute>
+  <xsl:attribute name="value">-</xsl:attribute>
+  <xsl:attribute name="onClick">javascript:doDelete('all')</xsl:attribute>
+  <xsl:attribute name="style">width: 25px; height:20px;</xsl:attribute>
+  <xsl:attribute name="disabled">disabled</xsl:attribute>
+</xsl:element>
+</td>
+</tr>
+</table>
+              </td>
+            </tr>
+              <tr>
+                <td colspan="4" style="border-top-width: 2; border-top-style: solid; border-top-color: black;">
+                &#160;
+                </td>
+              </tr>
+          </table>
+
           <table border="0" cellpadding="4" cellspacing="0" width="95%">
             <xsl:for-each select="//service">
-            <tr>
-              <td bgcolor="#9999ff" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 2; border-left-style: solid; border-left-color: black;">
-                <strong><xsl:value-of select="@role"/></strong>
+            <tr bgcolor="#ddddff">
+              <td bgcolor="#bbbbff" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 2; border-left-style: solid; border-left-color: black;">
+                <strong><xsl:value-of select="@role"/> Service</strong>
               </td>
-              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black;"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
-              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
-              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
+              <td style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
             </tr>
-              <tr bgcolor="#eeeeee">
-                <td bgcolor="#ddddff" valign="top" style="border-left-width: 2; border-left-style: solid; border-left-color: black;">
+              <tr bgcolor="#eeeeff">
+                <td valign="top" style="border-left-width: 2; border-left-style: solid; border-left-color: black;">
                   <xsl:choose>
                   <xsl:when test="@label != ''">
                     <font size="-1">[
@@ -182,7 +336,7 @@ function defaultSelected(role) {
                       <xsl:attribute name="value"><xsl:value-of select="@label"/></xsl:attribute>
                     </xsl:element>
                 </td>
-                <td valign="top">
+                <td valign="top" style="border-left-style: solid; border-left-width: 1; border-left-color: black;">
                   <xsl:element name="input">
                     <xsl:attribute name="type">radio</xsl:attribute>
                     <xsl:attribute name="name"><xsl:value-of select="@role"/>.basicAuth</xsl:attribute>
@@ -308,7 +462,7 @@ function defaultSelected(role) {
 <xsl:element name="select">
   <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.select</xsl:attribute>
   <xsl:choose>
-    <xsl:when test="count($ips/token) &gt; 4">
+    <xsl:when test="count($ips/token) &gt; 2">
       <xsl:attribute name="size">
         <xsl:value-of select="count($ips/token)"/>
       </xsl:attribute>
