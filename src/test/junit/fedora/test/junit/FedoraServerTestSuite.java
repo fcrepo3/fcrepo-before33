@@ -1,7 +1,6 @@
 package fedora.test.junit;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
@@ -15,7 +14,7 @@ import junit.framework.TestSuite;
  * 
  * @author Edwin Shin
  */
-public class FedoraServerTestSuite extends TestCase {
+public class FedoraServerTestSuite {
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(FedoraServerTestSuite.suite());

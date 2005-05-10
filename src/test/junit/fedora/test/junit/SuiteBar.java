@@ -6,19 +6,17 @@ import junit.framework.TestSuite;
 /**
  * @author Edwin Shin
  */
-public class FooSuite {
+public class SuiteBar {
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(FooSuite.suite());
+        junit.textui.TestRunner.run(SuiteBar.suite());
     }
 
     public static Test suite() {
         TestSuite suite = new TestSuite("Test for fedora.test.junit");
         //$JUnit-BEGIN$
-        suite.addTestSuite(TestFoo.class);
-        suite.addTest(BarSuite.suite());
+        suite.addTestSuite(TestBar.class);
         //$JUnit-END$
-        
         return new FedoraServerTestSetup(suite);
     }
 }
