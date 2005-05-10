@@ -10,7 +10,7 @@
 	<comment>Defines the password for the Fedora server; default is fedoraAdmin.</comment>
 	<param name="backendUsername" value="backendUser"/>
 	<comment>Defines the username for the backend calls from (and perhaps to) Fedora server; default is fedoraAdmin.</comment>
-	<!-- param name="backendPassword" value=""/ code doesn't like 0-length strings -->
+	<!-- <param name="backendPassword" value=""/> code doesn't like 0-length strings -->
 	<comment>Defines the password for the backend calls from (and perhaps to) Fedora server; default is fedoraAdmin.</comment>
 	<param name="log_max_size" value="5242880"/>
 	<comment>Defines the threshold at which a new log file is generated based on the size of the current log file in bytes; default is 5242880 bytes.</comment>
@@ -54,17 +54,17 @@
 		to be the escape character (token beginning an escape sequence).  This is needed to correctly
 		store and retrieve filepaths from the registry tables, if running under Windows/DOS.
 	</comment>
-	<param name="object_store_base" value="C:\fedora2_0_objects" testvalue="/tmp/fedoraTest/objects"/>
+	<param name="object_store_base" value="@fedora.home@/testStore/objects"/>
 	<comment>Defines the root directory for the internal storage of Fedora objects. 
 		This value should be adjusted based on your installation environment; 
 		default assumes a Windows installation of C:\fedora2_0_objects.
 	</comment>
-	<param name="temp_store_base" value="C:\fedora2_0_temp" testvalue="/tmp/fedoraTest/temp"/>
+	<param name="temp_store_base" value="@fedora.home@/testStore/temp"/>
 	<comment>Defines the root directory for Fedora temporary storage. 
 		This value should be adjusted based on your installation environment; 
 		default assumes a Windows installation of C:\fedora2_0_temp.
 	</comment>
-	<param name="datastream_store_base" value="C:\fedora2_0_datastreams" testvalue="/tmp/fedoraTest/datastreams"/>
+	<param name="datastream_store_base" value="@fedora.home@/testStore/datastreams"/>
 	<comment>Defines the root directory for the internal storage of Managed Content datastreams. 
 		This value should be adjusted based on your installation environment; 
 		default assumes a Windows installation of C:\fedora2_0_datastreams.
@@ -102,9 +102,9 @@
         <param name="REPOSITORY-GENERATED-POLICIES-DIRECTORY" value="config/xacml-policies/active/repository-policies-generated"/>        
         <param name="OBJECT-POLICIES-DIRECTORY" value="config/xacml-policies/active/object-policies"/>
         <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
-        <param name="ENFORCE-MODE" value="enforce-policies" testvalue="permit-all-requests"/>
-        <!-- param name="ENFORCE-MODE" value="permit-all-requests"/ -->
-        <!-- param name="ENFORCE-MODE" value="deny-all-requests"/ -->
+        <!-- <param name="ENFORCE-MODE" value="enforce-policies"/> -->
+        <param name="ENFORCE-MODE" value="permit-all-requests"/>
+        <!-- <param name="ENFORCE-MODE" value="deny-all-requests"/> -->
         <param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-1.0.xsd"/>
         <param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
         <param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
@@ -151,7 +151,7 @@
           Valid values are: "foxml1.0" and "metslikefedora1"
 		<param name="pidNamespace" value="changeme"/>
 		<param name="retainPIDs" value="demo test changeme fedora-bdef fedora-bmech tutorial"/>
-		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" testvalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
+		<param name="storagePool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 		<param name="storageCharacterEncoding" value="UTF-8"/>
 		<param name="defaultExportFormat" value="foxml1.0"/>
 	</module>
@@ -291,7 +291,7 @@
         </comment>
 		<param name="maxResults" value="100"/>
 		<param name="maxSecondsPerSession" value="100"/>
-		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" testvalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
+		<param name="connectionPool" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
 	<module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
 		<comment>
@@ -319,7 +319,7 @@
         </comment>
 		<param name="level" value="1"/>
 		<param name="datastore" value="localKowariTriplestore"/>
-    <param name="alias:test" value="http://example.org/terms#"/>
+    	<param name="alias:test" value="http://example.org/terms#"/>
 	</module>
 	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
 		<comment>
@@ -372,8 +372,8 @@
 	</module>
 	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
 		<comment>This module facilitates obtaining ConnectionPools</comment>
-		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" testvalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
-		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" testvalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
+		<param name="defaultPoolName" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
+		<param name="poolNames" value="localMySQLPool" mckoivalue="localMcKoiPool" oraclevalue="localOracle9iPool"/>
 	</module>
 	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
 		<comment>
@@ -457,7 +457,7 @@
 		</comment>
 		<param name="dbUsername" value="fedoraAdmin"/>
 		<param name="dbPassword" value="fedoraAdmin"/>
-		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedoraTest20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
 		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
 		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
 		<param name="maxActive" value="100"/>
@@ -577,7 +577,7 @@
         <comment>local Kowari Triplestore used by the Resource Index</comment>
         <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
         <param name="remote" value="false"/>
-        <param name="path" value="C:\fedora2_0_resourceIndex" testvalue="/tmp/fedoraTest/resourceIndex"/>
+        <param name="path" value="@fedora.home@/testStore/resourceIndex"/>
         <param name="serverName" value="fedora"/>
         <param name="modelName" value="ri"/>
         <param name="poolInitialSize" value="3"/>

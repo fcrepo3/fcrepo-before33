@@ -3,6 +3,7 @@
 <project name="Fedora" default="serverdist" basedir=".">
 	<description>The Fedora Project </description>
 	<!-- set global properties for this build -->
+    <property environment="env"/> <!-- OS-specific environment variables -->
 	<property name="build.debug" value="on"/>
 	<property name="build.optimize" value="off"/>
 	<property name="src.dir" location="src"/>
@@ -867,6 +868,9 @@
 			<fileset dir="src/dbspec/server"/>
 		</copy>
 		<copy todir="dist/server/config">
+            <filterset>
+                <filter token="fedora.home" value="${env.FEDORA_HOME}"/>  
+            </filterset>
 			<fileset dir="src/fcfg/server">
 				<include name="**/*.fcfg"/>
 			</fileset>
