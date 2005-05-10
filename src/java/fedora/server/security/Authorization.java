@@ -23,6 +23,8 @@ public interface Authorization {
 	public static final String ENVIRONMENT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:environment";
 	public static final String ENVIRONMENT_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:environment-category:access-environment";
 
+	public static final String FEDORA_ROLE_KEY = "fedoraRole";
+	
 	public void reloadPolicies(Context context)	throws Exception;
 	
 	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
