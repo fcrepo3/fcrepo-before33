@@ -9,7 +9,6 @@ package fedora.server.security;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.HashSet;

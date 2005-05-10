@@ -1,7 +1,6 @@
 package fedora.common.policy;
 
 import com.sun.xacml.attr.DateTimeAttribute;
-import com.sun.xacml.attr.StringAttribute;
 
 public class ResourceNamespace extends XacmlNamespace {
 	

@@ -19,14 +19,8 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
-import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzException;
-import fedora.server.errors.authorization.AuthzOperationalException;
-import fedora.server.errors.authorization.AuthzPermittedException;
-import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
-import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.utilities.ServerUtility;
 
 /**
  * Accepts and HTTP Multipart POST of a file from an authorized user, and if 

@@ -5,10 +5,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
-import com.sun.xacml.attr.DateAttribute;
-import com.sun.xacml.attr.IntegerAttribute;
-import com.sun.xacml.attr.TimeAttribute;
-import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 

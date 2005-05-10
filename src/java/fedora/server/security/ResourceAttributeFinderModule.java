@@ -3,15 +3,11 @@ import java.util.Date;
 import java.net.URI;
 import java.net.URISyntaxException;
 import com.sun.xacml.EvaluationCtx;
-import com.sun.xacml.attr.AnyURIAttribute;
 import com.sun.xacml.attr.AttributeDesignator;
-import com.sun.xacml.attr.DateTimeAttribute;
-import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 
 import fedora.common.Constants;
-import fedora.common.policy.XacmlName;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.ServerException;

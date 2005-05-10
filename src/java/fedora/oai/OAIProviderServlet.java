@@ -2,13 +2,11 @@ package fedora.oai;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 
 import fedora.common.Constants;
@@ -20,11 +18,8 @@ import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
-import fedora.server.errors.servletExceptionExtensions.Continue100Exception;
-import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.utilities.ServerUtility;
 
 /**
  *

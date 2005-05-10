@@ -1,24 +1,14 @@
 package fedora.server;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
 import org.apache.catalina.realm.GenericPrincipal;
 
-import com.sun.xacml.attr.DateAttribute;
-import com.sun.xacml.attr.DateTimeAttribute;
-import com.sun.xacml.attr.TimeAttribute;
-
 import fedora.common.Constants;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.security.Authorization;
 import fedora.server.utilities.DateUtility;
 
 /**

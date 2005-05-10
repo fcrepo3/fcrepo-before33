@@ -23,9 +23,7 @@ import java.io.File;
 import java.security.Principal;
 import java.security.acl.Group;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 
 import javax.security.auth.Subject;
@@ -47,11 +45,7 @@ import org.apache.catalina.util.StringManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import fedora.common.Constants;
-//import fedora.server.errors.ModuleInitializationException;
-//import fedora.server.security.PolicyEnforcementPoint;
 import fedora.server.MultiValueMap;
-//import fedora.server.errors.AuthzOperationalException;
 import fedora.server.security.ReducedPolicyEnforcementPoint;
 import fedora.server.security.Transom;
 

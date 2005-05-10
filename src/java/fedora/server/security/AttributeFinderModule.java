@@ -1,7 +1,5 @@
 package fedora.server.security;
 
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.net.URI;
@@ -10,7 +8,6 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletContext;
 import com.sun.xacml.EvaluationCtx;
-import com.sun.xacml.ParsingException;
 import com.sun.xacml.attr.AttributeValue;
 import com.sun.xacml.attr.BagAttribute;
 import com.sun.xacml.attr.IntegerAttribute;

@@ -2,7 +2,6 @@ package fedora.server;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,7 +10,6 @@ import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.authorization.AuthzDeniedException;
-import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
 import fedora.server.errors.servletExceptionExtensions.BadRequest400Exception;
@@ -21,7 +19,6 @@ import fedora.server.errors.servletExceptionExtensions.InternalError500Exception
 import fedora.server.errors.servletExceptionExtensions.Ok200Exception;
 import fedora.server.errors.servletExceptionExtensions.Unavailable503Exception;
 import fedora.server.security.Authorization;
-import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 
 /**

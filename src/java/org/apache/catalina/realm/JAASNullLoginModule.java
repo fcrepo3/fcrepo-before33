@@ -1,7 +1,6 @@
 package org.apache.catalina.realm;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
@@ -15,7 +14,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.catalina.Container;
-import org.apache.catalina.Realm;
 
 public final class JAASNullLoginModule implements LoginModule {
 	

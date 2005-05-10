@@ -23,7 +23,6 @@
  */
 
 package org.apache.catalina.realm;
-import java.io.File;
 import java.io.IOException;
 import java.util.Hashtable;
 import javax.security.auth.callback.Callback;
@@ -32,7 +31,6 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -42,13 +40,6 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.catalina.Container;
-
-import fedora.common.Constants;
-import fedora.server.Context;
-import fedora.server.errors.ModuleInitializationException;
-//import fedora.server.errors.authorization.NotAuthorizedException;
-import fedora.server.security.PolicyEnforcementPoint;
-import fedora.server.security.ReducedPolicyEnforcementPoint;
 
 public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule {
 	

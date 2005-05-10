@@ -3,7 +3,6 @@ package fedora.server.security;
 import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.authorization.AuthzException;
-import fedora.server.errors.authorization.AuthzDeniedException;
 
 public interface Authorization {
 	
