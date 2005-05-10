@@ -1067,19 +1067,22 @@
         <path refid="client-libs.path"/>
     </path>
     
-    <target name="compile-test" depends="server">
+<!--<target name="compile-test" depends="server">-->
+    <target name="compile-test">
         <javac fork="yes"
-	           srcdir="${junit.src.dir}" includes="**/*.java"
-	           destdir="${test.build.dir}">
-	        <classpath refid="test.path"/>
-	    </javac>
+               srcdir="${junit.src.dir}" includes="**/*.java"
+               destdir="${test.build.dir}">
+            <classpath refid="test.path"/>
+        </javac>
     </target>
+    
     <target name="junit" depends="compile-test">
-        
-        <junit printsummary="yes" fork="yes" haltonfailure="yes">
+        <junit printsummary="on" fork="yes" haltonfailure="yes">
             <classpath refid="test.path" />
-			<formatter type="plain"/>
-			<test name="fedora.server.resourceIndex.AllTests"/>
+            <formatter type="plain"
+                       usefile="false" />         
+            <!--<test name="fedora.server.resourceIndex.AllTests"/>-->
+            <test name="fedora.test.junit.FooSuite"/>
         </junit>
     </target>
     
