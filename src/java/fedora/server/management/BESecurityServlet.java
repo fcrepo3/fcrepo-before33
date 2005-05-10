@@ -36,6 +36,12 @@ public class BESecurityServlet extends HttpServlet {
      */
     public void doGet(HttpServletRequest req,
                       HttpServletResponse res) throws ServletException {
+        showConfig(req, res, null);
+    }
+
+    private void showConfig(HttpServletRequest req,
+                            HttpServletResponse res,
+                            String alertMessage) throws ServletException {
         PrintWriter writer = null;
         try {
             // get the pids and labels of all bMechs in the repository
@@ -93,6 +99,9 @@ public class BESecurityServlet extends HttpServlet {
                                               .newInstance()
                                               .newTemplates(new StreamSource(m_styleFile))
                                               .newTransformer();
+                if (alertMessage != null) {
+                    transformer.setParameter("alertMessage", alertMessage);
+                }
                 res.setContentType("text/html; charset=UTF-8");
                 writer = res.getWriter();
                 transformer.transform(new StreamSource(xmlReader),
@@ -116,15 +125,8 @@ public class BESecurityServlet extends HttpServlet {
                        HttpServletResponse res) throws ServletException {
         PrintWriter writer = null;
         try {
-            Map params = req.getParameterMap();
-
-            // TODO: Up-to-date check, plus validation
-            // (if these fail, execute doGet but with an error popup)
-
-            res.setContentType("text/plain; charset=UTF-8");
-            writer = res.getWriter();
-            writeConfig(params, writer);
-
+            writeConfigFile(req.getParameterMap());
+            showConfig(req, res, "Success! Your changes have been saved.");
         } catch (Exception e) {
             try {
                 e.printStackTrace();
@@ -135,6 +137,24 @@ public class BESecurityServlet extends HttpServlet {
             if (writer != null) {
                 try { writer.flush(); } catch (Exception e) { }
                 try { writer.close(); } catch (Exception e) { }
+            }
+        }
+    }
+
+    private synchronized void writeConfigFile(Map params) throws Exception {
+        String lastModifiedString = getParamValue("lastModified", params);
+        if (lastModifiedString.equals("")) throw new IOException("Required parameter (lastModified) missing");
+        long priorLastModified = DateUtility.parseDateAsUTC(lastModifiedString).getTime();
+        long configLastModified = m_propsFile.lastModified();
+        if (configLastModified > priorLastModified) throw new IOException("Up to date check failed - try again");
+        PrintWriter configWriter = null;
+        try {
+            configWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(m_propsFile)));
+            writeConfig(params, configWriter);
+        } finally {
+            if (configWriter != null) {
+                configWriter.flush();
+                configWriter.close();
             }
         }
     }

@@ -1,33 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+  <xsl:param name="alertMessage" select="'unspecified'"/>
   <xsl:output method="html" indent="yes"/>
   <xsl:template match="/">
     <html>
       <head>
         <title>Fedora Backend Security Configuration</title>
-        <script language="javascript"><![CDATA[
+        <script language="javascript">
+<xsl:if test="$alertMessage != 'unspecified'">
+alert("<xsl:value-of select="$alertMessage"/>");
+</xsl:if>
+<![CDATA[
 
 function doSubmit() {
     // for each role...
     var names;
     for (var i = 0; i < theForm.elements.length; i++) {
-      if (theForm.elements[i].name.indexOf(".role") != -1) {
+      if (document.theForm.elements[i].name.indexOf(".role") != -1) {
         // set the ipList value if ipListValue is not custom
-        var role = theForm.elements[i].value;
-        var ipListValueRadio = theForm.elements[role + ".ipListValue"];
+        var role = document.theForm.elements[i].value;
+        var ipListValueRadio = document.theForm.elements[role + ".ipListValue"];
         for (var j = 0; j < ipListValueRadio.length; j++) {
-          if (theForm.elements[role + ".ipListValue"][j].checked) {
-            var ipListValue = theForm.elements[role + ".ipListValue"][j].value;
+          if (document.theForm.elements[role + ".ipListValue"][j].checked) {
+            var ipListValue = document.theForm.elements[role + ".ipListValue"][j].value;
             if (ipListValue != "custom") {
-              theForm.elements[role + ".ipList"].value = ipListValue;
+              document.theForm.elements[role + ".ipList"].value = ipListValue;
             } else {
               var spaceDelimitedList = "";
-              var zlist = theForm.elements[role + ".ipList.select"];
+              var zlist = document.theForm.elements[role + ".ipList.select"];
               for (var k = 0; k < zlist.options.length; k++) {
                 if (k > 0) spaceDelimitedList = spaceDelimitedList + " ";
-                spaceDelimitedList = spaceDelimitedList + zlist.options[k].value;
+                spaceDelimitedList = spaceDelimitedList + zlist.options[k].text;
               }
-              theForm.elements[role + ".ipList"].value = spaceDelimitedList;
+              document.theForm.elements[role + ".ipList"].value = spaceDelimitedList;
             }
           }
         }
@@ -38,6 +43,7 @@ function doSubmit() {
 
 function doSelect(role) {
   theForm.elements[role + ".ipList.deleteButton"].disabled = false;
+  // document.getElementById(role + ".ssl.default.acronym").setAttribute('title', 'newTitle');
 }
 
 function doAdd(role) {
@@ -79,6 +85,7 @@ function defaultSelected(role) {
   select.selectedIndex = -1;
   select.disabled = true;
   theForm.elements[role + ".ipList.addButton"].disabled = true;
+  theForm.elements[role + ".ipList.deleteButton"].disabled = true;
 }
 
 ]]>
@@ -96,7 +103,10 @@ function defaultSelected(role) {
               <td valign="top">
                 <center>
                   <h3>Backend Security Configuration</h3>
+                  <strong>TODO: Put general instructions here.  Also add ability to edit default config values.</strong>
+                  <p>
   NOTE: IP address patterns are regular expressions, as defined at <a href="http://www.w3.org/TR/xpath-functions/#regex-syntax">http://www.w3.org/TR/xpath-functions/#regex-syntax</a>
+  </p>
                 </center>
               </td>
             </tr>
@@ -113,15 +123,15 @@ function defaultSelected(role) {
           <table border="0" cellpadding="4" cellspacing="0" width="95%">
             <xsl:for-each select="//service">
             <tr>
-              <td bgcolor="#9999ff">
+              <td bgcolor="#9999ff" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 2; border-left-style: solid; border-left-color: black;">
                 <strong><xsl:value-of select="@role"/></strong>
               </td>
-              <td bgcolor="#cccccc"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
-              <td bgcolor="#cccccc"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
-              <td bgcolor="#cccccc"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
+              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black;"><nobr><strong><font color="#000000">Basic Authentication</font></strong></nobr></td>
+              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black;"><nobr><strong><font color="#000000">SSL</font></strong></nobr></td>
+              <td bgcolor="#cccccc" style="border-top-width: 2; border-top-style: solid; border-top-color: black; border-left-width: 1; border-left-style: solid; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;"><nobr><strong><font color="#000000">Host Patterns</font></strong></nobr></td>
             </tr>
               <tr bgcolor="#eeeeee">
-                <td bgcolor="#ddddff" valign="top">
+                <td bgcolor="#ddddff" valign="top" style="border-left-width: 2; border-left-style: solid; border-left-color: black;">
                   <xsl:choose>
                   <xsl:when test="@label != ''">
                     <font size="-1">[
@@ -210,10 +220,10 @@ function defaultSelected(role) {
                   </xsl:element>
                   <xsl:element name="label">
                     <xsl:attribute name="for"><xsl:value-of select="@role"/>.basicAuth.default</xsl:attribute>
-                    Default
+                    Use Default
                   </xsl:element>
                 </td>
-                <td valign="top">
+                <td valign="top" style="border-left-style: solid; border-left-width: 1; border-left-color: black;">
                  <nobr>
                   <xsl:element name="input">
                     <xsl:attribute name="type">radio</xsl:attribute>
@@ -257,12 +267,20 @@ function defaultSelected(role) {
                     </xsl:if>
                   </xsl:element>
                   <xsl:element name="label">
-                    <xsl:attribute name="for"><xsl:value-of select="@role"/>.ssl.default</xsl:attribute> Use
-                    <acronym title="(Default is Optional)" style="border-bottom-style: solid; border-bottom-width: 1">Default</acronym>
+                    <xsl:attribute name="for"><xsl:value-of select="@role"/>.ssl.default</xsl:attribute>
+<!--                    <xsl:element name="acronym">
+                      <xsl:attribute name="id"><xsl:value-of select="@role"/>.ssl.default.acronym</xsl:attribute>
+                      <xsl:attribute name="title">Default is 'Optional'</xsl:attribute>
+                      <xsl:attribute name="style">border-bottom-style: none;</xsl:attribute>
+-->
+                      Use Default
+<!--
+                    </xsl:element>
+-->
                   </xsl:element>
                  </nobr>
                 </td>
-                <td valign="top">
+                <td valign="top" style="border-left-style: solid; border-left-width: 1; border-left-color: black; border-right-width: 2; border-right-style: solid; border-right-color: black;">
 <table border="0" cellpadding="0" cellspacing="0">
 <tr>
 <td valign="top">
@@ -278,6 +296,7 @@ function defaultSelected(role) {
                     <xsl:element name="input">
                         <xsl:attribute name="type">hidden</xsl:attribute>
                         <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList</xsl:attribute>
+                        <xsl:attribute name="value"><xsl:value-of select="@ipList"/></xsl:attribute>
                     </xsl:element>
 </td>
 <td valign="top">
@@ -289,7 +308,7 @@ function defaultSelected(role) {
 <xsl:element name="select">
   <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.select</xsl:attribute>
   <xsl:choose>
-    <xsl:when test="count($ips/token) &gt; 2">
+    <xsl:when test="count($ips/token) &gt; 4">
       <xsl:attribute name="size">
         <xsl:value-of select="count($ips/token)"/>
       </xsl:attribute>
@@ -322,7 +341,7 @@ function defaultSelected(role) {
   <xsl:if test="@ipList = 'default'">
     <xsl:attribute name="disabled">disabled</xsl:attribute>
   </xsl:if>
-</xsl:element>
+</xsl:element><br/>
 <xsl:element name="input">
   <xsl:attribute name="type">button</xsl:attribute>
   <xsl:attribute name="name"><xsl:value-of select="@role"/>.ipList.deleteButton</xsl:attribute>
@@ -353,7 +372,7 @@ function defaultSelected(role) {
                 </td>
               </tr>
               <tr>
-                <td colspan="4" align="right">
+                <td colspan="4" style="border-top-width: 2; border-top-style: solid; border-top-color: black;">
                 &#160;
                 </td>
               </tr>
@@ -399,7 +418,7 @@ function defaultSelected(role) {
       </token>
       <xsl:call-template name="_tokenize-characters">
          <xsl:with-param name="string"
-                         select="substring($string, 2)" />
+                         select="substring($string, 4)" />
       </xsl:call-template>
    </xsl:if>
 </xsl:template>
@@ -420,7 +439,7 @@ function defaultSelected(role) {
                <xsl:with-param name="string"
                                select="substring-before($string, $delimiter)" />
                <xsl:with-param name="delimiters"
-                               select="substring($delimiters, 2)" />
+                               select="substring($delimiters, 4)" />
             </xsl:call-template>
          </xsl:if>
          <xsl:call-template name="_tokenize-delimiters">
@@ -435,7 +454,7 @@ function defaultSelected(role) {
             <xsl:with-param name="string"
                             select="$string" />
             <xsl:with-param name="delimiters"
-                            select="substring($delimiters, 2)" />
+                            select="substring($delimiters, 4)" />
          </xsl:call-template>
       </xsl:otherwise>
    </xsl:choose>
