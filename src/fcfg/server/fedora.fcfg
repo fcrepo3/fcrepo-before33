@@ -213,7 +213,7 @@
               only for testing or cases where this security issue is not a concern. The 
               default value of doMediateDatastreams is true.
             </comment>
-		<param name="doMediateDatastreams" value="true"/>
+		<param name="doMediateDatastreams" value="false"/>
 	</module>
 	<module role="fedora.server.access.DynamicAccess" class="fedora.server.access.DynamicAccessModule">
 		<comment>
@@ -313,7 +313,7 @@
             For example: name="alias:test" value="http://example.org/terms#" will allow
             a query to use test:apple instead of http://example.org/terms#apple
         </comment>
-		<param name="level" value="1"/>
+		<param name="level" value="0"/>
 		<param name="datastore" value="localKowariTriplestore"/>
     <param name="alias:test" value="http://example.org/terms#"/>
 	</module>
