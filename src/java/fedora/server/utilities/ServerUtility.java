@@ -193,6 +193,7 @@ public class ServerUtility {
     private static final String STARTUP = "startup";
     private static final String SHUTDOWN = "shutdown";
     private static final String STATUS = "status";
+    private static final String RELOAD_POLICIES = "reloadPolicies";
     
     /*
     public static final void startup(String protocol) throws Exception {
@@ -316,7 +317,8 @@ public class ServerUtility {
         }
         if ((STARTUP.equals(action))
         ||  (STATUS.equals(action))
-        ||  (SHUTDOWN.equals(action))) {
+        ||  (SHUTDOWN.equals(action))
+        ||  (RELOAD_POLICIES.equals(action))) {
         	int code = serverAction(action, protocol, optionalUsername, optionalPassword);
         	String line = STATUS.equals(action) ? serverStatusResponseString(code) 
         			: serverControllerResponseString(code);

@@ -24,6 +24,8 @@ public interface Authorization {
 	public static final String ENVIRONMENT_CATEGORY = "urn:oasis:names:tc:xacml:1.0:environment";
 	public static final String ENVIRONMENT_CATEGORY_ACCESS = "urn:oasis:names:tc:xacml:1.0:environment-category:access-environment";
 
+	public void reloadPolicies(Context context)	throws Exception;
+	
 	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState) 
 	throws AuthzException;
@@ -148,6 +150,9 @@ public interface Authorization {
 	throws AuthzException;
 
 	public void enforceResolveDatastream(Context context, Date ticketDateTime)
+	throws AuthzException;
+	
+	public void enforceReloadPolicies(Context context)
 	throws AuthzException;
 	
 }

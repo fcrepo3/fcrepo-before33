@@ -113,24 +113,10 @@ public class PolicyEnforcementPoint {
 	private ServletContext servletContext = null;
 	
 	private ContextAttributeFinderModule contextAttributeFinder;
+
 	
-	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, String localPolicyConfig, DOManager manager,
-		boolean validateRepositoryPolicies,
-		boolean validateObjectPoliciesFromFile,
-		boolean validateObjectPoliciesFromDatastream, 
-		String policySchemaPath
-	) throws Exception {
-		System.err.println ("***initPep()");
-		destroy();
-
-		this.enforceMode = enforceMode;
-		if (ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
-		} else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
-		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
-		} else {
-			throw new AuthzOperationalException(log("invalid enforceMode from config"));
-		}
-
+	
+	public final void newPdp() throws Exception {
 		AttributeFinder attrFinder = new AttributeFinder();
 		List attrModules = new ArrayList();
 		//AttributeFinderModule attrModule = SSIAttributeFinder.getInstance(servletContext);
@@ -204,7 +190,53 @@ System.err.println("***debugging CombinedPolicyModule");
 			servletContext.log(se.getMessage());
 			throw se;
 		}
-		this.pdp = pdp;
+		synchronized (this) {
+			this.pdp = pdp;
+			//so enforce() will wait, if this pdp update is in progress
+		}
+	}
+	
+	String combiningAlgorithm = null;
+	String globalPolicyConfig = null; 
+	String globalBackendPolicyConfig = null; 
+	String globalPolicyGuiToolConfig = null; 
+	String localPolicyConfig = null; 
+	DOManager manager = null;
+	boolean validateRepositoryPolicies = false;
+	boolean validateObjectPoliciesFromFile = false;
+	boolean validateObjectPoliciesFromDatastream = false; 
+	String policySchemaPath = null;
+	
+	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
+			String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, String localPolicyConfig, 
+		DOManager manager,
+		boolean validateRepositoryPolicies,
+		boolean validateObjectPoliciesFromFile,
+		boolean validateObjectPoliciesFromDatastream, 
+		String policySchemaPath
+	) throws Exception {
+		System.err.println ("***initPep()");
+		destroy();
+
+		this.enforceMode = enforceMode;
+		if (ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
+		} else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
+		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
+		} else {
+			throw new AuthzOperationalException(log("invalid enforceMode from config"));
+		}
+		this.combiningAlgorithm = combiningAlgorithm;
+		this.globalPolicyConfig = globalPolicyConfig; 
+		this.globalBackendPolicyConfig = globalBackendPolicyConfig;
+		this.globalPolicyGuiToolConfig = globalPolicyGuiToolConfig;
+		this.localPolicyConfig = localPolicyConfig;
+		this.manager = manager;
+		this.validateRepositoryPolicies = validateRepositoryPolicies;
+		this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
+		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
+		this.policySchemaPath = policySchemaPath;
+		
+		newPdp();
 		System.err.println ("***ending initPep()");
 	}
 
@@ -363,6 +395,9 @@ System.err.println("***debugging CombinedPolicyModule");
 	private final Set NULL_SET = new HashSet();
 
 	public final void enforce(String subjectId, String action, String api, String pid, String namespace, Context context) throws AuthzException {
+		synchronized (this) {
+			//wait, if pdp update is in progress
+		}
 		if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
 			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {

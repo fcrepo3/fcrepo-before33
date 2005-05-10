@@ -20,6 +20,7 @@ import fedora.server.errors.servletExceptionExtensions.Forbidden403Exception;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.Ok200Exception;
 import fedora.server.errors.servletExceptionExtensions.Unavailable503Exception;
+import fedora.server.security.Authorization;
 import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 
@@ -126,6 +127,41 @@ public class ServerController
             }
 			throw new Ok200Exception(request, actionLabel, "server running", new String[0]);
         } 
+        if (action.equals("reloadPolicies")) {
+        	actionLabel = "reloading repository policies";
+        	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
+        	File fedoraHome = new File(System.getProperty("fedora.home"));
+            if (! Server.hasInstance(fedoraHome)) {
+                throw new Unavailable503Exception(request, actionLabel, "server not available", new String[0]);	
+            }
+			Server server = null;
+			try {
+				server = Server.getInstance(fedoraHome, false);
+            } catch (Throwable t) {
+                throw new InternalError500Exception(request, actionLabel, "error performing action0", new String[0]);	
+            }
+			if (server == null) {
+                throw new InternalError500Exception(request, actionLabel, "error performing action1", new String[0]);	
+			}
+			Authorization authModule = null;
+			authModule = (Authorization) server.getModule("fedora.server.security.Authorization");
+			if (authModule == null) {
+                throw new InternalError500Exception(request, actionLabel, "error performing action2", new String[0]);	
+			}
+			try {				
+				authModule.reloadPolicies(context);
+    		} catch (AuthzOperationalException aoe) {
+                throw new Forbidden403Exception(request, actionLabel, "authorization failed", new String[0]);                					
+    		} catch (AuthzDeniedException ade) {
+                throw new Forbidden403Exception(request, actionLabel, "authorization denied", new String[0]);
+			} catch (AuthzPermittedException ape) {
+                throw new Continue100Exception(request, actionLabel, "authorization permitted", new String[0]);	    			
+            } catch (Throwable t) {
+                throw new InternalError500Exception(request, actionLabel, "error performing action2", new String[0]);	
+            }
+			throw new Ok200Exception(request, actionLabel, "server running", new String[0]);
+        } 
+        
         throw new BadRequest400Exception(request, actionLabel, "bad action:  " + action, new String[0]);
     }
 

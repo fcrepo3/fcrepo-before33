@@ -55,6 +55,7 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName UPLOAD;	
 	public final XacmlName INTERNAL_DSSTATE;
 	public final XacmlName RESOLVE_DATASTREAM;
+	public final XacmlName RELOAD_POLICIES;	
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -105,6 +106,7 @@ public class ActionNamespace extends XacmlNamespace {
     	UPLOAD = addName(new XacmlName(this, "id-upload"));     	
     	INTERNAL_DSSTATE = addName(new XacmlName(this, "id-dsstate"));
     	RESOLVE_DATASTREAM = addName(new XacmlName(this, "id-resolveDatastream"));    	
+    	RELOAD_POLICIES = addName(new XacmlName(this, "id-reloadPolicies"));    	
     	CONTEXT_ID = addName(new XacmlName(this, "contextId", StringAttribute.identifier)); //internal callback support
     	// Values of CONTEXT_ID are sequential numerals, hence not enumerated here.
     	

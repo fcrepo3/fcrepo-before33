@@ -340,6 +340,11 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
   }
   
+  public void reloadPolicies(Context context) throws Exception {
+  	enforceReloadPolicies(context);
+  	xacmlPep.newPdp();
+  }
+  
 	private final String extractNamespace(String pid) {
 		String namespace = "";
 		int colonPosition = pid.indexOf(':');
@@ -1197,6 +1202,20 @@ public class DefaultAuthorization extends Module implements Authorization {
 			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
 		} finally {
 	        getServer().logFinest("Exiting enforceResolveDatastream");
+		}
+	}
+	
+	public void enforceReloadPolicies(Context context)
+	throws AuthzException {
+		try {
+	        getServer().logFinest("Entered enforceReloadPolicies");		
+			String target = Constants.ACTION.RELOAD_POLICIES.uri;
+			log("enforcing " + target);
+			context.setResourceAttributes(null);
+			context.setActionAttributes(null);
+			xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, "", "", "", context);
+		} finally {
+	        getServer().logFinest("Exiting enforceReloadPolicies");
 		}
 	}
 
