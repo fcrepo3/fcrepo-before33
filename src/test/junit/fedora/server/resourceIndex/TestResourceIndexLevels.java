@@ -57,36 +57,36 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         m_ri = new ResourceIndexImpl(ResourceIndex.INDEX_LEVEL_ON, m_conn, m_cPool, null, null);
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(23, m_ri.countTriples(null, null, null, 0));
+        assertEquals(29, m_ri.countTriples(null, null, null, 0));
         assertEquals(3, m_ri.countTriples(null, disseminates, null, 0));
         assertEquals(0, m_ri.countTriples(null, dependsOn, null, 0));
         
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(57, m_ri.countTriples(null, null, null, 0));
+        assertEquals(75, m_ri.countTriples(null, null, null, 0));
         assertEquals(9, m_ri.countTriples(null, disseminates, null, 0));
         assertEquals(0, m_ri.countTriples(null, dependsOn, null, 9));
         
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(166, m_ri.countTriples(null, null, null, 0));
         assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
         assertEquals(2, m_ri.countTriples(null, dependsOn, null, 9));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(166, m_ri.countTriples(null, null, null, 0));
         assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
         
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(166, m_ri.countTriples(null, null, null, 0));
         assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
         
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
         export("/tmp/rdf/c.rdf");
-        assertEquals(128, m_ri.countTriples(null, null, null, 0));
+        assertEquals(166, m_ri.countTriples(null, null, null, 0));
         assertEquals(20, m_ri.countTriples(null, disseminates, null, 0));
     }
     
@@ -95,22 +95,22 @@ public class TestResourceIndexLevels extends TestResourceIndex {
         
         m_ri.addDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(23, m_ri.countTriples(null, null, null, 0));
+        assertEquals(29, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(57, m_ri.countTriples(null, null, null, 0));
+        assertEquals(75, m_ri.countTriples(null, null, null, 0));
         m_ri.addDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(163, m_ri.countTriples(null, null, null, 0));
+        assertEquals(206, m_ri.countTriples(null, null, null, 0));
         
         m_ri.modifyDigitalObject(bdef);
         m_ri.commit();
-        assertEquals(163, m_ri.countTriples(null, null, null, 0));
+        assertEquals(206, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(bmech);
         m_ri.commit();
-        assertEquals(163, m_ri.countTriples(null, null, null, 0));
+        assertEquals(206, m_ri.countTriples(null, null, null, 0));
         m_ri.modifyDigitalObject(dataobject);
         m_ri.commit();
-        assertEquals(163, m_ri.countTriples(null, null, null, 0));
+        assertEquals(206, m_ri.countTriples(null, null, null, 0));
     }
 }

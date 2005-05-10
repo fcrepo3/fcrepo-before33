@@ -95,9 +95,9 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(78, count);
+            assertEquals(106, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(78, count);
+            assertEquals(106, count);
         }
         export("/tmp/out.rdf");
     }
@@ -112,9 +112,9 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(74, count);
+            assertEquals(102, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(74, count);
+            assertEquals(102, count);
         }
         
         it = m_ri.findTuples("rdql", query, 0, false);
@@ -122,9 +122,9 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(78, count);
+            assertEquals(106, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(78, count);
+            assertEquals(106, count);
         }
         
     }

@@ -67,9 +67,9 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, a);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(17, a);
+            assertEquals(29, a);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(17, a);
+            assertEquals(29, a);
         }
         
         m_ri.addDigitalObject(bmech);
@@ -78,9 +78,9 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, b);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(39, b);
+            assertEquals(75, b);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(39, b);
+            assertEquals(75, b);
         }
         
         m_ri.addDigitalObject(dataobject);
@@ -89,7 +89,7 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(87, c);
+            assertEquals(166, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
             assertEquals(112, c);
         }
