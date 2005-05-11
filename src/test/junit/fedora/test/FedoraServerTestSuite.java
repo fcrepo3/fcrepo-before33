@@ -1,4 +1,4 @@
-package fedora.test.junit;
+package fedora.test;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;

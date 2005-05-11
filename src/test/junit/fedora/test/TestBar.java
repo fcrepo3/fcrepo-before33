@@ -1,4 +1,4 @@
-package fedora.test.junit;
+package fedora.test;
 
 /**
  * @author Edwin Shin
