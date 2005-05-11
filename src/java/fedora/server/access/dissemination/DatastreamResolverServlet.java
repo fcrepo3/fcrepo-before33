@@ -209,7 +209,7 @@ public class DatastreamResolverServlet extends HttpServlet
       if (dm.callbackRole == null) {
           throw new AuthzOperationalException("no callbackRole for this ticket");
       } 
-      String targetRole = dm.callbackRole; //restrict access to role of this ticket
+      String targetRole = Authorization.FEDORA_ROLE_KEY + "=" + dm.callbackRole; //restrict access to role of this ticket
       String[] targetRoles = {targetRole};
       Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
       
