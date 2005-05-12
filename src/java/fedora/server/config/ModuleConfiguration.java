@@ -26,6 +26,10 @@ public class ModuleConfiguration
         return m_roleName;
     }
 
+    public void setClassName(String className) {
+        m_className = className;
+    }
+
     public String getClassName() {
         return m_className;
     }

@@ -23,6 +23,57 @@ public class ServerConfiguration
         m_datastoreConfigurations = datastoreConfigurations;
     }
 
+    /**
+     * Make an exact copy of this ServerConfiguration.
+     */
+    public ServerConfiguration copy() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        serialize(out);
+        return new ServerConfigurationParser(
+                   new ByteArrayInputStream(out.toByteArray())).parse();
+    }
+
+    /**
+     * Apply the given properties to this ServerConfiguration.
+     */
+    public void applyProperties(Properties props) {
+        Iterator iter = props.keySet().iterator();
+        while (iter.hasNext()) {
+            String fullName = (String) iter.next();
+            String value = props.getProperty(fullName);
+            if (fullName.indexOf(".") != -1 && value != null && value.length() > 0) {
+                String name = fullName.substring(fullName.lastIndexOf(".") + 1);
+                if (fullName.startsWith("server.")) {
+                    if (name.equals("class")) {
+                        m_className = value;
+                    } else {
+                        setParameterValue(name, value, true);
+                    }
+                } else if (fullName.startsWith("module.")) {
+                    String role = fullName.substring(7, fullName.lastIndexOf("."));
+                    ModuleConfiguration module = getModuleConfiguration(role);
+                    if (module == null) {
+                        module = new ModuleConfiguration(new ArrayList(), role, null, null);
+                        m_moduleConfigurations.add(module);
+                    }
+                    if (name.equals("class")) {
+                        module.setClassName(value);
+                    } else {
+                        module.setParameterValue(name, value, true);
+                    }
+                } else if (fullName.startsWith("datastore.")) {
+                    String id = fullName.substring(10, fullName.lastIndexOf("."));
+                    DatastoreConfiguration datastore = getDatastoreConfiguration(id);
+                    if (datastore == null) {
+                        datastore = new DatastoreConfiguration(new ArrayList(), id, null);
+                        m_datastoreConfigurations.add(datastore);
+                    }
+                    datastore.setParameterValue(name, value, true);
+                }
+            }
+        }
+    }
+
     public void serialize(OutputStream xmlStream) throws IOException {
         PrintStream out = new PrintStream(xmlStream);
         out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
@@ -185,6 +236,28 @@ public class ServerConfiguration
             if (config.getId().equals(id)) return config;
         }
         return null;
+    }
+
+    /**
+     * Deserialize, then output the given configuration.
+     *
+     * If two parameters are given, the first one is the filename and the
+     * second is the properties file to apply before re-serializing.
+     */
+    public static void main(String[] args) throws Exception {
+        if (args.length < 1 || args.length > 2) throw new IOException("One or two arguments expected.");
+        ServerConfiguration config = new ServerConfigurationParser(
+                                         new FileInputStream(
+                                             new File(args[0]))).parse();
+        if (args.length == 2) {
+            Properties props = new Properties();
+            props.load(new FileInputStream(new File(args[1])));
+            config.applyProperties(props);
+        }
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        config.serialize(out);
+        String content = new String(out.toByteArray(), "UTF-8");
+        System.out.println(content);
     }
 
 }
