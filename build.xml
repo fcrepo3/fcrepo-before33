@@ -1136,9 +1136,7 @@
       <exec executable="mckoi-start" spawn="true"/>
       <sleep seconds="2"/>
       <echo message="Starting Fedora...wait 45 seconds"/>
-      <exec executable="fedora-start" spawn="true">
-        <arg value="test"/>
-      </exec>
+      <exec executable="fedora-start" spawn="true"/>
       <sleep seconds="45"/>
       <exec executable="fedora-ingest-demos">
         <arg value="localhost"/>
