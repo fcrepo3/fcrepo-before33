@@ -1115,7 +1115,14 @@
 		<delete dir="${build.dir}"/>
 	</target> 
     <target name="test" description="Automatic tests" depends="clean, serverandclient">
-      <copy file="dist/server/config/test.fcfg" tofile="dist/server/config/fedora.fcfg" overwrite="true"/>
+      <!-- Generate fedora.fcfg with overrides from src/fcfg/test.properties -->
+      <exec executable="java" output="dist/server/config/fedora.fcfg">
+        <arg value="-cp"/>
+        <arg path="dist/server/jakarta-tomcat-5.0.28/webapps/fedora/WEB-INF/classes"/>
+        <arg value="fedora.server.config.ServerConfiguration"/>
+        <arg path="src/fcfg/server/fedora.fcfg"/>
+        <arg path="src/fcfg/server/test.properties"/>
+      </exec>
       <delete dir="/tmp/fedoraTest"/>
       <mkdir dir="/tmp"/>
       <mkdir dir="/tmp/fedoraTest"/>
