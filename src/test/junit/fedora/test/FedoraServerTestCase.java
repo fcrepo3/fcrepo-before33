@@ -11,6 +11,10 @@ import junit.framework.TestCase;
 public abstract class FedoraServerTestCase extends TestCase {
     FedoraServerTestSetup testSetup;
     
+    public FedoraServerTestCase(String name) {
+        super(name);
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(FedoraServerTestCase.class);
     }

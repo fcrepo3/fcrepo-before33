@@ -1082,6 +1082,7 @@
     
     <target name="junit" depends="compile-test">
         <junit printsummary="on" fork="yes" haltonfailure="yes">
+            <sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
             <classpath refid="test.path" />
             <formatter type="plain"
                        usefile="false" />         
