@@ -2,10 +2,13 @@ package fedora.server.utilities.rebuild;
 
 import java.io.*;
 import java.util.*;
-
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.SAXException;
+
+import gnu.trove.*;
+
 import fedora.server.config.*;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -62,7 +65,11 @@ public class Rebuild {
             System.out.println(rebuilder.getAction());
             System.out.println();
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
-            if (ServerUtility.pingServletContainerRunning("/fedora/describe", 20) && rebuilder.shouldStopServer()) {
+            boolean serverIsRunning = false;
+            try {
+                serverIsRunning = ServerUtility.pingServletContainerRunning("/fedora/describe", 20);
+            } catch (Exception e) { }
+            if (serverIsRunning && rebuilder.shouldStopServer()) {
             	ProtocolPort protocolPort = ServerUtility.getProtocolPort(ServerUtility.HTTP, ServerUtility.HTTPS); 
             	String username = ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY);
             	String password = ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY);            	
@@ -77,8 +84,10 @@ public class Rebuild {
                     // String objStoreBaseStr = conf.getObjectStoreBase();
                     String objStoreBaseStr = serverConfig.getParameter("object_store_base").getValue();
                     File dir = new File(objStoreBaseStr);
-                    multiFromDirectory(dir, "DMO", rebuilder);
-                    
+                    TIntHashSet saw = new TIntHashSet();
+                    rebuildFromDirectory(rebuilder, dir, "FedoraBDefObject", saw);
+                    rebuildFromDirectory(rebuilder, dir, "FedoraBMechObject", saw);
+                    rebuildFromDirectory(rebuilder, dir, "FedoraObject", saw);
                 } 
                 finally {
                     rebuilder.finish();
@@ -88,122 +97,63 @@ public class Rebuild {
             }
         }
     }
-     
-    public void multiFromDirectory(File dir, String fTypes, Rebuilder rebuilder)
-                                              throws Exception 
-    {
-        String tps=fTypes.toUpperCase();
-        if (tps.indexOf("D")!=-1) 
-        {
-            rebuildAll(getFiles(dir, "FedoraBDefObject"), rebuilder);
-        }
-        if (tps.indexOf("M")!=-1) 
-        {
-            rebuildAll(getFiles(dir, "FedoraBMechObject"), rebuilder);
-        }
-        if (tps.indexOf("O")!=-1) 
-        {
-            rebuildAll(getFiles(dir, "FedoraObject"), rebuilder);
-        }
-    }
-    
-    
-    private void rebuildAll(Set fileSet, Rebuilder rebuilder)
-    {
-        Iterator setIter = fileSet.iterator();
-        while (setIter.hasNext())
-        {
-            File file = (File)(setIter.next());
-            DigitalObject obj = new BasicDigitalObject();
-            DODeserializer deserializer;
-            try
-            {
-                System.out.println(file.getAbsoluteFile());
-                deserializer = new FOXMLDODeserializer();
-                deserializer.deserialize(new FileInputStream(file), obj, "UTF-8", 
-                        DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-                rebuilder.addObject(obj);
 
-            } 
-            catch (UnsupportedEncodingException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (FactoryConfigurationError e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (ParserConfigurationException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (SAXException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (ObjectIntegrityException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (StreamIOException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (FileNotFoundException e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } 
-            catch (Exception e)
-            {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private Set getFiles(File dir, String fTypeString)
-                        throws Exception 
-    {
-        LinkedHashSet set = new LinkedHashSet();
-        if (!dir.isDirectory()) 
-        {
-            throw new IOException("Not a directory: " + dir.getPath());
-        }
+    /**
+     * Recurse directories looking for files that contain searchString,
+     * and call rebuilder.addObject on them as long as their PIDs have
+     * not already been seen.
+     */
+    private void rebuildFromDirectory(Rebuilder rebuilder, 
+                                      File dir, 
+                                      String searchString,
+                                      TIntHashSet saw) throws Exception {
         File[] files = dir.listFiles();
-        for (int i=0; i<files.length; i++) 
-        {
-            if (files[i].isDirectory()) 
-            {
-                set.addAll(getFiles(files[i], fTypeString));
-            }   
-            else 
-            {
-                // if the file is a candidate, add it
-                BufferedReader in = new BufferedReader(new FileReader(files[i]));
-                boolean isCandidate = false;
-                String line;
-                while ( (line = in.readLine()) != null ) 
-                {
-                    if (line.indexOf(fTypeString)!=-1) 
-                    {
-                        isCandidate=true;
-                        break;
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                rebuildFromDirectory(rebuilder, files[i], searchString, saw);
+            } else {
+                BufferedReader reader = null;
+                InputStream in;
+                try {
+                    in = null;
+                    reader = new BufferedReader(
+                                 new InputStreamReader(
+                                     new FileInputStream(files[i]), "UTF-8"));
+                    String line = reader.readLine();
+                    while (line != null) {
+                        if (line.indexOf(searchString) != -1) {
+                            in = new FileInputStream(files[i]);
+                            line = null;
+                        } else {
+                            line = reader.readLine();
+                        }
                     }
-                }
-                if (isCandidate) 
-                {
-                    set.add(files[i]);
+                    if (in != null) {
+                        try {
+                            System.out.println(files[i].getAbsoluteFile());
+                            DigitalObject obj = new BasicDigitalObject();
+                            DODeserializer deser = new FOXMLDODeserializer();
+                            deser.deserialize(in, 
+                                              obj, 
+                                              "UTF-8", 
+                                              DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
+                            int hashCode = obj.getPid().hashCode();
+                            if (saw.contains(hashCode)) {
+                                System.out.println("Skipping (already saw " 
+                                                   + obj.getPid() + ")");
+                            } else {
+                                rebuilder.addObject(obj);
+                                saw.add(hashCode);
+                            }
+                        } finally {
+                            try { in.close(); } catch (Exception e) { }
+                        }
+                    }
+                } finally {
+                    if (reader != null) try { reader.close(); } catch (Exception e) { }
                 }
             }
         }
-        return(set);
     }
 
     private Map getOptions(Map descs) throws IOException {

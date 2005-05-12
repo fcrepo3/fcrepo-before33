@@ -133,6 +133,7 @@
 		<pathelement location="${lib.wsdl4j}"/>
 		<pathelement location="${lib.xerces}"/>
 		<pathelement location="${lib.xml-apis}"/>
+	  <pathelement location="${lib.trove}"/>
 	</path>
 	<!-- Set up the classpath arguments to be inserted into the Fedora startup scripts -->
 	<path id="AxisUtility-libs.path">
