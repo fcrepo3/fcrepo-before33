@@ -3,7 +3,8 @@ package fedora.server.config;
 /**
  * @author Edwin Shin
  */
-public interface ServerParameters {
+public interface BasicServerParameters {
+    public static final String CLASS                   = "fedora.server.BasicServer";
     public static final String PARAM_REPOSITORY_NAME   = "repositoryName";
     public static final String PARAM_ADMIN_EMAILS      = "adminEmailList";
     public static final String PARAM_ADMIN_USER        = "adminUsername";
