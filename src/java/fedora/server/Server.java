@@ -1202,7 +1202,7 @@ public abstract class Server
      * @throws ModuleInitializationException If there was an error starting
      *         a module.
      */
-    public final static Server getInstance(File homeDir)
+    public final static synchronized Server getInstance(File homeDir)
             throws ServerInitializationException,
                    ModuleInitializationException {
         // return an instance if already in memory

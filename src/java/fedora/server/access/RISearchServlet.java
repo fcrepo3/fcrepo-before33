@@ -13,7 +13,7 @@ public class RISearchServlet extends TrippiServlet {
     public TriplestoreReader getReader() throws ServletException {
         TriplestoreReader reader = null;
         try {
-            Server server = Server.getInstance(new File(System.getProperty("fedora.home")));
+            Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
             reader = (TriplestoreReader) server.getModule("fedora.server.resourceIndex.ResourceIndex");
         } catch (Exception e) {
             throw new ServletException("Error initting RISearchServlet.", e);
