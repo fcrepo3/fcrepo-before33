@@ -406,7 +406,12 @@
 		<mkdir dir="temp/client"/>
 	</target>
 	<target name="clientclasses" depends="clientprep,wsdl2java,stubwrappers" description="Compile client java code into temp/client">
-		<javac srcdir="${java.src.dir}:temp/server/java:temp/clientgen" destdir="temp/client" classpath="${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf};${lib.sunxacml}" includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}:temp/server/java:temp/clientgen" 
+               destdir="temp/client" 
+               classpath="${lib.trippi};${lib.xerces};${lib.jhbasic};${lib.getopt};${lib.saxon};${lib.axis};${lib.wsdl4j};${lib.jaxrpc};${lib.commons-discovery};${lib.commons-logging};${lib.saaj};${lib.commons-httpclient};${lib.jai_core};${lib.jai_codec};${lib.batik};${lib.jrdf};${lib.sunxacml}" 
+               includes="fedora/server/management/APIMStub.java,fedora/swing/mdi/**,fedora/swing/jhelp/**,fedora/swing/jtable/**,fedora/client/**,fedora/server/utilities/MethodInvokerThread.java,fedora/server/utilities/StreamUtility.java,fedora/server/management/FedoraAPIMBindingSOAPHTTPStub.java,fedora/server/access/FedoraAPIABindingSOAPHTTPStub.java,fedora/common/**" 
+               optimize="${build.optimize}" 
+               debug="${build.debug}"/>
 	</target>
 	<target name="clienthelp" depends="clientprep" description="Assemble JavaHelp for client into temp/client/help">
 		<mkdir dir="temp/client/help"/>
