@@ -20,6 +20,7 @@ public class AllTests {
         suite.addTestSuite(TestResourceIndexDB.class);
         suite.addTestSuite(TestResourceIndexImpl.class);
         suite.addTestSuite(TestResourceIndexLevels.class);
+        suite.addTestSuite(TestResourceIndexDependencies.class);
         //$JUnit-END$
         return suite;
     }

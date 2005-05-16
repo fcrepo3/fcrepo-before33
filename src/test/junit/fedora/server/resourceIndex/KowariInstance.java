@@ -30,8 +30,8 @@ public class KowariInstance {
 	
 	private final String MODEL_NAME = "resourceIndex";
 	private final String SERVER_NAME = "fedora";
-	private final String SERVER_DIR = "d:\\tmp\\kowari" + File.separator + SERVER_NAME;
-	private final String RDF_INPUT = "file:/d:/tmp/kowari/a.rdf";
+	private final String SERVER_DIR = "/tmp/kowari" + File.separator + SERVER_NAME;
+	private final String RDF_INPUT = "file:/tmp/rdf/a.rdf";
 	private URI XSD_MODEL_URI;
 	
 	private URI m_modelURI;

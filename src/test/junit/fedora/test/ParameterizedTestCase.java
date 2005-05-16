@@ -18,12 +18,20 @@ public class ParameterizedTestCase extends FedoraServerTestCase {
     
     public static Test suite() throws Exception {
         TestSuite suite = new TestSuite();
-        
+        suite.addTest(
+            new ParameterizedTestCase(
+                new Properties() ) );
         
         return suite;
     }
     
     public void doTest() {
+        // start server with fcfg
+        
+        // run tests with 
+        
+        // stop server
         
     }
+    
 }

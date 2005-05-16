@@ -2,18 +2,13 @@ package fedora.test;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
-import fedora.server.config.Configuration;
+import fedora.server.config.BasicServerParameters;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
-import fedora.server.config.ServerParameters;
 import fedora.utilities.ExecUtility;
 
 /**
@@ -24,7 +19,7 @@ import fedora.utilities.ExecUtility;
  */
 public class FedoraServerTestSetup 
   extends    TestSetup 
-  implements FedoraTestConstants, ServerParameters {
+  implements FedoraTestConstants, BasicServerParameters {
     private boolean doSetup;
     private String fedoraHome;
     private ServerConfiguration config;
@@ -34,15 +29,15 @@ public class FedoraServerTestSetup
      */
     public FedoraServerTestSetup(Test test) {
         super(test);
-        fedoraHome = getFedoraHome();
     }
 
-    public void setUp() {
+    public void setUp() throws Exception {
         doSetup = getSetup();
         
         if (doSetup) {
-            System.out.println("+ doing setUp()");
-            ingestDemoObjects();
+            fedoraHome = getFedoraHome();
+            config = getServerConfiguration();
+            startServer();
         } else {
             System.out.println("    skipping setUp()");
         }
@@ -50,30 +45,22 @@ public class FedoraServerTestSetup
     
     public void tearDown() {
         if (doSetup) {
-            System.out.println("- doing tearDown()");
             System.setProperty(PROP_SETUP, "true");
+            stopServer();
         } else {
             System.out.println("    skipping tearDown()");
         }
     }
     
-    private String getFedoraHome() {
+    public String getFedoraHome() {
         return System.getProperty("fedora.home", "/opt/fedora/current");
     }
     
-    private ServerConfiguration getServerConfiguration() {
+    private ServerConfiguration getServerConfiguration() throws Exception {
         ServerConfiguration cfg = null;
-        try {
-            cfg = new ServerConfigurationParser(
-                    new FileInputStream(
-                      new File(fedoraHome + "/server/config/fedora.fcfg"))).parse();
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        cfg = new ServerConfigurationParser(
+                new FileInputStream(
+                  new File(fedoraHome + "/server/config/fedora.fcfg"))).parse();
         return cfg;
     }
     
@@ -88,6 +75,14 @@ public class FedoraServerTestSetup
         } else {
             return setup.equalsIgnoreCase("true");
         }
+    }
+    
+    private void startServer() {
+        System.out.println("+ doing setUp(): starting server...");
+    }
+    
+    private void stopServer() {
+        System.out.println("- doing tearDown(): stopping server...");
     }
     
     private void ingestDemoObjects() {

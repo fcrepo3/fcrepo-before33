@@ -1,15 +1,18 @@
 package fedora.test;
 
-import junit.framework.TestCase;
-
 /**
  * Base class for JUnit tests that need a running Fedora server.
  * 
  * 
  * @author Edwin Shin
  */
-public abstract class FedoraServerTestCase extends TestCase {
+public abstract class FedoraServerTestCase extends FedoraTestCase {
     FedoraServerTestSetup testSetup;
+    String baseURL;
+    
+    public FedoraServerTestCase() {
+        super();
+    }
     
     public FedoraServerTestCase(String name) {
         super(name);
