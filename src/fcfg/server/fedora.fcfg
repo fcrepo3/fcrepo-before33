@@ -80,7 +80,7 @@
 		The value specified should be set high enough to allow for an average response time from any single external mechanisms.
 		Note this value must be less than the limit specified for the datastreamExpirationLimit.
 	</comment>
-	<param name="fedoraServerPort" value="8082"/>
+	<param name="fedoraServerPort" value="8080"/>
 	<comment>Defines the port number on which the Fedora server runs; default is 8080.</comment>
 	<param name="fedoraShutdownPort" value="8005"/>
 	<comment>Defines the port number used to shutdown the Fedora sever; default is 8005.</comment>
