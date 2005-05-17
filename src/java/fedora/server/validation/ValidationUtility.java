@@ -3,7 +3,7 @@ package fedora.server.validation;
 import java.net.*;
 
 import fedora.server.errors.*;
-import fedora.server.storage.translation.*;
+
 
 /**
  * Misc validation-related functions.
@@ -19,17 +19,10 @@ public abstract class ValidationUtility {
             URL goodURL = new URL(url);
         } catch (MalformedURLException murle) {
             if (url.startsWith("copy://") || url.startsWith("uploaded://")) return;
-            if (!canBeRelative) throw new ValidationException("Malformed URL: " + url, murle);
-            if (!url.startsWith(
-                  DOTranslationUtility.s_relativeGetPattern.pattern()) &&
-                !url.startsWith(
-                  DOTranslationUtility.s_relativeSearchPattern.pattern())) {
-                throw new ValidationException("Missing protocol or invalid "
-                  + " relative URL.\n"
-                  + " Relative repository URLs must start with 'fedora/get'"
-                  + " or 'fedora/search' with NO leading slash.\n " 
-                  + " URL is: " + url);
-            }
+			if (fedora.server.Debug.DEBUG) {
+				System.out.println("ValidationUtility.validateURL: malformed URL " + url);
+			}
+            throw new ValidationException("Malformed URL: " + url, murle);
         }
     }
 
