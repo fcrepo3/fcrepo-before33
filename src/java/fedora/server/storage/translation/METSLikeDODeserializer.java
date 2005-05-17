@@ -418,7 +418,7 @@ public class METSLikeDODeserializer
 				  // URL FORMAT VALIDATION for dsLocation:
 				  // make sure we have a properly formed URL (must have protocol)
                   try {
-                      ValidationUtility.validateURL(dsLocation, true);
+                      ValidationUtility.validateURL(dsLocation, false);
                   } catch (ValidationException ve) {
                       throw new SAXException(ve.getMessage());
                   }
@@ -434,7 +434,7 @@ public class METSLikeDODeserializer
 				  // once the repository has sucked in the content for storage.
                   if (m_obj.isNew()) {
                       try {
-                          ValidationUtility.validateURL(dsLocation, true);
+                          ValidationUtility.validateURL(dsLocation, false);
                       } catch (ValidationException ve) {
                           throw new SAXException(ve.getMessage());
                       }
