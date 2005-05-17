@@ -72,7 +72,7 @@ public class BackendPolicies {
 			String key = raw.substring(0, i);
 			key = key.replaceAll("\\:", ":");
 			String subkey = raw.substring(i+1);
-			System.err.println(key + " | " + subkey + "|" + data);			
+			log(key + " | " + subkey + "|" + data);			
 			if (! allowedSubkeys.contains(subkey)) {
 				throw new Exception();				
 			}
@@ -253,6 +253,21 @@ public class BackendPolicies {
 		return tempfiles;
 	}
 	
+	  private static boolean log = false;
+	  
+	  private final void log(String msg) {
+	  	if (log) {
+		  	System.err.println(msg);	  		
+	  	}
+	  }
+	  
+	  private static boolean slog = false;
+	  
+	  private static final void slog(String msg) {
+	  	if (slog) {
+		  	System.err.println(msg);	  		
+	  	}
+	  }	
 	
 	public static void main(String[] args) throws Exception {
 		BackendPolicies backendPolicies = new BackendPolicies(args[0], args[1]);

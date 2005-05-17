@@ -36,11 +36,11 @@ public class ServerController
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	System.err.println("Z1");
+    	log("Z1");
         String actionLabel = "server control";    	
         String action=request.getParameter("action");
         String requestInfo="Got controller '" + action + "' request from " + request.getRemoteAddr();
-    	System.err.println("Z2 action=" + action);
+    	log("Z2 action=" + action);
         if (fedora.server.Debug.DEBUG) System.out.println(requestInfo);
         if (action==null) {
             throw new BadRequest400Exception(request, actionLabel, "no action", new String[0]);	
@@ -48,30 +48,30 @@ public class ServerController
         if (action.equals("startup")) {
         	actionLabel = "starting server";
         	boolean serverHasInstance = false;
-        	System.err.println("Z3");
+        	log("Z3");
             try {
                 serverHasInstance = Server.hasInstance(new File(System.getProperty("fedora.home")));
-            	System.err.println("Z4");
+            	log("Z4");
             } catch (Throwable t) {
-            	System.err.println("A " + t.getMessage() + " " + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
+            	log("A " + t.getMessage() + " " + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
                 throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
             }          
-        	System.err.println("Z5");
+        	log("Z5");
             if (serverHasInstance) {
-            	System.err.println("B");
+            	log("B");
                 throw new InternalError500Exception(request, actionLabel, "server already started", new String[0]);	
             }	
-        	System.err.println("Z6");
+        	log("Z6");
             try {
 				s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
 			} catch (ServerInitializationException e) {
-            	System.err.println("C " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));
+            	log("C " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));
                 throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
 			} catch (ModuleInitializationException e) {
-            	System.err.println("D " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));				
+            	log("D " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));				
                 throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
 			}
-        	System.err.println("Z7");
+        	log("Z7");
             throw new Ok200Exception(request, actionLabel,"server started successfully", new String[0]);    
         }
         if (action.equals("shutdown")) {
@@ -167,5 +167,19 @@ public class ServerController
 
     public void destroy() {
     }
+    
+	public static boolean log = false; 
+	
+	public final void log(String msg) {
+		if (! log) return;
+		System.err.println(msg);
+	}
+	
+	public static boolean slog = false; 
+	
+	protected static final void slog(String msg) {
+		if (! slog) return;
+		System.err.println(msg);
+	}
     
 }

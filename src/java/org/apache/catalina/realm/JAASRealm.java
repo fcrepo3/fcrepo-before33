@@ -172,7 +172,7 @@ public class JAASRealm
 
     public void setContainer(Container container) {
         super.setContainer(container);
-        System.err.println("**************************************************" + container);
+        log("**************************************************" + container);
         JAASMemoryLoginModule.setStaticContainer(container); //fixup
         JAASJNDILoginModule.setStaticContainer(container); //fixup        
         String name=container.getName();
@@ -267,7 +267,7 @@ public class JAASRealm
         	}	
         	schemaPath = Transom.getInstance().getPolicySchemaPath();
             rpep = ReducedPolicyEnforcementPoint.getInstance();
-          	System.err.println("in initt() 6");
+          	log("in initt() 6");
           	if (rpep != null) {
                 rpep.initPep("com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg", surrogatePoliciesDirectory, validate, schemaPath);             		
           	}
@@ -275,7 +275,7 @@ public class JAASRealm
         	allowSurrogates = false;
         	surrogatePoliciesDirectory = null; 
         	rpep = null;
-        	System.err.println("problem setting up surrogate -- likely a policy breaks the schema");
+        	log("problem setting up surrogate -- likely a policy breaks the schema");
         } finally {
         	prepped = true;
         }
@@ -302,11 +302,11 @@ public class JAASRealm
     	}
     	Principal principal = null;
     	try {
-    		System.err.println("calling innerAuth for " + username);
+    		log("calling innerAuth for " + username);
     		principal = innerAuthenticate(username, credentials);
-    		System.err.println("back from innerAuth " + principal);
+    		log("back from innerAuth " + principal);
     		if ((principal != null) && (represented != null) && !"".equals(represented)) {
-        		System.err.println("in conditional");    			
+        		log("in conditional");    			
     			String[] roles = null;
     		  	if (principal instanceof GenericPrincipal) {		
     		  		roles = ((GenericPrincipal) principal).getRoles();
@@ -316,7 +316,7 @@ public class JAASRealm
     				initt();
     			}
     			if (allowSurrogates && (rpep != null)) {
-            		System.err.println("in conditional 2a");
+            		log("in conditional 2a");
     				fedora.server.Context context 
 					// = fedora.server.ReadOnlyContext.getContext("surrogate", httpServletRequest, username, null, roles);
 					= fedora.server.ReadOnlyContext.getContext("surrogate", httpServletRequest);
@@ -332,15 +332,15 @@ public class JAASRealm
             			throw new Exception(target + " couldn't set " + name, e);	
             		}
             		context.setResourceAttributes(null);
-            		System.err.println("in conditional 2b");
+            		log("in conditional 2b");
     				try {
         				log("enforcing " + target);
     					rpep.enforce(username, target, "", "", "", context);
-                		System.err.println("in conditional 2c");
+                		log("in conditional 2c");
     	    			principal = innerAuthenticate(represented, DONTCHECK);
-                		System.err.println("in conditional 2d");
+                		log("in conditional 2d");
     				} catch (Throwable t) {
-                		System.err.println("in conditional 2e, prob authz error on surrogate");
+                		log("in conditional 2e, prob authz error on surrogate");
     				}
     			}
     		}
@@ -364,7 +364,7 @@ public class JAASRealm
      *  authenticating this username
      */
     private Principal innerAuthenticate(String username, String credentials) {
-		System.err.println("begin innerAuth for " + username);
+		log("begin innerAuth for " + username);
         // Establish a LoginContext to use for authentication
         try {
         LoginContext loginContext = null;
@@ -378,34 +378,34 @@ public class JAASRealm
         ClassLoader ocl=Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
         try {
-    		System.err.println("innerAuth in try, before callback new " + appName + " " + username + " " + credentials);
+    		log("innerAuth in try, before callback new " + appName + " " + username + " " + credentials);
     		//JAASCallbackHandler dummyJAASCallbackHandler = new JAASCallbackHandler(this, username, credentials);
-    		System.err.println("innerAuth before new logincontext");
+    		log("innerAuth before new logincontext");
 
             loginContext = new LoginContext
                 (appName, new JAASCallbackHandler(this, username,
                                                   credentials));
-    		System.err.println("innerAuth after new logincontext");
+    		log("innerAuth after new logincontext");
 
         } catch (Throwable e) {
-    		System.err.println("innerAuth after blowup");
-    		System.err.println(e.getMessage());
-    		System.err.println(e.getCause().getMessage());    		
+    		log("innerAuth after blowup");
+    		log(e.getMessage());
+    		log(e.getCause().getMessage());    		
             log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
         } finally {
             Thread.currentThread().setContextClassLoader(ocl);
         }
-		System.err.println("didn't blowup");
+		log("didn't blowup");
         if( log.isDebugEnabled())
             log.debug("Login context created " + username);
 
         // Negotiate a login via this LoginContext
         Subject subject = null;
         try {
-    		System.err.println("before loginContext.login()");
+    		log("before loginContext.login()");
             loginContext.login();
-    		System.err.println("after loginContext.login()");            
+    		log("after loginContext.login()");            
             subject = loginContext.getSubject();
             if (subject == null) {
                 if( log.isDebugEnabled())
@@ -413,40 +413,40 @@ public class JAASRealm
                 return (null);
             }
         } catch (AccountExpiredException e) {    		
-        	System.err.println("then got 1 " + e.getMessage());
+        	log("then got 1 " + e.getMessage());
         	if (e.getCause() != null) {
-            	System.err.println("then got " + e.getCause().getMessage());        	        		
+            	log("then got " + e.getCause().getMessage());        	        		
         	}
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.accountExpired", username));
             return (null);
         } catch (CredentialExpiredException e) {
-        	System.err.println("then got 2 " + e.getMessage());
+        	log("then got 2 " + e.getMessage());
         	if (e.getCause() != null) {
-            	System.err.println("then got " + e.getCause().getMessage());        	        		
+            	log("then got " + e.getCause().getMessage());        	        		
         	}       	
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.credentialExpired", username));
             return (null);
         } catch (FailedLoginException e) {
-        	System.err.println("then got 3 " + e.getMessage());
+        	log("then got 3 " + e.getMessage());
         	if (e.getCause() != null) {
-            	System.err.println("then got " + e.getCause().getMessage());        	        		
+            	log("then got " + e.getCause().getMessage());        	        		
         	}  	
             if (log.isDebugEnabled())
                 log.debug(sm.getString("jaasRealm.failedLogin", username));
             return (null);
         } catch (LoginException e) {
-        	System.err.println("then got 4 " + e.getMessage());
+        	log("then got 4 " + e.getMessage());
         	if (e.getCause() != null) {
-            	System.err.println("then got " + e.getCause().getMessage());        	        		
+            	log("then got " + e.getCause().getMessage());        	        		
         	}
             log.warn(sm.getString("jaasRealm.loginException", username), e);
             return (null);
         } catch (Throwable e) {
-        	System.err.println("then got 5 " + e.getMessage());
+        	log("then got 5 " + e.getMessage());
         	if (e.getCause() != null) {
-            	System.err.println("then got " + e.getCause().getMessage());        	        		
+            	log("then got " + e.getCause().getMessage());        	        		
         	}        	
             log.error(sm.getString("jaasRealm.unexpectedError"), e);
             return (null);
@@ -464,7 +464,7 @@ public class JAASRealm
         if (log.isDebugEnabled()) {
             log.debug(sm.getString("jaasRealm.authenticateSuccess", username));
         }
-		System.err.println("end innerAuth for " + username);        
+		log("end innerAuth for " + username);        
         return (principal);
         } catch( Throwable t) {
             log.error( "error ", t);
@@ -517,7 +517,7 @@ public class JAASRealm
      * @param subject The Subject representing the logged in user
      */
     protected Principal createPrincipal(String username, Subject subject) {
-    	System.err.println("in createPrincipal");    	
+    	log("in createPrincipal");    	
         // Prepare to scan the Principals for this Subject
         String password = null; // -will- be carried forward
         ArrayList roles = new ArrayList();
@@ -566,11 +566,11 @@ public class JAASRealm
             	String[]  tempRoles = ((GenericPrincipal) principal).getRoles();
             	for (int i = 0; i < tempRoles.length; i++) {
                     roles.add(tempRoles[i]);            		
-System.err.println("AAAAAAAAAA adding role:" + tempRoles[i]);                    
+log("AAAAAAAAAA adding role:" + tempRoles[i]);                    
             	}
             } else if (roleClasses.contains(principalClass)) {
                 roles.add(principal.getName());
-System.err.println("XXXXXXXXXX adding role:" + principal.getName());                                 
+log("XXXXXXXXXX adding role:" + principal.getName());                                 
             }
             
             // following code left intact:
@@ -648,18 +648,18 @@ System.err.println("XXXXXXXXXX adding role:" + principal.getName());
      */
     
     public SecurityConstraint[] findSecurityConstraints(HttpRequest request, Context context) {
-    	System.err.println("in findSecurityConstraints");
+    	log("in findSecurityConstraints");
     	ServletRequest servletRequest = request.getRequest();
     	if (servletRequest instanceof HttpServletRequest) {
-        	System.err.println("got HttpServletRequest");
+        	log("got HttpServletRequest");
         	httpServletRequest = (HttpServletRequest) servletRequest;
         	String fromHeader = httpServletRequest.getHeader("From");
     		if ((fromHeader != null) && ! "".equals(fromHeader)) {
     			represented = fromHeader;
-            	System.err.println("got from=" + represented);    			
+            	log("got from=" + represented);    			
     		}
     		if (httpServletRequest != null) {
-    			System.err.println(httpServletRequest.getMethod() + httpServletRequest.getRequestURI());
+    			log(httpServletRequest.getMethod() + httpServletRequest.getRequestURI());
     		}
     	}
 
@@ -668,19 +668,48 @@ System.err.println("XXXXXXXXXX adding role:" + principal.getName());
     
     public boolean hasUserDataPermission(HttpRequest request, HttpResponse response,
             SecurityConstraint[] constraints) throws java.io.IOException {
-    	System.err.println("in hasUserDataPermission");
+    	log("in hasUserDataPermission");
     	return super.hasUserDataPermission(request, response, constraints);
     }
 	 
 	 public boolean hasResourcePermission(HttpRequest request, HttpResponse response,
             SecurityConstraint[] constraints, Context context) throws java.io.IOException {
-    	System.err.println("in hasResourcePermission");
+    	log("in hasResourcePermission");
 	 	return super.hasResourcePermission(request, response, constraints, context);
 	 }
 	 
 	 public JAASRealm() {
 	 	represented = "";
 	 }
+	 
+	 
+		protected boolean debug = false;
+		static public int logN = 0;
+		
+		/**
+		 * Log a message.
+		 *
+		 * @param message The message to be logged
+		 */
+		protected void log(String message) {
+			if (debug) {
+				System.out.print(logN++ + this.getClass().getName() + ":  ");
+				System.out.println(message);
+			}
+		}
+
+		/**
+		 * Log a message and associated exception.
+		 *
+		 * @param message The message to be logged
+		 * @param exception The associated exception
+		 */
+		protected void log(String message, Throwable exception) {
+			if (debug) {
+				log(message);
+				exception.printStackTrace(System.out);
+			}
+		}
 
 
 }

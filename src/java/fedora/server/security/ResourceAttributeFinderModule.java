@@ -331,7 +331,11 @@ import fedora.server.utilities.DateUtility;
 		}
 
 		return pid;				
-    }	
+    }
+    
+	static {
+		AttributeFinderModule.log = false;
+	}
 	
 }
 

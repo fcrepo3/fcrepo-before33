@@ -35,7 +35,7 @@ public class ValidatePolicy extends PolicyFinderModule {
 		String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
 		if (schemaName != null) {
 			schemaFile = new File(schemaName);
-			System.err.println("using schemaFile="+schemaFile);
+			log("using schemaFile="+schemaFile);
 		}
 	}
 
@@ -57,11 +57,11 @@ public class ValidatePolicy extends PolicyFinderModule {
 		factory.setNamespaceAware(true);
 
 		if (schemaFile == null) {
-			System.err.println("not validating");			
+			log("not validating");			
 			factory.setValidating(false);
 			builder = factory.newDocumentBuilder();
 		} else {
-			System.err.println("validating against "+schemaFile);			
+			log("validating against "+schemaFile);			
 			factory.setValidating(true);
 			factory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
 			factory.setAttribute(JAXP_SCHEMA_SOURCE, schemaFile);
@@ -79,9 +79,9 @@ public class ValidatePolicy extends PolicyFinderModule {
 		String filepath = args[0];
 		File file = new File(filepath);
 		if (! file.exists()) {
-			System.err.println(filepath + " does not exist");
+			slog(filepath + " does not exist");
 		} else if (! file.canRead()) {
-			System.err.println("cannot read " + filepath);
+			slog("cannot read " + filepath);
 		} else {
 			ValidatePolicy policyChecker = new ValidatePolicy();
 			String name = "";
@@ -92,28 +92,50 @@ public class ValidatePolicy extends PolicyFinderModule {
 				rootElement = builder.parse(file).getDocumentElement();
 				name = rootElement.getTagName();
 			} catch (Throwable e) {
-				System.err.println("couldn't parse repo-wide policy");
-				System.err.println(e);
+				slog("couldn't parse repo-wide policy");
+				slog(e);
 				e.printStackTrace();		
 			}
 	        AbstractPolicy abstractPolicy = null;
 			try {
 				if ("Policy".equals(name)) {
-					System.err.println("root node is Policy");
+					slog("root node is Policy");
 					abstractPolicy = Policy.getInstance(rootElement);
 				} else if ("PolicySet".equals(name)) {
-					System.err.println("root node is PolicySet");
+					slog("root node is PolicySet");
 					abstractPolicy = PolicySet.getInstance(rootElement);
 				} else {
-					System.err.println("bad root node for repo-wide policy");
+					slog("bad root node for repo-wide policy");
 				}
 			} catch (ParsingException e) {
-				System.err.println("couldn't parse repo-wide policy");
-				System.err.println(e);
+				slog("couldn't parse repo-wide policy");
+				slog(e);
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	  private static boolean log = false;
+	  
+	  private final void log(String msg) {
+	  	if (log) {
+		  	System.err.println(msg);	  		
+	  	}
+	  }
+	  
+	  private static boolean slog = false;
+	  
+	  private static final void slog(String msg) {
+	  	if (slog) {
+		  	System.err.println(msg);	  		
+	  	}
+	  }	
+	  
+	  private static final void slog(Throwable t) {
+	  	if (slog) {
+	  		slog(t.getMessage());
+	  	}
+	  }
 	
 	class MyErrorHandler implements ErrorHandler {
 

@@ -243,11 +243,14 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 
     ServletContext servletContext = null;
     
+    private static final boolean log = false;
 	private final void log(String msg) {
-		if (servletContext != null) {
-			servletContext.log(msg);
-		} else {
-			System.err.println(msg);			
+		if (log) {
+			if (servletContext != null) {
+				servletContext.log(msg);
+			} else {
+				System.err.println(msg);			
+			}
 		}
 	}
 

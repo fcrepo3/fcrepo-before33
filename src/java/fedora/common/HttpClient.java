@@ -24,17 +24,27 @@ public class HttpClient {
 
 	public GetMethod doNoAuthnGet(int millisecondsWait, int redirectDepth, int maxConnectionAttemptsPerUrl) 
 	throws Exception {
-    	System.err.println("doNoAuthnGet.../ ");
+    	log("doNoAuthnGet.../ ");
 			return doNoAuthnGet(millisecondsWait, redirectDepth, maxConnectionAttemptsPerUrl, SLEEP_MILLISECONDS);
     }    
 	
 	public GetMethod doNoAuthnGet(int millisecondsWait, int redirectDepth, int maxConnectionAttemptsPerUrl, int millisecondsSleep) 
 	throws Exception {
-    	System.err.println("doNoAuthnGet.../ ");
+    	log("doNoAuthnGet.../ ");
 			return doAuthnGet(millisecondsWait, redirectDepth, null, null, maxConnectionAttemptsPerUrl, millisecondsSleep);
     }
 	
-	private static final int SLEEP_MILLISECONDS = 1000;
+	private static final String SLEEP_MILLISECONDS_KEY = "HTTPCLIENT_SLEEP_MILLISECONDS";
+	private static int intSleepMilliseconds = 1000;
+	static {
+		String stringSleepMilliseconds = System.getProperty(SLEEP_MILLISECONDS_KEY);
+		try {
+			intSleepMilliseconds = Integer.parseInt(stringSleepMilliseconds);
+		} catch (Exception e) {
+			//go with hardcoded default
+		}
+	}
+	private static final int SLEEP_MILLISECONDS = intSleepMilliseconds;
 
 	
     public GetMethod doAuthnGet(int millisecondsWait, int redirectDepth, String username, String password, int maxConnectionAttemptsPerUrl) 
@@ -49,31 +59,31 @@ public class HttpClient {
     	retryhandler.setRequestSentRetryEnabled(true);
     	retryhandler.setRetryCount(5);
 
-    	System.err.println("doAuthnGet... " + this.relativePath + "for " + username + " " + password + 
+    	log("doAuthnGet... " + this.relativePath + "for " + username + " " + password + 
     			" " );
 	  	getMethod = null;
 	  	try {
 	  		try {
 		  		boolean authenticate = false;
-	  			System.err.println("setting timeouts (milliseconds) = " + millisecondsWait);	
+	  			log("setting timeouts (milliseconds) = " + millisecondsWait);	
 		  		apacheCommonsClient.setConnectionTimeout(0); // waiting for connection
 		  		apacheCommonsClient.setTimeout(0); // waiting for data
 		  		if (
 		  				((username == null) && (password == null)) 
 		  		||  	((username != null) && "".equals(username) && (password != null) && "".equals(password))
 				) {
-		  			System.err.println("doAuthnGet(), don't authenticate " + username + " " + password);
+		  			log("doAuthnGet(), don't authenticate " + username + " " + password);
 		  		} else {
 			  		if ((username == null) || (password == null) || ("".equals(username))) {
 			  			throw new Exception("unexpected username password mix");
 			  		}
-		  			System.err.println("doAuthnGet(), do authenticate " + username + " " + password);		  		
+		  			log("doAuthnGet(), do authenticate " + username + " " + password);		  		
 			  		apacheCommonsClient.getState().setCredentials(null, null, new UsernamePasswordCredentials(username, password));
 			  		apacheCommonsClient.getState().setAuthenticationPreemptive(true);
-		  			System.err.println("doAuthnGet(), apacheCommonsClient=" + apacheCommonsClient);
+		  			log("doAuthnGet(), apacheCommonsClient=" + apacheCommonsClient);
 			  		authenticate = true;
 		  		}
-		  		System.err.println("doAuthnGet(), after setup");
+		  		log("doAuthnGet(), after setup");
 		  		int resultCode = -1;
 		  		int connectionAttemptsPerUrl = 0;
 		  		String workingPath = absoluteUrl;
@@ -81,21 +91,21 @@ public class HttpClient {
 		  			getMethod = new GetMethod(workingPath);
 		  	    	getMethod.setMethodRetryHandler(retryhandler);
 		  			
-		  			System.err.println("doAuthnGet(), getMethod=" + getMethod);
-		  			System.err.println("doAuthnGet(), validate()=" + getMethod.validate());
+		  			log("doAuthnGet(), getMethod=" + getMethod);
+		  			log("doAuthnGet(), validate()=" + getMethod.validate());
 		  			
-		  			System.err.println("doAuthnGet(), workingpath="+workingPath);
+		  			log("doAuthnGet(), workingpath="+workingPath);
 
 		  			getMethod.setDoAuthentication(authenticate);
-		  			System.err.println("doAuthnGet(), got GetMethod object=" + getMethod);
+		  			log("doAuthnGet(), got GetMethod object=" + getMethod);
 		  			getMethod.setFollowRedirects(true);
 		  			
 		  			
 		  			
-		  	    	System.err.println("just setFollowRedirects(true)");   	  
+		  	    	log("just setFollowRedirects(true)");   	  
 		  	    	
-		  	    	System.err.println("getMethod.getRecoverableExceptionCount()" + getMethod.getRecoverableExceptionCount());
-		  	    	System.err.println("getMethod.validate()" + getMethod.validate());
+		  	    	log("getMethod.getRecoverableExceptionCount()" + getMethod.getRecoverableExceptionCount());
+		  	    	log("getMethod.validate()" + getMethod.validate());
 		  	    	
 		  	    	try {
 				  		log("doAuthnGet trying get, go=" + connectionAttemptsPerUrl);	
@@ -103,7 +113,7 @@ public class HttpClient {
 			  			if (300 <= resultCode && resultCode <= 399) {
 			  				workingPath=getMethod.getResponseHeader("Location").getValue();
 			  				connectionAttemptsPerUrl = 0;
-			  				System.err.println("doAuthnGet(), got redirect, new url=" + workingPath);
+			  				log("doAuthnGet(), got redirect, new url=" + workingPath);
 			  			} else {
 				  			workingPath = null; //signal loop completion			  				
 			  			}
@@ -112,7 +122,7 @@ public class HttpClient {
 				  		log("doAuthnGet got --inner-- IOException: " + ioe.getMessage());	
 		  	    		Thread.sleep(millisecondsSleep);
 		  	    	}
-		  	    	System.err.println("resultCode=" + resultCode + " absoluteUrl=" +absoluteUrl); 
+		  	    	log("resultCode=" + resultCode + " absoluteUrl=" +absoluteUrl); 
 
 		  		}
 		  	} catch (HttpException httpe) {
@@ -121,7 +131,7 @@ public class HttpClient {
 		  	} catch (IOException ioe) {
 		  		log("doAuthnGet got IOException: " + ioe.getMessage());	
 		  		if (ioe.getCause() != null) {
-			  		System.err.println(ioe.getCause().getMessage());	  			
+			  		log(ioe.getCause().getMessage());	  			
 		  		}		  		
 	            ioe.printStackTrace();		  		
 		  		throw new Exception("got IOException", ioe);		  		
@@ -171,9 +181,9 @@ public class HttpClient {
 		try {   	
 			getMethod.releaseConnection();
 		} catch (Throwable t) {
-	  		System.err.println(t.getMessage());
+	  		log(t.getMessage());
 	  		if (t.getCause() != null) {
-		  		System.err.println(t.getCause().getMessage());	  			
+		  		log(t.getCause().getMessage());	  			
 	  		}
 		}
 	}
@@ -182,9 +192,9 @@ public class HttpClient {
 		try {
 			getGetMethod().getResponseBodyAsStream().close();
 		} catch (Throwable t) {
-	  		System.err.println(t.getMessage());
+	  		log(t.getMessage());
 	  		if (t.getCause() != null) {
-		  		System.err.println(t.getCause().getMessage());	  			
+		  		log(t.getCause().getMessage());	  			
 	  		}
 		}
     }
@@ -208,12 +218,12 @@ public class HttpClient {
     private static final Pattern patternWithoutPort = Pattern.compile(captureWithoutPort);
     
     public HttpClient(String protocol, String host, String port, String path) {
-    	System.err.println("HttpClient " + protocol + " " + host + " " + port + " " + path);
+    	log("HttpClient " + protocol + " " + host + " " + port + " " + path);
     	if ( (protocol == null) || "".equals(protocol)
     	||   (host == null) || "".equals(host)
     	||   (port == null) || "".equals(port) ) {
     		absoluteUrl = path;
-			System.err.println("parsing " + absoluteUrl + " against " + patternWithPort);
+			log("parsing " + absoluteUrl + " against " + patternWithPort);
     		//parse url as absolute url into components
     		Matcher matcherWithPort = patternWithPort.matcher(absoluteUrl);
     		if (matcherWithPort.matches()) {
@@ -221,9 +231,9 @@ public class HttpClient {
     			host = matcherWithPort.group(2);
     			port = matcherWithPort.group(3);
     			relativePath = matcherWithPort.group(4);    
-				System.err.println("matched with port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
+				log("matched with port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
     		} else {
-    			System.err.println("parsing " + absoluteUrl + " against " + patternWithoutPort);    			
+    			log("parsing " + absoluteUrl + " against " + patternWithoutPort);    			
         		Matcher matcherWithoutPort = patternWithoutPort.matcher(absoluteUrl);
         		if (matcherWithoutPort.matches()) {
         			protocol = matcherWithoutPort.group(1);
@@ -234,25 +244,25 @@ public class HttpClient {
         			} else if ("http".equals(protocol)) {
         				port = "443";        				
         			} else {
-        				System.err.println("unsupported protocol");
+        				log("unsupported protocol");
         			}
-    				System.err.println("matched without port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
+    				log("matched without port " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
         		} else {
-    				System.err.println("didn't match");        			
-    				System.err.println("captureWithPort="+captureWithPort);        			
-    				System.err.println("captureWithoutPort="+captureWithoutPort);        			        			
+    				log("didn't match");        			
+    				log("captureWithPort="+captureWithPort);        			
+    				log("captureWithoutPort="+captureWithoutPort);        			        			
         		}
     		}
     	} else {
     		relativePath = path;
         	absoluteUrl = HttpClient.makeUrl(protocol, host, port, relativePath);
-			System.err.println("not matched " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
+			log("not matched " + protocol + " " + host + " " + port + " " + absoluteUrl + " " + relativePath);
     	}
-		System.err.println("protocol="+protocol);
-		System.err.println("host="+host);
-		System.err.println("port="+port);
-		System.err.println("relativePath="+relativePath);
-		System.err.println("absoluteUrl="+absoluteUrl);
+		log("protocol="+protocol);
+		log("host="+host);
+		log("port="+port);
+		log("relativePath="+relativePath);
+		log("absoluteUrl="+absoluteUrl);
 
         try {
         	Protocol easyhttps = null;
@@ -266,10 +276,10 @@ public class HttpClient {
         		Protocol.registerProtocol("https", easyhttps);
         		//check it out:
         		Protocol x = Protocol.getProtocol("https");
-        		System.err.println("proto equals?="+easyhttps.equals(x));
-        		System.err.println("proto ==?="+(easyhttps==x)); 
-        		System.err.println("x="+x.toString());
-        		System.err.println("x="+x.getScheme() + " " + x.getDefaultPort() + " " + x.isSecure());        		
+        		log("proto equals?="+easyhttps.equals(x));
+        		log("proto ==?="+(easyhttps==x)); 
+        		log("x="+x.toString());
+        		log("x="+x.getScheme() + " " + x.getDefaultPort() + " " + x.isSecure());        		
         		*/
         	}        	
         	apacheCommonsClient = new org.apache.commons.httpclient.HttpClient(new MultiThreadedHttpConnectionManager());
@@ -279,10 +289,10 @@ public class HttpClient {
         		//check it out:
         		HostConfiguration hostConfiguration = httpClient.getHostConfiguration();
         		Protocol y = hostConfiguration.getProtocol();
-        		System.err.println("proto equals?="+easyhttps.equals(y));
-        		System.err.println("proto ==?="+(easyhttps==y)); 
-        		System.err.println("y="+y.toString());
-        		System.err.println("y="+y.getScheme() + " " + y.getDefaultPort() + " " + y.isSecure());        		
+        		log("proto equals?="+easyhttps.equals(y));
+        		log("proto ==?="+(easyhttps==y)); 
+        		log("y="+y.toString());
+        		log("y="+y.getScheme() + " " + y.getDefaultPort() + " " + y.isSecure());        		
         		*/
         		apacheCommonsClient.getHostConfiguration().setHost(host, sslPort, easyhttps); //required
         	}
@@ -366,24 +376,32 @@ public class HttpClient {
     	return contentLength;
     }
  
-    private boolean log = true;
+    private static boolean log = false;
     
     private final void log(String msg) {
     	if (log) {
-  	  	System.err.println(msg);	  		
+  	  		System.err.println(msg);	  		
     	}
     }
-    
+
+    private static boolean slog = false;
+
+    private static final void slog(String msg) {
+    	if (slog) {
+  	  		System.err.println(msg);	  		
+    	}
+    }
+
     public static final void main(String[] args) {
     	
     	try {
-			System.err.println("ping="+ServerUtility.pingServletContainerStartup("/", 2));
-			System.err.println("ping="+ServerUtility.pingServletContainerRunning("/", 2));
+			slog("ping="+ServerUtility.pingServletContainerStartup("/", 2));
+			slog("ping="+ServerUtility.pingServletContainerRunning("/", 2));
 		} catch (GeneralException e1) {
 			e1.printStackTrace();
 		}
     	HttpClient httpClient = null;
-   		System.err.println("SC:call HttpClient()...");
+   		slog("SC:call HttpClient()...");
    		switch (args.length) {
    			case 1:
    			case 3:
@@ -395,35 +413,35 @@ public class HttpClient {
 				break;
 			default:
    		}
-   		System.err.println("...SC:call HttpClient()");
+   		slog("...SC:call HttpClient()");
    		try {
 	   		switch (args.length) {
 				case 1:
 				case 4:					
-		       		System.err.println("SC:call HttpClient.doNoAuthnGet()...");
+		       		slog("SC:call HttpClient.doNoAuthnGet()...");
 					httpClient.doNoAuthnGet(20000, 25, 1);
-		       		System.err.println("...SC:call HttpClient.doNoAuthnGet()");					
+		       		slog("...SC:call HttpClient.doNoAuthnGet()");					
 					break;
 				case 3:
-		       		System.err.println("SC:call HttpClient.doAuthnGet()...");					
+		       		slog("SC:call HttpClient.doAuthnGet()...");					
 					httpClient.doAuthnGet(20000, 25, args[1], args[2], 1);
-		       		System.err.println("...SC:call HttpClient.doAuthnGet()");										
+		       		slog("...SC:call HttpClient.doAuthnGet()");										
 					break;
 				case 6:
-		       		System.err.println("SC:call HttpClient.doAuthnGet()...");					
+		       		slog("SC:call HttpClient.doAuthnGet()...");					
 					httpClient.doAuthnGet(20000, 25, args[4], args[5], 1);
-		       		System.err.println("...SC:call HttpClient.doAuthnGet()");					
+		       		slog("...SC:call HttpClient.doAuthnGet()");					
 					break;
 				default:
 	   		}
    		} catch (Exception e) {
-   	   		System.err.println("exception thrown by HttpClient.do(No)AuthnGet()");   			
+   	   		slog("exception thrown by HttpClient.do(No)AuthnGet()");   			
    		}
    		
-   		System.err.println("SC:call HttpClient.getLineResponseUrl()...");			
+   		slog("SC:call HttpClient.getLineResponseUrl()...");			
     	String line = httpClient.getLineResponseUrl();
-    	System.err.println("line response = " + line);
-   		System.err.println("...SC:call HttpClient.getLineResponseUrl()");			
+    	slog("line response = " + line);
+   		slog("...SC:call HttpClient.getLineResponseUrl()");			
     }
     
 }

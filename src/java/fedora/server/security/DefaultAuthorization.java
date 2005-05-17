@@ -100,25 +100,25 @@ public class DefaultAuthorization extends Module implements Authorization {
     	surrogatePoliciesDirectory = 
     		//((String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY_KEY);
-    	System.err.println("surrogatePoliciesDirectory=" + surrogatePoliciesDirectory);
+    	log("surrogatePoliciesDirectory=" + surrogatePoliciesDirectory);
     }
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY_KEY)) {
     	repositoryPoliciesActiveDirectory = 
     		//((String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY_KEY);
-    	System.err.println("repositoryPoliciesDirectory=" + repositoryPoliciesActiveDirectory);
+    	log("repositoryPoliciesDirectory=" + repositoryPoliciesActiveDirectory);
     }
     if (moduleParameters.containsKey(OBJECT_POLICIES_DIRECTORY_KEY)) {
     	objectPoliciesActiveDirectory =
     		//((String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY);
-    	System.err.println("objectPoliciesDirectory=" + objectPoliciesActiveDirectory);
+    	log("objectPoliciesDirectory=" + objectPoliciesActiveDirectory);
     }
     if (moduleParameters.containsKey(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)) {
     	repositoryPolicyGuitoolDirectory = 
     		//((String) moduleParameters.get(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY);
-    	System.err.println("repositoryPolicyGuitoolDirectory=" + repositoryPolicyGuitoolDirectory);
+    	log("repositoryPolicyGuitoolDirectory=" + repositoryPolicyGuitoolDirectory);
     }        
     if (moduleParameters.containsKey(COMBINING_ALGORITHM_KEY)) {
     	combiningAlgorithm = (String) moduleParameters.get(COMBINING_ALGORITHM_KEY);
@@ -126,21 +126,21 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ENFORCE_MODE_KEY)) {
     	enforceMode = (String) moduleParameters.get(ENFORCE_MODE_KEY);
     }
-    System.err.println("looking for POLICY_SCHEMA_PATH");
+    log("looking for POLICY_SCHEMA_PATH");
     if (moduleParameters.containsKey(POLICY_SCHEMA_PATH_KEY)) {
-        System.err.println("found POLICY_SCHEMA_PATH");
+        log("found POLICY_SCHEMA_PATH");
     	policySchemaPath = 
     		(((String) moduleParameters.get(POLICY_SCHEMA_PATH_KEY)).startsWith(File.separator) ? "" : serverHome) 
 			+ (String) moduleParameters.get(POLICY_SCHEMA_PATH_KEY);
-        System.err.println("set it = " + policySchemaPath);
+        log("set it = " + policySchemaPath);
     }
-    System.err.println("looking for VALIDATE_REPOSITORY_POLICIES");
+    log("looking for VALIDATE_REPOSITORY_POLICIES");
     if (moduleParameters.containsKey(VALIDATE_REPOSITORY_POLICIES_KEY)) {
-        System.err.println("found VALIDATE_REPOSITORY_POLICIES");    
+        log("found VALIDATE_REPOSITORY_POLICIES");    
         String temp = (String) moduleParameters.get(VALIDATE_REPOSITORY_POLICIES_KEY);
-        System.err.println("string vers = " + temp);
+        log("string vers = " + temp);
     	validateRepositoryPolicies = (new Boolean( (String) moduleParameters.get(VALIDATE_REPOSITORY_POLICIES_KEY))).booleanValue();
-        System.err.println("set it = " + validateRepositoryPolicies);
+        log("set it = " + validateRepositoryPolicies);
     }
     if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY)) {
     	validateObjectPoliciesFromFile = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY));
@@ -154,7 +154,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     if (moduleParameters.containsKey(ALLOW_SURROGATE_POLICIES_KEY)) {
     	allowSurrogatePolicies = Boolean.getBoolean((String) moduleParameters.get(ALLOW_SURROGATE_POLICIES_KEY));
     }
-	System.err.println("DefaultAuthorization constructor end");
+	log("DefaultAuthorization constructor end");
   }
 
   
@@ -164,7 +164,7 @@ public class DefaultAuthorization extends Module implements Authorization {
    * @throws ModuleInitializationException If the module cannot be initialized.
    */
   public void initModule() throws ModuleInitializationException {
-	System.err.println("DefaultAuthorization.initModule()");
+	log("DefaultAuthorization.initModule()");
   }
   
 	private String policySchemaPath = "";
@@ -190,104 +190,104 @@ public class DefaultAuthorization extends Module implements Authorization {
 		File srcFile = new File(srcPath);
 		FileInputStream fis = new FileInputStream(srcFile);
 		File destFile = new File(destPath);
-		System.err.println("before creating new file " + destFile.getAbsolutePath());
+		slog("before creating new file " + destFile.getAbsolutePath());
 		try {
 			destFile.createNewFile();
 		} catch (Exception e) {
 		}
-		System.err.println("after creating new file " + destFile.getAbsolutePath());
+		slog("after creating new file " + destFile.getAbsolutePath());
 		FileOutputStream fos = new FileOutputStream(destFile);
-		System.err.println("after creating new fos " + fos);			
+		slog("after creating new fos " + fos);			
 		byte[] buffer = new byte[BUFFERSIZE]; 
 		boolean reading = true;
 		while (reading) {
-			System.err.println("loop 1 ");
+			slog("loop 1 ");
 			int bytesRead = fis.read(buffer);
-			System.err.println("loop 2 " + bytesRead);
+			slog("loop 2 " + bytesRead);
 			if (bytesRead > 0) {
-				System.err.println("loop 2a " + bytesRead);									
+				slog("loop 2a " + bytesRead);									
 				fos.write(buffer, 0, bytesRead);
-				System.err.println("loop 2b " + bytesRead);				
+				slog("loop 2b " + bytesRead);				
 			}
 			reading = (bytesRead > -1);
-			System.err.println("loop 3 " + bytesRead);				
+			slog("loop 3 " + bytesRead);				
 		}
-		System.err.println("after loop 1 ");
+		slog("after loop 1 ");
 		fis.close();
-		System.err.println("after loop 2");
+		slog("after loop 2");
 		fos.close();
-		System.err.println("after loop 3");
+		slog("after loop 3");
 		
 	}
 	
 	private static void dircopy(String srcPath, String destPath) throws Exception {
-		System.err.println("copying from " + srcPath + " to " + destPath);
+		slog("copying from " + srcPath + " to " + destPath);
 		File srcDir = new File(srcPath);
-		System.err.println("srcDir = " + srcDir);
-		System.err.println("exists?=" + srcDir.exists());
-		System.err.println("canRead?=" + srcDir.canRead());
+		slog("srcDir = " + srcDir);
+		slog("exists?=" + srcDir.exists());
+		slog("canRead?=" + srcDir.canRead());
 		String[] paths = srcDir.list();
-		System.err.println("paths = " + paths);		
-		System.err.println("copying " + paths.length + " files");
+		slog("paths = " + paths);		
+		slog("copying " + paths.length + " files");
 		try {
 		for (int i=0; i<paths.length; i++) {
-			System.err.println("up = " + paths[i]);			
+			slog("up = " + paths[i]);			
 			String absSrcPath = srcPath + File.separator + paths[i];
 			String absDestPath = destPath + File.separator + paths[i];
 			filecopy(absSrcPath, absDestPath);
 		}
 		} catch (IOException e) {
-			System.err.println("caught IOException: " + e.getMessage());
+			slog("caught IOException: " + e.getMessage());
 			throw e;
 		} catch (Exception x) {
-			System.err.println("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
+			slog("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
 			throw x;			
 		}
 	}
 	
 	private static void deldirfiles(String path) throws Exception {
-		System.err.println("deleting from " + path);
+		slog("deleting from " + path);
 		File srcDir = new File(path);
-		System.err.println("srcDir = " + srcDir);
-		System.err.println("exists?=" + srcDir.exists());
-		System.err.println("canRead?=" + srcDir.canRead());
+		slog("srcDir = " + srcDir);
+		slog("exists?=" + srcDir.exists());
+		slog("canRead?=" + srcDir.canRead());
 		String[] paths = srcDir.list();
-		System.err.println("paths = " + paths);		
-		System.err.println("copying " + paths.length + " files");
+		slog("paths = " + paths);		
+		slog("copying " + paths.length + " files");
 		try {
 		for (int i=0; i<paths.length; i++) {
-			System.err.println("up = " + paths[i]);			
+			slog("up = " + paths[i]);			
 			String absPath = path + File.separator + paths[i];
 			File f = new File(absPath);
 			f.delete();
 		}
 		} catch (Exception x) {
-			System.err.println("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
+			slog("caught Exception: " + x.getClass().getName() + " " + x.getMessage());
 			throw x;			
 		}
 	}
 
 	private final void generateBackendPolicies() throws Exception{
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
-		System.err.println("fedorahome=" + fedoraHome);			
+		log("fedorahome=" + fedoraHome);			
 		deldirfiles(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY);
 		BackendPolicies backendPolicies = new BackendPolicies(fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);
-		System.err.println("fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);	
+		log("fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);	
 		Hashtable tempfiles = backendPolicies.generateBackendPolicies();
-		System.err.println("tempfiles=" + tempfiles);					
-		System.err.println("tempfiles.length=" + tempfiles.size());							
+		log("tempfiles=" + tempfiles);					
+		log("tempfiles.length=" + tempfiles.size());							
 		TransformerFactory tfactory = TransformerFactory.newInstance();
 		Iterator iterator = tempfiles.keySet().iterator();
 		while (iterator.hasNext()) {
-			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
+			log("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
 			File f = new File(fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION); //<<stylesheet location
 			StreamSource ss = new StreamSource(f);
 		    Transformer transformer = tfactory.newTransformer(ss); //xformPath
 		    String key = (String) iterator.next();
-			System.err.println("key=" + key);
+			log("key=" + key);
 		    File infile = new File((String)tempfiles.get(key));
 			FileInputStream fis = new FileInputStream(infile);
-			System.err.println("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
+			log("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
 			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + key);
 			transformer.transform(new StreamSource(fis), new StreamResult(fos));
 		}
@@ -295,7 +295,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	
 	private void setupActivePolicyDirectories() throws Exception {
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
-		System.err.println("fedorahome=" + fedoraHome);				
+		log("fedorahome=" + fedoraHome);				
 		mkdir(surrogatePoliciesDirectory);
 		mkdir(repositoryPolicyGuitoolDirectory);
 		filecopy(fedoraHome + File.separator + XACML_DIST_BASE + File.separator + "readme-policyguitool-generated-policies.txt", 
@@ -310,30 +310,30 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
   public void postInitModule() throws ModuleInitializationException {
-  	System.err.println("in DefaultAuthorization.postInitModule() 1");
+  	log("in DefaultAuthorization.postInitModule() 1");
     DOManager m_manager = (DOManager) getServer().getModule("fedora.server.storage.DOManager");
-  	System.err.println("in DefaultAuthorization.postInitModule() 2");
+  	log("in DefaultAuthorization.postInitModule() 2");
     if (m_manager == null) {
-    	System.err.println("in DefaultAuthorization.postInitModule() 3");
+    	log("in DefaultAuthorization.postInitModule() 3");
       throw new ModuleInitializationException("Can't get a DOManager from Server.getModule", getRole());
     }
-  	System.err.println("in DefaultAuthorization.postInitModule() 4");
+  	log("in DefaultAuthorization.postInitModule() 4");
     try {
-      	System.err.println("in DefaultAuthorization.postInitModule() 5");
+      	log("in DefaultAuthorization.postInitModule() 5");
       	setupActivePolicyDirectories();
         xacmlPep = PolicyEnforcementPoint.getInstance();
-      	System.err.println("in DefaultAuthorization.postInitModule() 6, policySchemaPath=" + policySchemaPath +
+      	log("in DefaultAuthorization.postInitModule() 6, policySchemaPath=" + policySchemaPath +
       			" validateRepositoryPolicies=" + validateRepositoryPolicies);
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();      	
         xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
        		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
-      	System.err.println("in DefaultAuthorization.postInitModule() 7");
+      	log("in DefaultAuthorization.postInitModule() 7");
         Transom.getInstance().setAllowSurrogate(allowSurrogatePolicies);
         Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesDirectory);
         Transom.getInstance().setValidateSurrogatePolicies(validateSurrogatePolicies);
         Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
     } catch (Throwable e1) {
-      	System.err.println("in DefaultAuthorization.postInitModule() 8");
+      	log("in DefaultAuthorization.postInitModule() 8");
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole());
     	throw e2;
     }
@@ -541,23 +541,23 @@ public class DefaultAuthorization extends Module implements Authorization {
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		MultiValueMap resourceAttributes = new MultiValueMap();
-        System.err.println("in enforceGetDatastreams");
+        log("in enforceGetDatastreams");
 		String name = ""; 
 		try {
-	        System.err.println("in enforceGetDatastreams, before setting datastreamState=" + datastreamState);
+	        log("in enforceGetDatastreams, before setting datastreamState=" + datastreamState);
 	        name = resourceAttributes.setReturn(Constants.DATASTREAM.STATE.uri, datastreamState);	
-	        System.err.println("in enforceGetDatastreams, before setting asOfDateAsString");
+	        log("in enforceGetDatastreams, before setting asOfDateAsString");
 	        name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(asOfDate, context));
-		    System.err.println("in enforceGetDatastreams, after setting asOfDateAsString");
+		    log("in enforceGetDatastreams, after setting asOfDateAsString");
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
-        System.err.println("in enforceGetDatastreams, before setting resourceAttributes");
+        log("in enforceGetDatastreams, before setting resourceAttributes");
 		context.setResourceAttributes(resourceAttributes);
-        System.err.println("in enforceGetDatastreams, after setting resourceAttributes");
+        log("in enforceGetDatastreams, after setting resourceAttributes");
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-        System.err.println("in enforceGetDatastreams, after calling global enforce");
+        log("in enforceGetDatastreams, after calling global enforce");
 	} finally {
         getServer().logFinest("Exiting enforceGetDatastreams");
 	}
@@ -931,7 +931,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 		log("enforcing " + target);
 		context.setActionAttributes(null);
 		context.setResourceAttributes(null);
-		System.err.println("enforceFindObjects, subject (from context)=" + context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri));
+		log("enforceFindObjects, subject (from context)=" + context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri));
 		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIA.uri, "", "", context);
 	} finally {
         getServer().logFinest("Exiting enforceFindObjects");
@@ -1247,8 +1247,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	temp.append(pad(date.getSeconds(),2));
 	  	temp.append('Z'); //<<<<<<<<<<<<XXXXXXXXXXX!!!!!!!!!!!!!!!!!
 	  	} catch (Exception e) {
-	  		System.err.println("exception in dateAsString " + temp.toString());
-	  		System.err.println(e + " " + e.getMessage());
+	  		slog("exception in dateAsString " + temp.toString());
+	  		slog(e + " " + e.getMessage());
 	  		throw e;
 	  	}
 	  	return temp.toString();
@@ -1258,13 +1258,21 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
-	  private boolean log = true;
+	  private static boolean log = false;
 	  
 	  private final void log(String msg) {
 	  	if (log) {
 		  	System.err.println(msg);	  		
 	  	}
 	  }
+	  
+	  private static boolean slog = false;
+	  
+	  private static final void slog(String msg) {
+	  	if (slog) {
+		  	System.err.println(msg);	  		
+	  	}
+	  }	  
 
 	  private final String logged(String msg) {
 	  	log(msg);

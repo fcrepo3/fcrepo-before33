@@ -134,7 +134,7 @@ import fedora.server.Context;
 				if (0 > context.nSubjectValues(attributeId)) {
 					values = null;
 				} else {
-		    		System.err.println("getting n values for " + attributeId + "=" + context.nSubjectValues(attributeId));
+		    		log("getting n values for " + attributeId + "=" + context.nSubjectValues(attributeId));
 					switch(context.nSubjectValues(attributeId)) {
 						case 0: 
 							values = null;
@@ -232,7 +232,7 @@ System.err.println("RETURNING " + context.getEnvironmentValue(attributeId) + " f
 	}
 	
 	static {
-		AttributeFinderModule.log = true;
+		AttributeFinderModule.log = false;
 	}
 	
 	/*package*/ final void registerContext(Object key, Context value) {

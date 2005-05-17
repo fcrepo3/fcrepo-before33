@@ -71,19 +71,19 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		this.combiningAlgorithm = combiningAlgorithm;
 
 		List filelist = new ArrayList();
-		System.err.println("before building regular file list");
+		log("before building regular file list");
 		buildRepositoryPolicyFileList(new File(repositoryPolicyDirectoryPath),  filelist);
-		System.err.println("after building regular file list");
-		System.err.println("before building (backend generated) file list " + repositoryBackendPolicyDirectoryPath);
+		log("after building regular file list");
+		log("before building (backend generated) file list " + repositoryBackendPolicyDirectoryPath);
 		buildRepositoryPolicyFileList(new File(repositoryBackendPolicyDirectoryPath),  filelist);
-		System.err.println("after building (backend generated) file list");				
-		System.err.println("before building (pgt generated) file list " + repositoryPolicyGuiToolDirectoryPath);
+		log("after building (backend generated) file list");				
+		log("before building (pgt generated) file list " + repositoryPolicyGuiToolDirectoryPath);
 		buildRepositoryPolicyFileList(new File(repositoryPolicyGuiToolDirectoryPath),  filelist);
-		System.err.println("after building (pgt generated) file list");		
-		System.err.println("before getting repo policies");
+		log("after building (pgt generated) file list");		
+		log("before getting repo policies");
 		
 		//String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
-		System.err.println("XXpolicySchemaPath="+policySchemaPath);
+		log("XXpolicySchemaPath="+policySchemaPath);
 		if (policySchemaPath == null) {
 			this.validateRepositoryPolicies = false;
 			this.validateObjectPoliciesFromFile = false;
@@ -106,12 +106,12 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		repositoryPolicies = getRepositoryPolicies(filelist);
 		
 		File objectPolicyDirectory = new File(objectPolicyDirectoryPath);
-System.err.println("objectPolicyDirectory="+objectPolicyDirectory);
+log("objectPolicyDirectory="+objectPolicyDirectory);
 		if (objectPolicyDirectory.isDirectory()) {
-System.err.println("is a directory");			
+log("is a directory");			
 			this.objectPolicyDirectory = objectPolicyDirectory;
 		} else {
-System.err.println("is NOT a directory");
+log("is NOT a directory");
 		}
 		
 		this.doManager = doManager;
@@ -136,16 +136,16 @@ System.err.println("is NOT a directory");
 		// as of 1.2, we always are namespace aware
 		factory.setNamespaceAware(true);
 
-		System.err.println("ZZschemaFile=" +schemaFile);
-		System.err.println("validate=" +validate);
+		log("ZZschemaFile=" +schemaFile);
+		log("validate=" +validate);
 		if (schemaFile == null) {
 			factory.setValidating(false);
 			builder = factory.newDocumentBuilder();
 		} else {
 			factory.setValidating(validate);
-			System.err.println("VALIDATION ON? = " + validate);
+			log("VALIDATION ON? = " + validate);
 			factory.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-			System.err.println("schemaFile=" + schemaFile.isFile() + schemaFile.canRead());
+			log("schemaFile=" + schemaFile.isFile() + schemaFile.canRead());
 			factory.setAttribute(JAXP_SCHEMA_SOURCE, schemaFile);
 			builder = factory.newDocumentBuilder();
 			builder.setErrorHandler(handler);
@@ -169,7 +169,7 @@ System.err.println("is NOT a directory");
 		} catch (ParsingException e) {
 			String msg = "couldn't parse repo-wide policy in " + errorLabel;
 			logger.log(Level.INFO, msg);
-			System.err.println("HOW IT HAPPEN:");
+			slog("HOW IT HAPPEN:");
 			e.printStackTrace();
 			throw new GeneralException(msg);
 		}
@@ -195,7 +195,7 @@ System.err.println("is NOT a directory");
 		int methodErrors = 0;
 		while (it.hasNext()) {
 			String filepath = (String) it.next();
-			System.err.println("filepath=" + filepath);
+			log("filepath=" + filepath);
 			
             File file = new File(filepath);
             if (!file.exists()) {
@@ -204,40 +204,40 @@ System.err.println("is NOT a directory");
             Element rootElement = null;
             if (methodErrors == 0) {
     			try {
-    				System.err.println("GETTING A REPOSITORY POLICY = " + filepath);
-    				System.err.println("schemaFile = " + schemaFile);
+    				log("GETTING A REPOSITORY POLICY = " + filepath);
+    				log("schemaFile = " + schemaFile);
     				DocumentBuilder builder = getDocumentBuilder(new SchemaErrorHandler(), validateRepositoryPolicies);
     				rootElement = builder.parse(file).getDocumentElement();
     			} catch (ParserConfigurationException e) {
-    				System.err.println("parser failure at " + filepath);
+    				log("parser failure at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (SAXException e) {
-    				System.err.println("policy breaks schema at " + filepath);
+    				log("policy breaks schema at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (IOException e) {
-    				System.err.println("policy can't be read at " + filepath);
+    				log("policy can't be read at " + filepath);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			}
             }
-			System.err.println("methodErrors=" + methodErrors);
+			log("methodErrors=" + methodErrors);
             if (methodErrors == 0) {
                 AbstractPolicy abstractPolicy;
 				try {
-					System.err.println("before getting abstract policy from dom, at " + filepath);
+					log("before getting abstract policy from dom, at " + filepath);
 					abstractPolicy = getAbstractPolicyFromDOM(rootElement, filepath);
-					System.err.println("after getting abstract policy from dom");
+					log("after getting abstract policy from dom");
 					repositoryPolicies.add(abstractPolicy);  
 				} catch (GeneralException e) {
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
 					e.printStackTrace();                	
 				} catch (Throwable other) {
-					System.err.println("other exception is" + other.getMessage() + " " + other);
+					log("other exception is" + other.getMessage() + " " + other);
 					other.printStackTrace(); 
 				}
             }
 		}
 		classErrors += methodErrors;
-		System.err.println("classErrors=" + classErrors);
+		log("classErrors=" + classErrors);
 		if (classErrors != 0) {
 			repositoryPolicies.clear();
 			throw new GeneralException("problems loading repo-wide policies");			
@@ -266,18 +266,18 @@ System.err.println("is NOT a directory");
 			if (policyDatastream != null) {
 				try {
 					InputStream instream = policyDatastream.getContentStream();
-    				System.err.println("GETTING A OBJECT POLICY FROM DATASTREAM");					
+    				log("GETTING A OBJECT POLICY FROM DATASTREAM");					
 					DocumentBuilder builder = getDocumentBuilder(null, validateObjectPoliciesFromDatastream);
 					Element rootElement = builder.parse(instream).getDocumentElement();
 					objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "object xml for " + pid);
     			} catch (ParserConfigurationException e) {
-    				System.err.println("parser failure at " + pid);
+    				log("parser failure at " + pid);
 					throw e;
     			} catch (SAXException e) {
-    				System.err.println("policy breaks schema at " + pid);
+    				log("policy breaks schema at " + pid);
 					throw e;
     			} catch (IOException e) {
-    				System.err.println("policy can't be read at " + pid);
+    				log("policy can't be read at " + pid);
 					throw e;
 				} catch (Throwable e) {
 					logger.log(Level.INFO, "error reading policy from xml for object " + pid);
@@ -292,7 +292,7 @@ System.err.println("is NOT a directory");
     private AbstractPolicy getPolicyFromFile(String filepath) throws Exception {
 		AbstractPolicy objectPolicyFromObject = null;		
 		//String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
-System.err.println(">>>>>>>>filepath=" + filepath);
+log(">>>>>>>>filepath=" + filepath);
 		File file = new File(filepath);
 		if (file.exists()) {
 			if (!file.canRead()) {
@@ -301,18 +301,18 @@ System.err.println(">>>>>>>>filepath=" + filepath);
 				throw new GeneralException(msg);			
 			}
 			try {
-				System.err.println("GETTING A OBJECT POLICY FROM " + filepath);
+				log("GETTING A OBJECT POLICY FROM " + filepath);
 				DocumentBuilder builder = getDocumentBuilder(null, validateObjectPoliciesFromFile);
 				Element rootElement = builder.parse(file).getDocumentElement();
 				objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "policy file from xml at " + filepath);
 			} catch (ParserConfigurationException e) {
-				System.err.println("parser failure at " + filepath);
+				log("parser failure at " + filepath);
 				throw e;
 			} catch (SAXException e) {
-				System.err.println("policy breaks schema at " + filepath);
+				log("policy breaks schema at " + filepath);
 				throw e;
 			} catch (IOException e) {
-				System.err.println("policy can't be read at " + filepath);
+				log("policy can't be read at " + filepath);
 				throw e;
 			} catch (Throwable e) {
 				String msg = "error reading policy from xml from xml at " + filepath; 
@@ -471,10 +471,19 @@ System.err.println(">>>>>>>>filepath=" + filepath);
 
     ServletContext servletContext = null;
     
+    private static final boolean log = false;
 	private final void log(String msg) {
-		if (servletContext != null) {
-			servletContext.log(msg);
-		} else {
+		if (log) {
+			if (servletContext != null) {
+				servletContext.log(msg);
+			} else {
+				System.err.println(msg);			
+			}
+		}
+	}
+    private static final boolean slog = false;
+	private static final void slog(String msg) {
+		if (slog) {
 			System.err.println(msg);			
 		}
 	}

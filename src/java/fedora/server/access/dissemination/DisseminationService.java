@@ -353,7 +353,7 @@ public class DisseminationService
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType,
-										   bMechPid) //this is generic should be made specific per service
+										   bMechPid)
                 + "+(" + dissBindInfo.DSBindKey + ")";
           } else
           {

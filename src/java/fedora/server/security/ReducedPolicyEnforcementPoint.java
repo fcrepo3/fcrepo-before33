@@ -77,9 +77,9 @@ public class ReducedPolicyEnforcementPoint {
 			contextUri = new URI(Constants.ACTION.CONTEXT_ID.uri);
 			pidUri = new URI(Constants.OBJECT.PID.uri);
 			namespaceUri = new URI(Constants.OBJECT.NAMESPACE.uri);
-			System.err.println("all uris set, no throws");
+			log("all uris set, no throws");
 		} catch (URISyntaxException e) {
-			System.err.println("***throw in XACMLPep constructor");
+			log("***throw in XACMLPep constructor");
 		} finally {
 			XACML_SUBJECT_ID_URI = xacmlSubjectIdUri;
 			XACML_ACTION_ID_URI = xacmlActionIdUri;
@@ -98,7 +98,7 @@ public class ReducedPolicyEnforcementPoint {
 			singleton = new ReducedPolicyEnforcementPoint();
 		}
 		count++;
-		System.err.println ("***another use (" + count + ") of XACMLPep singleton");
+		slog ("***another use (" + count + ") of XACMLPep singleton");
 		return singleton;
 	}
 
@@ -116,25 +116,25 @@ public class ReducedPolicyEnforcementPoint {
 	
 	public void initPep(String combiningAlgorithm, File surrogatePolicyDirectory, boolean validateSurrogatePolicies, String schemaPath) 
 	throws Exception {
-		System.err.println ("***initReducedPep()");
+		log ("***initReducedPep()");
 		
 		destroy();
 
 		AttributeFinder attrFinder = new AttributeFinder();
 		List attrModules = new ArrayList();
-System.err.println("about to set contextAttributeFinder xxx");
+log("about to set contextAttributeFinder xxx");
 try {
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
-		System.err.println("about to set contextAttributeFinder after");
+		log("about to set contextAttributeFinder after");
 } catch(Throwable t) {
-	System.err.println ("***caught throwable in r initPep");	
-	System.err.println(t.getMessage());
+	log ("***caught throwable in r initPep");	
+	log(t.getMessage());
 	if (t.getCause() != null) {
-		System.err.println(t.getCause().getMessage());		
+		log(t.getCause().getMessage());		
 	}
-	System.err.println ("***that was it");	
+	log ("***that was it");	
 }
-System.err.println("just set contextAttributeFinder=" + contextAttributeFinder);
+log("just set contextAttributeFinder=" + contextAttributeFinder);
 		contextAttributeFinder.setServletContext(servletContext);
 		attrModules.add(contextAttributeFinder);		
 	
@@ -142,54 +142,54 @@ System.err.println("just set contextAttributeFinder=" + contextAttributeFinder);
 		//==>>attrModules.add(resourceAttributeModule);
 
 		attrFinder.setModules(attrModules);		
-System.err.println("before building policy finder");
+log("before building policy finder");
 		PolicyFinder policyFinder = new PolicyFinder();
-		System.err.println("just constructed policy finder");
+		log("just constructed policy finder");
 		Set policyModules = new HashSet();
-		System.err.println("just constructed policy module hashset"); 
+		log("just constructed policy module hashset"); 
 		ReducedPolicyFinderModule reducedPolicyModule = null;
 		//try {
-			System.err.println("***before constucting fedora policy finder module");
+			log("***before constucting fedora policy finder module");
 			reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory, validateSurrogatePolicies, schemaPath);
-			System.err.println("after constucting fedora policy finder module");
+			log("after constucting fedora policy finder module");
 			/*
 		} catch (Exception e) {
-System.err.println("***debugging CombinedPolicyModule");
+log("***debugging CombinedPolicyModule");
 			e.printStackTrace();
 		}*/
-		System.err.println("before adding fedora policy finder module to policy finder hashset");
+		log("before adding fedora policy finder module to policy finder hashset");
 		policyModules.add(reducedPolicyModule);
-		System.err.println("after adding fedora policy finder module to policy finder hashset");
-		System.err.println("r before setting policy finder hashset into policy finder");
+		log("after adding fedora policy finder module to policy finder hashset");
+		log("r before setting policy finder hashset into policy finder");
 		policyFinder.setModules(policyModules);
-		System.err.println("r after setting policy finder hashset into policy finder");
+		log("r after setting policy finder hashset into policy finder");
 		
 		PDP pdp = null;
-		System.err.println("r before getClassErrors");		
+		log("r before getClassErrors");		
 		try {
-			System.err.println(ReducedPolicyFinderModule.getClassErrors() + "class errors");
+			log(ReducedPolicyFinderModule.getClassErrors() + "class errors");
 		} catch (Throwable t) {
-			System.err.println("grr: " + t.getMessage());
+			log("grr: " + t.getMessage());
 			if (t.getCause() != null) {
-				System.err.println("grr: " + t.getCause().getMessage());				
+				log("grr: " + t.getCause().getMessage());				
 			}
 		}
 		
-		System.err.println("r after getClassErrors");
+		log("r after getClassErrors");
 		if (ReducedPolicyFinderModule.getClassErrors() == 0) {
-			System.err.println("0 class errors");
+			log("0 class errors");
 			pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
-			System.err.println("after newing PDPConfig");		
+			log("after newing PDPConfig");		
 		}
 		if (pdp == null) {
-			System.err.println("null pdp");
+			log("null pdp");
 			Exception se = new Exception("Xaclmpep.init() failed:  no pdp");
 			servletContext.log(se.getMessage());
 			throw se;
 		}
-		System.err.println("before assigning pdp");
+		log("before assigning pdp");
 		this.pdp = pdp;
-		System.err.println ("***ending initPep()");
+		log ("***ending initPep()");
 	}
 
 	public void inactivate() {
@@ -213,16 +213,16 @@ System.err.println("***debugging CombinedPolicyModule");
 	 */
 	
 	private final Set wrapSubjects(String subjectLoginId) {
-		System.err.println("wrapSubjectIdAsSubjects(): " + subjectLoginId);
+		log("wrapSubjectIdAsSubjects(): " + subjectLoginId);
 		StringAttribute stringAttribute = new StringAttribute("");
 		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
-		System.err.println("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
+		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
 		Set subjectAttributes = new HashSet();
 		subjectAttributes.add(subjectAttribute);
 		if ((subjectLoginId != null) && "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
 			subjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
-			System.err.println("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
+			log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
 		}
 		subjectAttributes.add(subjectAttribute);		
 		/*
@@ -245,12 +245,12 @@ System.err.println("***debugging CombinedPolicyModule");
 			for (int i=0; i<roles.length; i++) {
 				String[] parts = parseRole(roles[i]);
 				if ((parts == null) || (parts.length == 0)|| (parts[0] == null)) {
-					System.err.println("no attributes for subjectId=" + subjectId + " for roles[" + i + "]=" + roles[i]);
+					log("no attributes for subjectId=" + subjectId + " for roles[" + i + "]=" + roles[i]);
 				} else {
 					if ((parts[1] == null) || "".equals(parts[1])) {
 						parts[1] = "X";
 					}
-					System.err.println("XXXXXXXXXXXXX " + i + " " + parts[0] + "value i.e. parts[1] = " + parts[1]);
+					log("XXXXXXXXXXXXX " + i + " " + parts[0] + "value i.e. parts[1] = " + parts[1]);
 					try {
 						singleSubjectAttribute = new Attribute(new URI(parts[0]), null, null, new StringAttribute(parts[1]));
 					} catch (URISyntaxException e1) {
@@ -368,44 +368,44 @@ System.err.println("***debugging CombinedPolicyModule");
 			Iterator testIt = testSubjects.iterator();
 			while (testIt.hasNext()) {
 				Subject testSubject = (Subject) testIt.next();
-				System.err.println("testSubject=" + testSubject);
+				log("testSubject=" + testSubject);
 				Set testAttributes = testSubject.getAttributes();
 				Iterator testIt2 = testAttributes.iterator();
 				while (testIt2.hasNext()) {
 					Attribute testAttribute = (Attribute) testIt2.next();
-					System.err.println("testAttribute=" + testAttribute);
+					log("testAttribute=" + testAttribute);
 					AttributeValue attributeValue = testAttribute.getValue();
-					System.err.println("attributeValue=" + attributeValue);
-					System.err.println("attributeValue.toString()=" + attributeValue.toString());
+					log("attributeValue=" + attributeValue);
+					log("attributeValue.toString()=" + attributeValue.toString());
 				}
 			}
 			*/ /*
-			System.err.println("vvv environment vvv");
+			log("vvv environment vvv");
 			Set testEnvironmentAttributes = request.getEnvironmentAttributes();
 			Iterator testIt2 = testEnvironmentAttributes.iterator();
 			while (testIt2.hasNext()) {
 				Attribute testAttribute = (Attribute) testIt2.next();
 				URI testAttributeId = testAttribute.getId();
 				AttributeValue testAttributeValue = testAttribute.getValue();
-				System.err.println("test env attributeId=" + testAttributeId);
-				System.err.println("test env attributeValue=" + testAttributeValue);
-				System.err.println("test env attributeValue.toString()=" + testAttributeValue.toString());
+				log("test env attributeId=" + testAttributeId);
+				log("test env attributeValue=" + testAttributeValue);
+				log("test env attributeValue.toString()=" + testAttributeValue.toString());
 			}
 			*/
 			Logger logger = Logger.getLogger("com.sun.xacml");
 				logger.setLevel(Level.ALL);
-System.err.println("about to ref contextAttributeFinder=" + contextAttributeFinder);
+log("about to ref contextAttributeFinder=" + contextAttributeFinder);
 			contextAttributeFinder.registerContext(contextIndex, context);
 			response = pdp.evaluate(request);
-			System.err.println("in pep, after evaluate() called");
+			log("in pep, after evaluate() called");
 		} catch (Throwable t) {
-			System.err.println("got me throwable:");			
+			log("got me throwable:");			
 			t.printStackTrace();			
 			throw new Exception("");
 		} finally {
 			contextAttributeFinder.unregisterContext(contextIndex);
 		}
-		System.err.println("in pep, before denyBiasedAuthz() called");
+		log("in pep, before denyBiasedAuthz() called");
 		if (! denyBiasedAuthz(response.getResults())) {
 			throw new Exception("");
 		}			
@@ -439,22 +439,31 @@ System.err.println("about to ref contextAttributeFinder=" + contextAttributeFind
 					nWrongs++;
 					break;
 			}
-			//System.err.println("AUTHZ:  which=" + which + " resource=" + result.getResource() + " toString()=" + result.toString());			
+			//log("AUTHZ:  which=" + which + " resource=" + result.getResource() + " toString()=" + result.toString());			
 		}
 		System.err.println("AUTHZ:  permits=" + nPermits + " denies=" + nDenies + " indeterminates=" + nIndeterminates + " notApplicables=" + nNotApplicables + " unexpecteds=" + nWrongs);			
 		return (nPermits >= 1) && (nDenies == 0) && (nIndeterminates == 0) && (nWrongs == 0); // don't care about NotApplicables
 	}
 
+    private static final boolean log = false;
 	private final String log(String msg) {
-		if (servletContext != null) {
-			servletContext.log(msg);
-		} else {
-			System.err.println(msg);			
+		if (log) {
+			if (servletContext != null) {
+				servletContext.log(msg);
+			} else {
+				System.err.println(msg);			
+			}
 		}
 		return msg;
 	}
 	
-	
+    private static final boolean slog = false;
+	private static final String slog(String msg) {
+		if (slog) {
+			System.err.println(msg);			
+		}
+		return msg;
+	}	
 
 	
 }

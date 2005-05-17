@@ -206,9 +206,9 @@ public class ReadOnlyContext implements Context {
      			}
       		}
       	} catch (Exception e) {	
-      		log("caught exception building subjectMap " + e.getMessage());
+      		slog("caught exception building subjectMap " + e.getMessage());
       		if (e.getCause() != null) {
-      			log(e.getCause().getMessage());
+      			slog(e.getCause().getMessage());
       		}
       	} finally {
       		subjectMap.lock();
@@ -290,12 +290,12 @@ public class ReadOnlyContext implements Context {
   	  	String subjectId = request.getRemoteUser();
   	  	String password = null;
   	  	if (request.getUserPrincipal() == null) {
-  	  		System.err.println("in context, no principal to grok password from!!");				
+  	  		slog("in context, no principal to grok password from!!");				
   	  	} else {
 			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
-				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking password from it!!");
+				slog("in context, principal is -not- GenericPrincipal, so I'm not groking password from it!!");
 			} else {
-				System.err.println("in context, principal is GenericPrincipal, so I can grok password from it!!");
+				slog("in context, principal is GenericPrincipal, so I can grok password from it!!");
   	  	  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
   	  	  	  		if (password == null) {
   	  	  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
@@ -319,9 +319,9 @@ public class ReadOnlyContext implements Context {
   	boolean noOp = true; //safest approach 
   	try {
   		noOp = (new Boolean(request.getParameter(NOOP_PARAMETER_NAME))).booleanValue();
-  		System.err.println("NOOP_PARAMETER_NAME="+NOOP_PARAMETER_NAME);
-  		System.err.println("request.getParameter(NOOP_PARAMETER_NAME)="+ request.getParameter(NOOP_PARAMETER_NAME));
-  		System.err.println("noOp="+ noOp);
+  		slog("NOOP_PARAMETER_NAME="+NOOP_PARAMETER_NAME);
+  		slog("request.getParameter(NOOP_PARAMETER_NAME)="+ request.getParameter(NOOP_PARAMETER_NAME));
+  		slog("noOp="+ noOp);
  
   	} catch (Exception e) {
   	}
@@ -336,12 +336,12 @@ public class ReadOnlyContext implements Context {
     public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
   	  	String[] roles = null;
   	  	if (request.getUserPrincipal() == null) {
-  	  		System.err.println("in context, no principal to grok roles from!!");				
+  	  		slog("in context, no principal to grok roles from!!");				
   	  	} else {
 			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
-				System.err.println("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
+				slog("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
 			} else {
-				System.err.println("in context, principal is GenericPrincipal, so I can grok roles from it!!");
+				slog("in context, principal is GenericPrincipal, so I can grok roles from it!!");
   	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
 			}
   	  	}
@@ -385,8 +385,15 @@ public class ReadOnlyContext implements Context {
   	
 	public static boolean log = false; 
 	
-	protected static final void log(String msg) {
+	protected final void log(String msg) {
 		if (! log) return;
+		System.err.println(msg);
+	}
+	
+	public static boolean slog = false; 
+	
+	protected static final void slog(String msg) {
+		if (! slog) return;
 		System.err.println(msg);
 	}
     

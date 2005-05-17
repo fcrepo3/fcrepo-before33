@@ -338,7 +338,7 @@ log("USING AS DATETIME:" + ((String[])temp)[i]);
 	
 	abstract protected Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context);
 	
-	public static boolean log = true; 
+	public static boolean log = false; 
 	
 	protected final void log(String msg) {
 		if (! log) return;
