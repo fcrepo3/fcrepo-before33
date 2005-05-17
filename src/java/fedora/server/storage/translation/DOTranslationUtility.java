@@ -126,14 +126,8 @@ public abstract class DOTranslationUtility {
 	// changed, objects that have URLs that refer to the local repository won't break.
 	public static Pattern s_fedoraLocalPattern = Pattern.compile("http://local.fedora.server/");
 	
-	// RELATIVE URL Patterns:
-	// Relative URL paths that are based at the local Fedora repository server.	
-	public static Pattern s_relativePattern = Pattern.compile("fedora/");
-	public static Pattern s_relativeGetPattern = Pattern.compile("fedora/get/");
-	public static Pattern s_relativeSearchPattern = Pattern.compile("fedora/search/");
-	public static Pattern s_relativeGetPatternAsParm = Pattern.compile("=fedora/get/");
-	public static Pattern s_relativeSearchPatternAsParm = Pattern.compile("=fedora/search/");
-
+	// PATTERN FOR DEPRECATED METHOD (getItem of the Default Disseminator), for example:
+	public static Pattern s_getItemPattern = Pattern.compile("/fedora-system:3/getItem\\?itemID=");
 
 	// ABSOLUTE REPOSITORY URL Patterns:
 	// Patterns of how the protocol and repository server address may be encoded
@@ -155,6 +149,7 @@ public abstract class DOTranslationUtility {
 	// datastreams inside an export file.  Internal Fedora identifiers for
 	// the Managed Content datastreams are replaced with public callback URLS.
 	private static String s_localDissemUrlStart; // "http://hostname:port/fedora/get/"
+	
 
 	// The actual host and port of the Fedora repository server
 	private static String s_hostInfo = null;
@@ -253,11 +248,8 @@ public abstract class DOTranslationUtility {
 	 */
 	private static String makeAbsoluteURLs(String input) {
 		String output=input;
-		// First, convert any relative Fedora URLs to the special
-		// Fedora local URL syntax (i.e., "http://local.fedora.server/...")
-		output=convertRelativeToFedoraLocalURLs(output);
 		
-		// Now, make absolute URLs out of all instances of the Fedora local URL syntax ...
+		// Make absolute URLs out of all instances of the Fedora local URL syntax ...
 		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
 		if (fedora.server.Debug.DEBUG) {
 			System.out.println("makeAbsoluteURLs: input=" + input);
@@ -266,6 +258,7 @@ public abstract class DOTranslationUtility {
 		return output;
 	}
 
+	
 	/**
 	 * Detect all forms of URLs that point to the local Fedora repository and
 	 * make sure they are encoded in the special Fedora local URL syntax
@@ -295,15 +288,10 @@ public abstract class DOTranslationUtility {
 	 */
 	private static String makeFedoraLocalURLs(String input) {
 		String output=input;
-		// First, convert any relative Fedora URLs to the special
-		// Fedora local URL syntax ("http://local.fedora.server/...")
-		// Note that relative Fedora URLs may have come in via ingest
-		// or via API-M methods (addDatastream or modifyDatastream).
-		output=convertRelativeToFedoraLocalURLs(output);
 		
-		// Detect any absolute URLs that reference the local
-		// repository and convert them to the Fedora LOCALIZATION URL syntax
-		// ("http://local.fedora.server/...")\
+		// Detect any absolute URLs that refer to the local repository 
+		// and convert them to the Fedora LOCALIZATION URL syntax
+		// (i.e., "http://local.fedora.server/...")\
 		
 		// convert URLs that begin with http along with host and port
 		// explicitly configured for the repository
@@ -343,65 +331,26 @@ public abstract class DOTranslationUtility {
 	}
 
 	/**
-	 * Detect a relative repository URL by searching for the patterns
-	 * "/fedora/get/" or "/fedora/search/" in the input and convert
-	 * instances of these patterns to the Fedora local URL syntax
-	 * (e.g., "http://local.fedora.server/fedora/get/..."). This enables
-	 * Fedora clients to use a true relative URL syntax in ingest files or on
-	 * API-M requests when encoding relative repository URLs, but it lets
-	 * the Fedora system manage and store relative URLs with a precise syntax
-	 * that can always be depended on.  Note that relative repository
-	 * URLs can occur on External (E) and Redirected (R) datastreams.
-	 * They represent the case where the datastream location is either a
-	 * dissemination of a Fedora object in the local repository, or a
-	 * Fedora API-A-LITE request.  Examples:
-	 *
-	 *   "fedora/get/demo:1/DS1"
-	 *        is converted to
-	 *        "http://local.fedora.server/fedora/get/demo:1/DS1"
-	 *
-	 *   "fedora/get/demo:1/bdef:1/getFoo?in=fedora/get/demo:2/DC"
-	 *        is converted to
-	 * 	      "http://local.fedora.server/fedora/get/demo:1/bdef:1/getFoo?in=http://local.fedora.server/fedora/get/demo:2/DC"
-	 *
+	 *  Utility method to detect instances of of dsLocation URLs that use a deprecated
+	 *  default disseminator method (/fedora/get/{PID}/fedora-system:3/getItem?itemID={DSID} 
+	 *  and replace it with the new API-A-LITE syntax for getting a datastream
+	 *  (/fedora/get/{PID}/{DSID}
 	 * @param input
-	 * @return  String with relative repository URLs converted to Fedora local URLs
+	 * @return
 	 */
-	private static String convertRelativeToFedoraLocalURLs(String input) {
-		// LOOK!  is there any risk in replacing these patterns
-		// in arbitrary places in a URL or inline XML? Is there a more
-		// efficient way to do this than how it's implemented here?
-		// up this feature?
+	private static String convertGetItemURLs(String input) {
 		String output=input;
-		// The string must start with "fedora/" to initiate this conversion!
-		// This means that if the input is some arbitrary chunk of xml
-		// (an inline XML datastream), it will not get checked for the
-		// relative URL patterns. So, it's really only geared toward looking
-		// for the patterns in datastream locations.
-		if (input.startsWith(s_relativePattern.pattern())) {
-			// first, replace first occurrance of Fedora patterns when found at the
-			// beginning of the string
-			if (input.startsWith(s_relativeGetPattern.pattern())) {
-				output=s_relativeGetPattern.matcher(output).replaceFirst(
-					s_fedoraLocalPattern.pattern() + s_relativeGetPattern.pattern());
-			} else if (input.startsWith(s_relativeSearchPattern.pattern())){
-				output=s_relativeSearchPattern.matcher(output).replaceFirst(
-					s_fedoraLocalPattern.pattern() + s_relativeSearchPattern.pattern());
-			}
-			// then, replace any occurances of the relative URL patterns found as
-			// parameter values within the URL
-			output=s_relativeGetPatternAsParm.matcher(output).replaceAll(
-				"=" + s_fedoraLocalPattern.pattern() + s_relativeGetPattern.pattern());
-			output=s_relativeSearchPatternAsParm.matcher(output).replaceAll(
-				"=" + s_fedoraLocalPattern.pattern() + s_relativeSearchPattern.pattern());
-		}
+		
+		// Detect the old default disseminator syntax for getting datastreams
+		// (i.e., getItem), and replace with new API-A-LITE syntax.
+		
+		output=s_getItemPattern.matcher(input).replaceAll("/");
 		if (fedora.server.Debug.DEBUG) {
-			System.out.println("convertRelativeToFedoraLocalURLs: input=" + input);
-			System.out.println("convertRelativeToFedoraLocalURLs: output=" + output);
+			System.out.println("convertGetItemURLs: input=" + input);
+			System.out.println("convertGetItemURLs: output=" + output + "\n");
 		}
 		return output;
 	}
-
 
 	/*
 	 * Utility method to normalize the value of datastream location depending
@@ -479,6 +428,13 @@ public abstract class DOTranslationUtility {
 				ds.DSLocation = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
 			}
 		}
+		
+		// In any event, look for the deprecated getItem method of the default disseminator
+		// (i.e., "/fedora-system:3/getItem?itemID=") and convert to new API-A-LITE syntax.
+		if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
+			ds.DSLocation = convertGetItemURLs(ds.DSLocation);
+		}
+		
 		return ds;
 	}
 
@@ -538,6 +494,11 @@ public abstract class DOTranslationUtility {
 			&& ds.DSControlGrp.equalsIgnoreCase("X")) {
 				ds.DSMIME="text/xml";
 		}
+		
+		if (ds.DSState==null || ds.DSState.equals("")) {
+				ds.DSState="A";
+		}
+		
 		// For METS backward compatibility
 		if (ds.DSInfoType==null || ds.DSInfoType.equals("")
 				|| ds.DSInfoType.equalsIgnoreCase("OTHER") ) {
@@ -582,6 +543,10 @@ public abstract class DOTranslationUtility {
 		// Until future when we implement selective versioning,
 		// set default to true.
 		diss.dissVersionable=true;
+		
+		if (diss.dissState==null || diss.dissState.equals("")) {
+				diss.dissState="A";
+		}
 		return diss;
 	}
 }
