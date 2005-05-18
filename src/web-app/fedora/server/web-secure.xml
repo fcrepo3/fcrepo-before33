@@ -441,9 +441,6 @@
 			<http-method>HEAD</http-method>
 			<http-method>POST</http-method>
 		</web-resource-collection>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
@@ -456,9 +453,6 @@
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
