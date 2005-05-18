@@ -268,9 +268,9 @@ public class BESecurityServlet extends HttpServlet {
 
         // first determine the list of roles, ignoring "all"
         List configuredRoles = new ArrayList();
-        Enumeration enum = props.propertyNames();
-        while (enum.hasMoreElements()) {
-            String propName = (String) enum.nextElement();
+        Enumeration enm = props.propertyNames();
+        while (enm.hasMoreElements()) {
+            String propName = (String) enm.nextElement();
             if (propName.indexOf(":") != -1) {
                 String roleName = propName.split("\\.")[0];
                 if (!configuredRoles.contains(roleName)) {

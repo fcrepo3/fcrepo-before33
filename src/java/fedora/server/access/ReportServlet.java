@@ -73,9 +73,9 @@ public class ReportServlet
 		//Hashtable parmshash = new Hashtable();
 		String[] fieldsArray = null; {
 			ArrayList fieldsList = new ArrayList();
-			Enumeration enum = request.getParameterNames();
-			while (enum.hasMoreElements()) {
-				String name = (String) enum.nextElement();
+			Enumeration enm = request.getParameterNames();
+			while (enm.hasMoreElements()) {
+				String name = (String) enm.nextElement();
 				if (Report.allFields.contains(name)) {
 					fieldsList.add(name);
 				//} else if (Report.parms.contains(name)) {

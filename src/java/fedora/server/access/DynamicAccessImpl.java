@@ -112,8 +112,8 @@ public class DynamicAccessImpl
     {
       try
       {
-        Method method = mechClass.getMethod("reflectMethods", null);
-        return (MethodDef[])method.invoke(null, null);
+        Method method = mechClass.getMethod("reflectMethods", (Class[])null);
+        return (MethodDef[])method.invoke(null, (Object[])null);
       }
       catch (Exception e)
       {

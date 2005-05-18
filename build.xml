@@ -6,6 +6,8 @@
     <property environment="env"/> <!-- OS-specific environment variables -->
 	<property name="build.debug" value="on"/>
 	<property name="build.optimize" value="off"/>
+    <property name="javac.deprecation" value="off"/>   
+    <property name="javac.source" value="1.4"/>    
 	<property name="src.dir" location="src"/>
 	<property name="java.src.dir" location="${src.dir}/java"/>
 	<property name="test.src.dir" location="${src.dir}/test"/>
@@ -601,7 +603,7 @@
 		<mkdir dir="temp/server/java"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.saaj};${lib.commons-discovery}"/>
+			<arg path="${lib.axis};${lib.activation};${lib.javamail};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.saaj};${lib.commons-discovery}"/>
 			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
 			<arg value="-s"/>
 			<arg value="--skeletonDeploy"/>
@@ -622,7 +624,7 @@
 		<copy file="src/wsdl/Fedora-API-A.wsdl" todir="temp/wsdl2java"/>
 		<exec executable="java">
 			<arg value="-classpath"/>
-			<arg path="${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.saaj};${lib.commons-discovery}"/>
+			<arg path="${lib.axis};${lib.activation};${lib.javamail};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.saaj};${lib.commons-discovery}"/>
 			<arg value="org.apache.axis.wsdl.WSDL2Java"/>
 			<arg value="-s"/>
 			<arg value="--skeletonDeploy"/>
@@ -1031,7 +1033,14 @@
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIABindingSOAPHTTPImpl.java"/>
 		<delete file="temp/server/java/fedora/server/access/FedoraAPIAServiceLocator.java"/>
 		<mkdir dir="temp/server/classes"/>
-		<javac srcdir="${java.src.dir}:temp/server/java" destdir="temp/server/classes" classpathref="serverclasses-lib.path" includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**,org/apache/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}:temp/server/java" 
+               destdir="temp/server/classes" 
+               classpathref="serverclasses-lib.path" 
+               includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**,org/apache/**" 
+               optimize="${build.optimize}" 
+               debug="${build.debug}"
+               deprecation="${javac.deprecation}"
+               source="${javac.source}"/>
 	</target>
 	<target name="serverprep" depends="prep" description="Prepare a temporary build area for server-related targets">
 		<mkdir dir="temp/server"/>
@@ -1040,7 +1049,13 @@
 		<mkdir dir="temp/localservices/classes"/>
 		<mkdir dir="temp/soapclient/classes"/>
 		<mkdir dir="temp/soapclient/lib"/>
-		<javac srcdir="temp/localservices/java" destdir="temp/localservices/classes" classpathref="localservices-lib.path" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="temp/localservices/java" 
+               destdir="temp/localservices/classes" 
+               classpathref="localservices-lib.path" 
+               optimize="${build.optimize}" 
+               debug="${build.debug}"
+               deprecation="${javac.deprecation}"
+               source="${javac.source}"/>      
 		<exec executable="jar">
 			<arg value="-cf"/>
 			<arg path="temp/soapclient/lib/fedorautilities.jar"/>

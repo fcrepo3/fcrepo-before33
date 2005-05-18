@@ -61,9 +61,9 @@ public class BackendPolicies {
 		properties = new Properties();
 		properties.load(fis);
 		fis.close();		
-		Enumeration enum = properties.keys();
-		while (enum.hasMoreElements()) {
-			String raw = (String) enum.nextElement();
+		Enumeration enm = properties.keys();
+		while (enm.hasMoreElements()) {
+			String raw = (String) enm.nextElement();
 			String data = properties.getProperty(raw);
 			int i = raw.lastIndexOf('.');
 			if ((i < 1) || ((raw.length()-1)  < i)) {

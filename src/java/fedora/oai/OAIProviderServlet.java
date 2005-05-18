@@ -44,9 +44,9 @@ public abstract class OAIProviderServlet
     	String actionLabel = "OAI request";
         try {
             HashMap params=new HashMap();
-            Enumeration enum=request.getParameterNames();
-            while (enum.hasMoreElements()) {
-                String name=(String) enum.nextElement();
+            Enumeration enm=request.getParameterNames();
+            while (enm.hasMoreElements()) {
+                String name=(String) enm.nextElement();
                 params.put(name, request.getParameter(name));
             }
             ByteArrayOutputStream out=new ByteArrayOutputStream();

@@ -61,9 +61,9 @@ public class SaxonServlet extends HttpServlet {
         m_creds = new HashMap();
         m_cManager = new MultiThreadedHttpConnectionManager();
 
-        Enumeration enum = config.getInitParameterNames();
-        while (enum.hasMoreElements()) {
-            String name = (String) enum.nextElement();
+        Enumeration enm = config.getInitParameterNames();
+        while (enm.hasMoreElements()) {
+            String name = (String) enm.nextElement();
             if (name.startsWith(CRED_PARAM_START)) {
                 String value = config.getInitParameter(name);
                 if (value.indexOf(":") == -1) {
@@ -110,7 +110,7 @@ public class SaxonServlet extends HttpServlet {
         try {
             apply(style, source, req, res);
         } catch (Exception e) {
-            res.sendError(res.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            res.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             e.printStackTrace();
         }
     }

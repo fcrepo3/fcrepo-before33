@@ -265,9 +265,9 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	createHelpWindow();
 	if (modallyActivated) {
 	    if (b) {
-		dialog.show();
+	        dialog.setVisible(true);
 	    } else {
-		dialog.hide();
+	        dialog.setVisible(false);
 	    }
 	} else {
 	    frame.setVisible(b);
@@ -325,10 +325,10 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 		    // So...
 
 		    try {
-			Method m = Frame.class.getMethod("getState", null);
+			Method m = Frame.class.getMethod("getState", (Class[])null);
 
 			if (m != null) {
-			    int value =((Integer)(m.invoke(frame, null))).intValue();
+			    int value =((Integer)(m.invoke(frame, (Object[])null))).intValue();
 			    if (value == 0)
 				return true;
 			    else
@@ -504,10 +504,8 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	jhelp.getModel().setCurrentURL(url);
 	if (modallyActivated) {
 	    dialog.setVisible(true);
-	    dialog.show();
 	} else {
 	    frame.setVisible(true);
-	    frame.show();
 	}
     }
 
@@ -809,10 +807,10 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 	    // replace dialog.getOwner() with the following code
 	    Window owner=null;
 	    try {
-		Method m = Window.class.getMethod("getOwner", null);
+		Method m = Window.class.getMethod("getOwner", (Class[])null);
 
 		if (m != null && dialog != null) {
-		    owner = (Window) m.invoke(dialog, null);
+		    owner = (Window) m.invoke(dialog, (Object[])null);
 		}
 	    } catch (NoSuchMethodError ex) {
 		// as in JDK1.1
@@ -851,7 +849,7 @@ public class SimpleHelpBroker implements HelpBroker, KeyListener {
 			    debug ("modal window closing");
 			    // JDK1.2.1 bug not closing owned windows
 			    if (dialog.isShowing()) {
-				dialog.hide();
+				dialog.setVisible(false);
 			    }
 			    if (ownerWindow != null)
 			        ownerWindow.removeWindowListener(dl);

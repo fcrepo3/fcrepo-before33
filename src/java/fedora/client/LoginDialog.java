@@ -317,19 +317,19 @@ public class LoginDialog
 			}
 			
            /*
-            Enumeration enum = AxisProperties.propertyNames();
-        	System.err.println("1 are there any AxisProperties?=" + enum.hasMoreElements());
-            while(enum.hasMoreElements()) {
-            	String name = (String) enum.nextElement();
+            Enumeration enm = AxisProperties.propertyNames();
+        	System.err.println("1 are there any AxisProperties?=" + enm.hasMoreElements());
+            while(enm.hasMoreElements()) {
+            	String name = (String) enm.nextElement();
             	System.err.println("another axis property = " + name);
             }
             
             AxisProperties.setProperty("axis.socketSecureFactory", 
     		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
-            enum = AxisProperties.propertyNames();
-        	System.err.println("2 are there any AxisProperties?=" + enum.hasMoreElements());
-            while(enum.hasMoreElements()) {
-            	String name = (String) enum.nextElement();
+            enm = AxisProperties.propertyNames();
+        	System.err.println("2 are there any AxisProperties?=" + enm.hasMoreElements());
+            while(enm.hasMoreElements()) {
+            	String name = (String) enm.nextElement();
             	System.err.println("another axis property = " + name);
             }
 		*/  

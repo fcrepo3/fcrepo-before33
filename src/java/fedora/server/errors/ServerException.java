@@ -186,7 +186,7 @@ public abstract class ServerException
         if (values==null) {
             return locMessage;
         }
-        return MessageFormat.format(locMessage, values);
+        return MessageFormat.format(locMessage, (Object[])values);
     }
 
 }
