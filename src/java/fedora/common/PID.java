@@ -35,8 +35,13 @@ public class PID {
 
     /** The maximum length of a PID is 64. */
     public static final int MAX_LENGTH = 64;
+    
+    /** The reserved handle namespace id **/
+    public static final String NS_HANDLE = "hdl";
 
     private String m_normalized;
+    private String m_namespaceId;
+    private String m_objectId;
     private String m_filename;
 
     /**
@@ -46,6 +51,9 @@ public class PID {
     public PID(String pidString) 
             throws MalformedPIDException {
         m_normalized = normalize(pidString);
+        String[] split = m_normalized.split(":");
+        m_namespaceId = split[0];
+        m_objectId = split[1];
     }
 
     /**
@@ -198,6 +206,14 @@ public class PID {
             }
         }
         return m_filename;
+    }
+    
+    public String getNamespaceId() {
+        return m_namespaceId;
+    }
+    
+    public String getObjectId() {
+        return m_objectId;
     }
 
     /**

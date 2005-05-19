@@ -1,9 +1,19 @@
 package fedora.server.management;
 
-import java.io.*;
-import java.sql.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Arrays;
+import java.util.HashMap;
 
+import fedora.common.MalformedPIDException;
+import fedora.common.PID;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.SQLUtility;
 
@@ -18,7 +28,7 @@ public class DBPIDGenerator
         implements PIDGenerator {
 
     private HashMap m_highestID;
-    private String m_lastPID;
+    private PID m_lastPID;
     private ConnectionPool m_connectionPool;
 
     /**
@@ -102,19 +112,23 @@ public class DBPIDGenerator
      * Generate a new pid that is guaranteed to be unique, within the
      * given namespace.
      */
-    public synchronized String generatePID(String namespace)
-            throws IOException {
+    public synchronized PID generatePID(String namespace) throws IOException {
         int i=getHighestID(namespace);
         i++;
         setHighestID(namespace, i);
-        m_lastPID=namespace + ":" + i;
+        
+        try {
+            m_lastPID = new PID(namespace + ":" + i);
+        } catch (MalformedPIDException e) {
+            throw new IOException(e.getMessage());
+        }
         return m_lastPID;
     }
 
     /**
      * Get the last pid that was generated.
      */
-    public synchronized String getLastPID() {
+    public synchronized PID getLastPID() {
         return m_lastPID;
     }
 
@@ -123,15 +137,16 @@ public class DBPIDGenerator
      */
     public synchronized void neverGeneratePID(String pid)
             throws IOException {
-        String[] parts=pid.split(":");
-        if (parts.length!=2) throw new IOException("Invalid pid syntax; must contain one ':' character.");
-        String ns=parts[0];
         try {
-            int id=Integer.parseInt(parts[1]);
-            if (id>getHighestID(ns)) {
+            PID p = new PID(pid);
+            String ns = p.getNamespaceId();
+            int id = Integer.parseInt(p.getObjectId());
+            if (id > getHighestID(ns)) {
                 setHighestID(ns, id);
             }
-        } catch (NumberFormatException e) {
+        } catch (MalformedPIDException mpe) {
+            throw new IOException(mpe.getMessage());
+        } catch (NumberFormatException nfe) {
             // if the id part is not numeric, we already know we'll
             // never generate that id because all generated ids are numeric.
         }

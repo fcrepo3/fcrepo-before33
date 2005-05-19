@@ -1,8 +1,10 @@
 package fedora.server.management;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.Map;
 
+import fedora.common.PID;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
@@ -78,13 +80,13 @@ public class BasicPIDGenerator
         }
     }
 
-    public String generatePID(String namespaceID)
+    public PID generatePID(String namespaceID)
             throws IOException {
         initializeIfNeeded();
         return m_pidGenerator.generatePID(namespaceID);
     }
 
-    public String getLastPID()
+    public PID getLastPID()
             throws IOException {
         initializeIfNeeded();
         return m_pidGenerator.getLastPID();

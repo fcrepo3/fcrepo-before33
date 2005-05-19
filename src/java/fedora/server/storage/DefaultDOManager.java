@@ -543,7 +543,7 @@ public class DefaultDOManager
 						// yes... so do that, then set it in the obj.
 						String p=null;
 						try {
-							p=m_pidGenerator.generatePID(m_pidNamespace);
+							p=m_pidGenerator.generatePID(m_pidNamespace).toString();
 						} catch (Exception e) {
 							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
 									+ e.getClass().getName() + ") - " + e.getMessage());
@@ -1417,7 +1417,7 @@ public class DefaultDOManager
       try {
         for (int i=0; i<numPIDs; i++)
         {
-          pidList[i] = m_pidGenerator.generatePID(namespace);
+          pidList[i] = m_pidGenerator.generatePID(namespace).toString();
         }
         return pidList;
         } catch (IOException ioe)
