@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="info:fedora/fedora-system:def/beSecurity#" xmlns="info:fedora/fedora-system:def/beSecurity#" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- the root element for FOXML: digitalObject -->
+	<xsd:element name="serviceSecurityDescription" type="serviceSecurityDescriptionType"/>
+	<xsd:complexType name="serviceSecurityDescriptionType">
+		<xsd:sequence>
+			<xsd:element name="serviceSecurityDescription" type="serviceSecurityDescriptionType"  minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+
+		<!-- key attributes -->
+		<xsd:attribute name="BMECH_SERVICE_PID" type="pidType" use="optional"/>
+		<xsd:attribute name="location" type="xsd:anyURI" use="optional"/>
+		<xsd:attribute name="name" type="xsd:string" use="optional"/>
+
+		<!-- data attributes -->
+		<xsd:attribute name="ssl" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="basicAuth" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="username" type="xsd:string" use="optional"/>
+		<xsd:attribute name="password" type="xsd:string" use="optional"/>
+		<xsd:attribute name="iplist" type="xsd:string" use="optional"/>
+
+		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+	</xsd:complexType>
+	<!-- See http://www.fedora.info/definitions/identifiers/ -->
+	<xsd:simpleType name="pidType">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="64"/>
+			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
