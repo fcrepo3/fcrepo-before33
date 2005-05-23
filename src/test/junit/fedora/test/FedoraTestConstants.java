@@ -6,5 +6,5 @@ package fedora.test;
  */
 public interface FedoraTestConstants {
     public static final String PROP_SETUP = "fedora.test.setup";
-    public static final String PROP_FEDORA_HOME = "FEDORA_HOME";
+    public static final String PROP_FEDORA_HOME = "fedora.home";
 }

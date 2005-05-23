@@ -1,12 +1,14 @@
 package fedora.test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import fedora.server.config.BasicServerParameters;
-import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.utilities.ExecUtility;
@@ -15,14 +17,14 @@ import fedora.utilities.ExecUtility;
  * A wrapper (decorator) for Test responsible for starting and stopping a 
  * Fedora server test fixture.
  * 
+ * n.b. This class makes many assumptions about various filesystem locations.
+ * 
  * @author Edwin Shin
  */
 public class FedoraServerTestSetup 
   extends    TestSetup 
   implements FedoraTestConstants, BasicServerParameters {
     private boolean doSetup;
-    private String fedoraHome;
-    private ServerConfiguration config;
     
     /**
      * @param test
@@ -35,8 +37,7 @@ public class FedoraServerTestSetup
         doSetup = getSetup();
         
         if (doSetup) {
-            fedoraHome = getFedoraHome();
-            config = getServerConfiguration();
+            // setup actions go here
             startServer();
         } else {
             System.out.println("    skipping setUp()");
@@ -46,22 +47,21 @@ public class FedoraServerTestSetup
     public void tearDown() {
         if (doSetup) {
             System.setProperty(PROP_SETUP, "true");
+            // tear down actions go here
             stopServer();
         } else {
             System.out.println("    skipping tearDown()");
         }
     }
     
-    public String getFedoraHome() {
-        return System.getProperty("fedora.home", "/opt/fedora/current");
+    public static String getFedoraHome() {
+        return System.getProperty(PROP_FEDORA_HOME, new File("dist").getAbsolutePath());
     }
     
-    private ServerConfiguration getServerConfiguration() throws Exception {
-        ServerConfiguration cfg = null;
-        cfg = new ServerConfigurationParser(
+    public static ServerConfiguration getServerConfiguration() throws Exception {
+        return new ServerConfigurationParser(
                 new FileInputStream(
-                  new File(fedoraHome + "/server/config/fedora.fcfg"))).parse();
-        return cfg;
+                  new File(getFedoraHome() + "/server/config/fedora.fcfg"))).parse();
     }
     
     /**
@@ -79,32 +79,30 @@ public class FedoraServerTestSetup
     
     private void startServer() {
         System.out.println("+ doing setUp(): starting server...");
+        // TODO drop db tables
+        String cmd = getFedoraHome() + "/server/bin/fedora-start";
+        
+        try {
+	        Process cp = Runtime.getRuntime().exec(cmd, null);
+	        String line;
+	        BufferedReader input = new BufferedReader(
+	                new InputStreamReader(cp.getInputStream()));
+	        while ((line = input.readLine()) != null) {
+	            System.out.println(line);
+	            if ( line.equals("OK") ) break;
+	        }
+	        input.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     private void stopServer() {
         System.out.println("- doing tearDown(): stopping server...");
-    }
-    
-    private void ingestDemoObjects() {
-        Parameter port = config.getParameter(PARAM_PORT);
-        Parameter adminU = config.getParameter(PARAM_ADMIN_USER);
-        Parameter adminP = config.getParameter(PARAM_ADMIN_PASS);
-        String ingestDemos = fedoraHome + "/client/bin/fedora-ingest-demos " +
-                             "localhost " + port.getValue() + " " + 
-                             adminU.getValue() + " " + adminP.getValue() + 
-                             " http";
-        try {
-            Process ingest = ExecUtility.exec(ingestDemos);
-        } catch (Exception e) {
-            fail(e.getMessage());
-        }
+        ExecUtility.exec(getFedoraHome() + "/server/bin/fedora-stop");
         
+        // TODO delete low-level store
+        
+        // TODO drop db tables
     }
-    
-    /*--------------------------------------------------------------------------
-     * 
-     *------------------------------------------------------------------------*/
-    
-    
-
 }
