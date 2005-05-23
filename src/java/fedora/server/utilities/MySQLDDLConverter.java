@@ -22,6 +22,12 @@ public class MySQLDDLConverter
         return true;
     }
 
+    public String getDropDDL(String command) {
+        String[] parts = command.split(" ");
+        String tableName = parts[2];
+        return "DROP TABLE " + tableName;
+    }
+
     public List getDDL(TableSpec spec) {
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();

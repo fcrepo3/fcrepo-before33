@@ -22,6 +22,13 @@ public class OracleDDLConverter
         return true;
     }
 
+    public String getDropDDL(String command) {
+        String[] parts = command.split(" ");
+        String objectType = parts[1];
+        String objectName = parts[2];
+        return "DROP " + objectType + " " + objectName;
+    }
+
     public List getDDL(TableSpec spec) {
         ArrayList l=new ArrayList();
         StringBuffer out=new StringBuffer();
