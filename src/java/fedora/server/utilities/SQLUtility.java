@@ -1,14 +1,22 @@
 package fedora.server.utilities;
 
-import java.io.InputStream;
 import java.io.IOException;
-import java.sql.*;
+import java.io.InputStream;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
 import fedora.server.Logging;
+import fedora.server.config.DatastoreConfiguration;
+import fedora.server.config.ModuleConfiguration;
+import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.storage.ConnectionPool;
 
@@ -21,7 +29,50 @@ import fedora.server.storage.ConnectionPool;
  * @version $Id$
  */
 public abstract class SQLUtility {
-
+    public static ConnectionPool getConnectionPool(ServerConfiguration fcfg) throws SQLException {
+        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
+        String defaultPool = mcfg.getParameter("defaultPoolName").getValue();
+        DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(defaultPool);
+        return getConnectionPool(dcfg);
+    }
+    
+    public static ConnectionPool getConnectionPool(DatastoreConfiguration cpDC) throws SQLException {
+        String cpUsername = cpDC.getParameter("dbUsername").getValue();
+        String cpPassword = cpDC.getParameter("dbPassword").getValue();
+        String cpURL = cpDC.getParameter("jdbcURL").getValue();
+        String cpDriver = cpDC.getParameter("jdbcDriverClass").getValue();
+        String cpDDLConverter = cpDC.getParameter("ddlConverter").getValue();
+        int cpMaxActive = Integer.parseInt(cpDC.getParameter("maxActive").getValue());
+        int cpMaxIdle = Integer.parseInt(cpDC.getParameter("maxIdle").getValue());
+        long cpMaxWait = Long.parseLong(cpDC.getParameter("maxWait").getValue()); 
+        int cpMinIdle = Integer.parseInt(cpDC.getParameter("minIdle").getValue());
+        long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
+        int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
+        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
+        boolean cpTestOnBorrow = Boolean.getBoolean(cpDC.getParameter("testOnBorrow").getValue());
+        boolean cpTestOnReturn = Boolean.getBoolean(cpDC.getParameter("testOnReturn").getValue());
+        boolean cpTestWhileIdle = Boolean.getBoolean(cpDC.getParameter("testWhileIdle").getValue());
+        byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());
+        
+        DDLConverter ddlConverter = null;
+        if (cpDDLConverter != null) {
+            try {
+                ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return new ConnectionPool(cpDriver, cpURL, cpUsername, 
+                cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
+                cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
+                cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
+                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, cpWhenExhaustedAction);
+    }
+    
     public static void replaceInto(Connection conn, String tableName,
             String[] columns, String[] values, String uniqueColumn)
             throws SQLException {

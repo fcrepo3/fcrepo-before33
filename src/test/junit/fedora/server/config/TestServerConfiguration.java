@@ -4,12 +4,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Document;
 
 import fedora.test.FedoraTestCase;
@@ -18,9 +20,7 @@ import fedora.test.FedoraTestCase;
  * @author Edwin Shin
  */
 public class TestServerConfiguration extends FedoraTestCase {
-    private static final String NS_FCFG = "http://www.fedora.info/definitions/1/0/config/";
     private static final String NS_FCFG_PREFIX = "fcfg";
-    private static final String FCFG_LOCATION = "src/fcfg/server/fedora.fcfg";
     private File originalFile;
     private FileInputStream fis;
     private ServerConfiguration config;
@@ -85,8 +85,10 @@ public class TestServerConfiguration extends FedoraTestCase {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         config.serialize(out);
         
-        Document generated = builder.parse(new ByteArrayInputStream(out.toByteArray()));        
+        Document generated = builder.parse(new ByteArrayInputStream(out.toByteArray()));
+        XMLUnit.setIgnoreWhitespace(true);
         assertXMLEqual(original, generated);
+        XMLUnit.setIgnoreWhitespace(false);
     }
     
     private Document getDocument(ByteArrayOutputStream out) throws Exception {

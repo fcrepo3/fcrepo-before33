@@ -7,7 +7,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
  * 
  * @author Edwin Shin
  */
-public abstract class FedoraTestCase extends XMLTestCase {
+public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestConstants {
     public FedoraTestCase() {
         super();
     }
