@@ -4,28 +4,18 @@
 	<xsd:element name="serviceSecurityDescription" type="serviceSecurityDescriptionType"/>
 	<xsd:complexType name="serviceSecurityDescriptionType">
 		<xsd:sequence>
-			<xsd:element name="serviceSecurityDescription" type="serviceSecurityDescriptionType"  minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:element name="serviceSecurityDescription" type="serviceSecurityDescriptionType" minOccurs="0" maxOccurs="unbounded"/>
 		</xsd:sequence>
-
-		<!-- key attributes -->
-		<xsd:attribute name="BMECH_SERVICE_PID" type="pidType" use="optional"/>
-		<xsd:attribute name="location" type="xsd:anyURI" use="optional"/>
-		<xsd:attribute name="name" type="xsd:string" use="optional"/>
-
-		<!-- data attributes -->
-		<xsd:attribute name="ssl" type="xsd:boolean" use="optional"/>
-		<xsd:attribute name="basicAuth" type="xsd:boolean" use="optional"/>
-		<xsd:attribute name="username" type="xsd:string" use="optional"/>
-		<xsd:attribute name="password" type="xsd:string" use="optional"/>
+		<xsd:attribute name="role" type="xsd:string" use="required"/>
+		<xsd:attribute name="callSSL" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="callBasicAuth" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="callbackSSL" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="callbackBasicAuth" type="xsd:boolean" default="false"/>
+		<xsd:attribute name="callUsername" type="xsd:string" use="optional"/>
+		<xsd:attribute name="callPassword" type="xsd:string" use="optional"/>
 		<xsd:attribute name="iplist" type="xsd:string" use="optional"/>
-
 		<xsd:anyAttribute namespace="##other" processContents="lax"/>
+		<!-- key attributes -->
+		<!-- data attributes -->
 	</xsd:complexType>
-	<!-- See http://www.fedora.info/definitions/identifiers/ -->
-	<xsd:simpleType name="pidType">
-		<xsd:restriction base="xsd:string">
-			<xsd:maxLength value="64"/>
-			<xsd:pattern value="([A-Za-z0-9]|-|\.)+:(([A-Za-z0-9])|-|\.|~|_|(%[0-9A-F]{2}))+"/>
-		</xsd:restriction>
-	</xsd:simpleType>
 </xsd:schema>
