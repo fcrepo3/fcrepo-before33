@@ -88,8 +88,8 @@ public class FedoraServerTestSetup
     
     private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
-        dropDBTables();
-        deleteStore();
+        //dropDBTables();
+        //deleteStore();
         String cmd = getFedoraHome() + "/server/bin/fedora-start";
         
         try {
@@ -130,7 +130,7 @@ public class FedoraServerTestSetup
 	            tableSpec = (TableSpec)tableSpecs.next();
 	            commands = ddlConverter.getDDL(tableSpec).iterator();
 	            while (commands.hasNext()) {
-	                command = ddlConverter.getDropDDL((String)tableSpecs.next());
+	                command = ddlConverter.getDropDDL((String)commands.next());
 	                stmt.execute(command);
 	            }
 	        }
