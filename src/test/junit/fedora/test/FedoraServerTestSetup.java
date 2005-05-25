@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Iterator;
-import java.util.List;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -87,9 +86,10 @@ public class FedoraServerTestSetup
         }
     }
     
-    private void startServer() {
+    private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
-        // TODO drop db tables
+        dropDBTables();
+        deleteStore();
         String cmd = getFedoraHome() + "/server/bin/fedora-start";
         
         try {
@@ -110,29 +110,30 @@ public class FedoraServerTestSetup
     private void stopServer() throws Exception {
         System.out.println("- doing tearDown(): stopping server...");
         ExecUtility.exec(getFedoraHome() + "/server/bin/fedora-stop");
-        
-        // TODO delete low-level store
+        dropDBTables();
         deleteStore();
-        // TODO drop db tables
-        dropDB();
     }
     
-    private void dropDB() throws Exception {
+    private void dropDBTables() throws Exception {
         ConnectionPool cPool = SQLUtility.getConnectionPool(getServerConfiguration());
         Connection conn = cPool.getConnection();
         Statement stmt = conn.createStatement();
         DDLConverter ddlConverter = getDDLConverter();
         try {
 	        FileInputStream fis = new FileInputStream("src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec");
-	        List tableSpecs = TableSpec.getTableSpecs(fis);
-	        Iterator it = tableSpecs.iterator();
-	        TableSpec tspec;
-	        while (it.hasNext()) {
-	            tspec = (TableSpec)it.next();
-	            String tableName = tspec.getName();
-	            stmt.execute("DROP TABLE " + tableName);
+	        Iterator tableSpecs = TableSpec.getTableSpecs(fis).iterator();	        
+	        
+	        TableSpec tableSpec;
+	        Iterator commands;
+	        String command;
+	        while (tableSpecs.hasNext()) {
+	            tableSpec = (TableSpec)tableSpecs.next();
+	            commands = ddlConverter.getDDL(tableSpec).iterator();
+	            while (commands.hasNext()) {
+	                command = ddlConverter.getDropDDL((String)tableSpecs.next());
+	                stmt.execute(command);
+	            }
 	        }
-        
         } finally {
 	        if (stmt != null) stmt.close();
 	        if (conn != null) conn.close();
