@@ -17,18 +17,21 @@ public class BackendSecuritySpec {
 	/**
 	 * The Hashtable is as follows:
 	 * 
-	 *   roleKey = the role identifier for the backend service, for example: 
+	 *   roleKey = the role identifier for the backend service, for example:
+	 * 			 - "default" (the overall default for backend services) 
 	 *           - "bmech:9"  (the role key for a backend service)
 	 * 			 - "bmech:9/getThumb" (the role key for a method within a backend service)   
 	 * 			 - "fedora" (the role key for fedora calling back to itself)
 	 * 
 	 *   VALUE = a Hashtable of security properties whose keys
 	 * 	         are defined in BackendSecurityDeserializer.java as:
-	 * 		   	 - BackendSecurityDeserializer.BE_BASIC_AUTH
-	 * 		   	 - BackendSecurityDeserializer.BE_SSL
-	 * 		   	 - BackendSecurityDeserializer.BE_IPLIST
-	 * 		   	 - BackendSecurityDeserializer.BE_USERNAME
-	 * 		   	 - BackendSecurityDeserializer.BE_PASSWORD
+	 * 		   	 - BackendSecurityDeserializer.CALL_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALL_SSL
+	 * 		   	 - BackendSecurityDeserializer.CALL_USERNAME
+	 * 		   	 - BackendSecurityDeserializer.CALL_PASSWORD
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_SSL
+	 * 		   	 - BackendSecurityDeserializer.IPLIST
 	 */	
 	private Hashtable rolePropertiesTable;	
 	
@@ -36,41 +39,35 @@ public class BackendSecuritySpec {
 		rolePropertiesTable = new Hashtable();
 
 	}
-
-	/**
-	 * Set the default backend security properties.
-	 * @param properties
-	 */	
-	public void setDefaultSecuritySpec(Hashtable properties) {
-		
-		System.out.println(">>>>>> setSecuritySpec: "
-			+ " property count=" + properties.size()	);
-			
-		rolePropertiesTable.put("ROLE_DEFAULT", properties);
-	}
 		
 	/**
 	 * Set the security properties at the backend service or for a 
 	 * method of that backend service.   
-	 * @param serviceRoleID
-	 * @param methodRoleID - a methodname within the backend service.  If this 
-	 *        parm is null, then this method will set default security properties
-	 *        for the backend service. 
+	 * @param serviceRoleID - the role identifier for a service.  
+	 * 		Valid values for this parameter are:
+	 * 		- a bmech PID for a backend service
+	 * 		- "default" to indicate the default properties for any service
+	 * 		- "fedora" for Fedora calling back to itself as a service
+	 * @param methodName - optional method name within the backend service.  
+	 * 		  If specified security properties at the service method level will
+	 *        be recorded.  If null, service properties at the service level
+	 *        will be recorded.  
 	 * @param properties
 	 */	
-	public void setSecuritySpec(String serviceRoleID, String methodRoleID, Hashtable properties) 
+	public void setSecuritySpec(String serviceRoleID, String methodName, Hashtable properties) 
 		throws GeneralException {
-	
-		System.out.println(">>>>>> setSecuritySpec: "
-			+ " serviceRoleID=" + serviceRoleID
-			+ " methodRoleID=" + methodRoleID
-			+ " property count=" + properties.size()	);
 			
+		if (fedora.server.Debug.DEBUG) {
+			System.out.println(">>>>>> setSecuritySpec: "
+				+ " serviceRoleID=" + serviceRoleID
+				+ " methodName=" + methodName
+				+ " property count=" + properties.size());			
+		}			
 		if (serviceRoleID == null || serviceRoleID.equals("")) {
 			throw new GeneralException("serviceRoleID is missing.");
 		}
 		// if methodRoleID is missing, then set properties at the service level.
-		if (methodRoleID == null || methodRoleID.equals("")) {
+		if (methodName == null || methodName.equals("")) {
 			rolePropertiesTable.put(serviceRoleID, properties);
 			
 		// otherwise set properties at the method level, but only if
@@ -80,10 +77,9 @@ public class BackendSecuritySpec {
 			if (serviceProps == null) {
 				throw new GeneralException("Cannot add method-level security properties"  +
 					" if there are no properties defined for the backend service that the " +
-					" method is part of. ");
-				
+					" method is part of. ");				
 			}
-			String roleKey = serviceRoleID + "/" + methodRoleID;
+			String roleKey = serviceRoleID + "/" + methodName;
 			rolePropertiesTable.put(roleKey, properties);			
 		}
 	}
@@ -94,28 +90,42 @@ public class BackendSecuritySpec {
 	 * @param properties
 	 */	
 	public Hashtable getDefaultSecuritySpec() {
-		return (Hashtable) rolePropertiesTable.get("ROLE_DEFAULT");
+		return (Hashtable) rolePropertiesTable.get("default");
 	}
 			
 	/**
 	 * Get security properties for either the a backend service or
 	 * a method within that backend service. 
 	 * 
-	 * @param serviceRoleID - role identifier for a backend service
-	 * @param methodRoleID  - if null, will return the default 
-	 *        security properties for the backend service
-	 * @return
+	 * @param serviceRoleID - role identifier for a backend service. Valid options:
+	 *		- "default" (the overall default for backend services)    
+	 * 		- "fedora" (the role key for fedora calling back to itself)
+	 *		- A bmech PID (e.g., "bmech:9") as the identifier for a backend service
+	 *
+	 * @param methodName  - a method name that is specified within a bmech service.
+	 * 		If values is null, then this method will return the security properties 
+	 * 		defined for the backend service specified by the serviceRoleID parameter.
+	 * 
+	 * @return  a Hashtable containing the backend security properties for the role or role/method.
+	 * 			The security property names, defined in BackendSecurityDeserializer.java, are:
+	 * 		   	 - BackendSecurityDeserializer.CALL_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALL_SSL
+	 * 		   	 - BackendSecurityDeserializer.CALL_USERNAME
+	 * 		   	 - BackendSecurityDeserializer.CALL_PASSWORD
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_SSL
+	 * 		   	 - BackendSecurityDeserializer.IPLIST
 	 */		
-	public Hashtable getSecuritySpec(String serviceRoleID, String methodRoleID){
+	public Hashtable getSecuritySpec(String serviceRoleID, String methodName){
 		if (serviceRoleID == null || serviceRoleID.equals("")){
 			return getDefaultSecuritySpec();			
 		}
-		else if (methodRoleID == null || methodRoleID.equals("")){
+		else if (methodName == null || methodName.equals("")){
 			return (Hashtable) rolePropertiesTable.get(serviceRoleID);
 		}
 		else {
-			String roleKey = serviceRoleID + "/" + methodRoleID;
-			// First see if there is a role key that is at the method level
+			String roleKey = serviceRoleID + "/" + methodName;
+			// First see if there is already a role key at the method level
 			Hashtable properties = (Hashtable) rolePropertiesTable.get(roleKey);
 			
 			// if we did not find security properties for the method level,
@@ -135,10 +145,23 @@ public class BackendSecuritySpec {
 	
 	/**
 	 * Get security properties for either the a backend service or
-	 * a method within that backend service. 
+	 * a method within that backend service.  
 	 * 
-	 * @param roleKey - role key
-	 * @return
+	 * @param roleKey = the role identifier for the backend service, for example:
+	 * 			 - "default" (the overall default for backend services) 
+	 * 			 - "fedora" (the role key for fedora calling back to itself)
+	 *           - "bmech:9"  (the role key for a backend service)
+	 * 			 - "bmech:9/getThumb" (the role key for a method within a backend service)   
+	 * 
+	 * @return  a Hashtable containing the backend security properties for the roleKey.
+	 * 			The security property names, defined in BackendSecurityDeserializer.java, are:
+	 * 		   	 - BackendSecurityDeserializer.CALL_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALL_SSL
+	 * 		   	 - BackendSecurityDeserializer.CALL_USERNAME
+	 * 		   	 - BackendSecurityDeserializer.CALL_PASSWORD
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_BASIC_AUTH
+	 * 		   	 - BackendSecurityDeserializer.CALLBACK_SSL
+	 * 		   	 - BackendSecurityDeserializer.IPLIST
 	 */		
 	public Hashtable getSecuritySpec(String roleKey){
 		return (Hashtable) rolePropertiesTable.get(roleKey);
@@ -147,10 +170,5 @@ public class BackendSecuritySpec {
 	
 	public Set listRoleKeys(){
 		return (Set) rolePropertiesTable.keySet();
-	}
-
-	//=======================================
-	public static void main(String[] args) throws Exception {
-
 	}
 }

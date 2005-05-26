@@ -44,8 +44,8 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 	public static final String CALL_PASSWORD = "callPassword";
 	public static final String CALLBACK_BASIC_AUTH = "callbackBasicAuth";
 	public static final String CALLBACK_SSL = "callbackSSL";
-	public static final String CALLBACK_USERNAME = "callbackUsername";
-	public static final String CALLBACK_PASSWORD = "callbackPassword";
+	//public static final String CALLBACK_USERNAME = "callbackUsername";
+	//public static final String CALLBACK_PASSWORD = "callbackPassword";
 	public static final String IPLIST = "iplist";
 	public static final String ROLE = "role";
 	
@@ -88,7 +88,6 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 			throws GeneralException, StreamIOException, UnsupportedEncodingException {
             	
 		if (fedora.server.Debug.DEBUG) System.out.println("Parsing beSecurity file...");
-		System.out.println("Parsing beSecurity file " + inFilePath);
 				 
 		tmp_level=0;
 		try {
@@ -106,39 +105,31 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 				+ "Root element not found in backend security config file.");
 		}
 		 
-		if (fedora.server.Debug.DEBUG) System.out.println("Parse successful.");
-		System.out.println("Parse successful.");  
+		if (fedora.server.Debug.DEBUG) System.out.println("Parse successful."); 
 		return beSS;    
 	}
-
-/**	
-	public void startPrefixMapping(String prefix, String uri) {
-		tmp_prefixMap.put(prefix, uri);
-	}
-
-	public void endPrefixMapping(String prefix) {
-		tmp_prefixMap.remove(prefix);
-	}
-**/
 	
 	public void startElement(String uri, String localName, String qName, Attributes a) 
 		throws SAXException {
 
 		if (uri.equals(BE) && localName.equals("serviceSecurityDescription")) {
-			System.out.println("============================================");
-			System.out.println("start element uri=" + uri + " localName=" + localName + " tmp_level=" + tmp_level);
+			
+			if (fedora.server.Debug.DEBUG){
+				System.out.println("=======================================");
+				System.out.println("start element uri=" + uri 
+					+ " localName=" + localName + " tmp_level=" + tmp_level);
+			}
 			
 			tmp_role = grab(a, BE, ROLE);
-			beProperties = new Hashtable();
-			System.out.println("tmp_role = " + tmp_role);				
+			beProperties = new Hashtable();				
 			setProperty(CALL_BASIC_AUTH, grab(a, BE, CALL_BASIC_AUTH));
 			setProperty(CALL_SSL, grab(a, BE, CALL_SSL));
 			setProperty(CALL_USERNAME, grab(a, BE, CALL_USERNAME));
 			setProperty(CALL_PASSWORD, grab(a, BE, CALL_PASSWORD));
 			setProperty(CALLBACK_BASIC_AUTH, grab(a, BE, CALLBACK_BASIC_AUTH));
 			setProperty(CALLBACK_SSL, grab(a, BE, CALLBACK_SSL));
-			setProperty(CALLBACK_USERNAME, grab(a, BE, CALLBACK_USERNAME));
-			setProperty(CALLBACK_PASSWORD, grab(a, BE, CALLBACK_PASSWORD));
+			//setProperty(CALLBACK_USERNAME, grab(a, BE, CALLBACK_USERNAME));
+			//setProperty(CALLBACK_PASSWORD, grab(a, BE, CALLBACK_PASSWORD));
 			setProperty(IPLIST, grab(a, BE, IPLIST));
 			
 			try {
@@ -146,38 +137,44 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 					tmp_rootElementFound=true;
 					tmp_rootProperties = new Hashtable();
 					tmp_rootProperties.putAll(beProperties);
-					beSS.setDefaultSecuritySpec(beProperties);
+					validateProperties();
+					beSS.setSecuritySpec("default", null, beProperties);
 				} else if (tmp_level == 1){
 					tmp_parentRole = tmp_role;
 					tmp_serviceProperties = new Hashtable();
 					tmp_serviceProperties.putAll(beProperties);
 					inheritProperties(tmp_rootProperties);
+					validateProperties();
 					beSS.setSecuritySpec(tmp_role, null, beProperties);
 				} else if (tmp_level == 2){
 					inheritProperties(tmp_serviceProperties);
 					inheritProperties(tmp_rootProperties);
+					validateProperties();
 					beSS.setSecuritySpec(tmp_parentRole, tmp_role, beProperties);					
 				} else {
-					System.out.println("ERROR: xml depth exceeded for serviceSecurityDescription");
+					if (fedora.server.Debug.DEBUG){
+						System.out.println("ERROR: xml element depth exceeded.");
+					}
 					throw new SAXException("BackendSecurityDeserializer: "
 						+ "serviceSecurityDescription elements can only "
 						+ "be nested two levels deep from root element!");
 				}
 			} catch (Exception e) {
 				throw new SAXException("BackendSecurityDeserializer: "
-					+ "Error setting properties for role " + tmp_role);
+					+ "Error setting properties for role " + tmp_role + ". " + e.getMessage());
 			}
 			tmp_level++;				
 		}
 	}
 		
 	public void endElement(String uri, String localName, String qName) {
-		System.out.println("end element uri=" + uri + " localName=" + localName + " tmp_level=" + tmp_level);
 		
+		if (fedora.server.Debug.DEBUG) {
+			System.out.println("end element uri=" + uri 
+				+ " localName="	+ localName + " tmp_level=" + tmp_level);
+		}		
 		if (uri.equals(BE) && localName.equals("serviceSecurityDescription")) {
 			tmp_level--;
-			
-			System.out.println("end element serviceSecurityDescription uri=" + uri + " localName=" + localName + " tmp_level=" + tmp_level);
 		}
 	}
 
@@ -191,32 +188,57 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 	
 	private void setProperty(String key, String value){
 		if (key != null && value != null){
-			System.out.println("Setting propery.  key=" + key + " value=" + value);
+			if (fedora.server.Debug.DEBUG) {
+				System.out.println("Setting propery.  key=" + key + " value=" + value);
+			}
 			beProperties.put(key, value);					
 		}		
 	}
 	
 	private void inheritProperties(Hashtable inheritableProperties){
 		
-		// overlay the current properties on the inheritable properties.
-		// Effect will be to add properties not originally specificed by
-		// in the inheritable properties, any properties that were
-		// already in the inheritable properties with the values set in
-		// the current properties.
-		//beProperties.putAll(inheritableProperties);
-		System.out.println("Setting inherited properties...");
+		if (fedora.server.Debug.DEBUG) System.out.println("Setting inherited properties...");
 		Iterator it = inheritableProperties.keySet().iterator();
 		while (it.hasNext()) {
 			String key = (String) it.next();
 			if (!beProperties.containsKey(key)){
 				setProperty(key, (String) inheritableProperties.get(key));
 			}
-
+		}
+	}
+	
+	private void validateProperties()
+		throws GeneralException {
+		
+		if (fedora.server.Debug.DEBUG) System.out.println("Validating properties...");
+		if (!beProperties.containsKey(CALL_BASIC_AUTH)){
+			setProperty(CALL_BASIC_AUTH, "false");
+		}
+		if (!beProperties.containsKey(CALL_SSL)){
+			setProperty(CALL_SSL, "false");
+		}
+		if (!beProperties.containsKey(CALLBACK_BASIC_AUTH)){
+			setProperty(CALLBACK_BASIC_AUTH, "false");
+		}
+		if (!beProperties.containsKey(CALLBACK_SSL)){
+			setProperty(CALLBACK_SSL, "false");
+		}		
+		if (((String)beProperties.get(CALL_BASIC_AUTH)).equals("true")){
+			if (!beProperties.containsKey(CALL_USERNAME)){
+				throw new GeneralException("BackendSecurityDeserializer: "
+					+ "callBasicAuth is set to true, but callUsername is missing" 
+					+ "for role of " + tmp_role);
+			}
+			if (!beProperties.containsKey(CALL_PASSWORD)){
+				throw new GeneralException("BackendSecurityDeserializer: "
+					+ "callBasicAuth is set to true, but callPassword is missing" 
+					+ "for role of " + tmp_role);
+			}			
 		}
 	}
 
 	public static void main(String[] args) throws Exception {
-		System.out.println("BackendSecurityDeserializer start...");
+		System.out.println("BackendSecurityDeserializer start main()...");
 		BackendSecurityDeserializer bds = new BackendSecurityDeserializer("UTF-8", false);
 		BackendSecuritySpec beSS = bds.deserialize(args[0]);
 		
