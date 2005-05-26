@@ -16,7 +16,8 @@ public class TestBar extends FedoraServerTestCase {
         junit.textui.TestRunner.run(TestBar.class);
     }
     
-    public void testBar() {}
-    public void testBarBar() {}
+    public void testBar() {
+    	System.out.println("\n     * testBar() *\n");
+	}
 
 }
