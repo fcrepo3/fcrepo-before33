@@ -150,6 +150,25 @@
         <param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/>
         <param name="VALIDATE-SURROGATE-POLICIES" value="false"/>
     </module>
+    <module class="fedora.server.security.DefaultBackendSecurity"
+        role="fedora.server.security.BackendSecurity">
+        	<comment>Description: Interface to the backend service security configuration.
+        		This module initializes backend service security iinformation in the server
+        		by parsing the beSecurity configuration file. This file is located in the
+        		distribution in $FEDORA_HOME/dist/server/config/beSecurity.xml. The configuration
+        		file is read once at server startup.
+        	</comment>
+        <param name="beSecurity_validation" value="false"/>
+        	<comment>Controls whether beSecurity config file is validated against
+        		the beSecurityDescription schema. The default is "false".
+        		Valid values are "true" or "false".
+        	</comment>
+        <param name="beSecurity_char_encoding" value="utf-8"/>
+        	<comment>The character encoding used for the beSecurity configuration file.
+        		The default is "utf-8". The value specified must correspond to the
+        		character encoding used in the beSecurity configuration file.
+        	</comment>
+    </module>    
     <module class="fedora.server.storage.DefaultDOManager"
         role="fedora.server.storage.DOManager">
         <comment>Description: The interface to the storage subsystem. This
