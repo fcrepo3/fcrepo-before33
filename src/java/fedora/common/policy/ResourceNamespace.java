@@ -19,7 +19,11 @@ public class ResourceNamespace extends XacmlNamespace {
 	static {
 		onlyInstance.addNamespace(ObjectNamespace.getInstance()); 
 		onlyInstance.addNamespace(DatastreamNamespace.getInstance()); 
-		onlyInstance.addNamespace(DisseminatorNamespace.getInstance()); 		
+		onlyInstance.addNamespace(DisseminatorNamespace.getInstance()); 
+		onlyInstance.addNamespace(BDefNamespace.getInstance()); 
+		onlyInstance.addNamespace(BMechNamespace.getInstance()); 
+		
+		
 	}
 	
 	public static final ResourceNamespace getInstance() {
