@@ -1087,18 +1087,30 @@
     
     <path id="test.path">
         <pathelement path="${lib.junit}"/>
+        <pathelement path="${lib.xmlunit}"/>   
         <pathelement path="${lib.groboutils}"/>
+    	<!--
         <pathelement path="${lib.mysql-connector}"/>
         <pathelement path="${lib.xml-apis}"/>
-        <pathelement path="temp/server/classes"/>
+        -->
+        <pathelement path="${test.build.dir}/fedora-server.jar"/>  
+        <pathelement path="${test.build.dir}/fedora-client.jar"/>
+        <pathelement path="temp/fedora-utilities.jar"/>     
         <pathelement path="src/properties/server"/>
-        <pathelement path="${test.build.dir}"/>
+        <pathelement path="${test.build.dir}"/>   
         <path refid="server-libs.path"/>
         <path refid="client-libs.path"/>
     </path>
     
-<!--<target name="compile-test" depends="server">-->
-    <target name="compile-test">
+    <target name="junit-prep" depends="serverclasses, clientclasses">
+        <mkdir dir="${test.build.dir}"/>
+        <jar destfile="${test.build.dir}/fedora-server.jar"
+             basedir="temp/server/classes"/>
+        <jar destfile="${test.build.dir}/fedora-client.jar"
+             basedir="temp/client"/>      
+    </target>   
+    
+    <target name="compile-junit" depends="junit-prep">
         <javac fork="yes"
                srcdir="${junit.src.dir}" includes="**/*.java"
                destdir="${test.build.dir}">
@@ -1106,14 +1118,14 @@
         </javac>
     </target>
     
-    <target name="junit" depends="compile-test">
+    <target name="junit" depends="compile-junit">
         <junit printsummary="on" fork="yes" haltonfailure="yes">
             <sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
             <classpath refid="test.path" />
             <formatter type="plain"
                        usefile="false" />         
             <!--<test name="fedora.server.resourceIndex.AllTests"/>-->
-            <test name="fedora.test.junit.SuiteFoo"/>
+            <test name="fedora.test.SuiteBaz"/>
         </junit>
     </target>
     
