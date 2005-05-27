@@ -953,8 +953,8 @@
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>
 		<copy file="src/xsl/management/backendSecurityConfig.xslt" todir="dist/server/management"/>
-		<!-- Property file used to configure backend service security -->
-		<copy file="src/properties/server/beSecurity.properties" todir="dist/server/config"/>
+		<!-- beSecurity configuration file used to configure backend service security -->
+		<copy file="src/properties/server/beSecurity.xml" todir="dist/server/config"/>
 	</target>
 	<target name="localservices" depends="server, localservicesclasses">
 		<!-- saxon service -->
