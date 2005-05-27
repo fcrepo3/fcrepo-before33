@@ -78,7 +78,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
     }
     
     public static void ingestDemoObjects() {
-        ExecUtility.exec(getFedoraHome() + "/client/bin/fedora-ingest-demos " + 
+        ExecUtility.exec(FEDORA_HOME + "/client/bin/fedora-ingest-demos " + 
                          getHost() + " " + getPort() + " " + getUsername() + " " + 
                          getPassword() + " " + getProtocol());
     }

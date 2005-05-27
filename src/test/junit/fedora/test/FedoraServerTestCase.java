@@ -35,10 +35,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         testSetup.tearDown();
     }
     
-    public static String getFedoraHome() {
-        return FedoraServerTestSetup.getFedoraHome();
-    }
-    
     public static ServerConfiguration getServerConfiguration() {
         try {
             return FedoraServerTestSetup.getServerConfiguration();

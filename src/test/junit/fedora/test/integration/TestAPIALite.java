@@ -41,7 +41,7 @@ public class TestAPIALite extends FedoraServerTestCase {
                 demoObjects = TestIngestDemoObjects.demoObjects;
             }
             
-            public void tearDown() {
+            public void tearDown() throws Exception {
                 TestIngestDemoObjects.purgeDemoObjects();
                 super.tearDown();
             }

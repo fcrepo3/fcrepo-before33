@@ -33,7 +33,7 @@ public class TestServerConfiguration extends FedoraTestCase {
     
     protected void setUp() throws Exception {
         out = new ByteArrayOutputStream();
-        originalFile = new File(FCFG_LOCATION);
+        originalFile = new File(FCFG_SRC_DIR);
         fis = new FileInputStream(originalFile);
         ServerConfigurationParser scp = new ServerConfigurationParser(fis);
         config = scp.parse();

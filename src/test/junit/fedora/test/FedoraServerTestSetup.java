@@ -63,14 +63,9 @@ public class FedoraServerTestSetup
         }
     }
     
-    public static String getFedoraHome() {
-        return System.getProperty(PROP_FEDORA_HOME, new File("dist").getAbsolutePath());
-    }
-    
     public static ServerConfiguration getServerConfiguration() throws Exception {
         return new ServerConfigurationParser(
-                new FileInputStream(
-                  new File(getFedoraHome() + "/server/config/fedora.fcfg"))).parse();
+                new FileInputStream(FCFG)).parse();
     }
     
     /**
@@ -90,7 +85,7 @@ public class FedoraServerTestSetup
         System.out.println("+ doing setUp(): starting server...");
         //dropDBTables();
         //deleteStore();
-        String cmd = getFedoraHome() + "/server/bin/fedora-start";
+        String cmd = FEDORA_HOME + "/server/bin/fedora-start";
         
         try {
 	        Process cp = Runtime.getRuntime().exec(cmd, null);
@@ -109,7 +104,7 @@ public class FedoraServerTestSetup
     
     private void stopServer() throws Exception {
         System.out.println("- doing tearDown(): stopping server...");
-        ExecUtility.exec(getFedoraHome() + "/server/bin/fedora-stop");
+        ExecUtility.exec(FEDORA_HOME + "/server/bin/fedora-stop");
         dropDBTables();
         deleteStore();
     }
