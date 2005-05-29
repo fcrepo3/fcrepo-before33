@@ -5,7 +5,7 @@
         <comment>Defines a human readable name for the Fedora server; default is
             Fedora Repository.</comment>
     </param>
-    <param name="adminEmailList" value="bob@somewhere.com sally@somewhere.com">
+    <param name="adminEmailList" value="bob@example.org sally@example.org">
         <comment>Defines one or more email addresses for server administrators;
             list is space delimited.</comment>
     </param>
@@ -353,7 +353,7 @@
         <comment>Description: Exposes the repository for OAI harvesters.</comment>
         <param name="repositoryName" value="Your Fedora Repository Name Here"/>
         <param name="repositoryDomainName" value="example.org"/>
-        <param name="adminEmails" value="oai-admin@yourco.com bob@yourco.com"/>
+        <param name="adminEmails" value="oai-admin@example.org bob@example.org"/>
         <param name="friends" value="http://arXiv.org/oai2
             http://memory.loc.gov/cgi-bin/oai2_0"/>
         <param name="maxRecords" value="100"/>
