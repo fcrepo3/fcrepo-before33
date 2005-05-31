@@ -1,15 +1,9 @@
 package fedora.server.resourceIndex;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import junit.framework.TestCase;
 
-import java.net.InetAddress;
-
-import org.trippi.TripleMaker;
-
 import org.jrdf.graph.Triple;
+import org.trippi.TripleMaker;
 
 /**
  * @author Edwin Shin

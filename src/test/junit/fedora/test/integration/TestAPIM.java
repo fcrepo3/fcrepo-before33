@@ -34,7 +34,7 @@ public class TestAPIM extends FedoraServerTestCase {
         super.tearDown();
     }
     
-    public void testFoo() throws Exception {
+    public void testGetDatastream() throws Exception {
         Datastream ds = apim.getDatastream("demo:1", "DC", null);
         assertEquals("DC", ds.getID());
     }

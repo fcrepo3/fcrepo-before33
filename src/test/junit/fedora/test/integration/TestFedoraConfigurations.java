@@ -14,7 +14,6 @@ import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.test.FedoraConfigurationTestSetup;
 import fedora.test.FedoraTestCase;
-import fedora.test.SuiteQuux;
 import fedora.utilities.FileComparator;
 
 /**
@@ -31,21 +30,28 @@ import fedora.utilities.FileComparator;
  */
 public class TestFedoraConfigurations extends FedoraTestCase {
     
-    public static Test suite() throws Exception {
+    public static Test suite() {
         TestSuite suite = new TestSuite();
         
         // Add the TestSuite that should be run through once for each 
         // configuration
-        addTestToSuite(suite, SuiteQuux.suite());
+        //addTestToSuite(suite, SuiteQuux.suite());
+        //addTestToSuite(suite, TestAPIALite.suite());
+        addTestToSuite(suite, new TestSuite(TestAPIM.class));
         
         return suite;
     }
     
-    private static void addTestToSuite(TestSuite suite, Test test) throws Exception {
-        Iterator configs = getConfigurations().iterator();
-        while (configs.hasNext()) {
-            suite.addTest(new FedoraConfigurationTestSetup(test, 
-                    (ServerConfiguration)configs.next()));
+    private static void addTestToSuite(TestSuite suite, Test test) {
+        Iterator configs;
+        try {
+            configs = getConfigurations().iterator();
+            while (configs.hasNext()) {
+                suite.addTest(new FedoraConfigurationTestSetup(test, 
+                        (ServerConfiguration)configs.next()));
+            }
+        } catch (Exception e) {
+            fail(e.getMessage());
         }
     }
     

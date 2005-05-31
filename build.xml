@@ -1089,8 +1089,9 @@
         <pathelement path="${lib.junit}"/>
         <pathelement path="${lib.xmlunit}"/>   
         <pathelement path="${lib.groboutils}"/>
-    	<!--
         <pathelement path="${lib.mysql-connector}"/>
+        <pathelement path="${lib.mckoi-jdbc}"/>   
+        <!--
         <pathelement path="${lib.xml-apis}"/>
         -->
         <pathelement path="${test.build.dir}/fedora-server.jar"/>  
@@ -1102,7 +1103,7 @@
         <path refid="client-libs.path"/>
     </path>
     
-    <target name="junit-prep" depends="serverclasses, clientclasses">
+    <target name="junit-prep" depends="serverandclient">
         <mkdir dir="${test.build.dir}"/>
         <jar destfile="${test.build.dir}/fedora-server.jar"
              basedir="temp/server/classes"/>
@@ -1119,13 +1120,16 @@
     </target>
     
     <target name="junit" depends="compile-junit">
-        <junit printsummary="on" fork="yes" haltonfailure="yes">
+        <junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes">
             <sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
             <classpath refid="test.path" />
             <formatter type="plain"
                        usefile="false" />         
             <!--<test name="fedora.server.resourceIndex.AllTests"/>-->
-            <test name="fedora.test.SuiteBaz"/>
+            <!--<test name="fedora.test.SuiteBaz"/>-->
+            <!--<test name="fedora.test.integration.AllAPITests"/>   --> 
+            <!--<test name="fedora.test.integration.TestFedoraConfigurations"/> -->   
+            <test name="fedora.test.integration.AllTests"/>   
         </junit>
     </target>
     
@@ -1152,6 +1156,7 @@
 		<delete dir="temp"/>
 		<delete dir="${dist.dir}"/>
 		<delete dir="${build.dir}"/>
+        <delete dir="${test.build.dir}"/>      
 	</target> 
     <target name="test" description="Automatic tests" depends="clean, serverandclient">
       <!-- Generate fedora.fcfg with overrides from src/fcfg/test.properties -->

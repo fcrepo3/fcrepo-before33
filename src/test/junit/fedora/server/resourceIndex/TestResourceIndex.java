@@ -2,8 +2,8 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -16,8 +16,8 @@ import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
 
 import fedora.common.Constants;
-import fedora.server.Parameterized;
 import fedora.server.DummyLogging;
+import fedora.server.Parameterized;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.translation.METSLikeDODeserializer;
@@ -26,16 +26,16 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ConfigurationLoader;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
-import junit.framework.TestCase;
+import fedora.test.FedoraTestCase;
 
 /**
  * @author Edwin Shin
  */
-public abstract class TestResourceIndex extends TestCase implements Constants {
+public abstract class TestResourceIndex extends FedoraTestCase implements Constants {
     protected static final String DEMO_OBJECTS_ROOT_DIR = "src/test/junit/foxmlTestObjects";
     
     protected static String m_triplestorePath;
-    protected static String m_fedoraHome = System.getProperty("fedora.home");
+    protected static String m_fedoraHome = System.getProperty(PROP_FEDORA_HOME);
     protected ResourceIndex m_ri;
     protected ConnectionPool m_cPool;
     protected TriplestoreConnector m_conn;
@@ -52,7 +52,7 @@ public abstract class TestResourceIndex extends TestCase implements Constants {
             m_fedoraHome = "dist";
         }
         
-        ConfigurationLoader cl = new ConfigurationLoader(m_fedoraHome, "test.fcfg"); 
+        ConfigurationLoader cl = new ConfigurationLoader(m_fedoraHome, "fedora.fcfg"); 
         
         Map riMP = cl.getModuleParameters("fedora.server.resourceIndex.ResourceIndex");
         int level = Integer.parseInt((String)riMP.get("level"));

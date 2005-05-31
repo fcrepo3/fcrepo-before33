@@ -34,7 +34,14 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
             "demo:19", "demo:20", "demo:21", "demo:22", "demo:25", "demo:26", 
             "demo:27", "demo:28", "demo:29", "demo:30", "demo:31", 
             "demo:Collection", "demo:DualResImage", 
-            "demo:DualResImageCollection"
+            "demo:DualResImageCollection", 
+            "demo:SmileyBeerGlass", 
+            "demo:SmileyBucket", "demo:SmileyDinnerware", 
+            "demo:SmileyEarring", "demo:SmileyKeychain", 
+            "demo:SmileyNightlight", "demo:SmileyPens", 
+            "demo:SmileyShortRoundCup", "demo:SmileyStuff", 
+            "demo:SmileyTallRoundCup", "demo:SmileyToiletBrush", 
+            "demo:SmileyWastebasket"
     };
     private DocumentBuilderFactory factory;
     private DocumentBuilder builder;
@@ -86,6 +93,12 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
     public static void purgeDemoObjects() {
         // FIXME
         System.out.println("** TODO **: purging demo objects");
+        //for (int i = 0; i < demoObjects.length; i++) {
+            ExecUtility.exec(FEDORA_HOME + "/client/bin/fedora-purge " + 
+                    getHost() + ":" + getPort() + " " + getUsername() + " " + 
+                    getPassword() + " " + "demo:*" + " " + getProtocol() + 
+                    " for testing");
+        //}
     }
     
     private void doViewItemIndex(String pid) throws Exception {
