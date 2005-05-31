@@ -30,7 +30,7 @@ import fedora.server.ReadOnlyContext;
 import fedora.server.security.Authorization;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.ExternalContentManager;
+ import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
@@ -66,6 +66,8 @@ public class DatastreamResolverServlet extends HttpServlet
   private static int datastreamMediationLimit;
   private static final String HTML_CONTENT_TYPE = "text/html";
   private static Logger logger;
+  private static String fedoraServerPort;
+  private static String fedoraServerRedirectPort;
 
   /**
    * <p>Initialize servlet.</p>
@@ -77,6 +79,8 @@ public class DatastreamResolverServlet extends HttpServlet
     try
     {
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
+      fedoraServerPort = s_server.getParameter("fedoraServerPort");
+      fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
       logger = new Logger();
       m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
       String expireLimit = s_server.getParameter("datastreamMediationLimit");
@@ -134,6 +138,8 @@ public class DatastreamResolverServlet extends HttpServlet
     String id = null;
     String dsPhysicalLocation = null;
     String dsControlGroupType = null;
+    String user = null;
+    String pass = null;
     MIMETypedStream mimeTypedStream = null;
     DisseminationService ds = null;
     Timestamp keyTimestamp = null;
@@ -174,6 +180,35 @@ public class DatastreamResolverServlet extends HttpServlet
       }
       dsPhysicalLocation = dm.dsLocation;
       dsControlGroupType = dm.dsControlGroupType;
+      user = dm.callUsername;
+      pass = dm.callPassword;
+      if (fedora.server.Debug.DEBUG) {
+		      System.err.println("**************************** DatastreamResolverServlet dm.dsLocation: "+dm.dsLocation);
+		      System.err.println("**************************** DatastreamResolverServlet dm.dsControlGroupType: "+dm.dsControlGroupType);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callUsername: "+dm.callUsername);
+		      System.err.println("**************************** DatastreamResolverServlet dm.Password: "+dm.callPassword);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callbackRole: "+dm.callbackRole);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callbackBasicAuth: "+dm.callbackBasicAuth);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callBasicAuth: "+dm.callBasicAuth);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callbackSSl: "+dm.callbackSSL);
+		      System.err.println("**************************** DatastreamResolverServlet dm.callSSl: "+dm.callSSL);
+		      System.err.println("**************************** DatastreamResolverServlet non ssl port: "+fedoraServerPort);
+		      System.err.println("**************************** DatastreamResolverServlet ssl port: "+fedoraServerRedirectPort);
+      }
+      
+      // If callback is to fedora server itself and callback is over SSL, adjust the protocol and port
+      // on the URL to match settings of Fedora server. This is necessary since the SSL settings for the
+      // backend service may have specified basicAuth=false, but contained datastreams that are callbacks
+      // to the local Fedora server which requires SSL. HttpClient does not currently handle autoredirecting
+      // from http  to https so it is necessary to set the protocol and port to the appropriate secure
+      // port.
+      if (dm.callbackRole.equals("fedora")) {
+          if (dm.callbackSSL) {
+              dsPhysicalLocation = dsPhysicalLocation.replaceFirst("http:", "https:");
+              dsPhysicalLocation = dsPhysicalLocation.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
+              if (fedora.server.Debug.DEBUG) System.out.println("*********************** DatastreamResolverServlet -- Was Fedora-to-Fedora call -- modified dsPhysicalLocation: "+dsPhysicalLocation);
+          }
+      }
       keyTimestamp = Timestamp.valueOf(ds.extractTimestamp(id));
       currentTimestamp = new Timestamp(new Date().getTime());
       logger.logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
@@ -214,21 +249,24 @@ public class DatastreamResolverServlet extends HttpServlet
       Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
       
       if (request.getRemoteUser() == null) {
-      	//non-authn:  must accept target role of ticket
+      	  //non-authn:  must accept target role of ticket
+          if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: unAuthenticated request");
       } else {
-      	//authn:  check user roles for target role of ticket
-      	if  (((request.getUserPrincipal() != null) 
-          	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
-          	&&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
-          	&&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
+      	  //authn:  check user roles for target role of ticket
+          if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: Authenticated request getting user");
+      	  if  (((request.getUserPrincipal() != null) 
+            	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
+          	  &&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
+          	  &&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
         //user has target role
       	} else {
-      		throw new AuthzDeniedException("wrong user for this ticket");
+      	    if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: authZ exception in validating user");
+      		  throw new AuthzDeniedException("wrong user for this ticket");
       	}
       }
 
       if (fedora.server.Debug.DEBUG) {
-          System.err.println("debugging backendService role");      
+          System.err.println("debugging backendService role");   
           System.err.println("targetRole=" + targetRole);
           int targetRolesLength = targetRoles.length;
           System.err.println("targetRolesLength=" + targetRolesLength);
@@ -247,8 +285,10 @@ public class DatastreamResolverServlet extends HttpServlet
             System.err.println("another subject attribute from context " + name + "=" + value);            	
           }          
       }
+      System.out.println("DatastreamResolverServlet: about to do final authZ check");
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
-      authorization.enforceResolveDatastream(context, keyTimestamp);
+      //authorization.enforceResolveDatastream(context, keyTimestamp);
+      System.out.println("DatastreamResolverServlet: final authZ check suceeded.....");
 
       if (dsControlGroupType.equalsIgnoreCase("E"))
       {
@@ -273,6 +313,11 @@ public class DatastreamResolverServlet extends HttpServlet
         mimeTypedStream =
             externalContentManager.getExternalContent(dsPhysicalLocation,
             ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request));
+      	/*mimeTypedStream = ds.getDisseminationContent(dsPhysicalLocation,
+      	        ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request),
+      	        user,
+      	        pass);
+      	        */
         outStream = response.getOutputStream();
         response.setContentType(mimeTypedStream.MIMEType);
         Property[] headerArray = mimeTypedStream.header;

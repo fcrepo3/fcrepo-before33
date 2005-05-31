@@ -563,10 +563,12 @@ public class FedoraAccessServlet extends HttpServlet
           while ((byteStream = dissemResult.read(buffer)) != -1)
           {
             out.write(buffer, 0, byteStream);
+            if (fedora.server.Debug.DEBUG) System.out.println("***** Read "+byteStream+" bytes");
           }
           buffer = null;
           dissemResult.close();
           dissemResult = null;
+          //out.flush();
           long stopTime = new Date().getTime();
           long interval = stopTime - startTime;
           logger.logFiner("[FedoraAccessServlet] Read InputStream "
@@ -670,10 +672,12 @@ public class FedoraAccessServlet extends HttpServlet
         while ((byteStream = dissemResult.read(buffer)) != -1)
         {
           out.write(buffer, 0, byteStream);
+          if (fedora.server.Debug.DEBUG) System.out.println("***** Read "+byteStream+" bytes");
         }
         buffer = null;
         dissemResult.close();
         dissemResult = null;
+        //out.flush();
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         logger.logFiner("[FedoraAccessServlet] Read InputStream "

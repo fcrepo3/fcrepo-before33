@@ -2,9 +2,9 @@ package fedora.server.access.dissemination;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -14,24 +14,33 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.Properties;
 
+import org.apache.commons.httpclient.Header;
+
+import fedora.common.HttpClient;
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
 import fedora.server.errors.DisseminationBindingInfoNotFoundException;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.security.Authorization;
+import fedora.server.security.BackendSecurity;
+import fedora.server.security.BackendSecurityDeserializer;
+import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
-import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.DisseminationBindingInfo;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.ServerUtility;
 
 /**
  * <p><b>Title: </b>DisseminationService.java</p>
@@ -78,6 +87,10 @@ public class DisseminationService
   private static String fedoraServerRedirectPort = null;
   
   private static String fedoraHome = null;
+  
+  private static BackendSecuritySpec m_beSS = null;
+  
+  private static BackendSecurity m_beSecurity;
 
   /** Make sure we have a server instance for error logging purposes. */
   static
@@ -95,8 +108,10 @@ public class DisseminationService
         s_server = Server.getInstance(new File(fedoraHome));
         fedoraServerHost = s_server.getParameter("fedoraServerHost");
         fedoraServerPort = s_server.getParameter("fedoraServerPort");
-        fedoraServerRedirectPort = s_server.getParameter("fedoraServerRedirectport");
+        fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
         m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
+        m_beSecurity = (BackendSecurity) s_server.getModule("fedora.server.security.BackendSecurity");
+        m_beSS = m_beSecurity.getBackendSecuritySpec();
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
         {
@@ -122,6 +137,7 @@ public class DisseminationService
           doDatastreamMediation = new Boolean(dsMediation).booleanValue();
         }
       }
+
     } catch (InitializationException ie)
     {
         System.err.println(ie.getMessage());
@@ -130,6 +146,7 @@ public class DisseminationService
 
   /** The hashtable containing information required for datastream mediation. */
   protected static Hashtable dsRegistry = new Hashtable(1000);
+  protected static Hashtable beSecurityHash = new Hashtable();
 
   /**
    * <p>Constructs an instance of DisseminationService. Initializes two class
@@ -182,38 +199,21 @@ public class DisseminationService
    */
   public MIMETypedStream assembleDissemination(Context context, String PID,
       Hashtable h_userParms, DisseminationBindingInfo[] dissBindInfoArray, 
-      String bMechPid)
+      String bMechPid, String methodName)
       throws ServerException
   {
 
-    String callbackHost = null;
-    String callbackServletPath = null;
-    Properties backendServiceProperties = getBackendServiceProperties();
-    if (isBackendServiceBasicAuthEnabled(backendServiceProperties, bMechPid)) {
-        callbackServletPath = "/fedora/getDSAuthenticated?id=";
-    } else {
-        callbackServletPath = "/fedora/getDS?id=";
-    }
-    if (isBackendServiceSSLEnabled(backendServiceProperties, bMechPid)) {
-        callbackHost = "https://"+fedoraServerHost+":"+fedoraServerRedirectPort;
-    } else {
-        callbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
-    }    
-    String datastreamResolverServletURL = callbackHost + callbackServletPath;
-    if (fedora.server.Debug.DEBUG) {
-        System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);
-        System.out.println("******************callbackHost: "+callbackHost);
-    }
-    if (fedora.server.Debug.DEBUG) {
-        printBindingInfo(dissBindInfoArray);
-    }
-    long initStartTime = new Date().getTime();
-    long startTime = new Date().getTime();
+    String dissURL = null;
     String protocolType = null;
     DisseminationBindingInfo dissBindInfo = null;
-    String dissURL = null;
     MIMETypedStream dissemination = null;
+    long initStartTime = new Date().getTime();
+    long startTime = new Date().getTime();
     boolean isRedirect = false;
+    
+    if (fedora.server.Debug.DEBUG) {
+        printBindingInfo(dissBindInfoArray);
+    }    
 
     if (dissBindInfoArray != null && dissBindInfoArray.length > 0)
     {
@@ -272,8 +272,8 @@ public class DisseminationService
                 }
                 dissBindInfo.dsLocation=replaced.toString();
             }
-        }
-
+        }       
+        
         // Match DSBindingKey pattern in WSDL which is a string of the form:
         // (DSBindingKey). Rows in DisseminationBindingInfo are sorted
         // alphabetically on binding key.
@@ -299,6 +299,51 @@ public class DisseminationService
           }
           protocolType = dissBindInfo.ProtocolType;
         }
+        
+        // Assess beSecurity for backend service and for datastreams that may be parameters for the
+        // backend service.
+        //
+        // dsMediatedCallbackHost - when dsMediation is in effect, all M, X, and E type datastreams
+        //                          are encoded as callbacks to the Fedora server to obtain the
+        //                          datastream's contents. dsMediatedCallbackHost contains protocol, 
+        //                          host, and port used for this type of backendservice-to-fedora callback.
+        //                          The specifics of protocol, host, and port are obtained from the
+        //                          beSecurity configuration file.
+        // dsMediatedServletPath - when dsMediation is in effect, all M, X, and E type datastreams
+        //                         are encoded as callbacks to the Fedora server to obtain the
+        //                         datastream's contents. dsMediatedServletPath contains the servlet
+        //                         path info for this type of backendservice-to-fedora callback.
+        //                         The specifics of servlet path are obtained from the beSecurity configuration
+        //                         file and determines whether the backedservice-to-fedora callback
+        //                         will use authentication or not.
+        // callbackRole - contains the role of the backend service (the bMechPid of the service).
+
+        String callbackRole = bMechPid;
+        Hashtable beHash = m_beSS.getSecuritySpec(callbackRole, methodName);
+        boolean callbackBasicAuth = new Boolean((String) beHash.get("callbackBasichAuth")).booleanValue();
+        boolean callbackSSL = new Boolean((String) beHash.get("callbackSSL")).booleanValue();
+        String dsMediatedServletPath = null;
+        if (callbackBasicAuth) {
+            dsMediatedServletPath = "/fedora/getDSAuthenticated?id=";
+        } else {
+            dsMediatedServletPath = "/fedora/getDS?id=";
+        }
+        String dsMediatedCallbackHost = null;
+        if (callbackSSL) {
+            dsMediatedCallbackHost = "https://"+fedoraServerHost+":"+fedoraServerRedirectPort;
+        } else {
+            dsMediatedCallbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
+        }
+        String datastreamResolverServletURL = dsMediatedCallbackHost + dsMediatedServletPath;        
+        if (fedora.server.Debug.DEBUG) {
+            System.out.println("******************Checking backend service dsLocation: "+dissBindInfo.dsLocation);
+            System.out.println("******************Checking backend service dsControlGroupType: "+dissBindInfo.dsControlGroupType);
+            System.out.println("******************Checking backend service callbackBasicAuth: "+callbackBasicAuth);
+            System.out.println("******************Checking backend service callbackSSL: "+callbackSSL);
+            System.out.println("******************Checking backend service callbackRole: "+callbackRole);
+            System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);            
+        }           		                    
+        
         String currentKey = dissBindInfo.DSBindKey;
         String nextKey = "";
         if (i != numElements-1)
@@ -350,10 +395,11 @@ public class DisseminationService
               !dissBindInfo.dsControlGroupType.equalsIgnoreCase("R"))
           {
             // Use Datastream Mediation (except for redirected datastreams).
+           
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
                                            dissBindInfo.dsControlGroupType,
-										   bMechPid)
+										   callbackRole, methodName)
                 + "+(" + dissBindInfo.DSBindKey + ")";
           } else
           {
@@ -364,7 +410,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, callbackHost)
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, dsMediatedCallbackHost)
                         + "+(" + dissBindInfo.DSBindKey + ")";;
             } else {
                 replaceString =
@@ -384,7 +430,7 @@ public class DisseminationService
             replaceString = datastreamResolverServletURL
                 + registerDatastreamLocation(dissBindInfo.dsLocation,
                   dissBindInfo.dsControlGroupType,
-            		  bMechPid); //this is generic, should be made specific per service                        
+            		  callbackRole, methodName); //this is generic, should be made specific per service                        
           } else
           {
             // Bypass Datastream Mediation.
@@ -394,7 +440,7 @@ public class DisseminationService
                 // Use the Default Disseminator syntax to resolve the internal
                 // datastream location for Managed and XML datastreams.
                 replaceString =
-                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, callbackHost);
+                    resolveInternalDSLocation(context, dissBindInfo.dsLocation, PID, dsMediatedCallbackHost);
             } else
             {
                 replaceString = dissBindInfo.dsLocation;
@@ -512,14 +558,47 @@ public class DisseminationService
         {
           // For all non-redirected disseminations, Fedora captures and returns
           // the MIMETypedStream resulting from the dissemination request.
-          ExternalContentManager externalContentManager = (ExternalContentManager)
-              s_server.getModule("fedora.server.storage.ExternalContentManager");
+          //ExternalContentManager externalContentManager = (ExternalContentManager)
+          //    s_server.getModule("fedora.server.storage.ExternalContentManager");
           long stopTime = new Date().getTime();
           long interval = stopTime - startTime;
           s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
               + interval + " milliseconds.");
           if (fedora.server.Debug.DEBUG) System.out.println("URL: "+dissURL);
-          dissemination = externalContentManager.getExternalContent(dissURL, context);
+          System.out.println("URL: "+dissURL);
+	        
+          // See if backend service reference is to fedora server itself or an external location.
+          // We must examine URL to see if this is referencing a remote backend service or is
+          // simply a callback to the fedora server. If the reference is remote, then use
+          // the role of backend service bMechPid. If the referenc is to the fedora server, 
+          // use the special role of "fedora" to denote that the callback will come from the 
+          // fedora server itself.          
+	        String beServiceRole = null;
+	        if ( isURLFedoraServer(dissURL) ) {
+	            beServiceRole =  "fedora";
+	        } else {
+	            beServiceRole = bMechPid;
+	        }
+	        
+	        // Get basicAuth and SSL info about the backend service and use this info to configure the
+	        // "call" to the backend service.
+	        Hashtable beHash = m_beSS.getSecuritySpec(beServiceRole, methodName);
+	        boolean beServiceCallBasicAuth = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+	        boolean beServiceCallSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
+	        String beServiceCallUsername = (String) beHash.get("callUsername");
+	        String beServiceCallPassword = (String) beHash.get("callPassword");	        
+        
+	        if (fedora.server.Debug.DEBUG) {
+	            System.out.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
+	            System.out.println("******************getDisseminationContent beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+	            System.out.println("******************getDisseminationContent beServiceCallSSL: "+beServiceCallSSL);
+	            System.out.println("******************getDisseminationContent beServiceCallUsername: "+beServiceCallUsername);
+	            System.out.println("******************getDisseminationContent beServiceCallPassword: "+beServiceCallPassword);
+	            System.out.println("******************getDisseminationContent dissURL: "+dissURL);	            
+	        }    	        
+	        
+	        // Dispatch backend service URL request authenticating as necessary based on beSecurity configuration
+          dissemination = getDisseminationContent(dissURL, context, beServiceCallUsername, beServiceCallPassword);
         }
 
       } else if (protocolType.equalsIgnoreCase("soap"))
@@ -586,7 +665,7 @@ public class DisseminationService
    *         location.
    */
   public String registerDatastreamLocation(String dsLocation,
-      String dsControlGroupType, String callbackRole) throws ServerException
+      String dsControlGroupType, String beServiceCallbackRole, String methodName) throws ServerException
   {
 
     String tempID = null;
@@ -595,6 +674,9 @@ public class DisseminationService
     long currentTime = new Timestamp(new Date().getTime()).getTime();
     long expireLimit = currentTime -
                        (long)datastreamExpirationLimit*1000;
+    String dsMediatedServletPath = null;
+    String dsMediatedCallbackHost = null;
+    
     try
     {
 
@@ -612,7 +694,7 @@ public class DisseminationService
               + "removed from Hash: " + key);
         }
       }
-
+      
       // Register datastream.
       if (tempID == null)
       {
@@ -622,7 +704,50 @@ public class DisseminationService
         dm.mediatedDatastreamID = tempID;
         dm.dsLocation = dsLocation;
         dm.dsControlGroupType = dsControlGroupType; 
-        dm.callbackRole = callbackRole;
+        dm.methodName = methodName;
+        
+        // See if datastream reference is to fedora server itself or an external location.
+        // M and X type datastreams always reference fedora server. With E type datastreams
+        // we must examine URL to see if this is referencing a remote datastream or is
+        // simply a callback to the fedora server. If the reference is remote, then use
+        // the role of the backend service that will make a callback for this datastream.
+        // If the referenc s to the fedora server, use the special role of "fedora" to
+        // denote that the callback will come from the fedora server itself.
+        String beServiceRole = null;
+        if ( isURLFedoraServer(dsLocation) || 
+             dsControlGroupType.equals("M") ||
+             dsControlGroupType.equals("X") ) {
+            beServiceRole =  "fedora";
+        } else {
+            beServiceRole = beServiceCallbackRole;
+        }        
+        
+        // Store beSecurity info in hash 
+        Hashtable beHash = m_beSS.getSecuritySpec(beServiceRole, methodName);
+        boolean beServiceCallbackBasicAuth = new Boolean((String) beHash.get("callbackBasicAuth")).booleanValue();
+        boolean beServiceCallBasicAuth = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+        boolean beServiceCallbackSSL = new Boolean((String) beHash.get("callbackSSL")).booleanValue();
+        boolean beServiceCallSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
+        String beServiceCallUsername = (String) beHash.get("callUsername");
+        String beServiceCallPassword = (String) beHash.get("callPassword");
+        if (fedora.server.Debug.DEBUG) {
+            System.out.println("******************Registering datastream dsLocation: "+dsLocation);
+            System.out.println("******************Registering datastream dsControlGroupType: "+dsControlGroupType);
+            System.out.println("******************Registering datastream beServiceRole: "+beServiceRole);
+            System.out.println("******************Registering datastream beServiceCallbackBasicAuth: "+beServiceCallbackBasicAuth);
+            System.out.println("******************Registering datastream beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+            System.out.println("******************Registering datastream beServiceCallbackSSL: "+beServiceCallbackSSL);
+            System.out.println("******************Registering datastream beServiceCallSSL: "+beServiceCallSSL);
+            System.out.println("******************Registering datastream beServiceCallUsername: "+beServiceCallUsername);
+            System.out.println("******************Registering datastream beServiceCallPassword: "+beServiceCallPassword);
+        }           		                
+        dm.callbackRole = beServiceRole;
+        dm.callUsername = beServiceCallUsername;
+        dm.callPassword = beServiceCallPassword;
+        dm.callbackBasicAuth = beServiceCallbackBasicAuth;
+        dm.callBasicAuth = beServiceCallBasicAuth;
+        dm.callbackSSL = beServiceCallbackSSL;
+        dm.callSSL = beServiceCallSSL;
         dsRegistry.put(tempID, dm);
         s_server.logFinest("[DisseminationService] DatastreammediationKey "
             + "added to Hash: " + tempID);
@@ -740,7 +865,6 @@ public class DisseminationService
               callbackHost
               +"/fedora/get/"+s[0]+"/"+s[1]+"/"
               +DateUtility.convertDateToString(d.DSCreateDT);
-          if (fedora.server.Debug.DEBUG) System.out.println("resolveInternalDatastream DS: "+dsLocation);
           
       } else
       {
@@ -751,6 +875,7 @@ public class DisseminationService
         s_server.logFinest(message);
             throw new GeneralException(message);
       }
+      if (fedora.server.Debug.DEBUG) System.out.println("********** Resolving Internal Datastream dsLocation: "+dsLocation);
       return dsLocation;
   }
 
@@ -781,7 +906,7 @@ public class DisseminationService
     }
   }
   
-  public Properties getBackendServiceProperties() {
+/*  public Properties getBackendServiceProperties() {
       
       try {
           
@@ -800,55 +925,129 @@ public class DisseminationService
           s_server.logWarning(message);
       }
       return null;
-  }
+  } 
+  */
   
-  public boolean isBackendServiceBasicAuthEnabled(Properties backendServiceProperties, String role) throws GeneralException {
-      
-      String basicAuth = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".basicAuth");
-      
-      if (basicAuth == null) {
-          // Role(key) was not found in backend services properties file
-          // See if default exists for basicAuth
-          basicAuth = backendServiceProperties.getProperty("all.basicAuth");
-          if (basicAuth == null)
-              // No default was configured so set basicAuth to false
-              basicAuth = "false";
-      }
-      if (fedora.server.Debug.DEBUG) System.out.println("********************BASICAUTH: "+basicAuth+"   role: "+role);
-      if (basicAuth.equalsIgnoreCase("true")) {
-          return true;
-      } else if (basicAuth.equalsIgnoreCase("false")) {
-          return false;
-      } else {
-          throw new GeneralException("[DisseminationService] Backend service config "
-              + "parameter for basicAuth must be either \"true\" or \"false\". Value "
-              + "specified was: \"" + basicAuth + "\"  for backend service with role: \""
-              + role + "\".");
-      }
-  }
-  
-  public boolean isBackendServiceSSLEnabled(Properties backendServiceProperties, String role) throws GeneralException {
-
-      String ssl = backendServiceProperties.getProperty(role.replaceAll(":","\\:")+".ssl");
-      if (ssl == null) {
-          // Role(key) was not found in backend services properties file
-          // See if default exists for ssl          
-          ssl = backendServiceProperties.getProperty("all.ssl");
-          if (ssl == null)
-              // No default was configured so set ssl to false
-              ssl = "false";
-      }    
-      if (fedora.server.Debug.DEBUG) System.out.println("********************SSL: "+ssl+"   role: "+role);
-      if (ssl.equalsIgnoreCase("true")) {
-          return true;
-      } else if (ssl.equalsIgnoreCase("false")) {
-          return false;
-      } else {
-          throw new GeneralException("[DisseminationService] Backend service config "
-              + "parameter for ssl must be either \"true\" or \"false\". Value "
-              + "specified was: \"" + ssl + "\"  for backend service with role: \""
-              + role + "\".");
-      }
+  /**
+   * A method that reads the contents of the specified URL and returns the
+   * result as a MIMETypedStream
+   *
+   * @param url The URL of the external content.
+   * @return A MIME-typed stream.
+   * @throws HttpServiceNotFoundException If the URL connection could not
+   *         be established.
+   */
+  public MIMETypedStream getDisseminationContent(String url, Context context, String user, String pass)
+      throws GeneralException, HttpServiceNotFoundException {
+  	log("in getDisseminationContent(), url=" + url);
+  	MIMETypedStream httpContent = null;
+  	try {  		
+  		HttpClient client = new HttpClient(url); 
+  		
+		Properties serverProperties = ServerUtility.getServerProperties();    
+  		client.doAuthnGet(20000, 25, user, pass, 1);
+  		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
+  			log("in getDisseminationContent(), got bad code=" + client.getStatusCode());
+  			throw new StreamIOException(
+                "Server returned a non-200 response code ("
+                + client.getStatusCode() + ") from GET request of URL: "
+                + url);
+  		}          
+  		log("in getDisseminationContent(), got 200");
+//comment from earlier implementation; means anything?:  connection.setInstanceFollowRedirects(true);
+  		Header[] headers = client.getGetMethod().getResponseHeaders();
+  		Property[] headerArray = new Property[headers.length];
+  		for (int i = 0; i < headers.length; i++) {
+  			headerArray[i] = new Property();
+  			headerArray[i].name = headers[i].getName();
+  			headerArray[i].value = headers[i].getValue();
+  			log("in getDisseminationContent(), (after loop) " + headerArray[i].name + "=" + headerArray[i].value);
+  		}
+  		String contentType = "text/plain";
+  		if (client.getGetMethod().getResponseHeader("Content-Type") != null) {
+  			contentType = client.getGetMethod().getResponseHeader("Content-Type").getValue();
+  		}
+  		log("in getDisseminationContent(), contentType=" + contentType);
+  		for (int ha=0; ha<headerArray.length; ha++) {
+  			log("in getDisseminationContent(), header=" + headerArray[ha].name + "=" + headerArray[ha].value);
+  		}
+  		httpContent = new MIMETypedStream(contentType, client.getGetMethod().getResponseBodyAsStream(), headerArray);
+  		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream. 
+  		log("in getDisseminationContent(), httpContent=" + httpContent);
+  	} catch (Throwable th) {
+  		th.printStackTrace();
+  		throw new HttpServiceNotFoundException("[DisseminationService] "
+  			+ "returned an error.  The underlying error was a "
+			+ th.getClass().getName() + "  The message "
+			+ "was  \"" + th.getMessage() + "\"  .  ");
+  	} finally {
+  		log("in getDisseminationContent(), in finally");
+ 	
+  	}    	
+	return(httpContent);
   }  
+  
+  /*protected Hashtable getBeSecurity(String role, String methodName) {
+      return parseBeSecurity().getSecuritySpec(role, methodName);
+  }
+  */
+  
+  /*protected BackendSecuritySpec parseBeSecurity() {
+      
+      BackendSecurityDeserializer bsd = null;
+      BackendSecuritySpec beSS = null;
+      
+      try {
+			  bsd = new BackendSecurityDeserializer("UTF-8", true);
+			  return bsd.deserialize(fedoraHome+"/server/config/beSecurty.xml");
+      } catch (FactoryConfigurationError fce) {
+          
+      } catch (ParserConfigurationException pce ) {
+          
+      } catch (SAXException se) {
+          
+      } catch (UnsupportedEncodingException uee) {
+      } catch (StreamIOException sioe) {
+      } catch (GeneralException ge) {
+      }
+      return null;
+  }
+  */
+  
+  private final void log(String msg) {
+  	if (fedora.server.Debug.DEBUG) {
+	  	System.err.println(msg);	  		
+  	}
+  }  
+  
+  private boolean isURLFedoraServer(String url) {
+      boolean isFedoraLocalService = false;
+      
+      // Check for Fedora Local Services like saxon, fop, imagemanip, and soapclient
+      // Although these webapps are in the same web container as the Fedora server
+      // local services are treated like other backend services so must check for
+      // more than just hostname and port to determine if URL is a fedora-to-fedora
+      // server callback or a callback to a local service.
+      if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/soapclient")) {
+          isFedoraLocalService = true;
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
+      }
+      if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
+          !isFedoraLocalService) {
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
+          return true;
+      } else {
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
+          return false;
+      }
+          
+  }
   
 }

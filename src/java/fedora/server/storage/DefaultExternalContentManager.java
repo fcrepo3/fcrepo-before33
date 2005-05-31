@@ -1,6 +1,7 @@
 package fedora.server.storage;
 
 import java.net.HttpURLConnection;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
@@ -10,6 +11,8 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.security.BackendSecurity;
+import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.StreamIOException;
@@ -33,6 +36,7 @@ public class DefaultExternalContentManager extends Module
   private String m_userAgent;
   private String fedoraServerHost;
   private String fedoraServerPort;
+  private String fedoraServerRedirectPort;
 
   /**
    * <p> Creates a new DefaultExternalContentManager.</p>
@@ -72,6 +76,7 @@ public class DefaultExternalContentManager extends Module
 
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       fedoraServerHost = s_server.getParameter("fedoraServerHost");
+      fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
 
 
     } catch (Throwable th)
@@ -97,18 +102,34 @@ public class DefaultExternalContentManager extends Module
       throws GeneralException, HttpServiceNotFoundException {
   	log("in getExternalContent(), url=" + url);
   	MIMETypedStream httpContent = null;
-  	try {  		
-  		HttpClient client = new HttpClient(url); 
+  	try {  		 
   		
-		Properties serverProperties = ServerUtility.getServerProperties();
-		String backendUsername = "";
-		if (serverProperties.containsKey(ServerUtility.BACKEND_USERNAME_KEY)) {
-			backendUsername = serverProperties.getProperty(ServerUtility.BACKEND_USERNAME_KEY);
-		}
-		String backendPassword = "";
-		if (serverProperties.containsKey(ServerUtility.BACKEND_PASSWORD_KEY)) {
-			backendPassword = serverProperties.getProperty(ServerUtility.BACKEND_PASSWORD_KEY);
-		}		
+  		String backendUsername = "";
+  		String backendPassword = "";
+  		boolean backendSSL = false;
+  		String modURL = url;
+			if (isURLFedoraServer(modURL)) {
+			    BackendSecuritySpec m_beSS;
+	        BackendSecurity m_beSecurity = (BackendSecurity) getServer().getModule("fedora.server.security.BackendSecurity");
+	        try {
+	            m_beSS = m_beSecurity.getBackendSecuritySpec();
+	        } catch (Exception e) {
+	            throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule", getRole());
+	        }	            
+	        Hashtable beHash = m_beSS.getSecuritySpec("fedora");
+	        backendUsername = (String) beHash.get("callUsername");
+	        backendPassword = (String) beHash.get("callPassword");	            
+	        backendSSL = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+	        if (backendSSL) {
+	            modURL = modURL.replaceFirst("http:", "https:");
+	            modURL = modURL.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
+	        }    
+			}
+			if (fedora.server.Debug.DEBUG) {
+			    System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
+			    System.out.println("************************* doAuthnGetURL: "+modURL);
+			}
+			HttpClient client = new HttpClient(modURL);
   		client.doAuthnGet(20000, 25, backendUsername, backendPassword, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
@@ -150,6 +171,36 @@ public class DefaultExternalContentManager extends Module
   	}    	
 	return(httpContent);
   }
+  
+  private boolean isURLFedoraServer(String url) {
+      boolean isFedoraLocalService = false;
+      
+      // Check for Fedora Local Services like saxon, fop, imagemanip, and soapclient
+      // Although these webapps are in the same web container as the Fedora server
+      // local services are treated like other backend services so must check for
+      // more than just hostname and port to determine if URL is a fedora-to-fedora
+      // server callback or a callback to a local service.
+      if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
+          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ||
+          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/soapclient")) {
+          isFedoraLocalService = true;
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
+      }
+      if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
+          !isFedoraLocalService) {
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
+          return true;
+      } else {
+          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
+          return false;
+      }
+          
+  }  
   
   private boolean log = false;
   
