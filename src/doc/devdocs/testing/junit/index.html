@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+                      
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+  <head>
+      <title>JUnit Testing in Fedora</title>
+      <link rel="stylesheet" type="text/css" href="../../inc/css/docstyle.css" />
+  </head>
+  <body>
+      
+      <div id="header">
+          <a href="../../index.html" id="logo"></a>
+          <div id="title">
+              <h1>JUnit Testing in Fedora</h1>
+              <h2>Fedora Release 2.1</h2>
+          </div>
+      </div>
+      
+      <div id="toc">
+          <h2>Table of Contents</h2>
+          <div id="tocbox">
+              <ol>
+                  <li><a href="#intro">Introduction</a></li>
+                  <li><a href="#writing">Writing Tests</a>
+                      <ol>
+                          <li><a href="#writing.object">Object tests</a></li>
+                          <li><a href="#writng.end2end">End-to-End tests</a></li>
+                      </ol>
+                  </li>
+                  <li><a href="#running">Running Tests</a>
+                      <ol>
+                          <li><a href="#running.ant">Ant</a></li>
+                          <li><a href="#running.eclipse">Eclipse</a></li>
+                      </ol>
+                  </li>
+              </ol>
+          </div>
+      </div>
+      
+      <div id="introduction">
+          <h2><a name="intro">1. Introduction</a></h2>
+          <p>This document describes writing and running JUnit tests for 
+          Fedora. For a general introduction to unit testing or JUnit itself, 
+          consult <a href="http://www.junit.org/">http://www.junit.org/</a>. 
+          </p>
+          
+          <p>Test code is located in a separate source tree from production 
+          code. The JUnit classes are located under <code>src/test/junit</code>.
+          </p>
+      </div>
+      
+      <div class="sect">
+          <h2><a name="writing">2. Writing Tests</a></h2>
+          <p>We can characterize the types of tests we will write as a spectrum 
+          bounded by two extremes:</p>
+              <ol>
+                  <li>Object Tests</li>
+                  <li>End-to-End Tests</li>
+              </ol>
+              
+          <p>Object tests are tests of objects in isolation. An object is 
+          instantiated, a method invoked, and the result is verified. End-to-
+          end tests, on the other hand, test an entire application, from the 
+          outside. The Fedora Test Plan tends towards tests on this end of the 
+          spectrum.</p>
+          
+          <p>Generally, all the tests you write will be derived from the base 
+          TestCase, <code>fedora.test.FedoraTestCase</code>. This base class 
+          implements <code>FedoraTestConstants</code>, which defines a number of 
+          useful test-related constants.</p>
+          
+          <div class="subsect">
+              <h3><a name="writing.object">A. Writing Object Tests</a></h3>
+              <p></p>
+              
+          </div>
+          
+          <div class="subsect">
+              <h3><a name="writing.end2end">B. Writing End-to-End Tests</a></h3>
+              <p>End-to-end (or integration) tests for Fedora typically require 
+              a running instance of the Fedora Server. Because starting an 
+              instance of Fedora is relatively slow, and because not all tests 
+              demand a freshly-scrubbed instance of the server between tests, 
+              the <code>FedoraServerTestCase</code> is designed to start and 
+              stop the Fedora Server only once per test run.</p> 
+              
+              <p>The following TestCase class will start a Fedora Server, run 
+              the two test cases (<code>testExample</code> and 
+              <code>testExample2</code>) and stop the Fedora Server.</p>
+              <div class="code"><pre>
+package fedora.test.integration;
+
+public class TestAPIM extends FedoraServerTestCase {
+
+    public void testExample() throws Exception {
+        assertEquals("1", "1");
+    }
+    
+    public void testExample2() throws Exception {
+        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        assertXpathExists("//planet[@name='Earth']", xml);
+    }
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TestAPIM.class);
+    }
+
+}</pre></div>
+
+              <p>If your test cases require additional setUp or tearDown 
+              work between tests, remember to invoke super() so that the 
+              Fedora Server starts and stops correctly: </p>
+
+              <div class="code"><pre>
+package fedora.test.integration;
+
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+public class TestAPIM extends FedoraServerTestCase {
+    public void setUp() throws Exception {
+        super.setUp();
+        TestIngestDemoObjects.ingestDemoObjects();
+        SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
+    }
+    
+    public void tearDown() throws Exception {
+        SimpleXpathEngine.clearNamespaces();
+        TestIngestDemoObjects.purgeDemoObjects();
+        super.tearDown();
+    }
+    
+    public void testExample() throws Exception {
+        assertEquals("1", "1");
+    }
+    
+    public void testExample2() throws Exception {
+        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        assertXpathExists("//planet[@name='Earth']", xml);
+    }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TestAPIM.class);
+    }
+
+}</pre></div>
+
+          </div>
+          
+      </div>
+      
+      <div class="sect">
+          <h2><a name="running">3. Running Tests</a></h2>
+          <p>Running the Fedora server tests require that you have the 
+          environment variable <code>FEDORA_HOME</code> correctly defined. For 
+          testing, <code>FEDORA_HOME</code> should point to the 
+          <code>dist</code> directory Ant creates when the <code>server</code> 
+          target is invoked.</p>
+          
+          <p>In addition, the database you intend to run against should already 
+          be up and running.</p>
+          
+          <p>Note that FedoraServerTestCase will delete the various filesystem 
+          directories for the object, datastream, temp and resource index upon 
+          completion. It will also drop the tables in the Fedora database.</p>
+          
+          <div class="subsect">
+              <h3><a name="running.ant">A. Running Tests in Ant</a></h3>
+              
+              <div class="code"><pre>
+$ ant junit</pre></div>
+              
+              
+          </div>
+          
+          <div class="subsect">
+              <h3><a name="running.eclipse">B. Running Tests in Eclipse</a></h3>
+              <p></p>
+          </div>
+      </div>
+      
+      
+      <div id="references" class="sect">
+          <h2><a name="#references">6. References</a></h2>
+          <dl>
+              <dt><a name="foo.bar">[foo]</a></dt>
+              <dd><a href="http://example.org">bar</a></dd>
+          </dl>
+      </div>
+      
+      <div id="footer">
+          <div id="copyright">
+              Copyright &copy; 2005 Fedora Project
+          </div>
+          <div id="lastModified">
+              Last Modified
+              <script type="text/javascript">
+                  var cvsDate = "$Date$";
+                  var parts = cvsDate.split(" ");
+                  var modifiedDate = parts[1];
+                  document.write(modifiedDate);
+              </script>
+          </div>
+      </div>
+      
+  </body>
+</html>
