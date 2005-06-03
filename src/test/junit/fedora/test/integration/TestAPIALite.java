@@ -28,8 +28,6 @@ public class TestAPIALite extends FedoraServerTestCase {
     private static ServerConfiguration fcfg;
     private static FedoraClient client;
     private static String[] demoObjects;
-    private static final String NS_FEDORA_TYPES_PREFIX = "fedora-types";
-    private static final String NS_FEDORA_TYPES = "http://www.fedora.info/definitions/1/0/types/";
     
     public static Test suite() {
         TestSuite testSuite = new TestSuite(TestAPIALite.class);
