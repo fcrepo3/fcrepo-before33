@@ -985,24 +985,7 @@
 		<!-- the next two need to go in common cuz sealed -->
 		<copy file="${lib.jai_core}" todir="${tomcat.dir}/common/lib"/>
 		<copy file="${lib.jai_codec}" todir="${tomcat.dir}/common/lib"/>
-		<!-- soap client -->
-		<copy todir="${tomcat.deploy.dir}/soapclient/WEB-INF/classes">
-			<fileset dir="temp/soapclient/classes"/>
-		</copy>
-		<copy file="src/web-app/fedora/soapclient/web.xml" todir="${tomcat.deploy.dir}/soapclient/WEB-INF"/>
-		<copy file="${lib.saxon}" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/lib"/>
-		<copy file="temp/soapclient/lib/fedoragentypes.jar" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/lib"/>
-		<copy file="temp/soapclient/lib/fedorautilities.jar" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/lib"/>
-		<copy file="src/xsl/soapclient/objectMethods.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/listDatastreams.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/listMethods.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/viewObjectProfile.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/viewRepositoryInfo.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/viewObjectHistory.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/xsl/soapclient/behaviorDefs.xslt" todir="${tomcat.deploy.dir}/soapclient/WEB-INF/xsl"/>
-		<copy file="src/properties/soapclient/soapclient.properties" todir="${tomcat.deploy.dir}/soapclient/WEB-INF"/>
 		<copy file="src/web-app/userdocs/WEB-INF/web.xml" todir="${tomcat.deploy.dir}/userdocs/WEB-INF"/>
-		<copy file="src/jpg/server/newlogo2.jpg" todir="${tomcat.deploy.dir}/soapclient/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="${tomcat.deploy.dir}/saxon/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="${tomcat.deploy.dir}/imagemanip/images/"/>
 		<copy file="src/jpg/server/newlogo2.jpg" todir="${tomcat.deploy.dir}/fop/images/"/>
@@ -1049,8 +1032,6 @@
 	</target>
 	<target name="localservicesclasses" depends="localservicesprep" description="Generate java classes for local services">
 		<mkdir dir="temp/localservices/classes"/>
-		<mkdir dir="temp/soapclient/classes"/>
-		<mkdir dir="temp/soapclient/lib"/>
 		<javac srcdir="temp/localservices/java" 
                destdir="temp/localservices/classes" 
                classpathref="localservices-lib.path" 
@@ -1058,30 +1039,11 @@
                debug="${build.debug}"
                deprecation="${javac.deprecation}"
                source="${javac.source}"/>      
-		<exec executable="jar">
-			<arg value="-cf"/>
-			<arg path="temp/soapclient/lib/fedorautilities.jar"/>
-			<arg value="-C"/>
-			<arg value="temp/server/classes"/>
-			<arg value="fedora/server/utilities/"/>
-		</exec>
-		<exec executable="jar">
-			<arg value="-cf"/>
-			<arg path="temp/soapclient/lib/fedoragentypes.jar"/>
-			<arg value="-C"/>
-			<arg value="temp/server/classes"/>
-			<arg value="fedora/server/types/gen/"/>
-		</exec>
-		<javac srcdir="temp/soapclient/java" destdir="temp/soapclient/classes" classpath="${lib.servlet};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};lib/server/exist.jar;lib/server/jakarta-oro-2.0.6.jar;lib/server/antlr.jar;lib/server/excalibur-cli-1.0.jar;lib/server/resolver-20020130.jar;lib/server/trove.jar;lib/server/xalan-2.3.1.jar;lib/server/xmldb.jar;lib/server/xmlrpc-1.1.jar;${lib.saxon};${lib.junit};${lib.md5};temp/soapclient/lib/fedoragentypes.jar;temp/soapclient/lib/fedorautilities.jar" includes="**" optimize="${build.optimize}" debug="${build.debug}"/>
 	</target>
 	<target name="localservicesprep" depends="prep" description="Prepare a temporary build area for localservices-related targets">
 		<mkdir dir="temp/localservices"/>
 		<copy todir="temp/localservices/java/fedora/localservices">
 			<fileset dir="src/java/fedora/localservices"/>
-		</copy>
-		<mkdir dir="temp/soapclient"/>
-		<copy todir="temp/soapclient/java/fedora/soapclient">
-			<fileset dir="src/java/fedora/soapclient"/>
 		</copy>
 	</target>
     
