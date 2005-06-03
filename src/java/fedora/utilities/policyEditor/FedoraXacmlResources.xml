@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<policy_builder_specification>
+    <templates>
+    	<template  rule="permit" name="only from @machine_name@" description="Allow access attempts from the machine @machine_name@"
+    	           subject="<AnySubject/>" parms="machine_name=Machine Name;IP_Address_of_machine=IP Address of Machine" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_Address_of_machine@</AttributeValue>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="permit" name="only by @User_parameter_value@" description="Allow access attempt by any user with @User_parameter_name@ equal to @User_parameter_value@"
+    	           subject="<AnySubject/>" parms="User_parameter_name=Name of User parameter;User_parameter_value=Value for User parameter" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@User_parameter_value@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<SubjectAttributeDesignator AttributeId=&quot;@User_parameter_name@&quot; MustBePresent=&quot;false&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="permit" name="only by owner" description="Allow any access attempt if user is the owner of the object"
+    	           subject="<AnySubject/>" parms="" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:owner&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;<SubjectAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:subject:subject-id&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Condition>"/>
+    	<template  rule="permit" name="only from @organization_name@" description="Allow access only if it originates from within IP addresses at @organization_name@"
+    	           subject="<AnySubject/>" parms="organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:regexp-string-match&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_address_range@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Condition>"/>
+
+    	<template  rule="deny" name="except from @machine_name@" description="Deny any access attempt from a machine other than @machine_name@"
+    	           subject="<AnySubject/>" parms="machine_name=Machine Name;IP_Address_of_machine=IP Address of Machine" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_Address_of_machine@</AttributeValue>&#10;</Apply>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="deny" name="except by @User_parameter_value@" description="Deny any access attempt unless @User_parameter_name@ is equal to @User_parameter_value@"
+    	           subject="<AnySubject/>" parms="User_parameter_name=Name of User parameter;User_parameter_value=Value for User parameter" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@User_parameter_value@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<SubjectAttributeDesignator AttributeId=&quot;@User_parameter_name@&quot; MustBePresent=&quot;false&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="deny" name="except by owner" description="Deny any access attempt unless user is the owner of the object"
+    	           subject="<AnySubject/>" parms="" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:owner&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;<SubjectAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:subject:subject-id&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="deny" name="if not @object_state@" description="Deny action unless current state is '@object_state@'"
+    	           subject="<AnySubject/>" parms="object_state=State of Object" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@object_state@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:state&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Apply>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="deny" name="if not from @organization_name@" description="Deny action unless it originates from within the range of IP addresses at @organization_name@"
+    	           subject="<AnySubject/>" parms="organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:regexp-string-match&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_address_range@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    </templates>
+    <resource name="Fedora Resources and Actions" shortname="fedora" value="unrestricted" value1="--None--"
+        action="<AnyAction/>"
+        resource="<AnyResource/>">
+        <resource name="Accessing Repository (API-A)" shortname="API-A" value="seeParent" value1="seeParent"
+                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:api-a</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; &#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:api&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                resource="<AnyResource/>">
+            <resource name="Describe Repository" shortname="describe" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-describeRepository</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Search" shortname="search" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Basic Search" shortname="fieldSearch" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-findObjects</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Relationship Search" shortname="RISearch" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-riFindObjects</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+            </resource>
+            <resource name="Get Data" shortname="getData" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Get Dissemination" shortname="getDiss" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDissemination</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Datastream Dissemination" shortname="getDSDiss" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Object History" shortname="getHistory" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getObjectHistory</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Object Profile" shortname="getProfile" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getObjectProfile</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get List of Datastreams" shortname="getDSList" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-listDatastreams</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get List of Methods" shortname="getMethods" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-listMethods</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+            </resource>
+        </resource>
+        <resource name="Managing Repository (API-M)" shortname="API-M" value="seeParent" value1="seeParent"
+                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:api-m</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; &#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:api&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                resource="<AnyResource/>">
+            <resource name="Ingest" shortname="ingest" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-ingestObject</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Get Next PID" shortname="getPID" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getNextPid</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Modify Object Access Policies" shortname="policies" value="seeParent" value1="seeParent"
+                        action="<AnyAction/>"
+                        resource="<Resource>&#10;<ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>POLICY</AttributeValue>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:datastream:id&quot; MustBePresent=&quot;false&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</ResourceMatch>&#10;</Resource>">
+            </resource>
+            <resource name="Get Data" shortname="getData2" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Get Datastream" shortname="getDS" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDatastream</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Datastreams" shortname="getDSs" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDatastreams</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Datastream History" shortname="getDSHist" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDatastreamHistory</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Disseminator" shortname="getDisseminator" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDisseminator</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Disseminators" shortname="getDisseminators" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDisseminators</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Disseminator History" shortname="getDisHist" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getDisseminatorHistory</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Object Properties" shortname="getObjProps" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getObjectProperties</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Get Object XML" shortname="getObjXML" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-getObjectXML</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+            </resource>
+            <resource name="Modify Data" shortname="modifyData" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Modify Object" shortname="modifyObj" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-modifyObject</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Modify Disseminator" shortname="modifyDsm" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-modifyDisseminator</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Modify Datastream" shortname="modifyDS" value="seeParent" value1="seeParent"
+                                action="-combinechildren-"
+                                resource="<AnyResource/>">
+                    <resource name="By Reference" shortname="modifyDSByRef" value="seeParent" value1="seeParent"
+                                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-modifyDatastreamByReference</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                        resource="<AnyResource/>">
+                    </resource>
+                    <resource name="By Value" shortname="modifyDSByVal" value="seeParent" value1="seeParent"
+                                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-modifyDatastreamByValue</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                        resource="<AnyResource/>">
+                    </resource>
+                </resource>
+            </resource>
+            <resource name="Purge Data" shortname="purgeData" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Purge Object" shortname="purgeObj" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-purgeObject</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Purge Disseminator" shortname="purgeDsm" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-purgeDatastream</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Purge Datastream" shortname="purgeDS" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-purgeDisseminator</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+            </resource>
+            <resource name="Set State" shortname="setState" value="seeParent" value1="seeParent"
+                        action="-combinechildren-"
+                        resource="<AnyResource/>">
+                <resource name="Set Datastream State" shortname="setDSState" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-setDatastreamState</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+                <resource name="Set Disseminator State" shortname="setDsmState" value="seeParent" value1="seeParent"
+                                action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-setDisseminatorState</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                                resource="<AnyResource/>">
+                </resource>
+            </resource>
+        </resource>
+        <resource name="Other Server Actions" shortname="OtherActions" value="seeParent" value1="seeParent"
+                action="-combinechildren-"
+                resource="<AnyResource/>">
+            <resource name="Shutdown Server" shortname="shutdown" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-serverShutdown</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Get Server Status" shortname="status" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-serverStatus</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Act As Surrogate For" shortname="surrogate" value="seeParent" value1="seeParent"
+                        action=""
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="OAI" shortname="OAI" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-oai</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+        </resource>
+    </resource>
+</policy_builder_specification>
