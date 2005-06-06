@@ -1,50 +1,37 @@
 /*
  * Created on May 4, 2005
  *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package fedora.server.security;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.Enumeration;
-import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Properties;
-
+import java.util.Set;
+import fedora.common.PID;
 
 /**
  * @author wdn5e
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class BackendPolicies {
-	
-	private static final String KEY_ALL = "all";
-	private static final String SUBKEY_BASIC_AUTH = "basicAuth";
+
+	/*private static final String SUBKEY_BASIC_AUTH = "basicAuth";
 	private static final String SUBKEY_SSL = "ssl";
 	private static final String SUBKEY_IPLIST = "iplist";
-	private static final String ID = "PolicyId";
-	private static final String DESCRIPTION = "description";
-	private static final String ROLES = "roles";	
-	private static final String ROLE = "role";
 	private static final HashSet allowedSubkeys = new HashSet();
 	static {
 		allowedSubkeys.add(SUBKEY_BASIC_AUTH);
 		allowedSubkeys.add(SUBKEY_SSL);
 		allowedSubkeys.add(SUBKEY_IPLIST);
 		//neither INCLUDED_ROLE nor EXCLUDED_ROLES belong in this set
-	}
+	}*/
 
 	private String inFilePath = null;
 	private String outFilePath = null;	
-	private Properties properties = null;
-	private Hashtable policies = new Hashtable();
+	private BackendSecuritySpec backendSecuritySpec = null; 
 	
 	public BackendPolicies(String inFilePath, String outFilePath) {
 		this.inFilePath = inFilePath;
@@ -53,192 +40,204 @@ public class BackendPolicies {
 	
 	public BackendPolicies(String inFilePath) {
 		this(inFilePath, null);
-	}
-	
-	private void readSpecs() throws Exception {
-		File file = new File(inFilePath);
-		FileInputStream fis = new FileInputStream(file);
-		properties = new Properties();
-		properties.load(fis);
-		fis.close();		
-		Enumeration enm = properties.keys();
-		while (enm.hasMoreElements()) {
-			String raw = (String) enm.nextElement();
-			String data = properties.getProperty(raw);
-			int i = raw.lastIndexOf('.');
-			if ((i < 1) || ((raw.length()-1)  < i)) {
-				throw new Exception();
-			}
-			String key = raw.substring(0, i);
-			key = key.replaceAll("\\:", ":");
-			String subkey = raw.substring(i+1);
-			log(key + " | " + subkey + "|" + data);			
-			if (! allowedSubkeys.contains(subkey)) {
-				throw new Exception();				
-			}
-			Hashtable policy;
-			if (policies.containsKey(key)) {
-				policy = (Hashtable) policies.get(key);
-			} else {
-				policy = new Hashtable();
-				policy.put(ROLE, key);
-				if (KEY_ALL.equals(key)) {
-					policy.put(DESCRIPTION, "policy guarding callbacks from non-specific backend services");
-					policy.put(ID, "guard-callbacks-from-non-specific-backend-services");					
-				} else {
-					policy.put(DESCRIPTION, "policy guarding callbacks from backend service through " + key);									
-					policy.put(ID, "guard-callbacks-from-backend-service-through-" + key);									
-				}
-				policies.put(key, policy); 
-			}
-			if (SUBKEY_IPLIST.equals(subkey)) {
-				HashSet ips;
-				if (policies.containsKey(subkey)) {
-					ips = (HashSet) policy.get(subkey);
-				} else {
-					ips = new HashSet();
-					policy.put(subkey, ips);
-				}
-				String[] regex = data.split("\\s");
-				for (int ii=0; ii<regex.length; ii++) {
-					if (regex[ii].length() > 0) {
-						ips.add(regex[ii]);
-					}
-				}
-			} else {
-				if (policies.containsKey(subkey)) {
-					//error
-				} else {
-					policy.put(subkey, data); 
-				}
-			}
-		}
-	}
+	}	
 	
 	public Hashtable generateBackendPolicies() throws Exception {
-		readSpecs();
-		complete();
-		return writePolicies();
+    	log("in BackendPolicies.generateBackendPolicies() 1");			
+		Hashtable tempfiles = null;
+		if (inFilePath.endsWith(".xml")) { // replacing code for .properties
+	    	log("in BackendPolicies.generateBackendPolicies() .xml 1");			
+			BackendSecurityDeserializer bds = new BackendSecurityDeserializer("UTF-8", false);
+	    	log("in BackendPolicies.generateBackendPolicies() .xml 2");			
+			backendSecuritySpec = bds.deserialize(inFilePath);
+	    	log("in BackendPolicies.generateBackendPolicies() .xml 3");			
+			tempfiles = writePolicies();
+	    	log("in BackendPolicies.generateBackendPolicies() .xml 4");						
+		}
+		return tempfiles;
 	}
 	
-	private void completeDefaults() throws Exception {
-		if (! policies.containsKey(KEY_ALL)) {
-			throw new Exception("defaults weren't specified");
+	private static final String[] parseForSlash(String key) throws Exception {
+		int lastSlash = key.lastIndexOf("/");
+		if (lastSlash+1 == key.length()) {
+			throw new Exception("BackendPolicies.newWritePolicies() " + "can't handle key ending with '/'");
 		}
-		Hashtable policy = (Hashtable) policies.get(KEY_ALL);
-		Iterator subkeys = allowedSubkeys.iterator();
-		while (subkeys.hasNext()) {
-			String subkey = (String) subkeys.next();
-			if (! policy.containsKey(subkey)) {
-				Object object = null;
-				if (SUBKEY_BASIC_AUTH.equals(subkey)) {
-					object = "false";
-				} else if (SUBKEY_SSL.equals(subkey)) {
-					object = "false";
-				} else if (SUBKEY_IPLIST.equals(subkey)) {
-					object = new HashSet();
+		if (lastSlash != key.indexOf("/")) {
+			throw new Exception("BackendPolicies.newWritePolicies() " + "can't handle key containing multiple instances of '/'");				
+		}
+		String[] parts = null;
+		if ((-1 < lastSlash) && (lastSlash < key.length())) {
+			parts = key.split("/");
+		} else {
+			parts = new String[] {key};			
+		}
+		return parts;
+	}
+	
+	private static final String getExcludedRolesText(String key, Set roles) {
+		StringBuffer excludedRolesText = new StringBuffer();
+		if ("default".equals(key) && (roles.size() > 1)) {
+			excludedRolesText.append("\t\t<ExcludedRoles>\n");
+			Iterator excludedRoleIterator = roles.iterator();
+			while (excludedRoleIterator.hasNext()) {
+		    	slog("in BackendPolicies.newWritePolicies() another inner it");			
+				String excludedRole = (String) excludedRoleIterator.next();
+				if ("default".equals(excludedRole)) {
+					continue;
+				}					
+		    	slog("in BackendPolicies.newWritePolicies() excludedRole=" + excludedRole);					
+				excludedRolesText.append("\t\t\t<ExcludedRole>");
+				excludedRolesText.append(excludedRole);
+				excludedRolesText.append("</ExcludedRole>\n");				
+			}
+			excludedRolesText.append("\t\t</ExcludedRoles>\n");				
+		}
+		return excludedRolesText.toString();
+	}
+	
+	private static final String writeRules(String callbackBasicAuth, String callbackSsl, String iplist, String role, Set roles) throws Exception {
+		StringBuffer temp = new StringBuffer();
+		temp.append("\t<Rule RuleId=\"1\" Effect=\"Permit\">\n");
+		temp.append(getExcludedRolesText(role, roles));
+		if ("true".equals(callbackBasicAuth)) {
+			temp.append("\t\t<AuthnRequired/>\n");				
+		}
+		if ("true".equals(callbackSsl)) {
+			temp.append("\t\t<SslRequired/>\n");				
+		}
+		slog("DEBUGGING IPREGEX0 [" + iplist + "]");
+		String[] ipRegexes = new String[0];
+		if ((iplist != null) && ! "".equals(iplist.trim())) {
+			ipRegexes = iplist.trim().split("\\s");
+		}
+		/*
+		if (ipRegexes.length == 1) { //fixup
+			ipRegexes[0] = ipRegexes[0].trim();
+		}
+		*/
+		slog("DEBUGGING IPREGEX1 [" + iplist.trim() + "]");		
+		if (ipRegexes.length != 0) {
+			temp.append("\t\t<IpRegexes>\n");
+			for (int i = 0; i < ipRegexes.length; i++) {
+				slog("DEBUGGING IPREGEX2 " + ipRegexes[i]);
+				temp.append("\t\t\t<IpRegex>");
+				temp.append(ipRegexes[i]);
+				temp.append("</IpRegex>\n");				
+			}
+			temp.append("\t\t</IpRegexes>\n");			
+		}
+		temp.append("\t</Rule>\n");		
+		if (("true".equals(callbackBasicAuth)) 
+				||  ("true".equals(callbackSsl)) 
+				||  (ipRegexes.length != 0)) {
+					temp.append("\t<Rule RuleId=\"2\" Effect=\"Deny\">\n");
+					temp.append(getExcludedRolesText(role, roles));
+					temp.append("\t</Rule>\n");
 				}
-				policy.put(subkey, object);
-			}
-		}
+		
+		return temp.toString();
 	}
-	
-	private void complete() throws Exception{
-		completeDefaults();
-		HashSet roles = new HashSet();
-		Hashtable defaults = (Hashtable) policies.get(KEY_ALL);
-		Iterator it = policies.keySet().iterator();
-		while (it.hasNext()) {
-			String role = (String) it.next();
-			if (! KEY_ALL.equals(role)) {
-				roles.add(role);
-			}
-			Hashtable policy = (Hashtable) policies.get(role);
-			Iterator it2 = allowedSubkeys.iterator();
-			while (it2.hasNext()) {
-				String subkey = (String) it2.next();
-				if (! policy.containsKey(subkey)) {
-					policy.put(subkey, defaults.get(subkey));
-				}
-			}
-		}
-		defaults.put(ROLES, roles);
-	}
-	
+
 	private Hashtable writePolicies() throws Exception {
+    	log("in BackendPolicies.newWritePolicies() 1");			
 		StringBuffer sb = null;
-		StringBuffer sb2 = null;
 		Hashtable tempfiles = new Hashtable();
-		Iterator it = policies.keySet().iterator();
-		while (it.hasNext()) {
-			sb = new StringBuffer();
-			sb2 = new StringBuffer();
-			String key = (String) it.next();
-			Hashtable policy = (Hashtable) policies.get(key);
-			String role = (String) policy.get(ROLE);
-			String id = (String) policy.get(ID);
-			sb.append("<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\" PolicyId=\"" + id + "\">\n");
-			String desc = (String) policy.get(DESCRIPTION);
-			if ((desc != null) && (! "".equals(desc))) {
-				sb.append("\t<Description>" + desc + "</Description>\n");
+		Iterator coarseIterator = backendSecuritySpec.listRoleKeys().iterator();
+		while (coarseIterator.hasNext()) {
+			String key = (String) coarseIterator.next();
+			String[] parts = parseForSlash(key);
+			String filename1 = "";
+			String filename2 = "";
+			switch (parts.length) {
+				case 2:
+					filename2 = "-method-" + parts[1];	
+					//break purposely absent:  fall through
+				case 1: 
+			    	if (-1 == parts[0].indexOf(":")) {
+		    			filename1 = "callback-by:" + parts[0];			    			
+			    	} else {
+						filename1 = "callback-by-bmech-" + parts[0];			    		
+			    	}
+			    	if ("".equals(filename2)) {
+			    		if (! "default".equals(parts[0])) {
+			    			filename2 = "-other-methods";
+			    		}
+			    	}
+					break;
+				default:
+					//bad value
+					throw new Exception("BackendPolicies.newWritePolicies() " + "didn't correctly parse key " + key);
 			}
+			sb = new StringBuffer();
+	    	log("in BackendPolicies.newWritePolicies() another outer it, key=" + key);			
+			Hashtable coarseProperties = backendSecuritySpec.getSecuritySpec(key);	
+	    	log("in BackendPolicies.newWritePolicies() coarseProperties.size()=" + coarseProperties.size());
+	    	log("in BackendPolicies.newWritePolicies() coarseProperties.get(BackendSecurityDeserializer.ROLE)=" + coarseProperties.get(BackendSecurityDeserializer.ROLE));				    	
+			String coarseCallbackBasicAuth = (String) coarseProperties.get(BackendSecurityDeserializer.CALLBACK_BASIC_AUTH);
+			if (coarseCallbackBasicAuth == null) {
+				coarseCallbackBasicAuth = "false";
+			}
+			String coarseCallBasicAuth = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_BASIC_AUTH);
+			if (coarseCallBasicAuth == null) {
+				coarseCallBasicAuth = "false";
+			}			
+			String coarseCallUsername = "";
+			String coarseCallPassword = "";			
+			if ("true".equals(coarseCallbackBasicAuth)) {
+				coarseCallUsername = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_USERNAME);
+				coarseCallPassword = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_PASSWORD);
+			}
+			if (coarseCallUsername == null) {
+				coarseCallUsername = "";
+			}			
+			if (coarseCallPassword == null) {
+				coarseCallPassword = "";
+			}						
+	    	log("in BackendPolicies.newWritePolicies() callbackBasicAuth=" + coarseCallbackBasicAuth);			
+			String coarseCallbackSsl = (String) coarseProperties.get(BackendSecurityDeserializer.CALLBACK_SSL);
+			if (coarseCallbackSsl == null) {
+				coarseCallbackSsl = "false";
+			}
+			String coarseCallSsl = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_SSL);
+			if (coarseCallSsl == null) {
+				coarseCallSsl = "false";
+			}			
+	    	log("in BackendPolicies.newWritePolicies() callbackSsl=" + coarseCallbackSsl);			
+			String coarseIplist = (String) coarseProperties.get(BackendSecurityDeserializer.IPLIST);
+			if (coarseIplist == null) {
+				coarseIplist = "";
+			}
+	    	log("in BackendPolicies.newWritePolicies() coarseIplist=" + coarseIplist);			
+			String id = "generated_for_" + key.replace(':','-');
+	    	log("in BackendPolicies.newWritePolicies() id=" + id);
+	    	log("in BackendPolicies.newWritePolicies() " + filename1 + " " + filename2);
+	    	String filename = filename1 + filename2;  //was id.replace(':','-');
+	    	log("in BackendPolicies.newWritePolicies() " + filename);	    	
+	    	PID tempPid = new PID(filename);
+	    	log("in BackendPolicies.newWritePolicies() got PID " + tempPid);
+	    	filename = tempPid.toFilename();
+	    	log("in BackendPolicies.newWritePolicies() filename=" + filename);			
+			sb.append("<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\" PolicyId=\"" + id + "\">\n");
+			sb.append("\t<Description>this policy is machine-generated at each Fedora server startup.  edit beSecurity.xml to change this policy.</Description>\n");
 			sb.append("\t<Target>\n");
 			sb.append("\t\t<Subjects>\n");
-			if (KEY_ALL.equals(role)) {
+			if ("default".equals(key)) {
 				sb.append("\t\t\t<AnySubject/>\n");				
 			} else {
 				sb.append("\t\t\t<Subject>\n");
 				sb.append("\t\t\t\t<SubjectMatch>\n");
-				sb.append("\t\t\t\t\t<AttributeValue>" + role + "</AttributeValue>\n");
+				sb.append("\t\t\t\t\t<AttributeValue>" + key + "</AttributeValue>\n");
 				sb.append("\t\t\t\t</SubjectMatch>\n");				
 				sb.append("\t\t\t</Subject>\n");				
 			}
 			sb.append("\t\t</Subjects>\n");
 			sb.append("\t</Target>\n");
-			
-			HashSet roles = (HashSet) policy.get(ROLES);
-			if (roles != null) {
-				sb2.append("\t\t<ExcludedRoles>\n");
-				Iterator roleIterator = roles.iterator();
-				while (roleIterator.hasNext()) {
-					String excludedRole = (String) roleIterator.next();
-					sb2.append("\t\t\t<ExcludedRole>");
-					sb2.append(excludedRole);
-					sb2.append("</ExcludedRole>\n");				
-				}
-				sb2.append("\t\t</ExcludedRoles>\n");				
-			}
-			sb.append("\t<Rule RuleId=\"rule-1\" Effect=\"Permit\">\n");
-			sb.append(sb2);
-			if ("true".equals(policy.get(SUBKEY_BASIC_AUTH))) {
-				sb.append("\t\t<AuthnRequired/>\n");				
-			}
-			if ("true".equals(policy.get(SUBKEY_SSL))) {
-				sb.append("\t\t<SslRequired/>\n");				
-			}
-			HashSet ipRegexes = (HashSet) policy.get(SUBKEY_IPLIST);
-			if ((ipRegexes != null) && ! ipRegexes.isEmpty()) {
-				sb.append("\t\t<IpRegexes>\n");
-				Iterator ipRegexIterator = ipRegexes.iterator();
-				while (ipRegexIterator.hasNext()) {
-					String ipRegex = (String) ipRegexIterator.next();
-					sb.append("\t\t\t<IpRegex>");
-					sb.append(ipRegex);
-					sb.append("</IpRegex>\n");				
-				}
-				sb.append("\t\t</IpRegexes>\n");			
-			}
-			sb.append("\t</Rule>\n");
 
-			if (("true".equals(policy.get(SUBKEY_BASIC_AUTH))) 
-			||  ("true".equals(policy.get(SUBKEY_SSL))) 
-			||  ((ipRegexes != null) && ! ipRegexes.isEmpty())) {
-				sb.append("\t<Rule RuleId=\"rule-2\" Effect=\"Deny\">\n");
-				sb.append(sb2);
-				sb.append("\t</Rule>\n");
-			}
+			String temp = writeRules(coarseCallbackBasicAuth, coarseCallbackSsl, coarseIplist, key, backendSecuritySpec.listRoleKeys());
+			sb.append(temp);
+
 			sb.append("</Policy>\n");
-			String filename = id.replace(':','-');
+			log("\ndumping policy\n" + sb + "\n");
 			File outfile = null;
 			if (outFilePath == null) {
 				outfile = File.createTempFile(filename,".xml");
@@ -249,10 +248,11 @@ public class BackendPolicies {
 			PrintStream pos = new PrintStream(new FileOutputStream(outfile));
 			pos.println(sb);
 			pos.close();
-		}		
+		}	
+		log("finished writing temp files");
 		return tempfiles;
 	}
-	
+		
 	  private static boolean log = false;
 	  
 	  private final void log(String msg) {
