@@ -13,7 +13,7 @@
 <xsl:template match="xacml:Policy">
     <Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy"
       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:ordered-deny-overrides"
+      RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable"
       >
       <xsl:attribute name="PolicyId"><xsl:value-of select="@PolicyId"/></xsl:attribute>
       <xsl:apply-templates select="node()"/>
