@@ -18,16 +18,7 @@ import fedora.common.PID;
  */
 public class BackendPolicies {
 
-	/*private static final String SUBKEY_BASIC_AUTH = "basicAuth";
-	private static final String SUBKEY_SSL = "ssl";
-	private static final String SUBKEY_IPLIST = "iplist";
-	private static final HashSet allowedSubkeys = new HashSet();
-	static {
-		allowedSubkeys.add(SUBKEY_BASIC_AUTH);
-		allowedSubkeys.add(SUBKEY_SSL);
-		allowedSubkeys.add(SUBKEY_IPLIST);
-		//neither INCLUDED_ROLE nor EXCLUDED_ROLES belong in this set
-	}*/
+	public static final String FEDORA_INTERNAL_CALL = "fedoraInternalCall";
 
 	private String inFilePath = null;
 	private String outFilePath = null;	
@@ -170,44 +161,23 @@ public class BackendPolicies {
 			}
 			sb = new StringBuffer();
 	    	log("in BackendPolicies.newWritePolicies() another outer it, key=" + key);			
-			Hashtable coarseProperties = backendSecuritySpec.getSecuritySpec(key);	
-	    	log("in BackendPolicies.newWritePolicies() coarseProperties.size()=" + coarseProperties.size());
-	    	log("in BackendPolicies.newWritePolicies() coarseProperties.get(BackendSecurityDeserializer.ROLE)=" + coarseProperties.get(BackendSecurityDeserializer.ROLE));				    	
-			String coarseCallbackBasicAuth = (String) coarseProperties.get(BackendSecurityDeserializer.CALLBACK_BASIC_AUTH);
-			if (coarseCallbackBasicAuth == null) {
-				coarseCallbackBasicAuth = "false";
+			Hashtable properties = backendSecuritySpec.getSecuritySpec(key);	
+	    	log("in BackendPolicies.newWritePolicies() properties.size()=" + properties.size());
+	    	log("in BackendPolicies.newWritePolicies() properties.get(BackendSecurityDeserializer.ROLE)=" + properties.get(BackendSecurityDeserializer.ROLE));				    	
+			String callbackBasicAuth = (String) properties.get(BackendSecurityDeserializer.CALLBACK_BASIC_AUTH);
+			if (callbackBasicAuth == null) {
+				callbackBasicAuth = "false";
 			}
-			String coarseCallBasicAuth = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_BASIC_AUTH);
-			if (coarseCallBasicAuth == null) {
-				coarseCallBasicAuth = "false";
-			}			
-			String coarseCallUsername = "";
-			String coarseCallPassword = "";			
-			if ("true".equals(coarseCallbackBasicAuth)) {
-				coarseCallUsername = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_USERNAME);
-				coarseCallPassword = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_PASSWORD);
+	    	log("in BackendPolicies.newWritePolicies() CallbackBasicAuth=" + callbackBasicAuth);			
+			String callbackSsl = (String) properties.get(BackendSecurityDeserializer.CALLBACK_SSL);
+			if (callbackSsl == null) {
+				callbackSsl = "false";
 			}
-			if (coarseCallUsername == null) {
-				coarseCallUsername = "";
-			}			
-			if (coarseCallPassword == null) {
-				coarseCallPassword = "";
-			}						
-	    	log("in BackendPolicies.newWritePolicies() callbackBasicAuth=" + coarseCallbackBasicAuth);			
-			String coarseCallbackSsl = (String) coarseProperties.get(BackendSecurityDeserializer.CALLBACK_SSL);
-			if (coarseCallbackSsl == null) {
-				coarseCallbackSsl = "false";
+			String iplist = (String) properties.get(BackendSecurityDeserializer.IPLIST);
+			if (iplist == null) {
+				iplist = "";
 			}
-			String coarseCallSsl = (String) coarseProperties.get(BackendSecurityDeserializer.CALL_SSL);
-			if (coarseCallSsl == null) {
-				coarseCallSsl = "false";
-			}			
-	    	log("in BackendPolicies.newWritePolicies() callbackSsl=" + coarseCallbackSsl);			
-			String coarseIplist = (String) coarseProperties.get(BackendSecurityDeserializer.IPLIST);
-			if (coarseIplist == null) {
-				coarseIplist = "";
-			}
-	    	log("in BackendPolicies.newWritePolicies() coarseIplist=" + coarseIplist);			
+	    	log("in BackendPolicies.newWritePolicies() coarseIplist=" + iplist);			
 			String id = "generated_for_" + key.replace(':','-');
 	    	log("in BackendPolicies.newWritePolicies() id=" + id);
 	    	log("in BackendPolicies.newWritePolicies() " + filename1 + " " + filename2);
@@ -233,7 +203,7 @@ public class BackendPolicies {
 			sb.append("\t\t</Subjects>\n");
 			sb.append("\t</Target>\n");
 
-			String temp = writeRules(coarseCallbackBasicAuth, coarseCallbackSsl, coarseIplist, key, backendSecuritySpec.listRoleKeys());
+			String temp = writeRules(callbackBasicAuth, callbackSsl, iplist, key, backendSecuritySpec.listRoleKeys());
 			sb.append(temp);
 
 			sb.append("</Policy>\n");

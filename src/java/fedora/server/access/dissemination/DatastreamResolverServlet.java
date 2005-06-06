@@ -287,7 +287,7 @@ public class DatastreamResolverServlet extends HttpServlet
       }
       System.out.println("DatastreamResolverServlet: about to do final authZ check");
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
-      //authorization.enforceResolveDatastream(context, keyTimestamp);
+      authorization.enforceResolveDatastream(context, keyTimestamp);
       System.out.println("DatastreamResolverServlet: final authZ check suceeded.....");
 
       if (dsControlGroupType.equalsIgnoreCase("E"))
@@ -311,8 +311,8 @@ public class DatastreamResolverServlet extends HttpServlet
             (ExternalContentManager)s_server.getModule(
             "fedora.server.storage.ExternalContentManager");
         mimeTypedStream =
-            externalContentManager.getExternalContent(dsPhysicalLocation,
-            ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request));
+            externalContentManager.getExternalContent(dsPhysicalLocation, context);
+            //had substituted context:  ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request));
       	/*mimeTypedStream = ds.getDisseminationContent(dsPhysicalLocation,
       	        ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request),
       	        user,
