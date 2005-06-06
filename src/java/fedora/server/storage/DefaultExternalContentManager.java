@@ -11,6 +11,7 @@ import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.types.MIMETypedStream;
@@ -116,7 +117,7 @@ public class DefaultExternalContentManager extends Module
 	        } catch (Exception e) {
 	            throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule", getRole());
 	        }	            
-	        Hashtable beHash = m_beSS.getSecuritySpec("fedora");
+	        Hashtable beHash = m_beSS.getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
 	        backendUsername = (String) beHash.get("callUsername");
 	        backendPassword = (String) beHash.get("callPassword");	            
 	        backendSSL = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
