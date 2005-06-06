@@ -15,7 +15,14 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import com.sun.xacml.attr.AnyURIAttribute;
+import com.sun.xacml.attr.DateAttribute;
+import com.sun.xacml.attr.DateTimeAttribute;
+import com.sun.xacml.attr.IntegerAttribute;
+import com.sun.xacml.attr.StringAttribute;
+
 import fedora.common.Constants;
+import fedora.common.policy.XacmlName;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
@@ -68,6 +75,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-repository-policies-approximating-2.0"; 
 	private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-object-policies"; 
 	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
+	private static final String BE_SECURITY_XML_LOCATION = "config/beSecurity.xml";	
 	private static final String BACKEND_POLICIES_ACTIVE_DIRECTORY = XACML_DIST_BASE + "/active/generated/backend-service-policies"; 
 	private static final String BACKEND_POLICIES_XSL_LOCATION = XACML_DIST_BASE + "/active/generated/build-backend-policy.xsl";
  
@@ -268,12 +276,17 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	private final void generateBackendPolicies() throws Exception{
+    	log("in DefaultAuthorization.generateBackendPolicies() 1");			
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
+    	log("in DefaultAuthorization.generateBackendPolicies() 2");					
 		log("fedorahome=" + fedoraHome);			
 		deldirfiles(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY);
-		BackendPolicies backendPolicies = new BackendPolicies(fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);
-		log("fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_PROPERTIES_LOCATION);	
+    	log("in DefaultAuthorization.generateBackendPolicies() 3");			
+		BackendPolicies backendPolicies = new BackendPolicies(fedoraHome + File.separator + BE_SECURITY_XML_LOCATION);
+    	log("in DefaultAuthorization.generateBackendPolicies() 4");			
+		log("fedoraHome + File.separator + BE_SECURITY_XML_LOCATION=" + fedoraHome + File.separator + BE_SECURITY_XML_LOCATION);	
 		Hashtable tempfiles = backendPolicies.generateBackendPolicies();
+    	log("in DefaultAuthorization.generateBackendPolicies() 5");			
 		log("tempfiles=" + tempfiles);					
 		log("tempfiles.length=" + tempfiles.size());							
 		TransformerFactory tfactory = TransformerFactory.newInstance();
@@ -305,8 +318,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 		if (mkdir(objectPoliciesActiveDirectory)) {
 			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory);
-		}		
+		}
+    	log("in DefaultAuthorization.setupActivePolicyDirectories() 1");		
 		generateBackendPolicies();
+    	log("in DefaultAuthorization.setupActivePolicyDirectories() 2");		
 	}
 	
   public void postInitModule() throws ModuleInitializationException {
@@ -321,6 +336,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     try {
       	log("in DefaultAuthorization.postInitModule() 5");
       	setupActivePolicyDirectories();
+      	log("in DefaultAuthorization.postInitModule() 5a");      	
         xacmlPep = PolicyEnforcementPoint.getInstance();
       	log("in DefaultAuthorization.postInitModule() 6, policySchemaPath=" + policySchemaPath +
       			" validateRepositoryPolicies=" + validateRepositoryPolicies);
@@ -341,6 +357,7 @@ public class DefaultAuthorization extends Module implements Authorization {
   
   public void reloadPolicies(Context context) throws Exception {
   	enforceReloadPolicies(context);
+  	generateBackendPolicies();
   	xacmlPep.newPdp();
   }
   
@@ -353,6 +370,89 @@ public class DefaultAuthorization extends Module implements Authorization {
 		return namespace;
 	}
 	
+	/**
+	 * This method serves only to hold comments common to the various Enforce methods of this class.
+	 * 
+	 * <p>The following attributes are available for use in authorization policies during any fedora interface call.</p>
+	 * <p>subject attributes
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:subject:loginId (available only if user has authenticated)</li>
+	 * <li>urn:fedora:names:fedora:2.1:subject:<i>x</i> (available if authenticated user has attribute <i>x</i>)</li>
+	 * </ul>
+	 * </p>
+	 * <p>environment attributes derived from HTTP request
+	 * <ul> 
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:security
+	 * <ul>
+	 * <li>== urn:fedora:names:fedora:2.1:environment:httpRequest:security-secure(i.e., request is HTTPS/SSL)</li>
+	 * <li>== urn:fedora:names:fedora:2.1:environment:httpRequest:security-insecure(i.e., request is HTTP/non-SSL)</li>
+	 * </ul>
+	 * </li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol
+	 * <ul>
+	 * <li>== urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-soap(i.e., request is over SOAP/Axis)</li>
+	 * <li>== urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-rest(i.e., request is over non-SOAP/Axis ("REST") HTTP call)</li>
+	 * </ul>
+	 * </li>
+	 * </ul>
+	 * </p>
+	 * <p>environment attributes directly from HTTP request
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:authType</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientFqdn</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentLength</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:contentType</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:method</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:protocol</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:scheme</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverFqdn</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverIpAddress</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:serverPort</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionEncoding</li>
+	 * <li>urn:fedora:names:fedora:2.1:environment:httpRequest:sessionStatus</li>
+	 * </ul>
+	 * </p>
+	 * <p>other environment attributes
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:currentDateTime</li>
+	 * <li>urn:fedora:names:fedora:2.1:currentDate</li>	 	 
+	 * <li>urn:fedora:names:fedora:2.1:currentTime</li> 
+	 * </ul>
+	 * </p>
+	 * @see <a href="http://java.sun.com/products/servlet/2.2/javadoc/javax/servlet/http/HttpServletRequest.html">HttpServletRequest interface documentation</a>
+	 */
+	public final void enforceMethods(Context context) {
+	}
+	
+	/**
+	 * Enforce authorization for adding a datastream to an object.  Provide attributes for the authorization decision and wrap that xacml decision.
+	 * 
+	 * <p>The following attributes are available for use in authorization policies during a call to this method.</p>
+	 * <p>action attributes
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:action:id == urn:fedora:names:fedora:2.1:action:id-addDatastream</li>
+	 * <li>urn:fedora:names:fedora:2.1:action:api == urn:fedora:names:fedora:2.1:action:api-m</li>
+	 * </ul>
+	 * </p>
+	 * <p>resource attributes of object to which datastream would be added
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:resource:object:pid</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:object:namespace (if pid is "x:y", namespace is "x")</li>
+	 * </ul>
+	 * </p>
+	 * <p>resource attributes of datastream which would be added
+	 * <ul>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:mimeType</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:formatUri</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:state</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:id</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:location</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:controlGroup</li>
+	 * </ul>
+	 * </p> 
+	 * @see #enforceMethods common attributes available on any fedora interface call
+	 */
 	public final void enforceAddDatastream(Context context, String pid, String dsId, 
 			String[] altIDs, //how to handle altIDs?
 			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState)
