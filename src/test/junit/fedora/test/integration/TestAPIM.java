@@ -27,7 +27,7 @@ public class TestAPIM extends FedoraServerTestCase {
         TestSuite suite = new TestSuite("APIM TestSuite");
         suite.addTestSuite(TestAPIM.class);
         
-        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+        TestSetup wrapper = new TestSetup(suite) {
             public void setUp() throws Exception {
                 TestIngestDemoObjects.ingestDemoObjects();
                 SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");

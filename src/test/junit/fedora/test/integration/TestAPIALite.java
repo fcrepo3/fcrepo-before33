@@ -31,7 +31,7 @@ public class TestAPIALite extends FedoraServerTestCase {
     
     public static Test suite() {
         TestSuite suite = new TestSuite(TestAPIALite.class);
-        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+        TestSetup wrapper = new TestSetup(suite) {
             public void setUp() throws Exception {
                 TestIngestDemoObjects.ingestDemoObjects();
                 fcfg = getServerConfiguration();
@@ -110,9 +110,9 @@ public class TestAPIALite extends FedoraServerTestCase {
     public void testListMethods() throws Exception {
         Document result;
         // FIXME need to ensure we don't try this on bdefs or bmechs
-        String[] demoObjects = { "demo:5", "demo:6", "demo:7", "demo:10", 
-                "demo:11", "demo:14", "demo:17", "demo:18", "demo:21", "demo:26", 
-                "demo:29", "demo:30", "demo:31", "demo:SmileyBeerGlass", 
+        String[] demoObjects = { "demo:6", "demo:7", "demo:10", 
+                "demo:11", "demo:17", "demo:21", "demo:26", 
+                "demo:30", "demo:31", "demo:SmileyBeerGlass", 
                 "demo:SmileyBucket", "demo:SmileyDinnerware", 
                 "demo:SmileyEarring", "demo:SmileyKeychain", 
                 "demo:SmileyNightlight", "demo:SmileyPens", 

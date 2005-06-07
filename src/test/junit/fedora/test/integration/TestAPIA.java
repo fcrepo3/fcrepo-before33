@@ -26,7 +26,7 @@ public class TestAPIA extends FedoraServerTestCase {
     
     public static Test suite() {
         TestSuite suite = new TestSuite(TestAPIA.class);
-        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+        TestSetup wrapper = new TestSetup(suite) {
             public void setUp() throws Exception {
                 TestIngestDemoObjects.ingestDemoObjects();
                 SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
