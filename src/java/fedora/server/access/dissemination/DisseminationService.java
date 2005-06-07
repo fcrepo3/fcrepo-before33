@@ -28,6 +28,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.security.Authorization;
+import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.DOManager;
@@ -570,11 +571,11 @@ public class DisseminationService
           // We must examine URL to see if this is referencing a remote backend service or is
           // simply a callback to the fedora server. If the reference is remote, then use
           // the role of backend service bMechPid. If the referenc is to the fedora server, 
-          // use the special role of "fedora" to denote that the callback will come from the 
+          // use the special role of "fedoraInternalCall" to denote that the callback will come from the 
           // fedora server itself.          
 	        String beServiceRole = null;
 	        if ( isURLFedoraServer(dissURL) ) {
-	            beServiceRole =  "fedora";
+	            beServiceRole =  BackendPolicies.FEDORA_INTERNAL_CALL;
 	        } else {
 	            beServiceRole = bMechPid;
 	        }
@@ -585,7 +586,13 @@ public class DisseminationService
 	        boolean beServiceCallBasicAuth = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
 	        boolean beServiceCallSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
 	        String beServiceCallUsername = (String) beHash.get("callUsername");
-	        String beServiceCallPassword = (String) beHash.get("callPassword");	        
+	        String beServiceCallPassword = (String) beHash.get("callPassword");	
+	        
+	        if(isURLFedoraServer(dissURL)) {
+	            dissURL = dissURL.replaceFirst("^http:", "https:");
+	            dissURL = dissURL.replaceFirst(":"+fedoraServerPort, ":"+fedoraServerRedirectPort);
+	            if (fedora.server.Debug.DEBUG) System.out.println("**********getDisseminationContent dissURL changed to: "+dissURL);
+	        }
         
 	        if (fedora.server.Debug.DEBUG) {
 	            System.out.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
@@ -710,13 +717,13 @@ public class DisseminationService
         // we must examine URL to see if this is referencing a remote datastream or is
         // simply a callback to the fedora server. If the reference is remote, then use
         // the role of the backend service that will make a callback for this datastream.
-        // If the referenc s to the fedora server, use the special role of "fedora" to
+        // If the referenc s to the fedora server, use the special role of "fedoraInternalCall" to
         // denote that the callback will come from the fedora server itself.
         String beServiceRole = null;
         if ( isURLFedoraServer(dsLocation) || 
              dsControlGroupType.equals("M") ||
              dsControlGroupType.equals("X") ) {
-            beServiceRole =  "fedora";
+            beServiceRole =  BackendPolicies.FEDORA_INTERNAL_CALL;
         } else {
             beServiceRole = beServiceCallbackRole;
         }        

@@ -28,6 +28,7 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.security.Authorization;
+import fedora.server.security.BackendPolicies;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
  import fedora.server.storage.ExternalContentManager;
@@ -202,7 +203,7 @@ public class DatastreamResolverServlet extends HttpServlet
       // to the local Fedora server which requires SSL. HttpClient does not currently handle autoredirecting
       // from http  to https so it is necessary to set the protocol and port to the appropriate secure
       // port.
-      if (dm.callbackRole.equals("fedora")) {
+      if (dm.callbackRole.equals(BackendPolicies.FEDORA_INTERNAL_CALL)) {
           if (dm.callbackSSL) {
               dsPhysicalLocation = dsPhysicalLocation.replaceFirst("http:", "https:");
               dsPhysicalLocation = dsPhysicalLocation.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
