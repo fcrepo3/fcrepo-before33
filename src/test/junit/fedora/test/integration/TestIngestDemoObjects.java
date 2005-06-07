@@ -9,6 +9,10 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.custommonkey.xmlunit.HTMLDocumentBuilder;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.custommonkey.xmlunit.TolerantSaxDocumentBuilder;
@@ -19,6 +23,7 @@ import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
 import fedora.server.config.ServerConfiguration;
 import fedora.test.FedoraServerTestCase;
+import fedora.test.FedoraServerTestSetup;
 import fedora.utilities.ExecUtility;
 
 /**
@@ -51,19 +56,31 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
     private DocumentBuilder builder;
     private ServerConfiguration fcfg;
     
+    public static Test suite() {
+        TestSuite suite = new TestSuite(TestIngestDemoObjects.class);
+        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+            public void setUp() throws Exception {
+                ingestDemoObjects();
+            }
+            public void tearDown() throws Exception {
+                purgeDemoObjects();
+            }
+        };
+        return new FedoraServerTestSetup(wrapper);
+    }
+    
     public void setUp() throws Exception {
-        super.setUp();
-        ingestDemoObjects();
-        
         factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();
         fcfg = getServerConfiguration();
-        
+        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
+        SimpleXpathEngine.registerNamespace("demo", "http://example.org/ns#demo");
     }
     
     public void tearDown() throws Exception {
         purgeDemoObjects();
-        super.tearDown();
+        SimpleXpathEngine.clearNamespaces();
     }
     
     public void testIngestDemoObjects() throws Exception {        
@@ -75,9 +92,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputStream in;
-        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
-        SimpleXpathEngine.registerNamespace("demo", "http://example.org/ns#demo");
+        
         for (int i = 0; i < demoObjects.length; i++) {
             System.out.println("Checking for " + demoObjects[i]);
             in = client.get(baseURL + "/get/" + demoObjects[i] + "?xml=true", true);
