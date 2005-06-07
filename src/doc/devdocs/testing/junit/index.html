@@ -79,21 +79,28 @@
           <div class="subsect">
               <h3><a name="writing.end2end">B. Writing End-to-End Tests</a></h3>
               <p>End-to-end (or integration) tests for Fedora typically require 
-              a running instance of the Fedora Server. Because starting an 
-              instance of Fedora is relatively slow, and because not all tests 
-              demand a freshly-scrubbed instance of the server between tests, 
-              the <code>FedoraServerTestCase</code> is designed to start and 
-              stop the Fedora Server only once per test run.</p> 
+              a running instance of the Fedora Server. 
+              Tests that require a running instance of the Fedora Server should 
+              extend <code>FedoraServerTestCase</code> (which itself extends 
+              <code>FedoraTestCase</code>). The setUp and tearDown methods of 
+              <code>FedoraServerTestCase</code> start and stop a Fedora Server, 
+              so be sure to call super() if you override setUp or tearDown.</p>
               
-              <p>The following TestCase class will start a Fedora Server, run 
-              the two test cases (<code>testExample</code> and 
-              <code>testExample2</code>) and stop the Fedora Server.</p>
+              <p>The following TestCase class will:
+              <ol>
+                  <li>start a Fedora Server</li>
+                  <li>run <code>testExample1</code></li>
+                  <li>stop the Fedora Server</li>
+                  <li>start a Fedora Server</li>
+                  <li>run <code>testExample2</code></li>
+                  <li>stop the Fedora Server</li>
+              </ol>
+              </p>
               <div class="code"><pre>
 package fedora.test.integration;
 
-public class TestAPIM extends FedoraServerTestCase {
-
-    public void testExample() throws Exception {
+public class TestExampleA extends FedoraServerTestCase {
+    public void testExample1() throws Exception {
         assertEquals("1", "1");
     }
     
@@ -108,18 +115,36 @@ public class TestAPIM extends FedoraServerTestCase {
 
 }</pre></div>
 
-              <p>If your test cases require additional setUp or tearDown 
-              work between tests, remember to invoke super() so that the 
-              Fedora Server starts and stops correctly: </p>
-
+              <p>Note that in the preceding example, a Fedora Server is 
+              started and stopped for each test case (i.e. once for 
+              <code>testExample1</code> and again for 
+              <code>testExample2)</code>. For many tests, this is neither 
+              required nor desirable as starting an instance of Fedora is 
+              relatively expensive (i.e. slow). Sharing a single Fedora Server
+              between tests may be accomplished with an instance of 
+              <code>FedoraServerTestSetup</code>.</p>
+              
+              <p>The general pattern is as follows:</p>
+              <ol>
+                  <li>Implement a custom <code>suite()</code> method in your 
+                      <code>TestCase</code>.</li>
+                  <li>Return an instance of <code>TestSetup</code> at the end 
+                      of the <code>suite()</code> method.</li>
+              </ol>                         
+                  
               <div class="code"><pre>
 package fedora.test.integration;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
-public class TestAPIM extends FedoraServerTestCase {
+public class TestExampleB extends FedoraServerTestCase {
+    public static Test suite() {
+        TestSuite suite = new TestSuite("Unit test for APIM");
+        suite.addTestSuite(TestExampleB.class);
+        return new FedoraServerTestSetup(suite);
+    }
+    
     public void setUp() throws Exception {
-        super.setUp();
         TestIngestDemoObjects.ingestDemoObjects();
         SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
     }
@@ -127,7 +152,6 @@ public class TestAPIM extends FedoraServerTestCase {
     public void tearDown() throws Exception {
         SimpleXpathEngine.clearNamespaces();
         TestIngestDemoObjects.purgeDemoObjects();
-        super.tearDown();
     }
     
     public void testExample() throws Exception {
@@ -140,11 +164,89 @@ public class TestAPIM extends FedoraServerTestCase {
     }
     
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestAPIM.class);
+        junit.textui.TestRunner.run(TestExampleB.class);
     }
 
 }</pre></div>
+              <p>The following extends the preceding pattern, allowing for a 
+              setup and teardown that occurs once for an entire test run (i.e. 
+              starting and stopping the Fedora Server), another setup and 
+              teardown that occurs once for a given suite (e.g. ingesting and 
+              purging demo objects), and yet another that occurs for each test 
+              case.</p>
+              <div class="code"><pre>                  
+package fedora.test.integration;
 
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+public class TestExampleC extends FedoraServerTestCase {
+    public static Test suite() {
+        TestSuite suite = new TestSuite("Unit test for APIM");
+        suite.addTestSuite(TestExampleC.class);
+        TestSetup wrapper = new TestSetup(suite) {
+            public void setUp() {
+                TestIngestDemoObjects.ingestDemoObjects();
+            }
+            
+            public void tearDown() {
+                TestIngestDemoObjects.purgeDemoObjects();
+            }
+        };
+        return new FedoraServerTestSetup(wrapper);
+    }
+    
+    public void setUp() throws Exception {
+        System.out.println("once per test case setUp()");
+    }
+    
+    public void tearDown() throws Exception {
+        System.out.println("once per test case tearDown()");
+    }
+    
+    public void testExample() throws Exception {
+        assertEquals("1", "1");
+    }
+    
+    public void testExample2() throws Exception {
+        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        assertXpathExists("//planet[@name='Earth']", xml);
+    }
+    
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(TestExampleC.class);
+    }
+}</pre></div>
+
+              <p></p>
+
+          </div>
+          <div class="subsect">
+              <h3><a name="writing.grouping">C. Grouping Tests</a></h3>
+              <p><code>fedora.test.integration.AllTests</code> is the 
+              grandfather of all Fedora integration tests. This is currently 
+              the test that is called by the Ant junit target. All tests 
+              that should be run as part of the test plan should be called by
+              this test suite. Note that AllTests can call other test suites,
+              so it's not necessary to individually list all the TestCases at 
+              this level.</p>
+          </div>
+          
+          <div class="subsect">
+              <h3><a name="writing.config">D. Writing Configuration Tests</a></h3>
+              <p>Testing multiple configurations of the Fedora Server is handled 
+              through a combination of <code>Properties</code> files and 
+              <code>fedora.test.integration.TestFedoraConfigurations</code>. 
+              Properties files located in src/fcfg/server that are prefixed with 
+              "junit" are applied against the base fedora.fcfg and then  run.</p>
+              
+              <div class="code"><pre>
+# junit-mckoi.properties
+module.fedora.server.storage.DOManager.storagePool                 = localMcKoiPool
+module.fedora.server.search.FieldSearch.connectionPool             = localMcKoiPool
+module.fedora.server.storage.ConnectionPoolManager.poolNames       = localMcKoiPool
+module.fedora.server.storage.ConnectionPoolManager.defaultPoolName = localMcKoiPool
+</pre></div>
+              
           </div>
           
       </div>
@@ -175,7 +277,8 @@ $ ant junit</pre></div>
           
           <div class="subsect">
               <h3><a name="running.eclipse">B. Running Tests in Eclipse</a></h3>
-              <p></p>
+              <p>Running tests in Eclipse just require that you add 
+              src/test/junit as a source directory to your project.</p>
           </div>
       </div>
       
@@ -183,8 +286,8 @@ $ ant junit</pre></div>
       <div id="references" class="sect">
           <h2><a name="#references">6. References</a></h2>
           <dl>
-              <dt><a name="foo.bar">[foo]</a></dt>
-              <dd><a href="http://example.org">bar</a></dd>
+              <dt><a name="xmlunit">[XMLUnit]</a></dt>
+              <dd><a href="http://xmlunit.sourceforge.net/">bar</a></dd>
           </dl>
       </div>
       
