@@ -83,8 +83,6 @@ public class FedoraServerTestSetup
     
     private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
-        //dropDBTables();
-        //deleteStore();
         String cmd = FEDORA_HOME + "/server/bin/fedora-start";
         
         try {

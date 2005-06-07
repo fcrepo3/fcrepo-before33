@@ -4,12 +4,16 @@
  */
 package fedora.test.integration;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.APIMStubFactory;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
 import fedora.test.FedoraServerTestCase;
+import fedora.test.FedoraServerTestSetup;
 
 /**
  * @author Edwin Shin
@@ -17,6 +21,12 @@ import fedora.test.FedoraServerTestCase;
  */
 public class TestAPIM extends FedoraServerTestCase {
     private FedoraAPIM apim;
+    
+    public static Test suite() {
+        TestSuite suite = new TestSuite("APIM TestSuite");
+        suite.addTestSuite(TestAPIM.class);
+        return new FedoraServerTestSetup(suite);
+    }
     
     public void setUp() throws Exception {
         super.setUp();
@@ -38,6 +48,8 @@ public class TestAPIM extends FedoraServerTestCase {
         Datastream ds = apim.getDatastream("demo:1", "DC", null);
         assertEquals("DC", ds.getID());
     }
+    
+    public void testFoo() {}
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestAPIM.class);
