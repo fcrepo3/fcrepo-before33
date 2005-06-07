@@ -29,7 +29,6 @@ import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.security.Authorization;
 import fedora.server.security.BackendSecurity;
-import fedora.server.security.BackendSecurityDeserializer;
 import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
@@ -906,28 +905,6 @@ public class DisseminationService
     }
   }
   
-/*  public Properties getBackendServiceProperties() {
-      
-      try {
-          
-          Properties backendServiceProperties = new Properties();
-          backendServiceProperties.load(new FileInputStream(new File(fedoraHome+"/server/config/beSecurity.properties")));
-          backendServiceProperties.list(System.out);
-          return backendServiceProperties;
-      } catch (Throwable th) {
-          String message = "[DisseminationService] An error has occured in "
-              + "accessing the Fedora Access Subsystem. The error was \" "
-              + th.getClass().getName()
-              + " \". Reason: "  + th.getMessage()
-              + "  The file location of the backend service configuration file "
-              + " could not be found. Location specified in fedora.fcfg was: \"" 
-              + s_server.getHomeDir()+"/access/backendServiceConfig.properties" + "\".";
-          s_server.logWarning(message);
-      }
-      return null;
-  } 
-  */
-  
   /**
    * A method that reads the contents of the specified URL and returns the
    * result as a MIMETypedStream
@@ -986,33 +963,6 @@ public class DisseminationService
   	}    	
 	return(httpContent);
   }  
-  
-  /*protected Hashtable getBeSecurity(String role, String methodName) {
-      return parseBeSecurity().getSecuritySpec(role, methodName);
-  }
-  */
-  
-  /*protected BackendSecuritySpec parseBeSecurity() {
-      
-      BackendSecurityDeserializer bsd = null;
-      BackendSecuritySpec beSS = null;
-      
-      try {
-			  bsd = new BackendSecurityDeserializer("UTF-8", true);
-			  return bsd.deserialize(fedoraHome+"/server/config/beSecurty.xml");
-      } catch (FactoryConfigurationError fce) {
-          
-      } catch (ParserConfigurationException pce ) {
-          
-      } catch (SAXException se) {
-          
-      } catch (UnsupportedEncodingException uee) {
-      } catch (StreamIOException sioe) {
-      } catch (GeneralException ge) {
-      }
-      return null;
-  }
-  */
   
   private final void log(String msg) {
   	if (fedora.server.Debug.DEBUG) {

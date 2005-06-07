@@ -336,6 +336,7 @@ public class DatastreamResolverServlet extends HttpServlet
           outStream.write(buffer, 0, byteStream);
         }
         buffer = null;
+        outStream.flush();
       } else if (dsControlGroupType.equalsIgnoreCase("M") ||
                  dsControlGroupType.equalsIgnoreCase("X"))
       {
