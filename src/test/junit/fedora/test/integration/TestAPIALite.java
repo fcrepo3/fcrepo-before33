@@ -30,37 +30,27 @@ public class TestAPIALite extends FedoraServerTestCase {
     private static String[] demoObjects;
     
     public static Test suite() {
-        TestSuite testSuite = new TestSuite(TestAPIALite.class);
-        TestSetup wrapper = new FedoraServerTestSetup(testSuite) {
+        TestSuite suite = new TestSuite(TestAPIALite.class);
+        TestSetup wrapper = new FedoraServerTestSetup(suite) {
             public void setUp() throws Exception {
-                super.setUp();
                 TestIngestDemoObjects.ingestDemoObjects();
                 fcfg = getServerConfiguration();
                 client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
                 factory = DocumentBuilderFactory.newInstance();
                 builder = factory.newDocumentBuilder();
                 demoObjects = TestIngestDemoObjects.demoObjects;
+                SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+                SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
+                SimpleXpathEngine.registerNamespace("demo", "http://example.org/ns#demo");
             }
             
             public void tearDown() throws Exception {
+                SimpleXpathEngine.clearNamespaces();
                 TestIngestDemoObjects.purgeDemoObjects();
-                super.tearDown();
             }
         };
-        return wrapper;
+        return new FedoraServerTestSetup(wrapper);
                 
-    }
-    
-    public void setUp() throws Exception {
-        super.setUp();
-        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
-        SimpleXpathEngine.registerNamespace("demo", "http://example.org/ns#demo");
-    }
-    
-    public void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
-        super.tearDown();
     }
     
     public void testDescribeRepository() throws Exception {

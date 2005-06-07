@@ -2,7 +2,14 @@ package fedora.test.integration;
 
 import java.io.File;
 
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
 import fedora.test.FedoraServerTestCase;
+import fedora.test.FedoraServerTestSetup;
 import fedora.utilities.ExecUtility;
 
 /**
@@ -10,6 +17,21 @@ import fedora.utilities.ExecUtility;
  *
  */
 public class TestCommandLineUtilities extends FedoraServerTestCase {
+    public static Test suite() {
+        TestSuite suite = new TestSuite(TestCommandLineUtilities.class);
+        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+            public void setUp() throws Exception {
+
+            }
+            
+            public void tearDown() throws Exception {
+                SimpleXpathEngine.clearNamespaces();
+            }
+        };
+        return new FedoraServerTestSetup(wrapper);
+                
+    }
+    
     public void testFedoraIngestAndPurge() {
         ingestFoxmlFile(new File("src/demo-objects/foxml/local-server-demos/simple-image-demo"));
         purge("demo:5");

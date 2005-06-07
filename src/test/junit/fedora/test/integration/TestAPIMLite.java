@@ -9,10 +9,14 @@ import java.io.InputStream;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
 import org.w3c.dom.Document;
 
 import fedora.client.FedoraClient;
 import fedora.test.FedoraServerTestCase;
+import fedora.test.FedoraServerTestSetup;
 
 /**
  * @author Edwin Shin
@@ -23,8 +27,13 @@ public class TestAPIMLite extends FedoraServerTestCase {
     private static DocumentBuilder builder;
     private static FedoraClient client;
     
+    public static Test suite() {
+        TestSuite suite = new TestSuite("APIMLite TestSuite");
+        suite.addTestSuite(TestAPIMLite.class);
+        return new FedoraServerTestSetup(suite);
+    }
+    
     public void setUp() throws Exception {
-        super.setUp();
         client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
         factory = DocumentBuilderFactory.newInstance();
         builder = factory.newDocumentBuilder();

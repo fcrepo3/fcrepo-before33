@@ -17,9 +17,9 @@ public class AllAPITests {
         TestSuite suite = new TestSuite("All API tests");
         //$JUnit-BEGIN$
         suite.addTest(TestAPIALite.suite());
-        suite.addTestSuite(TestAPIMLite.class);
-        suite.addTestSuite(TestAPIA.class);
-        suite.addTestSuite(TestAPIM.class);
+        suite.addTest(TestAPIMLite.suite());
+        suite.addTest(TestAPIA.suite());
+        suite.addTest(TestAPIM.suite());
         //$JUnit-END$
         return new FedoraServerTestSetup(suite);
     }

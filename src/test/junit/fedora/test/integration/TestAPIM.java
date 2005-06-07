@@ -4,6 +4,7 @@
  */
 package fedora.test.integration;
 
+import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -25,23 +26,25 @@ public class TestAPIM extends FedoraServerTestCase {
     public static Test suite() {
         TestSuite suite = new TestSuite("APIM TestSuite");
         suite.addTestSuite(TestAPIM.class);
-        return new FedoraServerTestSetup(suite);
+        
+        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+            public void setUp() throws Exception {
+                TestIngestDemoObjects.ingestDemoObjects();
+                SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+                SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
+            }
+            
+            public void tearDown() throws Exception {
+                TestIngestDemoObjects.purgeDemoObjects();
+                SimpleXpathEngine.clearNamespaces();
+            }
+        };
+        return new FedoraServerTestSetup(wrapper);
     }
     
     public void setUp() throws Exception {
-        super.setUp();
-        TestIngestDemoObjects.ingestDemoObjects();
         apim = APIMStubFactory.getStub(getProtocol(), getHost(), 
                 Integer.parseInt(getPort()), getUsername(), getPassword());
-        
-        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
-        SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
-    }
-    
-    public void tearDown() throws Exception {
-        SimpleXpathEngine.clearNamespaces();
-        TestIngestDemoObjects.purgeDemoObjects();
-        super.tearDown();
     }
     
     public void testGetDatastream() throws Exception {
