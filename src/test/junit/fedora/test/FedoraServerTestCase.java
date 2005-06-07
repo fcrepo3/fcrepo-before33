@@ -32,7 +32,9 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
 
     public void tearDown() throws Exception {
         // FedoraServerTestSetup stops a Fedora server if we started it
-        testSetup.tearDown();
+        if (testSetup != null) {
+            testSetup.tearDown();
+        }
     }
     
     public static ServerConfiguration getServerConfiguration() {
