@@ -1082,6 +1082,7 @@
     </target>
     
     <target name="junit" depends="compile-junit">
+        <echo message="This will take awhile..."/>
         <junit printsummary="withOutAndErr" fork="yes" haltonfailure="yes">
             <sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
             <classpath refid="test.path" />
