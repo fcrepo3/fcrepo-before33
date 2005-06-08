@@ -139,6 +139,28 @@ public class GroupRuleTableModel extends AbstractTableModel
         return(rowNum);
     }
     
+    public void deleteRowByNum(int row)
+    {
+        if (permitDenyOrBoth == PERMIT)
+        {
+            GroupRuleInfo.permitRules.removeElementAt(row);
+        }
+        else if (permitDenyOrBoth == DENY)
+        {
+            GroupRuleInfo.denyRules.removeElementAt(row);            
+        }
+        else // BOTH
+        {
+            if (row < GroupRuleInfo.permitRules.size())
+            {
+                GroupRuleInfo.permitRules.removeElementAt(row);
+            }
+            else
+            {
+                GroupRuleInfo.denyRules.removeElementAt(row-GroupRuleInfo.permitRules.size());            
+            }
+        }
+    }
     
     public GroupRuleInfo getRow(int row)
     {

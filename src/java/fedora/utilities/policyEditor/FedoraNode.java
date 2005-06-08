@@ -60,11 +60,36 @@ class FedoraNode
      */
     public void writePolicies(File dir, StatusDialog cur)
     {
+        deleteExistingPolicies(dir);
         writePolicies(dir, 0, cur);  // allow Policies
         writePolicies(dir, 1, cur);  // overriding deny policies
     }
     
-    public void writePolicies(File dir, int index, StatusDialog cur)
+    private void deleteExistingPolicies(File dir)
+    {
+        java.io.FileFilter permitOrDenyXMLs = new java.io.FileFilter()
+        {
+
+            public boolean accept(File f)
+            {
+                if ((f.getName().startsWith("Deny-") || f.getName().startsWith("Permit-")) &&
+                     f.getName().endsWith(".xml"))
+                {
+                    return(true);
+                }
+                return(false);
+            }
+
+        };
+        File fileList[] = dir.listFiles(permitOrDenyXMLs);
+        for (int i = 0; i < fileList.length; i++)
+        {
+            fileList[i].delete();
+        }
+        
+    }
+    
+    private void writePolicies(File dir, int index, StatusDialog cur)
     {
         if (access[index].equals(seeChildren))
         {
@@ -285,10 +310,10 @@ class FedoraNode
     public static void HandleNewValue(FedoraNode node, int index, Object value)
     {
         if (node.access[index].toString().equals(value.toString())) return;
-        System.out.println("Setting node: "+node.name+ " to value: "+value);
+  //      System.out.println("Setting node: "+node.name+ " to value: "+value);
         if (node.access[index].toString().equals(seeChildren))
         {
-           node.access[index] = value;
+           assignValue(node.access, index, value);
            for (int i = 0; i < node.children.size(); i++)
            {
                FedoraNode child = (FedoraNode)node.children.elementAt(i);
@@ -306,7 +331,7 @@ class FedoraNode
                model.setValueAt( seeChildren, (FedoraNode)node.parent, index+1);
                oldValue = node.access[index];
            }
-           node.access[index] = value;
+           assignValue(node.access, index, value);
            for (int i = 0; i < node.children.size(); i++)
            {
                FedoraNode child = (FedoraNode)node.children.elementAt(i);
@@ -330,14 +355,30 @@ class FedoraNode
                     model.setValueAt( seeChildren, (FedoraNode)node.parent, index+1);
                 }
             }
-            node.access[index] = value;
+            assignValue(node.access, index, value);
 //            System.out.println("Setting node: "+node.name+ " to value: "+value);
         }
         else
         {
-            node.access[index] = value;
+            assignValue(node.access, index, value);
 //            System.out.println("Setting node: "+node.name+ " to value: "+value);            
         }
+    }
+    
+    
+    // Handle Ref Count for GroupRuleInfo objects
+    
+    static void assignValue(Object accessArray[], int index, Object value)
+    {
+        if (accessArray[index] != null && accessArray[index] instanceof GroupRuleInfo)
+        {
+            ((GroupRuleInfo)(accessArray[index])).removeRef();
+        }
+        if (value != null && value  instanceof GroupRuleInfo)
+        {
+            ((GroupRuleInfo)value).addRef();
+        }
+        accessArray[index] = value;
     }
     
     /**

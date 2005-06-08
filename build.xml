@@ -704,7 +704,7 @@
 	</target>
 	<target name="server" depends="serverunixstuff,servermostly">
 	</target>
-	<target name="servermostly" depends="serverclasses" description="Server distribution">
+	<target name="servermostly" depends="serverclasses,serverutils" description="Server distribution">
 		<condition property="buildingOnUnix">
 			<os family="unix"/>
 		</condition>
@@ -958,6 +958,20 @@
 		<!-- this can be removed when retrofit for beSecurity is complete-->
 		<copy file="src/properties/server/beSecurity.properties" todir="dist/server/config"/>
 	</target>
+	<target name="serverutils" depends="utilclasses" description="Policy Editor Tool">
+		<mkdir dir="${server.dist.dir}/utilities"/>
+		<jar destfile="${server.dist.dir}/utilities/PolicyEditor.jar">
+			<fileset dir="temp/util" 
+					 includes="fedora/utilities/policyEditor/*.class" />
+			<fileset dir="src/java"
+					 includes="fedora/utilities/policyEditor/FedoraXacmlResources.xml" />
+			<fileset dir="temp\server\classes"
+					 includes="org/kxml2/**/*.class,org/xmlpull/**/*.class"/>
+			<manifest>
+				<attribute name="Main-Class" value="fedora.utilities.policyEditor.PolicyEditor"/>
+			</manifest>
+		</jar>
+	</target>
 	<target name="localservices" depends="server, localservicesclasses">
 		<!-- saxon service -->
 		<copy todir="${tomcat.deploy.dir}/saxon/WEB-INF/classes/fedora/localservices/saxon">
@@ -1021,7 +1035,7 @@
 		<javac srcdir="${java.src.dir}:temp/server/java" 
                destdir="temp/server/classes" 
                classpathref="serverclasses-lib.path" 
-               includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**,org/apache/**" 
+               includes="fedora/server/**,fedora/logging/**,fedora/oai/**,fedora/common/**,org/apache/**,org/xmlpull/**,org/kxml2/**" 
                optimize="${build.optimize}" 
                debug="${build.debug}"
                deprecation="${javac.deprecation}"

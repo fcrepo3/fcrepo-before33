@@ -34,6 +34,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * A TreeTable example, showing a JTreeTable, operating on the local file
@@ -56,11 +57,13 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     JTable table = null;
     JButton newUserClass = null;
     JButton editUserClass = null;
+    JButton deleteUserClass = null;
     static String fedoraHome;
     static String configDir = "server/config";
     static String generatedRepositoryDir = "server\\config\\xacml-policies\\active\\repository-policies-generated";
     FedoraSystemModel treeModel = null;
     FedoraNode rootNode = null;
+    boolean dirty = false;
     
     public static void main(String[] args) 
     {
@@ -93,12 +96,17 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         {
             setFedoraHome();
         }
+        if (fedoraHome == null)
+        {
+            System.exit(0);
+        }       
         generatedRepositoryDir = loadGeneratedPolicyDirFromConfig(fedoraHome, configDir);
         mainWin = new PolicyEditor();
         mainWin.init();
         mainWin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainWin.addWindowListener(mainWin);
         mainWin.setTitle("Policy Editor Tool");
+        mainWin.clearDirty();
         mainWin.pack();
         mainWin.show();
     }
@@ -126,7 +134,9 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     
     private void init()
     {
-        rootNode = PolicyEditorInputkXML.readResourcebyName("FedoraXacmlResources.xml");
+        String className = this.getClass().getPackage().getName();
+        className = className.replace('.', '/');
+        rootNode = PolicyEditorInputkXML.readResourcebyName(className+"/FedoraXacmlResources.xml");
         
         treeModel = new FedoraSystemModel(rootNode);
         treeTable = new JTreeTable(treeModel);
@@ -166,8 +176,10 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         panelCenter.add(buttonPanel, BorderLayout.SOUTH);
         buttonPanel.add(newUserClass = new JButton("Add New User Class..."));
         buttonPanel.add(editUserClass = new JButton("Edit Parameters of Class..."));
+        buttonPanel.add(deleteUserClass = new JButton("Delete User Class"));
         newUserClass.addActionListener(this);
         editUserClass.addActionListener(this);
+        deleteUserClass.addActionListener(this);
         setJMenuBar(getJJMenuBar());
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         tab.addTab("Define classes of users", panelCenter);
@@ -175,6 +187,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         loadRuleDefinitions(generatedRepositoryDir);       
         loadPolicyAssignments(generatedRepositoryDir);       
         treeTable.expandNodes();
+        this.setSize(700,500);
     }
     
     
@@ -336,10 +349,20 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         else if (e.getActionCommand().startsWith("Save"))
         {
             savePolicies(generatedRepositoryDir); 
+            clearDirty();
         }
         else if (e.getActionCommand().startsWith("Revert"))
         {
+            GroupRuleInfo.init();
+            String className = this.getClass().getPackage().getName();
+            className = className.replace('.', '/');
+            rootNode = PolicyEditorInputkXML.readResourcebyName(className+"/FedoraXacmlResources.xml");
+            
+            treeModel = new FedoraSystemModel(rootNode);
+            treeTable.setModel(treeModel);
+            loadRuleDefinitions(generatedRepositoryDir);       
             loadPolicyAssignments(generatedRepositoryDir);
+            clearDirty();
             treeTable.expandNodes();
         }
         else if (e.getActionCommand().startsWith("Set Fedora Home"))
@@ -381,21 +404,73 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
                 else
                 {
                     EditUserClassDialog dialog = new EditUserClassDialog(this, template, group, "Edit User Parameters for Defining Access");
-                    table.invalidate();
-                    table.repaint();
+                    if (dialog.isChanged())
+                    {
+                        PolicyEditor.mainWin.setDirty();
+                        table.invalidate();
+                        table.repaint();
+                    }
                 }
             }
         }
+        else if (e.getActionCommand().startsWith("Delete"))
+        {
+            int selected = table.getSelectedRow();
+            if (selected == -1)
+            {
+                JOptionPane.showMessageDialog(this, "No User Class Selected", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            else
+            {
+                GroupRuleInfo group = ((GroupRuleTableModel)table.getModel()).getRow(selected);
+                if (group.getRefCount() > 0)
+                {
+                    JOptionPane.showMessageDialog(this, "User Class Currently Assigned, Cannot Delete", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                else
+                {
+                    ((GroupRuleTableModel)table.getModel()).deleteRowByNum(selected);
+                    PolicyEditor.mainWin.setDirty();
+                    table.invalidate();
+                    table.repaint();                    
+                }
+            }
+        }
+
     }
 
     private static void setFedoraHome()
     {
         JFileChooser chooser = new JFileChooser();
-        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-        int result = chooser.showOpenDialog(mainWin);
+        FileFilter filter = new FileFilter()
+        {
+            public boolean accept(File f)
+            {
+                if (f.isDirectory()) return(true);
+                else
+                {
+                    String name = f.getName();
+                    if (name.endsWith("fedora.fcfg")) return(true);
+                }
+                return(false);
+            }
+
+            public String getDescription()
+            {
+                return("Fedora Config file");
+            }
+            
+        };
+        chooser.setFileFilter(filter);
+   //     chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = chooser.showDialog(mainWin, "Specify Location of Fedora Config file (fedora.fcfg)");
         if (result == JFileChooser.APPROVE_OPTION)
         {
-            fedoraHome = chooser.getSelectedFile().getAbsolutePath();
+            File fcfgFile = chooser.getSelectedFile();
+            File configDir = fcfgFile.getParentFile();
+            File serverDir = configDir.getParentFile();
+            File fedoraHomeDir = serverDir.getParentFile();
+            fedoraHome = fedoraHomeDir.getAbsolutePath();            
         }
 
     }
@@ -445,15 +520,15 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
      */
     public void windowClosing(WindowEvent e)
     {
-        boolean allSaved = true;
-        if (!allSaved)
+        if (isDirty())
         {
-            Object[] options = { "Save All, Then Exit", "Exit Without Saving", "Cancel" };
-            int val = JOptionPane.showOptionDialog(this, "Some Collections Have NOT Been Saved", "Warning", 
+            Object[] options = { "Save Settings, Then Exit", "Exit Without Saving", "Cancel" };
+            int val = JOptionPane.showOptionDialog(this, "Some Settings Have NOT Been Saved", "Warning", 
                             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                             null, options, options[0]);
             if (val == 0) // save all then exit
             {
+                savePolicies(generatedRepositoryDir);                 
             }
             else if (val == 1) // exit without saving
             {
@@ -519,6 +594,43 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     public FedoraNode getRootNode()
     {
         return rootNode;
+    }
+
+    /**
+     * @return Returns the dirty.
+     */
+    public boolean isDirty()
+    {
+        return dirty;
+    }
+    /**
+     * @param dirty The dirty to set.
+     */
+    public void setDirty()
+    {
+        if (!isDirty())
+        {
+            String title = "Policy Editor Tool  [not saved]";
+            System.out.println("Setting Title to: "+title);
+            setTitle(title);
+            System.out.println("Title is now: "+ getTitle());
+        }
+        this.dirty = true;
+        
+    }
+    /**
+     * @param dirty The dirty to set.
+     */
+    public void clearDirty()
+    {
+        if (isDirty())
+        {
+            String title = "Policy Editor Tool";
+            setTitle(title);
+            System.out.println("Setting Title to "+title);
+        }
+        this.dirty = false;
+        
     }
 }
 

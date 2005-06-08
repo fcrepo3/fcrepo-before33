@@ -24,6 +24,7 @@ public class GroupRuleInfo
     String condition;
     Vector parms;
     String buildParms;
+    int refcount;
 //    int numParms;
     
     public static Vector permitRules = null;
@@ -32,11 +33,152 @@ public class GroupRuleInfo
     public static Vector denyTemplates = null;
     public final static int AND = 0;
     public final static int OR = 1;
+        
+    public GroupRuleInfo()
+    {
+        super();
+        // TODO Auto-generated constructor stub
+    }
     
-//    static 
+//    public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, boolean _accept, int numParms)
 //    {
-//        init();
+//        setName(_name);
+//        setDescription(_desc);
+//        setSubject(_subject);
+//        setCondition(_condition);
+//        parms = null;
+//        this.numParms = numParms;
+//        accept = _accept;
 //    }
+    
+    public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, String _parmsWithSemiColons, boolean _accept)
+    {
+        setName(_name);
+        setDescription(_desc);
+        setSubject(_subject);
+        setCondition(_condition);
+        parms = new Vector();
+        String parms[] = _parmsWithSemiColons.split(";");
+        setParms(parms);
+        accept = _accept;
+        refcount = 0;
+    }
+    
+    private GroupRuleInfo(Object ruleTemplateObj, String _parmsWithSemiColons)
+    {
+        GroupRuleInfo ruleTemplate = (GroupRuleInfo)ruleTemplateObj;
+        parms = new Vector();
+        if (_parmsWithSemiColons != null)
+        {
+            String parms[] = _parmsWithSemiColons.split(";");
+            setParms(parms);
+        }
+        setName(expandString(ruleTemplate.getName()));
+        setDescription(expandString(ruleTemplate.getDescription()));
+        setSubject(expandString(ruleTemplate.getSubject()));
+        setCondition(expandString(ruleTemplate.getCondition()));
+        accept = ruleTemplate.accept;
+        refcount = 0;
+    }
+    
+    public static void buildFromTemplate(boolean accept, int templateNum, String parms)
+    {
+        GroupRuleInfo tmp;
+        if (accept)
+        {
+            tmp = new GroupRuleInfo(permitTemplates.elementAt(templateNum), parms);
+            tmp.buildParms = "permit,Template,"+templateNum;
+            permitRules.addElement(tmp);
+        }
+        else
+        {
+            tmp = new GroupRuleInfo(denyTemplates.elementAt(templateNum), parms);
+            tmp.buildParms = "deny,Template,"+templateNum;
+            denyRules.addElement(tmp);
+        }
+    }
+    
+    public void rebuildFromTemplate(GroupRuleInfo template, String _parmsWithSemiColons)
+    {
+        parms = new Vector();
+        if (_parmsWithSemiColons != null)
+        {
+            String parms[] = _parmsWithSemiColons.split(";");
+            setParms(parms);
+        }
+        setName(expandString(template.getName()));
+        setDescription(expandString(template.getDescription()));
+        setSubject(expandString(template.getSubject()));
+        setCondition(expandString(template.getCondition()));
+        accept = template.accept;      
+    }
+        
+    private GroupRuleInfo(Object ruleTemplateObj1, Object ruleTemplateObj2, 
+                         int andOrOr)
+    {
+        GroupRuleInfo ruleTemplate1 = (GroupRuleInfo)ruleTemplateObj1;
+        GroupRuleInfo ruleTemplate2 = (GroupRuleInfo)ruleTemplateObj2;
+        setName(ruleTemplate1.getName()+
+                (andOrOr == AND ? " AND " : " OR ")+
+                ruleTemplate2.getName());
+        setDescription(ruleTemplate1.getDescription()+
+                       (andOrOr == AND ? " AND " : " OR ")+
+                       ruleTemplate2.getDescription());
+        setSubject(ruleTemplate1.getSubject(), ruleTemplate1.getSubject(), andOrOr);
+        setCondition(ruleTemplate1.getCondition(), ruleTemplate2.getCondition(), andOrOr);
+        parms = null;
+        accept = ruleTemplate1.accept;
+        refcount = 0;
+    }
+    
+    public static void buildFromRules(boolean accept, int rule1, int rule2, int andOrOr)   
+    {
+        GroupRuleInfo tmp;
+        if (accept)
+        {
+            tmp = new GroupRuleInfo(permitRules.elementAt(rule1), permitRules.elementAt(rule2), andOrOr);
+            tmp.buildParms = "permit,Combo,"+(andOrOr == AND?"and":"or")+","+rule1+","+rule2;
+            permitRules.addElement(tmp);
+        }
+        else
+        {
+            tmp = new GroupRuleInfo(denyRules.elementAt(rule1), denyRules.elementAt(rule2), andOrOr);
+            tmp.buildParms = "deny,Combo,"+(andOrOr == AND?"and":"or")+","+rule1+","+rule2;
+            denyRules.addElement(tmp);
+        }
+    }
+    
+    public static void buildFromRules(boolean accept, int[] rules, int andOrOr)   
+    {
+        GroupRuleInfo tmp;
+        if (accept)
+        {
+            tmp = new GroupRuleInfo(permitRules.elementAt(rules[0]), permitRules.elementAt(rules[1]), andOrOr);
+            String rule = rules[0] + "," + rules[1];
+            for (int i = 2; i < rules.length; i++)
+            {
+                tmp = new GroupRuleInfo(tmp, permitRules.elementAt(rules[i]), andOrOr);
+                rule = rule + "," + rules[i];
+            }
+            tmp.buildParms = "permit,Combo,"+(andOrOr == AND?"and":"or")+","+rule;
+
+            permitRules.addElement(tmp);
+        }
+        else
+        {
+            tmp = new GroupRuleInfo(denyRules.elementAt(rules[0]), denyRules.elementAt(rules[1]), andOrOr);
+            String rule = rules[0] + "," + rules[1];
+            for (int i = 2; i < rules.length; i++)
+            {
+                tmp = new GroupRuleInfo(tmp, denyRules.elementAt(rules[i]), andOrOr);
+                rule = rule + "," + rules[i];
+            }
+            tmp.buildParms = "deny,Combo,"+(andOrOr == AND?"and":"or")+","+rule;
+
+            denyRules.addElement(tmp);
+        }
+    }
+    
     
     public static void init()
     {
@@ -326,148 +468,6 @@ public class GroupRuleInfo
         }
     }
     
-    public GroupRuleInfo()
-    {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-    
-//    public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, boolean _accept, int numParms)
-//    {
-//        setName(_name);
-//        setDescription(_desc);
-//        setSubject(_subject);
-//        setCondition(_condition);
-//        parms = null;
-//        this.numParms = numParms;
-//        accept = _accept;
-//    }
-    
-    public GroupRuleInfo(String _name, String _desc, String _subject, String _condition, String _parmsWithSemiColons, boolean _accept)
-    {
-        setName(_name);
-        setDescription(_desc);
-        setSubject(_subject);
-        setCondition(_condition);
-        parms = new Vector();
-        String parms[] = _parmsWithSemiColons.split(";");
-        setParms(parms);
-        accept = _accept;
-    }
-    
-    private GroupRuleInfo(Object ruleTemplateObj, String _parmsWithSemiColons)
-    {
-        GroupRuleInfo ruleTemplate = (GroupRuleInfo)ruleTemplateObj;
-        parms = new Vector();
-        if (_parmsWithSemiColons != null)
-        {
-            String parms[] = _parmsWithSemiColons.split(";");
-            setParms(parms);
-        }
-        setName(expandString(ruleTemplate.getName()));
-        setDescription(expandString(ruleTemplate.getDescription()));
-        setSubject(expandString(ruleTemplate.getSubject()));
-        setCondition(expandString(ruleTemplate.getCondition()));
-        accept = ruleTemplate.accept;
-    }
-    
-    public static void buildFromTemplate(boolean accept, int templateNum, String parms)
-    {
-        GroupRuleInfo tmp;
-        if (accept)
-        {
-            tmp = new GroupRuleInfo(permitTemplates.elementAt(templateNum), parms);
-            tmp.buildParms = "permit,Template,"+templateNum;
-            permitRules.addElement(tmp);
-        }
-        else
-        {
-            tmp = new GroupRuleInfo(denyTemplates.elementAt(templateNum), parms);
-            tmp.buildParms = "deny,Template,"+templateNum;
-            denyRules.addElement(tmp);
-        }
-    }
-    
-    public void rebuildFromTemplate(GroupRuleInfo template, String _parmsWithSemiColons)
-    {
-        parms = new Vector();
-        if (_parmsWithSemiColons != null)
-        {
-            String parms[] = _parmsWithSemiColons.split(";");
-            setParms(parms);
-        }
-        setName(expandString(template.getName()));
-        setDescription(expandString(template.getDescription()));
-        setSubject(expandString(template.getSubject()));
-        setCondition(expandString(template.getCondition()));
-        accept = template.accept;      
-    }
-        
-    private GroupRuleInfo(Object ruleTemplateObj1, Object ruleTemplateObj2, 
-                         int andOrOr)
-    {
-        GroupRuleInfo ruleTemplate1 = (GroupRuleInfo)ruleTemplateObj1;
-        GroupRuleInfo ruleTemplate2 = (GroupRuleInfo)ruleTemplateObj2;
-        setName(ruleTemplate1.getName()+
-                (andOrOr == AND ? " AND " : " OR ")+
-                ruleTemplate2.getName());
-        setDescription(ruleTemplate1.getDescription()+
-                       (andOrOr == AND ? " AND " : " OR ")+
-                       ruleTemplate2.getDescription());
-        setSubject(ruleTemplate1.getSubject(), ruleTemplate1.getSubject(), andOrOr);
-        setCondition(ruleTemplate1.getCondition(), ruleTemplate2.getCondition(), andOrOr);
-        parms = null;
-        accept = ruleTemplate1.accept;
-    }
-    
-    public static void buildFromRules(boolean accept, int rule1, int rule2, int andOrOr)   
-    {
-        GroupRuleInfo tmp;
-        if (accept)
-        {
-            tmp = new GroupRuleInfo(permitRules.elementAt(rule1), permitRules.elementAt(rule2), andOrOr);
-            tmp.buildParms = "permit,Combo,"+(andOrOr == AND?"and":"or")+","+rule1+","+rule2;
-            permitRules.addElement(tmp);
-        }
-        else
-        {
-            tmp = new GroupRuleInfo(denyRules.elementAt(rule1), denyRules.elementAt(rule2), andOrOr);
-            tmp.buildParms = "deny,Combo,"+(andOrOr == AND?"and":"or")+","+rule1+","+rule2;
-            denyRules.addElement(tmp);
-        }
-    }
-    
-    public static void buildFromRules(boolean accept, int[] rules, int andOrOr)   
-    {
-        GroupRuleInfo tmp;
-        if (accept)
-        {
-            tmp = new GroupRuleInfo(permitRules.elementAt(rules[0]), permitRules.elementAt(rules[1]), andOrOr);
-            String rule = rules[0] + "," + rules[1];
-            for (int i = 2; i < rules.length; i++)
-            {
-                tmp = new GroupRuleInfo(tmp, permitRules.elementAt(rules[i]), andOrOr);
-                rule = rule + "," + rules[i];
-            }
-            tmp.buildParms = "permit,Combo,"+(andOrOr == AND?"and":"or")+","+rule;
-
-            permitRules.addElement(tmp);
-        }
-        else
-        {
-            tmp = new GroupRuleInfo(denyRules.elementAt(rules[0]), denyRules.elementAt(rules[1]), andOrOr);
-            String rule = rules[0] + "," + rules[1];
-            for (int i = 2; i < rules.length; i++)
-            {
-                tmp = new GroupRuleInfo(tmp, denyRules.elementAt(rules[i]), andOrOr);
-                rule = rule + "," + rules[i];
-            }
-            tmp.buildParms = "deny,Combo,"+(andOrOr == AND?"and":"or")+","+rule;
-
-            denyRules.addElement(tmp);
-        }
-    }
-    
     GroupRuleInfo getTemplateForRule()
     {
         String buildParmsArray[] = buildParms.split(",");
@@ -671,6 +671,21 @@ public class GroupRuleInfo
     public String getEffect()
     {
         return (accept ? "Permit" : "Deny");
+    }
+
+    public void addRef()
+    {
+        refcount++;
+    }
+    
+    public void removeRef()
+    {
+        refcount--;
+    }
+    
+    public int getRefCount()
+    {
+        return(refcount);
     }
 
 }

@@ -93,6 +93,11 @@ public class FedoraSystemModel extends AbstractTreeTableModel
         FedoraNode fnode = (FedoraNode)node;
         if (column > 0) 
         {
+            Object prev = fnode.getValue(column-1);
+            if (prev != aValue)  
+            {
+                PolicyEditor.mainWin.setDirty();
+            }
             fnode.setValue(column-1, aValue);
         }
     }

@@ -35,6 +35,7 @@ public class EditUserClassDialog extends JDialog implements ActionListener
     private JButton editClass = null;
     private GroupRuleInfo template = null;
     private GroupRuleInfo group = null;
+    private boolean changed = false;
     /**
      * @param owner
      * @param title
@@ -109,11 +110,18 @@ public class EditUserClassDialog extends JDialog implements ActionListener
             }
 
             group.rebuildFromTemplate(template, parmString);
+            changed = true;
         }
         this.hide();
         this.dispose();
 
             
+    }
+    
+    
+    public boolean isChanged()
+    {
+        return(changed);
     }
 
 }

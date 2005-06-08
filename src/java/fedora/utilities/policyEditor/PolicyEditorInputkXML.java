@@ -114,9 +114,13 @@ public class PolicyEditorInputkXML
     
     static FedoraNode readResourcebyName(String resourceName)
     {
-     //      System.out.println("metadataURL is: " + urlName);
+        System.out.println("resource URL is: " + resourceName);
         URL url = ClassLoader.getSystemClassLoader().getResource(resourceName);
-
+        if (url == null)
+        {
+            System.out.println("Resource not found: " + resourceName);
+            return(null);
+        }
         try {
             fedoraNode = null;
             fedoraRoot = null;
@@ -176,9 +180,6 @@ public class PolicyEditorInputkXML
         {
             if(eventType == XmlPullParser.START_DOCUMENT) 
             {
-                fedoraNode = null;
-                fedoraRoot = null;
-                FedoraNode.model = null;
             } 
             else if(eventType == XmlPullParser.END_DOCUMENT) 
             {
