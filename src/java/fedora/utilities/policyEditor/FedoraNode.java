@@ -34,12 +34,6 @@ class FedoraNode
     public final static String seeChildrenShort = "seeChildren";
     public final static String indentSpaces = "                                                                    ";
     public static FedoraSystemModel model = null;
-    public static String sep = "";
-    
-    static 
-    {
-        sep = System.getProperty("line.separator");
-    }
     
     public FedoraNode(Object parent, String nodename, String shortname, 
                       String action, String resource)
@@ -151,7 +145,7 @@ class FedoraNode
         if (actionStr.length() > 0)
         {
             actionStr = "<Actions>" + "\n" + actionStr + "\n" + "</Actions>";
-            actionStr = actionStr.replaceAll("\n", sep);
+            actionStr = actionStr.replaceAll("\n", XMLPrintWriter.sep);
         }
         return(actionStr);
     }
@@ -184,21 +178,21 @@ class FedoraNode
             for (int i = 0; i < children.size(); i++)
             {
                 FedoraNode child = (FedoraNode)children.elementAt(i);
-                resourceStr = resourceStr + sep + child.getResource();
+                resourceStr = resourceStr + XMLPrintWriter.sep + child.getResource();
             }            
         }
         else
         {
             resourceStr = resource;
         }
-        resourceStr = "<Resources>" + sep + resourceStr + sep + "</Resources>";
+        resourceStr = "<Resources>" + XMLPrintWriter.sep + resourceStr + XMLPrintWriter.sep + "</Resources>";
         return(resourceStr);
     }
     
     String getSubject(int index)
     {
         String subject = ((GroupRuleInfo)access[index]).getExpandedSubject();
-        subject = subject.replaceAll("\n", sep);
+        subject = subject.replaceAll("\n", XMLPrintWriter.sep);
         return(subject);
     }
     
@@ -207,7 +201,7 @@ class FedoraNode
         String condition = ((GroupRuleInfo)access[index]).getExpandedCondition();
         String permitOrDeny = ((GroupRuleInfo)access[index]).getEffect();
         String rule = "  <Rule RuleId=\"1\" Effect=\"" + permitOrDeny + "\">\n" + condition + "\n  </Rule>\n";        
-        rule = rule.replaceAll("\n", sep);
+        rule = rule.replaceAll("\n", XMLPrintWriter.sep);
         return(rule);
     }
     
@@ -218,20 +212,20 @@ class FedoraNode
         File file = new File(dir, policyFilename);
         try {
             FileWriter fwriter = new FileWriter(file);
-            PrintWriter writer = new PrintWriter(fwriter);
-            writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-            writer.println("<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\"");
-            writer.println("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-            writer.println("        PolicyId=\""+policyFilename.substring(0, policyFilename.length()-4)+"\"");
-            writer.println("        RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\">");
-            writer.println("  <Description>"+description+"</Description>");
-            writer.println("  <Target>");
-            writer.println(subject);
-            writer.println(resource);
-            writer.println(action);
-            writer.println("  </Target>");
-            writer.println(rule);
-            writer.println("</Policy>");
+            XMLPrintWriter writer = new XMLPrintWriter(fwriter);
+            writer.printlnWithIndent("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+            writer.printlnWithIndent("<Policy xmlns=\"urn:oasis:names:tc:xacml:1.0:policy\"");
+            writer.printlnWithIndent("        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+            writer.printlnWithIndent("        PolicyId=\""+policyFilename.substring(0, policyFilename.length()-4)+"\"");
+            writer.printlnWithIndent("        RuleCombiningAlgId=\"urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable\">");
+            writer.printlnWithIndent("  <Description>"+description+"</Description>");
+            writer.printlnWithIndent("  <Target>");
+            writer.printlnWithIndent(subject);
+            writer.printlnWithIndent(resource);
+            writer.printlnWithIndent(action);
+            writer.printlnWithIndent("  </Target>");
+            writer.printlnWithIndent(rule);
+            writer.printlnWithIndent("</Policy>");
             writer.flush();
             writer.close();
         }
