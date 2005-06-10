@@ -50,8 +50,8 @@ public class TestCommandLineUtilities extends FedoraServerTestCase {
                 getProtocol() + " junit purge");
     }
     
-    private void execute(String cmd) {
-        ExecUtility.exec(FEDORA_HOME + cmd);
+    public static void execute(String cmd) {
+        ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd);
     }
     
     public static void main(String[] args) {

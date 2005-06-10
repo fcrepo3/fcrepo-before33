@@ -51,6 +51,14 @@ public class ExecUtility {
         }
         return cp;
     }
+    
+    public static Process execCommandLineUtility(String cmd) {
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Windows")) {
+            cmd = "cmd.exe /C " + cmd;
+        }
+        return exec(cmd, null, System.out);
+    }
 
     public static Process altExec(String command) {
         int result;

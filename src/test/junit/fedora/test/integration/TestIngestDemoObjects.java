@@ -101,10 +101,10 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         }
     }
     
-    public static void ingestDemoObjects() {
-        ExecUtility.exec(FEDORA_HOME + "/client/bin/fedora-ingest-demos " + 
-                         getHost() + " " + getPort() + " " + getUsername() + " " + 
-                         getPassword() + " " + getProtocol());
+    public static void ingestDemoObjects() {        
+        ExecUtility.execCommandLineUtility(FEDORA_HOME + "/client/bin/fedora-ingest-demos " + 
+                getHost() + " " + getPort() + " " + getUsername() + " " + 
+                getPassword() + " " + getProtocol());
     }
     
     public static void purgeDemoObjects() throws Exception {
@@ -112,6 +112,11 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         String baseURL = getBaseURL();
         FedoraClient client = new FedoraClient(baseURL, getUsername(), getPassword());
         InputStream queryResult;
+        
+        String cmd = FEDORA_HOME + "/client/bin/fedora-purge " + 
+                     getHost() + ":" + getPort() + " " + getUsername() + " " + 
+                     getPassword();
+        
         for (int i = 0; i < fTypes.length; i++) {
             queryResult = client.get(baseURL + "/search?query=pid~demo:*%20fType=" +
             		                 fTypes[i] + "&maxResults=1000&pid=true&xml=true", 
@@ -120,10 +125,8 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
             Set pids = parser.getPIDs();
             Iterator it = pids.iterator();
             while (it.hasNext()) {
-                ExecUtility.exec(FEDORA_HOME + "/client/bin/fedora-purge " + 
-                        getHost() + ":" + getPort() + " " + getUsername() + " " + 
-                        getPassword() + " " + (String)it.next() + " " + getProtocol() + 
-                        " for testing");
+                ExecUtility.execCommandLineUtility(cmd + " " + 
+                        (String)it.next() + " " + getProtocol() + " for testing");
             }
         }
     }

@@ -85,6 +85,12 @@ public class FedoraServerTestSetup
         System.out.println("+ doing setUp(): starting server...");
         String cmd = FEDORA_HOME + "/server/bin/fedora-start";
         
+        String osName = System.getProperty("os.name" );
+
+        if (osName.startsWith("Windows")) {
+            cmd = "cmd.exe /C " + cmd;
+        }
+        
         try {
 	        Process cp = Runtime.getRuntime().exec(cmd, null);
 	        String line;
@@ -102,7 +108,8 @@ public class FedoraServerTestSetup
     
     private void stopServer() throws Exception {
         System.out.println("- doing tearDown(): stopping server...");
-        ExecUtility.exec(FEDORA_HOME + "/server/bin/fedora-stop");
+
+        ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-stop");
         dropDBTables();
         deleteStore();
     }
