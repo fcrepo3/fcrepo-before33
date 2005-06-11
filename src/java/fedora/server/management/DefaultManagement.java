@@ -1384,7 +1384,7 @@ public class DefaultManagement
           getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
           m_fedoraXACMLModule.enforceSetDisseminatorState(context, pid, disseminatorID, dissState);  
 
-          w=m_manager.getWriter(Server.USE_CACHE, context, pid);
+          w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
           if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
               throw new InvalidStateException("The disseminator state of \"" + dissState
                       + "\" is invalid. The allowed values for state are: "
