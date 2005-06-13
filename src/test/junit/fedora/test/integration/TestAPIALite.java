@@ -1,6 +1,8 @@
 package fedora.test.integration;
 
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -27,7 +29,7 @@ public class TestAPIALite extends FedoraServerTestCase {
     private static DocumentBuilder builder;
     private static ServerConfiguration fcfg;
     private static FedoraClient client;
-    private static String[] demoObjects;
+    private static Set demoObjects;
     
     public static Test suite() {
         TestSuite suite = new TestSuite(TestAPIALite.class);
@@ -38,7 +40,7 @@ public class TestAPIALite extends FedoraServerTestCase {
                 client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
                 factory = DocumentBuilderFactory.newInstance();
                 builder = factory.newDocumentBuilder();
-                demoObjects = TestIngestDemoObjects.demoObjects;
+                demoObjects = TestIngestDemoObjects.getDemoObjects(null);
                 SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
                 SimpleXpathEngine.registerNamespace(NS_FEDORA_TYPES_PREFIX, NS_FEDORA_TYPES);
                 SimpleXpathEngine.registerNamespace("demo", "http://example.org/ns#demo");
@@ -70,9 +72,10 @@ public class TestAPIALite extends FedoraServerTestCase {
     
     public void testGetDatastreamDissemination() throws Exception {
         Document result;
-        for (int i = 0; i < demoObjects.length; i ++) {
+        Iterator it = demoObjects.iterator();
+        while (it.hasNext()) {
             // just checking DC
-	        result = getQueryResult("/get/" + demoObjects[i] + "/DC?xml=true");
+	        result = getQueryResult("/get/" + (String)it.next() + "/DC?xml=true");
 	        assertXpathExists("/oai_dc:dc", result);
         }
     }
@@ -83,8 +86,9 @@ public class TestAPIALite extends FedoraServerTestCase {
     
     public void testGetObjectHistory() throws Exception {
         Document result;
-        for (int i = 0; i < demoObjects.length; i ++) {
-	        result = getQueryResult("/getObjectHistory/" + demoObjects[i] + "?xml=true");
+        Iterator it = demoObjects.iterator();
+        while (it.hasNext()) {
+	        result = getQueryResult("/getObjectHistory/" + (String)it.next() + "?xml=true");
 	        // FIXME devise a better test
 	        assertXpathExists("/fedoraObjectHistory", result);
         }
@@ -92,8 +96,9 @@ public class TestAPIALite extends FedoraServerTestCase {
     
     public void testGetObjectProfile() throws Exception {
         Document result;
-        for (int i = 0; i < demoObjects.length; i ++) {
-	        result = getQueryResult("/get/" + demoObjects[i] + "?xml=true");
+        Iterator it = demoObjects.iterator();
+        while (it.hasNext()) {
+	        result = getQueryResult("/get/" + (String)it.next() + "?xml=true");
 	        // FIXME devise a better test
 	        assertXpathExists("/objectProfile", result);
         }
@@ -101,27 +106,20 @@ public class TestAPIALite extends FedoraServerTestCase {
     
     public void testListDatastreams() throws Exception {
         Document result;
-        for (int i = 0; i < demoObjects.length; i ++) {
-	        result = getQueryResult("/listDatastreams/" + demoObjects[i] + "?xml=true");
+        Iterator it = demoObjects.iterator();
+        while (it.hasNext()) {
+	        result = getQueryResult("/listDatastreams/" + (String)it.next() + "?xml=true");
 	        assertXpathExists("/objectDatastreams", result);
         }
     }
     
     public void testListMethods() throws Exception {
         Document result;
-        // FIXME need to ensure we don't try this on bdefs or bmechs
-        String[] demoObjects = { "demo:6", "demo:7", "demo:10", 
-                "demo:11", "demo:17", "demo:21", "demo:26", 
-                "demo:30", "demo:31", "demo:SmileyBeerGlass", 
-                "demo:SmileyBucket", "demo:SmileyDinnerware", 
-                "demo:SmileyEarring", "demo:SmileyKeychain", 
-                "demo:SmileyNightlight", "demo:SmileyPens", 
-                "demo:SmileyShortRoundCup", "demo:SmileyStuff", 
-                "demo:SmileyTallRoundCup", "demo:SmileyToiletBrush", 
-                "demo:SmileyWastebasket"
-                };
-        for (int i = 0; i < demoObjects.length; i ++) {
-	        result = getQueryResult("/listMethods/" + demoObjects[i] + "?xml=true");
+        // only for dataobjects (not bdefs or bmechs)
+        Set demoDataObjects = TestIngestDemoObjects.getDemoObjects(new String[] {"O"});
+        Iterator it = demoDataObjects.iterator();
+        while (it.hasNext()) {
+	        result = getQueryResult("/listMethods/" + (String)it.next() + "?xml=true");
 	        assertXpathExists("/objectMethods", result);
         }
     }

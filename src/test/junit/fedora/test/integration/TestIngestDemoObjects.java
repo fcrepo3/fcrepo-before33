@@ -1,8 +1,10 @@
 package fedora.test.integration;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ import org.w3c.dom.Document;
 
 import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
+import fedora.client.utility.ingest.Ingest;
 import fedora.server.config.ServerConfiguration;
 import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
@@ -36,29 +39,13 @@ import fedora.utilities.ExecUtility;
 public class TestIngestDemoObjects extends FedoraServerTestCase {
     private String baseURL;
     private FedoraClient client;
-    public static String[] demoObjects = {
-            "demo:1", "demo:2", "demo:3", "demo:4", "demo:6", 
-            "demo:7", "demo:8", "demo:9", "demo:10", "demo:11", "demo:12", 
-            "demo:13", "demo:15", "demo:16", "demo:17",
-            "demo:19", "demo:20", "demo:21", "demo:22", "demo:25", "demo:26", 
-            "demo:27", "demo:28", "demo:30", "demo:31", 
-            "demo:Collection", "demo:DualResImage", 
-            "demo:DualResImageCollection", 
-            "demo:SmileyBeerGlass", 
-            "demo:SmileyBucket", "demo:SmileyDinnerware", 
-            "demo:SmileyEarring", "demo:SmileyKeychain", 
-            "demo:SmileyNightlight", "demo:SmileyPens", 
-            "demo:SmileyShortRoundCup", "demo:SmileyStuff", 
-            "demo:SmileyTallRoundCup", "demo:SmileyToiletBrush", 
-            "demo:SmileyWastebasket"
-    };
     private DocumentBuilderFactory factory;
     private DocumentBuilder builder;
     private ServerConfiguration fcfg;
     
     public static Test suite() {
         TestSuite suite = new TestSuite(TestIngestDemoObjects.class);
-        TestSetup wrapper = new FedoraServerTestSetup(suite) {
+        TestSetup wrapper = new TestSetup(suite) {
             public void setUp() throws Exception {
                 ingestDemoObjects();
             }
@@ -89,14 +76,33 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         client = new FedoraClient(baseURL, getUsername(), getPassword());
         
         // check that demo objects were ingested
+        File[] demoDirs = {
+                new File(FEDORA_HOME + "/client/demo/foxml/local-server-demos"),
+                new File(FEDORA_HOME + "/client/demo/foxml/open-server-demos")
+        };
+        Set demoObjectFiles = new HashSet();
+        for (int i = 0; i < demoDirs.length; i++) {
+            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraBDefObject"));
+            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraBMechObject"));
+            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraObject"));
+        }
+        Set repositoryDemoObjects = getDemoObjects(null);
+        
+        // simple test to see if the count of demo object files matches the 
+        // count from an APIA-Lite search
+        assertEquals(demoObjectFiles.size(), repositoryDemoObjects.size());
+        
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         InputStream in;
         
-        for (int i = 0; i < demoObjects.length; i++) {
-            System.out.println("Checking for " + demoObjects[i]);
-            in = client.get(baseURL + "/get/" + demoObjects[i] + "?xml=true", true);
+        Iterator it = repositoryDemoObjects.iterator();
+        while (it.hasNext()) {
+            String pid = (String)it.next();
+            System.out.println("Checking for " + pid);
+            in = client.get(baseURL + "/get/" + pid + "?xml=true", true);
             Document result = builder.parse(in);
+            // simple test of the objects in the repo
             assertXpathExists("/objectProfile", result);
         }
     }
@@ -107,27 +113,40 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
                 getPassword() + " " + getProtocol());
     }
     
-    public static void purgeDemoObjects() throws Exception {
-        String[] fTypes = {"O", "M", "D"};
+    /**
+     * Gets the PIDs of objects of the specified type in the "demo" pid 
+     * namespace that are in the repository
+     * @param fTypes any combination of O, D, or M
+     * @return 
+     * @throws Exception
+     */
+    public static Set getDemoObjects(String[] fTypes) throws Exception {
+        if (fTypes == null || fTypes.length == 0) {
+            fTypes = new String[] {"O", "M", "D"};
+        }
         String baseURL = getBaseURL();
         FedoraClient client = new FedoraClient(baseURL, getUsername(), getPassword());
         InputStream queryResult;
-        
-        String cmd = FEDORA_HOME + "/client/bin/fedora-purge " + 
-                     getHost() + ":" + getPort() + " " + getUsername() + " " + 
-                     getPassword();
-        
+        Set pids = new HashSet();
         for (int i = 0; i < fTypes.length; i++) {
             queryResult = client.get(baseURL + "/search?query=pid~demo:*%20fType=" +
             		                 fTypes[i] + "&maxResults=1000&pid=true&xml=true", 
             		                 true);
             SearchResultParser parser = new SearchResultParser(queryResult);
-            Set pids = parser.getPIDs();
-            Iterator it = pids.iterator();
-            while (it.hasNext()) {
-                ExecUtility.execCommandLineUtility(cmd + " " + 
-                        (String)it.next() + " " + getProtocol() + " for testing");
-            }
+            pids.addAll(parser.getPIDs());
+        }
+        return pids;
+    }
+    
+    public static void purgeDemoObjects() throws Exception {
+        String[] fTypes = {"O", "M", "D"};
+        Set pids = getDemoObjects(fTypes);
+        Iterator it = pids.iterator();
+        while (it.hasNext()) {
+            ExecUtility.execCommandLineUtility(FEDORA_HOME + "/client/bin/fedora-purge " + 
+                    getHost() + ":" + getPort() + " " + getUsername() + " " + 
+                    getPassword() + " " + (String)it.next() + " " + getProtocol() + 
+                    " for testing");
         }
     }
     
