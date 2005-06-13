@@ -252,7 +252,7 @@ public class Ingest {
         }
         return successSet;
     }
-    private static Set getFiles(File dir, String fTypeString)
+    public static Set getFiles(File dir, String fTypeString)
             throws Exception {
         if (!dir.isDirectory()) {
             throw new IOException("Not a directory: " + dir.getPath());
