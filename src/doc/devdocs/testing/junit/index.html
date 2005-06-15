@@ -268,7 +268,9 @@ module.fedora.server.storage.ConnectionPoolManager.defaultPoolName = localMcKoiP
           
           <div class="subsect">
               <h3><a name="running.ant">A. Running Tests in Ant</a></h3>
-              
+              <p>Note: Ant 1.6 suffers from a JUnit affliction described at 
+              <a href="http://ant.apache.org/faq.html#delegating-classloader">http://ant.apache.org/faq.html#delegating-classloader</a>.
+              Ensuring junit.jar is in ANT_HOME/lib should do the trick.</p>
               <div class="code"><pre>
 $ ant junit</pre></div>
               
@@ -277,8 +279,15 @@ $ ant junit</pre></div>
           
           <div class="subsect">
               <h3><a name="running.eclipse">B. Running Tests in Eclipse</a></h3>
-              <p>Running tests in Eclipse just require that you add 
-              src/test/junit as a source directory to your project.</p>
+              <p>You should have the following source directories configured: 
+              <ul>
+                  <li>src/java</li>
+                  <li>src/properties/client</li>
+                  <li>src/properties/server</li>
+                  <li>src/test/junit</li>
+                  <li>temp/generatedCode</li>
+              </ul>                                
+              </p>
           </div>
       </div>
       
