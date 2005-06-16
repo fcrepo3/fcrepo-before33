@@ -11,7 +11,6 @@ import java.util.Iterator;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
-import fedora.server.config.BasicServerParameters;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.ServerConfiguration;
@@ -32,7 +31,7 @@ import fedora.utilities.ExecUtility;
  */
 public class FedoraServerTestSetup 
   extends    TestSetup 
-  implements FedoraTestConstants, BasicServerParameters {
+  implements FedoraTestConstants {
     private boolean doSetup;
     
     /**
@@ -98,6 +97,7 @@ public class FedoraServerTestSetup
 	                new InputStreamReader(cp.getInputStream()));
 	        while ((line = input.readLine()) != null) {
 	            System.out.println(line);
+	            // If there's a better way to do this, please go ahead
 	            if ( line.equals("OK") ) break;
 	        }
 	        input.close();
