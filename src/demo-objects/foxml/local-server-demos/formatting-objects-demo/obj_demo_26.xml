@@ -24,7 +24,7 @@
 			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
-	<foxml:datastream ID="FOPDISSEM" CONTROL_GROUP="R" STATE="A">
+	<foxml:datastream ID="FOPDISSEM" CONTROL_GROUP="E" STATE="A">
 		<foxml:datastreamVersion ID="FOPRENDITION" MIMETYPE="text/xml" LABEL="FOP Dissemination as Datastream">
 			<foxml:contentLocation REF="http://localhost:8080/fedora/get/demo:26/demo:22/getFO" TYPE="URL"/>
 		</foxml:datastreamVersion>
