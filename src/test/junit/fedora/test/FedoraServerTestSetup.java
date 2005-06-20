@@ -67,17 +67,13 @@ public class FedoraServerTestSetup
                 new FileInputStream(FCFG)).parse();
     }
     
-    /**
-     * @return
-     */
     private boolean getSetup() {
         String setup = System.getProperty(PROP_SETUP);
         if (setup == null) {
             System.setProperty(PROP_SETUP, "false");
             return true;
-        } else {
-            return setup.equalsIgnoreCase("true");
         }
+        return setup.equalsIgnoreCase("true");
     }
     
     private void startServer() throws Exception {
