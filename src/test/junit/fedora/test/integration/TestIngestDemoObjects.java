@@ -118,7 +118,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         InputStream queryResult;
         Set pids = new LinkedHashSet();
         for (int i = 0; i < fTypes.length; i++) {
-            queryResult = client.get(baseURL + "/search?query=pid~demo:*%20fType=" +
+            queryResult = client.get(baseURL + "/search?query=pid~*%20fType=" +
             		                 fTypes[i] + "&maxResults=1000&pid=true&xml=true", 
             		                 true);
             SearchResultParser parser = new SearchResultParser(queryResult);
