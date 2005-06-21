@@ -37,7 +37,7 @@ public class TestFedoraConfigurations extends FedoraTestCase {
         // configuration
         //addTestToSuite(suite, SuiteQuux.suite());
         //addTestToSuite(suite, TestAPIALite.suite());
-        addTestToSuite(suite, new TestSuite(TestAPIM.class));
+        addTestToSuite(suite, TestAPIM.suite());
         
         return suite;
     }
