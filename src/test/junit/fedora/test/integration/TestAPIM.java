@@ -1282,7 +1282,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(pids.length > 0);
         System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, \"dummy\"): "+pids[0]);     
         assertEquals(pids.length,1);
-        assertEquals(pids[0],"dummy:1");
+        assertTrue(pids[0].startsWith("dummy:"));
         
         // test null for namespace argument
         pids = apim.getNextPID(new NonNegativeInteger("1"), null);
@@ -1296,8 +1296,8 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(pids.length > 0);
         System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(2, \"namespace\"): "+pids[0]+" , "+pids[1]);
         assertEquals(pids.length,2);
-        assertEquals(pids[0],"namespace:1");
-        assertEquals(pids[1],"namespace:2");
+        assertTrue(pids[0].startsWith("namespace:"));
+        assertTrue(pids[1].startsWith("namespace:"));
     }    
      
     public void verifyDatastreams(Datastream[] dsArray, String msg) throws Exception {
