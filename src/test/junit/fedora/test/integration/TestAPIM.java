@@ -30,7 +30,7 @@ import org.apache.axis.types.NonNegativeInteger;
 
 /**
  * @author rlw@virginia.edu
- * @version $Id
+ * @version $Id$
  * 
  */
 public class TestAPIM extends FedoraServerTestCase {
@@ -470,13 +470,13 @@ public class TestAPIM extends FedoraServerTestCase {
 
         String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML: "+pid);
-        assertEquals("demo:998", pid);
+        assertNotNull(pid);
         
-        byte [] objectXML = apim.getObjectXML("demo:998");
+        byte [] objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML XML \n"+xmlIn);
-        assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
+        assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
@@ -485,13 +485,13 @@ public class TestAPIM extends FedoraServerTestCase {
         
         pid = apim.ingest(changeme1FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML: "+pid);
-        assertEquals("changeme:1", pid);
+        assertNotNull(pid);
         
-        objectXML = apim.getObjectXML("changeme:1");
+        objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML XML \n"+xmlIn);
-        assertXpathExists("foxml:digitalObject[@PID='changeme:1']",xmlIn);
+        assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
@@ -500,13 +500,13 @@ public class TestAPIM extends FedoraServerTestCase {
         
         pid = apim.ingest(demo999METSObjectXML, "metslikefedora1", "ingesting new foxml object");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo999METS: "+pid);
-        assertEquals("demo:999", pid);
+        assertNotNull(pid);
         
-        objectXML = apim.getObjectXML("demo:999");
+        objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo999METS XML\n"+xmlIn);
-        assertXpathExists("foxml:digitalObject[@PID='demo:999']",xmlIn);
+        assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
@@ -515,13 +515,13 @@ public class TestAPIM extends FedoraServerTestCase {
         
         pid = apim.ingest(changeme2METSObjectXML, "metslikefedora1", "ingesting new foxml object");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS: "+pid);
-        assertEquals("changeme:2", pid);
+        assertNotNull(pid);
         
-        objectXML = apim.getObjectXML("changeme:2");
+        objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
         xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS XML \n"+xmlIn);
-        assertXpathExists("foxml:digitalObject[@PID='changeme:2']",xmlIn);
+        assertXpathExists("foxml:digitalObject[@PID='"+pid+"']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='Image of Coliseum in Rome']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel' and @VALUE='UVA_STD_IMAGE']",xmlIn);
@@ -1268,7 +1268,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(pids.length > 0);
         System.out.println("***** Testcase: TestAPIM.testgetNextPID  nextPid(null, null): "+pids[0]);
         assertEquals(pids.length,1);
-        assertEquals(pids[0],"changeme:3");
+        assertTrue(pids[0].startsWith("changeme"));
         
         // test null for numPids argument
         pids = apim.getNextPID(null,"dummy");
@@ -1282,7 +1282,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(pids.length > 0);
         System.out.println("***** Testcase: TestAPIM.testgetNextPID  nextPid(1, null): "+pids[0]);
         assertEquals(pids.length,1);
-        assertEquals(pids[0],"changeme:4");
+        assertTrue(pids[0].startsWith("changeme"));
         
         // test both arguments non-null
         pids = apim.getNextPID(new NonNegativeInteger("2"), "namespace");
