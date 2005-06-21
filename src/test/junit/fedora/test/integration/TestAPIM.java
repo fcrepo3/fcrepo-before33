@@ -466,8 +466,16 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
     }    
     
-    public void testIngestObject() throws Exception {
-
+    public void testObjectMethods() throws Exception {
+        
+        // test the object methods
+        // 1) ingest
+        // 2) modifyObject
+        // 3) export
+        // 4) purgeObject
+        
+        
+        // (1) test ingest
         String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML: "+pid);
         assertNotNull(pid);
@@ -528,16 +536,14 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
         
-    }
-    
-    public void testModifyObject() throws Exception {
+        // (2) test modifyObject
         
         // test changing object demo:5 by modifying state to Inactive; leave label unchanged
         String result = apim.modifyObject("demo:5", "I", null, "changed state to Inactive");
         
-        byte [] objectXML = apim.getObjectXML("demo:5");
+        objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
-        String xmlIn = new String(objectXML, "UTF-8");
+        xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state'and @VALUE='Inactive']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label'and @VALUE='Image of Coliseum in Rome']",xmlIn);
@@ -557,18 +563,13 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("***** Testcase: TestAPIM.testModifyObject demo:5\n"+xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Deleted']",xmlIn);        
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='label of object to be deleted']",xmlIn);
-    }
     
-    public void testGetObjectProperties() throws Exception {
-        // not currently implemented
-    }
-    
-    public void testExport() throws Exception {
+        // (3) test export
         
         // test exporting object as foxml with exportContext of default
-        byte[] objectXML = apim.export("demo:998", "foxml1.0", "default");
+        objectXML = apim.export("demo:998", "foxml1.0", "default");
         assertTrue(objectXML.length > 0);
-        String xmlIn = new String(objectXML, "UTF-8");
+        xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testExport demo:998 as FOXML\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:998']",xmlIn);
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#state' and @VALUE='Active']",xmlIn);        
@@ -640,18 +641,27 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);        
         
-    }
-    
-    public void testPurgeObject() throws Exception {
+        // (4) test purgeObject
         
         // test puring object demo:999
-        String result = apim.purgeObject("demo:999", "purging object demo:999", false);
+        result = apim.purgeObject("demo:999", "purging object demo:999", false);
         System.out.println("***** Testcase: TestAPIM.testPurgeObject demo:999\n");
         assertNotNull(result);       
         
     }
     
-    public void testAddDatastream() throws Exception {
+    public void testDatastreamMethods() throws Exception {
+        
+        // test datastream methods
+        // 1) addDatastream
+        // 2) modifyDatastreamByReference
+        // 3) modifyDatastreamByValue
+        // 4) purgeDatastream
+        // 5) getDatastream
+        // 6) getDatastreams
+        // 7) getDatastreamHistory
+        
+        // (1) test addDatastream
         
         // test adding M type datastream
         String[] altIds = new String[1];
@@ -694,42 +704,41 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:datastream[@ID='NEWDS3' and @CONTROL_GROUP='E' and @STATE='A']",xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS3.0' and @MIMETYPE='text/xml' and @LABEL='A New E-type Datastream' and @ALT_IDS='Datastream 3 Alternate ID' and @FORMAT_URI='info:myFormatURI/Etype/stuff#junk']",xmlIn);
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);             
-    }
-    
-    public void testModifyDatastreamByReference() throws Exception {
-        String[] altIds = new String[1];
+
+        // (2) test modifyDatastreamByReference
+        
+        altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        String result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", true, "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "A", "modified datastream", false);
+        result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", true, "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "A", "modified datastream", false);
 
         // test that datastream was modified
-        byte [] objectXML = apim.getObjectXML("demo:14");
+        objectXML = apim.getObjectXML("demo:14");
         assertTrue(objectXML.length > 0);
-        String xmlIn = new String(objectXML, "UTF-8");
+        xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testModifyDatastreamByReference NEWDS1\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:14']",xmlIn);
         assertXpathExists("//foxml:datastream[@ID='NEWDS1' and @CONTROL_GROUP='M' and @STATE='A']",xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS1.1' and @MIMETYPE='text/xml' and @LABEL='Modified M-type Datastream' and @ALT_IDS='Datastream 1 Modified Alternate ID' and @FORMAT_URI='info:newMyFormatURI/Mtype/stuff#junk']",xmlIn);
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);           
-    }
-    
-    public void testModifyDatastreamByValue() throws Exception {
-        String[] altIds = new String[1];
+
+        // (3) test modifyDatastreamByValue
+        
+        altIds = new String[1];
         altIds[0] = "Datastream 2 Modified Alternate ID";
-        String result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", true, "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "A", "modified datastream", false);
+        result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", true, "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "A", "modified datastream", false);
 
         // test that datastream was modified
-        byte [] objectXML = apim.getObjectXML("demo:14");
+        objectXML = apim.getObjectXML("demo:14");
         assertTrue(objectXML.length > 0);
-        String xmlIn = new String(objectXML, "UTF-8");
+        xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testModifyDatastreamByValue NEWDS2\n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:14']",xmlIn);
         assertXpathExists("//foxml:datastream[@ID='NEWDS2' and @CONTROL_GROUP='X' and @STATE='A']",xmlIn);
         assertXpathExists("//foxml:datastreamVersion[@ID='NEWDS2.1' and @MIMETYPE='text/xml' and @LABEL='Modified X-type Datastream' and @ALT_IDS='Datastream 2 Modified Alternate ID' and @FORMAT_URI='info:newMyFormatURI/Xtype/stuff#junk']",xmlIn);
         assertXpathExists("foxml:digitalObject/foxml:datastream[@ID='NEWDS2'][//dc:identifier='Identifier 5']",xmlIn);
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);          
-    }
-    
-    public void testPurgeDatastream() throws Exception {
+
+        // (4) test purgeDatastream
         
         // test specifying null for endDate
         String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purgind datastream NEWDS3", false);
@@ -744,11 +753,8 @@ public class TestAPIM extends FedoraServerTestCase {
             System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"2006-01-01T00:00:00.000Z\" dsID: "+results[i]);
         }        
         assertTrue(results.length > 0);
-    }
-    
-    public void testGetDatastream() throws Exception {
-        //Datastream ds = apim.getDatastream("demo:1", "DC", null);
-        //assertEquals("DC", ds.getID());
+
+        // (5) test getDatastream
         
         // test getting datastream id FOPDISSEM for object demo:26 specifying null for datetime
         Datastream ds = apim.getDatastream("demo:26", "FOPDISSEM", null);
@@ -795,12 +801,10 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[0].getAltIDs()[0],"");
         }
         
-    }
-    
-    public void testGetDatastreams() throws Exception {
+        // (6) test getDatastreams
         
         // test getting all datastreams for object demo:26 specifying null for datetime and state
-        Datastream [] dsArray = apim.getDatastreams("demo:26", null, null);
+        dsArray = apim.getDatastreams("demo:26", null, null);
         assertTrue(dsArray.length > 0);
         assertEquals(dsArray.length, 3);      
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
@@ -953,22 +957,31 @@ public class TestAPIM extends FedoraServerTestCase {
             assertEquals(dsArray[2].getAltIDs()[0],"");
         }            
         
-            
-    }
-    
-    public void testDatastreamHistory() throws Exception {
+        // (7) test getDatastreamHistory
         
         // test getting datastream history for datastream DS1 of object demo:10
-        Datastream [] dsArray = apim.getDatastreamHistory("demo:10", "DS1");
+        dsArray = apim.getDatastreamHistory("demo:10", "DS1");
         assertTrue(dsArray.length > 0);
         for (int i=0; i<dsArray.length; i++) {
-            Datastream ds = dsArray[i];
+            ds = dsArray[i];
             System.out.println("***** Testcase: TestAPIM.testGetDatastreamHistry createDate: "+ds.getCreateDate());
         }
         assertEquals(dsArray.length, 1);        
     }
     
-    public void testAddDisseminator() throws Exception {
+    public void testDisseminatorMethods() throws Exception {
+        
+        // test disseminator methods
+        // 1) addDisseminator
+        // 2) modifyDisseminator
+        // 3) purgeDisseminator
+        // 4) getDisseminator
+        // 5) getDisseminators
+        // 6) getDisseminatorHistory
+        
+        
+        // test (1) addDisseminator
+        
         DatastreamBindingMap dsBindMap = new DatastreamBindingMap();
         DatastreamBinding dsBinding = new DatastreamBinding();
         DatastreamBinding[] dsBindings = new DatastreamBinding[1];
@@ -995,12 +1008,12 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.0' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Image Manip Disseminator']",xmlIn);
         assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.0' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Image Manip Disseminator']/foxml:serviceInputMap/foxml:datastreamBinding[@DATASTREAM_ID='DS2' and @KEY='url' and @LABEL='Binding to big pic of coliseum']",xmlIn);
         assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);
-    }
-    
-    public void testModifyDisseminator() throws Exception {
-        DatastreamBindingMap dsBindMap = new DatastreamBindingMap();
-        DatastreamBinding dsBinding = new DatastreamBinding();
-        DatastreamBinding[] dsBindings = new DatastreamBinding[1];
+
+        // (2) test modifyDisseminator
+        
+        dsBindMap = new DatastreamBindingMap();
+        dsBinding = new DatastreamBinding();
+        dsBindings = new DatastreamBinding[1];
         dsBinding.setBindKeyName("url");
         dsBinding.setBindLabel("New Binding Label");
         dsBinding.setDatastreamID("DS4");
@@ -1011,14 +1024,14 @@ public class TestAPIM extends FedoraServerTestCase {
         dsBindMap.setDsBindMapLabel("dsBind Map Label");
         dsBindMap.setDsBindMechanismPID("demo:28");
         dsBindMap.setState("A");        
-        String result = apim.modifyDisseminator("demo:5", "DISS2", "demo:28", "Modified Disseminator Label", dsBindMap, "A", "modifying disseminator", false);
+        result = apim.modifyDisseminator("demo:5", "DISS2", "demo:28", "Modified Disseminator Label", dsBindMap, "A", "modifying disseminator", false);
         System.out.println("***** Testcase: TestAPIM.testModifyDisseminator demo:5 DISS2 result: "+result);
         assertNotNull(result);
         
         // test that disseminator was added
-        byte [] objectXML = apim.getObjectXML("demo:5");
+        objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
-        String xmlIn = new String(objectXML, "UTF-8");
+        xmlIn = new String(objectXML, "UTF-8");
         System.out.println("***** Testcase: TestAPIM.testModifyDisseminator \n"+xmlIn);
         assertXpathExists("foxml:digitalObject[@PID='demo:5']",xmlIn);
         assertXpathExists("//foxml:disseminator[@ID='DISS2' and @BDEF_CONTRACT_PID='demo:27' and @STATE='A']",xmlIn);
@@ -1026,9 +1039,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:disseminatorVersion[@ID='DISS2.1' and @BMECH_SERVICE_PID='demo:28' and @LABEL='Modified Disseminator Label']/foxml:serviceInputMap/foxml:datastreamBinding[@DATASTREAM_ID='DS4' and @KEY='url' and @LABEL='New Binding Label']",xmlIn);
         assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);        
         
-    }
-    
-    public void testPurgeDisseminator() throws Exception {
+        // (3) test purgeDisseminator
 
         // test specifying null for endDate
         String[] results = apim.purgeDisseminator("demo:5", "DISS2", null, "purging disseminator DISS2");
@@ -1036,9 +1047,9 @@ public class TestAPIM extends FedoraServerTestCase {
             System.out.println("***** Testcase: TestAPIM.testPurgeDisseminator demo:5 DISS2 specifying endDate=null dissID: "+results[i]);
         }
         //assertTrue(results.length > 0);
-        DatastreamBindingMap dsBindMap = new DatastreamBindingMap();
-        DatastreamBinding dsBinding = new DatastreamBinding();
-        DatastreamBinding[] dsBindings = new DatastreamBinding[1];
+        dsBindMap = new DatastreamBindingMap();
+        dsBinding = new DatastreamBinding();
+        dsBindings = new DatastreamBinding[1];
         dsBinding.setBindKeyName("url");
         dsBinding.setBindLabel("Binding to big pic of coliseum");
         dsBinding.setDatastreamID("DS2");
@@ -1049,7 +1060,7 @@ public class TestAPIM extends FedoraServerTestCase {
         dsBindMap.setDsBindMapLabel("dsBind Map Label");
         dsBindMap.setDsBindMechanismPID("demo:28");
         dsBindMap.setState("A");        
-        String result = apim.addDisseminator("demo:5", "demo:27", "demo:28", "Image Manip Disseminator", dsBindMap, "A", "adding new disseminator");
+        result = apim.addDisseminator("demo:5", "demo:27", "demo:28", "Image Manip Disseminator", dsBindMap, "A", "adding new disseminator");
         
         // test specifying datetime for endDate
         results = apim.purgeDisseminator("demo:5", "DISS2", "2006-01-01T00:00:00.000Z", "purging disseminator DISS2");
@@ -1059,9 +1070,7 @@ public class TestAPIM extends FedoraServerTestCase {
         //assertTrue(results.length > 0);
         assertEquals("1","1");
         
-    }
-    
-    public void testGetDisseminator() throws Exception {
+        // (4) test getDisseminator
 
         // test getting disseminator id DISS1 for object demo:26 specifying null for datetime
         Disseminator diss = apim.getDisseminator("demo:26", "DISS1", null);
@@ -1109,12 +1118,10 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getDatastreamID(),"FOPDISSEM");
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
         
-    }
-    
-    public void testGetDisseminators() throws Exception {
+        // (5) test getDisseminators
         
         // test getting all disseminators for object demo:26 specifying null for datetime and state
-        Disseminator [] dissArray = apim.getDisseminators("demo:26", null, null);
+        dissArray = apim.getDisseminators("demo:26", null, null);
         assertTrue(dissArray.length > 0);
         System.out.println("***** Testcase: TestAPIM.testGetDisseminators getDisseminators(\"demo:26\", null, null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
@@ -1227,15 +1234,14 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getBindLabel(),"TEI Source file to be transformed to FO");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");            
-    }    
-    
-    public void testGetDisseminatorHistory() throws Exception {
+
+        	// (6) test getDisseminatorHistory
         
         // test getting disseminator history for disseminator DISS1 of object demo:10
-        Disseminator [] dissArray = apim.getDisseminatorHistory("demo:10", "DISS1");
+        dissArray = apim.getDisseminatorHistory("demo:10", "DISS1");
         assertTrue(dissArray.length > 0);
         for (int i=0; i<dissArray.length; i++) {
-            Disseminator diss = dissArray[i];
+            diss = dissArray[i];
             System.out.println("***** Testcase: TestAPIM.testGetDatastreamHistory createDate: "+diss.getCreateDate());
         }
         assertEquals(dissArray.length, 1);
@@ -1266,28 +1272,29 @@ public class TestAPIM extends FedoraServerTestCase {
         // test null for both arguments
         String [] pids = apim.getNextPID(null, null);
         assertTrue(pids.length > 0);
-        System.out.println("***** Testcase: TestAPIM.testgetNextPID  nextPid(null, null): "+pids[0]);
+        System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, null): "+pids[0]);       
         assertEquals(pids.length,1);
         assertTrue(pids[0].startsWith("changeme"));
+        
         
         // test null for numPids argument
         pids = apim.getNextPID(null,"dummy");
         assertTrue(pids.length > 0);
-        System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, \"dummy\"): "+pids[0]);
+        System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, \"dummy\"): "+pids[0]);     
         assertEquals(pids.length,1);
         assertEquals(pids[0],"dummy:1");
         
         // test null for namespace argument
         pids = apim.getNextPID(new NonNegativeInteger("1"), null);
         assertTrue(pids.length > 0);
-        System.out.println("***** Testcase: TestAPIM.testgetNextPID  nextPid(1, null): "+pids[0]);
+        System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(1, null): "+pids[0]);      
         assertEquals(pids.length,1);
         assertTrue(pids[0].startsWith("changeme"));
         
         // test both arguments non-null
         pids = apim.getNextPID(new NonNegativeInteger("2"), "namespace");
         assertTrue(pids.length > 0);
-        System.out.println("***** Testcase: TestAPIM.testgetNextPID  nextPid(2, \"namespace\"): "+pids[0]+" , "+pids[1]);
+        System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(2, \"namespace\"): "+pids[0]+" , "+pids[1]);
         assertEquals(pids.length,2);
         assertEquals(pids[0],"namespace:1");
         assertEquals(pids[1],"namespace:2");
