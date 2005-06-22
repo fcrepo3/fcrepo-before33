@@ -320,7 +320,7 @@ public class DisseminationService
 
         String callbackRole = bMechPid;
         Hashtable beHash = m_beSS.getSecuritySpec(callbackRole, methodName);
-        boolean callbackBasicAuth = new Boolean((String) beHash.get("callbackBasichAuth")).booleanValue();
+        boolean callbackBasicAuth = new Boolean((String) beHash.get("callbackBasicAuth")).booleanValue();
         boolean callbackSSL = new Boolean((String) beHash.get("callbackSSL")).booleanValue();
         String dsMediatedServletPath = null;
         if (callbackBasicAuth) {
@@ -583,15 +583,13 @@ public class DisseminationService
 	        // Get basicAuth and SSL info about the backend service and use this info to configure the
 	        // "call" to the backend service.
 	        Hashtable beHash = m_beSS.getSecuritySpec(beServiceRole, methodName);
-	        boolean beServiceCallBasicAuth = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
 	        boolean beServiceCallSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
-	        String beServiceCallUsername = (String) beHash.get("callUsername");
-	        String beServiceCallPassword = (String) beHash.get("callPassword");	
-	        
-	        if(isURLFedoraServer(dissURL)) {
-	            dissURL = dissURL.replaceFirst("^http:", "https:");
-	            dissURL = dissURL.replaceFirst(":"+fedoraServerPort, ":"+fedoraServerRedirectPort);
-	            if (fedora.server.Debug.DEBUG) System.out.println("**********getDisseminationContent dissURL changed to: "+dissURL);
+	        String beServiceCallUsername = "";
+	        String beServiceCallPassword = "";	
+	        boolean beServiceCallBasicAuth = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+	        if (beServiceCallBasicAuth) {
+	        	beServiceCallUsername = (String) beHash.get("callUsername");
+	        	beServiceCallPassword = (String) beHash.get("callPassword");	
 	        }
         
 	        if (fedora.server.Debug.DEBUG) {
@@ -925,9 +923,8 @@ public class DisseminationService
       throws GeneralException, HttpServiceNotFoundException {
   	log("in getDisseminationContent(), url=" + url);
   	MIMETypedStream httpContent = null;
-  	try {  		
+  	try {  			
   		HttpClient client = new HttpClient(url); 
-  		
 		Properties serverProperties = ServerUtility.getServerProperties();    
   		client.doAuthnGet(20000, 25, user, pass, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
@@ -938,7 +935,6 @@ public class DisseminationService
                 + url);
   		}          
   		log("in getDisseminationContent(), got 200");
-//comment from earlier implementation; means anything?:  connection.setInstanceFollowRedirects(true);
   		Header[] headers = client.getGetMethod().getResponseHeaders();
   		Property[] headerArray = new Property[headers.length];
   		for (int i = 0; i < headers.length; i++) {
