@@ -162,11 +162,13 @@ public class HttpClient {
     public final String getPort() {
     	return port;
     }
-    
-    private String relativeUrl = null;
-    public String getRelativeUrl() {
-    	return relativeUrl;
+    public String getAbsoluteUrl() {
+    	return absoluteUrl;
     }
+    public String getRelativePath() {
+    	return relativePath;
+    }
+    
     
     private GetMethod getMethod = null;
     public GetMethod getGetMethod() {
@@ -263,6 +265,9 @@ public class HttpClient {
 		log("port="+port);
 		log("relativePath="+relativePath);
 		log("absoluteUrl="+absoluteUrl);
+		this.protocol = protocol;
+		this.host = host;
+		this.port = port;
 
         try {
         	Protocol easyhttps = null;
@@ -297,11 +302,18 @@ public class HttpClient {
         		apacheCommonsClient.getHostConfiguration().setHost(host, sslPort, easyhttps); //required
         	}
         } catch (Exception e) {
+    		log("caught exception");
 	  		log(e.getMessage());
 	  		if (e.getCause() != null) {
 		  		log(e.getCause().getMessage());	  			
 	  		}
         }
+        log("PROTOCOL-=" + getProtocol());
+        log("HOST-=" + getHost());
+  		log("PORT-=" + getPort());
+  		log("REL URL-=" + getRelativePath());
+  		log("ABS URL-=" + getAbsoluteUrl());
+		log("exiting constructor");
     }
 
     public HttpClient(String url) {
