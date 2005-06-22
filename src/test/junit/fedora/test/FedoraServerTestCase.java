@@ -10,7 +10,6 @@ import fedora.server.config.ServerConfiguration;
  */
 public abstract class FedoraServerTestCase extends FedoraTestCase {
     private FedoraServerTestSetup testSetup;
-    private String baseURL;
     
     public FedoraServerTestCase() {
         super();
