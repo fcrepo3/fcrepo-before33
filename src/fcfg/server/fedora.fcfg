@@ -300,7 +300,7 @@
             your users.</comment>
     <param name="maxResults" value="100"/>
     <param name="maxSecondsPerSession" value="100"/>
-    <param name="connectionPool" value="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
   </module>
   <module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
     <comment>Description: Supports the ResourceIndex. Parameters: - level
@@ -349,8 +349,8 @@
   </module>
   <module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
     <comment>This module facilitates obtaining ConnectionPools</comment>
-    <param name="defaultPoolName" value="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-    <param name="poolNames" value="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="defaultPoolName" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="poolNames" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
   </module>
   <module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
     <comment>Description: Supports validation of digital objects, including
