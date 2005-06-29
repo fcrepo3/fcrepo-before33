@@ -89,14 +89,32 @@ public class FedoraServerTestSetup
         try {
 	        Process cp = Runtime.getRuntime().exec(cmd, null);
 	        String line;
-	        BufferedReader input = new BufferedReader(
-	                new InputStreamReader(cp.getInputStream()));
-	        while ((line = input.readLine()) != null) {
-	            System.out.println(line);
+            BufferedReader input = new BufferedReader(
+                    new InputStreamReader(cp.getInputStream()));
+            BufferedReader error = new BufferedReader(
+                    new InputStreamReader(cp.getErrorStream()));
+	        boolean done = false;
+            while (!done)
+            {            
+                line = null;
+                while (!input.ready() && !error.ready()) 
+                {
+    	            Thread.sleep(10);
+                }
+                if (error.ready())
+                {
+                    line = error.readLine();
+                }
+                else if (input.ready())
+                {
+                    line = input.readLine();
+                }
+                System.out.println(line);
 	            // If there's a better way to do this, please go ahead
 	            if ( line.equals("OK") ) break;
 	        }
 	        input.close();
+            error.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
