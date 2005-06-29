@@ -1,4 +1,4 @@
-package fedora.test.integration;
+package fedora.test.integration;  
 
 import java.io.InputStream;
 import java.util.Iterator;
@@ -23,6 +23,7 @@ import fedora.test.FedoraServerTestSetup;
  * Test of API-A-Lite using demo objects
  * 
  * @author Edwin Shin
+ * @author Bill Niebel 
  */
 public class TestAPIALite extends FedoraServerTestCase {
     private static DocumentBuilderFactory factory;
@@ -31,6 +32,8 @@ public class TestAPIALite extends FedoraServerTestCase {
     private static FedoraClient client;
     private static Set demoObjects;
     
+    private static final boolean DEBUG = false;
+        
     public static Test suite() {
         TestSuite suite = new TestSuite(TestAPIALite.class);
         TestSetup wrapper = new TestSetup(suite) {
@@ -52,7 +55,6 @@ public class TestAPIALite extends FedoraServerTestCase {
             }
         };
         return new FedoraServerTestSetup(wrapper);
-                
     }
     
     public void testDescribeRepository() throws Exception {
@@ -62,12 +64,97 @@ public class TestAPIALite extends FedoraServerTestCase {
                                result);
     }
     
-    public void testFindObjects() throws Exception {
-        Document result = getQueryResult("/search?query=pid%7Edemo:*&pid=true&maxResults=100&xml=true");
-        assertXpathExists("/" + NS_FEDORA_TYPES_PREFIX + ":result/" + 
-                          NS_FEDORA_TYPES_PREFIX + ":resultList/" + 
-                          NS_FEDORA_TYPES_PREFIX + ":objectFields/" + 
-                          NS_FEDORA_TYPES_PREFIX + ":pid", result);
+    private class UrlString {
+    	StringBuffer buffer = null;
+    	String parmPrefix = "?";
+    	UrlString(String buffer) {
+    		this.buffer = new StringBuffer(buffer);
+    	}
+    	void append(String name, String value) {
+    		buffer.append(parmPrefix + name + "=" + value.replaceAll("=","%7E"));
+    		if ("?".equals(parmPrefix)) {
+    			parmPrefix = "&";
+    		}
+    	}
+    	public String toString() {
+    		return buffer.toString();
+    	}
+    }
+    
+    public /*static*/ final String getFindObjectsUrl(String query, int maxResults, boolean xml, String sessionToken) {
+    	//method can't be static because it contains this inner class:
+    	UrlString url = new UrlString("/search");
+    	if (query != null) {
+    		url.append("query", query);
+    	}
+    	url.append("pid", "true");    	
+    	url.append("maxResults", Integer.toString(maxResults));
+    	url.append("xml", Boolean.toString(xml));
+    	if (sessionToken != null) {
+        	url.append("sessionToken", sessionToken);    		
+    	}
+    	return url.toString();
+    }
+    
+    public static final String getFedoraXPath(String inpath) {
+    	inpath = inpath.replaceAll("/@", "@@"); //i.e., exclude from next replaceAll
+    	inpath = inpath.replaceAll("/", "/" + NS_FEDORA_TYPES_PREFIX + ":");    	
+    	inpath = inpath.replaceAll("@@", "/@"); //"
+    	inpath = inpath.replaceAll("@", "@" + NS_FEDORA_TYPES_PREFIX + ":");
+    	return inpath;
+    }
+    
+    private static final String XPATH_XML_FIND_OBJECTS_SESSION_TOKEN = getFedoraXPath("/result/listSession/token");
+    private static final String XPATH_XML_FIND_OBJECTS_CURSOR = getFedoraXPath("/result/listSession/cursor");
+    private static final String XPATH_XML_FIND_OBJECTS_PID = getFedoraXPath("/result/resultList/objectFields/pid");
+    private static final String XPATH_XML_FIND_OBJECTS_COUNT_PIDS = getFedoraXPath("count(/result/resultList/objectFields/pid)");
+    
+    public void commonResumeFindObjectsXML(int maxResults) throws Exception {
+        String sessionToken = null;
+		boolean again = true;
+		int cursorShouldBe = 0;
+		int hitsOnAllPages = 0;
+		while (again) { 	       
+			String url = getFindObjectsUrl("pid=demo:*", maxResults, true, sessionToken);
+			Document result = getQueryResult(url);
+			SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
+	        sessionToken = simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_SESSION_TOKEN, result);
+	        if (DEBUG) System.err.println("sessionToken=" + sessionToken);
+	        again = (sessionToken != null) && ! "".equals(sessionToken);
+	        	        
+			int hitsOnThisPage = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_COUNT_PIDS, result));
+			if (DEBUG) System.err.println("hitsOnThisPage=" + hitsOnThisPage);
+	        
+	        assertXpathExists(XPATH_XML_FIND_OBJECTS_PID, result);
+        	String cursor = simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_CURSOR, result);
+        	if (DEBUG) System.err.println("cursor=" + cursor);
+        	if (again) assertEquals(cursorShouldBe, Integer.parseInt(cursor)); //CONDITIONAL TO WORK AROUND A PROBABLE BUG IN SERVER CODE.
+	        
+        	assertTrue(hitsOnThisPage <= maxResults);
+			if (hitsOnThisPage < maxResults) {
+				assertTrue((sessionToken == null) || "".equals(sessionToken));
+			}
+			
+			if (DEBUG) System.err.println("getNDemoObjects()" + demoObjects.size());
+			
+			assertTrue (hitsOnThisPage <= demoObjects.size());
+
+			hitsOnAllPages += hitsOnThisPage;
+			assertTrue(hitsOnAllPages <= demoObjects.size());
+			assertEquals (hitsOnAllPages == demoObjects.size(), (sessionToken == null) || "".equals(sessionToken)); 
+			assertEquals(hitsOnAllPages < demoObjects.size(), (sessionToken != null) && ! "".equals(sessionToken)); 
+
+	        cursorShouldBe += maxResults;
+		}
+		assertTrue(hitsOnAllPages == demoObjects.size());
+    }    
+
+    public void testFindObjectsXML() throws Exception {
+    	commonResumeFindObjectsXML(1000000);
+    }
+    
+    public void testResumeFindObjectsXML() throws Exception {
+    	commonResumeFindObjectsXML(10);
     }
     
     public void testGetDatastreamDissemination() throws Exception {
@@ -122,10 +209,6 @@ public class TestAPIALite extends FedoraServerTestCase {
 	        result = getQueryResult("/listMethods/" + (String)it.next() + "?xml=true");
 	        assertXpathExists("/objectMethods", result);
         }
-    }
-    
-    public void testResumeFindObjects() {
-        
     }
     
     /**
