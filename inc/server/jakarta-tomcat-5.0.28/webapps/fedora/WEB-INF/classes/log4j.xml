@@ -8,12 +8,24 @@
     </layout>
   </appender>
   
+  <appender name="RI" class="org.apache.log4j.FileAppender">
+    <param name="File" value="/tmp/fedora/log/ri.log"/> 
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%p %d{ISO8601} %c{1}> %m%n"/>
+    </layout>
+  </appender>
+  
   <category name="org.kowari">
     <priority value="WARN"/>
   </category>
 
   <category name="org.trippi">
     <priority value="WARN" />
+  </category>
+  
+  <category name="fedora.server.resourceIndex.ResourceIndex">
+	<priority value="DEBUG"/>
+    <appender-ref ref="RI"/>
   </category>
 
   <root>

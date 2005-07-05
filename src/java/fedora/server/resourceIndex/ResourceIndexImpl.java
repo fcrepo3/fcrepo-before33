@@ -19,6 +19,10 @@ import javax.wsdl.*;
 import javax.xml.namespace.QName;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
@@ -36,9 +40,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.URIReference;
 
 import org.trippi.RDFFormat;
 import org.trippi.TripleMaker;
@@ -63,6 +70,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     //		- subsequent insert/edits/deletes
     //		- changes in levels
     //      - clean up/separate out sql/database calls
+	
+	private static final Logger logger =
+        Logger.getLogger(ResourceIndex.class.getName());
     
     private int m_indexLevel;
     
@@ -127,6 +137,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         RIQueue tripleQ = new RIQueue();
         
         String pid = digitalObject.getPid();
+        logger.debug("+ adding " + pid);
 		String doIdentifier = getDOURI(digitalObject);
 		
 		// Insert basic system metadata
@@ -179,6 +190,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
 		// No errors, so add the triples
         addQueue(tripleQ, false);
+        logger.debug("+ added " + pid);
 	}
 	
     /**
@@ -334,6 +346,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
         
+        String pid = digitalObject.getPid();
+        logger.debug("- deleting " + pid);
         Iterator it;
         
         // Delete disseminators
@@ -351,12 +365,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
         try {
-            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doURI), null, null, 0), false);
-        } catch (IOException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
+        	deleteTriples(findTriples(TripleMaker.createResource(doURI), null, null, 0), false);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
+        logger.debug("- deleted " + pid);
 	}
 
 	private void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
@@ -370,9 +383,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
         // DELETE statements where datastreamURI is subject
         try {
-            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), false);
-        } catch (IOException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
+            deleteTriples(findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), false);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -406,13 +417,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
         // delete bMech reference: 
         try {
-            m_writer.delete(m_reader.findTriples(TripleMaker.createResource(doIdentifier), 
+            deleteTriples(findTriples(TripleMaker.createResource(doIdentifier), 
                                                  MODEL.USES_BMECH, 
                                                  TripleMaker.createResource(getDOURI(bMechPID)), 
                                                  0), 
-                            false);
-        } catch (IOException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
+                          false);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
@@ -435,7 +444,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             while (rs.next()) {
                 permutation = rs.getString("permutation");
                 rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                m_writer.delete(m_reader.findTriples(TripleMaker.createResource(rep), null, null, 0), false);
+                deleteTriples(findTriples(TripleMaker.createResource(rep), null, null, 0), false);
             }
             delete = conn.createStatement();
             if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_BMECH_OBJECT) {
@@ -444,8 +453,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 delete.execute(deleteRIMIB);
             }
         } catch (SQLException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
@@ -469,6 +476,40 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
 	}
     
+	private void deleteTriples(TripleIterator ti, boolean flush) throws ResourceIndexException {
+		File tempFile = null;
+		try {
+			if (logger.isDebugEnabled()) {
+				tempFile = File.createTempFile("trippi-deltriples", "txt");
+                FileOutputStream fout = new FileOutputStream(tempFile);
+                ti.toStream(fout, RDFFormat.TURTLE);
+                fout.close();
+                ti.close();
+                ti = TripleIterator.fromStream(new FileInputStream(tempFile), RDFFormat.TURTLE);
+				OutputStream os = new ByteArrayOutputStream();
+                ti.toStream(os, RDFFormat.TURTLE);
+                logger.debug("delete:\n" + os.toString());
+				/*
+                while(ti.hasNext()) {
+					org.jrdf.graph.Triple t = ti.next();
+					logger.debug(t.getSubject().toString() + " " + 
+							     t.getPredicate().toString() + " " + 
+								 t.getObject().toString());
+				}
+				*/
+				ti.close();
+				ti = TripleIterator.fromStream(new FileInputStream(tempFile), RDFFormat.TURTLE);
+			}
+			m_writer.delete(ti, flush);
+		} catch (IOException e) {
+			throw new ResourceIndexException(e.getMessage(), e);
+		} catch (TrippiException e) {
+			throw new ResourceIndexException(e.getMessage(), e);
+		} finally {
+            if (tempFile != null) tempFile.delete();
+        }
+	}
+	
     public void commit() throws ResourceIndexException {
         try {
             m_writer.flushBuffer();
@@ -483,13 +524,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
      * 
      * @param out
      * @param format
-     * @throws IOException
-     * @throws TrippiException
+     * @throws ResourceIndexException
      */
     public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
         commit();
         try {
-            TripleIterator it = m_reader.findTriples(null, null, null, 0);
+            TripleIterator it = findTriples(null, null, null, 0);
             it.setAliasMap(namespaces);
             it.toStream(out, format);
         } catch (TrippiException e) {
@@ -1164,6 +1204,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
    
     private void addQueue(RIQueue queue, boolean flush) throws ResourceIndexException {
         try {
+        	if (logger.isDebugEnabled()) {
+        		TripleIterator ti = queue.getTripleIterator();
+        		OutputStream os = new ByteArrayOutputStream();
+                ti.toStream(os, RDFFormat.TURTLE);
+                logger.debug("add: \n" + os.toString());
+        	}
             m_writer.add(queue.listTriples(), flush);
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
@@ -1195,6 +1241,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                     String tupleQuery,
                                     int limit,
                                     boolean distinct) throws TrippiException {
+    	logger.debug("findTuples() \n" +
+			     "  queryLang: " + queryLang + "\n" +
+			     "  tupleQuery: " + tupleQuery + "\n" +
+				 "  limit: " + limit + "\n" +
+				 "  distinct: " + distinct + "\n");
         return m_reader.findTuples(queryLang, tupleQuery, limit, distinct);
     }
 
@@ -1215,6 +1266,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                       String tripleQuery,
                                       int limit,
                                       boolean distinct) throws TrippiException {
+    	logger.debug("findTriples() \n" +
+    			     "  queryLang: " + queryLang + "\n" +
+    			     "  tripleQuery: " + tripleQuery + "\n" +
+					 "  limit: " + limit + "\n" +
+					 "  distinct: " + distinct + "\n");
         return m_reader.findTriples(queryLang, tripleQuery, limit, distinct);
     }
 
@@ -1235,6 +1291,11 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                       PredicateNode predicate,
                                       ObjectNode object,
                                       int limit) throws TrippiException {
+    	logger.debug("findTriples() \n" +
+			     "  subject: " + subject + "\n" +
+			     "  predicate: " + predicate + "\n" +
+				 "  object: " + object + "\n" +
+				 "  limit: " + limit + "\n");
         return m_reader.findTriples(subject, predicate, object, limit);
     }
 
@@ -1256,6 +1317,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                                       String tripleTemplate,
                                       int limit,
                                       boolean distinct) throws TrippiException {
+    	logger.debug("findTriples() \n" +
+			     "  queryLang: " + queryLang + "\n" +
+			     "  tripleQuery: " + tripleQuery + "\n" +
+			     "  tripleTemplate: " + tripleTemplate + "\n" +
+				 "  limit: " + limit + "\n" +
+				 "  distinct: " + distinct + "\n");
         return m_reader.findTriples(queryLang, tripleQuery, tripleTemplate, limit, distinct);
     }
 

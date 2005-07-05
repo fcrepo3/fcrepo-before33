@@ -1,11 +1,19 @@
 package fedora.server.resourceIndex;
 
+import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.jrdf.graph.Literal;
+import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
+import org.trippi.RDFFormat;
+import org.trippi.TripleIterator;
 import org.trippi.TripleMaker;
 import org.trippi.TrippiException;
 
@@ -35,6 +43,37 @@ public class RIQueue implements Constants {
 
     public List listTriples() {
         return m_triples;
+    }
+    
+    public TripleIterator getTripleIterator() throws ResourceIndexException {
+    	Iterator it = listTriples().iterator();
+    	StringBuffer sb = new StringBuffer();
+		sb.append("\n");
+		while (it.hasNext()) {
+			org.jrdf.graph.Triple t = (org.jrdf.graph.Triple)it.next();
+			sb.append("<" + t.getSubject().toString() + "> " + 
+					  "<" + t.getPredicate().toString() + "> ");
+			ObjectNode on = t.getObject();
+			if (on instanceof Literal) {
+				Literal lit = (Literal) on;
+				sb.append("\"" + lit.getEscapedForm() + "\"");
+				if (lit.getDatatypeURI() != null) {
+					sb.append("^^<" + lit.getDatatypeURI() + ">");
+				} // omitting check for other kinds of literals
+			} else {
+				// assume it's a URI
+				sb.append("<" + on.toString() + ">");
+			}
+			sb.append(" .\n");
+		}
+		try {
+			return TripleIterator.fromStream(new ByteArrayInputStream(sb.toString().getBytes("UTF-8")), RDFFormat.N_TRIPLES) ;
+		} catch (UnsupportedEncodingException e) {
+			// should never get thrown for UTF-8
+			throw new ResourceIndexException(e.getMessage(), e);
+		} catch (TrippiException e) {
+			throw new ResourceIndexException(e.getMessage(), e);
+		}
     }
     
     /**
