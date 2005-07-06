@@ -39,7 +39,7 @@ public class TextContentEditor
     public static String[] s_types=new String[] {
             "text/xml", "text/plain", "text/html", "text/css", "text/html", 
             "text/sgml", "text/tab-separated-values", 
-            "text/xml-external-parsed-entity" };
+            "text/xml-external-parsed-entity", "application/xml" };
 
     protected boolean m_dirty;
     protected ActionListener m_dataChangeListener;
