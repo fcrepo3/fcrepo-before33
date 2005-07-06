@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import org.trippi.*;
+import org.trippi.impl.multi.*;
 import org.jrdf.graph.*;
 
 import fedora.server.*;
@@ -106,6 +107,31 @@ public class ResourceIndexModule extends Module
         try {
             m_conn = TriplestoreConnector.init(connectorClassName,
                                                map);
+
+            // Make a MultiConnector if any mirrors are specified
+            String mirrors = getParameter("mirrors");
+            if (mirrors != null) {
+                mirrors = mirrors.trim();
+                if (mirrors.length() > 0) {
+                    String[] mirrorList = mirrors.replaceAll(" +", ",").split(",");
+                    // make sure they exist first
+                    for (int i = 0; i < mirrorList.length; i++) {
+                        Parameterized mConf = getServer().getDatastoreConfig(mirrorList[i]);
+                        if (mConf == null) {
+                            throw new ModuleInitializationException("No such datastore: " + mirrorList[i], getRole());
+                        }
+                    }
+                    // then put them into the array
+                    TriplestoreConnector[] connectors = new TriplestoreConnector[mirrors.length() + 1];
+                    connectors[0] = m_conn;
+                    for (int i = 0; i < mirrorList.length; i++) {
+                        Map mMap = getServer().getDatastoreConfig(mirrorList[i]).getParameters();
+                        String mClass = (String) mMap.get("connectorClassName");
+                        connectors[i+1] = TriplestoreConnector.init(mClass, mMap);
+                    }
+                    m_conn = new MultiConnector(connectors);
+                }
+            }
             try {
                 m_resourceIndex = new ResourceIndexImpl(m_level, m_conn, cPool, aliasMap, this);
             } catch (ResourceIndexException e) {
@@ -113,6 +139,7 @@ public class ResourceIndexModule extends Module
                        + "connection pool.", getRole(), e);
             } 
         } catch (TrippiException e) {
+            e.printStackTrace();
             throw new ModuleInitializationException("Error initializing "
                     + "triplestore connector.", getRole(), e);
         } catch (ClassNotFoundException e) {
