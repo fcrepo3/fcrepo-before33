@@ -15,49 +15,121 @@ import java.io.PrintStream;
  */
 public class ExecUtility {
     public static Process exec(String cmd) {
-        return exec(cmd, null, System.out);
+        return exec(cmd, null, System.out, null);
     }
 
     public static Process exec(String cmd, OutputStream out) {
-        return exec(cmd, null, out);
+        return exec(cmd, null, out, null);
     }
 
     public static Process exec(String cmd, File dir) {
-        return exec(cmd, dir, System.out);
+        return exec(cmd, dir, System.out, null);
     }
 
-    public static Process exec(String cmd, File dir, OutputStream out) {
+    public static Process exec(String cmd, File dir, OutputStream out, OutputStream err) {
         Process cp = null;
         try {
-            if (dir == null) {
+            if (dir == null) 
+            {
                 cp = Runtime.getRuntime().exec(cmd, null);
-            } else {
+            } 
+            else 
+            {
                 cp = Runtime.getRuntime().exec(cmd, null, dir);
             }
 
             // Print stdio of cmd
-            if (out != null) {
+            if (out != null)
+            {
                 PrintStream pout = new PrintStream(out);
-                String line;
+                PrintStream perr = null;
+                if (err != null)
+                {
+                    if (out == err)
+                    {
+                        perr = pout;
+                    }
+                    else
+                    {
+                        perr = new PrintStream(err);
+                    }
+                }
+                String err_line;
+                String in_line;
                 BufferedReader input = new BufferedReader(
                         new InputStreamReader(cp.getInputStream()));
-                while ((line = input.readLine()) != null) {
-                    pout.println(line);
+                BufferedReader error = new BufferedReader(
+                        new InputStreamReader(cp.getErrorStream()));
+                while (true)
+                {
+                    try {
+                        int val = cp.exitValue();
+                        break; // process exited, 
+                    }
+                    catch (IllegalThreadStateException e)
+                    {
+                        // process has not terminated check for output
+                        if (error.ready())
+                        {
+                            err_line = error.readLine();
+                            perr.println(err_line);
+                        }
+                        else if (input.ready())
+                        {
+                            in_line = input.readLine();
+                            pout.println(in_line);
+                        }
+                        else 
+                        {
+                            try {
+                                Thread.sleep(10);
+                            }
+                            catch (InterruptedException ie)
+                            {
+                                // don't worry, be happy
+                            }
+                        }
+                    }
                 }
                 input.close();
+                error.close();
             }
-        } catch (IOException e) {
+        } 
+        catch (IOException e) 
+        {
             e.printStackTrace();
         }
         return cp;
     }
     
-    public static Process execCommandLineUtility(String cmd) {
+    public static Process execCommandLineUtility(String cmd) 
+    {
         String osName = System.getProperty("os.name");
-        if (osName.startsWith("Windows")) {
+        if (osName.startsWith("Windows")) 
+        {
             cmd = "cmd.exe /C " + cmd;
         }
-        return exec(cmd, null, System.out);
+        return exec(cmd, null, System.out, null);
+    }
+
+    public static Process execCommandLineUtilityWError(String cmd) 
+    {
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Windows")) 
+        {
+            cmd = "cmd.exe /C " + cmd;
+        }
+        return exec(cmd, null, System.out, System.err);
+    }
+    
+    public static Process execCommandLineUtility(String cmd, OutputStream out, OutputStream err) 
+    {
+        String osName = System.getProperty("os.name");
+        if (osName.startsWith("Windows")) 
+        {
+            cmd = "cmd.exe /C " + cmd;
+        }
+        return exec(cmd, null, out, err);
     }
 
     public static Process altExec(String command) {

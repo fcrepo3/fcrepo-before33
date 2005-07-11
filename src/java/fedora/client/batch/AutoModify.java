@@ -69,7 +69,7 @@ public class AutoModify
 
       AutoModify.s_APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
       AutoModify.s_APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-      AutoModify.s_UPLOADER = new Uploader(host, port, user, pass);
+      AutoModify.s_UPLOADER = new Uploader(protocol, host, port, user, pass);
 
   }
 

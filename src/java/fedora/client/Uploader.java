@@ -39,6 +39,16 @@ public class Uploader {
         m_uploadURL=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/management/upload";
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
+    
+    /**
+     * Construct an uploader to a certain repository as a certain user.
+     */
+    public Uploader(String protocol, String host, int port, String user, String pass)
+            throws IOException 
+    {
+        m_uploadURL = protocol + "://" + host + ":" + port + "/fedora/management/upload";
+        m_creds = new UsernamePasswordCredentials(user, pass);
+    }
 
     /**
      * Send the data from the stream to the server.
