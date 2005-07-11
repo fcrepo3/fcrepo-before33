@@ -7,7 +7,22 @@ set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
 :runMinimized
-%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest %1 %2 %3 %4 %5 %6 %7 %8 %9 %10 %11
+set arg1=%1
+set arg2=%2
+set arg3=%3
+set arg4=%4
+set arg5=%5
+set arg6=%6
+set arg7=%7
+set arg8=%8
+set arg9=%9
+shift
+shift
+shift
+set arg10=%7
+set arg11=%8
+
+%JAVA_HOME%\bin\java -Xms64m -Xmx96m -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar -Dfedora.home=%FEDORA_HOME% -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl fedora.client.utility.ingest.Ingest %arg1% %arg2% %arg3% %arg4% %arg5% %arg6% %arg7% %arg8% %arg9% %arg10% %arg11%
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 
