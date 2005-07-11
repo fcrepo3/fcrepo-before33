@@ -32,12 +32,12 @@ public class TestFedoraConfigurations extends FedoraTestCase {
     
     public static Test suite() {
         TestSuite suite = new TestSuite();
-        
-        // Add the TestSuite that should be run through once for each 
-        // configuration
-        //addTestToSuite(suite, SuiteQuux.suite());
-        //addTestToSuite(suite, TestAPIALite.suite());
+
+        // For all configurations, test the apis
         addTestToSuite(suite, TestAPIM.suite());
+        addTestToSuite(suite, TestAPIMLite.suite());
+        addTestToSuite(suite, TestAPIA.suite());
+        addTestToSuite(suite, TestAPIALite.suite());
         
         return suite;
     }
