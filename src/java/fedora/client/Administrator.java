@@ -120,16 +120,15 @@ public class Administrator extends JFrame {
         s_maxButtonHeight=new JTextField("test").getPreferredSize().height;
         BACKGROUND_COLOR=new JPanel().getBackground();
 
-        /*
         if (host!=null) {
             // already must have passed through non-interactive login
             try {
-            APIA=APIAStubFactory.getStub(host, port, user, pass);
-            APIM=APIMStubFactory.getStub(host, port, user, pass);;
-            setLoginInfo(host, port, user, pass);
+            APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+            APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);;
+            setLoginInfo(protocol, host, port, user, pass);
             } catch (Exception e) { APIA=null; APIM=null; }
         }
-        */
+        
         if (System.getProperty("fedora.home")!=null) {
             File f=new File(System.getProperty("fedora.home"));
             if (f.exists() && f.isDirectory()) {
