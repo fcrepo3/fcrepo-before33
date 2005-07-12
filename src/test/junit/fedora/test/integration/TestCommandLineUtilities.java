@@ -84,6 +84,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals(out.indexOf("Ingested PID: demo:5")!= -1, true );
+        System.out.println("Purge and ingest test succeeded");
     }
     
     public void testBatchBuildAndBatchIngestAndPurge()
@@ -92,13 +93,13 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         batchBuild(new File("dist/client/demo/batch-demo/foxml-template.xml"),
                    new File("dist/client/demo/batch-demo/object-specifics"),
                    new File("dist/client/demo/batch-demo/objects"),
-                   new File("dist/client/demo/batch-demo/build.log"));
+                   new File("dist/client/logs/build.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals(err.indexOf("10 Fedora null XML documents successfully created")!= -1, true );
         System.out.println("Ingesting batch objects");
         batchIngest(new File("dist/client/demo/batch-demo/objects"), 
-                    new File("dist/client/demo/batch-demo/ingest.log"));
+                    new File("dist/client/logs/ingest.log"));
         out = sbOut.toString();
         err = sbErr.toString();
         assertEquals(err.indexOf("10 objects successfully ingested into Fedora")!= -1, true ); 
@@ -106,6 +107,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                                "demo:3015", "demo:3016", "demo:3017", "demo:3018", "demo:3019"};
         System.out.println("Purging batch objects");
         purgeAll(batchObjs);
+        System.out.println("Build and ingest test succeeded");
     }
 
     public void testBatchBuildIngestAndPurge()
@@ -114,7 +116,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         batchBuildIngest(new File("dist/client/demo/batch-demo/foxml-template.xml"),
                    new File("dist/client/demo/batch-demo/object-specifics"),
                    new File("dist/client/demo/batch-demo/objects"),
-                   new File("dist/client/demo/batch-demo/build.log"));
+                   new File("dist/client/logs/buildingest.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals(err.indexOf("10 Fedora null XML documents successfully created")!= -1, true );
@@ -123,28 +125,46 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                                "demo:3015", "demo:3016", "demo:3017", "demo:3018", "demo:3019"};
         System.out.println("Purging batch objects");
         purgeAll(batchObjs);
+        System.out.println("Build/ingest test succeeded");
     }    
     
     public void testBatchModify()
     {
         System.out.println("Running batch modify of objects");
         batchModify(new File("dist/client/demo/batch-demo/modify-batch-directives.xml"),
-                    new File("dist/client/demo/batch-demo/modify.log"));
+                    new File("dist/client/logs/modify.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals(out.indexOf("24 modify directives successfully processed.")!= -1, true );
         assertEquals(out.indexOf("0 modify directives failed.")!= -1, true );
         System.out.println("Purging batch modify object");
         purge("demo:32");
+        System.out.println("Batch modify test succeeded");
     }
     
     public void testExport()
     {
+        System.out.println("Testing fedora-export");
+        File outFile = new File("dist/client/demo/batch-demo/demo_5.xml");
+        String absPath = outFile.getAbsolutePath();
+        if (outFile.exists())
+        {
+            outFile.delete();
+        }
         System.out.println("Exporting object demo:5");
         exportObj("demo:5", new File("dist/client/demo/batch-demo"));
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals(out.indexOf("Exported demo:5")!= -1, true );
+        File outFile2 = new File("dist/client/demo/batch-demo/demo_5.xml");
+        String absPath2 = outFile2.getAbsolutePath();
+        assertEquals(outFile2.exists(), true );
+        System.out.println("Deleting exported file");
+        if (outFile2.exists())
+        {
+            outFile2.delete();
+        }
+        System.out.println("Export test succeeded");
     }
     
     

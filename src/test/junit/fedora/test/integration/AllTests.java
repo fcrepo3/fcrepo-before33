@@ -19,6 +19,7 @@ public class AllTests {
         TestSuite suite = new TestSuite("All API tests");
         //$JUnit-BEGIN$
         suite.addTest(TestIngestDemoObjects.suite());
+        suite.addTest(TestCommandLineUtilities.suite());
         suite.addTest(AllAPITests.suite());
         suite.addTest(TestFedoraConfigurations.suite());
         // add more tests here
