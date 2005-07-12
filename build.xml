@@ -1090,7 +1090,7 @@
     <target name="compile-junit" depends="junit-prep">
         <javac fork="yes"
                srcdir="${junit.src.dir}" includes="**/*.java"
-               destdir="${test.build.dir}">
+               destdir="${test.build.dir}" debug="on">
             <classpath refid="test.path"/>
         </javac>
     </target>
