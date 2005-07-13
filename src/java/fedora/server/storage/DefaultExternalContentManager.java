@@ -109,28 +109,30 @@ public class DefaultExternalContentManager extends Module
   		String backendPassword = "";
   		boolean backendSSL = false;
   		String modURL = url;
-			if (isURLFedoraServer(modURL)) {
-			    BackendSecuritySpec m_beSS;
-	        BackendSecurity m_beSecurity = (BackendSecurity) getServer().getModule("fedora.server.security.BackendSecurity");
-	        try {
-	            m_beSS = m_beSecurity.getBackendSecuritySpec();
-	        } catch (Exception e) {
-	            throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule", getRole());
-	        }	            
-	        Hashtable beHash = m_beSS.getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
-	        backendUsername = (String) beHash.get("callUsername");
-	        backendPassword = (String) beHash.get("callPassword");	            
-	        backendSSL = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
-	        if (backendSSL) {
-	            modURL = modURL.replaceFirst("http:", "https:");
-	            modURL = modURL.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
-	        }    
-			}
-			if (fedora.server.Debug.DEBUG) {
-			    System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
-			    System.out.println("************************* doAuthnGetURL: "+modURL);
-			}
-			HttpClient client = new HttpClient(modURL);
+		if (isURLFedoraServer(modURL)) {
+		    BackendSecuritySpec m_beSS;
+		    BackendSecurity m_beSecurity = (BackendSecurity) getServer().getModule("fedora.server.security.BackendSecurity");
+		    try {
+		    	m_beSS = m_beSecurity.getBackendSecuritySpec();
+		    } catch (Exception e) {
+		    	throw new ModuleInitializationException("Can't intitialize BackendSecurity module (in default access) from Server.getModule", getRole());
+		    }	            
+		    Hashtable beHash = m_beSS.getSecuritySpec(BackendPolicies.FEDORA_INTERNAL_CALL);
+		    backendUsername = (String) beHash.get("callUsername");
+		    backendPassword = (String) beHash.get("callPassword");	            
+		    backendSSL = new Boolean((String) beHash.get("callBasicAuth")).booleanValue();
+		    if (backendSSL) {
+		    	if (modURL.startsWith("http:")) {
+		    		modURL = modURL.replaceFirst("http:", "https:");
+		    	}
+		    	modURL = modURL.replaceFirst(":"+fedoraServerPort+"/", ":"+fedoraServerRedirectPort+"/");
+		    }    
+		}
+		if (fedora.server.Debug.DEBUG) {
+		   	System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
+		   	System.out.println("************************* doAuthnGetURL: "+modURL);
+		}
+		HttpClient client = new HttpClient(modURL);
   		client.doAuthnGet(20000, 25, backendUsername, backendPassword, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
