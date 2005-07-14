@@ -60,7 +60,8 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     JButton deleteUserClass = null;
     static String fedoraHome;
     static String configDir = "server/config";
-    static String generatedRepositoryDir = "server\\config\\xacml-policies\\active\\repository-policies-generated";
+    static File generatedRepositoryDir = null;
+    static File policyEditorStateDir = null;
     FedoraSystemModel treeModel = null;
     FedoraNode rootNode = null;
     boolean dirty = false;
@@ -100,7 +101,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         {
             System.exit(0);
         }       
-        generatedRepositoryDir = loadGeneratedPolicyDirFromConfig(fedoraHome, configDir);
+        loadGeneratedPolicyDirFromConfig(fedoraHome, configDir);
         mainWin = new PolicyEditor();
         mainWin.init();
         mainWin.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -111,7 +112,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         mainWin.show();
     }
 
-    public static String loadGeneratedPolicyDirFromConfig(String fedoraHome, String configDir)
+    public static void loadGeneratedPolicyDirFromConfig(String fedoraHome, String configDir)
     {
         String param = Utility.getParamFromConfig(fedoraHome, configDir, 
                                                   "fedora.server.security.Authorization",
@@ -122,7 +123,12 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
 //            File paramFile = new File(configdirFile, param.substring(1));
 //            param = paramFile.getAbsolutePath();
 //        }
-        return(param);
+        generatedRepositoryDir = new File(param);
+        policyEditorStateDir = new File(generatedRepositoryDir.getParentFile(), "policy-editor-state"); 
+        if (!policyEditorStateDir.exists())
+        {
+            policyEditorStateDir.mkdir();
+        }       
     }
     
     
@@ -184,8 +190,8 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         tab.addTab("Define classes of users", panelCenter);
         
-        loadRuleDefinitions(generatedRepositoryDir);       
-        loadPolicyAssignments(generatedRepositoryDir);       
+        loadRuleDefinitions(policyEditorStateDir);       
+        loadPolicyAssignments(policyEditorStateDir);       
         treeTable.expandNodes();
         this.setSize(700,500);
     }
@@ -198,10 +204,10 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
             jJMenuBar = new JMenuBar();
             JMenu fileMenu = new JMenu("File");
             fileMenu.setMnemonic(KeyEvent.VK_F);
-            fileMenu.add(makeMenuItem("Save Policy Def...", KeyEvent.VK_S, KeyEvent.VK_S, ActionEvent.CTRL_MASK, null, true));
+            fileMenu.add(makeMenuItem("Save Settings/Generate Policies...", KeyEvent.VK_S, KeyEvent.VK_S, ActionEvent.CTRL_MASK, null, true));
             fileMenu.add(makeMenuItem("Set Fedora Home...", KeyEvent.VK_F, KeyEvent.VK_R, ActionEvent.CTRL_MASK, null, true));
             fileMenu.add(makeMenuItem("Revert to Saved Version", KeyEvent.VK_R, 0, 0, null, true));
-            fileMenu.add(makeMenuItem("Generate Policies...", KeyEvent.VK_A, 0, 0, null, true));
+     //       fileMenu.add(makeMenuItem("Generate Policies...", KeyEvent.VK_A, 0, 0, null, true));
             fileMenu.addSeparator();
             fileMenu.add(makeMenuItem("Exit", KeyEvent.VK_X, 0, 0, null, true));
             jJMenuBar.add(fileMenu);
@@ -262,18 +268,17 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         return(item);
     }
 
-    private File getDataFile(String generatedRepositoryDir, String fname)
+    private File getDataFile(File policyEditorStateDir, String fname)
     {
-        File dir = new File(generatedRepositoryDir);
-        if (!dir.exists() && !dir.mkdirs()) return(null);
-        File file = new File(dir, fname);
+        if (!policyEditorStateDir.exists() && !policyEditorStateDir.mkdirs()) return(null);
+        File file = new File(policyEditorStateDir, fname);
         return(file);
     }
     
     
-    public void loadRuleDefinitions(String generatedRepositoryDir)
+    public void loadRuleDefinitions(File policyEditorStateDir)
     {
-        File dataFile = getDataFile(generatedRepositoryDir, "GroupDefInfo.xml");
+        File dataFile = getDataFile(policyEditorStateDir, "GroupDefInfo.xml");
         if (dataFile.exists())
         {
             PolicyEditorInputkXML.readFile(dataFile);
@@ -284,9 +289,9 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         }
     }   
     
-    public void loadPolicyAssignments(String generatedRepositoryDir)
+    public void loadPolicyAssignments(File policyEditorStateDir)
     {
-        File dataFile = getDataFile(generatedRepositoryDir, "PolicySaveInfo.xml");
+        File dataFile = getDataFile(policyEditorStateDir, "PolicySaveInfo.xml");
         if (dataFile.exists())
         {
             PolicyEditorInputkXML.readFile(dataFile);
@@ -294,9 +299,9 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     }   
 
     
-    public void savePolicies(String generatedRepositoryDir)
+    public void savePolicies(File policyEditorStateDir)
     {
-        File dataFile = getDataFile(generatedRepositoryDir, "PolicySaveInfo.xml");
+        File dataFile = getDataFile(policyEditorStateDir, "PolicySaveInfo.xml");
         try
         {
              OutputStream out = new FileOutputStream(dataFile);
@@ -314,7 +319,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        File dataFile2 = getDataFile(generatedRepositoryDir, "GroupDefInfo.xml");
+        File dataFile2 = getDataFile(policyEditorStateDir, "GroupDefInfo.xml");
         try
         {
              OutputStream out = new FileOutputStream(dataFile2);
@@ -342,13 +347,14 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         {
             mainWin.windowClosing(null);  
         }
-        else if (e.getActionCommand().startsWith("Generate"))
+ /*       else if (e.getActionCommand().startsWith("Generate"))
         {
             writePolicies(generatedRepositoryDir, rootNode); 
-        }
+        }*/
         else if (e.getActionCommand().startsWith("Save"))
         {
-            savePolicies(generatedRepositoryDir); 
+            savePolicies(policyEditorStateDir); 
+            writePolicies(generatedRepositoryDir, rootNode); 
             clearDirty();
         }
         else if (e.getActionCommand().startsWith("Revert"))
@@ -360,8 +366,8 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
             
             treeModel = new FedoraSystemModel(rootNode);
             treeTable.setModel(treeModel);
-            loadRuleDefinitions(generatedRepositoryDir);       
-            loadPolicyAssignments(generatedRepositoryDir);
+            loadRuleDefinitions(policyEditorStateDir);       
+            loadPolicyAssignments(policyEditorStateDir);
             clearDirty();
             treeTable.expandNodes();
         }
@@ -475,12 +481,11 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
 
     }
     
-    public void writePolicies(String generatedRepositoryDir, FedoraNode rootNode)
+    public void writePolicies(File generatedRepositoryDir, FedoraNode rootNode)
     {
-        File dir = new File(generatedRepositoryDir);
         StatusDialog status = new StatusDialog(this, "Writing Policies");
         
-        RunnableCommand com = new RunnableCommand(rootNode, dir, status)
+        RunnableCommand com = new RunnableCommand(rootNode, generatedRepositoryDir, status)
         {
             public void run()
             {
@@ -522,13 +527,24 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     {
         if (isDirty())
         {
-            Object[] options = { "Save Settings, Then Exit", "Exit Without Saving", "Cancel" };
+            Object[] options = { "Save Settings, Then Exit", /*
+                    "Save Settings, DON'T Generate Policies, Then Exit", */
+                    "Exit Without Saving", 
+                    "Cancel" };
             int val = JOptionPane.showOptionDialog(this, "Some Settings Have NOT Been Saved", "Warning", 
                             JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE,
                             null, options, options[0]);
+            /*if (val == 0) // save all then exit
+            {
+                savePolicies(policyEditorStateDir);                 
+                writePolicies(generatedRepositoryDir, rootNode); 
+            }
+            else 
+                */
             if (val == 0) // save all then exit
             {
-                savePolicies(generatedRepositoryDir);                 
+                savePolicies(policyEditorStateDir);                 
+                writePolicies(generatedRepositoryDir, rootNode); 
             }
             else if (val == 1) // exit without saving
             {
