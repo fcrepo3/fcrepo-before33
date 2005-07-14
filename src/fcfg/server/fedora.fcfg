@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server xmlns="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
-  <param name="repositoryName" value="NSDL Repository">
+  <param name="repositoryName" value="Fedora Repository">
     <comment>Defines a human readable name for the Fedora server; default is
             Fedora Repository.</comment>
   </param>
-  <param name="adminEmailList" value="systems@nsdl.org">
+  <param name="adminEmailList" value="bob@example.org sally@example.org">
     <comment>Defines one or more email addresses for server administrators;
             list is space delimited.</comment>
   </param>
@@ -12,7 +12,7 @@
     <comment>Defines the username for the Fedora server; default is
             fedoraAdmin.</comment>
   </param>
-  <param name="adminPassword" value="cms4nsdl">
+  <param name="adminPassword" value="fedoraAdmin">
     <comment>Defines the password for the Fedora server; default is
             fedoraAdmin.</comment>
   </param>
@@ -73,19 +73,19 @@
             retrieve filepaths from the registry tables, if running under
             Windows/DOS.</comment>
   </param>
-  <param name="object_store_base" value="/usr/local/fedora21-content/objects">
+  <param name="object_store_base" value="C:\fedora2_0_objects">
     <comment>Defines the root directory for the internal storage of Fedora
             objects. This value should be adjusted based on your installation
             environment; default assumes a Windows installation of
             C:\fedora2_0_objects.</comment>
   </param>
-  <param name="temp_store_base" value="/usr/local/fedora21-content/temp">
+  <param name="temp_store_base" value="C:\fedora2_0_temp">
     <comment>Defines the root directory for Fedora temporary storage. This
             value should be adjusted based on your installation environment;
             default assumes a Windows installation of
         C:\fedora2_0_temp.</comment>
   </param>
-  <param name="datastream_store_base" value="/usr/local/fedora21-content/datastreams">
+  <param name="datastream_store_base" value="C:\fedora2_0_datastreams">
     <comment>Defines the root directory for the internal storage of Managed
             Content datastreams. This value should be adjusted based on your
             installation environment; default assumes a Windows installation of
@@ -109,32 +109,31 @@
             Note this value must be less than the limit specified for the
             datastreamExpirationLimit.</comment>
   </param>
-  <param name="fedoraServerPort" value="8880">
+  <param name="fedoraServerPort" value="8080">
     <comment>Defines the port number on which the Fedora server runs;
             default is 8080.</comment>
   </param>
-  <param name="fedoraShutdownPort" value="8805">
+  <param name="fedoraShutdownPort" value="8005">
     <comment>Defines the port number used to shutdown the Fedora sever;
             default is 8005.</comment>
   </param>
-  <param name="fedoraRedirectPort" value="8843">
+  <param name="fedoraRedirectPort" value="8443">
     <comment>Defines the redirect port of the Fedora sever; default is
         8443.</comment>
   </param>
-  <param name="fedoraServerHost" value="fedora.nsdlib.org">
+  <param name="fedoraServerHost" value="localhost">
     <comment>Defines the host name for the Fedora server, as seen from the
             outside world.</comment>
   </param>
   <module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
     <comment>Builds and manages Fedora's authorization structure.</comment>
     <param name="ALLOW-SURROGATES" value="false"/>
-    <param name="REPOSITORY-POLICIES-DIRECTORY" value="/usr/local/fedora21-content/fedora-xacml-policies/repository-policies"/>
-    <param name="OBJECT-POLICIES-DIRECTORY" value="/usr/local/fedora21-content/fedora-xacml-policies/object-policies"/>
-    <param name="SURROGATE-POLICIES-DIRECTORY" value="/usr/local/fedora21-content/fedora-xacml-policies/surrogate-policies"/>
-    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/usr/local/fedora21-content/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
+    <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
+    <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-xacml-policies/object-policies"/>
+    <param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
+    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
     <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
-    <!--<param name="ENFORCE-MODE" value="enforce-policies"/>-->
-    <param name="ENFORCE-MODE" value="permit-all-requests"/>
+    <param name="ENFORCE-MODE" value="enforce-policies"/>
     <param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-01.xsd"/>
     <param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
     <param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
@@ -182,8 +181,8 @@
             subsystem (see the ConnectionPoolManager module) -
             storageCharacterEncoding [default=UTF-8] If the serialization format
             is text-based, this is the character encoding that should be used.</comment>
-    <param name="pidNamespace" value="nsdl"/>
-    <param name="retainPIDs" value="demo test fedora-bdef fedora-bmech nsdl"/>
+    <param name="pidNamespace" value="changeme"/>
+    <param name="retainPIDs" value="demo test changeme fedora-bdef             fedora-bmech       tutorial"/>
     <param name="storagePool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
     <param name="storageCharacterEncoding" value="UTF-8"/>
     <param name="defaultExportFormat" value="foxml1.0"/>
@@ -317,7 +316,7 @@
             (shortcut) for the value, which is a URI prefix. For example:
             name="alias:test" value="http://example.org/terms#" will allow a
             query to use test:apple instead of http://example.org/terms#apple</comment>
-    <param name="level" value="2"/>
+    <param name="level" value="0"/>
     <param name="datastore" value="localKowariTriplestore"/>
     <param name="alias:test" value="http://example.org/terms#"/>
   </module>
@@ -441,8 +440,8 @@
             i.e., throw Exception), 1 (block i.e., wait), or 2 (grow i.e.,
             increase the size of the pool).</comment>
     <param name="dbUsername" value="fedoraAdmin"/>
-    <param name="dbPassword" value="cms4nsdl"/>
-    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora21?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+    <param name="dbPassword" value="fedoraAdmin"/>
+    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
     <param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
     <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
     <param name="maxActive" value="100"/>
@@ -565,7 +564,7 @@
     <comment>local Kowari Triplestore used by the Resource Index</comment>
     <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
     <param name="remote" value="false"/>
-    <param name="path" value="/usr/local/fedora21-content/resourceIndex"/>
+    <param name="path" value="C:\fedora2_0_resourceIndex"/>
     <param name="serverName" value="fedora"/>
     <param name="modelName" value="ri"/>
     <param name="poolInitialSize" value="3"/>
@@ -574,7 +573,7 @@
     <param name="autoCreate" value="true"/>
     <param name="autoTextIndex" value="false"/>
     <param name="memoryBuffer" value="true"/>
-    <param name="autoFlushDormantSeconds" value="0"/>
+    <param name="autoFlushDormantSeconds" value="5"/>
     <param name="autoFlushBufferSize" value="20000"/>
     <param name="bufferFlushBatchSize" value="20000"/>
     <param name="bufferSafeCapacity" value="40000"/>
