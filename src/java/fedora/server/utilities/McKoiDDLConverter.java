@@ -27,7 +27,12 @@ public class McKoiDDLConverter
         String tableName = parts[2];
         return "DROP TABLE " + tableName;
     }
-
+    public String getDeleteDDL(String command) {
+        String[] parts = command.split(" ");
+        String tableName = parts[2];
+        return "DELETE FROM " + tableName;        
+    }
+    
     public List getDDL(TableSpec spec) {
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();

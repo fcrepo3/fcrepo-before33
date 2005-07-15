@@ -24,6 +24,8 @@ public interface DDLConverter {
     public abstract List getDDL(TableSpec tableSpec);
 
     public String getDropDDL(String command);
+    
+    public String getDeleteDDL(String command);
 
 }
 
