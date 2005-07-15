@@ -125,14 +125,14 @@ public class FedoraClient {
             return APIAStubFactory.getStubAltPath(protocol,
 											   	  host, 
 											   	  port,
-											   	  m_baseURL + "management/soap",  
+											   	  baseURL.getPath() + "access/soap",  
 											   	  m_user,
 											   	  m_pass);
         } else {
             return APIAStubFactory.getStubAltPath(protocol,
 											   	  host, 
 											   	  port,
-											   	  m_baseURL + "services/management",  
+											   	  baseURL.getPath() + "services/access",  
 											   	  m_user,
 											   	  m_pass);
         }
