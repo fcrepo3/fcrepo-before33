@@ -29,6 +29,12 @@ public class OracleDDLConverter
         return "DROP " + objectType + " " + objectName;
     }
 
+    public String getDeleteDDL(String command) {
+        String[] parts = command.split(" ");
+        String tableName = parts[2];
+        return "DELETE FROM " + tableName;        
+    }
+    
     public List getDDL(TableSpec spec) {
         ArrayList l=new ArrayList();
         StringBuffer out=new StringBuffer();
