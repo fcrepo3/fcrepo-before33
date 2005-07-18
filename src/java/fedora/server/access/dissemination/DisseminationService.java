@@ -923,8 +923,9 @@ public class DisseminationService
       throws GeneralException, HttpServiceNotFoundException {
   	log("in getDisseminationContent(), url=" + url);
   	MIMETypedStream httpContent = null;
+  	HttpClient client = new HttpClient(url);
   	try {  			
-  		HttpClient client = new HttpClient(url); 
+  		client = new HttpClient(url); 
 		Properties serverProperties = ServerUtility.getServerProperties();    
   		client.doAuthnGet(20000, 25, user, pass, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
@@ -962,7 +963,7 @@ public class DisseminationService
 			+ "was  \"" + th.getMessage() + "\"  .  ");
   	} finally {
   		log("in getDisseminationContent(), in finally");
- 	
+  		//WRONG PLACE FOR HttpClient.thisUseFinished();
   	}    	
 	return(httpContent);
   }  

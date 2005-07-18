@@ -103,8 +103,8 @@ public class DefaultExternalContentManager extends Module
       throws GeneralException, HttpServiceNotFoundException {
   	log("in getExternalContent(), url=" + url);
   	MIMETypedStream httpContent = null;
-  	try {  		 
-  		
+	HttpClient client = null;
+  	try {
   		String backendUsername = "";
   		String backendPassword = "";
   		boolean backendSSL = false;
@@ -132,7 +132,7 @@ public class DefaultExternalContentManager extends Module
 		   	System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
 		   	System.out.println("************************* doAuthnGetURL: "+modURL);
 		}
-		HttpClient client = new HttpClient(modURL);
+		client = new HttpClient(modURL);
   		client.doAuthnGet(20000, 25, backendUsername, backendPassword, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
   			log("in getExternalContent(), got bad code=" + client.getStatusCode());
@@ -170,7 +170,7 @@ public class DefaultExternalContentManager extends Module
 			+ "was  \"" + th.getMessage() + "\"  .  ");
   	} finally {
   		log("in getExternalContent(), in finally");
- 	
+  		//WRONG PLACE FOR HttpClient.thisUseFinished();
   	}    	
 	return(httpContent);
   }

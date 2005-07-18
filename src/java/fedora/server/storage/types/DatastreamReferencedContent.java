@@ -37,8 +37,9 @@ public class DatastreamReferencedContent
     public InputStream getContentStream()
             throws StreamIOException {
       	InputStream contentStream = null;
+      	HttpClient client = null;
       	try {
-      		HttpClient client = new HttpClient(DSLocation);
+      		client = new HttpClient(DSLocation);
       		GetMethod getMethod = client.doNoAuthnGet(20000, 25, 1);
       		DSSize = client.getContentLength();
       		contentStream = getMethod.getResponseBodyAsStream();
@@ -51,6 +52,7 @@ public class DatastreamReferencedContent
     			+ "was  \"" + th.getMessage() + "\"  .  ");
       	} finally {
       		log("in getContentStream(), in finally");     	
+      		//WRONG PLACE FOR HttpClient.thisUseFinished();
       	}    	
     	return(contentStream);
     }

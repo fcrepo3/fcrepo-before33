@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection; //for response status codes
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.DefaultMethodRetryHandler;
@@ -51,7 +54,168 @@ public class HttpClient {
     throws Exception {
     	return doAuthnGet(millisecondsWait, redirectDepth, username, password, maxConnectionAttemptsPerUrl, SLEEP_MILLISECONDS);
     }
-	
+    
+    private static final Hashtable instancesTable = new Hashtable();
+
+    private static final boolean DEBUG = false;
+    private static final boolean VERBOSE = false;
+    private static final boolean DEBUG_MISSING_THISUSEFINISHED = false;
+    private static final boolean DEBUG_NEEDLESS_THISUSEFINISHED = false;
+    private static final int THRESHOLD = 0;
+    
+    private static final void dumpInstancesTable() {
+    	Iterator it = instancesTable.keySet().iterator();
+    	while (it.hasNext()) {
+    		Object key = it.next();
+    		Hashtable values = (Hashtable) instancesTable.get(key);
+    		dumpInstancesTableEntry((Thread) key, values);
+    	}
+    }
+
+    private static final void dumpInstancesTableEntry(Thread key, Hashtable values) {
+    	System.err.println("thread (key) == " + key);
+		Iterator it2 = values.keySet().iterator();
+    	while (it2.hasNext()) {
+    		Object key2 = it2.next();
+    		if ("callStack".equals(key2)) {
+    			printStackTrace(System.err, "setup trace was:", (StackTraceElement[]) values.get(key2));
+    		} else {
+        		System.err.println(key2 + " == " + values.get(key2));
+    		}
+    	}    		
+    }
+
+    private static final StackTraceElement[] getStackTrace() {
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			return e.getStackTrace();
+		}    	
+    }
+    
+    private static final void printStackTrace(PrintStream printStream, String header, StackTraceElement[] stackTraceElements) {
+    	printStream.println(header);
+		for (int i = 0; i < stackTraceElements.length; i++) {
+			printStream.println("\t" + stackTraceElements[i]);    					
+		}   	
+    }
+    
+    private static final void cleanInstancesTable() {
+		System.err.println("begin cleanInstancesTable()");				
+		int sizeBefore = instancesTable.size();
+		Iterator iterator = instancesTable.keySet().iterator();
+		while (iterator.hasNext()) {
+			Thread thread = (Thread) iterator.next();
+			if ((sizeBefore >= THRESHOLD) && (thread.getName().equals(Thread.currentThread().getName()) || ! thread.isAlive())) {
+				if (DEBUG && VERBOSE) {
+					if (thread.getName().equals(Thread.currentThread().getName())) {
+						System.err.println("deleting current thread (by ref) from instancesTable");
+					    dumpInstancesTableEntry(thread, (Hashtable) instancesTable.get(thread));
+					} else if (! thread.isAlive()) {
+						System.err.println("deleting dead thread from instancesTable");						
+					    dumpInstancesTableEntry(thread, (Hashtable) instancesTable.get(thread));
+					}
+				}
+		        thisUseFinished(thread);
+			} else {
+				if (DEBUG && VERBOSE) {
+					System.err.println("NOT deleting from instancesTable");						
+					System.err.println("thread not deleted == " + thread);
+					System.err.println("current thread == " + Thread.currentThread());						
+				    dumpInstancesTableEntry(thread, (Hashtable) instancesTable.get(thread));						
+				}				
+			}
+		}    	
+		System.err.println("end cleanInstancesTable()");		
+    }
+    
+    private GetMethod checkOut(String workingPath, String usage) throws Exception {
+    	if (DEBUG) System.err.println(">checkOut() " + instancesTable.size());
+    	if (instancesTable.size() > THRESHOLD) {
+    		System.err.println("HttpClient instancesTable abnormally large at " + instancesTable.size());
+    		cleanInstancesTable();
+    		if (DEBUG && VERBOSE) {
+    			dumpInstancesTable();
+    		}
+    	}
+    	GetMethod getMethod = new GetMethod(workingPath);
+		if (getMethod == null) {
+			if (DEBUG) {
+				System.err.println("HttpClient no getMethod made to " + workingPath + " for " + usage);				
+			}
+		} else {
+	    	Thread key = Thread.currentThread();
+			if (instancesTable.get(key) != null) {
+				if (DEBUG_MISSING_THISUSEFINISHED) { 
+					Exception e =  new Exception("HttpClient this thread already in instance table");
+					System.err.println(e.getMessage());				
+					throw e;
+				}
+			}
+			Hashtable instanceTable = new Hashtable();
+
+			instancesTable.put(key, instanceTable);
+			instanceTable.put("httpClient", this);
+			instanceTable.put("workingPath", workingPath);
+			instanceTable.put("usage", usage);
+			instanceTable.put("callStack", getStackTrace());
+			if (DEBUG && VERBOSE) {
+				System.err.println("HttpClient new connection made to " + workingPath + " for " + usage);
+	    		System.err.println("HttpClient instancesTable size now at " + instancesTable.size());
+			}
+		}
+		if (DEBUG) System.err.println("<checkOut() " + instancesTable.size());
+    	return getMethod;
+    }
+
+    private static void thisUseFinished(Thread key) {
+    	if (DEBUG) System.err.println(">thisUseFinished() " + instancesTable.size());
+		if (! instancesTable.containsKey(key)) {
+			if (DEBUG) {
+				System.err.println("HttpClient can't putBack():  this thread not in instancesTable " + key);				
+				if (VERBOSE) {
+        			printStackTrace(System.err, "teardown trace is:", getStackTrace());
+				}
+			}
+		} else {
+			Hashtable instanceTable = (Hashtable) instancesTable.get(key);
+			if (instanceTable == null) {
+				if (DEBUG_NEEDLESS_THISUSEFINISHED) {
+					System.err.println("HttpClient can't putBack():  this thread has empty hashtable in instancesTable" + key);
+					if (VERBOSE) {
+	        			printStackTrace(System.err, "teardown trace is:", getStackTrace());
+					}
+				}
+				
+			} else {
+				HttpClient httpClient = (HttpClient) instanceTable.get("httpClient");
+				if (httpClient == null) {
+					if (DEBUG_NEEDLESS_THISUSEFINISHED) System.err.println("HttpClient can't putBack():  httpClient not in instanceTable");				
+				} else {
+					if (DEBUG && VERBOSE) {
+						dumpInstancesTable();
+	        			printStackTrace(System.err, "teardown trace is:", getStackTrace());
+					}
+					if (DEBUG) System.err.println("closing httpClient");				
+					httpClient.close();	
+				}
+				instancesTable.remove(key);
+				if (DEBUG && VERBOSE) {
+					if (DEBUG) System.err.println("HttpClient removal successful");				
+				}			
+			}			
+		}
+		if (DEBUG) System.err.println("<thisUseFinished() " + instancesTable.size());
+    }    
+    
+    public static void thisUseFinished() {
+        thisUseFinished(Thread.currentThread());
+    }
+
+    private static final String getUsage(String username) {
+    	return (username == null) ? "" : username;
+    }
+    
     public GetMethod doAuthnGet(int millisecondsWait, int redirectDepth, String username, String password, int maxConnectionAttemptsPerUrl, int millisecondsSleep) 
     throws Exception 
 	{
@@ -61,7 +225,11 @@ public class HttpClient {
 
     	log("doAuthnGet... " + this.relativePath + "for " + username + " " + password + 
     			" " );
+    	
+    	printStackTrace(System.err, "CALLTRACE", getStackTrace());
+    	
 	  	getMethod = null;
+	  	String workingPath = "";
 	  	try {
 	  		try {
 		  		boolean authenticate = false;
@@ -86,9 +254,9 @@ public class HttpClient {
 		  		log("doAuthnGet(), after setup");
 		  		int resultCode = -1;
 		  		int connectionAttemptsPerUrl = 0;
-		  		String workingPath = absoluteUrl;
+		  		workingPath = absoluteUrl;
 		  		for (int loops = 0; (workingPath != null) && (loops < redirectDepth) && (connectionAttemptsPerUrl < maxConnectionAttemptsPerUrl) ; loops++) {
-		  			getMethod = new GetMethod(workingPath);
+		  			getMethod = checkOut(workingPath, getUsage(username));
 		  	    	getMethod.setMethodRetryHandler(retryhandler);
 		  			
 		  			log("doAuthnGet(), getMethod=" + getMethod);
@@ -114,13 +282,16 @@ public class HttpClient {
 			  				workingPath=getMethod.getResponseHeader("Location").getValue();
 			  				connectionAttemptsPerUrl = 0;
 			  				log("doAuthnGet(), got redirect, new url=" + workingPath);
+			  				thisUseFinished();
 			  			} else {
 				  			workingPath = null; //signal loop completion			  				
+				  			//don't putBack() here
 			  			}
 		  	    	} catch (IOException ioe) {
 		  	    		connectionAttemptsPerUrl++;
 				  		log("doAuthnGet got --inner-- IOException: " + ioe.getMessage());	
-		  	    		Thread.sleep(millisecondsSleep);
+		  	    		Thread.currentThread().sleep(millisecondsSleep);
+		  	    		thisUseFinished();
 		  	    	}
 		  	    	log("resultCode=" + resultCode + " absoluteUrl=" +absoluteUrl); 
 
@@ -140,9 +311,9 @@ public class HttpClient {
 		  		throw new Exception("got Exception", e);		  		
 		  	}
 	  	} catch (Throwable th) {
-	  		if (getMethod != null) {
-	  			getMethod.releaseConnection();
-	  		}
+  			if (getMethod != null) {
+  				thisUseFinished();
+  			}
 	  		throw new Exception("failed connection", th);
 	    }
 	  	return getMethod;
@@ -162,11 +333,10 @@ public class HttpClient {
     public final String getPort() {
     	return port;
     }
-    public String getAbsoluteUrl() {
-    	return absoluteUrl;
-    }
-    public String getRelativePath() {
-    	return relativePath;
+    
+    private String relativeUrl = null;
+    public String getRelativeUrl() {
+    	return relativeUrl;
     }
     
     
@@ -201,7 +371,7 @@ public class HttpClient {
 		}
     }
 
-    public final void close() {
+    private final void close() {
     	closeStream();
     	releaseConnection();
     }
@@ -311,8 +481,8 @@ public class HttpClient {
         log("PROTOCOL-=" + getProtocol());
         log("HOST-=" + getHost());
   		log("PORT-=" + getPort());
-  		log("REL URL-=" + getRelativePath());
-  		log("ABS URL-=" + getAbsoluteUrl());
+  		log("REL URL-=" + relativePath);
+  		log("ABS URL-=" + absoluteUrl);
 		log("exiting constructor");
     }
 
@@ -346,7 +516,7 @@ public class HttpClient {
 		  		log(e.getCause().getMessage());	  			
 	  		}
         } finally {
-  			close();
+  			//putBack();
         }
         return textResponse;
     }
@@ -388,7 +558,7 @@ public class HttpClient {
     	return contentLength;
     }
  
-    private static boolean log = false;
+    private static boolean log = true;
     
     private final void log(String msg) {
     	if (log) {
@@ -396,7 +566,7 @@ public class HttpClient {
     	}
     }
 
-    private static boolean slog = false;
+    private static boolean slog = true;
 
     private static final void slog(String msg) {
     	if (slog) {
@@ -453,7 +623,8 @@ public class HttpClient {
    		slog("SC:call HttpClient.getLineResponseUrl()...");			
     	String line = httpClient.getLineResponseUrl();
     	slog("line response = " + line);
-   		slog("...SC:call HttpClient.getLineResponseUrl()");			
+   		slog("...SC:call HttpClient.getLineResponseUrl()");		
+   		thisUseFinished();
     }
     
 }

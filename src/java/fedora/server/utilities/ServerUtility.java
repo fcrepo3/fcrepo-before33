@@ -137,6 +137,7 @@ public class ServerUtility {
     
     public static boolean pingServletContainer(String path, int secondsTimeout, int maxConnectionAttemptsPerUrl) throws GeneralException {
         boolean pingsOk = false;
+        HttpClient client = null;
         try {
         	slog(FINEST, "getServerProperties()="+getServerProperties());
         	ProtocolPort protocolPort = getProtocolPort(HTTP, HTTPS);
@@ -145,7 +146,7 @@ public class ServerUtility {
     		slog(FINEST, "protocolPort.getPort()="+protocolPort.getPort());
     		slog(FINEST, "serverProperties.get(FEDORA_SERVER_HOST)="+serverProperties.get(FEDORA_SERVER_HOST));
     		slog(FINEST, "path="+path);    		
-        	HttpClient client = new HttpClient(protocolPort.getProtocol(), (String) getServerProperties().get(FEDORA_SERVER_HOST), protocolPort.getPort(), path);
+        	client = new HttpClient(protocolPort.getProtocol(), (String) getServerProperties().get(FEDORA_SERVER_HOST), protocolPort.getPort(), path);
     		slog(FINEST, "client="+client);
         	GetMethod getMethod = client.doNoAuthnGet(1000 * secondsTimeout, 25, maxConnectionAttemptsPerUrl);
     		slog(FINEST, "getMethod="+getMethod);
@@ -154,6 +155,8 @@ public class ServerUtility {
     		slog(FINEST, "pingsOk="+pingsOk);
         } catch (Exception e) {			
         	throw new GeneralException(slog(FINEST, "op failure pinging fedora server"), e);
+		} finally {
+			HttpClient.thisUseFinished();
 		}
         return pingsOk;    	
     }
@@ -172,22 +175,29 @@ public class ServerUtility {
     }
     
     private static final int serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
-   		slog(FINEST, "SC:call HttpClient()...");
-  		HttpClient client = new HttpClient(protocol, 
-  				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
-  				ServerUtility.getServerProperties().getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
-  				"/fedora/management/control?action=" + action
-  				);
-   		slog(FINEST, "...SC:call HttpClient()"); 
-   		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
-  		GetMethod getMethod = client.doAuthnGet(20000, 25,
-  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY) : optionalUsername,
-  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
-  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
-  		);
-   		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		
-   		slog(FINEST, "SC:call HttpClient.getLineResponse()...");
-   		return getMethod.getStatusCode();
+    	HttpClient client = null;
+    	int statusCode = -1;
+    	try {
+	   		slog(FINEST, "SC:call HttpClient()...");
+	  		client = new HttpClient(protocol, 
+	  				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
+	  				ServerUtility.getServerProperties().getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
+	  				"/fedora/management/control?action=" + action
+	  				);
+	   		slog(FINEST, "...SC:call HttpClient()"); 
+	   		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
+	  		GetMethod getMethod = client.doAuthnGet(20000, 25,
+	  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY) : optionalUsername,
+	  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
+	  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
+	  		);
+	   		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		
+	   		slog(FINEST, "SC:call HttpClient.getLineResponse()...");
+   			statusCode = getMethod.getStatusCode();
+    	} finally {
+			HttpClient.thisUseFinished();
+    	}
+   		return statusCode;
     }
     
     private static final String STARTUP = "startup";

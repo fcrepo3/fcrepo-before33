@@ -19,6 +19,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import fedora.common.Constants;
+import fedora.common.HttpClient;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.authorization.AuthzDeniedException;
@@ -262,7 +263,7 @@ public class DatastreamResolverServlet extends HttpServlet
         //user has target role
       	} else {
       	    if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: authZ exception in validating user");
-      		  throw new AuthzDeniedException("wrong user for this ticket");
+      		throw new AuthzDeniedException("wrong user for this ticket");
       	}
       }
 
@@ -397,8 +398,8 @@ public class DatastreamResolverServlet extends HttpServlet
       th.printStackTrace();
       logger.logWarning(message);
       throw new ServletException(message);
-    } finally
-    {
+    } finally {
+    	HttpClient.thisUseFinished();
       if (out != null) out.close();
       if (outStream != null) outStream.close();
 	  dsRegistry.remove(id);
