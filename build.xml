@@ -77,10 +77,12 @@
 	<pathconvert pathsep="," property="client-libs.list">
 		<path id="client-libs.path">
 			<pathelement location="${lib.axis}"/>
-			<pathelement location="${lib.batik}"/>		
+			<pathelement location="${lib.batik}"/>	
+			<pathelement location="${lib.commons-dbcp}"/>
 			<pathelement location="${lib.commons-discovery}"/>
 			<pathelement location="${lib.commons-httpclient}"/>
 			<pathelement location="${lib.commons-logging}"/>
+			<pathelement location="${lib.commons-pool}"/>						
 			<pathelement location="${lib.getopt}"/>
 			<pathelement location="${lib.jai_codec}"/>
 			<pathelement location="${lib.jai_core}"/>
