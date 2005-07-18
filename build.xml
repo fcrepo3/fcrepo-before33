@@ -957,8 +957,7 @@
 		<copy file="src/xsl/management/backendSecurityConfig.xslt" todir="dist/server/management"/>
 		<!-- beSecurity configuration file used to configure backend service security -->
 		<copy file="src/properties/server/beSecurity.xml" todir="dist/server/config"/>
-		<!-- this can be removed when retrofit for beSecurity is complete-->
-		<copy file="src/properties/server/beSecurity.properties" todir="dist/server/config"/>
+		<copy file="src/properties/server/beSecurity-secure.xml" todir="dist/server/config"/>
 	</target>
 	<target name="serverutils" depends="utilclasses" description="Policy Editor Tool">
 		<mkdir dir="${server.dist.dir}/utilities"/>
