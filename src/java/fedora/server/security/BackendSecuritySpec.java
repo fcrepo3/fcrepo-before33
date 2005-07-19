@@ -21,7 +21,7 @@ public class BackendSecuritySpec {
 	 * 			 - "default" (the overall default for backend services) 
 	 *           - "bmech:9"  (the role key for a backend service)
 	 * 			 - "bmech:9/getThumb" (the role key for a method within a backend service)   
-	 * 			 - "fedora" (the role key for fedora calling back to itself)
+	 * 			 - "fedoraInternalCall" (the role key for fedora calling back to itself)
 	 * 
 	 *   VALUE = a Hashtable of security properties whose keys
 	 * 	         are defined in BackendSecurityDeserializer.java as:
@@ -47,7 +47,7 @@ public class BackendSecuritySpec {
 	 * 		Valid values for this parameter are:
 	 * 		- a bmech PID for a backend service
 	 * 		- "default" to indicate the default properties for any service
-	 * 		- "fedora" for Fedora calling back to itself as a service
+	 * 		- "fedoraInternalCall" for Fedora calling back to itself as a service
 	 * @param methodName - optional method name within the backend service.  
 	 * 		  If specified security properties at the service method level will
 	 *        be recorded.  If null, service properties at the service level
@@ -99,7 +99,7 @@ public class BackendSecuritySpec {
 	 * 
 	 * @param serviceRoleID - role identifier for a backend service. Valid options:
 	 *		- "default" (the overall default for backend services)    
-	 * 		- "fedora" (the role key for fedora calling back to itself)
+	 * 		- "fedoraInternalCall" (the role key for fedora calling back to itself)
 	 *		- A bmech PID (e.g., "bmech:9") as the identifier for a backend service
 	 *
 	 * @param methodName  - a method name that is specified within a bmech service.
@@ -149,7 +149,7 @@ public class BackendSecuritySpec {
 	 * 
 	 * @param roleKey = the role identifier for the backend service, for example:
 	 * 			 - "default" (the overall default for backend services) 
-	 * 			 - "fedora" (the role key for fedora calling back to itself)
+	 * 			 - "fedoraInternalCall" (the role key for fedora calling back to itself)
 	 *           - "bmech:9"  (the role key for a backend service)
 	 * 			 - "bmech:9/getThumb" (the role key for a method within a backend service)   
 	 * 
