@@ -50,6 +50,9 @@ public class PID {
      */
     public PID(String pidString) 
             throws MalformedPIDException {
+    	if (pidString.startsWith(Constants.FEDORA.uri)) {
+    		pidString = pidString.substring(Constants.FEDORA.uri.length());
+    	}
         m_normalized = normalize(pidString);
         String[] split = m_normalized.split(":");
         m_namespaceId = split[0];
