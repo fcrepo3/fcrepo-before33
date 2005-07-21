@@ -591,6 +591,34 @@ public class DisseminationService
 	        	beServiceCallUsername = (String) beHash.get("callUsername");
 	        	beServiceCallPassword = (String) beHash.get("callPassword");	
 	        }
+	        
+	        //fixup:
+	        if (BackendPolicies.FEDORA_INTERNAL_CALL.equals(beServiceRole)) {
+	        	if (beServiceCallSSL) {
+			    	if (dissURL.startsWith("http:")) {
+			    		dissURL = dissURL.replaceFirst("http:", "https:");
+			    	}
+			    	if (dissURL.indexOf(":"+fedoraServerPort+"/") >= 0) {
+				    	dissURL = dissURL.replaceFirst(":"+fedoraServerPort+"/", ":"+fedoraServerRedirectPort+"/");			    		
+			    	} 
+	        	} else {
+	        		if (dissURL.startsWith("https:")) {
+	        			dissURL = dissURL.replaceFirst("https:", "http:");			    		
+	        		}
+	        		if (dissURL.indexOf(":"+fedoraServerRedirectPort+"/") >= 0) {
+				    	dissURL = dissURL.replaceFirst(":"+fedoraServerRedirectPort+"/", ":"+fedoraServerPort+"/");
+			    	}
+	        	}
+	        	if (beServiceCallBasicAuth) {
+			    	if (dissURL.indexOf("getDS?") >= 0) {
+				    	dissURL = dissURL.replaceFirst("getDS?", "getDSAuthenticated?");			    		
+			    	}	        		
+	        	} else {
+			    	if (dissURL.indexOf("getDSAuthenticated?") >= 0) {
+				    	dissURL = dissURL.replaceFirst("getDSAuthenticated?", "getDS?");			    		
+			    	}	        			        		
+	        	}
+		    }   
         
 	        if (fedora.server.Debug.DEBUG) {
 	            System.out.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
