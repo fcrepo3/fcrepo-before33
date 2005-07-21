@@ -6,8 +6,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.HttpURLConnection; //for response status codes
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.DefaultMethodRetryHandler;
@@ -100,8 +102,13 @@ public class HttpClient {
 		}   	
     }
     
+    /**
+     * the care taken here is to avoid ConcurrentModificationException
+     *
+     */
     private static final void cleanInstancesTable() {
-		System.err.println("begin cleanInstancesTable()");				
+		System.err.println("begin cleanInstancesTable()");	
+		Set deleteSet = new HashSet();
 		int sizeBefore = instancesTable.size();
 		Iterator iterator = instancesTable.keySet().iterator();
 		while (iterator.hasNext()) {
@@ -116,7 +123,7 @@ public class HttpClient {
 					    dumpInstancesTableEntry(thread, (Hashtable) instancesTable.get(thread));
 					}
 				}
-		        thisUseFinished(thread);
+				deleteSet.add(thread);
 			} else {
 				if (DEBUG && VERBOSE) {
 					System.err.println("NOT deleting from instancesTable");						
@@ -125,7 +132,11 @@ public class HttpClient {
 				    dumpInstancesTableEntry(thread, (Hashtable) instancesTable.get(thread));						
 				}				
 			}
-		}    	
+		}  
+		Iterator deleteIterator = deleteSet.iterator();
+		while (deleteIterator.hasNext()) {
+	        thisUseFinished((Thread) deleteIterator.next());
+		}
 		System.err.println("end cleanInstancesTable()");		
     }
     
@@ -168,7 +179,7 @@ public class HttpClient {
     	return getMethod;
     }
 
-    private static void thisUseFinished(Thread key) {
+    private static synchronized void thisUseFinished(Thread key) {
     	if (DEBUG) System.err.println(">thisUseFinished() " + instancesTable.size());
 		if (! instancesTable.containsKey(key)) {
 			if (DEBUG) {
@@ -226,7 +237,7 @@ public class HttpClient {
     	log("doAuthnGet... " + this.relativePath + "for " + username + " " + password + 
     			" " );
     	
-    	printStackTrace(System.err, "CALLTRACE", getStackTrace());
+    	//printStackTrace(System.err, "CALLTRACE", getStackTrace());
     	
 	  	getMethod = null;
 	  	String workingPath = "";
@@ -308,6 +319,7 @@ public class HttpClient {
 		  		throw new Exception("got IOException", ioe);		  		
 		  	} catch (Exception e) {
 		  		log("doAuthnGet got Exception: " + e.getMessage());		  		
+		  		e.printStackTrace();
 		  		throw new Exception("got Exception", e);		  		
 		  	}
 	  	} catch (Throwable th) {
@@ -558,7 +570,7 @@ public class HttpClient {
     	return contentLength;
     }
  
-    private static boolean log = true;
+    private static boolean log = false;
     
     private final void log(String msg) {
     	if (log) {
@@ -566,7 +578,7 @@ public class HttpClient {
     	}
     }
 
-    private static boolean slog = true;
+    private static boolean slog = false;
 
     private static final void slog(String msg) {
     	if (slog) {
