@@ -82,10 +82,10 @@
   <xsl:comment>requiring ssl</xsl:comment>
   <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
     <AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string"
-    >urn:fedora:names:fedora:2.1:environment:httpRequest:security</AttributeValue>
+    >urn:fedora:names:fedora:2.1:environment:httpRequest:security-secure</AttributeValue>
     <Apply FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-one-and-only">
       <SubjectAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string"
-        AttributeId="urn:fedora:names:fedora:2.1:environment:httpRequest:security-secure" />
+        AttributeId="urn:fedora:names:fedora:2.1:environment:httpRequest:security" />
     </Apply>
   </Apply>
 </xsl:template>
