@@ -267,7 +267,7 @@ log("***debugging CombinedPolicyModule");
 		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
 		Set subjectAttributes = new HashSet();
 		subjectAttributes.add(subjectAttribute);
-		if ((subjectLoginId != null) && "".equals(subjectLoginId)) {
+		if ((subjectLoginId != null) && ! "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
 			subjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
 			log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
