@@ -1,13 +1,13 @@
 package fedora.server.resourceIndex;
 
+import java.io.OutputStream;
+
 import org.trippi.RDFFormat;
-import org.trippi.TriplestoreReader;
+import org.trippi.TriplestoreWriter;
 
 import fedora.common.Constants;
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.types.*;
-
-import java.io.OutputStream;
+import fedora.server.storage.types.DigitalObject;
 
 /**
  * ResourceIndex is the interface to the Fedora Resource Index. The Fedora Resource
@@ -16,7 +16,7 @@ import java.io.OutputStream;
  *
  * @author Edwin Shin
  */
-public interface ResourceIndex extends Constants, TriplestoreReader {
+public interface ResourceIndex extends Constants, TriplestoreWriter {
     /**
      * At this level, the ResourceIndex will not index anything.
      */

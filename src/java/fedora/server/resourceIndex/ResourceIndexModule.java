@@ -274,4 +274,67 @@ public class ResourceIndexModule extends Module
     public void close() throws TrippiException {
         // nope
     }
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(java.util.List, boolean)
+	 */
+	public void add(List triples, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.add(triples, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(org.trippi.TripleIterator, boolean)
+	 */
+	public void add(TripleIterator iter, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.add(iter, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(org.jrdf.graph.Triple, boolean)
+	 */
+	public void add(Triple triple, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.add(triple, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(java.util.List, boolean)
+	 */
+	public void delete(List triples, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.delete(triples, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(org.trippi.TripleIterator, boolean)
+	 */
+	public void delete(TripleIterator iter, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.delete(iter, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(org.jrdf.graph.Triple, boolean)
+	 */
+	public void delete(Triple triple, boolean flush) throws IOException, TrippiException {
+		m_resourceIndex.delete(triple, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#flushBuffer()
+	 */
+	public void flushBuffer() throws IOException, TrippiException {
+		m_resourceIndex.flushBuffer();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#setFlushErrorHandler(org.trippi.FlushErrorHandler)
+	 */
+	public void setFlushErrorHandler(FlushErrorHandler h) {
+		m_resourceIndex.setFlushErrorHandler(h);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#getBufferSize()
+	 */
+	public int getBufferSize() {
+		return m_resourceIndex.getBufferSize();
+	}
 }

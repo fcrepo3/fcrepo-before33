@@ -19,17 +19,21 @@ public class RISearchServlet extends TrippiServlet {
         Logger.getLogger(ResourceIndex.class.getName());
 	
     public TriplestoreReader getReader() throws ServletException {
-        TriplestoreReader reader = null;
+        return getWriter();
+    }
+    
+    public TriplestoreWriter getWriter() throws ServletException {
+        TriplestoreWriter writer = null;
         try {
             Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-            reader = (TriplestoreReader) server.getModule("fedora.server.resourceIndex.ResourceIndex");
+            writer = (TriplestoreWriter) server.getModule("fedora.server.resourceIndex.ResourceIndex");
         } catch (Exception e) {
             throw new ServletException("Error initting RISearchServlet.", e);
         } 
-        if (reader == null) {
+        if (writer == null) {
             throw new ServletException("The Resource Index is not loaded.");
         } else {
-            return reader;
+            return writer;
         }
     }
     
@@ -46,6 +50,7 @@ public class RISearchServlet extends TrippiServlet {
 						 "  limit: " + request.getParameter("limit") + "\n" +
 						 "  distinct: " + request.getParameter("distinct") + "\n" +
 						 "  format: " + request.getParameter("format") + "\n" +
+						 "  flush: " + request.getParameter("flush") + "\n" +
 						 "  dumbTypes: " + request.getParameter("dumbTypes") + "\n");
     	}
     	super.doGet(server, request, response);

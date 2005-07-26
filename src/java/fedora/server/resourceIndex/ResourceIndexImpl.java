@@ -41,12 +41,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.jrdf.graph.Literal;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
-import org.jrdf.graph.URIReference;
+import org.jrdf.graph.Triple;
 
+import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
 import org.trippi.TripleMaker;
 import org.trippi.TripleIterator;
@@ -512,7 +512,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	
     public void commit() throws ResourceIndexException {
         try {
-            m_writer.flushBuffer();
+            flushBuffer();
         } catch (IOException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         } catch (TrippiException e) {
@@ -1408,6 +1408,70 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             crossProduct.add(copy);
         }
     }
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(java.util.List, boolean)
+	 */
+	public void add(List arg0, boolean arg1) throws IOException, TrippiException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(org.trippi.TripleIterator, boolean)
+	 */
+	public void add(TripleIterator triples, boolean flush) throws IOException, TrippiException {
+		m_writer.add(triples, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#add(org.jrdf.graph.Triple, boolean)
+	 */
+	public void add(Triple triple, boolean flush) throws IOException, TrippiException {
+		m_writer.add(triple, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(java.util.List, boolean)
+	 */
+	public void delete(List triples, boolean flush) throws IOException, TrippiException {
+		m_writer.delete(triples, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(org.trippi.TripleIterator, boolean)
+	 */
+	public void delete(TripleIterator iter, boolean flush) throws IOException, TrippiException {
+		m_writer.delete(iter, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#delete(org.jrdf.graph.Triple, boolean)
+	 */
+	public void delete(Triple triple, boolean flush) throws IOException, TrippiException {
+		m_writer.delete(triple, flush);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#flushBuffer()
+	 */
+	public void flushBuffer() throws IOException, TrippiException {
+		m_writer.flushBuffer();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#setFlushErrorHandler(org.trippi.FlushErrorHandler)
+	 */
+	public void setFlushErrorHandler(FlushErrorHandler h) {
+		m_writer.setFlushErrorHandler(h);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.trippi.TriplestoreWriter#getBufferSize()
+	 */
+	public int getBufferSize() {
+		return m_writer.getBufferSize();
+	}
 
 
 }
