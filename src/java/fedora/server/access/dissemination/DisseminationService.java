@@ -574,7 +574,7 @@ public class DisseminationService
           // use the special role of "fedoraInternalCall" to denote that the callback will come from the 
           // fedora server itself.          
 	        String beServiceRole = null;
-	        if ( isURLFedoraServer(dissURL) ) {
+	        if ( ServerUtility.isURLFedoraServer(dissURL) ) {
 	            beServiceRole =  BackendPolicies.FEDORA_INTERNAL_CALL;
 	        } else {
 	            beServiceRole = bMechPid;
@@ -592,6 +592,7 @@ public class DisseminationService
 	        	beServiceCallPassword = (String) beHash.get("callPassword");	
 	        }
 	        
+	        /*
 	        //fixup:
 	        if (BackendPolicies.FEDORA_INTERNAL_CALL.equals(beServiceRole)) {
 	        	if (beServiceCallSSL) {
@@ -611,14 +612,16 @@ public class DisseminationService
 	        	}
 	        	if (beServiceCallBasicAuth) {
 			    	if (dissURL.indexOf("getDS?") >= 0) {
-				    	dissURL = dissURL.replaceFirst("getDS?", "getDSAuthenticated?");			    		
+				    	dissURL = dissURL.replaceFirst("getDS\\?", "getDSAuthenticated\\?");			    		
 			    	}	        		
 	        	} else {
 			    	if (dissURL.indexOf("getDSAuthenticated?") >= 0) {
-				    	dissURL = dissURL.replaceFirst("getDSAuthenticated?", "getDS?");			    		
+				    	dissURL = dissURL.replaceFirst("getDSAuthenticated\\?", "getDS\\?");			    		
 			    	}	        			        		
 	        	}
-		    }   
+	        	
+		    } 
+		    */
         
 	        if (fedora.server.Debug.DEBUG) {
 	            System.out.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
@@ -746,7 +749,7 @@ public class DisseminationService
         // If the referenc s to the fedora server, use the special role of "fedoraInternalCall" to
         // denote that the callback will come from the fedora server itself.
         String beServiceRole = null;
-        if ( isURLFedoraServer(dsLocation) || 
+        if ( ServerUtility.isURLFedoraServer(dsLocation)  || 
              dsControlGroupType.equals("M") ||
              dsControlGroupType.equals("X") ) {
             beServiceRole =  BackendPolicies.FEDORA_INTERNAL_CALL;
@@ -1001,35 +1004,5 @@ public class DisseminationService
 	  	System.err.println(msg);	  		
   	}
   }  
-  
-  private boolean isURLFedoraServer(String url) {
-      boolean isFedoraLocalService = false;
-      
-      // Check for Fedora Local Services like saxon, fop, imagemanip, and soapclient
-      // Although these webapps are in the same web container as the Fedora server
-      // local services are treated like other backend services so must check for
-      // more than just hostname and port to determine if URL is a fedora-to-fedora
-      // server callback or a callback to a local service.
-      if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/soapclient")) {
-          isFedoraLocalService = true;
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
-      }
-      if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
-          !isFedoraLocalService) {
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
-          return true;
-      } else {
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
-          return false;
-      }
-          
-  }
   
 }

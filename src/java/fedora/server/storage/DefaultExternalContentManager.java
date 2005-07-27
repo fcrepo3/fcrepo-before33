@@ -109,7 +109,7 @@ public class DefaultExternalContentManager extends Module
   		String backendPassword = "";
   		boolean backendSSL = false;
   		String modURL = url;
-		if (isURLFedoraServer(modURL)) {
+		if (ServerUtility.isURLFedoraServer(modURL)) {
 		    BackendSecuritySpec m_beSS;
 		    BackendSecurity m_beSecurity = (BackendSecurity) getServer().getModule("fedora.server.security.BackendSecurity");
 		    try {
@@ -173,37 +173,7 @@ public class DefaultExternalContentManager extends Module
   		//WRONG PLACE FOR HttpClient.thisUseFinished();
   	}    	
 	return(httpContent);
-  }
-  
-  private boolean isURLFedoraServer(String url) {
-      boolean isFedoraLocalService = false;
-      
-      // Check for Fedora Local Services like saxon, fop, imagemanip, and soapclient
-      // Although these webapps are in the same web container as the Fedora server
-      // local services are treated like other backend services so must check for
-      // more than just hostname and port to determine if URL is a fedora-to-fedora
-      // server callback or a callback to a local service.
-      if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
-          url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ||
-          url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/soapclient")) {
-          isFedoraLocalService = true;
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
-      }
-      if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
-          !isFedoraLocalService) {
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
-          return true;
-      } else {
-          if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
-          return false;
-      }
-          
-  }  
+  } 
   
   private boolean log = false;
   

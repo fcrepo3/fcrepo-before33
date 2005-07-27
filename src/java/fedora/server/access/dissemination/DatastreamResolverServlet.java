@@ -27,6 +27,7 @@ import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.Context;
+import fedora.server.Debug;
 import fedora.server.ReadOnlyContext;
 import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
@@ -68,6 +69,7 @@ public class DatastreamResolverServlet extends HttpServlet
   private static int datastreamMediationLimit;
   private static final String HTML_CONTENT_TYPE = "text/html";
   private static Logger logger;
+  private static String fedoraServerHost;
   private static String fedoraServerPort;
   private static String fedoraServerRedirectPort;
 
@@ -83,6 +85,7 @@ public class DatastreamResolverServlet extends HttpServlet
       s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
+      fedoraServerHost = s_server.getParameter("fedoraServerHost");
       logger = new Logger();
       m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
       String expireLimit = s_server.getParameter("datastreamMediationLimit");
@@ -198,12 +201,25 @@ public class DatastreamResolverServlet extends HttpServlet
 		      System.err.println("**************************** DatastreamResolverServlet ssl port: "+fedoraServerRedirectPort);
       }
       
+      // DatastreamResolverServlet maps to two distinct servlet mappings in fedora web.xml.
+      // getDS - is used when the backend service is incapable of basicAuth or SSL
+      // getDSAuthenticated - is used when the backend service has basicAuth and SSL enabled
+      // When the getDS servlet path is used, the role assigned by the fedora server will be
+      // either secure on unsecure depending on the settings in beSecurity.xml. A role that is
+      // secure indicates that the fedora server that initiated the request is operating in 
+      // secure mode, but the getDS servlet mapping needs to run as unsecure so the role must be
+      // be changed to an unsecure role.
+      if (request.getRequestURI().endsWith("getDS")) {
+          dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
+          if(fedora.server.Debug.DEBUG) System.out.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
+      }      
+      
       // If callback is to fedora server itself and callback is over SSL, adjust the protocol and port
       // on the URL to match settings of Fedora server. This is necessary since the SSL settings for the
       // backend service may have specified basicAuth=false, but contained datastreams that are callbacks
-      // to the local Fedora server which requires SSL. HttpClient does not currently handle autoredirecting
-      // from http  to https so it is necessary to set the protocol and port to the appropriate secure
-      // port.
+      // to the local Fedora server which requires SSL. The version of HttpClient currently in use does 
+      // not handle autoredirecting from http to https so it is necessary to set the protocol and port 
+      // to the appropriate secure port.
       if (dm.callbackRole.equals(BackendPolicies.FEDORA_INTERNAL_CALL)) {
           if (dm.callbackSSL) {
               dsPhysicalLocation = dsPhysicalLocation.replaceFirst("http:", "https:");
@@ -249,7 +265,6 @@ public class DatastreamResolverServlet extends HttpServlet
       String targetRole = Authorization.FEDORA_ROLE_KEY + "=" + dm.callbackRole; //restrict access to role of this ticket
       String[] targetRoles = {targetRole};
       Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
-      
       if (request.getRemoteUser() == null) {
       	  //non-authn:  must accept target role of ticket
           if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: unAuthenticated request");
@@ -285,7 +300,13 @@ public class DatastreamResolverServlet extends HttpServlet
           	String name = (String) it.next();
           	String value = context.getSubjectValue(name);
             System.err.println("another subject attribute from context " + name + "=" + value);            	
-          }          
+          }
+          it = context.environmentAttributes();
+          while (it.hasNext()) {
+          	String name = (String) it.next();
+          	String value = context.getEnvironmentValue(name);
+            System.err.println("another environment attribute from context " + name + "=" + value);            	
+          }                    
       }
       System.out.println("DatastreamResolverServlet: about to do final authZ check");
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
@@ -328,7 +349,7 @@ public class DatastreamResolverServlet extends HttpServlet
               if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
                   response.addHeader(headerArray[i].name, headerArray[i].value);
                   if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
-              }
+              }              
           }
         }
         int byteStream = 0;
@@ -402,9 +423,10 @@ public class DatastreamResolverServlet extends HttpServlet
     	HttpClient.thisUseFinished();
       if (out != null) out.close();
       if (outStream != null) outStream.close();
-	  dsRegistry.remove(id);
+	    dsRegistry.remove(id);
     }
   }
+    
 
   //Clean up resources
   public void destroy()

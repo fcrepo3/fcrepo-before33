@@ -19,6 +19,7 @@ import fedora.common.PID;
 public class BackendPolicies {
 
 	public static final String FEDORA_INTERNAL_CALL = "fedoraInternalCall";
+	public static final String BACKEND_SERVICE_CALL_UNSECURE = "BackendServiceCallUnsecure";
 
 	private String inFilePath = null;
 	private String outFilePath = null;	

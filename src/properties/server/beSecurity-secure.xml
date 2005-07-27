@@ -7,6 +7,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
 http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
     <serviceSecurityDescription role="fedoraInternalCall" callBasicAuth="true" callSSL="true" callbackBasicAuth="true" callbackSSL="true" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
+    <serviceSecurityDescription role="BackendServiceCallUnsecure" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
 	<serviceSecurityDescription role="demo:2" iplist="127.0.0.1"/>
 	<serviceSecurityDescription role="demo:2/getShorty" iplist="127.0.0.1"/>	
 	<serviceSecurityDescription role="demo:3" iplist="128.143.22.236"/>
@@ -14,8 +15,8 @@ http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
 	<serviceSecurityDescription role="demo:9" iplist="128.143.22.200"/>
 	<serviceSecurityDescription role="demo:13" iplist="127.0.0.1"/>
 	<serviceSecurityDescription role="demo:16" iplist="128.143.22.236"/>
-	<serviceSecurityDescription role="demo:20" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:25" iplist="127.0.0.1"/>
+	<serviceSecurityDescription role="demo:20" iplist="127.0.0.1 128.143.166.88"/>
+	<serviceSecurityDescription role="demo:25" iplist="127.0.0.1 128.143.166.88"/>
 	<serviceSecurityDescription role="demo:28" iplist="128.143.22.200"/>
 	<serviceSecurityDescription role="demo:DualResImageCollection" iplist="127.0.0.1"/>
 	<serviceSecurityDescription role="demo:DualResImageImpl" iplist="127.0.0.1"/>

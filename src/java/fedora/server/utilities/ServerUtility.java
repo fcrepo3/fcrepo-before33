@@ -351,6 +351,36 @@ public class ServerUtility {
 		return msg;
     }
     
-
-
+    public static boolean isURLFedoraServer(String url) {
+        boolean isFedoraLocalService = false;
+        String fedoraServerHost = (String) serverProperties.get(FEDORA_SERVER_HOST);
+        String fedoraServerPort = (String) serverProperties.get(FEDORA_SERVER_PORT);
+        String fedoraServerRedirectPort = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
+        
+        // Check for Fedora Local Services like saxon, fop, and imagemanip.
+        // Although these webapps are in the same web container as the Fedora server
+        // local services are treated like other backend services so must check for
+        // more than just hostname and port to determine if URL is a fedora-to-fedora
+        // server callback or a callback to a local service.
+        if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
+            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
+            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
+            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
+            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
+            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
+            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ) {
+            isFedoraLocalService = true;
+            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
+        }
+        if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
+            !isFedoraLocalService) {
+            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
+            return true;
+        } else {
+            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
+            return false;
+        }
+            
+    }    
+    
 }
