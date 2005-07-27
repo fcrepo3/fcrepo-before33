@@ -387,11 +387,7 @@ public class HttpClient {
     	closeStream();
     	releaseConnection();
     }
-    
-    private static final int sslPort = 8443; 
-    //private static final String host = "localhost";
-    private static final boolean allowSelfSignedCertificates = true;
-   
+       
     private static final String captureProtocol = "([^:]+?)://";
     private static final String captureHostWithPort = "([^:]+?):([^/]+?)";
     private static final String captureHostWithoutPort = "([^/]+?)";
@@ -451,38 +447,8 @@ public class HttpClient {
 		this.host = host;
 		this.port = port;
 
-        try {
-        	Protocol easyhttps = null;
-        	if (allowSelfSignedCertificates) {
-        		//required to use EasySSLProtocolSocketFactory
-        		easyhttps = new Protocol("https", new EasySSLProtocolSocketFactory(), sslPort);
-        	}
-        	if (allowSelfSignedCertificates) {
-        		/* http://jakarta.apache.org/commons/httpclient/sslguide.html seems to say that this should
-        		enable self-signed certificates.  can't make it work.
-        		Protocol.registerProtocol("https", easyhttps);
-        		//check it out:
-        		Protocol x = Protocol.getProtocol("https");
-        		log("proto equals?="+easyhttps.equals(x));
-        		log("proto ==?="+(easyhttps==x)); 
-        		log("x="+x.toString());
-        		log("x="+x.getScheme() + " " + x.getDefaultPort() + " " + x.isSecure());        		
-        		*/
-        	}        	
+        try {      	
         	apacheCommonsClient = new org.apache.commons.httpclient.HttpClient(new MultiThreadedHttpConnectionManager());
-        	if (allowSelfSignedCertificates) {
-        		/* http://jakarta.apache.org/commons/httpclient/sslguide.html says that this works per client
-        		instance to enable self-signed certificates.  and it does.
-        		//check it out:
-        		HostConfiguration hostConfiguration = httpClient.getHostConfiguration();
-        		Protocol y = hostConfiguration.getProtocol();
-        		log("proto equals?="+easyhttps.equals(y));
-        		log("proto ==?="+(easyhttps==y)); 
-        		log("y="+y.toString());
-        		log("y="+y.getScheme() + " " + y.getDefaultPort() + " " + y.isSecure());        		
-        		*/
-        		apacheCommonsClient.getHostConfiguration().setHost(host, sslPort, easyhttps); //required
-        	}
         } catch (Exception e) {
     		log("caught exception");
 	  		log(e.getMessage());
