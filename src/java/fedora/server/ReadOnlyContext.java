@@ -2,6 +2,8 @@ package fedora.server;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axis.MessageContext;
@@ -195,7 +197,7 @@ public class ReadOnlyContext implements Context {
     }
     */
     
-    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, boolean noOp) {
+    private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, Map auxSubjectRoles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
       	try {		
       		subjectMap.set(Constants.SUBJECT.LOGIN_ID.uri, (subjectId == null) ? "" : subjectId);
@@ -204,6 +206,16 @@ public class ReadOnlyContext implements Context {
      			if ((parts != null) && parts.length == 2) {
     				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
      			}
+      		}
+      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
+      		while (auxSubjectRoleKeys.hasNext()) {
+      			Object name = (String) auxSubjectRoleKeys.next();
+      			if (name instanceof String) {
+          			Object value = auxSubjectRoles.get(name);
+          			if ((value instanceof String) || (value instanceof String[])) {
+        				subjectMap.set((String) name, value);
+          			}      				
+      			}
       		}
       	} catch (Exception e) {	
       		slog("caught exception building subjectMap " + e.getMessage());
@@ -220,7 +232,7 @@ public class ReadOnlyContext implements Context {
     public static final ReadOnlyContext getContext(String messageProtocol, String subjectId, String password, String[] roles, boolean noOp) throws Exception {
     	MultiValueMap environmentMap = beginEnvironmentMap(messageProtocol);
   		environmentMap.lock(); // no request to grok more from 
-  		return getContext(environmentMap, subjectId, password, roles, noOp);
+  		return getContext(environmentMap, subjectId, password, roles, null, noOp);
     }
 
     public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request, String[] overrideRoles) {
@@ -325,7 +337,12 @@ public class ReadOnlyContext implements Context {
  
   	} catch (Exception e) {
   	}
-  	return getContext(environmentMap, subjectId, password, overrideRoles, noOp);
+  	Map auxSubjectRoles = null;
+  	Object testFedoraAuxSubjectAttributes = request.getAttribute(FEDORA_AUX_SUBJECT_ATTRIBUTES);
+  	if ((testFedoraAuxSubjectAttributes != null) && (testFedoraAuxSubjectAttributes instanceof Map)) {
+  		auxSubjectRoles = (Map) testFedoraAuxSubjectAttributes;
+  	}
+  	return getContext(environmentMap, subjectId, password, overrideRoles, auxSubjectRoles, noOp);
     }
 
     /*

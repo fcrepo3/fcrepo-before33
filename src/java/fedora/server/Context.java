@@ -63,6 +63,8 @@ public interface Context {
     
     public boolean getNoOp();
     
+    public static final String FEDORA_AUX_SUBJECT_ATTRIBUTES = "FEDORA_AUX_SUBJECT_ATTRIBUTES";
+    
     //public boolean useCachedObject();
     
 }
