@@ -33,6 +33,9 @@ public class TestConfigExample extends FedoraServerTestCase {
         // nothing to do here
     }
 
+    /**
+     * Test describeUser(ADMIN_USER) as ADMIN_USER with the correct password.
+     */
     public void testDescribeUser() throws Exception {
         FedoraClient client = new FedoraClient(BASE_URL, 
                                                ADMIN_USER, 
@@ -41,10 +44,26 @@ public class TestConfigExample extends FedoraServerTestCase {
         UserInfo info = apim.describeUser(ADMIN_USER);
     }
 
+    /**
+     * Test describeUser(ADMIN_USER) as ADMIN_USER with an incorrect password.
+     */
     public void testDescribeUserBadPassword() throws Exception {
     }
 
+    /**
+     * Test describeUser(ADMIN_USER) as RESTRICTED_USER with the correct 
+     * password, using a policy that states that the user IS NOT authorized to 
+     * run the command.
+     */
     public void testDescribeUserUnauthorized() throws Exception {
+    }
+
+    /**
+     * Test describeUser(ADMIN_USER) as RESTRICTED_USER with the correct 
+     * password, using a policy that states that the user IS authorized to 
+     * run the command.
+     */
+    public void testDescribeUserNowAuthorized() throws Exception {
     }
 
     public static void main(String[] args) {

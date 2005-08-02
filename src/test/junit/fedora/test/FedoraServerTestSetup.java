@@ -66,7 +66,7 @@ public class FedoraServerTestSetup
         return new ServerConfigurationParser(
                 new FileInputStream(FCFG)).parse();
     }
-    
+
     private boolean getSetup() {
         String setup = System.getProperty(PROP_SETUP);
         if (setup == null) {
