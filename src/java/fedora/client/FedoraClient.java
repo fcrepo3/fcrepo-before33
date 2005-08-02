@@ -80,6 +80,11 @@ public class FedoraClient {
         return in;
     }
 
+    public void reloadPolicies() throws IOException {
+        InputStream in = get("/management/control?action=reloadPolicies", true);
+        in.close();
+    }
+
     public String getString(String locator, boolean failIfNotOK) throws IOException {
         InputStream in = get(locator, failIfNotOK);
         try {
