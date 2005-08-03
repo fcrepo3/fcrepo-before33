@@ -701,6 +701,9 @@
 		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-stop.sh fedora-stop"/>
 		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s policy-editor.sh policy-editor"/>
+		</exec>		
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
