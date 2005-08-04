@@ -21,6 +21,7 @@ import java.util.Vector;
 import java.io.File;
 import java.io.InputStream;
 
+import fedora.client.Administrator;
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
 import fedora.client.utility.ingest.AutoIngestor;
@@ -50,17 +51,31 @@ public class BMechBuilder extends JInternalFrame
 
     public static void main(String[] args)
     {
-      JFrame frame = new JFrame("BMechBuilder Test");
-      frame.addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) {System.exit(0);}
-      });
-
-      File dir = null;
-      frame.getContentPane().add(
-        new BMechBuilder("http", "localhost", 8080, "test", "test", dir),
-          BorderLayout.CENTER);
-      frame.setSize(700, 500);
-      frame.setVisible(true);
+      try {
+          if (args.length == 5) {
+				      JFrame frame = new JFrame("BMechBuilder Test");
+				      String protocol = args[0];
+				      String host = args[1];
+				      int port = new Integer(args[2]).intValue();
+				      String user = args[3];
+				      String pass = args[4];
+				      File dir = null;
+				      frame.addWindowListener(new WindowAdapter() {
+				          public void windowClosing(WindowEvent e) {System.exit(0);}
+				      });
+				      frame.getContentPane().add(
+				        new BMechBuilder(protocol, host, port, user, pass, dir),
+				          BorderLayout.CENTER);
+				      frame.setSize(700, 500);
+				      frame.setVisible(true);
+          } else {
+              System.out.println("BMechBuilder main method requires 5 arguments.");
+              System.out.println("Usage: BMechBuilder protocol host port user pass");
+          }
+      } catch (Exception e) {
+          System.out.println(e.getMessage());
+          e.printStackTrace();
+      }     
   }
 
     public BMechBuilder(String protocol, String host, int port, String user, String pass, File dir)
