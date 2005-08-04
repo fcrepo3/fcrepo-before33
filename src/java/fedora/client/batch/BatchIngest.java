@@ -18,9 +18,9 @@ import fedora.client.utility.ingest.AutoIngestor;
  */
 class BatchIngest {
 
-	String protocol = null;  //http or https
-	String host = null; //"localhost";
-	int port = 0; //8080;
+	String protocol = null;
+	String host = null;
+	int port = 0;
 	String username;
 	String password;
 
