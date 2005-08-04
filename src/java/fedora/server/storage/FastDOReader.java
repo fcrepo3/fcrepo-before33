@@ -102,9 +102,6 @@ public class FastDOReader implements DOReader
   /** Instance of DOReader... used to get definitive readers. */
   protected DOReader definitiveDOReader = null;
 
-  /** Context for uncached objects. */
-  //protected static Context m_context = null;
-
   /** Host name of the Fedora server **/
   protected static String fedoraServerHost = null;
 
@@ -125,13 +122,6 @@ public class FastDOReader implements DOReader
       fedoraServerPort = s_server.getParameter("fedoraServerPort");
       m_manager = (DOManager) s_server.getModule(
           "fedora.server.storage.DOManager");
-      /*
-      HashMap h = new HashMap();
-      h.put("application", "apia");
-      h.put("useCachedObject", "false");
-      h.put("userId", "fedoraAdmin");
-      m_context = ReadOnlyContext.getContext(h);
-      */
     } catch (InitializationException ie)
     {
       System.err.println(ie.getMessage());
