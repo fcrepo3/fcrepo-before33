@@ -78,15 +78,18 @@ public class TestAPIA extends FedoraServerTestCase {
     
     public void testGetDissemination() throws Exception {
     	
+		// test dissemination of the Default Disseminator
 		MIMETypedStream diss = null;
+		diss = apia.getDissemination("demo:11", "fedora-system:3", "viewDublinCore", new Property[0], null);
+		assertEquals(diss.getMIMEType(),"text/html");
+		assertTrue(diss.getStream().length > 0);
+    	
+		// test dissemination with E datastream as input to a remote bmech service (MrSID)
         diss = apia.getDissemination("demo:11", "demo:8", "getThumbnail", new Property[0], null);
 		assertEquals(diss.getMIMEType(),"image/jpeg");
 		assertTrue(diss.getStream().length > 0);
 		
-		diss = apia.getDissemination("demo:11", "fedora-system:3", "viewDublinCore", new Property[0], null);
-		assertEquals(diss.getMIMEType(),"text/html");
-		assertTrue(diss.getStream().length > 0);
-		
+		// test dissemination using remote bmech service (MrSID) with user input parms		
 		Property[] parms = new Property[2];
 		Property p = new Property();
 		p.setName("ZOOM");
@@ -99,14 +102,24 @@ public class TestAPIA extends FedoraServerTestCase {
 		diss = apia.getDissemination("demo:11", "demo:8", "getImage", parms, null);
 		assertEquals(diss.getMIMEType(),"image/jpeg");
 		assertTrue(diss.getStream().length > 0);
+		
+		// test chained dissemination using local bmech services
+		// The object contains an E datastream that is a dissemination of the local SAXON service.
+		// This datastream is input to another dissemination that uses the local FOP service.
+		diss = apia.getDissemination("demo:26", "demo:19", "getPDF", new Property[0], null);
+		assertEquals(diss.getMIMEType(),"application/pdf");
+		assertTrue(diss.getStream().length > 0);
   
     }
     
 	public void testGetDatastreamDissemination() throws Exception {
+		
+		// test for DC datastream
 		MIMETypedStream ds = null;
 		ds = apia.getDatastreamDissemination("demo:11", "DC", null);
 		assertXpathExists("/oai_dc:dc", new String(ds.getStream()));
 		
+		// test for type X datastream 		
 		ds = apia.getDatastreamDissemination("demo:11", "TECH1", null);
 		String dsXML = new String(ds.getStream(), "UTF-8");
 		assertEquals(ds.getMIMEType(),"text/xml");
@@ -114,10 +127,22 @@ public class TestAPIA extends FedoraServerTestCase {
 		assertXpathExists("//uvalibadmin:technical",dsXML);
 		assertXpathEvaluatesTo(
 			"wavelet", "/uvalibadmin:admin/uvalibadmin:technical/uvalibadmin:compression/text( )", dsXML);
-			
+
+		// test for type E datastream 			
 		ds = apia.getDatastreamDissemination("demo:11", "DS1", null);
 		assertEquals(ds.getMIMEType(),"image/x-mrsid-image");
-		assertTrue(ds.getStream().length > 0);		      
+		assertTrue(ds.getStream().length > 0);	
+		
+		// test for type R datastream 			
+		ds = apia.getDatastreamDissemination("demo:30", "DS1", null);
+		assertEquals(ds.getMIMEType(),"application/fedora-redirect");
+		assertTrue(ds.getStream().length > 0);
+		
+		// test for type M datastream 			
+		ds = apia.getDatastreamDissemination("demo:5", "DS1", null);
+		assertEquals(ds.getMIMEType(),"image/jpeg");
+		assertTrue(ds.getStream().length > 0);
+		     
 	}
  
 	public void testListDatastreams() throws Exception {
