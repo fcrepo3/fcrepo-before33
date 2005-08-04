@@ -293,7 +293,7 @@ public class AutoModify
         String hostName = null;
         String username = null;
         String password = null;
-        int portNum = 8080;
+        int portNum = 0;
         boolean isValidateOnly = true;
 
         try {
