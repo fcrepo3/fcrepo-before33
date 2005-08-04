@@ -69,7 +69,7 @@ public class BDefBuilder extends JInternalFrame
 				      frame.setSize(700, 500);
 				      frame.setVisible(true);
           } else {
-              System.out.println("BDefBuilder main method requires5 arguments.");
+              System.out.println("BDefBuilder main method requires 5 arguments.");
               System.out.println("Usage: BDefBuilder protocol host port user pass");
           }
       } catch (Exception e) {
