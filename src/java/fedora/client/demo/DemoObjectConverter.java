@@ -12,11 +12,11 @@ import java.io.OutputStreamWriter;
  *
  * <p><b>Title:</b> DemoObjectConverter.java</p>
  * <p><b>Description:</b> Goes through the Fedora demo objects directory
- * and changes all occurrences of the strings "localhost" and "8080" to
+ * and changes all occurrences of strings for protocol, hostname and port number to
  * values supplied by the user in the calling arguments. This utility is
  * used to convert the original Fedora demo objects so that they will
  * function correctly when the Fedora server is configured to run on a
- * port other than 8080 and a sername other thanlocalhost.</p>
+ * protocol, host, or port other than the defaults.</p>
  *
  *
  * @author rlw@virginia.edu
@@ -25,14 +25,14 @@ import java.io.OutputStreamWriter;
 public class DemoObjectConverter
 {
   private static String fedoraHome = "";
-  private static String fromProtocol = "http";
-  private static String fromHostName = "localhost";
-  private static String fromPortNum = "8080";
-  private static String toProtocol = "http";
-  private static String toHostName = "localhost";
-  private static String toPortNum = "8080";
-  private static String fromName = "localhost:8080";
-  private static String toName = "localhost:8080";
+  private static String fromProtocol = null;
+  private static String fromHostName = null;
+  private static String fromPortNum = null;
+  private static String toProtocol = null;
+  private static String toHostName = null;
+  private static String toPortNum = null;
+  private static String fromName = null;
+  private static String toName = null;
 
   /**
    * <p> Constructor for DemoObjectConverter. Initializes class variables for
@@ -49,10 +49,10 @@ public class DemoObjectConverter
   public DemoObjectConverter(String fromProtocol, String fromHostName, String fromPortNum,
       String toProtocol, String toHostName, String toPortNum, String fedoraHome)
   {
-	DemoObjectConverter.toProtocol = toProtocol;
+	  DemoObjectConverter.toProtocol = toProtocol;
     DemoObjectConverter.toHostName = toHostName;
     DemoObjectConverter.toPortNum = toPortNum;
-	DemoObjectConverter.fromProtocol = fromProtocol;
+	  DemoObjectConverter.fromProtocol = fromProtocol;
     DemoObjectConverter.fromHostName = fromHostName;
     DemoObjectConverter.fromPortNum = fromPortNum;
     DemoObjectConverter.fedoraHome = fedoraHome;
@@ -105,8 +105,8 @@ public class DemoObjectConverter
   }
 
   /**
-   * <p> Substitute the hostname and port number supplied in calling arguments
-   * with strings "localhost" and "8080" found in Fedora demo objects. Replaces
+   * <p> Substitute the protocol, hostname and port number supplied in calling arguments
+   * with those found in Fedora demo objects. Replaces
    * the original file with the edited version.</p>
    *
    * @param demoObject The Fedora demo object file to be edited.
@@ -126,7 +126,7 @@ public class DemoObjectConverter
         newUrlStart= "http://" + toHostName + "/";
       } else if (toProtocol.equalsIgnoreCase("https") && ((toPortNum.equals("")) || (toPortNum.equals("443"))))
       {
-		  newUrlStart= "https://" + toHostName + "/";
+		    newUrlStart= "https://" + toHostName + "/";
       } else
       {
         newUrlStart= toProtocol + "://" + toHostName + ":" + toPortNum + "/";
@@ -134,23 +134,23 @@ public class DemoObjectConverter
       String a= fromProtocol + "://" + fromHostName;
       String fromURLStartNoPort=a + "/";
       String fromURLStartPort80=a + ":80" + "/";
-	  String fromURLStartPort443=a + ":443" + "/";
+	    String fromURLStartPort443=a + ":443" + "/";
       String fromURLStartWithPort=a + ":" + fromPortNum + "/";
 
 	  if (fromProtocol.equalsIgnoreCase("http") && (fromPortNum.equals("") || fromPortNum.equals("80")))
 	  {
-		System.out.println("searching for " + fromURLStartNoPort);
-		System.out.println("searching for " + fromURLStartPort80);
-		System.out.println("replacing with " + newUrlStart);
+		  System.out.println("searching for " + fromURLStartNoPort);
+		  System.out.println("searching for " + fromURLStartPort80);
+		  System.out.println("replacing with " + newUrlStart);
 	  } else if (fromProtocol.equalsIgnoreCase("https") && (fromPortNum.equals("") || fromPortNum.equals("443")))
 	  {
-		System.out.println("searching for " + fromURLStartNoPort);
-		System.out.println("searching for " + fromURLStartPort443);
-		System.out.println("replacing with " + newUrlStart);
+		  System.out.println("searching for " + fromURLStartNoPort);
+		  System.out.println("searching for " + fromURLStartPort443);
+		  System.out.println("replacing with " + newUrlStart);
 	  } else
 	  {
-		System.out.println("searching for " + fromURLStartWithPort);
-		System.out.println("replacing with " + newUrlStart);
+		  System.out.println("searching for " + fromURLStartWithPort);
+		  System.out.println("replacing with " + newUrlStart);
 	  }
       
       while (nextLine!=null)
@@ -164,8 +164,8 @@ public class DemoObjectConverter
             nextLine = nextLine.replaceAll(fromURLStartPort80, newUrlStart);
           } else if (fromProtocol.equalsIgnoreCase("https") && (fromPortNum.equals("") || fromPortNum.equals("443")))
           {
-			nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
-			nextLine = nextLine.replaceAll(fromURLStartPort443, newUrlStart);
+			      nextLine = nextLine.replaceAll(fromURLStartNoPort, newUrlStart);
+			      nextLine = nextLine.replaceAll(fromURLStartPort443, newUrlStart);
           } else
           {
             nextLine = nextLine.replaceAll(fromURLStartWithPort, newUrlStart);
@@ -175,6 +175,7 @@ public class DemoObjectConverter
       }
       in.close();
       out.close();
+      
       // Remove original file.
       if(demoObject.delete())
       {
