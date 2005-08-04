@@ -892,6 +892,7 @@
             </filterset>
 			<fileset dir="src/fcfg/server">
 				<include name="**/*.fcfg"/>
+				<include name="**/logging.properties"/>				
 			</fileset>
 		</copy>
 		<mkdir dir="dist/server/bin"/>
