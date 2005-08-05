@@ -12,11 +12,12 @@ public class TestDateUtility extends TestCase {
     protected final String EPOCH_DT = "1970-01-01T00:00:00.000Z";
     protected final String EPOCH_D = "1970-01-01Z";
     protected final String EPOCH_T = "00:00:00.000Z";
+    protected final String HTTP_DATE = "Thu, 04 Aug 2005 01:35:07 GMT";
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestDateUtility.class);
     }
-
+    
     public void testConvertDateToString() {
         assertEquals(DateUtility.convertDateToString(EPOCH), EPOCH_DT);
     }
@@ -39,7 +40,8 @@ public class TestDateUtility extends TestCase {
                           "1970-01-01T00:00:00.00",
                           "1970-01-01T00:00:00.0",
                           "1970-01-01T00:00:00",
-                          "1970-01-01"
+                          "1970-01-01",
+						  "Thu, 01 Jan 1970 00:00:00 GMT"
         };
         for (int i = 0; i < dates.length; i++) {
             assertEquals(DateUtility.parseDateAsUTC(dates[i]), EPOCH);

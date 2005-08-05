@@ -146,6 +146,8 @@ public abstract class DateUtility {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SS");
             } else if (dateString.length() == 23) {
                 formatter.applyPattern("yyyy-MM-dd'T'HH:mm:ss.SSS");
+            } else if (dateString.endsWith("GMT") || dateString.endsWith("UTC")) {
+            	formatter.applyPattern("EEE, dd MMMM yyyyy HH:mm:ss z");
             }
         }
         try {
