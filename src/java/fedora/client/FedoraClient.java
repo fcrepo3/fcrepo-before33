@@ -9,21 +9,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.jrdf.graph.Literal;
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
+import fedora.common.Constants;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
+import fedora.server.utilities.DateUtility;
 
-public class FedoraClient {
+public class FedoraClient implements Constants {
 
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
@@ -183,9 +190,53 @@ public class FedoraClient {
     }
 
     public Date getLastModifiedDate(String locator) throws IOException {
-        HttpInputStream in = get(locator, true);
-        return null;
-//        String dateString = in.getHeader("Last-Modified");
+    	if (locator.startsWith(FEDORA_URI_PREFIX)) {
+    		String query = "select $date " +
+    					   "from <#ri> " +
+    					   "where <" + locator + "> <" + VIEW.LAST_MODIFIED_DATE.uri + "> $date";
+    		Map map = new HashMap();
+    		map.put("lang", "itql");
+    		map.put("query", query);
+    		TupleIterator tuples = getTuples(map);
+    		try {
+				if (tuples.hasNext()) {
+					Map row = tuples.next();
+					Literal dateLiteral = (Literal) row.get("date");
+				    if (dateLiteral == null) {
+				        throw new IOException("A row was returned, but it did not contain a 'date' binding");
+				    }
+				    return DateUtility.parseDateAsUTC(dateLiteral.getLexicalForm());
+				} else {
+					throw new IOException("No rows were returned");
+				}
+			} catch (TrippiException e) {
+				throw new IOException(e.getMessage());
+			}
+    	} else {
+	    	HttpClient client = getHttpClient();
+
+	    	HeadMethod head = new HeadMethod(locator);
+	    	// FIXME for fedora locations head.setDoAuthentication(true);
+	    	head.setFollowRedirects(true);
+	    	
+	    	int statusCode = client.executeMethod(head);
+	    	if (statusCode != HttpStatus.SC_OK) {
+	            throw new IOException("Method failed: " + head.getStatusLine());
+	          }
+	    	Header[] headers = head.getResponseHeaders();
+	
+	        // Retrieve just the last modified header value.
+	    	Header header = head.getResponseHeader("last-modified");
+	    	if (header != null) {
+	    		String lastModified = header.getValue();
+	    		head.releaseConnection();
+	    		return DateUtility.convertStringToDate(lastModified);
+	    	} else {
+	    		// return current date time
+	    		head.releaseConnection();
+	    		return new Date();
+	    	}
+    	}
     }
 
     public HttpClient getHttpClient() {
