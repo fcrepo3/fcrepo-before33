@@ -72,6 +72,7 @@ start() {
 					  -Dcatalina.home="$TC" \
 					  -Djava.io.tmpdir="$TC"/temp \
                       -Djava.security.auth.login.config="$TC"/conf/jaas.config \
+                      -Djava.util.logging.config.file="$FEDORA_HOME"/server/config/logging.properties\
 					  org.apache.catalina.startup.Bootstrap start &)
 	
 	echo "Deploying API-M and API-A..."
@@ -134,6 +135,7 @@ debug() {
 					  -Dcatalina.home="$TC" \
 					  -Djava.io.tmpdir="$TC"/temp \
                       -Djava.security.auth.login.config="$TC"/conf/jaas.config \
+                      -Djava.util.logging.config.file="$FEDORA_HOME"/server/config/logging.properties\
 					  org.apache.catalina.startup.Bootstrap start &)
 	
 	echo "Deploying API-M and API-A..."
