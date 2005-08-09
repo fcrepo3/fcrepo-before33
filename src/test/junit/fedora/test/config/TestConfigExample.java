@@ -81,8 +81,11 @@ public class TestConfigExample extends FedoraServerTestCase {
                 System.out.println("describeUser for admin with bad password"
                         + " correctly failed with an 'Unauthorized' error.");
             } else {
-                fail("describeUser for admin with bad password failed, "
-                        + "but for an unexpected reason: " + e.getMessage());
+                if (!e.getClass().getName().equals("org.apache.axis.AxisFault")) {
+                    e.printStackTrace();
+                    fail("describeUser for admin with bad password failed, "
+                            + "but for an unexpected reason: " + e.getClass().getName() + ": " + e.getMessage());
+                }
             }
         }
 
@@ -109,8 +112,11 @@ public class TestConfigExample extends FedoraServerTestCase {
                 System.out.println("describeUser for restricted user correctly "
                         + "failed with an 'Unauthorized' error.");
             } else {
-                fail("describeUser for restricted user failed, "
-                        + "but for an unexpected reason: " + e.getMessage());
+                if (!e.getClass().getName().equals("org.apache.axis.AxisFault")) {
+                    e.printStackTrace();
+                    fail("describeUser for restricted user failed, "
+                            + "but for an unexpected reason: " + e.getClass().getName() + ": " + e.getMessage());
+                }
             }
         }
 
