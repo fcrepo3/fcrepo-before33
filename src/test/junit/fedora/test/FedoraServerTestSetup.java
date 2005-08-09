@@ -32,13 +32,28 @@ import fedora.utilities.ExecUtility;
 public class FedoraServerTestSetup 
   extends    TestSetup 
   implements FedoraTestConstants {
+
     private boolean doSetup;
+    private File m_configDir;
     
     /**
      * @param test
      */
     public FedoraServerTestSetup(Test test) {
         super(test);
+    }
+
+    public FedoraServerTestSetup(Test test, String suiteClassName) {
+        super(test);
+
+        String testHome = System.getProperty(PROP_TEST_HOME);
+        if (testHome == null) {
+            throw new RuntimeException("Required system property not set: " 
+                    + PROP_TEST_HOME);
+        }
+
+        m_configDir = new File(new File(testHome), 
+                               suiteClassName.replaceAll("\\.", "/"));
     }
 
     public void setUp() throws Exception {
@@ -78,6 +93,9 @@ public class FedoraServerTestSetup
     
     private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
+
+        swapConfigurationFiles();
+
         String cmd = FEDORA_HOME + "/server/bin/fedora-start";
         
         String osName = System.getProperty("os.name" );
@@ -126,6 +144,15 @@ public class FedoraServerTestSetup
         ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-stop");
         dropDBTables();
         deleteStore();
+        unswapConfigurationFiles();
+    }
+
+    private void swapConfigurationFiles() throws Exception {
+        System.out.println("Swapping-in configuration files from " + m_configDir.getPath());
+    }
+    
+    private void unswapConfigurationFiles() throws Exception {
+        System.out.println("Replacing original configuration files...");
     }
     
     private void dropDBTables() throws Exception {

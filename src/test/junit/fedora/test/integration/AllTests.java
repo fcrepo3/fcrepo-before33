@@ -3,6 +3,7 @@ package fedora.test.integration;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import fedora.test.FedoraServerTestSetup;
+import fedora.test.config.*;
 
 /**
  * The grand, complete, and slow mother of all tests.
@@ -16,15 +17,19 @@ public class AllTests {
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite("All API tests");
-        //$JUnit-BEGIN$
-        suite.addTest(TestIngestDemoObjects.suite());
-        suite.addTest(TestCommandLineUtilities.suite());
-        suite.addTest(AllAPITests.suite());
-        suite.addTest(TestFedoraConfigurations.suite());
-        // add more tests here
-        
-        //$JUnit-END$
-        return new FedoraServerTestSetup(suite);
+
+        TestSuite defaultTests = new TestSuite("Default configuration tests");
+        defaultTests.addTest(TestIngestDemoObjects.suite());
+        defaultTests.addTest(TestCommandLineUtilities.suite());
+        defaultTests.addTest(AllAPITests.suite());
+
+        TestSuite configTests = new TestSuite("Other configuration tests");
+        configTests.addTest(TestConfigExample.suite());
+
+        TestSuite allTests = new TestSuite("All tests");
+        allTests.addTest(new FedoraServerTestSetup(defaultTests));
+        allTests.addTest(configTests);
+
+        return allTests;
     }
 }
