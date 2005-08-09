@@ -52,7 +52,7 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
             testSetup.tearDown();
         }
     }
-    
+   
     public static ServerConfiguration getServerConfiguration() {
         try {
             return FedoraServerTestSetup.getServerConfiguration();

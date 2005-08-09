@@ -1,13 +1,9 @@
 package fedora.test;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Iterator;
+import java.util.*;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
@@ -149,10 +145,94 @@ public class FedoraServerTestSetup
 
     private void swapConfigurationFiles() throws Exception {
         System.out.println("Swapping-in configuration files from " + m_configDir.getPath());
+
+        //
+        // fcfg.properties
+        //
+        File fcfgPropertiesFile = new File(m_configDir, "fcfg.properties");
+        if (fcfgPropertiesFile.exists()) {
+            System.out.println("fcfg.properties FOUND. Overriding fedora.fcfg...");
+
+            // apply overrides in memory
+            FileInputStream fis = new FileInputStream(FCFG_SRC);
+            ServerConfigurationParser scp = new ServerConfigurationParser(fis);
+            ServerConfiguration config = scp.parse();
+            Properties overrides = new Properties();
+            overrides.load(new FileInputStream(fcfgPropertiesFile));
+            config.applyProperties(overrides);
+
+            // back the old one up
+            File fcfg = new File(FCFG);
+            backup(fcfg);
+
+            // serialize to fedora.fcfg
+            OutputStream out = new FileOutputStream(fcfg);
+            config.serialize(out);
+
+        } else {
+            System.out.println("fcfg.properties not found, will use default fedora.fcfg");
+        }
+
+        //
+        // other configuration files
+        //
+        swapIn(JAAS, new File(JAAS_PATH));
+        swapIn(TOMCAT_USERS_TEMPLATE, new File(TOMCAT_USERS_TEMPLATE_PATH));
+        swapIn(WEB_XML, new File(WEB_XML_PATH));
+
+    }
+
+    private void swapIn(String name, File activeConfig) throws Exception {
+        File newConfig = new File(m_configDir, name);
+        if (newConfig.exists()) {
+            System.out.println("Override found for " + name + ", swapping in...");
+            backup(activeConfig);
+            copy(newConfig, activeConfig);
+        } else {
+            System.out.println("No override for " + name + ", will use default.");
+        }
+    }
+
+    private static void backup(File source) throws Exception {
+        File backup = new File(source.getPath() + ".bak");
+        backup.delete();
+        source.renameTo(backup);
+    }
+
+    private static void copy(File source, File dest) throws Exception {
+        FileInputStream in = new FileInputStream(source);
+        FileOutputStream out = new FileOutputStream(dest);
+        int c;
+
+        while ((c = in.read()) != -1)
+           out.write(c);
+
+        in.close();
+        out.close();
     }
     
     private void unswapConfigurationFiles() throws Exception {
         System.out.println("Replacing original configuration files...");
+
+        // 
+        // restore from .baks of all config files
+        //
+        restore("fcfg.properties", new File(FCFG));
+        restore(JAAS, new File(JAAS_PATH));
+        restore(TOMCAT_USERS_TEMPLATE, new File(TOMCAT_USERS_TEMPLATE_PATH));
+        restore(WEB_XML, new File(WEB_XML_PATH));
+    }
+
+    private void restore(String name, File activeConfig) throws Exception {
+        File newConfig = new File(m_configDir, name);
+        if (newConfig.exists()) {
+            System.out.println(name + " was an override. Restoring original...");
+            File backup = new File(activeConfig.getPath() + ".bak");
+            activeConfig.delete();
+            backup.renameTo(activeConfig);
+        } else {
+            System.out.println(name + " was not an override; no need to restore.");
+        }
     }
     
     private void dropDBTables() throws Exception {
