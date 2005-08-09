@@ -1093,6 +1093,12 @@
              basedir="temp/server/classes"/>
         <jar destfile="${test.build.dir}/fedora-client.jar"
              basedir="temp/client"/>      
+        <copy todir="${test.build.dir}" file="inc/client/truststore"/>
+        <copy todir="${test.build.dir}" includeEmptyDirs="false">
+            <fileset dir="src/test/junit">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
     </target>   
     
     <target name="compile-junit" depends="junit-prep">
@@ -1108,7 +1114,8 @@
         <junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
             <sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
             <sysproperty key="fedora.test.home" value="${test.build.dir}"/>
-            <sysproperty key="javax.net.ssl.trustStore" value="/truststore"/>
+            <sysproperty key="tomcat.basename" value="${tomcat.basename}"/>
+            <sysproperty key="javax.net.ssl.trustStore" value="${test.build.dir}/truststore"/>
             <sysproperty key="javax.net.ssl.trustStorePassword" value="tomcat"/>
             <classpath refid="test.path" />
             <formatter type="plain"
