@@ -17,6 +17,8 @@ public interface FedoraTestConstants {
     public static final String FCFG_SRC = "src/fcfg/server/fedora.fcfg";
     public static final String FCFG_SRC_DIR = "src/fcfg/server";
 
+    public static final String BESECURITY_PATH = FEDORA_HOME + "/server/config/beSecurity.xml";
+
     public static final String TOMCAT_HOME = FEDORA_HOME + "/server/" + System.getProperty(PROP_TOMCAT_BASENAME);
    
     public static final String JAAS      = "jaas.config";

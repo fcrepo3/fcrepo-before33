@@ -2,6 +2,8 @@ package fedora.test;
 
 import java.io.File;
 
+import fedora.client.*;
+import fedora.server.config.Configuration;
 import fedora.server.config.ServerConfiguration;
 
 /**
@@ -89,5 +91,55 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     public void usePolicies(String dirName) throws Exception {
         File policyBaseDir = new File(m_configDir, dirName);
         System.out.println("Using policies from " + policyBaseDir.getPath());
+
+        // currently just blows away existing policies and replaces them with
+        // whatever's in dirName
+
+        System.out.println("Replacing policies...");
+        replacePolicies(new File(policyBaseDir, "repository-policies"), 
+                        "REPOSITORY-POLICIES-DIRECTORY");
+        replacePolicies(new File(policyBaseDir, "object-policies"), 
+                        "OBJECT-POLICIES-DIRECTORY");
+        replacePolicies(new File(policyBaseDir, "surrogate-policies"), 
+                        "SURROGATE-POLICIES-DIRECTORY");
+        replacePolicies(new File(policyBaseDir, "repository-policies-generated-by-policyguitool"), 
+                        "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY");
+
+        File backendSecurityReplacement = new File(dirName, "beSecurity.xml");
+        if (backendSecurityReplacement.exists()) {
+            File currentBackendSecurity = new File(BESECURITY_PATH);
+            currentBackendSecurity.delete();
+            FedoraServerTestSetup.copy(backendSecurityReplacement, currentBackendSecurity);
+        }
+       
+        System.out.println("Telling server to reload policies...");
+        FedoraClient client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
+        client.reloadPolicies();
     }
+
+    private void replacePolicies(File fromDir, String toDirProp) throws Exception {
+        Configuration config = getServerConfiguration().getModuleConfiguration("fedora.server.security.Authorization");
+        File toDir = new File(config.getParameter(toDirProp).getValue());
+        if (toDir.exists()) {
+            clearDir(toDir);
+            if (fromDir.exists()) {
+                copyFiles(fromDir, toDir);
+            }
+        }
+    }
+
+    private static void clearDir(File dir) throws Exception {
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            files[i].delete();
+        }
+    }
+
+    private static void copyFiles(File fromDir, File toDir) throws Exception {
+        File[] files = fromDir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
+        }
+    }
+
 }

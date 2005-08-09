@@ -199,7 +199,7 @@ public class FedoraServerTestSetup
         source.renameTo(backup);
     }
 
-    private static void copy(File source, File dest) throws Exception {
+    public static void copy(File source, File dest) throws Exception {
         FileInputStream in = new FileInputStream(source);
         FileOutputStream out = new FileOutputStream(dest);
         int c;
