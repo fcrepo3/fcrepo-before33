@@ -1,6 +1,3 @@
-/*
-*/
-
 package fedora.utilities.policyEditor;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
@@ -37,12 +34,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * A TreeTable example, showing a JTreeTable, operating on the local file
- * system.
+ * An editor that allow the repository-wide XACML policies 
+ * for a Fedora server configuration, to be created, modified, and installed,
+ * without requiring tedious, error-prone editing of the raw XML files. 
  *
  * @version %I% %G%
  *
- * @author Philip Milne
+ * @author Robert Haschart
  */
 
 public class PolicyEditor extends JFrame implements ActionListener, WindowListener
@@ -182,7 +180,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         panelCenter.add(buttonPanel, BorderLayout.SOUTH);
         buttonPanel.add(newUserClass = new JButton("Add New User Class..."));
         buttonPanel.add(editUserClass = new JButton("Edit Parameters of Class..."));
-        buttonPanel.add(deleteUserClass = new JButton("Delete User Class"));
+   //     buttonPanel.add(deleteUserClass = new JButton("Delete User Class"));
         newUserClass.addActionListener(this);
         editUserClass.addActionListener(this);
         deleteUserClass.addActionListener(this);
@@ -205,6 +203,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
             JMenu fileMenu = new JMenu("File");
             fileMenu.setMnemonic(KeyEvent.VK_F);
             fileMenu.add(makeMenuItem("Save Settings/Generate Policies...", KeyEvent.VK_S, KeyEvent.VK_S, ActionEvent.CTRL_MASK, null, true));
+            fileMenu.add(makeMenuItem("Install Policies...", KeyEvent.VK_I, KeyEvent.VK_I, ActionEvent.CTRL_MASK, null, true));
             fileMenu.add(makeMenuItem("Set Fedora Home...", KeyEvent.VK_F, KeyEvent.VK_R, ActionEvent.CTRL_MASK, null, true));
             fileMenu.add(makeMenuItem("Revert to Saved Version", KeyEvent.VK_R, 0, 0, null, true));
      //       fileMenu.add(makeMenuItem("Generate Policies...", KeyEvent.VK_A, 0, 0, null, true));
@@ -354,8 +353,12 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         else if (e.getActionCommand().startsWith("Save"))
         {
             savePolicies(policyEditorStateDir); 
-            writePolicies(generatedRepositoryDir, rootNode); 
+            writePolicies(policyEditorStateDir, rootNode); 
             clearDirty();
+        }
+        else if (e.getActionCommand().startsWith("Install"))
+        {
+            writePolicies(generatedRepositoryDir, rootNode); 
         }
         else if (e.getActionCommand().startsWith("Revert"))
         {

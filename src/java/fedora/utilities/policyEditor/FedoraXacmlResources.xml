@@ -13,6 +13,12 @@
     	<template  rule="permit" name="only from @organization_name@" description="Allow access only if it originates from within IP addresses at @organization_name@"
     	           subject="<AnySubject/>" parms="organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress" 
     	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:regexp-string-match&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_address_range@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="permit" name="if @object_state@" description="Permit action if current state is '@object_state@'"
+    	           subject="<AnySubject/>" parms="object_state=State of Object" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@object_state@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:state&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="permit" name="if not @object_state@" description="Permit action if current state is '@object_state@'"
+    	           subject="<AnySubject/>" parms="object_state=State of Object" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@object_state@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:state&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Apply>&#10;</Apply>&#10;</Condition>"/>
 
     	<template  rule="deny" name="except from @machine_name@" description="Deny any access attempt from a machine other than @machine_name@"
     	           subject="<AnySubject/>" parms="machine_name=Machine Name;IP_Address_of_machine=IP Address of Machine" 
@@ -29,6 +35,9 @@
     	<template  rule="deny" name="if not from @organization_name@" description="Deny action unless it originates from within the range of IP addresses at @organization_name@"
     	           subject="<AnySubject/>" parms="organization_name=Name of Organization;IP_address_range=Regular Expression for IP adress" 
     	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:regexp-string-match&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@IP_address_range@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:http-request:client-ip-address&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/>&#10;</Apply>&#10;</Condition>"/>
+    	<template  rule="deny" name="if @object_state@" description="Deny action if current state is '@object_state@'"
+    	           subject="<AnySubject/>" parms="object_state=State of Object" 
+    	           condition="<Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>@object_state@</AttributeValue>&#10;<Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-one-and-only&quot;>&#10;<ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:object:state&quot; &#10;DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; MustBePresent=&quot;false&quot;/>&#10;</Apply>&#10;</Condition>"/>
     </templates>
     <resource name="Fedora Resources and Actions" shortname="fedora" value="unrestricted" value1="--None--"
         action="<AnyAction/>"
@@ -190,6 +199,10 @@
                 resource="<AnyResource/>">
             <resource name="Shutdown Server" shortname="shutdown" value="seeParent" value1="seeParent"
                         action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-serverShutdown</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
+                        resource="<AnyResource/>">
+            </resource>
+            <resource name="Reload Policies" shortname="reload" value="seeParent" value1="seeParent"
+                        action="<Action>&#10;<ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;>&#10;<AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;>urn:fedora:names:fedora:2.1:action:id-reloadPolicies</AttributeValue>&#10;<ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&#10;AttributeId=&quot;urn:fedora:names:fedora:2.1:action:id&quot;/>&#10;</ActionMatch>&#10;</Action>"
                         resource="<AnyResource/>">
             </resource>
             <resource name="Get Server Status" shortname="status" value="seeParent" value1="seeParent"
