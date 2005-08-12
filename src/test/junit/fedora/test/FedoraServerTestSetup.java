@@ -90,7 +90,7 @@ public class FedoraServerTestSetup
     private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
 
-        swapConfigurationFiles();
+        if (m_configDir != null) swapConfigurationFiles();
 
         String cmd = FEDORA_HOME + "/server/bin/fedora-start";
         
@@ -140,7 +140,7 @@ public class FedoraServerTestSetup
         ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-stop");
         dropDBTables();
         deleteStore();
-        unswapConfigurationFiles();
+        if (m_configDir != null) unswapConfigurationFiles();
     }
 
     private void swapConfigurationFiles() throws Exception {
