@@ -154,6 +154,17 @@
 		<pathelement location="${lib.xerces}"/>
 		<pathelement location="${lib.xml-apis}"/>
 	</path>
+	<path id="Server-libs.path">
+		<pathelement location="${lib.log4j}"/>
+	</path>
+	<!-- $TC_COMMON should not be interpreted by Ant. -->
+	<pathconvert targetos="unix" property="Server.unix.libs" refid="Server-libs.path">
+		<map from="${lib.dir}" to="$TC_COMMON"/>
+	</pathconvert>
+	<!-- %TC_COMMON% should not be interpreted by Ant. -->
+	<pathconvert targetos="windows" property="Server.windows.libs" refid="Server-libs.path">
+		<map from="${lib.dir}" to="%TC_COMMON%"/>
+	</pathconvert>
 	<!-- $TC_COMMON should not be interpreted by Ant. -->
 	<pathconvert targetos="unix" property="AxisUtility.unix.libs" refid="AxisUtility-libs.path">
 		<map from="${lib.dir}" to="$TC_COMMON"/>
@@ -904,6 +915,8 @@
 				<filter token="tomcat.basename" value="${tomcat.basename}"/>
 				<filter token="AxisUtility.unix.libs" value="${AxisUtility.unix.libs}"/>
 				<filter token="AxisUtility.windows.libs" value="${AxisUtility.windows.libs}"/>
+				<filter token="Server.unix.libs" value="${Server.unix.libs}"/>
+				<filter token="Server.windows.libs" value="${Server.windows.libs}"/>
 				<filter token="ServerController.unix.libs" value="${ServerController.unix.libs}"/>
 				<filter token="ServerController.windows.libs" value="${ServerController.windows.libs}"/>
 			</filterset>

@@ -12,9 +12,15 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.Enumeration;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.PropertyConfigurator;
 import org.w3c.dom.Element;
 
 /**
@@ -27,7 +33,10 @@ import org.w3c.dom.Element;
  */
 public class BasicServer
         extends Server {
-
+	private static final String LOG4J_PROPS = "fedora.server.resources.log4j";
+    private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
+    private static final org.apache.log4j.Logger logger = 
+    	org.apache.log4j.Logger.getLogger(BasicServer.class);
     private File logDir;
 
     public BasicServer(Element rootElement, File fedoraHomeDir)
@@ -178,8 +187,34 @@ public class BasicServer
         logger.addHandler(fh);
         logFinest("Logger initialized. Switching to file-based log...");
         setLogger(logger);
+        configureLog4J();
     }
-
+    
+    /**
+     * Configures Log4J using a properties file.
+     *
+     */
+    private void configureLog4J() {
+    	// getHomeDir() returns $FEDORA_HOME/server
+    	File logDir = new File(getHomeDir(), LOG_DIR);
+    	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
+		Properties props = new Properties();
+		ResourceBundle res =
+            ResourceBundle.getBundle(LOG4J_PROPS);
+		Enumeration enum = res.getKeys();
+		while(enum.hasMoreElements()) {
+			String key = (String)enum.nextElement();
+			String value = res.getString(key);
+			Matcher matcher = pattern.matcher(key);
+			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
+			if (matcher.matches() && (value == null || value.equals(""))) {
+				value = new File(logDir, matcher.group(1).toLowerCase() + ".log").getAbsolutePath();
+			}
+			props.put(key, value);
+		}
+		PropertyConfigurator.configure(props);
+    }
+    
     public void shutdownServer()
             throws ServerShutdownException {
         closeLogger();

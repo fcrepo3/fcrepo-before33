@@ -30,6 +30,7 @@ TC="$FEDORA_HOME"/server/"$TC_BASENAME"
 TC_COMMON="$TC"/common/lib
 TC_ENDORSED="$TC"/common/endorsed
 AXIS_UTILITY_LIBS=@AxisUtility.unix.libs@
+SERVER_LIBS=@Server.unix.libs@
 SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
 
 # ----------------------------------------------------------------------
@@ -43,7 +44,7 @@ start() {
 		mkdir "$FEDORA_HOME"/server/logs
 	fi
 	
-	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Dtomcat.dir="$TC_BASENAME" \
 	            fedora.server.BasicServer)
@@ -104,7 +105,7 @@ debug() {
 		mkdir "$FEDORA_HOME"/server/logs
 	fi
 	
-	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
 	            -Dfedora.home="$FEDORA_HOME" \
 	            -Dtomcat.dir="$TC_BASENAME" \
 	            fedora.server.BasicServer)
@@ -214,6 +215,6 @@ case "$1" in
 		status "$@"
 		;;
 	*)
-		echo "Usage: $0 {start|stop|restart|status}"
+		echo "Usage: $0 {start|stop|restart|debug|status}"
 		;;
 esac
