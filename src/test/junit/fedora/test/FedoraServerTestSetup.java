@@ -7,6 +7,7 @@ import java.util.*;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
+import fedora.server.config.Configuration;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.ServerConfiguration;
@@ -62,7 +63,11 @@ public class FedoraServerTestSetup
             System.out.println("    skipping setUp()");
         }
     }
-    
+   
+    /**
+     * If this instance started the server, shut it down (and signal that it
+     * can be started again by setting PROP_SETUP to true).
+     */
     public void tearDown() throws Exception {
         if (doSetup) {
             System.setProperty(PROP_SETUP, "true");
@@ -78,13 +83,20 @@ public class FedoraServerTestSetup
                 new FileInputStream(FCFG)).parse();
     }
 
+    /**
+     * Tell whether the Fedora server should be started.
+     *
+     * If PROP_SETUP is undefined or true, set it to false then return true.
+     * Else return false.
+     */
     private boolean getSetup() {
         String setup = System.getProperty(PROP_SETUP);
-        if (setup == null) {
+        if (setup == null || setup.equalsIgnoreCase("true")) {
             System.setProperty(PROP_SETUP, "false");
             return true;
+        } else {
+            return false;
         }
-        return setup.equalsIgnoreCase("true");
     }
     
     private void startServer() throws Exception {
@@ -143,8 +155,65 @@ public class FedoraServerTestSetup
         if (m_configDir != null) unswapConfigurationFiles();
     }
 
+    private void backupPolicies() throws Exception {
+        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
+        Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
+        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue());
+        backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue());
+        backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue());
+        backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
+    }
+
+    private void restorePolicies() throws Exception {
+        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
+        Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
+        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue());
+        restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue());
+        restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue());
+        restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
+    }
+
+    private void backupDir(String dirName) throws Exception {
+
+        // make sure the original exists
+        File origDir = new File(dirName);
+        if (!origDir.exists()) {
+            throw new IOException(dirName + " does not exist!  To remedy, run Fedora with default configuration first!!");
+        }
+
+        // prepare the new directory
+        File newDir = new File(dirName + "_ORIG");
+        deleteDirectory(newDir.getPath());
+        newDir.mkdirs();
+
+        // copy all files from origDir to newDir
+        File[] sourceFiles = origDir.listFiles();
+        for (int i = 0; i < sourceFiles.length; i++) {
+            copy(sourceFiles[i], new File(newDir, sourceFiles[i].getName()));
+        }
+    }
+
+    private void restoreDir(String dirName) throws Exception {
+        
+        // clear out the active directory
+        File activeDir = new File(dirName);
+        deleteDirectory(activeDir.getPath());
+        activeDir.mkdirs();
+
+        // copy all files from dirName + "_ORIG" to the active directory
+        File[] sourceFiles = new File(dirName + "_ORIG").listFiles();
+        for (int i = 0; i < sourceFiles.length; i++) {
+            copy(sourceFiles[i], new File(activeDir, sourceFiles[i].getName()));
+        }
+    }
+
     private void swapConfigurationFiles() throws Exception {
         System.out.println("Swapping-in configuration files from " + m_configDir.getPath());
+
+        //
+        // back up the contents of the policy directories
+        //
+        backupPolicies();
 
         //
         // fcfg.properties
@@ -213,6 +282,11 @@ public class FedoraServerTestSetup
     
     private void unswapConfigurationFiles() throws Exception {
         System.out.println("Replacing original configuration files...");
+
+        //
+        // restore the backed-up policy directories
+        //
+        restorePolicies();
 
         // 
         // restore from .baks of all config files
