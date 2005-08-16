@@ -763,7 +763,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
 		}
 		context.setResourceAttributes(resourceAttributes);
-		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+		xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, "", extractNamespace(pid), context);
 	} finally {
         getServer().logFinest("Exiting enforceIngestObject");
 	}
@@ -1359,7 +1359,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
-	  private static boolean log = false;
+	  private static boolean log = true;
 	  
 	  private final void log(String msg) {
 	  	if (log) {
@@ -1367,7 +1367,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	}
 	  }
 	  
-	  private static boolean slog = false;
+	  private static boolean slog = true;
 	  
 	  private static final void slog(String msg) {
 	  	if (slog) {
