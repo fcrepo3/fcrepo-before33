@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.log4j.Logger;
 import org.jrdf.graph.Literal;
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
@@ -34,8 +35,17 @@ public class FedoraClient implements Constants {
 
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
+    /** Seconds to wait before a connection is established. */
     public int TIMEOUT_SECONDS = 20;
+
+    /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
+    public int SOCKET_TIMEOUT_SECONDS = 20;
+
+    /** Whether to automatically follow HTTP redirects. */
     public boolean FOLLOW_REDIRECTS = true;
+
+    private static final Logger logger =
+        Logger.getLogger(FedoraClient.class.getName());
 
     private String m_baseURL;
     private String m_user;
@@ -70,10 +80,13 @@ public class FedoraClient implements Constants {
      */
     public HttpInputStream get(String locator, boolean failIfNotOK) throws IOException {
         String url = getURL(locator);
+
+        logger.info("Getting " + url);
+
         HttpClient client = getHttpClient();
         GetMethod getMethod = new GetMethod(url);
         getMethod.setDoAuthentication(true);
-        getMethod.setFollowRedirects(true);
+        getMethod.setFollowRedirects(FOLLOW_REDIRECTS);
         HttpInputStream in = new HttpInputStream(client, getMethod, url);
         if (failIfNotOK) {
             if (in.getStatusCode() != 200) {
@@ -113,7 +126,7 @@ public class FedoraClient implements Constants {
         String url;
         if (locator.startsWith(FEDORA_URI_PREFIX)) {
             url = m_baseURL + "get/" + locator.substring(FEDORA_URI_PREFIX.length());
-        } else if (locator.startsWith("http://")) {
+        } else if (locator.startsWith("http://") || locator.startsWith("https://")) {
             url = locator;
         } else if (locator.startsWith("/")) {
             // assume it's for something within this Fedora server
@@ -122,7 +135,7 @@ public class FedoraClient implements Constants {
             }
             url = m_baseURL + locator;
         } else {
-            throw new IOException("Bad locator (must start with '" + FEDORA_URI_PREFIX + "', 'http://', or '/'");
+            throw new IOException("Bad locator (must start with '" + FEDORA_URI_PREFIX + "', 'http[s]://', or '/'");
         }
         return url;
     }
@@ -216,8 +229,8 @@ public class FedoraClient implements Constants {
 	    	HttpClient client = getHttpClient();
 
 	    	HeadMethod head = new HeadMethod(locator);
-	    	// FIXME for fedora locations head.setDoAuthentication(true);
-	    	head.setFollowRedirects(true);
+            head.setDoAuthentication(true);
+	    	head.setFollowRedirects(FOLLOW_REDIRECTS);
 	    	
 	    	int statusCode = client.executeMethod(head);
 	    	if (statusCode != HttpStatus.SC_OK) {
@@ -242,6 +255,7 @@ public class FedoraClient implements Constants {
     public HttpClient getHttpClient() {
         HttpClient client = new HttpClient(m_cManager);
         client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
+        client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
         client.getState().setCredentials(null, m_host, m_creds);
         client.getState().setAuthenticationPreemptive(true);
         return client;

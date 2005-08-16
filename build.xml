@@ -82,6 +82,7 @@
 			<pathelement location="${lib.commons-discovery}"/>
 			<pathelement location="${lib.commons-httpclient}"/>
 			<pathelement location="${lib.commons-logging}"/>
+			<pathelement location="${lib.log4j}"/>
 			<pathelement location="${lib.commons-pool}"/>						
 			<pathelement location="${lib.getopt}"/>
 			<pathelement location="${lib.jai_codec}"/>
