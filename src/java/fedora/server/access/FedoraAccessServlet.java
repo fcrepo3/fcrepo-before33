@@ -568,7 +568,8 @@ public class FedoraAccessServlet extends HttpServlet
           buffer = null;
           dissemResult.close();
           dissemResult = null;
-          //out.flush();
+          out.flush();
+          out.close();
           long stopTime = new Date().getTime();
           long interval = stopTime - startTime;
           logger.logFiner("[FedoraAccessServlet] Read InputStream "
@@ -677,7 +678,8 @@ public class FedoraAccessServlet extends HttpServlet
         buffer = null;
         dissemResult.close();
         dissemResult = null;
-        //out.flush();
+        out.flush();
+        out.close();
         long stopTime = new Date().getTime();
         long interval = stopTime - startTime;
         logger.logFiner("[FedoraAccessServlet] Read InputStream "
