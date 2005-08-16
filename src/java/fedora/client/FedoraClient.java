@@ -39,7 +39,7 @@ public class FedoraClient implements Constants {
     public int TIMEOUT_SECONDS = 20;
 
     /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
-    public int SOCKET_TIMEOUT_SECONDS = 20;
+    public int SOCKET_TIMEOUT_SECONDS = 120;
 
     /** Whether to automatically follow HTTP redirects. */
     public boolean FOLLOW_REDIRECTS = true;
