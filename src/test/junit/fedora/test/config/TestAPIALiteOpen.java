@@ -64,7 +64,7 @@ public class TestAPIALiteOpen extends SuperAPIALite {
     }
     
     public static Test suite() {
-        TestSuite suite = new TestSuite("TestAPIALite Out-of-the-Box Configuration");
+        TestSuite suite = new TestSuite("TestAPIALite Open Configuration");
         suite.addTestSuite(TestAPIALiteOpen.class);
         TestSetup wrapper = new TestSetup(suite) {
         //TestSetup wrapper = new TestSetup(suite, TestAPIALiteOutOfTheBoxConfig.class.getName()) {
