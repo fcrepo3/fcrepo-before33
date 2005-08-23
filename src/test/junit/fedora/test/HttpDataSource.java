@@ -43,7 +43,7 @@ public class HttpDataSource extends DataSource {
     HttpInputStream stream = null;
 	
 	public HttpDataSource(String baseurl, int expectedStatus) throws Exception {
-		super(expectedStatus == 200);
+		super(expectedStatus == 200, (expectedStatus == 302) ? false : (expectedStatus == 200));
 		this.baseurl = baseurl;
 		this.expectedStatus = expectedStatus;
 	}

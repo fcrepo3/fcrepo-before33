@@ -26,6 +26,7 @@ public class AllTests {
         TestSuite configTests = new TestSuite("Other configuration tests");
         configTests.addTest(TestConfigExample.suite());
         configTests.addTest(TestAPIALiteOpen.suite());
+        configTests.addTest(TestAPIALiteSecure.suite());        
 
         TestSuite allTests = new TestSuite("All tests");
         allTests.addTest(new FedoraServerTestSetup(defaultTests));

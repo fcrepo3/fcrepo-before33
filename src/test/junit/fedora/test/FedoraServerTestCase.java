@@ -76,8 +76,10 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         return getServerConfiguration().getParameter("fedoraServerPort").getValue();
     }
     
+    public static String ssl = ""; //big hack for fixme below, set this to "" or "s"
+    
     public static String getProtocol() {
-        return "http"; // FIXME how to get this?
+        return "http" + ssl; // FIXME how to get this?
     }
     
     public static String getUsername() {

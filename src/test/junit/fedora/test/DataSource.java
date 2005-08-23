@@ -44,9 +44,11 @@ public abstract class DataSource {
     }
 	
 	private boolean expectingSuccess = false;
+	private boolean clientThrowsStatusCodeException = false;
 	
-	public DataSource(boolean expectingSuccess) throws Exception {
+	public DataSource(boolean expectingSuccess, boolean clientThrowsStatusCodeException) throws Exception {
 		this.expectingSuccess = expectingSuccess;
+		this.clientThrowsStatusCodeException = clientThrowsStatusCodeException;
 		if (factory == null) {
 			factory = DocumentBuilderFactory.newInstance();
 		}
