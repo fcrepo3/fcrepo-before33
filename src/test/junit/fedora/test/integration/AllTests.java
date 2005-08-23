@@ -21,15 +21,11 @@ public class AllTests {
         TestSuite defaultTests = new TestSuite("Default configuration tests");
         defaultTests.addTest(TestIngestDemoObjects.suite());
         defaultTests.addTest(TestCommandLineUtilities.suite());
-//
-// NOTE: This is currently commented out because it fails at
-//       TestAPIA.testListMethods() ... when that is fixed,
-//       this can be un-commented.
-//
-//        defaultTests.addTest(AllAPITests.suite());
+        defaultTests.addTest(AllAPITests.suite());
 
         TestSuite configTests = new TestSuite("Other configuration tests");
         configTests.addTest(TestConfigExample.suite());
+        configTests.addTest(TestAPIALiteOpen.suite());
 
         TestSuite allTests = new TestSuite("All tests");
         allTests.addTest(new FedoraServerTestSetup(defaultTests));
