@@ -773,9 +773,11 @@
 		</copy>
 		<mkdir dir="dist/server/config/xacml-policies/active/generated/backend-service-policies"/>
 		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/config/xacml-policies/active/generated"/>
-		<copy file="src/web-app/fedora/server/web.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
-		<copy file="src/web-app/fedora/server/web.xml" tofile="${tomcat.deploy.dir}/fedora/WEB-INF/web-defaults.xml"/>
+		<!-- tomcat: web configuration files for the Fedora webapp -->
+		<copy file="src/web-app/fedora/server/web-defaults.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-secure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<!-- tomcat: put the default web configuration file into play for the Fedora webapp -->
+		<copy file="src/web-app/fedora/server/web-defaults.xml" tofile="${tomcat.deploy.dir}/fedora/WEB-INF/web.xml"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora">
 			<fileset dir="src/jsp"/>
@@ -889,6 +891,7 @@
 			<fileset dir="src/properties/server"/>
 			<fileset dir="src/dbspec/server"/>
 		</copy>
+		<!-- fedora configuration files -->
 		<copy todir="dist/server/config">
 			<filterset>
 				<filter token="fedora.home" value="${env.FEDORA_HOME}"/>
@@ -896,9 +899,13 @@
 			<fileset dir="src/fcfg/server">
 				<include name="**/*.fcfg"/>
 				<include name="**/logging.properties"/>
+				<include name="**/*.xml"/>
 			</fileset>
 		</copy>
-		<copy file="src/fcfg/server/fedora.fcfg" tofile="dist/server/config/fedora-defaults.fcfg"/>
+		<!-- put the default fedora configuration file into play  -->
+		<copy file="src/fcfg/server/fedora-defaults.fcfg" tofile="dist/server/config/fedora.fcfg"/>
+		<!-- put the default beSecurity configuration file into play  -->
+		<copy file="src/fcfg/server/beSecurity-defaults.xml" tofile="dist/server/config/beSecurity.xml"/>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
@@ -968,10 +975,6 @@
 		<!-- ObjectMethods xsl stylesheet used by API-A-LITE and Default Disseminator (DefaultBehaviorImpl) -->
 		<copy file="src/xsl/management/getNextPIDInfo.xslt" todir="dist/server/management"/>
 		<copy file="src/xsl/management/backendSecurityConfig.xslt" todir="dist/server/management"/>
-		<!-- beSecurity configuration file used to configure backend service security -->
-		<copy file="src/fcfg/server/beSecurity.xml" todir="dist/server/config"/>
-		<copy file="src/fcfg/server/beSecurity.xml" tofile="dist/server/config/beSecurity-defaults.xml"/>
-		<copy file="src/fcfg/server/beSecurity-secure.xml" todir="dist/server/config"/>
 	</target>
 	<target name="serverutils" depends="utilclasses" description="Policy Editor Tool">
 		<mkdir dir="${server.dist.dir}/utilities"/>
