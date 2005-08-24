@@ -571,7 +571,7 @@ public class DisseminationService
           // We must examine URL to see if this is referencing a remote backend service or is
           // simply a callback to the fedora server. If the reference is remote, then use
           // the role of backend service bMechPid. If the referenc is to the fedora server, 
-          // use the special role of "fedoraInternalCall" to denote that the callback will come from the 
+          // use the special role of "fedoraInternalCall-1" to denote that the callback will come from the 
           // fedora server itself.          
 	        String beServiceRole = null;
 	        if ( ServerUtility.isURLFedoraServer(dissURL) ) {
@@ -746,7 +746,7 @@ public class DisseminationService
         // we must examine URL to see if this is referencing a remote datastream or is
         // simply a callback to the fedora server. If the reference is remote, then use
         // the role of the backend service that will make a callback for this datastream.
-        // If the referenc s to the fedora server, use the special role of "fedoraInternalCall" to
+        // If the referenc s to the fedora server, use the special role of "fedoraInternalCall-1" to
         // denote that the callback will come from the fedora server itself.
         String beServiceRole = null;
         if ( ServerUtility.isURLFedoraServer(dsLocation)  || 
