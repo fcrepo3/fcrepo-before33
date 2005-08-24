@@ -387,6 +387,7 @@
 		<copy todir="dist/client/lib">
 			<fileset refid="client-libs.fileset"/>
 		</copy>
+        <copy file="inc/client/truststore" toFile="dist/client/truststore"/>
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
 	<target name="prep" description="Prepare a temporary build area for targets">

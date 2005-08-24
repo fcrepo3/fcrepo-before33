@@ -14,9 +14,10 @@ else
 fi
 
 echo "Starting Fedora Administrative Client..."
-
 (exec "$JAVA" -Xms64m -Xmx96m \
               -cp $FEDORA_HOME/client \
+              -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
+              -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \
               -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
               -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
