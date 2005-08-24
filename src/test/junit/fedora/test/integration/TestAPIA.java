@@ -153,7 +153,7 @@ public class TestAPIA extends FedoraServerTestCase {
 	
 	public void testListMethods() throws Exception {
 		ObjectMethodsDef[] methodDefs = apia.listMethods("demo:11", null);
-		assertEquals(methodDefs.length,6);
+		assertEquals(methodDefs.length,7);
 		verifyObjectMethods(methodDefs, "testListMethods: ");
 	}
 
