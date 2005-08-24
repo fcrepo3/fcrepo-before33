@@ -29,10 +29,17 @@ public class DatastreamsPane
     private Datastream[] m_currentVersions;
     private Map m_currentVersionMap;
 
-    public String[] ALL_KNOWN_MIMETYPES = new String[] {"text/xml",
-            "text/plain", "text/html", "text/html+xml", "text/svg+xml",
-            "image/jpeg", "image/gif", "image/bmp", "application/postscript",
-            "application/ms-word", "application/pdf", "application/zip"};
+    public String[] ALL_KNOWN_MIMETYPES = new String[] {
+            "text/xml", "text/plain", "text/html", "text/html+xml", "text/svg+xml", "text/rtf",
+            "image/jpeg", "image/jp2", "image/gif", "image/bmp", "image/png", "image/tiff", 
+            "audio/mpeg", "audio/x-aiff", "audio/x-wav", "audio/x-pn-realaudio",
+            "video/mpeg", "video/quicktime", 
+            "application/postscript", "application/pdf", "application/rdf+xml",
+            "application/ms-word", "application/ms-excel", "application/ms-powerpoint",
+            "application/smil", "application/octet-stream",
+            "application/x-tar", "application/zip", "application/x-gtar", "application/x-gzip", 
+            "application/xml", "application/xhtml+xml", "application/xslt+xml", "application/xml-dtd",
+            };
     public String[] XML_MIMETYPE = new String[] {"text/xml"};
 
     static ImageIcon newIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/New16.gif"));
