@@ -359,7 +359,8 @@ public class ServerUtility {
         
         // Check for URLs that are callbacks to the Fedora server
         if ( url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora") ||
-             url.startsWith("http://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora") ) {
+             url.startsWith("http://"+fedoraServerHost+"/fedora") ||   
+             url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora") ) {
             if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
             return true;
         } else {
