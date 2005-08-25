@@ -357,27 +357,13 @@ public class ServerUtility {
         String fedoraServerPort = (String) serverProperties.get(FEDORA_SERVER_PORT);
         String fedoraServerRedirectPort = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
         
-        // Check for Fedora Local Services like saxon, fop, and imagemanip.
-        // Although these webapps are in the same web container as the Fedora server
-        // local services are treated like other backend services so must check for
-        // more than just hostname and port to determine if URL is a fedora-to-fedora
-        // server callback or a callback to a local service.
-        if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/saxon") ||
-            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fop") ||
-            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/imagemanip") ||
-            url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/soapclient") ||
-            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/saxon") ||
-            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fop") ||
-            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/imagemanip") ) {
-            isFedoraLocalService = true;
-            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Local Service callback: "+url);
-        }
-        if ( (url.startsWith("http://"+fedoraServerHost) || url.startsWith("https://"+fedoraServerHost)) &&
-            !isFedoraLocalService) {
+        // Check for URLs that are callbacks to the Fedora server
+        if ( url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora") ||
+             url.startsWith("http://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora") ) {
             if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
             return true;
         } else {
-            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Backend Service callback: "+url);
+            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Non-Fedora callback: "+url);
             return false;
         }
             
