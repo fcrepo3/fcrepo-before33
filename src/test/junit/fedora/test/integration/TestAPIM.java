@@ -89,22 +89,22 @@ public class TestAPIM extends FedoraServerTestCase {
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:disseminator ID=\"DISS1\" BDEF_CONTRACT_PID=\"demo:1\" STATE=\"A\">");
@@ -153,22 +153,22 @@ public class TestAPIM extends FedoraServerTestCase {
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS1\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum thumbnail jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-thumb.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS2\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum medium jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-medium.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS3\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum high jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-high.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:datastream ID=\"DS4\" CONTROL_GROUP=\"M\" STATE=\"A\">");
         sb.append("    <foxml:datastreamVersion ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" LABEL=\"Thorny's Coliseum veryhigh jpg image\">");
-        sb.append("      <foxml:contentLocation REF=\"http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
+        sb.append("      <foxml:contentLocation REF=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" TYPE=\"URL\"/>");
         sb.append("    </foxml:datastreamVersion>");
         sb.append("  </foxml:datastream>");
         sb.append("  <foxml:disseminator ID=\"DISS1\" BDEF_CONTRACT_PID=\"demo:1\" STATE=\"A\">");
@@ -231,25 +231,25 @@ public class TestAPIM extends FedoraServerTestCase {
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
         sb.append("        <!--This is the thumbnail resolution image -->");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
         sb.append("        <!-- This is the medium resoluion image -->");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
         sb.append("        <!--This is the high resolution image -->");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
         sb.append("        <!--This is the very high resolution image -->");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
@@ -344,25 +344,25 @@ public class TestAPIM extends FedoraServerTestCase {
         sb.append("      <METS:fileGrp ID=\"DS1\" STATUS=\"A\">");
         sb.append("        <!--This is the thumbnail resolution image -->");
         sb.append("        <METS:file ID=\"DS1.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-thumb.jpg\" xlink:title=\"Thorny's Coliseum thumbnail jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS2\" STATUS=\"A\">");
         sb.append("        <!-- This is the medium resoluion image -->");
         sb.append("        <METS:file ID=\"DS2.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-medium.jpg\" xlink:title=\"Thorny's Coliseum medium jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS3\">");
         sb.append("        <!--This is the high resolution image -->");
         sb.append("          <METS:file ID=\"DS3.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
+        sb.append("            <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-high.jpg\" xlink:title=\"Thorny's Coliseum high jpg image\"/>");
         sb.append("          </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("      <METS:fileGrp ID=\"DS4\">");
         sb.append("        <!--This is the very high resolution image -->");
         sb.append("        <METS:file ID=\"DS4.0\" MIMETYPE=\"image/jpeg\" OWNERID=\"M\" STATUS=\"A\">");
-        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
+        sb.append("          <METS:FLocat LOCTYPE=\"URL\" xlink:href=\"http://"+getHost()+":8080/demo/simple-image-demo/coliseum-veryhigh.jpg\" xlink:title=\"Thorny's Coliseum veryhigh jpg image\"/>");
         sb.append("        </METS:file>");
         sb.append("      </METS:fileGrp>");
         sb.append("    </METS:fileGrp>");
@@ -450,6 +450,7 @@ public class TestAPIM extends FedoraServerTestCase {
     public void testGetObjectXML() throws Exception {
         
         // test getting xml for object demo:5
+        System.out.println("Running TestAPIM.testGetObjectXML...");
         byte [] objectXML = apim.getObjectXML("demo:5");
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
@@ -472,6 +473,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         
         // (1) test ingest
+        System.out.println("Running TestAPIM.testIngest...");
         String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo998FOXML: "+pid);
         assertNotNull(pid);
@@ -533,7 +535,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
         
         // (2) test modifyObject
-        
+        System.out.println("Running TestAPIM.testModifyObject...");
         // test changing object demo:5 by modifying state to Inactive; leave label unchanged
         String result = apim.modifyObject("demo:5", "I", null, "changed state to Inactive");
         
@@ -561,7 +563,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathExists("//foxml:objectProperties/foxml:property[@NAME='info:fedora/fedora-system:def/model#label' and @VALUE='label of object to be deleted']",xmlIn);
     
         // (3) test export
-        
+        System.out.println("Running TestAPIM.testExport...");
         // test exporting object as foxml with exportContext of default
         objectXML = apim.export("demo:998", "foxml1.0", "default");
         assertTrue(objectXML.length > 0);
@@ -638,7 +640,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);        
         
         // (4) test purgeObject
-        
+        System.out.println("Running TestAPIM.testPurgeObject...");
         // test puring object demo:999
         result = apim.purgeObject("demo:999", "purging object demo:999", false);
         //System.out.println("***** Testcase: TestAPIM.testPurgeObject demo:999\n");
@@ -658,7 +660,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // 7) getDatastreamHistory
         
         // (1) test addDatastream
-        
+        System.out.println("Running TestAPIM.testAddDatastream...");
         // test adding M type datastream
         String[] altIds = new String[1];
         altIds[0] = "Datastream 1 Alternate ID";
@@ -702,7 +704,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);             
 
         // (2) test modifyDatastreamByReference
-        
+        System.out.println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
         result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", true, "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "A", "modified datastream", false);
@@ -718,7 +720,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);           
 
         // (3) test modifyDatastreamByValue
-        
+        System.out.println("Running TestAPIM.testModifyDatastreamByValue...");
         altIds = new String[1];
         altIds[0] = "Datastream 2 Modified Alternate ID";
         result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", true, "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "A", "modified datastream", false);
@@ -735,7 +737,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("7", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);          
 
         // (4) test purgeDatastream
-        
+        System.out.println("Running TestAPIM.testPurgeDatastream...");
         // test specifying null for endDate
         String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purgind datastream NEWDS3", false);
         for (int i=0; i<results.length; i++) {
@@ -751,7 +753,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(results.length > 0);
 
         // (5) test getDatastream
-        
+        System.out.println("Running TestAPIM.testGetDatastream...");
         // test getting datastream id FOPDISSEM for object demo:26 specifying null for datetime
         Datastream ds = apim.getDatastream("demo:26", "FOPDISSEM", null);
         assertNotNull(ds);
@@ -764,7 +766,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
         assertEquals(dsArray[0].getFormatURI(),null);
         assertEquals(dsArray[0].getLabel(),"FOP Dissemination as Datastream");
-        assertEquals(dsArray[0].getLocation(),"http://localhost:8080/fedora/get/demo:26/demo:22/getFO");
+        assertEquals(dsArray[0].getLocation(),"http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO");
         assertEquals(dsArray[0].getMIMEType(),"text/xml");
         assertEquals(dsArray[0].getState(),"A");
         assertEquals(dsArray[0].getVersionID(),"FOPRENDITION");
@@ -786,7 +788,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
         assertEquals(dsArray[0].getFormatURI(),null);
         assertEquals(dsArray[0].getLabel(),"FOP Dissemination as Datastream");
-        assertEquals(dsArray[0].getLocation(),"http://localhost:8080/fedora/get/demo:26/demo:22/getFO");
+        assertEquals(dsArray[0].getLocation(),"http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO");
         assertEquals(dsArray[0].getMIMEType(),"text/xml");
         assertEquals(dsArray[0].getState(),"A");
         assertEquals(dsArray[0].getVersionID(),"FOPRENDITION");
@@ -798,7 +800,7 @@ public class TestAPIM extends FedoraServerTestCase {
         }
         
         // (6) test getDatastreams
-        
+        System.out.println("Running TestAPIM.testGetDatastreams...");
         // test getting all datastreams for object demo:26 specifying null for datetime and state
         dsArray = apim.getDatastreams("demo:26", null, null);
         assertTrue(dsArray.length > 0);
@@ -810,7 +812,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
         assertEquals(dsArray[0].getFormatURI(),null);
         assertEquals(dsArray[0].getLabel(),"FOP Dissemination as Datastream");
-        assertEquals(dsArray[0].getLocation(),"http://localhost:8080/fedora/get/demo:26/demo:22/getFO");
+        assertEquals(dsArray[0].getLocation(),"http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO");
         assertEquals(dsArray[0].getMIMEType(),"text/xml");
         assertEquals(dsArray[0].getState(),"A");
         assertEquals(dsArray[0].getVersionID(),"FOPRENDITION");
@@ -861,7 +863,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
         assertEquals(dsArray[0].getFormatURI(),null);
         assertEquals(dsArray[0].getLabel(),"FOP Dissemination as Datastream");
-        assertEquals(dsArray[0].getLocation(),"http://localhost:8080/fedora/get/demo:26/demo:22/getFO");
+        assertEquals(dsArray[0].getLocation(),"http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO");
         assertEquals(dsArray[0].getMIMEType(),"text/xml");
         assertEquals(dsArray[0].getState(),"A");
         assertEquals(dsArray[0].getVersionID(),"FOPRENDITION");
@@ -912,7 +914,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
         assertEquals(dsArray[0].getFormatURI(),null);
         assertEquals(dsArray[0].getLabel(),"FOP Dissemination as Datastream");
-        assertEquals(dsArray[0].getLocation(),"http://localhost:8080/fedora/get/demo:26/demo:22/getFO");
+        assertEquals(dsArray[0].getLocation(),"http://"+getHost()+":8080/fedora/get/demo:26/demo:22/getFO");
         assertEquals(dsArray[0].getMIMEType(),"text/xml");
         assertEquals(dsArray[0].getState(),"A");
         assertEquals(dsArray[0].getVersionID(),"FOPRENDITION");
@@ -954,7 +956,7 @@ public class TestAPIM extends FedoraServerTestCase {
         }            
         
         // (7) test getDatastreamHistory
-        
+        System.out.println("Running TestAPIM.testGetDatastreamHistory...");
         // test getting datastream history for datastream DS1 of object demo:10
         dsArray = apim.getDatastreamHistory("demo:10", "DS1");
         assertTrue(dsArray.length > 0);
@@ -977,7 +979,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         
         // test (1) addDisseminator
-        
+        System.out.println("Running TestAPIM.testAddDisseminator...");
         DatastreamBindingMap dsBindMap = new DatastreamBindingMap();
         DatastreamBinding dsBinding = new DatastreamBinding();
         DatastreamBinding[] dsBindings = new DatastreamBinding[1];
@@ -1006,7 +1008,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);
 
         // (2) test modifyDisseminator
-        
+        System.out.println("Running TestAPIM.testModifyDisseminator...");
         dsBindMap = new DatastreamBindingMap();
         dsBinding = new DatastreamBinding();
         dsBindings = new DatastreamBinding[1];
@@ -1036,7 +1038,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("2", "count(//foxml:disseminator)",xmlIn);        
         
         // (3) test purgeDisseminator
-
+        System.out.println("Running TestAPIM.testPurgeDisseminator...");
         // test specifying null for endDate
         String[] results = apim.purgeDisseminator("demo:5", "DISS2", null, "purging disseminator DISS2");
         for (int i=0; i<results.length; i++) {
@@ -1067,7 +1069,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals("1","1");
         
         // (4) test getDisseminator
-
+        System.out.println("Running TestAPIM.testGetDisseminator...");
         // test getting disseminator id DISS1 for object demo:26 specifying null for datetime
         Disseminator diss = apim.getDisseminator("demo:26", "DISS1", null);
         assertNotNull(diss);
@@ -1115,7 +1117,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
         
         // (5) test getDisseminators
-        
+        System.out.println("Running TestAPIM.testGetDisseminators...");
         // test getting all disseminators for object demo:26 specifying null for datetime and state
         dissArray = apim.getDisseminators("demo:26", null, null);
         assertTrue(dissArray.length > 0);
@@ -1231,8 +1233,8 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getDatastreamID(),"TEISOURCE");
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");            
 
-        	// (6) test getDisseminatorHistory
-        
+        // (6) test getDisseminatorHistory
+        System.out.println("Running TestAPIM.testGetDisseminatorHistory...");
         // test getting disseminator history for disseminator DISS1 of object demo:10
         dissArray = apim.getDisseminatorHistory("demo:10", "DISS1");
         assertTrue(dissArray.length > 0);
@@ -1246,6 +1248,7 @@ public class TestAPIM extends FedoraServerTestCase {
     public void testSetDatastreamState() throws Exception {
         
         // test setting datastream state to "I" for datastream id DC of object demo:5
+        System.out.println("Running TestAPIM.testSetDatastreamState...");
         String result = apim.setDatastreamState("demo:5", "DC", "I", "changed state to Inactive");
         assertNotNull(result);
         Datastream ds = apim.getDatastream("demo:5", "DC", null);
@@ -1256,6 +1259,7 @@ public class TestAPIM extends FedoraServerTestCase {
     public void testSetDisseminatorState() throws Exception {
         
         // test setting disseminator state to "I" for disseminator id DISS1 of object demo:5
+        System.out.println("Running TestAPIM.testSetDisseminatorState...");
         String result = apim.setDisseminatorState("demo:5", "DISS1", "I", "changed state to Inactive");
         assertNotNull(result);
         Disseminator diss = apim.getDisseminator("demo:5", "DISS1", null);
@@ -1266,6 +1270,7 @@ public class TestAPIM extends FedoraServerTestCase {
     public void testGetNextPID() throws Exception {
         
         // test null for both arguments
+        System.out.println("Running TestAPIM.testGetNextPID...");
         String [] pids = apim.getNextPID(null, null);
         assertTrue(pids.length > 0);
         //System.out.println("***** Testcase: TestAPIM.testGetNextPID  nextPid(null, null): "+pids[0]);       
