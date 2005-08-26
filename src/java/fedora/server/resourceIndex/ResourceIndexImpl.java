@@ -346,6 +346,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
         
+        // flush buffer before deletes, or findTriples may be incomplete
+        commit();
+        
         String pid = digitalObject.getPid();
         logger.debug("- deleting " + pid);
         Iterator it;

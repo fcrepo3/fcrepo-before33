@@ -1,14 +1,14 @@
 package fedora.server.resourceIndex;
 
 import java.io.File;
+import java.util.Date;
+
+import org.jrdf.graph.Triple;
+import org.trippi.TripleIterator;
+import org.trippi.TripleMaker;
 
 import fedora.common.PID;
 import fedora.server.storage.types.DigitalObject;
-
-import org.jrdf.graph.Triple;
-
-import org.trippi.TripleIterator;
-import org.trippi.TripleMaker;
 
 /**
  * @author Edwin Shin
@@ -91,7 +91,7 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
             assertEquals(166, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(112, c);
+            assertEquals(206, c);
         }
         
         m_ri.deleteDigitalObject(dataobject);
@@ -122,5 +122,21 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         m_ri.commit();
         int b = m_ri.countTriples(null, null, null, 0);
         assertEquals(a, b);
+    }
+    
+    public void testModify() throws Exception {
+        m_ri.addDigitalObject(dataobject);
+        m_ri.commit();
+        int a = m_ri.countTriples(null, null, null, 0);
+        
+        m_ri.deleteDigitalObject(dataobject);
+        m_ri.commit();
+        
+        m_ri.addDigitalObject(dataobject);
+    	dataobject.setLastModDate(new Date());
+    	m_ri.modifyDigitalObject(dataobject);
+    	m_ri.commit();
+    	int b = m_ri.countTriples(null, null, null, 0);
+    	assertEquals(a, b);
     }
 }
