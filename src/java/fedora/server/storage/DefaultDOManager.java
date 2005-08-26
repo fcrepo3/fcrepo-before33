@@ -821,6 +821,17 @@ public class DefaultDOManager
         } else {
             logFinest("COMMIT: Entered doCommit (add/modify)");
             try {
+                // MANAGED DATASTREAM PURGE:
+                // find out which, if any, managed datastreams were purged,
+                // then remove them from low level datastream storage
+
+// TODO: Uncomment the next line of code, and delete the chunk in 
+//       DefaultDOReplicator.purgeComponents that starts with "FIXME: this is a quick hack"
+//       and ends with if (isDeleted) return true; (it's around 40 lines)
+//       after 2.1 is released (or before if team says it's ok) - cwilper
+
+//                if (!obj.isNew()) deletePurgedDatastreams(obj, context);
+
                 // DATASTREAM STORAGE:
                 // copy and store any datastreams of type Managed Content
                 Iterator dsIDIter = obj.datastreamIdIterator();
@@ -1004,6 +1015,58 @@ public class DefaultDOManager
                 }
                 throw se;
             }
+        }
+    }
+
+    private boolean hasVersionWithDate(List datastreams, long versionDate) {
+        for (int i = 0; i < datastreams.size(); i++) {
+            Datastream ds = (Datastream) datastreams.get(i);
+            if (ds.DSCreateDT.getTime() == versionDate) return true;
+        }
+        return false;
+    }
+
+    private void deletePurgedDatastreams(DigitalObject obj, Context context) {
+        try {
+            // for each datastream that existed before the change:
+            DOReader reader = getReader(false, context, obj.getPid());
+            Datastream[] datastreams = reader.GetDatastreams(null, null);
+            for (int i = 0; i < datastreams.length; i++) {
+                // if it's a managed datastream...
+                if (datastreams[i].DSControlGrp.equals("M")) {
+                    String dsID = datastreams[i].DatastreamID;
+                    // find out which versions were purged
+                    List newVersions = obj.datastreams(dsID);
+                    Date[] dates = reader.getDatastreamVersions(dsID);
+                    for (int j = 0; j < dates.length; j++) {
+                        Date dt = dates[j];
+                        if (!hasVersionWithDate(newVersions, dt.getTime())) {
+                            // ... and delete them from low level storage
+                            String token = obj.getPid() + "+" + dsID + "+" + 
+                                    reader.GetDatastream(dsID, dt).DSVersionID;
+                            try {
+                                getDatastreamStore().remove(token);
+                                logInfo("Removed purged datastream version "
+                                    + "from low level storage (token = " 
+                                    + token + ")"); 
+                            } catch (Exception e) {
+                                logWarning("Error removing purged datastream "
+                                        + "version from low level storage "
+                                        + "(token = " + token + ").  Stack "
+                                        + "trace follows.");
+                                logStackTrace(e);
+                            }
+                        }
+                    }
+
+
+                }
+            }
+        } catch (ServerException e) {
+            logWarning("Error reading " + obj.getPid() + "; if any"
+                    + " managed datastreams were purged, they were not removed "
+                    + " from low level storage.  Stack trace follows.");
+            logStackTrace(e);
         }
     }
 

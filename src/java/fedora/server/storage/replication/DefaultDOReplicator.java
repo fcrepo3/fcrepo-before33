@@ -669,6 +669,8 @@ public class DefaultDOReplicator
                         results.close();
                         results=null;
 
+// DELETE THE BELOW LINES AND UN-COMMENT DefaultDOManager line 833 to fix
+
                         // FIXME: this is a quick hack to fix the problem of versioned datastreams
                         // not being properly removed from LLStore at time of purge.
                         // Check for any Managed Content Datastreams that have been purged
@@ -708,6 +710,9 @@ public class DefaultDOReplicator
                         results=null;
                         if(isDeleted)
                           return true;
+
+// DELETE THE ABOVE LINES AND UN-COMMENT DefaultDOManager line 833 to fix
+
 
                         // Get all disseminators that are in db for this object
                         HashSet dissDbIds = new HashSet();
