@@ -22,10 +22,17 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
 	
     private String username=null;
     private String password=null;
+    private int socketTimeoutMilliseconds = 120000;  // two minute default
 
     public FedoraAPIAServiceLocator(String user, String pass) {
         username=user;
         password=pass;
+    }
+    
+    public FedoraAPIAServiceLocator(String user, String pass, int socketTimeoutSeconds) {
+        username=user;
+        password=pass;
+        socketTimeoutMilliseconds = socketTimeoutSeconds * 1000;
     }
     
     public FedoraAPIAServiceLocator() { // for AccessConsole
@@ -64,6 +71,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
         try {
             fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(portAddress, this, username, password);
             _stub.setPortName(getFedoraAPIAPortSOAPHTTPWSDDServiceName());
+            _stub.setTimeout(socketTimeoutMilliseconds);
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
@@ -106,6 +114,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
 		try {
 			fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(portAddress, this, username, password);
 			_stub.setPortName(getFedoraAPIAPortSOAPHTTPSWSDDServiceName());
+            _stub.setTimeout(socketTimeoutMilliseconds);
 			// _stub._setProperty("httpclient.authentication.preemptive","true");
 			return _stub;
 		}
@@ -124,6 +133,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
             if (fedora.server.access.FedoraAPIA.class.isAssignableFrom(serviceEndpointInterface)) {
                 fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(new java.net.URL(FedoraAPIAPortSOAPHTTP_address), this, username, password);
                 _stub.setPortName(getFedoraAPIAPortSOAPHTTPWSDDServiceName());
+                _stub.setTimeout(socketTimeoutMilliseconds);
                 // _stub._setProperty("httpclient.authentication.preemptive","true");                
                 return _stub;
             }
@@ -131,6 +141,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
 			if (fedora.server.access.FedoraAPIA.class.isAssignableFrom(serviceEndpointInterface)) {
 				fedora.server.access.APIAStub _stub = new fedora.server.access.APIAStub(new java.net.URL(FedoraAPIAPortSOAPHTTPS_address), this, username, password);
 				_stub.setPortName(getFedoraAPIAPortSOAPHTTPSWSDDServiceName());
+                _stub.setTimeout(socketTimeoutMilliseconds);
 				// _stub._setProperty("httpclient.authentication.preemptive","true");                
 				return _stub;
 			}
@@ -167,6 +178,7 @@ public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service imp
 		else  {
 			java.rmi.Remote _stub = getPort(serviceEndpointInterface);
 			((org.apache.axis.client.Stub) _stub).setPortName(portName);
+            ((org.apache.axis.client.Stub) _stub).setTimeout(socketTimeoutMilliseconds);
 			return _stub;
 		}
     }

@@ -18,6 +18,8 @@ import fedora.server.access.FedoraAPIAServiceLocator;
  */
 public abstract class APIAStubFactory {
 
+    public static int SOCKET_TIMEOUT_SECONDS = 120;
+
 	/**
 	 * Method to rewrite the default API-A base URL (specified in the service
 	 * locator class FedoraAPIAServiceLocator).  In this case we allow the protocol,
@@ -36,7 +38,7 @@ public abstract class APIAStubFactory {
 	public static FedoraAPIA getStub(String protocol, String host, int port, String username, String password)
         throws MalformedURLException, ServiceException {
         	
-	    FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator(username, password);
+	    FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator(username, password, SOCKET_TIMEOUT_SECONDS);
 	
 		//SDP - HTTPS support added
 		URL ourl = null;
@@ -84,7 +86,7 @@ public abstract class APIAStubFactory {
 		String path, String username, String password)
 		throws MalformedURLException, ServiceException {
         	
-		FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator(username, password);
+		FedoraAPIAServiceLocator locator=new FedoraAPIAServiceLocator(username, password, SOCKET_TIMEOUT_SECONDS);
 	
 		//SDP - HTTPS support added
 		URL ourl = null;

@@ -41,6 +41,12 @@ public class FedoraClient implements Constants {
     /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
     public int SOCKET_TIMEOUT_SECONDS = 120;
 
+    /** Maxiumum http connections per host (for REST calls only). */
+    public int MAX_CONNECTIONS_PER_HOST = 5;
+
+    /** Maxiumum total http connections (for REST calls only). */
+    public int MAX_TOTAL_CONNECTIONS = 20;
+
     /** Whether to automatically follow HTTP redirects. */
     public boolean FOLLOW_REDIRECTS = true;
 
@@ -146,6 +152,7 @@ public class FedoraClient implements Constants {
         String host = baseURL.getHost();
         int port = baseURL.getPort();
         if (port == -1) port = baseURL.getDefaultPort();
+        APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
         if (getServerVersion().equals("2.0")) {
             return APIAStubFactory.getStubAltPath(protocol,
 											   	  host, 
@@ -169,6 +176,7 @@ public class FedoraClient implements Constants {
         String host = baseURL.getHost();
         int port = baseURL.getPort();
         if (port == -1) port = baseURL.getDefaultPort();
+        APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
         if (getServerVersion().equals("2.0")) {
             return APIMStubFactory.getStubAltPath(protocol,
 											   	  host, 
@@ -254,6 +262,8 @@ public class FedoraClient implements Constants {
     }
 
     public HttpClient getHttpClient() {
+        m_cManager.setMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
+        m_cManager.setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
         HttpClient client = new HttpClient(m_cManager);
         client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
         client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);

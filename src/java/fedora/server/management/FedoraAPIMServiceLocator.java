@@ -22,10 +22,17 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
 	
     private String username=null;
     private String password=null;
+    private int socketTimeoutMilliseconds = 120000;  // two minute default
 
     public FedoraAPIMServiceLocator(String user, String pass) {
         username=user;
         password=pass;
+    }
+
+    public FedoraAPIMServiceLocator(String user, String pass, int socketTimeoutSeconds) {
+        username=user;
+        password=pass;
+        socketTimeoutMilliseconds = socketTimeoutSeconds * 1000;
     }
 
     public java.lang.String getFedoraAPIMPortSOAPHTTPAddress() {
@@ -58,6 +65,7 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
         try {
             fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(portAddress, this, username, password);
             _stub.setPortName(getFedoraAPIMPortSOAPHTTPWSDDServiceName());
+            _stub.setTimeout(socketTimeoutMilliseconds);
             return _stub;
         }
         catch (org.apache.axis.AxisFault e) {
@@ -97,6 +105,7 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
 		try {
 			fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(portAddress, this, username, password);
 			_stub.setPortName(getFedoraAPIMPortSOAPHTTPSWSDDServiceName());
+            _stub.setTimeout(socketTimeoutMilliseconds);
 			return _stub;
 		}
 		catch (org.apache.axis.AxisFault e) {
@@ -114,12 +123,14 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
             if (fedora.server.management.FedoraAPIM.class.isAssignableFrom(serviceEndpointInterface)) {
                 fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(new java.net.URL(FedoraAPIMPortSOAPHTTP_address), this, username, password);
                 _stub.setPortName(getFedoraAPIMPortSOAPHTTPWSDDServiceName());
+                _stub.setTimeout(socketTimeoutMilliseconds);
                 return _stub;
             }
             //SDP - HTTPS (added second port for https)
 			if (fedora.server.management.FedoraAPIM.class.isAssignableFrom(serviceEndpointInterface)) {
 				fedora.server.management.APIMStub _stub = new fedora.server.management.APIMStub(new java.net.URL(FedoraAPIMPortSOAPHTTPS_address), this, username, password);
 				_stub.setPortName(getFedoraAPIMPortSOAPHTTPSWSDDServiceName());
+                _stub.setTimeout(socketTimeoutMilliseconds);
 				return _stub;
 			}
         }
@@ -156,6 +167,7 @@ public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service imp
 		else  {
 			java.rmi.Remote _stub = getPort(serviceEndpointInterface);
 			((org.apache.axis.client.Stub) _stub).setPortName(portName);
+			((org.apache.axis.client.Stub) _stub).setTimeout(socketTimeoutMilliseconds);
 			return _stub;
 		}
     }

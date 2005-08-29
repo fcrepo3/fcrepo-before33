@@ -18,6 +18,8 @@ import fedora.server.management.FedoraAPIMServiceLocator;
  */
 public abstract class APIMStubFactory {
 
+    public static int SOCKET_TIMEOUT_SECONDS = 120;
+
 	/**
 	 * Method to rewrite the default API-M base URL (specified in the service
 	 * locator class FedoraAPIMServiceLocator).  In this case we allow the protocol,
@@ -36,7 +38,7 @@ public abstract class APIMStubFactory {
 	public static FedoraAPIM getStub(String protocol, String host, int port, String username, String password)
 			throws MalformedURLException, ServiceException {
         	
-		FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator(username, password);
+		FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator(username, password, SOCKET_TIMEOUT_SECONDS);
 
 		//SDP - HTTPS support added
 		URL ourl = null;
@@ -84,7 +86,7 @@ public abstract class APIMStubFactory {
 			String path, String username, String password)
 			throws MalformedURLException, ServiceException {
         	
-		FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator(username, password);
+		FedoraAPIMServiceLocator locator=new FedoraAPIMServiceLocator(username, password, SOCKET_TIMEOUT_SECONDS);
 
 		//SDP - HTTPS support added
 		URL ourl = null;
