@@ -225,14 +225,14 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     {
         execute("/client/bin/fedora-modify " + getHost() + ":" + getPort() + " " + 
                 getUsername() + " " + getPassword() + " " + batchDirectives.getAbsolutePath() + " " + 
-                logFile.getAbsolutePath() + " http");
+                logFile.getAbsolutePath() + " " + getProtocol() );
     }
 
     private void exportObj(String pid, File dir)
     {
         execute("/client/bin/fedora-export " + getHost() + ":" + getPort() + " " + 
                 getUsername() + " " + getPassword() + " " + pid + " foxml1.0 public " + 
-                dir.getAbsolutePath() + " http");
+                dir.getAbsolutePath() + " " + getProtocol() );
     }
     
     public static void execute(String cmd) 
