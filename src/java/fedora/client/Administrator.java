@@ -750,7 +750,16 @@ public class Administrator extends JFrame {
     }
 
     public static void main(String[] args) {
-
+        if (args.length == 1) {
+            int socketTimeoutSeconds = 120;
+            try {
+                socketTimeoutSeconds = Integer.parseInt(args[0]);
+            } catch (Exception e) {
+            }
+            APIAStubFactory.SOCKET_TIMEOUT_SECONDS = socketTimeoutSeconds;
+            APIMStubFactory.SOCKET_TIMEOUT_SECONDS = socketTimeoutSeconds;
+            System.out.println("Socket timeout is now set to " + socketTimeoutSeconds + " seconds.");
+        }
         WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
         PrintStream sysOut=System.out;
         PrintStream sysErr=System.err;
