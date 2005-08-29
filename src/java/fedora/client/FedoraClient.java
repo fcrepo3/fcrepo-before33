@@ -198,6 +198,7 @@ public class FedoraClient implements Constants {
                 throw new IOException("Could not find end of repositoryVersion element in content of /describe?xml=true");
             }
             m_serverVersion = parts[1].substring(0, i).trim();
+            logger.debug("Server version is: " + m_serverVersion);
         }
         return m_serverVersion;
     }
