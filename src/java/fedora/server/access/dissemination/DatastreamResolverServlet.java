@@ -33,12 +33,13 @@ import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
- import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.ExternalContentManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.Logger;
+import fedora.server.utilities.ServerUtility;
 
 /**
  * <p><b>Title: </b>DatastreamResolverServlet.java</p>
@@ -204,14 +205,25 @@ public class DatastreamResolverServlet extends HttpServlet
       // DatastreamResolverServlet maps to two distinct servlet mappings in fedora web.xml.
       // getDS - is used when the backend service is incapable of basicAuth or SSL
       // getDSAuthenticated - is used when the backend service has basicAuth and SSL enabled
-      // When the getDS servlet path is used, the role assigned by the fedora server will be
-      // either secure on unsecure depending on the settings in beSecurity.xml. A role that is
-      // secure indicates that the fedora server that initiated the request is operating in 
-      // secure mode, but the getDS servlet mapping needs to run as unsecure so the role must be
-      // be changed to an unsecure role.
-      if (request.getRequestURI().endsWith("getDS")) {
-          dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
+      // Since both the getDS and getDSAuthenticated servlet targets map to the same servlet
+      // code and the Context used to initialize policy enforcement is based on the incoming 
+      // HTTPRequest, the code must provide special handling for requests using the getDS
+      // target. When the incoming URL to DatastreamResolverServlet contains the getDS target, 
+      // there are several conditions that must be checked to insure that the correct role is
+      // assigned to the request before policy enforcement occurs.
+      // 1) if the mapped dsPhysicalLocation of the request is actually a callback to the
+      //    Fedora server itself, then assign the role as BACKEND_SERVICE_CALL_UNSECURE so
+      //    the basicAuth and SSL constraints will match those of the getDS target.
+      // 2) if the mapped dsPhysicalLocation of the request is actually a Managed Content
+      //    or Inline XML Content datastream, then assign the role as BACKEND_SERVICE_CALL_UNSECURE so
+      //    the basicAuth and SSL constraints will match the getDS target.
+      // 3) Otherwise, leave the targetrole unchanged.
+      if ( request.getRequestURI().endsWith("getDS") &&
+           (ServerUtility.isURLFedoraServer(dsPhysicalLocation))  ||
+            dsControlGroupType.equals("M") || 
+            dsControlGroupType.equals("X")) {
           if(fedora.server.Debug.DEBUG) System.out.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
+          dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
       }      
       
       // If callback is to fedora server itself and callback is over SSL, adjust the protocol and port
