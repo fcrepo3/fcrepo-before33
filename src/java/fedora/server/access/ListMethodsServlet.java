@@ -195,14 +195,19 @@ public class ListMethodsServlet extends HttpServlet
 
       try {
           if (isListMethodsRequest) {
+      		System.out.println("before setting context");
               Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
+        		System.out.println("after setting context");
+
               listMethods(context, PID, asOfDateTime, xml, request, response);
+        		System.out.println("after doing listMethods");
+
               long stopTime = new Date().getTime();
               long interval = stopTime - servletStartTime;
               logger.logFiner("[ListMethodsServlet] Servlet Roundtrip "
                   + "listMethods: " + interval + " milliseconds.");
           }
-  	} catch (AuthzException ae) {            
+  	} catch (AuthzException ae) {     
         throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	
       } catch (Throwable th)
           {
@@ -211,6 +216,7 @@ public class ListMethodsServlet extends HttpServlet
                              + th.getClass().getName()
                              + " \". Reason: "  + th.getMessage()
                              + "  Input Request was: \"" + request.getRequestURL().toString();
+              System.out.println(message);
               logger.logWarning(message);
               th.printStackTrace();
           }
@@ -264,6 +270,8 @@ public class ListMethodsServlet extends HttpServlet
               transformer.transform(new StreamSource(pr), new StreamResult(out));
           }
           out.flush();
+    	  } catch (AuthzException ae) {     
+            throw ae;
           } catch (Throwable th)
           {
               String message = "[ListMethodsServlet] An error has occured. "
