@@ -734,6 +734,7 @@
 		<copy todir="dist/server/xsd">
 			<fileset dir="src/xsd"/>
 		</copy>
+		<copy file="inc/client/truststore" toFile="dist/server/truststore"/>
 		<!-- Schematron:  Fedora rules schema and schematron preprocessor -->
 		<mkdir dir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/metsExtRules1-0.xml" todir="dist/server/schematron"/>
