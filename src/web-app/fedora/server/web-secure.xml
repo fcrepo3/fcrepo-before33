@@ -224,62 +224,68 @@
 	<error-page>
 		<error-code>100</error-code>
 		<location>/continue-100.jsp</location>
-	</error-page>	
+	</error-page>
 	<error-page>
 		<exception-type>fedora.server.errors.servletExceptionExtensions.Continue100Exception</exception-type>
 		<location>/continue-100.jsp</location>
-	</error-page>		
+	</error-page>
 	<!-- this comment is here for clarity:  this element should not be uncommented. 
 	error-page>
 		<error-code>200</error-code>
 		<location>/ok-200.jsp</location>
-	</error-page -->	
+	</error-page -->
 	<error-page>
 		<exception-type>fedora.server.errors.servletExceptionExtensions.Ok200Exception</exception-type>
 		<location>/ok-200.jsp</location>
-	</error-page>		
+	</error-page>
 	<!--error-page>
 		<error-code>400</error-code>
 		<location>/bad-request-400.jsp</location>
-	</error-page-->	
+	</error-page-->
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.BadRequest400Exception</exception-type>	
+		<exception-type>fedora.server.errors.servletExceptionExtensions.BadRequest400Exception</exception-type>
 		<location>/bad-request-400.jsp</location>
-	</error-page>				
+	</error-page>
 	<error-page>
 		<error-code>401</error-code>
 		<location>/unauthorized-401.jsp</location>
-	</error-page>		
+	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.Unauthorized401Exception</exception-type>	
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Unauthorized401Exception</exception-type>
 		<location>/unauthorized-401.jsp</location>
-	</error-page>				
+	</error-page>
 	<error-page>
 		<error-code>403</error-code>
 		<location>/forbidden-403.jsp</location>
 	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.Forbidden403Exception</exception-type>	
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Forbidden403Exception</exception-type>
 		<location>/forbidden-403.jsp</location>
-	</error-page>			
+	</error-page>
 	<!--error-page>
 		<error-code>500</error-code>
 		<location>/internal-error-500.jsp</location>
-	</error-page-->	
+	</error-page-->
+	<!-- SDP:  xml document would not validate with two exception-type elements. -->
+	<!-- SDP: Commented out offending exception-type, and put a second error-page entry with the second exception. -->
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>	
+		<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>
+		<!--<exception-type>javax.servlet.ServletException</exception-type>-->
+		<location>/internal-error-500.jsp</location>
+	</error-page>
+	<error-page>
+		<!--<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>-->
 		<exception-type>javax.servlet.ServletException</exception-type>
 		<location>/internal-error-500.jsp</location>
-	</error-page>		
+	</error-page>
 	<error-page>
 		<error-code>503</error-code>
 		<location>/unavailable-503.jsp</location>
-	</error-page>	
+	</error-page>
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.Unavailable503Exception</exception-type>	
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Unavailable503Exception</exception-type>
 		<location>/unavailable-503.jsp</location>
-	</error-page>	
-
+	</error-page>
 	<!-- Security Constraints for the Fedora Repository Server web app -->
 	<!-- First, lock down as the default case (no access to any roles) -->
 	<security-constraint>
