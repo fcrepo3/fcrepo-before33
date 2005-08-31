@@ -716,6 +716,9 @@
 		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-reload-policies.sh fedora-reload-policies"/>
 		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s validate-policies.sh validate-policies"/>
+		</exec>		
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
