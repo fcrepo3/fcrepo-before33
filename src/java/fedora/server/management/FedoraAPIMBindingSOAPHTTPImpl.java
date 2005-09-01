@@ -1,5 +1,16 @@
 package fedora.server.management;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.rmi.RemoteException;
+import java.util.Date;
+
+import org.apache.axis.types.NonNegativeInteger;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -9,14 +20,9 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.authorization.AuthzException;
-import fedora.server.management.Management;
 import fedora.server.utilities.AxisUtility;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
-import java.io.*;
-import java.rmi.RemoteException;
-import java.util.Date;
-import org.apache.axis.types.NonNegativeInteger;
 
 /**
  *
@@ -28,7 +34,10 @@ import org.apache.axis.types.NonNegativeInteger;
  */
 public class FedoraAPIMBindingSOAPHTTPImpl
         implements FedoraAPIM {
-
+	
+	private static final org.apache.log4j.Logger logger = 
+    	org.apache.log4j.Logger.getLogger(FedoraAPIM.class);
+	
     /** The Fedora Server instance */
     private static Server s_server;
 
@@ -62,11 +71,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
 
     private void logStackTrace(Exception e) {
-        StringWriter trace = new StringWriter();
-        e.printStackTrace(new PrintWriter(trace));
-        s_server.logFiner("Error carried up to API-M level:\n" + trace.toString());
-/*
-        StackTraceElement[] els=e.getStackTrace();
+    	StackTraceElement[] els=e.getStackTrace();
         StringBuffer lines=new StringBuffer();
         boolean skip=false;
         for (int i=0; i<els.length; i++) {
@@ -78,32 +83,37 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 lines.append("\n");
             }
         }
+        
+        Throwable t = e.getCause();
+        if (t != null) {
+        	els = t.getStackTrace();
+        	for (int i=0; i<els.length; i++) {
+        		if (els[i].toString().indexOf("FedoraAPIMBindingSOAPHTTPSkeleton")!=-1) {
+                    skip=true;
+                }
+                if (!skip) {
+                    lines.append(els[i].toString());
+                    lines.append("\n");
+                }
+        	}
+        }
         s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
-*/
+
     }
 
-	// DEPRECATED. This remains in Fedora 2.0 for backward compatibility.  
-	// It assumes METS-Fedora as the ingest format.  It will be removed in a future version.
+    /**
+     * @deprecated This remains in Fedora 2.0 for backward compatibility. 
+     *    It assumes METS-Fedora as the ingest format.
+     *    It will be removed in a future version.
+     *    Replaced by {@link #ingest(byte, String, String)}
+     */
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
 		return ingest(METSXML, "metslikefedora1", logMessage);
-		/**
-        try {
-          // always gens pid, unless pid in stream starts with "test: or demo:"
-          return s_management.ingestObject(getContext(),
-                   new ByteArrayInputStream(METSXML), logMessage, "metslikefedora1", "UTF-8", true);
-
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-        } catch (Exception e) {
-            logStackTrace(e);
-            throw AxisUtility.getFault(e);
-        }
-        **/
     }
     
 	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {
+		logger.debug("start: ingest");
 		assertInitialized();
 		try {
 		  // always gens pid, unless pid in stream starts with "test:" "demo:"
@@ -118,12 +128,15 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 		} catch (Exception e) {
 			logStackTrace(e);
 			throw AxisUtility.getFault(e);
+		} finally {
+			logger.debug("end: ingest");
 		}
 	}
 
     public String modifyObject(String PID, String state, String label,
             String logMessage)
             throws RemoteException {
+    	logger.debug("start: modifyObject, " + PID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
@@ -137,6 +150,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (Exception e) {
             logStackTrace(e);
             throw AxisUtility.getFault(e);
+        } finally {
+        	logger.debug("end: modifyObject, " + PID);
         }
     }
 
@@ -253,6 +268,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String purgeObject(String PID, 
                               String logMessage,
                               boolean force) throws java.rmi.RemoteException {
+    	logger.debug("start: purgeObject, " + PID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
@@ -265,6 +281,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
+        } finally {
+        	logger.debug("end: purgeObject, " + PID);
         }
     }
 
@@ -279,6 +297,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                 String controlGroup,
                                 String dsState,
                                 String logMessage) throws RemoteException {
+    	logger.debug("start: addDatastream, " + pid + ", " + dsID);
         assertInitialized();
         try {
             return s_management.addDatastream(ReadOnlyContext.getSoapContext(), 
@@ -298,6 +317,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
+        } finally {
+        	logger.debug("end: addDatastream, " + pid + ", " + dsID);
         }
     }
 
@@ -313,6 +334,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                               String logMessage, 
                                               boolean force)
             throws java.rmi.RemoteException {
+    	logger.debug("start: modifyDatastreamByReference, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
@@ -334,6 +356,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
+        } finally {
+        	logger.debug("end: modifyDatastreamByReference, " + PID + ", " + datastreamID);
         }
     }
 
@@ -349,6 +373,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                           String logMessage, 
                                           boolean force) 
                 throws java.rmi.RemoteException {
+    	logger.debug("start: modifyDatastreamByValue, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             ByteArrayInputStream byteStream = null;
@@ -373,6 +398,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         } catch (ServerException se) {
             logStackTrace(se);
             throw AxisUtility.getFault(se);
+        } finally {
+        	logger.debug("end: modifyDatastreamByValue, " + PID + ", " + datastreamID);
         }
     }
 
@@ -422,6 +449,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                     String logMessage,
                                     boolean force) 
             throws java.rmi.RemoteException {
+    	logger.debug("start: purgeDatastream, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             return toStringArray(
@@ -440,6 +468,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         } catch (Exception e) {
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        } finally {
+        	logger.debug("end: purgeDatastream, " + PID + ", " + datastreamID);
         }
     }
 
@@ -690,6 +720,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public java.lang.String[] getNextPID(NonNegativeInteger numPIDs,
             String namespace)
             throws java.rmi.RemoteException {
+    	logger.debug("start: getNextPID");
         assertInitialized();
         try {
             if(numPIDs==null) numPIDs=new NonNegativeInteger("1");
@@ -701,6 +732,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(se);
         } catch (Exception e) {
             throw AxisUtility.getFault(new ServerInitializationException(e.getClass().getName() + ": " + e.getMessage()));
+        } finally {
+        	logger.debug("end: getNextPID");
         }
     }
 
