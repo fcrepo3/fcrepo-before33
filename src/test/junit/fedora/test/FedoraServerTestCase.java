@@ -1,6 +1,9 @@
 package fedora.test;
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
 
 import fedora.client.*;
 import fedora.server.config.Configuration;
@@ -73,13 +76,44 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     }
     
     public static String getPort() {
-        return getServerConfiguration().getParameter("fedoraServerPort").getValue();
+        String port=null;
+        if(getProtocol().equals("http")) {
+            port = getServerConfiguration().getParameter("fedoraServerPort").getValue();
+        } else {
+            port = getServerConfiguration().getParameter("fedoraRedirectPort").getValue();
+        }
+        System.out.println("***** Port: "+port);
+        return port;
     }
     
-    public static String ssl = ""; //big hack for fixme below, set this to "" or "s"
+    public static String ssl = "";
     
     public static String getProtocol() {
-        return "http" + ssl; // FIXME how to get this?
+        System.out.println("**** SSL setting: "+ssl);
+        return ssl;
+    }
+    
+    // hack to dynamically set protocol based on settings in beSecurity
+    // Settings for fedoraInternalCall-1 should have callSSL=true when server is secure
+    static {
+        ssl = "http";
+        try {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(new FileInputStream(BESECURITY_PATH)));
+                String line = null;
+                while ((line = br.readLine()) != null)
+                {
+                  if(line.indexOf("role=\"fedoraInternalCall-1\"") > 0    &&
+                     line.indexOf("callSSL=\"true\"") > 0) {
+                          ssl = "https";
+                          break;
+                  }
+                  System.out.println("***** BESECURITY LINE: "+line);
+                }      
+        } catch (Exception e) {
+            System.out.println("beSecurity file Not found: "+BESECURITY_PATH);
+        }
+        System.out.println("**** SSL setting: "+ssl);        
     }
     
     public static String getUsername() {
