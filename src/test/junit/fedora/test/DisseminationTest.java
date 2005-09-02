@@ -32,47 +32,53 @@ import fedora.test.FedoraServerTestSetup;
  * @author Bill Niebel 
  */
 
-public class ListMethodsTest extends IndividualTest {
+public class DisseminationTest extends IndividualTest {
 	
 	String pid = "";
+	String bDef = "";
+	String method = "";
 	
-	public ListMethodsTest(String pid, boolean xml) {
+	public DisseminationTest(String pid, String bDef, String method, boolean xml) {
 		super(xml, false);
 		this.pid = pid;
+		this.bDef = bDef;
+		this.method = method;
 	}
 	
     /** 
-     *  http://localhost:8080/fedora/listMethods/demo:10?xml=true 
+     *  
      */
     public final String getUrl(boolean xml) throws Exception {
-    	UrlString url = new UrlString("/listMethods");
+    	UrlString url = new UrlString("/get");
     	if (pid != null) {
     		url.appendPathinfo(pid);
+    	}    	
+    	if (bDef != null) {
+    		url.appendPathinfo(bDef);
     	}
-    	url.appendParm("xml", Boolean.toString(xml));
+    	if (method != null) {
+    		url.appendPathinfo(method);
+    	}
     	return url.toString();
     }  
 
     public final void checkResultsXml(Document result) throws Exception {
-    	System.out.println("IN SPECIFIC TEST CHECKRESULTS 1");
-        assertXpathExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-    	System.out.println("IN SPECIFIC TEST CHECKRESULTS 2");
+    	assertXpathExists(XPATH_XHTML_DISSEMINATION_DC, result);	        	
     }
 
     public final void checkResultsXhtml(Document result) throws Exception {
-        assertXpathExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	//no XHTML disseminations in demo objects    	        	
     }	
 
     public final void checkResultsXmlElse(Document result) throws Exception {
-        assertXpathNotExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	assertXpathNotExists(XPATH_XHTML_DISSEMINATION_DC, result);	        	
     }
 
     public final void checkResultsXhtmlElse(Document result) throws Exception {
-        assertXpathNotExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	//no XHTML disseminations in demo objects  	        	
     }	
 
-    private static final String XPATH_XML_LIST_METHODS_OBJECT_METHODS = "/objectMethods"; 
-    private static final String XPATH_XHTML_LIST_METHODS_OBJECT_METHODS = getXhtmlXpath("");
+    private static final String XPATH_XHTML_DISSEMINATION_DC = "/oai_dc:dc"; //<<<<<<<<<<<<<<<<<<<
   
 }
 

@@ -107,15 +107,21 @@ public abstract class IndividualTest extends FedoraTestCase {
     
     public abstract void checkResultsXml(Document result) throws Exception;
 
+    public void checkResultsXmlElse(Document result) throws Exception {
+    }
+
     public abstract void checkResultsXhtml(Document result) throws Exception;
 
+    public void checkResultsXhtmlElse(Document result) throws Exception {
+    }
+
+    public void checkResults() throws Exception {        
+    }
     
     public void checkResultsElse() throws Exception {
     	again = false;
     }
     
-    public void checkResults() throws Exception {        
-    }
 
 
 }

@@ -35,11 +35,33 @@ public abstract class IterableTest extends FedoraServerTestCase {
 	
     protected static DocumentBuilderFactory factory;
     protected static DocumentBuilder builder;
+    protected static ServerConfiguration fcfg;
+    protected static FedoraClient client;
+
+    public static final String NS_XHTML_PREFIX = "xhtml";
+    public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
     
     protected boolean testXML = true;
     protected boolean testXHTML = false;
     protected boolean XML = true;
     protected boolean XHTML = false;
+    
+    protected static Set demoObjects;
+    protected static final Set badPids = new HashSet();
+    static {
+    	badPids.add("hoo%20doo:%20TheClash"); //unacceptable syntax
+    }
+    
+    protected static final Set fewPids = new HashSet();
+    static {
+    	fewPids.add("demo:10");
+    }
+    
+    protected static final Set missingPids = new HashSet();
+    static {
+    	missingPids.add("doowop:667"); //simply not in repository
+    }
+
     
     public static final boolean samePolicies(String policiesA, String policiesB) {
     	boolean samePolicies = false;

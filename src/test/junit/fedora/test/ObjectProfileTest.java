@@ -42,10 +42,10 @@ public class ObjectProfileTest extends IndividualTest {
 	}
 	
     /** 
-     *  http://localhost:8080/fedora/get/demo:10?xml=true
+     *  http://localhost:8080/fedora/getObjectProfile/demo:10?xml=true
      */
     public final String getUrl(boolean xml) throws Exception {
-    	UrlString url = new UrlString("/get");
+    	UrlString url = new UrlString("/getObjectProfile");
     	if (pid != null) {
     		url.appendPathinfo(pid);
     	}
@@ -53,38 +53,6 @@ public class ObjectProfileTest extends IndividualTest {
     	return url.toString();
     }  
 
-    /*
-    public void objectProfile(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
-        Document result = null;
-        while (iterator.hasNext()) {
-        	String pid = (String) iterator.next();
-        	try {
-        		result = getQueryResult(getUrlForObjectProfile(pid, xml));
-            	System.err.flush();
-        	} catch (Exception e) {	  
-        	}
-        	if (shouldWork) {   		
-        	} else {
-    	        if (result != null) {
-    		        if (xml) {
-    		        	try {
-    		        		assertXpathNotExists(XPATH_XML_OBJECT_PROFILE_PID, result);
-    		        	} catch (Exception e) {
-    	    	            assertXpathEvaluatesTo("", XPATH_XML_OBJECT_PROFILE_PID, result);
-    		        	}
-    		        } else {
-    		        	try {
-    		        		assertXpathNotExists(XPATH_XHTML_OBJECT_PROFILE_PID, result);
-    		        	} catch (Exception e) {
-    	    	            assertXpathEvaluatesTo("", XPATH_XHTML_OBJECT_PROFILE_PID, result);
-    		        	}
-    		        }
-    	        }        		
-        	}
-        }    	
-    }
-    */
-    
     public final void checkResultsXml(Document result) throws Exception {
         assertXpathExists(XPATH_XML_OBJECT_PROFILE_LABEL, result);	
         assertXpathExists(XPATH_XML_OBJECT_PROFILE_CONTENT_MODEL, result);	
@@ -95,6 +63,14 @@ public class ObjectProfileTest extends IndividualTest {
         assertXpathExists(XPATH_XML_OBJECT_PROFILE_ITEM_INDEX_VIEW_URL, result);
         assertXpathEvaluatesTo(pid, XPATH_XML_OBJECT_PROFILE_PID, result);      	    	
     }
+    
+    public final void checkResultsXmlElse(Document result) throws Exception {
+    	try {
+    		assertXpathNotExists(XPATH_XML_OBJECT_PROFILE_PID, result);
+    	} catch (Exception e) {
+            assertXpathEvaluatesTo("", XPATH_XML_OBJECT_PROFILE_PID, result);
+    	}
+    }    
 
     public final void checkResultsXhtml(Document result) throws Exception {
         assertXpathExists(XPATH_XHTML_OBJECT_PROFILE_LABEL, result);	
@@ -104,13 +80,20 @@ public class ObjectProfileTest extends IndividualTest {
         assertXpathExists(XPATH_XHTML_OBJECT_PROFILE_OBJTYPE, result);	
         assertXpathExists(XPATH_XHTML_OBJECT_PROFILE_DISS_INDEX_VIEW_URL, result);	
         assertXpathExists(XPATH_XHTML_OBJECT_PROFILE_ITEM_INDEX_VIEW_URL, result);
-        assertXpathEvaluatesTo(pid, XPATH_XHTML_OBJECT_PROFILE_PID, result);		        
-
+        assertXpathEvaluatesTo(pid, XPATH_XHTML_OBJECT_PROFILE_PID, result);
         assertXpathEvaluatesTo("Object Profile HTML Presentation", XPATH_XHTML_OBJECT_PROFILE_HEAD_TITLE, result);
-        assertXpathEvaluatesTo("Object Profile View", XPATH_XHTML_OBJECT_PROFILE_BODY_TITLE, result);	        	
-
+        assertXpathEvaluatesTo("Object Profile View", XPATH_XHTML_OBJECT_PROFILE_BODY_TITLE, result);
     }	
+
     
+    public final void checkResultsXhtmlElse(Document result) throws Exception {
+    	try {
+    		assertXpathNotExists(XPATH_XHTML_OBJECT_PROFILE_PID, result);
+    	} catch (Exception e) {
+            assertXpathEvaluatesTo("", XPATH_XHTML_OBJECT_PROFILE_PID, result);
+    	}
+    }	
+
 	//Fedora namespace not declared in result, so these xpaths don't include namespace prefixes
     private static final String XPATH_XML_OBJECT_PROFILE_PID = "/objectProfile/@pid";
     private static final String XPATH_XML_OBJECT_PROFILE_LABEL = "/objectProfile/objLabel";

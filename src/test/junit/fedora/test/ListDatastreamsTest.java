@@ -32,20 +32,20 @@ import fedora.test.FedoraServerTestSetup;
  * @author Bill Niebel 
  */
 
-public class ListMethodsTest extends IndividualTest {
+public class ListDatastreamsTest extends IndividualTest {
 	
 	String pid = "";
 	
-	public ListMethodsTest(String pid, boolean xml) {
+	public ListDatastreamsTest(String pid, boolean xml) {
 		super(xml, false);
 		this.pid = pid;
 	}
 	
     /** 
-     *  http://localhost:8080/fedora/listMethods/demo:10?xml=true 
+     *  http://localhost:8080/fedora/listDatastreams/demo:10?xml=true
      */
     public final String getUrl(boolean xml) throws Exception {
-    	UrlString url = new UrlString("/listMethods");
+    	UrlString url = new UrlString("/listDatastreams");
     	if (pid != null) {
     		url.appendPathinfo(pid);
     	}
@@ -54,25 +54,24 @@ public class ListMethodsTest extends IndividualTest {
     }  
 
     public final void checkResultsXml(Document result) throws Exception {
-    	System.out.println("IN SPECIFIC TEST CHECKRESULTS 1");
-        assertXpathExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-    	System.out.println("IN SPECIFIC TEST CHECKRESULTS 2");
+    	assertXpathExists(XPATH_XML_LIST_DATASTREAMS_OBJECT_DATASTREAMS, result);
     }
 
     public final void checkResultsXhtml(Document result) throws Exception {
-        assertXpathExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	assertXpathExists(XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS, result);    	        	
     }	
 
     public final void checkResultsXmlElse(Document result) throws Exception {
-        assertXpathNotExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	assertXpathNotExists(XPATH_XML_LIST_DATASTREAMS_OBJECT_DATASTREAMS, result);    	        	
     }
 
     public final void checkResultsXhtmlElse(Document result) throws Exception {
-        assertXpathNotExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
+    	assertXpathNotExists(XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS, result);    	        	
     }	
 
-    private static final String XPATH_XML_LIST_METHODS_OBJECT_METHODS = "/objectMethods"; 
-    private static final String XPATH_XHTML_LIST_METHODS_OBJECT_METHODS = getXhtmlXpath("");
+    private static final String XPATH_XML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = "/objectDatastreams"; 
+    private static final String XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = getXhtmlXpath(""); 
+
   
 }
 
