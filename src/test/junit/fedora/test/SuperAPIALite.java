@@ -165,54 +165,21 @@ public abstract class SuperAPIALite extends IterableTest {
     
     public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
     
-    private static final Set badPids = new HashSet();
+    protected static final Set badPids = new HashSet();
     static {
     	badPids.add("hoo%20doo:%20TheClash"); //unacceptable syntax
-    	badPids.add("doowop:667"); //simply not in repository
-    }
-
-    /*
-    public static final boolean samePolicies(String policiesA, String policiesB) {
-    	boolean samePolicies = false;
-    	if (policiesA == policiesB) {
-    		samePolicies = true;
-    	} else if (policiesA != null) {
-    		samePolicies = policiesA.equals(policiesB); 
-    	} else {
-    		samePolicies = policiesB.equals(policiesA);
-    	}
-    	return samePolicies;
     }
     
-
-    protected void iterate(Set trials, SingleTest test) throws Exception {
-    	String lastPolicies = null;
-    	Iterator it = trials.iterator();
-    	while (it.hasNext()) {
-    		Trial trial = (Trial) it.next(); 
-    		String policies = trial.policies;
-    		if (samePolicies(policies, lastPolicies)) {
-    			lastPolicies = policies;
-    		} else {
-	            usePolicies(policies);
-    		}
-        	test.run(trial.username, trial.password);
-    	}
-    } 
-*/
-    
-    /** 
-     *  methods getXUrl() (for each APIA Lite operation X) can't be static because they contain an instance --inner-- class UrlString.
-     *  likewise, methods calling getXUrl() can't be static, because getXUrl() isn't. 
-     *  they are otherwise static in use and would be declared static if javac allowed it. 
-     */
-/*    
-    public final String getUrlForDescribeRepository(boolean xml) {
-    	UrlString url = new UrlString("/describe");
-    	url.appendParm("xml", Boolean.toString(xml));
-    	return url.toString();
+    protected static final Set fewPids = new HashSet();
+    static {
+    	fewPids.add("demo:10");
     }
-*/
+    
+    protected static final Set missingPids = new HashSet();
+    static {
+    	missingPids.add("doowop:667"); //simply not in repository
+    }
+
     /** 
      *  http://localhost:8080/fedora/get/demo:10/DC?xml=true 
      */
@@ -246,17 +213,7 @@ public abstract class SuperAPIALite extends IterableTest {
     	return url.toString();
     }
 
-    /** 
-     *  http://localhost:8080/fedora/get/demo:10?xml=true
-     */
-    public final String getUrlForObjectProfile(String pid, boolean xml) throws Exception {
-    	UrlString url = new UrlString("/get");
-    	if (pid != null) {
-    		url.appendPathinfo(pid);
-    	}
-    	url.appendParm("xml", Boolean.toString(xml));
-    	return url.toString();
-    }    
+  
 
     /** 
      *  http://localhost:8080/fedora/getObjectHistory/demo:10?xml=true    
@@ -270,19 +227,7 @@ public abstract class SuperAPIALite extends IterableTest {
     	return url.toString();
     }    
 
-    public final String getUrlForFindObjects(String query, int maxResults, boolean xml, String sessionToken) {
-    	UrlString url = new UrlString("/search");
-    	if (query != null) {
-    		url.appendParm("query", query);
-    	}
-    	url.appendParm("pid", "true");    	
-    	url.appendParm("maxResults", Integer.toString(maxResults));
-    	url.appendParm("xml", Boolean.toString(xml));
-    	if (sessionToken != null) {
-        	url.appendParm("sessionToken", sessionToken);    		
-    	}
-    	return url.toString();
-    }
+
 
     /** 
      *  http://localhost:8080/fedora/listDatastreams/demo:10?xml=true
@@ -296,100 +241,7 @@ public abstract class SuperAPIALite extends IterableTest {
     	return url.toString();
     }
 
-    /** 
-     *  http://localhost:8080/fedora/listMethods/demo:10?xml=true 
-     */
-    public final String getUrlForListMethods(String pid, boolean xml) throws Exception {
-    	UrlString url = new UrlString("/listMethods");
-    	if (pid != null) {
-    		url.appendPathinfo(pid);
-    	}
-    	url.appendParm("xml", Boolean.toString(xml));
-    	return url.toString();
-    }
 
-    /*
-    public class DescribeRepositoryTest extends HttpTest { 
-    	private boolean xml = true; //results are xml (else xhtml)
-    	public DescribeRepositoryTest(String baseurl, int expectedStatus, boolean xml) {
-    		super(baseurl, expectedStatus);
-    		this.xml = xml;
-    	}
-    	protected String getUrl() {
-    		return getUrlForDescribeRepository(xml);
-    	}
-    	protected void checkResults(Document document) {
-	        String repositoryName = fcfg.getParameter("repositoryName").getValue();
-	        if (xml) {
-	        	describeRepositoryCheckDataXml(document, repositoryName);
-	        } else {
-	            describeRepositoryCheckDataXhtml(document, repositoryName);
-	        }    		
-    	}
-	    private final void describeRepositoryCheckDataXml(Document result, String repositoryName) throws Exception {
-	        assertXpathEvaluatesTo(repositoryName, XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_NAME, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_BASEURL, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_VERSION, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_NAMESPACE, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_DELIMITER, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_SAMPLE, result);
-			SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
-			int pidsToRetain = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XML_DESCRIBE_REPOSITORY_COUNT_RETAIN_PIDS, result));
-			assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_OAI_NAMESPACE, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_OAI_DELIMITER, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_OAI_SAMPLE, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_SEARCH_URL, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_ACCESS_URL, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_OAI_URL, result);
-	        assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_ADMIN_EMAIL, result);        	    	
-	    }
-
-	    private final void describeRepositoryCheckDataXhtml(Document result, String repositoryName) throws Exception {
-	        assertXpathEvaluatesTo(repositoryName, XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_NAME, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_BASEURL, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_VERSION, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_PID_NAMESPACE, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_PID_DELIMITER, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_PID_SAMPLE, result);
-			//TODO:  count test for retain pids in xhtml
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_NAMESPACE, result);			
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_DELIMITER, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_SAMPLE, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_SEARCH_URL, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_ACCESS_URL, result);
-	        assertXpathExists(XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_OAI_URL, result);
-	        //TODO:  count test for admin emails in xhtml    	
-	    }		
-    }
-    
-	//Fedora namespace not declared in result, so these xpaths don't include namespace prefixes
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_NAME = "/fedoraRepository/repositoryName"; 
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_BASEURL = "/fedoraRepository/repositoryBaseURL";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_REPOSITORY_VERSION = "/fedoraRepository/repositoryVersion"; 
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_PID_NAMESPACE = "/fedoraRepository/repositoryPID/PID-namespaceIdentifier";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_PID_DELIMITER = "/fedoraRepository/repositoryPID/PID-delimiter";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_PID_SAMPLE = "/fedoraRepository/repositoryPID/PID-sample";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_COUNT_RETAIN_PIDS = "count(/fedoraRepository/repositoryPID/retainPID)";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_OAI_NAMESPACE = "/fedoraRepository/repositoryOAI-identifier/OAI-namespaceIdentifier";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_OAI_DELIMITER = "/fedoraRepository/repositoryOAI-identifier/OAI-delimiter";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_OAI_SAMPLE = "/fedoraRepository/repositoryOAI-identifier/OAI-sample";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_SEARCH_URL = "/fedoraRepository/sampleSearch-URL";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_ACCESS_URL = "/fedoraRepository/sampleAccess-URL";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_SAMPLE_OAI_URL = "/fedoraRepository/sampleOAI-URL";
-    private static final String XPATH_XML_DESCRIBE_REPOSITORY_ADMIN_EMAIL = "/fedoraRepository/adminEmail";
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_NAME = getXhtmlXpath("/html/body//font[@id='repositoryName']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_BASEURL = getXhtmlXpath("/html/body//td[@id='repositoryBaseURL']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_REPOSITORY_VERSION = getXhtmlXpath("/html/body//td[@id='repositoryVersion']"); 
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_PID_NAMESPACE = getXhtmlXpath("/html/body//td[@id='PID-namespaceIdentifier']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_PID_DELIMITER = getXhtmlXpath("/html/body//td[@id='PID-delimiter']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_PID_SAMPLE = getXhtmlXpath("/html/body//td[@id='PID-sample']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_NAMESPACE = getXhtmlXpath("/html/body//td[@id='OAI-namespaceIdentifier']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_DELIMITER = getXhtmlXpath("/html/body//td[@id='OAI-delimiter']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_OAI_SAMPLE = getXhtmlXpath("/html/body//td[@id='OAI-sample']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_SEARCH_URL = getXhtmlXpath("/html/body//td[@id='sampleSearch-URL']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_ACCESS_URL = getXhtmlXpath("/html/body//td[@id='sampleAccess-URL']");
-    private static final String XPATH_XHTML_DESCRIBE_REPOSITORY_SAMPLE_OAI_URL = getXhtmlXpath("/html/body//td[@id='sampleOAI-URL']");
-*/
 
     private void datastreamDissemination(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
@@ -466,6 +318,7 @@ public abstract class SuperAPIALite extends IterableTest {
     }
     private static final String XPATH_XHTML_DISSEMINATION_DC = "/oai_dc:dc"; //<<<<<<<<<<<<<<<<<<<
 
+    /*
     public void objectProfile(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
         while (iterator.hasNext()) {
@@ -529,24 +382,7 @@ public abstract class SuperAPIALite extends IterableTest {
         	}
         }    	
     }
-    private static final String XPATH_XML_OBJECT_PROFILE_PID = "/objectProfile/@pid";
-    private static final String XPATH_XML_OBJECT_PROFILE_LABEL = "/objectProfile/objLabel";
-    private static final String XPATH_XML_OBJECT_PROFILE_CONTENT_MODEL = "/objectProfile/objContentModel";    
-    private static final String XPATH_XML_OBJECT_PROFILE_CREATE_DATE = "/objectProfile/objCreateDate";
-    private static final String XPATH_XML_OBJECT_PROFILE_LASTMOD_DATE = "/objectProfile/objLastModDate";
-    private static final String XPATH_XML_OBJECT_PROFILE_OBJTYPE = "/objectProfile/objType";
-    private static final String XPATH_XML_OBJECT_PROFILE_DISS_INDEX_VIEW_URL = "/objectProfile/objDissIndexViewURL";
-    private static final String XPATH_XML_OBJECT_PROFILE_ITEM_INDEX_VIEW_URL = "/objectProfile/objItemIndexViewURL";    
-    private static final String XPATH_XHTML_OBJECT_PROFILE_PID = getXhtmlXpath("/html/body//td[@id='pid']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_LABEL = getXhtmlXpath("/html/body//td[@id='objLabel']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_CONTENT_MODEL = getXhtmlXpath("/html/body//td[@id='objContentModel']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_CREATE_DATE = getXhtmlXpath("/html/body//td[@id='objCreateDate']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_LASTMOD_DATE = getXhtmlXpath("/html/body//td[@id='objLastModDate']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_OBJTYPE = getXhtmlXpath("/html/body//td[@id='objType']");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_DISS_INDEX_VIEW_URL = getXhtmlXpath("/html/body//a[@id='objDissIndexViewURL']/@href");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_ITEM_INDEX_VIEW_URL = getXhtmlXpath("/html/body//a[@id='objItemIndexViewURL']/@href");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_HEAD_TITLE = getXhtmlXpath("/html/head/title");
-    private static final String XPATH_XHTML_OBJECT_PROFILE_BODY_TITLE = getXhtmlXpath("/html/body//h3");
+    */
 
     private void objectHistory(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
@@ -603,75 +439,7 @@ public abstract class SuperAPIALite extends IterableTest {
     private static final String XPATH_XHTML_OBJECT_HISTORY_BODY_TITLE = getXhtmlXpath("/html/body//h3");    
 
     
-    private final void findObjects(int maxResults, boolean xml) throws Exception {   	
-        String sessionToken = null;
-		int hitsOnThisPage = -1;
-		boolean again = true;
-		int cursorShouldBe = 0; //for xml results only (cursor is not included in xhtml results)
-		int hitsOnAllPages = 0;
 
-		while (again) { 	       
-			if (DEBUG) System.err.println("0"); System.err.flush();
-			String url = getUrlForFindObjects("pid=demo:*", maxResults, xml, sessionToken);
-			Document result = getQueryResult(url);
-	        //if (DEBUG) nodeWalk (result, "");
-			SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
-			if (DEBUG) System.err.println("A"); System.err.flush();
-			if (xml) {
-				if (DEBUG) System.err.println("B"); System.err.flush();
-				if (DEBUG) System.err.println("b4 getting sessionToken");  System.err.flush();
-				if (DEBUG) System.err.println("XPATH_XML_FIND_OBJECTS_SESSION_TOKEN="+XPATH_XML_FIND_OBJECTS_SESSION_TOKEN);  System.err.flush();
-		        sessionToken = simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_SESSION_TOKEN, result);
-				if (DEBUG) System.err.println("b4 getting hitsOnThisPage");
-				hitsOnThisPage = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_COUNT_PIDS, result));
-				if (DEBUG) System.err.println("b4 getting hits");
-			} else {
-				if (DEBUG) System.err.println("C1"); System.err.flush();
-				if (DEBUG) System.err.println("b4 getting sessionToken");
-		        sessionToken = simpleXpathEngine.evaluate(XPATH_XHTML_FIND_OBJECTS_SESSION_TOKEN, result);
-		        if (DEBUG) System.err.println("C2"); System.err.flush();
-				if (DEBUG) System.err.println("b4 getting hitsOnThisPage");
-				hitsOnThisPage = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XHTML_FIND_OBJECTS_COUNT_PIDS, result));
-				if (DEBUG) System.err.println("C3"); System.err.flush();
-				if (DEBUG) System.err.println("b4 getting hits");
-				if (DEBUG) System.err.println("C4"); System.err.flush();
-			}
-			if (DEBUG) System.err.println("hitsOnThisPage=" + hitsOnThisPage);
-	        if (DEBUG) System.err.println("sessionToken=" + sessionToken);
-	        again = (sessionToken != null) && ! "".equals(sessionToken);
-	        
-        	if (xml && again) {
-            	String cursor = simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_CURSOR, result);
-            	if (DEBUG) System.err.println("cursor=" + cursor);
-        		assertEquals(cursorShouldBe, Integer.parseInt(cursor)); //&&again TO WORK AROUND A PROBABLE BUG IN SERVER CODE.
-        	}
-	        
-        	assertTrue(hitsOnThisPage <= maxResults);
-			if (hitsOnThisPage < maxResults) {
-				assertTrue((sessionToken == null) || "".equals(sessionToken));
-			}
-			
-			if (DEBUG) System.err.println("getNDemoObjects()" + demoObjects.size());
-			
-			assertTrue (hitsOnThisPage <= demoObjects.size());
-
-			hitsOnAllPages += hitsOnThisPage;
-			assertTrue(hitsOnAllPages <= demoObjects.size());
-			assertEquals (hitsOnAllPages == demoObjects.size(), (sessionToken == null) || "".equals(sessionToken)); 
-			assertEquals(hitsOnAllPages < demoObjects.size(), (sessionToken != null) && ! "".equals(sessionToken)); 
-
-			
-	        cursorShouldBe += maxResults;
-		}
-		assertTrue(hitsOnAllPages == demoObjects.size());
-    }    
-    private static final String XPATH_XML_FIND_OBJECTS_SESSION_TOKEN = getFedoraXpath("/result/listSession/token");
-    private static final String XPATH_XML_FIND_OBJECTS_CURSOR = getFedoraXpath("/result/listSession/cursor");
-    private static final String XPATH_XML_FIND_OBJECTS_COUNT_PIDS = getFedoraXpath("count(/result/resultList/objectFields/pid)");
-    private static final String XPATH_XML_FIND_OBJECTS_PID = getFedoraXpath("/result/resultList/objectFields/pid");
-    private static final String XPATH_XHTML_FIND_OBJECTS_SESSION_TOKEN = getXhtmlXpath("/html/body//form//input[@name=\"sessionToken\"]/@value");
-    private static final String XPATH_XHTML_FIND_OBJECTS_COUNT_PIDS = getXhtmlXpath("count(/html/body//form//a[@href])");
-    private static final String XPATH_XHTML_FIND_OBJECTS_PID = getXhtmlXpath("/html/body//form//a[@href]");
 
     private final void listDatastreams(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
@@ -711,46 +479,12 @@ public abstract class SuperAPIALite extends IterableTest {
         }    	
     }
     private static final String XPATH_XML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = "/objectDatastreams"; 
-    private static final String XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = getXhtmlXpath("");        
-    private void listMethods(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
-        Document result = null;
-        while (iterator.hasNext()) {
-        	String pid = (String) iterator.next();
-        	if (DEBUG) System.err.println("trying pid=" + pid); System.err.flush();
-        	if (DEBUG) nodeWalk (result, "");
-        	try {
-        		result = getQueryResult(getUrlForListMethods(pid, xml));
-            	if (DEBUG) System.err.println("no exception on pid=" + pid); System.err.flush();
-            	System.err.flush();
-        	} catch (Exception e) {	  
-            	if (DEBUG) {
-            		System.err.println("exception on pid=" + pid); 
-            		System.err.println(e.getMessage()); 
-            		if (e.getCause() != null) {
-                		System.err.println(e.getCause().getMessage());             			
-            		}
-            		System.err.flush();
-            	}
-        	}
-        	if (shouldWork) {
-    	        if (xml) {
-    		        assertXpathExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-    	        } else {
-    		        assertXpathExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-    	        }        		
-        	} else {
-    	        if (result != null) {
-        	        if (xml) {
-        		        assertXpathNotExists(XPATH_XML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-        	        } else {
-        		        assertXpathNotExists(XPATH_XHTML_LIST_METHODS_OBJECT_METHODS, result);    	        	
-        	        }        		
-    	        }        		
-        	}
-        }    	    	
-    }
-    private static final String XPATH_XML_LIST_METHODS_OBJECT_METHODS = "/objectMethods"; 
-    private static final String XPATH_XHTML_LIST_METHODS_OBJECT_METHODS = getXhtmlXpath("");
+    private static final String XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = getXhtmlXpath(""); 
+    
+    
+    
+    
+
 
 
 }

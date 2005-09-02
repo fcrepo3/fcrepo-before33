@@ -1,3 +1,4 @@
+
 package fedora.test;  
 
 import java.io.InputStream;
@@ -45,7 +46,7 @@ public class Trial {
     public static final String HTTP_BASE_URL = "http://localhost:8080/fedora";
     public static final String HTTPS_BASE_URL = "https://localhost:8443/fedora";
 
-    public static final String DEFAULT_POLICIES = null;
+    public static final String DEFAULT_POLICIES = "defaultPolicies";
     public static final String SHIPPED_POLICIES = "shippedPolicies";
     public static final String NO_POLICIES = "noPolicies";
     public static final String PERMIT_DESC_REPO_POLICY = "permitDescRepoPolicy";    
@@ -98,60 +99,309 @@ public class Trial {
 
     
     private static final Map clients = new Hashtable();
-    
+    private static int count = 0;     
     public static final FedoraClient getClient(String baseurl, String username, String password) throws Exception {
     	String key = baseurl + "|" + username + "|" + password;
     	if (!clients.containsKey(key)) {
+			count++;
+			System.out.println("about to new FedoraClient(), n==" + count);
     		FedoraClient client = new FedoraClient(baseurl, username, password);
     		clients.put(key, client);
     	}
+		System.out.println("about to return (FedoraClient) clients.get(key)" + (FedoraClient) clients.get(key));
     	return (FedoraClient) clients.get(key);
     }
 
     
-    public static final Set ALL_SHIPPED_POLICY_TRIALS = new HashSet();
+    public static final Set ALL_TRIALS_WITH_DEFAULT_POLICIES = new HashSet();
     static {
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTP_NO_NO);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTPS_NO_NO);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTP_END_END);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTPS_END_END);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTP_END_BAD);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTPS_END_BAD);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTP_ADMIN_ADMIN);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTPS_ADMIN_ADMIN);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTP_ADMIN_BAD);
-        ALL_SHIPPED_POLICY_TRIALS.add(SHIPPED_POLICIES_HTTPS_ADMIN_BAD);            	
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTP_NO_NO);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTPS_NO_NO);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTP_END_END);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTPS_END_END);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTP_END_BAD);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTPS_END_BAD);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTP_ADMIN_ADMIN);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTPS_ADMIN_ADMIN);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTP_ADMIN_BAD);
+    	ALL_TRIALS_WITH_DEFAULT_POLICIES.add(SHIPPED_POLICIES_HTTPS_ADMIN_BAD); 
+    }
+    public static final Set ALL_SHIPPED_POLICY_TRIALS = ALL_TRIALS_WITH_DEFAULT_POLICIES;    	
+
+    
+    public static final Set ALL_TRIALS_WITH_NO_POLICIES = new HashSet();
+    static {
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTP_NO_NO);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTPS_NO_NO);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTP_END_END);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTPS_END_END);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTP_END_BAD);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTPS_END_BAD);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTP_ADMIN_ADMIN);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTPS_ADMIN_ADMIN);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTP_ADMIN_BAD);
+    	ALL_TRIALS_WITH_NO_POLICIES.add(NO_POLICIES_HTTPS_ADMIN_BAD);            	
+    }
+    public static final Set ALL_NO_POLICY_TRIALS = ALL_TRIALS_WITH_NO_POLICIES; 
+    
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP  = new HashSet();
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_BADUSER = new HashSet();
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_ENDUSER = new HashSet();
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_ADMIN = new HashSet();
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_GOODUSER = new HashSet();
+    static {
+    	TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP.add(SHIPPED_POLICIES_HTTP_NO_NO);
+    	TRIALS_WITH_DEFAULT_POLICIES_BADUSER.add(SHIPPED_POLICIES_HTTPS_NO_NO);
+    	TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP.add(SHIPPED_POLICIES_HTTP_END_END);
+    	TRIALS_WITH_DEFAULT_POLICIES_ADMIN.add(SHIPPED_POLICIES_HTTPS_ADMIN_ADMIN);
+    	TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP.add(SHIPPED_POLICIES_HTTP_END_BAD);
+    	TRIALS_WITH_DEFAULT_POLICIES_BADUSER.add(SHIPPED_POLICIES_HTTPS_END_BAD);
+    	TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP.add(SHIPPED_POLICIES_HTTP_ADMIN_ADMIN);
+    	TRIALS_WITH_DEFAULT_POLICIES_ADMIN.add(SHIPPED_POLICIES_HTTPS_ADMIN_ADMIN);
+    	TRIALS_WITH_DEFAULT_POLICIES_GIVING_302_ON_HTTP.add(SHIPPED_POLICIES_HTTP_ADMIN_BAD);
+    	TRIALS_WITH_DEFAULT_POLICIES_BADUSER.add(SHIPPED_POLICIES_HTTPS_ADMIN_BAD);            	
+        TRIALS_WITH_DEFAULT_POLICIES_GOODUSER.addAll(TRIALS_WITH_DEFAULT_POLICIES_ENDUSER);
+        TRIALS_WITH_DEFAULT_POLICIES_GOODUSER.addAll(TRIALS_WITH_DEFAULT_POLICIES_ADMIN);    	
+    }
+    
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_GIVING_401_ON_HTTPS = TRIALS_WITH_DEFAULT_POLICIES_BADUSER;
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_GIVING_403_ON_HTTPS = TRIALS_WITH_DEFAULT_POLICIES_ENDUSER;
+    public static final Set TRIALS_WITH_DEFAULT_POLICIES_GIVING_200_ON_HTTPS = TRIALS_WITH_DEFAULT_POLICIES_ADMIN;
+
+    public static final Set TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP = new HashSet();
+    public static final Set TRIALS_WITH_NO_POLICIES_BADUSER = new HashSet();
+    public static final Set TRIALS_WITH_NO_POLICIES_ENDUSER = new HashSet();
+    public static final Set TRIALS_WITH_NO_POLICIES_ADMIN = new HashSet();
+    public static final Set TRIALS_WITH_NO_POLICIES_GOODUSER = new HashSet();
+    static {
+    	TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP.add(NO_POLICIES_HTTP_NO_NO);
+    	TRIALS_WITH_NO_POLICIES_BADUSER.add(NO_POLICIES_HTTPS_NO_NO);
+    	TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP.add(NO_POLICIES_HTTP_END_END);
+    	TRIALS_WITH_NO_POLICIES_ENDUSER.add(NO_POLICIES_HTTPS_END_END);
+    	TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP.add(NO_POLICIES_HTTP_END_BAD);
+    	TRIALS_WITH_NO_POLICIES_BADUSER.add(NO_POLICIES_HTTPS_END_BAD);
+    	TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP.add(NO_POLICIES_HTTP_ADMIN_ADMIN);
+    	TRIALS_WITH_NO_POLICIES_ADMIN.add(NO_POLICIES_HTTPS_ADMIN_ADMIN);
+    	TRIALS_WITH_NO_POLICIES_GIVING_302_ON_HTTP.add(NO_POLICIES_HTTP_ADMIN_BAD);
+    	TRIALS_WITH_NO_POLICIES_BADUSER.add(NO_POLICIES_HTTPS_ADMIN_BAD);  
+        TRIALS_WITH_NO_POLICIES_GOODUSER.addAll(TRIALS_WITH_NO_POLICIES_ENDUSER);
+        TRIALS_WITH_NO_POLICIES_GOODUSER.addAll(TRIALS_WITH_NO_POLICIES_ADMIN);
     }
 
-    public static final Set ALL_NO_POLICY_TRIALS = new HashSet();
+    
+    public static final Set TRIALS_WITH_NO_POLICIES_GIVING_401_ON_HTTPS = TRIALS_WITH_NO_POLICIES_BADUSER;
+    public static final Set TRIALS_WITH_NO_POLICIES_GIVING_403_ON_HTTPS = TRIALS_WITH_NO_POLICIES_ENDUSER;
+    public static final Set TRIALS_WITH_NO_POLICIES_GIVING_200_ON_HTTPS = TRIALS_WITH_NO_POLICIES_ADMIN;   
+    
+    private static final HashSet NULLSET = new HashSet();
+    
+    public static final String OPEN = "open";
+    private static final String SECURE = "secure";
+    private static final String DEMO_OBJECTS = "demoObjects";
+    private static final String MISSING_PIDS = "missingPids";
+    private static final String BAD_PIDS = "badPids";    
+    private static final String OBJECT_PROFILE = "objectProfile";
+    private static final String DESCRIBE_REPOSITORY = "describeRepository";    
+    private static final String HTTP = "HTTP";
+    private static final String HTTPS = "HTTPS";
+    
+    private static final String makeKey(String config, String policies, String protocol, String op, String dataset, int desiredStatus) {
+    	String key = (config + "|" + policies + "|" + protocol + "|" + op + "|" + dataset + "|" + Integer.toString(desiredStatus));
+		System.out.println("trial key==" + key);
+    	return key;
+    }
+
+    private static final String makeKey(String config, String policies, String protocol, String op, int desiredStatus) {
+    	String key = (config + "|" + policies + "|" + protocol + "|" + op + "|" + Integer.toString(desiredStatus));
+		System.out.println("trial key==" + key);
+    	return key;
+    }
+
+    private static Hashtable trialsets = new Hashtable();
     static {
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTP_NO_NO);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTPS_NO_NO);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTP_END_END);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTPS_END_END);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTP_END_BAD);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTPS_END_BAD);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTP_ADMIN_ADMIN);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTPS_ADMIN_ADMIN);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTP_ADMIN_BAD);
-        ALL_NO_POLICY_TRIALS.add(NO_POLICIES_HTTPS_ADMIN_BAD);            	
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, ALL_TRIALS_WITH_DEFAULT_POLICIES);    	
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(makeKey(OPEN, DEFAULT_POLICIES, HTTPS, OBJECT_PROFILE, DEMO_OBJECTS, 200), ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, TRIALS_WITH_NO_POLICIES_ENDUSER);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, TRIALS_WITH_NO_POLICIES_ADMIN);    	
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, NULLSET);
+
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, TRIALS_WITH_DEFAULT_POLICIES_GOODUSER);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, TRIALS_WITH_DEFAULT_POLICIES_GOODUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, NULLSET);    	
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 403, TRIALS_WITH_NO_POLICIES_ENDUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + DEMO_OBJECTS + "|" + 200, TRIALS_WITH_NO_POLICIES_ADMIN);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 500, TRIALS_WITH_NO_POLICIES_GOODUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + BAD_PIDS + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 403, TRIALS_WITH_NO_POLICIES_ENDUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + OBJECT_PROFILE + "|" + MISSING_PIDS + "|" + 200, TRIALS_WITH_NO_POLICIES_ADMIN);    	
+    	
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 200, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 403, NULLSET);
+    	trialsets.put(OPEN + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(makeKey(OPEN, DEFAULT_POLICIES, HTTPS, DESCRIBE_REPOSITORY, 200), ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 403, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 200, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 403, ALL_TRIALS_WITH_NO_POLICIES);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(OPEN + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 200, NULLSET);
+
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + DEFAULT_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 200, TRIALS_WITH_DEFAULT_POLICIES_GOODUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 302, ALL_TRIALS_WITH_DEFAULT_POLICIES);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 401, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 403, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTP + "|" + DESCRIBE_REPOSITORY + "|" + 200, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 302, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 401, TRIALS_WITH_DEFAULT_POLICIES_BADUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 403, TRIALS_WITH_NO_POLICIES_ENDUSER);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 500, NULLSET);
+    	trialsets.put(SECURE + "|" + NO_POLICIES + "|" + HTTPS + "|" + DESCRIBE_REPOSITORY + "|" + 200, TRIALS_WITH_NO_POLICIES_ADMIN);
+    	
     }
     
-    public static final Set PROTECTED_URL_NOT_401 = new HashSet();
-    public static final Set PROTECTED_URL_401 = new HashSet();
-    static {
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTP_NO_NO);
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTPS_NO_NO);
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTP_END_END);
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTPS_END_END);
-    	PROTECTED_URL_401.add(PERMIT_DESC_REPO_HTTP_END_BAD);
-    	PROTECTED_URL_401.add(PERMIT_DESC_REPO_HTTPS_END_BAD);
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTP_ADMIN_ADMIN);
-    	PROTECTED_URL_NOT_401.add(PERMIT_DESC_REPO_HTTPS_ADMIN_ADMIN);
-    	PROTECTED_URL_401.add(PERMIT_DESC_REPO_HTTP_ADMIN_BAD);
-    	PROTECTED_URL_401.add(PERMIT_DESC_REPO_HTTPS_ADMIN_BAD);            	
+    private static final Set getTrialSet(String key) {
+    	Set trialSet = null;
+		if ( trialsets.containsKey(key)) {
+			trialSet = (Set) trialsets.get(key);
+		}
+		return trialSet;
     }
     
+    public static final Set getTrialSet(String config, String policies, String protocol, String op, String dataset, int desiredStatus) {
+		String key = makeKey (config, policies, protocol, op, dataset, desiredStatus);
+		return getTrialSet(key);
+    }
+
+    public static final Set getTrialSet(String config, String policies, String protocol, String op, int desiredStatus) {
+		String key = makeKey (config, policies, protocol, op, desiredStatus);
+		return getTrialSet(key);    }
+
     public static void main(String[] args) {
     }
 }

@@ -60,33 +60,53 @@ public abstract class IterableTest extends FedoraServerTestCase {
     		Trial trial = (Trial) it.next(); 
     		String policies = trial.policies;
     		if (samePolicies(policies, lastPolicies)) {
-    			lastPolicies = policies;
+    			System.out.println("no need to change policies");
     		} else {
+    			System.out.println("changing to policies==" + policies);
 	            usePolicies(policies);
+    			lastPolicies = policies;    			
     		}
+    		HttpDataSource httpDataSource = (HttpDataSource) dataSource;
+    		System.out.println("*** in Iterable.iterate()");
+    		System.out.println("\t" + policies);
         	run(test, dataSource, trial.username, trial.password);
     	}
     } 
-    
+    private static int count = 0; 
 	//public abstract void run(IndividualTest test, Connector connector, String username, String password) throws Exception;
     public void run(IndividualTest test, DataSource dataSource, String username, String password) throws Exception {
 		InputStream is = null;
     	if (testXML) {
-    		dataSource.reset(test, XML, username, password);
-			assertTrue(dataSource.expectedStatusObtained());
-            if (dataSource.expectingSuccess()) {
-            	Document results = dataSource.getResults();
-           		test.checkResultsXml(results);
-        	} 
+    		while (test.again()) { //URL MAY NEED FIXUP, CONSIDER DS.RESET()
+    			is = null;
+    			count++;
+    			System.out.println("about to dataSource.reset(), n==" + count);
+        		dataSource.reset(test, XML, username, password);
+    			System.out.println("*** in Iterable.run(), b4 assertTrue()");    		
+    			assertTrue(dataSource.expectedStatusObtained());
+                if (dataSource.expectingSuccess()) {
+                	Document results = dataSource.getResults();
+               		test.checkResultsXml(results);
+               		test.checkResults();
+            	} else {
+            		test.checkResultsElse();
+            	}
+    		}
     	} 
     	if (testXHTML) {
-			is = null;
-			dataSource.reset(test, XHTML, username, password);
-			assertTrue(dataSource.expectedStatusObtained());
-            if (dataSource.expectingSuccess()) {
-            	Document results = dataSource.getResults();
-           		test.checkResultsXhtml(results);
-        	} 
+    		while (test.again()) {
+    			is = null;
+    			dataSource.reset(test, XHTML, username, password);
+    			System.out.println("*** in Iterable.run(), b4 assertTrue()");
+    			assertTrue(dataSource.expectedStatusObtained());
+                if (dataSource.expectingSuccess()) {
+                	Document results = dataSource.getResults();
+               		test.checkResultsXhtml(results);
+               		test.checkResults();
+            	} else {
+            		test.checkResultsElse();               		
+            	}     			
+    		}
     	} 
     }
 }

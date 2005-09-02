@@ -41,7 +41,7 @@ public class DescribeRepositoryTest extends IndividualTest {
 		this.repositoryName = repositoryName;
 	}
 	
-    public String getUrl(boolean xml) {
+    public String getUrl(boolean xml) throws Exception {
     	UrlString url = new UrlString("/describe");
     	url.appendParm("xml", Boolean.toString(xml));
     	return url.toString();    	
@@ -54,7 +54,7 @@ public class DescribeRepositoryTest extends IndividualTest {
         assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_NAMESPACE, result);
         assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_DELIMITER, result);
         assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_PID_SAMPLE, result);
-		SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
+		//SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
 		int pidsToRetain = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XML_DESCRIBE_REPOSITORY_COUNT_RETAIN_PIDS, result));
 		assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_OAI_NAMESPACE, result);
         assertXpathExists(XPATH_XML_DESCRIBE_REPOSITORY_OAI_DELIMITER, result);

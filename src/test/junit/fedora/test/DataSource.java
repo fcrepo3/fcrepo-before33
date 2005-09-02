@@ -62,9 +62,12 @@ public abstract class DataSource {
     protected abstract void reset(IndividualTest test, boolean xml, String username, String password) throws Exception;
 	    
 	protected abstract Document getResults() throws Exception;
-    
+	
     protected final boolean expectingSuccess() {
     	return expectingSuccess;
     }
 
+    protected final boolean clientThrowsStatusCodeException() {
+    	return clientThrowsStatusCodeException;
+    }
 }
