@@ -167,6 +167,53 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         System.out.println("Export test succeeded");
     }
     
+    public void testValidatePolicy()
+    {
+        System.out.println("Testing Validate Policies");
+        File validDir = new File("src/test/junit/XACMLTestPolicies/valid-policies");
+        traverseAndValidate(validDir, true);
+        
+        File invalidDir = new File("src/test/junit/XACMLTestPolicies/invalid-policies");
+        traverseAndValidate(invalidDir, false);
+        
+        System.out.println("Validate Policies test succeeded");
+    }
+    
+    private void traverseAndValidate(File testDir, boolean expectValid)
+    {
+  //      assertEquals(testDir.isDirectory(), true);
+        File testFiles[] = testDir.listFiles(new java.io.FilenameFilter()
+            {
+                public boolean accept(File dir, String name)
+                {
+                    if ((name.toLowerCase().startsWith("permit") ||
+                         name.toLowerCase().startsWith("deny")) &&
+                         name.endsWith(".xml"))
+                    {
+                        return(true);
+                    }
+                    return(false);
+                }
+            }
+        );
+        for ( int i = 0; i < testFiles.length; i++)
+        {
+            System.out.println("Checking "+(expectValid ? "valid" : "invalid") +" policy: "+
+                               testFiles[i].getName());
+            execute("/server/bin/validate-policy " + testFiles[i].getAbsolutePath());
+            String out = sbOut.toString();
+            String err = sbErr.toString();
+             
+            if (expectValid)
+            {
+                assertEquals(err.length() == 0, true);
+            }
+            else
+            {
+                assertEquals(err.length() == 0, false);
+            }                 
+        }        
+    }
     
     private static void purgeAll(String items[])
     {
