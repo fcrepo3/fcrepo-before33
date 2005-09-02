@@ -225,6 +225,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         tripleQ.queueDissemination(doURI, datastreamURI);
         tripleQ.queueDisseminationType(datastreamURI, getDisseminationType(datastreamID));
         tripleQ.queueLastModifiedDate(datastreamURI, ds.DSCreateDT);
+        tripleQ.queueMimeType(datastreamURI, ds.DSMIME);
         tripleQ.queueState(datastreamURI, ds.DSState);
         
 		// handle special system datastreams: DC, METHODMAP, RELS-EXT
