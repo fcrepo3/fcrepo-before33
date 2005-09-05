@@ -6,6 +6,9 @@ import java.io.FileReader;
 import java.io.File;
 import java.util.ArrayList;
 
+import fedora.client.FedoraClient;
+import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.oai.sample.RandomDCMetadataFactory;
 
@@ -21,6 +24,8 @@ import fedora.oai.sample.RandomDCMetadataFactory;
 public class MassIngest {
 
     private ArrayList m_wordList;
+	public static FedoraAPIA APIA=null;
+	public static FedoraAPIM APIM=null;
 
     public MassIngest(AutoIngestor ingestor, File templateFile,
             File dictFile, String format, int numTimes) throws Exception {
@@ -81,8 +86,18 @@ public class MassIngest {
                 // third arg==file... must exist
                 File f=new File(args[4]);
                 String protocol=args[8];
-                AutoIngestor a=new AutoIngestor(protocol, hostName, portNum, username, password);
-                MassIngest m=new MassIngest(a, f, dictFile, format, Integer.parseInt(args[7]));
+                //AutoIngestor a=new AutoIngestor(protocol, hostName, portNum, username, password);
+                
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, username, password);
+				APIA=fc.getAPIA_HandleSSLRedirect();
+				APIM=fc.getAPIM_HandleSSLRedirect();
+				//*******************************************
+				AutoIngestor autoIngestor = new AutoIngestor(APIA, APIM);
+                MassIngest m=new MassIngest(autoIngestor, f, dictFile, format, Integer.parseInt(args[7]));
             }
         } catch (Exception e) {
             MassIngest.showUsage(e.getClass().getName() + " - "

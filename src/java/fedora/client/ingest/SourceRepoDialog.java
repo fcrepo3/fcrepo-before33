@@ -7,6 +7,7 @@ import javax.swing.*;
 import fedora.client.Administrator;
 import fedora.client.APIAStubFactory;
 import fedora.client.APIMStubFactory;
+import fedora.client.FedoraClient;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
@@ -92,6 +93,16 @@ public class SourceRepoDialog
                             m_protocol=m_protocolField.getText();
 							m_host=hp[0];
 							m_port=Integer.parseInt(hp[1]);
+							
+							// ******************************************************
+							// NEW: use the new client utility class FedoraClient
+							// FIXME:  Get around hardcoding the path in the baseURL
+							String baseURL = m_protocol + "://" + m_host + ":" + m_port + "/fedora";
+							FedoraClient fc = 
+								new FedoraClient(baseURL, m_usernameField.getText(), new String(m_passwordField.getPassword()));
+							m_apia=fc.getAPIA_HandleSSLRedirect();
+							m_apim=fc.getAPIM_HandleSSLRedirect();
+							//*******************************************************
                             
                             // Get SOAP stubs for the source repository.
                             // NOTE! For backward compatibility with Fedora 2.0
@@ -100,9 +111,9 @@ public class SourceRepoDialog
                             // fails, we will try obtaining a stub with the OLD
                             // SOAP URL syntax.  This is because the path in the 
                             // SOAP URLs were changed in Fedora 2.1 to be more standard.
-                            
+ /*                           
                             try {
-                            	//System.out.println("Getting stubs with default path...");
+
 								m_apia=APIAStubFactory.getStub(m_protocol,
 															   m_host, 
 															   m_port, 
@@ -114,13 +125,15 @@ public class SourceRepoDialog
 															   m_port, 
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
+
+								
 															   
 								// try a request to see if things work ok
 								m_repositoryInfo=m_apia.describeRepository();
 								
 							} catch (Exception e) {
-								// If request on default stub fails, try the old URL path for the service
-								//System.out.println("Fallback: getting stubs with OLD path...");
+								// If request on default stub fails, try the old URL path for the service\
+
 								m_apia=APIAStubFactory.getStubAltPath(m_protocol,
 															   m_host, 
 															   m_port,
@@ -133,8 +146,9 @@ public class SourceRepoDialog
 															   "/fedora/management/soap",  
 															   m_usernameField.getText(),
 															   new String(m_passwordField.getPassword()));
+							   
                             }
-
+*/
                             try {
                                 m_repositoryInfo=m_apia.describeRepository();
                                 m_userInfo=m_apim.describeUser(m_usernameField.getText());

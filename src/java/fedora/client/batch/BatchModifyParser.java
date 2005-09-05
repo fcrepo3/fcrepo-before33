@@ -6,6 +6,7 @@ import fedora.client.batch.types.DigitalObject;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
 import fedora.client.batch.types.Disseminator;
+import fedora.client.FedoraClient;
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
@@ -1431,8 +1432,18 @@ public class BatchModifyParser extends DefaultHandler
 		        try {
 		            UPLOADER=new Uploader(host, port, user, pass);
 		            logFile = new PrintStream(new FileOutputStream("C:\\zlogfile.txt"));
-		            APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
-		            APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
+		            //APIM = fedora.client.APIMStubFactory.getStub(protocol, host, port, user, pass);
+		            //APIA = fedora.client.APIAStubFactory.getStub(protocol, host, port, user, pass);
+		            
+					// ******************************************
+					// NEW: use new client utility class
+					// FIXME:  Get around hardcoding the path in the baseURL
+					String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+					FedoraClient fc = new FedoraClient(baseURL, user, pass);
+					APIA=fc.getAPIA_HandleSSLRedirect();
+					APIM=fc.getAPIM_HandleSSLRedirect();
+					//*******************************************
+		            
 		            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");
 		            BatchModifyParser bmp = new BatchModifyParser(UPLOADER, APIM, APIA, file, logFile);
 		            file.close();

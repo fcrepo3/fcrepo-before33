@@ -7,6 +7,9 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import fedora.client.utility.ingest.AutoIngestor;
+import fedora.client.FedoraClient;
+import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 
 /**
  *
@@ -23,6 +26,9 @@ class BatchIngest {
 	int port = 0;
 	String username;
 	String password;
+	
+	FedoraAPIA APIA;
+	FedoraAPIM APIM;
 
 	//set by arguments to constructor
 	String objectsPath = null;
@@ -77,7 +83,16 @@ class BatchIngest {
 		if (! BatchTool.argOK(protocol)) {
 				System.err.println("server protocol required");
 				throw new Exception();
-		}		
+		}	
+		
+		// ******************************************
+		// NEW: use new client utility class for SOAP stubs
+		// FIXME:  Get around hardcoding the path in the baseURL
+		String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+		FedoraClient fc = new FedoraClient(baseURL, username, password);
+		APIA=fc.getAPIA_HandleSSLRedirect();
+		APIM=fc.getAPIM_HandleSSLRedirect();
+		//*******************************************	
 
 	}
 
@@ -102,7 +117,8 @@ class BatchIngest {
     		//System.err.println("in BatchIngest.process()");
 		pidMaps = new Hashtable();
 		keys = new Vector();
-		AutoIngestor autoIngestor = new AutoIngestor(protocol, host, port, username, password);
+		//AutoIngestor autoIngestor = new AutoIngestor(protocol, host, port, username, password);
+		AutoIngestor autoIngestor = new AutoIngestor(APIA, APIM);
 
 		//get files from batchDirectory
 		File[] files = null; {

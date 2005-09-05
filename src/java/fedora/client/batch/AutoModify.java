@@ -9,8 +9,9 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMStubFactory;
-import fedora.client.APIAStubFactory;
+//import fedora.client.APIMStubFactory;
+//import fedora.client.APIAStubFactory;
+import fedora.client.FedoraClient;
 import fedora.client.batch.BatchModifyParser;
 import fedora.client.Uploader;
 import fedora.server.management.FedoraAPIM;
@@ -48,10 +49,24 @@ public class AutoModify
     private static FedoraAPIM s_APIM = null;
     private static FedoraAPIA s_APIA = null;
     private static Uploader s_UPLOADER = null;
+	public static FedoraAPIA APIA=null;
+	public static FedoraAPIM APIM=null;
+
+
+  //public AutoModify(String protocol, String host, int port, String user, String pass)
+  //    throws MalformedURLException, ServiceException, IOException
+  //{
+
+  //    AutoModify.s_APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+  //    AutoModify.s_APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+  //    AutoModify.s_UPLOADER = new Uploader(protocol, host, port, user, pass);
+  //}
 
   /**
    * <p> Constructor for the class.</p>
    *
+   * @param apia - SOAP stub for APIA service.
+   * @param apim - SOAP stub for APIM service.
    * @param host - Hostname of the Fedora server.
    * @param port - Port number of the Fedora server.
    * @param user - username of the Fedora server admin user.
@@ -62,14 +77,15 @@ public class AutoModify
    *                            API-M web service.
    * @throws IOException - If an error occurs in creating an instance of the
    *                       Uploader.
-   */
-  public AutoModify(String protocol, String host, int port, String user, String pass)
-      throws MalformedURLException, ServiceException, IOException
+   */  
+  public AutoModify(FedoraAPIA apia, FedoraAPIM apim, 
+  	String protocol, String host, int port, String user, String pass)
+	  throws MalformedURLException, ServiceException, IOException
   {
 
-      AutoModify.s_APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
-      AutoModify.s_APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-      AutoModify.s_UPLOADER = new Uploader(protocol, host, port, user, pass);
+	  AutoModify.s_APIM=apim;
+	  AutoModify.s_APIA=apia;
+	  AutoModify.s_UPLOADER = new Uploader(protocol, host, port, user, pass);
 
   }
 
@@ -321,8 +337,19 @@ public class AutoModify
                 }
                 if (new File(directivesFilePath).exists()) {
                     System.out.println("\nCONNECTING to Fedora server....");
-                    AutoModify am = new AutoModify(protocol, hostName, portNum, username,
-                            password);
+                    
+					// ******************************************
+					// NEW: use new client utility class
+					// FIXME:  Get around hardcoding the path in the baseURL
+					String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
+					FedoraClient fc = new FedoraClient(baseURL, username, password);
+					APIA=fc.getAPIA_HandleSSLRedirect();
+					APIM=fc.getAPIM_HandleSSLRedirect();
+					//*******************************************
+                    
+                    AutoModify am = new AutoModify(APIA, APIM, 
+                    	protocol, hostName, portNum, username, password);
+                    	
                     if (isValidateOnly) {
                         System.out.println("\n----- VALIDATING DIRECTIVES FILE ONLY -----\n");
                     } else {

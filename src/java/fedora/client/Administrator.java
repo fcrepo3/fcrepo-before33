@@ -123,8 +123,17 @@ public class Administrator extends JFrame {
         if (host!=null) {
             // already must have passed through non-interactive login
             try {
-            APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-            APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);;
+            //APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+            //APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+            
+            // ******************************************
+            // NEW: use new client utility class
+            // FIXME:  Get around hardcoding the path in the baseURL
+            String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+            FedoraClient fc = new FedoraClient(baseURL, user, pass);
+            APIA=fc.getAPIA_HandleSSLRedirect();
+			APIM=fc.getAPIM_HandleSSLRedirect();
+            //*******************************************
             setLoginInfo(protocol, host, port, user, pass);
             } catch (Exception e) { APIA=null; APIM=null; }
         }

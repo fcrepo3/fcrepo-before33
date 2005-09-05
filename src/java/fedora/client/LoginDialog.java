@@ -279,14 +279,26 @@ public class LoginDialog
 			// SOAP URLs were changed in Fedora 2.1 to be more standard.
 			RepositoryInfo info = null;        
 			try {
-				//System.out.println("Getting stubs with default path...");
-            	Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-            	Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+            	//Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
+            	//Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
+            	
+				// ******************************************************
+				// NEW: use the new client utility class FedoraClient
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, user, pass);
+				Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
+				Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
+				//*******************************************************
+            	
+            	System.out.println("trying describeRepository...");
 				info=Administrator.APIA.describeRepository();
 			} catch (Exception e) {
 				// As a fallback, try the old SOAP URL syntax
 				// (different path in Fedora 2.0 and prior releases).
 				//System.out.println("Fallback: getting stubs with OLD path...");
+				
+				/*
 				Administrator.APIA=APIAStubFactory.getStubAltPath(
 											   	protocol,
 											   	host, 
@@ -305,14 +317,20 @@ public class LoginDialog
 					info=Administrator.APIA.describeRepository();
 				} catch (Exception e2) {
 					throw new IOException("Server connection failed on describeRepository for target: "
-							+ protocol + "://" + host + ":" + port + " (with alternate path).");
+							+ protocol + "://" + host + ":" + port);
+
 				}
+				*/
+				
 				//System.out.println("server version = " + info.getRepositoryVersion());
-				//System.out.println("client version = " + Administrator.VERSION);
+				//System.out.println("client version = " + Administrator.VERSION);				
 				if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
 					throw new IOException("Server is version "
 							+ info.getRepositoryVersion() + ", but this"
 							+ " client only works with version" +  Administrator.VERSION);
+				} else {
+					throw new IOException("Server connection failed on describeRepository for target: "
+							+ protocol + "://" + host + ":" + port);
 				}
 			}
 			
