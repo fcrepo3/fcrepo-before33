@@ -64,7 +64,7 @@ public class PurgeObject
         }
         AutoPurger purger=null;
         try {
-            purger=new AutoPurger(Administrator.getProtocol(), Administrator.getHost(), Administrator.getPort(), Administrator.getUser(), Administrator.getPass());
+            purger=new AutoPurger(Administrator.APIM);
         } catch (Exception e) {
         	Administrator.showErrorDialog(Administrator.getDesktop(), "Purge Failure", 
         		StringUtility.prettyPrint(e.getClass().getName() + ": " + e.getMessage(),70, null), e);
