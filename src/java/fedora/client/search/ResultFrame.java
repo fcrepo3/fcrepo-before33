@@ -40,10 +40,7 @@ public class ResultFrame
     public ResultFrame(String frameTitle, String[] displayFields, String sessionToken) {
         super(frameTitle, true, true, true, true);
         try {
-            m_finder=new AutoFinder(
-            		Administrator.getProtocol(), Administrator.getHost(),
-                    Administrator.getPort(), Administrator.getUser(),
-                    Administrator.getPass());
+            m_finder=new AutoFinder(Administrator.APIA);
             searchAndDisplay(m_finder.resumeFindObjects(sessionToken),
                     displayFields);
         } catch (Exception e) {
@@ -79,10 +76,7 @@ public class ResultFrame
             }
         }
         try {
-            if (m_finder==null) m_finder=new AutoFinder(
-            	Administrator.getProtocol(), Administrator.getHost(),
-                Administrator.getPort(), Administrator.getUser(),
-                Administrator.getPass());
+            if (m_finder==null) m_finder=new AutoFinder(Administrator.APIA);
             searchAndDisplay(m_finder.findObjects(resultFields, maxResults,
                     query), displayFields);
         } catch (Exception e) {
