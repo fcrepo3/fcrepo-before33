@@ -3,8 +3,7 @@ package fedora.client.utility.export;
 import java.io.*;
 import java.util.*;
 
-import fedora.client.APIAStubFactory;
-import fedora.client.APIMStubFactory;
+import fedora.client.FedoraClient;
 import fedora.client.utility.export.AutoExporter;
 import fedora.client.utility.AutoFinder;
 
@@ -195,20 +194,16 @@ public class Export {
 				(!protocol.equals("https"))) {
 					Export.badArgs("PROTOCOL arg must be 'http' or 'https'");			   
 			}
-           
-			FedoraAPIA sourceRepoAPIA=
-					APIAStubFactory.getStub(protocol,
-											hp[0],
-											Integer.parseInt(hp[1]),
-											args[1],
-											args[2]);
-			FedoraAPIM sourceRepoAPIM=
-					APIMStubFactory.getStub(protocol,
-											hp[0],
-											Integer.parseInt(hp[1]),
-											args[1],
-											args[2]);
-				
+			
+			// ******************************************
+			// NEW: use new client utility class
+			// FIXME:  Get around hardcoding the path in the baseURL
+			String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
+			FedoraClient fc = new FedoraClient(baseURL, args[1], args[2]);
+			FedoraAPIA sourceRepoAPIA=fc.getAPIA_HandleSSLRedirect();
+			FedoraAPIM sourceRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+			//*******************************************
+							
 			String exportFormat = args[4];
 			String exportContext = args[5];
 			if ((!exportFormat.equals("metslikefedora1")) &&
@@ -254,21 +249,11 @@ public class Export {
                 System.out.println();
             } else {
                 // assume args[3] is a PID...they only want to export one object
-                Export.one(APIAStubFactory.getStub(
-                				protocol,
-                				hp[0],
-								Integer.parseInt(hp[1]),
-								args[1],
-								args[2]),
-							APIMStubFactory.getStub(
-								protocol,
-								hp[0],
-                            	Integer.parseInt(hp[1]),
-                                args[1],
-                                args[2]),
-                           	args[3], // PID
-                           	exportFormat,
-                           	exportContext,
+                
+				Export.one(sourceRepoAPIA, sourceRepoAPIM,
+							args[3], // PID
+							exportFormat,
+							exportContext,
 							//args[4], // format
 							//args[5], // export context
 							new File(args[6])); // path

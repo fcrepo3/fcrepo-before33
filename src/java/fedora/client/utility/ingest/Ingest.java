@@ -3,8 +3,7 @@ package fedora.client.utility.ingest;
 import java.io.*;
 import java.util.*;
 
-import fedora.client.APIAStubFactory;
-import fedora.client.APIMStubFactory;
+import fedora.client.FedoraClient;
 import fedora.client.utility.export.AutoExporter;
 import fedora.client.utility.ingest.AutoIngestor;
 import fedora.client.utility.AutoFinder;
@@ -404,23 +403,19 @@ public class Ingest {
                 if (args.length==8) {
                     logMessage=args[7];
                 }
-				//SDP - HTTPS  
-				//FIXME: must still make this an argument
-				String protocol=args[6];
-				
+
+				String protocol=args[6];			
                 String[] hp=args[3].split(":");
-                FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[4],
-                                                args[5]);
-                FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[4],
-                                                args[5]);
+                
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, args[4], args[5]);
+				FedoraAPIA targetRepoAPIA=fc.getAPIA_HandleSSLRedirect();
+				FedoraAPIM targetRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				//*******************************************
+				
                 String pid = Ingest.oneFromFile(f, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage);
                 if (pid==null){
 					System.out.print("ERROR: ingest failed for file: " + args[1]);
@@ -440,22 +435,19 @@ public class Ingest {
                 if (args.length==9) {
                     logMessage=args[8];
                 }
-				//SDP - HTTPS  
-				String protocol=args[7];
-				
+  
+				String protocol=args[7];				
                 String[] hp=args[4].split(":");
-                FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[5],
-                                                args[6]);
-                FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(protocol,
-                        						hp[0],
-                                                Integer.parseInt(hp[1]),
-                                                args[5],
-                                                args[6]);
+                
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, args[5], args[6]);
+				FedoraAPIA targetRepoAPIA=fc.getAPIA_HandleSSLRedirect();
+				FedoraAPIM targetRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				//*******************************************
+				
 				logRootName="ingest-from-dir";
 				logFile = IngestLogger.newLogFile(logRootName);
 				log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
@@ -494,48 +486,16 @@ public class Ingest {
 				String source_user = args[2];
 				String source_password = args[3];  
 				String source_protocol=args[8];
-				               
-				FedoraAPIA sourceRepoAPIA;
-				FedoraAPIM sourceRepoAPIM;
 				
-				// Get SOAP stubs for the source repository.
-				// NOTE! For backward compatibility with Fedora 2.0
-				// we will immediately try a describe repository
-				// request on the API-A stub to see if it works.  If it
-				// fails, we will try obtaining a stub with the OLD
-				// SOAP URL syntax.  This is because the path in the 
-				// SOAP URLs were changed in Fedora 2.1 to be more standard.
-                try {
-					//System.out.println("Getting stubs with default path for source repo...");
-					sourceRepoAPIA=
-							APIAStubFactory.getStub(source_protocol,
-													source_host,
-													Integer.parseInt(source_port),
-													source_user,
-													source_password);
-					sourceRepoAPIM=
-							APIMStubFactory.getStub(source_protocol,
-													source_host,
-													Integer.parseInt(source_port),
-													source_user,
-													source_password);
-                	
-				} catch (Exception e) {
-					//System.out.println("Fallback: getting stubs with OLD path for 2.0 source repo...");
-					sourceRepoAPIA=APIAStubFactory.getStubAltPath(source_protocol,
-													source_host, 
-												   	Integer.parseInt(source_port),
-												   	"/fedora/access/soap", 
-													source_user,
-													source_password);
-												   
-					sourceRepoAPIM=APIMStubFactory.getStubAltPath(source_protocol,
-													source_host, 
-													Integer.parseInt(source_port),
-												   	"/fedora/management/soap",  
-													source_user,
-													source_password);
-				}
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String sourceBaseURL = 
+					source_protocol + "://" + source_host + ":" + Integer.parseInt(source_port) + "/fedora";
+				FedoraClient sfc = new FedoraClient(sourceBaseURL, source_user, source_password);
+				FedoraAPIA sourceRepoAPIA=sfc.getAPIA_HandleSSLRedirect();
+				FedoraAPIM sourceRepoAPIM=sfc.getAPIM_HandleSSLRedirect();
+				//*******************************************
 
 				//Target repository
 				String[] thp=args[5].split(":");
@@ -544,19 +504,16 @@ public class Ingest {
 				String target_user = args[6];
 				String target_password = args[7];  
 				String target_protocol=args[9];
-
-                FedoraAPIA targetRepoAPIA=
-                        APIAStubFactory.getStub(target_protocol,
-												target_host,
-                                                Integer.parseInt(target_port),
-												target_user,
-												target_password);
-                FedoraAPIM targetRepoAPIM=
-                        APIMStubFactory.getStub(target_protocol,
-												target_host,
-                                                Integer.parseInt(target_port),
-												target_user,
-												target_password);
+				
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String targetBaseURL = 
+					target_protocol + "://" + target_host + ":" + Integer.parseInt(target_port) + "/fedora";
+				FedoraClient tfc = new FedoraClient(targetBaseURL, target_user, target_password);
+				FedoraAPIA targetRepoAPIA=tfc.getAPIA_HandleSSLRedirect();
+				FedoraAPIM targetRepoAPIM=tfc.getAPIM_HandleSSLRedirect();
+				//*******************************************
                 
                 // First, determine the default export format of the source repo.
                 // For backward compatibility with pre-2.0 repositories, 
