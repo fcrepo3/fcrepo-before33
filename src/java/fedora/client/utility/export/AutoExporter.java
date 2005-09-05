@@ -38,12 +38,18 @@ public class AutoExporter {
 	private FedoraAPIA m_apia;
     private static HashMap s_repoInfo=new HashMap();
 
-    public AutoExporter(String protocol, String host, int port, String user, String pass)
-            throws MalformedURLException, ServiceException {
-		m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
-        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
-    }
+    //public AutoExporter(String protocol, String host, int port, String user, String pass)
+    //        throws MalformedURLException, ServiceException {
+	//	m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
+    //    m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
+    //}
     
+	public AutoExporter(FedoraAPIA apia, FedoraAPIM apim)
+			throws MalformedURLException, ServiceException {
+		m_apia=apia;
+		m_apim=apim;
+	}
+	
 	public void export(String pid, String format, String exportContext, 
 			OutputStream outStream) 
 			throws RemoteException, IOException {

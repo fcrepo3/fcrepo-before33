@@ -32,11 +32,17 @@ public class AutoIngestor {
     private FedoraAPIM m_apim;
     private static HashMap s_repoInfo=new HashMap();
 
-    public AutoIngestor(String protocol, String host, int port, String user, String pass)
-            throws MalformedURLException, ServiceException {
-		m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
-        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
-    }
+    //public AutoIngestor(String protocol, String host, int port, String user, String pass)
+    //        throws MalformedURLException, ServiceException {
+	//	m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
+    //    m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
+    //}
+    
+	public AutoIngestor(FedoraAPIA apia, FedoraAPIM apim)
+			throws MalformedURLException, ServiceException {
+		m_apia=apia;
+		m_apim=apim;
+	}
 
 	// DEPRECATED.
 	// This assumes the ingest format is 'metslikefedora1' for pre-2.0 repositories.
