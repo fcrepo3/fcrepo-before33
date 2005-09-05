@@ -9,7 +9,7 @@ import javax.xml.rpc.ServiceException;
 
 import org.apache.axis.types.NonNegativeInteger;
 
-import fedora.client.APIAStubFactory;
+import fedora.client.FedoraClient;
 import fedora.client.Downloader;
 import fedora.client.search.*;
 import fedora.server.access.FedoraAPIA;
@@ -31,10 +31,15 @@ public class AutoFinder {
 
     private FedoraAPIA m_apia;
 
-    public AutoFinder(String protocol, String host, int port, String user, String pass)
-            throws MalformedURLException, ServiceException {
-        m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
-    }
+    //public AutoFinder(String protocol, String host, int port, String user, String pass)
+    //        throws MalformedURLException, ServiceException {
+    //    m_apia=APIAStubFactory.getStub(protocol, host, port, user, pass);
+    //}
+    
+	public AutoFinder(FedoraAPIA apia)
+			throws MalformedURLException, ServiceException {
+		m_apia=apia;
+	}
 
     public FieldSearchResult findObjects(String[] resultFields,
             int maxResults, FieldSearchQuery query)
@@ -130,9 +135,18 @@ public class AutoFinder {
             AutoFinder.showUsage("Five arguments required.");
         }
         try {
-            AutoFinder finder=new AutoFinder(
-            		args[4], args[0], Integer.parseInt(args[1]),
-                    null, null);
+            //AutoFinder finder=new AutoFinder(
+            //		args[4], args[0], Integer.parseInt(args[1]),
+            //        null, null);
+                    
+			// ******************************************
+			// NEW: use new client utility class
+			// FIXME:  Get around hardcoding the path in the baseURL
+			String baseURL = args[4] + "://" + args[0] + ":" + Integer.parseInt(args[1]) + "/fedora";
+			FedoraClient fc = new FedoraClient(baseURL, null, null);
+			AutoFinder finder=new AutoFinder(fc.getAPIA_HandleSSLRedirect());
+			//*******************************************
+			
             FieldSearchQuery query=new FieldSearchQuery();
             query.setTerms(args[3]);
             FieldSearchResult result=finder.findObjects(args[2].split(" "),

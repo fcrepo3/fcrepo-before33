@@ -5,7 +5,7 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMStubFactory;
+import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 
 /**
@@ -21,10 +21,15 @@ public class AutoPurger {
 
     private FedoraAPIM m_apim;
 
-    public AutoPurger(String protocol, String host, int port, String user, String pass)
-            throws MalformedURLException, ServiceException {
-        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
-    }
+    //public AutoPurger(String protocol, String host, int port, String user, String pass)
+    //        throws MalformedURLException, ServiceException {
+    //    m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
+    //}
+    
+	public AutoPurger(FedoraAPIM apim)
+			throws MalformedURLException, ServiceException {
+		m_apim=apim;
+	}
 
     public void purge(String pid, 
                       String logMessage,
@@ -81,7 +86,15 @@ public class AutoPurger {
                 String pid=args[3];
                 String protocol=args[4];
 				String logMessage=args[5];
-                AutoPurger a=new AutoPurger(protocol, hostName, portNum, args[1], args[2]);
+                //AutoPurger a=new AutoPurger(protocol, hostName, portNum, args[1], args[2]);
+                
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, args[1], args[2]);
+				AutoPurger a=new AutoPurger(fc.getAPIM_HandleSSLRedirect());
+				//*******************************************
                 a.purge(pid, logMessage, false); // DEFAULT_FORCE_PURGE
             }
         } catch (Exception e) {

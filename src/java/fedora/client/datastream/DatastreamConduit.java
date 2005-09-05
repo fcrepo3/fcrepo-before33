@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import javax.xml.rpc.ServiceException;
 
-import fedora.client.APIMStubFactory;
+import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.Datastream;
 
@@ -21,10 +21,15 @@ public class DatastreamConduit {
 
     private FedoraAPIM m_apim;
 
-    public DatastreamConduit(String protocol, String host, int port, String user, String pass)
-            throws MalformedURLException, ServiceException {
-        m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
-    }
+    //public DatastreamConduit(String protocol, String host, int port, String user, String pass)
+    //        throws MalformedURLException, ServiceException {
+    //    m_apim=APIMStubFactory.getStub(protocol, host, port, user, pass);
+    //}
+    
+	public DatastreamConduit(FedoraAPIM apim)
+			throws MalformedURLException, ServiceException {
+		m_apim=apim;
+	}
 
     public static Datastream getDatastream(FedoraAPIM skeleton, String pid,
             String dsId, String asOfDateTime)
@@ -202,7 +207,17 @@ public class DatastreamConduit {
                 String password=args[3];
                 String pid=args[4];
 				String protocol=args[5];
-                DatastreamConduit c=new DatastreamConduit(protocol, hostName, portNum, username, password);
+                //DatastreamConduit c=new DatastreamConduit(protocol, hostName, portNum, username, password);
+                
+				// ******************************************
+				// NEW: use new client utility class
+				// FIXME:  Get around hardcoding the path in the baseURL
+				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
+				FedoraClient fc = new FedoraClient(baseURL, username, password);
+				FedoraAPIM sourceRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				//*******************************************
+				DatastreamConduit c=new DatastreamConduit(sourceRepoAPIM);
+				
                 Datastream[] datastreams=c.getDatastreams(pid, null, null);
                 for (int i=0; i<datastreams.length; i++) {
                     System.out.println("   Datastream : " + datastreams[i].getID());
