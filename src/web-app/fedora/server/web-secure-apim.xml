@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2.2.dtd">
+<web-app>
+	<display-name>Fedora Repository Server</display-name>
+	<!-- Servlets defined for SOAP-based web service interfaces to the Fedora Repository Server-->
+	<servlet>
+		<servlet-name>AdminServlet</servlet-name>
+		<display-name>Axis Admin Servlet</display-name>
+		<servlet-class>
+	        org.apache.axis.transport.http.AdminServlet
+	    </servlet-class>
+		<init-param>
+			<param-name>enableRemoteAdmin</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<load-on-startup>100</load-on-startup>
+	</servlet>
+	<servlet>
+		<servlet-name>AxisServlet</servlet-name>
+		<display-name>Apache-Axis Servlet</display-name>
+		<servlet-class>
+	        org.apache.axis.transport.http.AxisServlet
+	    </servlet-class>
+	</servlet>
+	<!-- Servlets defined for REST-based interfaces to the Fedora Repository Server-->
+	<servlet>
+		<servlet-name>AccessServlet</servlet-name>
+		<display-name>Fedora Access Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FedoraAccessServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ControlServlet</servlet-name>
+		<display-name>Fedora Controller Servlet (start, stop, get server status)</display-name>
+		<servlet-class>
+        	fedora.server.ServerController
+    		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<display-name>Fedora Datastream Resolver Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.dissemination.DatastreamResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>DescribeRepositoryServlet</servlet-name>
+		<display-name>Fedora Repository Description Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.DescribeRepositoryServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>FieldSearchServlet</servlet-name>
+		<display-name>Fedora Search Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.FieldSearchServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<display-name>Fedora PID Generator Servlet</display-name>
+		<servlet-class>
+			fedora.server.management.GetNextPIDServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>BESecurityServlet</servlet-name>
+		<display-name>Fedora Backend Security Configuration Servlet</display-name>
+		<servlet-class>
+			fedora.server.management.BESecurityServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>GetObjectHistoryServlet</servlet-name>
+		<display-name>Fedora Object History Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.GetObjectHistoryServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ListDatastreamsServlet</servlet-name>
+		<display-name>Fedora List Datastreams Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.ListDatastreamsServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ListMethodsServlet</servlet-name>
+		<display-name>Fedora List Methods Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.ListMethodsServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>MethodParameterResolverServlet</servlet-name>
+		<display-name>Fedora Method Parm Resolver Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.MethodParameterResolverServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>OAIProviderServlet</servlet-name>
+		<display-name>Fedora OAI Provider Servlet</display-name>
+		<servlet-class>
+			fedora.server.oai.FedoraOAIProviderServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>ReportServlet</servlet-name>
+		<display-name>Fedora Report Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.ReportServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>RISearchServlet</servlet-name>
+		<display-name>Fedora Resource Index Search Servlet</display-name>
+		<servlet-class>
+			fedora.server.access.RISearchServlet
+		</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>UploadServlet</servlet-name>
+		<display-name>Fedora Upload Servlet (accepts HTTP POST to upload a file and sends back an identifier)</display-name>
+		<servlet-class>
+			fedora.server.management.UploadServlet
+		</servlet-class>
+	</servlet>
+	<!-- Servlet Mappings for Axis -->
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/AdminService</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<!-- Servlet Mappings for Fedora Repository Server -->
+	<servlet-mapping>
+		<servlet-name>default</servlet-name>
+		<url-pattern>/index.html</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AccessServlet</servlet-name>
+		<url-pattern>/get/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ControlServlet</servlet-name>
+		<url-pattern>/management/control</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<url-pattern>/getDS</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DatastreamResolverServlet</servlet-name>
+		<url-pattern>/getDSAuthenticated</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>DescribeRepositoryServlet</servlet-name>
+		<url-pattern>/describe</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>FieldSearchServlet</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetObjectHistoryServlet</servlet-name>
+		<url-pattern>/getObjectHistory/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<!-- this mapping is preferred beginning fedora 2.1; see additional mapping -->
+		<url-pattern>/management/getNextPID</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetNextPIDServlet</servlet-name>
+		<!-- this mapping is deprecated beginning fedora 2.1
+		     and may be removed from default web.xml in later fedora releases -->
+		<url-pattern>/mgmt/getNextPID</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>BESecurityServlet</servlet-name>
+		<url-pattern>/management/backendSecurity</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ListDatastreamsServlet</servlet-name>
+		<url-pattern>/listDatastreams/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ListMethodsServlet</servlet-name>
+		<url-pattern>/listMethods/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MethodParameterResolverServlet</servlet-name>
+		<url-pattern>/getAccessParmResolver</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>OAIProviderServlet</servlet-name>
+		<url-pattern>/oai</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ReportServlet</servlet-name>
+		<url-pattern>/report</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>RISearchServlet</servlet-name>
+		<url-pattern>/risearch</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UploadServlet</servlet-name>
+		<url-pattern>/management/upload</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list id="WelcomeFileList_1">
+		<welcome-file>index.html</welcome-file>
+	</welcome-file-list>
+	<error-page>
+		<error-code>100</error-code>
+		<location>/continue-100.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Continue100Exception</exception-type>
+		<location>/continue-100.jsp</location>
+	</error-page>
+	<!-- this comment is here for clarity:  this element should not be uncommented. 
+	error-page>
+		<error-code>200</error-code>
+		<location>/ok-200.jsp</location>
+	</error-page -->
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Ok200Exception</exception-type>
+		<location>/ok-200.jsp</location>
+	</error-page>
+	<!--error-page>
+		<error-code>400</error-code>
+		<location>/bad-request-400.jsp</location>
+	</error-page-->
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.BadRequest400Exception</exception-type>
+		<location>/bad-request-400.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>401</error-code>
+		<location>/unauthorized-401.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Unauthorized401Exception</exception-type>
+		<location>/unauthorized-401.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/forbidden-403.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Forbidden403Exception</exception-type>
+		<location>/forbidden-403.jsp</location>
+	</error-page>
+	<!--error-page>
+		<error-code>500</error-code>
+		<location>/internal-error-500.jsp</location>
+	</error-page-->
+	<!-- SDP:  xml document would not validate with two exception-type elements. -->
+	<!-- SDP: Commented out offending exception-type, and put a second error-page entry with the second exception. -->
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>
+		<!--<exception-type>javax.servlet.ServletException</exception-type>-->
+		<location>/internal-error-500.jsp</location>
+	</error-page>
+	<error-page>
+		<!--<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>-->
+		<exception-type>javax.servlet.ServletException</exception-type>
+		<location>/internal-error-500.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>503</error-code>
+		<location>/unavailable-503.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.Unavailable503Exception</exception-type>
+		<location>/unavailable-503.jsp</location>
+	</error-page>
+	<!-- Security Constraints for the Fedora Repository Server web app -->
+	<!-- First, lock down as the default case (no access to any roles) -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/</url-pattern>
+			<http-method>CONNECT</http-method>
+			<http-method>DELETE</http-method>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>OPTIONS</http-method>
+			<http-method>POST</http-method>
+			<http-method>PUT</http-method>
+			<http-method>TRACE</http-method>
+		</web-resource-collection>
+		<auth-constraint/>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<!-- Security Constraints for general access points-->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/index.html</url-pattern>
+			<!--url-pattern>*.html</url-pattern-->
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<!-- called during fedora server startup -->
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/AdminService</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>*.jws</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<!-- Security Constraints on SOAP-based API-M interface to the Fedora Repository Server -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/services/management</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<!-- Security Constraints on REST-based management interfaces to Fedora Repository Server -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/management/control</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<!-- note that xacml authz requires started server, 
+			so server start must be protected here, if at all-->
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/management/getNextPID</url-pattern>
+			<!-- preferred -->
+			<url-pattern>/mgmt/getNextPID</url-pattern>
+			<!-- deprecated -->
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/management/upload</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<!-- Security Constraints on REST-based backend-security interfaces to Fedora Repository Server -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/management/backendSecurity</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/getDS</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/getDSAuthenticated</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>*</role-name>
+		</auth-constraint>
+	</security-constraint>
+	<!-- Security Constrainst on SOAP-based API-A interface to the Fedora Repository Server -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/services/access</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<!-- Security Constraints on REST-based API-A interfaces to Fedora Repository Server -->
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/describe</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/get/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/search</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/getObjectHistory/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/listDatastreams/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/listMethods/*</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/getAccessParmResolver</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/oai</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/report</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>Fedora Repository Server</web-resource-name>
+			<url-pattern>/risearch</url-pattern>
+			<http-method>GET</http-method>
+			<http-method>HEAD</http-method>
+			<http-method>POST</http-method>
+		</web-resource-collection>
+	</security-constraint>
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>Fedora Repository Server</realm-name>
+	</login-config>
+	<security-role>
+		<role-name>administrator</role-name>
+	</security-role>
+</web-app>
