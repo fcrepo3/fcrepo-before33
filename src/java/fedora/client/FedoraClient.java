@@ -30,6 +30,9 @@ import fedora.common.Constants;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.DateUtility;
+import fedora.server.access.FedoraAPIAServiceLocator;
+import fedora.server.management.FedoraAPIMServiceLocator;
+import fedora.server.types.gen.RepositoryInfo;
 
 public class FedoraClient implements Constants {
 
@@ -63,6 +66,12 @@ public class FedoraClient implements Constants {
     private MultiThreadedHttpConnectionManager m_cManager;
 
     private String m_serverVersion;
+    
+    // variables for SSL redirect handling
+    //private boolean checkedAPIMRedirect = false;
+	//private URL m_SSLRedirectAPIM = null;
+	//private boolean checkedAPIARedirect = false;
+	//private URL m_SSLRedirectAPIA = null;
 
     public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
         m_baseURL = baseURL;
@@ -72,7 +81,7 @@ public class FedoraClient implements Constants {
         URL url = new URL(m_baseURL);
         m_host = url.getHost();
         m_creds = new UsernamePasswordCredentials(user, pass);
-        m_cManager = new MultiThreadedHttpConnectionManager();
+        m_cManager = new MultiThreadedHttpConnectionManager();       
     }
 
     /**
@@ -176,7 +185,7 @@ public class FedoraClient implements Constants {
         String host = baseURL.getHost();
         int port = baseURL.getPort();
         if (port == -1) port = baseURL.getDefaultPort();
-        APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
+        APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;      
         if (getServerVersion().equals("2.0")) {
             return APIMStubFactory.getStubAltPath(protocol,
 											   	  host, 
@@ -193,10 +202,12 @@ public class FedoraClient implements Constants {
 											   	  m_pass);
         }
     }
+    
 
     public String getServerVersion() throws IOException {
         if (m_serverVersion == null) {
             String desc = getString("/describe?xml=true", true);
+            System.out.println("DESCRIBE=" + desc);
             String[] parts = desc.split("<repositoryVersion>");
             if (parts.length < 2) {
                 throw new IOException("Could not find repositoryVersion element in content of /describe?xml=true");
@@ -327,5 +338,228 @@ public class FedoraClient implements Constants {
         }
         return encoded.toString();
     }
+
+	/**
+	 * Get a an http resource's input stream given a URL.
+	 *
+	 * Note that if the HTTP response has no body, the InputStream will
+	 * be empty.  The success of a request can be checked with
+	 * getResponseCode().  Usually you'll want to see a 200.
+	 * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+	 */
+	public HttpInputStream get(URL url, boolean failIfNotOK) throws IOException {
+
+		HttpClient client = getHttpClient();
+		GetMethod getMethod = new GetMethod(url.toString());
+		getMethod.setDoAuthentication(true);
+		getMethod.setFollowRedirects(FOLLOW_REDIRECTS);
+		HttpInputStream in = new HttpInputStream(client, getMethod, url.toString());
+		if (failIfNotOK) {
+			if (in.getStatusCode() != 200) {
+				try { 
+					throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
+				} finally {
+					try { in.close(); } catch (Exception e) { }
+				}
+			}
+		}
+		return in;
+	}
+	/**
+	 * Ping the APIM SOAP endpoint to see if an HTTP 302 status 
+	 * code is returned.  If so, this means the server has set 
+	 * up an SSL redirect on that endpoint.  We obtain the redirect 
+	 * URL from the HTTP header for later use.
+	 * 
+	 * @return  URL  the URL that the server returns as the SSL redirect location
+	 * @throws IOException
+	 */    
+	private URL getRedirectLocationAPIM() throws IOException {
+
+		URL redirectURL = null;
+			
+		// Ping APIM endpoint...
+		HttpInputStream in = get("/services/management", false);		
+		System.out.println("STATUS CODE = " + in.getStatusCode());
+		logger.debug("Check for SSL redirect on APIM... HTTP STATUS=" + in.getStatusCode());
+		if (in.getStatusCode() == 302) {
+			Header h = in.getResponseHeader("location");
+			if (h != null) {
+				logger.debug("Detected SSL redirect for APIM: " + h.getValue());
+				redirectURL = new URL(h.getValue());	
+			}
+		}
+		in.close();
+		return redirectURL;
+	}
+	
+	/**
+	 * Ping the APIA SOAP endpoint to see if an HTTP 302 status 
+	 * code is returned.  If so, this means the server has set 
+	 * up an SSL redirect on that endpoint.  We obtain the redirect 
+	 * URL from the HTTP header for later use.
+	 * 
+	 * @return  URL  the URL that the server returns as the SSL redirect location
+	 * @throws IOException
+	 */    
+	private URL getRedirectLocationAPIA() throws IOException {
+
+		URL redirectURL = null;
+		
+		// Ping APIA endpoint ...
+		HttpInputStream in = get("/services/access", false);		
+		System.out.println("STATUS CODE = " + in.getStatusCode());
+		logger.debug("Check for SSL redirect on APIA... HTTP STATUS=" + in.getStatusCode());
+		if (in.getStatusCode() == 302) {
+			Header h = in.getResponseHeader("location");
+			if (h != null) {
+				logger.debug("Detected SSL redirect for APIA: " + h.getValue());
+				redirectURL = new URL(h.getValue());	
+			}
+		}
+		in.close();
+		return redirectURL;
+	}
+	
+	/**
+	 * Get SOAP stub for APIA with SSL redirect.  If the SOAP service endpoint 
+	 * is configured for SSL auto-redirect, then get a stub that points to the 
+	 * SSL redirect location.
+	 * 
+	 * Use of this stub will prevent the client from receiving a exception due
+	 * to underlying HTTP 302 status being returned from server.
+	 * @return
+	 * @throws Exception
+	 */
+	public FedoraAPIA getAPIA_HandleSSLRedirect() throws Exception {
+		URL baseURL = new URL(m_baseURL);		
+		String protocol = baseURL.getProtocol();
+		String host = baseURL.getHost();
+		int port = baseURL.getPort();
+		String path = baseURL.getPath();
+		if (port == -1) port = baseURL.getDefaultPort();
+		APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
+		// Note that SSL auto redirect not supported in Fedora 2.0 
+		// so we don't look for a redirect URL.
+		if (getServerVersion().equals("2.0")) {
+			return APIAStubFactory.getStubAltPath(protocol,
+												  host, 
+												  port,
+												  baseURL.getPath() + "access/soap",  
+												  m_user,
+												  m_pass);
+		} else {
+			// Check whether there is SSL redirecting at the server for APIM 
+			// (HTTP status 302) and get appropriate SOAP stub.
+			URL redirectURL = getRedirectLocationAPIA();
+			if (redirectURL == null){
+				return APIAStubFactory.getStubAltPath(protocol,
+													  host, 
+													  port,
+													  baseURL.getPath() + "services/access",  
+													  m_user,
+													  m_pass);
+			} else {
+				return APIAStubFactory.getStubAltPath(redirectURL.getProtocol(),
+													  redirectURL.getHost(), 
+													  redirectURL.getPort(),
+													  redirectURL.getPath(),  
+													  m_user,
+													  m_pass);				
+			}
+		}
+	}
+	
+	/**
+	 * Get SOAP stub for APIM with SSL redirect.  If the SOAP service endpoint 
+	 * is configured for SSL auto-redirect, then get a stub that points to the 
+	 * SSL redirect location.
+	 * 
+	 * Use of this stub will prevent the client from receiving a exception due
+	 * to underlying HTTP 302 status being returned from server.
+	 * @return
+	 * @throws Exception
+	 */   
+	public FedoraAPIM getAPIM_HandleSSLRedirect() throws Exception {
+
+		URL baseURL = new URL(m_baseURL);
+		
+		String protocol = baseURL.getProtocol();
+		String host = baseURL.getHost();
+		int port = baseURL.getPort();
+		String path = baseURL.getPath();
+		if (port == -1) port = baseURL.getDefaultPort();
+		APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS; 
+		// Note that SSL auto redirect not supported in Fedora 2.0
+		// so we don't look for a redirect URL.     
+		if (getServerVersion().equals("2.0")) {
+			return APIMStubFactory.getStubAltPath(protocol,
+												  host, 
+												  port,
+												  baseURL.getPath() + "management/soap",  
+												  m_user,
+												  m_pass);
+		} else {
+			// Check whether there is SSL redirecting at the server for APIM
+			// (HTTP status 302) and get appropriate SOAP stub.
+			URL redirectURL = getRedirectLocationAPIM();
+			if (redirectURL == null){
+				System.out.println("Using APIM stub with original endpoint URL...");
+				return APIMStubFactory.getStubAltPath(protocol,
+													  host, 
+													  port,
+													  baseURL.getPath() + "services/management",   
+													  m_user,
+													  m_pass);			
+			} else {
+				System.out.println("Using APIM stub with redirect endpoint URL ...");
+				return APIMStubFactory.getStubAltPath(redirectURL.getProtocol(),
+													  redirectURL.getHost(), 
+													  redirectURL.getPort(),
+													  redirectURL.getPath(),  
+													  m_user,
+													  m_pass);				
+			}
+
+		}
+	}
+    
+	// for quick testing
+	public static void main(String[] args) {
+		try {
+			String protocol = "http";
+			String host = "localhost";
+			String port = "8080";
+			String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+			System.out.println("baseURL = " + baseURL);
+			
+			FedoraClient fc =  
+				new FedoraClient(baseURL, "fedoraAdmin", "fedoraAdmin");
+				//new FedoraClient("https://localhost:8443/fedora", "fedoraAdmin", "fedoraAdmin");
+			System.out.println("First try APIM...");
+			fc.getRedirectLocationAPIM();
+			System.out.println("Second try APIM...");
+			fc.getRedirectLocationAPIM();
+			System.out.println("First try APIA...");
+			fc.getRedirectLocationAPIA();
+			System.out.println("Second try APIA...");
+			fc.getRedirectLocationAPIA();
+			
+			// ******************************************************
+			// NEW: use the new client utility class FedoraClient
+			// FIXME:  Get around hardcoding the path in the baseURL
+			Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
+			Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
+			//Administrator.APIA=fc.getAPIA();
+			//Administrator.APIM=fc.getAPIM();
+			//*******************************************************
+            	
+			System.out.println("trying describeRepository...");
+			RepositoryInfo info=Administrator.APIA.describeRepository();
+			System.out.println("Repo baseURL from Administrator: " + info.getRepositoryBaseURL());
+		} catch (Exception e) { 
+			System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
+		}
+	}
 
 }
