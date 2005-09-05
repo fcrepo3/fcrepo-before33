@@ -387,7 +387,7 @@
 		<copy todir="dist/client/lib">
 			<fileset refid="client-libs.fileset"/>
 		</copy>
-        <copy file="inc/client/truststore" toFile="dist/client/truststore"/>
+		<copy file="inc/client/truststore" toFile="dist/client/truststore"/>
 		<echo message="Finished building client distribution in dist/client"/>
 	</target>
 	<target name="prep" description="Prepare a temporary build area for targets">
@@ -718,7 +718,7 @@
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s validate-policy.sh validate-policy"/>
-		</exec>		
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
@@ -779,10 +779,10 @@
 		<mkdir dir="dist/server/config/xacml-policies/active/generated/backend-service-policies"/>
 		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/config/xacml-policies/active/generated"/>
 		<!-- tomcat: web configuration files for the Fedora webapp -->
-		<copy file="src/web-app/fedora/server/web-defaults.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
-		<copy file="src/web-app/fedora/server/web-secure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
-		<!-- tomcat: put the default web configuration file into play for the Fedora webapp -->
-		<copy file="src/web-app/fedora/server/web-defaults.xml" tofile="${tomcat.deploy.dir}/fedora/WEB-INF/web.xml"/>
+		<copy file="src/web-app/fedora/server/web-secure-apim.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<copy file="src/web-app/fedora/server/web-secure-all.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
+		<!-- tomcat: put the secure apim web configuration file into play for the Fedora webapp -->
+		<copy file="src/web-app/fedora/server/web-secure-apim.xml" tofile="${tomcat.deploy.dir}/fedora/WEB-INF/web.xml"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy todir="${tomcat.deploy.dir}/fedora">
 			<fileset dir="src/jsp"/>
@@ -908,9 +908,9 @@
 			</fileset>
 		</copy>
 		<!-- put the default fedora configuration file into play  -->
-		<copy file="src/fcfg/server/fedora-defaults.fcfg" tofile="dist/server/config/fedora.fcfg"/>
+		<copy file="src/fcfg/server/fedora-secure-apim.fcfg" tofile="dist/server/config/fedora.fcfg"/>
 		<!-- put the default beSecurity configuration file into play  -->
-		<copy file="src/fcfg/server/beSecurity-defaults.xml" tofile="dist/server/config/beSecurity.xml"/>
+		<copy file="src/fcfg/server/beSecurity-secure-apim.xml" tofile="dist/server/config/beSecurity.xml"/>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
