@@ -69,8 +69,8 @@ public abstract class APIAStubFactory {
 
 	/**
 	 * Method to rewrite the default API-A base URL (specified in the service
-	 * locator class FedoraAPIAServiceLocator).  In this case we allow the protocol,
-	 * host, port, and PATH parts of the service URL to be replaced.  A SOAP stub
+	 * locator class FedoraAPIAServiceLocator).  In this case we allow the path
+	 * of the service URL to be replaced.  A SOAP stub
 	 * will be returned with the desired service endpoint URL.
 	 * @param protocol
 	 * @param host
