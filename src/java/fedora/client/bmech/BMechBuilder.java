@@ -224,7 +224,7 @@ public class BMechBuilder extends JInternalFrame
         }
         try
         {
-          AutoIngestor ingestor = new AutoIngestor(s_protocol, s_host, s_port, s_user, s_pass);
+		  AutoIngestor ingestor = new AutoIngestor(Administrator.APIA, Administrator.APIM);
           pid = ingestor.ingestAndCommit(in, "ingest bmech object via BMechBuilder tool");
         }
         catch (Exception e)

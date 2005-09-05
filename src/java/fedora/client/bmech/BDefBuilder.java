@@ -23,6 +23,7 @@ import java.io.InputStream;
 import fedora.client.bmech.data.*;
 import fedora.client.bmech.xml.*;
 import fedora.client.utility.ingest.AutoIngestor;
+import fedora.client.Administrator;
 
 /**
  *
@@ -210,7 +211,7 @@ public class BDefBuilder extends JInternalFrame
         }
         try
         {
-          AutoIngestor ingestor = new AutoIngestor(s_protocol, s_host, s_port, s_user, s_pass);
+          AutoIngestor ingestor = new AutoIngestor(Administrator.APIA, Administrator.APIM);
           pid = ingestor.ingestAndCommit(in, "ingest bdef object via BDefBuilder tool");
         }
         catch (Exception e)
