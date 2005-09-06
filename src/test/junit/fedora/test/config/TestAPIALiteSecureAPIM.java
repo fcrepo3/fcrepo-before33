@@ -20,24 +20,25 @@ import fedora.test.FedoraServerTestSetup;
 import fedora.test.integration.TestIngestDemoObjects;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
-public class TestAPIALiteOpen extends TestAPIALite {
+public class TestAPIALiteSecureAPIM extends TestAPIALite {
 	
-    public TestAPIALiteOpen() throws Exception {
+    public TestAPIALiteSecureAPIM() throws Exception {
     	super();
     }
         
     public String getConfiguration() {
-    	return Trial.OPEN;
+    	return Trial.SECURE_APIM;
     }
    
     
     public static Test suite() {
-        TestSuite suite = new TestSuite("TestAPIALite Open Configuration");
-        suite.addTestSuite(TestAPIALiteOpen.class);
+        TestSuite suite = new TestSuite("TestAPIALite SecureAPIM Configuration");
+        suite.addTestSuite(TestAPIALiteSecureAPIM.class);
         TestSetup wrapper = new TestSetup(suite) {
         //TestSetup wrapper = new TestSetup(suite, TestAPIALiteOutOfTheBoxConfig.class.getName()) {
             public void setUp() throws Exception {
-            	FedoraServerTestCase.ssl = "";
+				ssl = "https"; //fixup
+				System.out.println("protocol just set ==" + ssl); 
                 TestIngestDemoObjects.ingestDemoObjects();
                 fcfg = getServerConfiguration();
                 client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
@@ -54,11 +55,11 @@ public class TestAPIALiteOpen extends TestAPIALite {
                 TestIngestDemoObjects.purgeDemoObjects();
             }
         };
-        return new FedoraServerTestSetup(wrapper, TestAPIALiteOpen.class.getName());
+        return new FedoraServerTestSetup(wrapper, TestAPIALiteSecureAPIM.class.getName());
     }
     
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(TestAPIALiteOpen.class);
+        junit.textui.TestRunner.run(TestAPIALiteSecureAPIM.class);
     }
 
 }

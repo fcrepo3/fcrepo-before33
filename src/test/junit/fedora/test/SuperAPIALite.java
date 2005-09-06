@@ -37,9 +37,9 @@ import fedora.test.Trial;
 public abstract class SuperAPIALite extends IterableTest {
     //protected static DocumentBuilderFactory factory;
     //protected static DocumentBuilder builder;
-    protected static ServerConfiguration fcfg;
-    protected static FedoraClient client;
-    protected static Set demoObjects;
+    //protected static ServerConfiguration fcfg;
+    //protected static FedoraClient client;
+    //protected static Set demoObjects;
     
     public SuperAPIALite() {
     }
@@ -161,10 +161,12 @@ public abstract class SuperAPIALite extends IterableTest {
     public static final String getXhtmlXpath(String inpath) {
 		return getXpath(inpath, NS_XHTML_PREFIX);    	
     }
-    public static final String NS_XHTML_PREFIX = "xhtml";
+    //public static final String NS_XHTML_PREFIX = "xhtml";
     
-    public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
+    //public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
     
+    
+    /*
     protected static final Set badPids = new HashSet();
     static {
     	badPids.add("hoo%20doo:%20TheClash"); //unacceptable syntax
@@ -179,11 +181,12 @@ public abstract class SuperAPIALite extends IterableTest {
     static {
     	missingPids.add("doowop:667"); //simply not in repository
     }
+    */
 
     /** 
      *  http://localhost:8080/fedora/get/demo:10/DC?xml=true 
      */
-    
+    /*
     public final String getUrlForDatastreamDissemination(String pid, String datastream, boolean xml) throws Exception {
     	UrlString url = new UrlString("/get");
     	if (pid != null) {
@@ -195,10 +198,12 @@ public abstract class SuperAPIALite extends IterableTest {
     	url.appendParm("xml", Boolean.toString(xml));
     	return url.toString();
     }
+    */
 
     /** 
      *  ?????????????????????
      */
+    /*
     public final String getUrlForDissemination(String pid, String bDef, String method) throws Exception {
     	UrlString url = new UrlString("/get");
     	if (pid != null) {
@@ -212,12 +217,13 @@ public abstract class SuperAPIALite extends IterableTest {
     	}
     	return url.toString();
     }
-
+*/
   
 
     /** 
      *  http://localhost:8080/fedora/getObjectHistory/demo:10?xml=true    
      */
+    /*
     public final String getUrlForObjectHistory(String pid, boolean xml) throws Exception {
     	UrlString url = new UrlString("/getObjectHistory");
     	if (pid != null) {
@@ -226,12 +232,14 @@ public abstract class SuperAPIALite extends IterableTest {
     	url.appendParm("xml", Boolean.toString(xml));
     	return url.toString();
     }    
+    */
 
 
 
     /** 
      *  http://localhost:8080/fedora/listDatastreams/demo:10?xml=true
      */
+    /*
     public final String getUrlForListDatastreams(String pid, boolean xml) throws Exception {
     	UrlString url = new UrlString("/listDatastreams");
     	if (pid != null) {
@@ -240,9 +248,9 @@ public abstract class SuperAPIALite extends IterableTest {
     	url.appendParm("xml", Boolean.toString(xml));
     	return url.toString();
     }
+*/
 
-
-
+/*
     private void datastreamDissemination(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
         while (iterator.hasNext()) {
@@ -279,8 +287,9 @@ public abstract class SuperAPIALite extends IterableTest {
         	}
         }
     }
-    private static final String XPATH_XML_DATASTREAM_DISSEMINATION_DC = "/oai_dc:dc";    
-    
+    private static final String XPATH_XML_DATASTREAM_DISSEMINATION_DC = "/oai_dc:dc"; 
+    */
+/*    
     private void dissemination(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
         while (iterator.hasNext()) {
@@ -317,7 +326,7 @@ public abstract class SuperAPIALite extends IterableTest {
         }
     }
     private static final String XPATH_XHTML_DISSEMINATION_DC = "/oai_dc:dc"; //<<<<<<<<<<<<<<<<<<<
-
+*/
     /*
     public void objectProfile(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
@@ -382,7 +391,7 @@ public abstract class SuperAPIALite extends IterableTest {
         	}
         }    	
     }
-    */
+    
 
     private void objectHistory(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
@@ -439,8 +448,10 @@ public abstract class SuperAPIALite extends IterableTest {
     private static final String XPATH_XHTML_OBJECT_HISTORY_BODY_TITLE = getXhtmlXpath("/html/body//h3");    
 
     
+    */
+    
 
-
+/*
     private final void listDatastreams(Iterator iterator, boolean shouldWork, boolean xml) throws Exception {
         Document result = null;
         while (iterator.hasNext()) {
@@ -480,7 +491,7 @@ public abstract class SuperAPIALite extends IterableTest {
     }
     private static final String XPATH_XML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = "/objectDatastreams"; 
     private static final String XPATH_XHTML_LIST_DATASTREAMS_OBJECT_DATASTREAMS = getXhtmlXpath(""); 
-    
+  */  
     
     
     

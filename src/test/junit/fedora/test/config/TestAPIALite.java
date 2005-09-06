@@ -64,16 +64,16 @@ abstract public class TestAPIALite extends IterableTest {
     
     private static final Set protocolSet = new HashSet ();
     static {
-    	protocolSet.add("HTTP");
-    	protocolSet.add("HTTPS");
+    	protocolSet.add("http");
+    	protocolSet.add("https");
     }
     
     private static final Set objectsetSet = new HashSet ();
     static {
     	objectsetSet.add("demoObjects");
     	//objectsetSet.add("fewPids");
-    	//objectsetSet.add("missingPids");
-    	//objectsetSet.add("badPids");
+    	objectsetSet.add("missingPids");
+    	objectsetSet.add("badPids");
     }
 
     private static final Set expectedStatusSet = new HashSet ();
@@ -88,7 +88,7 @@ abstract public class TestAPIALite extends IterableTest {
     public static final Set getObjects(String name) {
     	Set temp = null;
     	if ("demoObjects".equals(name)) {
-    		temp = fewPids; //demoObjects;
+    		temp = demoObjects;
     	} else if ("badPids".equals(name)) {
     		temp = badPids;
     	} else if ("missingPids".equals(name)) {
@@ -106,6 +106,8 @@ abstract public class TestAPIALite extends IterableTest {
 			Iterator protocolIterator = protocolSet.iterator();
 			while (protocolIterator.hasNext()) {
 				String protocol = (String) protocolIterator.next();
+				ssl = protocol; //fixup
+				System.out.println("protocol just set ==" + ssl);
 				Iterator objectsetIterator = objectsetSet.iterator();
 				while (objectsetIterator.hasNext()) {
 					String objectset = (String) objectsetIterator.next();
@@ -123,28 +125,29 @@ abstract public class TestAPIALite extends IterableTest {
 						Iterator objectIterator = objects.iterator();
 						while (objectIterator.hasNext()) {
 				        	String pid = (String) objectIterator.next();
+				        	System.out.println("pid==" + pid);
 				        	Set trials = null;
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 				        	ObjectProfileTest objectProfileTestXmlOnly = new ObjectProfileTest(pid, true);					        	
 				        	iterate(trials, dataSource, objectProfileTestXmlOnly);
 				        	
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 							ObjectHistoryTest objectHistoryTestXmlOnly = new ObjectHistoryTest(pid, true);					        	
 				        	iterate(trials, dataSource, objectHistoryTestXmlOnly);
 				        	
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 							ListMethodsTest listMethodsTestXmlOnly = new ListMethodsTest(pid, true);					        	
 				        	iterate(trials, dataSource, listMethodsTestXmlOnly);
 							
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 							ListDatastreamsTest listDatastreamsTestXmlOnly = new ListDatastreamsTest(pid, true);					        	
 				        	iterate(trials, dataSource, listDatastreamsTestXmlOnly);
 
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 							DatastreamDisseminationTest datastreamDisseminationTestXmlOnly = new DatastreamDisseminationTest(pid, "DC", true);					        	
 				        	iterate(trials, dataSource, datastreamDisseminationTestXmlOnly);
 				        	
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "objectProfile", objectset, expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "objectProfile", objectset, expectedStatus);
 							DisseminationTest disseminationTestXmlOnly = new DisseminationTest(pid, "fedora-system:3", "viewDublinCore", true);					        	
 				        	iterate(trials, dataSource, disseminationTestXmlOnly);				        	
 
@@ -163,7 +166,8 @@ abstract public class TestAPIALite extends IterableTest {
 			Iterator protocolIterator = protocolSet.iterator();
 			while (protocolIterator.hasNext()) {
 				String protocol = (String) protocolIterator.next();
-				
+				ssl = protocol; //fixup
+				System.out.println("protocol just set ==" + ssl);				
 				//Iterator objectsetIterator = objectsetSet.iterator();
 				//while (objectsetIterator.hasNext()) {
 					//String objectset = (String) objectsetIterator.next();
@@ -173,7 +177,7 @@ abstract public class TestAPIALite extends IterableTest {
 						System.out.println("PROTOCOL FOR DATASOURCE = " + protocol);
 						System.out.println("EXPECTEDSTATUS FOR DATASOURCE = " + expectedStatus);						
 						//DataSource dataSource = HttpDataSource.getDataSource(protocol, expectedStatus);
-						String baseurl = "HTTPS".equals(protocol) ? Trial.HTTPS_BASE_URL : Trial.HTTP_BASE_URL; 
+						String baseurl = getBaseURL(); //Trial.HTTPS.equals(protocol) ? Trial.HTTPS_BASE_URL : Trial.HTTP_BASE_URL; 
 						DataSource dataSource = new HttpDataSource (baseurl, expectedStatus);						
 						System.out.println("DATASOURCE = " + dataSource);
 						System.out.println("in loop nest, policies==" + policies);						
@@ -182,15 +186,16 @@ abstract public class TestAPIALite extends IterableTest {
 						//while (objectIterator.hasNext()) {
 				        	//String pid = (String) objectIterator.next();
 							Set trials = null;
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "describeRepository", expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "describeRepository", expectedStatus);
 							DescribeRepositoryTest describeRepositoryTestXmlOnly = new DescribeRepositoryTest("Fedora Repository", true);					        	
 				        	iterate(trials, dataSource, describeRepositoryTestXmlOnly);
 
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "describeRepository", expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "describeRepository", expectedStatus);
 							FindTest findTestXmlOnly = new FindTest("pid=demo:*", 1000000, demoObjects.size(), true);					        	
+//if (expectedStatus == 403) continue;
 				        	iterate(trials, dataSource, findTestXmlOnly);
 				        	
-							trials = Trial.getTrialSet(Trial.OPEN, policies, protocol, "describeRepository", expectedStatus);
+							trials = Trial.getTrialSet(getConfiguration(), policies, protocol, "describeRepository", expectedStatus);
 							FindTest resumeFindTestXmlOnly = new FindTest("pid=demo:*", 10, demoObjects.size(), true);					        	
 							iterate(trials, dataSource, resumeFindTestXmlOnly);
 				        	

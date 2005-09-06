@@ -30,6 +30,8 @@ import fedora.test.FedoraServerTestSetup;
 import fedora.test.SuperAPIALite;
 import fedora.test.Trial;
 import fedora.test.DescribeRepositoryTest;
+import fedora.test.ObjectProfileTest;
+import fedora.test.DataSource;
 import fedora.test.HttpDataSource;
 /**
  * Test of API-A-Lite using demo objects
@@ -41,11 +43,15 @@ public class TestAPIALite extends SuperAPIALite {
 	private DescribeRepositoryTest describeRepositoryTestXmlOnly = new DescribeRepositoryTest("Fedora Repository", true);
 	private HttpDataSource HTTP200 = null;
 	private HttpDataSource HTTPS200 = null;
+	private HttpDataSource HTTP500 = null;
+	private HttpDataSource HTTPS500 = null;
 	
     public TestAPIALite() throws Exception {
     	super();
     	HTTP200 = new HttpDataSource(Trial.HTTP_BASE_URL, 200);
     	HTTPS200 = new HttpDataSource(Trial.HTTPS_BASE_URL, 200);
+    	HTTP500 = new HttpDataSource(Trial.HTTP_BASE_URL, 500);
+    	HTTPS500 = new HttpDataSource(Trial.HTTPS_BASE_URL, 500);
     }
     
     public static Test suite() {
@@ -57,7 +63,7 @@ public class TestAPIALite extends SuperAPIALite {
             public void setUp() throws Exception {
                 TestIngestDemoObjects.ingestDemoObjects();
                 fcfg = getServerConfiguration();
-                client = new FedoraClient(getBaseURL(), getUsername(), getPassword());
+                client = new FedoraClient(Trial.HTTP_BASE_URL, getUsername(), getPassword());
                 factory = DocumentBuilderFactory.newInstance();
                 builder = factory.newDocumentBuilder();
                 demoObjects = TestIngestDemoObjects.getDemoObjects(null);
@@ -76,49 +82,88 @@ public class TestAPIALite extends SuperAPIALite {
     }
     
 
-    public void testDescribeRepository() throws Exception {
-    	run(describeRepositoryTestXmlOnly, HTTP200, "", "");
-    	run(describeRepositoryTestXmlOnly, HTTPS200, "", "");
-    }    
-    
     /*
     public void testDatastreamDisseminationDemoPidsXML() throws Exception {
     	if (TEST_XML) datastreamDissemination(demoObjects.iterator(), true, XML);
     }
-
     public void testDatastreamDisseminationBadPidsXML() throws Exception {
     	if (TEST_XML) datastreamDissemination(badPids.iterator(), false, XML);
 	}
-    
+
+
+
+
+    public void testListDatastreamsDemoObjectsXML() throws Exception {
+    	if (TEST_XML) listDatastreams(demoObjects.iterator(), true, XML);
+    }
+    public void testListDatastreamsBadPidsXML() throws Exception {
+    	if (TEST_XML) listDatastreams(badPids.iterator(), false, XML);
+    }
+    public void testListDatastreamsDemoObjectsXHTML() throws Exception {
+    	if (TEST_XHTML) listDatastreams(demoObjects.iterator(), true, XHTML);
+    }
+    public void testListDatastreamsBadPidsXHTML() throws Exception {
+    	if (TEST_XHTML) listDatastreams(badPids.iterator(), false, XHTML);
+    }
+
+
+
+    public void testDisseminationDemoObjectsXHTML() throws Exception {
+    	if (TEST_XHTML) dissemination(demoObjects.iterator(), true, XHTML);
+    }    
+    public void testDisseminationBadPidsXHTML() throws Exception {
+    	if (TEST_XHTML) dissemination(badPids.iterator(), false, XHTML);
+    }
     // no default disseminators return non-XHTML XML, so there are no methods testDisseminationDemoPidsXML() or testDisseminationBadPidsXML()
+    // no demo XHTML datastreams to test so no methods testDatastreamDisseminationDemoPidsXML() or testDatastreamDisseminationBadPidsXML()
+        
+*/
+
+
+
+
+/* CONVERTED:
+
+
+    
     
     public void testObjectHistoryDemoObjectsXML() throws Exception {
     	if (TEST_XML) objectHistory(demoObjects.iterator(), true, XML);
     }
-    
     public void testObjectHistoryBadPidsXML() throws Exception {
     	if (TEST_XML) objectHistory(badPids.iterator(), false, XML);
     }
-
-    public void testObjectProfileDemoObjectsXML() throws Exception {
-    	if (TEST_XML) objectProfile(demoObjects.iterator(), true, XML);
+    public void testObjectHistoryDemoObjectsXHTML() throws Exception {
+    	if (TEST_XHTML) objectHistory(demoObjects.iterator(), true, XHTML);    	
+    }
+    public void testObjectHistoryBadPidsXHTML() throws Exception {
+    	if (TEST_XHTML) objectHistory(badPids.iterator(), false, XHTML);    	
     }
 
-    public void testObjectProfileBadPidsXML() throws Exception {
-    	if (TEST_XML) objectProfile(badPids.iterator(), false, XML);
+        public void testDescribeRepository() throws Exception {
+    	run(describeRepositoryTestXmlOnly, HTTP200, "", "");
+    	run(describeRepositoryTestXmlOnly, HTTPS200, "", "");
+    }    
+
+	private ObjectProfileTest objectProfileTestXmlOnly = null;
+	void iterateObjectProfile(Iterator iterator, DataSource dataSource) throws Exception {
+        while (iterator.hasNext()) {
+        	String pid = (String) iterator.next();
+        	objectProfileTestXmlOnly = new ObjectProfileTest(pid, true);
+        	run(objectProfileTestXmlOnly, dataSource, "", "");
+        }		
+	}
+	public void testObjectProfile() throws Exception {
+		iterateObjectProfile(demoObjects.iterator(), HTTP200);
+		iterateObjectProfile(demoObjects.iterator(), HTTPS200);
+		iterateObjectProfile(badPids.iterator(), HTTP500);
+		iterateObjectProfile(badPids.iterator(), HTTPS500);
     }
 
     public void testFindObjectsXML() throws Exception {
     	if (TEST_XML) findObjects(1000000, XML);
     }
 
-    public void testListDatastreamsDemoObjectsXML() throws Exception {
-    	if (TEST_XML) listDatastreams(demoObjects.iterator(), true, XML);
-    }
-
-    public void testListDatastreamsBadPidsXML() throws Exception {
-    	if (TEST_XML) listDatastreams(badPids.iterator(), false, XML);
-    }
 
     public void testListMethodsDemoObjectsXML() throws Exception {
     	if (TEST_XML) listMethods(TestIngestDemoObjects.getDemoObjects(new String[] {"O"}).iterator(), true, XML);
@@ -132,47 +177,23 @@ public class TestAPIALite extends SuperAPIALite {
     	if (TEST_XML) findObjects(10, XML);
     }
 
-    // no demo XHTML datastreams to test so no methods testDatastreamDisseminationDemoPidsXML() or testDatastreamDisseminationBadPidsXML()
 
-    public void testDisseminationDemoObjectsXHTML() throws Exception {
-    	if (TEST_XHTML) dissemination(demoObjects.iterator(), true, XHTML);
+    public void testObjectProfileDemoObjectsXML() throws Exception {
+    	if (TEST_XML) objectProfile(demoObjects.iterator(), true, XML);
     }
-    
-    public void testDisseminationBadPidsXHTML() throws Exception {
-    	if (TEST_XHTML) dissemination(badPids.iterator(), false, XHTML);
+
+    public void testObjectProfileBadPidsXML() throws Exception {
+    	if (TEST_XML) objectProfile(badPids.iterator(), false, XML);
     }
-        
+
     public void testFindObjectsXHTML() throws Exception {
     	if (TEST_XHTML) findObjects(1000000, XHTML);
     }
-        
-    public void testObjectHistoryDemoObjectsXHTML() throws Exception {
-    	if (TEST_XHTML) objectHistory(demoObjects.iterator(), true, XHTML);    	
-    }
-
-    public void testObjectHistoryBadPidsXHTML() throws Exception {
-    	if (TEST_XHTML) objectHistory(badPids.iterator(), false, XHTML);    	
-    }
-
-    public void testObjectProfileDemoObjectsXHTML() throws Exception {
-    	if (TEST_XHTML) objectProfile(demoObjects.iterator(), true, XHTML);    	
-    }
-
-    public void testObjectProfileBadPidsXHTML() throws Exception {
-    	if (TEST_XHTML) objectProfile(badPids.iterator(), false, XHTML);    	
-    }
-
-    public void testListDatastreamsDemoObjectsXHTML() throws Exception {
-    	if (TEST_XHTML) listDatastreams(demoObjects.iterator(), true, XHTML);
-    }
-
-    public void testListDatastreamsBadPidsXHTML() throws Exception {
-    	if (TEST_XHTML) listDatastreams(badPids.iterator(), false, XHTML);
-    }
-
+    
     public void testListMethodsDemoObjectsXHTML() throws Exception {
     	if (TEST_XHTML) listMethods(TestIngestDemoObjects.getDemoObjects(new String[] {"O"}).iterator(), true, XHTML);
     }    
+        
 
     public void testListMethodsBadPidsXHTML() throws Exception {
     	if (TEST_XHTML) listMethods(badPids.iterator(), false, XHTML);
