@@ -70,35 +70,30 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
-    private void logStackTrace(Exception e) {
-    	StackTraceElement[] els=e.getStackTrace();
-        StringBuffer lines=new StringBuffer();
-        boolean skip=false;
-        for (int i=0; i<els.length; i++) {
-            if (els[i].toString().indexOf("FedoraAPIMBindingSOAPHTTPSkeleton")!=-1) {
-                skip=true;
-            }
-            if (!skip) {
-                lines.append(els[i].toString());
-                lines.append("\n");
-            }
+    private static void logStackTrace(Throwable e) {
+        StringBuffer out = new StringBuffer();
+        addException(e, out);
+        e = e.getCause();
+        while (e != null) {
+            out.append("Caused by: ");
+            addException(e, out);
+            e = e.getCause();
         }
-        
-        Throwable t = e.getCause();
-        if (t != null) {
-        	els = t.getStackTrace();
-        	for (int i=0; i<els.length; i++) {
-        		if (els[i].toString().indexOf("FedoraAPIMBindingSOAPHTTPSkeleton")!=-1) {
-                    skip=true;
-                }
-                if (!skip) {
-                    lines.append(els[i].toString());
-                    lines.append("\n");
-                }
-        	}
-        }
-        s_server.logFiner("Error carried up to API-M level: " + e.getClass().getName() + "\n" + lines.toString());
+        s_server.logFiner("Error carried up to API-M level:\n" + out.toString());
+    }
 
+    private static void addException(Throwable e, StringBuffer out) {
+        out.append(e.getClass().getName());
+        String message = e.getMessage();
+        if (message == null) message = "(no detail provided)";
+        out.append(": " + message + "\n");
+        StackTraceElement[] el = e.getStackTrace();
+        boolean skip = false;
+        for (int i = 0; i < el.length; i++) {
+            String line = el[i].toString();
+            if (line.indexOf("FedoraAPIMBindingSOAPHTTPSkeleton") != -1) return;
+            out.append("        at " + line + "\n");
+        }
     }
 
     /**
