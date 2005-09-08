@@ -16,10 +16,10 @@ public class AllAPITests {
     public static Test suite() {
         TestSuite suite = new TestSuite("All API tests");
         //$JUnit-BEGIN$
-        suite.addTest(TestAPIALite.suite());
-        //suite.addTest(TestAPIMLite.suite());
-        //suite.addTest(TestAPIA.suite());
-        //suite.addTest(TestAPIM.suite());
+        //APIALite testing with defaults is included as one config in configuration testing
+        suite.addTest(TestAPIMLite.suite());
+        suite.addTest(TestAPIA.suite());
+        suite.addTest(TestAPIM.suite());
         //$JUnit-END$
         return new FedoraServerTestSetup(suite);
     }
