@@ -176,14 +176,14 @@ public class FedoraClient implements Constants {
 						try { 
 							throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
 						} finally {
-							try { in.close(); } catch (Exception e) { }
+							try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
 						}
 					}
 				} else {
 					try { 
 						throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
 					} finally {
-						try { in.close(); } catch (Exception e) { }
+						try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
 					}
 				}
 			}
@@ -224,7 +224,7 @@ public class FedoraClient implements Constants {
             }
             return buffer.toString();
         } finally {
-            try { in.close(); } catch (Exception e) { }
+			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
         }
     }
 
@@ -424,20 +424,25 @@ public class FedoraClient implements Constants {
 	private URL getRedirectLocationAPIM() throws IOException {
 
 		URL redirectURL = null;
+		HttpInputStream in = null;
 			
 		// Ping APIM service endpoint and get a redirect URL if one exists.
-		HttpInputStream in = get("/services/management", false, false);		
-		logger.debug("Check for SSL redirect on APIM... HTTP STATUS=" + in.getStatusCode());
-		System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
-		if (in.getStatusCode() == 302) {
-			Header h = in.getResponseHeader("location");
-			if (h != null) {
-				logger.debug("Detected SSL redirect for APIM: " + h.getValue());
-				redirectURL = new URL(h.getValue());	
+		try {
+			in = get("/services/management", false, false);		
+			logger.debug("Check for SSL redirect on APIM... HTTP STATUS=" + in.getStatusCode());
+			System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
+			if (in.getStatusCode() == 302) {
+				Header h = in.getResponseHeader("location");
+				if (h != null) {
+					logger.debug("Detected SSL redirect for APIM: " + h.getValue());
+					redirectURL = new URL(h.getValue());	
+				}
 			}
+			//in.close();
+			return redirectURL;
+		} finally {
+			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
 		}
-		in.close();
-		return redirectURL;
 	}
 	
 	/**
@@ -452,20 +457,25 @@ public class FedoraClient implements Constants {
 	private URL getRedirectLocationAPIA() throws IOException {
 
 		URL redirectURL = null;
+		HttpInputStream in = null;
 		
 		// Ping APIA service endpoint and get a redirect URL if one exists.
-		HttpInputStream in = get("/services/access", false, false);		
-		logger.debug("Check for SSL redirect on APIA... HTTP STATUS=" + in.getStatusCode());
-		System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
-		if (in.getStatusCode() == 302) {
-			Header h = in.getResponseHeader("location");
-			if (h != null) {
-				logger.debug("Detected SSL redirect for APIA: " + h.getValue());
-				redirectURL = new URL(h.getValue());	
+		try {
+			in = get("/services/access", false, false);		
+			logger.debug("Check for SSL redirect on APIA... HTTP STATUS=" + in.getStatusCode());
+			System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
+			if (in.getStatusCode() == 302) {
+				Header h = in.getResponseHeader("location");
+				if (h != null) {
+					logger.debug("Detected SSL redirect for APIA: " + h.getValue());
+					redirectURL = new URL(h.getValue());	
+				}
 			}
+			//in.close();
+			return redirectURL;
+		} finally {
+			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
 		}
-		in.close();
-		return redirectURL;
 	}
     
     public String getServerVersion() throws IOException {
@@ -540,8 +550,13 @@ public class FedoraClient implements Constants {
     }
 
 	public void reloadPolicies() throws IOException {
-		InputStream in = get("/management/control?action=reloadPolicies", true, true);
-		in.close();
+
+		InputStream in = null;		
+		try {
+			in = get("/management/control?action=reloadPolicies", true, true);
+		} finally {
+			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+		}
 	}
 
 
