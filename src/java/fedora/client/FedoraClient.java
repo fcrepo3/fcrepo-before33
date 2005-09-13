@@ -101,6 +101,48 @@ public class FedoraClient implements Constants {
 		client.getState().setAuthenticationPreemptive(true);
 		return client;
 	}
+
+	/**
+	 * Get an HTTP resource with the response as an InputStream, given a resource
+     * locator that either begins with 'info:fedora/' , 'http://', or '/'.
+     *
+     * This method will follow redirects if FOLLOW_REDIRECTS is true.
+     *
+     * Note that if the HTTP response has no body, the InputStream will
+     * be empty.  The success of a request can be checked with
+     * getResponseCode().  Usually you'll want to see a 200.
+     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+     * 
+	 * @param locator         A URL, relative Fedora URL, or Fedora URI that we want to 
+	 *                        do an HTTP GET upon
+	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
+	 *                        if we do NOT receive an HTTP 200 response (OK)
+	 * @return HttpInputStream  the HTTP response
+	 * @throws IOException
+     */
+    public HttpInputStream get(String locator, boolean failIfNotOK) throws IOException {
+        return get(locator, failIfNotOK, FOLLOW_REDIRECTS);
+    }
+	  
+	/**
+	 * Get an HTTP resource with the response as an InputStream, given a URL.
+     *
+     * This method will follow redirects if FOLLOW_REDIRECTS is true.
+     *
+     * Note that if the HTTP response has no body, the InputStream will
+     * be empty.  The success of a request can be checked with
+     * getResponseCode().  Usually you'll want to see a 200.
+     * See http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html for other codes.
+     * 
+	 * @param url             A URL that we want to do an HTTP GET upon
+	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
+	 *                        if we do NOT receive an HTTP 200 response (OK)
+	 * @return HttpInputStream  the HTTP response
+	 * @throws IOException
+     */
+    public HttpInputStream get(URL url, boolean failIfNotOK) throws IOException {
+        return get(url, failIfNotOK, FOLLOW_REDIRECTS);
+    }
 	   
 	/**
 	 * Get an HTTP resource with the response as an InputStream, given a resource
