@@ -157,20 +157,17 @@ public class FedoraClient implements Constants {
 	 *                        do an HTTP GET upon
 	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
 	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param handleRedirect  boolean value indicating whether HTTP 302 redirects
+	 * @param followRedirects boolean value indicating whether HTTP redirects
 	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later.  If handleRedirect
-	 *                        is true, then a 302 status will be handled here.
-	 *                        If false the 302 response will be passed back in the
-	 *                        HttpInputStream that is returned.
+	 *                        so that they can be handled later.
 	 * @return HttpInputStream  the HTTP response
 	 * @throws IOException
 	 */
-    public HttpInputStream get(String locator, boolean failIfNotOK, boolean handleRedirect) throws IOException {
+    public HttpInputStream get(String locator, boolean failIfNotOK, boolean followRedirects) throws IOException {
 
         // Convert the locator to a proper Fedora URL and the do a get.
         String url = getLocatorAsURL(locator);
-        return get(new URL(url), failIfNotOK, handleRedirect);
+        return get(new URL(url), failIfNotOK, followRedirects);
     }
     
 	/**
@@ -184,28 +181,25 @@ public class FedoraClient implements Constants {
 	 * @param url             A URL that we want to do an HTTP GET upon
 	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
 	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param handleRedirect  boolean value indicating whether HTTP 302 redirects
+	 * @param followRedirects boolean value indicating whether HTTP redirects
 	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later.  If handleRedirect
-	 *                        is true, then a 302 status will be handled here.
-	 *                        If false the 302 response will be passed back in the
-	 *                        HttpInputStream that is returned.
+	 *                        so that they can be handled later.
 	 * @return HttpInputStream  the HTTP response
 	 * @throws IOException
 	 */
-	public HttpInputStream get(URL url, boolean failIfNotOK, boolean handleRedirect) throws IOException {
+	public HttpInputStream get(URL url, boolean failIfNotOK, boolean followRedirects) throws IOException {
 
 		String urlString = url.toString();
 		logger.info("FedoraClient is getting " + urlString);		
 		HttpClient client = getHttpClient();
 		GetMethod getMethod = new GetMethod(urlString);
 		getMethod.setDoAuthentication(true);
-		getMethod.setFollowRedirects(FOLLOW_REDIRECTS);
+		getMethod.setFollowRedirects(followRedirects);
 		HttpInputStream in = new HttpInputStream(client, getMethod, urlString);
 		if (failIfNotOK) {
 			if (in.getStatusCode() != 200) {
-				if (handleRedirect && in.getStatusCode() == 302){
-					// Handle the 302 redirect status here !
+				if (followRedirects && in.getStatusCode() == 302){
+					// Handle the 302 SSL redirect here !
 					logger.debug("FedoraClient is handling redirect for HTTP STATUS=" + in.getStatusCode());
 					System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + in.getStatusCode());
 					Header hLoc = in.getResponseHeader("location");
@@ -241,18 +235,15 @@ public class FedoraClient implements Constants {
 	 *                        do an HTTP GET upon
 	 * @param failIfNotOK     boolean value indicating if an exception should be thrown
 	 *                        if we do NOT receive an HTTP 200 response (OK)
-	 * @param handleRedirect  boolean value indicating whether HTTP 302 redirects
+	 * @param followRedirects boolean value indicating whether HTTP redirects
 	 *                        should be handled in this method, or be passed along
-	 *                        so that they can be handled later.  If handleRedirect
-	 *                        is true, then a 302 status will be handled here.
-	 *                        If false the 302 response will be passed back in the
-	 *                        HttpInputStream that is returned.
+	 *                        so that they can be handled later. 
 	 * @return String  the HTTP response as a string
 	 * @throws IOException
 	 */
-    public String getResponseAsString(String locator, boolean failIfNotOK, boolean handleRedirect) throws IOException {
+    public String getResponseAsString(String locator, boolean failIfNotOK, boolean followRedirects) throws IOException {
        
-        InputStream in = get(locator, failIfNotOK, handleRedirect);
+        InputStream in = get(locator, failIfNotOK, followRedirects);
         
         // Convert the response into a String.
         try {
@@ -355,7 +346,7 @@ public class FedoraClient implements Constants {
 	 * SSL redirect location.
 	 * 
 	 * Use of this stub will prevent the client from receiving a exception due
-	 * to underlying HTTP 302 status being returned from server.
+	 * to underlying HTTP 302 status (SSL redirect) being returned from server.
 	 * @return
 	 * @throws Exception
 	 */
@@ -406,7 +397,7 @@ public class FedoraClient implements Constants {
 	 * SSL redirect location.
 	 * 
 	 * Use of this stub will prevent the client from receiving a exception due
-	 * to underlying HTTP 302 status being returned from server.
+	 * to underlying HTTP 302 status (SSL redirect) being returned from server.
 	 * @return
 	 * @throws Exception
 	 */   
@@ -664,32 +655,23 @@ public class FedoraClient implements Constants {
 			String host = "localhost";
 			String port = "8080";
 			String baseURL = protocol + "://" + host + ":" + port + "/fedora";
-			System.out.println("baseURL = " + baseURL);
+			System.out.println(">>>baseURL = " + baseURL);
 			
 			FedoraClient fc =  
 				new FedoraClient(baseURL, "fedoraAdmin", "fedoraAdmin");
 				//new FedoraClient("https://localhost:8443/fedora", "fedoraAdmin", "fedoraAdmin");
-			System.out.println("First try APIM...");
-			fc.getRedirectLocationAPIM();
-			System.out.println("Second try APIM...");
-			fc.getRedirectLocationAPIM();
-			System.out.println("First try APIA...");
-			fc.getRedirectLocationAPIA();
-			System.out.println("Second try APIA...");
-			fc.getRedirectLocationAPIA();
+			URL newAPIM = fc.getRedirectLocationAPIM();
+			System.out.println(">>>Redirect location for APIM is: " + newAPIM.toExternalForm());
+			URL newAPIA = fc.getRedirectLocationAPIA();
+			System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
 			
-			// ******************************************************
-			// NEW: use the new client utility class FedoraClient
 			// FIXME:  Get around hardcoding the path in the baseURL
 			Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
 			Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
-			//Administrator.APIA=fc.getAPIA();
-			//Administrator.APIM=fc.getAPIM();
-			//*******************************************************
             	
-			System.out.println("trying describeRepository...");
+			System.out.println(">>>Adminstrator is trying describeRepository using SOAP stub...");
 			RepositoryInfo info=Administrator.APIA.describeRepository();
-			System.out.println("Repo baseURL from Administrator: " + info.getRepositoryBaseURL());
+			System.out.println(">>>Repository baseURL from Administrator: " + info.getRepositoryBaseURL());
 		} catch (Exception e) { 
 			System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
 		}
