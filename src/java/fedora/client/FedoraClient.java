@@ -38,8 +38,8 @@ import fedora.server.types.gen.RepositoryInfo;
  * Provides methods to get SOAP stubs for Fedora APIs.  Also serves as 
  * one-stop-shopping for issuing HTTP requests using Apache's HttpClient.  
  * 
- * Provides option for client to handle HTTP redirect
- * (specifically 302 status that occurs with SSL auto-redirects at server.)
+ * Provides option for client to handle HTTP redirects
+ * (notably 302 status that occurs with SSL auto-redirects at server.)
  *
  *
  * @author cwilper@cs.cornell.edu
@@ -196,12 +196,14 @@ public class FedoraClient implements Constants {
 		getMethod.setDoAuthentication(true);
 		getMethod.setFollowRedirects(followRedirects);
 		HttpInputStream in = new HttpInputStream(client, getMethod, urlString);
+		int status = in.getStatusCode();
 		if (failIfNotOK) {
-			if (in.getStatusCode() != 200) {
-				if (followRedirects && in.getStatusCode() == 302){
-					// Handle the 302 SSL redirect here !
-					logger.debug("FedoraClient is handling redirect for HTTP STATUS=" + in.getStatusCode());
-					System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + in.getStatusCode());
+			if (status != 200) {
+				//if (followRedirects && in.getStatusCode() == 302){
+				if (followRedirects && (300 <= status && status <= 399)) {
+					// Handle the redirect here !
+					logger.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
+					System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + status);
 					Header hLoc = in.getResponseHeader("location");
 					if (hLoc != null) {
 						logger.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
@@ -210,7 +212,7 @@ public class FedoraClient implements Constants {
 						return get(hLoc.getValue(), true, false);	
 					} else {
 						try { 
-							throw new IOException("Request failed [" + in.getStatusCode() + " " + in.getStatusText() + "]");
+							throw new IOException("Request failed [" + status + " " + in.getStatusText() + "]");
 						} finally {
 							try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
 						}
@@ -370,7 +372,7 @@ public class FedoraClient implements Constants {
 		} else {
 			// Check whether there is SSL redirecting at the server for APIM 
 			// (HTTP status 302) and get appropriate SOAP stub.
-			URL redirectURL = getRedirectLocationAPIA();
+			URL redirectURL = getSSLRedirectLocationAPIA();
 			if (redirectURL == null){
 				System.out.println("Using APIA stub with original URL...");
 				return APIAStubFactory.getStubAltPath(protocol,
@@ -423,7 +425,7 @@ public class FedoraClient implements Constants {
 		} else {
 			// Check whether there is SSL redirecting at the server for APIM
 			// (HTTP status 302) and get appropriate SOAP stub.
-			URL redirectURL = getRedirectLocationAPIM();
+			URL redirectURL = getSSLRedirectLocationAPIM();
 			if (redirectURL == null){
 				System.out.println("Using APIM stub with original URL...");
 				return APIMStubFactory.getStubAltPath(protocol,
@@ -452,9 +454,10 @@ public class FedoraClient implements Constants {
 	 * URL from the HTTP header for later use.
 	 * 
 	 * @return  URL  the URL that the server returns as the SSL redirect location
+	 *               or null if there is no redirect location
 	 * @throws IOException
 	 */    
-	private URL getRedirectLocationAPIM() throws IOException {
+	private URL getSSLRedirectLocationAPIM() throws IOException {
 
 		URL redirectURL = null;
 		HttpInputStream in = null;
@@ -485,9 +488,10 @@ public class FedoraClient implements Constants {
 	 * URL from the HTTP header for later use.
 	 * 
 	 * @return  URL  the URL that the server returns as the SSL redirect location
+	 *               or null if there is no redirect location
 	 * @throws IOException
 	 */    
-	private URL getRedirectLocationAPIA() throws IOException {
+	private URL getSSLRedirectLocationAPIA() throws IOException {
 
 		URL redirectURL = null;
 		HttpInputStream in = null;
@@ -660,12 +664,15 @@ public class FedoraClient implements Constants {
 			FedoraClient fc =  
 				new FedoraClient(baseURL, "fedoraAdmin", "fedoraAdmin");
 				//new FedoraClient("https://localhost:8443/fedora", "fedoraAdmin", "fedoraAdmin");
-			URL newAPIM = fc.getRedirectLocationAPIM();
-			System.out.println(">>>Redirect location for APIM is: " + newAPIM.toExternalForm());
-			URL newAPIA = fc.getRedirectLocationAPIA();
-			System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
-			
-			// FIXME:  Get around hardcoding the path in the baseURL
+			URL newAPIM = fc.getSSLRedirectLocationAPIM();
+			if (newAPIM != null) {
+				System.out.println(">>>Redirect location for APIM is: " + newAPIM.toExternalForm());
+			}
+			URL newAPIA = fc.getSSLRedirectLocationAPIA();
+			if (newAPIA != null) {
+				System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
+			}
+
 			Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
 			Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
             	
