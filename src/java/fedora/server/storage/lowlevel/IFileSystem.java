@@ -16,6 +16,6 @@ import fedora.server.errors.LowlevelStorageException;
 interface IFileSystem {
 	public void write(File file, InputStream content) throws LowlevelStorageException;
 	public void rewrite(File file, InputStream content) throws LowlevelStorageException;
-	public FileInputStream read(File file) throws LowlevelStorageException;
+	public InputStream read(File file) throws LowlevelStorageException;
 	public void delete(File file) throws LowlevelStorageException;
 }

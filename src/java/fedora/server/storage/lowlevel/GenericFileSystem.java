@@ -156,7 +156,7 @@ if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} /
 if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} // so to watch file creation/renaming/deletion
 }
 
-	public final FileInputStream read(File file) throws LowlevelStorageException {
+	public final InputStream read(File file) throws LowlevelStorageException {
 		//buffered reader?
 		FileInputStream fileInputStream = null; {
 			if (! file.exists()) {
