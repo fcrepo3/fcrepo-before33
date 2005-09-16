@@ -1,0 +1,9 @@
+<tomcat-users>
+	<user name="#1" password="#2" roles="fedoraRole=administrator"/>
+	<user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1"/>
+	<user name="surrogate64" password="surrogate64" roles="webfrontend"/>
+	<user name="guest" password="" roles=""/>
+	<user name="sdp" password="sdp" roles="fedoraRole=professor"/>
+	<user name="andy" password="andy" roles="fedoraRole=student"/>
+	<user name="kmitnick" password="notorious" roles="fedoraRole=goofball"/>
+</tomcat-users>
