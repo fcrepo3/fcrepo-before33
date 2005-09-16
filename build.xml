@@ -5,26 +5,26 @@
 	<!-- set global properties for this build -->
 	<property environment="env"/>
 	<!-- OS-specific environment variables -->
-	<property name="build.debug" value="on"/>
-	<property name="build.optimize" value="off"/>
+	<property name="build.debug"       value="on"/>
+	<property name="build.optimize"    value="off"/>
 	<property name="javac.deprecation" value="off"/>
-	<property name="javac.source" value="1.4"/>
-	<property name="src.dir" location="src"/>
-	<property name="java.src.dir" location="${src.dir}/java"/>
-	<property name="test.src.dir" location="${src.dir}/test"/>
-	<property name="junit.src.dir" location="${test.src.dir}/junit"/>
-	<property name="doc.dir" location="${src.dir}/doc"/>
-	<property name="dev.doc.dir" location="${doc.dir}/devdocs"/>
-	<property name="user.doc.dir" location="${doc.dir}/userdocs"/>
-	<property name="build.dir" location="build"/>
-	<property name="license.dir" location="license"/>
-	<property name="test.build.dir" location="${build.dir}"/>
-	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
-	<property name="dist.dir" location="dist"/>
-	<property name="server.dist.dir" location="${dist.dir}/server"/>
-	<property name="lib.dir" location="lib"/>
-	<property name="release.dir" location="${dist.dir}/release"/>
-	<property name="properties.dir" location="${src.dir}/properties"/>
+	<property name="javac.source"      value="1.4"/>
+	<property name="src.dir"           location="src"/>
+	<property name="java.src.dir"      location="${src.dir}/java"/>
+	<property name="test.src.dir"      location="${src.dir}/test"/>
+	<property name="junit.src.dir"     location="${test.src.dir}/junit"/>
+	<property name="doc.dir"           location="${src.dir}/doc"/>
+	<property name="dev.doc.dir"       location="${doc.dir}/devdocs"/>
+	<property name="user.doc.dir"      location="${doc.dir}/userdocs"/>
+	<property name="build.dir"         location="build"/>
+	<property name="license.dir"       location="license"/>
+	<property name="test.build.dir"    location="${build.dir}"/>
+	<property name="junit.build.dir"   location="${test.build.dir}/junit"/>
+	<property name="dist.dir"          location="dist"/>
+	<property name="server.dist.dir"   location="${dist.dir}/server"/>
+	<property name="lib.dir"           location="lib"/>
+	<property name="release.dir"       location="${dist.dir}/release"/>
+	<property name="properties.dir"    location="${src.dir}/properties"/>
 	<!-- load external properties files -->
 	<loadproperties srcFile="${properties.dir}/lib.properties"/>
 	<loadproperties srcFile="${properties.dir}/mckoi.properties"/>
@@ -60,7 +60,6 @@
 			<pathelement location="${lib.jai_core}"/>
 			<pathelement location="${lib.md5}"/>
 			<pathelement location="${lib.jena}"/>
-			<pathelement location="${lib.kowari-driver}"/>
 			<pathelement location="${lib.trippi}"/>
 			<pathelement location="${lib.rio}"/>
 			<pathelement location="${lib.xmlpull}"/>
@@ -71,6 +70,47 @@
 			<pathelement location="${lib.log4j}"/>
 			<pathelement location="${lib.oro}"/>
 			<pathelement location="${lib.trove}"/>
+      <pathelement location="${lib.j2ee-connector}"/>
+      <pathelement location="${lib.dateutils}"/>
+      <pathelement location="${lib.jotm-carol}"/>
+      <pathelement location="${lib.jotm-stubs}"/>
+      <pathelement location="${lib.jotm-patched}"/>
+      <pathelement location="${lib.jta}"/>
+      <pathelement location="${lib.kowari-mbox}"/>
+      <pathelement location="${lib.kowari-mp3}"/>
+      <pathelement location="${lib.kowari-n3}"/>
+      <pathelement location="${lib.kowari-rdfxml}"/>
+			<pathelement location="${lib.kowari-driver}"/>
+      <pathelement location="${lib.kowari-itql}"/>
+      <pathelement location="${lib.kowari-jena}"/>
+      <pathelement location="${lib.kowari-jrdf}"/>
+      <pathelement location="${lib.kowari-query}"/>
+      <pathelement location="${lib.kowari-rbase}"/>
+      <pathelement location="${lib.kowari-rfile}"/>
+      <pathelement location="${lib.kowari-rfilesys}"/>
+      <pathelement location="${lib.kowari-rgis}"/>
+      <pathelement location="${lib.kowari-rhttp}"/>
+      <pathelement location="${lib.kowari-rjar}"/>
+      <pathelement location="${lib.kowari-rlucene}"/>
+      <pathelement location="${lib.kowari-rmem}"/>
+      <pathelement location="${lib.kowari-rnodetype}"/>
+      <pathelement location="${lib.kowari-rprefix}"/>
+      <pathelement location="${lib.kowari-rspi}"/>
+      <pathelement location="${lib.kowari-rstore}"/>
+      <pathelement location="${lib.kowari-rurl}"/>
+      <pathelement location="${lib.kowari-rview}"/>
+      <pathelement location="${lib.kowari-rxsd}"/>
+      <pathelement location="${lib.kowari-server}"/>
+      <pathelement location="${lib.kowari-serverlocal}"/>
+      <pathelement location="${lib.kowari-spmem}"/>
+      <pathelement location="${lib.kowari-spxa}"/>
+      <pathelement location="${lib.kowari-npmem}"/>
+      <pathelement location="${lib.kowari-npxa}"/>
+      <pathelement location="${lib.kowari-tuples}"/>
+      <pathelement location="${lib.kowari-tupleshybrid}"/>
+      <pathelement location="${lib.kowari-utilxa}"/>
+      <pathelement location="${lib.kowari-utilbase}"/>
+
 		</path>
 		<map from="${lib.dir}${file.separator}" to=""/>
 	</pathconvert>
@@ -130,11 +170,8 @@
 		<pathelement location="${lib.jhbasic}"/>
 		<pathelement location="${lib.jmx}"/>
 		<pathelement location="${lib.junit}"/>
-		<pathelement location="${lib.kowari-driver}"/>
 		<pathelement location="${lib.trippi}"/>
-		<pathelement location="${lib.rio}"/>
-		<pathelement location="${lib.xmlpull}"/>
-		<pathelement location="${lib.xpp3}"/>
+		<pathelement location="${lib.jrdf}"/>
 		<pathelement location="${lib.md5}"/>
 		<pathelement location="${lib.saxon}"/>
 		<pathelement location="${lib.servlet}"/>
@@ -828,7 +865,7 @@
 				-->
 			</fileset>
 		</copy>
-		<copy file="${lib.dir}\jrdf-0.3.3.jar" todir="${tomcat.common.dir}/lib"/>
+		<copy file="${lib.jrdf}" todir="${tomcat.common.dir}/lib"/>
 		<copy todir="${tomcat.server.dir}/classes">
 			<fileset dir="temp/server/classes">
 				<include name="org/**"/>
@@ -875,7 +912,7 @@
 				<include name="org/apache/commons/httpclient/contrib/ssl/**"/>
 			</fileset>
 		</copy>
-		<java classname="fedora.common.policy.Release2_1Namespace" classpath="${tomcat.server.dir}/classes;${lib.dir}/jrdf-0.3.3.jar" output="dist/server/config/xacml-policies/vocabulary.txt"/>
+		<java classname="fedora.common.policy.Release2_1Namespace" classpath="${tomcat.server.dir}/classes;${lib.jrdf}" output="dist/server/config/xacml-policies/vocabulary.txt"/>
 		<copy file="src/java/org/apache/catalina/realm/readme.txt" todir="${tomcat.server.dir}/classes/org/apache/catalina/realm"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
