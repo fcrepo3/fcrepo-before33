@@ -463,6 +463,9 @@
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
+		</user-data-constraint>		
 	</security-constraint>
 	<!-- Security Constrainst on SOAP-based API-A interface to the Fedora Repository Server -->
 	<security-constraint>
