@@ -78,6 +78,7 @@
 			<pathelement location="${lib.jotm-stubs}"/>
 			<pathelement location="${lib.jotm-patched}"/>
 			<pathelement location="${lib.jta}"/>
+			<pathelement location="${lib.emory-util}"/>
 			<pathelement location="${lib.kowari-mbox}"/>
 			<pathelement location="${lib.kowari-mp3}"/>
 			<pathelement location="${lib.kowari-n3}"/>
