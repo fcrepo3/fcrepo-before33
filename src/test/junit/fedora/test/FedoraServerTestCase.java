@@ -37,8 +37,11 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
                     + PROP_TEST_HOME);
         }
 
-        m_configDir = new File(new File(testHome), 
-                               this.getClass().getName().replaceAll("\\.", "/"));
+        //m_configDir = new File(new File(testHome), 
+        //                       this.getClass().getName().replaceAll("\\.", "/"));
+
+		m_configDir = new File(new File(testHome), 
+							   (this.getClass().getName().replaceAll("\\.", "/")) + "CFG");
     }
 
     public static void main(String[] args) {

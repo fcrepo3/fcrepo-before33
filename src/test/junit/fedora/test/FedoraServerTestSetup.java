@@ -49,8 +49,9 @@ public class FedoraServerTestSetup
                     + PROP_TEST_HOME);
         }
 
+		System.out.println("Using suite configuration package: " + suiteClassName + "CFG");
         m_configDir = new File(new File(testHome), 
-                               suiteClassName.replaceAll("\\.", "/"));
+                               (suiteClassName.replaceAll("\\.", "/")) + "CFG");
     }
 
     public void setUp() throws Exception {
@@ -101,6 +102,7 @@ public class FedoraServerTestSetup
     
     private void startServer() throws Exception {
         System.out.println("+ doing setUp(): starting server...");
+		System.out.println("Suite configuration package is: " + m_configDir);
 
         if (m_configDir != null) swapConfigurationFiles();
 
@@ -156,6 +158,7 @@ public class FedoraServerTestSetup
     }
 
     private void backupPolicies() throws Exception {
+		System.out.println("Backing up poliices...");
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue());
@@ -214,7 +217,6 @@ public class FedoraServerTestSetup
         // back up the contents of the policy directories
         //
         backupPolicies();
-
         //
         // fcfg.properties
         //
@@ -252,7 +254,9 @@ public class FedoraServerTestSetup
     }
 
     private void swapIn(String name, File activeConfig) throws Exception {
-        File newConfig = new File(m_configDir, name);
+        File newConfig = new File(m_configDir, name);       
+        System.out.println("SWAP IN FILE: " + newConfig.getAbsolutePath());
+		System.out.println("ACTIVE FILE: " + activeConfig.getAbsolutePath());
         if (newConfig.exists()) {
             System.out.println("Override found for " + name + ", swapping in...");
             backup(activeConfig);
