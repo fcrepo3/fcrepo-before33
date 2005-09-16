@@ -40,11 +40,11 @@
 	<property name="fedora.version" value="${version.major}.${version.minor}"/>
 	<property name="fedora.releaseDate" value="${version.releaseDate}"/>
 	<!-- 
-        The following pattern of <pathconvert> and <fileset> declarations 
-        take a set of jar files, and:
-            1. create a path, suitable for classpath declarations
-            2. create a comma-separated list of just the file names
-            3. create a fileset, suitable for copying to release locations
+			  The following pattern of <pathconvert> and <fileset> declarations 
+			  take a set of jar files, and:
+			      1. create a path, suitable for classpath declarations
+			      2. create a comma-separated list of just the file names
+			      3. create a fileset, suitable for copying to release locations
     -->
 	<pathconvert pathsep="," property="server-libs.list">
 		<path id="server-libs.path">
@@ -62,6 +62,8 @@
 			<pathelement location="${lib.jena}"/>
 			<pathelement location="${lib.trippi}"/>
 			<pathelement location="${lib.rio}"/>
+			<pathelement location="${lib.openrdf-util}"/>
+			<pathelement location="${lib.openrdf-model}"/>
 			<pathelement location="${lib.xmlpull}"/>
 			<pathelement location="${lib.xpp3}"/>
 			<pathelement location="${lib.activation}"/>
@@ -70,46 +72,47 @@
 			<pathelement location="${lib.log4j}"/>
 			<pathelement location="${lib.oro}"/>
 			<pathelement location="${lib.trove}"/>
-      <pathelement location="${lib.j2ee-connector}"/>
-      <pathelement location="${lib.dateutils}"/>
-      <pathelement location="${lib.jotm-carol}"/>
-      <pathelement location="${lib.jotm-stubs}"/>
-      <pathelement location="${lib.jotm-patched}"/>
-      <pathelement location="${lib.jta}"/>
-      <pathelement location="${lib.kowari-mbox}"/>
-      <pathelement location="${lib.kowari-mp3}"/>
-      <pathelement location="${lib.kowari-n3}"/>
-      <pathelement location="${lib.kowari-rdfxml}"/>
+			<pathelement location="${lib.j2ee-connector}"/>
+			<pathelement location="${lib.dateutils}"/>
+			<pathelement location="${lib.jotm-carol}"/>
+			<pathelement location="${lib.jotm-stubs}"/>
+			<pathelement location="${lib.jotm-patched}"/>
+			<pathelement location="${lib.jta}"/>
+			<pathelement location="${lib.kowari-mbox}"/>
+			<pathelement location="${lib.kowari-mp3}"/>
+			<pathelement location="${lib.kowari-n3}"/>
+			<pathelement location="${lib.kowari-rdfxml}"/>
 			<pathelement location="${lib.kowari-driver}"/>
-      <pathelement location="${lib.kowari-itql}"/>
-      <pathelement location="${lib.kowari-jena}"/>
-      <pathelement location="${lib.kowari-jrdf}"/>
-      <pathelement location="${lib.kowari-query}"/>
-      <pathelement location="${lib.kowari-rbase}"/>
-      <pathelement location="${lib.kowari-rfile}"/>
-      <pathelement location="${lib.kowari-rfilesys}"/>
-      <pathelement location="${lib.kowari-rgis}"/>
-      <pathelement location="${lib.kowari-rhttp}"/>
-      <pathelement location="${lib.kowari-rjar}"/>
-      <pathelement location="${lib.kowari-rlucene}"/>
-      <pathelement location="${lib.kowari-rmem}"/>
-      <pathelement location="${lib.kowari-rnodetype}"/>
-      <pathelement location="${lib.kowari-rprefix}"/>
-      <pathelement location="${lib.kowari-rspi}"/>
-      <pathelement location="${lib.kowari-rstore}"/>
-      <pathelement location="${lib.kowari-rurl}"/>
-      <pathelement location="${lib.kowari-rview}"/>
-      <pathelement location="${lib.kowari-rxsd}"/>
-      <pathelement location="${lib.kowari-server}"/>
-      <pathelement location="${lib.kowari-serverlocal}"/>
-      <pathelement location="${lib.kowari-spmem}"/>
-      <pathelement location="${lib.kowari-spxa}"/>
-      <pathelement location="${lib.kowari-npmem}"/>
-      <pathelement location="${lib.kowari-npxa}"/>
-      <pathelement location="${lib.kowari-tuples}"/>
-      <pathelement location="${lib.kowari-tupleshybrid}"/>
-      <pathelement location="${lib.kowari-utilxa}"/>
-      <pathelement location="${lib.kowari-utilbase}"/>
+			<pathelement location="${lib.kowari-itql}"/>
+			<pathelement location="${lib.kowari-jena}"/>
+			<pathelement location="${lib.kowari-jrdf}"/>
+			<pathelement location="${lib.kowari-query}"/>
+			<pathelement location="${lib.kowari-rbase}"/>
+			<pathelement location="${lib.kowari-rfile}"/>
+			<pathelement location="${lib.kowari-rfilesys}"/>
+			<pathelement location="${lib.kowari-rgis}"/>
+			<pathelement location="${lib.kowari-rhttp}"/>
+			<pathelement location="${lib.kowari-rjar}"/>
+			<pathelement location="${lib.kowari-rlucene}"/>
+			<pathelement location="${lib.kowari-rmem}"/>
+			<pathelement location="${lib.kowari-rnodetype}"/>
+			<pathelement location="${lib.kowari-rprefix}"/>
+			<pathelement location="${lib.kowari-rspi}"/>
+			<pathelement location="${lib.kowari-rstore}"/>
+			<pathelement location="${lib.kowari-rurl}"/>
+			<pathelement location="${lib.kowari-rview}"/>
+			<pathelement location="${lib.kowari-rxsd}"/>
+			<pathelement location="${lib.kowari-rules}"/>
+			<pathelement location="${lib.kowari-server}"/>
+			<pathelement location="${lib.kowari-serverlocal}"/>
+			<pathelement location="${lib.kowari-spmem}"/>
+			<pathelement location="${lib.kowari-spxa}"/>
+			<pathelement location="${lib.kowari-npmem}"/>
+			<pathelement location="${lib.kowari-npxa}"/>
+			<pathelement location="${lib.kowari-tuples}"/>
+			<pathelement location="${lib.kowari-tupleshybrid}"/>
+			<pathelement location="${lib.kowari-utilxa}"/>
+			<pathelement location="${lib.kowari-utilbase}"/>
 
 		</path>
 		<map from="${lib.dir}${file.separator}" to=""/>
@@ -498,18 +501,18 @@
 	</target>
 	<!--
   <target name="docs"
-          description="Build dev docs and user docs">
+			    description="Build dev docs and user docs">
   </target>
 
   <target name="apidoc"
-          description="Build the javadocs">
+			    description="Build the javadocs">
     <mkdir dir="apidoc"/>
     <javadoc packagenames="fedora.swing.mdi.*,fedora.swing.jhelp.*,fedora.client.*,fedora.common.*"
-             sourcepath="${java.src.dir}"
-             destdir="apidoc"
-             author="true"
-             version="true"
-             use="true"/>
+			       sourcepath="${java.src.dir}"
+			       destdir="apidoc"
+			       author="true"
+			       version="true"
+			       use="true"/>
   </target>
 -->
 	<target name="definitions" depends="serverdocs" description="Generate the latest docs for each fedora-defined namespace.">
@@ -1112,8 +1115,8 @@
 		<pathelement path="${lib.mysql-connector}"/>
 		<pathelement path="${lib.mckoi-jdbc}"/>
 		<!--
-        <pathelement path="${lib.xml-apis}"/>
-        -->
+			  <pathelement path="${lib.xml-apis}"/>
+			  -->
 		<pathelement path="${test.build.dir}/fedora-server.jar"/>
 		<pathelement path="${test.build.dir}/fedora-client.jar"/>
 		<pathelement path="temp/fedora-utilities.jar"/>
