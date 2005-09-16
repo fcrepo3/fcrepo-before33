@@ -10,10 +10,7 @@ import junit.framework.TestSuite;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
-import java.util.Iterator;
-import java.util.Set;
-
-import fedora.client.APIAStubFactory;
+import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.RepositoryInfo;
@@ -26,11 +23,13 @@ import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
 
 /**
- * @author Edwin Shin
  * @author Sandy Payette
  *
  */
 public class TestAPIA extends FedoraServerTestCase {
+	
+	public static final String BASE_URL = "http://localhost:8080/fedora";
+	private static FedoraClient client;
     private FedoraAPIA apia;
     
     public static Test suite() {
@@ -53,8 +52,7 @@ public class TestAPIA extends FedoraServerTestCase {
     }
     
     public void setUp() throws Exception {
-        apia = APIAStubFactory.getStub(getProtocol(), getHost(), 
-                Integer.parseInt(getPort()), getUsername(), getPassword());
+		apia = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIA_HandleSSLRedirect();
     }
     
     public void testDescribeRepository() throws Exception {
@@ -153,7 +151,7 @@ public class TestAPIA extends FedoraServerTestCase {
 	
 	public void testListMethods() throws Exception {
 		ObjectMethodsDef[] methodDefs = apia.listMethods("demo:11", null);
-		assertEquals(methodDefs.length,7);
+		assertEquals(methodDefs.length,6);
 		verifyObjectMethods(methodDefs, "testListMethods: ");
 	}
 

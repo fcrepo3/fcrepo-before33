@@ -32,9 +32,11 @@ import org.apache.axis.types.NonNegativeInteger;
 public class TestAPIM extends FedoraServerTestCase {
     private FedoraAPIM apim;
     
+	public static final String BASE_URL = "http://localhost:8080/fedora";
+	private static FedoraClient client;
+	
     private static DocumentBuilderFactory factory;
-    private static DocumentBuilder builder;
-    private static FedoraClient client;    
+    private static DocumentBuilder builder;    
     
     public static byte[] dsXML;
     public static byte[] demo998FOXMLObjectXML;
@@ -436,8 +438,10 @@ public class TestAPIM extends FedoraServerTestCase {
     }
     
     public void setUp() throws Exception {
-        apim = APIMStubFactory.getStub(getProtocol(), getHost(), 
-                Integer.parseInt(getPort()), getUsername(), getPassword());
+        //apim = APIMStubFactory.getStub(getProtocol(), getHost(), 
+        //        Integer.parseInt(getPort()), getUsername(), getPassword());
+                
+		apim = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIM_HandleSSLRedirect();
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
         SimpleXpathEngine.registerNamespace("foxml", "info:fedora/fedora-system:def/foxml#");
