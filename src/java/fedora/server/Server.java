@@ -729,6 +729,13 @@ public abstract class Server
             throw mie;
         } catch (Throwable th) {
             th.printStackTrace();
+            logSevere(th.getMessage());
+            try {
+                shutdownServer();
+            } catch (ServerShutdownException sse) {
+                logSevere(sse.getMessage());
+            }
+            throw new RuntimeException("Fatal error starting server", th);
         }
     }
 
