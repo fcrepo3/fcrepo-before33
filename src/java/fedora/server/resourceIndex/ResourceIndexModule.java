@@ -138,13 +138,12 @@ public class ResourceIndexModule extends Module
                 throw new ModuleInitializationException("Error initializing "
                        + "connection pool.", getRole(), e);
             } 
-        } catch (TrippiException e) {
-            e.printStackTrace();
-            throw new ModuleInitializationException("Error initializing "
-                    + "triplestore connector.", getRole(), e);
         } catch (ClassNotFoundException e) {
             throw new ModuleInitializationException("Connector class \"" 
                     + connectorClassName + "\" not in classpath.", getRole(), e);
+        } catch (Exception e) {
+            throw new ModuleInitializationException("Error initializing ResourceIndexModule", 
+                                                    getRole(), e);
         }
     }
 

@@ -710,6 +710,7 @@ public abstract class Server
             // 1) so they can be logged in the startup log, and
             // 2) so an attempt can be made to free resources tied up thus far
             //    via shutdown()
+            sie.printStackTrace();
             logSevere(sie.getMessage());
             try {
                 shutdownServer();
@@ -718,6 +719,7 @@ public abstract class Server
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
+            mie.printStackTrace();
             logSevere(mie.getRole() + ": " + mie.getMessage());
             try {
                 shutdownServer();
@@ -725,6 +727,8 @@ public abstract class Server
                 logSevere(sse.getMessage());
             }
             throw mie;
+        } catch (Throwable th) {
+            th.printStackTrace();
         }
     }
 
