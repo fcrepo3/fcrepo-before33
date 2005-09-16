@@ -441,7 +441,7 @@ public class TestAPIM extends FedoraServerTestCase {
         //apim = APIMStubFactory.getStub(getProtocol(), getHost(), 
         //        Integer.parseInt(getPort()), getUsername(), getPassword());
                 
-		apim = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIM_HandleSSLRedirect();
+		apim = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIM();
         SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
         SimpleXpathEngine.registerNamespace("dc", "http://purl.org/dc/elements/1.1/");
         SimpleXpathEngine.registerNamespace("foxml", "info:fedora/fedora-system:def/foxml#");

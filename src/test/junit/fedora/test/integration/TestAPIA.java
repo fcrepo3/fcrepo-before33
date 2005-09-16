@@ -52,7 +52,7 @@ public class TestAPIA extends FedoraServerTestCase {
     }
     
     public void setUp() throws Exception {
-		apia = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIA_HandleSSLRedirect();
+		apia = new FedoraClient(BASE_URL, getUsername(), getPassword()).getAPIA();
     }
     
     public void testDescribeRepository() throws Exception {
