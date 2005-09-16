@@ -46,34 +46,7 @@ public class RIQueue implements Constants {
     }
     
     public TripleIterator getTripleIterator() throws ResourceIndexException {
-    	Iterator it = listTriples().iterator();
-    	StringBuffer sb = new StringBuffer();
-		sb.append("\n");
-		while (it.hasNext()) {
-			org.jrdf.graph.Triple t = (org.jrdf.graph.Triple)it.next();
-			sb.append("<" + t.getSubject().toString() + "> " + 
-					  "<" + t.getPredicate().toString() + "> ");
-			ObjectNode on = t.getObject();
-			if (on instanceof Literal) {
-				Literal lit = (Literal) on;
-				sb.append("\"" + lit.getEscapedForm() + "\"");
-				if (lit.getDatatypeURI() != null) {
-					sb.append("^^<" + lit.getDatatypeURI() + ">");
-				} // omitting check for other kinds of literals
-			} else {
-				// assume it's a URI
-				sb.append("<" + on.toString() + ">");
-			}
-			sb.append(" .\n");
-		}
-		try {
-			return TripleIterator.fromStream(new ByteArrayInputStream(sb.toString().getBytes("UTF-8")), RDFFormat.N_TRIPLES) ;
-		} catch (UnsupportedEncodingException e) {
-			// should never get thrown for UTF-8
-			throw new ResourceIndexException(e.getMessage(), e);
-		} catch (TrippiException e) {
-			throw new ResourceIndexException(e.getMessage(), e);
-		}
+        return new IteratorBasedTripleIterator(listTriples().iterator());
     }
     
     /**
@@ -319,5 +292,25 @@ public class RIQueue implements Constants {
         } else {
             throw new ResourceIndexException("Unknown state: " + state);
         }
+    }
+
+    public class IteratorBasedTripleIterator extends TripleIterator {
+
+        private Iterator m_iter;
+
+        public IteratorBasedTripleIterator(Iterator iter) {
+            m_iter = iter;
+        }
+
+        public boolean hasNext() {
+            return m_iter.hasNext();
+        }
+
+        public Triple next() {
+            return (Triple) m_iter.next();
+        }
+
+        public void close() { }
+
     }
 }
