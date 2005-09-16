@@ -93,8 +93,8 @@ public class MassIngest {
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, username, password);
-				APIA=fc.getAPIA_HandleSSLRedirect();
-				APIM=fc.getAPIM_HandleSSLRedirect();
+				APIA=fc.getAPIA();
+				APIM=fc.getAPIM();
 				//*******************************************
 				AutoIngestor autoIngestor = new AutoIngestor(APIA, APIM);
                 MassIngest m=new MassIngest(autoIngestor, f, dictFile, format, Integer.parseInt(args[7]));

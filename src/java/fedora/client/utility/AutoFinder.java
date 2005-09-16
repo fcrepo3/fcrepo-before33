@@ -144,7 +144,7 @@ public class AutoFinder {
 			// FIXME:  Get around hardcoding the path in the baseURL
 			String baseURL = args[4] + "://" + args[0] + ":" + Integer.parseInt(args[1]) + "/fedora";
 			FedoraClient fc = new FedoraClient(baseURL, null, null);
-			AutoFinder finder=new AutoFinder(fc.getAPIA_HandleSSLRedirect());
+			AutoFinder finder=new AutoFinder(fc.getAPIA());
 			//*******************************************
 			
             FieldSearchQuery query=new FieldSearchQuery();

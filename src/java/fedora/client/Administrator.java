@@ -131,8 +131,8 @@ public class Administrator extends JFrame {
             // FIXME:  Get around hardcoding the path in the baseURL
             String baseURL = protocol + "://" + host + ":" + port + "/fedora";
             FedoraClient fc = new FedoraClient(baseURL, user, pass);
-            APIA=fc.getAPIA_HandleSSLRedirect();
-			APIM=fc.getAPIM_HandleSSLRedirect();
+            APIA=fc.getAPIA();
+			APIM=fc.getAPIM();
             //*******************************************
             setLoginInfo(protocol, host, port, user, pass);
             } catch (Exception e) { APIA=null; APIM=null; }

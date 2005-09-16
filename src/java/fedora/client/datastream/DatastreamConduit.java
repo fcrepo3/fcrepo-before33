@@ -214,7 +214,7 @@ public class DatastreamConduit {
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, username, password);
-				FedoraAPIM sourceRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				FedoraAPIM sourceRepoAPIM=fc.getAPIM();
 				//*******************************************
 				DatastreamConduit c=new DatastreamConduit(sourceRepoAPIM);
 				

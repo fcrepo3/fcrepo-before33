@@ -90,8 +90,8 @@ class BatchIngest {
 		// FIXME:  Get around hardcoding the path in the baseURL
 		String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 		FedoraClient fc = new FedoraClient(baseURL, username, password);
-		APIA=fc.getAPIA_HandleSSLRedirect();
-		APIM=fc.getAPIM_HandleSSLRedirect();
+		APIA=fc.getAPIA();
+		APIM=fc.getAPIM();
 		//*******************************************	
 
 	}

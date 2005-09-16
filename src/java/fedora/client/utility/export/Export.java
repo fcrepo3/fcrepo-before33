@@ -200,8 +200,8 @@ public class Export {
 			// FIXME:  Get around hardcoding the path in the baseURL
 			String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
 			FedoraClient fc = new FedoraClient(baseURL, args[1], args[2]);
-			FedoraAPIA sourceRepoAPIA=fc.getAPIA_HandleSSLRedirect();
-			FedoraAPIM sourceRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+			FedoraAPIA sourceRepoAPIA=fc.getAPIA();
+			FedoraAPIM sourceRepoAPIM=fc.getAPIM();
 			//*******************************************
 							
 			String exportFormat = args[4];

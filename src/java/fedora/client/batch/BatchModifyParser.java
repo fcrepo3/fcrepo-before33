@@ -1440,8 +1440,8 @@ public class BatchModifyParser extends DefaultHandler
 					// FIXME:  Get around hardcoding the path in the baseURL
 					String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 					FedoraClient fc = new FedoraClient(baseURL, user, pass);
-					APIA=fc.getAPIA_HandleSSLRedirect();
-					APIM=fc.getAPIM_HandleSSLRedirect();
+					APIA=fc.getAPIA();
+					APIM=fc.getAPIM();
 					//*******************************************
 		            
 		            InputStream file = new FileInputStream("c:\\fedora\\mellon\\dist\\client\\demo\\batch-demo\\modify-batch-directives-valid.xml");

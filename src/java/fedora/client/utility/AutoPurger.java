@@ -93,7 +93,7 @@ public class AutoPurger {
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + hostName + ":" + portNum + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, args[1], args[2]);
-				AutoPurger a=new AutoPurger(fc.getAPIM_HandleSSLRedirect());
+				AutoPurger a=new AutoPurger(fc.getAPIM());
 				//*******************************************
                 a.purge(pid, logMessage, false); // DEFAULT_FORCE_PURGE
             }

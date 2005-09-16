@@ -412,8 +412,8 @@ public class Ingest {
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, args[4], args[5]);
-				FedoraAPIA targetRepoAPIA=fc.getAPIA_HandleSSLRedirect();
-				FedoraAPIM targetRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				FedoraAPIA targetRepoAPIA=fc.getAPIA();
+				FedoraAPIM targetRepoAPIM=fc.getAPIM();
 				//*******************************************
 				
                 String pid = Ingest.oneFromFile(f, ingestFormat, targetRepoAPIA, targetRepoAPIM, logMessage);
@@ -444,8 +444,8 @@ public class Ingest {
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + hp[0] + ":" + Integer.parseInt(hp[1]) + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, args[5], args[6]);
-				FedoraAPIA targetRepoAPIA=fc.getAPIA_HandleSSLRedirect();
-				FedoraAPIM targetRepoAPIM=fc.getAPIM_HandleSSLRedirect();
+				FedoraAPIA targetRepoAPIA=fc.getAPIA();
+				FedoraAPIM targetRepoAPIM=fc.getAPIM();
 				//*******************************************
 				
 				logRootName="ingest-from-dir";
@@ -493,8 +493,8 @@ public class Ingest {
 				String sourceBaseURL = 
 					source_protocol + "://" + source_host + ":" + Integer.parseInt(source_port) + "/fedora";
 				FedoraClient sfc = new FedoraClient(sourceBaseURL, source_user, source_password);
-				FedoraAPIA sourceRepoAPIA=sfc.getAPIA_HandleSSLRedirect();
-				FedoraAPIM sourceRepoAPIM=sfc.getAPIM_HandleSSLRedirect();
+				FedoraAPIA sourceRepoAPIA=sfc.getAPIA();
+				FedoraAPIM sourceRepoAPIM=sfc.getAPIM();
 				//*******************************************
 
 				//Target repository
@@ -511,8 +511,8 @@ public class Ingest {
 				String targetBaseURL = 
 					target_protocol + "://" + target_host + ":" + Integer.parseInt(target_port) + "/fedora";
 				FedoraClient tfc = new FedoraClient(targetBaseURL, target_user, target_password);
-				FedoraAPIA targetRepoAPIA=tfc.getAPIA_HandleSSLRedirect();
-				FedoraAPIM targetRepoAPIM=tfc.getAPIM_HandleSSLRedirect();
+				FedoraAPIA targetRepoAPIA=tfc.getAPIA();
+				FedoraAPIM targetRepoAPIM=tfc.getAPIM();
 				//*******************************************
                 
                 // First, determine the default export format of the source repo.

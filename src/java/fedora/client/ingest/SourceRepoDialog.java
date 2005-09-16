@@ -100,8 +100,8 @@ public class SourceRepoDialog
 							String baseURL = m_protocol + "://" + m_host + ":" + m_port + "/fedora";
 							FedoraClient fc = 
 								new FedoraClient(baseURL, m_usernameField.getText(), new String(m_passwordField.getPassword()));
-							m_apia=fc.getAPIA_HandleSSLRedirect();
-							m_apim=fc.getAPIM_HandleSSLRedirect();
+							m_apia=fc.getAPIA();
+							m_apim=fc.getAPIM();
 							//*******************************************************
                             
                             // Get SOAP stubs for the source repository.

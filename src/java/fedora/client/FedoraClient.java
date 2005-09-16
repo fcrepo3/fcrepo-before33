@@ -281,66 +281,6 @@ public class FedoraClient implements Constants {
         }
         return url;
     }
-
-	/**
-	 * Get a SOAP stub for the Fedora Access Service (APIA).
-	 * 
-	 * @return FedoraAPIA  a SOAP stub for APIA.
-	 * @throws Exception
-	 */	
-    public FedoraAPIA getAPIA() throws Exception {
-        URL baseURL = new URL(m_baseURL);
-        String protocol = baseURL.getProtocol();
-        String host = baseURL.getHost();
-        int port = baseURL.getPort();
-        if (port == -1) port = baseURL.getDefaultPort();
-        APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
-        if (getServerVersion().equals("2.0")) {
-            return APIAStubFactory.getStubAltPath(protocol,
-											   	  host, 
-											   	  port,
-											   	  baseURL.getPath() + "access/soap",  
-											   	  m_user,
-											   	  m_pass);
-        } else {
-            return APIAStubFactory.getStubAltPath(protocol,
-											   	  host, 
-											   	  port,
-											   	  baseURL.getPath() + "services/access",  
-											   	  m_user,
-											   	  m_pass);
-        }
-    }
-
-	/**
-	 * Get a SOAP stub for the Fedora Management Service (APIM).
-	 * 
-	 * @return FedoraAPIA  a SOAP stub for APIM.
-	 * @throws Exception
-	 */
-    public FedoraAPIM getAPIM() throws Exception {
-        URL baseURL = new URL(m_baseURL);
-        String protocol = baseURL.getProtocol();
-        String host = baseURL.getHost();
-        int port = baseURL.getPort();
-        if (port == -1) port = baseURL.getDefaultPort();
-        APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;      
-        if (getServerVersion().equals("2.0")) {
-            return APIMStubFactory.getStubAltPath(protocol,
-											   	  host, 
-											   	  port,
-											   	  baseURL.getPath() + "management/soap",  
-											   	  m_user,
-											   	  m_pass);
-        } else {
-            return APIMStubFactory.getStubAltPath(protocol,
-											   	  host, 
-											   	  port,
-											   	  baseURL.getPath() + "services/management",  
-											   	  m_user,
-											   	  m_pass);
-        }
-    }
     
 	/**
 	 * Get SOAP stub for APIA with SSL redirect.  If the SOAP service endpoint 
@@ -352,7 +292,7 @@ public class FedoraClient implements Constants {
 	 * @return
 	 * @throws Exception
 	 */
-	public FedoraAPIA getAPIA_HandleSSLRedirect() throws Exception {
+	public FedoraAPIA getAPIA() throws Exception {
 		URL baseURL = new URL(m_baseURL);		
 		String protocol = baseURL.getProtocol();
 		String host = baseURL.getHost();
@@ -403,7 +343,7 @@ public class FedoraClient implements Constants {
 	 * @return
 	 * @throws Exception
 	 */   
-	public FedoraAPIM getAPIM_HandleSSLRedirect() throws Exception {
+	public FedoraAPIM getAPIM() throws Exception {
 
 		URL baseURL = new URL(m_baseURL);
 		
@@ -673,8 +613,8 @@ public class FedoraClient implements Constants {
 				System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
 			}
 
-			Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
-			Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
+			Administrator.APIA=fc.getAPIA();
+			Administrator.APIM=fc.getAPIM();
             	
 			System.out.println(">>>Adminstrator is trying describeRepository using SOAP stub...");
 			RepositoryInfo info=Administrator.APIA.describeRepository();

@@ -287,8 +287,8 @@ public class LoginDialog
 				// FIXME:  Get around hardcoding the path in the baseURL
 				String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, user, pass);
-				Administrator.APIA=fc.getAPIA_HandleSSLRedirect();
-				Administrator.APIM=fc.getAPIM_HandleSSLRedirect();
+				Administrator.APIA=fc.getAPIA();
+				Administrator.APIM=fc.getAPIM();
 				//*******************************************************
             	
             	System.out.println("trying describeRepository...");
