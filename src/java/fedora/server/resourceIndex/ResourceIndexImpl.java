@@ -263,7 +263,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
 	    // Query for disseminations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
-            String query = "SELECT riMethodPermutation.methodID, riMethodPermutation.permutation, riMethodMimeType.mimeType, riMethodImplBinding.dsBindKey " +
+            String query = "SELECT riMethodPermutation.methodId, riMethodPermutation.permutation, riMethodMimeType.mimeType, riMethodImplBinding.dsBindKey " +
                            "FROM riMethodPermutation, riMethodMimeType, riMethodImpl, riMethodImplBinding " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
