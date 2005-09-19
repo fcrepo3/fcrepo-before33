@@ -1,5 +1,15 @@
 package fedora.server.access.dissemination;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.sql.Timestamp;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -8,35 +18,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.realm.GenericPrincipal;
 
-import java.io.File;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Timestamp;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 import fedora.common.Constants;
 import fedora.common.HttpClient;
+import fedora.server.Context;
+import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.Context;
-import fedora.server.Debug;
-import fedora.server.ReadOnlyContext;
 import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
-import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamMediation;
+import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.Logger;
 import fedora.server.utilities.ServerUtility;

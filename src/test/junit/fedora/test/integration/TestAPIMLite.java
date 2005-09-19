@@ -55,7 +55,7 @@ public class TestAPIMLite extends FedoraServerTestCase {
      * @throws Exception
      */
     private Document getQueryResult(String location) throws Exception {
-        InputStream is = client.get(getBaseURL() + location, true);
+        InputStream is = client.get(getBaseURL() + location, true, true);
         return builder.parse(is);
     }
     

@@ -72,7 +72,7 @@ public class TestOAIService extends FedoraServerTestCase {
     }
     
     private Document getQueryResult(String location) throws Exception {
-        InputStream is = client.get(getBaseURL() + location, true);
+        InputStream is = client.get(getBaseURL() + location, true, true);
         return builder.parse(is);
     }
     

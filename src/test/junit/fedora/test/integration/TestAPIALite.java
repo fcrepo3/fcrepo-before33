@@ -1,14 +1,5 @@
 package fedora.test.integration;  
 
-import java.io.InputStream;
-import fedora.client.HttpInputStream;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Hashtable;
-
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.extensions.TestSetup;
@@ -16,23 +7,13 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-
 
 import fedora.client.FedoraClient;
-import fedora.server.config.ServerConfiguration;
-import fedora.test.FedoraServerTestCase;
+import fedora.test.DescribeRepositoryTest;
 import fedora.test.FedoraServerTestSetup;
+import fedora.test.HttpDataSource;
 import fedora.test.SuperAPIALite;
 import fedora.test.Trial;
-import fedora.test.DescribeRepositoryTest;
-import fedora.test.ObjectProfileTest;
-import fedora.test.DataSource;
-import fedora.test.HttpDataSource;
 /**
  * Test of API-A-Lite using demo objects
  * 

@@ -1,20 +1,19 @@
 package fedora.client.utility.ingest;
 
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import javax.xml.rpc.ServiceException;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
-import fedora.client.APIAStubFactory;
-import fedora.client.APIMStubFactory;
-import fedora.server.management.FedoraAPIM;
+import javax.xml.rpc.ServiceException;
+
 import fedora.server.access.FedoraAPIA;
-import fedora.server.utilities.StreamUtility;
+import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
+import fedora.server.utilities.StreamUtility;
 
 /**
  *

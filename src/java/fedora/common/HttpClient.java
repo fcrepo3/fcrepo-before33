@@ -5,20 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.HttpURLConnection; //for response status codes
+import java.net.HttpURLConnection;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.httpclient.DefaultMethodRetryHandler;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.protocol.Protocol;
+
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.utilities.ServerUtility;
@@ -301,7 +301,7 @@ public class HttpClient {
 		  	    	} catch (IOException ioe) {
 		  	    		connectionAttemptsPerUrl++;
 				  		log("doAuthnGet got --inner-- IOException: " + ioe.getMessage());	
-		  	    		Thread.currentThread().sleep(millisecondsSleep);
+		  	    		Thread.sleep(millisecondsSleep);
 		  	    		thisUseFinished();
 		  	    	}
 		  	    	log("resultCode=" + resultCode + " absoluteUrl=" +absoluteUrl); 

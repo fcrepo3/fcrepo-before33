@@ -3,8 +3,8 @@ package fedora.client;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
@@ -30,9 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-
-import fedora.client.Administrator;
-import fedora.client.APIAStubFactory;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;

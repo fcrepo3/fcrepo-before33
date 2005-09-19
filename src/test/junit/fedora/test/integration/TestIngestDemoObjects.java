@@ -26,11 +26,9 @@ import fedora.client.utility.ingest.Ingest;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.ServerConfiguration;
-import fedora.server.config.ServerConfigurationParser;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
-import fedora.server.utilities.ServerUtility;
 import fedora.server.utilities.TableSpec;
 import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
@@ -101,7 +99,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         while (it.hasNext()) {
             String pid = (String)it.next();
             System.out.println("Checking for " + pid);
-            in = client.get(baseURL + "/get/" + pid + "?xml=true", true);
+            in = client.get(baseURL + "/get/" + pid + "?xml=true", true, true);
             Document result = builder.parse(in);
             // simple test of the objects in the repo
             assertXpathExists("/objectProfile", result);
@@ -132,7 +130,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         for (int i = 0; i < fTypes.length; i++) {
             queryResult = client.get(baseURL + "/search?query=pid~*%20fType=" +
             		                 fTypes[i] + "&maxResults=1000&pid=true&xml=true", 
-            		                 true);
+            		                 true, true);
             SearchResultParser parser = new SearchResultParser(queryResult);
             pids.addAll(parser.getPIDs());
         }

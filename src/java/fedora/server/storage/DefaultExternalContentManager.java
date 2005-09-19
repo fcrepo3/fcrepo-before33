@@ -3,23 +3,23 @@ package fedora.server.storage;
 import java.net.HttpURLConnection;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.httpclient.Header;
+
+import fedora.common.HttpClient;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
+import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;
 import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.errors.HttpServiceNotFoundException;
-import fedora.server.errors.StreamIOException;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.ServerUtility;
-import fedora.common.HttpClient;
 
 /**
  *

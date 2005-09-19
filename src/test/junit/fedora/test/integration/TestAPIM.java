@@ -1,28 +1,25 @@
 package fedora.test.integration;
 
 import java.io.UnsupportedEncodingException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.axis.types.NonNegativeInteger;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
-import fedora.client.APIMStubFactory;
+
 import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
-
-
 import fedora.server.types.gen.Datastream;
-import fedora.server.types.gen.Disseminator;
 import fedora.server.types.gen.DatastreamBinding;
 import fedora.server.types.gen.DatastreamBindingMap;
+import fedora.server.types.gen.Disseminator;
 import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
-
-import org.apache.axis.types.NonNegativeInteger;
 
 /**
  * @author rlw@virginia.edu

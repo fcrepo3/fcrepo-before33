@@ -1,32 +1,17 @@
 package fedora.test;  
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Hashtable;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-
 
 import fedora.client.FedoraClient;
-import fedora.client.HttpInputStream;
 import fedora.server.config.ServerConfiguration;
-import fedora.test.FedoraServerTestCase;
-import fedora.test.FedoraServerTestSetup;
 
 /**
  * @author Bill Niebel 

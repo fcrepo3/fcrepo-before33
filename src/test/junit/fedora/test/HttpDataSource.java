@@ -1,37 +1,12 @@
 package fedora.test;  
 
-import java.io.InputStream;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Hashtable;
+import java.util.Iterator;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.extensions.TestSetup;
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.NodeList;
-
 
 import fedora.client.FedoraClient;
 import fedora.client.HttpInputStream;
-import fedora.server.config.ServerConfiguration;
-import fedora.test.FedoraServerTestCase;
-import fedora.test.FedoraServerTestSetup;
-import junit.framework.Assert;
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * @author Bill Niebel 
@@ -59,7 +34,7 @@ public class HttpDataSource extends DataSource {
     	System.out.println("\tclientThrowsStatusCodeException()==" + clientThrowsStatusCodeException());
     	try {
     		System.out.println("about to use " + test.getUrl(xml));
-    		stream = client.get(baseurl + test.getUrl(xml), clientThrowsStatusCodeException());
+    		stream = client.get(baseurl + test.getUrl(xml), clientThrowsStatusCodeException(), true);
     		System.out.println("nothing caught");
     	} catch (Throwable t) {
     		System.out.println("caught " + t.getMessage() + ((t.getCause() == null)?"":t.getCause().getMessage()));

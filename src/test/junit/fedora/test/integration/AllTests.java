@@ -3,7 +3,6 @@ package fedora.test.integration;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import fedora.test.FedoraServerTestSetup;
-import fedora.test.config.*;
 
 /**
  * The grand, complete, and slow mother of all tests.

@@ -1,13 +1,12 @@
 package fedora.test.config;
 
-import java.io.*;
-import junit.framework.*;
-
-import fedora.client.*;
-import fedora.server.access.*;
-import fedora.server.management.*;
-import fedora.server.types.gen.*;
-import fedora.test.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import fedora.client.FedoraClient;
+import fedora.server.management.FedoraAPIM;
+import fedora.server.types.gen.UserInfo;
+import fedora.test.FedoraServerTestCase;
+import fedora.test.FedoraServerTestSetup;
 
 /**
  * An example TestSuite that uses it's own set of configuration files.

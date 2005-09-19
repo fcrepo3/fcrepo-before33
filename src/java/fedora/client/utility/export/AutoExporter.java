@@ -5,22 +5,19 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
-import java.util.StringTokenizer;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
-import javax.xml.rpc.ServiceException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
+import javax.xml.rpc.ServiceException;
 
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
+import org.w3c.dom.Document;
 
-import fedora.client.APIMStubFactory;
-import fedora.client.APIAStubFactory;
-import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
+import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.RepositoryInfo;
 
 /**

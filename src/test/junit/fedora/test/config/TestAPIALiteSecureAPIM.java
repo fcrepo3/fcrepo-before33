@@ -1,24 +1,17 @@
 package fedora.test.config;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import junit.extensions.TestSetup;
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import fedora.client.*;
-import fedora.server.access.*;
-import fedora.server.management.*;
-import fedora.server.types.gen.*;
-import fedora.test.*;
-import fedora.test.SuperAPIALite;
-import fedora.test.Trial;
-import fedora.test.FedoraServerTestSetup;
-import fedora.test.integration.TestIngestDemoObjects;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+import fedora.client.FedoraClient;
+import fedora.test.FedoraServerTestSetup;
+import fedora.test.Trial;
+import fedora.test.integration.TestIngestDemoObjects;
 
 public class TestAPIALiteSecureAPIM extends TestAPIALite {
 	

@@ -1,24 +1,21 @@
 package fedora.test.config;
 
-import java.io.*;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import junit.extensions.TestSetup;
-import junit.framework.*;
-
-import fedora.client.*;
-import fedora.server.access.*;
-import fedora.server.management.*;
-import fedora.server.types.gen.*;
-import fedora.test.*;
-import fedora.test.SuperAPIALite;
+import fedora.test.DataSource;
+import fedora.test.DatastreamDisseminationTest;
+import fedora.test.DescribeRepositoryTest;
+import fedora.test.DisseminationTest;
+import fedora.test.FindTest;
+import fedora.test.HttpDataSource;
+import fedora.test.IterableTest;
+import fedora.test.ListDatastreamsTest;
+import fedora.test.ListMethodsTest;
+import fedora.test.ObjectHistoryTest;
+import fedora.test.ObjectProfileTest;
 import fedora.test.Trial;
-import fedora.test.FedoraServerTestSetup;
-import fedora.test.integration.TestIngestDemoObjects;
-import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 /**
  * An example TestSuite that uses it's own set of configuration files.

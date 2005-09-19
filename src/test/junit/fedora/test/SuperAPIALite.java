@@ -1,33 +1,12 @@
 package fedora.test;  
 
 import java.io.InputStream;
-import fedora.client.HttpInputStream;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Hashtable;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Node;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-
-import fedora.client.FedoraClient;
-import fedora.server.config.ServerConfiguration;
-import fedora.test.FedoraServerTestCase;
-import fedora.test.FedoraServerTestSetup;
-import fedora.test.Trial;
 
 /**
  * Test of API-A-Lite using demo objects
@@ -45,7 +24,7 @@ public abstract class SuperAPIALite extends IterableTest {
     }
     
     private Document getQueryResult(String location) throws Exception {
-        InputStream is = client.get(getBaseURL() + location, true);
+        InputStream is = client.get(getBaseURL() + location, true, true);
         return builder.parse(is);
     }
     
@@ -106,7 +85,7 @@ public abstract class SuperAPIALite extends IterableTest {
         		Node child = children.item(i);
             	if (child == null) {
                     //System.err.println("child == null " + i);
-            	} else if (child.getNodeType() == child.TEXT_NODE) {
+            	} else if (child.getNodeType() == Node.TEXT_NODE) {
             		String textValue = child.getNodeValue();
             		System.err.println(tabs + TAB + textValue.trim());
             	} else {

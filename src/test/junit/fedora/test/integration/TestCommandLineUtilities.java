@@ -2,18 +2,10 @@ package fedora.test.integration;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-
-import javax.xml.rpc.ServiceException;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.custommonkey.xmlunit.SimpleXpathEngine;
-
-import fedora.client.batch.AutoModify;
 import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
 import fedora.utilities.ExecUtility;
