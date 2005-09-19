@@ -27,7 +27,7 @@ import fedora.server.errors.StreamIOException;
  * 		 that contains configuration properties for backend services. </p>
  *
  * @author payette@cs.cornell.edu
- * @version $Id $
+ * @version $Id
  */
 public class BackendSecurityDeserializer extends DefaultHandler {
 
