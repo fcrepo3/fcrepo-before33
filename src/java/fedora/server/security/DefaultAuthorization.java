@@ -1,28 +1,21 @@
 package fedora.server.security;
 
 
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import com.sun.xacml.attr.AnyURIAttribute;
-import com.sun.xacml.attr.DateAttribute;
-import com.sun.xacml.attr.DateTimeAttribute;
-import com.sun.xacml.attr.IntegerAttribute;
-import com.sun.xacml.attr.StringAttribute;
-
 import fedora.common.Constants;
-import fedora.common.policy.XacmlName;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.MultiValueMap;
@@ -1332,27 +1325,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  }
 	  
 	  public static final String dateAsString (Date date) throws Exception {
-	  	 //2003-12-13T18:30:02Z
-	  	StringBuffer temp = new StringBuffer();
-	  	try {
-	  	temp.append(pad(1900 + date.getYear(),4));
-	  	temp.append('-');
-	  	temp.append(pad(1 + date.getMonth(),2));
-	  	temp.append('-');
-	  	temp.append(pad(date.getDate(),2));
-	  	temp.append('T');
-	  	temp.append(pad(date.getHours(),2));
-	  	temp.append(':');
-	  	temp.append(pad(date.getMinutes(),2));
-	  	temp.append(':');
-	  	temp.append(pad(date.getSeconds(),2));
-	  	temp.append('Z'); //<<<<<<<<<<<<XXXXXXXXXXX!!!!!!!!!!!!!!!!!
-	  	} catch (Exception e) {
-	  		slog("exception in dateAsString " + temp.toString());
-	  		slog(e + " " + e.getMessage());
-	  		throw e;
-	  	}
-	  	return temp.toString();
+	  	return DateUtility.convertDateToString(date, false);
 	  }
 	  
 	  private static final void putAsOfDate (Hashtable resourceAttributes, Date asOfDate) throws Exception {
