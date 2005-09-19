@@ -54,10 +54,32 @@ public abstract class DateUtility {
      *              of the Date argument or null if the Date argument is null.
      */
     public static String convertDateToString(Date date) {
+        return convertDateToString(date, true);
+    }
+    
+    /**
+     * Converts an instance of java.util.Date into an ISO 8601 String 
+     * representation. 
+     * Uses the date format yyyy-MM-ddTHH:mm:ss.SSSZ or 
+     * yyyy-MM-ddTHH:mm:ssZ, depending on whether millisecond precision is 
+     * desired.
+     * 
+     * @param date		Instance of java.util.Date.
+     * @param millis	Whether or not the return value should include 
+     * 					milliseconds.
+     * @return			ISO 8601 String representation of the Date argument or 
+     * 					null if the Date argument is null.
+     */
+    public static String convertDateToString(Date date, boolean millis) {
         if (date == null) {
             return null;
         } else {
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        	DateFormat df;
+        	if (millis) {
+        		df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        	} else {
+        		df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        	}
             df.setTimeZone(TimeZone.getTimeZone("UTC"));
             return df.format(date);
         }
