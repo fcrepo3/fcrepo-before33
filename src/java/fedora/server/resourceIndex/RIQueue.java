@@ -1,7 +1,5 @@
 package fedora.server.resourceIndex;
 
-import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,10 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.jrdf.graph.Literal;
-import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.Triple;
-import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
 import org.trippi.TripleMaker;
 import org.trippi.TrippiException;
@@ -94,12 +89,6 @@ public class RIQueue implements Constants {
                   rep2);
     }
     
-    protected void queueDissemination(String digitalObjectURI, String dissemination) throws ResourceIndexException {
-        addTriple(digitalObjectURI, 
-                  VIEW.DISSEMINATES.uri,
-                  dissemination);
-    }
-    
     protected void queueDisseminationType(String dissemination, String dType) throws ResourceIndexException {
         addTriple(dissemination, 
                   VIEW.DISSEMINATION_TYPE.uri, 
@@ -111,17 +100,23 @@ public class RIQueue implements Constants {
                        property, 
                        value);
     }
+    
+    protected void queueHasDatastream(String digitalObjectURI, String datastreamURI) throws ResourceIndexException {
+    	addTriple(digitalObjectURI,
+    			  VIEW.HAS_DATASTREAM.uri,
+				  datastreamURI);
+    }
+    
+    protected void queueHasMethod(String digitalObjectURI, String methodURI) throws ResourceIndexException {
+    	addTriple(digitalObjectURI,
+  			      VIEW.HAS_METHOD.uri,
+				  methodURI);
+    }
 
     protected void queueImplements(String bMechURI, String bDefURI) throws ResourceIndexException {
         addTriple(bMechURI, 
                   MODEL.IMPLEMENTS_BDEF.uri, 
                   bDefURI);
-    }
-    
-    protected void queueIsDirect(String subject, String isDirect) throws ResourceIndexException {
-        addPlainTriple(subject, 
-                       VIEW.IS_DIRECT.uri, 
-                       isDirect);
     }
     
     protected void queueIsVolatile(String subject, boolean isVolatile) throws ResourceIndexException {

@@ -214,15 +214,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    String doURI = getDOURI(digitalObject);
 		String datastreamURI = getDSURI(doURI, datastreamID);
 		
-        // Datastreams are direct by definition
-        tripleQ.queueIsDirect(datastreamURI, "true");
         // Managed and Inline XML datastreams are never volatile
         // Future dependency analysis may be able to discern if kinds of E
         // and R datastreams are also not volatile
         boolean isVolatile = !(ds.DSControlGrp.equals("M") || ds.DSControlGrp.equals("X"));
         tripleQ.queueIsVolatile(datastreamURI, isVolatile);
         
-        tripleQ.queueDissemination(doURI, datastreamURI);
+        tripleQ.queueHasDatastream(doURI, datastreamURI);
         tripleQ.queueDisseminationType(datastreamURI, getDisseminationType(datastreamID));
         tripleQ.queueLastModifiedDate(datastreamURI, ds.DSCreateDT);
         tripleQ.queueMimeType(datastreamURI, ds.DSMIME);
@@ -265,7 +263,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         
 	    // Query for disseminations
 	    if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
-            String query = "SELECT riMethodPermutation.permutation, riMethodMimeType.mimeType, riMethodImplBinding.dsBindKey " +
+            String query = "SELECT riMethodPermutation.methodID, riMethodPermutation.permutation, riMethodMimeType.mimeType, riMethodImplBinding.dsBindKey " +
                            "FROM riMethodPermutation, riMethodMimeType, riMethodImpl, riMethodImplBinding " +
                            "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
                            "AND riMethodImpl.methodImplId = riMethodMimeType.methodImplId " +
@@ -275,55 +273,56 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             Statement select = null;
             ResultSet rs = null;
             
+            Set methods = new HashSet();
             Set permutations = new HashSet();
             try {
-                 conn = m_cPool.getConnection();
-                 select = conn.createStatement();
-                 rs = select.executeQuery(query);
-                 String permutation, mimeType, rep, repType, dsBindKey, dsURI;
-                 while (rs.next()) {
-                     permutation = rs.getString("permutation");
-                     rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                     // The ResultSet may contain multiple rows for the same 
-                     // permutation, because of datastream dependencies.
-                     // We ensure we only add one dissemination per permutation
-                     if (permutations.add(permutation)) {
-                         mimeType = rs.getString("mimeType");
-                         tripleQ.queueDissemination(doIdentifier, rep);
-                         tripleQ.queueDisseminationType(rep, getDisseminationType(bDefPID, permutation));
-                         tripleQ.queueMimeType(rep, mimeType);
-                         tripleQ.queueIsDirect(rep, "false"); 
-                         tripleQ.queueLastModifiedDate(rep, diss.dissCreateDT);
-                         // disseminator's state is propagated to all its disseminations
-                         tripleQ.queueState(rep, diss.dissState);
-                     }
-                     
-                     // Dependencies
-                     dsBindKey = rs.getString("dsBindKey");
-                     dsURI = (String)dsMap.get(dsBindKey);
-                     tripleQ.queueDependsOn(rep, dsURI);
-                     tripleQ.updateLastModified(rep, dsURI);
-                     tripleQ.updateIsVolatile(rep, dsURI);
-                 }
+            	conn = m_cPool.getConnection();
+            	select = conn.createStatement();
+            	rs = select.executeQuery(query);
+            	String permutation, mimeType, method, rep, repType, dsBindKey, dsURI;
+            	while (rs.next()) {
+            		method = doIdentifier + "/" + rs.getString("methodId");
+            		if (methods.add(method)) {
+            			tripleQ.queueHasMethod(doIdentifier, method);
+            			mimeType = rs.getString("mimeType");
+            			tripleQ.queueMimeType(method, mimeType);
+            			tripleQ.queueLastModifiedDate(method, diss.dissCreateDT);
+            			tripleQ.queueState(method, diss.dissState);
+            		}
+            		permutation = rs.getString("permutation");
+            		// The ResultSet may contain multiple rows for the same 
+            		// permutation, because of datastream dependencies.
+            		// We ensure we only add one dissemination per permutation
+            		if (permutations.add(permutation)) {
+            			tripleQ.queueDisseminationType(method, getDisseminationType(bDefPID, permutation));
+            		}
+            		
+            		// Dependencies
+            		dsBindKey = rs.getString("dsBindKey");
+            		dsURI = (String)dsMap.get(dsBindKey);
+            		tripleQ.queueDependsOn(method, dsURI);
+            		tripleQ.updateLastModified(method, dsURI);
+            		tripleQ.updateIsVolatile(method, dsURI);
+            	}
             } catch (SQLException e) {
-                throw new ResourceIndexException(e.getMessage(), e);
+            	throw new ResourceIndexException(e.getMessage(), e);
             } finally {
-                try {
-                    if (rs != null) {
-                        rs.close();
-                    }
-                    if (select != null) {
-                        select.close();
-                    }
-                    if (conn != null) {
-                        m_cPool.free(conn);
-                    }
-                } catch(SQLException e2) {
-                    throw new ResourceIndexException(e2.getMessage(), e2);
-                } finally {
-                    rs = null;
-                    select = null;
-                }
+            	try {
+            		if (rs != null) {
+            			rs.close();
+            		}
+            		if (select != null) {
+            			select.close();
+            		}
+            		if (conn != null) {
+            			m_cPool.free(conn);
+            		}
+            	} catch(SQLException e2) {
+            		throw new ResourceIndexException(e2.getMessage(), e2);
+            	} finally {
+            		rs = null;
+            		select = null;
+            	}
             }
 	    }
     }
