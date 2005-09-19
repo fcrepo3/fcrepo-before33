@@ -26,7 +26,7 @@ import com.sun.xacml.finder.PolicyFinderModule;
  * @author wdn5e
  * to understand why this class is needed 
  * (why configuring the xacml pdp with all of the multiplexed policy finders just won't work),
- * @see http://sourceforge.net/mailarchive/message.php?msg_id=6068981
+ * @see "http://sourceforge.net/mailarchive/message.php?msg_id=6068981"
  */
 public class ValidatePolicy extends PolicyFinderModule { 
 	private File schemaFile = null;

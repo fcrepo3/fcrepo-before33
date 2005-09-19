@@ -3,9 +3,9 @@ package fedora.common.rdf;
 /**
  * 
  * @author Edwin Shin
- * @see org.kowari.query.rdf.Tucana, 
+ * @see "org.kowari.query.rdf.Tucana, 
  *      org.kowari.query.SpecialPredicates,
- *      org.kowari.resolver.xsd.XSDResolverFactory
+ *      org.kowari.resolver.xsd.XSDResolverFactory"
  */
 public class TucanaNamespace extends RDFNamespace {
 

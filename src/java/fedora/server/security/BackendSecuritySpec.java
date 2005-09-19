@@ -87,7 +87,6 @@ public class BackendSecuritySpec {
 
 	/**
 	 * Get the default backend security properties.
-	 * @param properties
 	 */	
 	public Hashtable getDefaultSecuritySpec() {
 		return (Hashtable) rolePropertiesTable.get("default");

@@ -134,8 +134,7 @@ public abstract class DateUtility {
      * Attempt to parse the given string of form: yyyy-MM-dd[THH:mm:ss[.SSS][Z]]
      * as a Date. If the string is not of that form, return null.
      * 
-     * @param str
-     *            the date string to parse
+     * @param dateString the date string to parse
      * @return Date the date, if parse was successful; null otherwise
      */
     public static Date parseDateAsUTC(String dateString) {

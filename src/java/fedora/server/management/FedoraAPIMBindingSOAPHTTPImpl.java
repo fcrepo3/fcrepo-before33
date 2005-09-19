@@ -100,7 +100,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
      * @deprecated This remains in Fedora 2.0 for backward compatibility. 
      *    It assumes METS-Fedora as the ingest format.
      *    It will be removed in a future version.
-     *    Replaced by {@link #ingest(byte, String, String)}
+     *    Replaced by {@link #ingest(byte[], String, String)}
      */
     public String ingestObject(byte[] METSXML, String logMessage) throws java.rmi.RemoteException {
         assertInitialized();
