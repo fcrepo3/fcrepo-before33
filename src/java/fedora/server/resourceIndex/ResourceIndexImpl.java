@@ -283,6 +283,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             	while (rs.next()) {
             		method = doIdentifier + "/" + rs.getString("methodId");
             		if (methods.add(method)) {
+            			logger.debug("adding triples for " + method);
             			tripleQ.queueHasMethod(doIdentifier, method);
             			mimeType = rs.getString("mimeType");
             			tripleQ.queueMimeType(method, mimeType);
@@ -290,10 +291,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             			tripleQ.queueState(method, diss.dissState);
             		}
             		permutation = rs.getString("permutation");
-            		// The ResultSet may contain multiple rows for the same 
-            		// permutation, because of datastream dependencies.
-            		// We ensure we only add one dissemination per permutation
             		if (permutations.add(permutation)) {
+            			logger.debug("adding permutation: " + permutation);
             			tripleQ.queueDisseminationType(method, getDisseminationType(bDefPID, permutation));
             		}
             		
@@ -1001,7 +1000,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // (i.e., deleteDigitalObject(DigitalObject do), we don't actually
         // need to handle anything here.
         
-//        // FIXME this is not complete
+//        // NOTE this is not complete
 //        DatastreamXMLMetadata rels = (DatastreamXMLMetadata)ds;
 //        // Use the SAX2-compliant Xerces parser:
 //        System.setProperty(
