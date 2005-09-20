@@ -1162,7 +1162,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                     parm.add(mparms[j].parmName + "=" + mparms[j].parmDomainValues[k]);
                 }
             }
-            parms.add(parm);
+        	parms.add(parm);
         }
         
         CrossProduct cp = new CrossProduct(parms);
@@ -1377,8 +1377,15 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         public List lol;
         
         public CrossProduct(List listOfLists) {
-            this.lol = listOfLists;
-            this.crossProduct = new ArrayList();
+        	this.crossProduct = new ArrayList();
+        	this.lol = new ArrayList();
+        	Iterator it = listOfLists.iterator();
+        	while (it.hasNext()) {
+        		List list = (List)it.next();
+        		if (!list.isEmpty()) {
+        			lol.add(list);
+        		}
+        	}
         }
         
         public List getCrossProduct() {
