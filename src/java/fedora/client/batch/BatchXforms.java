@@ -48,8 +48,10 @@ class BatchXforms {
     // Valid values are "metslikefedora1" and "foxml1.0"
     if(optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("foxml1.0")) {
         xformPath = System.getProperty("fedora.home") + "/client/lib/foxml-merge.xsl";
+        formatMap.put(BatchTool.OBJECTFORMAT,"FOXML");
     } else if (optValues.getProperty(BatchTool.OBJECTFORMAT).equalsIgnoreCase("metslikefedora1")) {
         xformPath = System.getProperty("fedora.home") + "/client/lib/mets-merge.xsl";
+        formatMap.put(BatchTool.OBJECTFORMAT,"METS");
     } else {
         System.err.println("Unknown objectTemplate format: "+optValues.getProperty(BatchTool.OBJECTFORMAT));
   			throw new Exception();
@@ -57,8 +59,8 @@ class BatchXforms {
 		additionsPath = optValues.getProperty(BatchTool.ADDITIONSPATH);
 		objectsPath = optValues.getProperty(BatchTool.OBJECTSPATH);
 		modelPath = optValues.getProperty(BatchTool.CMODEL);
-formatMap.put("foxml1.0","FOXML");
-formatMap.put("metslikefedora1","METS");
+    //formatMap.put("foxml1.0","FOXML");
+    //formatMap.put("metslikefedora1","METS");
 		if (! BatchTool.argOK(additionsPath)) {
 			System.err.println("additionsPath required");
 			throw new Exception();
