@@ -37,8 +37,9 @@
 	</Target>
 	<!-- *********************************************************************************************************************************************************-->
 	<!-- Rule 1:  The Rule is completely undiscriminating in that it has no refining conditions.  It will DENY access to to ANY USER issuing -->
-	<!-- a request for actions specified above in the Target.  This essentially turns off access to actions in the Policy Target -->
-	<!-- because this Rule does not have its own Target or a contraining Condition to narrow it down. -->
+	<!-- a request for actions named in the Policy Target above.  This essentially turns off access to the Subject/Resource/Action -->
+	<!-- combinations  specified in the Policy Target because this Rule does not have its own local Target or any constraining -->
+	<!-- Condition to narrow down the scope of the denial. -->
 	<!-- *********************************************************************************************************************************************************-->
 	<Rule RuleId="1" Effect="Deny"/>
 </Policy>

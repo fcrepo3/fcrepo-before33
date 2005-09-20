@@ -13,9 +13,16 @@
 			<AnySubject/>
 		</Subjects>
 		<!-- *********************************************************************************************************************************************************-->
-		<!-- This policy is applicable to resources that are Dubin Core (DC) datastreams.   The ResourceAttributeDesignator element specifies -->
-		<!-- an attribute identifier for a Fedora datastream id (identified by urn:fedora:names:fedora:2.1:resource:datastream:id).   -->
-		<!-- The AttributeValue element indicates that the value of of the datastream id must be 'DC.' -->
+		<!-- This policy is applicable to resources that are Dubin Core (DC) datastreams.   -->
+		<!-- *********************************************************************************************************************************************************-->
+		<!-- The ResourceMatch element enables the XACML enforcement engine to determine whether this policy is applicable based -->
+		<!-- on whether an incoming Fedora request pertains to the kind of a Resource entity specified in the ResourceMatch.  -->
+		<!-- This is done by the XACML engine doing a comparison of attribute names/values in the incoming request against attribute -->
+		<!-- names/values in the ResourceMatch specification.  Notice the XACML-based function "string-equal" on the ResourceMatch -->
+		<!-- element which indicates that the matching will be string-based.   -->
+		<!-- The ResourceAttributeDesignator element specifies a match criterion as the attribute name datastream:id  -->
+		<!-- (identified by urn:fedora:names:fedora:2.1:resource:datastream:id).  The AttributeValue  element indicates that the value -->
+		<!-- of the datastream:id must be 'DC' for this policy to be applicable.  -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<Resource>
@@ -42,8 +49,9 @@
 	</Target>
 	<!-- *********************************************************************************************************************************************************-->
 	<!-- Rule 1:  The Rule is completely undiscriminating in that it has no refining conditions.  It will DENY access to to ANY USER issuing -->
-	<!-- a request for actions specified above in the Target.  This essentially turns off access to actions in the Policy Target -->
-	<!-- because this Rule does not have its own Target or a contraining Condition to narrow it down. -->
+	<!-- a request for actions named in the Policy Target above.  This essentially turns off access to the Subject/Resource/Action -->
+	<!-- combinations  specified in the Policy Target because this Rule does not have its own local Target or any constraining -->
+	<!-- Condition to narrow down the scope of the denial. -->
 	<!-- *********************************************************************************************************************************************************-->
 	<Rule RuleId="1" Effect="Deny"/>
 </Policy>

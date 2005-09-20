@@ -8,7 +8,7 @@
 	<!-- *********************************************************************************************************************************************************-->
 	<!--  TEST CASE:  This policy can be tested on the object demo:26 -->
 	<!-- *********************************************************************************************************************************************************-->
-	<Description>This policy will DENY access to TEI datastreams by controlling access to the getDatastreamDissemination method of the Fedora Access Service (API-A).  The TEI datastream is identified as a Resource where the Fedora datastream id has the value of 'TEISOURCE.'   This policy will DENY access to a SPECIFIC USER based on login id (as registered in the tomcat-users.xml file). --></Description>
+	<Description>This policy will DENY access to TEI datastreams by controlling access to the getDatastreamDissemination method of the Fedora Access Service (API-A).  The TEI datastream is identified as a Resource where the Fedora datastream id has the value of 'TEISOURCE.'   This policy will DENY access to a SPECIFIC USER based on login id (as registered in the tomcat-users.xml file). </Description>
 	<Target>
 		<!-- *********************************************************************************************************************************************************-->
 		<!--  This policy is applicable to any Subject.  However, the scope of the Subject is narrowed down in the Rule Condition (below). -->
@@ -18,6 +18,15 @@
 		</Subjects>
 		<!-- *********************************************************************************************************************************************************-->
 		<!--  This policy is applicable to TEI datastreams.  Any Resource that has a datastream identifier of 'TEISOURCE' fits the bill.  -->
+		<!-- *********************************************************************************************************************************************************-->
+		<!-- The ResourceMatch element enables the XACML enforcement engine to determine whether this policy is applicable based -->
+		<!-- on whether an incoming Fedora request pertains to the kind of a Resource entity specified in the ResourceMatch.  -->
+		<!-- This is done by the XACML engine doing a comparison of attribute names/values in the incoming request against attribute -->
+		<!-- names/values in the ResourceMatch specification.  Notice the XACML-based function "string-equal" on the ResourceMatch -->
+		<!-- element which indicates that the matching will be string-based.   -->
+		<!-- The ResourceAttributeDesignator element specifies a match criterion as the attribute name datastream:id  -->
+		<!-- (identified by urn:fedora:names:fedora:2.1:resource:datastream:id).  The AttributeValue  element indicates that the value -->
+		<!-- of the datastream:id must be 'TEISOURCE' for this policy to be applicable.  -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<Resource>
@@ -49,12 +58,12 @@
 	<!-- See the Fedora system documentation on Tomcat Authentication for details of how register users in the tomcat-users.xml file. -->
 	<!-- A Condition element wraps the specification of the SubjectAttributeDesignator, which contains the attribute identifier for -->
 	<!-- Fedora loginId (urn:fedora:names:fedora:2.1:subject:loginId).  This rule says that denial will occur when the value of this -->
-	<!-- attribute is 'rlw.' -->
+	<!-- attribute is 'sdp.' -->
 	<!-- *********************************************************************************************************************************************************-->
 	<Rule RuleId="1" Effect="Deny">
 		<!-- The condition:  this rule will deny access when the requester (i.e., subject) has the login id is "rlw" -->
 		<Condition FunctionId="urn:oasis:names:tc:xacml:1.0:function:string-is-in">
-			<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">rlw</AttributeValue>
+			<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">sdp</AttributeValue>
 			<SubjectAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:subject:loginId"/>
 		</Condition>
 	</Rule>
