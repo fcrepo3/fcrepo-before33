@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- callSsl, callBasicAuth, callUsername, callPassword callbackSsl, callbackBasicAuth, callbackUsername, callbackPassword, iplist-->
+<!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist-->
 <serviceSecurityDescription role="default" xmlns="info:fedora/fedora-system:def/beSecurity#" callSSL="false" callbackSSL="false" callBasicAuth="false" callbackBasicAuth="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
 http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
 	<serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
