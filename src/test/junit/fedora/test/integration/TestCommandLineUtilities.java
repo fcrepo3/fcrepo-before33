@@ -69,7 +69,6 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     {
         System.out.println("Purging object demo:5");
         purge("demo:5");
-        assertEquals(sbOut.size(), 0);
         assertEquals(sbErr.size(), 0);
         System.out.println("Re-ingesting object demo:5");
         ingestFoxmlFile(new File("src/demo-objects/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
@@ -88,7 +87,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                    new File("dist/client/logs/build.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        assertEquals(err.indexOf("10 Fedora null XML documents successfully created")!= -1, true );
+        assertEquals(err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1, true );
         System.out.println("Ingesting batch objects");
         batchIngest(new File("dist/client/demo/batch-demo/objects"), 
                     new File("dist/client/logs/ingest.log"));
@@ -111,7 +110,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                    new File("dist/client/logs/buildingest.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        assertEquals(err.indexOf("10 Fedora null XML documents successfully created")!= -1, true );
+        assertEquals(err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1, true );
         assertEquals(err.indexOf("10 objects successfully ingested into Fedora")!= -1, true );
         String batchObjs[] = { "demo:3010", "demo:3011", "demo:3012", "demo:3013", "demo:3014",
                                "demo:3015", "demo:3016", "demo:3017", "demo:3018", "demo:3019"};
