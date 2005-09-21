@@ -498,6 +498,8 @@ public class FedoraClient implements Constants {
 				}
 			} catch (TrippiException e) {
 				throw new IOException(e.getMessage());
+			} finally {
+                try { tuples.close(); } catch (Exception e) { }
 			}
     	} else {
 	    	HttpClient client = getHttpClient();
@@ -505,24 +507,26 @@ public class FedoraClient implements Constants {
 	    	HeadMethod head = new HeadMethod(locator);
             head.setDoAuthentication(true);
 	    	head.setFollowRedirects(FOLLOW_REDIRECTS);
-	    	
-	    	int statusCode = client.executeMethod(head);
-	    	if (statusCode != HttpStatus.SC_OK) {
-	            throw new IOException("Method failed: " + head.getStatusLine());
-	          }
-	    	Header[] headers = head.getResponseHeaders();
-	
-	        // Retrieve just the last modified header value.
-	    	Header header = head.getResponseHeader("last-modified");
-	    	if (header != null) {
-	    		String lastModified = header.getValue();
-	    		head.releaseConnection();
-	    		return DateUtility.convertStringToDate(lastModified);
-	    	} else {
-	    		// return current date time
-	    		head.releaseConnection();
-	    		return new Date();
-	    	}
+
+            try {
+    	    	int statusCode = client.executeMethod(head);
+    	    	if (statusCode != HttpStatus.SC_OK) {
+    	            throw new IOException("Method failed: " + head.getStatusLine());
+    	          }
+    	    	Header[] headers = head.getResponseHeaders();
+    	
+    	        // Retrieve just the last modified header value.
+    	    	Header header = head.getResponseHeader("last-modified");
+    	    	if (header != null) {
+    	    		String lastModified = header.getValue();
+    	    		return DateUtility.convertStringToDate(lastModified);
+    	    	} else {
+    	    		// return current date time
+    	    		return new Date();
+    	    	}
+            } finally {
+                head.releaseConnection();
+            }
     	}
     }
 
