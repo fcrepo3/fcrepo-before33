@@ -203,11 +203,11 @@ public class FedoraClient implements Constants {
 				if (followRedirects && (300 <= status && status <= 399)) {
 					// Handle the redirect here !
 					logger.debug("FedoraClient is handling redirect for HTTP STATUS=" + status);
-					System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + status);
+					//System.out.println("FedoraClient is handling redirect for HTTP STATUS=" + status);
 					Header hLoc = in.getResponseHeader("location");
 					if (hLoc != null) {
 						logger.debug("FedoraClient is trying redirect location: " + hLoc.getValue());
-						System.out.println("FedoraClient is trying redirect location: " + hLoc.getValue());
+						//System.out.println("FedoraClient is trying redirect location: " + hLoc.getValue());
 						// Try the redirect location, but don't try to handle another level of redirection.						
 						return get(hLoc.getValue(), true, false);	
 					} else {
@@ -314,7 +314,7 @@ public class FedoraClient implements Constants {
 			// (HTTP status 302) and get appropriate SOAP stub.
 			URL redirectURL = getSSLRedirectLocationAPIA();
 			if (redirectURL == null){
-				System.out.println("Using APIA stub with original URL...");
+				//System.out.println("Using APIA stub with original URL...");
 				return APIAStubFactory.getStubAltPath(protocol,
 													  host, 
 													  port,
@@ -322,7 +322,7 @@ public class FedoraClient implements Constants {
 													  m_user,
 													  m_pass);
 			} else {
-				System.out.println("Using APIA stub with redirect URL: " + redirectURL);
+				//System.out.println("Using APIA stub with redirect URL: " + redirectURL);
 				return APIAStubFactory.getStubAltPath(redirectURL.getProtocol(),
 													  redirectURL.getHost(), 
 													  redirectURL.getPort(),
@@ -367,7 +367,7 @@ public class FedoraClient implements Constants {
 			// (HTTP status 302) and get appropriate SOAP stub.
 			URL redirectURL = getSSLRedirectLocationAPIM();
 			if (redirectURL == null){
-				System.out.println("Using APIM stub with original URL...");
+				//System.out.println("Using APIM stub with original URL...");
 				return APIMStubFactory.getStubAltPath(protocol,
 													  host, 
 													  port,
@@ -375,7 +375,7 @@ public class FedoraClient implements Constants {
 													  m_user,
 													  m_pass);			
 			} else {
-				System.out.println("Using APIM stub with redirect URL: " + redirectURL);
+				//System.out.println("Using APIM stub with redirect URL: " + redirectURL);
 				return APIMStubFactory.getStubAltPath(redirectURL.getProtocol(),
 													  redirectURL.getHost(), 
 													  redirectURL.getPort(),
@@ -406,7 +406,7 @@ public class FedoraClient implements Constants {
 		try {
 			in = get("/services/management", false, false);		
 			logger.debug("Check for SSL redirect on APIM... HTTP STATUS=" + in.getStatusCode());
-			System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
+			//System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
 			if (in.getStatusCode() == 302) {
 				Header h = in.getResponseHeader("location");
 				if (h != null) {
@@ -440,7 +440,7 @@ public class FedoraClient implements Constants {
 		try {
 			in = get("/services/access", false, false);		
 			logger.debug("Check for SSL redirect on APIA... HTTP STATUS=" + in.getStatusCode());
-			System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
+			//System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
 			if (in.getStatusCode() == 302) {
 				Header h = in.getResponseHeader("location");
 				if (h != null) {
