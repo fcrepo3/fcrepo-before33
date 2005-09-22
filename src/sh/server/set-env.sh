@@ -10,9 +10,9 @@ if [ -z "$FEDORA_HOME" ]; then
 	exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
+if [ ! -d "$FEDORA_HOME/server/config" ]; then
 	echo "ERROR: FEDORA_HOME does not appear to be set correctly."
-	echo "Configuration file not found at $FEDORA_HOME/server/config/fedora.fcfg"
+	echo "Configuration directory not found at $FEDORA_HOME/server/config"
 	exit 1
 fi
 
