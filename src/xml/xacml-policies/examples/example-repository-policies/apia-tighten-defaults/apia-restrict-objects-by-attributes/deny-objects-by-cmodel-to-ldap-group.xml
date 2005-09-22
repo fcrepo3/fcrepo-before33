@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" PolicyId="deny-apia-dissem-demo1-getMedium-to-ldap-group" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xacml:1.0:policy
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" PolicyId="deny-objects-by-cmodel-to-ldap-group" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xacml:1.0:policy
 http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 	<!-- *********************************************************************************************************************************************************-->
-	<!--  This policy will DENY access to the 'demo:1/getMedium' dissemination (defined on a disseminator that subscibes to the demo:1 -->
-	<!--  behavior definition).   Specificallly, it will DENY access to users of particular LDAP-defined GROUPS who are making -->
-	<!--  getDissemination requests on API-A  for the 'demo:1/getMedium' dissemination.  -->
+	<!-- This policy will DENY all APIA access to digital objects that are EAD Finding AIDS.  This is based on the object content model -->
+	<!-- attribute having a value of "UVA_EAD_FINDING_AID.  Specifically, the policy will DENY access to users that belong to a -->
+	<!-- particular LDAP-defined GROUP. -->
 	<!-- *********************************************************************************************************************************************************-->
-	<Description> This policy will DENY access to the 'demo:1/getMedium' dissemination (defined on a disseminator that subscibes to the demo:1 behavior definition).   Specifically, it will DENY access to users of particular LDAP-defined GROUPS who are making getDissemination requests on API-A  for the 'demo:1/getMedium' dissemination.</Description>
+	<Description>This policy will DENY all APIA access to digital objects that are EAD Finding AIDS.  This is based on the object content model  attribute having a value of "UVA_EAD_FINDING_AID.  Specifically, the policy will DENY access to users that belong to a particular LDAP-defined GROUP.</Description>
 	<Target>
 		<!-- *********************************************************************************************************************************************************-->
 		<!--  This policy is applicable to any Subject.  However, the scope of the Subject is narrowed down in the Rule Condition (below).  -->
@@ -15,8 +15,8 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 			<AnySubject/>
 		</Subjects>
 		<!-- *********************************************************************************************************************************************************-->
-		<!-- This policy is applicable to resources that are disseminations, specifically 'demo:1/getMedium' disseminations.  The incoming -->
-		<!-- dissemination request must contain the 'demo:1' behavior definition AND the 'getMedium' method for this policy to be applicable.  -->
+		<!-- This policy is applicable ONLY to objects that belong the the content model grouping of "UVA_EAD_FINDING_AID" -->
+		<!-- *********************************************************************************************************************************************************-->
 		<!-- *********************************************************************************************************************************************************-->
 		<!-- The ResourceMatch elements enables the XACML enforcement engine to determine whether this policy is applicable based -->
 		<!-- on whether an incoming Fedora request pertains to the kind of a Resource entity (in this case a dissemination) that is specified -->
@@ -26,34 +26,30 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 		<!-- ResourceMatch element indicates that the matching will be string-based.  Multiple ResourceMatch elements are logically -->
 		<!-- AND-ed together by the XACML enforcement engine. -->
 		<!-- *********************************************************************************************************************************************************-->
-		<!-- In this example, the ResourceMatch elements say that that this policy is applicable for resources (disseminations) where : -->
-		<!--         attribute named 'resource:bdef:pid" has a value of 'demo:1'  -->
-		<!--           AND -->
-		<!--         attribute named 'resource:disseminator:method' has a value of 'getMedium.' =-->
+		<!-- In this example, the ResourceMatch elements say that that this policy is applicable for resources (objects) where : -->
+		<!--         attribute named 'resource:object:contentModel" has a value of 'UVA_EAD_FINDING_AID'  -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<Resource>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:1</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:bdef:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
-				</ResourceMatch>
-				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">getMedium</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:disseminator:method" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">UVA_EAD_FINDING_AID</AttributeValue>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:contentModel" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 			</Resource>
 		</Resources>
 		<!-- *********************************************************************************************************************************************************-->
-		<!--  This policy is applicable to ONLY to the getDissemination action (operation) in the Fedora Access Service (i.e., API-A).  -->
-		<!--  Note that the ActionAttributeDesignator element specifies the concept of a fedora-based action via the identifier -->
-		<!--  urn:fedora:names:fedora:2.1:action:id.  The particular action (API-A operation) that is the target for this policy -->
-		<!--  is specified by the AttributeValue identifier of urn:fedora:names:fedora:2.1:action:id-getDissemination. -->
+		<!--  This policy is applicable ONLY to actions (operations) of the Fedora Access Service (i.e., API-A). -->
+		<!--  The ActionAttributeDesignator element is used to specify the action identifier.  -->
+		<!--  The action identifier (urn:fedora:names:fedora:2.1:action:api) indicates that the policy will apply broadly to an entire Fedora API -->
+		<!--  (a sort of composite action consisting of all methods in a particular API).  -->
+		<!-- The AttributeValue names the specific Fedora API  that is the target of this policy, namely API-A, as indicated by the  -->
+		<!-- identifier urn:fedora:names:fedora:2.1:action:api-a. -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Actions>
 			<Action>
 				<ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDissemination</AttributeValue>
-					<ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-a</AttributeValue>
+					<ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
 				</ActionMatch>
 			</Action>
 		</Actions>

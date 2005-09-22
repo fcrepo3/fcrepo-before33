@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" PolicyId="deny-apia-to-tomcat-role" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="urn:oasis:names:tc:xacml:1.0:policy
-http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
+<Policy xmlns="urn:oasis:names:tc:xacml:1.0:policy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" PolicyId="deny-apia-datastream-MRSID-if-not-tomcat-role">
 	<!-- *********************************************************************************************************************************************************-->
-	<!--  This policy will DENY access to ALL API-A methods to users who are NOT in the administrator or professor ROLES. -->
+	<!--  This policy will DENY access to MRSID image datastreams by controlling access to the getDatastreamDissemination method -->
+	<!--  of the Fedora Access Service (API-A).  Specificallly, it will DENY access to users who are NOT of particular ROLES when -->
+	<!--  the requested  resource is a datastream with identifier of  'MRSID.'  -->
 	<!-- *********************************************************************************************************************************************************-->
 	<!--  NOTE:  User ROLES are defined using custom Fedora attributes in the tomcat-users.xml file. -->
 	<!--  See the Fedora system documentation on Tomcat Authentication for details of how to specify custom attributes -->
 	<!--  (such as 'fedoraRole') in the tomcat-users.xml file. -->
 	<!-- *********************************************************************************************************************************************************-->
-	<Description> This policy will DENY access to ALL API-A methods  to users who are NOT in the administrator or professor ROLES. </Description>
+	<!--  TEST CASE:  This policy can be tested on the object demo:6 -->
+	<!-- *********************************************************************************************************************************************************-->
+	<Description>This policy will DENY access to MRSID image datastreams by controlling access to the getDatastreamDissemination method of the Fedora Access Service (API-A).  Specificallly, it will DENY access to users who are NOT of particular ROLES when the requested  resource is a datastream with identifier of  'MRSID.' </Description>
 	<Target>
 		<!-- *********************************************************************************************************************************************************-->
-		<!--  This policy is applicable to any Subject.  However, the scope of the Subject is narrowed down in the Rule Condition (below).  -->
+		<!--  This policy is applicable to any Subject.  However, the scope of the Subject is narrowed down in the Rule Condition (below). -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Subjects>
 			<AnySubject/>
 		</Subjects>
 		<!-- *********************************************************************************************************************************************************-->
-		<!--  This policy is applicable to any Resource (i.e., any digital object)  -->
+		<!--  This policy is applicable to any Resource.  -->
+		<!--  However, note that the Rule Target (below) narrows things down to the MRSID image datastream. -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<AnyResource/>
@@ -33,18 +37,56 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 		<Actions>
 			<Action>
 				<ActionMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:api-a</AttributeValue>
-					<ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:action:api"/>
+					<ActionAttributeDesignator DataType="http://www.w3.org/2001/XMLSchema#string" AttributeId="urn:fedora:names:fedora:2.1:action:id"/>
+					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">urn:fedora:names:fedora:2.1:action:id-getDatastreamDissemination</AttributeValue>
 				</ActionMatch>
 			</Action>
 		</Actions>
 	</Target>
 	<!-- *********************************************************************************************************************************************************-->
-	<!-- Rule 1: This Rule will DENY access to users who are NOT of a particular role  (i.e., based on the 'fedoraRole' attribute. -->
-	<!-- See the Fedora system documentation on Tomcat Authentication for details of how to specify custom roles -->
-	<!--  (such as 'fedoraRole') in the tomcat-users.xml file. -->
+	<!-- Rule 1: This Rule will DENY access to MRSID image datastreams to users are NOT of a particular ROLE  -->
+	<!-- (i.e., based on the Fedora 'fedoraRole' attribute). -->
 	<!-- *********************************************************************************************************************************************************-->
 	<Rule RuleId="1" Effect="Deny">
+		<!-- ******************************************************************************************************************************************************* -->
+		<!-- Rule Target: -->
+		<!-- Notice that a Target specification can occur at the Rule-level, instead of at the Policy level (above).-->
+		<!-- This is a question of style, whether you want a policy whose overall purpose applies to particular Subjects/ Resources/Actions  -->
+		<!-- (a Target at the Policy-level), or you want a policy of broad applicability but with one or more Rules (with each Rule having its own -->
+		<!-- Target for Subjects/Resources/Actions). -->
+		<!-- ******************************************************************************************************************************************************* -->
+		<Target>
+			<Subjects>
+				<AnySubject/>
+			</Subjects>
+			<!-- *********************************************************************************************************************************************************-->
+			<!-- This Rule is applicable to resources that are MRSID image datastreams.   -->
+			<!-- *********************************************************************************************************************************************************-->
+			<!-- The ResourceMatch element enables the XACML enforcement engine to determine whether this policy is applicable based -->
+			<!-- on whether an incoming Fedora request pertains to the kind of a Resource entity specified in the ResourceMatch.  -->
+			<!-- This is done by the XACML engine doing a comparison of attribute names/values in the incoming request against attribute -->
+			<!-- names/values in the ResourceMatch specification.  Notice the XACML-based function "string-equal" on the ResourceMatch -->
+			<!-- element which indicates that the matching will be string-based.   -->
+			<!-- The ResourceAttributeDesignator element specifies a match criterion as the attribute name datastream:id  -->
+			<!-- (identified by urn:fedora:names:fedora:2.1:resource:datastream:id).  The AttributeValue  element indicates that the value -->
+			<!-- of the datastream:id must be 'MRSID' for this policy to be applicable.  -->
+			<!-- *********************************************************************************************************************************************************-->
+			<Resources>
+				<Resource>
+					<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
+						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">MRSID</AttributeValue>
+					</ResourceMatch>
+				</Resource>
+			</Resources>
+			<Actions>
+				<AnyAction/>
+			</Actions>
+		</Target>
+		<!-- *********************************************************************************************************************************************************-->
+		<!-- Condition:  This Rule sets up a Condition to DENY access to users who are NOT of a particular role  (i.e., based on the -->
+		<!-- 'fedoraRole' attribute.  See the Fedora system documentation on Tomcat Authentication for details of how to specify custom roles -->
+		<!--  (such as 'fedoraRole') in the tomcat-users.xml file. -->
 		<!-- ****************************************************************************************************************************************************-->
 		<!-- This sets up a Condition under which denial should occur.  The Condition element sets up a NOT condition using the -->
 		<!-- XACML-defined negation function (urn:oasis:names:tc:xacml:1.0:function:not). -->

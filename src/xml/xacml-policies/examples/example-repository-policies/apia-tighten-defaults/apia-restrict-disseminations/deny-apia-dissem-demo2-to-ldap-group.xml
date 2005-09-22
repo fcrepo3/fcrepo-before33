@@ -5,7 +5,7 @@ http://www.fedora.info/definitions/1/0/api/cs-xacml-schema-policy-01.xsd">
 	<!--  This policy will DENY access to disseminations that are available on objects via a disseminator subscribing to the 'demo:2' -->
 	<!--  behavior definition.  Specificallly, it will DENY access to users that belong to a particular LDAP-defined GROUP. -->
 	<!-- *********************************************************************************************************************************************************-->
-	<Description>This policy will DENY access to all disseminations that are available on objects via a disseminator subscribing to the 'demo:2' behavior definition.  Specificallly, it will DENY access to users that belong to a particular LDAP-defined GROUP. </Description>
+	<Description>This policy will DENY access to all disseminations that are available on objects via a disseminator subscribing to the 'demo:2' behavior definition.  Specifically, it will DENY access to users that belong to a particular LDAP-defined GROUP. </Description>
 	<Target>
 		<!-- *********************************************************************************************************************************************************-->
 		<!--  This policy is applicable to any Subject.  However, the scope of the Subject is narrowed down in the Rule Condition (below).  -->
