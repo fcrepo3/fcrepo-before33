@@ -760,6 +760,9 @@
 		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s validate-policy.sh validate-policy"/>
 		</exec>
+		<exec dir="./dist/server/bin" executable="/bin/ln">
+			<arg line="-s fedora-setup.sh fedora-setup"/>
+		</exec>		
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
