@@ -89,6 +89,12 @@ public class RIQueue implements Constants {
                   rep2);
     }
     
+    protected void queueDissemination(String digitalObjectURI, String dissemination) throws ResourceIndexException {
+        addTriple(digitalObjectURI, 
+                  VIEW.DISSEMINATES.uri,
+                  dissemination);
+    }
+    
     protected void queueDisseminationType(String dissemination, String dType) throws ResourceIndexException {
         addTriple(dissemination, 
                   VIEW.DISSEMINATION_TYPE.uri, 
@@ -105,12 +111,6 @@ public class RIQueue implements Constants {
     	addTriple(digitalObjectURI,
     			  VIEW.HAS_DATASTREAM.uri,
 				  datastreamURI);
-    }
-    
-    protected void queueHasMethod(String digitalObjectURI, String methodURI) throws ResourceIndexException {
-    	addTriple(digitalObjectURI,
-  			      VIEW.HAS_METHOD.uri,
-				  methodURI);
     }
 
     protected void queueImplements(String bMechURI, String bDefURI) throws ResourceIndexException {

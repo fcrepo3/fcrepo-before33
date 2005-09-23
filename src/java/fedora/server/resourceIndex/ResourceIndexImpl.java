@@ -221,6 +221,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         tripleQ.queueIsVolatile(datastreamURI, isVolatile);
         
         tripleQ.queueHasDatastream(doURI, datastreamURI);
+        tripleQ.queueDissemination(doURI, datastreamURI);
         tripleQ.queueDisseminationType(datastreamURI, getDisseminationType(datastreamID));
         tripleQ.queueLastModifiedDate(datastreamURI, ds.DSCreateDT);
         tripleQ.queueMimeType(datastreamURI, ds.DSMIME);
@@ -284,7 +285,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             		method = doIdentifier + "/" + rs.getString("methodId");
             		if (methods.add(method)) {
             			logger.debug("adding triples for " + method);
-            			tripleQ.queueHasMethod(doIdentifier, method);
+            			tripleQ.queueDissemination(doIdentifier, method);
             			mimeType = rs.getString("mimeType");
             			tripleQ.queueMimeType(method, mimeType);
             			tripleQ.queueLastModifiedDate(method, diss.dissCreateDT);
