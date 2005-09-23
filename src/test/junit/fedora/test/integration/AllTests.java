@@ -3,6 +3,10 @@ package fedora.test.integration;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import fedora.test.FedoraServerTestSetup;
+import fedora.test.config.TestConfigExample;
+import fedora.test.config.TestAPIALiteUnsecure;
+import fedora.test.config.TestAPIALiteSecureAPIM;
+import fedora.test.config.TestAPIALiteSecureAll;
 
 /**
  * The grand, complete, and slow mother of all tests.
@@ -18,15 +22,15 @@ public class AllTests {
     public static Test suite() {
 
         TestSuite defaultTests = new TestSuite("Default configuration tests");
-        //defaultTests.addTest(TestIngestDemoObjects.suite());
+        defaultTests.addTest(TestIngestDemoObjects.suite());
         defaultTests.addTest(TestCommandLineUtilities.suite());
-        //defaultTests.addTest(AllAPITests.suite());
+        defaultTests.addTest(AllAPITests.suite());
 
         TestSuite configTests = new TestSuite("Other configuration tests");
-        //configTests.addTest(TestConfigExample.suite());
-        //configTests.addTest(TestAPIALiteUnsecure.suite());
-        //configTests.addTest(TestAPIALiteSecureAPIM.suite());        
-        //configTests.addTest(TestAPIALiteSecureAll.suite());        
+        configTests.addTest(TestConfigExample.suite());
+        configTests.addTest(TestAPIALiteUnsecure.suite());
+        configTests.addTest(TestAPIALiteSecureAPIM.suite());        
+        configTests.addTest(TestAPIALiteSecureAll.suite());        
 
         TestSuite allTests = new TestSuite("All tests");
         allTests.addTest(new FedoraServerTestSetup(defaultTests));
