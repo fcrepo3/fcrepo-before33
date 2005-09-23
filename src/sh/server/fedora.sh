@@ -33,6 +33,51 @@ AXIS_UTILITY_LIBS=@AxisUtility.unix.libs@
 SERVER_LIBS=@Server.unix.libs@
 SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
 
+# Before starting server, check if configuration files exist.
+# If not, lof which files are missing and inform user
+# to run fedora-setup to initially configure the server.
+
+notConfiguredFlag="false"
+if [ ! -r "$FEDORA_HOME/server/config/fedora.fcfg" ]; then
+    echo
+    echo "ERROR: Unable to find file: $FEDORA_HOME/server/config/fedora.fcfg."
+    echo
+    notConfiguredFlag="true"
+fi
+
+if [ ! -r "$FEDORA_HOME/server/config/beSecurity.xml" ]; then
+    echo
+    echo "ERROR: Unable to find file: $FEDORA_HOME/server/config/beSecurity.xml."
+    echo
+    notConfiguredFlag="true"
+fi
+
+if [ ! -r "$TC/webapps/fedora/WEB-INF/web.xml" ]; then
+    echo
+    echo "ERROR: Unable to find file: $TC/webapps/fedora/WEB-INF/web.xml."
+    echo
+    notConfiguredFlag="true"
+fi
+
+if [ "$notConfiguredFlag" = "true" ]; then
+    echo
+    echo       "It appears that the server has not been initially configured."
+    echo       "Run the fedora-setup.bat script to initially configure the server"
+    echo       "with the desired configuration. e.g.,"
+    echo       
+    echo       "fedora-setup configuration-name"
+    echo
+    echo         "where configuration-name must be one of the following:"
+    echo           "secure-apim   - API-M with basicAuth and SSL; API-A with no basicAuth and no SSL"
+    echo           "secure-all    - API-M with basicAuth and SSL; API-A with basicAuth and SSL"
+    echo           "unsecure-apim - API-M with basicAuth but no SSL; API-A with no basicAuth and no SSL"
+    echo           "unsecure-all  - API-M with basicAuth but no SSL; API-A with basicAuth but no SSL"
+    echo	
+    exit 1
+fi
+
+
+
 # ----------------------------------------------------------------------
 # Functions
 
