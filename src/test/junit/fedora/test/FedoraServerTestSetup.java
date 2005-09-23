@@ -32,6 +32,8 @@ public class FedoraServerTestSetup
 
     private boolean doSetup;
     private File m_configDir;
+    static ByteArrayOutputStream sbOut = null;
+    static ByteArrayOutputStream sbErr = null;    
     
     /**
      * @param test
@@ -59,6 +61,9 @@ public class FedoraServerTestSetup
         
         if (doSetup) {
             // setup actions go here
+            // Before starting server run fedora-setup to populate
+            // config files with default for secure-apim configuration
+            execute("/server/bin/fedora-setup secure-apim ");       
             startServer();
         } else {
             System.out.println("    skipping setUp()");
@@ -394,4 +399,19 @@ public class FedoraServerTestSetup
 
         return result;
     }//deleteDirectory()
+
+    public static void execute(String cmd) 
+    {
+        if (sbOut != null && sbErr != null)
+        {
+            sbOut.reset();
+            sbErr.reset();
+            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd, sbOut, sbErr);
+        }
+        else
+        {
+            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd);
+        }
+    }
+    
 }

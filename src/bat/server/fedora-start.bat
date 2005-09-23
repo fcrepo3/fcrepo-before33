@@ -15,6 +15,14 @@ set SERVER_CONTROLLER_LIBS=@ServerController.windows.libs@
 set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 
+@rem Before starting server, check for existence of configuration files.
+@rem If not present, log which files are missing
+@rem and inform user to run fedora-setup script before starting server.
+
+if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto noFedoraConfig
+if not exist %FEDORA_HOME%\server\config\beSecurity.xml goto noBeSecurityConfig
+if not exist %TC%\webapps\fedora\WEB-INF\web.xml goto noWebXmlConfig
+
 if exist %FEDORA_HOME%\server\logs\startup.log goto logDirExists
 mkdir %FEDORA_HOME%\server\logs > NUL
 
@@ -68,7 +76,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
+if not exist %FEDORA_HOME%\server\config goto configNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 
@@ -103,6 +111,37 @@ goto end
 :badJavaVersion
 echo ERROR: java was found in %THIS_JAVA_HOME%, but it was not version 1.4
 echo Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base.
+goto end
+
+:noFedoraConfig
+echo ERROR: Unable to locate file: %FEDORA_HOME%\server\config\fedora.fcfg
+if not exist %FEDORA_HOME%\server\config\beSecurity.xml goto noBeSecurityConfig
+if not exist %TC%\webapps\fedora\WEB-INF\web.xml goto noWebXmlConfig
+goto noConfig
+
+:noBeSecurityConfig
+echo ERROR: Unable to locate file: %FEDORA_HOME%\server\config\beSecurity.xml
+if not exist %TC%\webapps\fedora\WEB-INF\web.xml goto noWebXmlConfig
+goto noConfig
+
+:noWebXmlConfig
+echo ERROR: Unable to locate file: %TC%\webapps\fedora\WEB-INF\web.xml
+goto noConfig
+
+:noConfig
+echo.
+echo        It appears that the server has not been initially configured.
+echo        Run the fedora-setup.bat script to initially configure the server
+echo        with the desired configuration. e.g.,
+echo.
+echo        fedora-setup configuration-name
+echo.
+echo          where configuration-name must be one of the following:
+echo            secure-apim   - API-M with basicAuth and SSL; API-A with no basicAuth and no SSL
+echo            secure-all    - API-M with basicAuth and SSL; API-A with basicAuth and SSL 
+echo            unsecure-apim - API-M with basicAuth but no SSL; API-A with no basicAuth and no SSL
+echo            unsecure-all  - API-M with basicAuth but no SSL; API-A with basicAuth but no SSL 
+echo.
 goto end
 
 :end
