@@ -24,6 +24,7 @@ public class HttpDataSource extends DataSource {
 	}
     private static int count = 0; 
     protected final void reset(IndividualTest test, boolean xml, String username, String password) throws Exception {
+    	usecount++;
 		count++;
 		System.out.println("about to Trial.getClient(), n==" + count);
     	FedoraClient client = Trial.getClient(baseurl, username, password);
@@ -34,7 +35,7 @@ public class HttpDataSource extends DataSource {
     	System.out.println("\tclientThrowsStatusCodeException()==" + clientThrowsStatusCodeException());
     	try {
     		System.out.println("about to use " + test.getUrl(xml));
-    		stream = client.get(baseurl + test.getUrl(xml), clientThrowsStatusCodeException(), true);
+    		stream = client.get(baseurl + test.getUrl(xml), clientThrowsStatusCodeException());
     		System.out.println("nothing caught");
     	} catch (Throwable t) {
     		System.out.println("caught " + t.getMessage() + ((t.getCause() == null)?"":t.getCause().getMessage()));
@@ -62,13 +63,19 @@ public class HttpDataSource extends DataSource {
 		return expectedStatusObtained;
 	}
 
+	protected final void close() throws Exception {
+        stream.close();        	
+        stream = null;
+	}
+	
+	
+	
 	protected final Document getResults() throws Exception {
 		Document results = null;
         try {
     		results = builder.parse(stream);        	
         } finally {
-            stream.close();        	
-            stream = null;
+            close();        	
         }
 		return results;
 	}

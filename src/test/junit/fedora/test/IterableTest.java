@@ -26,10 +26,11 @@ public abstract class IterableTest extends FedoraServerTestCase {
     public static final String NS_XHTML_PREFIX = "xhtml";
     public static final String NS_XHTML = "http://www.w3.org/1999/xhtml";
     
-    protected boolean testXML = true;
-    protected boolean testXHTML = false;
     protected boolean XML = true;
     protected boolean XHTML = false;
+    
+    protected boolean TEST_XML = true;
+    protected boolean TEST_XHTML = false;
     
     protected static Set demoObjects;
     protected static final Set badPids = new HashSet();
@@ -46,6 +47,12 @@ public abstract class IterableTest extends FedoraServerTestCase {
     static {
     	missingPids.add("doowop:667"); //simply not in repository
     }
+    
+    
+    protected static final String getLabel(String policies, String protocol, String objectset, int expectedStatus) {
+    	String label = policies + "" + protocol + ((objectset == null) ? "" : objectset) + "" + expectedStatus;
+    	return label;
+    }
 
     
     public static final boolean samePolicies(String policiesA, String policiesB) {
@@ -60,14 +67,15 @@ public abstract class IterableTest extends FedoraServerTestCase {
     	return samePolicies;
     }
     
-    public void iterate(Set trials, DataSource dataSource, IndividualTest test) throws Exception {
+    public void iterate(Set trials, DataSource dataSource, IndividualTest testXml, IndividualTest testXhtml, String label) throws Exception {
     	String lastPolicies = null;
+    	//if (trials == null) return;
     	Iterator it = trials.iterator();
     	while (it.hasNext()) {
     		Trial trial = (Trial) it.next(); 
     		String policies = trial.policies;
     		if (samePolicies(policies, lastPolicies)) {
-    			System.out.println("no need to change policies");
+    			System.out.println("staying with policies==" + policies);
     		} else {
     			System.out.println("changing to policies==" + policies);
 	            usePolicies(policies);
@@ -76,42 +84,80 @@ public abstract class IterableTest extends FedoraServerTestCase {
     		HttpDataSource httpDataSource = (HttpDataSource) dataSource;
     		System.out.println("*** in Iterable.iterate()");
     		System.out.println("\t" + policies);
-        	run(test, dataSource, trial.username, trial.password);
+        	run(testXml, testXhtml, dataSource, trial.username, trial.password, label);
     	}
     } 
     private static int count = 0; 
+    private static int kount = 0; 
 	//public abstract void run(IndividualTest test, Connector connector, String username, String password) throws Exception;
-    public void run(IndividualTest test, DataSource dataSource, String username, String password) throws Exception {
+    public void run(IndividualTest testXml, IndividualTest testXhtml, DataSource dataSource, String username, String password, String label) throws Exception {
 		InputStream is = null;
-    	if (testXML) {
-    		while (test.again()) { //URL MAY NEED FIXUP, CONSIDER DS.RESET()
+		int loopcount = 0;
+    	if (TEST_XML && (testXml != null) && testXml.handlesXml()) {
+    		if (testXml.again()) {
+    			if ("wellspringrathole".equals(username + password)) {
+    				kount++;
+        			System.out.println("wellspring/rathole of " + kount);    				
+    			}
+    			System.out.println("encountered loop " + count++ + " times");
+    		
+    		}
+    		while (testXml.again()) { //URL MAY NEED FIXUP, CONSIDER DS.RESET()
     			is = null;
-    			count++;
-    			System.out.println("about to dataSource.reset(), n==" + count);
-        		dataSource.reset(test, XML, username, password);
-    			System.out.println("*** in Iterable.run(), b4 assertTrue()");    		
+    			System.out.println("local loop it of " + loopcount++ + " dataSource.usecount==" + dataSource.usecount);
+
+        		dataSource.reset(testXml, XML, username, password);
+    			System.out.println("*** in Iterable.run(), b4 assertTrue()");
+            	System.out.println("X:  " +  username + " " + password + " " + testXml.getUrl(XML) + " " + label);    			
     			assertTrue(dataSource.expectedStatusObtained());
+            	Document results = null;
                 if (dataSource.expectingSuccess()) {
-                	Document results = dataSource.getResults();
-               		test.checkResultsXml(results);
-               		test.checkResults();
+                	System.out.println("OUT");
+                	System.err.println("ERR");
+                	results = dataSource.getResults();
+                	testXml.checkResultsXml(results);
+                	testXml.checkResults();
             	} else {
-            		test.checkResultsElse();
+            		testXml.checkResultsElse(); //remove this to get runaway loop, which causes class-not-found error
+            		dataSource.close();
+            		/* abandoned this because some server action returning an unclosed img tag
+            		try {
+            			results = dataSource.getResults();
+            		} catch (Exception e) { 
+            		}
+            		if (results != null) {
+                   		test.checkResultsXmlElse(results);
+            			test.checkResultsElse();            			
+            		}
+            		*/
             	}
     		}
+    		//test.reuse();
     	} 
-    	if (testXHTML) {
-    		while (test.again()) {
+    	if (TEST_XHTML && (testXhtml != null) && testXhtml.handlesXhtml()) {
+    		while (testXhtml.again()) {
     			is = null;
-    			dataSource.reset(test, XHTML, username, password);
+    			dataSource.reset(testXhtml, XHTML, username, password);
     			System.out.println("*** in Iterable.run(), b4 assertTrue()");
     			assertTrue(dataSource.expectedStatusObtained());
+            	Document results = null;
                 if (dataSource.expectingSuccess()) {
-                	Document results = dataSource.getResults();
-               		test.checkResultsXhtml(results);
-               		test.checkResults();
+                	results = dataSource.getResults();
+                	testXhtml.checkResultsXhtml(results);
+                	testXhtml.checkResults();
             	} else {
-            		test.checkResultsElse();               		
+            		testXhtml.checkResultsElse();
+            		dataSource.close();
+            		/* abandoned this because some server action returning an unclosed img tag            		
+            		try {
+            			results = dataSource.getResults();
+            		} catch (Exception e) { 
+            		}
+            		if (results != null) {
+                   		test.checkResultsXhtmlElse(results);
+            			test.checkResultsElse();            			
+            		}
+            		*/
             	}     			
     		}
     	} 

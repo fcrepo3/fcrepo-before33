@@ -6,24 +6,28 @@ import org.w3c.dom.Document;
 /**
  * @author Bill Niebel 
  */
-public abstract class IndividualTest extends FedoraTestCase {
+public abstract class IndividualTest extends FedoraTestCase implements Cloneable {
 	
-	private boolean xml = true;
-	private boolean xhtml = false;
+	private boolean handleXml = true;
+	private boolean handleXhtml = false;
 	protected boolean again = true; //prime initial test; this is reset on each test
-	protected boolean repeating = false;
+	protected boolean repeating = false; //set true in constructor of a subclass whose test is repeating
 	
 	public final boolean again() {
 		return repeating && again;
 	}
 	
-	public final boolean xml() {
-		return xml;
+	public final boolean handlesXml() {
+		return handleXml;
 	}
 	
-	public IndividualTest(boolean xml, boolean xhtml) {
-		this.xml = xml;
-		this.xhtml = xhtml;
+	public final boolean handlesXhtml() {
+		return handleXhtml;
+	}
+	
+	public IndividualTest(boolean handleXml, boolean handleXhtml) {
+		this.handleXml = handleXml;
+		this.handleXhtml = handleXhtml;
 	}
 	
 	SimpleXpathEngine simpleXpathEngine = new SimpleXpathEngine();
@@ -91,7 +95,11 @@ public abstract class IndividualTest extends FedoraTestCase {
     public void checkResultsElse() throws Exception {
     	again = false;
     }
-    
 
-
+	public void reuse() {
+		if (repeating) {
+			again = true;			
+		}
+	}
+	
 }

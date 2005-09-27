@@ -17,6 +17,7 @@ public abstract class DataSource {
 	
 	private boolean expectingSuccess = false;
 	private boolean clientThrowsStatusCodeException = false;
+	public int usecount = 0;
 	
 	public DataSource(boolean expectingSuccess, boolean clientThrowsStatusCodeException) throws Exception {
 		this.expectingSuccess = expectingSuccess;
@@ -33,6 +34,12 @@ public abstract class DataSource {
 	
     protected abstract void reset(IndividualTest test, boolean xml, String username, String password) throws Exception;
 	    
+    /* once reset() has been called (externally), either close() or getResults() must be called (externally) 
+     * to close the contained stream.  otherwise, eventually underlying available sockets will be used up
+     */
+    
+	protected abstract void close() throws Exception;
+    
 	protected abstract Document getResults() throws Exception;
 	
     protected final boolean expectingSuccess() {

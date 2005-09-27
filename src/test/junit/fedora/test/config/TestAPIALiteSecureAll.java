@@ -20,7 +20,7 @@ public class TestAPIALiteSecureAll extends TestAPIALite {
     }
         
     public String getConfiguration() {
-    	return Trial.SECURE_ALL;
+    	return Trial.SECURE_ALL_CONFIG;
     }
    
     

@@ -20,7 +20,7 @@ public class TestAPIALiteSecureAPIM extends TestAPIALite {
     }
         
     public String getConfiguration() {
-    	return Trial.SECURE_APIM;
+    	return Trial.SECURE_APIM_CONFIG;
     }
    
     

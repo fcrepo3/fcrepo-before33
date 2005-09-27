@@ -156,14 +156,26 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         client.reloadPolicies();
     }
 
+    private final void showFiles (File dir, String label) {
+    	System.out.println(dir.getPath() + " " + label);
+    	String[] files = dir.list();
+    	for (int i = 0; i < files.length; i++) {
+    		System.out.println("\t" + files[i]);
+    	}
+    }
+    
     private void replacePolicies(File fromDir, String toDirProp) throws Exception {
         Configuration config = getServerConfiguration().getModuleConfiguration("fedora.server.security.Authorization");
         File toDir = new File(config.getParameter(toDirProp).getValue());
         if (toDir.exists()) {
+        	showFiles(toDir, "before clearing");
             clearDir(toDir);
+        	showFiles(toDir, "after clearing");
             if (fromDir.exists()) {
+            	System.out.println(fromDir.getPath() + " exists");
                 copyFiles(fromDir, toDir);
             }
+        	showFiles(toDir, "after copying");
         }
     }
 

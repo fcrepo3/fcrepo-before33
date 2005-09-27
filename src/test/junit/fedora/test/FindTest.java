@@ -17,7 +17,7 @@ public class FindTest extends IndividualTest {
 	int cursorShouldBe = 0; //for xml results only (cursor is not included in xhtml results)
 	int hitsOnAllPages = 0;
 
-	
+
 	public final void setSessionToken (String sessionToken) {
 		this.sessionToken = sessionToken;
 	}
@@ -55,11 +55,13 @@ try {
 	throw e;
 }
         again = (sessionToken != null) && ! "".equals(sessionToken);
-        System.out.println("again set to " + again);
+        System.out.println("again set to " + again + " sessiontoken==" + sessionToken);
 		hitsOnThisPage = Integer.parseInt(simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_COUNT_PIDS, result));
     	if (again()) {
         	String cursor = simpleXpathEngine.evaluate(XPATH_XML_FIND_OBJECTS_CURSOR, result);
     		assertEquals(cursorShouldBe, Integer.parseInt(cursor)); //&&again TO WORK AROUND A PROBABLE BUG IN SERVER CODE.
+    	} else {
+    		sessionToken = null;
     	}
     }
 
