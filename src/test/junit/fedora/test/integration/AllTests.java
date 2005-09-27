@@ -4,7 +4,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import fedora.test.FedoraServerTestSetup;
 import fedora.test.config.TestConfigExample;
-import fedora.test.config.TestAPIALiteUnsecure;
+import fedora.test.config.TestAPIALiteUnsecureAPIM;
 import fedora.test.config.TestAPIALiteSecureAPIM;
 import fedora.test.config.TestAPIALiteSecureAll;
 
@@ -28,7 +28,7 @@ public class AllTests {
 
         TestSuite configTests = new TestSuite("Other configuration tests");
         configTests.addTest(TestConfigExample.suite());
-        configTests.addTest(TestAPIALiteUnsecure.suite());
+        configTests.addTest(TestAPIALiteUnsecureAPIM.suite());
         configTests.addTest(TestAPIALiteSecureAPIM.suite());        
         configTests.addTest(TestAPIALiteSecureAll.suite());        
 
