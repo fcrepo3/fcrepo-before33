@@ -825,7 +825,6 @@
 		<!-- tomcat: web configuration files for the Fedora webapp -->
 		<copy file="src/web-app/fedora/server/web-secure-apim.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-secure-all.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
-		<copy file="src/web-app/fedora/server/web-unsecure.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-unsecure-apim.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-unsecure-all.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/readme.txt" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
