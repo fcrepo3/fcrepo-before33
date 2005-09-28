@@ -7,12 +7,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.MultipartPostMethod;
+import org.apache.log4j.Logger;
 
+import fedora.client.FedoraClient;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -30,6 +35,9 @@ public class Uploader {
 
     private String m_uploadURL;
     private UsernamePasswordCredentials m_creds;
+    private FedoraClient fc;
+    private static final Logger logger =
+        Logger.getLogger(FedoraClient.class.getName());    
 
     /**
      * Construct an uploader to a certain repository as a certain user.
@@ -38,6 +46,8 @@ public class Uploader {
             throws IOException {
         m_uploadURL=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/management/upload";
         m_creds=new UsernamePasswordCredentials(user, pass);
+        String baseURL = Administrator.getProtocol() + "://" + host + ":" + port + "/fedora";
+        fc = new FedoraClient(baseURL, user, pass);
     }
     
     /**
@@ -48,6 +58,8 @@ public class Uploader {
     {
         m_uploadURL = protocol + "://" + host + ":" + port + "/fedora/management/upload";
         m_creds = new UsernamePasswordCredentials(user, pass);
+        String baseURL = protocol + "://" + host + ":" + port + "/fedora";
+        fc = new FedoraClient(baseURL, user, pass);        
     }
 
     /**
@@ -110,12 +122,50 @@ public class Uploader {
      */
     public String upload(File in) throws IOException {
         MultipartPostMethod post=null;
+        
         try {
-            HttpClient client=new HttpClient(m_cManager);
-            client.setConnectionTimeout(20000); // wait 20 seconds max
-            client.getState().setCredentials(null, null, m_creds);
-            client.getState().setAuthenticationPreemptive(true); // don't bother with challenges
-            post=new MultipartPostMethod(m_uploadURL);
+            // Ping m_uploadURL using HTTP GET to see if any redirects
+            // If it is a redirect, use the redirectLocation as uploadURL to perform POST;
+            // otherwise, just use m_uploadURL.
+            //
+            // Note: It would save some coding to just use FedoraClient.get(URL, boolean, boolean),
+            // but can't use FedoraClient.get(m_updateURL, true, true) here because this method
+            // attempts to evaluate the redirected URL which in this case is /management/upload. This
+            // URL is handled by UploadServlet which only accepts POSTS and returns SC_BAD_REQUEST(400)
+            // for GET requests so FedoraClient.get(m_updateURL, true, true) will return IOException
+            // because of the 400 error.
+            HttpClient client = fc.getHttpClient();
+        		GetMethod getMethod = new GetMethod(m_uploadURL);
+        		getMethod.setDoAuthentication(true);
+        		getMethod.setFollowRedirects(true);
+        		HttpInputStream his = new HttpInputStream(client, getMethod, m_uploadURL);
+        		int status = his.getStatusCode();
+        		String redirectURL = m_uploadURL;
+      			if (status != 200) {
+      					if (300 <= status && status <= 399) {
+      						// Handle the redirect here !
+      						logger.debug("Uploader is handling redirect for HTTP STATUS=" + status);      					    
+      						Header hLoc = his.getResponseHeader("location");
+      						if (hLoc != null) {
+      							redirectURL = hLoc.getValue();
+      							logger.debug("Uploader is trying redirect location: " + hLoc.getValue());      							
+      						} else {
+      							try { 
+      								throw new IOException("Request failed [" + status + " " + his.getStatusText() + "]");
+      							} finally {
+      								try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+      							}
+      						}
+      					} else {
+      						try { 
+      							throw new IOException("Request failed [" + his.getStatusCode() + " " + his.getStatusText() + "]");
+      						} finally {
+      							try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+      						}
+      					}
+      				}        		
+            client=fc.getHttpClient();
+            post=new MultipartPostMethod(redirectURL);
             post.setDoAuthentication(true);
             post.addParameter("file", in);
             int resultCode=0;
