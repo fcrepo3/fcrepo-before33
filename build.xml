@@ -54,13 +54,14 @@
 			<pathelement location="${lib.commons-dbcp}"/>
 			<pathelement location="${lib.commons-pool}"/>
 			<pathelement location="${lib.cos}"/>
+			<pathelement location="${lib.oro}"/>
 			<pathelement location="${lib.fop}"/>
 			<pathelement location="${lib.ij}"/>
 			<pathelement location="${lib.jai_codec}"/>
 			<pathelement location="${lib.jai_core}"/>
 			<pathelement location="${lib.md5}"/>
-			<pathelement location="${lib.jena}"/>
 			<pathelement location="${lib.trippi}"/>
+			<pathelement location="${lib.jena}"/>
 			<pathelement location="${lib.rio}"/>
 			<pathelement location="${lib.openrdf-util}"/>
 			<pathelement location="${lib.openrdf-model}"/>
@@ -70,8 +71,10 @@
 			<pathelement location="${lib.castor}"/>
 			<pathelement location="${lib.lucene}"/>
 			<pathelement location="${lib.log4j}"/>
-			<pathelement location="${lib.oro}"/>
 			<pathelement location="${lib.trove}"/>
+			<pathelement location="${lib.kowari-driver}"/>
+			<pathelement location="${lib.kowari-jrdf}"/>
+<!-- Kowari 1.1.0
 			<pathelement location="${lib.j2ee-connector}"/>
 			<pathelement location="${lib.dateutils}"/>
 			<pathelement location="${lib.jotm-carol}"/>
@@ -83,10 +86,8 @@
 			<pathelement location="${lib.kowari-mp3}"/>
 			<pathelement location="${lib.kowari-n3}"/>
 			<pathelement location="${lib.kowari-rdfxml}"/>
-			<pathelement location="${lib.kowari-driver}"/>
 			<pathelement location="${lib.kowari-itql}"/>
 			<pathelement location="${lib.kowari-jena}"/>
-			<pathelement location="${lib.kowari-jrdf}"/>
 			<pathelement location="${lib.kowari-query}"/>
 			<pathelement location="${lib.kowari-rbase}"/>
 			<pathelement location="${lib.kowari-rfile}"/>
@@ -114,7 +115,7 @@
 			<pathelement location="${lib.kowari-tupleshybrid}"/>
 			<pathelement location="${lib.kowari-utilxa}"/>
 			<pathelement location="${lib.kowari-utilbase}"/>
-
+-->
 		</path>
 		<map from="${lib.dir}${file.separator}" to=""/>
 	</pathconvert>
