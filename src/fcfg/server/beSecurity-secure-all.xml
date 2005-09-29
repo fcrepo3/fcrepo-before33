@@ -9,7 +9,7 @@ http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
     <serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="true" callSSL="true" callbackBasicAuth="true" callbackSSL="true" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
     <serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
 	<serviceSecurityDescription role="demo:2" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:2/getShorty" iplist="127.0.0.1"/>	
+	<serviceSecurityDescription role="demo:2/getThumbnail" iplist="127.0.0.1"/>	
 	<serviceSecurityDescription role="demo:3" iplist="128.143.22.236"/>
 	<serviceSecurityDescription role="demo:4" iplist="128.143.22.200"/>
 	<serviceSecurityDescription role="demo:9" iplist="128.143.22.200"/>
