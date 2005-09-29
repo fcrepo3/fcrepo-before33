@@ -218,9 +218,9 @@ public class DatastreamResolverServlet extends HttpServlet
       //    the basicAuth and SSL constraints will match the getDS target.
       // 3) Otherwise, leave the targetrole unchanged.
       if ( request.getRequestURI().endsWith("getDS") &&
-           (ServerUtility.isURLFedoraServer(dsPhysicalLocation))  ||
-            dsControlGroupType.equals("M") || 
-            dsControlGroupType.equals("X")) {
+           (  ServerUtility.isURLFedoraServer(dsPhysicalLocation)  ||
+              dsControlGroupType.equals("M") || 
+              dsControlGroupType.equals("X")) ){
           if(fedora.server.Debug.DEBUG) System.out.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
           dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
       }      
