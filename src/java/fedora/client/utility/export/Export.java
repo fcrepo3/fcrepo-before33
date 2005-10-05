@@ -28,7 +28,8 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 
 public class Export {
-    
+
+    // fixme: this isn't export-specific... it doesn't belong here
     public static String getDuration(long millis) {
         long tsec=millis/1000;
         long h=tsec/60/60;
@@ -51,7 +52,7 @@ public class Export {
         }
         return out.toString();
     }
-
+    
     public static void one(FedoraAPIA apia, FedoraAPIM apim, 
     					   String pid, String format, String exportContext, File dir)
             throws Exception {
@@ -61,74 +62,86 @@ public class Export {
         AutoExporter.export(apia, apim, pid, format, exportContext, 
         	new FileOutputStream(file));
     }
-    
-    public static String[] multi(FedoraAPIA apia, FedoraAPIM apim, 
-    							 String fTypes, String format, String exportContext, File dir)
+
+    public static int multi(FedoraAPIA apia, 
+                            FedoraAPIM apim, 
+                            String fTypes, 
+                            String format, 
+                            String exportContext, 
+                            File dir)
             throws Exception {
-        String tps=fTypes.toUpperCase();
-        Set toExport=new HashSet();
-        Set pidSet=new HashSet();
-        if (tps.indexOf("D")!=-1) {
-            toExport=getPIDs(apia, "D");
-            System.out.println("Found " + toExport.size() + " behavior definitions.");
-            pidSet.addAll(toExport);
+        int count = 0;
+        if (fTypes.indexOf("D") != -1) {
+            System.out.println("Exporting all FedoraBDefObjects");
+            count += multi(apia, apim, 'D', format, exportContext, dir);
         }
-        if (tps.indexOf("M")!=-1) {
-            toExport=getPIDs(apia, "M");
-            System.out.println("Found " + toExport.size() + " behavior mechanisms.");
-            pidSet.addAll(toExport);
+        if (fTypes.indexOf("M") != -1) {
+            System.out.println("Exporting all FedoraBMechObjects");
+            count += multi(apia, apim, 'M', format, exportContext, dir);
         }
-        if (tps.indexOf("O")!=-1) {
-            toExport=getPIDs(apia, "O");
-            System.out.println("Found " + toExport.size() + " data objects.");
-            pidSet.addAll(toExport);
+        if (fTypes.indexOf("O") != -1) {
+            System.out.println("Exporting all FedoraObjects");
+            count += multi(apia, apim, 'O', format, exportContext, dir);
         }
-        Iterator iter=pidSet.iterator();
-        String[] pids=new String[pidSet.size()];
-        int i=0;
-        while (iter.hasNext()) {
-            String pid=(String) iter.next();
-            one(apia, apim, pid, format, exportContext, dir);
-            pids[i++]=pid;
-        }
-        return pids;
+        System.out.println("Finished exporting.");
+        return count;
     }
 
-    public static Set getPIDs(FedoraAPIA apia,
-                              String fType)
+    public static int multi(FedoraAPIA apia, 
+                            FedoraAPIM apim, 
+                            char fType,
+                            String format, 
+                            String exportContext, 
+                            File dir)
             throws Exception {
-        // get pids with fType='$fType', adding all to set at once,
-        // then returning the entire set.
-        HashSet set=new HashSet();
-        Condition cond=new Condition();
+        int count = 0;
+
+        // prepare the FieldSearch query
+        String fTypeString = "" + fType;
+        FieldSearchQuery query = new FieldSearchQuery();
+        Condition cond = new Condition();
         cond.setProperty("fType");
         cond.setOperator(ComparisonOperator.fromValue("eq"));
-        cond.setValue(fType);
-        Condition[] conds=new Condition[1];
-        conds[0]=cond;
-        FieldSearchQuery query=new FieldSearchQuery();
-        query.setConditions(conds);
+        cond.setValue(fTypeString);
+        Condition[] conditions = new Condition[1];
+        conditions[0] = cond;
+        query.setConditions(conditions);
         query.setTerms(null);
-        String[] fields=new String[1];
-        fields[0]="pid";
-        FieldSearchResult res=AutoFinder.findObjects(apia,
-                                                     fields,
-                                                     1000,
-                                                     query);
-        boolean exhausted=false;
-        while (res!=null && !exhausted) {
-            ObjectFields[] ofs=res.getResultList();
-            for (int i=0; i<ofs.length; i++) {
-                set.add(ofs[i].getPid());
+
+        String[] resultFields = new String[1];
+        resultFields[0] = "pid";
+
+        // get the first chunk of search results
+        FieldSearchResult result = AutoFinder.findObjects(apia,
+                                                          resultFields,
+                                                          100,
+                                                          query);
+
+        while (result != null) {
+
+            ObjectFields[] ofs = result.getResultList();
+
+            // export all objects from this chunk of search results
+            for (int i=0; i < ofs.length; i++) {
+                String pid = ofs[i].getPid();
+                one(apia, apim, pid, format, exportContext, dir);
+                count++;
             }
-            if (res.getListSession()!=null && res.getListSession().getToken()!=null) {
-                res=AutoFinder.resumeFindObjects(apia,
-                                                 res.getListSession().getToken());
+
+            // get the next chunk of search results, if any
+            String token = null;
+            try { 
+                token = result.getListSession().getToken(); 
+            } catch (Throwable th) { }
+
+            if (token != null) {
+                result = AutoFinder.resumeFindObjects(apia, token);
             } else {
-                exhausted=true;
+                result = null;
             }
         }
-        return set;
+
+        return count;
     }
 
     /**
@@ -233,7 +246,7 @@ public class Export {
 			}
             if (args[3].indexOf(":")==-1) {
                 // assume args[3] is FTYPS... so multi-export
-                String[] pids=Export.multi(sourceRepoAPIA,
+                int count = Export.multi(sourceRepoAPIA,
 										   sourceRepoAPIM,
 					                       args[3], // FTYPS
 					                       exportFormat,
@@ -241,12 +254,7 @@ public class Export {
 					                       //args[4], // format
 										   //args[5], // export context
 					                       new File(args[6])); // path
-                System.out.print("Exported ");
-                for (int i=0; i<pids.length; i++) {
-                    if (i>0) System.out.print(", ");
-                    System.out.print(pids[i]);
-                }
-                System.out.println();
+                System.out.print("Exported " + count + " objects.");
             } else {
                 // assume args[3] is a PID...they only want to export one object
                 

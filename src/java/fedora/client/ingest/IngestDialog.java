@@ -78,15 +78,13 @@ public class IngestDialog {
                             new ObjectFormatDialog("Select XML Format of Ingest File(s)");
                         if (fmtDialog.getSelection()!=null) {
                             String ingestFormat=fmtDialog.getSelection(); 
-                            String[] pids=Ingest.multiFromDirectory(file, ingestFormat, fTypes, 
+                            Ingest.multiFromDirectory(file, ingestFormat, fTypes, 
                                 Administrator.APIA, Administrator.APIM, null, log, counter);
                             long et=System.currentTimeMillis();
                             JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                                pids.length + " objects successfully ingested.\n"
+                                counter.successes + " objects successfully ingested.\n"
                                 + counter.failures + " objects failed.\n"
-								//+ s_failedCount + " objects failed.\n"
                                 + "Time elapsed: " + Ingest.getDuration(et-st));
-                             //   Details are in File->Advanced->STDOUT/STDERR window.");
                         }
                     }
                 }
@@ -142,9 +140,8 @@ public class IngestDialog {
 						logFile = IngestLogger.newLogFile(logRootName);
 						log =new PrintStream(new FileOutputStream(logFile), true, "UTF-8");
 						IngestLogger.openLog(log, logRootName);
-                        String[] pids=Ingest.multiFromRepository(
-														  sdlg.getProtocol(),
-                        								  sdlg.getHost(),
+                        Ingest.multiFromRepository(sdlg.getProtocol(),
+                        					              sdlg.getHost(),
                                                           sdlg.getPort(),
                                                           sdlg.getAPIA(),
                                                           sdlg.getAPIM(),
@@ -155,9 +152,8 @@ public class IngestDialog {
                                                           null, log, counter);
                         long et=System.currentTimeMillis();
                         JOptionPane.showMessageDialog(Administrator.getDesktop(),
-                            pids.length + " objects successfully ingested.\n"
+                            counter.successes + " objects successfully ingested.\n"
                             + counter.failures + " objects failed.\n"
-							//+ s_failedCount + " objects failed.\n"
                             + "Time elapsed: " + Ingest.getDuration(et-st));
                     }
                 }

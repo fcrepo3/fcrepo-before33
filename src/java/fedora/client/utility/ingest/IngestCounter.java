@@ -15,4 +15,8 @@ public class IngestCounter {
     	successes=0;
     	failures=0;
     }
+
+    public int getTotal() {
+        return successes + failures;
+    }
 }

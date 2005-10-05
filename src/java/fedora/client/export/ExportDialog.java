@@ -49,7 +49,7 @@ public class ExportDialog {
 	                    if (dlg.getResult()!=null) {
 	                        String fTypes=dlg.getResult();
 	                        long st=System.currentTimeMillis();
-	                        String[] pids=Export.multi(Administrator.APIA, 
+	                        int count = Export.multi(Administrator.APIA, 
 	                                            Administrator.APIM, 
 	                                            fTypes,
 												optsDialog.getFormatSelection(),
@@ -57,7 +57,7 @@ public class ExportDialog {
 	                                            file);
 	                        long et=System.currentTimeMillis();
 	                        JOptionPane.showMessageDialog(Administrator.getDesktop(),
-	                            "Export of " + pids.length + " objects finished.\n"
+	                            "Export of " + count + " objects finished.\n"
 	                            + "Time elapsed: " + Export.getDuration(et-st));  
 	                    }
 	                }
