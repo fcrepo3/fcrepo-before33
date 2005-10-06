@@ -1,7 +1,9 @@
 package fedora.test.integration;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.Statement;
@@ -81,9 +83,9 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         };
         Set demoObjectFiles = new HashSet();
         for (int i = 0; i < demoDirs.length; i++) {
-            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraBDefObject"));
-            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraBMechObject"));
-            demoObjectFiles.addAll(Ingest.getFiles(demoDirs[i], "FedoraObject"));
+            demoObjectFiles.addAll(getFiles(demoDirs[i], "FedoraBDefObject"));
+            demoObjectFiles.addAll(getFiles(demoDirs[i], "FedoraBMechObject"));
+            demoObjectFiles.addAll(getFiles(demoDirs[i], "FedoraObject"));
         }
         Set repositoryDemoObjects = getDemoObjects(null);
         
@@ -104,6 +106,32 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
             // simple test of the objects in the repo
             assertXpathExists("/objectProfile", result);
         }
+    }
+
+    private static Set getFiles(File dir, String searchString) throws Exception {
+        Set set = new HashSet();
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isDirectory()) {
+                set.addAll(getFiles(files[i], searchString));
+            } else {
+                if (matches(files[i], searchString)) set.add(files[i]);
+            }
+        }
+        return set;
+    }
+
+    private static boolean matches(File file, String searchString) throws Exception {
+        BufferedReader in = new BufferedReader(new FileReader(file));
+        try {
+            String line;
+            while ( (line=in.readLine()) != null ) {
+                if (line.indexOf(searchString)!=-1) return true;
+            }
+        } finally {
+            try { in.close(); } catch (Exception e) { }
+        }
+        return false;
     }
     
     public static void ingestDemoObjects() {        
