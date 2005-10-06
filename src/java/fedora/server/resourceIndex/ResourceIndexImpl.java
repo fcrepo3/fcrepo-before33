@@ -1110,6 +1110,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 throw new ResourceIndexException("Datastream, " + ds.DSVersionID + ", is missing create date");
             } else if (ds.DSCreateDT.getTime() > latestDSCreateDT) {
                 latestDS = ds;
+                latestDSCreateDT = ds.DSCreateDT.getTime();
             }
         }
         return latestDS;
@@ -1125,6 +1126,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
                 throw new ResourceIndexException("Disseminator, " + diss.dissVersionID + ", is missing create date");
             } else if (diss.dissCreateDT.getTime() > latestDISSCreateDT) {
                 latestDISS = diss;
+                latestDISSCreateDT = diss.dissCreateDT.getTime();
             }
         }
         return latestDISS;
