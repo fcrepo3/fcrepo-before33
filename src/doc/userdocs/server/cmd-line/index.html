@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+  <title>Fedora Server Command-Line Utilities</title>
+  <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+</head>
+
+<body>
+  <div id="header">
+    <a href="../index.html" id="logo"></a>
+
+    <div id="title">
+      <h1>Fedora Server Command-Line Utilities</h1>
+
+      <h2>Fedora Release 2.1b</h2>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+
+    <div class="tocbox">
+      <ol>
+        <li><a href="#intro">Introduction</a></li>
+
+        <li><a href="#start">fedora-start</a></li>
+
+        <li><a href="#stop">fedora-stop</a></li>
+
+        <li><a href="#rebuild">fedora-rebuild</a></li>
+
+        <li><a href="#reload">fedora-reload-policies</a></li>
+
+        <li><a href="#validate">validate-policy</a></li>
+
+        <li><a href="#mckoiinit">mckoi-init</a></li>
+
+        <li><a href="#mckoistart">mckoi-start</a></li>
+
+        <li><a href="#mckoistop">mckoi-stop</a></li>
+
+        <li><a href="#mysqlconfig">mysql-config</a></li>
+
+        <li><a href="#mysqldropdb">mysql-drop-db</a></li>
+
+      </ol>
+    </div>
+  </div>
+
+  <div class="sec1">
+    <div>
+      <h2><a name="intro" id="intro"></a>Introduction</h2>
+    </div>
+
+    <p>The Fedora server distribution comes with several
+    command-line utilities that can be used to start and stop the Fedora 
+    server and to control the operation of that server. Some of these
+    will be used by a site's repository administrator fairly 
+    regularly, while others may only rarely or never be needed. 
+    A description and usage instructions for each follows.</p>
+
+    <p>This guide assumes you have correctly installed the Fedora
+    server distribution as per the install guide, including having
+    set up your PATH and FEDORA_HOME appropriately. Additionally there
+    are many other issues involved in initially setting up a Fedora 
+    repository these are explained in the 
+    command-line scripts are located in FEDORA_HOME/server/bin/. In
+    Windows, these commands resolve to batch files (.bat); in
+    <span class="GramE">Unix</span>, they resolve to shell scripts
+    (.sh).</p>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="start" id="start"></a>fedora-start</h2>
+
+    <blockquote>
+      <p><b>fedora-start</b> </p>
+      <p>or</p>
+	<p><b>fedora-start</b> mckoi</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li>when run <u>without</u> a parameter the fedora server is started using the 
+	database that has been specified in the configuration file (fedora.fcfg)
+	</li>
+      <li>when run <u>with</u> a parameter the fedora server is started using the 
+	mckoi database, overriding whatever database that is specified in the configuration 
+	file (fedora.fcfg)</li>
+    </ul>Example:
+
+    <blockquote>
+      <p><b>fedora-start </b></p>
+	<p>Note: Before starting the Fedora server, a decision about what security configuration 
+	to use needs to be made (see fedora-config) and several decisions need to be made pertaining
+	to the overall setup of the fedora-server need to be made, (see the Fedora Installation and 
+	Configuration Guide) and the database that is to be used in conjunction with the Fedora server 
+	(either MySql or McKoi or some other custom solution) needs to be started and initialized.
+
+    </blockquote>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="stop" id="export">fedora-stop</a></h2>
+
+    <blockquote>
+    <p><b>fedora-stop</b></p>
+    </blockquote>
+
+    <p>This command is used to cleanly stop the Fedora server.   This might need to be 
+	done when the configuration of the server is changed or to prevent all access to 
+	the repository while certain systems administration tasks are performed, or to 
+	run the program <a href="#rebuild">fedora-rebuild</a> listed below.</p>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="rebuild" id="rebuild"></a>fedora-rebuild</h2>
+
+    <blockquote>
+      <p><b>fedora-rebuild</b> </p>
+
+    </blockquote>
+
+  <p>fedora-rebuild is an interactive utility that can be used when the Fedora repository is somehow corrupted.  
+	When this occurs either the SQL database of the Resource-Index become unusable, and usually the Fedora 
+	server will refuse to start.	The SQL database (either MySQL or McKoi) caches 	
+	some of the data stored in the repository to enable simple searching and to speed access to the repository.</p>
+  <p>In the past, under some circumstances the SQL database could become corrupt, which would then 
+	require the entire repository to be deleted and all of the digital objects in the repository to be 
+	manually re-ingested.  The fedora-rebuild utility allows the Fedora administrator to merely purge the 
+	database used by the Fedora server, and re-configure the database (using either mysql-config or mckoi-init)
+	and then run this utility to restore the repository to a rational, usable state.  Additionally, if the 
+	Fedora administrator want to change from using the McKoi database to using the MySQL database, 
+	(or from MySQL to McKoi) the existing database can be purged, the fedora configuration file (fedora.fcfg) 
+	can be edited, and the fedora-rebuild utility can then be run to correctly populate the tables in the new
+	database system.</p>
+  <p>Similarly, the Resource-Index files that are used for more advanced searching could occasionally
+	become corrupted, which would prevent the Fedora server from starting.  The fedora-rebuild utility can 
+	also be used to rebuild the Resource-Index files if this problem occurs.</p>
+  <p>When you run the utility, a text menu appears, allowing you to specify whether you need to rebuild 
+	the SQL database or rebuild the Resource-Index files.  See below for a step-by-step description of 
+	how to recover from a corrupted MySQL database.
+	<ol>
+	<li>Stop the Fedora server (is it is running) using <a href="#stop">fedora-stop</a>.</li>
+	<li>Delete the existing MySQL database used by Fedora. (using the <a href="#mysqldropdb">mysql-drop-db</a> command).</li>
+	<li>Re-configure the database for Fedora (using <a href="#mysqlconfig">mysql-config</a>)</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate all of the database tables with the correct information.</li>
+	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
+	</ol></p>
+  </div>
+<br><br><hr><br>
+  <div class="sec1">
+    <h2><a name="reload" id="reload"></a>fedora-reload-policies</h2>
+
+    <blockquote>
+      <p><b>fedora-reload-policies</b></p>
+    </blockquote>
+
+    <p>One of the main features added to version 2.1 of Fedora is improvements in access security 
+	(as described in the document [link to Bill's doc]) This access security is specified using XACML files which 
+	detail what persons or groups are allowed to perform various actions to the repository.  Many of these 
+	XACML policies are applied for all actions and access attempts peformed on the repository as a whole.  
+	These "repository-wide" XACML policies are only loaded at the time the Fedora server is started.  
+	If the Fedora server administrator needs to change one or more of these repository-wide policies, this command
+	can be used to tell the running Fedora server to reload all of the repository-wide policies.  
+	The alternative to using this command is to stop the Fedora server, and restart it.
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="validate" id="validate"></a>validate-policy</h2>
+
+    <blockquote>
+      <p><b>validate-policy</b> [policyFilename]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+	<li><b>[policyFilename]</b> - Name of XACML file containing the newly written policy</li>
+    </ul>
+
+    <p>One of the main features added to version 2.1 of Fedora is improvements in access security 
+	(as described in the document [link to Bill's doc]) This access security is specified using XACML files which 
+	detail what persons or groups are allowed to perform various given actions to the repository.  
+	If the Fedora server administrator creates a new XACML policy to broaden the existing access policies or 
+	to more tightly restrict access, the newly created policy <b>should</b> be run through this program to ensure 
+	that the XACML policy is well-formed before attempting to install it in the Fedora server. </p>
+
+  </div>
+<br><br><hr><br>
+  <div class="sec1">
+    <h2><a name="mckoiinit" id="mckoiinit"></a>mckoi-init</h2>
+
+    <blockquote>
+      <p><b>mckoi-init</b> [fedoraDBUser] [fedoraDBPass]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[fedoraDBUser]</b> - The Fedora username (e.g. fedoraAdmin).</li>
+
+      <li><b>[fedoraDBPass]</b> - The Fedora user's password.</li>
+    </ul>
+
+    <p>Example:</p>
+
+    <blockquote>
+      <p><b>mckoi-init fedoraAdmin fedoraAdmin</b></p>
+    </blockquote>
+
+    <p>Initializes the McKoi database so that it can be used by the Fedora server.  After it is initialized
+       (which generally only needs to be done once) you will need to start the McKoi database with the 
+	 <a href="#mckoistart">mckoi-start</a> command listed below.</p>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="mckoistart" id="mckoistart"></a>mckoi-start</h2>
+
+    <blockquote>
+      <p><b>mckoi-start</b></p>
+    </blockquote>
+
+    <p>The mckoi-start command is used to start the McKoi database, after it has been initialized 
+	via the <a href="#mckoiinit">mckoi-init</a> command.  Note that if you are using the McKoi database
+	this command must be performed <b>before</b> the Fedora server is started.  Also note that if you 
+	choose to use the MySQL database, or any other database system, this command is not needed.</p>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="mckoistop" id="mckoistop"></a>mckoi-stop</h2>
+
+    <blockquote>
+      <p><b>mckoi-stop</b> [fedoraDBUser] [fedoraDBPass]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[fedoraDBUser]</b> - The Fedora username entered when then command mckoi-init was run.</li>
+
+      <li><b>[fedoraDBPass]</b> - The Fedora user's password entered when then command mckoi-init was run.</li>
+    </ul>
+
+    <p>The mckoi-stop command is used to stop the McKoi database, after it has been started 
+	via the <a href="#mckoistart">mckoi-start</a> command.  Note that if you are using the McKoi database
+	this command must be performed <b>after</b> the Fedora server is stopped.  Also note that if you 
+	choose to use the MySQL database, or any other database system, this command is not needed.</p>
+  </div>
+<br><br><hr><br>
+  <div class="sec1">
+    <h2><a name="mysqlconfig" id="mysqlconfig"></a>mysql-config</h2>
+
+    <blockquote>
+      <p><b>mysql-config</b> [installDir] [dbaUser] [dbaPass] [fedoraDBUser] [fedoraDBPass] [dbName] [mysql41_flag]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[installDir]</b> - Is the location where MySQL is installed. In Unix, this might be /usr/local/mysql. In Windows, it might be C:\mysql</li>
+
+      <li><b>[dbaUser]</b> - Is the name of the MySQL user with dba privileges. In a default MySQL installation, this will be root.
+	<br>Please note that dbaUser is case sensitive.</li>
+
+      <li><b>[dbaPass]</b> - Is the password of the MySQL user with dba privileges. In a default MySQL installation, 
+       if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.
+	<br>Please note that dbaPass is case sensitive.</li>
+
+      <li><b>[fedoraDBUser]</b> - Is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin) </li>
+
+      <li><b>[fedoraDBPass]</b> - Is the password you'd like to use for the above user. (e.g., fedoraAdmin) </li>
+
+      <li><b>[dbName]</b> - Is the name you'd like to use for the Fedora database. (e.g., fedora20) <br>Please note that this datbase name is case sensitive.</li>
+
+      <li><b>[mysql41_flag]</b> - Is an optional paramter that is only used if you are running MySQL 4.1.x. 
+	If using MySQL 4.1.x Fedora requires that you set the default character set to "utf8" 
+	and the default collation to "utf8_bin" for the Fedora database. Any value may be used 
+	for this parameter. If present, the script will automatically set the default character 
+	set to "utf8" and the default collation to "utf8_bin" for the Fedora SQL database. 
+	<br>Note: If you are running versions of MySQL prior to 4.1, OMIT THIS PARAMETER.</li>
+    </ul>
+
+    <p>The mysql-config command line builds all of the necessary tables within the MySQL database
+	so that the Fedora server can be run using MySQL as its backing store.  If you plan to use
+	the McKoi database, this command is not necessary. </p>
+  </div>
+<br><br><br>
+  <div class="sec1">
+    <h2><a name="mysqldropdb" id="mysqldropdb"></a>mysql-drop-db</h2>
+
+    <blockquote>
+      <p><b>mysql-drop-db</b> [installDir] [dbaUser] [dbaPass] [dbName]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[installDir]</b> - Is the location where MySQL is installed. In Unix, this might be /usr/local/mysql. In Windows, it might be C:\mysql</li>
+
+      <li><b>[dbaUser]</b> - Is the name of the MySQL user with dba privileges. In a default MySQL installation, this will be root.
+	<br>Please note that dbaUser is case sensitive.</li>
+
+      <li><b>[dbaPass]</b> - Is the password of the MySQL user with dba privileges. In a default MySQL installation, 
+       if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.
+	<br>Please note that dbaPass is case sensitive.</li>
+
+      <li><b>[dbName]</b> - Is the name you'd like to use for the Fedora database. (e.g., fedora20)</li>
+
+    </ul>
+
+    <p><a name="rebuildsteps" id="rebuildsteps"></a>This command can be used to delete all of the database tables used by the Fedora server.  It might be needed if the 
+	database gets corrupted, as described above for the command <a href="#rebuild">fedora-rebuild</a>.  
+	</p>
+  </div>
+<br>
+  <div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+  </div>
+</body>
+</html>
