@@ -15,7 +15,7 @@
     <div id="title">
       <h1>Fedora Client Command-Line Utilities</h1>
 
-      <h2>Fedora Release 2.0</h2>
+      <h2>Fedora Release 2.1b</h2>
     </div>
   </div>
 
@@ -24,30 +24,36 @@
 
     <div class="tocbox">
       <ol>
-        <li><a href="#d0e48">Introduction</a></li>
+        <li><a href="#intro">Introduction</a></li>
 
-        <li><a href="#d0e55">fedora-dsinfo</a></li>
+        <li><a href="#dsinfo">fedora-dsinfo</a></li>
 
-        <li><a href="#d0e89">fedora-export</a></li>
+        <li><a href="#export">fedora-export</a></li>
 
-        <li><a href="#d0e131">fedora-find</a></li>
+        <li><a href="#find">fedora-find</a></li>
 
-        <li><a href="#d0e164">fedora-ingest</a></li>
+        <li><a href="#ingest">fedora-ingest</a></li>
 
-        <li><a href="#d0e221">fedora-ingest-demos</a></li>
+        <li><a href="#indemo">fedora-ingest-demos</a></li>
 
-        <li><a href="#d0e252">fedora-convert-demos</a></li>
+        <li><a href="#cvdemo">fedora-convert-demos</a></li>
 
-        <li><a href="#d0e291">fedora-purge</a></li>
+        <li><a href="#purge">fedora-purge</a></li>
 
-        <li><a href="#fedmod">fedora-modify</a></li>
+        <li><a href="#modify">fedora-modify</a></li>
+
+        <li><a href="#bbuild">fedora-batch-build</a></li>
+
+        <li><a href="#bingest">fedora-batch-ingest</a></li>
+
+        <li><a href="#bbdingest">fedora-batch-buildingest</a></li>
       </ol>
     </div>
   </div>
 
   <div class="sec1">
     <div>
-      <h2><a name="d0e48" id="d0e48"></a>Introduction</h2>
+      <h2><a name="intro" id="intro"></a>Introduction</h2>
     </div>
 
     <p>The Fedora client distribution comes with several
@@ -66,11 +72,11 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e55" id="d0e55"></a>fedora-dsinfo</h2>
+    <h2><a name="dsinfo" id="dsinfo"></a>fedora-dsinfo</h2>
 
     <blockquote>
       <p><b>fedora-dsinfo</b> [hostname] [port-number] [user]
-      [pass] [<span class="SpellE">pid</span>]</p>
+      [pass] [<span class="SpellE">pid</span>] [protocol]</p>
     </blockquote>
 
     <p>Where:</p>
@@ -88,10 +94,12 @@
 
       <li><b>[pid]</b> - The pid of the object whose datastream
       information should be shown.</li>
+      <li><b>[protocol]</b> - Is how to connect to repository, either<tt> http </tt>or<tt> https</tt>.</li>
+
     </ul>Example:
 
     <blockquote>
-      <p><b>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5</b></p>
+      <p><b>fedora-dsinfo localhost 8080 fedoraAdmin fedoraAdmin demo:5 http</b></p>
        <p>Displays key information about each of an object's datastreams.</p>
     </blockquote>
 
@@ -99,9 +107,9 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e89" id="d0e89">fedora-export</a></h2>
+    <h2><a name="export" id="export">fedora-export</a></h2>
 
-    <p><b>fedora-export</b> [HST:PRT] [USR] [PSS] [PID|FTYPS] [FORMAT] [ECONTEXT] [PATH]</p>
+    <p><b>fedora-export</b> [HST:PRT] [USR] [PSS] [PID|FTYPS] [FORMAT] [ECONTEXT] [PATH] [PROTOCOL]</p>
 
     <p>Where:</p>
 
@@ -126,25 +134,27 @@
          <em>archive </em>, or <em>default</em>.</li>
          
       <li><b>[PATH]</b> - The directory to export to.</li>
+
+      <li><b>[PROTOCOL]</b> - Is how to connect to repository, either<tt> http </tt>or<tt> https</tt>.</li>
     </ul>
 
     <div>
       <p>Examples:</p>
       <blockquote>
-	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate </b></p>
+	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate http</b></p>
   	<p>Exports demo:1 for migration in FOXML format  (from example.com:80 to the current directory).</p>
 	<br></br>
-	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump</b></p>
+	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump http</b></p>
   	<p>Exports all objects in the default export format and context (from example.com:80 to directory /tmp/fedoradump).</p>
       </blockquote>
     </div>
 
     <div class="sec1">
-      <h2><a name="d0e131" id="d0e131"></a>fedora-find</h2>
+      <h2><a name="find" id="find"></a>fedora-find</h2>
 
       <blockquote>
-        <p><b>fedora-find</b> [hostname] [port-number] [fieldList]
-        [searchString]</p>
+        <p><b>fedora-find</b> [hostname] [port-number] [fieldList] 
+        [searchString] [protocol]</p>
       </blockquote>
 
       <p>Where:</p>
@@ -166,12 +176,14 @@
       <li><b>[searchString]</b> - A simple text string to search
       all fields for. This may include wildcard characters and is
       case-insensitive.</li>
+      
+	<li><b>[protocol]</b> - Is how to connect to repository, either<tt> http </tt>or<tt> https</tt>.</li>
     </ul>
 
     <p>Example:</p>
 
     <blockquote>
-      <p><b>fedora-find localhost 8080 "pid fType title description" "fedora"</b></p>
+      <p><b>fedora-find localhost 8080 "pid fType title description" "fedora" http</b></p>
 
       <p>(shows the pid, Fedora object type, title, and description
       fields of each object that has the word fedora somewhere in
@@ -185,16 +197,16 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e164" id="d0e164"></a>fedora-ingest</h2>
+    <h2><a name="ingest" id="ingest"></a>fedora-ingest</h2>
 
     <blockquote>
-      <p><b>fedora-ingest</b> f[ile] [PATH] [FORMAT] [THST:TPRT] [TUSR] [TPSS]
+      <p><b>fedora-ingest</b> f[ile] [PATH] [FORMAT] [THST:TPRT] [TUSR] [TPSS] [TPROTOCOL]
       [LOG]</p>
 
-      <p><b>fedora-ingest</b> d[ir] [PATH] [FORMAT] [FTYPS] [THST:TPRT] [TUSR] [TPSS]  [LOG]</p>
+      <p><b>fedora-ingest</b> d[ir] [PATH] [FORMAT] [FTYPS] [THST:TPRT] [TUSR] [TPSS] [TPROTOCOL] [LOG]</p>
 
       <p><b>fedora-ingest</b> r[epos] [SHST:SPRT] [SUSR] [SPSS] [PID|FTYPS]
-      [THST:TPRT] [TUSR] [TPSS] [LOG]</p>
+      [THST:TPRT] [TUSR] [TPSS] [SPROTOCOL] [TPROTOCOL] [LOG]</p>
     </blockquote>
 
     <p>Where:</p>
@@ -222,6 +234,10 @@
       repository OR the types of objects to export (FTYPS).  FTYPS can be any combination 
       of the characters O, D,  and M, specifying which Fedora object type(s) should be
       exported. O=regular data objects, D=behavior definitions,  M=behavior mechanisms.</li>
+      
+	<li><b>[SPROTOCOL]</b> -  the protocol to communicate with source repository, either<tt> http </tt>or<tt> https</tt>.</li>
+
+      <li><b>[TPROTOCOL]</b> -  the protocol to communicate with target repository, either<tt> http </tt>or<tt> https</tt>.</li>
 
       <li><b>[LOG]</b> - the optional log message. If unspecified,
       the log message will indicate the source of the
@@ -230,7 +246,7 @@
 
     <p>Examples:</p>
     <blockquote>
-	<p><b>fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw</b></p>
+	<p><b>fedora-ingest f obj1.xml foxml1.0 myrepo.com:80 jane jpw http</b></p>
 
   <p>Ingests obj1.xml (encoded in foxml1.0 format) from the
   current directory into the repository at myrepo.com:80
@@ -238,7 +254,7 @@
   The logmessage will be system-generated, indicating
   the source path+filename.</p>
 
-	<p><b>fedora-ingest d c:\archive foxml1.0 M myrepo.com:80 jane janepw ""</b></p>
+	<p><b>fedora-ingest d c:\archive foxml1.0 M myrepo.com:80 jane janepw http ""</b></p>
 
   <p>Traverses entire directory structure of c:\archive, and ingests
   any file that looks like a behavior mechanism object (M).
@@ -246,11 +262,11 @@
   and will fail on ingests of files that are not of this format.
   All log messages will be the quoted string.</p>
 
-	<p><b>fedora-ingest d c:\archive foxml1.0 ODM myrepo.com:80 jane janepw "for jane"</b></p>
+	<p><b>fedora-ingest d c:\archive foxml1.0 ODM myrepo.com:80 jane janepw http "for jane"</b></p>
 
   <p>Same as above, but ingests all three types of objects (O,D,M).</p>
 
-	<p><b>fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw ""</b></p>
+	<p><b>fedora-ingest r jrepo.com:8081 mike mpw demo:1 myrepo.com:80 jane jpw http ""</b></p>
 
  <p>Ingests the object whose pid is 'demo:1' from the source repository
   'srcrepo.com:8081' into the target repository 'myrepo.com:80'.
@@ -258,7 +274,7 @@
   export format configured at the source.
   All log messages will be empty.</p> 
 
-	<p><b>fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw ""</b></p>
+	<p><b>fedora-ingest r jrepo.com:8081 mike mpw O myrepo.com:80 jane jpw http ""</b></p>
 
   <p>Same as above, but ingests all data objects (type O).</p>
     
@@ -266,11 +282,11 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e221" id="d0e221"></a>fedora-ingest-demos</h2>
+    <h2><a name="indemo" id="indemo"></a>fedora-ingest-demos</h2>
 
     <blockquote>
       <p><b>fedora-ingest-demos</b> [hostname] [port-number] [user]
-      [pass]</p>
+      [pass] [protocol]</p>
     </blockquote>
 
     <p>Where:</p>
@@ -285,6 +301,8 @@
       <li><b>[user]</b> - The Fedora user (e.g. fedoraAdmin).</li>
 
       <li><b>[pass]</b> - The Fedora user's password.</li>
+
+	<li><b>[protocol]</b> - Is how to connect to repository, either<tt> http </tt>or<tt> https</tt>.</li>
     </ul>
 
     <p>Example:</p>
@@ -303,27 +321,27 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e252" id="d0e252"></a>fedora-convert-demos</h2>
+    <h2><a name="cvdemo" id="cvdemo"></a>fedora-convert-demos</h2>
 
     <blockquote>
-      <p><b>fedora-convert-demos</b> [fromHostName] [fromPortNum]
-      [toHostName] [toHostNum] [fedoraHomeDir]</p>
+      <p><b>fedora-convert-demos</b> [fromProtocol] [fromHostName] [fromPortNum]
+      [toProtocol] [toHostName] [toHostNum] [fedoraHomeDir]</p>
     </blockquote>
 
     <p>Where:</p>
 
     <ul>
-      <li><b>[fromHostName]</b> - The hostname currently being used
-      in the demo object files.</li>
+	<li><b>[fromProtocol]</b> -  currently being used in the demo object files, either<tt> http </tt>or<tt> https</tt>.</li>
 
-      <li><b>[fromPortNum]</b> - The port number currently being
-      used in the demo object files.</li>
+      <li><b>[fromHostName]</b> - The hostname currently being used in the demo object files.</li>
 
-      <li><b>[ptoHostNamep]</b> - The hostname of the
-      repository.</li>
+      <li><b>[fromPortNum]</b> - The port number currently being used in the demo object files.</li>
 
-      <li><b>[toPortNum]</b> - The port number of the
-      repository.</li>
+      <li><b>[toProtocol]</b> -  the protocol to use for the repository, either<tt> http </tt>or<tt> https</tt>.</li>
+
+      <li><b>[toHostName]</b> - The hostname of the repository.</li>
+
+      <li><b>[toPortNum]</b> - The port number of the repository.</li>
 
       <li><b>[fedoraHomeDir]</b> - Fedora's install base directory.
       This is the directory that contains the client
@@ -333,10 +351,10 @@
     <p>Example:</p>
 
     <blockquote>
-      <p><b>fedora-convert-demos localhost 8080 www.fedora.info 80 c:\fedora-2.0</b></p>
+      <p><b>fedora-convert-demos http localhost 8080 https www.fedora.info 80 c:\fedora-2.0</b></p>
     </blockquote>
 
-    <p>Converts URLs in the demo objects from one host/port
+    <p>Converts URLs in the demo objects from one protocol/host/port
     combination to another. After running this script with your
     repository's hostname, the demo objects can successfully be
     ingested.</p>
@@ -355,11 +373,11 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="d0e291" id="d0e291"></a>fedora-purge</h2>
+    <h2><a name="purge" id="purge"></a>fedora-purge</h2>
 
     <blockquote>
       <p><b>fedora-purge</b> [hostname] [port-number] [user] [pass]
-      [pid] [logMessage]</p>
+      [pid] [protocol] [logMessage]</p>
     </blockquote>
 
     <p>Where:</p>
@@ -378,14 +396,15 @@
       <li><b>[pid]</b> - The PID of the object to permanently
       remove.</li>
 
-      <li><b>[logMessage]</b> - A log message explaining the
-      removal.</li>
+      <li><b>[protocol]</b> - The protocol to communicate with repository, either<tt> http </tt>or<tt> https</tt>.</li>
+
+      <li><b>[logMessage]</b> - An <em>optional</em> log message explaining the removal.</li>
     </ul>
 
     <p>Example:</p>
 
     <blockquote>
-      <p><b>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6 "It was just a test object"</b></p>
+      <p><b>fedora-purge localhost 8080 fedoraAdmin fedoraAdmin demo:6 http "It was just a test object"</b></p>
     </blockquote>
 
     <p>Permanently removes an object from the repository. Note:
@@ -397,10 +416,10 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="fedmod" id="fedmod"></a>fedora-modify</h2>
+    <h2><a name="modify" id="modify"></a>fedora-modify</h2>
 
     <blockquote>
-      <p><b>fedora-modify</b> [hostname:port]  [user]  [password]  [directives-filepath]  [log-filepath] [validate-only-option]*</p>
+      <p><b>fedora-modify</b> [hostname:port]  [user]  [password]  [directives-filepath]  [log-filepath] [protocol] [validate-only-option]*</p>
     </blockquote>
 
     <p>Where:</p>
@@ -421,6 +440,9 @@
       <li><b>[log-filepath]</b> - The full path to the file where
       logs will be written.</li>
 
+      <li><b>[protocol]</b> - The protocol to communicate with repository, 
+      either<tt> http </tt>or<tt> https</tt>.</li>
+
       <li><b>[validate-only-option]</b> - An <em>optional </em> parameter
       indicating whether to only validate the directives file or to
       immediately process the file. The parameter can have any
@@ -432,6 +454,118 @@
     <p>The fedora-modify command line utility enables the running
     of the batch modify utility of the Administrator GUI client
     from the command line.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="bbuild" id="bbuild"></a>fedora-batch-build</h2>
+
+    <blockquote>
+      <p><b>fedora-batch-build</b> [object-template-file]  [object-specific-dir]  [object-directory] [log-filepath] [log-format]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[object-template-file]</b> - The full path to the batch template file.</li>
+
+      <li><b>[obj-specific-dir]</b> - The full path to the directory containing the 
+	object-specific files.</li>
+
+      <li><b>[object-directory]</b> - The full path to the directory where the 
+	generated objects will be built.</li>
+
+      <li><b>[log-filepath]</b> - The full path to the file where logs will be written.</li>
+
+      <li><b>[log-format]</b> - The format of the log file. Valid values are <tt> text </tt>or<tt> xml</tt>.</li>
+
+    </ul>
+
+    <p>The fedora-batch-build command line utility enables the running of 
+       the batch build utility of the Administrator GUI client from the command 
+       line. The batch build utility creates a "batch" of Fedora objects based 
+       on the specified template file and the corresponding directory of object-specific files. 
+       Refer to the documentation on the Batch Utility for more details on how to 
+       use the batch build utility.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="bingest" id="bingest"></a>fedora-batch-ingest</h2>
+
+    <blockquote>
+      <p><b>fedora-batch-ingest</b> [object-directory] [log-filepath] [log-format] [host:port] [user] [password] [protocol]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[obj-directory]</b> - The full path to the directory containing the objects to be ingested.</li>
+
+      <li><b>[log-filepath]</b> - The full path to the file where logs will be written.</li>
+
+      <li><b>[log-format]</b> - The format of the log file. Valid values are <tt> text </tt>or<tt> xml</tt>.</li>
+
+      <li><b>[host:port]</b> - The hostname and port of the target
+      Fedora server.</li>
+
+      <li><b>[user]</b> - The Fedora administrator username (e.g.,
+      fedoraAdmin)</li>
+
+      <li><b>[password]</b> - The password for the Fedora
+      administrator user.</li>
+
+      <li><b>[protocol]</b> - The protocol to communicate with Fedora server, 
+      either<tt> http </tt>or<tt> https</tt>.</li>
+    </ul>
+
+    <p>The fedora-batch-ingest command line utility enables the running of the 
+	batch ingest utility of the Administrator GUI client from the command line. 
+	The batch ingest utility ingests a "batch" of Fedora objects from the 
+	specified directory into the repository. Refer to the documentation on 
+	the Batch Utility for more details on how to use the batch ingest utility.</p>
+  </div>
+
+  <div class="sec1">
+    <h2><a name="bbdingest" id="bbdingest"></a>fedora-batch-buildingest</h2>
+
+    <blockquote>
+      <p><b>fedora-batch-buildingest</b> [object-template-file] [object-specific-dir] [object-directory] [log-filepath] [log-format] [host:port] [user] [password] [protocol]</p>
+    </blockquote>
+
+    <p>Where:</p>
+
+    <ul>
+      <li><b>[object-template-file]</b> - The full path to the batch template file.</li>
+
+      <li><b>[obj-specific-dir]</b> - The full path to the directory containing the 
+	object-specific files.</li>
+
+      <li><b>[object-directory]</b> - The full path to the directory where the 
+	generated objects will be built.</li>
+
+      <li><b>[log-filepath]</b> - The full path to the file where logs will be written.</li>
+
+      <li><b>[log-format]</b> - The format of the log file. Valid values are <tt> text </tt>or<tt> xml</tt>.</li>
+
+      <li><b>[host:port]</b> - The hostname and port of the target
+      Fedora server.</li>
+
+      <li><b>[user]</b> - The Fedora administrator username (e.g.,
+      fedoraAdmin)</li>
+
+      <li><b>[password]</b> - The password for the Fedora
+      administrator user.</li>
+
+      <li><b>[protocol]</b> - The protocol to communicate with Fedora server, 
+      either<tt> http </tt>or<tt> https</tt>.</li>
+    </ul>
+
+    <p>The fedora-batch-buildingest command line utility enables the running of the 
+	batch build & ingest utility of the Administrator GUI client from the command 
+	line. The batch build & ingest utility creates a "batch" of Fedora objects based 
+	on the specified template file and the corresponding directory of object-specific 
+	files and then ingests them into the repository. Refer to the documentation on 
+	the Batch Utility for more details on how to use the batch build & ingest utility.
+	</p>
   </div>
 
   <div id="footer">
