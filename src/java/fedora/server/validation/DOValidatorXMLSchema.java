@@ -21,7 +21,7 @@ import fedora.server.errors.GeneralException;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-public class DOValidatorXMLSchema
+public class DOValidatorXMLSchema implements EntityResolver
 {
     /** Constants used for JAXP 1.2 */
     private static final String JAXP_SCHEMA_LANGUAGE =
@@ -91,6 +91,7 @@ public class DOValidatorXMLSchema
 
       XMLReader xmlreader = sp.getXMLReader();
       xmlreader.setErrorHandler(new DOValidatorXMLErrorHandler());
+      xmlreader.setEntityResolver(this);
       xmlreader.parse(doXML);
       }
       catch (ParserConfigurationException e)
@@ -98,21 +99,38 @@ public class DOValidatorXMLSchema
         String msg = "DOValidatorXMLSchema returned parser error.\n"
                   + "The underlying exception was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        throw new GeneralException(msg);
+        throw new GeneralException(msg, e);
       }
       catch (SAXException e)
       {
         String msg = "DOValidatorXMLSchema returned validation exception.\n"
                   + "The underlying exception was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        throw new ObjectValidityException(msg);
+        throw new ObjectValidityException(msg, e);
       }
       catch (Exception e)
       {
         String msg = "DOValidatorXMLSchema returned error.\n"
                   + "The underlying error was a " + e.getClass().getName() + ".\n"
                   + "The message was "  + "\"" + e.getMessage() + "\"";
-        throw new GeneralException(msg);
+        throw new GeneralException(msg, e);
       }
+    }
+
+    /**
+     * Resolve the entity if it's referring to the required schema.
+     * Otherwise, return an empty InputSource.
+     *
+     * This behavior is required in order to ensure that Xerces never
+     * attempts to load external schemas specified with xsi:schemaLocation.
+     * It is not enough that we specify processContents="skip" in our own
+     * schema.
+     */
+    public InputSource resolveEntity(String publicId, String systemId) {
+        if (systemId != null && systemId.equals(schemaURI.toString())) {
+            return null;
+        } else {
+            return new InputSource();
+        }
     }
 }
