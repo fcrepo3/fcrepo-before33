@@ -151,7 +151,10 @@ public class TestAPIA extends FedoraServerTestCase {
 	
 	public void testListMethods() throws Exception {
 		ObjectMethodsDef[] methodDefs = apia.listMethods("demo:11", null);
-		assertEquals(methodDefs.length,7);
+		// Now, there are now only 6 methods since the getItem method of the
+		// default disseminator has been deprecated (commented out in 2.1b).
+		//assertEquals(methodDefs.length,7);
+		assertEquals(methodDefs.length,6);
 		verifyObjectMethods(methodDefs, "testListMethods: ");
 	}
 
