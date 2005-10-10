@@ -343,6 +343,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
 	methodList.add(method);
 
 	// DEPRECATED in Fedora 2.0.  Will be removed in Fedora 2.1.
+	/**
     method = new MethodDef();
     method.methodName = "getItem";
     method.methodLabel = "Get an item from the object";
@@ -356,6 +357,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
     method.methodParms[0].parmDefaultValue = null;
     method.methodParms[0].parmDomainValues = new String[0];
     methodList.add(method);
+    **/
     
 	return (MethodDef[])methodList.toArray(new MethodDef[0]);
 
