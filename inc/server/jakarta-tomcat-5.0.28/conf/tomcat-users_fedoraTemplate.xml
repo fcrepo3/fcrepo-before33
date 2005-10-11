@@ -4,8 +4,12 @@
   you must define such a user - the username and password are arbitrary.
 -->
 <tomcat-users>
-  <user name="#1" password="#2" roles="fedoraRole=administrator" />
-  <user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1" />  
-  <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
-  <user name="guest" password="" roles="" />
+	<user name="#1" password="#2" roles="fedoraRole=administrator"/>
+	<user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1"/>
+	<user name="surrogate64" password="surrogate64" roles="webfrontend"/>
+	<user name="testuser1" password="testuser1" roles="fedoraRole=professor"/>
+	<user name="testuser2" password="testuser2" roles="fedoraRole=researcher"/>
+	<user name="testuser3" password="testuser3" roles="fedoraRole=student"/>
+	<user name="testuser4" password="testuser4" roles="fedoraRole=visitor"/>
+	<user name="guest" password="" roles=""/>
 </tomcat-users>
