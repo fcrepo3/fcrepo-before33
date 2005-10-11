@@ -43,7 +43,7 @@
     <a href="../../index.html" id="logo"></a>
     <div id="title">
         <h1>Resource Index Guide</h1>
-        <h2>Fedora Release 2.0</h2>
+        <h2>Fedora Release 2.1</h2>
     </div>
 </div>
 
@@ -125,7 +125,7 @@ behavior definition <code>demo:Collection</code>.</p>
 
 <img src="images/system-basic.png" height="300" width="460" alt="System Relationships" />
 
-<p>Dublic Core statement, as shown in the figure below, are automatically 
+<p>Dublin Core statements, as shown in the figure below, are automatically 
 extracted from an object's DC datastream and inserted into the Resource Index.
 datastream, as shown in the figure below: </p>
 <img src="images/system-dc.png" height="183" width="600" alt="DC properties" />
@@ -317,7 +317,11 @@ repository.</p>
     </li>
     <li>poolInitialSize
         <div class="description">
-            The initial size of the session pool used for queries.
+            The initial size of the session pool used for queries. Note: 
+            A value of 0  will cause the Resource Index to operate in 
+            synchronized mode: concurrent read/write requests are put in a 
+            queue and handled in FIFO order; this will severely impair 
+            performance and is only intended for debugging.
         </div>
     </li>
     <li>poolMaxGrowth
@@ -455,10 +459,6 @@ repository.</p>
                             the background, during which time the buffer is still 
                             available for writing.
                         </div>
-                        <ul class="domain">
-                            <li>true</li>
-                            <li>false</li>
-                        </ul>
                     </li>
                     <li>autoFlushBufferSize
                         <div class="description">
@@ -467,10 +467,6 @@ repository.</p>
                             the background, during which time the buffer is still 
                             available for writing.
                         </div>
-                        <ul class="domain">
-                            <li>true</li>
-                            <li>false</li>
-                        </ul>
                     </li>
                     <li>bufferSafeCapacity
                         <div class="description">
@@ -481,10 +477,6 @@ repository.</p>
                             writing until it is finished. This should be larger 
                             than autoFlushBufferSize.
                         </div>
-                        <ul class="domain">
-                            <li>true</li>
-                            <li>false</li>
-                        </ul>
                     </li>
                     <li>bufferFlushBatchSize
                         <div class="description">
@@ -492,10 +484,6 @@ repository.</p>
                             a time. This should be the same size as, or smaller 
                             than autoFlushBufferSize.
                         </div>
-                        <ul class="domain">
-                            <li>true</li>
-                            <li>false</li>
-                        </ul>
                     </li>
                     
                 </ul>
@@ -514,10 +502,9 @@ providing a stateless query interface that accepts queries by value or by
 reference [<a href="#ref.rels" class="reference">Fedora Relationships</a>].</p>
     
 <p>The query interface to the Resource Index currently supports three RDF query 
-languages, RDQL, iTQL, and SPO. Both RDQL and iTQL share a superficially similar 
-syntax to SQL, with RDQL enjoying broader implementation support, but iTQL 
-providing a richer feature set. Support for SPARQL is planned for a future 
-release.</p>
+languages, RDQL, iTQL, and SPO. However, as of Fedora 2.1, RDQL support is now 
+deprecated and may be entirely absent in future releases. 
+Support for SPARQL is planned for a future release.</p>
 
 <p>Please consult the <a href="../webservices/risearch/index.html">Resource 
 Index Search documentation</a> for more information.</p>
