@@ -283,13 +283,19 @@ public class Trial {
     private static final HashSet NULLSET = new HashSet();
     
     //configurations
-    public static final String UNSECURE_CONFIG = "unsecure";
+    public static final String UNSECURE_APIM_CONFIG = "unsecure-apim";
+    public static final String UNSECURE_ALL_CONFIG = "unsecure-all";
     public static final String SECURE_APIM_CONFIG = "secure-apim";
     public static final String SECURE_ALL_CONFIG = "secure-all";  
 
-    private static final Set ONLY_UNSECURE_CONFIG = new HashSet();
+    private static final Set ONLY_UNSECURE_APIM_CONFIG = new HashSet();
     static {
-    	ONLY_UNSECURE_CONFIG.add(UNSECURE_CONFIG);
+    	ONLY_UNSECURE_APIM_CONFIG.add(UNSECURE_APIM_CONFIG);
+    }
+
+    private static final Set ONLY_UNSECURE_ALL_CONFIG = new HashSet();
+    static {
+    	ONLY_UNSECURE_ALL_CONFIG.add(UNSECURE_ALL_CONFIG);
     }
 
     private static final Set ONLY_SECURE_APIM_CONFIG = new HashSet();
@@ -304,7 +310,8 @@ public class Trial {
     
     private static final Set UNSECURE_CONFIGS = new HashSet();
     static {
-    	UNSECURE_CONFIGS.addAll(ONLY_UNSECURE_CONFIG);
+    	UNSECURE_CONFIGS.addAll(ONLY_UNSECURE_APIM_CONFIG);
+    	UNSECURE_CONFIGS.addAll(ONLY_UNSECURE_ALL_CONFIG);    	
     }
     
     private static final Set SECURE_CONFIGS = new HashSet();
@@ -360,7 +367,7 @@ public class Trial {
     
     private static final String makeKey(String config, String policies, String protocol, String op, String dataset, String desiredStatus) {
     	String key = (config + "|" + policies + "|" + protocol + "|" + op + "|" + dataset + "|" + desiredStatus);
-		System.out.println("trial key==" + key);
+		//System.out.println("trial key==" + key);
     	return key;
     }
     
@@ -372,7 +379,7 @@ public class Trial {
 
     private static final String makeKey(String config, String policies, String protocol, String op, String desiredStatus) {
     	String key = (config + "|" + policies + "|" + protocol + "|" + op + "|" + desiredStatus);
-		System.out.println("trial key==" + key);
+		//System.out.println("trial key==" + key);
     	return key;
     }
     
@@ -469,7 +476,7 @@ public class Trial {
     	putMultiple(ONLY_SECURE_APIM_CONFIG, NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 403, HTTPS_TRIALS_WITH_NO_POLICIES);
     	putMultiple(ONLY_SECURE_ALL_CONFIG, NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 403, HTTPS_TRIALS_WITH_NO_POLICIES_ENDUSER);
     	putMultiple(ALL_CONFIGS, NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 500, NULLSET);
-    	putMultiple(ONLY_UNSECURE_CONFIG,  NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 200, NULLSET);
+    	putMultiple(ONLY_UNSECURE_APIM_CONFIG,  NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 200, NULLSET);
     	putMultiple(ONLY_SECURE_ALL_CONFIG, NO_POLICIES, HTTPS, APIA, DEMO_OBJECTS, 200, HTTPS_TRIALS_WITH_NO_POLICIES_ADMIN);
     	    	
     	putMultiple(ALL_CONFIGS, NO_POLICIES, HTTPS, APIA, BAD_PIDS, 302, NULLSET);
@@ -611,7 +618,7 @@ public class Trial {
     	Set trialSet = null;
 		String key = makeKey (config, policies, protocol, op, dataset, desiredStatus);
     	trialSet = getTrialSet(key);
-    	System.out.println("about to return null trial set for " + key + " " + trialSet);
+    	//System.out.println("about to return null trial set for " + key + " " + trialSet);
 		return trialSet;
     }
 
@@ -619,7 +626,7 @@ public class Trial {
     	Set trialSet = null;
 		String key = makeKey (config, policies, protocol, op, desiredStatus);
     	trialSet = getTrialSet(key);
-    	System.out.println("about to return null trial set for " + key + " " + trialSet);
+    	//System.out.println("about to return null trial set for " + key + " " + trialSet);
 		return trialSet;    }
 
     public static void main(String[] args) {
