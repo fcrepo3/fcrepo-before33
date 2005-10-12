@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 
 <head>
   <title>Securing Your Fedora Repository</title>
   <meta name="robots" content="all"/>
-  <link href="docstyle.css" rel="stylesheet" type="text/css"/>
+  <link href="../../docstyle.css" rel="stylesheet" type="text/css"/>
 </head>
 
 <body>
@@ -34,10 +33,10 @@
     <p>under Unix in $FEDORA_HOME\server\bin\fedora-setup configuration-name</p>
 
     <p><blockquote>where configuration-name is one of the following:
-	 <blockquote>secure-apim<br>
-		secure-all<br>
-		unsecure-apim<br>
-		unsecure-all</p></blockquote></blockquote>
+	 <blockquote>secure-apim<br/>
+		secure-all<br/>
+		unsecure-apim<br/>
+		unsecure-all</blockquote></blockquote></p>
 
     <p>The fedora-setup utility initializes the base security configuration by copying a set of three files into the distribution tree. These three files are:</p>
 	<ul>
@@ -153,14 +152,18 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 
 <p>By default, the template contains the following users, passwords, and roles:</p>
 
-	<div class="code">
-	  <tomcat-users>
-        <user name="#1" password="#2" roles="fedoraRole=administrator" />
-        <user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1" />  
-        <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
-        <user name="guest" password="" roles="" />
-	  </tomcat-users> 
-	</div>
+	  <div class="code"> 
+  &lt;tomcat-users&gt;
+    &lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;
+    &lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;
+    &lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;
+    &lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;
+    &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;
+    &lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;
+    &lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;
+    &lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;
+  &lt;/tomcat-users&gt; 
+      </div>
 
 <p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-suers-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
 
@@ -174,9 +177,9 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 
 	<div class="code">
 	  roles="attribute1,attribute2,attribute3"
-	<div?
+	</div>
 
-<p>In addition, the extensions include the ability to represent attributes as name=value pairs allowing you to specify both the attribute name and value as opposed to just the value. e.g.,</p>
+<p>In addition, the extensions include the ability to represent attributes as name=value pairs allowing you to specify both the attribute name and value as opposed to just the value. e.g.,<p></p>
 
 	<div class="code">
 	  roles="fedoraRole=administrator,fedoraRole=demo:9/getThumbnail"
@@ -282,5 +285,5 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 	</blockquote>
 	</div>
 
-</body>
+</div></ul></ul></body>
 </html>
