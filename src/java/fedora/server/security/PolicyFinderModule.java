@@ -48,7 +48,7 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 
 /**
- * @author wdn5e
+ * @author wdn5e@virginia.edu
  * to understand why this class is needed 
  * (why configuring the xacml pdp with all of the multiplexed policy finders just won't work),
  * @see "http://sourceforge.net/mailarchive/message.php?msg_id=6068981"

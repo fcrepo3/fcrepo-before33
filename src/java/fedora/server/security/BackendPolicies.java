@@ -14,7 +14,7 @@ import java.util.Set;
 import fedora.common.PID;
 
 /**
- * @author wdn5e
+ * @author wdn5e@virginia.edu
  */
 public class BackendPolicies {
 

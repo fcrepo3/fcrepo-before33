@@ -28,6 +28,10 @@ import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
 import fedora.server.storage.DOManager;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 public class PolicyEnforcementPoint {
 	
 	public static final String SUBACTION_SEPARATOR = "//"; 

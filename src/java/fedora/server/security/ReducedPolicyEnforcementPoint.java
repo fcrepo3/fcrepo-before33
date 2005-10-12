@@ -32,6 +32,10 @@ import fedora.server.errors.GeneralException;
 import fedora.server.storage.DOManager;
 */
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 public class ReducedPolicyEnforcementPoint {
 	
 	public static final String SUBACTION_SEPARATOR = "//"; 

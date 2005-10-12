@@ -1,5 +1,8 @@
 package fedora.server.security;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
 
 public class Transom { 	
 	

@@ -4,6 +4,10 @@ import java.util.Date;
 import fedora.server.Context;
 import fedora.server.errors.authorization.AuthzException;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 public interface Authorization {
 	
 

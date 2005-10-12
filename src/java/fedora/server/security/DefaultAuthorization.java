@@ -33,7 +33,7 @@ import fedora.server.utilities.DateUtility;
  * <p><b>Description: </b>The Access Module, providing support for the Fedora
  * Access subsystem.</p>
  *
- * @author rlw@virginia.edu
+ * @author wdn5e@virginia.edu
  * @version $Id$
  */
 public class DefaultAuthorization extends Module implements Authorization {

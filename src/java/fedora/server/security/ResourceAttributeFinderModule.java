@@ -16,6 +16,10 @@ import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
 import fedora.server.utilities.DateUtility;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 /*package*/ class ResourceAttributeFinderModule extends AttributeFinderModule {
 	
 	protected boolean canHandleAdhoc() {

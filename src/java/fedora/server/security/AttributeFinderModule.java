@@ -18,6 +18,10 @@ import com.sun.xacml.attr.TimeAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 /*package*/ abstract class AttributeFinderModule extends com.sun.xacml.finder.AttributeFinderModule {
 	
 	private ServletContext servletContext = null;

@@ -11,6 +11,10 @@ import com.sun.xacml.cond.EvaluationResult;
 import fedora.common.Constants;
 import fedora.server.Context;
 
+/**
+ * @author wdn5e@virginia.edu
+ */
+
 /*package*/ class ContextAttributeFinderModule extends AttributeFinderModule {
 	
 	protected boolean canHandleAdhoc() {
