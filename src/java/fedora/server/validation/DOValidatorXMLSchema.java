@@ -118,7 +118,7 @@ public class DOValidatorXMLSchema implements EntityResolver
     }
 
     /**
-     * Resolve the entity if it's referring to the required schema.
+     * Resolve the entity if it's referring to a local schema.
      * Otherwise, return an empty InputSource.
      *
      * This behavior is required in order to ensure that Xerces never
@@ -127,7 +127,7 @@ public class DOValidatorXMLSchema implements EntityResolver
      * schema.
      */
     public InputSource resolveEntity(String publicId, String systemId) {
-        if (systemId != null && systemId.equals(schemaURI.toString())) {
+        if (systemId != null && systemId.startsWith("file:")) {
             return null;
         } else {
             return new InputSource();
