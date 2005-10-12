@@ -75,7 +75,7 @@ defaults at the <i>service</i> <i>interface</i> level</b></h3>
 		<td width="64">&nbsp;</td>
 		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
-		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-to-ldap-group.xml">deny-apia-to-ldap-group.xml</a></span></td>
+		<a href="userdocs/xacml-policies/examples/object-specific/deny-apia-to-ldap-group.xml">deny-apia-to-ldap-group.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>Deny access to all </span><span
    style='font-size:10.0pt;font-family:Arial;color:black;background:white'>API-A
@@ -448,79 +448,74 @@ defaults at the <i>service</i> <i>interface</i> level</b></p>
 
 <p><b>4.1. Object-Specific Policies</b></p>
 
-<p style='margin-left:.25in'>&nbsp;</p>
+<p>&nbsp;</p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0 width=816
- style='width:8.5in;margin-left:5.4pt;border-collapse:collapse;border:none'>
- <tr>
-  <td width=32 valign=top style='width:24.15pt;border:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><b>ID</b></p>
-  </td>
-  <td width=364 valign=top style='width:272.85pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p><b>Policy Name</b> </p>
-  </td>
-  <td width=420 valign=top style='width:315.0pt;border:solid windowtext 1.0pt;
-  border-left:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p><b>Policy Description</b></p>
-  </td>
- </tr>
- <tr>
-  <td width=32 valign=top style='width:24.15pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p>1</p>
-  </td>
-  <td width=364 valign=top style='width:272.85pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
-  <td width=420 valign=top style='width:315.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=32 valign=top style='width:24.15pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p>2</p>
-  </td>
-  <td width=364 valign=top style='width:272.85pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
-  <td width=420 valign=top style='width:315.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
- </tr>
- <tr>
-  <td width=32 valign=top style='width:24.15pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
-  <p>3</p>
-  </td>
-  <td width=364 valign=top style='width:272.85pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
-  <td width=420 valign=top style='width:315.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0in 5.4pt 0in 5.4pt'>
-  <p><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>&nbsp;</span></p>
-  </td>
- </tr>
-</table>
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="284"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">1</td>
+		<td width="64">&nbsp;</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-5.xml">
+		demo-5.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		This is an object-specific policy. It could be stored inside the demo:5 
+		digital object in the POLICY datastream OR in the directory for 
+		object-specific policies. (The directory location is set in the 
+		Authorization module configuration in the Fedora server configuration 
+		file (fedora.fcfg). By using multiple policy Rules, this policy shows 
+		how to deny access to all raw datastreams in the object except to 
+		particular users (e.g., the object owners). It also shows how to deny 
+		access to a particular disseminations to selected user roles.</span></td>
+	</tr>
+	<tr>
+		<td width="41">2</td>
+		<td width="64">&nbsp;</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-11.xml">
+		demo-11.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		By using multiple policy Rules, this policy shows how to deny access to 
+		particular datastreams in the object. 1) The policy will DENY everyone 
+		except professors and researchers access to -particular- source 
+		datastreams of the demo:11 object by controlling access to the 
+		getDatastreamDissemination method of the Fedora Access Service (API-A). 
+		2) The policy will DENY everyone except students, professors, and 
+		researchers, access to all disseminations of demo:11. 3) This policy 
+		will also DENY ALL access to the demo:11 object to a SPECIFIC USER based 
+		on login id (as registered in the tomcat-users.xml file). NOTE: The net 
+		effect of the policy permits open access to the descriptive metadata 
+		datastream of demo:11.</span></td>
+	</tr>
+	<tr>
+		<td width="41">3</td>
+		<td width="64">&nbsp;</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-26.xml">
+		demo-26.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		By using multiple policy Rules, this policy shows how to deny access to 
+		particular datastreams in the object. The policy will DENY visitors 
+		access to the TEI and FOP source datastreams of the demo:26 object by 
+		controlling access to the getDatastreamDissemination method of the 
+		Fedora Access Service (API-A). These datastreams are open to all other 
+		kinds of users, and Disseminations are open to all users. This is an 
+		object-specific policy. It could be stored inside the demo:26 digital 
+		object in the POLICY datastream OR in the directory for object-specific 
+		policies. (The directory location is set in the Authorization module 
+		configuration in the Fedora server configuration file (fedora.fcfg).</span></td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
 
 <p>&nbsp;</p>
 

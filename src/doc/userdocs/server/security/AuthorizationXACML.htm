@@ -12,7 +12,7 @@
 <div id="header">
     <a href="../index.html" id="logo"></a>
     <div id="title">
-		<h1>The Fedora Authorization Module for XACML Policy Enforcement</h1>
+		<h1>Fedora Authorization with&nbsp;XACML Policy Enforcement</h1>
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 </div>
@@ -25,7 +25,7 @@
             <li><a href="#POLICY">Encoding Fedora XACML Policies</a></li>
                 <ul>
 					<li><a href="#POLICY1">2.1 The Fedora Policy Vocabulary</a></li>
-					<li><a href="#POLICY2">2.1 Policy Identifier, Description, and Rule Combining Algorithm</a></li>
+					<li><a href="#POLICY2">2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining Algorithm</a></li>
 					<li><a href="#POLICY3">2.3 Defining the Policy Target</a></li>
 					<li><a href="#POLICY4">2.4 Defining Policy Rules</a></li>
 					<li><a href="#POLICY5">2.5 Recommended Best Practices for Authoring Fedora XACML Policies</a></li>
@@ -67,28 +67,98 @@
 <h2><a name="INTRO">1 Introduction</a></h2>
 
 <p>&nbsp;</p>
-
-<p><i>&lt;INSERT HERE:  general discussion to orient
-people on writing their own XACML policies.  First we discuss the default
-policies that come out of the box and why they are there.  Then we discuss how
-to create custom policies of your own.  We distinguish between repository-wide
-and object-specific policies and when/why you choose one approach vs. another. 
-Note that the Fedora-specific identifiers to use in policies can be found in dist/server/config/xacml-policies/vocabulary.txt.  
-Mention that the Fedora Policy Enforcement Module is built upon the Sun XACML
-engine.&gt;&nbsp;</i></p>
+<p>This guide is intended to give a general overview of XACML in the context of 
+Fedora repositories.&nbsp;&nbsp; A brief discussion of the major components of 
+an XACML policy is provided, as well as the basics necessary to write XACML 
+policies for Fedora.&nbsp;&nbsp; This guide also provides Instructions on how to 
+configure XACML-based policy authorization in Fedora as well as a discussion of 
+how the Fedora Policy Enforcement module works.&nbsp; </p>
+<p>&nbsp;XACML provides a very flexible language for expressing access control 
+policies.&nbsp;&nbsp; This document offers guidance on writing a range of useful 
+policies for Fedora such as 1) broad respository-wide policies for controlling 
+access to Fedora API operations,&nbsp; 2) more detailed repository-wide policies 
+for controlling access to groups of digital objects based on various attributes, 
+and 3) more fine-grained object-specific policies for controlling access 
+individual digital objects.&nbsp;&nbsp;&nbsp; </p>
+<p>This document is not intended to be a comprehensive tutorial on writing XACML 
+policies.&nbsp;&nbsp; Anyone intending to author custom XACML policies for 
+Fedora is encouraged to read the following documentation provided by OASIS 
+Technical Committee that defined the XACML standard, and Sun who is the provider 
+of the opensource Sun XACML engine that is used in the Fedora implementation.&nbsp;&nbsp;&nbsp; 
+It is very important to understanding the basics of XACML to ensure that a suite 
+of policies works as intended.&nbsp;&nbsp; One of the most important concepts in 
+using XACML is understanding how multiple policies can interact with each other 
+(in good ways, or in ways you didn't intend).&nbsp;&nbsp; By following the 
+examples in this guide, you should be able to set up many kinds of access 
+control policies for your repository.&nbsp;&nbsp; With additional help from the 
+following documents, you should be able to do more advanced policies, and change 
+some of the XACML settings for how sets of policies are combined.</p>
+<p>&nbsp;</p>
+<p><b>OASIS&nbsp; (for policy writers)</b></p>
+<p><br>
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+XACML Specification</a>:&nbsp;
+this is the official specification and a good reference document. <br>
+<br>
+<a href="http://www.oasis-open.org/committees/download.php/2713/Brief_Introduction_to_XACML.html">
+A Brief Introduction to XACML</a>:&nbsp; this is nice introduction to the XACML 
+concepts<br>
+<br>
+<a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xacml">XACML 
+Technical Committee</a>:&nbsp;&nbsp; this home page of the technical committee 
+provides access to other documents on XACML<br>
+<br>
+<br>
+<b>SUN&nbsp; (for developers)</b></p>
+<p><br>
+<a href="http://sunxacml.sourceforge.net/javadoc/index.html">Sun XACML Home Page</a>:&nbsp; 
+general information on the Sun Java reference implementation of XACML</p>
+<p><a href="http://sunxacml.sourceforge.net/guide.html">Sun XACML Programmer 
+Guide</a>:&nbsp; technical details of the reference implementation</p>
+<p><a href="http://sunxacml.sourceforge.net/javadoc/index.html">Sun XACML 
+Javadocs</a>:&nbsp; interface definitions of the reference implementation<br>
+<i><br>
+<br>
+To quiet sunxacml INFO messages, a logging.properties file is included with the 
+Fedora distribution,<br>
+edited to print only SEVERE messages to the console. Fedora then starts Java 
+using that logging.properties file.<br>
+The original file, as distributed with JDK 1.4.2.8, prints INFO (and more 
+severe) messages, making the console a bit<br>
+chatty. To revert to the original logging behavior, edit fedora-start.bat 
+(Windows) or fedora.sh (Unix), and remove</i></p>
 <p>&nbsp;</p>
 
 <h2><a name="POLICY">2 Encoding Fedora XACML Policies</a></h2>
 
-<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
-
+<p>&nbsp;</p>
 <h4><a name="POLICY1"><b>2.1 The Fedora Policy Vocabulary</b></a></h4>
 
 <p>&nbsp;</p>
 
-<p>Fedora-specific identifiers for use in authoring Fedora
-XACML policies can be found in dist/server/config/xacml-policies/vocabulary.txt.  
-This vocabulary provides a set of identifiers (URNs) that can appear in XACML
+<p>A <a href="xacml-policies/vocabulary.txt">Fedora-specific policy vocabulary</a> 
+is defined to enable the creation of XACML policies for Fedora repositories and 
+digital objects.&nbsp;&nbsp; This vocabulary define a set of URNs that can be 
+used to identify specific Fedora API operations, Fedora object attributes, and 
+the Fedora environment within an XACML policy.&nbsp;&nbsp; These URNs are used 
+as attribute designators in XACML policies, specifically within a SubjectAttributeDesignator, 
+ResourceAttributeDesignator, ActionAttributeDesignator, and jfkdjkf.&nbsp;&nbsp;&nbsp;&nbsp; </p>
+<p>&nbsp;</p>
+<p>The set of identifiers defined for the Fedora policy vocabulary is 
+automatically generated and can be found in the Fedora software distribution at:</p>
+
+<p>
+        &nbsp;Under Windows:</p>
+      <div class="code">
+&nbsp;&nbsp;&nbsp; %FEDORA_HOME%\server\config\xacml-policies\vocabulary.txt</div>
+      <p style='text-autospace:none'>&nbsp;</p>
+
+<p>
+        &nbsp;Under Unix:</p>
+      <div class="code">
+&nbsp;&nbsp;&nbsp; $FEDORA_HOME\server\config\xacml-policies\vocabulary.txt</div>
+	<p>&nbsp;</p>
+	<p>This vocabulary provides a set of identifiers (URNs) that can appear in XACML
 policies to refer to Fedora API operations (Actions in XACML), any aspects of a
 Fedora digital object (Resources in XACML), and key attributes of the
 environment in which Fedora runs in (Environment in XACML).  <b><i>&lt;link to
@@ -97,7 +167,7 @@ vocabulary.txt&gt;</i></b></p>
 <p style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
-<h4><a name="POLICY2"><b>2.1 Policy Identifier, Description, and Rule Combining
+<h4><a name="POLICY2"><b>2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining
 Algorithm</b></a></h4>
 
 <p><b>&nbsp;</b></p>
@@ -111,21 +181,25 @@ purpose of the policy.</p>
 
       <div class="code">
 &lt;Policy
-PolicyId=&quot;deny-apia&quot; 
+<b>PolicyId=&quot;deny-apia&quot; </b> 
 
-<p>        RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;  </p>
+<p>        <b>RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;</b>  </p>
 
 <p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
 xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
 
 <p>&nbsp;</p>
 
-<p>    &lt;Description&gt;This policy will DENY access to Dublin
-Core datastreams.&lt;/Description&gt;</p>
+<p>    <b>&lt;Description&gt;This policy will DENY access to Dublin
+Core datastreams.&lt;/Description&gt;</b></p>
 
-<p>    &lt;Target/&gt;</p>
+<p>    &lt;Target&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</p>
 
-<p>    &lt;Rule/&gt;</p>
+<p>    &lt;Rule&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;/Rule&gt;</p>
 
 <p>&lt;/Policy&gt;</p>
 
@@ -155,8 +229,41 @@ All three of these components must be matched to the context of an incoming
 request for the policy to be applicable.  [NOTE: A fourth component at this
 level, Environments, is apparent in the OASIS XACML spec, but not yet
 implemented by sunxacml.]</p>
+<p>&nbsp;</p>
 
-<p style='text-autospace:none'>&nbsp;</p>
+      <div class="code">
+&lt;Policy
+PolicyId=&quot;deny-apia&quot; 
+
+<p>        RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;  </p>
+
+<p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>    &lt;Description&gt;This policy will DENY access to Dublin
+Core datastreams.&lt;/Description&gt;</p>
+
+<p><b>    &lt;Target&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Subjects&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Resources&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Actions&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</b></p>
+
+<p>    &lt;Rule/&gt;</p>
+
+<p>&lt;/Policy&gt;</p>
+
+&nbsp;</div>
+
+<p>&nbsp;</p>
 
 <p>A Policy Target can be specified for a Policy or PolicySet. 
  A &lt;Target&gt; element is defined at the Policy level (as a child of the
@@ -461,85 +568,107 @@ of a Target in a policy.  For example, to define a policy that is applicable to
 
 <p style='text-autospace:none'>From a practical standpoint in
 Fedora, there is are only two attributes that pertain to identifying Fedora
-service requests:  the attribute that indicates what Fedora API is in context,
-and the attribute that indicates the specific service operation within that API.  
-As with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple
-<b>&lt;ActionMatch&gt; </b>elements are <b>logically </b><b>AND</b><b>-ed
-together</b>.  The AttributeID in the &lt;ActionAttributeDesignator&gt; element
-is used to identify a particular action attributes.  In general in is not
-necessary to scope a Fedora service operation by which API it exists within
-because in reality, Fedora APIs are designed so that the same operation name
-will not be repeated across different APIs.   So to specify the match for
-particular Fedora API operation a single &lt;ActionMatch&gt; is needed, with
-the AttributeId of the &lt;ActionAttributeDesignator&gt; referring to the URN
-of a Fedora operation (as listed in the Fedora policy vocabulary.  For example the
-following snippet says that the policy will match if the incoming request is
-for the “exportObject” operation.</p>
+API operations:  1) an attribute that indicates what Fedora API is in context,
+and 2) an attribute that indicates the specific service operation within that API.  &nbsp; 
+To create a policy that is intended for an <i>entire</i> service&nbsp; (e.g., 
+ALL operations of API-A) do the following:</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Actions&gt;<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;Action&gt;</p>
+&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
 MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
 
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-exportObject</b>&lt;/AttributeValue&gt; </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;     
+</p>
 
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;                                  </p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;    </p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ActionMatch&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;/&gt;</p>
 
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;/Action&gt;</p>
+<p>     &nbsp;&lt;/ActionMatch&gt;</p>
 
-<p>&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;</p>
+<p>  &nbsp;&lt;/Action&gt;</p>
+
+<p>&lt;/Actions&gt;</p>
 
       </div>
 
 <p style='text-autospace:none'>&nbsp;</p>
-<p style='text-autospace:none'>The above can be considered a
-shortcut for the fully qualified approach that refers to both the specific
-Fedora API and the specific operation within that API as follows:</p>
+<p style='text-autospace:none'>To create a policy that is about a specific 
+operation in a Fedora API do the following:</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
+MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;                                  </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
+
+<p>     &nbsp;&lt;/ActionMatch&gt;</p>
+
+<p>  &nbsp;&lt;/Action&gt;</p>
+
+<p>&lt;/Actions&gt;</p>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>The above can be considered a shortcut for fully 
+qualifying an service operation within its respective service API.&nbsp;&nbsp; 
+An alternative way to specify an Action as a Fedora API operation is to refer to 
+the Fedora service API <b>AND</b> the service operation.&nbsp;&nbsp;&nbsp; As with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple
+<b>&lt;ActionMatch&gt; </b>elements are <b>logically AND-ed
+together</b>. &nbsp;&nbsp;&nbsp; For example the following snippet says that the 
+policy will match if the incoming request pertains to the Fedora API-A service 
+AND the service request is for the the “getDatastreamDissemination” operation.</p>
 
 <p>&nbsp;</p>
 <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Actions&gt;<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;Action&gt;</p>
+&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
 MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
 
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-m</b>&lt;/AttributeValue&gt;     
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;     
 </p>
 
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
 DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;    </p>
 
-<p>                                   &nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;/&gt;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ActionMatch&gt;</p>
+<p>     &nbsp;&lt;/ActionMatch&gt;</p>
 
 <p>&nbsp;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
 MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-exportObject</b>&lt;/AttributeValue&gt; </p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
 DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; </p>
 
-<p>                                 &nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
 
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ActionMatch&gt;</p>
+<p>     &nbsp;&lt;/ActionMatch&gt;</p>
 
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;/Action&gt;</p>
+<p>  &nbsp;&lt;/Action&gt;</p>
 
-<p>&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;</p>
+<p>&lt;/Actions&gt;</p>
 
       </div>
       <p style='text-autospace:none'>&nbsp;</p>
@@ -547,32 +676,38 @@ DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; </p>
 for resource matching, multiple &lt;Action&gt; elements must be specified.   If
 there are multiple <b>&lt;Action&gt;</b> elements within the &lt;Actions&gt;
 wrapper component, the &lt;Action&gt; elements are <b>logically OR-ed together</b>. 
-This means that a match on only one of the Resource specifications is necessary
+This means that a match on only one of the Action specifications is necessary
 for the policy to apply to a service request.  For example, the snippet below
 says that a resource match will occur if the incoming request is <b><i>either</i></b>
 the getDatastreamDissemination operation of API-A or the getDissemination
-operation of API-A.</p>
-
+operation of API-A.&nbsp;&nbsp; </p>
 <p style='text-autospace:none'>&nbsp;</p>
-<div class="code">
-&nbsp;&lt;Actions&gt;<p>  &nbsp;&nbsp;&lt;Action&gt;</p>
+<p style='text-autospace:none'><i>Note:&nbsp; The &quot;shortcut&quot; method of referring 
+to a Fedora API operation is used in the example (i.e., we have an ActionMatch 
+for the specific Fedora API of &quot;api-a&quot;) because Fedora actions identifiers are 
+unique in themselves.&nbsp; Fedora automatically knows that the 
+getDatastreamDissemination operation is part of API-A. </i>&nbsp;</p>
+<p style='text-autospace:none'>&nbsp;</p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
+<div class="code">
+&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
 MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
 
-<p>        &nbsp;&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
 DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; </p>
 
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
 
-<p>     &nbsp;&nbsp;&lt;/ActionMatch&gt;</p>
+<p>     &nbsp;&lt;/ActionMatch&gt;</p>
 
-<p>  &nbsp;&nbsp;&lt;/Action&gt;</p>
+<p>  &nbsp;&lt;/Action&gt;</p>
 
 <p>  &nbsp;&nbsp;&lt;Action&gt;</p>
-
 <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
 MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
 
@@ -598,21 +733,66 @@ DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;  </p>
 
 <p>There must be at least one Rule in the policy that matches
 the incoming request for the policy to be deemed applicable.  </p>
+<p>&nbsp;</p>
 
+      <div class="code">
+&lt;Policy
+PolicyId=&quot;deny-apia&quot; 
+
+<p>        RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;  </p>
+
+<p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
+xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
+
+<p>&nbsp;</p>
+
+<p>    &lt;Description&gt;This policy will DENY access to Dublin
+Core datastreams.&lt;/Description&gt;</p>
+
+<p>    &lt;Target&gt;</p>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
+<p>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</p>
+
+<p><b>    &lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Target&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>&nbsp;...</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Condition&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
+<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Condition&gt;</b></p>
+<p><b>&nbsp;&nbsp;&nbsp; &lt;/Rule&gt;</b></p>
+
+<p>&lt;/Policy&gt;</p>
+
+&nbsp;</div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>
+<span style="background-color: #FFFFFF; background-position: 0% 0%">
+<font size="2"><b><span style="font-family: Courier New">&lt;Rule&gt;</span></b></font></span></p>
+<p style='text-autospace:none'>A policy can contain one or more Rules.&nbsp; 
+Each rule has a <b>RuleId</b> and and <b>Effect</b>.&nbsp;&nbsp; An Effect is 
+the intended consequence of a satisfied rule, which can be either &quot;Deny&quot; or 
+&quot;Permit.&quot;&nbsp;&nbsp;&nbsp;&nbsp; This means that if the rule is deemed 
+applicable to an incoming service request, and the rule's conditions evaluate to 
+TRUE,&nbsp; then the specified effect should be enforced.</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>
+<span style="background-color: #FFFFFF; background-position: 0% 0%">
+<font size="2"><b><span style="font-family: Courier New">&lt;Target&gt;</span></b></font></span></p>
 <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'><b>
 <span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>&lt;Conditions&gt;</span></b></p>
+font-family:"Courier New";background:white'>&lt;Condition&gt;</span></b></p>
 
-<p style='text-autospace:none'><b>&nbsp;</b></p>
-
-<p>While Targets are appealing, frame-like expressions, they
+<p style='text-autospace:none'><b>&nbsp;</b>While Targets are appealing, frame-like expressions, they
 have a constrained logic which isn't always expressive enough to narrow down
 whether a policy is applicable to a service request.  Hence, the need for
 Condition elements.  <b><i>A Condition can appear only within a Rule.</i></b> 
-It cannot appear as within a Target, nor directly under Policy or PolicySet.  A
-Condition cannot apply to the Policy in whole; therefore, if a Target is not
-able to adequately express a Policy-wide constraint, a Condition can be added
+It cannot appear as within a Target, nor directly under Policy or PolicySet. &nbsp;&nbsp; A
+Condition cannot apply to the Policy in whole; therefore, if a either the policy Target 
+or the rule Target is not
+able to adequately express a constraint, a Condition can be added
 to a Rule.  If the Condition is intended to be applicable to the entire Policy,
 the Condition must be repeated in every Rule in that Policy.</p>
 
@@ -792,7 +972,18 @@ Authorization Module (XACML Policy Enforcement)</span></b></a></h2>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>&nbsp;</span></p>
-	<p>Configuration of the Fedora XACML-based Policy Enforcement
+	<p><i>Note that to do identity-based policies (user login id or user 
+	attributes), you must have authentication configured.&nbsp;&nbsp;&nbsp; Run 
+	fedora-setup to choose which Fedora service interfaces will be configured 
+	for authentication.&nbsp;&nbsp; If a policy is written that makes reference 
+	to user identity or attributes (Subject attributes in Policy target) and 
+	authentication has not been configured, the policy will be evaluated as 
+	&quot;indeterminate&quot; and the service request will fail with an authorization 
+	exception.&nbsp;&nbsp; Be sure to enable authentication for API-A if you 
+	intend to write policies for accessing objects based on user 
+	identity/attributes.&nbsp; </i></p>
+<p>&nbsp;</p>
+<p>By default, Fedora XACML-based authorization is enabled.&nbsp;&nbsp; Configuration of the Fedora XACML-based Policy Enforcement
 Module is done in the Fedora server configuration file (fedora.fcfg).  Depicted
 below is the section of the configuration file for the Authorization module
 that controls XACML-based policy enforcement.</p>
@@ -1079,7 +1270,7 @@ authenticates the front-end &quot;surrogate&quot; users - and there are policies
 	<p style='text-autospace:none'><b>&nbsp;</b></p>
 	<p style='text-autospace:none'>According to the OASIS XACML
 specification, “an application functions in the role of the Policy Enforcement
-Point (PEP) if it guards access to a set of resources and ask the Policy
+Point (PEP) if it guards access to a set of resources and asks the Policy
 Determination Point (PDP) for an authorization decision.  The PEP MUST abide by
 the authorization decision in the following way:  A PEP SHALL allow access to
 the resource only if a valid XACML response of “Permit” is returned by the
@@ -1088,10 +1279,10 @@ response of “Permit” SHALL be considered valid only if the PEP understands all
 of the obligations contained in the response.”   </p>
 	<p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>The Fedora Policy Enforcement
-Module fulfills the responsibilities of both the PDP and the PEP, using both
-custom Fedora source code and the Sun XACML engine.</p>
+Module fulfills the responsibilities of both the PDP and the PEP.&nbsp; It uses 
+the Sun XACML implemtation of the PDP and a custom Fedora PEP implementation.</p>
 	<p>&nbsp;</p>
-<p>The Fedora PDP will determine the set of policies that are
+<p>The PDP determines the set of policies that are
 applicable to any given Fedora service request.  Remember the PDP determines
 whether a policy is applicable by comparing the Subject/Resource/Action attribute
 designations in a Policy Target to the context of an incoming Fedora service
@@ -1105,17 +1296,41 @@ policy mentioning that PID.  <i><b>&lt;bill -- I assume that the PDP makes the
 decision of deny/permit/indeterminate, and then the PEP makes sure to enforce 
 this decision for on the incoming Fedora API request.&gt;</b></i></p>
 <p>&nbsp;</p>
-	<p style='text-autospace:none'>Fedora's PEP builds a
-minimal request, which includes an index to an enhanced Fedora Context object.&nbsp; There are 2 attribute finder
-modules provided as callbacks to the sunxacml engine.  The ResourceAttributeFinderModule
-provides only resource attribute values, only those it is coded explicitly to provide, and only those derived
-from actual objects in the repository.  The ContextAttributeFinderModule provides any of the attribute types
-(subject, action, resource, or environment), as these have been stored in an enhanced Fedora
-Context object.  It will honor a callback, even for an attribute which hasn't been explicitly coded, so
+	<p style='text-autospace:none'>Fedora's Policy Enforcement Point (PEP) builds a
+minimal request for the Sun XACML engine to evaluate.&nbsp; One job of the 
+	Fedora PEP is to gather up all of the Subject/Resource/Action/Environment 
+	attributes that are relevant for an incoming service requests.&nbsp;&nbsp; 
+	The values of this attributes are the key to determining what policies are 
+	in scope for an incoming service request.&nbsp;&nbsp; To gather up all 
+	relevant attributes,&nbsp; the Fedora PEP has two custom &quot;attribute finder&quot; modules 
+	that interact with the Sun XACML engine. </p>
+<ul>
+	<li>
+	<p style='text-autospace:none'>The <b>ContextAttributeFinderModule</b> has 
+	the job of obtaining attributes that are stored in the enhanced Fedora 
+	Context object that is associated with an incoming Fedora service request.&nbsp;&nbsp;&nbsp; 
+	Attributes that originate with an incoming service requests can be Subject 
+	attributes (i.e., attributes of the requesting user/agent), Action 
+	attributes (i.e., the identity of the Fedora API operation that is the basis 
+	of the request), Resource attributes (i.e.,&nbsp; attributes that identify 
+	specific objects/datastreams/disseminations that are being requested, and 
+	Environment attributes (i.e., attributes that describe the runtime 
+	environment of the incoming request, like the current date/time or the 
+	server IP address).&nbsp;&nbsp; It will honor a callback, even for an attribute which hasn't been explicitly coded, so
 can provide arbitrary attributes (e.g., from LDAP lookup in a JAAS login module, 
 	from Shibboleth via a servlet filter).  [There are a few
 attributes which it explicitly doesn't serve, to prevent stack overflow on improper recursion, or because
-the attributes are known to be provided in the xacml request itself.]</p>
+the attributes are known to be provided in the xacml request itself.]</p></li>
+	<li>
+	<p style='text-autospace:none'>The <b>ResourceAttributeFinderModule</b> has 
+	the job of obtaining all relevant attributes about Fedora resources (i.e., 
+	digital objects, datastreams, and disseminations) for resources that are in 
+	scope for an incoming request.&nbsp;&nbsp; While a few attributes of a 
+	resource are picked up from the incoming request itself (typically, the 
+	identity of a resource like a PID or a datastream Id), the 
+	ResourceAttributeFinderModule gets all other attributes about such resources 
+	by introspecting on actual digital objects in the repository.  </p></li>
+</ul>
 <p style='text-autospace:none'>&nbsp;</p>
 
 <h4><a name="IMPL2">4<b>.2&nbsp; Understanding the XACML Policy Combining Algorithm</b></a></h4>
@@ -1382,7 +1597,8 @@ copied into this location. </i>&nbsp;</p>
 	<tr>
 		<td width="41">1</td>
 		<td width="64"><font size="2">any</font></td>
-		<td width="260"><font size="2">permit-anything-to-administrator.xml</font></td>
+		<td width="260"><font size="2">
+		<a href="xacml-policies/default/repository-wide/permit-anything-to-administrator.xml">permit-anything-to-administrator.xml</a></font></td>
 		<td><font size="2">This is a &quot;positive policy&quot; that permits the Fedora 
 		administrator to have access to any operation on any Fedora repository 
 		service (API-M, API-A, OAI, RISearch).&nbsp; By default the Fedora 
@@ -1392,7 +1608,8 @@ copied into this location. </i>&nbsp;</p>
 	<tr>
 		<td width="41">2</td>
 		<td width="64"><font size="2">API-M</font></td>
-		<td width="260"><font size="2">deny-apim-if-not-localhost.xml</font></td>
+		<td width="260"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-apim-if-not-localhost.xml">deny-apim-if-not-localhost.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that denies access to 
 		API-M operations that are not made from the IP address of the machine on 
 		which the Fedora repository is running on.&nbsp;&nbsp; In other words, 
@@ -1402,7 +1619,8 @@ copied into this location. </i>&nbsp;</p>
 	<tr>
 		<td width="41">3</td>
 		<td width="64"><font size="2">API-A</font></td>
-		<td width="260"><font size="2">permit-apia-unrestricted.xml</font></td>
+		<td width="260"><font size="2">
+		<a href="xacml-policies/default/repository-wide/permit-apia-unrestricted.xml">permit-apia-unrestricted.xml</a></font></td>
 		<td><font size="2">This is a &quot;positive policy&quot; that permits unrestricted 
 		access to API-A.&nbsp; In other words, API-A operations are completely 
 		open for use by any user/agent.</font></td>
@@ -1410,7 +1628,8 @@ copied into this location. </i>&nbsp;</p>
 	<tr>
 		<td width="41">4</td>
 		<td width="59"><font size="2">OAI</font></td>
-		<td width="423"><font size="2">permit-oai-unrestricted.xml</font></td>
+		<td width="423"><font size="2">
+		<a href="xacml-policies/default/repository-wide/permit-oai-unrestricted.xml">permit-oai-unrestricted.xml</a></font></td>
 		<td><font size="2">This is a &quot;positive policy&quot; that permits unrestricted 
 		access to the default OAI provider interface to the Fedora repository.&nbsp; 
 		In other words, OAI-PMH operations are completely open for use by any 
@@ -1441,14 +1660,15 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">1</td>
 		<td width="78"><font size="2">serverAdmin</font></td>
-		<td width="416"><font size="2">deny-policy-management-if-not-administrator.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-policy-management-if-not-administrator.xml">deny-policy-management-if-not-administrator.xml</a></font></td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
 		<td width="41">2</td>
 		<td width="78"><font size="2">any</font></td>
 		<td width="416"><font size="2">
-		deny-inactive-or-deleted-disseminations-if-not-administrator.xml</font></td>
+		<a href="xacml-policies/default/repository-wide/deny-inactive-or-deleted-disseminations-if-not-administrator.xml">deny-inactive-or-deleted-disseminations-if-not-administrator.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will deny all access 
 		to inactive/deleted disseminations if the user/agent is not the Fedora 
 		administrator.&nbsp;&nbsp; Unlike purged disseminations, 
@@ -1461,7 +1681,7 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 		<td width="41">3</td>
 		<td width="78"><font size="2">any</font></td>
 		<td width="416"><font size="2">
-		deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml</font></td>
+		<a href="xacml-policies/default/repository-wide/deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml">deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will deny all access 
 		to inactive/deleted datastreams if the user/agent is not the Fedora 
 		administrator.&nbsp;&nbsp; Unlike purged datastreams, inactive/deleted 
@@ -1473,7 +1693,8 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">4</td>
 		<td width="78"><font size="2">API-M</font></td>
-		<td width="416"><font size="2">deny-purge-datastream-if-active-or-inactive.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-purge-datastream-if-active-or-inactive.xml">deny-purge-datastream-if-active-or-inactive.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will ensure that 
 		datastreams cannot be purged (permanently removed) unless they are in 
 		the deleted state.&nbsp; Purging of active or inactive datastreams is 
@@ -1482,7 +1703,8 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">5</td>
 		<td width="78"><font size="2">API-M</font></td>
-		<td width="416"><font size="2">deny-purge-object-if-active-or-inactive.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-purge-object-if-active-or-inactive.xml">deny-purge-object-if-active-or-inactive.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will ensure that 
 		objects cannot be purged (permanently removed) unless they are in the 
 		&quot;deleted&quot; state.&nbsp; Purging of active or inactive objects not 
@@ -1491,7 +1713,8 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">6</td>
 		<td width="78"><font size="2">serverAdmin</font></td>
-		<td width="416"><font size="2">deny-reloadPolicies-if-not-localhost.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-reloadPolicies-if-not-localhost.xml">deny-reloadPolicies-if-not-localhost.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will deny requests 
 		to reload policies (i.e., policy reactivation) if this requests is not 
 		initiated from the IP address of the machine on which the repository is 
@@ -1500,7 +1723,8 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">7</td>
 		<td width="78"><font size="2">serverAdmin</font></td>
-		<td width="416"><font size="2">deny-serverShutdown-if-not-localhost.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/deny-serverShutdown-if-not-localhost.xml">deny-serverShutdown-if-not-localhost.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will deny requests 
 		to shutdown the Fedora server if this requests is not initiated from the 
 		IP address of the machine on which the repository is running (i.e., 
@@ -1509,14 +1733,16 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 	<tr>
 		<td width="41">8</td>
 		<td width="78"><font size="2">serverAdmin</font></td>
-		<td width="416"><font size="2">permit-adminPing-unrestricted.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/permit-adminPing-unrestricted.xml">permit-adminPing-unrestricted.xml</a></font></td>
 		<td><font size="2">This is a &quot;positive policy&quot; that permits unrestricted 
 		access for pinging of the Fedora server.</font></td>
 	</tr>
 	<tr>
 		<td width="41">9</td>
 		<td width="78"><font size="2">serverAdmin</font></td>
-		<td width="416"><font size="2">permit-serverStatus-unrestricted.xml</font></td>
+		<td width="416"><font size="2">
+		<a href="xacml-policies/default/repository-wide/permit-serverStatus-unrestricted.xml">permit-serverStatus-unrestricted.xml</a></font></td>
 		<td><font size="2">This is a &quot;positive policy&quot; that permits unrestricted 
 		access for obtaining the Fedora server status.</font></td>
 	</tr>
