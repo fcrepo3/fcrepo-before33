@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 
@@ -7,13 +8,51 @@
   <link href="../../docstyle.css" rel="stylesheet" type="text/css"/>
 </head>
 
+
 <body>
-  <div class="title">
-    <h1>Securing Your Fedora Repository</h1>
-  </div>
+  <div id="header">
+    <a href="../index.html" id="logo"></a>
+    <div id="title">
+		<h1>Securing Your Fedora Repository</h1>
+    </div>
+    <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
+	</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+        <ol>
+            <li><a href="#INTRO">Introduction</a>
+            <li><a href="#CONFIG">Security Setup - Select One of Four Base 
+			Security Configurations </a>
+                <ul>
+					<li><a href="#CONFIG1">2.1 SECURE-APIM Configuration</a></li>
+					<li><a href="#CONFIG2">2.2 SECURE-ALL Configuration</a></li>
+					<li><a href="#CONFIG3">2.3 UNSECURE-APIM Configuration</a></li>
+					<li><a href="#CONFIG4">2.4 UNSECURE-ALL Configuration</a></li>
+			</ul>
+
+            <li><a href="#CONFIG-CUSTOM">Customized Security Configurations</a><li>
+			<a href="#AUTHN">Authentication</a><ul>
+					<li><a href="#AUTHN-TOMCAT">4.1 Option A - Default 
+					Authentication Plug-In&nbsp; (Memory Realm with Tomcat Users File)</a></li>
+					<li><a href="#AUTHN-JAAS1">4.2 Option B - Configuring 
+					Multiple Login Modules (Multiplexing via Tomcat's JAAS)</a></li>
+					<li><a href="#AUTHN-JAAS2">4.3 Option C - Configuring 
+					Multiple Login Modules (Multiplexing via Fedora's JAAS)</a></li>
+			</ul>
+			</li>
+			<li><a href="#AUTHZ">Authorization via XACML</a><ul>
+				<li><a href="#AUTHZ-DEFAULT">5.1 Default Repository Policies</a></li>
+				<li><a href="#AUTHZ-CUSTOM">5.2 Custom Policies</a></li>
+			</ul>
+			<li><a href="#STEP-BY-STEP">Step-By-Step Guide to Securing Your 
+			Repository</a></ol>
+    </div>
+</div>
 
   <div class="sect">
-    <h2>Introduction</h2>
+    <h2><a name="INTRO"></a>1 Introduction</h2>
     
     <p>Fedora 2.1b represents the first release of Fedora that includes support for authentication, SSL, and authorization using XACML policies. This document provides an overview of the security configurations that ship with Fedora 2.1b and describes how to setup and configure Fedora to run in each of the four base security modes.</p>
     <p>Fedora 2.0 provided a very minimal level of security that consisted of the following:</p>
@@ -27,43 +66,73 @@
     </blockquote>
     <p>In Fedora 2.0, these security measures were handled through the fedora.fcfg file and special use of the single super user name(fedoraAdmin) in the codebase. In Fedora 2.1b, these security measures are now handled through a set of XACML policies and with authentication information provided through tomcat or external authentication sources.</p>
 
-    <p>There are four base security configurations provided with the Fedora 2.1b server distribution: (1) "secure-apim" configuration, (2) "secure-all" configuration, (3) "unsecure-apim" configuration, and (4) "unsecure-all" configuration. Unlike Fedora 2.0, there is no longer a "default" configuration. Before starting the Fedora server, you need to select a base security configuration that will be your default and then customize that base configuration as needed. To select your base security configuration, run the "fedora-setup" command-line utility. This utility requires a single argument which is the name of the base security configuration you wish to use. For example,</p>
-<p>under Windows in %FEDORA_HOME%\sever\bin\fedora-setup.bat configuration-name</p>
-
-    <p>under Unix in $FEDORA_HOME\server\bin\fedora-setup configuration-name</p>
-
-    <p><blockquote>where configuration-name is one of the following:
-	 <blockquote>secure-apim<br/>
-		secure-all<br/>
-		unsecure-apim<br/>
-		unsecure-all</blockquote></blockquote></p>
-
-    <p>The fedora-setup utility initializes the base security configuration by copying a set of three files into the distribution tree. These three files are:</p>
-	<ul>
-	  <li>fedora.fcfg - Fedora server configuration file</li>
-	  <li>beSecurity.xml - backend services configuration file (see "beSecurity Configuration" document for details)</li>
-	  <li>web.xml - Fedora webapp web.xml file; controls whether basic authentication and SSL are enabled for API-M and API-A</li>
-	</ul>
-    <p>The contents of these three files will vary depending on the base security configuration selected. The four base security configurations are described in more detail in the next section.</p>
+    <p>There are four base security configurations provided with the Fedora 2.1b server distribution: (1) "secure-apim" configuration, (2) "secure-all" configuration, (3) "unsecure-apim" configuration, and (4) "unsecure-all" configuration. Unlike Fedora 2.0, there is no longer a "default" configuration. Before starting the Fedora server, you 
+	must run a server setup utility to select a base security configuration that 
+	will be your base security configuration.&nbsp;&nbsp; After setup, you can customize that base configuration as needed.&nbsp;&nbsp; 
+	Section 2.0 describes the server setup process and the nature of the 
+	different base security configurations.</p>
+	<p>&nbsp;</p>
   </div>
 
 <div class="sect">
-    <h2>Four Base Security Configurations</h2>
+    <h2><a name="CONFIG"></a>2 Security Setup - Select One of Four Base Security 
+	Configurations</h2>
+	<p>To select your base security configuration, run the &quot;fedora-setup&quot; 
+	command-line utility. This utility requires a single argument which is the 
+	name of the base security configuration you wish to use.</p>
+	<p>&nbsp;</p>
 
-    <div class="sect2">
-      <h3>SECURE-APIM Configuration</h3>
+<p>
+        &nbsp;Under Windows:</p>
+      <div class="code">
+&nbsp;&nbsp;&nbsp; %FEDORA_HOME%\server\bin\fedora-setup.bat <i><b>configuration-name</b></i></div>
+      <p style='text-autospace:none'>&nbsp;</p>
+
+<p>
+        &nbsp;Under Unix:</p>
+      <div class="code">
+&nbsp;&nbsp;&nbsp; $FEDORA_HOME\server\bin\fedora-setup <i><b>configuration-name</b></i></div>
+	<p>&nbsp;</p>
+	<p>The possible values for<i><b> configuration-name</b></i> is one of the following:
+	</p>
+	<blockquote>
+	 <blockquote>
+		<ul>
+			<li>secure-apim</li>
+			<li>secure-all</li>
+			<li>unsecure-apim</li>
+			<li>unsecure-all</li>
+		</ul>
+		</blockquote></blockquote>
+
+    <p>The fedora-setup utility initializes one of the four base security configurations by copying a set of 
+	configuration files into the distribution tree.&nbsp; The contents of these 
+	configuration files will vary depending on the base security configuration selected.&nbsp; The 
+	resultant functionality of the four possible base security configurations are described in more detail 
+	below.&nbsp;&nbsp; The setup utility <i><b>automatically</b></i> puts an 
+	appropriate version of the three necessary Fedora configuration files into 
+	play:</p>
+	<p>&nbsp;</p>
+	<p><b>fedora.fcfg </b>- Fedora server configuration file</p>
+	<p><b>web.xml </b>- Fedora Tomcat web application configuration file; controls whether basic authentication and SSL are enabled for API-M and API-A</p>
+	<p><b>beSecurity.xml</b> - Fedora backend services configuration file; 
+	controls security for services calling back to Fedora (see &quot;beSecurity Configuration" document for details)</p>
+	<p>&nbsp;</p>
+	<div class="sect2">
+      <h3><a name="CONFIG1"></a>2.1 SECURE-APIM Configuration</h3>
       
 	<ul>
 	  <li>API-M supports basic authentication and SSL</li>
-	  <li>API-A unrestricted</li>
-	  <li>backend service security is minimal</li>
+	  <li>API-A unrestricted (i.e., open access)</li>
+	  <li>backend services security is minimal</li>
 
-    <p>The secure-apim configuration is desinged for repositories that desire a secure management interface for administering and maintaining a repository, but wish to keep access to the repository content completely open.</p>
+    	</ul>
+		<p>The secure-apim configuration is designed for repositories that desire a secure management interface for administering and maintaining a repository, but wish to keep access to the repository content completely open.</p>
     </div>
 
  
    <div class="sect2">
-      <h3>SECURE-ALL Configuration</h3>
+      <h3><a name="CONFIG2"></a>2.2 SECURE-ALL Configuration</h3>
 
 	 <ul>
 	  <li>API-M supports basic authentication and SSL</li>
@@ -75,53 +144,72 @@
    </div>
 
    <div class="sect2">
-      <h3>UNSECURE-APIM Configuration</h3>
+      <h3><a name="CONFIG3"></a>2.3 UNSECURE-APIM Configuration</h3>
 
 	  <ul>
-	   <li>API-M supports basic authentication but not SSL; restricted by IP to localhost</li>
-	   <li>API-A unrestricted</li>
+	   <li>API-M supports basic authentication <b><i>but no SSL</i></b>; restricted by IP to localhost</li>
+	   <li>API-A unrestricted (i.e., open access)</li>
 	   <li>backend security security is minimal</li>
 
-	<p>The unsecure-apim configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
+		</ul>
+		<p>The unsecure-apim configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
    </div>
 
   <div class="sect2">
-      <h3>UNSECURE-ALL Configuration</h3>
+      <h3><a name="CONFIG4"></a>2.4 UNSECURE-ALL Configuration</h3>
 
 	 <ul>
-	  <li>API-M supports basic authentication but not SSL; restricted by IP to localhost</li>
-	  <li>API-A supports basic authentication but no SSL</li>
+	  <li>API-M supports basic authentication <i><b>but no SSL</b></i>; restricted by IP to localhost</li>
+	  <li>API-A supports basic authentication <i><b>but no SSL</b></i></li>
 	  <li>backend security security is minimal</li>
 	 </ul>
 
 	<p>The unsecure-all configuration is designed for repositories that want the features of basic authentication for both API-M and API-a, but are not ready to tackle some of the additional issues imposed by SSL with their client-side or middleware applications. Note that since there is no SSL support for either API-A any authentication passwords are in clear text. This configuration is NOT recommended for any repositories requiring a secure environment. Since API-A and API-M both support basic authentication, you can write policies for both API-M and API-A that use user-based attributes. This configuration can be a good choice if you want to experiment with policy writing for API-M and API-A, but are not ready to tackle SSL and security is not a concern. Note that when authentication is enabled for API-A, the hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" or "127.0.0.1" since remote backend services use this as the hostname to communicate with the fedora server.</p>
+		<p>&nbsp;</p>
 	</div>
    </div>
    <div class="sect">
-	 <h2>Customization</h2>
+	 <h2><a name="CONFIG-CUSTOM"></a>3 Customized Security Configurations</h2>
 
 	 <p>After selecting a base security configuration and running "fedora-setup", you can then begin customizing your configuration. Care must be exercised when performing customizations since there are some dependencies in the three configuration files: fedora.fcfg, beSecurity.xml, and web.xml that must be preserved.</p>
 
 	<blockquote>
-	<p><strong>fedora.fcfg</strong> - The fedora.fcfg configuration file can be customized as needed as it was in Fedora 2.0 with one exception. The value of the parameter named "doMediateDatastreams" that is in the API-A module section is dependent on the authentication setting for API-A. If authentication is disabled for API-A, then the setting for "doMediateDatastreams" should be set to "false". If authentication is enabled for API-A, then "doMediateDatastreams" should be set to "true". This value is set appropriately in the four base configurations, but if you begin creating your own custom configuration, you need to be sure that the appropriate value is used for "doMediateDatastreams". Also remember that when doMediateDatastreams is set to true, the hostname used for the "fedoraServerHost" in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" since remote backend services use this hostname to communicate with the fedora server.</p>
-
-	<p><strong>beSecurity.xml</strong> - Customization of the beSecurity.xml configuration file is described in detail in the document entitled "beSecurity Configuration". The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the secure-apim or unsecure-apim configurations.</p>
-
-	<p><strong>web.xml</strong> - The web.xml configuration file which is in the fedora webapp directory controls the settings for authentication and SSL fowarding for API-M and API-A. It is strongly recommended that you do not customize this file unless you have very special needs that cannot be met by one of the four base configuration files. If you decide you have to customize this file, here are some helpful pointers to keep in mind:</p>
+	<p><strong>fedora.fcfg</strong> - The Fedora server configuration file is 
+	found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; The fedora.fcfg configuration file can be customized as needed as it was in Fedora 2.0 with one exception. The value of the parameter named "doMediateDatastreams" that is in the API-A module section is dependent on the authentication setting for API-A. If authentication is disabled for API-A, then the setting for "doMediateDatastreams" should be set to "false". If authentication is enabled for API-A, then "doMediateDatastreams" should be set to "true". This value is set appropriately in the four base configurations, but if you begin creating your own custom configuration, you need to be sure that the appropriate value is used for "doMediateDatastreams". Also remember that when doMediateDatastreams is set to true, the hostname used for the "fedoraServerHost" in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" since remote backend services use this hostname to communicate with the fedora server.</p>
+	<p>&nbsp;</p>
+	<p><strong>web.xml</strong> - The web.xml configuration file is found in the 
+	Fedora Tomcat web application directory under the Fedora Tomcat path ($FEDORA_HOME\server\jakarta-tomcat-5.0.28\webapps\fedora\WEB-INF).&nbsp;&nbsp; 
+	This file controls the settings for authentication and SSL forwarding for API-M and API-A.&nbsp;
+	<i><b>It is strongly recommended that you do not customize this file</b></i> unless you have very special needs that cannot be met by one of the four base configuration files. If you decide you have to customize this file, here are some helpful pointers to keep in mind:</p>
 
 	<ul>
 	 <li>fedora.fcfg - remember that if authentication is enabled for API-A, you must also set doMediateDatastreams to true in fedora.fcfg</li>
-	 <li>beSecurity - remember that settings for authentication and SSL forwarding for API-A must mesh with settings in beSecurity.xml</li>
-	 <li>policies - remember that policies that use "subject" attributes are only available if the corresponding API has authenticaton enabled</li>
-	 <li>authentication and SSL - remember that settings for authentication and SSL can affect the settings in fedora.fcfg, beSecurity, and in written policies so exercise care when making changes</li>
+		<li>beSecurity - remember that settings for authentication and SSL forwarding for API-A must mesh with settings in beSecurity.xml</li>
+		<li>XACML policies - remember that policies that use "Subject" attributes are only available if the corresponding API has 
+		authentication enabled</li>
+		<li>authentication and SSL - remember that settings for authentication and SSL can affect the settings in fedora.fcfg, beSecurity, and in written policies so exercise care when making changes</li>
 	</ul>
 
-	<p><strong>tomcat-users-fedoraTemplate.xml</strong> - Depending on the method you choose for authentication, you will probably also need to make some additions to the tomcat-users-fedoraTemplate file which is used to build the tomcat-users.xml file. New entries will be necessary here if you are using the tomcat-users file for authentication and you add additional authenticated users and also if you customize beSecurity.xml with new usernames, passwords, or roles. See the section on "Tomcat Users File" for addititional details in customizing the tomcat-users file.</p>
+	<p><strong>beSecurity.xml</strong> -&nbsp; The Fedora backend security configuration file is 
+	found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; 
+	Customization of this file is only relevant for repositories that are using 
+	custom disseminators that point to external services.&nbsp; If you want to 
+	set up a totally secure repository, you must configure things up so that 
+	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled "beSecurity Configuration". The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the secure-apim or unsecure-apim configurations.</p>
+	<p>&nbsp;</p>
+	<p><strong>tomcat-users-fedoraTemplate.xml</strong> - This a Fedora-specific 
+	template file is found in the Fedora Tomcat directory ($FEDORA_HOME\server\jakarta-tomcat-5.0.28\conf).&nbsp; 
+	If you are using the default Tomcat authentication (out-of-the-box with 
+	Fedora 2.0), you will probably need to add new users.&nbsp; This is done by 
+	making additions to the Fedora-specific template (tomcat-users-fedoraTemplate.xml) which is 
+	<b><i>automatically converted </i></b>into a runtime Tomcat users 
+	configuration file (i.e., tomcat-users.xml). New entries will be necessary here if you are using the tomcat-users file for authentication and you add additional authenticated users and also if you customize beSecurity.xml with new usernames, passwords, or roles. See the section on "Tomcat Users File" for 
+	additional details in customizing the tomcat-users file.</p>
 	</blockquote>
    </div>
 
    <div class="sect">
-	<h2>Authentication</h2>
+	<h2><a name="AUTHN"></a>4 Authentication</h2>
 
 	<p>The Fedora server is built on top of Apache's tomcat and authentication information is channeled through the normal tomcat mechanisms. Fedora currently provides two authentication plug-ins: (1) Simple user/password file, and (2) LDAP</p>
 	<ol>
@@ -138,34 +226,51 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 	<p>Other methods of authentication are possible, but require writing your own custom LoginModule or JAASModule for tomcat. The Fedora code is "aware" of any user that is authenticated through tomcat. For more details on the Fedora security architecture, refer to the document entitled "Fedora Security Architecture - Authentication".</p>
 	</div>
     <div class="sect">
-	<h2>Tomcat Users File</h2>
+	<h3><a name="AUTHN-TOMCAT"></a>4.1&nbsp; Option A - Default Authentication 
+	Plug-In&nbsp; (Tomcat Memory Realm with Tomcat Users File)</h3>
 
-<p>The file named "tomcat-users.xml" is generated by the Fedora server at startup based on the contents of the template file named "tomcat-users_fedoraTemplate.xml". This file is located:</p>
+<p>Fedora is configured out-of-the-box with the Tomcat Memory Realm login module 
+enabled.&nbsp;&nbsp; For this login module, the source of user identity 
+information is the file named "tomcat-users.xml" which is automatically generated by the Fedora server at startup based on the contents of the template file named "tomcat-users_fedoraTemplate.xml".&nbsp;&nbsp; 
+It is recommended that you make changes to this template file instead of the 
+generated file.&nbsp;&nbsp; Each time the server is started a new tomcat-users.xml 
+will be generated.&nbsp;&nbsp; The template file is located:</p>
 
 <p>In source distribution:</p>
 
-<p><blockquote>$FEDORA_HOME/inc/server/jakarta-tomcat-5.0.8/conf/tomcat-users_fedoraTemplate.xml on Unix, or %FEDORA_HOME%\inc\server\jakarta-5.0.8\conf\tomcat-users_fedoraTemplate.xml on Windows.</blockquote></p>
+<p><blockquote>Unix:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $FEDORA_HOME/inc/server/jakarta-tomcat-5.0.8/conf/tomcat-users_fedoraTemplate.xml<p>
+		Windows:&nbsp; %FEDORA_HOME%\inc\server\jakarta-5.0.8\conf\tomcat-users_fedoraTemplate.xml</p>
+	</blockquote></p>
 
-<p>In binary distribution:</p>
+<p>&nbsp;</p>
+	<p>In binary distribution:</p>
 
-<p><blockquote>$FEDORA_HOME/server/jakarta-tomcat-5.0.8/conf/tomcat-users_fedoraTemplate.xml on Unix, or %FEDORA_HOME%\server\jakarta-tomcat-5.0.8\conf\tomcat-users_fedoraTemplate.xml on Windows.</blockquote></p>
+<p><blockquote>Unix:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; $FEDORA_HOME/server/jakarta-tomcat-5.0.8/conf/tomcat-users_fedoraTemplate.xml
+		<p>Windows:&nbsp; %FEDORA_HOME%\server\jakarta-tomcat-5.0.8\conf\tomcat-users_fedoraTemplate.xml</p>
+	</blockquote></p>
 
-<p>By default, the template contains the following users, passwords, and roles:</p>
+<p>&nbsp;</p>
+	<p>By default, the template contains the following users, passwords, and roles:</p>
 
-	  <div class="code"> 
-  &lt;tomcat-users&gt;
-    &lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;
-    &lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;
-    &lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;
-    &lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;
-    &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;
-    &lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;
-    &lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;
-    &lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;
-  &lt;/tomcat-users&gt; 
-      </div>
+	<div class="code">
+	  <tomcat-users>
+        <user name="#1" password="#2" roles="fedoraRole=administrator" />
+        <user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1" />  
+        <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
+        <user name="guest" password="" roles="" />
+	  &lt;tomcat-users&gt;<br>
+		&lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;<br>
+		&lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;<br>
+		&lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;<br>
+		&lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;<br>
+		&lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;<br>
+		&lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;<br>
+		&lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;<br>
+		&lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;<br>
+		&lt;/tomcat-users&gt;</tomcat-users></div>
 
-<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-suers-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
+<p>&nbsp;</p>
+	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-suers-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
 
 <p>The username of "fedoraIntCallUser" is also a special Fedora system user. The role of "fedoraRole=fedoraInternalCall-1" grants special system privileges to this user. This username is used as the authenticating user when the fedora server needs to make calls to itself. The values for username and password may be edited, but you should leave the role unchanged. If you do change the username or password, you must also update these values in the beSecurity.xml file.</p>
 
@@ -177,9 +282,9 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 
 	<div class="code">
 	  roles="attribute1,attribute2,attribute3"
-	</div>
+	<div?
 
-<p>In addition, the extensions include the ability to represent attributes as name=value pairs allowing you to specify both the attribute name and value as opposed to just the value. e.g.,<p></p>
+<p>In addition, the extensions include the ability to represent attributes as name=value pairs allowing you to specify both the attribute name and value as opposed to just the value. e.g.,</p>
 
 	<div class="code">
 	  roles="fedoraRole=administrator,fedoraRole=demo:9/getThumbnail"
@@ -190,9 +295,17 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 <p>In addition to username and password, you can also assign what tomcat refers to as "roles". You can think of these "roles" in the tomcat-users file as attributes about the user and are entered as name=value pairs. You can use "roles" to define groups of users and then write policies based on these attributes. With the multiplexor feature, you can also have access to attributes from other sources. For example, using jaas.config you could also configure a ldap server to provide additioinal attributes about an authenticated user. There is an example in the jaas.config file that demonstrates how to do this with the public UVa ldap server which is used to provide additional attribute information about authenticated users.</p>
 	</div>
 	<div class="sect">
-	  <h2>JAAS Config File</h2>
+	  <h2>&nbsp;</h2>
+		<h3><a name="AUTHN-JAAS1"></a>4.2 Option B - Configuring Multiple Login 
+		Modules (Multiplexing via Tomcat's JAAS)</h3>
+		<p><i><b>&lt;bill - insert general description and links to relevant docs 
+		here&gt;</b></i></p>
+		<p>&nbsp;</p>
+		<h3><a name="AUTHN-JAAS2"></a>4.3 Option C - Configuring Multiple Login 
+		Modules (Multiplexing via Fedora's JAAS)</h3>
 
-<p>The jaas.config file includes one or more login module configurations. The default shipped with Fedora 2.1b provides an entry for the basic JAASMemoryLoginModule that uses the tomcat-users.xml file.</p>
+<p><i><b>&lt;bill - insert some general context and motivation here.&gt;</b></i></p>
+		<p>The jaas.config file includes one or more login module configurations. The default shipped with Fedora 2.1b provides an entry for the basic JAASMemoryLoginModule that uses the tomcat-users.xml file.</p>
 
 	<div class="code">
 	org.apache.catalina.realm.JAASMemoryLoginModule 
@@ -244,31 +357,26 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 	</div>
 
 	<div class="sect">
-	  <h2>Default Repository Policies</h2>
+	  <h2>&nbsp;</h2>
+		<h2><a name="AUTHZ"></a>5 Authorization via XACML</h2>
+		<p>&lt;Sandy insert something brief here.&gt;&nbsp;&nbsp; A complete 
+		description can be found in the documentation for the
+		<a href="AuthorizationXACML.htm">Fedora Authorization Module for XACML Policy Enforcement</a>.</p>
+		<h3><a name="AUTHZ-DEFAULT"></a>5.1 Default Repository Policies</h3>
 
-<p>Fedora 2.1b ships with a set of XACML policies that approximate the minimal security level provided by Fedora 2.0. This set of repository-wide policies includes the following policies:</p>
+<p>Fedora 2.1b ships with a set of <a href="AuthorizationXACML.htm#DEFAULT">
+default repository-wide XACML policies</a> that approximate the minimal security level provided by Fedora 2.0.&nbsp; This set of repository-wide policies includes the following policies:</p>
 
-	<ul>
-	<li>deny-apim-if-not-localhost.xml - restricts API-M by IP address to hostname of localhost</li>
-	<li>deny-inactive-or-deleted-disseminations-if-not-administrator.xml - restricts access to Inactive or Deleted disseminations to users with attribute of fedoraRole=administrator</li>
-	<li>deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml - restricts access to Inactive or Deleted disseminations to users with attribute of fedoraRole=administrator</li>
-	<li>deny-policy-management-if-not-administrator.xml - restricts access to POLICY datastream to users with attribute of fedoraRole=administrator</li>
-	<li>deny-purge-datastream-if-active-or-inactive.xml - restricts purging of active or inactive datastreams</li>
-	<li>deny-purge-object-if-active-or-inactive.xml - restricts purging of active or inactive objects</li>
-	<li>deny-reloadpolicies-if-not-localhost.xml - restricts reloading of policies by IP address to hostname of localhost</li>
-	<li>deny-servershutdown-if-not-localhost.xml - restricts shutdown of server by IP address to hostname of localhost</li>
-	<li>permit-adminping-unrestricted.xml - login to admin client is unrestricted</li>
-	<li>permit-anything-to-administrator.xml - users with the attribute of fedoraRole=administrator act as super user</li>
-	<li>permit-apia-unrestricted.xml - API-A is unrestricted</li>
-	<li>permit-oai-unrestricted.xml - OAI provider service is unrestricted</li>
-	<li>permit-serverstatus-unrestricted.xml - ability to obtain server status is unrestricted</li>
-	</ul>
-
-<p>Note that these policies enforce a minimal level security (e.g., API-A is totally unrestricted). If you need a higher level of security than what is provided by the default, you will need to add additional repository-wide policies or individual object-specific policies to customize your access environment. Refer to the "Security Architecture - Sample Policies and Companion User Guide" document for more information about how to construct policies for your repository.</p>
+<h3><a name="AUTHZ-CUSTOM"></a>5.2 Custom Policies</h3>
+		<p>Note that the default repository policies enforce a minimal level security (e.g., API-A is totally unrestricted).&nbsp; If you need a 
+		more customized level of access control what is provided by the default, you will need to add additional repository-wide policies or individual object-specific policies to customize your access environment.&nbsp;&nbsp; Refer to the "<a href="SamplePolicyGuide.htm">Sample 
+		Policy Guide</a>" document for more information about how to construct policies for your repository.</p>
 	</div>
 
 	<div class="sect">
-	  <h2>Step By Step Guide</h2>
+	  <h2>&nbsp;</h2>
+		<h2><a name="STEP-BY-STEP"></a>6 Step-By-Step Guide to Securing Your 
+		Repository</h2>
 
 <p>Here is a brief step-by-step guide that describes what you will need to do to configure your fedora repository. It is recommended that you start with one of the base security configurations and set of default policies and become familiar with the new security features of Fedora 2.1b. Then you can go back and experiment with customizing various aspects of your repository configuration and policies.</p>
 
@@ -285,5 +393,5 @@ http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for 
 	</blockquote>
 	</div>
 
-</div></ul></ul></body>
+</body>
 </html>
