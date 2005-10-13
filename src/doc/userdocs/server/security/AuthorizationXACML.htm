@@ -24,32 +24,31 @@
             <li><a href="#INTRO">Introduction</a>
             <li><a href="#POLICY">Encoding Fedora XACML Policies</a></li>
                 <ul>
-					<li><a href="#POLICY1">2.1 The Fedora Policy Vocabulary</a></li>
-					<li><a href="#POLICY2">2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining Algorithm</a></li>
-					<li><a href="#POLICY3">2.3 Defining the Policy Target</a></li>
-					<li><a href="#POLICY4">2.4 Defining Policy Rules</a></li>
-					<li><a href="#POLICY5">2.5 Recommended Best Practices for Authoring Fedora XACML Policies</a></li>
-					<li><a href="#POLICY6">2.6 XACML Gotchas</a></li>
+					<li><a href="#POLICY-VOCAB">2.1 The Fedora Policy Vocabulary</a></li>
+					<li><a href="#POLICY-BASICS">2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining Algorithm</a></li>
+					<li><a href="#POLICY-TARGET">2.3 Defining the Policy Target</a></li>
+					<li><a href="#POLICY-RULE">2.4 Defining Policy Rules</a></li>
+					<li><a href="#POLICY-BEST">2.5 Recommended Best Practices for Authoring Fedora XACML Policies</a></li>
+					<li><a href="#POLICY-GOTCHA">2.6 XACML Gotchas</a></li>
 			</ul>
 
             <li><a href="#CONFIG">Configuring the Fedora Authorization Module (XACML Policy Enforcement)</a></li>
                  <ul>
-					<li><a href="#CONFIG1">3.1 Enabling/Disabling XACML Policy Enforcement</a></li>
-					<li><a href="#CONFIG2">3.2 Configuring the Storage Location of XACML Policies</a></li>
-					<li><a href="#CONFIG3">3.3 Enabling/Disabling Policy Validation</a></li>
-					<li><a href="#CONFIG4">3.4 Configuring “Surrogate” Policies (and what are they?)</a></li>
-					<li><a href="#CONFIG5">3.5 How to Activate New or Modified 
+					<li><a href="#CONFIG-ENABLE">3.1 Enabling/Disabling XACML Policy Enforcement</a></li>
+					<li><a href="#CONFIG-STORE">3.2 Configuring the &quot;Active&quot; Policies Storage Location</a></li>
+					<li><a href="#CONFIG-ACTIVATE">3.3 How to Activate and Load 
 					Policies</a></li>
+					<li><a href="#CONFIG-ENABLE">3.4 Enabling/Disabling Policy Validation</a></li>
+					<li><a href="#CONFIG-SURROG">3.5 Configuring “Surrogate” Policies (and what are they?)</a></li>
 			</ul>
-            <li><a href="#IMPL">Implementation of the Fedora Policy Enforcement Module</a></li>
+			<li><a href="#IMPL">Implementation of the Fedora Policy Enforcement Module</a></li>
                 <ul>
 					<li><a href="#IMPL1">4.1 Policy Determination Point (PDP) and Policy Enforcement Point (PEP)</a></li>
 					<li><a href="#IMPL2">4.2 Understanding the XACML Policy Combining Algorithm</a></li>
 					<li><a href="#IMPL3">4.3 Understanding the Authorization Decision</a></li>
 					<li><a href="#IMPL4">4.4 Optional Attributes in a Policy 
 					Target</a></li>
-			</ul>
-			</li>
+			</ul></li>
 			<li><a href="#ATTR">How to Send User Attributes into the Fedora Policy Enforcement Module</a>
 			<ul>
 				<li><a href="#ATTR1">5.1  Tomcat-users attributes</a></li>
@@ -132,7 +131,7 @@ chatty. To revert to the original logging behavior, edit fedora-start.bat
 <h2><a name="POLICY">2 Encoding Fedora XACML Policies</a></h2>
 
 <p>&nbsp;</p>
-<h4><a name="POLICY1"><b>2.1 The Fedora Policy Vocabulary</b></a></h4>
+<h4><b><a name="POLICY-VOCAB">2.1 The Fedora Policy Vocabulary</a></b></h4>
 
 <p>&nbsp;</p>
 
@@ -142,7 +141,7 @@ digital objects.&nbsp;&nbsp; This vocabulary define a set of URNs that can be
 used to identify specific Fedora API operations, Fedora object attributes, and 
 the Fedora environment within an XACML policy.&nbsp;&nbsp; These URNs are used 
 as attribute designators in XACML policies, specifically within a SubjectAttributeDesignator, 
-ResourceAttributeDesignator, ActionAttributeDesignator, and jfkdjkf.&nbsp;&nbsp;&nbsp;&nbsp; </p>
+ResourceAttributeDesignator, and ActionAttributeDesignator.&nbsp;&nbsp;&nbsp;&nbsp; </p>
 <p>&nbsp;</p>
 <p>The set of identifiers defined for the Fedora policy vocabulary is 
 automatically generated and can be found in the Fedora software distribution at:</p>
@@ -167,8 +166,8 @@ vocabulary.txt&gt;</i></b></p>
 <p style='text-autospace:none'><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
-<h4><a name="POLICY2"><b>2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining
-Algorithm</b></a></h4>
+<h4><b><a name="POLICY-BASICS">2.1 Policy Basics:&nbsp; Identifier, Description, and Rule Combining
+Algorithm</a></b></h4>
 
 <p><b>&nbsp;</b></p>
 
@@ -217,18 +216,16 @@ combining algorithm at the authorization module level.&gt;</i></b></p>
 
 <p>&nbsp;</p>
 
-<h4><a name="POLICY3">2.3 Defining the Policy Target</a></h4>
+<h4><a name="POLICY-TARGET">2.3 Defining the Policy Target</a></h4>
 
 <p>&nbsp;</p>
 
 <p style='text-autospace:none'>A Policy Target is the part of a
 policy that specifies matching criteria for figuring out whether a particular
 policy is applicable to an incoming service request.   A Target contains three
-basic matching components: <b>Subjects</b>, <b>Actions</b>, and <b>Resources</b>. 
-All three of these components must be matched to the context of an incoming
-request for the policy to be applicable.  [NOTE: A fourth component at this
-level, Environments, is apparent in the OASIS XACML spec, but not yet
-implemented by sunxacml.]</p>
+basic matching components: <b>Subjects</b>, <b>Actions</b>, and <b>Resources</b>, 
+and <b>Environments</b>.&nbsp; All of these components must be matched to the context of an incoming
+request for the policy to be applicable.  </p>
 <p>&nbsp;</p>
 
       <div class="code">
@@ -726,8 +723,24 @@ DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;  </p>
 
       </div>
       <p><b>&nbsp;</b></p>
+<p><b>
+<span style='font-size:10.0pt;
+font-family:"Courier New";background:white'>&lt;Environments&gt;</span></b></p>
+<p>The target matching component&nbsp; <b>Environments</b> is discussed in the OASIS XACML specification, but not yet
+implemented by the Sun XACML engine that underlies the Fedora Authorization 
+module.&nbsp; Therefore, in Fedora 2.0 do not create policies that specify 
+matching criteria in the policy target using Environments.&nbsp;&nbsp; The 
+Environments component of a target is intended to specify aspects of the 
+environment in which the incoming request exists that would make the policy 
+match the incoming requests.&nbsp;&nbsp; Although the Environments element is 
+not currently supported in the policy target, this does not mean that you cannot 
+talk about aspects of the environments within a policy.&nbsp; Within a policy 
+Rule, you can specify a Condition that contains matching criteria for 
+environmental attributes.&nbsp; Refer to the discussion of policy rules below 
+for an example of Environment attribute matching in a Condition.</p>
 
-<h4><a name="POLICY4"><b>2.4 Defining Policy Rules</b></a></h4>
+<h4>&nbsp;</h4>
+<h4><b><a name="POLICY-RULE">2.4 Defining Policy Rules</a></b></h4>
 
 <p><b>&nbsp;</b></p>
 
@@ -780,7 +793,22 @@ TRUE,&nbsp; then the specified effect should be enforced.</p>
 <p style='text-autospace:none'>
 <span style="background-color: #FFFFFF; background-position: 0% 0%">
 <font size="2"><b><span style="font-family: Courier New">&lt;Target&gt;</span></b></font></span></p>
-<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>
+Each Rule in a policy can have its own Rule Target.&nbsp; While a Policy Target 
+describes the kinds of requests to which an entire policy applies, a Rule Target 
+describes the kinds of request to which a particular rule applies.&nbsp;&nbsp;&nbsp; 
+If a Rule Target is not present, the Policy Target is used to determine whether 
+the Rule is applicable to an incoming request.&nbsp; When a policy target 
+exists, it is applicable to every rule in the policy; however, a rule target can 
+be consider a constraint on the policy target, fine tuning to specific 
+Subject/Resource/Action match criteria that are in the context of a the 
+particular rule.&nbsp; </p>
+<p style='text-autospace:none'>
+Refer to the documentation above for the <a href="#POLICY-TARGET">Defining a 
+Policy Target </a>for the structure of a Target, since rule and policy Targets 
+are defined using the same elements.&nbsp;&nbsp;&nbsp; </p>
+<p style='text-autospace:none'>
+&nbsp;</p>
 <p style='text-autospace:none'><b>
 <span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>&lt;Condition&gt;</span></b></p>
@@ -788,19 +816,112 @@ font-family:"Courier New";background:white'>&lt;Condition&gt;</span></b></p>
 <p style='text-autospace:none'><b>&nbsp;</b>While Targets are appealing, frame-like expressions, they
 have a constrained logic which isn't always expressive enough to narrow down
 whether a policy is applicable to a service request.  Hence, the need for
-Condition elements.  <b><i>A Condition can appear only within a Rule.</i></b> 
-It cannot appear as within a Target, nor directly under Policy or PolicySet. &nbsp;&nbsp; A
-Condition cannot apply to the Policy in whole; therefore, if a either the policy Target 
-or the rule Target is not
-able to adequately express a constraint, a Condition can be added
-to a Rule.  If the Condition is intended to be applicable to the entire Policy,
+Condition elements.   If either the policy Target or the rule Target is not able 
+to adequately express a constraint, a Condition can be added to a Rule. <b><i>&nbsp; A Condition can appear only within a Rule.</i></b> 
+It cannot appear within a Target, nor directly under Policy or PolicySet.&nbsp;&nbsp;&nbsp; If 
+a Condition is intended to be applicable to the entire Policy,
 the Condition must be repeated in every Rule in that Policy.</p>
+<p style='text-autospace:none'>The XACML specification defines numerous 
+functions that can be used in defining conditions.&nbsp; Consult the
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+XACML Specification</a> for a complete list of functions with their 
+descriptions.&nbsp;&nbsp; For convenience, here is a small sampling of 
+convenient&nbsp; functions with their XACML identifiers:</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'><b>Equality predicates </b>&nbsp;&nbsp; </p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>String Equality </b>-&nbsp; 
+	urn:oasis:names:tc:xacml:1.0:function:string-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Boolean Equality </b>- 
+	urn:oasis:names:tc:xacml:1.0:function:boolean-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Date/Time Equality</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:dateTime-equal</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Logical functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>OR</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:or</p></li>
+	<li>
+	<p style='text-autospace:none'><b>AND</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:and</p></li>
+	<li>
+	<p style='text-autospace:none'><b>NOT</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:not</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Comparison functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>Greater Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:integer-greater-than</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Less Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:type-bag</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Greater Than or Equal</b> -&nbsp; 
+	urn:oasis:names:tc:xacml:1.0:function:integer-greater-than-or-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Less Than or Equal</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:integer-less-than-or-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Date/Time Greater Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:dateTime-greater-than</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Bag and Set functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>Bag of Strings</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:string-bag</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Member of Set </b>- 
+	urn:oasis:names:tc:xacml:1.0:function:type-at-least-one-member-of</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'>Below is an example Condition that uses several 
+of these functions.&nbsp; The Condition evaluates to TRUE if client IP address 
+(picked up from the environment of the incoming request) is NOT a member of a 
+set of particular IP addresses.&nbsp;&nbsp; The Condition element itself 
+contained the outer-most function which is a negation function.&nbsp;&nbsp; 
+Within the condition, we see the application of the set membership function, 
+which specified that the environment attribute of interest is clientIpAddress 
+(from the Fedora vocabulary).&nbsp; Then, the inner most function wraps a set of 
+possible values for thie clientIPAddress attribute (i.e., using the bag 
+function).</p>
+<p style='text-autospace:none'>&nbsp;</p>
 
-<p><b>&nbsp;</b></p>
+<div class="code">
+&lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;EnvironmentAttributeDesignator 
+AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;127.0.0.1&lt;/AttributeValue&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;128.84.103.11&lt;/AttributeValue&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Apply&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;/Apply&gt;<br>
+&lt;/Condition&gt;</div>
+      <p><b>&nbsp;</b></p>
+<p style='text-autospace:none'>Given that the rule Target matches an incoming 
+service request, and given that the Condition evaluates to TRUE, the incoming 
+request will be permitted or denied based on what is specified in the Rule 
+Effect.</p>
+<p style='text-autospace:none'>&nbsp;</p>
 
-<p><b>&nbsp;</b></p>
-
-<h4><a name="POLICY5"><b>2.5 Recommended Best Practices for Authoring Fedora XACML Policies</b></a></h4>
+<h4><b><a name="POLICY-BEST">2.5 Recommended Best Practices for Authoring Fedora XACML Policies</a></b></h4>
 <p style='text-autospace:none'>&nbsp;</p>
 
 <ol style='margin-top:0in' start=1 type=1>
@@ -873,7 +994,7 @@ the Condition must be repeated in every Rule in that Policy.</p>
 
  </ol>
 
-<h4><a name="POLICY6"><b>2.2 XACML Gotchas</b></a></h4>
+<h4><b><a name="POLICY-GOTCHA">2.2 XACML Gotchas</a></b></h4>
 
 </div>
 <ol>
@@ -1049,7 +1170,7 @@ name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</p>
       </div>
 
 	<p>&nbsp;</p>
-<h4><a name="CONFIG1"><b>3.1 Enabling/Disabling XACML Policy Enforcement</b></a></h4>
+<h4><b><a name="CONFIG-ENABLE">3.1 Enabling/Disabling XACML Policy Enforcement</a></b></h4>
 	<p>&nbsp;</p>
 	<p>To enable/disable XACML policy enforcement in Fedora, use
 the Fedora configuration file (fedora.fcfg).  Whether Fedora uses XACML for
@@ -1098,15 +1219,12 @@ always in place regardless of the setting for parameter ENFORCE-MODE.</p>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New"'>&nbsp;</span></p>
 
-<h4><a name="CONFIG2"><b>3.2 Configuring the Storage Location of XACML Policies</b></a></h4>
+<h4><b><a name="CONFIG-STORE">3.2 Configuring the Active Policies Storage Location</a></b></h4>
 	<p><b>&nbsp;</b></p>
 	<p><b><i>a. Repository-wide policies stored in central location</i></b></p>
 	<p>&nbsp;</p>
-	<p>The storage location for repository-wide policies can be set
+	<p>The storage location for active repository-wide policies can be set
 by the repository administrator using the follow parameter in Authorization
 module (in fedora.fcfg):   </p>
 <p>&nbsp;</p>
@@ -1133,27 +1251,12 @@ requests that do not pertain to the specific digital object it is about.   As
 described below, there are better places to store a policy that pertains to a
 single digital object.</p>
 	<p>&nbsp;</p>
-	<p><b><i>b. Object-specific policies stored inside digital
-objects</i></b></p>
-	<p style='text-autospace:none'>&nbsp;</p>
-	<p style='text-autospace:none'>An object-specific policy can be
-stored inside a digital object within the special reserved datastream whose
-datastream ID is &quot;POLICY&quot;.  It is good practice with object policy's
-to include a check of the PID in the policy.   One benefit of putting object
-specific policies inside digital objects is that the policies become <b><i>portable</i></b>
-with the object itself.   Another benefit is that it may provide for easier
-distribution of policy management responsibility.  For example, authors or
-owners of particular digital objects can be granted the rights to modify the
-POLICY datastream of their objects, without having to obtain repository
-administrator privileges to modify policies in the configured policy storage
-locations for a repository.</p>
+	<p><b><i>b. Object-specific policies stored in a central location</i></b></p>
 	<p><b><i>&nbsp;</i></b></p>
-	<p><b><i>b. Object-specific policies stored in central location</i></b></p>
-	<p><b><i>&nbsp;</i></b></p>
-	<p>Alternatively, object-specific policies can be stored in a
+<p>Object-specific policies can be stored in a
 centrally configured location, outside of the digital object that the policy is
-written for.   The location of these object-specific policies is configured in
-the following parameter of the Authorization module in fedora.fcfg:</p>
+written for.   The location for active object-specific policies is configured in
+the following parameter of the Authorization module (in fedora.fcfg):</p>
 	<p>&nbsp;</p>
 <div class="code">
 	<p style="text-autospace: none">    &lt;param
@@ -1175,11 +1278,77 @@ an object).   </p>
 gets put into repository-policies directory, it has the same effect at
 enforcement time.   It will just be unnecessarily in scope for evaluation for
 service requests that it will never be applicable to.</p>
+	<p>&nbsp;</p>
+	<p><b><i>c. Object-specific policies stored inside digital
+objects</i></b></p>
+	<p style='text-autospace:none'>&nbsp;</p>
+	<p style='text-autospace:none'>An object-specific policy can be
+stored inside a digital object within the special reserved datastream whose
+datastream ID is &quot;POLICY&quot;.  It is good practice with object policy's
+to include a check of the PID in the policy.   One benefit of putting object
+specific policies inside digital objects is that the policies become <b><i>portable</i></b>
+with the object itself.   Another benefit is that it may provide for easier
+distribution of policy management responsibility.  For example, authors or
+owners of particular digital objects can be granted the rights to modify the
+POLICY datastream of their objects, without having to obtain repository
+administrator privileges to modify policies in the configured policy storage
+locations for a repository.</p>
+	<p><b><i>&nbsp;</i></b></p>
+<p style='text-autospace:none'>&nbsp;</p>
+
+<h4><a name="CONFIG-ACTIVATE">3<b>.3 How to Activate and Load Policies</b></a></h4>
+	<p>
+	&nbsp;</p>
+<p>
+	Policies are not considered <i><b>active</b></i> unless they are placed in the
+	<a href="#CONFIG-ENABLE">active policy storage locations</a> specified for the 
+	Authorization module in the Fedora server configuration file (fedora.fcfg).&nbsp;&nbsp; 
+	Once policies are stored in the active policy directories, they are able to 
+	be <i><b>loaded</b></i> by the Fedora repository server once it is started.&nbsp;&nbsp; 
+	To put new custom policies into play, simply add them to one of the active 
+	policy directory.&nbsp;&nbsp;&nbsp; To inactive a policy, remove it from the 
+	active policy directory.&nbsp; To modify an existing policies, edit the 
+	policy in the active policy directories (or preferably, edit in another 
+	location and replace the existing policy in the active policy directory).</p>
+<p>
+	To activate and load policies take the following steps:</p>
+<ol>
+	<li><b>Validate</b> your policies using the
+	<a href="../cmd-line/index.html#validate">validate-policy</a> command line utility&nbsp;
+	<i>(optional, but recommended!)</i></li>
+	<li><b>Activate</b> your policies by copying them into the one of the active 
+	policies storage directories configured in the 
+	Authorization module (in fedora.fcfg)</li>
+	<li><b>Load</b> your policies by starting the Fedora server (using the
+	<a href="../cmd-line/index.html#start">fedora-start</a> command line 
+	utility).&nbsp; If the server is already started run the
+	<a href="../cmd-line/index.html#reload">fedora-reload-policies</a> command 
+	line utility.&nbsp; </li>
+</ol>
+<p>
+	It should be noted that only repository-wide policies are pre-loaded into 
+	the Fedora server.&nbsp; For performance reasons, object-specific policies are not 
+	pre-loaded; instead they are loaded on an as-needed basis (i.e., when a 
+	request for that object is made).&nbsp; </p>
+<p>
+	<br>
+	It should also be noted that the <i><b>first time </b></i>the Fedora server 
+	is started, the <i><b>default out-of-the-box policies</b></i> will be copied 
+	into a subdirectory named &quot;default&quot; under the appropriate active policy storage location 
+	(configured for the Authorization module in fedora.fcfg).&nbsp;&nbsp; These 
+	default policies are copied <b><i>from</i></b> the Fedora distribution 
+	directory $FEDORA_HOME/dist/server/config/xacml-policies/default.&nbsp;&nbsp; 
+	In Fedora 2.0 there are only <a href="#DEFAULT">default repository-wide 
+	policies,</a> but no default object policies or surrogate policies.&nbsp; 
+	The default out-of-box policies will be <i><b>copied only once</b></i>.&nbsp; 
+	This is to prevent subsequent server restarts from clobbering any 
+	customizations that may have been made to the default policies by a 
+	repository administrator.</p>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
-<h4><a name="CONFIG3"><b>3.3 Enabling/Disabling Policy Validation</b></a></h4>
+<h4><b><a name="CONFIG-VALIDATE">3.4 Enabling/Disabling Policy Validation</a></b></h4>
 	<p style='text-autospace:none'><b>&nbsp;</b></p>
 	<p style='text-autospace:none'>There are several parameters in
 the Authorization module configuration that control whether Fedora will attempt
@@ -1210,7 +1379,7 @@ name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</p>
 policies will be validated.  It is up to the repository administrator to enable
 policy validation for object-specific and surrogate policies.   <b><i>&lt;</i></b><b><i>BILL</i></b><b><i>: 
 what happens if invalid policy is in play?  Exception?  Also who are
-object-sepcific policies set to false?&gt;</i></b></p>
+object-specific policies set to false?&gt;</i></b></p>
 	<p style='text-autospace:none'><b><i>&nbsp;</i></b></p>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
@@ -1230,7 +1399,7 @@ http://sunxacml.sourceforge.net/guide.html#using-validating</span><span
 style='font-size:10.0pt;font-family:"Courier New"'>&gt;</span></p>
 	<p style='text-autospace:none'><b><i>&nbsp;</i></b></p>
 
-<h4><a name="CONFIG4"><b>3.4 Configuring “Surrogate” Policies (and what are they?)</b></a></h4>
+<h4><b><a name="CONFIG-SURROG">3.5 Configuring “Surrogate” Policies (and what are they?)</a></b></h4>
 <p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>
 	Web front ends or services can authenticate to Fedora as a &quot;surrogate 
@@ -1244,23 +1413,6 @@ authenticates the front-end &quot;surrogate&quot; users - and there are policies
 	authorization decisions based on the repository-wide and object-specific 
 	policies configured for the repository.<i><b> &lt;bill:&nbsp; this needs better 
 	explanation&gt;</b></i></p>
-<p style='text-autospace:none'>&nbsp;</p>
-
-<h4><a name="CONFIG5">3<b>.5 How to Activate New or Modified Policies</b></a></h4>
-	<p>
-	&nbsp;</p>
-<p>
-	To activate policies take the following steps:</p>
-<ol>
-	<li>validate your policies using the validate-policy command line utility</li>
-	<li>copy valid policies into the one of the directories configured in the 
-	Authorization module, depending on whether it is a repository-wide, 
-	object-specific, or surrogate policy</li>
-	<li>run the reload-policies command line utility</li>
-</ol>
-<p>
-	Note that restarting the Fedora server will also load any new policies that 
-	were put in the configured policy directories.</p>
 <p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'><b>&nbsp;</b></p>
 
@@ -1429,11 +1581,11 @@ style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span><b>
 	<p>&nbsp;</p>
 	<p>The Fedora policy determination point (PDP) enforces these four requirements.  If all
 are satisfied, the incoming service request is <b>permitted</b> and it proceeds normally; if any are not, an 
-	the incoming request is <b>denied</b> and an Authorization fault is thrown.&nbsp; Note that some policy evaluations can return a “notApplicable”
+	the incoming request is <b>denied</b> and an Authorization fault is thrown.&nbsp; Note that some policy evaluations can return a “NotApplicable”
 result which means that all required attributes were indeed present, but the
 policy’s target wasn’t matched.   This is fine; it just means that a policy
 that the PDP evaluated did not apply to the incoming service request.   Fedora
-silently ignores notApplicable results.  <b><i>&lt;BILL:
+silently ignores NotApplicable results.  <b><i>&lt;BILL:
 is this correct?&gt;</i></b></p>
 <p>&nbsp;</p>
 <p><i><b>For a service request to succeed, there must be an explicit permit;&nbsp; 
@@ -1581,7 +1733,7 @@ The default access control policies can be found within the Fedora software
 distribution in the following directory: <span style="font-family: Courier New">&nbsp;</span></p>
 <p><span style="font-family: Courier New"><b>dist\server\config\xacml-policies\default\default-repository-policies-approximating-2.0</b></span></p>
 <p><i>The first time the Fedora repository server is started, these policies 
-will be automatically copied into the official <a href="#CONFIG2">
+will be automatically copied into the official <a href="#CONFIG-STORE">
 repository-wide policy storage location </a>that was specified in the Fedora 
 configuration file (fedora.fcfg).&nbsp; The policies are activated once they are 
 copied into this location. </i>&nbsp;</p>
