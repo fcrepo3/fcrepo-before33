@@ -5,7 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
     <title>Backend Services Security Configuration</title>
-    <link rel="stylesheet" type="text/css" href="docstyle.css" />
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
     <style type="text/css">
         ol {
             list-style: square outside none;
@@ -54,15 +54,15 @@
 
 <p>There are two special entries in the beSecurity file that are used by the server when handling special cases where the Fedora server itslef is acting as a backend service. e.g., when using chained disseminators where one dissemination request is a call to Fedora requesting another dissemination request. If API-A is configured to not use basic authentication or SSL, these entries will appear similar to the following:</p>
 
-	<div class="code">
-	<serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
+	<div class="code"><pre>
+  &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+  &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; plist=&quot;127.0.0.1&quot;/&gt;</pre>
 	</div>
 
 <p>If API-A is configured to use basic authentication and SSL, these entries should look similar to the following:</p>
-	<div class="code">	
-	<serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="true" callSSL="true" callbackBasicAuth="true" callbackSSL="true" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
+	<div class="code"><pre> 
+  &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;true&quot; callSSL=&quot;true&quot; callbackBasicAuth=&quot;true&quot; callbackSSL=&quot;true&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+  &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;</pre> 
 	</div>
 
 <p>Care needs to be exercised when editing these two special entries in the beSecurity configuration file or problems can result in how backend services communicate with the Fedora server. In the first entry for "fedoraInternalCall-1", changes can be made to the "callUsername" or "callPassword" attributes, but you must also make corresponding changes in the tomcat-users-fedoraTemplate.xml file before the changes will be recognized. Changes can also be made to the "iplist" attribute. The "iplist" should be the same as the IP address of the fedora server as specified in the fedora.fcfg file. The attribute for "role" should never be edited. The second entry for "fedoraInternalCall-2" should never be edited.</p>
@@ -93,60 +93,68 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 
 	<div class="sect2">
 	  <h3>beSecurity-secure-apim.xml</h3>>
-<div class="code">
-<?xml version="1.0" encoding="utf-8"?>
-<!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist-->
-<serviceSecurityDescription role="default" xmlns="info:fedora/fedora-system:def/beSecurity#" callSSL="false" callbackSSL="false" callBasicAuth="false" callbackBasicAuth="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
-http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
-	<serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
-</serviceSecurityDescription>
-</div>
+      <div class="code"><pre>
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;<br>
+  &lt;!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist--&gt;
+  &lt;serviceSecurityDescription role=&quot;default&quot;
+      xmlns=&quot;info:fedora/fedora-system:def/beSecurity#&quot;
+      callSSL=&quot;false&quot; callbackSSL=&quot;false&quot;
+      callBasicAuth=&quot;false&quot; callbackBasicAuth=&quot;false&quot;
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:schemaLocation=&quot;info:fedora/fedora-system:def/beSecurity#
+      http://www.fedora.info/definitions/1/0/api/beSecurity.xsd&quot;&gt;
+		
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+  &lt;/serviceSecurityDescription&gt;</pre>
+	  </div>
 
 <p>Note that this beSecurity configuration represents minimal security for backend services. In secure-apim mode, API-M is secure, but API-A is open. In this configuration, basicAuth and SSL are not required by the Fedora server for API-A. There are also no additional security measures imposed on backend services so backend services do not use basic authentication or SSL and there is no IP restriction for backend services communicating with the fedora server.</p>
 </div>
 
-	<div class="sect2">
+	<div class="sect2"><pre>
 	  <h3>beSecurity-secure-all.xml</h3>
-<div class="code">
-<?xml version="1.0" encoding="utf-8"?>
-<!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist-->
-<serviceSecurityDescription role="default" 
-xmlns="info:fedora/fedora-system:def/beSecurity#" 
-callSSL="false" callbackSSL="false" callBasicAuth="false" callbackBasicAuth="false" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
-http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
-    <serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="true" callSSL="true" callbackBasicAuth="true" callbackSSL="true" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-    <serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:2" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:2/getThumbnail" iplist="127.0.0.1"/>	
-	<serviceSecurityDescription role="demo:3" iplist="128.143.22.236"/>
-	<serviceSecurityDescription role="demo:4" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:9" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:13" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:16" iplist="128.143.22.236"/>
-	<serviceSecurityDescription role="demo:20" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:25" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:28" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:DualResImageCollection" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:DualResImageImpl" iplist="127.0.0.1"/>
-</serviceSecurityDescription>
-</div>
+      <div class="code"> 
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+  &lt;!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist--&gt;
+  &lt;serviceSecurityDescription role=&quot;default&quot;
+      xmlns=&quot;info:fedora/fedora-system:def/beSecurity#&quot;
+      callSSL=&quot;false&quot; callbackSSL=&quot;false&quot; 
+      callBasicAuth=&quot;false&quot; callbackBasicAuth=&quot;false&quot;
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:schemaLocation=&quot;info:fedora/fedora-system:def/beSecurity#
+      http://www.fedora.info/definitions/1/0/api/beSecurity.xsd&quot;&gt;
+  
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;true&quot; callSSL=&quot;true&quot; callbackBasicAuth=&quot;true&quot; callbackSSL=&quot;true&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:2&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:2/getThumbnail&quot; iplist=&quot;127.0.0.1&quot;/&gt;	
+      &lt;serviceSecurityDescription role=&quot;demo:3&quot; iplist=&quot;128.143.22.236&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:4&quot; iplist=&quot;128.143.22.200&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:9&quot; iplist=&quot;128.143.22.200&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:13&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:16&quot; iplist=&quot;128.143.22.236&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:20&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:25&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:28&quot; iplist=&quot;128.143.22.200&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:DualResImageCollection&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:DualResImageImpl&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+   &lt;/serviceSecurityDescription&gt;</pre> 
+      </div>
 
 <p>This beSecurity configuration provides enhanced security for the backend services used with the set of demo objects distributed with Fedora 2.1b. In secure-all mode, both API-A and API-M use basic authentication and SSL. In addition to the two special entries for the fedora server, this configuration also includes entries for each of the backend services that are referenced by the set of demo objects. The role of the backend service corresponds to the bmech PID of the associated disseminator. For example, the first entry with "role=demo:2" is for the UVA Basic Image disseminator which has a bdef PID of demo:1 and bmech PID of demo:2. The IP restriction of 127.0.0.1 means that requests for the backend service identified by demo:2 will only be granted for requests originating from localhost(i.e., the feodra server). Since no method is specified, this restriction applies to all methods of the disseminator. The next entry with "role=demo:2/getThumbnail" is an example where the IP restriction applies only to the getThumbnail method rather than the entire disseminator. These entries are somewhat unusual in the sense that the backend service being employed is a simple HTTP GET because this is how the bmech object demo:2 was constructed. Since the datastreams are Managed Content datastreams, the backend service is serving up the content from the Fedora server itself. This is why the IP restriction is 127.0.0.1 or localhost since this is the default IP address for the Fedora server.</p>
 
 <p>A more typical example is the entry for demo:9 where the backend service is an external web service that resides on a remote host with IP address of 128.143.22.200. Here the IP restriction is for the external host that is performing the web service. This particular web service is not capable of handling basic authentication or SSL so it defaults to callBasicAuth=false, callSSL=false, callbackBasicAuth=false, and callbackSSL=false. Note that even though this base security configuration uses basic authentication and SSL for API-A, it is possible to configure backend services to either use basic authentication or not use authentication when communicating with the Fedora server. For the best security, the Fedora administrator may want to ensure that all backend services authenticate in this configuration, but the option is available to not authenticate in cases where the backend service may not be capable of authentication or using SSL.</p>
 
 <p>If you configure beSecurity so that a backend service must authenticate with the Fedora server, you also need to insure that the username being used to authenticate with the Fedora server appears in the tomcat-users-fedoraTemplate.xml file and that the "role" attribute in the beSecurity file is also present in the tomcat-users-fedoraTemplate.xml file. Consider for example a backend service with a bmech pid of demo:999. To have this service authenticate with the fedora server, you would add a beSecurity entry similar to the following:</p>
-	<div class="code">
-	<serviceSecurityDescription role="demo:999" callbackBasicAuth="true" callbackSSL="true" iplist="123.456.789.012"/>
-	</div>
+	<div class="code"><pre>
+  &lt;serviceSecurityDescription role=&quot;demo:999&quot; callbackBasicAuth=&quot;true&quot; callbackSSL=&quot;true&quot; iplist=&quot;123.456.789.012&quot;/&gt;</pre>
+    </div>
 
 <p>This entry will autogenerate an XACML policy that says that the connection between the backend service and Fedora server must be authenticated, must be over SSL, must originate from the IP address of 123.456.789.012, and that the authenticating user must have the attribute of "fedoraRole=demo:999". Let's assume that this backend service will authenticate to the fedora server with a username of "backendServiceUser" and a password of "backendServicePassword". In this case, the tomcat-users-fedoraTemplate.xml must have the following entry:</p>
-	<div class="code">
-	<user name="backendServiceUser" password="backendServicePassword" roles="fedoraRole=fedoraInternalCall-1,fedoraRole="demo:999"/>
-	</div>
+	<div class="code"><pre>
+  &lt;user name=&quot;backendServiceUser&quot; password=&quot;backendServicePassword&quot; roles=&quot;fedoraRole=fedoraInternalCall-1,fedoraRole=&quot;demo:999&quot;/&gt;</pre>
+    </div>
 
 <p>[This section may change depending on what we decide on how to handle updating of tomcat-users file....]</p>
 <p>Then when the backend service authenticates with Fedora as backendServiceUser, it will have both the "fedoraInternalCall-1" and "demo:999" attributes associated with it. The authenticating user must have the "fedoraRole=demo:999" attribute available to satisfy the policy autogenerated by the beSecurity entry and the attribute of "fedoraRole=fedoraInternalCall-1" insures that the authenticated user has the necessary authority to communicate with the Fedora server.</p>
@@ -154,46 +162,52 @@ http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
 
 	<div class="sect2">
   	  <h3>beSecurity-unsecure-apim.xml</h3>
-<div class="code">
-<?xml version="1.0" encoding="utf-8"?>
-<!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist-->
-<serviceSecurityDescription role="default" xmlns="info:fedora/fedora-system:def/beSecurity#" callSSL="false" callbackSSL="false" callBasicAuth="false" callbackBasicAuth="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
-http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
-	<serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
-</serviceSecurityDescription>
-</div>
+    <div class="code"><pre>
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+  &lt;!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist--&gt;
+  &lt;serviceSecurityDescription role=&quot;default&quot; xmlns=&quot;info:fedora/fedora-system:def/beSecurity#&quot; 
+      callSSL=&quot;false&quot; callbackSSL=&quot;false&quot; callBasicAuth=&quot;false&quot; 
+      callbackBasicAuth=&quot;false&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+      xsi:schemaLocation=&quot;info:fedora/fedora-system:def/beSecurity#
+      http://www.fedora.info/definitions/1/0/api/beSecurity.xsd&quot;&gt;
+      
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+  &lt;/serviceSecurityDescription&gt;</pre>
+	</div>
 
 <p>This beSecurity configuration is identical to that for the secure-apim configuration with the exception that there is no SSL support for the fedora server. Hence the "callSSL" and "callbackSSL" attributes are set to false for the fedoraInternalCall-1 entry. This configuration should only be used in conjunction with the other unsecure-apim configuration files: fedora-unsecura-apim.fcfg, and web-unsecure-apim.xml.</p>
 </div>
 
 	<div class="sect2">
-	  <h3>beSecurity-unsecure-all.xml</strong></p>
-<div class="code">
-<?xml version="1.0" encoding="utf-8"?>
-<!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist-->
-<serviceSecurityDescription role="default" 
-xmlns="info:fedora/fedora-system:def/beSecurity#" 
-callSSL="false" callbackSSL="false" callBasicAuth="false" callbackBasicAuth="false" 
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-xsi:schemaLocation="info:fedora/fedora-system:def/beSecurity# 
-http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
-    <serviceSecurityDescription role="fedoraInternalCall-1" callBasicAuth="true" callSSL="false" callbackBasicAuth="true" callbackSSL="false" callUsername="fedoraIntCallUser" callPassword="changeme" iplist="127.0.0.1"/>
-    <serviceSecurityDescription role="fedoraInternalCall-2" callBasicAuth="false" callSSL="false" callbackBasicAuth="false" callbackSSL="false" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:2" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:2/getThumbnail" iplist="127.0.0.1"/>	
-	<serviceSecurityDescription role="demo:3" iplist="128.143.22.236"/>
-	<serviceSecurityDescription role="demo:4" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:9" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:13" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:16" iplist="128.143.22.236"/>
-	<serviceSecurityDescription role="demo:20" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:25" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:28" iplist="128.143.22.200"/>
-	<serviceSecurityDescription role="demo:DualResImageCollection" iplist="127.0.0.1"/>
-	<serviceSecurityDescription role="demo:DualResImageImpl" iplist="127.0.0.1"/>
-</serviceSecurityDescription>
-</div>
+	  <h3>beSecurity-unsecure-all.xml</h3><p></p>
+<div class="code"><pre>
+  &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+  &lt;!-- callSSL, callBasicAuth, callUsername, callPassword callbackSSL, callbackBasicAuth, iplist--&gt;
+  &lt;serviceSecurityDescription role=&quot;default&quot;
+      xmlns=&quot;info:fedora/fedora-system:def/beSecurity#&quot;
+      callSSL=&quot;false&quot; callbackSSL=&quot;false&quot;
+      callBasicAuth=&quot;false&quot; callbackBasicAuth=&quot;false&quot;
+      xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;
+      xsi:schemaLocation=&quot;info:fedora/fedora-system:def/beSecurity#
+      http://www.fedora.info/definitions/1/0/api/beSecurity.xsd&quot;&gt;
+	  
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-1&quot; callBasicAuth=&quot;true&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;true&quot; callbackSSL=&quot;false&quot; callUsername=&quot;fedoraIntCallUser&quot; callPassword=&quot;changeme&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:2&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+      &lt;serviceSecurityDescription role=&quot;demo:2/getThumbnail&quot; iplist=&quot;127.0.0.1&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:3&quot; iplist=&quot;128.143.22.236&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:4&quot; iplist=&quot;128.143.22.200&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:9&quot; iplist=&quot;128.143.22.200&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:13&quot; iplist=&quot;127.0.0.1&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:16&quot; iplist=&quot;128.143.22.236&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:20&quot; iplist=&quot;127.0.0.1&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:25&quot; iplist=&quot;127.0.0.1&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:28&quot; iplist=&quot;128.143.22.200&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:DualResImageCollection&quot; iplist=&quot;127.0.0.1&quot;/&gt; 
+      &lt;serviceSecurityDescription role=&quot;demo:DualResImageImpl&quot; iplist=&quot;127.0.0.1&quot;/&gt;
+  &lt;/serviceSecurityDescription&gt;</pre>
+	</div>
 <p>This beSecurity configuration is identical to that for the secure-all configuration with the exception that there is no SSL support for the fedora server. Hence the "callSSL" and "callbackSSL" attributes are set to false for the fedoraInternalCall-1 entry. This security scenario is present for those administrators who do not wish to use SSL. This configuration should only be used in conjunction with the other unsecure-all configuration files: fedora-unsecura-all.fcfg, and web-unsecure-all.xml.</p>
 </div>
 
@@ -218,5 +232,5 @@ http://www.fedora.info/definitions/1/0/api/beSecurity.xsd">
         </script>
     </div>
 </div>
-</body>
+</div></div></body>
 </html>
