@@ -85,38 +85,40 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         } else {
             port = getServerConfiguration().getParameter("fedoraRedirectPort").getValue();
         }
-        System.out.println("***** Port: "+port);
+        System.out.println("***** Port based on SSL setting in beSecurity: "+port);
         return port;
     }
     
-    public static String ssl = "";
-    
-    public static String getProtocol() {
-        System.out.println("**** SSL setting: "+ssl);
-        return ssl;
-    }
-    
+    public static String ssl = "http";
+
     // hack to dynamically set protocol based on settings in beSecurity
-    // Settings for fedoraInternalCall-1 should have callSSL=true when server is secure
-    static {
-        ssl = "http";
+    // Settings for fedoraInternalCall-1 should have callSSL=true when server is secure    
+    public static String getProtocol() {
+        BufferedReader br = null;
         try {
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(new FileInputStream(BESECURITY_PATH)));
-                String line = null;
-                while ((line = br.readLine()) != null)
-                {
-                  if(line.indexOf("role=\"fedoraInternalCall-1\"") > 0    &&
-                     line.indexOf("callSSL=\"true\"") > 0) {
-                          ssl = "https";
-                          break;
-                  }
-                  System.out.println("***** BESECURITY LINE: "+line);
-                }      
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(BESECURITY_PATH)));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                if(line.indexOf("role=\"fedoraInternalCall-1\"") > 0    &&
+                        line.indexOf("callSSL=\"true\"") > 0) {
+                        ssl = "https";
+                        break;
+                }
+            }
         } catch (Exception e) {
             System.out.println("beSecurity file Not found: "+BESECURITY_PATH);
+        } finally {
+            try {
+                if( br!=null ) {
+                    br.close();
+                    br=null;
+                }
+            } catch (Exception e) {
+                System.out.println("Unable to close BufferdReader");
+            }
         }
-        System.out.println("**** SSL setting: "+ssl);        
+        System.out.println("**** SSL setting from beSecurity: "+ssl); 
+        return ssl;
     }
     
     public static String getUsername() {
