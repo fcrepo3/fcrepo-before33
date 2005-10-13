@@ -100,7 +100,6 @@ public abstract class IterableTest extends FedoraServerTestCase {
         			System.out.println("wellspring/rathole of " + kount);    				
     			}
     			System.out.println("encountered loop " + count++ + " times");
-    		
     		}
     		while (testXml.again()) { //URL MAY NEED FIXUP, CONSIDER DS.RESET()
     			is = null;
@@ -112,13 +111,11 @@ public abstract class IterableTest extends FedoraServerTestCase {
     			assertTrue(dataSource.expectedStatusObtained());
             	Document results = null;
                 if (dataSource.expectingSuccess()) {
-                	System.out.println("OUT");
-                	System.err.println("ERR");
                 	results = dataSource.getResults();
                 	testXml.checkResultsXml(results);
                 	testXml.checkResults();
             	} else {
-            		testXml.checkResultsElse(); //remove this to get runaway loop, which causes class-not-found error
+            		testXml.checkResultsElse();
             		dataSource.close();
             		/* abandoned this because some server action returning an unclosed img tag
             		try {
