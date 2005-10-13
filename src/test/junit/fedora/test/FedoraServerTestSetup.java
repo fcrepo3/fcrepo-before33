@@ -60,10 +60,7 @@ public class FedoraServerTestSetup
         doSetup = getSetup();
         
         if (doSetup) {
-            // setup actions go here
-            // Before starting server run fedora-setup to populate
-            // config files with default for secure-apim configuration
-            execute("/server/bin/fedora-setup secure-apim ");       
+            // setup actions go here      
             startServer();
         } else {
             System.out.println("    skipping setUp()");
