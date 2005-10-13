@@ -505,7 +505,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);
         
-        pid = apim.ingest(demo999METSObjectXML, "metslikefedora1", "ingesting new foxml object");
+        pid = apim.ingest(demo999METSObjectXML, "metslikefedora1", "ingesting new mets object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest demo999METS: "+pid);
         assertNotNull(pid);
         
@@ -520,7 +520,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("5", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         assertXpathEvaluatesTo("1", "count(//foxml:disseminator)",xmlIn);        
         
-        pid = apim.ingest(changeme2METSObjectXML, "metslikefedora1", "ingesting new foxml object");
+        pid = apim.ingest(changeme2METSObjectXML, "metslikefedora1", "ingesting new mets object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS: "+pid);
         assertNotNull(pid);
         
