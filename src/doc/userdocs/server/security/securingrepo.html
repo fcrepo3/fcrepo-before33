@@ -252,23 +252,18 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
 <p>&nbsp;</p>
 	<p>By default, the template contains the following users, passwords, and roles:</p>
 
-	<div class="code">
-	  <tomcat-users>
-        <user name="#1" password="#2" roles="fedoraRole=administrator" />
-        <user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1" />  
-        <user name="surrogate64" password="surrogate64" roles="webfrontend" />  
-        <user name="guest" password="" roles="" />
-	  &lt;tomcat-users&gt;<br>
-		&lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;<br>
-		&lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;<br>
-		&lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;<br>
-		&lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;<br>
-		&lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;<br>
-		&lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;<br>
-		&lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;<br>
-		&lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;<br>
-		&lt;/tomcat-users&gt;</tomcat-users></div>
-
+	<div class="code"><pre>
+  &lt;tomcat-users&gt;
+      &lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;
+      &lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;
+      &lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;
+      &lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;
+      &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;
+      &lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;
+      &lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;
+      &lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;
+  &lt;/tomcat-users&gt;</pre></div>
+  
 <p>&nbsp;</p>
 	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-suers-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
 
@@ -280,20 +275,20 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
 
 <p>Fedora 2.1b extends several of the tomcat realm classes in org.apache.catalina.realm to facilitate the passing of attribute values. For complete details of the extensions, see the document entitled "Fedora Security Architecture - Authentication". In brief, the extensions enable the ability to include multiple attributes using the tomcat "roles" attribute by separating attributes with a comma. e.g.,</p>
 
-	<div class="code">
-	  roles="attribute1,attribute2,attribute3"
-	<div?
+	<div class="code"><pre>
+  roles="attribute1,attribute2,attribute3"</pre>
+	</div>
 
 <p>In addition, the extensions include the ability to represent attributes as name=value pairs allowing you to specify both the attribute name and value as opposed to just the value. e.g.,</p>
 
-	<div class="code">
-	  roles="fedoraRole=administrator,fedoraRole=demo:9/getThumbnail"
+	<div class="code"><pre>
+  roles="fedoraRole=administrator,fedoraRole=demo:9/getThumbnail"</pre>
 	</div>
 
 <p>The extensions also provide a multiplexor capability that enables attributes from authenticated sources other than tomcat-users to be gathered at authentication time. If you want to make changes to any of the user, password, or role settings, make the changes in the tomcat-users_fedoraTemplate.xml file prior to starting the server. If you make them in the tomcat-users.xml file, the changes will be overwritten by what is in the template when the server starts. When users are prompted to provide basic authentication, their credentials are verified based on what is in the tomcat-users file.</p>
 
 <p>In addition to username and password, you can also assign what tomcat refers to as "roles". You can think of these "roles" in the tomcat-users file as attributes about the user and are entered as name=value pairs. You can use "roles" to define groups of users and then write policies based on these attributes. With the multiplexor feature, you can also have access to attributes from other sources. For example, using jaas.config you could also configure a ldap server to provide additioinal attributes about an authenticated user. There is an example in the jaas.config file that demonstrates how to do this with the public UVa ldap server which is used to provide additional attribute information about authenticated users.</p>
-	</div>
+
 	<div class="sect">
 	  <h2>&nbsp;</h2>
 		<h3><a name="AUTHN-JAAS1"></a>4.2 Option B - Configuring Multiple Login 
@@ -307,50 +302,50 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
 <p><i><b>&lt;bill - insert some general context and motivation here.&gt;</b></i></p>
 		<p>The jaas.config file includes one or more login module configurations. The default shipped with Fedora 2.1b provides an entry for the basic JAASMemoryLoginModule that uses the tomcat-users.xml file.</p>
 
-	<div class="code">
-	org.apache.catalina.realm.JAASMemoryLoginModule 
-	required 
-	debug=true 
-	path="conf/tomcat-users.xml"
-	;
+	<div class="code"><pre>
+  org.apache.catalina.realm.JAASMemoryLoginModule 
+  required 
+  debug=true 
+  path="conf/tomcat-users.xml"
+  ;</pre>
 	</div>
 
 <p>As configured, all authenticated users must have an entry in the tomcat-users-feodraTemplate.xml file.</p>
 
 <p>It also includes two additional examples that are commented out. The first example is for a surrogate web frontend that enables end-user attributes to be gathered by a surrogate. This case is useful if you have a web-based frontend to the Fedora APIs that is authenticated outside of Fedora and you simply wish to use the outside authenticated user to be able to appear as authenticated to the Fedora server.</p>
 
-	<div class="code">
-	org.apache.catalina.realm.JAASMemoryLoginModule 
-	required 
-	debug=true 
-	path="conf/tomcat-users.xml"
-	;
+	<div class="code"><pre>
+  org.apache.catalina.realm.JAASMemoryLoginModule 
+  required 
+  debug=true 
+  path="conf/tomcat-users.xml"
+  ;
 
-	/** uncomment to enable end-user ldap attributes in case of surrogate
-	org.apache.catalina.realm.JAASNullLoginModule 
-	required debug=true;	
-	**/
+  /** uncomment to enable end-user ldap attributes in case of surrogate
+      org.apache.catalina.realm.JAASNullLoginModule 
+      required debug=true;	
+  **/</pre>
 	</div>
 
 <p>This allows attributes provided by the external authentication agent to be gathered in addition to any attributes associated with this user in the tomcat-users file. The second example is for an ldap server that is not used for authentication, but instead to provide additional attributes about an authenticated user.</p>
 
-	<div class="code">
-	org.apache.catalina.realm.JAASMemoryLoginModule 
-	required 
-	debug=true 
-	path="conf/tomcat-users.xml"
-	;
+	<div class="code"><pre>
+  org.apache.catalina.realm.JAASMemoryLoginModule 
+  required 
+  debug=true 
+  path="conf/tomcat-users.xml"
+  ;
 
-	/** uncomment to test against uva ldap; e.g., put wdn5e in tomcat-users.xml, it will match here
-	org.apache.catalina.realm.JAASJNDILoginModule optional debug=true
-	connectionURL="ldap://ldapvs.itc.virginia.edu:389"
-	userBase="o=University of Virginia,c=US"
-	userSearch="(uid={0})"
-	userRoleName="objectClass,uid,ou,UnixUid,eduPersonOrgDN,eduPersonOrgUnitDN,eduPersonPrimaryAffiliation,eduPersonScopedAffiliation"
-	userSubtree=true
-	userPassword="NO_AUTHENTICATION"
-	;
-	**/
+  /** uncomment to test against uva ldap; e.g., put wdn5e in tomcat-users.xml, it will match here
+      org.apache.catalina.realm.JAASJNDILoginModule optional debug=true
+      connectionURL="ldap://ldapvs.itc.virginia.edu:389"
+      userBase="o=University of Virginia,c=US"
+      userSearch="(uid={0})"
+      userRoleName="objectClass,uid,ou,UnixUid,eduPersonOrgDN,eduPersonOrgUnitDN,eduPersonPrimaryAffiliation,eduPersonScopedAffiliation"
+      userSubtree=true
+      userPassword="NO_AUTHENTICATION"
+      ;
+  **/</pre>
 	</div>
 
 <p>This allows attributes provided by the ldap server to be gathered in addition to any attributes associated with this user in the tomcat-users file. For example, if there is user entry in the tomcat-users file for "wdn5e", then this authenticated username will match against the corresponding entry in the ldap server and any attributes associated with the username "wdn5e" in the ldap server will also be available for use by Fedora.</p>
@@ -408,5 +403,5 @@ default repository-wide XACML policies</a> that approximate the minimal security
     </div>
 </div>
 
-</body>
+</div></body>
 </html>
