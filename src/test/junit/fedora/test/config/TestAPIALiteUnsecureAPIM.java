@@ -32,7 +32,7 @@ public class TestAPIALiteUnsecureAPIM extends TestAPIALite {
     }
         
     public String getConfiguration() {
-    	return Trial.UNSECURE_CONFIG;
+    	return Trial.UNSECURE_APIM_CONFIG;
     }
     
     public static Test suite() {
