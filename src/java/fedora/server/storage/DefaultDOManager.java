@@ -85,6 +85,21 @@ public class DefaultDOManager
 
     public static String DEFAULT_STATE="L";
 
+    private static long THIRD_HEAPSIZE;
+
+    /** Whether to request a full gc on each commit. */
+    private static boolean GC_ON_COMMIT;
+
+    static {
+        GC_ON_COMMIT = true;
+        try {
+            if (System.getProperty("fedora.GCOnCommit").toLowerCase().equals("false")) {
+                GC_ON_COMMIT = false;
+            }
+        } catch (Throwable th) { }
+        THIRD_HEAPSIZE = Runtime.getRuntime().totalMemory() / 3;
+    }
+
     /**
      * Creates a new DefaultDOManager.
      */
@@ -710,6 +725,13 @@ public class DefaultDOManager
      */
     public void doCommit(boolean cachedObjectRequired, Context context, DigitalObject obj, String logMessage, boolean remove)
             throws ServerException {
+        // Request a full gc if gcOnCommit is true OR free heap is below 1/3 of total
+        if (GC_ON_COMMIT || Runtime.getRuntime().freeMemory() < THIRD_HEAPSIZE) {
+            logFiner("Requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
+            System.gc();
+            logFiner("Done requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
+        }
+        
         // OBJECT REMOVAL...
         if (remove) {
             logFinest("COMMIT: Entered doCommit (remove)");
