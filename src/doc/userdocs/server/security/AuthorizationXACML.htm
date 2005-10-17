@@ -75,19 +75,22 @@ Fedora repositories.&nbsp;&nbsp; A brief discussion of the major components of
 an XACML policy is provided, as well as the basics necessary to write XACML 
 policies for Fedora.&nbsp;&nbsp; This guide also provides Instructions on how to 
 configure XACML-based policy authorization in Fedora as well as a discussion of 
-how the Fedora Policy Enforcement module works.&nbsp; </p>
-<p>&nbsp;XACML provides a very flexible language for expressing access control 
+how the Fedora Policy Enforcement module works.&nbsp; <i><b>&nbsp; </b></i> </p>
+<p>XACML provides a very flexible language for expressing access control 
 policies.&nbsp;&nbsp; This document offers guidance on writing a range of useful 
-policies for Fedora such as 1) broad respository-wide policies for controlling 
+policies for Fedora such as 1) broad repository-wide policies for controlling 
 access to Fedora API operations,&nbsp; 2) more detailed repository-wide policies 
 for controlling access to groups of digital objects based on various attributes, 
 and 3) more fine-grained object-specific policies for controlling access 
-individual digital objects.&nbsp;&nbsp;&nbsp; </p>
+individual digital objects.&nbsp;&nbsp;&nbsp; <i><b>It should be noted that to 
+help users who do not wish to learn native XACML, a Policy Authoring Client is 
+currently under development that will provide an easy graphical user interface 
+for creating XACML policies for Fedora.</b></i></p>
 <p>This document is not intended to be a comprehensive tutorial on writing XACML 
 policies.&nbsp;&nbsp; Anyone intending to author custom XACML policies for 
 Fedora is encouraged to read the following documentation provided by OASIS 
 Technical Committee that defined the XACML standard, and Sun who is the provider 
-of the opensource Sun XACML engine that is used in the Fedora implementation.&nbsp;&nbsp;&nbsp; 
+of the open source Sun XACML engine that is used in the Fedora implementation.&nbsp;&nbsp;&nbsp; 
 It is very important to understanding the basics of XACML to ensure that a suite 
 of policies works as intended.&nbsp;&nbsp; One of the most important concepts in 
 using XACML is understanding how multiple policies can interact with each other 
@@ -121,16 +124,7 @@ Guide</a>:&nbsp; technical details of the reference implementation</p>
 <p><a href="http://sunxacml.sourceforge.net/javadoc/index.html">Sun XACML 
 Javadocs</a>:&nbsp; interface definitions of the reference implementation<br>
 <i><br>
-<br>
-To quiet sunxacml INFO messages, a logging.properties file is included with the 
-Fedora distribution,<br>
-edited to print only SEVERE messages to the console. Fedora then starts Java 
-using that logging.properties file.<br>
-The original file, as distributed with JDK 1.4.2.8, prints INFO (and more 
-severe) messages, making the console a bit<br>
-chatty. To revert to the original logging behavior, edit fedora-start.bat 
-(Windows) or fedora.sh (Unix), and remove</i></p>
-<p>&nbsp;</p>
+&nbsp;</i></p>
 
 <h2><a name="POLICY">2 Encoding Fedora XACML Policies</a></h2>
 
@@ -2044,6 +2038,17 @@ would be easy to do in the software.  This is solely a </span></p>
 	<span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>question of how we want this to
 work.</span></p>
+<p style='text-autospace:none'>
+	&nbsp;</p>
+<p style='text-autospace:none'>
+<i>To quiet sunxacml INFO messages, a logging.properties file is included with the 
+Fedora distribution,<br>
+edited to print only SEVERE messages to the console. Fedora then starts Java 
+using that logging.properties file.<br>
+The original file, as distributed with JDK 1.4.2.8, prints INFO (and more 
+severe) messages, making the console a bit<br>
+chatty. To revert to the original logging behavior, edit fedora-start.bat 
+(Windows) or fedora.sh (Unix), and remove</i></p>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
