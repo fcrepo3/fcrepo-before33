@@ -97,7 +97,7 @@
 <p>
         &nbsp;Under Unix:</p>
       <div class="code">
-&nbsp;&nbsp;&nbsp; $FEDORA_HOME\server\bin\fedora-setup <i><b>configuration-name</b></i></div>
+&nbsp;&nbsp;&nbsp; $FEDORA_HOME/server/bin/fedora-setup <i><b>configuration-name</b></i></div>
 	<p>&nbsp;</p>
 	
   <p>The valid values for<i><b> configuration-name</b></i> include: </p>
@@ -114,7 +114,7 @@
     <p>The fedora-setup utility initializes one of the four base security configurations by copying a set of 
 	configuration files into the distribution tree.&nbsp; The contents of these 
 	configuration files will vary depending on the base security configuration selected.&nbsp; The 
-	resultant functionality of the four possible base security configurations are described in more detail 
+	resultant functionalities of the four possible base security configurations are described in more detail 
 	below.&nbsp;&nbsp; The setup utility <i><b>automatically</b></i> puts an 
 	appropriate version of the three necessary Fedora configuration files into 
 	play:</p>
@@ -170,7 +170,7 @@
 	  <li>backend security security is minimal</li>
 	 </ul>
 
-	<p>The unsecure-all configuration is designed for repositories that want the features of basic authentication for both API-M and API-a, but are not ready to tackle some of the additional issues imposed by SSL with their client-side or middleware applications. Note that since there is no SSL support for either API-A any authentication passwords are in clear text. This configuration is NOT recommended for any repositories requiring a secure environment. Since API-A and API-M both support basic authentication, you can write policies for both API-M and API-A that use user-based attributes. This configuration can be a good choice if you want to experiment with policy writing for API-M and API-A, but are not ready to tackle SSL and security is not a concern. Note that when authentication is enabled for API-A, the hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" or "127.0.0.1" since remote backend services use this as the hostname to communicate with the fedora server.</p>
+	<p>The unsecure-all configuration is designed for repositories that want the features of basic authentication for both API-M and API-A, but are not ready to tackle some of the additional issues imposed by SSL with their client-side or middleware applications. Note that since there is no SSL support for either API-M or API-A any authentication passwords are in clear text. This configuration is NOT recommended for any repositories requiring a secure environment. Since API-A and API-M both support basic authentication, you can write policies for both API-M and API-A that use user-based attributes. This configuration can be a good choice if you want to experiment with policy writing for API-M and API-A, but are not ready to tackle SSL and security is not a concern. Note that when authentication is enabled for API-A, the hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" or "127.0.0.1" since remote backend services use this as the hostname to communicate with the fedora server.</p>
 		<p>&nbsp;</p>
 	</div>
    </div>
@@ -204,7 +204,7 @@
 	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i>. The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the secure-apim or unsecure-apim configurations.</p>
 	<p>&nbsp;</p>
 	<p><strong>tomcat-users-fedoraTemplate.xml</strong> - This a Fedora-specific 
-      template file is found in the Fedora Tomcat directory ($FEDORA_HOME\server\jakarta-tomcat-5.0.28\conf).&nbsp; 
+      template file is found in the Fedora Tomcat directory ($FEDORA_HOME/inc/server/jakarta-tomcat-5.0.28/conf).&nbsp; 
       If you are using the default Tomcat authentication (out-of-the-box with 
       Fedora 2.0), you will probably need to add new users.&nbsp; This is done 
       by making additions to the Fedora-specific template (tomcat-users-fedoraTemplate.xml) 
