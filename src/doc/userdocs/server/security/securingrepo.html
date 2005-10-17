@@ -65,7 +65,7 @@
 	  <li>no SSL support</li>
 	</ul>
     </blockquote>
-    <p>In Fedora 2.0, these security measures were handled through the fedora.fcfg file and special use of the single super user name(fedoraAdmin) in the codebase. In Fedora 2.1b, these security measures are now handled through a set of XACML policies and with authentication information provided through tomcat or external authentication sources.</p>
+    <p>In Fedora 2.0, these security measures were handled through the fedora.fcfg file and special use of the single super user name(fedoraAdmin) in the codebase. In Fedora 2.1b, these security measures are now handled through a set of XACML policies and with authentication information provided through Tomcat or external authentication sources.</p>
 
     
   <p>There are four base security configurations provided with the Fedora 2.1b 
@@ -245,23 +245,28 @@
    <div class="sect">
 	<h2><a name="AUTHN"></a>4 Authentication</h2>
 
-	<p>The Fedora server is built on top of Apache's tomcat and authentication information is channeled through the normal tomcat mechanisms. Fedora currently provides two authentication plug-ins: (1) Simple user/password file, and (2) LDAP</p>
+	<p>The Fedora server is built on top of Apache's Tomcat and authentication information is channeled through the normal Tomcat mechanisms. Fedora currently provides two authentication sources: (1) Simple user/password file, and (2) LDAP</p>
 	<ol>
 	  <li><p>tomcat-users.xml - simple user/password file</p>
 
-		<p>This file is part of the tomcat configuration files and is auto-generated from the tomcat-user_fedoraTemplate.xml file. It contains username and password information about "authenticated" users. Roles can also be assigned to user entries which can then be used as attributes in related XACML policies. Refer to the next section entitled "Tomcat Users File" for details concerning the contents of the tomcat users file.</p></li>
+		<p>This file is part of the Tomcat configuration files and is auto-generated from the tomcat-user_fedoraTemplate.xml file. It contains username and password information about "authenticated" users. Roles can also be assigned to user entries.  These can then be used as attributes in related XACML policies, or in customized web.xml files. Refer to the next section entitled "Option A - Default Single Authentication Source" for details concerning the contents of the Tomcat users file.</p></li>
 
 	  <li><p>LDAP</p>
 
-		<p>The configuration of tomcat to use LDAP for authentication follows the standard rules outlined by the apache tomcat group. Refer to
-http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm  for details on how to configure tomcat to use LDAP for authentication.<p></li>
+		<p>The configuration of Tomcat to use LDAP for authentication follows the standard rules outlined by the Apache Tomcat group. 
+		Refer to http://jakarta.apache.org/tomcat/tomcat-5.0-doc/realm-howto.html#JNDIRealm for details on how to configure Tomcat to use LDAP for authentication.
+		Fedora's use of LDAP for authentication is described here as one of several authentication sources multiplexed as JAAS 
+		Login Modules.  The Apache description of JNDI parameters is adapted to the options of the jaas.config file, as 
+		described following under "Option B - Configuring Multiple Login Modules (Multiplexing via Tomcat's JAAS)" and 
+		"Option C - Configuring Multiple Login Modules (Multiplexing via Fedora's JAAS)"<p></li>
 	</ol>
 
-	<p>Other methods of authentication are possible, but require writing your own custom LoginModule or JAASModule for tomcat. The Fedora code is "aware" of any user that is authenticated through tomcat. For more details on the Fedora security architecture, refer to the document entitled "Fedora Security Architecture - Authentication".</p>
+	<p>Fedora software is "aware" of any user that is authenticated through Tomcat. Other methods of authentication are possible, but require configuring other Realm or Login Modules obtained separately from the Apache Project or third parties,
+	or writing your own custom Realms or LoginModules.  For more details on the Fedora security architecture, refer to the document entitled "Fedora Security Architecture - Authentication".</p>
 	</div>
     <div class="sect">
-	<h3><a name="AUTHN-TOMCAT"></a>4.1&nbsp; Option A - Default Authentication 
-	Plug-In&nbsp; (Tomcat Memory Realm with Tomcat Users File)</h3>
+	<h3><a name="AUTHN-TOMCAT"></a>4.1&nbsp; Option A - Default Single Authentication 
+	Source&nbsp; (Tomcat Memory Realm with Tomcat Users File)</h3>
 
 <p>Fedora is configured out-of-the-box with the Tomcat Memory Realm login module 
 enabled.&nbsp;&nbsp; For this login module, the source of user identity 
@@ -299,7 +304,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
   &lt;/tomcat-users&gt;</pre></div>
   
 <p>&nbsp;</p>
-	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-suers-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
+	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-users-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
 
 <p>The username of "fedoraIntCallUser" is also a special Fedora system user. The role of "fedoraRole=fedoraInternalCall-1" grants special system privileges to this user. This username is used as the authenticating user when the fedora server needs to make calls to itself. The values for username and password may be edited, but you should leave the role unchanged. If you do change the username or password, you must also update these values in the beSecurity.xml file.</p>
 
@@ -316,7 +321,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
 
 <p>[This section may change depending on what we decide on how to handle updating of tomcat-users file and whether we decide to provide additional documentation re configuring authentication via ldap. Needs more input from Bill when he has time ....]</p>
 
-<p>Fedora 2.1b extends several of the tomcat realm classes in org.apache.catalina.realm to facilitate the passing of attribute values. For complete details of the extensions, see the document entitled "Fedora Security Architecture - Authentication". In brief, the extensions enable the ability to include multiple attributes using the tomcat "roles" attribute by separating attributes with a comma. e.g.,</p>
+<p>Fedora 2.1b extends several of the Tomcat realm classes in org.apache.catalina.realm to facilitate the passing of attribute values. For complete details of the extensions, see the document entitled "Fedora Security Architecture - Authentication". In brief, the extensions enable the ability to include multiple attributes using the Tomcat "roles" attribute by separating attributes with a comma. e.g.,</p>
 
 	<div class="code"><pre>
   roles="attribute1,attribute2,attribute3"</pre>
@@ -330,7 +335,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
 
 <p>The extensions also provide a multiplexor capability that enables attributes from authenticated sources other than tomcat-users to be gathered at authentication time. If you want to make changes to any of the user, password, or role settings, make the changes in the tomcat-users_fedoraTemplate.xml file prior to starting the server. If you make them in the tomcat-users.xml file, the changes will be overwritten by what is in the template when the server starts. When users are prompted to provide basic authentication, their credentials are verified based on what is in the tomcat-users file.</p>
 
-<p>In addition to username and password, you can also assign what tomcat refers to as "roles". You can think of these "roles" in the tomcat-users file as attributes about the user and are entered as name=value pairs. You can use "roles" to define groups of users and then write policies based on these attributes. With the multiplexor feature, you can also have access to attributes from other sources. For example, using jaas.config you could also configure a ldap server to provide additioinal attributes about an authenticated user. There is an example in the jaas.config file that demonstrates how to do this with the public UVa ldap server which is used to provide additional attribute information about authenticated users.</p>
+<p>In addition to username and password, you can also assign what Tomcat refers to as "roles". You can think of these "roles" in the tomcat-users file as attributes about the user and are entered as name=value pairs. You can use "roles" to define groups of users and then write policies based on these attributes. With the multiplexor feature, you can also have access to attributes from other sources. For example, using jaas.config you could also configure a ldap server to provide additioinal attributes about an authenticated user. There is an example in the jaas.config file that demonstrates how to do this with the public UVa ldap server which is used to provide additional attribute information about authenticated users.</p>
 
 	<div class="sect">
 	  <h2>&nbsp;</h2>
@@ -424,7 +429,7 @@ default repository-wide XACML policies</a> that approximate the minimal security
 	  <li>Optionally customize fedora.fcfg for your repository</li>
 	  <li>Optionally customize beSecurity.xml for your custom disseminators</li>
 	  <li>Optionally customize repository-wide and object-specific policies</li>
-	  <li>Optionally customize tomcat-users-fedoraTemplat.xml for your repository and users</li>
+	  <li>Optionally customize tomcat-users-fedoraTemplate.xml for your repository and users</li>
 	  <li>Optionally customize jaas.config for your repository</li>
 	  <li>Start the fedora server</li>
 	</ol>
