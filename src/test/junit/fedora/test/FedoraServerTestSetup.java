@@ -194,7 +194,9 @@ public class FedoraServerTestSetup
         // copy all files from origDir to newDir
         File[] sourceFiles = origDir.listFiles();
         for (int i = 0; i < sourceFiles.length; i++) {
-            copy(sourceFiles[i], new File(newDir, sourceFiles[i].getName()));
+            if (!sourceFiles[i].isDirectory() && sourceFiles[i].canRead()) {
+                copy(sourceFiles[i], new File(newDir, sourceFiles[i].getName()));
+            }
         }
     }
 
