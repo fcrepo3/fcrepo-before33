@@ -228,11 +228,11 @@
 	set up a totally secure repository, you must configure things up so that 
 	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i>. The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the secure-apim or unsecure-apim configurations.</p>
 	<p>&nbsp;</p>
-	<p><strong>tomcat-users-fedoraTemplate.xml</strong> - This a Fedora-specific 
+	<p><strong>tomcat-users_fedoraTemplate.xml</strong> - This a Fedora-specific 
       template file is found in the Fedora Tomcat directory ($FEDORA_HOME/inc/server/jakarta-tomcat-5.0.28/conf).&nbsp; 
       If you are using the default Tomcat authentication (out-of-the-box with 
       Fedora 2.0), you will probably need to add new users.&nbsp; This is done 
-      by making additions to the Fedora-specific template (tomcat-users-fedoraTemplate.xml) 
+      by making additions to the Fedora-specific template (tomcat-users_fedoraTemplate.xml) 
       which is <b><i>automatically converted </i></b>into a runtime Tomcat users 
       configuration file (i.e., tomcat-users.xml). New entries will be necessary 
       here if you are using the tomcat-users file for authentication and you add 
@@ -304,7 +304,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
   &lt;/tomcat-users&gt;</pre></div>
   
 <p>&nbsp;</p>
-	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-users-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
+	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-users_fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
 
 <p>The username of "fedoraIntCallUser" is also a special Fedora system user. The role of "fedoraRole=fedoraInternalCall-1" grants special system privileges to this user. This username is used as the authenticating user when the fedora server needs to make calls to itself. The values for username and password may be edited, but you should leave the role unchanged. If you do change the username or password, you must also update these values in the beSecurity.xml file.</p>
 
@@ -315,7 +315,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
     corresponding surrogate user policy. An example of a repository wide policy 
     that uses a surrogate user can be found in the set of example policies under 
     the name "permit-webfrontend-as-surrogate.xml". This example policy uses the 
-    role of "webfrontend" which corresponds to the value in the tomcat-users-fedoraTemplate.xml 
+    role of "webfrontend" which corresponds to the value in the tomcat-users_fedoraTemplate.xml 
     file. See the next sections for additional details regarding configuring a 
     surrogate user.</p>
 
@@ -358,7 +358,7 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
   ;</pre>
 	</div>
 
-<p>As configured, all authenticated users must have an entry in the tomcat-users-feodraTemplate.xml file.</p>
+<p>As configured, all authenticated users must have an entry in the tomcat-users_feodraTemplate.xml file.</p>
 
 <p>It also includes two additional examples that are commented out. The first example is for a surrogate web frontend that enables end-user attributes to be gathered by a surrogate. This case is useful if you have a web-based frontend to the Fedora APIs that is authenticated outside of Fedora and you simply wish to use the outside authenticated user to be able to appear as authenticated to the Fedora server.</p>
 
@@ -429,7 +429,11 @@ default repository-wide XACML policies</a> that approximate the minimal security
 	  <li>Optionally customize fedora.fcfg for your repository</li>
 	  <li>Optionally customize beSecurity.xml for your custom disseminators</li>
 	  <li>Optionally customize repository-wide and object-specific policies</li>
-	  <li>Optionally customize tomcat-users-fedoraTemplate.xml for your repository and users</li>
+<<<<<<< securingrepo.html
+	  <li>Optionally customize tomcat-users_fedoraTemplat.xml for your repository and users</li>
+=======
+	  <li>Optionally customize tomcat-users_fedoraTemplate.xml for your repository and users</li>
+>>>>>>> 1.10
 	  <li>Optionally customize jaas.config for your repository</li>
 	  <li>Start the fedora server</li>
 	</ol>
