@@ -128,11 +128,10 @@
       <h3><a name="CONFIG1"></a>2.1 SECURE-APIM Configuration</h3>
       
 	<ul>
-	  <li>API-M supports basic authentication and SSL</li>
-	  <li>API-A unrestricted (i.e., open access)</li>
-	  <li>backend services security is minimal</li>
-
-    	</ul>
+      <li>API-M supports basic authentication and SSL; restricted by IP to localhost</li>
+      <li>API-A unrestricted (i.e., open access)</li>
+      <li>backend services security is minimal</li>
+    </ul>
 		<p>The secure-apim configuration is designed for repositories that desire a secure management interface for administering and maintaining a repository, but wish to keep access to the repository content completely open.</p>
     </div>
 
@@ -140,24 +139,35 @@
    <div class="sect2">
       <h3><a name="CONFIG2"></a>2.2 SECURE-ALL Configuration</h3>
 
-	 <ul>
-	  <li>API-M supports basic authentication and SSL</li>
-	  <li>API-A supports basic authentication and SSL</li>
-	  <li>backend service security is enhanced by limiting backend service communication only from specified IP addresses</li>
-	 </ul>
+	 
+    <ul>
+      <li>API-M supports basic authentication and SSL; restricted by IP to localhost</li>
+      <li>API-A supports basic authentication and SSL</li>
+      <li>backend service security is enhanced by limiting backend service communication 
+        only from specified IP addresses</li>
+    </ul>
 
-	<p>The secure-all configuration is designed for repositories that desire full security for both management and access and also want to add additional security regarding how backend services are allowed to communicate with the Fedora server. Note that when authentication is enabled for API-A, the hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" or "127.0.0.1" since remote backend services use this as the hostname to communicate with the fedora server.</p>
+	<p>The secure-all configuration is designed for repositories that desire full 
+      security for both management and access and also want to add additional 
+      security regarding how backend services are allowed to communicate with 
+      the Fedora server. Note that as authentication is enabled for API-A, the 
+      hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be 
+      a resolvable, fully qualified domain name. You cannot use just "localhost" 
+      or "127.0.0.1" since remote backend services use this as the hostname to 
+      communicate with the fedora server.</p>
    </div>
 
    <div class="sect2">
       <h3><a name="CONFIG3"></a>2.3 UNSECURE-APIM Configuration</h3>
 
-	  <ul>
-	   <li>API-M supports basic authentication <b><i>but no SSL</i></b>; restricted by IP to localhost</li>
-	   <li>API-A unrestricted (i.e., open access)</li>
-	   <li>backend security security is minimal</li>
-
-		</ul>
+	  
+    <ul>
+      <li>API-M supports basic authentication <b><i>but no SSL</i></b>; restricted 
+        by IP to localhost</li>
+      <li>API-A unrestricted (i.e., open access)</li>
+      <li>backend service security is enhanced by limiting backend service communication 
+        only from specified IP addresses</li>
+    </ul>
 		<p>The unsecure-apim configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
    </div>
 
@@ -170,7 +180,21 @@
 	  <li>backend security security is minimal</li>
 	 </ul>
 
-	<p>The unsecure-all configuration is designed for repositories that want the features of basic authentication for both API-M and API-A, but are not ready to tackle some of the additional issues imposed by SSL with their client-side or middleware applications. Note that since there is no SSL support for either API-M or API-A any authentication passwords are in clear text. This configuration is NOT recommended for any repositories requiring a secure environment. Since API-A and API-M both support basic authentication, you can write policies for both API-M and API-A that use user-based attributes. This configuration can be a good choice if you want to experiment with policy writing for API-M and API-A, but are not ready to tackle SSL and security is not a concern. Note that when authentication is enabled for API-A, the hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" or "127.0.0.1" since remote backend services use this as the hostname to communicate with the fedora server.</p>
+	<p>The unsecure-all configuration is designed for repositories that want the 
+      features of basic authentication for both API-M and API-A, but are not ready 
+      to tackle some of the additional issues imposed by SSL with their client-side 
+      or middleware applications. Note that since there is no SSL support for 
+      either API-M or API-A any authentication passwords are in clear text. This 
+      configuration is NOT recommended for any repositories requiring a secure 
+      environment. Since API-A and API-M both support basic authentication, you 
+      can write policies for both API-M and API-A that use user-based attributes. 
+      This configuration can be a good choice if you want to experiment with policy 
+      writing for API-M and API-A, but are not ready to tackle SSL and security 
+      is not a concern. Note that as authentication is enabled for API-A, the 
+      hostname used for the "fedoraServerHost" parameter in fedora.fcfg must be 
+      a resolvable, fully qualified domain name. You cannot use just "localhost" 
+      or "127.0.0.1" since remote backend services use this as the hostname to 
+      communicate with the fedora server.</p>
 		<p>&nbsp;</p>
 	</div>
    </div>
