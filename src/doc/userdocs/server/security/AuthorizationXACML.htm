@@ -147,13 +147,15 @@ automatically generated and can be found in the Fedora software distribution at:
 <p>
         &nbsp;Under Windows:</p>
       <div class="code">
-&nbsp;&nbsp;&nbsp; %FEDORA_HOME%\server\config\xacml-policies\vocabulary.txt</div>
+<pre>    %FEDORA_HOME%\server\config\xacml-policies\vocabulary.txt</pre>
+</div>
       <p style='text-autospace:none'>&nbsp;</p>
 
 <p>
         &nbsp;Under Unix:</p>
       <div class="code">
-&nbsp;&nbsp;&nbsp; $FEDORA_HOME\server\config\xacml-policies\vocabulary.txt</div>
+<pre>    $FEDORA_HOME\server\config\xacml-policies\vocabulary.txt</pre>
+</div>
 	<p>&nbsp;</p>
 	<p>This vocabulary provides a set of identifiers (URNs) that can appear in XACML
 policies to refer to Fedora API operations (Actions in XACML), any aspects of a
@@ -175,30 +177,17 @@ purpose of the policy.</p>
 <p>&nbsp;</p>
 
       <div class="code">
-&lt;Policy
-<b>PolicyId=&quot;deny-apia&quot; </b> 
-
-<p>        <b>RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;</b>  </p>
-
-<p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
-xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>    <b>&lt;Description&gt;This policy will DENY access to Dublin
-Core datastreams.&lt;/Description&gt;</b></p>
-
-<p>    &lt;Target&gt;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
-<p>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</p>
-
-<p>    &lt;Rule&gt;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
-<p>&nbsp;&nbsp;&nbsp; &lt;/Rule&gt;</p>
-
-<p>&lt;/Policy&gt;</p>
-
-&nbsp;</div>
+<pre>&lt;Policy <b>PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+</b>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    <b>&lt;Description&gt;This policy will DENY access to THESIS datastreams.&lt;/Description&gt;
+    </b>&lt;Target&gt;
+        ...
+    &lt;/Target&gt;
+    &lt;Rule&gt;
+        ...
+    &lt;/Rule&gt;
+&lt;/Policy&gt;</pre>
+</div>
 
 <p>&nbsp;</p>
 
@@ -207,7 +196,7 @@ and one or more <b>Rules</b> which are described in the next sections.  Note
 that in the root element of a policy, the rule combining algorithm (i.e.,
 attribute “RuleCombiningAlgID”), specifies how the Fedora Policy Enforcement
 Module will deal with multiple Rules in a policy (how those rules are combined
-and evaluated together).  <b><i>&lt;bill: check on how this related to policy
+and evaluated together).  <b><i>&lt;Bill: check on how this related to policy
 combining algorithm at the authorization module level.&gt;</i></b></p>
 
 <p>&nbsp;</p>
@@ -226,36 +215,23 @@ can be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. </p>
 <p>&nbsp;</p>
 
       <div class="code">
-&lt;Policy
-PolicyId=&quot;deny-apia&quot; 
-
-<p>        RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;  </p>
-
-<p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
-xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>    &lt;Description&gt;This policy will DENY access to Dublin
-Core datastreams.&lt;/Description&gt;</p>
-
-<p><b>    &lt;Target&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Subjects&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Resources&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Actions&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</b></p>
-
-<p>    &lt;Rule/&gt;</p>
-
-<p>&lt;/Policy&gt;</p>
-
-&nbsp;</div>
+<pre>&lt;Policy PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    &lt;Description&gt;This policy will DENY access to THESIS datastreams.&lt;/Description&gt;
+<b>    &lt;Target&gt;
+        &lt;Subjects&gt;
+            </b>...
+<b>        &lt;/Subjects&gt;</b></pre>
+<pre><b>        &lt;Resources&gt;
+            </b>...
+<b>        &lt;/Resources&gt;</b></pre>
+<pre><b>        &lt;Actions&gt;
+            </b>...
+<b>        &lt;/Actions&gt;
+    &lt;/Target&gt;
+    </b>&lt;Rule/&gt;
+&lt;/Policy&gt;</pre>
+</div>
 
 <p>&nbsp;</p>
 
@@ -300,9 +276,10 @@ the following is specified:</p>
 <p>
         &nbsp;</p>
       <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Subjects&gt;<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&lt;AnySubject/&gt;</p>
-<p>&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;</div>
+<pre>    &lt;Subjects&gt;
+        &lt;AnySubject/&gt;
+    &lt;/Subjects&gt;</pre>
+</div>
       <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>Within a single &lt;Subject&gt; specification,
 there may be one or more attributes that together determine whether a policy match
@@ -320,24 +297,15 @@ has a role attribute with the value of “administrator.”</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Subjects&gt;<p>         &lt;Subject&gt;</p>
-
-<p>           &lt;SubjectMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>              &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;</p>
-
-<p>              &lt;SubjectAttributeDesignator
-AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; </p>
-
-<p>                   DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>           &lt;/SubjectMatch&gt;</p>
-
-<p>         &lt;/Subject&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;</p>
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
 
       </div>
 
@@ -354,41 +322,22 @@ either “administrator” or “superuser.”</p>
 
 <p>&nbsp;</p>
       <div class="code">
-      &lt;Subjects&gt;<p>         &lt;Subject&gt;</p>
-
-<p>           &lt;SubjectMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>              &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;</p>
-
-<p>              &lt;SubjectAttributeDesignator
-AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; </p>
-
-<p>                   DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>           &lt;/SubjectMatch&gt;</p>
-
-<p>         &lt;/Subject&gt;</p>
-
-<p>         &lt;Subject&gt;</p>
-
-<p>           &lt;SubjectMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>              &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>superuser</b>&lt;/AttributeValue&gt;</p>
-
-<p>              &lt;SubjectAttributeDesignator
-AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; </p>
-
-<p>                   DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>           &lt;/SubjectMatch&gt;</p>
-
-<p>         &lt;/Subject&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;</p>
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;</pre>
+<pre>    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>superuser</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
       </div>
 
 <p style='text-autospace:none'>&nbsp;</p>
@@ -420,10 +369,9 @@ resource, the following is specified:</p>
 font-family:"Courier New";background:white'>&nbsp;</span></p>
 
       <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Resources&gt;<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&lt;AnyResource/&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;</p>
+<pre>  &lt;Resources&gt;
+    &lt;AnyResource/&gt;
+  &lt;/Resources&gt;</pre>
 
       </div>
 
@@ -447,37 +395,20 @@ requested resource has the datastream id of THESIS and the MIME type of
 <p style='text-autospace:none'>&nbsp;</p>
 
       <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Resources&gt;<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;Resource&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceAttributeDesignator
-AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>datastream:id</b>&quot; </p>
-
-<p>            &nbsp;&nbsp;&nbsp;&nbsp; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>THESIS</b>&lt;/AttributeValue&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ResourceMatch&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceAttributeDesignator
-AttributeId=&quot;
-urn:fedora:names:fedora:2.1:resource:datastream:<b>mimeType</b>&quot; </p>
-
-<p>            &nbsp;&nbsp;&nbsp;&nbsp; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>        &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>application/pdf</b>&lt;/AttributeValue&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ResourceMatch&gt;</p>
-
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resource&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;</p>
+<pre>  &lt;Resources&gt;
+    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>datastream:id</b>&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>THESIS</b>&lt;/AttributeValue&gt;
+      &lt;/ResourceMatch&gt;</pre>
+<pre>      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot; urn:fedora:names:fedora:2.1:resource:datastream:<b>mimeType</b>&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>application/pdf</b>&lt;/AttributeValue&gt;
+      &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;
+  &lt;/Resources&gt;</pre>
 
       </div>
       <p style='text-autospace:none'>&nbsp;</p>
@@ -492,40 +423,22 @@ incoming request is for a digial object that has the content model type of eithe
 “UVA_STD_IMAGE” or “MRSID.”</p>
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Resources&gt;<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;Resource&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>         &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>UVA_STD_IMAGE</b>&lt;/AttributeValue&gt;</p>
-
-<p>         &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceAttributeDesignator
-AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ResourceMatch&gt;</p>
-
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resource&gt;</p>
-
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;Resource&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>         &nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>MRSID</b>&lt;/AttributeValue&gt;</p>
-
-<p>         &nbsp;&nbsp;&nbsp;&nbsp; &lt;ResourceAttributeDesignator
-AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-
-<p>     &nbsp;&nbsp;&nbsp;&nbsp; &lt;/ResourceMatch&gt;</p>
-
-<p>  &nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resource&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;</p>
+<pre>  &lt;Resources&gt;
+    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>UVA_STD_IMAGE</b>&lt;/AttributeValue&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;</pre>
+<pre>    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>MRSID</b>&lt;/AttributeValue&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;
+  &lt;/Resources&gt;</pre>
 
       </div>
       <p style='text-autospace:none'>&nbsp;</p>
@@ -551,10 +464,9 @@ of a Target in a policy.  For example, to define a policy that is applicable to
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&nbsp;&nbsp;&nbsp; &lt;Actions&gt;<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&lt;AnyAction/&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;</p>
+<pre>&lt;Actions&gt;
+  &lt;AnyAction/&gt;
+&lt;/Actions&gt;</pre>
 
       </div>
 
@@ -569,25 +481,15 @@ ALL operations of API-A) do the following:</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;     
-</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;    </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>  &nbsp;&lt;/Action&gt;</p>
-
-<p>&lt;/Actions&gt;</p>
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;
+        &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
 
       </div>
 
@@ -597,23 +499,15 @@ operation in a Fedora API do the following:</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;                                  </p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>  &nbsp;&lt;/Action&gt;</p>
-
-<p>&lt;/Actions&gt;</p>
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
 
       </div>
 
@@ -629,40 +523,20 @@ AND the service request is for the the “getDatastreamDissemination” operation.</
 
 <p>&nbsp;</p>
 <div class="code">
-&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;     
-</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;    </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>  &nbsp;&lt;/Action&gt;</p>
-
-<p>&lt;/Actions&gt;</p>
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;</pre>
+<pre>    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot; 
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
 
       </div>
       <p style='text-autospace:none'>&nbsp;</p>
@@ -684,39 +558,22 @@ getDatastreamDissemination operation is part of API-A. </i>&nbsp;</p>
 <p style='text-autospace:none'>&nbsp;</p>
 
 <div class="code">
-&lt;Actions&gt;<p>  &nbsp;&lt;Action&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>  &nbsp;&lt;/Action&gt;</p>
-
-<p>  &nbsp;&nbsp;&lt;Action&gt;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-
-<p>        &nbsp;&nbsp;&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDissemination</b>&lt;/AttributeValue&gt;</p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionAttributeDesignator
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;  </p>
-
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;</p>
-
-<p>     &nbsp;&nbsp;&lt;/ActionMatch&gt;</p>
-
-<p>  &nbsp;&nbsp;&lt;/Action&gt;</p>
-
-<p>&nbsp;&lt;/Actions&gt;</p>
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot; 
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;</pre>
+<pre>  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
 
       </div>
       <p><b>&nbsp;</b></p>
@@ -757,35 +614,22 @@ is governed by the policy Target.&nbsp; </p>
 <p>&nbsp;</p>
 
       <div class="code">
-&lt;Policy
-PolicyId=&quot;deny-apia&quot; 
-
-<p>        RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;  </p>
-
-<p>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot;
-xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</p>
-
-<p>&nbsp;</p>
-
-<p>    &lt;Description&gt;This policy will DENY access to Dublin
-Core datastreams.&lt;/Description&gt;</p>
-
-<p>    &lt;Target&gt;</p>
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ...</p>
-<p>&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</p>
-
-<p><b>    &lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Target&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>&nbsp;...</p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Target&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Condition&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>...</p>
-<p><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Condition&gt;</b></p>
-<p><b>&nbsp;&nbsp;&nbsp; &lt;/Rule&gt;</b></p>
-
-<p>&lt;/Policy&gt;</p>
-
-&nbsp;</div>
+<pre>&lt;Policy PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    &lt;Description&gt;This policy will DENY access to Dublin Core datastreams.&lt;/Description&gt;</pre>
+<pre>    &lt;Target&gt;
+        ...
+    &lt;/Target&gt;</pre>
+<pre><b>    &lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;
+        &lt;Target&gt;
+           </b>...<b>
+        &lt;/Target&gt;</b></pre>
+<pre><b>        &lt;Condition&gt;
+           ...
+        &lt;/Condition&gt;
+    &lt;/Rule&gt;</b></pre>
+<pre>&lt;/Policy&gt;</pre>
+<p>&nbsp;</div>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>
@@ -917,20 +761,17 @@ addresses, then the rule's Deny effect should take place.</p>
 <p style='text-autospace:none'>&nbsp;</p>
 
 <div class="code">
-&lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;EnvironmentAttributeDesignator 
-AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress&quot;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;127.0.0.1&lt;/AttributeValue&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;128.84.103.11&lt;/AttributeValue&gt;<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Apply&gt;<br>
-&nbsp;&nbsp;&nbsp; &lt;/Apply&gt;<br>
-&lt;/Condition&gt;</div>
+<pre>&lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;&gt;
+    &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;
+        &lt;EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress&quot;
+                                        DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;
+            &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;127.0.0.1&lt;/AttributeValue&gt;
+            &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;128.84.103.11&lt;/AttributeValue&gt;
+        &lt;/Apply&gt;
+    &lt;/Apply&gt;
+&lt;/Condition&gt;</pre>
+</div>
       <p><b>&nbsp;</b></p>
 <p style='text-autospace:none'>In summary, each policy must have at least one 
 Rule.&nbsp; For a Rule to have an effect, (1) the Rule must match the incoming 
@@ -976,14 +817,16 @@ style='font-family:"Courier New"'>MustBePresent=&quot;false&quot;)</span> in the
 incoming request as follows:&nbsp; </p>
 <p>&nbsp;</p>
 <div class="code">
-	&lt;Subjects&gt;<p>&nbsp;&nbsp;&nbsp; &lt;Subject&gt;</p>
-	<p>&nbsp;&nbsp;&nbsp; &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;</p>
-	<p>&nbsp;&nbsp;&nbsp; &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;administrator&lt;/AttributeValue&gt;</p>
-	<p>&nbsp;&nbsp;&nbsp; &lt;SubjectAttributeDesignator AttributeId=&quot;fedoraRole&quot; 
-	<b>MustBePresent=&quot;false&quot;</b> DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;</p>
-	<p>&nbsp;&nbsp;&nbsp; &lt;/SubjectMatch&gt;</p>
-	<p>&nbsp;&nbsp;&nbsp; &lt;/Subject&gt;</p>
-	<p>&lt;/Subjects&gt;</p></div>
+	<pre>&lt;Subjects&gt;
+  &lt;Subject&gt;
+    &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;administrator&lt;/AttributeValue&gt;
+      &lt;SubjectAttributeDesignator AttributeId=&quot;fedoraRole&quot; <b>MustBePresent=&quot;false&quot;</b> 
+                                  DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/SubjectMatch&gt;
+  &lt;/Subject&gt;
+&lt;/Subjects&gt;</pre>
+</div>
 
 	<h2>&nbsp;</h2>
 
@@ -1129,23 +972,15 @@ unexpected results, due to bad coding near the end of its TargetMatch.getInstanc
 method.   Also, avoid using two AttributeDesignator elements (without any
 AttributeValues), until we clarify with Sun how they'll fix this.
 
-<p style='text-autospace:none'>&nbsp;</p>
-<div class="code">
+	<p>&nbsp;</p>
+	<div class="code">
 
 
-<p style='margin-left:.5in;text-autospace:none'>&lt;ResourceMatch
-MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:dateTime-less-than&quot;&gt;</p>
-
-<p style='margin-left:.5in;text-autospace:none'>   &lt;AttributeValue
-DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;&gt;2004-12-07T20:22:26.705Z&lt;/AttributeValue&gt;</p>
-
-<p style='margin-left:.5in;text-autospace:none'>   &lt;ResourceAttributeDesignator
-AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:object:lastModifiedDate&quot; </p>
-
-<p style='margin-left:.5in;text-autospace:none'>                               
-DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;/&gt;</p>
-
-<p style='margin-left:.5in;text-autospace:none'>&lt;/ResourceMatch&gt;</p>
+<pre style="margin-left:.5in;text-autospace:none">&lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:dateTime-less-than&quot;&gt;
+  &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;&gt;2004-12-07T20:22:26.705Z&lt;/AttributeValue&gt;
+  &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:object:lastModifiedDate&quot; 
+                               DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;/&gt;</pre>
+<pre style="margin-left:.5in;text-autospace:none">&lt;/ResourceMatch&gt;</pre>
 
       </div>
 
@@ -1176,61 +1011,20 @@ that controls XACML-based policy enforcement.</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-	<p style='text-autospace:none'>
-	&lt;module
-role=&quot;fedora.server.security.Authorization&quot;
-class=&quot;fedora.server.security.DefaultAuthorization&quot;&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;comment&gt;Builds and
-manages Fedora's authorization structure.&lt;/comment&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param name=&quot;ALLOW-SURROGATES&quot;
-value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot;
-value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;OBJECT-POLICIES-DIRECTORY&quot;
-value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;SURROGATE-POLICIES-DIRECTORY&quot;
-value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY&quot; </p>
-	<p style='text-autospace:none'>
-	          
-value=&quot;/fedora-xacml-policies/repository-policies-generated-by-policyguitool&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;XACML-COMBINING-ALGORITHM&quot;
-value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;POLICY-SCHEMA-PATH&quot;
-value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot;
-value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot;
-value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	&lt;/module&gt;</p>
+	<pre style="text-autospace:none">&lt;module role=&quot;fedora.server.security.Authorization&quot; class=&quot;fedora.server.security.DefaultAuthorization&quot;&gt;</pre>
+	<pre style="text-autospace:none">    &lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;ALLOW-SURROGATES&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;OBJECT-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;SURROGATE-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">&lt;/module&gt;</pre>
 
       </div>
 
@@ -1244,8 +1038,8 @@ Authorization module:</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
-	<p style="text-autospace: none">    &lt;param name=&quot;ENFORCE-MODE&quot;
-value=&quot;enforce-policies&quot;/&gt;</div>
+	<pre style="text-autospace: none">    &lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</pre>
+</div>
 
 	<p>&nbsp;</p>
 <p>The &quot;ENFORCE-MODE&quot; parameter can contain one of
@@ -1294,9 +1088,8 @@ by the repository administrator using the follow parameter in Authorization
 module (in fedora.fcfg):   </p>
 <p>&nbsp;</p>
 <div class="code">
-	<p style="text-autospace: none">    &lt;param
-name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot;
-value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</div>
+	<pre style="text-autospace: none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
+</div>
 
 	<p>&nbsp;</p>
 	<p>Repository-wide policies are broad policies that are
@@ -1324,9 +1117,8 @@ written for.   The location for active object-specific policies is configured in
 the following parameter of the Authorization module (in fedora.fcfg):</p>
 	<p>&nbsp;</p>
 <div class="code">
-	<p style="text-autospace: none">    &lt;param
-name=&quot;OBJECT-POLICIES-DIRECTORY&quot;
-value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</div>
+	<pre style="text-autospace: none">    &lt;param name=&quot;OBJECT-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</pre>
+</div>
 
 	<p>&nbsp;</p>
 <p>An object policy named “demo-5.xml” in this directory will
@@ -1420,22 +1212,11 @@ the Authorization module configuration that control whether Fedora will attempt
 to validate policies against the XML schema for XACML.    </p>
 	<p>&nbsp;</p>
 <div class="code">
-	<p style='text-autospace:none'>&nbsp;   &lt;param
-name=&quot;POLICY-SCHEMA-PATH&quot;
-value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;    </p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot;
-value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot;
-value=&quot;false&quot;/&gt;</p>
-	<p style='text-autospace:none'>
-	    &lt;param
-name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</p>
+	<pre style="text-autospace:none">&nbsp;&nbsp;&nbsp;&nbsp;&lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;    </pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</pre>
 
       </div>
 
@@ -1525,8 +1306,8 @@ that will be used by the Policy Enforcement Module in evaluating sets of policie
 for the Authorization module::</p>
 	<p>&nbsp;</p>
 <div class="code">
-	&lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot;
-value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</div>
+	<pre>&lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</pre>
+</div>
 
 	<p>&nbsp;</p>
 <p>This parameter sets the XACML policy combining algorithm
@@ -1581,34 +1362,16 @@ vs. Optional Attributes</a> for more details.&nbsp; </p>
 Policy Enforcement module, things work like this:</p>
 <p>&nbsp;</p>
 <div class="code">
-	<i>&nbsp;NOTE:&nbsp; </i>=0&nbsp; <i>means NO policy in a policy set 
-	evaluated to that result; </i>
-	<p><i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </i>=1&nbsp; <i>means one 
-	or more policies in a policy set evaluated to that result</i></p>
-	<p>&nbsp;</p>
-	<p>========= POLICY SET RESULTS =======&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
-	=== FINAL DECISION ===</p>
-	<p>&nbsp;</p>
-	<p>DENY=0   INDETERMINATE=0    PERMIT=0   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is DENY</p>
-	<p>DENY=1   INDETERMINATE=0    PERMIT=0   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is DENY</p>
-	<p>DENY=1   INDETERMINATE=0    PERMIT=1   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is DENY&nbsp; (note denial
-trumps permit)</p>
-	<p>DENY=0   INDETERMINATE=0    PERMIT=1   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is <b>PERMIT</b></p>
-	<p>DENY=0   INDETERMINATE=1    PERMIT=1   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is DENY&nbsp; 
-	(note indeterminate is treated as denial which trumps permit)</p>
-	<p>DENY=0   INDETERMINATE=1    PERMIT=0   
-	<span
-style='font-family:Wingdings'>è</span>&nbsp;&nbsp;&nbsp;&nbsp; result is DENY</p>
+	<pre><i>&nbsp;NOTE:  </i>=0  <i>means NO policy in a policy set evaluated to that result; 
+        </i>=1  <i>means one or more policies in a policy set evaluated to that result</i></pre>
+	<pre>&nbsp;</pre>
+	<pre>========= POLICY SET RESULTS =======        === FINAL DECISION ===</pre>
+	<pre>DENY=0   INDETERMINATE=0    PERMIT=0   <span style="font-family:Wingdings">è</span>     result is DENY</pre>
+	<pre>DENY=1   INDETERMINATE=0    PERMIT=0   <span style="font-family:Wingdings">è</span>     result is DENY</pre>
+	<pre>DENY=1   INDETERMINATE=0    PERMIT=1   <span style="font-family:Wingdings">è</span>     result is DENY  (note denial trumps permit)</pre>
+	<pre>DENY=0   INDETERMINATE=0    PERMIT=1   <span style="font-family:Wingdings">è</span>     result is <b>PERMIT</b></pre>
+	<pre>DENY=0   INDETERMINATE=1    PERMIT=1   <span style="font-family:Wingdings">è</span>     result is DENY  (note indeterminate is treated as denial which trumps permit)</pre>
+	<pre>DENY=0   INDETERMINATE=1    PERMIT=0   <span style="font-family:Wingdings">è</span>     result is DENY</pre>
 
       </div>
 
