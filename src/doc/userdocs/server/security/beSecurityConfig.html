@@ -31,7 +31,15 @@
 					<li><a href="#EXAMPLES-UNSECURE-ALL">4.4 UNSECURE-ALL Example</a></li>					
 			    </ul>
 			</li>
-			<li><a href="#CONFIGTOOL">beSecurity Configuration Tool</a></li>
+			<li><a href="#CONFIGTOOL">beSecurity Configuration Tool</a>
+				<ul>
+					<li><a href="#CONFIGTOOL-DEFAULT">5.1 Default Settings</a></li>
+					<li><a href="#CONFIGTOOL-INTERNAL">5.2 Internal Settings</a></li>
+					<li><a href="#CONFIGTOOL-CALL">5.3 Specifying How The Fedora Server Communicates With The Backend Service</a></li>
+					<li><a href="#CONFIGTOOL-CALLBACK">5.4 Specifying How The Backend Service Communicates With The Fedora Server</a></li>
+					<li><a href="#CONFIGTOOL-OVERRIDE">5.5 Specifying Method Overrides</a></li>
+					<li><a href="#CONFIGTOOL-SAVE">5.6 Saving Your Changes</a></li>
+				</ul></li>
 	    </ol>
     </div>
 </div>
@@ -222,9 +230,150 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 	<div class="sect">
   	  <h2><a name="CONFIGTOOL"></a>5 beSecurity Configuration Tool</h2>
 
-<p>A GUI  configuration tool is provided to facilitate creating and customizing the beSecurity file. After selecting a base security configuration you wish to start from using the fedora-setup command-line utility, launch the beSecurity Tool by running fedora-beSecurity-tool.</p>
+      <p>A GUI configuration tool is provided to facilitate customizing the beSecurity 
+        file. The beSecurity Configuration Tool runs as a web application off 
+        the Fedora server so the server needs to be running before you can use 
+        the tool. To run the tool, use a URL similar to the following:</p>
+	  
+	  <div class="code"><pre>
+  http://fedoraServerHost:fedoraSereverPort/fedora/management/backendSecurity<b>[?xml=boolean]</b>
+		
+  where
+      fedoraServerHost - the hostname of the Fedora server configured in fedora.fcfg
+      fedoraServerPort - the port number on which the Fedora server is running configured in fedora.fcfg
+	  xml - optional boolean parameter. If equal to <i>false</i> or omitted, the tool displays a web form.
+	        If set to <i>true</i>, the tool instead displays enough information to reconstruct the HTML web
+			form encoded as xml.
+		
+  e.g.,  http://localhost:8080/fedora/management/backendSecurity
+		</pre>
+	  </div>
+		
+		<p>When the tool starts, it first loads the backend service entries specified 
+          in beSecurity.xml configuration file. The tool then communicates with the server and automatically 
+          pre-populates the beSecurity display with entries for any remaining backend services 
+          and their methods found in the repository that were not already defined 
+          in beSecurity.xml. If backend services and/or backend service methods 
+          were found on the server, but not defined in beSecurity.xml, those entries 
+          will be assigned the default values which are:</p>
+		  
+		<ul>
+			<li><strong>callSSL=false</strong></li>
+			<li><strong>callBasicAuth=false</strong></li>
+			<li><strong>callbackSSL=false</strong></li>
+			<li><strong>callbackBasicAuth=false</strong></li>
+			<li><strong>iplist=none</strong></li>
+		</ul>		
+        
+      <p>To view the configuration for a particular backend service, click on 
+        the backed service name displayed in the left pane and the configuration 
+        information will be displayed in the right pane.</p>
+		
+	  <p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
+	  
+	  <div class="sect2"><a name=#CONFIGTOOL-DEFAULT></a>
+	  	<h3>5.1 Default Settings</h3>
+	  	<p>INSERT TEXT HERE RE DEFAULT SETTINGS</p>
+		<p></p>
+		<p><img src="images/beSecurity-tool-default.jpg"></img></p>
+	  </div>
+	
+	  <div class="sect2"><a name=#CONFIGTOOL-INTERNAL></a>
+	  	<h3>5.2 Internal Settings</h3>
+	  	<p>INSERT TEXT HERE RE INTERNAL SETTINGS</p>
+		<p></p>
+		<p><img src="images/beSecurity-tool-internal.jpg"></img></p>
+	  </div>	
+	
+	  <div class="sect2"><a name=#CONFIGTOOL-CALL></a>
+	  	<h3>5.3 Specifying How The Fedora Server Communicates With The Backend Service</h3>
+	  	<p>There are four attributes that can be used to configure how the backend 
+          service communicates with the Fedora server. These include the following:</p>
+        <ul>
+          <li><strong>SSL</strong> - boolean indicating if call to backend service 
+            requires SSL. If set to true, the backend service must always support 
+            SSL communication.</li>
+          <li><strong>Basic Auth</strong> - boolean indicating if call to backend 
+            service requires basic authentication. If set to true, the backend 
+            service must always support basic authentication and attributes for 
+            callUsername and callPassword must be supplied.</li>
+          <li><strong>Username</strong> - username used for basic authenitcation 
+            if call to backend service requires basic authentication</li>
+          <li><strong>Password</strong> - password used for basic authenitcation 
+            if call to backend service requires basic authentication</li>
+        </ul>
 
-<p>.... finish this last section when Chris has finished  beSecurity GUI</p>
+		<p>These attributes appear under the <i>Calls to Service</i> heading in 
+          the right pane of the display window:</p>
+		<p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
+		
+	  </div>		
+	  	
+	  <div class="sect2"><a name=#CONFIGTOOL-CALLBACK></a>
+	  	<h3>5.4 Specifying How The Backend Service Communicates With The Fedora Server</h3>
+	  	<p>There are three attributes that can be used to configure how the backend 
+          service communicates with the Fedora server. These include the following:</p>
+        <ul>
+          <li><strong>SSL</strong> - boolean indicating if callback from backend 
+            service to Fedora server requires SSL. If set to true, remember that 
+            you must have SSL enabled in the fedora webapp web.xml file.</li>
+          <li><strong>Basic Auth</strong> - boolean indicating if callback from 
+            backend service to Fedora server requires basic authentication. If 
+            set to true, remember that you must have basic authentication enabled 
+            in the fedora webapp web.xml file and must have doMediateDatastreams 
+            set to true in the fedora.fcfg file. It is the responsibility of the 
+            backend service author and the Fedora administrator to coordinate 
+            username and password used for authentication with the Fedora server. 
+            The username and password used by the backend service to authenticate 
+            with the Fedora server must be known by the authentication application 
+            used by the Fedora server.</li>
+          <li><strong>Allowed IPs</strong> - space separated list of IP addresses 
+            from which the backend service is allowed to connect to the fedora 
+            server. By default, there is no restriction. If specified, only backend 
+            services matching the specified role and originating from the specified 
+            IP will be permitted.</li>
+        </ul>
+        <p>These attributes appear under the <i>Callbacks to Fedora</i> heading 
+          in the right pane of the display window:</p>
+		<p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
+	  </div>	
+
+	  <div class="sect2"><a name=#CONFIGTOOL-OVERRIDE></a>
+	  	<h3>5.5 Specifying Method Overrides</h3>
+	  	<p>By default all backend service methods inherit their properties from 
+          the parent backend service. In this scenario the properties defined 
+          for the backend service apply to all methods for that service. To specify 
+          properties individually for methods within a backend service, use the 
+          method override option that is on the lower portion of the right pane 
+          of the display. Select each method you want to configure from the <i>Method 
+          Overrides</i> list, and then enter the appropriate values. Overriding 
+          methods can be useful if you want to customize settings on a per method 
+          basis.</p>
+		  
+		  
+        <p>The entry layout for a method is identical to that for the backend 
+          service as a whole; it just applies to the method specified:</p>
+		  <p><img src="images/beSecurity-tool-override.jpg"></img></p>
+	  </div>	  
+	  
+	  <div class="sect2"><a name=#CONFIGTOOL-SAVE></a>
+	  	<h3>5.6 Saving Your Changes</h3>
+	  	<p>Clicking on the <i>Save Changes</i> button will replace the active 
+          beSecurity.xml file in the distribution with your changes, regenerate 
+          backend service policies based on the new beSecurity information, and 
+          then reload all policies on the Fedora server. If any of the edits involved 
+          changes to authentication information including username, password, 
+          or role then you will also need to update the application that provides 
+          authentication for the Fedora server. By default, this is the tomcat-users 
+          file so you would need to stop the server, update the tomcat-users-fedoraTemplate.xml 
+          file (see <i><a href="securingrepo.html">Securing Your Repository</a></i> 
+          for more details) , and then restart the server. If using other forms 
+          of authentication, you would need to update the authentication application 
+          with the new entries that you included in the beSecurity.xml file. </p>
+	  </div>	  
+	  
+	</div>
+
 </div>
 <div id="footer">
     <div id="copyright">
