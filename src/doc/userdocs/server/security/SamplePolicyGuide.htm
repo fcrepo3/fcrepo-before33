@@ -12,7 +12,8 @@
 <div id="header">
     <a href="../index.html" id="logo"></a>
     <div id="title">
-		<h1>Sample Policy Guide: A Reference Collection XACML Policies for Fedora</h1>
+		<h1>Sample Policy Guide</h1>
+		<h2>A Reference Collection of XACML Policies for Fedora</h2>
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 </div>
@@ -22,44 +23,93 @@
     <div class="tocbox">
         <ol>
             <li><a href="#INTRO">Introduction</a>
-			<li><a href="#POLICY-REPO">Sample Policies - Repository-Wide Policies</a></li>
-			<li><a href="#POLICY-OBJ">Sample Policies - Object-Specific Policies</a></li>
+			<li><a href="#REPO-WIDE">Sample Policies - Repository-Wide Policies</a></li>
+			<li><a href="#OBJ-SPECIFIC">Sample Policies - Object-Specific Policies</a></li>
        </ol>
     </div>
 </div>
 
 <div class=Section1>
 
-<h2><a name="INTRO">1 Introduction</a></h2>
+<h2><a name="INTRO"></a>1 Introduction</h2>
 
 <p>&nbsp;</p>
 
-<p><i>&lt;<b>INSERT HERE</b>:  general discussion to orient
-people on writing their own XACML policies.  First we discuss the default
-policies that come out of the box and why they are there.  Then we discuss how
-to create custom policies of your own.  We distinguish between repository-wide
-and object-specific policies and when/why you choose one approach vs. another. 
-Note that the Fedora-specific identifiers to use in policies can be found in dist/server/config/xacml-policies/vocabulary.txt.  
-Also, make appropriate links to Bill’s documentation.&gt;</i></p>
-
-<p><i>&nbsp;</i></p>
-
-<p>Refer to the <a href="AuthorizationXACML.htm">Fedora Authorization Module</a> 
-documentation for details on writing and activating XACML policies for Fedora 
-repositories.&nbsp; </p>
+<p>This collection of sample XACML policies is intended as reference material to 
+help in writing custom XACML policies for Fedora.&nbsp; The sample policies 
+demonstrate one possible authoring style for XACML, in recognition that there 
+are other ways to write XACML policies that have the same effect.&nbsp;&nbsp;&nbsp;
+<i><b>It should be noted that to help users who do not wish to learn native 
+XACML, a Policy Authoring Client is currently under development that will 
+provide an easy graphical user interface for creating XACML policies for Fedora.
+</b></i> </p>
+<p>Most of the sample repository-wide policies are authored to have a <i><b>
+single effect,</b></i> meaning that each policy has a single rule that either 
+permits or denies access.&nbsp;&nbsp; This style of policy writing results in 
+many individual policies, but each policy is atomic and uncomplicated.&nbsp; An 
+alternative is to have fewer policies, each with multiple rules within.&nbsp;&nbsp; 
+This multi-rule approach can result in more complicated policies, but is, 
+nevertheless, appropriate for writing <b><i>object-specific</i></b> <i><b>
+policies</b></i> in Fedora where a single policy states all the rules for a 
+particular digital object.&nbsp;&nbsp;&nbsp; In either case, it is essential to 
+understand the policy combining algorithm that is configured for your 
+repository's XACML-based Authorization module.&nbsp; By default, the &quot;Deny 
+Overrides&quot; algorithm is configured in Fedora, which means that when multiple 
+policies are applicable to an incoming request, deny will trump permit.&nbsp;&nbsp; 
+As you add new policies to the mix, you must be aware of what kinds of policies 
+are already active in the repository.&nbsp;&nbsp;&nbsp; Also, when writing a 
+policy that contains more than one rule, you must understand the the rule 
+combining algorithm (which is specified in the root element of an individual 
+XACML policy).&nbsp; The sample policies use the &quot;first-applicable&quot; rule 
+combining algorithm, which means that the first applicable rule in the policy 
+will prevail. </p>
+<p>The sample policies are written with the assumption that Fedora's
+<a href="AuthorizationXACML.htm#DEFAULT">Default Repository-Wide Policies</a> 
+are activated.&nbsp;&nbsp;&nbsp; These default policies lock down access to the 
+Fedora API-M service so that only the Fedora Administrator is permitted access.&nbsp; 
+The default policies also result in open access to API-A (all users are 
+permitted).&nbsp;&nbsp; Given this starting point,&nbsp; you can think writing 
+custom policies as a way to &quot;loosen up&quot;&nbsp; the API-M defaults and &quot;tighten 
+up&quot; the API-M defaults.&nbsp; In other words, it is likely that you will want to 
+write policies that let more users have access to API-M operations.&nbsp; Also, 
+you will likely want to add restrictions in who can access digital objects, 
+datastreams, and disseminations (i.e., via API-A).&nbsp;&nbsp; The sample 
+policies will demonstrate how to do these things, given various authentication 
+scenarios.&nbsp; Notice that there some policies restrict access based on user 
+identity/attributes based on Tomcat's default user directory ( 
+tomcat-users.xml).&nbsp; Other policies demonstrate how to restrict access by 
+user attributes/groups that are defined in an LDAP directory.&nbsp; </p>
+<p>Note that the sample policies have been written for demonstration purposes.&nbsp;&nbsp; 
+They are not intended to work as a collaborative set of policies, since they 
+often demonstrate different ways of of doing the same basic thing (e.g., one 
+policy demonstrating rules based on Tomcat user identity, another showing a 
+similar thing with LDAP groups).&nbsp;&nbsp; If you want to try them out, you 
+can put one or more of the sample policies into play by following the 
+instructions for <a href="AuthorizationXACML.htm#CONFIG-ACTIVATE">activating and 
+loading policies</a> into a Fedora repository.&nbsp; However, it is recommended 
+that you either test them individually to understand the effect each policy has.&nbsp;&nbsp; 
+Ultimately, you can proceed to write a meaningful suite of policies that are 
+intended to work together for your repository.&nbsp;&nbsp;&nbsp; </p>
+<p>&nbsp;</p>
+<p><b>For more information:</b></p>
+<p>See:&nbsp; <a href="securingrepo.html">Securing Your Repository</a> 
+documentation for more information on configuring user authentication sources.</p>
+<p>See:&nbsp; <a href="AuthorizationXACML.htm">Fedora XACML Authorization Module</a> 
+documentation for details on writing XACML policies for Fedora repositories, and 
+for <a href="AuthorizationXACML.htm#ATTR">referring to user attributes in 
+policies</a>.</p>
+<p>See:&nbsp;
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+OASIS XACML Specification</a> for more information on writing XACML policies.</p>
 
 <p><i>&nbsp;</i><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
 
-<h2><span style="font-size: 14pt"><b>2</b></span><b><span style='font-size:14.0pt'> Sample 
+<h2><span style="font-size: 14pt"><b><a name="REPO-WIDE"></a>2</b></span><b><span style='font-size:14.0pt'> Sample 
 Policies - Repository-Wide Policies</span></b></h2>
-
-<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
-
-<p><i>&lt;Introductory discussion here.&gt;</i></p>
 
 <p>&nbsp;</p>
 
-<h3><b>3.1. Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+<h3>2<b>.1&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
 defaults at the <i>service</i> <i>interface</i> level</b></h3>
 <p>&nbsp;</p>
 
@@ -71,11 +121,11 @@ defaults at the <i>service</i> <i>interface</i> level</b></h3>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.1.1</td>
+		<td width="64">API-A</td>
 		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
-		<a href="userdocs/xacml-policies/examples/object-specific/deny-apia-to-ldap-group.xml">deny-apia-to-ldap-group.xml</a></span></td>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-to-ldap-group.xml">deny-apia-to-ldap-group.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>Deny access to all </span><span
    style='font-size:10.0pt;font-family:Arial;color:black;background:white'>API-A
@@ -83,8 +133,8 @@ defaults at the <i>service</i> <i>interface</i> level</b></h3>
   by their LDAP attributes).</span></td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.1.2</td>
+		<td width="64">API-A</td>
 		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-if-not-tomcat-role.xml">deny-apia-if-not-tomcat-role.xml</a></span></td>
@@ -94,8 +144,8 @@ defaults at the <i>service</i> <i>interface</i> level</b></h3>
   methods to users who are NOT in the “administrator” or “professor” ROLES.</span></td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.1.3</td>
+		<td width="64">API-A</td>
 		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-to-tomcat-user.xml">deny-apia-to-tomcat-user.xml</a></span></td>
@@ -108,7 +158,7 @@ defaults at the <i>service</i> <i>interface</i> level</b></h3>
 	</table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h3><b>3.2. Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+<h3>2<b>.2&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
 defaults based on <i>object attributes</i></b></h3>
 
 <p>&nbsp;</p>
@@ -121,8 +171,8 @@ defaults based on <i>object attributes</i></b></h3>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.2.1</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-by-pids-to-tomcat-role.xml">deny-objects-by-pids-to-tomcat-role.xml</a></span></td>
@@ -139,8 +189,8 @@ defaults based on <i>object attributes</i></b></h3>
   system documentation on XACML policies for more information.)</span></td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.2.2</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-by-cmodel-to-ldap-group.xml">deny-objects-by-cmodel-to-ldap-group.xml</a></span></td>
@@ -153,8 +203,8 @@ defaults based on <i>object attributes</i></b></h3>
   particular LDAP-defined GROUP.</span></td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.2.3</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-hide-datastreams-if-not-tomcat-role.xml">deny-objects-hide-datastreams-if-not-tomcat-role.xml</a></span></td>
@@ -174,16 +224,10 @@ defaults based on <i>object attributes</i></b></h3>
   or 'professor. It will also DENY dissemination access to users who do NOT
   have the ROLE of ‘student,' ‘administrator,’ or 'professor.'</span></td>
 	</tr>
-	<tr>
-		<td width="41">4</td>
-		<td width="59">&nbsp;</td>
-		<td width="317">&nbsp;</td>
-		<td>&nbsp;</td>
-	</tr>
-</table>
+	</table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h3><b>3.3. Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+<h3>2<b>.3&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
 defaults at the <i>datastream</i> level</b></h3>
 <p>&nbsp;</p>
 
@@ -195,8 +239,8 @@ defaults at the <i>datastream</i> level</b></h3>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.3.1</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-all-to-all-users.xml">deny-apia-datastream-all-to-all-users.xml</a></span></td>
@@ -207,8 +251,8 @@ defaults at the <i>datastream</i> level</b></h3>
   USERS making requests to the getDatastreamDissemination method of API-A.</span></td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.3.2</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-all-users.xml">deny-apia-datastream-DC-to-all-users.xml</a></span></td>
@@ -220,8 +264,8 @@ defaults at the <i>datastream</i> level</b></h3>
   obtain datastreams with an identifier of 'DC.'</span></td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.3.3</td>
+		<td width="64">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-tomcat-group-ALT1.xml">deny-apia-datastream-DC-to-tomcat-group-ALT1.xml</a></span></td>
@@ -235,8 +279,8 @@ defaults at the <i>datastream</i> level</b></h3>
   defined using custom roles in the tomcat-users.xml file.</span></td>
 	</tr>
 	<tr>
-		<td width="41">4</td>
-		<td width="59">&nbsp;</td>
+		<td width="41">2.3.4</td>
+		<td width="59">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-tomcat-group-ALT2.xml">deny-apia-datastream-DC-to-tomcat-group-ALT2.xml</a></span></td>
@@ -250,8 +294,8 @@ defaults at the <i>datastream</i> level</b></h3>
   defined using custom roles in the tomcat-users.xml file.</span></td>
 	</tr>
 	<tr>
-		<td width="41">5</td>
-		<td width="59">&nbsp;</td>
+		<td width="41">2.3.5</td>
+		<td width="59">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-MRSID-if-not-tomcat-role.xml">deny-apia-datastream-MRSID-if-not-tomcat-role.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
@@ -264,8 +308,8 @@ defaults at the <i>datastream</i> level</b></h3>
   resource is a datastream with identifier of 'MRSID.'</span></td>
 	</tr>
 	<tr>
-		<td width="41">6</td>
-		<td width="59">&nbsp;</td>
+		<td width="41">2.3.6</td>
+		<td width="59">API-A</td>
 		<td width="317"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-TEISOURCE-to-tomcat-user.xml">deny-apia-datastream-TEISOURCE-to-tomcat-user.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
@@ -281,9 +325,8 @@ defaults at the <i>datastream</i> level</b></h3>
 </table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<h4><b>3.4. Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
-defaults at the <i>dissemination</i> level</b></h4>
-<p>&nbsp;</p>
+<h3>2<b>.4&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+defaults at the <i>dissemination</i> level</b></h3>
 <p>&nbsp;</p>
 
 <table border="1" width="100%">
@@ -294,14 +337,14 @@ defaults at the <i>dissemination</i> level</b></h4>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.4.1</td>
+		<td width="64">API-A</td>
 		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-all-users.xml">deny-apia-dissem-demo1-getMedium-to-all-users.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>This policy will DENY access to the
   'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
-  to the demo:1 behavior definition).   Specifically, it will DENY access to </span><span
+  to the demo:1 behavior definition.   Specifically, it will DENY access to </span><span
    style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL
   users making getDissemination requests on </span><span style='font-size:10.0pt;
    font-family:Arial;color:black;background:white'>API</span><span
@@ -309,14 +352,14 @@ defaults at the <i>dissemination</i> level</b></h4>
   for the 'demo:1/getMedium' dissemination.</span></td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.4.2</td>
+		<td width="64">API-A</td>
 		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-ldap-group.xml">deny-apia-dissem-demo1-getMedium-to-ldap-group.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>This policy will DENY access to the
   'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
-  to the demo:1 behavior definition).   Specifically, it will DENY access to
+  to the demo:1 behavior definition.   Specifically, it will DENY access to
   users of particular LDAP-defined GROUPS who are making getDissemination
   requests on </span><span style='font-size:10.0pt;font-family:Arial;
    color:black;background:white'>API</span><span style='font-size:10.0pt;
@@ -324,14 +367,14 @@ defaults at the <i>dissemination</i> level</b></h4>
   'demo:1/getMedium' dissemination.</span></td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.4.3</td>
+		<td width="64">API-A</td>
 		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-if-not-tomcat-role.xml">deny-apia-dissem-demo1-getMedium-if-not-tomcat-role.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
   color:black;background:white'>This policy will DENY access to the
   'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
-  to the demo:1 behavior definition).   Specifically, it will DENY access to
+  to the demo:1 behavior definition.   Specifically, it will DENY access to
   users who are NOT of particular ROLES who are making getDissemination
   requests on </span><span style='font-size:10.0pt;font-family:Arial;
    color:black;background:white'>API</span><span style='font-size:10.0pt;
@@ -339,8 +382,8 @@ defaults at the <i>dissemination</i> level</b></h4>
   dissemination.</span></td>
 	</tr>
 	<tr>
-		<td width="41">4</td>
-		<td width="59">&nbsp;</td>
+		<td width="41">2.4.4</td>
+		<td width="59">API-A</td>
 		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
 		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-tomcat-user.xml">deny-apia-dissem-demo1-getMedium-to-tomcat-user.xml</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
@@ -350,57 +393,23 @@ defaults at the <i>dissemination</i> level</b></h4>
   (as registered in  the tomcat-users.xml file).</span></td>
 	</tr>
 	<tr>
-		<td width="41">5</td>
-		<td width="59">&nbsp;</td>
-		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
-		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo2-to-all-users.xml">deny-apia-dissem-demo2-to-all-users.xml</a></span></td>
+		<td width="41">2.4.5</td>
+		<td width="59">API-A</td>
+		<td width="343"><span style="font-size: 10.0pt; font-family: Arial">
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-DualResImage-to-all-users.xml">
+		deny-apia-dissem-DualResImage-to-all-users</a></span></td>
 		<td><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>This policy will DENY access to disseminations
-  that are available on objects via a disseminator subscribing to the 'demo:2' 
-  behavior definition.  Specifically,  it will DENY access to </span><span
-   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL
-  users making these getDissemination requests.</span></td>
+  color:black;background:white'>This policy will DENY access to ALL disseminations
+  that are available on objects via a particular disseminator (one that subscribes 
+		to an image-based behavior definition whose PID is 'demo:DualResImage'.  Specifically,  it will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL 
+		users making getDissemination requests on this disseminator.</span></td>
 	</tr>
-	<tr>
-		<td width="41">6</td>
-		<td width="59">&nbsp;</td>
-		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
-		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo2-to-ldap-group.xml">deny-apia-dissem-demo2-to-ldap-group.xml</a></span></td>
-		<td><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>This policy will DENY access to all
-  disseminations that are available on objects via a disseminator subscribing
-  to the 'demo:2' behavior definition.  Specifically, it will DENY access to
-  users that belong to a particular LDAP-defined GROUP.</span></td>
-	</tr>
-	<tr>
-		<td width="41">7</td>
-		<td width="59">&nbsp;</td>
-		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
-		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo2-to-tomcat-group.xml">deny-apia-dissem-demo2-to-tomcat-group.xml</a></span></td>
-		<td><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>This policy will DENY access to all
-  disseminations that are available on objects via a disseminator subscribing
-  to the 'demo:2' behavior definition.  Specifically, it will DENY access to
-  users that belong to a particular GROUP (as defined in the tomcat-users.xml
-  file).</span></td>
-	</tr>
-	<tr>
-		<td width="41">8</td>
-		<td width="59">&nbsp;</td>
-		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
-		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo2-to-tomcat-user.xml">deny-apia-dissem-demo2-to-tomcat-user.xml</a></span></td>
-		<td><span style='font-size:10.0pt;font-family:Arial;
-  color:black;background:white'>This policy will DENY access to all
-  disseminations that are available on objects via a disseminator subscribing
-  to the 'demo:2' behavior definition.  Specifically, it will DENY access to a
-  specific user  (as registered in  the tomcat-users.xml file).</span></td>
-	</tr>
-</table>
+	</table>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<p><b>3.5. Repository Policies to <i>loosen</i> the </b><b>API</b><b>-M
-defaults at the <i>service</i> <i>interface</i> level</b></p>
-<p>&nbsp;</p>
+<h3>2<b>.5&nbsp; Repository Policies to <i>loosen</i> the </b><b>API</b><b>-M
+defaults at the <i>service</i> <i>interface</i> level</b></h3>
 <p>&nbsp;</p>
 
 <table border="1" width="100%">
@@ -411,24 +420,24 @@ defaults at the <i>service</i> <i>interface</i> level</b></p>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.5.1</td>
+		<td width="64">API-M</td>
 		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-ldap-group.xml">permit-apim-by-ldap-group.xml</a></span></td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.5.2</td>
+		<td width="64">API-M</td>
 		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-tomcat-group.xml">permit-apim-by-tomcat-group.xml</a></span></td>
 		<td>&nbsp;</td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">2.5.3</td>
+		<td width="64">API-M</td>
 		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
   color:black'>
 		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-tomcat-user.xml">permit-apim-by-tomcat-user.xml</a></span></td>
@@ -438,15 +447,20 @@ defaults at the <i>service</i> <i>interface</i> level</b></p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
-<p><b><span style='font-size:14.0pt'>4 Sample Policies - Object-Specific Policies</span></b></p>
+<h2><span style="font-size: 14pt"><a name="OBJ-SPECIFIC"></a>3</span><b><span style='font-size:14.0pt'> Sample Policies - Object-Specific Policies</span></b></h2>
 
-<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+<p>&nbsp;</p>
+<h3><b>3.1 Object-specific policies with multiple policy rules</b></h3>
 
-<p><i>&lt;Introductory discussion here.&gt;</i></p>
-
-<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
-
-<p><b>4.1. Object-Specific Policies</b></p>
+<p>Object-specific policies are policies that refer to one particular digital 
+object.&nbsp;&nbsp; An object-specific policy can be stored in the &quot;POLICY&quot; 
+datastream of the digital object to which it pertains.&nbsp; Alternatively, an 
+object-specific policy can be stored in the object-specific policy directory 
+configured with the Fedora repository service via the Fedora server 
+configuration file (fedora.fcfg).&nbsp;&nbsp;&nbsp; The choice comes down to 
+whether you want policies to be actual components of digital objects (and 
+thereby portable with the object), or whether you want the policies to be more a 
+part of the configured repository environment.&nbsp;&nbsp;&nbsp; </p>
 
 <p>&nbsp;</p>
 
@@ -458,31 +472,27 @@ defaults at the <i>service</i> <i>interface</i> level</b></p>
 		<td><b>&nbsp; Policy Description</b></td>
 	</tr>
 	<tr>
-		<td width="41">1</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">3.1.1</td>
+		<td width="64">N/A</td>
 		<td width="284"><font size="2"><span style="font-family: Arial">
 		<a href="xacml-policies/examples/example-object-policies/demo-5.xml">
 		demo-5.xml</a></span></font></td>
 		<td>
 		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
-		This is an object-specific policy. It could be stored inside the demo:5 
-		digital object in the POLICY datastream OR in the directory for 
-		object-specific policies. (The directory location is set in the 
-		Authorization module configuration in the Fedora server configuration 
-		file (fedora.fcfg). By using multiple policy Rules, this policy shows 
+		By using <i><b>multiple policy rules</b></i>, this policy shows 
 		how to deny access to all raw datastreams in the object except to 
 		particular users (e.g., the object owners). It also shows how to deny 
 		access to a particular disseminations to selected user roles.</span></td>
 	</tr>
 	<tr>
-		<td width="41">2</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">3.1.2</td>
+		<td width="64">N/A</td>
 		<td width="284"><font size="2"><span style="font-family: Arial">
 		<a href="xacml-policies/examples/example-object-policies/demo-11.xml">
 		demo-11.xml</a></span></font></td>
 		<td>
 		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
-		By using multiple policy Rules, this policy shows how to deny access to 
+		By using <i><b>multiple policy rules</b></i>, this policy shows how to deny access to 
 		particular datastreams in the object. 1) The policy will DENY everyone 
 		except professors and researchers access to -particular- source 
 		datastreams of the demo:11 object by controlling access to the 
@@ -495,14 +505,14 @@ defaults at the <i>service</i> <i>interface</i> level</b></p>
 		datastream of demo:11.</span></td>
 	</tr>
 	<tr>
-		<td width="41">3</td>
-		<td width="64">&nbsp;</td>
+		<td width="41">3.1.3</td>
+		<td width="64">N/A</td>
 		<td width="284"><font size="2"><span style="font-family: Arial">
 		<a href="xacml-policies/examples/example-object-policies/demo-26.xml">
 		demo-26.xml</a></span></font></td>
 		<td>
 		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
-		By using multiple policy Rules, this policy shows how to deny access to 
+		By using <i><b>multiple policy rules</b></i>, this policy shows how to deny access to 
 		particular datastreams in the object. The policy will DENY visitors 
 		access to the TEI and FOP source datastreams of the demo:26 object by 
 		controlling access to the getDatastreamDissemination method of the 
