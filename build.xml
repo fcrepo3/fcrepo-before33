@@ -373,6 +373,17 @@
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
+		<!-- make securty-sensitive files readable only by owner -->
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx" />
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx" />
+		<chmod file="dist/server/config/fedora-secure-apim.fcfg" perm="go-rwx" />
+		<chmod file="dist/server/config/fedora-secure-all.fcfg" perm="go-rwx" />
+		<chmod file="dist/server/config/fedora-unsecure-apim.fcfg" perm="go-rwx" />
+		<chmod file="dist/server/config/fedora-unsecure-all.fcfg" perm="go-rwx" />		
+		<chmod file="dist/server/config/beSecurity-secure-apim.xml" perm="go-rwx" />
+		<chmod file="dist/server/config/beSecurity-secure-all.xml" perm="go-rwx" />
+		<chmod file="dist/server/config/beSecurity-unsecure-apim.xml" perm="go-rwx" />
+		<chmod file="dist/server/config/beSecurity-unsecure-all.xml" perm="go-rwx" />		
 	</target>
 	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
 	</target>
