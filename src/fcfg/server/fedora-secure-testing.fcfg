@@ -30,7 +30,7 @@
     <comment>Defines the directory in which the Fedora logs will be written;
             default is logs.</comment>
   </param>
-  <param name="log_level" value="finest">
+  <param name="log_level" value="warning">
     <comment>Defines the level of logging desired;default is finest;
             possible levels include: - config denotes logging indicating what
             occurred during the server&apos;s (or a module&apos;s)
@@ -299,7 +299,7 @@
             and make sure you have a connectionPool large enough to accomodate
             your users.</comment>
     <param name="maxResults" value="100"/>
-    <param name="maxSecondsPerSession" value="100"/>
+    <param name="maxSecondsPerSession" value="500"/>
     <param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
   </module>
   <module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
