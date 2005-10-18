@@ -191,7 +191,7 @@ font-family:"Courier New"'>&nbsp;</span></p>
 
 <h3><a name="CONFIG-STORE">2</a><b><a name="CONFIG-STORE">.2 Configuring the Active Policies Storage Location</a></b></h3>
 	<p><b>&nbsp;</b></p>
-	<p><b><i>a. Repository-wide policies stored in central location</i></b></p>
+	<p><b><i><a name="STORE-REPO-WIDE"></a>a. </i></b>&nbsp;<b><i>Repository-wide policies stored in central location</i></b></p>
 	<p>&nbsp;</p>
 	<p>The storage location for active repository-wide policies can be set
 by the repository administrator using the follow parameter in Authorization
@@ -219,7 +219,7 @@ requests that do not pertain to the specific digital object it is about.   As
 described below, there are better places to store a policy that pertains to a
 single digital object.</p>
 	<p>&nbsp;</p>
-	<p><b><i>b. Object-specific policies stored in a central location</i></b></p>
+	<p><b><i><a name="STORE-OBJ-SPECIFIC"></a>b. Object-specific policies stored in a central location</i></b></p>
 	<p><b><i>&nbsp;</i></b></p>
 <p>Object-specific policies can be stored in a
 centrally configured location, outside of the digital object that the policy is
@@ -268,12 +268,12 @@ locations for a repository.</p>
 	&nbsp;</p>
 <p>
 	Policies are not considered <i><b>active</b></i> unless they are placed in the
-	<a href="#CONFIG-ENABLE">active policy storage locations</a> specified for the 
-	Authorization module in the Fedora server configuration file (fedora.fcfg).&nbsp;&nbsp; 
-	Once policies are stored in the active policy directories, they are able to 
-	be <i><b>loaded</b></i> by the Fedora repository server once it is started.&nbsp;&nbsp; 
-	To put new custom policies into play, simply add them to one of the active 
-	policy directory.&nbsp;&nbsp;&nbsp; To inactive a policy, remove it from the 
+	<a href="#CONFIG-ENABLE">active policy storage locations</a> specified in the 
+	Authorization module configuration (see fedora.fcfg).&nbsp;&nbsp; 
+	Once policies are placed in an active policy storage location, they are able to 
+	be <i><b>loaded</b></i> by the Fedora repository server.&nbsp;&nbsp; 
+	To put new custom policies into play, simply add them to an active policies 
+	directory.&nbsp;&nbsp;&nbsp; To inactivate a policy, remove it from the 
 	active policy directory.&nbsp; To modify an existing policies, edit the 
 	policy in the active policy directories (or preferably, edit in another 
 	location and replace the existing policy in the active policy directory).</p>
@@ -283,18 +283,27 @@ locations for a repository.</p>
 	<li><b>Validate</b> your policies using the
 	<a href="../cmd-line/index.html#validate">validate-policy</a> command line utility&nbsp;
 	<i>(optional, but recommended!)</i></li>
-	<li><b>Activate</b> your policies by copying them into the one of the active 
-	policies storage directories configured in the 
-	Authorization module (in fedora.fcfg)</li>
+	<li><b>Activate</b> your policies by copying them into the active policy 
+	storage location configured in the 
+	Authorization module (in fedora.fcfg).&nbsp; There are two active policy 
+	directories:<p>&nbsp;<ul>
+		<li><a href="#STORE-REPO-WIDE">REPOSITORY-POLICIES-DIRECTORY </a>&nbsp; 
+		- put your custom repository-wide policies in any sub-directory under 
+		this configured directory</li>
+		<li><a href="#STORE-OBJ-SPECIFIC">OBJECT-POLICIES-DIRECTORY</a>&nbsp; -&nbsp; 
+		put your custom object-specific policies in this configured directory, 
+		with each policy named to match its object PID (e.g., demo-11.xml)</li>
+	</ul>
+	<p>&nbsp;</li>
 	<li><b>Load</b> your policies by starting the Fedora server (using the
 	<a href="../cmd-line/index.html#start">fedora-start</a> command line 
-	utility).&nbsp; If the server is already started run the
+	utility).&nbsp; If the server is already started, run the
 	<a href="../cmd-line/index.html#reload">fedora-reload-policies</a> command 
 	line utility.&nbsp; </li>
 </ol>
 <p>
-	It should be noted that only repository-wide policies are pre-loaded into 
-	the Fedora server.&nbsp; For performance reasons, object-specific policies are not 
+	It should be noted that all repository-wide policies are pre-loaded into 
+	Fedora server memory every time the server is started.&nbsp; For performance reasons, object-specific policies are not 
 	pre-loaded; instead they are loaded on an as-needed basis (i.e., when a 
 	request for that object is made).&nbsp; </p>
 <p>
