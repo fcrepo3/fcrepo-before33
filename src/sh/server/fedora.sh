@@ -65,13 +65,21 @@ if [ "$notConfiguredFlag" = "true" ]; then
     echo       "Run the fedora-setup.bat script to initially configure the server"
     echo       "with the desired configuration. e.g.,"
     echo       
-    echo       "fedora-setup configuration-name"
+    echo "    Usage: fedora-setup [configuration-name]"
     echo
-    echo         "where configuration-name must be one of the following:"
-    echo           "secure-apim   - API-M with basicAuth and SSL; API-A with no basicAuth and no SSL"
-    echo           "secure-all    - API-M with basicAuth and SSL; API-A with basicAuth and SSL"
-    echo           "unsecure-apim - API-M with basicAuth but no SSL; API-A with no basicAuth and no SSL"
-    echo           "unsecure-all  - API-M with basicAuth but no SSL; API-A with basicAuth but no SSL"
+    echo "    where [configuration-name] must be one of the following:"
+    echo
+    echo "        ssl-authenticate-apim - API-M with basicAuth and SSL"
+    echo "                              - API-A with no basicAuth and no SSL"
+    echo
+    echo "        ssl-authenticate-all  - API-M with basicAuth and SSL
+    echo "                              - API-A with basicAuth and SSL"
+    echo
+    echo "        no-ssl-authenticate-apim - API-M with basicAuth but no SSL
+    echo "                                 - API-A with no basicAuth and no SSL"
+    echo
+    echo "        no-ssl-authenticate-all  - API-M with basicAuth but no SSL
+    echo "                                 - API-A with basicAuth but no SSL"
     echo	
     exit 1
 fi
