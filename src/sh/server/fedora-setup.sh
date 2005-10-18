@@ -57,17 +57,11 @@ fi
 
 if [ "$1" = "ssl-authenticate-apim" ]; then
    CONFIG_SUFFIX="secure-apim"
-fi
-
-if [ "$1" = "ssl-authenticate-all" ]; then
+elif [ "$1" = "ssl-authenticate-all" ]; then
    CONFIG_SUFFIX="secure-all"
-fi
-
-if [ "$1" = "no-ssl-authenticate-apim" ]; then
+elif [ "$1" = "no-ssl-authenticate-apim" ]; then
    CONFIG_SUFFIX="unsecure-apim"
-fi
-
-if [ "$1" = "no-ssl-authenticate-all" ]; then
+elif [ "$1" = "no-ssl-authenticate-all" ]; then
    CONFIG_SUFFIX="unsecure-all"
 fi
 
