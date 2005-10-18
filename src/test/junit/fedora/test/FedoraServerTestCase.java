@@ -191,7 +191,9 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     private static void copyFiles(File fromDir, File toDir) throws Exception {
         File[] files = fromDir.listFiles();
         for (int i = 0; i < files.length; i++) {
-            FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
+            if (!files[i].isDirectory() && files[i].canRead()) {
+                FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
+            }
         }
     }
 
