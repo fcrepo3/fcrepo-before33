@@ -135,35 +135,39 @@ public class Uploader {
             // for GET requests so FedoraClient.get(m_updateURL, true, true) will return IOException
             // because of the 400 error.
             HttpClient client = fc.getHttpClient();
+            String redirectURL = m_uploadURL;
+            
+            // Only look for redirect if protocol is http.
+            if (m_uploadURL.startsWith("http:")) {
         		GetMethod getMethod = new GetMethod(m_uploadURL);
         		getMethod.setDoAuthentication(true);
         		getMethod.setFollowRedirects(true);
         		HttpInputStream his = new HttpInputStream(client, getMethod, m_uploadURL);
         		int status = his.getStatusCode();
-        		String redirectURL = m_uploadURL;
       			if (status != 200) {
-      					if (300 <= status && status <= 399) {
-      						// Handle the redirect here !
-      						logger.debug("Uploader is handling redirect for HTTP STATUS=" + status);      					    
-      						Header hLoc = his.getResponseHeader("location");
-      						if (hLoc != null) {
-      							redirectURL = hLoc.getValue();
-      							logger.debug("Uploader is trying redirect location: " + hLoc.getValue());      							
-      						} else {
-      							try { 
-      								throw new IOException("Request failed [" + status + " " + his.getStatusText() + "]");
-      							} finally {
-      								try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-      							}
-      						}
-      					} else {
-      						try { 
-      							throw new IOException("Request failed [" + his.getStatusCode() + " " + his.getStatusText() + "]");
-      						} finally {
-      							try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-      						}
-      					}
-      				}        		
+					if (300 <= status && status <= 399) {
+						// Handle the redirect here !
+						logger.debug("Uploader is handling redirect for HTTP STATUS=" + status);      					    
+						Header hLoc = his.getResponseHeader("location");
+						if (hLoc != null) {
+							redirectURL = hLoc.getValue();
+							logger.debug("Uploader is trying redirect location: " + hLoc.getValue());      							
+						} else {
+							try { 
+								throw new IOException("Request failed [" + status + " " + his.getStatusText() + "]");
+							} finally {
+								try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+							}
+						}
+					} else {
+						try { 
+							throw new IOException("Request failed [" + his.getStatusCode() + " " + his.getStatusText() + "]");
+						} finally {
+							try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
+						}
+					}
+				}        		
+            }
             client=fc.getHttpClient();
             post=new MultipartPostMethod(redirectURL);
             post.setDoAuthentication(true);
