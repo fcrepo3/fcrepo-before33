@@ -35,9 +35,9 @@
 
             <li><a href="#CONFIG-CUSTOM">Customized Security Configurations</a><li>
 			<a href="#AUTHN">Authentication and User Attributes</a><ul>
-					<li><a href="#AUTHN-MEMORYREALM">4.1 Option A - Default Single 
+					<li><a href="#AUTHN-MEMORYREALM">4.1 Option A - Single 
 					Authentication Source&nbsp; (Memory Realm with Tomcat Users File)</a></li>
-					<li><a href="#AUTHN-JAAS-MODIFIED">4.2 Option B - Configuring 
+					<li><a href="#AUTHN-JAAS-MODIFIED">4.2 (Default) Option B - Configuring 
 					Multiple Login Modules (Multiplexing via Fedora's JAAS)</a></li>
 					<li><a href="#AUTHN-JAAS-UNMODIFIED">4.3 Option C - Configuring 
 					Multiple Login Modules (Multiplexing via Tomcat's JAAS)</a></li>
@@ -247,11 +247,12 @@
 
 	<p>The Fedora server is built on top of Apache's Tomcat and authentication information is channeled through the normal Tomcat mechanisms. 
 	Fedora currently provides two authentication sources: (1) Simple user/password file, and (2) LDAP.
-	These two authentication sources are specified as one of three options described below.</p>
+	These two authentication sources are specified as one of three options described below.  (These are best described
+	by placing the default, medium complexity, as option B.)</p>
 	<ol>
 	  <li><p>tomcat-users.xml - simple user/password file</p>
 
-		<p>This file is part of the Tomcat configuration files and is auto-generated from the tomcat-user_fedoraTemplate.xml file. It contains username and password information about "authenticated" users. Roles can also be assigned to user entries.  These can then be used as attributes in related XACML policies, or in customized web.xml files. Refer to the next section entitled "Option A - Default Single Authentication Source" for details concerning the contents of the Tomcat users file.
+		<p>This file is part of the Tomcat configuration files and is auto-generated from the tomcat-user_fedoraTemplate.xml file. It contains username and password information about "authenticated" users. Roles can also be assigned to user entries.  These can then be used as attributes in related XACML policies, or in customized web.xml files. Refer to the next section entitled "Option A - Single Authentication Source" for details concerning the contents of the Tomcat users file.
 		This file is a single source of simple authentication when used in option A.  It is one of potentially many when used in options B or C.</p></li>
 
 	  <li><p>LDAP</p>
@@ -272,7 +273,7 @@
 	For more details on the Fedora security architecture, refer to the document entitled "Fedora Security Architecture - Authentication".</p>
 	</div>
     <div class="sect">
-	<h3><a name="AUTHN-MEMORYREALM"></a>4.1&nbsp; Option A - Default Single Authentication 
+	<h3><a name="AUTHN-MEMORYREALM"></a>4.1&nbsp; Option A - Single Authentication 
 	Source&nbsp; (Tomcat Memory Realm with Tomcat Users File)</h3>
 
 <p>Fedora is configured out-of-the-box with the Tomcat Memory Realm enabled.&nbsp;&nbsp;
@@ -389,7 +390,7 @@ how to customize authentication for your needs.
 
 	<div class="sect">
 	  <h2>&nbsp;</h2>
-		<h3><a name="AUTHN-JAAS-MODIFIED"></a>4.2 Option B - Configuring Multiple Login 
+		<h3><a name="AUTHN-JAAS-MODIFIED"></a>4.2 (Default) Option B - Configuring Multiple Login 
 		Modules (Multiplexing via Fedora's JAAS)</h3>
 <p>Tomcat comes with realms other than the Memory Realm.  In general, each realm supports a single source for authentication.  
 One of these other realms, however, is different:  the JAAS Realm.  As a realm, it supplies Tomcat with an apparent single authentication source.
