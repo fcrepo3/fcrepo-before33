@@ -1,0 +1,1469 @@
+<html>
+
+<head>
+	<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+	<meta name=Generator content="Microsoft Word 10 (filtered)">
+	<title>Sample Policy Guide: A Reference Collection XACML Policies for Fedora</title>
+	<link rel="stylesheet" type="text/css" href="../../docstyle.css">
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div id="header">
+    <a href="../index.html" id="logo"></a>
+    <div id="title">
+		<h1>Fedora XACML Policy Writing Guide</h1>
+		<h2>With Reference Collection of Sample Policies for Fedora</h2>
+    </div>
+    <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
+</div>
+
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+        <ol>
+            <li><a href="#INTRO">Introduction</a>
+			<li><a href="#POLICY">Writing Fedora XACML Policies</a><ul>
+				<li><a href="#POLICY-VOCAB">2.1 The Fedora Policy Vocabulary</a></li>
+				<li><a href="#POLICY-BASICS">2.2 Policy Basics:&nbsp; Identifier, Description, and Rule Combining Algorithm</a></li>
+				<li><a href="#POLICY-TARGET">2.3 Defining the Policy Target</a></li>
+				<li><a href="#POLICY-RULE">2.4 Defining Policy Rules</a></li>
+				<li><a href="#POLICY-FUNCTIONS">2.5 XACML Functions</a></li>
+				<li><a href="#POLICY-OPT-ATTRS">2.6 Required vs. Optional 
+					Attributes in a Policy</a></li>
+				<li><a href="#POLICY-BEST">2.7 Recommended Best Practices for Authoring Fedora XACML Policies</a></li>
+				<li><a href="#POLICY-GOTCHA">2.8 XACML Gotchas</a></li>
+			</ul>
+			<li><a href="#DEFAULT-REPOWIDE">Default Repository Policies</a><li>
+			<a href="#CUSTOM-REPO-WIDE">Custom Policies - Sample Repository-Wide 
+			Policies</a></li>
+			<li><a href="#CUSTOM-OBJ-SPECIFIC">Custom Policies - Sample 
+			Object-Specific Policies</a></li>
+       </ol>
+    </div>
+</div>
+
+<div class=Section1>
+
+<h2><a name="INTRO"></a>1 Introduction</h2>
+
+<p>XACML provides a very flexible language for expressing access control 
+policies.&nbsp;&nbsp; This document offers guidance on writing a range of useful 
+policies for Fedora such as 1) broad repository-wide policies for controlling 
+access to Fedora API operations,&nbsp; 2) more detailed repository-wide policies 
+for controlling access to groups of digital objects based on various attributes, 
+and 3) more fine-grained object-specific policies for controlling access 
+individual digital objects.&nbsp;&nbsp;&nbsp; <i><b>It should be noted that to 
+help users who do not wish to learn native XACML, a Policy Authoring Client is 
+currently under development that will provide an easy graphical user interface 
+for creating XACML policies for Fedora.</b></i></p>
+
+<p>This guide also provides a&nbsp; collection of sample XACML policies is intended as reference material to 
+help in writing custom XACML policies for Fedora.&nbsp; The sample policies 
+demonstrate one possible authoring style for XACML, in recognition that there 
+are other ways to write XACML policies that have the same effect.&nbsp;&nbsp;&nbsp; Most of the sample repository-wide policies are authored to have a <i><b>
+single effect,</b></i> meaning that each policy has a single rule that either 
+permits or denies access.&nbsp;&nbsp; This style of policy writing results in 
+many individual policies, but each policy is atomic and uncomplicated.&nbsp; An 
+alternative is to have fewer policies, each with multiple rules within.&nbsp;&nbsp; 
+This multi-rule approach can result in more complicated policies, but is, 
+nevertheless, appropriate for writing <b><i>object-specific</i></b> <i><b>
+policies</b></i> in Fedora where a single policy states all the rules for a 
+particular digital object.&nbsp;&nbsp;&nbsp; In either case, it is essential to 
+understand the policy combining algorithm that is configured for your 
+repository's XACML-based Authorization module.&nbsp; By default, the &quot;Deny 
+Overrides&quot; algorithm is configured in Fedora, which means that when multiple 
+policies are applicable to an incoming request, deny will trump permit.&nbsp;&nbsp; 
+As you add new policies to the mix, you must be aware of what kinds of policies 
+are already active in the repository.&nbsp;&nbsp;&nbsp; Also, when writing a 
+policy that contains more than one rule, you must understand the the rule 
+combining algorithm (which is specified in the root element of an individual 
+XACML policy).&nbsp; The sample policies use the &quot;first-applicable&quot; rule 
+combining algorithm, which means that the first applicable rule in the policy 
+will prevail. </p>
+<p>This document is not intended to be a comprehensive tutorial on writing XACML 
+policies.&nbsp;&nbsp; Anyone intending to author custom XACML policies for 
+Fedora is encouraged to read the following documentation provided by OASIS 
+Technical Committee that defined the XACML standard, and Sun who is the provider 
+of the open source Sun XACML engine that is used in the Fedora implementation.&nbsp;&nbsp;&nbsp; 
+It is very important to understanding the basics of XACML to ensure that a suite 
+of policies works as intended.&nbsp;&nbsp; One of the most important concepts in 
+using XACML is understanding how multiple policies can interact with each other 
+(in good ways, or in ways you didn't intend).&nbsp;&nbsp; By following the 
+examples in this guide, you should be able to set up many kinds of access 
+control policies for your repository.&nbsp;&nbsp; With additional help from the 
+following documents, you should be able to do more advanced policies, and change 
+some of the XACML settings for how sets of policies are combined.</p>
+<p>&nbsp;</p>
+<p><b>More information on writing XACML policies:</b></p>
+<p><br>
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+OASIS XACML Specification</a>:&nbsp;
+this is the official specification and a good reference document. <br>
+<br>
+<a href="http://www.oasis-open.org/committees/download.php/2713/Brief_Introduction_to_XACML.html">
+A Brief Introduction to XACML</a>:&nbsp; this is nice introduction to the XACML 
+concepts<br>
+<br>
+<a href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=xacml">OASIS 
+XACML 
+Technical Committee</a>:&nbsp;&nbsp; this home page of the technical committee 
+provides access to other documents on XACML</p>
+<p>&nbsp;</p>
+<p><b>More information on the Fedora security architecture:</b></p>
+<p><a href="securingrepo.html">Securing Your Repository</a> 
+: 
+documentation on security options and configuring configuring user 
+authentication sources for Fedora repositories</p>
+<p><a href="AuthorizationXACML.htm">Fedora Authorization with XACML Policy 
+Enforcement</a> : 
+documentation on configuration and implementation of the Fedora XACML-based 
+policy enforcement module</p>
+<p><a href="AuthorizationXACML.htm#ATTR">Binding to user attributes to 
+policies</a> : a discussion of how to use attributes from different sources 
+(e.g., Tomcat, LDAP, Shibboleth) in policies</p>
+
+<p>&nbsp;</p>
+<p><i>&nbsp;</i></p>
+
+<div class=Section1>
+
+<h2><a name="POLICY">2&nbsp; Writing Fedora XACML Policies</a></h2>
+
+<p>&nbsp;</p>
+<h3><b><a name="POLICY-VOCAB">2.1 The Fedora Policy Vocabulary</a></b></h3>
+
+<p>&nbsp;</p>
+
+<p>A <a href="xacml-policies/vocabulary.txt">Fedora-specific policy vocabulary</a> 
+is defined to enable the creation of XACML policies for Fedora repositories and 
+digital objects.&nbsp;&nbsp; This vocabulary define a set of URNs that can be 
+used to identify specific Fedora API operations, Fedora object attributes, and 
+the Fedora environment within an XACML policy.&nbsp;&nbsp; These URNs are used 
+as attribute designators in XACML policies, specifically within a SubjectAttributeDesignator, 
+ResourceAttributeDesignator, and ActionAttributeDesignator.&nbsp;&nbsp;&nbsp;&nbsp; </p>
+<p>&nbsp;</p>
+<p>The set of identifiers defined for the Fedora policy vocabulary is 
+automatically generated and can be found in the Fedora software distribution at:</p>
+
+<p>
+        &nbsp;Under Windows:</p>
+      <div class="code">
+<pre>    %FEDORA_HOME%\server\config\xacml-policies\vocabulary.txt</pre>
+</div>
+      <p style='text-autospace:none'>&nbsp;</p>
+
+<p>
+        &nbsp;Under Unix:</p>
+      <div class="code">
+<pre>    $FEDORA_HOME\server\config\xacml-policies\vocabulary.txt</pre>
+</div>
+	<p>&nbsp;</p>
+	<p>This vocabulary provides a set of identifiers (URNs) that can appear in XACML
+policies to refer to Fedora API operations (Actions in XACML), any aspects of a
+Fedora digital object (Resources in XACML), and key attributes of the
+environment in which Fedora runs in (Environment in XACML). </p>
+<p><span style='font-size:10.0pt;
+font-family:"Courier New"'>&nbsp;</span></p>
+
+<h3><b><a name="POLICY-BASICS">2.2 Policy Basics:&nbsp; Identifier, Description, and Rule Combining
+Algorithm</a></b></h3>
+
+<p><b>&nbsp;</b></p>
+
+<p>Every policy has an identifier, a rule combining algorithm,
+and a description.  In the root element of an XACML policy there is an attribute 
+to provide the policy with a unique identifier.&nbsp;&nbsp; Also, the 
+&lt;Description&gt; element provides a place to put a textual description of the 
+purpose of the policy.</p>
+<p>&nbsp;</p>
+
+      <div class="code">
+<pre>&lt;Policy <b>PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+</b>        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    <b>&lt;Description&gt;This policy will DENY access to THESIS datastreams.&lt;/Description&gt;
+    </b>&lt;Target&gt;
+        ...
+    &lt;/Target&gt;
+    &lt;Rule&gt;
+        ...
+    &lt;/Rule&gt;
+&lt;/Policy&gt;</pre>
+</div>
+
+<p>&nbsp;</p>
+
+<p>The main body of a policy consists of a <b>Policy Target</b>
+and one or more <b>Rules</b> which are described in the next sections.  Note
+that in the root element of a policy, the rule combining algorithm (i.e.,
+attribute “RuleCombiningAlgID”), specifies how the Fedora Policy Enforcement
+Module will deal with multiple Rules in a policy (how those rules are combined
+and evaluated together).  <b><i>&lt;Bill: check on how this related to policy
+combining algorithm at the authorization module level.&gt;</i></b></p>
+
+<p>&nbsp;</p>
+
+<h3><a name="POLICY-TARGET">2.3 Defining the Policy Target</a></h3>
+
+<p>&nbsp;</p>
+
+<p style='text-autospace:none'>A Policy Target is the part of a
+policy that specifies matching criteria for figuring out whether a particular
+policy is applicable to an incoming service request.   A Target contains three
+basic matching components: <b>Subjects</b>, <b>Actions</b>, and <b>Resources</b>, 
+and <b>Environments</b>.&nbsp; All of these components must be matched to the context of an incoming
+request for the policy to be applicable. &nbsp; These matching specifications 
+can be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. </p>
+<p>&nbsp;</p>
+
+      <div class="code">
+<pre>&lt;Policy PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    &lt;Description&gt;This policy will DENY access to THESIS datastreams.&lt;/Description&gt;
+<b>    &lt;Target&gt;
+        &lt;Subjects&gt;
+            </b>...
+<b>        &lt;/Subjects&gt;</b></pre>
+<pre><b>        &lt;Resources&gt;
+            </b>...
+<b>        &lt;/Resources&gt;</b></pre>
+<pre><b>        &lt;Actions&gt;
+            </b>...
+<b>        &lt;/Actions&gt;
+    &lt;/Target&gt;
+    </b>&lt;Rule/&gt;
+&lt;/Policy&gt;</pre>
+</div>
+
+<p>&nbsp;</p>
+
+<p>A Policy Target can be specified for a Policy or PolicySet. 
+ A &lt;Target&gt; element is defined at the Policy level (as a child of the
+root &lt;Policy&gt; element).  A Policy Target applies to any contained Rules
+that are expressed in that policy.  However, a Rule may have its own Target, in
+which case the Rule-level Target overrides - for that Rule only – the Policy
+level Target.  Typically, a Target defined at the Rule level is used to tighten
+or refine a broader match specification at the overall Policy level (described
+below).</p>
+
+<p>&nbsp;</p>
+
+<p><b><span style='font-size:10.0pt;font-family:"Courier New";
+background:white'>&lt;Subjects&gt;</span></b></p>
+
+<p><b><span style='font-size:10.0pt;font-family:"Courier New";
+background:white'>&nbsp;</span></b></p>
+
+<p style='text-autospace:none'><i>The Fedora policy vocabulary
+(see: dist/server/config/xacml-policies/vocabulary.txt) defines general-purpose
+attributes for use in policies (e.g., login-id).  However, attributes for
+subjects will vary depending on what a repository uses as the source of user information
+(e.g., tomcat-users.xml, LDAP, Shibboleth).   Fedora XACML policies can make
+reference to the identifiers of any subject attribute that can be passed into
+Fedora from authenticating sources.  See the section below on “Getting User
+Attributes into the Fedora Policy Enforcement Module” for more information on
+the sources of subject attributes.</i></p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>The &lt;Subjects&gt; element of
+a Policy Target is used to wrap one or more descriptions of users or agents
+that this policy should apply to.  At runtime, the Fedora Policy Enforcement
+Module will compare attributes of the user/agent making a service request
+against the criteria specific in the &lt;Subjects&gt; specification of the
+policy Target to determine if the policy is applicable to the incoming request.
+  For example, to define a policy that is applicable to any kind user or agent,
+the following is specified:</p>
+
+<p>
+        &nbsp;</p>
+      <div class="code">
+<pre>    &lt;Subjects&gt;
+        &lt;AnySubject/&gt;
+    &lt;/Subjects&gt;</pre>
+</div>
+      <p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>Within a single &lt;Subject&gt; specification,
+there may be one or more attributes that together determine whether a policy match
+should occur.  Each &lt;SubjectMatch&gt; element is used to specify an name/value
+of an attribute of a user/agent.<b> </b> Multiple <b>&lt;SubjectMatch&gt; </b>elements
+are used to specify multiple attributes of a subject, and are <b>logically AND-ed
+together</b>.  This means that for a policy to be applicable to an incoming
+service request, <b><i>all</i></b> &lt;SubjectMatch&gt; specifications must
+match the attributes of the requesting user/agent.  In the example below, there
+is only one attribute to match on (i.e., “fedoraRole”).  The AttributeID in the
+&lt;SubjectAttributeDesignator&gt; element is used to identify a particular
+subject attribute by its local or global identifier.  The snippet says that a policy
+match will occur if the incoming request context indicates that the user/agent
+has a role attribute with the value of “administrator.”</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
+for subject matching, multiple &lt;Subject&gt; elements must be specified.   If
+there are multiple <b>&lt;Subject&gt;</b> elements within the &lt;Subjects&gt;
+wrapper component, the &lt;Subject&gt; elements are <b>logically OR-ed together</b>. 
+This means that a match on only one of the Subject specifications is necessary
+for the policy to apply to a service request.  For example, the snippet below
+says that a subject match will occur if the requesting user has the role of
+either “administrator” or “superuser.”</p>
+
+<p>&nbsp;</p>
+      <div class="code">
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;</pre>
+<pre>    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>superuser</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'><b>
+<span style='font-size:10.0pt;
+font-family:"Courier New";background:white'>&lt;Resources&gt;</span></b></p>
+
+<p style='text-autospace:none'><span style='font-size:10.0pt;
+font-family:"Courier New"'>&nbsp;</span></p>
+
+<p style='text-autospace:none'><i>All Fedora resources
+(objects, datastreams, disseminations) have attribute identifiers defined in
+the Fedora policy vocabulary (see: dist/server/config/xacml-policies/vocabulary.txt). 
+</i></p>
+
+<p style='text-autospace:none'><span style='font-size:10.0pt;
+font-family:"Courier New"'>&nbsp;</span></p>
+
+<p style='text-autospace:none'>The &lt;Resources&gt; element of
+a Policy Target is used to wrap one or more descriptions of the kinds of Fedora
+resources (objects, datastreams, disseminations, etc.) that the policy should
+apply to.  At runtime, the Policy Enforcement Module will compare attributes of
+a requested resource against the criteria in the &lt;Resources&gt; specification
+within the policy Target to determine if the policy is applicable to the
+incoming request. For example, to define a policy that is applicable to any Fedora
+resource, the following is specified:</p>
+
+<p style='text-autospace:none'><span style='font-size:9.0pt;
+font-family:"Courier New";background:white'>&nbsp;</span></p>
+
+      <div class="code">
+<pre>  &lt;Resources&gt;
+    &lt;AnyResource/&gt;
+  &lt;/Resources&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>Within a single &lt;Resource&gt;
+specification, there may be one or more attributes that together determine
+whether a policy match should occur.  Each &lt;ResourceMatch&gt; element is
+used to specify the name/value of an attribute of a Fedora resource<b>.  </b> Multiple
+<b>&lt;ResourceMatch&gt; </b>elements are used to specify multiple attributes
+of a resource, and are <b>logically AND-ed together</b>.  This
+means that for a policy to be applicable to an incoming service request, <b><i>all</i></b>
+&lt;ResourceMatch&gt; specifications must match the attributes of the requested
+Fedora resource.  The AttributeID in the &lt;ResourceAttributeDesignator&gt;
+element is used to identify a particular resource attribute by a URN, as
+defined in the Fedora policy vocabulary.  In the example below, there are two attributes
+to match on: “urn:…datastream:id” and “urn:…mimeType”.  The snippet says that a
+policy match will occur if the incoming request context indicates that the
+requested resource has the datastream id of THESIS and the MIME type of
+“application/pdf.”</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+      <div class="code">
+<pre>  &lt;Resources&gt;
+    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>datastream:id</b>&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>THESIS</b>&lt;/AttributeValue&gt;
+      &lt;/ResourceMatch&gt;</pre>
+<pre>      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot; urn:fedora:names:fedora:2.1:resource:datastream:<b>mimeType</b>&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>application/pdf</b>&lt;/AttributeValue&gt;
+      &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;
+  &lt;/Resources&gt;</pre>
+
+      </div>
+      <p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
+for resource matching, multiple &lt;Resource&gt; elements must be specified.  
+If there are multiple <b>&lt;Resource&gt;</b> elements within the
+&lt;Resources&gt; wrapper component, the &lt;Resource&gt; elements are <b>logically
+OR-ed together</b>.  This means that a match on only one of the Resource
+specifications is necessary for the policy to apply to a service request.  For
+example, the snippet below says that a resource match will occur if the
+incoming request is for a digial object that has the content model type of either
+“UVA_STD_IMAGE” or “MRSID.”</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>  &lt;Resources&gt;
+    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>UVA_STD_IMAGE</b>&lt;/AttributeValue&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;</pre>
+<pre>    &lt;Resource&gt;
+      &lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>MRSID</b>&lt;/AttributeValue&gt;
+        &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:<b>object:contentModel</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/ResourceMatch&gt;
+    &lt;/Resource&gt;
+  &lt;/Resources&gt;</pre>
+
+      </div>
+      <p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'><b>
+<span style='font-size:10.0pt;
+font-family:"Courier New";background:white'>&lt;Actions&gt;</span></b></p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'><i>All Fedora service operations
+have an action identifier in defined by the Fedora policy vocabulary (see:
+dist/server/config/xacml-policies/vocabulary.txt).  </i></p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>The &lt;Actions&gt; element of a
+Policy Target is used to wrap one or more service operations that this policy
+should apply to.  At runtime, the Policy Enforcement Module will compare the
+identity of an incoming request against the criteria specific in the &lt;Actions&gt;
+of a Target in a policy.  For example, to define a policy that is applicable to
+<b><i>any</i></b> Fedora service operation, the following is specified:</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>&lt;Actions&gt;
+  &lt;AnyAction/&gt;
+&lt;/Actions&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>From a practical standpoint in
+Fedora, there is are only two attributes that pertain to identifying Fedora
+API operations:  1) an attribute that indicates what Fedora API is in context,
+and 2) an attribute that indicates the specific service operation within that API.  &nbsp; 
+To create a policy that is intended for an <i>entire</i> service&nbsp; (e.g., 
+ALL operations of API-A) do the following:</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;
+        &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>To create a policy that is about a specific 
+operation in a Fedora API do the following:</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>The above can be considered a shortcut for fully 
+qualifying an service operation within its respective service API.&nbsp;&nbsp; 
+An alternative way to specify an Action as a Fedora API operation is to refer to 
+the Fedora service API <b>AND</b> the service operation.&nbsp;&nbsp;&nbsp; As with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple
+<b>&lt;ActionMatch&gt; </b>elements are <b>logically AND-ed
+together</b>. &nbsp;&nbsp;&nbsp; For example the following snippet says that the 
+policy will match if the incoming request pertains to the Fedora API-A service 
+AND the service request is for the the “getDatastreamDissemination” operation.</p>
+
+<p>&nbsp;</p>
+<div class="code">
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>api-a</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:api</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;</pre>
+<pre>    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot; 
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
+
+      </div>
+      <p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
+for resource matching, multiple &lt;Action&gt; elements must be specified.   If
+there are multiple <b>&lt;Action&gt;</b> elements within the &lt;Actions&gt;
+wrapper component, the &lt;Action&gt; elements are <b>logically OR-ed together</b>. 
+This means that a match on only one of the Action specifications is necessary
+for the policy to apply to a service request.  For example, the snippet below
+says that a resource match will occur if the incoming request is <b><i>either</i></b>
+the getDatastreamDissemination operation of API-A or the getDissemination
+operation of API-A.&nbsp;&nbsp; </p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'><i>Note:&nbsp; The &quot;shortcut&quot; method of referring 
+to a Fedora API operation is used in the example (i.e., we have an ActionMatch 
+for the specific Fedora API of &quot;api-a&quot;) because Fedora actions identifiers are 
+unique in themselves.&nbsp; Fedora automatically knows that the 
+getDatastreamDissemination operation is part of API-A. </i>&nbsp;</p>
+<p style='text-autospace:none'>&nbsp;</p>
+
+<div class="code">
+<pre>&lt;Actions&gt;
+  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDatastreamDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot; 
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;</pre>
+<pre>  &lt;Action&gt;
+    &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:action:<b>id-getDissemination</b>&lt;/AttributeValue&gt;
+      &lt;ActionAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;
+            DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/ActionMatch&gt;
+  &lt;/Action&gt;
+&lt;/Actions&gt;</pre>
+
+      </div>
+      <p><b>&nbsp;</b></p>
+<p><b>
+<span style='font-size:10.0pt;
+font-family:"Courier New";background:white'>&lt;Environments&gt;</span></b></p>
+<p>The 
+Environments component of a Target is intended to specify aspects of the runtime 
+environment that would make the policy match the incoming request.&nbsp;&nbsp;&nbsp; 
+Such attributes include the current date, current time, the IP address of the 
+client, and the protocol being used for the request.&nbsp;&nbsp; The <b>Environments</b> 
+element is discussed in the OASIS XACML specification, but it is <i><b>not yet
+implemented by the Sun XACML engine</b></i> that underlies the Fedora Authorization 
+module.&nbsp; This prevents the expression of environment matching criteria 
+within Targets.&nbsp; </p>
+<blockquote>
+	<p><i><b>**&nbsp; </b>Therefore, in Fedora 2.1 do not create policies that 
+	specify Environment matching criteria in the policy Target.</i>&nbsp; </p>
+</blockquote>
+<p>Although the Environments element is not currently supported for use within a 
+Target, this does not mean that you cannot 
+encode matching criteria for environmental attributes within a policy.&nbsp;&nbsp; Within a policy 
+Rule, you can specify a Condition that contains matching criteria for 
+environmental attributes.&nbsp; Refer to the discussion of policy rules below 
+for an example of Environment attribute matching in a Condition.</p>
+
+<h4>&nbsp;</h4>
+<h3><b><a name="POLICY-RULE">2.4 Defining Policy Rules</a></b></h3>
+
+<p><b>&nbsp;</b></p>
+
+<p>There must be at least one Rule in a policy that matches
+the incoming request for a policy to be deemed applicable to that request.&nbsp;&nbsp;&nbsp; 
+The way the PDP determines whether a rule is applicable to an incoming request 
+is by evaluating the rule Target and rule Condition (if they exist).&nbsp;&nbsp; 
+If there is no rule Target and no rule Condition, the applicability of the rule 
+is governed by the policy Target.&nbsp; </p>
+<p>&nbsp;</p>
+
+      <div class="code">
+<pre>&lt;Policy PolicyId=&quot;deny-apia&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+        xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;</pre>
+<pre>    &lt;Description&gt;This policy will DENY access to Dublin Core datastreams.&lt;/Description&gt;</pre>
+<pre>    &lt;Target&gt;
+        ...
+    &lt;/Target&gt;</pre>
+<pre><b>    &lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;
+        &lt;Target&gt;
+           </b>...<b>
+        &lt;/Target&gt;</b></pre>
+<pre><b>        &lt;Condition&gt;
+           ...
+        &lt;/Condition&gt;
+    &lt;/Rule&gt;</b></pre>
+<pre>&lt;/Policy&gt;</pre>
+<p>&nbsp;</div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>
+<span style="background-color: #FFFFFF; background-position: 0% 0%">
+<font size="2"><b><span style="font-family: Courier New">&lt;Rule&gt;</span></b></font></span></p>
+<p style='text-autospace:none'>A policy can contain one or more Rules.&nbsp; 
+Each rule has a <b>RuleId</b> and and <b>Effect</b>.&nbsp;&nbsp; An Effect is 
+the intended consequence of a satisfied rule, which can be either &quot;Deny&quot; or 
+&quot;Permit.&quot;&nbsp;&nbsp;&nbsp;&nbsp; This means that if the rule is deemed 
+applicable to an incoming service request, and the rule's conditions evaluate to 
+TRUE,&nbsp; then the specified effect should be enforced.</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>
+<span style="background-color: #FFFFFF; background-position: 0% 0%">
+<font size="2"><b><span style="font-family: Courier New">&lt;Target&gt;</span></b></font></span></p>
+<p style='text-autospace:none'>
+Each Rule in a policy can have its own Rule Target.&nbsp; While a Policy Target 
+describes the kinds of requests to which an entire policy applies, a Rule Target 
+describes the kinds of request to which a particular rule applies.&nbsp;&nbsp;&nbsp; 
+If a Rule Target is not present, the Policy Target is used to determine whether 
+the Rule is applicable to an incoming request.&nbsp; When a policy target 
+exists, it is applicable to every rule in the policy; however, a rule target can 
+be consider a constraint on the policy target, fine tuning to specific 
+Subject/Resource/Action match criteria that are in the context of a the 
+particular rule.&nbsp; </p>
+<p style='text-autospace:none'>
+Refer to the documentation above for the <a href="#POLICY-TARGET">Defining a 
+Policy Target </a>for the structure of a Target, since rule and policy Targets 
+are defined using the same elements.&nbsp;&nbsp;&nbsp; </p>
+<p style='text-autospace:none'>
+&nbsp;</p>
+<p style='text-autospace:none'><b>
+<span style='font-size:10.0pt;
+font-family:"Courier New";background:white'>&lt;Condition&gt;</span></b></p>
+
+<p style='text-autospace:none'>A Condition is a predicate that must be satisfied 
+for a rule to be assigned its effect.&nbsp; <b>&nbsp; </b>These predicates can 
+be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. </p>
+<p style='text-autospace:none'>While Targets are appealing, frame-like expressions, they
+have a constrained logic which isn't always expressive enough to narrow down
+whether a policy is applicable to a service request.  Hence, the need for
+Condition elements.  &nbsp; If either the policy Target or the rule Target is not able 
+to adequately express a constraint, a Condition can be added to a Rule. <b><i>&nbsp; A Condition can appear only within a Rule.</i></b> 
+It cannot appear within a Target, nor directly under Policy or PolicySet.&nbsp;&nbsp;&nbsp; If 
+a Condition is intended to be applicable to the entire Policy,
+the Condition must be repeated in every Rule in that Policy.&nbsp;&nbsp; </p>
+<p style='text-autospace:none'>&nbsp;</p>
+<h3><b><a name="POLICY-FUNCTIONS">2.5&nbsp; XACML Functions</a></b></h3>
+
+<p style='text-autospace:none'>The XACML specification defines numerous 
+functions that can be used in defining attribute match criteria in Targets and 
+in defining predicates for Conditions.&nbsp; Consult the
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+XACML Specification</a> for a complete list of functions with their 
+descriptions.&nbsp;&nbsp; For convenience, here is a small sampling of 
+convenient&nbsp; functions with their XACML identifiers:</p>
+<p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'><b>Equality predicates </b>&nbsp;&nbsp; </p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>String Equality </b>-&nbsp; 
+	urn:oasis:names:tc:xacml:1.0:function:string-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Boolean Equality </b>- 
+	urn:oasis:names:tc:xacml:1.0:function:boolean-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Date/Time Equality</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:dateTime-equal</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Logical functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>OR</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:or</p></li>
+	<li>
+	<p style='text-autospace:none'><b>AND</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:and</p></li>
+	<li>
+	<p style='text-autospace:none'><b>NOT</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:not</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Comparison functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>Greater Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:integer-greater-than</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Less Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:type-bag</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Greater Than or Equal</b> -&nbsp; 
+	urn:oasis:names:tc:xacml:1.0:function:integer-greater-than-or-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Less Than or Equal</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:integer-less-than-or-equal</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Date/Time Greater Than</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:dateTime-greater-than</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'><b>Bag and Set functions</b></p>
+<ul>
+	<li>
+	<p style='text-autospace:none'><b>Bag of Strings</b> - 
+	urn:oasis:names:tc:xacml:1.0:function:string-bag</p></li>
+	<li>
+	<p style='text-autospace:none'><b>Member of Set </b>- 
+	urn:oasis:names:tc:xacml:1.0:function:type-at-least-one-member-of</p></li>
+	<li>
+	<p style='text-autospace:none'>others</p></li>
+</ul>
+<p style='text-autospace:none'>Below is an example Condition that uses several 
+of these functions.&nbsp; This Condition evaluates to TRUE if the client IP address 
+(from the environment of the incoming request) is NOT a member of a 
+set of privileged IP addresses.&nbsp;&nbsp; The Condition element itself 
+contains an outer-most function which is a <i><b>negation</b></i> <i><b>function</b></i>.&nbsp;&nbsp; 
+Within the condition, we see the application of the <i><b>set membership function</b></i>, 
+which specifies that the environment attribute &quot;clientIpAddress&quot; 
+(from the Fedora vocabulary) should be evaluated.&nbsp; Finally, the inner most 
+<i><b>bag function</b></i> wraps a set of 
+possible values for the clientIPAddress attribute.&nbsp; Again, if the 
+clientIpAddress on the incoming request is not one of those in the bag of 
+addresses, then the rule's Deny effect should take place.</p>
+<p style='text-autospace:none'>&nbsp;</p>
+
+<div class="code">
+<pre>&lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;&gt;
+    &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;
+        &lt;EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress&quot;
+                                        DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+        &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;
+            &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;127.0.0.1&lt;/AttributeValue&gt;
+            &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;128.84.103.11&lt;/AttributeValue&gt;
+        &lt;/Apply&gt;
+    &lt;/Apply&gt;
+&lt;/Condition&gt;</pre>
+</div>
+      <p><b>&nbsp;</b></p>
+<p style='text-autospace:none'>In summary, each policy must have at least one 
+Rule.&nbsp; For a Rule to have an effect, (1) the Rule must match the incoming 
+request by virtue of a Target match (either via a policy Target, or a 
+constraining rule Target), and (2) if a Condition is specified,&nbsp; the condition 
+predicate evaluates to TRUE.&nbsp;&nbsp; An applicable rule will result in a 
+Permit or Deny for an incoming request, based on what is specified in the Rule 
+Effect.</p>
+<p style='text-autospace:none'>
+	&nbsp;</p>
+<h3><a name="POLICY-OPT-ATTRS">2<b>.6 Required vs. Optional Attributes in a Policy</b></a></h3>
+<p>There are times when an attribute that is referred to by a policy target will 
+not be available on an incoming service request.&nbsp; By default, when the 
+policy matching activity occurs -&nbsp; and an attribute specified in a policy 
+is not found in the incoming request context -&nbsp; an Indeterminate result is 
+returned and an authorization exception is thrown.&nbsp; Policy authors can avoid unwanted Indeterminate results by 
+indicating in the attribute designators of a Target that a particular attribute 
+can be considered optional in terms of whether it must existing in the incoming 
+request context.&nbsp;&nbsp; This is done by setting &quot;<span
+style='font-family:"Courier New"'>MustBePresent=false&quot;</span> on a 
+SubjectAttribututeDesignator, ResourceAttributeDesignator, or 
+ActionAttributeDesignator element.&nbsp;&nbsp;&nbsp; This will tell the Fedora 
+Policy Enforcement module that 
+it's ok if the incoming request does not have the specified attribute available 
+within it.&nbsp;&nbsp; </p>
+<p>Let's take an example to make this clearer.&nbsp;&nbsp; Consider a policy 
+where the SubjectMatch specification talks about an attribute &quot;fedoraRole&quot; and 
+specifies that the value of this attribute must be &quot;administrator&quot; in order for 
+this policy to be considered applicable by the PEP.&nbsp;&nbsp; Now consider an 
+incoming service request that has a user login id (e.g.,&nbsp; &quot;wdn5e&quot;) in the 
+request context, but this user does not have a &quot;fedoraRole&quot; attribute associated 
+with it.&nbsp; So,&nbsp; when the PEP tries to determine whether this policy is 
+applicable to the incoming service request, it returns INDETERMINATE because it 
+can't figure out whether there is a subject match without the presence of a &quot;fedoraRole&quot; 
+attribute.&nbsp;&nbsp; This will cause an authorization exception to be thrown 
+for the request because the PDP expects the &quot;fedoraRole&quot; attribute to be present 
+in the request context.&nbsp;&nbsp;&nbsp; However, we essentially want to 
+somehow indicate that the fedoraRole attribute is considered &quot;optional&quot; on an 
+incoming request&nbsp; (i.e., not every incoming request must have this 
+particular attribute in context).&nbsp;&nbsp; To do this, you must indicate in 
+the policy Target that the attribute does not have to be present (&quot;<span
+style='font-family:"Courier New"'>MustBePresent=&quot;false&quot;)</span> in the 
+incoming request as follows:&nbsp; </p>
+<p>&nbsp;</p>
+<div class="code">
+	<pre>&lt;Subjects&gt;
+  &lt;Subject&gt;
+    &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+      &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;administrator&lt;/AttributeValue&gt;
+      &lt;SubjectAttributeDesignator AttributeId=&quot;fedoraRole&quot; <b>MustBePresent=&quot;false&quot;</b> 
+                                  DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+    &lt;/SubjectMatch&gt;
+  &lt;/Subject&gt;
+&lt;/Subjects&gt;</pre>
+</div>
+
+	<h2>&nbsp;</h2>
+
+<h3><b><a name="POLICY-BEST">2.7 Recommended Best Practices for Authoring Fedora XACML Policies</a></b></h3>
+<p style='text-autospace:none'>&nbsp;</p>
+
+<ol style='margin-top:0in' start=1 type=1>
+ <li style='text-autospace:none'>Set the PolicyId attribute in
+     the XACML policy to match the filename of the policy.
+	<p style='text-autospace:none'>&nbsp;</p>
+	<p style='margin-left:.5in;text-autospace:none'>
+	<span
+	style='font-size:9.0pt;font-family:"Courier New";background:white'>&lt;Policy
+	PolicyId=&quot;deny-objects-to-students&quot; . . . &gt;&nbsp; </span>
+	<font face="Arial">
+	<span
+	style='font-size:9.0pt;background:white; font-style:italic; font-weight:700'>
+	corresponds to filename of 
+	&quot;/repository-policies/deny-objects-to-students.xml&quot;</span></font></p>
+
+	<p style='margin-left:.5in;text-autospace:none'><span
+	style='font-size:10.0pt;font-family:"Courier New";background:white'>&nbsp;</span></p>
+</li>
+
+
+
+ <li style='text-autospace:none'>For object-specific policies,
+     set the PolicyID in the XACML and the policy filename to match the object
+     PID, but with concession to demand of OS filenames (e.g., uses dash instead of colon).
+	<p style='text-autospace:none'>&nbsp;</p>
+	<p style='margin-left:.5in;text-autospace:none'>
+	<span style='font-size:9.0pt;font-family:"Courier New";background:white'>&lt;Policy
+	PolicyId=&quot;demo-5&quot; . . . &gt;&nbsp; </span><font face="Arial">
+	<span
+	style='font-size:9.0pt;background:white; font-style:italic; font-weight:700'>
+	corresponds to filename of &quot;/object-policies/demo-5.xml&quot;</span></font></p>
+
+	<p style='margin-left:.5in;text-autospace:none'><span
+	style='font-size:10.0pt;font-family:"Courier New";background:white'>&nbsp;</span></p>
+ </li>
+
+
+ <li style='text-autospace:none'>Policies should use simplest
+     rule-combining algorithm which gives desired outcome. Avoid a more
+     complicated algorithm which happens to work, but which confuses because it
+     implies more than what's there.  A simple choice is the “first-applicable”
+     rule combining algorithm which give precedence to the first rule in a
+     policy to apply to a situation.
+	<p style='text-autospace:none'>&nbsp;</p>
+	<p style='margin-left:.5in;text-autospace:none'>
+	<span
+	style='font-size:9.0pt;font-family:"Courier New";background:white'>&lt;Policy PolicyId=&quot;demo-5&quot;
+	RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;
+	. . . &gt;</span></p>
+
+	<p style='margin-left:.5in;text-autospace:none'><span
+	style='font-size:10.0pt;font-family:"Courier New";background:white'>&nbsp;</span></p>
+ </li>
+
+ <li style='text-autospace:none'>An object-specific policy should be coded so that 
+     it applies only to that specific object.
+	<p style='text-autospace:none'>&nbsp;</p>
+ </li>
+
+ <li style='text-autospace:none'>Try to stick with
+     “single-effect” policies, that is a policy should either permit or deny. 
+     Things can get confusing if a single policy has some rules that permit and
+     some that deny.   If most policies are single-effect, try to have them all
+     be single-effect.  You may wind up writing more individual policies, some
+     that deny and some that permit, but from a policy management standpoint,
+     it is probably easier to have atomic, unambiguous policies.
+	<p style='text-autospace:none'>&nbsp;</p>
+ </li>
+
+ </ol>
+
+<h3><b><a name="POLICY-GOTCHA">2.8 XACML Gotchas</a></b></h3>
+
+</div>
+<ol>
+	<li>XACML provides for an AttributeValue in a &lt;Target&gt; evaluation as a 
+	single value, but provides for an AttributeValue in a &lt;Condition&gt; evaluation 
+	as &quot;bags&quot; (sets), doing so even for either singleton or empty bags.&nbsp; 
+	Code policies accordingly.
+	<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+	</li>
+	
+
+		
+	<li>MatchId functions (which are used in Targets) are much
+restricted in allowed values, compared to the values allowed in the analogous
+FunctionIds (which are used in Conditions).  There are no existing functions
+which are self-contained boolean combinations, such as not-equal.  Since
+attributes are generally not boolean themselves (and so possibly negated), the
+not function can't be used as a MatchId, e.g., in a SubjectMatch element. 
+Since SubjectMatch, e.g., expresses a single binary operation, there is no
+possibility of introducing negative logic into a Target.  [An exception would
+be an explicit value returned by an attribute finder, which would signify the
+absence of the attribute.]
+<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+</li>
+
+
+	<li>Despite statements in Sun XACML documentation that
+&lt;Environments&gt; was added to &lt;Target&gt; generally, it doesn't seem to
+work currently in sunxacml.
+<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+</li>
+
+
+	<li>&nbsp;Another issue is that, with no short-circuiting in
+expressions and with no explicit way to test if an attribute is available,
+absence of an attribute causing an Indeterminate (error) result is a practical
+impediment to writing effective policies.  [Hence, Fedora's attribute finders
+(callbacks for the sunxacml engine to use) return a dummy value if the
+attribute is not available.]
+<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+</li>
+
+
+	<li>&nbsp;sunxacml has a relaxed parsing of policies; e.g., we have
+encountered schema violation (e.g., Action omitted between Actions and
+ActionMatch) which resulted only in the policy not being evaluated correctly,
+as opposed to failing parse.  How widespread this is, we don't know. As a
+precaution, policies should be tested for effect.  This is good practice,
+anyway, since testing is the only check of the policy-writer's understanding of
+xacml and against the inevitable typ0.
+<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+</li>
+
+
+	<li>&nbsp;Though sunxacml parsing is relaxed, &lt;Description&gt;
+&lt;/Description&gt; apparently requires at least one-character content: 
+&lt;Desciption/&gt; doesn't do it.
+<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
+</li>
+
+
+ <li style='text-autospace:none'>In SubjectMatch, ResourceMatch, and ActionMatch 
+	blocks, place AttributeValue elements before AttributeDesignator. The reason for
+this is that the Sun XACML engine silently does this reordering, leading to
+unexpected results, due to bad coding near the end of its TargetMatch.getInstance()
+method.   Also, avoid using two AttributeDesignator elements (without any
+AttributeValues), until we clarify with Sun how they'll fix this.
+
+	<p>&nbsp;</p>
+	<div class="code">
+
+
+<pre style="margin-left:.5in;text-autospace:none">&lt;ResourceMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:dateTime-less-than&quot;&gt;
+  &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;&gt;2004-12-07T20:22:26.705Z&lt;/AttributeValue&gt;
+  &lt;ResourceAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:resource:object:lastModifiedDate&quot; 
+                               DataType=&quot;http://www.w3.org/2001/XMLSchema#dateTime&quot;/&gt;</pre>
+<pre style="margin-left:.5in;text-autospace:none">&lt;/ResourceMatch&gt;</pre>
+
+      </div>
+
+	<p>&nbsp;</p>
+
+</ol>
+
+<h2><span style="font-size: 14pt"><b><a name="DEFAULT-REPOWIDE"></a>3</b></span><b><span style='font-size:14.0pt'> 
+Default Repository-Wide Policies</span></b></h2>
+
+<p>Out of the box, the Fedora repository is configured with a default set of access 
+control policies that provide for a highly restricted management service 
+(API-M), an open access service&nbsp; (API-A), and an open OAI provider service.&nbsp;&nbsp; 
+These default access control policies establish the same level of out-of-the-box 
+security on the repository that was previously configured for Fedora 2.0 
+release; however, as of Fedora 2.1 these basic access controls are now specified 
+as XACML policies.&nbsp;&nbsp; Please consult the <a href="#DEFAULT">Default 
+Repository Policies</a> documentation for a description of each default policy. </p>
+<p>&nbsp;</p>
+
+<h2><span style="font-size: 14pt"><b><a name="CUSTOM-REPO-WIDE"></a>4</b></span><b><span style='font-size:14.0pt'> 
+Custom 
+Policies - Sample Repository-Wide Policies</span></b></h2>
+
+<p>The sample policies are written with the assumption that Fedora's
+<a href="AuthorizationXACML.htm#DEFAULT">Default Repository-Wide Policies</a> 
+are activated.&nbsp;&nbsp;&nbsp; These default policies lock down access to the 
+Fedora API-M service so that only the Fedora Administrator is permitted access.&nbsp; 
+The default policies also result in open access to API-A (all users are 
+permitted).&nbsp;&nbsp; Given this starting point,&nbsp; you can think writing 
+custom policies as a way to &quot;loosen up&quot;&nbsp; the API-M defaults and &quot;tighten 
+up&quot; the API-M defaults.&nbsp; In other words, it is likely that you will want to 
+write policies that let more users have access to API-M operations.&nbsp; Also, 
+you will likely want to add restrictions in who can access digital objects, 
+datastreams, and disseminations (i.e., via API-A).&nbsp;&nbsp; The sample 
+policies will demonstrate how to do these things, given various authentication 
+scenarios.&nbsp; Notice that there some policies restrict access based on user 
+identity/attributes based on Tomcat's default user directory ( 
+tomcat-users.xml).&nbsp; Other policies demonstrate how to restrict access by 
+user attributes/groups that are defined in an LDAP directory.&nbsp; </p>
+<p>Note that the sample policies have been written for demonstration purposes.&nbsp;&nbsp; 
+They are not intended to work as a collaborative set of policies, since they 
+often demonstrate different ways of of doing the same basic thing (e.g., one 
+policy demonstrating rules based on Tomcat user identity, another showing a 
+similar thing with LDAP groups).&nbsp;&nbsp; If you want to try them out, you 
+can put one or more of the sample policies into play by following the 
+instructions for <a href="AuthorizationXACML.htm#CONFIG-ACTIVATE">activating and 
+loading policies</a> into a Fedora repository.&nbsp; However, it is recommended 
+that you either test them individually to understand the effect each policy has.&nbsp;&nbsp; 
+Ultimately, you can proceed to write a meaningful suite of policies that are 
+intended to work together for your repository.&nbsp;&nbsp;&nbsp; </p>
+
+<p>&nbsp;</p>
+
+<h3>4<b>.1&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+defaults at the <i>service</i> <i>interface</i> level</b></h3>
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="316"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">4.1.1</td>
+		<td width="64">API-A</td>
+		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-to-ldap-group.xml">deny-apia-to-ldap-group.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>Deny access to all </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>API-A
+  methods to users who are “Librarians” or “Info Technologists” (as indicated
+  by their LDAP attributes).</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.1.2</td>
+		<td width="64">API-A</td>
+		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-if-not-tomcat-role.xml">deny-apia-if-not-tomcat-role.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL API-A
+  methods to users who are NOT in the “administrator” or “professor” ROLES.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.1.3</td>
+		<td width="64">API-A</td>
+		<td width="316"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-all-methods/deny-apia-to-tomcat-user.xml">deny-apia-to-tomcat-user.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will deny access to all </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>API-A
+  methods to a particular user based on login id (as registered in the
+  tomcat-users.xml file).</span></td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>4<b>.2&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+defaults based on <i>object attributes</i></b></h3>
+
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="317"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">4.2.1</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-by-pids-to-tomcat-role.xml">deny-objects-by-pids-to-tomcat-role.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>Overall, this policy will identify a set of
+  objects by their PIDs and it will DENY </span><span style='font-size:10.0pt;
+   font-family:Arial;color:black;background:white'>ALL</span><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'> APIA
+  access to users of particular ROLES.  NOTE:  As a repository-wide policy,
+  this policy demonstrates how to control access to specific objects
+  (identified by PID).  As an alternative, it is possible to create ‘object-specific’
+  policies that either resides in the digital object’s POLICY datastream, or
+  that is stored in the object-specific policy directory.  (See the Fedora
+  system documentation on XACML policies for more information.)</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.2.2</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-by-cmodel-to-ldap-group.xml">deny-objects-by-cmodel-to-ldap-group.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY all </span><span
+    style='font-size:10.0pt;font-family:Arial;color:black;background:white'>APIA
+  access to digital objects that are EAD Finding AIDS.  This is based on the
+  object content model attribute having a value of &quot;UVA_EAD_FINDING_AID. 
+  Specifically, the policy will DENY access to users that belong to a
+  particular LDAP-defined GROUP.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.2.3</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-objects-by-attributes/deny-objects-hide-datastreams-if-not-tomcat-role.xml">deny-objects-hide-datastreams-if-not-tomcat-role.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>The overall intent of this policy is datastream
+  hiding, meaning that raw datastreams must not be accessible to anyone except
+  very privileged users, but service-mediated disseminations are accessible by
+  a broader audience.  The key point is that students can access disseminations
+  of the object, but not the raw datastreams.  This is might typically be done
+  in cases where lesser privleged users are given a derivation of the main
+  datastream, or a lesser quality view, or a less complete view of the raw
+  datastream content.  Given that an object is of a certain content model (in
+  this case UVA_</span><span style='font-size:10.0pt;font-family:Arial;
+   color:black;background:white'>STD</span><span style='font-size:10.0pt;
+  font-family:Arial;color:black;background:white'>_IMAGE), this policy will
+  DENY datastream access to users who do NOT have the ROLE of 'administrator'
+  or 'professor. It will also DENY dissemination access to users who do NOT
+  have the ROLE of ‘student,' ‘administrator,’ or 'professor.'</span></td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>4<b>.3&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+defaults at the <i>datastream</i> level</b></h3>
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="317"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.1</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-all-to-all-users.xml">deny-apia-datastream-all-to-all-users.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL
+  datastreams.  Specifically, it will DENY access to ALL
+  USERS making requests to the getDatastreamDissemination method of API-A.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.2</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-all-users.xml">deny-apia-datastream-DC-to-all-users.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to Dublin Core
+  datastreams.  Specifically, it will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL
+  users making getDatastreamDissemination requests on API-A to
+  obtain datastreams with an identifier of 'DC.'</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.3</td>
+		<td width="64">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-tomcat-group-ALT1.xml">deny-apia-datastream-DC-to-tomcat-group-ALT1.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to Dublin Core
+  datastreams.  Specifically, it will deny access to USER GROUPS making
+  getDatastreamDissemination requests on </span><span style='font-size:10.0pt;
+   font-family:Arial;color:black;background:white'>API</span><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'>-A
+  for datastreams with a datastream identifier of 'DC.'  User groups are
+  defined using custom roles in the tomcat-users.xml file.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.4</td>
+		<td width="59">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-DC-to-tomcat-group-ALT2.xml">deny-apia-datastream-DC-to-tomcat-group-ALT2.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to Dublin Core
+  datastreams.  Specifically, it will deny access to USER GROUPS making
+  getDatastreamDissemination requests on </span><span style='font-size:10.0pt;
+   font-family:Arial;color:black;background:white'>API</span><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'>-A
+  for datastreams with a datastream identifier of 'DC.'  User groups are
+  defined using custom roles in the tomcat-users.xml file.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.5</td>
+		<td width="59">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-MRSID-if-not-tomcat-role.xml">deny-apia-datastream-MRSID-if-not-tomcat-role.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to MRSID image
+  datastreams by controlling access to the getDatastreamDissemination method of
+  the Fedora Access Service (</span><span style='font-size:10.0pt;font-family:
+   Arial;color:black;background:white'>API</span><span style='font-size:10.0pt;
+  font-family:Arial;color:black;background:white'>-A).  Specifically, it will
+  DENY access to users who are NOT of particular ROLES when the requested
+  resource is a datastream with identifier of 'MRSID.'</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.3.6</td>
+		<td width="59">API-A</td>
+		<td width="317"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-datastreams/deny-apia-datastream-TEISOURCE-to-tomcat-user.xml">deny-apia-datastream-TEISOURCE-to-tomcat-user.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to TEI datastreams
+  by controlling access to the getDatastreamDissemination method of the Fedora
+  Access Service (</span><span style='font-size:10.0pt;font-family:Arial;
+   color:black;background:white'>API</span><span style='font-size:10.0pt;
+  font-family:Arial;color:black;background:white'>-A).  The TEI datastream is
+  identified as a Resource where the Fedora datastream id has the value of
+  'TEISOURCE.'   This policy will DENY access to a SPECIFIC USER based on login
+  id (as registered in the tomcat-users.xml file).</span></td>
+	</tr>
+</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>4<b>.4&nbsp; Repository Policies to <i>tighten</i> the </b><b>API</b><b>-A
+defaults at the <i>dissemination</i> level</b></h3>
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="343"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">4.4.1</td>
+		<td width="64">API-A</td>
+		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-all-users.xml">deny-apia-dissem-demo1-getMedium-to-all-users.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to the
+  'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
+  to the demo:1 behavior definition.   Specifically, it will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL
+  users making getDissemination requests on </span><span style='font-size:10.0pt;
+   font-family:Arial;color:black;background:white'>API</span><span
+  style='font-size:10.0pt;font-family:Arial;color:black;background:white'>-A
+  for the 'demo:1/getMedium' dissemination.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.4.2</td>
+		<td width="64">API-A</td>
+		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-ldap-group.xml">deny-apia-dissem-demo1-getMedium-to-ldap-group.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to the
+  'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
+  to the demo:1 behavior definition.   Specifically, it will DENY access to
+  users of particular LDAP-defined GROUPS who are making getDissemination
+  requests on </span><span style='font-size:10.0pt;font-family:Arial;
+   color:black;background:white'>API</span><span style='font-size:10.0pt;
+  font-family:Arial;color:black;background:white'>-A  for the
+  'demo:1/getMedium' dissemination.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.4.3</td>
+		<td width="64">API-A</td>
+		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-if-not-tomcat-role.xml">deny-apia-dissem-demo1-getMedium-if-not-tomcat-role.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to the
+  'demo:1/getMedium' dissemination (defined on a disseminator that subscribes
+  to the demo:1 behavior definition.   Specifically, it will DENY access to
+  users who are NOT of particular ROLES who are making getDissemination
+  requests on </span><span style='font-size:10.0pt;font-family:Arial;
+   color:black;background:white'>API</span><span style='font-size:10.0pt;
+  font-family:Arial;color:black;background:white'>-A for the 'demo:1/getMedium'
+  dissemination.</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.4.4</td>
+		<td width="59">API-A</td>
+		<td width="343"><span style='font-size:10.0pt;font-family:Arial'>
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-demo1-getMedium-to-tomcat-user.xml">deny-apia-dissem-demo1-getMedium-to-tomcat-user.xml</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to disseminations
+  that are available on objects via a disseminator subscribing to the 'demo:2'
+  behavior definition.  Specifically, it will DENY access to a particular user
+  (as registered in  the tomcat-users.xml file).</span></td>
+	</tr>
+	<tr>
+		<td width="41">4.4.5</td>
+		<td width="59">API-A</td>
+		<td width="343"><span style="font-size: 10.0pt; font-family: Arial">
+		<a href="xacml-policies/examples/example-repository-policies/apia-tighten-defaults/apia-restrict-disseminations/deny-apia-dissem-DualResImage-to-all-users.xml">
+		deny-apia-dissem-DualResImage-to-all-users</a></span></td>
+		<td><span style='font-size:10.0pt;font-family:Arial;
+  color:black;background:white'>This policy will DENY access to ALL disseminations
+  that are available on objects via a particular disseminator (one that subscribes 
+		to an image-based behavior definition whose PID is 'demo:DualResImage'.  Specifically,  it will DENY access to </span><span
+   style='font-size:10.0pt;font-family:Arial;color:black;background:white'>ALL 
+		users making getDissemination requests on this disseminator.</span></td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<h3>4<b>.5&nbsp; Repository Policies to <i>loosen</i> the </b><b>API</b><b>-M
+defaults at the <i>service</i> <i>interface</i> level</b></h3>
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="284"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">4.5.1</td>
+		<td width="64">API-M</td>
+		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-ldap-group.xml">permit-apim-by-ldap-group.xml</a></span></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td width="41">4.5.2</td>
+		<td width="64">API-M</td>
+		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-tomcat-group.xml">permit-apim-by-tomcat-group.xml</a></span></td>
+		<td>&nbsp;</td>
+	</tr>
+	<tr>
+		<td width="41">4.5.3</td>
+		<td width="64">API-M</td>
+		<td width="284"><span style='font-size:10.0pt;font-family:Arial;
+  color:black'>
+		<a href="xacml-policies/examples/example-repository-policies/apim-loosen-defaults/apim-permit-all-methods/permit-apim-by-tomcat-user.xml">permit-apim-by-tomcat-user.xml</a></span></td>
+		<td>&nbsp;</td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<h2><span style="font-size: 14pt"><a name="CUSTOM-OBJ-SPECIFIC"></a>5</span><b><span style='font-size:14.0pt'> 
+Custom Policies - Sample Object-Specific Policies</span></b></h2>
+
+<p>&nbsp;</p>
+<h3>5<b>.1 Object-specific policies with multiple policy rules</b></h3>
+
+<p>Object-specific policies are policies that refer to one particular digital 
+object.&nbsp;&nbsp; An object-specific policy can be stored in the &quot;POLICY&quot; 
+datastream of the digital object to which it pertains.&nbsp; Alternatively, an 
+object-specific policy can be stored in the object-specific policy directory 
+configured with the Fedora repository service via the Fedora server 
+configuration file (fedora.fcfg).&nbsp;&nbsp;&nbsp; The choice comes down to 
+whether you want policies to be actual components of digital objects (and 
+thereby portable with the object), or whether you want the policies to be more a 
+part of the configured repository environment.&nbsp;&nbsp;&nbsp; </p>
+
+<p>&nbsp;</p>
+
+<table border="1" width="100%">
+	<tr>
+		<td width="41">&nbsp;</td>
+		<td width="64"><b>Service</b></td>
+		<td width="284"><b>&nbsp;XACML Policy File</b></td>
+		<td><b>&nbsp; Policy Description</b></td>
+	</tr>
+	<tr>
+		<td width="41">5.1.1</td>
+		<td width="64">N/A</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-5.xml">
+		demo-5.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		By using <i><b>multiple policy rules</b></i>, this policy shows 
+		how to deny access to all raw datastreams in the object except to 
+		particular users (e.g., the object owners). It also shows how to deny 
+		access to a particular disseminations to selected user roles.</span></td>
+	</tr>
+	<tr>
+		<td width="41">5.1.2</td>
+		<td width="64">N/A</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-11.xml">
+		demo-11.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		By using <i><b>multiple policy rules</b></i>, this policy shows how to deny access to 
+		particular datastreams in the object. 1) The policy will DENY everyone 
+		except professors and researchers access to -particular- source 
+		datastreams of the demo:11 object by controlling access to the 
+		getDatastreamDissemination method of the Fedora Access Service (API-A). 
+		2) The policy will DENY everyone except students, professors, and 
+		researchers, access to all disseminations of demo:11. 3) This policy 
+		will also DENY ALL access to the demo:11 object to a SPECIFIC USER based 
+		on login id (as registered in the tomcat-users.xml file). NOTE: The net 
+		effect of the policy permits open access to the descriptive metadata 
+		datastream of demo:11.</span></td>
+	</tr>
+	<tr>
+		<td width="41">5.1.3</td>
+		<td width="64">N/A</td>
+		<td width="284"><font size="2"><span style="font-family: Arial">
+		<a href="xacml-policies/examples/example-object-policies/demo-26.xml">
+		demo-26.xml</a></span></font></td>
+		<td>
+		<span style="font-size: 10.0pt; font-family: Arial; color: black; background: white url('')">
+		By using <i><b>multiple policy rules</b></i>, this policy shows how to deny access to 
+		particular datastreams in the object. The policy will DENY visitors 
+		access to the TEI and FOP source datastreams of the demo:26 object by 
+		controlling access to the getDatastreamDissemination method of the 
+		Fedora Access Service (API-A). These datastreams are open to all other 
+		kinds of users, and Disseminations are open to all users. This is an 
+		object-specific policy. It could be stored inside the demo:26 digital 
+		object in the POLICY datastream OR in the directory for object-specific 
+		policies. (The directory location is set in the Authorization module 
+		configuration in the Fedora server configuration file (fedora.fcfg).</span></td>
+	</tr>
+	</table>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
+
+<p>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>
