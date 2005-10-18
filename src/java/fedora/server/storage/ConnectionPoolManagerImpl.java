@@ -240,7 +240,7 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(poolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(poolName);
-        this.getServer().logInfo("PoolFound: "+connectionPool);
+        //this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: pool was never initialized or name could not be found
@@ -275,7 +275,7 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(defaultPoolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(defaultPoolName);
-        this.getServer().logInfo("PoolFound: "+connectionPool);
+        //this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: default pool was never initialized or could not be found

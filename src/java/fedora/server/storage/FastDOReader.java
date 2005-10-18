@@ -377,7 +377,7 @@ public class FastDOReader implements DOReader
       try
       {
         connection = connectionPool.getConnection();
-        s_server.logFinest("connectionPool = " + connectionPool);
+        //s_server.logFinest("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -943,8 +943,8 @@ public class FastDOReader implements DOReader
       {
         // execute database query and retrieve results
         connection = connectionPool.getConnection();
-        s_server.logFinest("DisseminationConnectionPool: "+
-                                     connectionPool);
+        //s_server.logFinest("DisseminationConnectionPool: "+
+        //                             connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -1767,13 +1767,12 @@ public class FastDOReader implements DOReader
         + "do "
         + "WHERE "
         + "do.doPID=\'" + PID + "\'";
-    s_server.logFinest("LocatPIDQuery: " + query);
+    //s_server.logFinest("LocatPIDQuery: " + query);
 
     try
     {
       connection = connectionPool.getConnection();
-      s_server.logFinest("LocatePIDConnectionPool: "
-                                   + connectionPool);
+      //s_server.logFinest("LocatePIDConnectionPool: " + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
@@ -1813,7 +1812,7 @@ public class FastDOReader implements DOReader
         loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
         doLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        s_server.logFinest("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
+        //s_server.logFinest("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
       } catch (ServerException se)
       {
         throw se;
@@ -1827,7 +1826,7 @@ public class FastDOReader implements DOReader
     } else
     {
       isFoundInFastStore = true;
-      s_server.logFinest("OBJECT FOUND IN FAST STORE: " + PID);
+      //s_server.logFinest("OBJECT FOUND IN FAST STORE: " + PID);
     }
     return doLabel;
   }
