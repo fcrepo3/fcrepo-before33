@@ -73,23 +73,23 @@
             retrieve filepaths from the registry tables, if running under
             Windows/DOS.</comment>
   </param>
-  <param name="object_store_base" value="C:\fedora2_0_objects">
+  <param name="object_store_base" value="C:\fedora2_1b_objects">
     <comment>Defines the root directory for the internal storage of Fedora
             objects. This value should be adjusted based on your installation
             environment; default assumes a Windows installation of
-            C:\fedora2_0_objects.</comment>
+            C:\fedora2_1b_objects.</comment>
   </param>
-  <param name="temp_store_base" value="C:\fedora2_0_temp">
+  <param name="temp_store_base" value="C:\fedora2_1b_temp">
     <comment>Defines the root directory for Fedora temporary storage. This
             value should be adjusted based on your installation environment;
             default assumes a Windows installation of
-        C:\fedora2_0_temp.</comment>
+        C:\fedora2_1b_temp.</comment>
   </param>
-  <param name="datastream_store_base" value="C:\fedora2_0_datastreams">
+  <param name="datastream_store_base" value="C:\fedora2_1b_datastreams">
     <comment>Defines the root directory for the internal storage of Managed
             Content datastreams. This value should be adjusted based on your
             installation environment; default assumes a Windows installation of
-            C:\fedora2_0_datastreams.</comment>
+            C:\fedora2_1b_datastreams.</comment>
   </param>
   <param name="debug" value="false">
     <comment>A boolean toggle used to turn off/on internal debugging in the
@@ -405,7 +405,7 @@
     <param name="pollInterval" value="5000"/>
   </module>
   <datastore id="localMySQLPool">
-    <comment>MySQL database on localhost with db name of fedora20. Each
+    <comment>MySQL database on localhost with db name of fedora21b. Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -441,7 +441,7 @@
             increase the size of the pool).</comment>
     <param name="dbUsername" value="fedoraAdmin"/>
     <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora21b?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
     <param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
     <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
     <param name="maxActive" value="100"/>
@@ -509,7 +509,7 @@
     <param name="whenExhaustedAction" value="1"/>
   </datastore>
   <datastore id="localOracle9iPool">
-    <comment>Oracle9i database on localhost with SID=fedora20 Each
+    <comment>Oracle9i database on localhost with SID=fedora21b Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -545,7 +545,7 @@
             increase the size of the pool).</comment>
     <param name="dbUsername" value="fedoraAdmin"/>
     <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora20"/>
+    <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora21b"/>
     <param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
     <param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
     <param name="maxActive" value="100"/>
@@ -564,7 +564,7 @@
     <comment>local Kowari Triplestore used by the Resource Index</comment>
     <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
     <param name="remote" value="false"/>
-    <param name="path" value="C:\fedora2_0_resourceIndex"/>
+    <param name="path" value="C:\fedora2_1b_resourceIndex"/>
     <param name="serverName" value="fedora"/>
     <param name="modelName" value="ri"/>
     <param name="poolInitialSize" value="3"/>
