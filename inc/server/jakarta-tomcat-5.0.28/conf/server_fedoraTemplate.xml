@@ -19,13 +19,11 @@
     </Connector>
     <Engine name="Catalina" defaultHost="localhost" debug="0">
       <Logger className="org.apache.catalina.logger.FileLogger" />
-      <!-- Realm className="org.apache.catalina.realm.UserDatabaseRealm" / -->
-
-<Realm className="org.apache.catalina.realm.JAASRealm" 
-	appName="fedora" 
-	userClassNames="org.apache.catalina.realm.IdPasswordPrincipal" 
-	roleClassNames="org.apache.catalina.realm.RolePrincipal" /> 
-      
+      <!-- Realm className="org.apache.catalina.realm.MemoryRealm" / -->
+      <Realm className="org.apache.catalina.realm.JAASRealm" 
+	    appName="fedora" 
+	    userClassNames="org.apache.catalina.realm.IdPasswordPrincipal" 
+	    roleClassNames="org.apache.catalina.realm.RolePrincipal" /> 
       <Host name="localhost" appBase="webapps" debug="0"
             unpackWARS="true" autoDeploy="true">
           <Valve className="org.apache.catalina.valves.AccessLogValve"
