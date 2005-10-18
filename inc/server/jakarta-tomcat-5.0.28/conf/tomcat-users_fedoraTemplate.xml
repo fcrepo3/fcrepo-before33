@@ -12,4 +12,5 @@
 	<user name="testuser3" password="testuser3" roles="fedoraRole=student"/>
 	<user name="testuser4" password="testuser4" roles="fedoraRole=visitor"/>
 	<user name="guest" password="" roles=""/>
+    <user name="wdn5e" password="wdn5e" />	
 </tomcat-users>
