@@ -31,42 +31,65 @@ TC="$FEDORA_HOME"/server/"$TC_BASENAME"
 WEBAPP_DIR="$TC"/webapps/fedora/WEB-INF
 
 # Check for valid configuration names
-if [ "$1" != "secure-apim"   ] &&
-   [ "$1" != "secure-all"    ] &&
-   [ "$1" != "unsecure-apim" ] &&
-   [ "$1" != "unsecure-all"  ]; then
+if [ "$1" != "ssl-authenticate-apim"   ] &&
+   [ "$1" != "ssl-authenticate-all"    ] &&
+   [ "$1" != "no-ssl-authenticate-apim" ] &&
+   [ "$1" != "no-ssl-authenticate-all"  ]; then
        echo
-       echo "Usage: fedora-setup configuration-name"
+       echo "Usage: fedora-setup [configuration-name]"
        echo
-       echo "    where configuration-name must be one of the following:"
-       echo "        secure-apim   - API-M with basicAuth and SSL; API-A with no basicAuth and no SSL"
-       echo "        secure-all    - API-M with basicAuth and SSL; API-A with basicAuth and SSL"
-       echo "        unsecure-apim - API-M with basicAuth but no SSL; API-A with no basicAuth and no SSL"
-       echo "        unsecure-all  - API-M with basicAuth but no SSL; API-A with basicAuth but no SSL"
+       echo "    where [configuration-name] must be one of the following:"
+       echo
+       echo "        ssl-authenticate-apim - API-M with basicAuth and SSL"
+       echo "                              - API-A with no basicAuth and no SSL"
+       echo
+       echo "        ssl-authenticate-all  - API-M with basicAuth and SSL
+       echo "                              - API-A with basicAuth and SSL"
+       echo
+       echo "        no-ssl-authenticate-apim - API-M with basicAuth but no SSL
+       echo "                                 - API-A with no basicAuth and no SSL"
+       echo
+       echo "        no-ssl-authenticate-all  - API-M with basicAuth but no SSL
+       echo "                                 - API-A with basicAuth but no SSL"
        echo
        exit 1
 fi
 
+if [ "$1" = "ssl-authenticate-apim" ]; then
+   CONFIG_SUFFIX="secure-apim"
+fi
+
+if [ "$1" = "ssl-authenticate-all" ]; then
+   CONFIG_SUFFIX="secure-all"
+fi
+
+if [ "$1" = "no-ssl-authenticate-apim" ]; then
+   CONFIG_SUFFIX="unsecure-apim"
+fi
+
+if [ "$1" = "no-ssl-authenticate-all" ]; then
+   CONFIG_SUFFIX="unsecure-all"
+fi
 
 echo
 echo "Copying"
-echo "   FROM: $FEDORA_HOME/server/config/fedora-$1.fcfg"
+echo "   FROM: $FEDORA_HOME/server/config/fedora-$CONFIG_SUFFIX.fcfg"
 echo "     TO: $FEDORA_HOME/server/config/fedora.fcfg"
-cp $FEDORA_HOME/server/config/fedora-$1.fcfg $FEDORA_HOME/server/config/fedora.fcfg
+cp $FEDORA_HOME/server/config/fedora-$CONFIG_SUFFIX.fcfg $FEDORA_HOME/server/config/fedora.fcfg
 echo "Copying"
-echo "   FROM: $FEDORA_HOME/server/config/beSecurity-$1.xml"
+echo "   FROM: $FEDORA_HOME/server/config/beSecurity-$CONFIG_SUFFIX.xml"
 echo "     TO: $FEDORA_HOME/server/config/beSecurity.xml"
-cp $FEDORA_HOME/server/config/beSecurity-$1.xml $FEDORA_HOME/server/config/beSecurity.xml
+cp $FEDORA_HOME/server/config/beSecurity-$CONFIG_SUFFIX.xml $FEDORA_HOME/server/config/beSecurity.xml
 echo "Copying"
-echo "   FROM: $WEBAPP_DIR/web-$1.xml"
+echo "   FROM: $WEBAPP_DIR/web-$CONFIG_SUFFIX.xml"
 echo "     TO: $WEBAPP_DIR/web.xml"
-cp $WEBAPP_DIR/web-$1.xml $WEBAPP_DIR/web.xml
+cp $WEBAPP_DIR/web-$CONFIG_SUFFIX.xml $WEBAPP_DIR/web.xml
 
 echo
 echo "Fedora security setup complete!"
 echo "Configuration files in play are:"
-echo "   fedora-$1.fcfg"
-echo "   beSecurity-$1.xml"
-echo "   web-$1.xml"
+echo "   fedora-$CONFIG_SUFFIX.fcfg"
+echo "   beSecurity-$CONFIG_SUFFIX.xml"
+echo "   web-$CONFIG_SUFFIX.xml"
 
 exit 0
