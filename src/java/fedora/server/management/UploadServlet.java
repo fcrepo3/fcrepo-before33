@@ -103,7 +103,7 @@ public class UploadServlet
             if (status==HttpServletResponse.SC_CREATED) {
                 logFine("Successful upload, id=" + message);
             } else {
-                logInfo("Failed upload: " + message);
+                logWarning("Failed upload: " + message);
             }
             response.setStatus(status);
             response.setContentType(CONTENT_TYPE_TEXT);
