@@ -449,16 +449,26 @@ default repository-wide XACML policies</a> that approximate the minimal security
 <p>Here is a brief step-by-step guide that describes what you will need to do to configure your fedora repository. It is recommended that you start with one of the base security configurations and set of default policies and become familiar with the new security features of Fedora 2.1b. Then you can go back and experiment with customizing various aspects of your repository configuration and policies.</p>
 
 	<blockquote>
-	<ol>
-	  <li>Select a base security configuration by running "fedora-setup"</li>
-	  <li>Optionally customize fedora.fcfg for your repository</li>
-	  <li>Optionally customize beSecurity.xml for your custom disseminators</li>
-	  <li>Optionally customize repository-wide and object-specific policies</li>
-	  <li>Optionally customize tomcat-users_fedoraTemplate.xml for your repository and users</li>
-	  <li>Optionally customize server_fedoraTemplate.xml and/or jaas.config for your repository</li>
-	  <li>Start the fedora server</li>
-	</ol>
+	    <ol>
+          <li>Select a base security configuration by running "fedora-setup"</li>
+          <li>Optionally customize fedora.fcfg for your repository</li>
+          <li>Optionally customize beSecurity.xml for your custom disseminators<font size="-1"> 
+            * </font></li>
+          <li>Optionally customize repository-wide and object-specific policies</li>
+          <li>Optionally customize tomcat-users_fedoraTemplate.xml for your repository 
+            and users</li>
+          <li>Optionally customize server_fedoraTemplate.xml and/or jaas.config 
+            for your repository</li>
+          <li>Start the fedora serve</li>
+        </ol>
 	</blockquote>
+	  <p>* If using the beSecurity Configuration Tool to customize the beSecurity.xml 
+        file, the server needs to be running prior to using the configuration 
+        tool. In this case, make all other customizations first, start the server, 
+        and then use beSecurity Configuration Tool to finish customization of 
+        beSecurity.xml. For additional information on using the beSecurity Configuration 
+        Tool see the <i><a href="beSecurityConfig.html#CONFIGTOOL">beSecurity 
+        Configuration</a></i> document.</p>
 	</div>
 	
 	<div class="sect">
