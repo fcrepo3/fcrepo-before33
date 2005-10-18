@@ -5,26 +5,26 @@
 	<!-- set global properties for this build -->
 	<property environment="env"/>
 	<!-- OS-specific environment variables -->
-	<property name="build.debug"       value="on"/>
-	<property name="build.optimize"    value="off"/>
+	<property name="build.debug" value="on"/>
+	<property name="build.optimize" value="off"/>
 	<property name="javac.deprecation" value="off"/>
-	<property name="javac.source"      value="1.4"/>
-	<property name="src.dir"           location="src"/>
-	<property name="java.src.dir"      location="${src.dir}/java"/>
-	<property name="test.src.dir"      location="${src.dir}/test"/>
-	<property name="junit.src.dir"     location="${test.src.dir}/junit"/>
-	<property name="doc.dir"           location="${src.dir}/doc"/>
-	<property name="dev.doc.dir"       location="${doc.dir}/devdocs"/>
-	<property name="user.doc.dir"      location="${doc.dir}/userdocs"/>
-	<property name="build.dir"         location="build"/>
-	<property name="license.dir"       location="license"/>
-	<property name="test.build.dir"    location="${build.dir}"/>
-	<property name="junit.build.dir"   location="${test.build.dir}/junit"/>
-	<property name="dist.dir"          location="dist"/>
-	<property name="server.dist.dir"   location="${dist.dir}/server"/>
-	<property name="lib.dir"           location="lib"/>
-	<property name="release.dir"       location="${dist.dir}/release"/>
-	<property name="properties.dir"    location="${src.dir}/properties"/>
+	<property name="javac.source" value="1.4"/>
+	<property name="src.dir" location="src"/>
+	<property name="java.src.dir" location="${src.dir}/java"/>
+	<property name="test.src.dir" location="${src.dir}/test"/>
+	<property name="junit.src.dir" location="${test.src.dir}/junit"/>
+	<property name="doc.dir" location="${src.dir}/doc"/>
+	<property name="dev.doc.dir" location="${doc.dir}/devdocs"/>
+	<property name="user.doc.dir" location="${doc.dir}/userdocs"/>
+	<property name="build.dir" location="build"/>
+	<property name="license.dir" location="license"/>
+	<property name="test.build.dir" location="${build.dir}"/>
+	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
+	<property name="dist.dir" location="dist"/>
+	<property name="server.dist.dir" location="${dist.dir}/server"/>
+	<property name="lib.dir" location="lib"/>
+	<property name="release.dir" location="${dist.dir}/release"/>
+	<property name="properties.dir" location="${src.dir}/properties"/>
 	<!-- load external properties files -->
 	<loadproperties srcFile="${properties.dir}/lib.properties"/>
 	<loadproperties srcFile="${properties.dir}/mckoi.properties"/>
@@ -74,7 +74,7 @@
 			<pathelement location="${lib.trove}"/>
 			<pathelement location="${lib.kowari-driver}"/>
 			<pathelement location="${lib.kowari-jrdf}"/>
-<!-- Kowari 1.1.0
+			<!-- Kowari 1.1.0
 			<pathelement location="${lib.j2ee-connector}"/>
 			<pathelement location="${lib.dateutils}"/>
 			<pathelement location="${lib.jotm-carol}"/>
@@ -374,16 +374,16 @@
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
 		<!-- make securty-sensitive files readable only by owner -->
-		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx" />
-		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx" />
-		<chmod file="dist/server/config/fedora-secure-apim.fcfg" perm="go-rwx" />
-		<chmod file="dist/server/config/fedora-secure-all.fcfg" perm="go-rwx" />
-		<chmod file="dist/server/config/fedora-unsecure-apim.fcfg" perm="go-rwx" />
-		<chmod file="dist/server/config/fedora-unsecure-all.fcfg" perm="go-rwx" />		
-		<chmod file="dist/server/config/beSecurity-secure-apim.xml" perm="go-rwx" />
-		<chmod file="dist/server/config/beSecurity-secure-all.xml" perm="go-rwx" />
-		<chmod file="dist/server/config/beSecurity-unsecure-apim.xml" perm="go-rwx" />
-		<chmod file="dist/server/config/beSecurity-unsecure-all.xml" perm="go-rwx" />		
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx"/>
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx"/>
+		<chmod file="dist/server/config/fedora-secure-apim.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/fedora-secure-all.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/fedora-unsecure-apim.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/fedora-unsecure-all.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/config/beSecurity-secure-all.xml" perm="go-rwx"/>
+		<chmod file="dist/server/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/config/beSecurity-unsecure-all.xml" perm="go-rwx"/>
 	</target>
 	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
 	</target>
@@ -553,6 +553,19 @@
 		<mkdir dir="${dist.dir}/userdocs"/>
 		<copy todir="${dist.dir}/userdocs">
 			<fileset dir="${user.doc.dir}"/>
+		</copy>
+		<!-- generate the Fedora xacml vocabulary listing -->
+		<mkdir dir="${dist.dir}/userdocs/server/security/xacml-policies"/>
+		<java classname="fedora.common.policy.Release2_1Namespace" classpath="${tomcat.server.dir}/classes;${lib.jrdf}" output="${dist.dir}/userdocs/server/security/xacml-policies/vocabulary.txt"/>
+		<!-- copy the default repository-wide policies for linking to documentation -->
+		<mkdir dir="${dist.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
+		<copy todir="${dist.dir}/userdocs/server/security/xacml-policies/default/repository-wide">
+			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
+		</copy>
+		<!-- copy the sample policy collection for linking to documentation -->
+		<mkdir dir="${dist.dir}/userdocs/server/security/xacml-policies/examples"/>
+		<copy todir="${dist.dir}/userdocs/server/security/xacml-policies/examples">
+			<fileset dir="src/xml/xacml-policies/examples"/>
 		</copy>
 		<!--  Temporarily turned off pending userdoc changes		
 		<copy todir="dist/userdocs/client/browser/search/images">
@@ -774,7 +787,7 @@
 		</exec>
 		<exec dir="./dist/server/bin" executable="/bin/ln">
 			<arg line="-s fedora-setup.sh fedora-setup"/>
-		</exec>		
+		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
 	</target>
