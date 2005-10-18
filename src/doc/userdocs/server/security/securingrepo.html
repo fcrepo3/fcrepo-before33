@@ -27,10 +27,10 @@
             <li><a href="#CONFIG">Security Setup - Select One of Four Base 
 			Security Configurations </a>
                 <ul>
-					<li><a href="#CONFIG1">2.1 SECURE-APIM Configuration</a></li>
-					<li><a href="#CONFIG2">2.2 SECURE-ALL Configuration</a></li>
-					<li><a href="#CONFIG3">2.3 UNSECURE-APIM Configuration</a></li>
-					<li><a href="#CONFIG4">2.4 UNSECURE-ALL Configuration</a></li>
+					<li><a href="#CONFIG1">2.1 SSL-AUTHENTICATE-APIM Configuration</a></li>
+					<li><a href="#CONFIG2">2.2 SSL-AUTHENTICATE-ALL Configuration</a></li>
+					<li><a href="#CONFIG3">2.3 NO-SSL-AUTHENTICATE-APIM Configuration</a></li>
+					<li><a href="#CONFIG4">2.4 NO-SSL-AUTHENTICATE-ALL Configuration</a></li>
 			</ul>
 
             <li><a href="#CONFIG-CUSTOM">Customized Security Configurations</a><li>
@@ -69,8 +69,8 @@
 
     
   <p>There are four base security configurations provided with the Fedora 2.1b 
-    server distribution: (1) "secure-apim" configuration, (2) "secure-all" configuration, 
-    (3) "unsecure-apim" configuration, and (4) "unsecure-all" configuration. Unlike 
+    server distribution: (1) "ssl-authenticate-apim" configuration, (2) "ssl-authenticate-all" configuration, 
+    (3) "no-ssl-authenticate-apim" configuration, and (4) "no-ssl-authenticate-all" configuration. Unlike 
     Fedora 2.0, there is no longer a "default" configuration. Before starting 
     the Fedora server, you must run a server setup utility to select a base security 
     configuration that will initialize the servers security configuration.&nbsp;&nbsp; 
@@ -105,10 +105,10 @@
 	<blockquote>
 	 <blockquote>
 		<ul>
-			<li>secure-apim</li>
-			<li>secure-all</li>
-			<li>unsecure-apim</li>
-			<li>unsecure-all</li>
+			<li><b>ssl-authenticate-apim</b></li>
+			<li><b>ssl-authenticate-all</b></li>
+			<li><b>no-ssl-authenticate-apim</b></li>
+			<li><b>no-ssl-authenticate-all</b></li>
 		</ul>
 		</blockquote></blockquote>
 
@@ -126,19 +126,19 @@
 	controls security for services calling back to Fedora (see <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i> document for details)</p>
 	<p>&nbsp;</p>
 	<div class="sect2">
-      <h3><a name="CONFIG1"></a>2.1 SECURE-APIM Configuration</h3>
+      <h3><a name="CONFIG1"></a>2.1 SSL-AUTHENTICATE-APIM Configuration</h3>
       
 	<ul>
       <li>API-M supports basic authentication and SSL; restricted by IP to localhost</li>
       <li>API-A unrestricted (i.e., open access)</li>
       <li>backend services security is minimal</li>
     </ul>
-		<p>The secure-apim configuration is designed for repositories that desire a secure management interface for administering and maintaining a repository, but wish to keep access to the repository content completely open.</p>
+		<p>The &quot;ssl-authenticate-apim&quot; configuration is designed for repositories that desire a secure management interface for administering and maintaining a repository, but wish to keep access to the repository content completely open.</p>
     </div>
 
  
    <div class="sect2">
-      <h3><a name="CONFIG2"></a>2.2 SECURE-ALL Configuration</h3>
+      <h3><a name="CONFIG2"></a>2.2 SSL-AUTHENTICATE-ALL Configuration</h3>
 
 	 
     <ul>
@@ -148,7 +148,7 @@
         only from specified IP addresses</li>
     </ul>
 
-	<p>The secure-all configuration is designed for repositories that desire full 
+	<p>The &quot;ssl-authenticate-all&quot; configuration is designed for repositories that desire full 
       security for both management and access and also want to add additional 
       security regarding how backend services are allowed to communicate with 
       the Fedora server. Note that as authentication is enabled for API-A, the 
@@ -159,7 +159,7 @@
    </div>
 
    <div class="sect2">
-      <h3><a name="CONFIG3"></a>2.3 UNSECURE-APIM Configuration</h3>
+      <h3><a name="CONFIG3"></a>2.3 NO-SSL-AUTHENTICATE-APIM Configuration</h3>
 
 	  
     <ul>
@@ -169,11 +169,11 @@
       <li>backend service security is enhanced by limiting backend service communication 
         only from specified IP addresses</li>
     </ul>
-		<p>The unsecure-apim configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
+		<p>The &quot;no-ssl-authenticate-apim&quot; configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
    </div>
 
   <div class="sect2">
-      <h3><a name="CONFIG4"></a>2.4 UNSECURE-ALL Configuration</h3>
+      <h3><a name="CONFIG4"></a>2.4 NO-SSL-AUTHENTICATE-ALL Configuration</h3>
 
 	 <ul>
 	  <li>API-M supports basic authentication <i><b>but no SSL</b></i>; restricted by IP to localhost</li>
@@ -181,7 +181,7 @@
 	  <li>backend security security is minimal</li>
 	 </ul>
 
-	<p>The unsecure-all configuration is designed for repositories that want the 
+	<p>The &quot;no-ssl-authenticate-all&quot; configuration is designed for repositories that want the 
       features of basic authentication for both API-M and API-A, but are not ready 
       to tackle some of the additional issues imposed by SSL with their client-side 
       or middleware applications. Note that since there is no SSL support for 
@@ -226,7 +226,8 @@
 	Customization of this file is only relevant for repositories that are using 
 	custom disseminators that point to external services.&nbsp; If you want to 
 	set up a totally secure repository, you must configure things up so that 
-	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i>. The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the secure-apim or unsecure-apim configurations.</p>
+	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i>. The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the 
+	&quot;ssl-authenticate-apim&quot; or &quot;no-ssl-authenticate-apim&quot; configurations.</p>
 	<p>&nbsp;</p>
 	<p><strong>tomcat-users_fedoraTemplate.xml</strong> - This a Fedora-specific 
       template file is found in the Fedora Tomcat directory ($FEDORA_HOME/inc/server/jakarta-tomcat-5.0.28/conf).&nbsp; 
@@ -565,7 +566,7 @@ Editing of the configuration files is the same as for option B.
 		<h2><a name="AUTHZ"></a>5 Authorization via XACML</h2>
 		<p>&lt;Sandy insert something brief here.&gt;&nbsp;&nbsp; A complete 
 		description can be found in the documentation for the
-		<a href="AuthorizationXACML.htm">Fedora Authorization Module for XACML Policy Enforcement</a>.</p>
+		<a href="AuthorizationXACML.htm">Fedora Authorization Module for?XACML Policy Enforcement</a>.</p>
 		<h3><a name="AUTHZ-DEFAULT"></a>5.1 Default Repository Policies</h3>
 
 <p>Fedora 2.1b ships with a set of <a href="AuthorizationXACML.htm#DEFAULT">
