@@ -438,7 +438,7 @@ public class BESecurityConfig {
         // default values
         writer.print(indent);
         write(m_defaultConfig, false, skipNonOverrides, writer);
-        writer.println("/>");
+        writer.println(">");
 
         // fedoraInternalCall-1 and -2
         writeInternalConfig(1, m_internalSSL, 
