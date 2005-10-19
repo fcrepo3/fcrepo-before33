@@ -281,7 +281,7 @@ public class DefaultDisseminatorImpl extends InternalService implements DefaultD
 	  sb.append("<html><head><title>Dissemination Index Not Available</title></head>");
 	  sb.append("<body><center>");
 	  sb.append("<table width=\"784\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">");
-	  sb.append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"></td>");
+	  sb.append("<tr><td width=\"141\" height=\"134\" valign=\"top\"><img src=\"/images/newlogo2.jpg\" width=\"141\" height=\"134\"/></td>");
 	  sb.append("<td width=\"643\" valign=\"top\">");
 	  sb.append("<center><h2>Fedora Repository</h2>");
 	  sb.append("<h3>Dissemination Index</h3>");
