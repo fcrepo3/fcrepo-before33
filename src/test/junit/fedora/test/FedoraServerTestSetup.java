@@ -163,33 +163,44 @@ public class FedoraServerTestSetup
 		System.out.println("Backing up poliices...");
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue());
-        backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue());
-        backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue());
-        backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
+        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
+        backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
+        backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+        //backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
     }
 
     private void restorePolicies() throws Exception {
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue());
-        restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue());
-        restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue());
-        restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
+        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
+        restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
+        restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+        //restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
     }
 
-    private void backupDir(String dirName) throws Exception {
+    private void backupDir(String fromDirName, String toDirName) throws Exception {
 
         // make sure the original exists
-        File origDir = new File(dirName);
+        File origDir = new File(fromDirName);
+        System.out.println("LOOK! backing up orig dir: " + fromDirName);
         if (!origDir.exists()) {
-            throw new IOException(dirName + " does not exist!  To remedy, run Fedora with default configuration first!!");
+            throw new IOException(fromDirName + " does not exist!  To remedy, run Fedora with default configuration first!!");
         }
 
-        // prepare the new directory
-        File newDir = new File(dirName + "_ORIG");
-        deleteDirectory(newDir.getPath());
-        newDir.mkdirs();
+		File newDir = null;
+		if (toDirName == null){
+			newDir = new File(fromDirName + "_ORIG");
+			deleteDirectory(newDir.getPath());
+			newDir.mkdirs();
+			
+		} else {
+			newDir = new File(toDirName);
+			deleteDirectory(newDir.getPath());
+			newDir.mkdirs();
+		}
+        //File newDir = new File(dirName + "_ORIG");
+        //deleteDirectory(newDir.getPath());
+        //newDir.mkdirs();
 
         // copy all files from origDir to newDir
         File[] sourceFiles = origDir.listFiles();
@@ -197,20 +208,53 @@ public class FedoraServerTestSetup
             if (!sourceFiles[i].isDirectory() && sourceFiles[i].canRead()) {
                 copy(sourceFiles[i], new File(newDir, sourceFiles[i].getName()));
             }
+            // SDP: recurse directories
+            else if (sourceFiles[i].isDirectory()){
+            	System.out.println("LOOK!! copying orig dir: " + sourceFiles[i].getAbsolutePath());
+				System.out.println("LOOK!! to target dir: " + newDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());          	
+            	backupDir(sourceFiles[i].getAbsolutePath(), 
+            			  newDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
+            }
         }
     }
 
-    private void restoreDir(String dirName) throws Exception {
+    private void restoreDir(String toDirName, String sourceDirName) throws Exception {
         
         // clear out the active directory
-        File activeDir = new File(dirName);
+        File activeDir = new File(toDirName);
         deleteDirectory(activeDir.getPath());
         activeDir.mkdirs();
 
-        // copy all files from dirName + "_ORIG" to the active directory
-        File[] sourceFiles = new File(dirName + "_ORIG").listFiles();
+
+        File fromDir = null;
+        File[] sourceFiles = null;
+        if (sourceDirName == null){
+        	fromDir = new File(toDirName + "_ORIG");
+			sourceFiles = fromDir.listFiles();
+        	
+        } else {
+			fromDir = new File(sourceDirName);
+			sourceFiles = fromDir.listFiles();
+        	
+        }
+        //File[] sourceFiles = new File(toDirName + "_ORIG").listFiles();
+        
+		// copy all files from sourceDirName + "_ORIG" to the active directory        
         for (int i = 0; i < sourceFiles.length; i++) {
-            copy(sourceFiles[i], new File(activeDir, sourceFiles[i].getName()));
+           
+            //SDP
+			//copy(sourceFiles[i], new File(activeDir, sourceFiles[i].getName()));
+			if (!sourceFiles[i].isDirectory() && sourceFiles[i].canRead()) {
+				copy(sourceFiles[i], new File(activeDir, sourceFiles[i].getName()));
+				sourceFiles[i].delete();
+			}
+			// SDP: recurse directories
+			else if (sourceFiles[i].isDirectory()){
+				System.out.println("LOOK! restoring from backup dir: " + sourceFiles[i].getAbsolutePath());
+				System.out.println("LOOK! to active dir: " + activeDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
+				restoreDir(activeDir.getAbsolutePath() + File.separator + sourceFiles[i].getName(),
+						   fromDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
+			}
         }
     }
 
