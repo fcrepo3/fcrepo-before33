@@ -262,6 +262,35 @@ public class BESecurityConfig {
         return m_bMechConfigs;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Add empty bMech and method configurations given by the map if they
+     * are not already already defined.
+     */
+    public void addEmptyConfigs(Map pidToMethodList) {
+        Iterator pIter = pidToMethodList.keySet().iterator();
+        while (pIter.hasNext()) {
+            String bMechPID = (String) pIter.next();
+            // add the bMech indicated by the key if it doesn't exist
+            BMechRoleConfig bMechRoleConfig = (BMechRoleConfig) m_bMechConfigs.get(bMechPID);
+            if (bMechRoleConfig == null) {
+                bMechRoleConfig = new BMechRoleConfig(m_defaultConfig, bMechPID);
+                m_bMechConfigs.put(bMechPID, bMechRoleConfig);
+            }
+            // add each method indicated by the List which doesn't already exist
+            Iterator mIter = ((List) pidToMethodList.get(bMechPID)).iterator();
+            while (mIter.hasNext()) {
+                String methodName = (String) mIter.next();
+                MethodRoleConfig methodRoleConfig = (MethodRoleConfig) bMechRoleConfig.getMethodConfigs().get(methodName);
+                if (methodRoleConfig == null) {
+                    methodRoleConfig = new MethodRoleConfig(bMechRoleConfig, methodName);
+                    bMechRoleConfig.getMethodConfigs().put(methodName, methodRoleConfig);
+                }
+            }
+        }
+    }
+
     //
     // Deserialization/serialization to/from XML streams.
     //
@@ -538,6 +567,15 @@ public class BESecurityConfig {
         if (args.length == 1) {
             BESecurityConfig config = BESecurityConfig.fromStream(
                     new FileInputStream(new File(args[0])));
+            List methodNames = new ArrayList();
+            methodNames.add("methodOne");
+            methodNames.add("methodTwo");
+            Map pidToMethodList = new HashMap();
+            pidToMethodList.put("demo:bMechOne", methodNames);
+            methodNames = new ArrayList();
+            methodNames.add("getFriday");
+            pidToMethodList.put("demo:13", methodNames);
+            config.addEmptyConfigs(pidToMethodList);
             PrintWriter writer = new PrintWriter(System.out, true);
             writer.println("------------");
             writer.println("Abbreviated:");
@@ -548,7 +586,6 @@ public class BESecurityConfig {
             writer.println("Complete:");
             writer.println("---------");
             config.write(false, writer);
-//            config.toStream(false, new FileOutputStream(new File(args[1])));
         } else {
             System.err.println("Expected 1 arg: inputFile");
         }
