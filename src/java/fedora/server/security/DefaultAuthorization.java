@@ -46,7 +46,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private String repositoryPoliciesActiveDirectory = "";
 	private String objectPoliciesActiveDirectory = "";	
 	private String repositoryPolicyGuitoolDirectory = "";	
-	private String surrogatePoliciesDirectory = "";
+	private String surrogatePoliciesActiveDirectory = "";
 
 	private String combiningAlgorithm = ""; //"com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg";
 	private String enforceMode = "";
@@ -65,6 +65,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String ALLOW_SURROGATE_POLICIES_KEY = "ALLOW-SURROGATE-POLICIES";
 	
 	private static final String XACML_DIST_BASE = "config/xacml-policies";	
+	private static final String DEFAULT_SURROGATE_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-surrogate-policies"; 
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-repository-policies-approximating-2.0"; 
 	private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-object-policies"; 
 	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
@@ -98,10 +99,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
     if (moduleParameters.containsKey(SURROGATE_POLICIES_DIRECTORY_KEY)) {
-    	surrogatePoliciesDirectory = 
+    	surrogatePoliciesActiveDirectory = 
     		//((String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(SURROGATE_POLICIES_DIRECTORY_KEY);
-    	log("surrogatePoliciesDirectory=" + surrogatePoliciesDirectory);
+    	log("surrogatePoliciesDirectory=" + surrogatePoliciesActiveDirectory);
     }
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY_KEY)) {
     	repositoryPoliciesActiveDirectory = 
@@ -305,9 +306,6 @@ public class DefaultAuthorization extends Module implements Authorization {
       	log("in setupActivePolicyDirectories() 0");		
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
       	log("in setupActivePolicyDirectories() fedorahome=" + fedoraHome);		
-		mkdir(surrogatePoliciesDirectory);
-		mkdir(surrogatePoliciesDirectory + File.separator + DEFAULT);		
-      	log("in setupActivePolicyDirectories() a");		
 		/* add back > 2.1b vvvvv
 		mkdir(repositoryPolicyGuitoolDirectory);
 		filecopy(fedoraHome + File.separator + XACML_DIST_BASE + File.separator + "readme-policyguitool-generated-policies.txt", 
@@ -333,6 +331,11 @@ public class DefaultAuthorization extends Module implements Authorization {
 	      	log("in setupActivePolicyDirectories() j");		
 		}
     	log("in DefaultAuthorization.setupActivePolicyDirectories() k");		
+		if (mkdir(surrogatePoliciesActiveDirectory)) {
+			if (mkdir(surrogatePoliciesActiveDirectory + File.separator + DEFAULT)) {
+				dircopy(fedoraHome + File.separator + DEFAULT_SURROGATE_POLICIES_DIRECTORY, surrogatePoliciesActiveDirectory + File.separator + DEFAULT);
+			}
+		}    	
 		generateBackendPolicies();
     	log("in DefaultAuthorization.setupActivePolicyDirectories() l");		
 	}
@@ -359,7 +362,7 @@ public class DefaultAuthorization extends Module implements Authorization {
        		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
       	log("in DefaultAuthorization.postInitModule() 7");
         Transom.getInstance().setAllowSurrogate(allowSurrogatePolicies);
-        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesDirectory);
+        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesActiveDirectory);
         Transom.getInstance().setValidateSurrogatePolicies(validateSurrogatePolicies);
         Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
     } catch (Throwable e1) {

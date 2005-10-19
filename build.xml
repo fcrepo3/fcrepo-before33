@@ -835,6 +835,9 @@
 		<copy todir="dist/server/config/xacml-policies/default/default-object-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-object-policies"/>
 		</copy>
+		<copy todir="dist/server/config/xacml-policies/default/default-surrogate-policies">
+			<fileset dir="src/xml/xacml-policies/default/default-surrogate-policies"/>
+		</copy>		
 		<mkdir dir="dist/server/config/xacml-policies/examples"/>
 		<copy todir="dist/server/config/xacml-policies/examples/example-repository-policies">
 			<fileset dir="src/xml/xacml-policies/examples/example-repository-policies"/>
