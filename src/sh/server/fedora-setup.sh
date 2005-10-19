@@ -43,13 +43,13 @@ if [ "$1" != "ssl-authenticate-apim"   ] &&
        echo "        ssl-authenticate-apim - API-M with basicAuth and SSL"
        echo "                              - API-A with no basicAuth and no SSL"
        echo
-       echo "        ssl-authenticate-all  - API-M with basicAuth and SSL
+       echo "        ssl-authenticate-all  - API-M with basicAuth and SSL"
        echo "                              - API-A with basicAuth and SSL"
        echo
-       echo "        no-ssl-authenticate-apim - API-M with basicAuth but no SSL
+       echo "        no-ssl-authenticate-apim - API-M with basicAuth but no SSL"
        echo "                                 - API-A with no basicAuth and no SSL"
        echo
-       echo "        no-ssl-authenticate-all  - API-M with basicAuth but no SSL
+       echo "        no-ssl-authenticate-all  - API-M with basicAuth but no SSL"
        echo "                                 - API-A with basicAuth but no SSL"
        echo
        exit 1
