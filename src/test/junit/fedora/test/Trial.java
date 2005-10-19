@@ -54,8 +54,8 @@ public class Trial {
     public static final String BAD_PASSWORD = "sesame";
     public static final String ADMIN_USERNAME = "fedoraAdmin";
     public static final String ADMIN_PASSWORD = "fedoraAdmin";
-    public static final String END_USERNAME = "wdn5e";
-    public static final String END_PASSWORD = "wdn5e";
+    public static final String END_USERNAME = "wellspring";
+    public static final String END_PASSWORD = "rathole";
 
     public static final Trial SHIPPED_POLICIES_HTTP_NO_NO = new Trial(SHIPPED_POLICIES, HTTP_BASE_URL, null, null);
     public static final Trial SHIPPED_POLICIES_HTTPS_NO_NO = new Trial(SHIPPED_POLICIES, HTTPS_BASE_URL, null, null);
