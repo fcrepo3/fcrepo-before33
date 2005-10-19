@@ -219,7 +219,7 @@ log("***debugging CombinedPolicyModule");
 		boolean validateObjectPoliciesFromDatastream, 
 		String policySchemaPath
 	) throws Exception {
-		log ("***initPep()");
+		log ("in initPep()");
 		destroy();
 
 		this.enforceMode = enforceMode;
@@ -239,9 +239,9 @@ log("***debugging CombinedPolicyModule");
 		this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 		this.policySchemaPath = policySchemaPath;
-		
+		log ("***in initPep(), before calling newPdp()");	
 		newPdp();
-		log ("***ending initPep()");
+		log ("***exiting initPep()");
 	}
 
 	public void inactivate() {

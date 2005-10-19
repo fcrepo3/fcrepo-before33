@@ -299,22 +299,42 @@ public class DefaultAuthorization extends Module implements Authorization {
 		}
 	}
 	
+	private static final String DEFAULT = "default";
+	
 	private void setupActivePolicyDirectories() throws Exception {
+      	log("in setupActivePolicyDirectories() 0");		
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();
-		log("fedorahome=" + fedoraHome);				
+      	log("in setupActivePolicyDirectories() fedorahome=" + fedoraHome);		
 		mkdir(surrogatePoliciesDirectory);
+		mkdir(surrogatePoliciesDirectory + File.separator + DEFAULT);		
+      	log("in setupActivePolicyDirectories() a");		
+		/* add back > 2.1b vvvvv
 		mkdir(repositoryPolicyGuitoolDirectory);
 		filecopy(fedoraHome + File.separator + XACML_DIST_BASE + File.separator + "readme-policyguitool-generated-policies.txt", 
 				repositoryPolicyGuitoolDirectory + File.separator + "readme-policyguitool-generated-policies.txt");
+		add back > 2.1b ^^^^^ */ 
 		if (mkdir(repositoryPoliciesActiveDirectory)) {
-			dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory);
+	      	log("in setupActivePolicyDirectories() b");		
+			if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {
+		      	log("in setupActivePolicyDirectories() c");		
+				dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory + File.separator + DEFAULT);
+		      	log("in setupActivePolicyDirectories() d");		
+			}
+	      	log("in setupActivePolicyDirectories() e");		
 		}
+      	log("in setupActivePolicyDirectories() f");		
 		if (mkdir(objectPoliciesActiveDirectory)) {
-			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory);
+	      	log("in setupActivePolicyDirectories() g");		
+			if (mkdir(objectPoliciesActiveDirectory + File.separator + DEFAULT)) {
+		      	log("in setupActivePolicyDirectories() h");		
+				dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory + File.separator + DEFAULT);
+		      	log("in setupActivePolicyDirectories() i");		
+			}
+	      	log("in setupActivePolicyDirectories() j");		
 		}
-    	log("in DefaultAuthorization.setupActivePolicyDirectories() 1");		
+    	log("in DefaultAuthorization.setupActivePolicyDirectories() k");		
 		generateBackendPolicies();
-    	log("in DefaultAuthorization.setupActivePolicyDirectories() 2");		
+    	log("in DefaultAuthorization.setupActivePolicyDirectories() l");		
 	}
 	
   public void postInitModule() throws ModuleInitializationException {
@@ -333,7 +353,8 @@ public class DefaultAuthorization extends Module implements Authorization {
         xacmlPep = PolicyEnforcementPoint.getInstance();
       	log("in DefaultAuthorization.postInitModule() 6, policySchemaPath=" + policySchemaPath +
       			" validateRepositoryPolicies=" + validateRepositoryPolicies);
-		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();      	
+		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();   
+      	log("in DefaultAuthorization.postInitModule() 6a fedoraHome=" + fedoraHome);
         xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
        		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
       	log("in DefaultAuthorization.postInitModule() 7");
@@ -1332,7 +1353,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	resourceAttributes.put("asOfDate", dateAsString(asOfDate));
 	  }
 	  
-	  private static boolean log = true;
+	  private static boolean log = false;
 	  
 	  private final void log(String msg) {
 	  	if (log) {
@@ -1340,7 +1361,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	}
 	  }
 	  
-	  private static boolean slog = true;
+	  private static boolean slog = false;
 	  
 	  private static final void slog(String msg) {
 	  	if (slog) {

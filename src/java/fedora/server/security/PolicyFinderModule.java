@@ -76,10 +76,12 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		log("after building regular file list");
 		log("before building (backend generated) file list " + repositoryBackendPolicyDirectoryPath);
 		buildRepositoryPolicyFileList(new File(repositoryBackendPolicyDirectoryPath),  filelist);
-		log("after building (backend generated) file list");				
+		log("after building (backend generated) file list");		
+		/* add back > 2.1b vvvvv
 		log("before building (pgt generated) file list " + repositoryPolicyGuiToolDirectoryPath);
 		buildRepositoryPolicyFileList(new File(repositoryPolicyGuiToolDirectoryPath),  filelist);
-		log("after building (pgt generated) file list");		
+		log("after building (pgt generated) file list");
+		add back > 2.1b ^^^^^ */		
 		log("before getting repo policies");
 		
 		//String schemaName = System.getProperty(POLICY_SCHEMA_PROPERTY);
