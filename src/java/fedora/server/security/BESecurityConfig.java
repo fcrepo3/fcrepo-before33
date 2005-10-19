@@ -2,6 +2,9 @@ package fedora.server.security;
 
 import java.io.*;
 import java.util.*;
+import javax.xml.parsers.*;
+
+import org.w3c.dom.*;
 
 /**
  * Security configuration for backend services.
@@ -267,7 +270,103 @@ public class BESecurityConfig {
      * Instantiate a <code>BESecurityConfig</code> from an XML stream.
      */
     public static BESecurityConfig fromStream(InputStream in) throws Exception {
-        return null;
+
+        BESecurityConfig config = new BESecurityConfig();
+
+        // instantiate DOM
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false);
+        factory.setValidating(false);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(in);
+        Element root = doc.getDocumentElement();
+
+        // set default role configuration
+        DefaultRoleConfig defaultRoleConfig = new DefaultRoleConfig();
+        setValuesFromElement(defaultRoleConfig, root);
+        config.setDefaultConfig(defaultRoleConfig);
+
+        // get all child config nodes for repeated use
+        NodeList nodes = root.getElementsByTagName(_CONFIG);
+
+        // parse and add all explicitly configured bdef configurations
+        // while also parsing fedoraInternalCall-1 and setting appropriate vals
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element e = (Element) nodes.item(i);
+            String role = e.getAttribute(_ROLE);
+            if (role.indexOf(":") != -1 && role.indexOf("/") == -1) {
+                BMechRoleConfig bMechRoleConfig = new BMechRoleConfig(defaultRoleConfig, role);
+                setValuesFromElement(bMechRoleConfig, e);
+                config.getBMechConfigs().put(role, bMechRoleConfig);
+            } else if (role.equals(_INTERNAL_PREFIX + "1")) {
+                config.setInternalSSL(getBoolean(e, _CALLSSL));
+                config.setInternalBasicAuth(getBoolean(e, _CALLBASICAUTH));
+                config.setInternalUsername(getString(e, _CALLUSERNAME));
+                config.setInternalPassword(getString(e, _CALLPASSWORD));
+                config.setInternalIPList(getStringArray(e, _IPLIST));
+            }
+        }
+
+        // finally, parse and add all configured methods, first adding
+        // a blank bdef role configuration if needed
+        for (int i = 0; i < nodes.getLength(); i++) {
+            Element e = (Element) nodes.item(i);
+            String[] parts = e.getAttribute(_ROLE).split("/");
+            if (parts.length == 2) {
+                String bMechPID = parts[0];
+                String methodName = parts[1];
+                BMechRoleConfig bMechRoleConfig = (BMechRoleConfig) config.getBMechConfigs().get(bMechPID);
+                if (bMechRoleConfig == null) {
+                    bMechRoleConfig = new BMechRoleConfig(defaultRoleConfig, bMechPID);
+                    config.getBMechConfigs().put(bMechPID, bMechRoleConfig);
+                }
+                MethodRoleConfig methodRoleConfig = new MethodRoleConfig(bMechRoleConfig, methodName);
+                setValuesFromElement(methodRoleConfig, e);
+                bMechRoleConfig.getMethodConfigs().put(methodName, methodRoleConfig);
+            }
+        }
+
+        return config;
+    }
+
+    private static void setValuesFromElement(BERoleConfig roleConfig,
+                                             Element e) throws Exception {
+        roleConfig.setCallSSL(getBoolean(e, _CALLSSL));
+        roleConfig.setCallBasicAuth(getBoolean(e, _CALLBASICAUTH));
+        roleConfig.setCallUsername(getString(e, _CALLUSERNAME));
+        roleConfig.setCallPassword(getString(e, _CALLPASSWORD));
+        roleConfig.setCallbackSSL(getBoolean(e, _CALLBACKSSL));
+        roleConfig.setCallbackBasicAuth(getBoolean(e, _CALLBACKBASICAUTH));
+        roleConfig.setIPList(getStringArray(e, _IPLIST));
+    }
+
+    private static String getString(Element e, String name) {
+        Attr a = e.getAttributeNode(name);
+        if (a != null) {
+            return a.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    private static Boolean getBoolean(Element e, String name) {
+        String s = getString(e, name);
+        if (s != null) {
+            return new Boolean(s);
+        } else {
+            return null;
+        }
+    }
+
+    private static String[] getStringArray(Element e, String name) {
+        String s = getString(e, name);
+        if (s != null) {
+            String[] array = s.split(" +");
+            if (array.length == 1 && array[0].length() == 0) return null;
+            return array;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -298,14 +397,14 @@ public class BESecurityConfig {
         // useful constants while serializing
         final String ns = "info:fedora/fedora-system:def/beSecurity#";
         final String xsi_ns = "http://www.w3.org/2001/XMLSchema-instance";
-        final String indent = "                            ";
+        final String indent = "                           ";
         final String schemaURL = "http://www.fedora.info/definitions/1/0/api/beSecurity.xsd";
 
         // header
         writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         writer.println("<" + _CONFIG + " xmlns=\"" + ns + "\"");
-        writer.println(indent + "xmlns:xsi=\"" + xsi_ns + "\"");
-        writer.println(indent + "xsi:schemaLocation=\"" + ns + " " + schemaURL + "\"");
+        writer.println(indent + " xmlns:xsi=\"" + xsi_ns + "\"");
+        writer.println(indent + " xsi:schemaLocation=\"" + ns + " " + schemaURL + "\"");
 
         // default values
         writer.print(indent);
@@ -352,7 +451,7 @@ public class BESecurityConfig {
                                             String password,
                                             String[] ipList,
                                             PrintWriter writer) {
-        writer.print("  " + _CONFIG);
+        writer.print("  <" + _CONFIG);
         writeAttribute(_ROLE,              _INTERNAL_PREFIX + n, writer);
         writeAttribute(_CALLSSL,           ssl,                  writer);
         writeAttribute(_CALLBASICAUTH,     basicAuth,            writer);
@@ -361,6 +460,7 @@ public class BESecurityConfig {
         writeAttribute(_CALLBACKSSL,       ssl,                  writer);
         writeAttribute(_CALLBACKBASICAUTH, basicAuth,            writer);
         writeAttribute(_IPLIST,            ipList,               writer);
+        writer.println("/>");
     }
 
 
@@ -435,12 +535,22 @@ public class BESecurityConfig {
      * Will deserialize from inputFile and serialize to outputFile.
      */
     public static void main(String[] args) throws Exception {
-        if (args.length == 2) {
+        if (args.length == 1) {
             BESecurityConfig config = BESecurityConfig.fromStream(
                     new FileInputStream(new File(args[0])));
-            config.toStream(false, new FileOutputStream(new File(args[1])));
+            PrintWriter writer = new PrintWriter(System.out, true);
+            writer.println("------------");
+            writer.println("Abbreviated:");
+            writer.println("------------");
+            config.write(true, writer);
+            writer.println();
+            writer.println("---------");
+            writer.println("Complete:");
+            writer.println("---------");
+            config.write(false, writer);
+//            config.toStream(false, new FileOutputStream(new File(args[1])));
         } else {
-            System.err.println("Expected 2 args: inputFile and outputFile");
+            System.err.println("Expected 1 arg: inputFile");
         }
     }
 
