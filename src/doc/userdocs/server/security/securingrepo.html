@@ -166,8 +166,7 @@
       <li>API-M supports basic authentication <b><i>but no SSL</i></b>; restricted 
         by IP to localhost</li>
       <li>API-A unrestricted (i.e., open access)</li>
-      <li>backend service security is enhanced by limiting backend service communication 
-        only from specified IP addresses</li>
+      <li>backend services security is minimal</li>
     </ul>
 		<p>The &quot;no-ssl-authenticate-apim&quot; configuration is designed for repositories that desire to simulate the security that was available in Fedora 2.0. Note that this configuration does not use SSL on API-M so authentication passwords are in clear text and API-A is completely unrestricted. This configuration is NOT recommended for any repositories requiring a secure environment. Note that because there is no basic authentication for API-A, you also cannot write policies for API-A that use any user attribute information.</p>
    </div>
@@ -175,11 +174,14 @@
   <div class="sect2">
       <h3><a name="CONFIG4"></a>2.4 NO-SSL-AUTHENTICATE-ALL Configuration</h3>
 
-	 <ul>
-	  <li>API-M supports basic authentication <i><b>but no SSL</b></i>; restricted by IP to localhost</li>
-	  <li>API-A supports basic authentication <i><b>but no SSL</b></i></li>
-	  <li>backend security security is minimal</li>
-	 </ul>
+	 
+    <ul>
+      <li>API-M supports basic authentication <i><b>but no SSL</b></i>; restricted 
+        by IP to localhost</li>
+      <li>API-A supports basic authentication <i><b>but no SSL</b></i></li>
+      <li>backend service security is enhanced by limiting backend service communication 
+        only from specified IP addresses</li>
+    </ul>
 
 	<p>The &quot;no-ssl-authenticate-all&quot; configuration is designed for repositories that want the 
       features of basic authentication for both API-M and API-A, but are not ready 
@@ -206,22 +208,39 @@
 
 	<blockquote>
 	<p><strong>fedora.fcfg</strong> - The Fedora server configuration file is 
-	found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; The fedora.fcfg configuration file can be customized as needed as it was in Fedora 2.0 with one exception. The value of the parameter named "doMediateDatastreams" that is in the API-A module section is dependent on the authentication setting for API-A. If authentication is disabled for API-A, then the setting for "doMediateDatastreams" should be set to "false". If authentication is enabled for API-A, then "doMediateDatastreams" should be set to "true". This value is set appropriately in the four base configurations, but if you begin creating your own custom configuration, you need to be sure that the appropriate value is used for "doMediateDatastreams". Also remember that when doMediateDatastreams is set to true, the hostname used for the "fedoraServerHost" in fedora.fcfg must be a resolvable, fully qualified domain name. You cannot use just "localhost" since remote backend services use this hostname to communicate with the fedora server.</p>
-	<p>&nbsp;</p>
+      found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; 
+      The fedora.fcfg configuration file can be customized as needed as it was 
+      in Fedora 2.0 with one exception. The value of the parameter named "doMediateDatastreams" 
+      that is in the API-A module section is dependent on the authentication setting 
+      for API-A. If authentication is disabled for API-A, then the setting for 
+      "doMediateDatastreams" should be set to "false". If authentication is enabled 
+      for API-A, then "doMediateDatastreams" should be set to "true". This value 
+      is set appropriately in the four base configurations, but if you begin creating 
+      your own custom configuration, you need to be sure that the appropriate 
+      value is used for "doMediateDatastreams". Also remember that when doMediateDatastreams 
+      is set to true, the hostname used for the "fedoraServerHost" in fedora.fcfg 
+      must be a resolvable, fully qualified domain name. You cannot use just "localhost" 
+      since remote backend services use this hostname to communicate with the 
+      fedora server.</p>
+    <p>&nbsp;</p>
 	<p><strong>web.xml</strong> - The web.xml configuration file is found in the 
 	Fedora Tomcat web application directory under the Fedora Tomcat path ($FEDORA_HOME\server\jakarta-tomcat-5.0.28\webapps\fedora\WEB-INF).&nbsp;&nbsp; 
 	This file controls the settings for authentication and SSL forwarding for API-M and API-A.&nbsp;
 	<i><b>It is strongly recommended that you do not customize this file</b></i> unless you have very special needs that cannot be met by one of the four base configuration files. If you decide you have to customize this file, here are some helpful pointers to keep in mind:</p>
 
 	<ul>
-	 <li>fedora.fcfg - remember that if authentication is enabled for API-A, you must also set doMediateDatastreams to true in fedora.fcfg</li>
-		<li>beSecurity - remember that settings for authentication and SSL forwarding for API-A must mesh with settings in beSecurity.xml</li>
-		<li>XACML policies - remember that policies that use "Subject" attributes are only available if the corresponding API has 
-		authentication enabled</li>
-		<li>authentication and SSL - remember that settings for authentication and SSL can affect the settings in fedora.fcfg, beSecurity, and in written policies so exercise care when making changes</li>
-	</ul>
+      <li>fedora.fcfg - remember that if authentication is enabled for API-A, 
+        you must also set doMediateDatastreams to true in fedora.fcfg</li>
+      <li>beSecurity - remember that settings for authentication and SSL forwarding 
+        for API-A must mesh with settings in beSecurity.xml</li>
+      <li>XACML policies - remember that policies that use "Subject" attributes 
+        are only available if the corresponding API has authentication enabled</li>
+      <li>authentication and SSL - remember that settings for authentication and 
+        SSL can affect the settings in fedora.fcfg, beSecurity, and in written 
+        policies so exercise care when making changes</li>
+    </ul>
 
-	<p><strong>beSecurity.xml</strong> -&nbsp; The Fedora backend security configuration file is 
+	<p>&nbsp;</p><p><strong>beSecurity.xml</strong> -&nbsp; The Fedora backend security configuration file is 
 	found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; 
 	Customization of this file is only relevant for repositories that are using 
 	custom disseminators that point to external services.&nbsp; If you want to 
@@ -318,9 +337,21 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
   &lt;/tomcat-users&gt;</pre></div>
   
 <p>&nbsp;</p>
-	<p>The placeholders indicated by #1 and #2 will be substituted with the values specified for adminUsername(default is fedoraAdmin) and adminPassword(default is fedoraAdmin) specified in the fedora.fcfg file at server startup time. To change these values, make the changes in fedora.fcfg and leave the #1, and #2 markers unchanged in tomcat-users-fedoraTemplate.xml. The role of "fedoraRole=administrator" is a special role that grants super user privileges for the Fedora server and should not be edited.</p>
-
-<p>The username of "fedoraIntCallUser" is also a special Fedora system user. The role of "fedoraRole=fedoraInternalCall-1" grants special system privileges to this user. This username is used as the authenticating user when the fedora server needs to make calls to itself. The values for username and password may be edited, but you should leave the role unchanged. If you do change the username or password, you must also update these values in the beSecurity.xml file.</p>
+	
+  <p>The placeholders indicated by #1 and #2 will be substituted with the values 
+    specified for adminUsername(default is fedoraAdmin) and adminPassword(default 
+    is fedoraAdmin) specified in the fedora.fcfg file at server startup time. 
+    To change these values, make the changes in fedora.fcfg and leave the #1, 
+    and #2 markers unchanged in &quot;tomcat-users_fedoraTemplate.xml&quot;. The 
+    role of &quot;fedoraRole=administrator&quot; is a special role that grants 
+    super user privileges for the Fedora server and should not be edited.</p>
+  <p>The username of &quot;fedoraIntCallUser&quot; is also a special Fedora system 
+    user. The role of &quot;fedoraRole=fedoraInternalCall-1&quot; grants special 
+    system privileges to this user. This username is used as the authenticating 
+    user when the fedora server needs to make calls to itself. The values for 
+    username and password may be edited, but you should leave the role unchanged. 
+    If you do change the username or password, you must also update these values 
+    in the beSecurity.xml file.</p>
 
   <p>The third entry provides a username that can be used when a webfrontend is 
     authenticated outside of Fedora and you want that authenticated webfrontend 
@@ -329,15 +360,21 @@ will be generated.&nbsp;&nbsp; The template file is located:</p>
     corresponding surrogate user policy. An example of a repository wide policy 
     that uses a surrogate user can be found in the set of example policies under 
     the name "permit-webfrontend-as-surrogate.xml". This example policy uses the 
-    role of "webfrontend" which corresponds to the value in the tomcat-users-fedoraTemplate.xml 
+    role of "webfrontend" which corresponds to the value in the tomcat-users_fedoraTemplate.xml 
     file. See the next sections for additional details regarding configuring a 
     surrogate user.</p>
+  <p>The remaining usernames in the example tomcat-users_fedoraTemplate.xml file 
+    are used by the example policies described in <i><a href="XACMLPolicyGuide.htm">Fedora 
+    XACML Policy Writing Guide</a></i>. If you plan to experiment with the sample 
+    policies, you will need to retain these usernames and roles in order for the 
+    policies to function properly. </p>
 
-<p>In addition to username and password, you can also assign what Tomcat refers to as "roles".
-(These roles have a matching function against Tomcat's web.xml file, which remains unchanged.) 
-In addition, for Fedora, you can think of these "roles" in the tomcat-users file as attributes about the user 
-which are entered as name=value pairs. 
-You can use "roles" to define groups of users and then write policies based on these attributes.</p>
+  <p>In addition to username and password, you can also assign what Tomcat refers 
+    to as &quot;roles&quot;. (These roles have a matching function against Tomcat's 
+    web.xml file, which remains unchanged.) In addition, for Fedora, you can think 
+    of these &quot;roles&quot; in the tomcat-users file as attributes about the 
+    user which are entered as &quot;name=value&quot; pairs. You can use &quot;roles&quot; 
+    to define groups of users and then write policies based on these attributes.</p>
 
 <p>
 Option A is not the default.  It is chosen by editing a configuration file. 
