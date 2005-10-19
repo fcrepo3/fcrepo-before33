@@ -159,20 +159,36 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     }
 
     private final void showFiles (File dir, String label) {
-    	System.out.println(dir.getPath() + " " + label);
-    	String[] files = dir.list();
-    	for (int i = 0; i < files.length; i++) {
-    		System.out.println("\t" + files[i]);
-    	}
+    	System.out.println("LOOK! " + dir.getPath() + " CONTENTS  " + label + ":");
+    	//String[] files = dir.list();
+    	File[] files = dir.listFiles();
+    	
+    	//for (int i = 0; i < files.length; i++) {
+    	//	System.out.println("\t" + files[i]);
+    	//}
+    	
+		//SDP: recurse directories
+		for (int i = 0; i < files.length; i++) {
+			if (!files[i].isDirectory() && files[i].canRead()) {
+				System.out.println("\t" + files[i].getName());
+			}
+			else if (files[i].isDirectory()){
+				showFiles(files[i], label);        	
+			}
+		}
     }
     
     private void replacePolicies(File fromDir, String toDirProp) throws Exception {
         Configuration config = getServerConfiguration().getModuleConfiguration("fedora.server.security.Authorization");
         File toDir = new File(config.getParameter(toDirProp).getValue());
         if (toDir.exists()) {
+			// clear out the active policy directory
+			System.out.println("LOOK! replacing active policies at: " + toDir.getAbsolutePath());
         	showFiles(toDir, "before clearing");
             clearDir(toDir);
         	showFiles(toDir, "after clearing");
+        	
+        	// copy junit config policy files into active directory
             if (fromDir.exists()) {
             	System.out.println(fromDir.getPath() + " exists");
                 copyFiles(fromDir, toDir);
@@ -183,18 +199,49 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
 
     private static void clearDir(File dir) throws Exception {
         File[] files = dir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            files[i].delete();
-        }
+        
+        //for (int i = 0; i < files.length; i++) {
+        //    files[i].delete();
+        //}
+        
+        //SDP: recurse directories
+		for (int i = 0; i < files.length; i++) {
+			if (!files[i].isDirectory() && files[i].canRead()) {
+				files[i].delete();
+			}
+			else if (files[i].isDirectory()){
+				clearDir(files[i]);        	
+			}
+		}
     }
 
     private static void copyFiles(File fromDir, File toDir) throws Exception {
         File[] files = fromDir.listFiles();
-        for (int i = 0; i < files.length; i++) {
-            if (!files[i].isDirectory() && files[i].canRead()) {
-                FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
-            }
-        }
+        
+        //for (int i = 0; i < files.length; i++) {
+        //    if (!files[i].isDirectory() && files[i].canRead()) {
+        //        FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
+        //    }
+        //}
+        
+        // SDP recursive
+		for (int i = 0; i < files.length; i++) {
+			if (!files[i].isDirectory() && files[i].canRead()) {
+				System.out.println("LOOK! copying file: " + files[i].getName());
+				FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
+			}
+			// SDP: recurse directories
+			else if (files[i].isDirectory()){   
+				if (files[i].getName().equalsIgnoreCase("CVS")) { 
+					continue;     	
+				} else {
+					System.out.println("LOOK! copying dir: " + files[i].getName());
+					copyFiles(files[i], 
+							  new File(toDir.getAbsolutePath() + File.separator + files[i].getName()));
+				}
+
+			}
+		}
     }
 
 }
