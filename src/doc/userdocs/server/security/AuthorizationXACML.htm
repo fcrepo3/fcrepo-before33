@@ -190,7 +190,40 @@ always in place regardless of the setting for parameter ENFORCE-MODE.</p>
 font-family:"Courier New"'>&nbsp;</span></p>
 
 <h3><a name="CONFIG-STORE">2</a><b><a name="CONFIG-STORE">.2 Configuring the Active Policies Storage Location</a></b></h3>
-	<p><b>&nbsp;</b></p>
+	<p>&nbsp;</p>
+<p>Active policies are those policies that are &quot;in play&quot; for the repository.&nbsp;&nbsp;&nbsp; 
+In the Authorization module section of the Fedora server configuration file 
+(fedora.fcfg),&nbsp; there are parameters to set the storage location for active 
+policies.&nbsp;&nbsp; <i><b>The Fedora repository will only know about policies 
+that are stored in the configured policy directories.&nbsp; Policies stored in 
+any other location will be invisible to the repository.&nbsp;&nbsp;&nbsp;&nbsp;
+</b></i></p>
+<p>The configuration parameters in the Authorization module provide the 
+repository administrator with a choice as to where XACML policy files are 
+stored.&nbsp;&nbsp; You can keep the default values, which will designate a 
+directory path at the root of the disk where the repository server is running.&nbsp;&nbsp; 
+The policy storage locations work just like the digital object and datastream 
+storage locations that are configured for the server (also in fedora.fcfg).&nbsp;&nbsp; 
+It is expected that repository administrators appropriately protect these 
+directories so that they cannot be tampered with.</p>
+<p>It should be noted that Fedora comes out-of-the-box with a set of default 
+repository-wide policies.&nbsp; The default policies are automatically copied 
+into the active policies storage location the first time the Fedora repository 
+server is started (i.e., copied into a subdirectory named &quot;/default&quot;).&nbsp;&nbsp;
+<b><i>Any changes to the default policies should be made in this active policy 
+directory .&nbsp; The policies located in the Fedora software distribution 
+directory ($FEDORA_HOME/dist/server/config/xacml-policies) are NOT active and 
+are not loaded by the repository!&nbsp;&nbsp; </i></b>It is recommended that 
+changes to the default repository-wide policies are made with extreme care.&nbsp;&nbsp; 
+These policies establish the baseline authorization rules for Fedora.&nbsp; 
+Refer to the documentation below&nbsp; on <a href="#DEFAULT">default repository 
+policies </a>for a description of what each policy does.&nbsp; </p>
+<p>In addition to the default policies,&nbsp; it is possible to create any 
+number of custom XACML policies for a repository and for specific digital 
+objects.&nbsp;&nbsp; Consult the Fedora <a href="XACMLPolicyGuide.htm">XACML 
+Policy Writing Guide </a>for instructions on authoring new policies and a set of 
+sample policies for Fedora. </p>
+<p>&nbsp;</p>
 	<p><b><i><a name="STORE-REPO-WIDE"></a>a. </i></b>&nbsp;<b><i>Repository-wide policies stored in central location</i></b></p>
 	<p>&nbsp;</p>
 	<p>The storage location for active repository-wide policies can be set
@@ -310,7 +343,7 @@ locations for a repository.</p>
 	<br>
 	It should also be noted that the <i><b>first time </b></i>the Fedora server 
 	is started, the <i><b>default out-of-the-box policies</b></i> will be copied 
-	into a subdirectory named &quot;default&quot; under the appropriate active policy storage location 
+	into a subdirectory named &quot;/default&quot; under the appropriate active policy storage location 
 	(configured for the Authorization module in fedora.fcfg).&nbsp;&nbsp; These 
 	default policies are copied <b><i>from</i></b> the Fedora distribution 
 	directory $FEDORA_HOME/dist/server/config/xacml-policies/default.&nbsp;&nbsp; 
@@ -341,28 +374,18 @@ to validate policies against the XML schema for XACML.    </p>
 
 	<p>&nbsp;</p>
 	<p style='text-autospace:none'>By default all repository-wide
-policies will be validated.  It is up to the repository administrator to enable
-policy validation for object-specific and surrogate policies.   <b><i>&lt;</i></b><b><i>BILL</i></b><b><i>: 
-what happens if invalid policy is in play?  Exception?  Also who are
+policies will be validated by the repository when they are loaded.  It is up to the repository administrator to 
+	pre-validate for object-specific and surrogate policies before placing them 
+	in the active policy storage location.    In general it is recommended that 
+	all new policies are validated before they are put into the active policy 
+	location.&nbsp; Use the
+	<a href="../cmd-line/index.html#validate">validate-policy</a> command line 
+	utility to validate an XACML policy file.</p>
+<p style='text-autospace:none'>&lt;<i><b>BILL</b></i><b><i>: 
+is this true?&nbsp; what happens if invalid policy is in play?  Exception?  Also 
+why are
 object-specific policies set to false?&gt;</i></b></p>
-	<p style='text-autospace:none'><b><i>&nbsp;</i></b></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>&lt;For now, there is no
-Fedora-based xacml schema checking of policies.  Some policies fail sunxacml
-parse</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>with console errors; with
-repository-policies, this would be at server startup, with object-policies, 
-	</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>only on access to that specific
-object.  on schema validation:
-http://sunxacml.sourceforge.net/guide.html#using-validating</span><span
-style='font-size:10.0pt;font-family:"Courier New"'>&gt;</span></p>
-	<p style='text-autospace:none'><b><i>&nbsp;</i></b></p>
+	<p style='text-autospace:none'><b><i>&nbsp;&nbsp;</i></b></p>
 
 <h3><a name="CONFIG-SURROG">2</a><b><a name="CONFIG-SURROG">.5 Configuring “Surrogate” Policies (and what are they?)</a></b></h3>
 <p style='text-autospace:none'>&nbsp;</p>
@@ -376,7 +399,11 @@ authenticates the front-end &quot;surrogate&quot; users - and there are policies
 <b>subjectRepresented -</b> then the incoming service request is treated as if the end-user had been authenticated by
 	Fedora.   From that point, the actual end user identity is subject to 
 	authorization decisions based on the repository-wide and object-specific 
-	policies configured for the repository.<i><b> &lt;Bill -&nbsp; this needs better 
+	policies configured for the repository.<i><b> </b></i></p>
+<p style='text-autospace:none'>
+	&nbsp;</p>
+<p style='text-autospace:none'>
+	<i><b> &lt;BILL -&nbsp; this needs better 
 	explanation&gt;</b></i></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
@@ -626,16 +653,128 @@ the attributes are known to be provided in the xacml request itself.]</p></li>
 	ResourceAttributeFinderModule gets all other attributes about such resources 
 	by introspecting on actual digital objects in the repository.  </p></li>
 </ul>
-<p><i><b>&lt;Bill -&nbsp; what else do we want here?&gt;</b></i></p>
+<p><i><b>&lt;BILL -&nbsp; what else do we want here?&gt;</b></i></p>
 <h2>&nbsp;</h2>
 <h2><a name="ATTR">4<b> How to Bind User Attributes into the Fedora Policy 
 Enforcement Module</b></a></h2>
-	<p><b>&nbsp;</b></p>
+	<p><b>&nbsp;</b>The availability of user identity and attributes depends on 
+	the authentication configuration option selected for the repository.&nbsp;&nbsp; 
+	Refer to the <a href="securingrepo.html#AUTHN">Authentication and User 
+	Attributes</a> section of the <a href="securingrepo.html">Securing Your 
+	Repository</a> guide for information on authentication configuration 
+	options.&nbsp;&nbsp;&nbsp;&nbsp; In terms of understanding what user 
+	attributes can be referenced for Subjects in an XACML policy, you must first 
+	know what the sources of authentication information are for the repository.&nbsp;&nbsp;&nbsp;&nbsp; 
+	The Fedora XACML-based Policy Enforcement module will automatically be able 
+	to obtain attributes from one or more of following authentication sources 
+	when they are configured as described in <a href="securingrepo.html#AUTHN">
+	Authentication and User Attributes</a>.</p>
 	<h3><a name="ATTR1">4<b>.1  Tomcat-users attributes</b></a></h3>
-	<p><b><i>&nbsp;&lt;Bill - fill in here&gt;</i></b></p>
+	<p>In Fedora, XACML policies can refer to user identity and role information 
+	that is specified within the Tomcat-users file.&nbsp;&nbsp; This file is part of the Tomcat configuration files and is auto-generated from the tomcat-user_fedoraTemplate.xml file. It contains username and password information about "authenticated" users. Roles can also be assigned to user entries.  These 
+	roles can then be used as attributes in related XACML policies.</p>
+<p>By default, the template contains the following users, passwords, and roles:</p>
+
+	<div class="code"><pre>
+  &lt;tomcat-users&gt;
+      &lt;user name=&quot;#1&quot; password=&quot;#2&quot; roles=&quot;fedoraRole=administrator&quot;/&gt;
+      &lt;user name=&quot;fedoraIntCallUser&quot; password=&quot;changeme&quot; roles=&quot;fedoraRole=fedoraInternalCall-1&quot;/&gt;
+      &lt;user name=&quot;surrogate64&quot; password=&quot;surrogate64&quot; roles=&quot;webfrontend&quot;/&gt;
+      &lt;user name=&quot;testuser1&quot; password=&quot;testuser1&quot; roles=&quot;fedoraRole=professor&quot;/&gt;
+      &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;fedoraRole=researcher&quot;/&gt;
+      &lt;user name=&quot;testuser3&quot; password=&quot;testuser3&quot; roles=&quot;fedoraRole=student&quot;/&gt;
+      &lt;user name=&quot;testuser4&quot; password=&quot;testuser4&quot; roles=&quot;fedoraRole=visitor&quot;/&gt;
+      &lt;user name=&quot;guest&quot; password=&quot;&quot; roles=&quot;&quot;/&gt;
+  &lt;/tomcat-users&gt;</pre></div>
+  
 <p>&nbsp;</p>
+	
+  <p>Two aspects of tomcat-users use need pointing out.&nbsp; User roles are 
+	normally defined in Tomcat-users as &lt;user ..... 
+	roles=&quot;value1,value2,value3&quot;/&gt;,&nbsp; where a user can have multiple roles, 
+	and each role name is separated by a comma.&nbsp;&nbsp;  
+	<p>&nbsp;<div class="code">
+	<pre>
+  &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; <b>roles=&quot;someRole,someOtherRole&quot;</b>/&gt;</pre>
+	</div>
+
+<p>&nbsp;</p>
+<p>Fedora allows an enhancement of this specification of roles which allows each 
+role <b><i>value</i></b> to itself be a name-value pair - essentially making 
+each role value an attribute/value string.&nbsp; This is a simple concept that 
+does not break the normal workings of Tomcat, but conveniently permits more 
+meaning user attribute information to be recorded.&nbsp; The reason for doing 
+this is to allow user attributes (attributeName=attributeValue) to be recorded 
+in Tomcat-users in such a way that such attributes can be later used inside 
+XACML policies.&nbsp;&nbsp; The basic idea is that each Tomcat role <b><i>value</i></b> 
+is just a string, and as such, there is no reason we can't embed an equal sign 
+within such a string.&nbsp;&nbsp; Thus, within the the &quot;roles=&quot; part of the user 
+element in Tomcat-users, we can put a series of inner name/value pairs as in the 
+following example:&nbsp;
+</p>
+<div class="code">
+	<pre>
+  &lt;user name=&quot;testuser2&quot; password=&quot;testuser2&quot; roles=&quot;<b>someAttribute=xyz</b>,<b>fedoraRole=researcher</b>&quot;/&gt;</pre>
+	</div>
+
+<p>The above example indicates that the user has two attributes (an attribute 
+named<b> &quot;someAttriibute&quot;</b> whose value is <i>xyz</i>, and an attribute named<b> 
+&quot;fedoraRole&quot;</b> whose value is <i>researcher</i>).&nbsp; These attribute names 
+can be used in SubjectAttributeDesignator specifications in XACML policies and 
+the values can be used in AttributeValue specifications in policies.&nbsp;&nbsp; 
+Below is a snippet of an XACML policy that refers to attributes from 
+Tomcat-users (refer to the <a href="XACMLPolicyGuide.htm">Fedora XACML Policy 
+Guide</a> for more info on policy syntax):</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
 	<h3><a name="ATTR2">4<b>.2  LDAP attributes</b></a></h3>
-	<p><b>&nbsp;<i>&lt;Bill - fill in here&gt;</i></b></p>
+	<p>In Fedora, XACML policies can refer to user attribute names and values 
+	that are registered in an LDAP that is configured with Fedora's Tomcat.&nbsp;&nbsp; 
+	Refer to the <a href="securingrepo.html#AUTHN">Authentication and User 
+	Attributes</a> section of the <a href="securingrepo.html">Securing Your 
+	Repository</a> guide for information on authentication configuration 
+	options.&nbsp;&nbsp; Given that an LDAP is properly configured with Fedora, 
+	the Fedora XACML-based Policy Enforcement module will be able to access LDAP 
+	user attributes, which means that you can refer to LDAP attributes in 
+	reference to a Subject in a policy, as shown in the following XACML snippet 
+	(refer to the <a href="XACMLPolicyGuide.htm">Fedora XACML Policy Guide</a> 
+	for more info on policy syntax)::</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>  &lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;
+    &lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;
+       &lt;SubjectAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; AttributeId=&quot;<b>ou</b>&quot;/&gt;
+       &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;
+          &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>Lb-Info Technology</b>&lt;/AttributeValue&gt;
+          &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>Lb-Univ Librarian-General</b>&lt;/AttributeValue&gt;
+       &lt;/Apply&gt;
+    &lt;/Condition&gt;
+  &lt;/Rule&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>In the above example, the 
+SubjectAttributeDesignator refers to an LDAP attribute name (&quot;ou&quot;), which refers 
+to the university organizational department that a user belongs to.&nbsp; The 
+policy rule applies a function to set up the condition that the value of the &quot;ou&quot; 
+attribute must be one of the listed values (&quot;Lb-Info Technology&quot; or Lb-Univ 
+Librarian-General&quot;).&nbsp; </p>
 <p>&nbsp;</p>
 	<h3><a name="ATTR3">4<b>.3  Shibboleth attributes via an HTTP Servlet Filter</b></a></h3>
 	<p><span style='font-size:10.0pt;font-family:"Courier New"'>&nbsp;</span></p>
@@ -663,10 +802,12 @@ HTTP servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT
 Fedora will then  ook for it, and use the attributes in XACML-based
 authorization.  </p>
 	<p style='text-autospace:none'>&nbsp;</p>
-	<p style='text-autospace:none'>This approach was initially
-developed to support a Shibboleth servlet filter that is offered to the Fedora
-community by OhioLink.  Although full Shibboleth integration with Fedora will
-be pursued for future releases of Fedora, the ability to send attributes into
+	<p style='text-autospace:none'>This approach was initially developed to 
+	support the OhioLink
+	<a href="http://drc-dev.ohiolink.edu/browser/fedora-shib-filter/trunk/">Shibboleth servlet filter 
+	</a>that will be available to the Fedora community from the OhioLink 
+	implementation.&nbsp; Although full Shibboleth integration with Fedora will 
+	be in future releases of Fedora, the ability to send attributes into
 Fedora via a servlet filter is a way to get started with using
 Shibboleth-acquired attributes in Fedora XACML policy enforcement.  It should
 be noted that this means of getting attributes into Fedora can be used with any
@@ -890,15 +1031,13 @@ directories:&nbsp;&nbsp;&nbsp;
 <p>
 	&nbsp;</p>
 	<p>=================================================================</p>
-<p>&lt;Bill - REMAINING SOURCE NOTES TO INTEGRATE&gt;</p>
-<p>&nbsp;</p>
+<p>&lt;<b>BILL</b> - MISC. THINGS ....</p>
 	<p><b><i>&lt;Bill – what is relationship of configured policy
 combining algorithm  to the rule combining algorithm in the policy?&gt;</i></b><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New"'>&nbsp;</span></p>
-	<p style='text-autospace:none'>
+	&nbsp;</p>
+<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>to do:  should one object policy
 override the other?  if so, what order of preference?</span></p>
@@ -928,14 +1067,7 @@ work.</span></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
 <p style='text-autospace:none'>
-<i>To quiet sunxacml INFO messages, a logging.properties file is included with the 
-Fedora distribution,<br>
-edited to print only SEVERE messages to the console. Fedora then starts Java 
-using that logging.properties file.<br>
-The original file, as distributed with JDK 1.4.2.8, prints INFO (and more 
-severe) messages, making the console a bit<br>
-chatty. To revert to the original logging behavior, edit fedora-start.bat 
-(Windows) or fedora.sh (Unix), and remove</i></p>
+&nbsp;</p>
 	<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
