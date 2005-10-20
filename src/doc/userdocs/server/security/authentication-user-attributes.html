@@ -18,11 +18,47 @@
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 	</div>
+	
+<div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+        <ol>
+            <li><a href="#INTRO">Introduction</a>
+            <li><a href="#USERATTRIBUTES">2 Arbitrary User Attributes</a>
+		</ol>
+    </div>
+</div>
 
+  <div class="sect">
+    <h2><a name="INTRO"></a>1 Introduction</h2>
+    
 <p>For a practical introduction to using Tomcat authentication for Fedora, see the Section 4 of 
 the document "Securing Your Fedora Repository".  The basics under Tomcat is covered in <a href="http://tomcat.apache.org/tomcat-5.0-doc/realm-howto.html">http://tomcat.apache.org/tomcat-5.0-doc/realm-howto.html</a>
 A few of the Tomcat source files were edited and compiled for use with Fedora. 
 </p>
+  </div>
+   
+     <div class="sect">
+    <h2><a name="USERATTRIBUTES"></a>2 Arbitrary User Attributes</h2>
+    
+<p>Fedora 2.1b includes a string constant fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES and looks for an http servlet request 
+attribute named after that constant. The Fedora code now takes a request attribute found under that name, as a Map giving name => values of subject attributes. Currently, name must be a String and this is unlikely to change. Value must be a String, and later this might be relaxed to include String[], to allow attributes with multiple values. Other types of value are not serviced. The effect 
+within Fedora of having a key => value pair "a" => "b" in the Map is the same as having a Tomcat role "a=b", with the exception that the effect of having the same attribute key defined both places is right now undefined. (That is, don't do it. :)
+</p><p>
+        So your servlet filter needs only create the map and populate it, and put it into the http servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. Fedora will then look for it, and use the attributes in xacml authorization. This services any subject attribute source, and remains source-neutral, i.e., you could use it to link
+        in Shibboleth, but it doesn't favor Shibboleth.
+</p><p>        
+        If doing this, it would be best to isolate your interface code to be independent both of being in a servlet filter and also of interacting with the Map. 
+        This is so you could later refactor the code into as a JAAS login module if needed. That would allow you to optionally authenticate as well,
+        and also make the attributes available to security checks by Tomcat, i.e., through web.xml. 
+        You may not end up doing that, but the way you code now could speed that up.
+</p><p>        
+        This means of introducing arbitrary attributes has been tested by another developer successfully, but
+        not by Fedora core developers. 
+</p>
+  </div>
+
+
 
 <p>
 </p>
