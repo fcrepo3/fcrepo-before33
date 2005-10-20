@@ -157,7 +157,9 @@ public class BESecurityServlet extends HttpServlet {
                         try { out.close(); } catch (Exception e) { }
                         out = new FileOutputStream(m_configFile);
                         originalConfig.toStream(false, out);
-                        throw new Exception("Backend policy generation failed.", th);
+                        String msg = th.getMessage();
+                        if (msg == null) msg = "";
+                        throw new Exception("Backend policy generation failed. " + msg, th);
                     }
                 }
 
