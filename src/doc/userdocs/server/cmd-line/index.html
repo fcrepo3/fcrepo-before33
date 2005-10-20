@@ -25,6 +25,7 @@
     <div class="tocbox">
       <ol>
         <li><a href="#intro">Introduction</a></li>
+		<li><a href="#setup">fedora-setup</a></li>
 
         <li><a href="#start">fedora-start</a></li>
 
@@ -72,7 +73,57 @@
     <span class="GramE">Unix</span>, they resolve to shell scripts
     (.sh).</p>
   </div>
-<br><br><br>
+&nbsp;<h2>
+<br><a name="setup"></a>fedora-setup</h2>
+	<p>Before the Fedora server is started you must run the Fedora setup utility 
+	to put a security configuration in place.&nbsp; See the guide for Securing 
+	Your Fedora Repository for a full discussion of the four configuration 
+	options.&nbsp;&nbsp; To select your base security configuration, run the &quot;fedora-setup&quot; 
+	command-line utility.&nbsp; This utility requires a single argument which is the 
+	name of the base security configuration you wish to use.</p>
+	<p>&nbsp;</p>
+
+<p>
+        &nbsp;Under Windows:</p>
+      
+  <div class="code"> &nbsp;&nbsp;&nbsp; %FEDORA_HOME%\server\bin\fedora-setup 
+    <i><b>configuration-name</b></i></div>
+      <p style='text-autospace:none'>&nbsp;</p>
+
+<p>
+        &nbsp;Under Unix:</p>
+      <div class="code">
+&nbsp;&nbsp;&nbsp; $FEDORA_HOME/server/bin/fedora-setup <i><b>configuration-name</b></i></div>
+	<p>&nbsp;</p>
+	
+  <p>The valid values for<i><b> configuration-name</b></i> include: </p>
+	<blockquote>
+	 <blockquote>
+		<ul>
+			<li><b>ssl-authenticate-apim</b></li>
+			<li><b>ssl-authenticate-all</b></li>
+			<li><b>no-ssl-authenticate-apim</b></li>
+			<li><b>no-ssl-authenticate-all</b></li>
+		</ul>
+		</blockquote></blockquote>
+
+    <p>The fedora-setup utility initializes one of the four base security configurations by copying a set of 
+	configuration files into the distribution tree.&nbsp; The contents of these 
+	configuration files will vary depending on the base security configuration selected.&nbsp; The 
+	resultant functionalities of the four possible base security configurations are described in more detail 
+	below.&nbsp;&nbsp; <b><i>You can rerun the Fedora setup utility at any time 
+	to change your repository configuration.</i></b>&nbsp;&nbsp; Just stop the 
+	server, run fedora-setup, and restart the server.&nbsp;&nbsp; The setup utility <i><b>automatically</b></i> puts an 
+	appropriate version of the three necessary Fedora configuration files into 
+	play:</p>
+	<p>&nbsp;</p>
+	<p><b>fedora.fcfg </b>- Fedora server configuration file</p>
+	<p><b>web.xml </b>- Fedora Tomcat web application configuration file; controls whether basic authentication and SSL are enabled for API-M and API-A</p>
+	<p><b>beSecurity.xml</b> - Fedora backend services configuration file; 
+	controls security for services calling back to Fedora (see <i>
+	<a href="../security/beSecurityConfig.html">beSecurity Configuration</a></i> document for details)</p>
+	<p><br><br>
+  </p>
   <div class="sec1">
     <h2><a name="start" id="start"></a>fedora-start</h2>
 
