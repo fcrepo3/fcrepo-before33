@@ -58,11 +58,46 @@
 <h2><a name="INTRO">1 Introduction</a></h2>
 <p>&nbsp;</p>
 
+<p><font face="Arial" style="font-size: 9pt">A major feature of the new Fedora 
+security architecture is the introduction of the
+<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+eXtensible Access Control Markup Language</a> (XACML) and an XACML-based policy 
+enforcement module.&nbsp;&nbsp;&nbsp; Developed by the OASIS Consortium, XACML 
+is an XML-based markup language to encode access control policies.&nbsp; The 
+policy language is flexible and enables the specification of fine-grained, 
+machine-readable policies that can be used to control access to Fedora web 
+services, Fedora digital objects, datastreams, disseminations, and more.&nbsp;&nbsp;&nbsp; 
+Since a policy is only worth its salt if it can be enforced, Fedora 2.1b 
+introduces a new Authorization module implemented as part of the core Fedora 
+repository service.&nbsp;&nbsp;&nbsp; The Authorization module is built upon the
+<a href="http://sunxacml.sourceforge.net">Sun XACML engine</a>.&nbsp; Each XACML 
+policy defines: (1) a &quot;target&quot; describes what the policy applies to (by 
+referring to attributes of users, operations, objects, datastreams, dates, and 
+more), and (2) one or more &quot;rules&quot; to permit or deny access.&nbsp; There is a
+<a href="XACMLPolicyGuide.htm#POLICY-VOCAB">Fedora-specific policy vocabulary</a> 
+for referring Fedora operations and Fedora-specific entities within in XACML 
+policies.&nbsp;&nbsp;&nbsp; Regarding policies, Fedora supports both 
+repository-wide policies (that specify broad access controls that apply to the 
+entire repository), and object-specific policies (that specify rules for a 
+single object, and can even be stored within the object in a special 
+datastream).&nbsp; Fedora 2.1 comes out-of-the-box with a set of
+<a href="#DEFAULT">default repository-wide policies</a> that establish baseline 
+access controls that are equivalent to what was provided in Fedora 2.0.&nbsp;&nbsp; 
+These default policies restrict access to the Fedora management web service 
+(API-M) to only the Fedora administrator, permit open access to the Fedora 
+access web service (API-A), and establish some other basic controls (e.g., allow 
+access to API-M only from localhost; restrict policy management to 
+administrator).&nbsp;&nbsp; In addition to the default policies (which can be 
+modified), any number of custom XACML policies can be written and loaded into 
+Fedora.&nbsp;&nbsp; For assistance in creating new policies for your repository 
+and for your objects, see the <a href="XACMLPolicyGuide.htm">Fedora XACML Policy 
+Writing Guide</a>. </font> </p>
 <p>This guide is intended to give a general overview of XACML-based Policy 
 Enforcement Module to support authorization in 
 Fedora repositories.&nbsp;&nbsp;&nbsp; This guide provides Instructions on how to 
 configure XACML-based policy authorization in Fedora as well as a discussion of 
-how the Fedora Policy Enforcement module works.&nbsp; <i><b>&nbsp; </b></i> </p>
+how the Fedora Policy Enforcement module works.&nbsp; <b> <i>&nbsp;</i></b> For 
+more information consult the following sources:</p>
 <p>&nbsp;</p>
 <p><b>Fedora Security Architecture:</b></p>
 <p><a href="securingrepo.html">Securing Your Repository</a> 
@@ -75,7 +110,7 @@ documentation for details on writing XACML policies for Fedora repositories</p>
 <p><b>OASIS&nbsp; (for policy writers)</b></p>
 <p><br>
 <a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
-XACML Specification</a>:&nbsp;
+OASIS XACML Specification</a>:&nbsp;
 this is the official specification and a good reference document. <br>
 <br>
 <a href="http://www.oasis-open.org/committees/download.php/2713/Brief_Introduction_to_XACML.html">
