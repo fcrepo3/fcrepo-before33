@@ -310,7 +310,7 @@ h3 {
          </head>
          <body onLoad="javascript:init()">
             <div id="header">
-               <table border="0" width="650">
+               <table border="0" width="850">
                   <tr>
                      <td>
                         <!-- <img src="/images/newlogo2.jpg" width="141" height="134"/> -->
@@ -320,7 +320,8 @@ h3 {
                         <center>
                            <span style="font-weight: bold; color: #000000; margin-top: 4px; margin-bottom: 4px; font-size: 24px; line-height: 110%; padding-top: 8px; padding-bottom: 4px;">&titleText;</span>
                            <br/>
-                           IN PROGRESS...</center>
+                           <nobr>Use this form to make changes to Fedora's backend security configuration.</nobr><br/>
+                           <nobr>When finished, click <i>Save Changes</i>.  See the Fedora server documentation for more detail.</nobr></center>
                      </td>
                   </tr>
                </table>
