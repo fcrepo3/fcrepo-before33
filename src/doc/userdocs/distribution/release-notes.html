@@ -6,6 +6,16 @@
 <head>
   <title>Fedora Release Notes</title>
   <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+	<style>
+<!--
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	margin-left:0in; margin-right:0in; margin-top:0in}
+-->
+</style>
 </head>
 
 <body>
@@ -23,69 +33,9 @@
 
     <div class="tocbox">
       <ol>
-        <li><a href="#rel2.0">Release 2.0 - January 31,
+        <li><a href="#rel2.1b">Release 2.1b - October 21, 2005</a></li>
+		<li><a href="#rel2.1b">Release 2.0 - January 31,
         2005</a></li>
-
-        <li style="list-style: none">
-          <ol type="A">
-            <li><a href="#rel2.0.migrate">Migrating from Fedora
-            1.2.1 to Fedora 2.0</a></li>
-
-            <li><a href="#rel2.0.features">New Features</a></li>
-
-              <ol>
-                <li><a href="#rel2.0.features.foxml">Fedora Object
-                XML (FOXML)</a></li>
-
-                <li><a href="#rel2.0.features.format">Ingest and
-                Export with Different XML Formats</a></li>
-
-                <li><a href="#rel2.0.features.relmeta">Relationship
-                Metadata for Digital Objects</a></li>
-
-                <li><a href="#rel2.0.features.ri">Resource
-                Index</a></li>
-
-                <li><a href="#rel2.0.features.modify">Batch Modify
-                Utility</a></li>
-
-                <li><a href="#rel2.0.features.report">Repository
-                Administrator Reporting Tools</a></li>
-                
-                <li><a href="#rel2.0.demo.soapclient">Example Client 
-                for Making SOAP calls to Fedora APIs</a></li>
-
-                <li><a href="#rel2.0.features.libs">Third Party
-                Library Upgrades</a></li>
-
-                <li><a href="#rel2.0.features.tune">Performance
-                Tuning</a></li>
-
-                <li><a href="#rel2.0.features.apia">API-A and
-                API-A-LITE Changes</a></li>
-
-                <li><a href="#rel2.0.features.apim">API-M
-                Changes</a></li>
-
-                <li><a href="#rel2.0.features.pidsyntax">PID
-                Definition Syntrax Relaxed</a></li>
-
-                <li><a href="#rel2.0.features.passpid">Including
-                PID as Default Parameter in Disseminations</a></li>
-
-                <li><a href="#rel2.0.features.timestamp">Syntax of
-                Timestamp Values Extended</a></li>
-
-                <li><a href="#rel2.0.features.website">Redesign of
-                Fedora Web Site and Documentation</a></li>
-
-                <li><a href="#rel2.0.features.tutorial">Fedora
-                Tutorials</a></li>
-              </ol>
-
-            <li><a href="#rel2.0.bugfix">Bug Fixes</a></li>
-          </ol>
-        </li>
 
         <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) -
         April 19, 2004</a></li>
@@ -111,7 +61,189 @@
   </div>
 
   <div class="sec1">
-    <h2><a name="rel2.0" id="rel2.0">1. Release 2.0 - January 31,
+    <h2><a id="rel2.0" name="rel2.1b">1. Release 2.1b - October 21, 2005</a></h2>
+	<h2>&nbsp;</h2>
+	<h2>A. Migrating from Fedora 2.0</h2>
+	<h2>&nbsp;</h2>
+	<h2><b>B. New Features</b></h2>
+	<p class="MsoNormal">&nbsp;</p>
+	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
+		Open-Source License (ECL)</b><br>
+		We have replaced MPL with ECL. We are not doing a dual license yet, 
+		though we could certainly decide to do so in the future. The main 
+		difference is that it removes the requirement to contribute back any 
+		changes to our source.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
+		<a name="rel2.1b.features.authn"></a><b>New Security Architecture – 
+		Authentication</b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
+		Security Architecture - XACML-based Policy Enforcement</b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
+		Security Architecture – Configuration options for repository </b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
+		Security Architecture – Backend Security for Service call-backs</b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		Fedora Service Framework</b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">DirIngest 
+		Service<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">PROAI 
+		Service<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Resource 
+		Index </font>
+		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">Resource 
+			Index corruption problems diagnosed and fixed</font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">RI model 
+			changes</font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">New 
+			indexing levels</font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">Upgraded 
+			to latest version of Kowari for triplestore </font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">New 
+			Sesame support for triplestore<br>
+&nbsp;</font></li>
+		</ol>
+		</li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Relaxation 
+		of REL-EXT datastream constraints<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Rebuild 
+		Repository Utility<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Improved 
+		logging using log4j </font>
+		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">
+			Trippi.log</font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">
+			Kowari.log</font></li>
+			<li class="MsoNormal">
+			<font face="Arial" style="font-size: 9pt; font-weight: 700">
+			Repository log<br>
+&nbsp;</font></li>
+		</ol>
+		</li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Handle 
+		System Plug-in for PID Generation<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Command-line 
+		utility syntax changes<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Fedora 
+		Reload Policy Utility<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Fedora 
+		Policy Validation Utility<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">FedoraClient 
+		utility class for building new clients<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Batch 
+		Utility Enhancements:&nbsp;&nbsp; <br>
+		</font><font face="Arial" style="font-size: 9pt">You can now use either 
+		a FOXML or METS template file when building objects.&nbsp; The batch utility 
+		now detects the format of the template file and then generates objects 
+		based on the format of the template file so you can create either METS 
+		or FOXML&nbsp; objects now.&nbsp;</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Performance 
+		and Scale testing<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">Preservation 
+		Feature Set</font><br>
+		<br>
+		<br>
+&nbsp;</li>
+	</ol>
+	<p class="MsoNormal">&nbsp;</p>
+	<h2>C.&nbsp; Bug Fixes</h2>
+	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
+		Index Kowari Memory Leak</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
+		Index – date bug</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">all 
+		others in Bugzilla…</font></li>
+	</ol>
+	<p class="MsoNormal">&nbsp;</p>
+	<h2>D.&nbsp; Known Issues</h2>
+	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Server 
+		name of LOCALHOST not recommended when using remote dissemination 
+		services.&nbsp;&nbsp; If you are using object disseminators that bind to 
+		external services AND if you configure Fedora to authenticate API-A, 
+		then you should not configure the Fedora server name to be “localhost” 
+		since this is not a recognized domain name.&nbsp; When external services need 
+		to call back to Fedora, they require the Fedora API-A service to be at a 
+		registered domain name or IP address.&nbsp;&nbsp;<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Running 
+		server in debug mode will slow down performance.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
+		Modification of Behavior Definition and Behavior Mechanism object not 
+		supported yet.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">In 
+		Administrator, the BDef and BMech Builder still generates METS files for 
+		ingest.&nbsp; This is not a problem, just noteworthy since the other Fedora 
+		clients are FOXML-based.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">One 
+		early adopter of Fedora 2.1b reported anomalous 401 status codes 
+		returned after a period of normal server use.&nbsp; To date, this observation 
+		hasn't been replicated, and the cause is unknown.&nbsp; The problem was fixed 
+		by changing from option B to option C as described in the document 
+		titled &quot;Securing Your Fedora Repository&quot;, section 4.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">The 
+		exception 
+		fedora.server.errors.servletExceptionExtensions.Ok200Exception, (and 
+		associated stacktrace) is produced by fedora.server.ServerController and 
+		can safely be ignored.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">To quiet 
+		sunxacml INFO messages, a logging.properties file is included with the 
+		Fedora distribution, &nbsp;edited to print only SEVERE messages to the 
+		console. Fedora then starts Java using that logging.properties file. 
+		&nbsp;The original file, as distributed with JDK 1.4.2.8, prints INFO (and 
+		more severe) messages, making the console a bit &nbsp;chatty. To revert to 
+		the original logging behavior, edit fedora-start.bat (Windows) or 
+		fedora.sh (Unix), and remove</font></li>
+	</ol>
+	<p>&nbsp;</p>
+	<h2>&nbsp;</h2>
+	<h2>2.&nbsp; <a name="rel2.0" id="rel2.0">Release 2.0 - January 31,
     2005</a></h2>
 
     <p>Fedora 2.0 is a major release that culminates Phase I of the
