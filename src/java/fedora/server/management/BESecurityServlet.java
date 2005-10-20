@@ -93,11 +93,23 @@ public class BESecurityServlet extends HttpServlet {
 
     public void doPost(HttpServletRequest req,
                        HttpServletResponse res) throws ServletException {
-/*
         PrintWriter writer = null;
         try {
-            writeConfigFile(req.getParameterMap());
-            showConfig(req, res, "Success! Your changes have been saved.");
+            res.setContentType("text/html");
+            writer = res.getWriter();
+            writer.println("<html><body><h2>Parameters</h2><table border=\"1\">");
+            Iterator keys = req.getParameterMap().keySet().iterator();
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                writer.print("<tr><td><b>" + key + "</b></td><td>");
+                String[] vals = (String[]) req.getParameterMap().get(key);
+                for (int i = 0; i < vals.length; i++) {
+                    if (i > 0) writer.println("<br/>");
+                    writer.print("'" + vals[i] + "'");
+                }
+                writer.println("</td></tr>");
+            }
+            writer.println("</table></body></html>");
         } catch (Exception e) {
             try {
                 e.printStackTrace();
@@ -110,7 +122,6 @@ public class BESecurityServlet extends HttpServlet {
                 try { writer.close(); } catch (Exception e) { }
             }
         }
-*/
     }
 
     private Map getAllBMechMethods(Context context) throws Exception {
