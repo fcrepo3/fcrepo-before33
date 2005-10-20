@@ -408,7 +408,7 @@ public class BESecurityConfig {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
-            write(skipNonOverrides, writer);
+            write(skipNonOverrides, true, writer);
         } finally {
             try { writer.close(); } catch (Throwable th) { }
             try { out.close(); } catch (Throwable th) { }
@@ -421,7 +421,9 @@ public class BESecurityConfig {
      * If skipNonOverrides is true, any configuration whose values are all
      * null will not be written.
      */
-    public void write(boolean skipNonOverrides, PrintWriter writer) {
+    public void write(boolean skipNonOverrides,
+                      boolean withXMLDeclaration,
+                      PrintWriter writer) {
 
         // useful constants while serializing
         final String ns = "info:fedora/fedora-system:def/beSecurity#";
@@ -430,7 +432,9 @@ public class BESecurityConfig {
         final String schemaURL = "http://www.fedora.info/definitions/1/0/api/beSecurity.xsd";
 
         // header
-        writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        if (withXMLDeclaration) {
+          writer.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        }
         writer.println("<" + _CONFIG + " xmlns=\"" + ns + "\"");
         writer.println(indent + " xmlns:xsi=\"" + xsi_ns + "\"");
         writer.println(indent + " xsi:schemaLocation=\"" + ns + " " + schemaURL + "\"");
@@ -580,12 +584,12 @@ public class BESecurityConfig {
             writer.println("------------");
             writer.println("Abbreviated:");
             writer.println("------------");
-            config.write(true, writer);
+            config.write(true, false, writer);
             writer.println();
             writer.println("---------");
             writer.println("Complete:");
             writer.println("---------");
-            config.write(false, writer);
+            config.write(false, false, writer);
         } else {
             System.err.println("Expected 1 arg: inputFile");
         }
