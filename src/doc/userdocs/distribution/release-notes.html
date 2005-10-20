@@ -68,40 +68,139 @@
 	<h2><b>B. New Features</b></h2>
 	<p class="MsoNormal">&nbsp;</p>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
-		Open-Source License (ECL)</b><br>
-		We have replaced MPL with ECL. We are not doing a dual license yet, 
-		though we could certainly decide to do so in the future. The main 
-		difference is that it removes the requirement to contribute back any 
-		changes to our source.<br>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		<a name="rel2.1b.features.ecl"></a>New Open-Source License (ECL)</b><br>
+		For version 2.1 we have decided to move from Mozilla Pulic License 1.1 (MPL) 
+		to the Educational Community License 1.0 (ECL). The main difference 
+		between the two licenses is that the ECL imposes no compulsion to 
+		contribute changes to source code. Our experience has been that 
+		consumers of our code, both academic and commercial, see it as in their 
+		interest to contribute code back anyway. In several cases, this 
+		requirement has been a barrier for adoption of Fedora.&nbsp;&nbsp; Note 
+		that this license makes the software openly usable by anyone for any 
+		purpose. The only requirement imposed is that anyone using our source 
+		code, making changes and distributing the changed source, is required to 
+		make it clear that the new distribution is different and to describe the 
+		changes made.&nbsp; Also note that this change only applies to version 
+		2.1. All earlier versions continue to be covered by their original 
+		license.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		<a name="rel2.1b.features.configs"></a>New Security Architecture – 4 
+		Configuration Options for a Repository<br>
+		</b>Fedora 2.1b introduces a configurable security architecture, that 
+		provides options for SSL and authentication at the Fedora web service 
+		API level.&nbsp;&nbsp; There are
+		<a href="../server/security/securingrepo.html#CONFIG">four base security configurations</a> provided with the Fedora 2.1b 
+    server distribution: (1) "ssl-authenticate-apim" configuration which uses 
+		SSL and enables authentication for API-M, (2) "ssl-authenticate-all" configuration 
+		which uses SSL and enables authentication for both API-M and API-A, 
+    (3) "no-ssl-authenticate-apim" configuration which does not use SSL but 
+		still enables authentication for API-M, and (4) "no-ssl-authenticate-all" configuration 
+		which does not use SSL, but still enables authentication for API-M and 
+		API-A. Unlike 
+    Fedora 2.0, there is no longer a "default" configuration. Before starting 
+    the Fedora server, you must run the new server setup utility (<a href="../server/cmd-line/index.html#setup">fedora-setup</a>) to select a base security 
+    configuration that will initialize the servers security configuration.&nbsp;&nbsp; 
+    After setup, you can customize that base configuration as needed.&nbsp;&nbsp; 
+		The document entitled &quot;<a href="../server/security/securingrepo.html">Securing 
+		Your Fedora Repository&quot;</a> describes the server setup process and the nature of the different 
+    base security configurations.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
 		<a name="rel2.1b.features.authn"></a><b>New Security Architecture – 
-		Authentication</b><br>
-&nbsp;</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
-		Security Architecture - XACML-based Policy Enforcement</b><br>
-&nbsp;</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
-		Security Architecture – Configuration options for repository </b><br>
-&nbsp;</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>New 
-		Security Architecture – Backend Security for Service call-backs</b><br>
+		Authentication<br>
+		</b>The Fedora repository server is built on top of Apache's Tomcat, and authentication is channeled through the normal Tomcat mechanisms 
+		(e.g., HTTP Basic Authentication, HTTPS Client Authentication).&nbsp; 
+		When you select one of <a href="#rel2.1b.features.configs">Fedora's four 
+		security configurations</a>, an appropriate rendition of the Tomcat 
+		configuration file (web.xml) will be copied into the Fedora Tomcat 
+		configuration directory.&nbsp; This configuration file will set up 
+		authentication for Fedora web services (via &lt;login-config&gt;&nbsp; and 
+		&lt;security-constraint&gt; elements)<font style="font-size: 9pt">.</font>&nbsp; 
+		Under the hood, Tomcat comes with different <b>Realms,</b> where a realm 
+		is defined as a &quot;database&quot; of usernames and passwords that identify 
+		valid users of a web application (or set of web applications), plus an 
+		enumeration of the list of roles associated with each valid user&nbsp; 
+		[see: <a href="http://tomcat.apache.org/tomcat-5.0-doc/realm-howto.html">
+		Apache Tomcat Realms</a>].&nbsp; </font>
+		<font style="font-size: 9pt" face="Arial">Tomcat defines a Java 
+		interface (org.apache.catalina.Realm) that can be implemented by &quot;plug 
+		in&quot; components to &quot;connect&quot; a servlet container to some existing 
+		authentication database<font style="font-size: 9pt">.&nbsp;&nbsp; </font>
+		Fedora 2.1b comes pre-configured with a customized JAAS Realm whose 
+		purpose is to multiplex several authentication sources.&nbsp;&nbsp; By 
+		default, Fedora's JAAS multiplexing Realm in configured to deal with a 
+		simple user/password file.&nbsp; There is also support for acquiring 
+		user attributes from an LDAP source.&nbsp; Authentication methods other than the two described here are possible through Tomcat, but require configuring other Realm or Login Modules obtained separately from the Apache Project or third parties,
+	or writing your own custom Realms or LoginModules.&nbsp; Additional user attributes can be merged with those which Tomcat provides by 
+	configuring a site-written servlet filter, which calls the Fedora API.&nbsp;&nbsp; For more details refer to the documents entitled 
+		&quot;<a href="../server/security/securingrepo.html">Securing Your Fedora 
+		Repository </a>&quot; and &quot;<a href="../server/security/authentication-user-attributes.html">Fedora Security Architecture - Authentication</a>.&quot;<b><br>
+		</b><br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		Fedora Service Framework</b><br>
+		<a name="rel2.1b.features.xacml"></a>New Security Architecture - XACML 
+		Policy Enforcement</b><br>
+		A major feature of the new Fedora security architecture is the 
+		introduction of the
+		<a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
+		eXtensible Access Control Markup Language</a> (XACML) and an XACML-based 
+		policy enforcement module.&nbsp;&nbsp;&nbsp; Developed by the OASIS 
+		Consortium, XACML is an XML-based markup language to encode access 
+		control policies.&nbsp; The policy language is flexible and enables the 
+		specification of fine-grained, machine-readable policies that can be 
+		used to control access to Fedora web services, Fedora digital objects, 
+		datastreams, disseminations, and more.&nbsp;&nbsp;&nbsp; Since a policy 
+		is only worth its salt if it can be enforced, Fedora 2.1b introduces a 
+		new Authorization module implemented as part of the core Fedora 
+		repository service.&nbsp;&nbsp;&nbsp; The Authorization module is built 
+		upon the <a href="http://sunxacml.sourceforge.net">Sun XACML engine</a>.&nbsp; 
+		Each XACML policy defines: (1) a &quot;target&quot; describes what the policy 
+		applies to (by referring to attributes of users, operations, objects, 
+		datastreams, dates, and more), and (2) one or more &quot;rules&quot; to permit or 
+		deny access.&nbsp; Version 2.1b provides a Fedora-specific policy 
+		vocabulary for referring Fedora operations and Fedora-specific entities 
+		within in XACML policies.&nbsp;&nbsp; For a description of how the 
+		policy enforcment module is implemented, see the document entitled &quot;<a href="../server/security/AuthorizationXACML.htm">Fedora 
+		Authorization with XACML Policy Enforcement</a>.&quot;&nbsp; Regarding 
+		policies, Fedora supports both repository-wide policies (that specify 
+		broad access controls that apply to the entire repository), and 
+		object-specific policies (that specify rules for a single object, and 
+		can even be stored within the object in a special datastream).&nbsp; 
+		Fedora 2.1 comes out-of-the-box with a set of
+		<a href="../server/security/AuthorizationXACML.htm#DEFAULT">default 
+		repository-wide policies</a> that establish baseline access controls 
+		that are equivalent to what was provided in Fedora 2.0.&nbsp;&nbsp; 
+		These default policies restrict access to the Fedora management web 
+		service (API-M) to only the Fedora administrator, permit open access to 
+		the Fedora access web service (API-A), and establish some other basic 
+		controls (e.g., allow access to API-M only from localhost; restrict 
+		policy management to administrator).&nbsp;&nbsp; In addition to the 
+		default policies (which can be modified), any number of custom XACML 
+		policies can be written and loaded into Fedora.&nbsp;&nbsp; For 
+		assistance in creating new policies for your repository and for your 
+		objects, see the &quot;<a href="../server/security/XACMLPolicyGuide.htm">Fedora 
+		XACML Policy Writing Guide</a>.&quot; <br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		<a name="rel2.1b.features.besecurity"></a>New Security Architecture – 
+		Backend Security for Service call-backs</b><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		<a name="rel2.1b.features.framework"></a>Fedora Service Framework</b><br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">DirIngest 
-		Service<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.diringest"></a>DirIngest Service<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">PROAI 
-		Service<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.proai"></a>PROAI Service<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Resource 
-		Index </font>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.ri"></a>Resource Index </font>
 		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
 			<li class="MsoNormal">
 			<font face="Arial" style="font-size: 9pt; font-weight: 700">Resource 
@@ -122,16 +221,17 @@
 		</ol>
 		</li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Relaxation 
-		of REL-EXT datastream constraints<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.relsext"></a>Relaxation of REL-EXT datastream 
+		constraints<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Rebuild 
-		Repository Utility<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Improved 
-		logging using log4j </font>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j </font>
 		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
 			<li class="MsoNormal">
 			<font face="Arial" style="font-size: 9pt; font-weight: 700">
@@ -146,28 +246,31 @@
 		</ol>
 		</li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Handle 
-		System Plug-in for PID Generation<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.hdl"></a>Handle System Plug-in for PID 
+		Generation<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Command-line 
-		utility syntax changes<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Fedora 
-		Reload Policy Utility<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.reload"></a>Fedora Reload Policy Utility<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Fedora 
-		Policy Validation Utility<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.policyvalid"></a>Fedora Policy Validation 
+		Utility<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">FedoraClient 
-		utility class for building new clients<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.fedoraclient"></a>FedoraClient utility class 
+		for building new clients<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Batch 
-		Utility Enhancements:&nbsp;&nbsp; <br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; <br>
 		</font><font face="Arial" style="font-size: 9pt">You can now use either 
 		a FOXML or METS template file when building objects.&nbsp; The batch utility 
 		now detects the format of the template file and then generates objects 
@@ -175,12 +278,13 @@
 		or FOXML&nbsp; objects now.&nbsp;</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Performance 
-		and Scale testing<br>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.perf"></a>Performance and Scale testing<br>
 &nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">Preservation 
-		Feature Set</font><br>
+		<li class="MsoNormal"><span style="font-weight: 700">
+		<font face="Arial" style="font-size: 9pt">
+		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
+		Contributions by Community</font></span><br>
 		<br>
 		<br>
 &nbsp;</li>
