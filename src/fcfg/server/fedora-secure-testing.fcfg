@@ -131,7 +131,9 @@
     <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
     <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-xacml-policies/object-policies"/>
     <param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
-    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
+    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool">
+      <comment>The parameter REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY is for future use.</comment>
+    </param>
     <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
     <param name="ENFORCE-MODE" value="enforce-policies"/>
     <param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-01.xsd"/>
@@ -316,7 +318,7 @@
             (shortcut) for the value, which is a URI prefix. For example:
             name="alias:test" value="http://example.org/terms#" will allow a
             query to use test:apple instead of http://example.org/terms#apple</comment>
-    <param name="level" value="0"/>
+    <param name="level" value="1"/>
     <param name="datastore" value="localKowariTriplestore"/>
     <param name="alias:test" value="http://example.org/terms#"/>
   </module>
@@ -381,13 +383,7 @@
     <param name="tempDir" value="work"/>
   </module>
   <module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
-    <comment>This module facilitates obtaining external content via HTTP
-            Parameters: - userAgent (optional...to make unspecified, comment out
-            or delete the whole param line as opposed to using an empty string,
-            default=Fedora): How to identify the Fedora server in HTTP requests.
-            This defaults to something reasonable, but if you want to provide
-            more information (such as an admin email address) in the User-Agent
-            HTTP request header, put it here.</comment>
+    <comment>This module facilitates obtaining external content via HTTP</comment>
   </module>
   <module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
     <comment>Prints basic information about the system memory and running
