@@ -16,7 +16,7 @@
             <meta http-equiv="Cache-Control" content="no-cache, must-revalidate"/>
 
             <script>
-
+<![CDATA[
 
 var activeLayer = null;
 var activeLayerName = null;
@@ -24,16 +24,16 @@ var activeBottomLayer = new Array();
 
 function setActiveLayer(layerName) {
   if (activeLayer != null) {
-    activeLayer.style.visibility = "hidden";
     if (activeBottomLayer[activeLayerName] != null) {
-      activeBottomLayer[activeLayerName].visibility = "hidden";
+      activeBottomLayer[activeLayerName].style.visibility = "hidden";
     }
+    activeLayer.style.visibility = "hidden";
   }
   activeLayerName = layerName;
   activeLayer = document.getElementById(layerName);
   activeLayer.style.visibility = "visible";
   if (activeBottomLayer[activeLayerName] != null) {
-    activeBottomLayer[activeLayerName].visibility = "visible";
+    activeBottomLayer[activeLayerName].style.visibility = "visible";
   }
 }
 
@@ -56,11 +56,36 @@ function init() {
 function doAdd(name) {
   var ip = prompt("Enter a new IP address.", "");
   if (ip == null || ip.length == 0) return;
-  var box = theForm.elements[name + "/box"];
-  box.options[box.options.length] = new Option(ip, ip);
-  if (box.options.length > 1) {
-    box.size = box.options.length;
+  var err = verifyIP(ip);
+  if (err == null) {
+    var box = theForm.elements[name + "/box"];
+    box.options[box.options.length] = new Option(ip, ip);
+    if (box.options.length > 1) {
+      box.size = box.options.length;
+    }
+    setHiddenIPList(name);
+  } else {
+    alert(err);
   }
+}
+
+function verifyIP(IPvalue) {
+  var ipPattern = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
+  var ipArray = IPvalue.match(ipPattern); 
+  if (IPvalue == "0.0.0.0" || IPvalue == "255.255.255.255") {
+    return IPvalue + ' is a special IP address and cannot be used here.';
+  }
+  if (ipArray == null) {
+    return IPvalue + ' is not a valid IP address.';
+  } else {
+    for (i = 0; i < 4; i++) {
+      thisSegment = ipArray[i];
+      if (thisSegment > 255) {
+        return IPvalue + ' is not a valid IP address.';
+      }
+    }
+  }
+  return null;
 }
 
 function doDelete(name) {
@@ -79,6 +104,17 @@ function doDelete(name) {
   if (box.options.length > 1) {
     box.size = box.options.length;
   }
+  setHiddenIPList(name);
+}
+
+function setHiddenIPList(name) {
+  var box = theForm.elements[name + "/box"];
+  var val = "";
+  for (i = 0; i < box.options.length; i++) {
+    if (i > 0) val = val + " ";
+    val = val + box.options[i].value;
+  }
+  theForm.elements[name].value = val;
 }
 
 function doSelect(name) {
@@ -131,6 +167,8 @@ function callBasicAuthChanged(name) {
   }
 }
 
+
+]]>
             </script>
 
             <style type="text/css">
@@ -442,9 +480,10 @@ h3 {
                                        <xsl:attribute name="style">width:200;</xsl:attribute>
                                        <xsl:attribute name="onChange">javascript:setActiveBottomLayer('<xsl:value-of select="@role"/>', this.options[this.selectedIndex].value)</xsl:attribute>
                                        <xsl:for-each select="/&desc;/&desc;[starts-with(@role, $startString)]">
-                                          <option>
-                                             <xsl:value-of select="substring-after(@role, '/')"/>
-                                          </option>
+                                         <xsl:element name="option">
+                                           <xsl:attribute name="value"><xsl:value-of select="substring-after(@role, '/')"/></xsl:attribute>
+                                           <xsl:value-of select="substring-after(@role, '/')"/>
+                                         </xsl:element>
                                        </xsl:for-each>
                                     </xsl:element>
                                  </div>
@@ -605,9 +644,29 @@ h3 {
          </xsl:element>
        </td>
        <td valign="top">
+         <xsl:variable name="ips">
+           <xsl:call-template name="tokenize">
+             <xsl:with-param name="string" select="$value"/>
+           </xsl:call-template>
+         </xsl:variable>
+         <xsl:element name="input">
+           <xsl:attribute name="name"><xsl:value-of select="$name"/></xsl:attribute>
+           <xsl:attribute name="type">hidden</xsl:attribute>
+           <xsl:attribute name="value">
+             <xsl:for-each select="$ips/token">
+               <xsl:if test="position() &gt; 1"><xsl:text> </xsl:text></xsl:if>
+               <xsl:value-of select="."/>
+             </xsl:for-each>
+           </xsl:attribute>
+         </xsl:element>
          <xsl:element name="select">
            <xsl:attribute name="name"><xsl:value-of select="$name"/>/box</xsl:attribute>
-           <xsl:attribute name="size">2</xsl:attribute>
+           <xsl:attribute name="size">
+             <xsl:choose>
+               <xsl:when test="count($ips/token) &gt; 2"><xsl:value-of select="count($ips/token)"/></xsl:when>
+               <xsl:otherwise>2</xsl:otherwise>
+             </xsl:choose>
+           </xsl:attribute>
            <xsl:attribute name="style">width: 130px;</xsl:attribute>
            <xsl:attribute name="onChange">javascript:doSelect('<xsl:value-of select="$name"/>')</xsl:attribute>
            <xsl:choose>
@@ -615,15 +674,11 @@ h3 {
                <xsl:attribute name="disabled">disabled</xsl:attribute>
              </xsl:when>
              <xsl:otherwise>
-               <xsl:variable name="ips">
-                 <xsl:call-template name="tokenize">
-                   <xsl:with-param name="string" select="$value"/>
-                 </xsl:call-template>
-               </xsl:variable>
                <xsl:for-each select="$ips/token"> 
-                 <option>
+                 <xsl:element name="option">
+                   <xsl:attribute name="value"><xsl:value-of select="."/></xsl:attribute>
                    <xsl:value-of select="."/>
-                 </option>
+                 </xsl:element>
                </xsl:for-each>
              </xsl:otherwise>
            </xsl:choose>
