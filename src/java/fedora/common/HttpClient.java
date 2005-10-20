@@ -75,7 +75,7 @@ public class HttpClient {
     }
 
     private static final void dumpInstancesTableEntry(Thread key, Hashtable values) {
-    	System.err.println("thread (key) == " + key);
+    	if (DEBUG) System.err.println("thread (key) == " + key);
 		Iterator it2 = values.keySet().iterator();
     	while (it2.hasNext()) {
     		Object key2 = it2.next();
@@ -107,7 +107,7 @@ public class HttpClient {
      *
      */
     private static final void cleanInstancesTable() {
-		System.err.println("begin cleanInstancesTable()");	
+		if (DEBUG) System.err.println("begin cleanInstancesTable()");	
 		Set deleteSet = new HashSet();
 		int sizeBefore = instancesTable.size();
 		Iterator iterator = instancesTable.keySet().iterator();
@@ -137,13 +137,13 @@ public class HttpClient {
 		while (deleteIterator.hasNext()) {
 	        thisUseFinished((Thread) deleteIterator.next());
 		}
-		System.err.println("end cleanInstancesTable()");		
+		if (DEBUG) System.err.println("end cleanInstancesTable()");		
     }
     
     private GetMethod checkOut(String workingPath, String usage) throws Exception {
     	if (DEBUG) System.err.println(">checkOut() " + instancesTable.size());
     	if (instancesTable.size() > THRESHOLD) {
-    		System.err.println("HttpClient instancesTable abnormally large at " + instancesTable.size());
+    		if (DEBUG) System.err.println("HttpClient instancesTable abnormally large at " + instancesTable.size());
     		cleanInstancesTable();
     		if (DEBUG && VERBOSE) {
     			dumpInstancesTable();

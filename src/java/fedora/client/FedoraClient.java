@@ -190,7 +190,7 @@ public class FedoraClient implements Constants {
 	public HttpInputStream get(URL url, boolean failIfNotOK, boolean followRedirects) throws IOException {
 
 		String urlString = url.toString();
-		logger.info("FedoraClient is getting " + urlString);		
+		logger.debug("FedoraClient is getting " + urlString);		
 		HttpClient client = getHttpClient();
 		GetMethod getMethod = new GetMethod(urlString);
 		getMethod.setDoAuthentication(true);
