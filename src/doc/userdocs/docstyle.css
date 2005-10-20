@@ -53,6 +53,10 @@ body {
     list-style: upper-alpha outside none;
 }
 
+#tocbox ol ol ol{
+    list-style: decimal outside none;
+}
+
 #introduction, #references, .sect {
     margin-bottom: 5px;
 }
