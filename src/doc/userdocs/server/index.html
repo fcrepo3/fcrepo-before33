@@ -21,15 +21,55 @@
     <h2>Table of Contents</h2>
     <div id="tocbox">
 	<ol>
-		<li><h3>Features</h3>
+		<li><h3>New Features</h3>
 			<ol>
-				<li><a href="features/features.html">Summary of Major Features</a></li>
-				<li><a href="features/identifiers.html">Fedora Identifiers and URIs</a></li>
-				<li><a href="features/versioning.html">Content Versioning</a></li>
-				<li><a href="localservices/index.html">Fedora Local Services</a></li>
-				<li><a href="resourceIndex/index.html">Resource Index</a></li>
+				<li><a href="security/securingrepo.html">Security 
+				Architecture - Configurations, Authentication, and SSL</a></li>
+				<li><a href="security/AuthorizationXACML.htm">Security 
+				Architecture - XACML-based Policy Enforcement</a><ol>
+				<li><a href="security/XACMLPolicyGuide.htm">Writing XACML 
+				Policies for Fedora</a></li>
+				<li><a href="cmd-line/index.html#validate">Policy 
+				Validation Utility</a></li>
+				<li><a href="cmd-line/index.html#reload">Reload Policies 
+				Utility</a></li>
+			</ol></li>
+				<li><a href="security/beSecurityConfig.html">Security 
+				Architecture - Backend Security for Remote Service Callbacks</a></li>
+				<li><a href="security/XACMLPolicyGuide.htm">Writing XACML 
+				Policies for Fedora</a></li>
+				<li><a href="features/serviceframework.htm">Fedora 
+				Service Framework</a><ol>
+				<li>Directory Ingest Service (DirIngest)</li>
+				<li>OAI Provider Service (PROAI)</li>
+			</ol></li>
+				<li><a href="cmd-line/index.html#rebuild">Repository 
+				Rebuilder Utility</a></li>
+				<li>Handle System Plug-in for PID Generation<p>&nbsp;</li>
 			</ol>
 	    </li>
+		<li><h3>Standard Features</h3>
+		<ol>
+			<li><a href="features/features.html">Summary of Major Features</a></li>
+			<li><a href="features/identifiers.html">Fedora Identifiers and URIs</a></li>
+			<li><a href="../digitalobjects/ingestExport.html">XML-based Ingest and 
+			Export</a><ol>
+				<li><a href="../digitalobjects/foxml-ingest-example.xml">FOXML 
+				Ingest Example</a></li>
+				<li><a href="../digitalobjects/mets-ingest-example.xml">METS Ingest 
+				Example</a></li>
+			</ol></li>
+			<li><a href="../digitalobjects/introFOXML.html">XML-based Digital 
+			Object Storage</a></li>
+			<li><a href="../digitalobjects/introRelsExt.html">Object Relationships</a></li>
+			<li><a href="features/versioning.html">Datastream Versioning</a></li>
+			<li>Service-based Disseminators for Digital Objects<ol>
+				<li><a href="localservices/index.html">Fedora Local Services</a></li>
+				<li>Remote Services</li>
+			</ol></li>
+			<li><a href="resourceIndex/index.html">RDF-based Resource Index</a></li>
+		</ol>
+		<p>&nbsp;</li>
 		<li><h3>Fedora Web Service Interfaces</h3>
 			<ol>
 				<li><strong>API-A</strong>: Fedora Access Service (SOAP)  [<a href="http://www.fedora.info/definitions/1/0/api/#apia">WSDL</a>]</li>
