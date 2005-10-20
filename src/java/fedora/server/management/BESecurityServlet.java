@@ -139,21 +139,32 @@ public class BESecurityServlet extends HttpServlet {
                 writeDebugXML(req.getParameterMap(), config, writer);
             } else {
                 synchronized (m_configFile) {
+                    // load the original configuration in case of failure
+                    BESecurityConfig originalConfig = BESecurityConfig.fromStream(new FileInputStream(m_configFile));
+
                     // save the new configuration
                     FileOutputStream out = new FileOutputStream(m_configFile);
-                    config.toStream(true, out);
 
-                    // determine the caller's context
-                    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, req);
+                    try {
+                        config.toStream(true, out);
 
-                    // cause the server to reload the policies
-                    m_authz.reloadPolicies(context);
+                        // determine the caller's context
+                        Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, req);
+
+                        // cause the server to reload the policies
+                        m_authz.reloadPolicies(context);
+                    } catch (Throwable th) {
+                        try { out.close(); } catch (Exception e) { }
+                        out = new FileOutputStream(m_configFile);
+                        originalConfig.toStream(false, out);
+                        throw new Exception("Backend policy generation failed.", th);
+                    }
                 }
 
                 // output html
                 res.setContentType("text/html");
                 writer = res.getWriter();
-                writeSavedHTML(writer);
+                writeSavedHTML(writer, config);
             }
         } catch (Throwable th) {
             try {
@@ -169,16 +180,40 @@ public class BESecurityServlet extends HttpServlet {
         }
     }
 
-    private static void writeSavedHTML(PrintWriter writer) {
-        writer.println("<html><body>Saved and reloaded.   <a href=''>Go back</a></body></html>");
-/*
-<html xmlns:ns="info:fedora/fedora-system:def/beSecurity#">
-   <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-   
-      <title>Fedora Backend Security Configuration</title>
-
-*/
+    private static void writeSavedHTML(PrintWriter writer, BESecurityConfig config) {
+        writer.println("<html><head><title>Saved Backend Security Configuration</title></head><body>");
+        writer.println("<table border=\"0\" width=\"850\">");
+        writer.println("    <tr>");
+        writer.println("       <td><img src=\"/images/newlogo2.jpg\" width=\"70\" height=\"67\"></td>");
+        writer.println("       <td valign=\"top\">");
+        writer.println("          <center><span style=\"font-weight: bold; color: #000000; margin-top: 4px; margin-bottom: 4px; font-size: 24px; line-height: 110%; padding-top: 8px; padding-bottom: 4px;\">Backend Security Configuration<br/>[Changes Saved]</span>");
+        writer.println("             </nobr>");
+        writer.println("          </center>");
+        writer.println("       </td>");
+        writer.println("    </tr>");
+        writer.println(" </table>");
+        writer.println("<hr size=\"1\"/>");
+        writer.println("<h3>Success!</h3><p><ul>");
+        writer.println("  <li> Your changes have been successfully saved.</li>");
+        writer.println("  <li> Backend policies have been automatically regenerated and applied.</li>");
+        writer.println("  <li> To go back to the form, <a href=\"backendSecurity\">click here</a>.</li>");
+        writer.println("</ul></p>");
+        writer.println("<h3>Note:</h3>");
+        writer.println("<p>If you have configured any backend services to authenticate to Fedora using");
+        writer.println("basic authentication, you will also need to manually edit the tomcat <code>conf/tomcat-users_fedoraTemplate.xml</code>");
+        writer.println("file and restart Fedora.</p>");
+        writer.println("<p>For each service role there must be a user and password");
+        writer.println("configured in this file so that Fedora can properly authenticate the service.</p>");
+        writer.println("<p>For example, if <code>demo:13</code> and <code>demo:2/getHigh</code> must authenticate");
+        writer.println("to Fedora, the file must be edited to include the following:</p>");
+        writer.println("<pre>");
+        writer.println("  &lt;user name=\"demo13user\" password=\"demo13pass\" roles=\"fedoraRole=demo:13\"/&gt;");
+        writer.println("  &lt;user name=\"demo2user\" password=\"demo2pass\" roles=\"fedoraRole=demo:2/getHigh\"/&gt;");
+        writer.println("</pre>");
+        writer.println("<p>The actual usernames and password will be of your own choosing, ");
+        writer.println("and should match the credentials that the backend service is configured");
+        writer.println("to authenticate to Fedora with during callbacks.</p>");
+        writer.println("</body></html>");
     }
 
     /**
