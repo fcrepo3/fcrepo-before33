@@ -213,7 +213,7 @@ import fedora.server.Context;
 						case 1: 
 							values = new String[1];
 							((String[])values)[0] = context.getEnvironmentValue(attributeId); 
-System.err.println("RETURNING " + context.getEnvironmentValue(attributeId) + " for " + attributeId);							
+//make conditional > 2.1b System.err.println("RETURNING " + context.getEnvironmentValue(attributeId) + " for " + attributeId);							
 							break;
 						default:
 							values = context.getEnvironmentValues(attributeId);
