@@ -253,101 +253,9 @@ replace and so tighten a broader match specification found at the overall Policy
 
 <p>&nbsp;</p>
 
-<p><b><span style='font-size:10.0pt;font-family:"Courier New";
-background:white'>&lt;Subjects&gt;</span></b></p>
 
-<p><b><span style='font-size:10.0pt;font-family:"Courier New";
-background:white'>&nbsp;</span></b></p>
 
-<p style='text-autospace:none'><i>The Fedora policy vocabulary
-(see: dist/server/config/xacml-policies/vocabulary.txt) defines general-purpose
-attributes for use in policies (e.g., login-id).  However, attributes for
-subjects will vary depending on what a repository uses as the source of user information
-(e.g., tomcat-users.xml, LDAP, Shibboleth).   Fedora XACML policies can make
-reference to the identifiers of any subject attribute that can be passed into
-Fedora from authenticating sources.  See the section below on “Getting User
-Attributes into the Fedora Policy Enforcement Module” for more information on
-the sources of subject attributes.</i></p>
 
-<p style='text-autospace:none'>&nbsp;</p>
-
-<p style='text-autospace:none'>The &lt;Subjects&gt; element of
-a Policy Target is used to wrap one or more descriptions of users or agents
-that this policy should apply to.  At runtime, the Fedora Policy Enforcement
-Module will compare attributes of the user/agent making a service request
-against the criteria specific in the &lt;Subjects&gt; specification of the
-policy Target to determine if the policy is applicable to the incoming request.
-  For example, to define a policy that is applicable to any kind of user or agent,
-the following is specified:</p>
-
-<p>
-        &nbsp;</p>
-      <div class="code">
-<pre>    &lt;Subjects&gt;
-        &lt;AnySubject/&gt;
-    &lt;/Subjects&gt;</pre>
-</div>
-      <p style='text-autospace:none'>&nbsp;</p>
-<p style='text-autospace:none'>Within a single &lt;Subject&gt; specification,
-there may be one or more XACML attributes that together determine whether a policy match
-should occur.  Each &lt;SubjectMatch&gt; element is used to specify an name/value
-of an attribute of a user/agent.<b> </b> Multiple <b>&lt;SubjectMatch&gt; </b>elements
-are used to specify multiple attributes of a subject, and are <b>logically AND-ed
-together</b>.  This means that for a policy to be applicable to an incoming
-service request, <b><i>all</i></b> &lt;SubjectMatch&gt; specifications must
-match the attributes of the requesting user/agent.  In the example below, there
-is only one attribute to match on (i.e., “fedoraRole”).  The AttributeID in the
-&lt;SubjectAttributeDesignator&gt; element is used to identify a particular
-subject attribute by its local or global identifier.  The snippet says that a policy
-match will occur if the incoming request context indicates that the user/agent
-has a role attribute with the value of “administrator.”</p>
-
-<p style='text-autospace:none'>&nbsp;</p>
-<div class="code">
-<pre>  &lt;Subjects&gt;
-    &lt;Subject&gt;
-      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
-        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
-        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
-              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
-      &lt;/SubjectMatch&gt;
-    &lt;/Subject&gt;
-  &lt;/Subjects&gt;</pre>
-
-      </div>
-
-<p style='text-autospace:none'>&nbsp;</p>
-
-<p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
-for subject matching, multiple &lt;Subject&gt; elements must be specified.   If
-there are multiple <b>&lt;Subject&gt;</b> elements within the &lt;Subjects&gt;
-wrapper component, the &lt;Subject&gt; elements are <b>logically OR-ed together</b>. 
-This means that a match on only one of the Subject specifications is necessary
-for the policy to apply to a service request.  For example, the snippet below
-says that a subject match will occur if the requesting user has the role of
-either “administrator” or “superuser.”</p>
-
-<p>&nbsp;</p>
-      <div class="code">
-<pre>  &lt;Subjects&gt;
-    &lt;Subject&gt;
-      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
-        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
-        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
-              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
-      &lt;/SubjectMatch&gt;
-    &lt;/Subject&gt;</pre>
-<pre>    &lt;Subject&gt;
-      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
-        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>superuser</b>&lt;/AttributeValue&gt;
-        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
-              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
-      &lt;/SubjectMatch&gt;
-    &lt;/Subject&gt;
-  &lt;/Subjects&gt;</pre>
-      </div>
-
-<p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'><b>
 <span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>&lt;Resources&gt;</span></b></p>
@@ -584,6 +492,110 @@ getDatastreamDissemination operation is part of API-A. </i>&nbsp;</p>
 
       </div>
       <p><b>&nbsp;</b></p>
+      
+      
+<p><b><span style='font-size:10.0pt;font-family:"Courier New";
+background:white'>&lt;Subjects&gt;</span></b></p>
+
+<p><b><span style='font-size:10.0pt;font-family:"Courier New";
+background:white'>&nbsp;</span></b></p>
+
+<p style='text-autospace:none'><i>The Fedora policy vocabulary
+(see: dist/server/config/xacml-policies/vocabulary.txt) defines general-purpose
+attributes for use in policies (e.g., login-id).  However, attributes for
+subjects will vary depending on what a repository uses as the source of user information
+(e.g., tomcat-users.xml, LDAP, Shibboleth).   Fedora XACML policies can make
+reference to the identifiers of any subject attribute that can be passed into
+Fedora from authenticating sources.  See the section below on “Getting User
+Attributes into the Fedora Policy Enforcement Module” for more information on
+the sources of subject attributes.</i></p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>The &lt;Subjects&gt; element of
+a Policy Target is used to wrap one or more descriptions of users or agents
+that this policy should apply to.  At runtime, the Fedora Policy Enforcement
+Module will compare attributes of the user/agent making a service request
+against the criteria specific in the &lt;Subjects&gt; specification of the
+policy Target to determine if the policy is applicable to the incoming request.
+  For example, to define a policy that is applicable to any kind of user or agent,
+the following is specified:</p>
+
+<p>
+        &nbsp;</p>
+      <div class="code">
+<pre>    &lt;Subjects&gt;
+        &lt;AnySubject/&gt;
+    &lt;/Subjects&gt;</pre>
+</div>
+      <p style='text-autospace:none'>&nbsp;</p>
+<p style='text-autospace:none'>Within a single &lt;Subject&gt; specification,
+there may be one or more XACML attributes that together determine whether a policy match
+should occur.  Each &lt;SubjectMatch&gt; element is used to specify an name/value
+of an attribute of a user/agent.<b> </b> Multiple <b>&lt;SubjectMatch&gt; </b>elements
+are used to specify multiple attributes of a subject, and are <b>logically AND-ed
+together</b>.  This means that for a policy to be applicable to an incoming
+service request, <b><i>all</i></b> &lt;SubjectMatch&gt; specifications must
+match the attributes of the requesting user/agent.  In the example below, there
+is only one attribute to match on (i.e., “fedoraRole”).  The AttributeID in the
+&lt;SubjectAttributeDesignator&gt; element is used to identify a particular
+subject attribute by its local or global identifier.  The snippet says that a policy
+match will occur if the incoming request context indicates that the user/agent
+has a role attribute with the value of “administrator.”</p>
+
+<p style='text-autospace:none'>&nbsp;</p>
+<div class="code">
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
+
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+
+<p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
+for subject matching, multiple &lt;Subject&gt; elements must be specified.   If
+there are multiple <b>&lt;Subject&gt;</b> elements within the &lt;Subjects&gt;
+wrapper component, the &lt;Subject&gt; elements are <b>logically OR-ed together</b>. 
+This means that a match on only one of the Subject specifications is necessary
+for the policy to apply to a service request.  For example, the snippet below
+says that a subject match will occur if the requesting user has the role of
+either “administrator” or “superuser.”</p>
+
+<p>&nbsp;</p>
+      <div class="code">
+<pre>  &lt;Subjects&gt;
+    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>administrator</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;</pre>
+<pre>    &lt;Subject&gt;
+      &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;
+        &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;<b>superuser</b>&lt;/AttributeValue&gt;
+        &lt;SubjectAttributeDesignator AttributeId=&quot;<b>fedoraRole</b>&quot; MustBePresent=&quot;false&quot; 
+              DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+      &lt;/SubjectMatch&gt;
+    &lt;/Subject&gt;
+  &lt;/Subjects&gt;</pre>
+      </div>
+
+<p style='text-autospace:none'>&nbsp;</p>
+      
+      
+      
+      
+      
+      
+      
 <p><b>
 <span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>&lt;Environments&gt;</span></b></p>
@@ -824,6 +836,7 @@ the policy Target that the attribute does not have to be present (&quot;<span
 style='font-family:"Courier New"'>MustBePresent=&quot;false&quot;)</span> in the 
 incoming request as follows:&nbsp; </p>
 <p>&nbsp;</p>
+
 <div class="code">
 	<pre>&lt;Subjects&gt;
   &lt;Subject&gt;
