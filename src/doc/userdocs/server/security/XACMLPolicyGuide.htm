@@ -52,7 +52,7 @@ policies.&nbsp;&nbsp; This document offers guidance on writing a range of useful
 policies for Fedora such as 1) broad repository-wide policies for controlling 
 access to Fedora API operations,&nbsp; 2) more detailed repository-wide policies 
 for controlling access to groups of digital objects based on various attributes, 
-and 3) more fine-grained object-specific policies for controlling access 
+and 3) more fine-grained object-specific policies for controlling access to 
 individual digital objects.&nbsp;&nbsp;&nbsp; <i><b>It should be noted that to 
 help users who do not wish to learn native XACML, a Policy Authoring Client is 
 currently under development that will provide an easy graphical user interface 
@@ -86,7 +86,7 @@ policies.&nbsp;&nbsp; Anyone intending to author custom XACML policies for
 Fedora is encouraged to read the following documentation provided by OASIS 
 Technical Committee that defined the XACML standard, and Sun who is the provider 
 of the open source Sun XACML engine that is used in the Fedora implementation.&nbsp;&nbsp;&nbsp; 
-It is very important to understanding the basics of XACML to ensure that a suite 
+It is very important to understand the basics of XACML to ensure that a suite 
 of policies works as intended.&nbsp;&nbsp; One of the most important concepts in 
 using XACML is understanding how multiple policies can interact with each other 
 (in good ways, or in ways you didn't intend).&nbsp;&nbsp; By following the 
@@ -144,7 +144,7 @@ as attribute designators in XACML policies, specifically within a SubjectAttribu
 ResourceAttributeDesignator, and ActionAttributeDesignator.&nbsp;&nbsp;&nbsp;&nbsp; </p>
 <p>&nbsp;</p>
 <p>The set of identifiers defined for the Fedora policy vocabulary is 
-automatically generated and can be found in the Fedora software distribution at:</p>
+automatically generated on Fedora build and can be found in the Fedora software distribution at:</p>
 
 <p>
         &nbsp;Under Windows:</p>
@@ -237,14 +237,15 @@ can be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. </p>
 
 <p>&nbsp;</p>
 
-<p>A Policy Target can be specified for a Policy or PolicySet. 
+<p>A Policy Target can be specified for a Policy (or for a PolicySet,
+which is an advanced way of grouping policies together). 
  A &lt;Target&gt; element is defined at the Policy level (as a child of the
 root &lt;Policy&gt; element).  A Policy Target applies to any contained Rules
 that are expressed in that policy.  However, a Rule may have its own Target, in
 which case the Rule-level Target overrides - for that Rule only – the Policy
-level Target.  Typically, a Target defined at the Rule level is used to tighten
-or refine a broader match specification at the overall Policy level (described
-below).</p>
+level Target.  Typically, a Target defined at the Rule level is used to 
+replace and so tighten a broader match specification found at the overall Policy level. 
+(This is described below.)</p>
 
 <p>&nbsp;</p>
 
@@ -272,7 +273,7 @@ that this policy should apply to.  At runtime, the Fedora Policy Enforcement
 Module will compare attributes of the user/agent making a service request
 against the criteria specific in the &lt;Subjects&gt; specification of the
 policy Target to determine if the policy is applicable to the incoming request.
-  For example, to define a policy that is applicable to any kind user or agent,
+  For example, to define a policy that is applicable to any kind of user or agent,
 the following is specified:</p>
 
 <p>
@@ -284,7 +285,7 @@ the following is specified:</p>
 </div>
       <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>Within a single &lt;Subject&gt; specification,
-there may be one or more attributes that together determine whether a policy match
+there may be one or more XACML attributes that together determine whether a policy match
 should occur.  Each &lt;SubjectMatch&gt; element is used to specify an name/value
 of an attribute of a user/agent.<b> </b> Multiple <b>&lt;SubjectMatch&gt; </b>elements
 are used to specify multiple attributes of a subject, and are <b>logically AND-ed
@@ -421,7 +422,7 @@ If there are multiple <b>&lt;Resource&gt;</b> elements within the
 OR-ed together</b>.  This means that a match on only one of the Resource
 specifications is necessary for the policy to apply to a service request.  For
 example, the snippet below says that a resource match will occur if the
-incoming request is for a digial object that has the content model type of either
+incoming request is for a digital object that has the content model type of either
 “UVA_STD_IMAGE” or “MRSID.”</p>
 <p style='text-autospace:none'>&nbsp;</p>
 <div class="code">
@@ -475,7 +476,7 @@ of a Target in a policy.  For example, to define a policy that is applicable to
 <p style='text-autospace:none'>&nbsp;</p>
 
 <p style='text-autospace:none'>From a practical standpoint in
-Fedora, there is are only two attributes that pertain to identifying Fedora
+Fedora, there are only two attributes that pertain to identifying Fedora
 API operations:  1) an attribute that indicates what Fedora API is in context,
 and 2) an attribute that indicates the specific service operation within that API.  &nbsp; 
 To create a policy that is intended for an <i>entire</i> service&nbsp; (e.g., 
@@ -515,7 +516,7 @@ operation in a Fedora API do the following:</p>
 
 <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>The above can be considered a shortcut for fully 
-qualifying an service operation within its respective service API.&nbsp;&nbsp; 
+qualifying a service operation within its respective service API.&nbsp;&nbsp; 
 An alternative way to specify an Action as a Fedora API operation is to refer to 
 the Fedora service API <b>AND</b> the service operation.&nbsp;&nbsp;&nbsp; As with &lt;SubjectMatch&gt; and &lt;ResourceMatch&gt; specifications, multiple
 <b>&lt;ActionMatch&gt; </b>elements are <b>logically AND-ed
@@ -543,7 +544,7 @@ AND the service request is for the the “getDatastreamDissemination” operation.</
       </div>
       <p style='text-autospace:none'>&nbsp;</p>
 <p style='text-autospace:none'>To create an <b>OR</b> <b>condition</b>
-for resource matching, multiple &lt;Action&gt; elements must be specified.   If
+for action matching, multiple &lt;Action&gt; elements must be specified.   If
 there are multiple <b>&lt;Action&gt;</b> elements within the &lt;Actions&gt;
 wrapper component, the &lt;Action&gt; elements are <b>logically OR-ed together</b>. 
 This means that a match on only one of the Action specifications is necessary
@@ -607,7 +608,8 @@ for an example of Environment attribute matching in a Condition.</p>
 
 <p><b>&nbsp;</b></p>
 
-<p>There must be at least one Rule in a policy that matches
+<p>Each policy has at least one, and possibly more, rules.
+There must be at least one Rule in a policy that matches
 the incoming request for a policy to be deemed applicable to that request.&nbsp;&nbsp;&nbsp; 
 The way the PDP determines whether a rule is applicable to an incoming request 
 is by evaluating the rule Target and rule Condition (if they exist).&nbsp;&nbsp; 
@@ -637,7 +639,7 @@ is governed by the policy Target.&nbsp; </p>
 <p style='text-autospace:none'>
 <span style="background-color: #FFFFFF; background-position: 0% 0%">
 <font size="2"><b><span style="font-family: Courier New">&lt;Rule&gt;</span></b></font></span></p>
-<p style='text-autospace:none'>A policy can contain one or more Rules.&nbsp; 
+<p style='text-autospace:none'>A policy contains one or more Rules.&nbsp; 
 Each rule has a <b>RuleId</b> and and <b>Effect</b>.&nbsp;&nbsp; An Effect is 
 the intended consequence of a satisfied rule, which can be either &quot;Deny&quot; or 
 &quot;Permit.&quot;&nbsp;&nbsp;&nbsp;&nbsp; This means that if the rule is deemed 
@@ -998,7 +1000,7 @@ control policies that provide for a highly restricted management service
 (API-M), an open access service&nbsp; (API-A), and an open OAI provider service.&nbsp;&nbsp; 
 These default access control policies establish the same level of out-of-the-box 
 security on the repository that was previously configured for Fedora 2.0 
-release; however, as of Fedora 2.1 these basic access controls are now specified 
+release; however, as of Fedora 2.1b these basic access controls are now specified 
 as XACML policies.&nbsp;&nbsp; Please consult the <a href="#DEFAULT">Default 
 Repository Policies</a> documentation for a description of each default policy. </p>
 <p>&nbsp;</p>
@@ -1009,7 +1011,7 @@ Policies - Sample Repository-Wide Policies</span></b></h2>
 
 <p>The sample policies are written with the assumption that Fedora's
 <a href="AuthorizationXACML.htm#DEFAULT">Default Repository-Wide Policies</a> 
-are activated.&nbsp;&nbsp;&nbsp; These default policies lock down access to the 
+are unedited and activated.&nbsp;&nbsp;&nbsp; These default policies lock down access to the 
 Fedora API-M service so that only the Fedora Administrator is permitted access.&nbsp; 
 The default policies also result in open access to API-A (all users are 
 permitted).&nbsp;&nbsp; Given this starting point,&nbsp; you can think writing 
@@ -1019,7 +1021,7 @@ write policies that let more users have access to API-M operations.&nbsp; Also,
 you will likely want to add restrictions in who can access digital objects, 
 datastreams, and disseminations (i.e., via API-A).&nbsp;&nbsp; The sample 
 policies will demonstrate how to do these things, given various authentication 
-scenarios.&nbsp; Notice that there some policies restrict access based on user 
+scenarios.&nbsp; Notice that there are some policies which restrict access based on user 
 identity/attributes based on Tomcat's default user directory ( 
 tomcat-users.xml).&nbsp; Other policies demonstrate how to restrict access by 
 user attributes/groups that are defined in an LDAP directory.&nbsp; </p>
@@ -1031,7 +1033,7 @@ similar thing with LDAP groups).&nbsp;&nbsp; If you want to try them out, you
 can put one or more of the sample policies into play by following the 
 instructions for <a href="AuthorizationXACML.htm#CONFIG-ACTIVATE">activating and 
 loading policies</a> into a Fedora repository.&nbsp; However, it is recommended 
-that you either test them individually to understand the effect each policy has.&nbsp;&nbsp; 
+that you test them individually to understand the effect each policy has.&nbsp;&nbsp; 
 Ultimately, you can proceed to write a meaningful suite of policies that are 
 intended to work together for your repository.&nbsp;&nbsp;&nbsp; </p>
 
