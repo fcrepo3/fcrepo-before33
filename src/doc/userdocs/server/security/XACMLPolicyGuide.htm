@@ -141,7 +141,7 @@ digital objects.&nbsp;&nbsp; This vocabulary define a set of URNs that can be
 used to identify specific Fedora API operations, Fedora object attributes, and 
 the Fedora environment within an XACML policy.&nbsp;&nbsp; These URNs are used 
 as attribute designators in XACML policies, specifically within a SubjectAttributeDesignator, 
-ResourceAttributeDesignator, and ActionAttributeDesignator.&nbsp;&nbsp;&nbsp;&nbsp; </p>
+ResourceAttributeDesignator, ActionAttributeDesignator, or EnvironmentAttributeDesignator.&nbsp;&nbsp;&nbsp;&nbsp; </p>
 <p>&nbsp;</p>
 <p>The set of identifiers defined for the Fedora policy vocabulary is 
 automatically generated on Fedora build and can be found in the Fedora software distribution at:</p>
@@ -161,8 +161,10 @@ automatically generated on Fedora build and can be found in the Fedora software 
 	<p>&nbsp;</p>
 	<p>This vocabulary provides a set of identifiers (URNs) that can appear in XACML
 policies to refer to Fedora API operations (Actions in XACML), any aspects of a
-Fedora digital object (Resources in XACML), and key attributes of the
-environment in which Fedora runs in (Environment in XACML). </p>
+Fedora digital object (Resources in XACML), key attributes of the
+environment in which Fedora runs in (Environment in XACML), and common subject (i.e., user) attributes. 
+(Other user attributes are named according to site-usage and so their names aren't included in the Fedora XACML vocabulary.)
+</p>
 <p><span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
@@ -210,10 +212,12 @@ combining algorithm at the authorization module level.&gt;</i></b></p>
 <p style='text-autospace:none'>A Policy Target is the part of a
 policy that specifies matching criteria for figuring out whether a particular
 policy is applicable to an incoming service request.   A Target contains three
-basic matching components: <b>Subjects</b>, <b>Actions</b>, and <b>Resources</b>, 
-and <b>Environments</b>.&nbsp; All of these components must be matched to the context of an incoming
+basic "matching" components: <b>Subjects</b>, <b>Actions</b>, and <b>Resources</b>.&nbsp; All of these components must be matched to the context of an incoming
 request for the policy to be applicable. &nbsp; These matching specifications 
-can be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. </p>
+can be built upon <a href="#POLICY-FUNCTIONS">XACML Functions</a>. 
+(A fourth matching component, Environments, is defined in XACML and will be available in Fedora's XACML policies
+when it is available in the Sun XACML version as used in Fedora.)
+</p>
 <p>&nbsp;</p>
 
       <div class="code">
@@ -593,7 +597,7 @@ implemented by the Sun XACML engine</b></i> that underlies the Fedora Authorizat
 module.&nbsp; This prevents the expression of environment matching criteria 
 within Targets.&nbsp; </p>
 <blockquote>
-	<p><i><b>**&nbsp; </b>Therefore, in Fedora 2.1 do not create policies that 
+	<p><i><b>**&nbsp; </b>Therefore, in Fedora 2.1b do not create policies that 
 	specify Environment matching criteria in the policy Target.</i>&nbsp; </p>
 </blockquote>
 <p>Although the Environments element is not currently supported for use within a 
@@ -995,7 +999,7 @@ AttributeValues), until we clarify with Sun how they'll fix this.
 <h2><span style="font-size: 14pt"><b><a name="DEFAULT-REPOWIDE"></a>3</b></span><b><span style='font-size:14.0pt'> 
 Default Repository-Wide Policies</span></b></h2>
 
-<p>Out of the box, the Fedora repository is configured with a default set of access 
+<p>out-of-the-box, the Fedora repository is configured with a default set of access 
 control policies that provide for a highly restricted management service 
 (API-M), an open access service&nbsp; (API-A), and an open OAI provider service.&nbsp;&nbsp; 
 These default access control policies establish the same level of out-of-the-box 
