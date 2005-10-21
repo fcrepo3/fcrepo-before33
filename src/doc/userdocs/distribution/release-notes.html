@@ -65,7 +65,131 @@
     <h1><a id="rel2.0" name="rel2.1b">1. Release 2.1b (beta) - October 21, 2005</a></h1>
 	<h2>&nbsp;</h2>
 	<h2>A. Migrating from Fedora 2.0</h2>
-	<h2>&nbsp;</h2>
+
+      <p>The move from Fedora 2.0 to Fedora 2.1b is quite simple and does not 
+		require reloading of your repository.&nbsp; If you are upgrading from Fedora 
+		2.0 to Fedora 2.1b
+      follow the steps below.&nbsp; More detail on these steps is found in the 
+		Fedora <a href="installation.html">Installation Guide</a> and the
+		<a href="migration.html">Upgrade and Migrate Guide</a>.&nbsp;&nbsp; If 
+		you are starting from a release prior to Fedora 2.0, consult the Fedora 
+		2.0 release notes and/or the Upgrade and Migration Guide for 
+		instructions on how to migrate to Fedora 2.0 before upgrading to Fedora 
+		2.1b.</p>
+	<ol>
+
+        <li><b>Download: </b>download the Fedora 2.1b software from <a href=
+        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
+
+        <li><b>Install</b>:&nbsp; install the Fedora 2.1b software</li>
+		<li><b>Backup:&nbsp; </b>it is highly recommended that you create a 
+		backup of your pre-existing Fedora 2.0 repository </li>
+		<li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1b 
+		server configuration file (fedora.fcfg) set the object storage location 
+		to point to that of of the Fedora 2.0 repository, for example:<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_0_objects</b>&quot;/&gt;</pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp; </li>
+		<li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1b 
+		server configuration file (fedora.fcfg) set the datastream storage 
+		location to point to that of of the Fedora 2.0 repository, for example:<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_datastreams</b>&quot;/&gt;</pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</li>
+		<li><b>Configure the Temporary Storage Location:</b> in the Fedora 2.1b 
+		server configuration file (fedora.fcfg) set the temp storage location to 
+		point to that of of the Fedora 2.0 repository, for example:<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_temp</b>&quot;/&gt;</pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</li>
+		<li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1b 
+		server configuration file (fedora.fcfg) set the relational database 
+		location topoint to the pre-existing database (used by the Fedora 2.0 
+		repository), for example (if using MySQL):<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
+  &lt;comment&gt;MySQL database on localhost with db name of fedora20src&lt;/comment&gt;
+  &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
+  &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
+  <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora20src?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
+  &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+  &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
+  &lt;param name=&quot;minPoolSize&quot; value=&quot;10&quot;/&gt;
+  &lt;param name=&quot;maxPoolSize&quot; value=&quot;100&quot;/&gt;
+&lt;/datastore&gt;</pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;If you are using Oracle or mckoi as your database, update the 
+		appropriate datastore configuration.<br>
+&nbsp;</li>
+		<li><b>Rebuild the Fedora Resource Index. </b>&nbsp; Note that you <b>
+		MUST NOT </b>point your Fedora 2.1b repository server at the 
+		pre-existing Fedora 2.0 Resource Index.&nbsp;&nbsp; The Resource Index 
+		data model has changed slightly, and also there have been bug fixes on 
+		the Resource Index.&nbsp;&nbsp;&nbsp; The Resource Index can be easily 
+		rebuilt using the <a href="../server/cmd-line/index.html#rebuild">Fedora 
+		Rebuild Utility</a>, as shown below.&nbsp; When prompted for what you 
+		want to do, select option 2 to rebuild the Resource Index only.&nbsp;&nbsp; 
+		(Note: that you in lieu of Step 7 above, you could have chosen to 
+		rebuild a brand new SQL database, but this is not necessary.).<i><b>&nbsp;
+		<br>
+		<br>
+		NOTE: The Fedora server must not be running while rebuilding the 
+		Resource Index</b></i>.<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>C:\fedora-2.1b-src&gt;<b> fedora-rebuild</b></pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</li>
+		<li>Run the Fedora Setup Utility to select a security configuration.&nbsp; 
+		Consult the <a href="../server/security/securingrepo.html">Securing Your 
+		Repository Guide</a> for a description of security configuration 
+		options.&nbsp; To have an equivalent configuration to what was in Fedora 
+		2.0 (no SSL, API-M authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
+		option as demonstrated below.&nbsp; You can easily change to more secure 
+		configurations at any time by rerunning the Fedora Setup Utility.&nbsp;
+		<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>C:\fedora-2.1b-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</p></li>
+		<li>Start the Fedora 2.0 server <br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>C:\fedora-2.1b-src&gt;<b> fedora-start</b></pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</p></li>
+		<li><i><b>You are done! </b></i></li>
+		<li></li>
+      </ol>
 	<h2><b>B. New Features</b></h2>
 	<p class="MsoNormal">&nbsp;</p>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
@@ -305,11 +429,26 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.diringest"></a>New Directory Ingest Service (DirIngest)<br>
-&nbsp;</font></li>
+		</font><font style="font-size: 9pt" face="Arial">A stand-alone web 
+		service application that interacts with a Fedora repository to provide 
+		for ingesting directories or archives or files into a Fedora repository.&nbsp; 
+		The service receives a zip/jar file of files in directory hierarchy 
+		(i.e., a file archive), including a METS-based manifest file.&nbsp; The 
+		Directory Ingest Service will receive the archive, open it up, create a 
+		digital object in the repository for every file and directory, and 
+		populate the RELS-EXT datastream 
+			preserve the relationships between files and directories as 
+			represented in the input archive.</font><br>
+&nbsp;</li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.proai"></a>New OAI-Provider Service (PROAI)<br>
-&nbsp;</font></li>
+		</font><font style="font-size: 9pt" face="Arial">A stand-alone web 
+		service application that is a highly configurable OAI provider.&nbsp;&nbsp; 
+			The PROAI service can be set up to harvest any type of datastream or 
+			dissemination of digital objects in a Fedora repository.&nbsp; It also 
+			supports OAI sets.&nbsp; (Note: PROAI can be used outside the 
+			context of Fedora too, by writing a custom adapter.)</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.ri"></a>Resource Index </font>
@@ -328,15 +467,12 @@
 			to latest version of Kowari for triplestore </font></li>
 			<li class="MsoNormal">
 			<font face="Arial" style="font-size: 9pt; font-weight: 700">New 
-			Sesame support for triplestore<br>
-&nbsp;</font></li>
-		</ol>
-		</li>
+			Sesame support for triplestore<br>&nbsp;</font></li>
+		</ol></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.relsext"></a>Relaxation of REL-EXT datastream 
-		constraints<br>
-		</font><font face="Arial" style="font-size: 9pt">In Fedora 2.0, the 
+		constraints<br></font><font face="Arial" style="font-size: 9pt">In Fedora 2.0, the 
 		Relationships datastream in an object (identified as &quot;RELS-EXT&quot;) was 
 		reserved for assertions of object-to-object relationships.&nbsp;&nbsp; 
 		Now, in Fedora 2.1b, the RELS-EXT datastream can be used as a means of 
@@ -363,16 +499,14 @@
 		&quot;demo:99&quot; is member of the collection object identified by &quot;demo:c1&quot;&nbsp; 
 		(2) <i><b>a relationship (myns:isPartOf) defined in custom namespace 
 		that says &quot;demo:99&quot; is part of a non-Fedora entity identified by 
-		&quot;doi:10.123/456<font style="font-size: 9pt">&quot; </font></b></i>and (3) <i>
-		<b>an object property (myns:owner) defined in custom namespace that has 
+		&quot;doi:10.123/456<font style="font-size: 9pt">&quot; </font></b></i>and (3) 
+		<i><b>an object property (myns:owner) defined in custom namespace that has 
 		a value of&nbsp; &quot;Jane Doe.&quot;</b></i>&nbsp;&nbsp;&nbsp; The second and 
 		third assertions are examples of what is newly supported in Fedora 2.1b 
 		that was not previously supported.&nbsp;&nbsp; The second assertion is 
 		in the form &quot;<i>PID</i> -- <i>someRelationshipName</i> -- <i>someURI</i>&quot; 
-		and the third assertion is in the form of&nbsp; &quot;<i>PID</i> -- <i>
-		somePropertyName</i> -- <i>someLiteralValue.</i>&quot;<br>
-		<br>
-&nbsp;</font><div class="code">
+		and the third assertion is in the form of&nbsp; &quot;<i>PID</i> -- <i>somePropertyName</i> -- 
+		<i>someLiteralValue.</i>&quot;<br><br>&nbsp;</font><div class="code">
 			<pre>&lt;rdf:RDF&nbsp;xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;&nbsp;
  xmlns:rdfs=&quot;http://www.w3.org/2000/01/rdf-schema#&quot;
 &nbsp;xmlns:fedora=&quot;info:fedora/fedora-system:def/relations-external#&quot;
@@ -384,22 +518,25 @@
 &nbsp;&nbsp;&nbsp;&nbsp;<b>&lt;myns:owner&gt;Jane Doe&lt;myns:owner/&gt;</b>
 &nbsp;&lt;/rdf:Description&gt;
 
-&lt;/rdf:RDF&gt; </pre>
-		</div>
-		<p><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
-&nbsp;</font></li>
+&lt;/rdf:RDF&gt; </pre></div>
+		<p><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>
-&nbsp;</font></li>
+		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
-&nbsp;</font></li>
+		</font><font face="Arial" style="font-size: 9pt; ">With the introduction 
+		of the new security architecture for Fedora, the repository can be 
+		configured for SSL or non-SSL.&nbsp; Therefore, the syntax for Fedora 
+		client command line utilities has been slightly changed to accomodate 
+		the a parameter for the protocol that will be used when calling Fedora.&nbsp; 
+		Refer the the <a href="../client/cmd-line">Client Command Line Utilities</a> 
+		Guide for the new syntax for each command line utiltiy.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; <br>
-		</font><font face="Arial" style="font-size: 9pt">You can now use either 
+		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; 
+		<br></font><font face="Arial" style="font-size: 9pt">You can now use either 
 		a FOXML or METS template file when building objects with the Fedora 
 		batch utility.&nbsp; The batch utility now detects the format of the template 
 		file and then generates objects based on the format of the template file 
@@ -408,9 +545,7 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j <br>
-		</font>
-		<font face="Arial" style="font-size: 9pt; ">
-		Fedora server logging has been standardized to use log4j.&nbsp;&nbsp; In 
+		</font><font face="Arial" style="font-size: 9pt; ">Fedora server logging has been standardized to use log4j.&nbsp;&nbsp; In 
 		addition to the general repository server log (created each time the 
 		Fedora server is started and named with a date-time stamp), there are 
 		now separate logs for Resource Index activity (ri.log) and for 
@@ -423,22 +558,18 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.hdl"></a>Handle System Plug-in for PID 
-		Generation<br>
-&nbsp;</font></li>
+		Generation<br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.fedoraclient"></a>FedoraClient utility class 
-		for building new clients<br>
-&nbsp;</font></li>
+		for building new clients<br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.perf"></a>Performance and Scale testing<br>
-&nbsp;</font></li>
+		<a name="rel2.1b.features.perf"></a>Performance and Scale testing<br>&nbsp;</font></li>
 		<li class="MsoNormal"><span style="font-weight: 700">
 		<font face="Arial" style="font-size: 9pt">
 		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
-		Contributions by Community</font></span><br>
-		&nbsp;</li>
+		Contributions by Community</font></span><br>&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>C.&nbsp; Bug Fixes</h2>
