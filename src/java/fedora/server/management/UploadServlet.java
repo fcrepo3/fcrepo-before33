@@ -93,7 +93,7 @@ public class UploadServlet
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
-		sendResponse(HttpServletResponse.SC_BAD_REQUEST, 
+		sendResponse(HttpServletResponse.SC_OK, 
 		        "Client must use HTTP Multipart POST", response);
 	}
 
