@@ -26,6 +26,7 @@
       <ol>
         <li><a href="#saxon">Welcome to the Saxon XSLT Processor
         Local Service</a></li>
+        <li><a href="#authn">Configuring Authentication</a></li>
       </ol>
     </div>
   </div>
@@ -91,8 +92,38 @@
         http://localhost:8080/saxon/SaxonServlet?source=http://dl.lib.virginia.edu/data/xmltext/ead/viu03270&amp;style=http://dl.lib.virginia.edu/bin/ead/xsl/document.xsl</p>
       </blockquote>
 
-      <p><span class="emphasis"><em><sup>[<a name="fnrex11" href=
-      "#ftn.fnrex11" id="fnrex11">1</a>]</sup></em></span></p>
+    </div>
+
+    <div class="sec1">
+      <div class="titlepage">
+        <div>
+          <h2 class="title" style="clear: both"><a name="authn"></a>Configuring Authentication</h2>
+        </div>
+      </div>
+
+      <p> If the Saxon Servlet needs to retrieve a stylesheet or source xml
+      that is protected by basic authentication, it can be configured to do
+      so by setting the parameters in the servlet's <code>web.xml</code> file.
+      In the Fedora server distribution, this file can be found under the
+      tomcat directory in <code>webapps/saxon/WEB-INF</code>.</p>
+
+      <p> The example below is what needs to be added for each host:port/path
+      combination that the servlet needs to provide credentials for.  The
+      param-value is a colon-delimited username and password pair.  When
+      the Saxon Servlet needs to access a URL starting with the param-name,
+      it will provide these credentials.  Multiple init-param elements may
+      be provided.</p>
+
+      </p>
+      <div class="code"><pre>
+&lt;init-param>
+  &lt;param-name&gt;credentials for localhost:8080/fedora/getDS&lt;/param-name&gt;
+  &lt;param-value&gt;backendUser:backendPass&lt;/param-value&gt;
+&lt;/init-param></pre></div>
+
+      <p>The Saxon Servlet will need to be restarted in order
+      for new values to take effect.</p>
+
     </div>
 
     <div class="footnotes">
