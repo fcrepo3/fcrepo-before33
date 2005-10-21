@@ -57,11 +57,12 @@
 
         <li><a href="#relalpha1">Alpha 1 - Oct 31, 2002</a></li>
       </ol>
-    </div>
+    	<hr>
+		<p>&nbsp;</div>
   </div>
 
   <div class="sec1">
-    <h2><a id="rel2.0" name="rel2.1b">1. Release 2.1b - October 21, 2005</a></h2>
+    <h1><a id="rel2.0" name="rel2.1b">1. Release 2.1b (beta) - October 21, 2005</a></h1>
 	<h2>&nbsp;</h2>
 	<h2>A. Migrating from Fedora 2.0</h2>
 	<h2>&nbsp;</h2>
@@ -86,8 +87,8 @@
 		license.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.configs"></a>New Security Architecture – 4 
-		Configuration Options for a Repository<br>
+		<a name="rel2.1b.features.configs"></a>New Security Architecture – Four 
+		Security Configuration Options for a Repository<br>
 		</b>Fedora 2.1b introduces a configurable security architecture, that 
 		provides options for SSL and authentication at the Fedora web service 
 		API level.&nbsp;&nbsp; There are
@@ -183,9 +184,67 @@
 		objects, see the &quot;<a href="../server/security/XACMLPolicyGuide.htm">Fedora 
 		XACML Policy Writing Guide</a>.&quot; <br>
 &nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.reload"></a>Fedora Policy Reload Utility<br>
+		</font><font face="Arial" style="font-size: 9pt">With the addition of 
+		the XACML-based Policy Enforcement module, there is the opportunity to 
+		modify existing policies or add new policies over time.&nbsp; All 
+		&quot;active&quot; policies must be stored in the active policies storage 
+		locations configured for the Authorization module in the Fedora server 
+		configuration file (fedora.fcfg).&nbsp;&nbsp; Once policies are copied 
+		into one of these &quot;active&quot; policy directories, the Fedora server can 
+		locate them and load them into memory for policy enforcement.&nbsp;&nbsp; 
+		Every time the Fedora server is started policies are loaded from the 
+		active policy directories.&nbsp; However, the
+		<a href="../server/cmd-line/index.html#reload">Fedora Policy Reload 
+		Utility</a> provides an easy way to load new or modified policies into 
+		Fedora without having to restart the Fedora server.&nbsp;&nbsp; It 
+		should be noted that Fedora supports both repository-wide policies and 
+		object specific policies.&nbsp; The Policy Reload Utility will load only 
+		repository-wide policies.&nbsp; For performance benefits, 
+		object-specific policies are loaded on demand when the repository 
+		receives a request for that particular object.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.policyvalid"></a>Fedora Policy Validation 
+		Utility<br>
+&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
 		<a name="rel2.1b.features.besecurity"></a>New Security Architecture – 
-		Backend Security for Service call-backs</b><br>
+		Backend Security for Service call-backs<br>
+		</b>Backend security is applicable to repositories that contain digital 
+		object Disseminators that call upon external web services - <i>and where 
+		a high level of security is desired</i>.&nbsp;&nbsp; Repositories that 
+		do not use such external dissemination services do not require any 
+		custom configuration of this new security feature.&nbsp;&nbsp; </font>
+		<font style="font-size: 9pt" face="Arial">The term "backend services" is used to describe the set of web services 
+		that are used by Fedora Disseminators.&nbsp;&nbsp; Disseminators are 
+		optional components in the Fedora digital object model that allow for 
+		service-based views of the digital object.&nbsp; A Disseminator points 
+		to a &quot;Behavior Mechanism&quot; which contains a WSDL service description that 
+		is used by the Fedora repository service to call upon an external 
+		supporting service at runtime.&nbsp;&nbsp; These external services that 
+		Fedora calls upon are referred to as &quot;backend services.&quot;&nbsp;&nbsp; 
+		When Fedora makes a call to a backend service, it will typically send a 
+		reference to a datastream (stored in a digital object in the repository) 
+		that Fedora wants the external service to process in some way (e.g., a 
+		transformation of the datastream content).&nbsp;&nbsp; When a backend 
+		service receives such a request from Fedora, it must call back to Fedora 
+		to get the datastream content that it is required to process.&nbsp;&nbsp; 
+		This is where backend security comes in.&nbsp; If the Fedora repository 
+		is set up in a secure manner (SSL and authentication), a backend service 
+		will be treated like any other incoming client to Fedora.&nbsp; The 
+		service must make calls to Fedora in a secure manner, and it may need to 
+		provide credentials to Fedora.&nbsp;&nbsp; To support the secure 
+		interaction of backend services with a secure Fedora repository, Fedora 
+		2.1 provides a the &quot;<a href="../server/security/beSecurityConfig.html#CONFIGTOOL">beSecurity 
+		Configuration Tool</a>&quot; for registering each backend service and 
+		specifying how it should call back to Fedora.&nbsp; For more information 
+		on configuring backend security refer to the document entitled &quot;<a href="../server/security/beSecurityConfig.html">Backend 
+		Services Security Configuration</a>.&quot;<font style="font-size: 9pt">
+		</font><br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
 		<a name="rel2.1b.features.framework"></a>Fedora Service Framework</b><br>
@@ -224,11 +283,75 @@
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.relsext"></a>Relaxation of REL-EXT datastream 
 		constraints<br>
+		</font><font face="Arial" style="font-size: 9pt">In Fedora 2.0, the 
+		Relationships datastream in an object (identified as &quot;RELS-EXT&quot;) was 
+		reserved for assertions of object-to-object relationships.&nbsp;&nbsp; 
+		Now, in Fedora 2.1b, the RELS-EXT datastream can be used as a means of 
+		creating extensible properties for digital objects (i.e., properties not 
+		defined in the FOXML schema).&nbsp; The benefit of putting such 
+		properties in the RELS-EXT datastream is that the are automatically 
+		indexed in the Resource Index, and thus are searchable via the RISearch 
+		interface.&nbsp; Previously, the RELS-EXT datastream was validated by 
+		Fedora to ensure that every assertion was of the form&nbsp; &quot;<i>PID</i> 
+		-- <i>relationship</i> -- <i>anotherPID</i>&quot;</font><font face="Arial" style="font-size: 9pt; font-weight: 700">&nbsp;
+		</font><font face="Arial" style="font-size: 9pt">where the subject was 
+		the PID of the object containing the assertion, the predicate a 
+		relationship, and the object of the predicate was the PID of another 
+		Fedora object.&nbsp;&nbsp; New in Fedora 2.1b is that validation of the 
+		RELS-EXT datastream has been relaxed so that it can be used to assert 
+		other kinds of custom properties about the digital object.&nbsp;&nbsp;&nbsp; 
+		Specifically, the object of the predicate of an assertion does NOT have 
+		to be another Fedora PID;&nbsp; it can be any URI or literal value.&nbsp;&nbsp; 
+		Thus RELS-EXT can be used to associate properties defined in any 
+		ontology with a Fedora digital object.&nbsp; The example below shows the 
+		content of a RELS-EXT datastream with three assertions about the Fedora 
+		object &quot;demo:99.&quot;&nbsp;&nbsp; The assertions are: (1) a object-to-object 
+		relationship defined in the Fedora ontology namespace that says 
+		&quot;demo:99&quot; is member of the collection object identified by &quot;demo:c1&quot;&nbsp; 
+		(2) <i><b>a relationship (myns:isPartOf) defined in custom namespace 
+		that says &quot;demo:99&quot; is part of a non-Fedora entity identified by 
+		&quot;doi:10.123/456<font style="font-size: 9pt">&quot; </font></b></i>and (3) <i>
+		<b>an object property (myns:owner) defined in custom namespace that has 
+		a value of&nbsp; &quot;Jane Doe.&quot;</b></i>&nbsp;&nbsp;&nbsp; The second and 
+		third assertions are examples of what is newly supported in Fedora 2.1b 
+		that was not previously supported.&nbsp;&nbsp; The second assertion is 
+		in the form &quot;<i>PID</i> -- <i>someRelationshipName</i> -- <i>someURI</i>&quot; 
+		and the third assertion is in the form of&nbsp; &quot;<i>PID</i> -- <i>
+		somePropertyName</i> -- <i>someLiteralValue.</i>&quot;<br>
+		<br>
+&nbsp;</font><div class="code">
+			<pre>&lt;rdf:RDF&nbsp;xmlns:rdf=&quot;http://www.w3.org/1999/02/22-rdf-syntax-ns#&quot;&nbsp;
+ xmlns:rdfs=&quot;http://www.w3.org/2000/01/rdf-schema#&quot;
+&nbsp;xmlns:fedora=&quot;info:fedora/fedora-system:def/relations-external#&quot;
+&nbsp;xmlns:myns=&quot;http://www.nsdl.org/ontologies/relationships#&quot;&gt; 
+
+&nbsp;&lt;rdf:Description rdf:about=&quot;info:fedora/demo:99&quot;&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;fedora:isMemberOfCollection rdf:resource=&quot;info:fedora/demo:c1&quot;/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;<b>&lt;myns:isPartOf rdf:resource=&quot;doi:10.123/456&quot;/&gt;</b>
+&nbsp;&nbsp;&nbsp;&nbsp;<b>&lt;myns:owner&gt;Jane Doe&lt;myns:owner/&gt;</b>
+&nbsp;&lt;/rdf:Description&gt;
+
+&lt;/rdf:RDF&gt; </pre>
+		</div>
+		<p><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>
 &nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; <br>
+		</font><font face="Arial" style="font-size: 9pt">You can now use either 
+		a FOXML or METS template file when building objects with the Fedora 
+		batch utility.&nbsp; The batch utility now detects the format of the template 
+		file and then generates objects based on the format of the template file 
+		so you can create either METS or FOXML&nbsp; objects now.&nbsp;</font></li>
+		<li class="MsoNormal"></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j </font>
@@ -252,30 +375,8 @@
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
-&nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.reload"></a>Fedora Reload Policy Utility<br>
-&nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.policyvalid"></a>Fedora Policy Validation 
-		Utility<br>
-&nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.fedoraclient"></a>FedoraClient utility class 
 		for building new clients<br>
-&nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; <br>
-		</font><font face="Arial" style="font-size: 9pt">You can now use either 
-		a FOXML or METS template file when building objects.&nbsp; The batch utility 
-		now detects the format of the template file and then generates objects 
-		based on the format of the template file so you can create either METS 
-		or FOXML&nbsp; objects now.&nbsp;</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
@@ -345,10 +446,10 @@
 		the original logging behavior, edit fedora-start.bat (Windows) or 
 		fedora.sh (Unix), and remove</font></li>
 	</ol>
-	<p>&nbsp;</p>
-	<h2>&nbsp;</h2>
-	<h2>2.&nbsp; <a name="rel2.0" id="rel2.0">Release 2.0 - January 31,
-    2005</a></h2>
+	<p>&nbsp;</p><hr>
+	<h1>&nbsp;</h1>
+	<h1>2.&nbsp; <a name="rel2.0" id="rel2.0">Release 2.0 - January 31,
+    2005</a></h1>
 
     <p>Fedora 2.0 is a major release that culminates Phase I of the
     initial Fedora project that began in October 2001 and ended in
@@ -1519,15 +1620,17 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
           xml characters can safely be included in object labels.</p>
         </li>        
       </ol>
+    	<hr>
+		<p>&nbsp;</p>
     </div>
   </div>
   
   <!-- Inserted Release Notes from Fedora 1.2.1 -->
 
   <div>
-    <h2 class="title" style="clear: both"><a name="rel1.2.1" id=
-    "rel1.2.1"></a>2. Release 1.2.1 (Bug Fix Release) - April 19,
-    2004</h2>
+    <h1 style="clear: both"><a name="rel1.2.1" id=
+    "rel1.2.1"></a>3. Release 1.2.1 (Bug Fix Release) - April 19,
+    2004</h1>
   </div>
 
   <p>Fedora 1.2.1 provides fixes to several bugs that were reported
@@ -2039,8 +2142,10 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="rel1.2" id=
-        "rel1.2"></a>3. Release 1.2 - December 15, 2003</h2>
+        <h2 class="title" style="clear: both">&nbsp;</h2><hr>
+		<h2 class="title" style="clear: both">&nbsp;</h2>
+		<h1 style="clear: both"><a name="rel1.2" id=
+        "rel1.2"></a>4. Release 1.2 - December 15, 2003</h1>
       </div>
     </div>
 
@@ -2842,6 +2947,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         </div>
 
         <p>(see release notes for Fedora 1.1).</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
       </div>
     </div>
   </div>
@@ -2849,9 +2956,9 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="rel1.1.1"
-        id="rel1.1.1"></a>4. Release 1.1.1 (Bug Fix Release) -
-        September 5, 2003</h2>
+        <h1 style="clear: both"><a name="rel1.1.1"
+        id="rel1.1.1"></a>5. Release 1.1.1 (Bug Fix Release) -
+        September 5, 2003</h1>
       </div>
     </div>
 
@@ -2916,6 +3023,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         required that something was provided for the DSLocation.
         Now, if DSLocation is passed in a null or empty, the
         original datastream content will be used (no change).</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
       </div>
     </div>
   </div>
@@ -2923,9 +3032,9 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="rel1.1" id=
-        "rel1.1"></a>5. Release 1.1 (Bug Fix Release) - August 5,
-        2003</h2>
+        <h1 style="clear: both"><a name="rel1.1" id=
+        "rel1.1"></a>6. Release 1.1 (Bug Fix Release) - August 5,
+        2003</h1>
       </div>
     </div>
 
@@ -3280,6 +3389,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
         which will enable the Fedora server to send SOAP requests
         to other services and receive SOAP responses from those
         services.</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
       </div>
     </div>
   </div>
@@ -3287,8 +3398,8 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="rel1.0" id=
-        "rel1.0"></a>6. Release 1.0 - May 16, 2003</h2>
+        <h1 style="clear: both"><a name="rel1.0" id=
+        "rel1.0"></a>7. Release 1.0 - May 16, 2003</h1>
       </div>
     </div>
 
@@ -3429,14 +3540,16 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
 
       <p>In-line documentation in the source code has also been
       updated.</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
     </div>
   </div>
 
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="rel0.9" id=
-        "rel0.9"></a>7. Release 0.9 - March 7, 2003</h2>
+        <h1 style="clear: both"><a name="rel0.9" id=
+        "rel0.9"></a>8. Release 0.9 - March 7, 2003</h1>
       </div>
     </div>
 
@@ -3749,14 +3862,16 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
       http://localhost:8080/userdocs (substitute your own hostname
       and port number if using something other than the
       default).</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
     </div>
   </div>
 
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="relbeta1"
-        id="relbeta1"></a>8. Beta 1 - Dec 20, 2002</h2>
+        <h1 style="clear: both"><a name="relbeta1"
+        id="relbeta1"></a>9. Beta 1 - Dec 20, 2002</h1>
       </div>
     </div>
 
@@ -3944,14 +4059,16 @@ runScript.pl?pid=info:fedora:/pid-of-the-data-object
       documentation and diagrams updated. Master Specification
       Document updated. The Specification documented distributed in
       June 2002 has been updated to reflect changes.</p>
+		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p>
     </div>
   </div>
 
   <div class="sec1">
     <div class="titlepage">
       <div>
-        <h2 class="title" style="clear: both"><a name="relalpha1"
-        id="relalpha1"></a>9. Alpha 1 - Oct 31, 2002</h2>
+        <h1 style="clear: both"><a name="relalpha1"
+        id="relalpha1"></a>10. Alpha 1 - Oct 31, 2002</h1>
       </div>
     </div>
 
