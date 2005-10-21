@@ -48,7 +48,7 @@ export JAVA_HOME
               -Dfedora.home=$FEDORA_HOME \
               -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
               -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-              fedora.client.search.AutoFinder $1 $2 $3 $4 $5)
+              fedora.client.utility.AutoFinder $1 $2 $3 $4 $5)
 
 JAVA_HOME=$OLD_JAVA_HOME
 export JAVA_HOME
