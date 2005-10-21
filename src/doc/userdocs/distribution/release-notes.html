@@ -68,22 +68,27 @@
 	soon to follow.&nbsp; This is a very significant release of Fedora since it 
 	introduces the new Fedora security architecture (with pluggable 
 	authentication and XACML-based policy enforcement), the Fedora Service 
-	Framework, and many other new features.&nbsp; Fedora 2.1b has been 
-	successfully tested with an extensive suite of JUnit tests.&nbsp; Some of 
-	the system documentation is still evolving.&nbsp; Most documentation is 
-	complete, but several documents are still being enhanced and improved.&nbsp; 
-	To identify documents that will continue to evolve, please look for an icon 
-	that says &quot;Draft Doc&quot; under the document title.&nbsp; As revisions are made, 
-	we will publish the most updated versions of these documents on the Fedora 
-	web site (<a href="http://www.fedora.info">www.fedora.info</a>) and send 
-	alerts to the Fedora Users mail list.&nbsp;&nbsp;&nbsp; Also, bulk loading 
-	was performed on a testbed of 1million digital objects with approximately 
-	75M&nbsp; triples in the Kowari-based Resource Index.&nbsp;&nbsp;&nbsp; It 
-	should also be noted, that coinciding with this release is the publication 
-	of the new Tools page on the Fedora web site (<a href="http://www.fedora.info/tools">www.fedora.info/tools</a>).&nbsp;&nbsp; 
-	This page will be a clearinghouse for community-developed, open-source 
-	applications, tools, and services that work with Fedora repositories.&nbsp;
-	</p>
+	Framework, and many other new features.&nbsp; The introduction of the new 
+	security architecture resulted in a significant amount of code refactoring, 
+	therefore, Fedora 2.1b has been tested with an extensive suite of new JUnit 
+	tests.&nbsp; Some of the system documentation is still evolving.&nbsp; Most 
+	documentation is complete, but several documents are still being enhanced 
+	and improved.&nbsp; To identify documents that will continue to evolve, 
+	please look for an icon that says &quot;Draft Doc&quot; under the document title.&nbsp; 
+	As revisions are made, we will publish the most updated versions of these 
+	documents on the Fedora web site (<a href="http://www.fedora.info">www.fedora.info</a>) 
+	and send alerts to the Fedora Users mail list.&nbsp;&nbsp;&nbsp; This 
+	release of Fedora was also tested against a large production testbed 
+	collection, where bulk loading was performed on for a collection of 1million 
+	digital objects with approximately 75M&nbsp; triples in the Kowari-based 
+	Resource Index.&nbsp;&nbsp;&nbsp; </p>
+	<p>Also, coinciding with this release is the publication of the
+	<a href="http://www.fedora.info/tools">Community-Developed Tools</a> page on 
+	the Fedora web site (see: <a href="http://www.fedora.info/tools">
+	www.fedora.info/tools</a>).&nbsp;&nbsp; This is a clearinghouse for 
+	community-developed, open-source applications, tools, and services that work 
+	with Fedora repositories.&nbsp;&nbsp; There are already many tools that are 
+	available, so check it out!</p>
 	<p>&nbsp;</p>
 	<h2>A. Migrating from Fedora 2.0</h2>
 
@@ -358,24 +363,30 @@
 			context of Fedora too, by writing a custom adapter.)</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.ri"></a>Resource Index </font>
-		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">Resource 
-			Index corruption problems diagnosed and fixed</font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">RI model 
-			changes</font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">New 
-			indexing levels</font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">Upgraded 
-			to latest version of Kowari for triplestore </font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">New 
-			Sesame support for triplestore<br>&nbsp;</font></li>
-		</ol></li>
+		<a name="rel2.1b.features.ri"></a>Resource Index<br>
+		</font>
+		<font face="Arial" style="font-size: 9pt; ">
+		The Resource Index has undergone significant testing and a number of 
+		bugs have been fixed (see Bug Fixes below).&nbsp; Most notably, a memory 
+		leak was discovered in the Kowari triplestore software that underlies 
+		the Resource Index that was the cause of reported Resource Index 
+		corruption problems.&nbsp; (It should be noted that corrupted Resource 
+		Index can be restored using the Fedora Rebuilder Utility that was 
+		pre-release to those having the problem in Fedora 2.0.&nbsp; The 
+		Rebuilder is now part of Fedora 2.1b.)&nbsp;&nbsp; There have been minor 
+		changes to the Resource Index data model.&nbsp; This should be 
+		transparent, unless you have written applications or middleware with 
+		static queries to the Resource Index, in which case you may have to make 
+		modifications to those queries.&nbsp; See the Resource Index Guide for 
+		more information.&nbsp; Also with Fedora 2.1b, a new indexing level is 
+		introduced for the resource index.&nbsp; This new level (Level 3), will 
+		index parameterized disseminations as concrete &quot;representations&quot; of 
+		digital objects, whenever there is a fixed domain of values for method 
+		parameters.&nbsp; This is explained in detail in the Resource Index 
+		Guide.&nbsp; Also, as explained in below, the RELS-EXT datastream can be 
+		used more freely now, beyond just the expression of object-to-object 
+		relationships, making the Resource Index more useful for asserting 
+		community-specific properties about objects via RDF.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.relsext"></a>Relaxation of REL-EXT datastream 
@@ -429,11 +440,24 @@
 		<p><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>&nbsp;</font></li>
-		<li class="MsoNormal">
+		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>
+		</font><font style="font-size: 9pt" face="Arial">The Fedora Rebuild 
+		utility is an interactive utility that can be used when the Fedora repository is somehow corrupted.&nbsp; 
+		The utility rebuilds the repository by crawling the repository storage 
+		directories where the FOXML digital objects reside.&nbsp;&nbsp; The 
+		utility can rebuild the SQL database (registries, search tables, and 
+		other tables), the Resource Index, or both.&nbsp;&nbsp;&nbsp; This is 
+		useful for a number of purposes, such as migrating from Fedora 2.0 to 
+		Fedora 2.1b, and also if a database or index becomes corrupted.&nbsp;&nbsp;  Additionally, if the 
+	Fedora administrator want to change from using the McKoi database to using the MySQL database, 
+	(or from MySQL to McKoi) the existing database can be purged, the fedora configuration file (fedora.fcfg) 
+	can be edited, and the fedora-rebuild utility can then be run to correctly populate the tables in the new
+	database system.&nbsp;&nbsp; Similarly, the fedora Rebuild Utility can 
+	also be useful for rebuilding the Kowari triplestore of the Resource-Index if 
+		a problem or corruption occurs.</font><p>
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
-		</font><font face="Arial" style="font-size: 9pt; ">With the introduction 
+		<br><a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br></font>
+		<font face="Arial" style="font-size: 9pt; ">With the introduction 
 		of the new security architecture for Fedora, the repository can be 
 		configured for SSL or non-SSL.&nbsp; Therefore, the syntax for Fedora 
 		client command line utilities has been slightly changed to accomodate 
@@ -479,10 +503,14 @@
 		results of these tests will be published soon on www.fedora.info.&nbsp;
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<br>&nbsp;</font></li>
-		<li class="MsoNormal"><span style="font-weight: 700">
+		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt">
+		<span style="font-weight: 700">
 		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
-		Contributions by Community</font></span><br>&nbsp;</li>
+		Contributions by Community<br>
+		</span>A new page now exists on the Fedora web site (<a href="http://www.fedora.info">www.fedora.info</a>) 
+		for downloading community-developed, open-source tools, applications, 
+		services that work with Fedora.&nbsp; Check it out!</font><br>&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>C.&nbsp; Bug Fixes</h2>
