@@ -741,13 +741,16 @@
               sensitive. As noted for username, any changes to this value must 
               also be reflected in your authentication database.</p>
           </dd>
-          <dt><span class="term"><font color="#FF0000">object_store_base</font></span></dt>
+
+          <dt><span class="term"><font color="#FF0000">log_level</font></span></dt>
           <dd> 
-            <p>A directory where XML serializations of the digital objects will 
-              be stored. This will be created if it doesn't already exist. This 
-              parameter must be given as an absolute path. The default value for 
-              this paramter is now <i>C:\fedora_2_1b_objects</i>.</p>
+            <p>Indicates the amount of detail to include in the server logs.
+            The default level is <b><font color="#ff0000">warning</font></b>, which only writes log messages
+            when problems occur.  To get as much detail as possible for debugging
+            purposes, set this value to <b>finest</b>.
+            </p>
           </dd>
+
           <dt><span class="term"><font color="#FF0000">fedora_temp</font></span></dt>
           <dd> 
             <p>A temporary directory. This will be created if it doesn't already 
@@ -795,15 +798,29 @@
               name of the machine on which Fedora runs. If the machine has aliases, 
               use the alias that will be used by people connecting to the server 
               (be it via a web browser or one of the SOAP API exposures).</p>
-            <p>Since you will be changing this value before running Fedora for 
-              the first time, you must also change the hostname (and possibly 
-              the port) in the URLs inside the demo objects, if you want to use 
-              them. So, after making changes to the configuration file, but before 
-              you ingest the demo objects, run the <span class=
-              "emphasis"><em>fedora-convert-demos</em></span> script. See the 
+            <p>
+              <b>NOTE: If you are using Fedora's policy enforcement, read
+              the following:</b> Before you change this value to an IP address
+              or hostname other than 127.0.0.1 or localhost, you should start
+              the server once with the default value of localhost.  This will
+              cause the default policies to be put into play.  Then you can
+              shutdown the server and manually edit the repository policies
+              (they will be in the directory you specified for them in fedora.fcfg)
+              with the new IP address.  Next, after making the fedoraServerHost
+              change to fedora.fcfg, you can restart the Fedora server and your
+              policies will be accurate with respect to the IP address of the
+              local server.
+            </p>
+            <p>After you have successfully changed your server's hostname,
+               if you would like to ingest the demo objects, they will need to
+               be changed before they can be properly ingested.
+               You can do this by running the <span class="emphasis"><em>fedora-convert-demos</em></span> 
+               script. See the 
               <i><a href="../cmd-line/index.html">Client Command-Line Utilities</a></i> 
               document for instructions on using this and other scripts that come 
               with Fedora.</p>
+            <p>
+            </p>
             <p><b>If you have selected the base security configuration of <i>ssl-authenticate-all</i> 
               or <i>no-ssl-authenticate-all</i> which use basic authentication 
               for API-A, this hostname must have an externally resolvable IP address 
