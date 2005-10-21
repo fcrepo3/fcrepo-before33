@@ -402,19 +402,167 @@
 		<font face="Arial" style="font-size: 9pt">
 		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
 		Contributions by Community</font></span><br>
-		<br>
-		<br>
-&nbsp;</li>
+		&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>C.&nbsp; Bug Fixes</h2>
+	<p><font style="font-size: 9pt" face="Arial">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
+	for full descriptions of the resolved bugs. </font></p>
+	<p>&nbsp;</p>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
-		Index Kowari Memory Leak</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
-		Index ? date bug</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">all 
-		others in Bugzilla?</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #68:&nbsp; Inconsistent treatment of null vs. empty space on 
+		API-M method parameter values. </b>&nbsp; <br>
+		Wthin the operations modifyObject, modifyDatastream, and 
+		modifyDisseminator on API-M null parameter values were not handled 
+		consistently.&nbsp; Now a null parameter value means that a change will 
+		be made to the object/datastream/disseminator property that the null 
+		parameter value is targeting.&nbsp;&nbsp; An empty string parameter 
+		value means that property will be changed to an empty string.&nbsp; Any 
+		non-empty string parameter value means that property will be changed to 
+		the specified parameter value.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal">
+		<font style="font-size: 9pt; font-weight: 700" face="Arial">Bugzilla 
+		#87-88&nbsp; Minor display issues on Fedora web site.&nbsp; </font>
+		<font style="font-size: 9pt" face="Arial">These are fixed on
+		<a href="http://www.fedora.info">www.fedora.info</a>.</font><font style="font-size: 9pt; font-weight: 700" face="Arial"><br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #89: Classpath error when running fedora-stop.bat. </b>&nbsp;<br>
+		This was traced to servlet-api.jar not being found on the classpath.&nbsp; 
+		Specifically, TC_COMMON is referenced at line 11 but not defined till 
+		line 15.&nbsp; The fix was to move line 15 of&nbsp; fedora-stop.bat to 
+		be after line 8 and before line 11. <br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #93:&nbsp; Fedora Tutorial has broken dissemination example.
+		</b>&nbsp;<br>
+		In <a href="../tutorials/tutorial2.pdf">Fedora Tutorial 2</a> Example 5 
+		there is an example image object (demo:800) with disseminators using the 
+		BDef demo:600.&nbsp; The greyscale and and resize disseminations are now 
+		fixed.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #97-98:&nbsp; Command line scripts break if JAVA_HOME has 
+		spaces.</b>&nbsp; This problem was reported on fedora-stop.bat and 
+		fedora-ingest-demos.&nbsp; This has been fixed.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #99:&nbsp; The API-A listDatastreams operation via SOAP 
+		returning incomplete list. </b>&nbsp;<br>
+		When running listDatastreams via API-A (SOAP), the list is incomplete, 
+		but when running against API-A-LITE (REST), it works fine.&nbsp; The 
+		incomplete list consists only of datastreams that are used by 
+		disseminators. cause was getting a &quot;cached&quot; context in 
+		FedoraAPIASOAPHTTPImpl.java.&nbsp; The fix was to use a non-cached 
+		context so the full, acurate list of datastreams is returned.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #100:&nbsp; Fedora debug script required upgrading.</b>&nbsp; 
+		The fedora-debug.bat was not previously updated to be compliant with 
+		Fedora 2.0, which has now been fixed.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #101 and 104: MySQL scripts fail when MySQL path includes 
+		spaces. </b>&nbsp;<br>
+		The scripts affected were mysql-config.bat&nbsp; and mysql-drop.bat.&nbsp; 
+		The fix is that If the MySQL path contained spaces, enclose the path in 
+		double quotes and the script will handle the path correctly (e.g., 
+		mysql-config.bat &quot;C:Program files\MySQL\MySQL server 4.1&quot;).<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #105-106:&nbsp; The MySQL script &quot;mysql-drop-db.bat&quot; does not 
+		work with MySQL 4.1.</b>&nbsp; <br>
+		This was a bug in mysql-drop-db.bat and has been fixed in cvs as of 
+		2/18/2005. The optional mysql41_flag argument has been added to the 
+		script. When specified, the script will set the default character set to 
+		utf8 and collation to utf8_bin for the fedora database when it is 
+		recreated. This script is primarily a convenience utility when testing 
+		and you need to drop and recreate the Fedora SQL database.&nbsp; Refer 
+		You can accomplish the same tasks manually using the MySQL commands.&nbsp; 
+		Refer to <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> for 
+		more details on how to do this.&nbsp; <br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #107:&nbsp; Use of &quot;distinct&quot; ignored in Resource Index Search.</b>&nbsp;
+		<br>
+		When using the Resource Index REST-based search interface (risearch), 
+		the use of &quot;distinct&quot; didn't work in queries.&nbsp; The cause was that 
+		risearch was ignoring the &quot;on&quot; value.&nbsp; The servlet that implements 
+		risearch was looking for a value of 'true' instead of a value of &quot;on.&quot;&nbsp; 
+		This caused &quot;distinct&quot; to not work.&nbsp; The fix was done within the 
+		trippi libraries -- now it accepts 'on' or 'true' for the value.&nbsp; A 
+		replacement trippi library (trippi.jar) was created and checking into 
+		cvs.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #108:&nbsp; Bad link on Download Page for Fedora 1.2.1.</b>&nbsp;&nbsp;
+		<br>
+		The download page for 1.2.1 has a bad hyperlink to the patch download. 
+		Also the link &quot;Download&quot; on this page pointed to an old location.&nbsp; 
+		Both are fixed.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #110:&nbsp; Resource Index Corruption. </b>&nbsp;<br>
+		After the introduction of the Resource Index in Fedora 2.0, there were 
+		reports of out of memory errors occurring related to the Kowari 
+		triplestore.&nbsp; This often led to corruption of Resource Index.&nbsp; 
+		This was </font><font style="font-size: 9pt" face="Arial">traced to a 
+		memory link in Kowari which <font style="font-size: 9pt">was caused by a 
+		failure to properly clean up unused FreeList$Phase objects in one of the 
+		FreeList constructors.</font>&nbsp; The problem showed up when doing 
+		many inserts and deletions. <font style="font-size: 9pt">More 
+		information can be found at: </font>&nbsp;</font><font size="2"><a title="http://prototypo.blogspot.com/2005/09/kowari-memory-leak-found-and-fixed.html" href="http://prototypo.blogspot.com/2005/09/kowari-memory-leak-found-and-fixed.html">http://prototypo.blogspot.com/2005/09/kowari-memory-leak-found-and-fixed.html</a></font><br>
+&nbsp;</li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #114: Resource Index had missing lastModifiedDate property on 
+		datastream disseminations nodes. </b>&nbsp;<br>
+		Resource Index datastream disseminations had createdDate instead of 
+		lastModifiedDate properties.&nbsp; According the the Resource Index data 
+		model, Disseminations should *not* have a createdDate property.&nbsp; 
+		Now they have lastModifiedDates as expected.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #116: Possible SQL database corruption during ingest when 
+		failure occurs. <br>
+		</b>When ingesting an object and a failure occurs after the object is 
+		initially registered, the registry entries in the sql db table 
+		doRegistry are not properly backed out. The result is that PID entries 
+		are left in the doRegistry table so that subsequent attempts to 
+		re-ingest will fail with the error being that the PID already exists.&nbsp; 
+		bug had to do with Exception handling during the ingest sequence. The 
+		bug was introduced with code changes related to Fedora 2.0. The 
+		occurence of this bug in the 2.0 release should be rare but could occur 
+		if a fatal error occurred with the sql database transactions during the 
+		ingest sequence after the object had been registered. The symptom would 
+		be a failed ingest and then the inability to re-ingest the same object 
+		after the failure without manually removing the PID entry from the 
+		doRegistry table.Exception handling has been modified in DOManager and 
+		DOWriter to account for this scenario and properly backout any entries 
+		in the doRegistry table. Exceptionon handling has been modified in 
+		DOManager and DOWriter to account for this scenario and properly backout 
+		any entries in the doRegistry table following a failure during the 
+		ingest process.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #117: Inline datastream xmlns placement problem. <br>
+		</b>An inline xml datastream with valid, namespaced XML.&nbsp; When 
+		tried to export the object, it failed (but purging it worked).The 
+		problem seems to show itself when you have multiple 'xmlns=' 
+		(&quot;default&quot;namespace) declarations in one inline xml chunk.What happens 
+		is, somewhere along the line the default namespace declarations getmoved 
+		to the root.&nbsp; And this makes for invalid (not well-formed) xml 
+		(repeatingattributes of the same name are not allowed in the same 
+		element).This is fixed in FOXMLDODeserializer and METSLikeDODeserializer.&nbsp; 
+		The fix was tokeep a map of all prefix-to-uris and a list of prefixes 
+		that needed to be written while parsing each element inside xml content.<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font style="font-size: 9pt" face="Arial"><b>
+		Bugzilla #125: Fedora Administrator does not allow editing of 
+		&quot;application/xml&quot; MIME-typed datastreams.</b>&nbsp; This is now fixed.</font><br>
+&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>D.&nbsp; Known Issues</h2>
