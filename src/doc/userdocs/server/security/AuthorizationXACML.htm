@@ -974,7 +974,9 @@ users are expressly permitted access to API-A and OAI service requests.</p>
 <p>&nbsp;</p>
 <h3>5<b>.2&nbsp; Default Utility Policies</b></h3>
 	<p>Generally, the default repository utility policies <i><b>should not
-be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
+be removed</b></i>.  They enforce core and crucial protections of the repository.  Considerate understanding
+of how they work should proceed any (unlikely) needed editing.  For example, consider and edit to permit
+other IPs than localhost, as opposed simply to deleting the policy.</p>
 <p>&nbsp;</p>
 <table border="1" width="100%">
 	<tr>
@@ -1010,8 +1012,8 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 		<a href="xacml-policies/default/repository-wide/deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml">deny-inactive-or-deleted-objects-or-datastreams-if-not-administrator.xml</a></font></td>
 		<td><font size="2">This is a &quot;negative policy&quot; that will deny all access 
 		to inactive/deleted datastreams if the user/agent is not the Fedora 
-		administrator.&nbsp;&nbsp; Unlike purged datastreams, inactive/deleted 
-		datastreams still exist, but they are just marked as inactive/deleted.&nbsp;&nbsp; 
+		administrator.&nbsp;&nbsp; Unlike purged objects/datastreams, inactive/deleted 
+		objects/datastreams still exist, but they are just marked as inactive/deleted.&nbsp;&nbsp; 
 		As such they should not be available to users.&nbsp; The exception is 
 		that the Fedora administrator is allowed to access them.&nbsp; </font>
 		</td>

@@ -632,10 +632,11 @@ for an example of Environment attribute matching in a Condition.</p>
 <p>Each policy has at least one, and possibly more, rules.
 There must be at least one Rule in a policy that matches
 the incoming request for a policy to be deemed applicable to that request.&nbsp;&nbsp;&nbsp; 
-The way the PDP determines whether a rule is applicable to an incoming request 
-is by evaluating the rule Target and rule Condition (if they exist).&nbsp;&nbsp; 
-If there is no rule Target and no rule Condition, the applicability of the rule 
-is governed by the policy Target.&nbsp; </p>
+The way the Sun XACML engine determines whether a rule is applicable to an incoming request 
+is by evaluating the Target and optional Condition (if it exists).&nbsp;&nbsp; 
+These are ANDed together, and the rule's effect achieved if the ANDed value is TRUE.
+(If there is no Condition, this result is simply the value of the Target.)
+The rule's Target is so used, and if it has no Target, the policy's Target is used instead.&nbsp; </p>
 <p>&nbsp;</p>
 
       <div class="code">
@@ -672,12 +673,13 @@ TRUE,&nbsp; then the specified effect should be enforced.</p>
 <font size="2"><b><span style="font-family: Courier New">&lt;Target&gt;</span></b></font></span></p>
 <p style='text-autospace:none'>
 Each Rule in a policy can have its own Rule Target.&nbsp; While a Policy Target 
-describes the kinds of requests to which an entire policy applies, a Rule Target 
+generally describes the kinds of requests to which an entire policy applies, a Rule Target 
 describes the kinds of request to which a particular rule applies.&nbsp;&nbsp;&nbsp; 
 If a Rule Target is not present, the Policy Target is used to determine whether 
 the Rule is applicable to an incoming request.&nbsp; When a policy target 
-exists, it is applicable to every rule in the policy; however, a rule target can 
-be consider a constraint on the policy target, fine tuning to specific 
+exists, it is applicable to every rule in the policy which does not have its own Target.
+In practice, a rule target is often more  
+constrained than the associated policy target, fine tuning to specific 
 Subject/Resource/Action match criteria that are in the context of a the 
 particular rule.&nbsp; </p>
 <p style='text-autospace:none'>
@@ -700,7 +702,11 @@ Condition elements.  &nbsp; If either the policy Target or the rule Target is no
 to adequately express a constraint, a Condition can be added to a Rule. <b><i>&nbsp; A Condition can appear only within a Rule.</i></b> 
 It cannot appear within a Target, nor directly under Policy or PolicySet.&nbsp;&nbsp;&nbsp; If 
 a Condition is intended to be applicable to the entire Policy,
-the Condition must be repeated in every Rule in that Policy.&nbsp;&nbsp; </p>
+the Condition must be repeated in every Rule in that Policy.&nbsp;&nbsp; 
+Unlike the relationship of rule targets to policy targets, conditions do in fact begin with the associate (rule or policy) target,
+and proceed to further constrain that target.
+
+</p>
 <p style='text-autospace:none'>&nbsp;</p>
 <h3><b><a name="POLICY-FUNCTIONS">2.5&nbsp; XACML Functions</a></b></h3>
 
