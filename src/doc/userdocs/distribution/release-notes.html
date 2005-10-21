@@ -64,22 +64,23 @@
   <div class="sec1">
     <h1><a id="rel2.0" name="rel2.1b">1. Release 2.1b (beta) - October 21, 2005</a></h1>
 	<h2>&nbsp;</h2>
-	<p>Fedora 2.1 is initially being released as beta, with a final release soon 
-	to follow.&nbsp; Some of the system documentation is still evolving.&nbsp; 
-	Most documentation is complete, but several documents are still being 
-	enhanced and improved.&nbsp; To identify documents that will continue to 
-	evolve, please look for an icon that says &quot;Draft Doc&quot; under the document 
-	title.&nbsp; As revisions are made, we will publish the most updated 
-	versions of these documents on the Fedora web site (<a href="http://www.fedora.info">www.fedora.info</a>) 
-	and send alerts to the Fedora Users mail list.&nbsp;&nbsp; This is a very 
-	significant release of Fedora since it introduces the new Fedora security 
-	architecture (with pluggable authentication and XACML-based policy 
-	enforcement), the Fedora Service Framework, and many other new features.&nbsp; 
-	Fedora 2.1b has been tested with a new suite of JUnit tests.&nbsp; Also, 
-	bulk loading was performed on a testbed of 1million digital objects with 
-	approximately 75M&nbsp; triples in the Kowari-based Resource Index.&nbsp;&nbsp;&nbsp; 
-	It should also be noted, that coinciding with this release is the 
-	publication of the new Tools page on the Fedora web site (<a href="http://www.fedora.info/tools">www.fedora.info/tools</a>).&nbsp;&nbsp; 
+	<p>Fedora 2.1b is initially being released as beta, with a final release 
+	soon to follow.&nbsp; This is a very significant release of Fedora since it 
+	introduces the new Fedora security architecture (with pluggable 
+	authentication and XACML-based policy enforcement), the Fedora Service 
+	Framework, and many other new features.&nbsp; Fedora 2.1b has been 
+	successfully tested with an extensive suite of JUnit tests.&nbsp; Some of 
+	the system documentation is still evolving.&nbsp; Most documentation is 
+	complete, but several documents are still being enhanced and improved.&nbsp; 
+	To identify documents that will continue to evolve, please look for an icon 
+	that says &quot;Draft Doc&quot; under the document title.&nbsp; As revisions are made, 
+	we will publish the most updated versions of these documents on the Fedora 
+	web site (<a href="http://www.fedora.info">www.fedora.info</a>) and send 
+	alerts to the Fedora Users mail list.&nbsp;&nbsp;&nbsp; Also, bulk loading 
+	was performed on a testbed of 1million digital objects with approximately 
+	75M&nbsp; triples in the Kowari-based Resource Index.&nbsp;&nbsp;&nbsp; It 
+	should also be noted, that coinciding with this release is the publication 
+	of the new Tools page on the Fedora web site (<a href="http://www.fedora.info/tools">www.fedora.info/tools</a>).&nbsp;&nbsp; 
 	This page will be a clearinghouse for community-developed, open-source 
 	applications, tools, and services that work with Fedora repositories.&nbsp;
 	</p>
@@ -93,123 +94,9 @@
 		Fedora <a href="installation.html">Installation Guide</a> and the
 		<a href="migration.html">Upgrade and Migrate Guide</a>.&nbsp;&nbsp; If 
 		you are starting from a release prior to Fedora 2.0, consult the Fedora 
-		2.0 release notes and/or the Upgrade and Migration Guide for 
-		instructions on how to migrate to Fedora 2.0 before upgrading to Fedora 
-		2.1b.</p>
-	<ol>
-
-        <li><b>Download: </b>download the Fedora 2.1b software from <a href=
-        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
-
-        <li><b>Install</b>:&nbsp; install the Fedora 2.1b software</li>
-		<li><b>Backup:&nbsp; </b>it is highly recommended that you create a 
-		backup of your pre-existing Fedora 2.0 repository </li>
-		<li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the object storage location 
-		to point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_0_objects</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp; </li>
-		<li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the datastream storage 
-		location to point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_datastreams</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li><b>Configure the Temporary Storage Location:</b> in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the temp storage location to 
-		point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_temp</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the relational database 
-		location topoint to the pre-existing database (used by the Fedora 2.0 
-		repository), for example (if using MySQL):<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
-  &lt;comment&gt;MySQL database on localhost with db name of fedora20src&lt;/comment&gt;
-  &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora20src?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
-  &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
-  &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
-  &lt;param name=&quot;minPoolSize&quot; value=&quot;10&quot;/&gt;
-  &lt;param name=&quot;maxPoolSize&quot; value=&quot;100&quot;/&gt;
-&lt;/datastore&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;If you are using Oracle or mckoi as your database, update the 
-		appropriate datastore configuration.<br>
-&nbsp;</li>
-		<li><b>Rebuild the Fedora Resource Index. </b>&nbsp; Note that you <b>
-		MUST NOT </b>point your Fedora 2.1b repository server at the 
-		pre-existing Fedora 2.0 Resource Index.&nbsp;&nbsp; The Resource Index 
-		data model has changed slightly, and also there have been bug fixes on 
-		the Resource Index.&nbsp;&nbsp;&nbsp; The Resource Index can be easily 
-		rebuilt using the <a href="../server/cmd-line/index.html#rebuild">Fedora 
-		Rebuild Utility</a>, as shown below.&nbsp; When prompted for what you 
-		want to do, select option 2 to rebuild the Resource Index only.&nbsp;&nbsp; 
-		(Note: that you in lieu of Step 7 above, you could have chosen to 
-		rebuild a brand new SQL database, but this is not necessary.).<i><b>&nbsp;
-		<br>
-		<br>
-		NOTE: The Fedora server must not be running while rebuilding the 
-		Resource Index</b></i>.<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-rebuild</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li>Run the Fedora Setup Utility to select a security configuration.&nbsp; 
-		Consult the <a href="../server/security/securingrepo.html">Securing Your 
-		Repository Guide</a> for a description of security configuration 
-		options.&nbsp; To have an equivalent configuration to what was in Fedora 
-		2.0 (no SSL, API-M authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
-		option as demonstrated below.&nbsp; You can easily change to more secure 
-		configurations at any time by rerunning the Fedora Setup Utility.&nbsp;
-		<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</p></li>
-		<li>Start the Fedora 2.0 server <br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-start</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</p></li>
-		<li><i><b>You are done! </b></i></li>
-		<li></li>
-      </ol>
+		2.0 release notes and the Upgrade and Migration Guide for instructions 
+		on how to migrate to Fedora 2.0 before upgrading to Fedora 2.1b.</p>
+	<h2>&nbsp;</h2>
 	<h2><b>B. New Features</b></h2>
 	<p class="MsoNormal">&nbsp;</p>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">

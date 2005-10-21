@@ -75,6 +75,23 @@
         <li><b>Install</b>:&nbsp; install the Fedora 2.1b software</li>
 		<li><b>Backup:&nbsp; </b>it is highly recommended that you create a 
 		backup of your pre-existing Fedora 2.0 repository </li>
+		<li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1b, you can 
+		choose among four different security configurations. <b>&nbsp;</b>Consult 
+		the <a href="../server/security/securingrepo.html">Securing Your 
+		Repository Guide</a> for a description of security configuration 
+		options.&nbsp; To have an equivalent configuration to what was in Fedora 
+		2.0 (no SSL, API-M authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
+		option as demonstrated below.&nbsp; You can easily change to more secure 
+		configurations at any time by rerunning the Fedora Setup Utility.&nbsp;
+		<br>
+&nbsp;<div class="code">
+			<blockquote>
+				<blockquote>
+					<pre>C:\fedora-2.1b-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
+				</blockquote>
+			</blockquote>
+		</div>
+		<p>&nbsp;</p></li>
 		<li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1b 
 		server configuration file (fedora.fcfg) set the object storage location 
 		to point to that of of the Fedora 2.0 repository, for example:<br>
@@ -116,14 +133,22 @@
 			<blockquote>
 				<blockquote>
 					<pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
-  &lt;comment&gt;MySQL database on localhost with db name of fedora20src&lt;/comment&gt;
   &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
   &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
   <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora20src?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
   &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
   &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
-  &lt;param name=&quot;minPoolSize&quot; value=&quot;10&quot;/&gt;
-  &lt;param name=&quot;maxPoolSize&quot; value=&quot;100&quot;/&gt;
+  &lt;param name=&quot;maxActive&quot; value=&quot;100&quot;/&gt;
+  &lt;param name=&quot;maxIdle&quot; value=&quot;10&quot;/&gt;
+  &lt;param name=&quot;maxWait&quot; value=&quot;-1&quot;/&gt;
+  &lt;param name=&quot;minIdle&quot; value=&quot;0&quot;/&gt;
+  &lt;param name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot;/&gt;
+  &lt;param name=&quot;numTestsPerEvictionRun&quot; value=&quot;3&quot;/&gt;
+  &lt;param name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;-1&quot;/&gt;
+  &lt;param name=&quot;testOnBorrow&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;testOnReturn&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;testWhileIdle&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
 &lt;/datastore&gt;</pre>
 				</blockquote>
 			</blockquote>
@@ -185,23 +210,7 @@ Rebuilding...</pre>
 			</blockquote>
 		</div>
 		<p>&nbsp;</li>
-		<li>Run the Fedora Setup Utility to select a security configuration.&nbsp; 
-		Consult the <a href="../server/security/securingrepo.html">Securing Your 
-		Repository Guide</a> for a description of security configuration 
-		options.&nbsp; To have an equivalent configuration to what was in Fedora 
-		2.0 (no SSL, API-M authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
-		option as demonstrated below.&nbsp; You can easily change to more secure 
-		configurations at any time by rerunning the Fedora Setup Utility.&nbsp;
-		<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</p></li>
-		<li>Start the Fedora 2.0 server <br>
+		<li>Start the Fedora 2.1b server <br>
 &nbsp;<div class="code">
 			<blockquote>
 				<blockquote>
