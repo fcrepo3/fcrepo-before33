@@ -25,9 +25,8 @@
             <li><a href="#INTRO">Introduction</a><li><a href="#REPO">Fedora 
 			Repository Server (with Core Repository Web Service Interfaces)</a><li>
 			<a href="#FRAMEWORK1">Fedora Service Framework - Initial Services</a><li>
-			<p><a href="#FRAMEWORK2">Fedora Service Framework - Future Services 
-			(2005-2007)</a></p>
-			<p>&nbsp;</p>
+			<a href="#FRAMEWORK2">Fedora Service Framework - Future Services 
+			(2005-2007)</a><p>&nbsp;</p></li>
            </ol>
     </div>
 </div>
@@ -35,6 +34,38 @@
 <div class=Section1>
 
 <h2><a name="INTRO"></a>1&nbsp; Introduction</h2>
+<p><font style="font-size: 9pt" face="Arial">As of Fedora 2.1b, the<a href="serviceframework.htm"> 
+Fedora Service Framework</a> is being introduced to facilitate the integration 
+of new services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
+The framework takes a service-oriented architecture approach to building new 
+functionality around a Fedora repository.&nbsp; While the Fedora repository, 
+itself, exposes its functionality as a set of web service interfaces, all of 
+these interfaces belong to the Fedora web application that runs in its own 
+Tomcat&nbsp;&nbsp; The new Fedora Service Framework allows new services to be 
+built around the core repository - <i>as stand-alone web applications that run 
+independently of the Fedora repository.</i>&nbsp;&nbsp; While Fedora repository 
+functionality can still be extended with new modules, the intent is to keep the 
+repository service focused on the core functions of a repository.&nbsp;&nbsp; 
+Yet, there are many other services that are beneficial companions to a 
+repository, such as specialized ingest services, workflow services, preservation 
+services, and many others.&nbsp;&nbsp; These are the kinds of services that the 
+framework is intended to support.&nbsp;&nbsp; There are two main benefits to the 
+service framework approach:&nbsp; (1) it allows new functionality to be added as</font> 
+atomic, modular services that can interact with Fedora repositories, yet not be 
+part of the repository, (2) it makes co-development of new services for Fedora 
+easier since each service can be independently developed and plugged&nbsp; into 
+the framework.&nbsp;&nbsp; The Fedora development team has developed an initial 
+set of services (Directory Ingest and PROAI described below), and will continue 
+to develop new services over the coarse of Fedora Phase 2 (205-2007), especially 
+services for workflow, preservation, and search.&nbsp;&nbsp; New services will 
+be part of the main Fedora distribution and will be kept up to date with new 
+versions of the core Fedora repository distribution.&nbsp;&nbsp; Members of the 
+Fedora community will be collaborating on the development of services and will 
+contributed back to the Fedora Project.&nbsp;&nbsp;&nbsp; Further documentation 
+will be provided to establish guidelines on how services should be designed to 
+effectively plug into the framework.&nbsp; In the mean time, developers of new 
+services can follow the design patterns of the Directory Ingest and PROAI 
+services. </font></p>
 <p>&nbsp;</p>
 <h2><a name="REPO"></a>2&nbsp; Fedora Repository Server (with Core Repository 
 Web Service Interfaces) </h2>
@@ -47,30 +78,11 @@ developed to fit into a broader service-based architecture (SOA), and it
 provides web services interfaces to its core functionality.&nbsp; The Fedora 
 repository services is depicted below.</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<p align="center">
-<img border="0" src="images/reposervices.jpg" width="838" height="411" align="left"></p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
-
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
-<h2>&nbsp;</h2>
+<h2><img border="0" src="images/reposervice.jpg" width="838" height="411"></h2>
 <h2>&nbsp;</h2>
 <h2><a name="FRAMEWORK1">2 </a>&nbsp; The Fedora Service Framework </h2>
 <p>&nbsp;</p>
-<p>Fedora Service Framework, establishes a means for coupling new services with 
+<p>The Fedora Service Framework, establishes a means for coupling new services with 
 the core Fedora repository.&nbsp; The framework allows for the creation of 
 atomic, modular services that can interact with Fedora.&nbsp;&nbsp;&nbsp; The 
 diagram below depicts the Fedora Service Framework with the two services 
