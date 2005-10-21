@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+  <title>OAI Provider Service</title>
+  <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+</head>
+
+<body>
+  <div id="header">
+    <a href="../index.html" id="logo"></a>
+
+    <div id="title">
+      <h1>OAI Provider Service</h1>
+
+      <h2>Fedora Release 2.1b</h2>
+      <img src="../images/drafticon.jpg"/>
+    </div>
+  </div>
+
+  <div class="toc">
+    <h2>Table of Contents</h2>
+
+    <div class="tocbox">
+      <ol>
+        <li><a href="#about">About This Service</a></li>
+        <li><a href="#installation">Installation</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+      </ol>
+    </div>
+  </div>
+
+    <div class="sec1">
+      <div class="titlepage">
+        <div>
+          <h2 class="title" style="clear: both"><a name="about"></a>About This Service</h2>
+        </div>
+      </div>
+      <p>The Fedora OAI Provider Service is part of the <a href="../server/features/serviceframework.htm">Fedora Service Framework</a>
+      and offers a vast improvement over the previous, simple OAI provider
+      that Fedora used in previous versions.  The new provider is based 
+      on <a href="http://www.sf.net/projects/proai/">Proai</a>, 
+        an open source caching, polling OAI provider.  It has the following features:
+        <ul>
+          <li> Supports any metadata format available through your Fedora repository via a
+          datastream or dissemination.</li>
+          <li> Supports sets that are expressed as RDF relationships in your digital objects'
+          RELS-EXT datastreams as exposed via the <a href="../server/resourceIndex/index.html">Resource Index</a>.</li>
+          <li> Runs in its own servlet container, acting as a web service client to Fedora.</li>
+          <li> Caches the content of the Fedora disseminations and datastreams intended to be
+          exposed as OAI records.  This makes for fast response times and also ensures that
+          the OAI provider can continue to run even when Fedora is temporarily stopped.</li>
+        </ul>
+      <p>
+    </div>
+
+  <div>
+    <div class="sec1">
+      <div class="titlepage">
+        <div>
+          <h2 class="title" style="clear: both"><a name="installation"></a>Installation</h2>
+        </div>
+      </div>
+      <p>To install the service:
+      <ol>
+        <li> Make sure you have a suitable database installed (MySQL, Oracle,
+        or McKoi) and a database user account that can create tables in the
+        database.</li>
+        <li> Make sure your Fedora repository is running with the ResourceIndex
+        turned ON.  This is necessary because the oai provider periodically
+        queries the resource index to discover what records of interest have
+        changed.</li>
+        <li> Deploy the oaiprovider.war file into your servlet container.</li>
+        <li> Configure the OAI provider as described below, and re-start
+        the webapp (this is often done by restarting the servlet container
+        itself).</li>
+      </ol>
+      </p>
+    </div>
+  </div>
+
+  <div>
+    <div class="sec1">
+      <div class="titlepage">
+        <div>
+          <h2 class="title" style="clear: both"><a name="configuration"></a>Configuration</h2>
+        </div>
+      </div>
+      <p>By editing the <code>WEB-INF/classes/proai.properties</code>
+      file, you can configure the OAI provider in many different ways.
+      See the example configuration values and change them to match the
+      configuration you want.</p>
+      <p>The example configuration follows.</p>
+<div class="code"><pre>
+#
+#                        Proai Configuration 
+#                 ================================
+
+#######################
+# Required Properties #
+#######################
+
+proai.sessionBaseDir = /tmp/proai/sessions
+proai.secondsBetweenRequests = 300
+proai.incompleteRecordListSize = 2
+proai.incompleteSetListSize = 2
+proai.incompleteIdentifierListSize = 2
+
+# [proai.readLockWait]
+#     The number of milliseconds to wait for a read lock on the cache
+#     before giving up.  A higher value means that OAI harvesters won't
+#     have to deal with "Service Unavailable" requests as often, whereas
+#     a lower value will result in quicker response.
+
+proai.readLockWait = 5000
+
+# [proai.writeLockWait]
+#     The number of milliseconds to wait for a write lock on the cache
+#     before giving up.  If this amount of time passes while waiting
+#     to commit a change to the cache, the update will be canceled and
+#     attempted again after proai.cache.RecordCache.pollSeconds
+
+proai.writeLockWait = 60000
+
+# [proai.cacheBaseDir]
+#     The directory where cache files should be stored. This will be created 
+#     if it doesn't exist.
+
+proai.cacheBaseDir            = /tmp/proai/cache
+
+
+# [proai.driverClassName]
+#     The class name of proai.driver.OAIDriver implementation. This should be 
+#     in the classpath.
+
+proai.driverClassName = fedora.services.oaiprovider.FedoraOAIDriver
+
+
+# [proai.driverPollSeconds]
+#     How often to poll the driver for updates.
+
+proai.driverPollSeconds = 60
+
+
+# [proai.db.url]
+#     The JDBC connection URL for the database that will be used by the cache.
+# [proai.db.driverClassName]
+#     The class name of the JDBC driver appropriate for use with the
+#     connection url.  This class should be in the classpath.
+# [proai.db.username]
+#     The database user.  This user should already exist in the database
+#     and must have permission to create, modify, and query tables.
+# [proai.db.password]
+#     The password for the database user.
+
+# MySQL
+proai.db.url = jdbc:mysql://localhost/proai?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true
+proai.db.driverClassName = com.mysql.jdbc.Driver
+
+# McKoi
+#proai.db.url             = jdbc:mckoi:local://build/test/mckoi/mckoi.conf?create_or_boot=true
+#proai.db.driverClassName = com.mckoi.JDBCDriver
+
+proai.db.username        = proai
+proai.db.password        = proai
+
+# [JDBC Driver-specific DDL Converters]
+#     A ddlConverter class is used to generate the commands necessary for 
+#     creating the tables required Proai's record cache.  The name of the 
+#     property should be the driverClassName of the JDBC driver you're using
+#     plus ".ddlConverter".
+com.mckoi.JDBCDriver.ddlConverter            = proai.util.McKoiDDLConverter
+com.mysql.jdbc.Driver.ddlConverter           = proai.util.MySQLDDLConverter
+oracle.jdbc.driver.OracleDriver.ddlConverter = proai.util.OracleDDLConverter
+
+#################################
+# OAIDriver-Specific Properties #
+#################################
+
+driver.fedora.baseURL = http://localhost:8080/fedora/
+driver.fedora.user = fedoraAdmin
+driver.fedora.pass = fedoraAdmin
+
+# [driver.fedora.queryConnectionTimeout]
+#     When querying the resource index, the maximum number of seconds to
+#     wait for the http connection to be established before giving up.
+driver.fedora.queryConnectionTimeout = 30
+
+# [driver.fedora.querySocketTimeout]
+#     When querying the resource index, the maximum number of seconds of
+#     socket inactivity to allow before giving up.
+driver.fedora.querySocketTimeout = 600
+
+# [driver.fedora.disseminationConnectionTimeout]
+#     When getting xml data from Fedora, the maximum number of seconds to
+#     wait for the http connection to be established before giving up.
+driver.fedora.disseminationConnectionTimeout = 30
+
+# [driver.fedora.disseminationSocketTimeout]
+#     When getting xml data from Fedora, the maximum number of seconds of
+#     socket inactivity to allow before giving up.
+driver.fedora.disseminationSocketTimeout = 120
+
+driver.fedora.queryFactory = fedora.services.oaiprovider.ITQLQueryFactory
+driver.fedora.identify = http://localhost:8080/fedora/get/demo:MyRepository/Identify.xml
+
+# space-separated list of metadata formats
+driver.fedora.md.formats = oai_dc test_format formatX formatY
+
+driver.fedora.md.format.oai_dc.loc = http://www.openarchives.org/OAI/2.0/oai_dc.xsd
+driver.fedora.md.format.oai_dc.uri = http://www.openarchives.org/OAI/2.0/oai_dc/
+driver.fedora.md.format.oai_dc.dissType = info:fedora/*/oai_dc
+# optional
+driver.fedora.md.format.oai_dc.about.dissType = info:fedora/*/about_oai_dc
+driver.fedora.md.format.formatX.about.dissType = info:fedora/*/demo:XYFormatsBDef/getMetadataAbout?format=x
+driver.fedora.md.format.formatY.about.dissType = info:fedora/*/demo:XYFormatsBDef/getMetadataAbout?format=y
+
+driver.fedora.md.format.test_format.loc = http://example.org/testFormat.xsd
+driver.fedora.md.format.test_format.uri = http://example.org/testFormat/
+driver.fedora.md.format.test_format.dissType = info:fedora/*/test_format
+
+driver.fedora.md.format.formatX.loc = http://example.org/formatX.xsd
+driver.fedora.md.format.formatX.uri = http://example.org/formatX/
+driver.fedora.md.format.formatX.dissType = info:fedora/*/demo:XYFormatsBDef/getMetadata?format=x
+
+driver.fedora.md.format.formatY.loc = http://example.org/formatY.xsd
+driver.fedora.md.format.formatY.uri = http://example.org/formatY/
+driver.fedora.md.format.formatY.dissType = info:fedora/*/demo:XYFormatsBDef/getMetadata?format=y
+
+driver.fedora.itemID = http://www.openarchives.org/OAI/2.0/itemID
+driver.fedora.setSpec = http://www.openarchives.org/OAI/2.0/setSpec
+driver.fedora.setSpec.name = http://www.openarchives.org/OAI/2.0/setName
+driver.fedora.setSpec.desc.dissType = info:fedora/*/SetInfo.xml
+
+driver.fedora.itemSetSpecPath = $item &lt;fedora-rels-ext:isMemberOf&gt; $set $set &lt;http://www.openarchives.org/OAI/2.0/setSpec&gt; $setSpec
+
+# optional oai-deleted property
+#driver.fedora.deleted = info:fedora/fedora-system:def/model#state
+
+# optional volatile property
+#driver.fedora.volatile = true</pre></div>
+
+    </div>
+  </div>
+
+
+
+  <div id="footer">
+    <div id="copyright">
+      Copyright &#xA9; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+  </div>
+</body>
+</html>
