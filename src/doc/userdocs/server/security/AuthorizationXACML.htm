@@ -300,19 +300,31 @@ the following parameter of the Authorization module (in fedora.fcfg):</p>
 
 	<p>&nbsp;</p>
 <p>An object policy named “demo-5.xml” in this directory will
-be included in the evaluation of policies for requests for the Fedora object whose
+be included only in the evaluation of policies for requests for the Fedora object whose
 PID is “demo:5.”   If this policy file is mistakenly put into
 repository-policies directory, it has the same effect at the time of policy
-evaluation and enforcement.   The configuration of the object-policies
-directory really a convenience; it provides a way to easily distinguish between
+evaluation and enforcement, if the best practice is followed of coding the policy to restrict 
+its application to that single object.   The configuration of the object-policies
+directory is not just a convenient way to easily distinguish between
 broader repository policies and policies that are intended to be applicable to
-a single digital object (but are not stored inside the “POLICY” datastream of
-an object).   </p>
+a single digital object (but which are not stored inside the “POLICY” datastream of
+an object).  Only a single file in that directory is included in policy evaluation, whose filename
+matches the object PID.   </p>
 	<p>&nbsp;</p>
 	<p>As previously noted, if an object-specific policy mistakenly
 gets put into repository-policies directory, it has the same effect at
-enforcement time.   It will just be unnecessarily in scope for evaluation for
+enforcement time (again, if best practice is followed).   It will just be unnecessarily in scope for evaluation for
 service requests that it will never be applicable to.</p>
+<p>Object-specific policies stored as operating system files exist as a testing convenience, or
+for repositories with small numbers of objects.  
+Intended use is for an object to have at most one object-specific policy.
+If an object has two object-specific policies, 
+one as an operating system file and another in the object itself as a datastream (see following),
+they could easily subvert the intended authorization effect.
+If required, that single object-specific policy could be in fact an XACML policy set consisting
+of multiple XACML policies.  The point is that this would still reside in one location only.
+</p>
+
 	<p>&nbsp;</p>
 	<p><b><i>c. Object-specific policies stored inside digital
 objects</i></b></p>
@@ -382,7 +394,7 @@ locations for a repository.</p>
 	(configured for the Authorization module in fedora.fcfg).&nbsp;&nbsp; These 
 	default policies are copied <b><i>from</i></b> the Fedora distribution 
 	directory $FEDORA_HOME/dist/server/config/xacml-policies/default.&nbsp;&nbsp; 
-	In Fedora 2.0 there are only <a href="#DEFAULT">default repository-wide 
+	In Fedora 2.1b there are only <a href="#DEFAULT">default repository-wide 
 	policies,</a> but no default object policies or surrogate policies.&nbsp; 
 	The default out-of-box policies will be <i><b>copied only once</b></i>.&nbsp; 
 	This is to prevent subsequent server restarts from clobbering any 
@@ -494,7 +506,7 @@ arguments (see -D flags).</font></i></p>
 multiple XACML policies that are in scope for any particular action.  The
 Fedora configuration file (fedora.fcfg) sets the policy combining algorithm
 that will be used by the Policy Enforcement Module in evaluating sets of policies.  In the 
-	the Fedora server configuration file (fedora.fcdg) not the following 
+	the Fedora server configuration file (fedora.fcfg) note the following 
 	parameter in the section
 for the Authorization module::</p>
 	<p>&nbsp;</p>
@@ -511,7 +523,9 @@ allows a single evaluation of <b><i>deny</i></b> <b><i>to take precedence</i></b
 over any number of permit, not applicable or indeterminate results.  Note that
 this uses the regular Deny Overrides implementation since it is also ordered.  
 Consult the OASIS and Sun XACML documentation for a description of alternative
-combining algorithms.  </p>
+combining algorithms.  Note that the default policies assume and require this algorithm.
+Generally policies are developed with an algorithm in mind.
+</p>
 	<p>In the PDP, policies are matched based on their applicability to an 
 	incoming service request.&nbsp;&nbsp; All policies that are applicable are combined programmatically and dynamically
 per request into a PolicySet.  To estimate the number of policies that may be
@@ -527,10 +541,11 @@ service request <b><i>refers to an</i></b> <b><i>object,</i></b> <b><i>but
 there is no object-specific policy for that object</i></b></p>
 	<p style='text-autospace:none'>N+1:   # of policies if a
 service request <b><i>refers to an</i></b> <b><i>object that has an object-specific
-policy datastream</i></b></p>
+policy datastream, but has no object-specific policy in the object policies directory</i></b></p>
 	<p style='text-autospace:none'>N+1:   # of policies if a
 service request <b><i>refers to an</i></b> <b><i>object that has an
-object-specific policy in the object policies directory</i></b></p>
+object-specific policy in the object policies directory, but has no object-specific
+policy datastream</i></b></p>
 	<p style='text-autospace:none'>N+2:   # of policies if a
 service request<b><i> refers to an</i></b> <b><i>object that has an 
 	object-specific policy datastream and a policy in the object-policies directory</i></b></p>
@@ -539,7 +554,7 @@ service request<b><i> refers to an</i></b> <b><i>object that has an
 <h3><a name="IMPL-DECISION">3<b>.3 A Simplified Understanding of the Authorization Decision</b></a></h3>
 <p>&nbsp;</p>
 <p><i><b>For an incoming service request to succeed, there must be an explicit permit 
-in the absence of a deny;&nbsp; 
+and the absence of a deny;&nbsp; 
 the absence of a deny is not enough to permit an action</b> </i>&nbsp; By default, if any of the 
 applicable policies in a Policy Set yield a deny, the requesting subject will be 
 denied access, even if some other policy permitted the action.&nbsp; In other 
@@ -862,7 +877,7 @@ Shibboleth or any other particular scheme). </p>
 <h2><a name="DEFAULT">5<b> Default Repository Policies for Fedora</b></a></h2>
 	<p>&nbsp;</p>
 <h3>5<b>.1 Default Access Control Policies</b></h3>
-<p>Out of the box, the Fedora repository will have a default set of access 
+<p>out-of-the-box, the Fedora repository will have a default set of access 
 control policies that provide for a highly restricted management service 
 (API-M), an open access service&nbsp; (API-A), and an open OAI provider service.&nbsp;&nbsp; 
 The default access control policies establish the same level of out-of-the-box security on the 
@@ -1047,7 +1062,7 @@ be removed</b></i>.  <i>&lt;Discuss more.&gt;</i></p>
 of creating access control for a repository and for digital objects within a 
 repository.&nbsp;&nbsp; Therefore, it is expected that each Fedora repository 
 will have XACML policies appropriate for specific contexts and use cases.&nbsp;&nbsp;&nbsp; 
-All repositories will start off, out of the box, with the set of default 
+All repositories will start off, out-of-the-box, with the set of default 
 repository policies.&nbsp;&nbsp; These policies set up a world where (1) users 
 in the Fedora administrator role are permitted to do
 anything (see permit-anything-to-administrator.xml), (2) access to the API-M 
