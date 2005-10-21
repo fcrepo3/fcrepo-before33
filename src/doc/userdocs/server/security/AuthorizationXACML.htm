@@ -459,12 +459,10 @@ the resource only if a valid XACML response of “Permit” is returned by the
 PDP.  The PEP SHALL deny access to the resource in all other cases.  An XACML
 response of “Permit” SHALL be considered valid only if the PEP understands all
 of the obligations contained in the response.”   </p>
-	<p style='text-autospace:none'>&nbsp;</p>
-<p style='text-autospace:none'>The Fedora Policy Enforcement
+	<p style='text-autospace:none'>The Fedora Policy Enforcement
 Module fulfills the responsibilities of both the PDP and the PEP.&nbsp; The 
 Fedora module wraps the Sun XACML implementation of the PDP.&nbsp;&nbsp; Fedora 
 module also implements custom attribute finders and a custom PEP.</p>
-<p style='text-autospace:none'>&nbsp;</p>
 <p>The PDP determines the set of policies that are
 applicable to any given Fedora service request.  Remember the PDP determines
 whether a policy is applicable by comparing the Subject/Resource/Action attribute
@@ -478,6 +476,16 @@ request refers to an object by its PID and there exists an object-specific
 policy mentioning that PID.  <i><b>PDP makes the 
 decision of deny/permit/indeterminate, and then the PEP makes sure to enforce 
 this decision for on the incoming Fedora API request.</b></i></p>
+<p>&nbsp;</p>
+<p><i>NOTE:&nbsp; <font face="Arial" style="font-size: 9pt">To quiet 
+		the Sun XACML engine's INFO messages, a logging.properties file is included with the 
+		Fedora distribution, &nbsp;edited to print only SEVERE messages to the 
+		console. Fedora then starts Java using that logging.properties file. 
+		&nbsp;The original file, as distributed with JDK 1.4.2.8, prints INFO (and 
+		more severe) messages, making the console a bit &nbsp;chatty.&nbsp; To revert to 
+		the original logging behavior, edit fedora-start.bat (Windows) or 
+		fedora.sh (Unix), and remove the logging.properties from the java vm 
+arguments (see -D flags).</font></i></p>
 <p>&nbsp;</p>
 
 <h3><a name="IMPL-ALGORITHM">3<b>.2&nbsp; Understanding the XACML Policy Combining Algorithm</b></a></h3>
@@ -595,7 +603,8 @@ evaluation of the various policies, as follows:<br>
 will evaluate a Policy Set and return a decision.&nbsp;&nbsp; Refer to the
 <a href="http://docs.oasis-open.org/xacml/access_control-xacml-2_0-core-spec-cd-04.pdf">
 OASIS XACML Specification</a> and the <a href="http://sunxacml.sourceforge.net">
-Sun XACML documentation</a> for details.&nbsp; In making its authorization decision, the Sun XACML engine will return a single result from its evaluation of 
+Sun XACML documentation</a> for details.&nbsp; </p>
+	<p>In making its authorization decision, the Sun XACML engine will return a single result from its evaluation of 
 a Policy.&nbsp; The result will be one of the following:</p>
 <ul>
 	<li><b>Permit</b> - returned if a policy rule was applicable and thus it 
