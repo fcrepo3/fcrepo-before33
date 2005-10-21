@@ -79,21 +79,20 @@
 	<li><strong>iplist</strong> - space separated list of IP addresses from which the service is allowed to connect to the Fedora server</li>
 	</ul>
 
-    <p>Note that there is no "callbackUsername" or "callbackPassword" attribute used 
-      when the backend service must authenticate with the Fedora server. It is 
-      the responsibility of the administrator of the backend service to coordinate 
-      with the Fedora server administrator to ensure that the username and password 
-      being used by the backend service correspond to a valid username and password 
-      recognized by the Fedora server. One method to accomplish this is to use 
-      the existing username of fedoraIntCallUser for all backend services. A more 
-      secure method would be to add individual usernames for each backend service 
-      and then ensure that policies properly restrict the capabilities for this set 
-      of usernames. If backend services are configured to authenticate with the 
-      Fedora server, you must also ensure that the "role" specified in the beSecurity 
-      file is also specified for the associated username in the tomcat-users file. 
-      [This section may change depending on what we decide on how to handle updating 
-      of tomcat-users file....] If your backend services are not capable of basic 
-      authentication, you do not need to be concerned about this issue.</p>
+    <p>Note that there is no "callbackUsername" or "callbackPassword" attribute 
+      used when the backend service must authenticate with the Fedora server. 
+      It is the responsibility of the administrator of the backend service to 
+      coordinate with the Fedora server administrator to ensure that the username 
+      and password being used by the backend service correspond to a valid username 
+      and password recognized by the Fedora server. One method to accomplish this 
+      is to use the existing username of fedoraIntCallUser for all backend services. 
+      A more secure method would be to add individual usernames for each backend 
+      service and then ensure that policies properly restrict the capabilities 
+      for this set of usernames. If backend services are configured to authenticate 
+      with the Fedora server, you must also ensure that the "role" specified in 
+      the beSecurity file is also specified for the associated username in the 
+      tomcat-users file. If your backend services are not capable of basic authentication, 
+      you do not need to be concerned about this issue.</p>
 
     <p>There are two special entries in the beSecurity file that are used by the server 
       when handling special cases where the Fedora server itself is acting as 
@@ -160,16 +159,16 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
     <p>The Fedora 2.1b distribution ships with four beSecurity configuration file 
       examples that correspond to the four base security configurations named 
       &quot;ssl-authenticate-apim,&quot; &quot;ssl-authenticate-all,&quot; &quot;no-ssl-authenticate-apim,&quot; 
-      and &quot;no-ssl-authenticate-all.&quot;&nbsp; Refer to the document "Securing 
-      your Fedora Repository" for more information regarding the four base security 
-      configurations. Prior to customizing your beSecurity file, you should run 
-      the "fedora-setup" command-line utility and select your base security configuration. 
-      You can then customize the base version of beSecurity as necessary for you 
-      particular repository. It is important to keep in mind the base security 
-      configuration that you are using since some options of the beSecurity file 
-      may not make sense or be possible in all security configurations. For example, 
-      if you are using the &quot;ssl-authenticate-apim&quot; configuration which 
-      has API-A unrestricted, it would not make sense to configure beSecurity 
+      and &quot;no-ssl-authenticate-all.&quot;&nbsp; Refer to the document <i><a href="securingrepo.html">Securing 
+      your Fedora Repository</a></i> for more information regarding the four base 
+      security configurations. Prior to customizing your beSecurity file, you 
+      should run the "fedora-setup" command-line utility and select your base 
+      security configuration. You can then customize the base version of beSecurity 
+      as necessary for you particular repository. It is important to keep in mind 
+      the base security configuration that you are using since some options of 
+      the beSecurity file may not make sense or be possible in all security configurations. 
+      For example, if you are using the &quot;ssl-authenticate-apim&quot; configuration 
+      which has API-A unrestricted, it would not make sense to configure beSecurity 
       with backend services that were trying to authenticate or use SSL against 
       API-A.</p>
 
@@ -271,9 +270,8 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         entry:</p>
 	<div class="code"><pre>
   &lt;user name=&quot;backendServiceUser&quot; password=&quot;backendServicePassword&quot; roles=&quot;fedoraRole=fedoraInternalCall-1,fedoraRole=&quot;demo:999&quot;/&gt;</pre>
-    </div>
+      </div>
 
-<p>[This section may change depending on what we decide on how to handle updating of tomcat-users file....]</p>
 <p>Then when the backend service authenticates with Fedora as backendServiceUser, it will have both the "fedoraInternalCall-1" and "demo:999" attributes associated with it. The authenticating user must have the "fedoraRole=demo:999" attribute available to satisfy the policy autogenerated by the beSecurity entry and the attribute of "fedoraRole=fedoraInternalCall-1" insures that the authenticated user has the necessary authority to communicate with the Fedora server.</p>
 </div>
 
@@ -485,6 +483,13 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
           If using other forms of authentication, you would need to update the 
           authentication application with the new entries that you included in 
           the beSecurity.xml file. </p>
+        <p><b>Note that since the beSecurity Configuration Tool replaces the beSecurity.xml 
+          file when you click the <i>Save Changes</i> button, you should not rerun 
+          the <i>fedora-setup</i> command-line utility without first making a 
+          backup copy of your customized beSecurity.xml. Rerunning <i>fedora-setup</i> 
+          will overwrite the existing beSecurity.xml file with the base security 
+          configuration file specified erasing any custom changes you may have 
+          had in beSecurity.xml.</b></p>
 		  <p><img src="images/beSecurity-tool-save.jpg"></p>
 	  </div>	  
 	  
