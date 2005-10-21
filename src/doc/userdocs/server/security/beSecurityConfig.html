@@ -63,7 +63,7 @@
 <div class="sect">
   <h2><a name="BASICS"></a>2 Backend Security Basics</h2>
 
-<p>Once basic authentication or SSL support is enabled for either the Fedora server or backend service or both, there are multiple scenarios that require authentication between the fedora server and backend service and/or between the backend service and fedora. Since the security capability of backend services may vary, the beSecurity configuration file allows you to configure these properties individually for the Fedora server and for each backend service. The beSecurity configuration file is an xml-encoded file containing information about the security configuration of the Fedora server and for each backend service. The XML Schema for the beSecurity file can be found at http://www.fedora.info/definitions/1/0/api/beSecurity.xsd.</p>
+<p>Once basic authentication or SSL support is enabled for either the Fedora server or backend service or both, there are multiple scenarios that require authentication between the Fedora server and backend service and/or between the backend service and Fedora. Since the security capability of backend services may vary, the beSecurity configuration file allows you to configure these properties individually for the Fedora server and for each backend service. The beSecurity configuration file is an xml-encoded file containing information about the security configuration of the Fedora server and for each backend service. The XML Schema for the beSecurity file can be found at http://www.fedora.info/definitions/1/0/api/beSecurity.xsd.</p>
 
 <p>The beSecurity configuration file consists of a sequence of "serviceSecurityDescription" elements. Each "serviceSecurityDescription" element can contain a series of attributes that define the security configuration for the service. These attributes include the following:</p>
 
@@ -74,9 +74,9 @@
         if call to service requires basic authentication</li>
 	  <li><strong>callPassword</strong> - password used for basic authentication 
         if call to service requires basic authentication</li>
-	<li><strong>callbackSSL</strong> - boolean indicating if callback from service to fedora server requires SSL</li>
-	<li><strong>callbackBasicAuth</strong> - boolean indicating if callback from service to fedora server requires basic authentication</li>
-	<li><strong>iplist</strong> - space separated list of IP addresses from which the service is allowed to connect to the fedora server</li>
+	<li><strong>callbackSSL</strong> - boolean indicating if callback from service to Fedora server requires SSL</li>
+	<li><strong>callbackBasicAuth</strong> - boolean indicating if callback from service to Fedora server requires basic authentication</li>
+	<li><strong>iplist</strong> - space separated list of IP addresses from which the service is allowed to connect to the Fedora server</li>
 	</ul>
 
     <p>Note that there is no "callbackUsername" or "callbackPassword" attribute used 
@@ -87,7 +87,7 @@
       recognized by the Fedora server. One method to accomplish this is to use 
       the existing username of fedoraIntCallUser for all backend services. A more 
       secure method would be to add individual usernames for each backend service 
-      and then add policies that further restrict the capabilities for this set 
+      and then ensure that policies properly restrict the capabilities for this set 
       of usernames. If backend services are configured to authenticate with the 
       Fedora server, you must also ensure that the "role" specified in the beSecurity 
       file is also specified for the associated username in the tomcat-users file. 
@@ -120,13 +120,13 @@
       must also make corresponding changes in the tomcat-users_fedoraTemplate.xml 
       file before the changes will be recognized. Changes can also be made to 
       the "iplist" attribute. The "iplist" should be the same as the IP address 
-      of the fedora server as specified in the fedora.fcfg file. The attribute 
+      of the Fedora server as specified in the fedora.fcfg file. The attribute 
       for "role" should never be edited. The second entry for "fedoraInternalCall-2" 
       should never be edited.</p>
 
 <p>In addition to the two special entries for the Fedora server, you can optionally add entries for each backend service. If no additional entries are provided, then a backend service defaults to the values of no basic authentication, no SSL, and no IP restriction. The only criteria used to restrict access is that the role matches the bmech PID of the backend service. Refer to the section on "beSecurity Examples" for examples of several beSecurity configurations.</p>
 
-<p>To further enhance security for backend services, you can specify entries for each service that customizes properties like basic authentication, SSL support, and IP restriction. For example, if the backend service is a remote web service you can require that only requests coming from the IP address of the remote web service will be honored by the fedora server for that service.</p>
+<p>To further enhance security for backend services, you can specify entries for each service that customizes properties like basic authentication, SSL support, and IP restriction. For example, if the backend service is a remote web service you can require that only requests coming from the IP address of the remote web service will be honored by the Fedora server for that service.</p>
 </div>
 
 <div class="sect">
@@ -228,7 +228,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
       <p>This beSecurity configuration provides enhanced security for the backend services 
         used with the set of demo objects distributed with Fedora 2.1b. In &quot;ssl-authenticate-all&quot; 
         mode, both API-A and API-M use basic authentication and SSL. In addition 
-        to the two special entries for the fedora server, this configuration also 
+        to the two special entries for the Fedora server, this configuration also 
         includes entries for each of the backend services that are referenced 
         by the set of demo objects. The role of the backend service corresponds 
         to the bmech PID of the associated disseminator. For example, the first 
@@ -236,7 +236,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         has a bdef PID of demo:1 and bmech PID of demo:2. The IP restriction of 
         127.0.0.1 means that requests for the backend service identified by demo:2 
         will only be granted for requests originating from localhost(i.e., the 
-        fedora server). Since no method is specified, this restriction applies 
+        Fedora server). Since no method is specified, this restriction applies 
         to all methods of the disseminator. The next entry with "role=demo:2/getThumbnail" 
         is an example where the IP restriction applies only to the getThumbnail 
         method rather than the entire disseminator. These entries are somewhat 
@@ -255,7 +255,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         file and that the "role" attribute in the beSecurity file is also present 
         in the tomcat-users_fedoraTemplate.xml file. Consider for example a backend 
         service with a bmech pid of demo:999. To have this service authenticate 
-        with the fedora server, you would add a beSecurity entry similar to the 
+        with the Fedora server, you would add a beSecurity entry similar to the 
         following:</p>
 	<div class="code"><pre>
   &lt;serviceSecurityDescription role=&quot;demo:999&quot; callbackBasicAuth=&quot;true&quot; callbackSSL=&quot;true&quot; iplist=&quot;123.456.789.012&quot;/&gt;</pre>
@@ -265,7 +265,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         between the backend service and Fedora server must be authenticated, must 
         be over SSL, must originate from the IP address of 123.456.789.012, and 
         that the authenticating user must have the attribute of "fedoraRole=demo:999". 
-        Let's assume that this backend service will authenticate to the fedora 
+        Let's assume that this backend service will authenticate to the Fedora 
         server with a username of "backendServiceUser" and a password of "backendServicePassword". 
         In this case, the tomcat-users_fedoraTemplate.xml must have the following 
         entry:</p>
@@ -330,7 +330,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 	</div>
       <p>This beSecurity configuration is identical to that for the &quot;ssl-authenticate-all&quot; 
         configuration with the exception that there is no SSL support for the 
-        fedora server. Hence the "callSSL" and "callbackSSL" attributes are set 
+        Fedora server. Hence the "callSSL" and "callbackSSL" attributes are set 
         to false for the fedoraInternalCall-1 entry. This security scenario is 
         present for those administrators who do not wish to use SSL. This configuration 
         should only be used in conjunction with the other &quot;no-ssl-authenticate-all&quot; 
@@ -430,11 +430,11 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         <ul>
           <li><strong>SSL</strong> - boolean indicating if callback from backend 
             service to Fedora server requires SSL. If set to true, remember that 
-            you must have SSL enabled in the fedora webapp web.xml file.</li>
+            you must have SSL enabled in the Fedora webapp web.xml file.</li>
           <li><strong>Basic Auth</strong> - boolean indicating if callback from 
             backend service to Fedora server requires basic authentication. If 
             set to true, remember that you must have basic authentication enabled 
-            in the fedora webapp web.xml file and must have doMediateDatastreams 
+            in the Fedora webapp web.xml file and must have doMediateDatastreams 
             set to true in the fedora.fcfg file. It is the responsibility of the 
             backend service author and the Fedora administrator to coordinate 
             username and password used for authentication with the Fedora server. 
@@ -442,7 +442,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
             with the Fedora server must be known by the authentication application 
             used by the Fedora server.</li>
           <li><strong>Allowed IPs</strong> - space separated list of IP addresses 
-            from which the backend service is allowed to connect to the fedora 
+            from which the backend service is allowed to connect to the Fedora 
             server. By default, there is no restriction. If specified, only backend 
             services matching the specified role and originating from the specified 
             IP will be permitted.</li>
