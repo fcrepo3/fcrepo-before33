@@ -34,12 +34,11 @@
 			</li>
 			<li><a href="#CONFIGTOOL">beSecurity Configuration Tool</a>
 				<ul>
-					<li><a href="#CONFIGTOOL-DEFAULT">5.1 Default Settings</a></li>
-					<li><a href="#CONFIGTOOL-INTERNAL">5.2 Internal Settings</a></li>
-					<li><a href="#CONFIGTOOL-CALL">5.3 Specifying How The Fedora Server Communicates With The Backend Service</a></li>
-					<li><a href="#CONFIGTOOL-CALLBACK">5.4 Specifying How The Backend Service Communicates With The Fedora Server</a></li>
-					<li><a href="#CONFIGTOOL-OVERRIDE">5.5 Specifying Method Overrides</a></li>
-					<li><a href="#CONFIGTOOL-SAVE">5.6 Saving Your Changes</a></li>
+					<li><a href="#CONFIGTOOL-INTERNAL">5.1 Internal Settings</a></li>
+					<li><a href="#CONFIGTOOL-CALL">5.2 Specifying How The Fedora Server Communicates With The Backend Service</a></li>
+					<li><a href="#CONFIGTOOL-CALLBACK">5.3 Specifying How The Backend Service Communicates With The Fedora Server</a></li>
+					<li><a href="#CONFIGTOOL-OVERRIDE">5.4 Specifying Method Overrides</a></li>
+					<li><a href="#CONFIGTOOL-SAVE">5.5 Saving Your Changes</a></li>
 				</ul></li>
 	    </ol>
     </div>
@@ -268,35 +267,38 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
           will be assigned the default values which are:</p>
 		  
 		<ul>
-			<li><strong>callSSL=false</strong></li>
-			<li><strong>callBasicAuth=false</strong></li>
-			<li><strong>callbackSSL=false</strong></li>
-			<li><strong>callbackBasicAuth=false</strong></li>
-			<li><strong>iplist=none</strong></li>
+			
+        <li><strong>Calls to Service, SSL: will not be used</strong></li>
+        <li><strong>Calls to Service, Basic Auth: will not be used</strong></li>
+        <li><strong>Callbacks to Fedora, SSL: will not be used</strong></li>
+        <li><strong>Callbacks to Fedora, Basic Auth: will not be used</strong></li>
+        <li><strong>Allowed IPs: All</strong></li>
 		</ul>		
         
       <p>To view the configuration for a particular backend service, click on 
         the backed service name displayed in the left pane and the configuration 
-        information will be displayed in the right pane.</p>
+        information will be displayed in the right pane. Clicking on Default Settings, 
+        the display will appear similar to the following:</p>
 		
-	  <p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
-	  
-	  <div class="sect2"><a name=#CONFIGTOOL-DEFAULT></a>
-	  	<h3>5.1 Default Settings</h3>
-	  	<p>INSERT TEXT HERE RE DEFAULT SETTINGS</p>
-		<p></p>
-		<p><img src="images/beSecurity-tool-default.jpg"></img></p>
-	  </div>
+	  <p><img src="images/beSecurity-tool-default.jpg"></p>
 	
 	  <div class="sect2"><a name=#CONFIGTOOL-INTERNAL></a>
-	  	<h3>5.2 Internal Settings</h3>
-	  	<p>INSERT TEXT HERE RE INTERNAL SETTINGS</p>
-		<p></p>
-		<p><img src="images/beSecurity-tool-internal.jpg"></img></p>
+	  	<h3>5.1 Internal Settings</h3>
+	  	<p>Selecting <i>Internal Settings</i> will show the values for the special 
+          case where Fedora acts as a backend service to itself. As described 
+          earlier in this document, settings in beSecurity must correlate with 
+          the settings in fedora.fcfg and web.xml. These values are preset for 
+          each of the base security confgurations, but you may want to change 
+          the value used for password or to change the allowed IP addresses. For 
+          the internal setting, the allowed IP needs to match the IP that corresponds 
+          to the Fedora server hostname that is configured in fedora.fcfg. By 
+          default, this is <i>localhost</i> which corresponds to 127.0.0.1.</p>
+		<p><img src="images/beSecurity-tool-internal.jpg"></p>
 	  </div>	
 	
 	  <div class="sect2"><a name=#CONFIGTOOL-CALL></a>
-	  	<h3>5.3 Specifying How The Fedora Server Communicates With The Backend Service</h3>
+	  	<h3>5.2 Specifying How The Fedora Server Communicates With The Backend 
+          Service</h3>
 	  	<p>There are four attributes that can be used to configure how the backend 
           service communicates with the Fedora server. These include the following:</p>
         <ul>
@@ -315,12 +317,13 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 
 		<p>These attributes appear under the <i>Calls to Service</i> heading in 
           the right pane of the display window:</p>
-		<p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
+		<p><img src="images/beSecurity-tool-nooverride.jpg"></p>
 		
 	  </div>		
 	  	
 	  <div class="sect2"><a name=#CONFIGTOOL-CALLBACK></a>
-	  	<h3>5.4 Specifying How The Backend Service Communicates With The Fedora Server</h3>
+	  	<h3>5.3 Specifying How The Backend Service Communicates With The Fedora 
+          Server</h3>
 	  	<p>There are three attributes that can be used to configure how the backend 
           service communicates with the Fedora server. These include the following:</p>
         <ul>
@@ -345,11 +348,11 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         </ul>
         <p>These attributes appear under the <i>Callbacks to Fedora</i> heading 
           in the right pane of the display window:</p>
-		<p><img src="images/beSecurity-tool-nooverride.jpg"></img></p>
+		<p><img src="images/beSecurity-tool-nooverride.jpg"></p>
 	  </div>	
 
 	  <div class="sect2"><a name=#CONFIGTOOL-OVERRIDE></a>
-	  	<h3>5.5 Specifying Method Overrides</h3>
+	  	<h3>5.4 Specifying Method Overrides</h3>
 	  	<p>By default all backend service methods inherit their properties from 
           the parent backend service. In this scenario the properties defined 
           for the backend service apply to all methods for that service. To specify 
@@ -363,7 +366,7 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
 		  
         <p>The entry layout for a method is identical to that for the backend 
           service as a whole; it just applies to the method specified:</p>
-		  <p><img src="images/beSecurity-tool-override.jpg"></img></p>
+		  <p><img src="images/beSecurity-tool-override.jpg"></p>
 	  </div>	  
 	  
 	  <div class="sect2"><a name=#CONFIGTOOL-SAVE></a>
@@ -373,13 +376,15 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
           backend service policies based on the new beSecurity information, and 
           then reload all policies on the Fedora server. If any of the edits involved 
           changes to authentication information including username, password, 
-          or role then you will also need to update the application that provides 
-          authentication for the Fedora server. By default, this is the tomcat-users 
-          file so you would need to stop the server, update the tomcat-users-fedoraTemplate.xml 
-          file (see <i><a href="securingrepo.html">Securing Your Repository</a></i> 
-          for more details) , and then restart the server. If using other forms 
-          of authentication, you would need to update the authentication application 
-          with the new entries that you included in the beSecurity.xml file. </p>
+          or backend service role, then you will also need to update the application 
+          that provides authentication for the Fedora server. By default, this 
+          is the tomcat-users file so you would need to stop the server, update 
+          the tomcat-users-fedoraTemplate.xml file (see <i><a href="securingrepo.html">Securing 
+          Your Repository</a></i> for more details) , and then restart the server. 
+          If using other forms of authentication, you would need to update the 
+          authentication application with the new entries that you included in 
+          the beSecurity.xml file. </p>
+		  <p><img src="images/beSecurity-tool-save.jpg"></p>
 	  </div>	  
 	  
 	</div>
@@ -399,5 +404,5 @@ and under Unix in $FEDORA_HOME/server/config/xacml-policies/active/generated/bac
         </script>
     </div>
 </div>
-</div></div></body>
+</div></body>
 </html>
