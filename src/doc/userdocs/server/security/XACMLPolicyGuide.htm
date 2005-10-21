@@ -200,8 +200,13 @@ and one or more <b>Rules</b> which are described in the next sections.  Note
 that in the root element of a policy, the rule combining algorithm (i.e.,
 attribute “RuleCombiningAlgID”), specifies how the Fedora Policy Enforcement
 Module will deal with multiple Rules in a policy (how those rules are combined
-and evaluated together).  <b><i>&lt;Bill: check on how this related to policy
-combining algorithm at the authorization module level.&gt;</i></b></p>
+and evaluated together).  This algorithm is valid for only the specific policy containing it,
+and is independent of similar algorithms in other policies.  It governs how the various 
+effects of the potentially several rules of a policy are combined into the single 
+effect of the policy as a whole.  It is also independent of the policy-combining algorithm
+operative for all policies collectively, which governs how the various results of all policies 
+are combined into a single result. 
+</p>
 
 <p>&nbsp;</p>
 

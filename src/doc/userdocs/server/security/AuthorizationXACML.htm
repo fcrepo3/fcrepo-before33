@@ -427,31 +427,45 @@ policies will be validated by the repository when they are loaded.  It is up to 
 	all new policies are validated before they are put into the active policy 
 	location.&nbsp; Use the
 	<a href="../cmd-line/index.html#validate">validate-policy</a> command line 
-	utility to validate an XACML policy file.</p>
-<p style='text-autospace:none'>&lt;<i><b>BILL</b></i><b><i>: 
-is this true?&nbsp; what happens if invalid policy is in play?  Exception?  Also 
-why are
-object-specific policies set to false?&gt;</i></b></p>
+	utility to validate an XACML policy file.  A policy failing validation would result in the following
+	situation, according to the stated case.
+	<ul>
+	<li>repository policy:  authorization module failure at server startup time, server not properly started</li>
+	<li>object policy:  authorization enforcement failure at request time, authorization denied</li>
+	<li>surrogate policy:  authorization enforcement failure at request time, authorization denied</li>
+	</ul>
+	</p>
+	
+<p style='text-autospace:none'>
+Object policies are not set to validate by default because they are loaded dynamically at each use,
+and neither testing to prove adequate performance nor caching to ensure it has been done.
+Surrogate policies are not set to validate by default because surrogate support is not by default turned on.
+Either of these policy validation checks can be enabled by the appropriate fedora.fcfg setting. 
+</p>
 	<p style='text-autospace:none'><b><i>&nbsp;&nbsp;</i></b></p>
 
 <h3><a name="CONFIG-SURROG">2</a><b><a name="CONFIG-SURROG">.5 Configuring “Surrogate” Policies (and what are they?)</a></b></h3>
 <p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>
-	Web front ends or services can authenticate to Fedora as a &quot;surrogate 
-	representing an end-user.&quot;&nbsp; The surrogate user can provide Fedora with 
-	the identity of the end-user it is representing within the HTTP request 
-	header.  If Fedora
-authenticates the front-end &quot;surrogate&quot; users - and there are policies allowing the front end to
-	<b>actAsSurrogateFor</b> the
-<b>subjectRepresented -</b> then the incoming service request is treated as if the end-user had been authenticated by
-	Fedora.   From that point, the actual end user identity is subject to 
+	Web front ends or services can authenticate to Fedora as a surrogate 
+	representing an end-user.&nbsp; The surrogate user must provide Fedora with 
+	the identity of the end-user it is representing in the HTTP request 
+	header, From:.  If Fedora
+authenticates the front-end surrogate user - and there are policies allowing the front end to
+	<b>actAsSurrogateFor</b> the <b>subjectRepresented -</b> then the incoming service request 
+	is treated as if the end-user had been authenticated by
+	Fedora.   
+	The surrogate policies refer necessarily to the action <b>actAsSurrogateFor</b> and
+	optionally to the subject attribute <b>subjectRepresented</b> to determine whether the automatic authentication is permitted.
+	These two attributes are defined in the Fedora XACML vocabulary.   
+	From that point, i.e., if permitted, the actual end user identity is subject to 
 	authorization decisions based on the repository-wide and object-specific 
-	policies configured for the repository.<i><b> </b></i></p>
+	policies configured for the repository, but as if the end user represented were directly in play.<i>
+	User attributes are possible with properly configured JAAS login modules or using custom servlet filters.
+	</i>  
+	 </p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
-<p style='text-autospace:none'>
-	<i><b> &lt;BILL -&nbsp; this needs better 
-	explanation&gt;</b></i></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
 <h2 style='text-autospace:none'>
@@ -711,8 +725,14 @@ the attributes are known to be provided in the xacml request itself.]</p></li>
 	identity of a resource like a PID or a datastream Id), the 
 	ResourceAttributeFinderModule gets all other attributes about such resources 
 	by introspecting on actual digital objects in the repository.  </p></li>
+	<li>
+	<p style='text-autospace:none'>The ContextAttributeFinderModule supplies 
+	environment values, named into the Fedora XACML URN namespace. 
+	An <b>EnvironmentAttributeFinderModule</b> may be added for full
+	compliance with XACML requirement that environment attributes be serviced
+	which are named into its namespace XACML's namespace itself.
+</p></li>	
 </ul>
-<p><i><b>&lt;BILL -&nbsp; what else do we want here?&gt;</b></i></p>
 <h2>&nbsp;</h2>
 <h2><a name="ATTR">4<b> How to Bind User Attributes into the Fedora Policy 
 Enforcement Module</b></a></h2>
@@ -1085,44 +1105,8 @@ digital objects based on certain attributes of the objects, for restricting
 access to certain kinds of datastreams and disseminations, for selectively 
 permitting access to different API-M operations, and more.&nbsp;&nbsp; These 
 policies can be found within the Fedora software distribution in the following 
-directories:&nbsp;&nbsp;&nbsp;
+directory:&nbsp;&nbsp;&nbsp;
 <span style="font-family: Courier New; font-weight: 700">dist\server\config\xacml-policies\examples</span></p>
-<p>
-	&nbsp;</p>
-	<p>=================================================================</p>
-<p>&lt;<b>BILL</b> - MISC. THINGS ....</p>
-	<p><b><i>&lt;Bill – what is relationship of configured policy
-combining algorithm  to the rule combining algorithm in the policy?&gt;</i></b><span style='font-size:10.0pt;
-font-family:"Courier New"'>&nbsp;</span></p>
-	<p style='text-autospace:none'>
-	&nbsp;</p>
-<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>to do:  should one object policy
-override the other?  if so, what order of preference?</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New"'>&nbsp;</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>to do:  should there be a way for
-an object policy to override repository policies?  e.g., </span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>we could have 2 named policy
-datastreams COOPERATING-POLICY (like now) and OVERRIDING-POLICY</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>(which would cause the software to
-ignore a COOPERATING-POLICY datastream -and- all of</span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>the repository policies.  This
-would be easy to do in the software.  This is solely a </span></p>
-	<p style='text-autospace:none'>
-	<span style='font-size:10.0pt;
-font-family:"Courier New";background:white'>question of how we want this to
-work.</span></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
 <p style='text-autospace:none'>
