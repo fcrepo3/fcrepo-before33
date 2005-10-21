@@ -137,7 +137,8 @@ td {
     <h3>Datastream Triples</h3>
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:hasDatastream</td><td>info:fedora/$PID/$DSID</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:hasDatastream</td><td>info:fedora/$PID/$DSID</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:disseminates</td><td>info:fedora/$PID/$DSID</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$DSID</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
       <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:lastModifiedDate</td><td>(date modified in UTC)</td></tr>
@@ -148,7 +149,7 @@ td {
     <h3>Per-Method Triples</h3>
     <table cellpadding="1" cellspacing="1">
       <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
-      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:hasMethod</td><td>info:fedora/$PID/$BDEF_PID/$METHOD</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:disseminates</td><td>info:fedora/$PID/$BDEF_PID/$METHOD</td></tr>
       <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$BDEF_PID/$METHOD</td></tr>
       <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
       <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:lastModifiedDate</td><td>(date considered modified in UTC)</td></tr>
@@ -193,14 +194,14 @@ td {
       </tr>
        <tr>
          <td>
-           If the object has a RELS-EXT datastream, <b>add 6</b>, then <b>add 1</b>
+           If the object has a RELS-EXT datastream, <b>add 7</b>, then <b>add 1</b>
            for each statement asserted therein.
          </td>
          <td>&nbsp;</td>
       </tr>
        <tr>
          <td>
-           For each additional datastream, <b>add 6</b>.
+           For each additional datastream, <b>add 7</b>.
          </td>
          <td>&nbsp;</td>
       </tr>
