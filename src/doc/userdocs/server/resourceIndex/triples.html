@@ -1,0 +1,232 @@
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=us-ascii">
+<html>
+  <head>
+    <title>Triples in the Resource Index</title>
+    <style>
+
+body { 
+  background-color: #ffffff;
+  font-size: 14px;
+  color: #000000;
+}
+
+h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  border-bottom: 3px solid;
+}
+
+h3 {
+  font-family: Arial, Helvetica, sans-serif;
+  margin-top: 25px;
+  margin-bottom: 5px;
+}
+
+p {
+  margin-top: 4px;
+  margin-bottom: 4px;
+}
+
+.heading {
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #aaaaaa;
+  border-bottom: 2px solid;
+  font-weight: bold;
+}
+
+td {
+  font-size: 14px;
+  border: 1px solid #aaaaaa;
+}
+
+.always {
+  background-color: #aaddaa;
+}
+
+.option {
+  background-color: #aaaaff;
+}
+
+.zeroplus {
+  background-color: #ffff88;
+}
+
+.oneplus {
+  background-color: #ff8888;
+}
+
+.default {
+  background-color: #aaddaa;
+}
+
+    </style>
+  </head>
+  <body>
+    <h2>Triples in the Resource Index</h2>
+
+    <div style="float: right; text-align: center; border: 1px solid; margin: 5px; padding: 4px">
+    <span style="font-weight: bold; font-family: Arial, Helvetica, sans-serif">Cardinality Key</span>
+    <table cellpadding="3" cellspacing="3">
+      <tr><td class="zeroplus">&nbsp;</td><td style="border: none">Zero or more</td></tr>
+      <tr><td class="option">&nbsp;</td><td style="border: none">Zero or one</td></tr>
+      <tr><td class="always">&nbsp;</td><td style="border: none">Exactly one</td></tr>
+      <tr><td class="oneplus">&nbsp;</td><td style="border: none">One or more</td></tr>
+    </table>
+    </div>
+    <p>
+      The resource index stores system and user-controlled metadata about
+      each object in the repository in the form of RDF triples.  
+      The number and type of triples stored depends on the content of 
+      the object and the indexing level of the resource index:
+      At level 0, no triples are indexed.  At level 1, all triples <em>except
+      method permutations</em> are indexed.  At level 2, all triples, including
+      those indicating permutations, are indexed.
+    </p>
+    <p style="margin-top: 8px;">
+      This document describes the triples that may exist in the resource index
+      for a given object.  The color of each row indicates how many of each kind of
+      RDF triple can be expected.  See the key on the right.
+    </p>
+
+    <h3 style="font-weight: bold; text-decoration: underline;">Breakdown</h3>
+    <dir>
+    <h3>Base Triples</h3>
+    <p>
+      The following triples will exist for any object, irrespective of its datastream
+      and disseminator content.
+    </p>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>rdf:type</td><td>fedora-model:FedoraObject|BMechObject|BDefObject</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:createdDate</td><td>(date created in UTC)</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:lastModifiedDate</td><td>(date modified in UTC)</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:owner</td><td>(not used)</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:label</td><td>(any string)</td></tr>
+      <tr class="option"><td>info:fedora/$PID</td><td>fedora-model:cModel</td><td>(any string)</td></tr>
+    </table>
+
+    <h3>Dublin Core Triples</h3>
+    <p>
+      Every object in Fedora has a Dublin Core <em>(&quot;DC&quot;)</em> datastream.  
+      The following triples are derived from its content, which may consist of
+      any number of each of the 15 unqualified dublin core elements.
+      If unprovided at ingest, the DC datastream will be automatically
+      created with minimal information (a <em>dc:title</em> and a <em>dc:identifier</em>).
+    </p>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="oneplus"><td>info:fedora/$PID</td><td>dc:title</td><td>(any string)</td></tr>
+      <tr class="oneplus"><td>info:fedora/$PID</td><td>dc:identifier</td><td>(any string)</td></tr>
+      <tr class="zeroplus"><td>info:fedora/$PID</td><td>(any other dc predicate)</td><td>(any string)</td></tr>
+    </table>
+
+    <h3>RELS-EXT Triples</h3>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="zeroplus"><td>info:fedora/$PID</td><td>(any non-reserved predicate)</td><td>(any uri or literal)</td></tr>
+    </table>
+
+    <h3>Behavior Mechanism Triples</h3>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-model:usesBMech</td><td>info:fedora/$BMECH_PID</td></tr>
+    </table>
+
+    <h3>Datastream Triples</h3>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:hasDatastream</td><td>info:fedora/$PID/$DSID</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$DSID</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:lastModifiedDate</td><td>(date modified in UTC)</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$DSID</td><td>fedora-view:isVolatile</td><td>(true if R or E, false if M or X)</td></tr>
+    </table>
+
+    <h3>Per-Method Triples</h3>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="always"><td>info:fedora/$PID</td><td>fedora-view:hasMethod</td><td>info:fedora/$PID/$BDEF_PID/$METHOD</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$BDEF_PID/$METHOD</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:mimeType</td><td>(any mime type string)</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:lastModifiedDate</td><td>(date considered modified in UTC)</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-model:state</td><td>fedora-model:Active|Inactive|Deleted</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:isVolatile</td><td>(true if any dependencies are volatile, false otherwise)</td></tr>
+      <tr class="oneplus"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-model:dependsOn</td><td>info:fedora/$PID/$DSID</td></tr>
+    </table>
+
+    <h3>Per-Permutation Triples</h3>
+    <table cellpadding="1" cellspacing="1">
+      <tr><td class="heading">Subject</td><td class="heading">Predicate</td><td class="heading">Object</td></tr>
+      <tr class="always"><td>info:fedora/$PID/$BDEF_PID/$METHOD</td><td>fedora-view:disseminationType</td><td>info:fedora/*/$BDEF_PID/$METHOD?PARAM=VALUE1</td></tr>
+    </table>
+
+    </dir>
+
+    <h3 style="font-weight: bold; text-decoration: underline;">Calculating Triples/Object</h3>
+    <p>You can use the following table to estimate the number of triples
+    for each kind of object in your Fedora repository.</p>
+    <dir>
+       <table border="0" cellpadding="3" cellspacing="3" width="90%">
+       <tr><td width="650"></td><td><b><nobr># TRIPLES</nobr></b></td></tr>
+       <tr><td>Every object automatically gets the following triples:
+       <ul>
+         <li> Base: <b>6</b></li>
+         <li> Dublin Core (dc:title and dc:identifier): <b>2</b></li>
+         <li> Datastream Triples (for DC): <b>6</b></li>
+       </ul>
+       </td><td align="center">
+       <b>14</b></td></tr>
+       <tr><td>
+       If the object has a content model (cModel) defined, <b>add 1</b>.
+       </td>
+       <td>&nbsp;</td>
+       </tr>
+       <tr>
+         <td>
+           If the DC datastream has any elements besides the standard dc:title and dc:identifier,
+           <b>add 1</b> for each additional element.
+         </td>
+         <td>&nbsp;</td>
+      </tr>
+       <tr>
+         <td>
+           If the object has a RELS-EXT datastream, <b>add 6</b>, then <b>add 1</b>
+           for each statement asserted therein.
+         </td>
+         <td>&nbsp;</td>
+      </tr>
+       <tr>
+         <td>
+           For each additional datastream, <b>add 6</b>.
+         </td>
+         <td>&nbsp;</td>
+      </tr>
+       <tr>
+         <td>
+           For each disseminator:
+           <ul>
+             <li> <b>add 1</b></li>
+             <li> For each method:
+               <ul>
+                 <li> <b>add 6</b></li>
+                 <li> If permutations are enabled (RI indexing level 2):
+                 <ul>
+                 <li> For each input datastream, <b>add 1</b></li>
+                 <li> If the method takes parameters and all of them are mandatory
+                      and have a defined set of possible values,
+                      <b>add 1</b> for each permutatation</li>
+                 </ul>
+                 </li>
+               </ul>
+             </li>
+         </td>
+         <td>&nbsp;</td>
+      </tr>
+      <tr><td></td><td>&nbsp;</td></tr>
+       </table>
+    </dir>
+  </body>
+</html>
