@@ -87,7 +87,7 @@
 		license.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.configs"></a>New Security Architecture – Four 
+		<a name="rel2.1b.features.configs"></a>New Security Architecture ? Four 
 		Security Configuration Options for a Repository<br>
 		</b>Fedora 2.1b introduces a configurable security architecture, that 
 		provides options for SSL and authentication at the Fedora web service 
@@ -109,7 +109,7 @@
     base security configurations.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
-		<a name="rel2.1b.features.authn"></a><b>New Security Architecture – 
+		<a name="rel2.1b.features.authn"></a><b>New Security Architecture ? 
 		Authentication<br>
 		</b>The Fedora repository server is built on top of Apache's Tomcat, and authentication is channeled through the normal Tomcat mechanisms 
 		(e.g., HTTP Basic Authentication, HTTPS Client Authentication).&nbsp; 
@@ -187,7 +187,13 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.reload"></a>Fedora Policy Reload Utility<br>
-		</font><font face="Arial" style="font-size: 9pt">With the addition of 
+		</font>
+		<font face="Arial" style="font-size: 9pt; ">
+		The
+		<a href="../server/cmd-line/index.html#reload">Fedora Policy Reload 
+		Utility</a> (&quot;fedora-reload-policies&quot; on the command line) provides an 
+		easy way to load new or modified policies into Fedora without having to 
+		restart the Fedora server.&nbsp;&nbsp; With the addition of 
 		the XACML-based Policy Enforcement module, there is the opportunity to 
 		modify existing policies or add new policies over time.&nbsp; All 
 		&quot;active&quot; policies must be stored in the active policies storage 
@@ -196,10 +202,7 @@
 		into one of these &quot;active&quot; policy directories, the Fedora server can 
 		locate them and load them into memory for policy enforcement.&nbsp;&nbsp; 
 		Every time the Fedora server is started policies are loaded from the 
-		active policy directories.&nbsp; However, the
-		<a href="../server/cmd-line/index.html#reload">Fedora Policy Reload 
-		Utility</a> provides an easy way to load new or modified policies into 
-		Fedora without having to restart the Fedora server.&nbsp;&nbsp; It 
+		active policy directories.&nbsp; &nbsp; It 
 		should be noted that Fedora supports both repository-wide policies and 
 		object specific policies.&nbsp; The Policy Reload Utility will load only 
 		repository-wide policies.&nbsp; For performance benefits, 
@@ -210,9 +213,23 @@
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.policyvalid"></a>Fedora Policy Validation 
 		Utility<br>
+		</font>
+		<font face="Arial" style="font-size: 9pt; ">
+		To support authoring and maintenance of XACML policyies for Fedora, the
+		<a href="../server/cmd-line/index.html#validate">policy validation 
+		utility</a> (i.e., &quot;validate-policy&nbsp; <i>{policyfile name}</i>&quot;on 
+		the command line) is provided with Fedora 2.1b.&nbsp; This utility will 
+		validate an XACML policy against the XML schema defined by Sun for XACML.&nbsp; 
+		It is recommended that this utility be invoked on all policies before 
+		they are moved to the active policies storage location </font>
+		<font style="font-size: 9pt" face="Arial">to prevent errors when the 
+		Fedora server attempts to load XACML policies for use by the Fedora 
+		Authorization module. </font>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.besecurity"></a>New Security Architecture – 
+		<a name="rel2.1b.features.besecurity"></a>New Security Architecture ? 
 		Backend Security for Service call-backs<br>
 		</b>Backend security is applicable to repositories that contain digital 
 		object Disseminators that call upon external web services - <i>and where 
@@ -354,20 +371,19 @@
 		<li class="MsoNormal"></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j </font>
-		<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="a">
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">
-			Trippi.log</font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">
-			Kowari.log</font></li>
-			<li class="MsoNormal">
-			<font face="Arial" style="font-size: 9pt; font-weight: 700">
-			Repository log<br>
-&nbsp;</font></li>
-		</ol>
-		</li>
+		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j <br>
+		</font>
+		<font face="Arial" style="font-size: 9pt; ">
+		Fedora server logging has been standardized to use log4j.&nbsp;&nbsp; In 
+		addition to the general repository server log (created each time the 
+		Fedora server is started and named with a date-time stamp), there are 
+		now separate logs for Resource Index activity (ri.log) and for 
+		transactions sent to the Kowari triplestore that underlies the Resource 
+		Index (see: trippi.log and replay.log).&nbsp;&nbsp; With the log4j 
+		logging in place, the next release of Fedora will include a refactoring 
+		of log messages to eliminate excessive log messaging, and to better 
+		categorize the severity levels of existing log postings.&nbsp; </font>
+		<font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.hdl"></a>Handle System Plug-in for PID 
@@ -396,55 +412,84 @@
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
 		Index Kowari Memory Leak</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Resource 
-		Index – date bug</font></li>
+		Index ? date bug</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">all 
-		others in Bugzilla…</font></li>
+		others in Bugzilla?</font></li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>D.&nbsp; Known Issues</h2>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Server 
-		name of LOCALHOST not recommended when using remote dissemination 
-		services.&nbsp;&nbsp; If you are using object disseminators that bind to 
-		external services AND if you configure Fedora to authenticate API-A, 
-		then you should not configure the Fedora server name to be “localhost” 
-		since this is not a recognized domain name.&nbsp; When external services need 
-		to call back to Fedora, they require the Fedora API-A service to be at a 
-		registered domain name or IP address.&nbsp;&nbsp;<br>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">If you 
+		are using Disseminators that bind to external services AND if you 
+		configure Fedora to authenticate the API-A service, then you should NOT 
+		set the Fedora server hostname to LOCALHOST 
+		since this is not a resolvable domain name.&nbsp; Disseminators with 
+		external services require that external services be able to call back to 
+		the Fedora repository to obtain datastreams.&nbsp;&nbsp; When an external 
+		web service tries to call back to the Fedora, repository,&nbsp; there 
+		must be a publicly 
+		registered domain name for the Fedora server or else the external 
+		service will not be able to contact the repository.&nbsp;&nbsp; To avoid 
+		this problem, change the Fedora server hostname in the Fedora server 
+		configuration file (fedora.fcfg) to a registered domain name.&nbsp; Note 
+		that if you are running as LOCALHOST when API-A authentication is ON, 
+		you will encounter exceptions in demo objects disseminations that depend 
+		on external services (demo:6, demo:7, demo:10, demo:11, demo:17).<br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">When the 
+		Resource Index is configured to be ON,&nbsp; care should be taken to 
+		estimate the number of triples per object that will be indexed in the 
+		Resource Index (in the Kowari triplestore in particular).&nbsp; Consult 
+		the document named &quot;<a href="../server/resourceIndex/triples.html">Triples 
+		in the Resource Index</a>&quot; for an understanding what is indexed in the 
+		Resource Index, and to estimate the number of triples in that will be 
+		inserted into the Kowari triplestore.&nbsp;&nbsp; For very large 
+		triplestores, a 64 bit architecture is required for optimal performance 
+		and memory management.&nbsp; Testing of Kowari has shown that 
+		performance on a 32 bit architecture degrades when the Kowari 
+		triplestore get to approximately 50M triples, but that with a 64 bit 
+		architecture, Kowari scales well to 250M triples (see:
+		<a href="http://www.itee.uq.edu.au/~dwood/docs/www2005-kowari.pdf">
+		http://www.itee.uq.edu.au/~dwood/docs/www2005-kowari.pdf</a>).<br>
+&nbsp; </font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Also, 
+		when bulk loading a repository that is estimated to have a very large 
+		Resource Index (i.e., triplestore &gt; 50M triples), it is recommended that 
+		the Fedora server be restarted periodically to optimize performance.&nbsp; 
+		Bulk load tests on Fedora 2.1b indicate that there may be a slow memory 
+		leak when doing large numbers of delete/insert sequences on the Kowari 
+		triplestore.&nbsp;&nbsp;&nbsp; This potential issue is currently under 
+		investigation.&nbsp; As a cautionary measure, periodic stopping and 
+		restarting of the Fedora repository server will reclaim memory and 
+		prevent the possibility of an out-of-memory exception (which might have 
+		unpredictable effects on the Kowari triplestore).&nbsp; <br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Running 
-		server in debug mode will slow down performance.<br>
-&nbsp;</font></li>
+		the server in &quot;debug&quot; mode will slow down performance.&nbsp; You can 
+		turn debugging on/off in the Fedora server configuration file (fedora.fcfg).<br>&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
-		Modification of Behavior Definition and Behavior Mechanism object not 
-		supported yet.<br>
-&nbsp;</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">In 
-		Administrator, the BDef and BMech Builder still generates METS files for 
-		ingest.&nbsp; This is not a problem, just noteworthy since the other Fedora 
-		clients are FOXML-based.<br>
-&nbsp;</font></li>
+		Modification of Behavior Definition and Behavior Mechanism objects not 
+		yet supported, but will be made available in the next release of Fedora.
+		<br>&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">One 
 		early adopter of Fedora 2.1b reported anomalous 401 status codes 
 		returned after a period of normal server use.&nbsp; To date, this observation 
 		hasn't been replicated, and the cause is unknown.&nbsp; The problem was fixed 
 		by changing from option B to option C as described in the document 
-		titled &quot;Securing Your Fedora Repository&quot;, section 4.<br>
-&nbsp;</font></li>
+		titled &quot;Securing Your Fedora Repository&quot;, section 4.<br>&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">The 
 		exception 
 		fedora.server.errors.servletExceptionExtensions.Ok200Exception, (and 
 		associated stacktrace) is produced by fedora.server.ServerController and 
-		can safely be ignored.<br>
-&nbsp;</font></li>
+		can safely be ignored.<br>&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">To quiet 
-		sunxacml INFO messages, a logging.properties file is included with the 
+		the Sun XACML engine's INFO messages, a logging.properties file is included with the 
 		Fedora distribution, &nbsp;edited to print only SEVERE messages to the 
 		console. Fedora then starts Java using that logging.properties file. 
 		&nbsp;The original file, as distributed with JDK 1.4.2.8, prints INFO (and 
-		more severe) messages, making the console a bit &nbsp;chatty. To revert to 
+		more severe) messages, making the console a bit &nbsp;chatty.&nbsp; To revert to 
 		the original logging behavior, edit fedora-start.bat (Windows) or 
-		fedora.sh (Unix), and remove</font></li>
+		fedora.sh (Unix), and remove.</font></li>
 	</ol>
 	<p>&nbsp;</p><hr>
 	<h1>&nbsp;</h1>
