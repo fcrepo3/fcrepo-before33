@@ -264,15 +264,51 @@
 		</font><br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.framework"></a>Fedora Service Framework</b><br>
+		<a name="rel2.1b.features.framework"></a>Fedora Service Framework<br>
+		</b></font><font style="font-size: 9pt" face="Arial">As of Fedora 2.1b, 
+		the<a href="../server/features/serviceframework.htm"> Fedora Service 
+		Framework</a> is being introduced to facilitate the integration of new 
+		services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
+		The framework takes a service-oriented architecture approach to building 
+		new functionality around a Fedora repository.&nbsp; While the Fedora 
+		repository, itself, exposes its functionality as a set of web service 
+		interfaces, all of these interfaces belong to the Fedora web application 
+		that runs in its own Tomcat&nbsp;&nbsp; The new Fedora Service Framework 
+		allows new services to be built around the core repository - <i>as 
+		stand-alone web applications that run independently of the Fedora 
+		repository.</i>&nbsp;&nbsp; While Fedora repository functionality can 
+		still be extended with new modules, the intent is to keep the repository 
+		service focused on the core functions of a repository.&nbsp;&nbsp; Yet, 
+		there are many other services that are beneficial companions to a 
+		repository, such as specialized ingest services, workflow services, 
+		preservation services, and many others.&nbsp;&nbsp; These are the kinds 
+		of services that the framework is intended to support.&nbsp;&nbsp; There 
+		are two main benefits to the service framework approach:&nbsp; (1) it 
+		allows new functionality to be added as</font> atomic, modular services 
+		that can interact with Fedora repositories, yet not be part of the 
+		repository, (2) it makes co-development of new services for Fedora 
+		easier since each service can be independently developed and plugged&nbsp; 
+		into the framework.&nbsp;&nbsp; The Fedora development team has 
+		developed an initial set of services (Directory Ingest and PROAI 
+		described below), and will continue to develop new services over the 
+		coarse of Fedora Phase 2 (205-2007), especially services for workflow, 
+		preservation, and search.&nbsp;&nbsp; New services will be part of the 
+		main Fedora distribution and will be kept up to date with new versions 
+		of the core Fedora repository distribution.&nbsp;&nbsp; Members of the 
+		Fedora community will be collaborating on the development of services 
+		and will contributed back to the Fedora Project.&nbsp;&nbsp;&nbsp; 
+		Further documentation will be provided to establish guidelines on how 
+		services should be designed to effectively plug into the framework.&nbsp; 
+		In the mean time, developers of new services can follow the design 
+		patterns of the Directory Ingest and PROAI services. <br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.diringest"></a>DirIngest Service<br>
+		<a name="rel2.1b.features.diringest"></a>New Directory Ingest Service (DirIngest)<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.proai"></a>PROAI Service<br>
+		<a name="rel2.1b.features.proai"></a>New OAI-Provider Service (PROAI)<br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
