@@ -36,18 +36,21 @@
       </div>
     </div>
 
-    <p>When moving from Fedora 2.0 to Fedora 2.1 can do a software <i><b>upgrade</b></i> 
-	and then point to their pre-existing repository storage locations and 
-	relational database.&nbsp; This involve entering these locations in the 
-	Fedora 2.1b server configuration file (fedora.fcfg).&nbsp; See the 
-	instructions in section 2 below.</p>
+    <p>When moving from Fedora 2.0 to Fedora 2.1b you will be able to a simple software <i><b>upgrade</b></i> 
+	without having to migrate digital objects via a mass export and ingest.&nbsp;&nbsp; 
+	After you install Fedora 2.1b, you can configure it to point to your 
+	existing repository datastores (both the existing repository directory storage locations and 
+	the existing relational database).&nbsp; This involves changing parameters 
+	in the 
+	Fedora 2.1b server configuration file (fedora.fcfg) that define the storage 
+	directory paths and database location.&nbsp; See the instructions in section 
+	2 below for details.</p>
 	<p>When moving from Fedora Release 1.2.1, you must first migrate to Fedora 
-	2.0.&nbsp; Migration involve use of the migration utility which will export 
+	2.0.&nbsp; Migration involves using the Fedora migration utility which will export 
 	objects from the old repository and ingest them into the new repository.&nbsp; 
-	Migration (as opposed to software upgrade) is necessary when either the 
-	FOXML schema or the relational database schema changes in a new release.&nbsp;&nbsp; 
+	Migration (as opposed to software upgrade) is necessary when either the FOXML schema or the relational database schema changes in a new release.&nbsp;&nbsp; 
 	This occurred between Fedora 1.2.1 and Fedora 2.0.&nbsp; See the 
-	instructions in section 3 below, then move on the the instructions in 
+	instructions in section 3 below for migration, then move on the the instructions in 
 	section 2.</p>
 
     <p>If you are running a version of the Fedora software prior to
@@ -55,9 +58,7 @@
     to version 1.2.1 first, and then proceed with the migration
     from Fedora 1.2.1 to Fedora 2.0. Steps for migrating to Fedora
     1.2.1 can be found in the release notes section for 
-    <a href="release-notes.html#rel1.2.1">Fedora 1.2.1.</a> This
-    document only address migration from a Fedora 1.2.1 repository
-    to a Fedora 2.0 repository.</p>
+    <a href="release-notes.html#rel1.2.1">Fedora 1.2.1.</a> </p>
   </div>
 
     <div class="sec2">
@@ -65,7 +66,7 @@
 		<h2><a name="migrate20-21b" id="migrate0">2. Upgrading From Fedora 2.0 to Fedora 2.1b</a></h2>
 
       <p>The move from Fedora 2.0 to Fedora 2.1b is quite simple and does not 
-		requireIf you are upgrading from Fedora 2.0 to Fedora 2.1b
+		require migration of objects.&nbsp; If you are upgrading from Fedora 2.0 to Fedora 2.1b
       follow these steps:</p>
 		<ol>
 
