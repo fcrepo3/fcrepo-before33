@@ -486,7 +486,8 @@ PDP.  The PEP SHALL deny access to the resource in all other cases.  An XACML
 response of “Permit” SHALL be considered valid only if the PEP understands all
 of the obligations contained in the response.”   </p>
 	<p style='text-autospace:none'>The Fedora Policy Enforcement
-Module fulfills the responsibilities of both the PDP and the PEP.&nbsp; The 
+Module fulfills the responsibilities of both the PEP, except that for 2.1b,
+obligations are ignored.  (But neither are any coded in the default policies.)&nbsp; The 
 Fedora module wraps the Sun XACML implementation of the PDP.&nbsp;&nbsp; Fedora 
 module also implements custom attribute finders and a custom PEP.</p>
 <p>The PDP determines the set of policies that are
@@ -501,7 +502,7 @@ incoming Fedora service request.  Object-specific policies if the incoming
 request refers to an object by its PID and there exists an object-specific
 policy mentioning that PID.  <i><b>PDP makes the 
 decision of deny/permit/indeterminate, and then the PEP makes sure to enforce 
-this decision for on the incoming Fedora API request.</b></i></p>
+this decision for the incoming Fedora API request.</b></i></p>
 <p>&nbsp;</p>
 <p><i>NOTE:&nbsp; <font face="Arial" style="font-size: 9pt">To quiet 
 		the Sun XACML engine's INFO messages, a logging.properties file is included with the 
@@ -659,13 +660,13 @@ evaluate a rule could not be found, or another error prevented processing.</li>
 <div dir="ltr" align="left">
 	<span class="892423617-14102005"></span>&nbsp;</div>
 <div dir="ltr" align="left">
-	<b>(2)&nbsp; PDP (Fedora wrapper&nbsp;perspective):&nbsp;&nbsp;&nbsp;</b></div>
+	<b>(2)&nbsp; PEP (Fedora wrapper&nbsp;perspective):&nbsp;&nbsp;&nbsp;</b></div>
 <div dir="ltr" align="left">
 &nbsp;<p>The Fedora wrapper respects the verdict of the Sun XACML PDP, which 
 	should usually be PERMIT or DENY, given our default set of policies.&nbsp; But, 
 	for safety, the Fedora wrapper code imposes a DENY result in any of several 
-	extraordinary cases:&nbsp; (1) if somehow Sun XACML returned a final result 
-	of Indeterminate or NotApplicable, (2) if Sun XACML returned no result at 
+	extraordinary cases:&nbsp; (1) if somehow Sun XACML returned an unexpected final result 
+	of Indeterminate or NotApplicable, perhaps due to a policy written incorrectly, (2) if Sun XACML returned no result at 
 	all, (3) if Sun XACML returned a result which is not defined by OASIS XACML 
 	or Sun XACML standards (the sunxacml Java interface uses int to code the 
 	results, so sunxacml could return bad results), or (4) if authorization 
@@ -673,7 +674,7 @@ evaluate a rule could not be found, or another error prevented processing.</li>
 <div dir="ltr" align="left">
 	<span class="892423617-14102005"></span>&nbsp;</div>
 <div dir="ltr" align="left">
-	<b>3)&nbsp; PDP (Bottom line perspective):&nbsp; </b>
+	<b>3)&nbsp; Combined (Bottom line perspective):&nbsp; </b>
 	<p>&nbsp;</p>
 	<p>As a rule, a policy set evaluates to PERMIT when at least one policy in 
 	the set evaluates to Permit and no policies evaluating to Deny or 
@@ -686,7 +687,7 @@ evaluate a rule could not be found, or another error prevented processing.</li>
 	<p>a) DENY occurs when no policies were found to be applicable (all evaluate 
 	to NotApplicable) or the related case of there being no policies at all 
 	configured with Fedora</p>
-	<p>b) DENY occurs errors occurred during authorization processing, including 
+	<p>b) DENY occurs when errors occurred during authorization processing, including 
 	no or bad results obtained.<br>
 	<span class="892423617-14102005"></span>&nbsp;</p>
 	<p>&nbsp;</div>
@@ -864,7 +865,7 @@ provides a simple means of getting these attributes into the Fedora repository
 service so they can be used by the Fedora XACML policy enforcement module.  To
 support the ability for upstream applications or services to send these user
 attributes into a repository, Fedora will recognize a special HTTP servlet
-request attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES.</p>
+request attribute named after the value of static final String constant fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES.</p>
 	<p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>The Fedora repository service
 will automatically look for an HTTP servlet request attribute named after this
@@ -877,8 +878,8 @@ values.  Other types of value are not serviced. The effect of having a key
 having a Tomcat role &quot;a=b&quot;, with the exception that the effect of
 having the same attribute key redefined both places is right now undefined.  So
 your servlet filter needs only create the map and populate it, and put it into an
-HTTP servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. 
-Fedora will then  ook for it, and use the attributes in XACML-based
+HTTP servlet request as attribute named after fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. 
+Fedora will then look for it, and use the attributes in XACML-based
 authorization.  </p>
 	<p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>This approach was initially developed to 

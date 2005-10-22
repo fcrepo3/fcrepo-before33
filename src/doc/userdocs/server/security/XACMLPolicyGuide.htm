@@ -819,19 +819,19 @@ not be available on an incoming service request.&nbsp; By default, when the
 policy matching activity occurs -&nbsp; and an attribute specified in a policy 
 is not found in the incoming request context -&nbsp; an Indeterminate result is 
 returned and an authorization exception is thrown.&nbsp; Policy authors can avoid unwanted Indeterminate results by 
-indicating in the attribute designators of a Target that a particular attribute 
+indicating in the attribute designators of a Target or Condition that a particular attribute 
 can be considered optional in terms of whether it must existing in the incoming 
-request context.&nbsp;&nbsp; This is done by setting &quot;<span
-style='font-family:"Courier New"'>MustBePresent=false&quot;</span> on a 
-SubjectAttribututeDesignator, ResourceAttributeDesignator, or 
-ActionAttributeDesignator element.&nbsp;&nbsp;&nbsp; This will tell the Fedora 
+request context.&nbsp;&nbsp; This is done by setting <span
+style='font-family:"Courier New"'>MustBePresent=&quot;false&quot;</span> on a 
+SubjectAttribututeDesignator, ResourceAttributeDesignator,
+ActionAttributeDesignator, or EnvironmentAttributeDesignator element.&nbsp;&nbsp;&nbsp; This will tell the Fedora 
 Policy Enforcement module that 
 it's ok if the incoming request does not have the specified attribute available 
-within it.&nbsp;&nbsp; </p>
+within it.  (The implicit/unstated default is MustBePresent=&quot;true&quot;)&nbsp;&nbsp; </p>
 <p>Let's take an example to make this clearer.&nbsp;&nbsp; Consider a policy 
 where the SubjectMatch specification talks about an attribute &quot;fedoraRole&quot; and 
 specifies that the value of this attribute must be &quot;administrator&quot; in order for 
-this policy to be considered applicable by the PEP.&nbsp;&nbsp; Now consider an 
+this policy to be considered applicable by the PDP.&nbsp;&nbsp; Now consider an 
 incoming service request that has a user login id (e.g.,&nbsp; &quot;wdn5e&quot;) in the 
 request context, but this user does not have a &quot;fedoraRole&quot; attribute associated 
 with it.&nbsp; So,&nbsp; when the PEP tries to determine whether this policy is 
@@ -860,6 +860,12 @@ incoming request as follows:&nbsp; </p>
 &lt;/Subjects&gt;</pre>
 </div>
 
+<p>
+In this example, it's easy to imagine that another policy could independently permit access.
+Hence the fit of MustBePresent="false":  if the policy above lacks an attribute, it may not be 
+crucial to the ultimate authorization decision.  Policies are not authored in isolation, but to work together.
+</p>
+
 	<h2>&nbsp;</h2>
 
 <h3><b><a name="POLICY-BEST">2.7 Recommended Best Practices for Authoring Fedora XACML Policies</a></b></h3>
@@ -886,6 +892,7 @@ incoming request as follows:&nbsp; </p>
 
 
  <li style='text-autospace:none'>For object-specific policies,
+ especially if kept in an XML file,
      set the PolicyID in the XACML and the policy filename to match the object
      PID, but with concession to demand of OS filenames (e.g., uses dash instead of colon).
 	<p style='text-autospace:none'>&nbsp;</p>
@@ -919,7 +926,8 @@ incoming request as follows:&nbsp; </p>
  </li>
 
  <li style='text-autospace:none'>An object-specific policy should be coded so that 
-     it applies only to that specific object.
+     it applies only to that specific object.  So-coded, if misplaced among general repository
+     policies, that wouldn't be hurtful.
 	<p style='text-autospace:none'>&nbsp;</p>
  </li>
 
@@ -962,19 +970,9 @@ absence of the attribute.]
 </li>
 
 
-	<li>Despite statements in Sun XACML documentation that
+	<li>Despite some evidence that
 &lt;Environments&gt; was added to &lt;Target&gt; generally, it doesn't seem to
 work currently in sunxacml.
-<p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
-</li>
-
-
-	<li>&nbsp;Another issue is that, with no short-circuiting in
-expressions and with no explicit way to test if an attribute is available,
-absence of an attribute causing an Indeterminate (error) result is a practical
-impediment to writing effective policies.  [Hence, Fedora's attribute finders
-(callbacks for the sunxacml engine to use) return a dummy value if the
-attribute is not available.]
 <p style='margin-left:.25in;text-autospace:none'>&nbsp;</p>
 </li>
 
@@ -998,11 +996,9 @@ xacml and against the inevitable typ0.
 
 
  <li style='text-autospace:none'>In SubjectMatch, ResourceMatch, and ActionMatch 
-	blocks, place AttributeValue elements before AttributeDesignator. The reason for
-this is that the Sun XACML engine silently does this reordering, leading to
-unexpected results, due to bad coding near the end of its TargetMatch.getInstance()
-method.   Also, avoid using two AttributeDesignator elements (without any
-AttributeValues), until we clarify with Sun how they'll fix this.
+	blocks, place AttributeValue elements before AttributeDesignator. Also, avoid using two AttributeDesignator elements (without any
+AttributeValues).  Though it may seem logical to use other ordering or attribute selection, it doesn't
+match the standard and won't work.
 
 	<p>&nbsp;</p>
 	<div class="code">
@@ -1044,7 +1040,7 @@ Fedora API-M service so that only the Fedora Administrator is permitted access.&
 The default policies also result in open access to API-A (all users are 
 permitted).&nbsp;&nbsp; Given this starting point,&nbsp; you can think writing 
 custom policies as a way to &quot;loosen up&quot;&nbsp; the API-M defaults and &quot;tighten 
-up&quot; the API-M defaults.&nbsp; In other words, it is likely that you will want to 
+up&quot; the API-I defaults.&nbsp; In other words, it is likely that you will want to 
 write policies that let more users have access to API-M operations.&nbsp; Also, 
 you will likely want to add restrictions in who can access digital objects, 
 datastreams, and disseminations (i.e., via API-A).&nbsp;&nbsp; The sample 
@@ -1062,8 +1058,13 @@ can put one or more of the sample policies into play by following the
 instructions for <a href="AuthorizationXACML.htm#CONFIG-ACTIVATE">activating and 
 loading policies</a> into a Fedora repository.&nbsp; However, it is recommended 
 that you test them individually to understand the effect each policy has.&nbsp;&nbsp; 
+This approach of augmenting the default policies, which are left as-is, allows
+progressive learning, without endangering your repository.  It may be that this 
+approach goes farther in opening up API-M than in tighting up API-I, and 
+that eventually the default policy for API-A will need to be replaced by one or more 
+policies written to your site's needs.  So it goes.
 Ultimately, you can proceed to write a meaningful suite of policies that are 
-intended to work together for your repository.&nbsp;&nbsp;&nbsp; </p>
+intended to work together for your repository.  &nbsp;&nbsp;&nbsp; </p>
 
 <p>&nbsp;</p>
 
