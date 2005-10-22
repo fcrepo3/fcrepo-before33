@@ -341,7 +341,9 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.diringest"></a>New Directory Ingest Service (DirIngest)<br>
-		</font><font style="font-size: 9pt" face="Arial">A stand-alone web 
+		</font><font style="font-size: 9pt" face="Arial">New as part of the 
+		Fedora Service Framework, is the new Directory Ingest Service, which is 
+		a stand-alone web 
 		service application that interacts with a Fedora repository to provide 
 		for ingesting directories or archives or files into a Fedora repository.&nbsp; 
 		The service receives a zip/jar file of files in directory hierarchy 
@@ -355,12 +357,17 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.proai"></a>New OAI-Provider Service (PROAI)<br>
-		</font><font style="font-size: 9pt" face="Arial">A stand-alone web 
+		</font><font style="font-size: 9pt" face="Arial">New as part of the 
+		Fedora Service Framework, is the new Fedora OAI Provider Service, which 
+		is a stand-alone web 
 		service application that is a highly configurable OAI provider.&nbsp;&nbsp; 
 			The PROAI service can be set up to harvest any type of datastream or 
 			dissemination of digital objects in a Fedora repository.&nbsp; It also 
 			supports OAI sets.&nbsp; (Note: PROAI can be used outside the 
-			context of Fedora too, by writing a custom adapter.)</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
+			context of Fedora too, by writing a custom adapter.)&nbsp; Note also 
+		that the simple OAI provider interface on the core Fedora repository is 
+		still available.&nbsp;&nbsp; The new OAI service provides much more 
+		functionality and better performance.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.ri"></a>Resource Index<br>
@@ -454,15 +461,16 @@
 	can be edited, and the fedora-rebuild utility can then be run to correctly populate the tables in the new
 	database system.&nbsp;&nbsp; Similarly, the fedora Rebuild Utility can 
 	also be useful for rebuilding the Kowari triplestore of the Resource-Index if 
-		a problem or corruption occurs.</font><p>
-		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<br><a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br></font>
-		<font face="Arial" style="font-size: 9pt; ">With the introduction 
+		a problem or corruption occurs.<br>
+&nbsp;</font></li>
+		<li><font face="Arial" style="font-size: 9pt; font-weight: 700">
+		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
+		</font><font face="Arial" style="font-size: 9pt; ">With the introduction 
 		of the new security architecture for Fedora, the repository can be 
 		configured for SSL or non-SSL.&nbsp; Therefore, the syntax for Fedora 
 		client command line utilities has been slightly changed to accomodate 
 		the a parameter for the protocol that will be used when calling Fedora.&nbsp; 
-		Refer the the <a href="../client/cmd-line">Client Command Line Utilities</a> 
+		Refer the the <a href="../client/cmd-line/index.html">Client Command Line Utilities</a> 
 		Guide for the new syntax for each command line utiltiy.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
@@ -471,8 +479,8 @@
 		a FOXML or METS template file when building objects with the Fedora 
 		batch utility.&nbsp; The batch utility now detects the format of the template 
 		file and then generates objects based on the format of the template file 
-		so you can create either METS or FOXML&nbsp; objects now.&nbsp;</font></li>
-		<li class="MsoNormal"></li>
+		so you can create either METS or FOXML&nbsp; objects now.&nbsp;<br>
+&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j <br>
@@ -493,14 +501,15 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<a name="rel2.1b.features.perf"></a>Performance and Scale testing<br>
-		</font>Bulk loading was performed on the NSDL repository, which provided 
+		</font><font style="font-size: 9pt" face="Arial">Bulk loading was performed on the NSDL repository, which provided 
 		a testbed of 1 million digital objects with approximately 75M&nbsp; 
 		triples in the Kowari-based Resource Index.&nbsp; These tests were run 
 		on a 64 bit architecture due to heavy use of the Resource Index and 
 		Kowari memory requirements.&nbsp; These tests were run by NSDL 
 		middleware that heavily exercised the repository in terms of 
 		adding/modifying/deleting large numbers of objects.&nbsp;&nbsp; The 
-		results of these tests will be published soon on www.fedora.info.&nbsp;
+		results of these tests will be published soon on 
+		<a href="http://www.fedora.info">www.fedora.info</a>.&nbsp;</font>
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
 		<br>&nbsp;</font></li>
 		<li class="MsoNormal">
