@@ -1099,7 +1099,7 @@ public class DefaultDOManager
             lines.append(els[i].toString());
             lines.append("\n");
         }
-        logFiner("Stack trace: " + th.getClass().getName() + "\n" + lines.toString());
+        logWarning("Stack trace: " + th.getClass().getName() + "\n" + lines.toString());
     }
 
     /**

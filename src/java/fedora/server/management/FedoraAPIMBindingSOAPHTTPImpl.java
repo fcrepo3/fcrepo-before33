@@ -79,7 +79,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             addException(e, out);
             e = e.getCause();
         }
-        s_server.logFiner("Error carried up to API-M level:\n" + out.toString());
+        s_server.logWarning("Error carried up to API-M level:\n" + out.toString());
     }
 
     private static void addException(Throwable e, StringBuffer out) {

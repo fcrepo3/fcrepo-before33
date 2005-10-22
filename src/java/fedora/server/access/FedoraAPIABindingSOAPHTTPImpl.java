@@ -436,7 +436,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
         lines.append("\n");
       }
     }
-    s_server.logFiner("Error carried up to API-A level: "
+    s_server.logWarning("Error carried up to API-A level: "
                       + e.getClass().getName() + "\n" + lines.toString());
   }
 
