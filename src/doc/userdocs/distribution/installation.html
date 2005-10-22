@@ -652,7 +652,7 @@
       Before starting for the first time, you will want to select a base security 
       configuration and initialize the server with your base configuration using 
       the <i>fedora-setup</i> command-line utility. This process is described 
-      in detail in the <i><a href="../server/securingrepo.html#CONFIG">Securing 
+      in detail in the <i><a href="../server/security/securingrepo.html#CONFIG">Securing 
       Your Repository</a></i> document. Once fedora-setup has been run you can 
       then customize the generated configuration files as needed.</p>
 
@@ -730,7 +730,7 @@
               file which includes the username <i>fedoraAdmin</i> with a role 
               of <i>fedoraRole=&quot;administrator&quot;</i>. If you change the 
               username in fedora.fcfg, you must also updated the entry in tomcat-users_fedoraTemplate.xml 
-              or you other authentication application of choice. See <i><a href="..security/securingrepo.html">Securing 
+              or you other authentication application of choice. See <i><a href="../server/security/securingrepo.html">Securing 
               Your Repository</a></i> for additional information.</p>
           </dd>
           <dt><span class="term"><font color="#FF0000">adminPassword</font></span></dt>
@@ -816,7 +816,7 @@
                be changed before they can be properly ingested.
                You can do this by running the <span class="emphasis"><em>fedora-convert-demos</em></span> 
                script. See the 
-              <i><a href="../cmd-line/index.html">Client Command-Line Utilities</a></i> 
+              <i><a href="../server/cmd-line/index.html">Client Command-Line Utilities</a></i> 
               document for instructions on using this and other scripts that come 
               with Fedora.</p>
             <p>
@@ -837,7 +837,7 @@
               This will be created if it doesn't already exist. This parameter 
               must be given as an absolute path. The default value for this parameter 
               is <i>/fedora-xacml-policies/repository-policies</i>. For additional 
-              information regarding policy writing see <i><a href="../security/XACMLPolciyGuide.htm">Fedora 
+              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
               XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><span class=
@@ -846,7 +846,9 @@
             <p>A directory where XACML object-specific policies will be stored. 
               This will be created if it doesn't already exist. This parameter 
               must be given as an absolute path. The default value for this parameter 
-              is <i>/fedora-xacml-policies/object-policies</i>.</p>
+              is <i>/fedora-xacml-policies/object-policies</i>. For additional 
+              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
+              XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/SURROGATE-POLICIES-DIRECTORY</font></b></span></span></dt>
@@ -854,7 +856,9 @@
             <p>A directory where XACML surrogate policies will be stored. This 
               will be created if it doesn't already exist. This parameter must 
               be given as an absolute path. The default value for this parameter 
-              is <i>/fedora-xacml-policies/surrogate-policies</i>.</p>
+              is <i>/fedora-xacml-policies/surrogate-policies</i>. For additional 
+              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
+              XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY</font></b></span></span></dt>
@@ -900,28 +904,28 @@
           <dd> 
             <p>This parameter has been removed from fedora.fcfg. IP restrictions 
               are now handled using XACML policies. For additional information 
-              regarding policy writing see <i><a href="../security/XACMLPolciyGuide.htm">Fedora 
+              regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
               XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><font color="#FF0000"><s>Management/denyHosts</s></font></span></dt>
           <dd> 
             <p>This parameter has been removed from fedora.fcfg. IP restrictions 
               are now handled using XACML policies. For additional information 
-              regarding policy writing see <i><a href="../security/XACMLPolciyGuide.htm">Fedora 
+              regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
               XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><font color="#FF0000"><s>Access/allowHosts</s></font></span></dt>
           <dd> 
             <p>This parameter has been removed from fedora.fcfg. IP restrictions 
               are now handled using XACML policies. For additional information 
-              regarding policy writing see <i><a href="../security/XACMLPolciyGuide.htm">Fedora 
+              regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
               XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class="term"><font color="#FF0000"><s>Access/denyHosts</s></font></span></dt>
           <dd> 
             <p>This parameter has been removed from fedora.fcfg. IP restrictions 
               are now handled using XACML policies. For additional information 
-              regarding policy writing see <i><a href="../security/XACMLPolciyGuide.htm">Fedora 
+              regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
               XACML Policy Writing Guide</a></i>. </p>
           </dd>
           <dt><span class=
@@ -934,7 +938,7 @@
               should be set to true. The value for doMediateDatastreams is preset 
               to the correct value in each of the four base security configurations 
               so you should not need to change it if using one of the four base 
-              security configuration. Refer to <i><a href="../security/securingrepo.html">Securing 
+              security configuration. Refer to <i><a href="../server/security/securingrepo.html">Securing 
               Your Repository</a></i> for more information about the base security 
               configurations. </p>
           </dd>
