@@ -34,8 +34,7 @@
     <div class="tocbox">
       <ol>
         <li><a href="#rel2.1b">Release 2.1b - October 21, 2005</a></li>
-		<li><a href="#rel2.0">Release 2.0 - January 31,
-        2005</a></li>
+		<li><a href="#rel2.0">Release 2.0 - January 31, 2005</a></li>
 
         <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) -
         April 19, 2004</a></li>
@@ -101,6 +100,20 @@
 		you are starting from a release prior to Fedora 2.0, consult the Fedora 
 		2.0 release notes and the Upgrade and Migration Guide for instructions 
 		on how to migrate to Fedora 2.0 before upgrading to Fedora 2.1b.</p>
+	<p>&nbsp;</p>
+	<p><b>NOTE: </b>&nbsp;Please be aware the base URLs for the Fedora SOAP 
+	interfaces have changed in Fedora 2.1b.&nbsp; The path names for API-A and 
+	API-M have changed to facilitate better security management.&nbsp;&nbsp; The 
+	new path names can be seen in the WSDL files for API-A and API-M and in the 
+	Fedora Tomcat web.xml file.&nbsp;&nbsp;&nbsp; If you have written your own 
+	custom SOAP clients or middleware for Fedora, your SOAP connector code will 
+	need to reference the new path names of the base URLs:</p>
+	<ul>
+		<li><b>API-A Base URL</b> (assume your host:port):&nbsp; http://localhost:8080/<b>fedora/services/access</b>&nbsp; 
+	(formerly the path was /fedora/access/soap)</li>
+		<li><b>API-M Base URL</b> (assume your host:port):&nbsp; http://localhost:8080/<b>fedora/services/management
+		</b>&nbsp;(formerly&nbsp; the path was /fedora/management/soap)</li>
+	</ul>
 	<h2>&nbsp;</h2>
 	<h2><b>B. New Features</b></h2>
 	<p class="MsoNormal">&nbsp;</p>
@@ -761,7 +774,7 @@
 	</ol>
 	<p>&nbsp;</p><hr>
 	<h1>&nbsp;</h1>
-	<h1>2.&nbsp; <a name="rel2.0" id="rel2.0">Release 2.0 - January 31,
+	<h1><a id="rel2.0" name="rel2.0">2.&nbsp; Release 2.0 - January 31,
     2005</a></h1>
 
     <p>Fedora 2.0 is a major release that culminates Phase I of the
