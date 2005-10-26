@@ -105,9 +105,12 @@
 	interfaces have changed in Fedora 2.1b.&nbsp; The path names for API-A and 
 	API-M have changed to facilitate better security management.&nbsp;&nbsp; The 
 	new path names can be seen in the WSDL files for API-A and API-M and in the 
-	Fedora Tomcat web.xml file.&nbsp;&nbsp;&nbsp; If you have written your own 
-	custom SOAP clients or middleware for Fedora, your SOAP connector code will 
-	need to reference the new path names of the base URLs:</p>
+	Fedora Tomcat web.xml file.&nbsp;&nbsp;&nbsp;
+	<span class="906045116-26102005"><font face="Arial" size="2">In terms of 
+	impact on users, this change will only affect developers who have written 
+	custom SOAP clients or middleware for Fedora.&nbsp; If you have written your own 
+	custom SOAP connector for Fedora,&nbsp; be sure to reference the new path names 
+	within the SOAP base URLs</font></span>:</p>
 	<ul>
 		<li><b>API-A Base URL</b> (assume your host:port):&nbsp; http://localhost:8080/<b>fedora/services/access</b>&nbsp; 
 	(formerly the path was /fedora/access/soap)</li>
