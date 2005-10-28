@@ -75,8 +75,8 @@
 			<pathelement location="${lib.kowari-driver}"/>
 			<pathelement location="${lib.kowari-jrdf}"/>
 			<!-- Kowari 1.1.0
-			<pathelement location="${lib.j2ee-connector}"/>
-			<pathelement location="${lib.dateutils}"/>
+			<pathelement location="${lib.j2ee-connector}"/> -->
+			<pathelement location="${lib.dateutils}"/> <!--
 			<pathelement location="${lib.jotm-carol}"/>
 			<pathelement location="${lib.jotm-stubs}"/>
 			<pathelement location="${lib.jotm-patched}"/>
