@@ -565,7 +565,6 @@ public class DisseminationService
           s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
               + interval + " milliseconds.");
           if (fedora.server.Debug.DEBUG) System.out.println("URL: "+dissURL);
-          System.out.println("URL: "+dissURL);
 	        
           // See if backend service reference is to fedora server itself or an external location.
           // We must examine URL to see if this is referencing a remote backend service or is
