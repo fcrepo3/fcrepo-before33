@@ -29,6 +29,19 @@ import fedora.server.utilities.DateUtility;
 	//protected boolean adhoc() { return false; }
 
 	static private final ResourceAttributeFinderModule singleton = new ResourceAttributeFinderModule();
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static Server fedoraServer;
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static void setServer() {
+        try {
+            fedoraServer = Server.getInstance(new java.io.File(System.getProperty("fedora.home")), false);
+        } catch (Throwable th) {
+            System.out.println("Server instance not found... will not log times.");
+            // no biggie, just won't logFinest
+        }
+    }
  
 	private ResourceAttributeFinderModule() {
 		super();
@@ -168,6 +181,11 @@ import fedora.server.utilities.DateUtility;
 
 	
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context) {
+
+        setServer();
+        long getAttributeStartTime = System.currentTimeMillis();
+
+        try {
 		String pid = getPid(context);		
 		if ("".equals(pid)) {
 			log("no pid");
@@ -298,6 +316,12 @@ import fedora.server.utilities.DateUtility;
 			log("looking for unknown resource attribute=" + attributeId);			
 		}
 		return values;
+        } finally {
+            if (fedoraServer != null) {
+                long dur = System.currentTimeMillis() - getAttributeStartTime;
+                fedoraServer.logFinest("Locally getting the '" + attributeId + "' attribute for this resource took " + dur + "ms.");
+            }
+        }
 	}
 
     private final String getPid(EvaluationCtx context) {

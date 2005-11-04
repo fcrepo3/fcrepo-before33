@@ -46,6 +46,7 @@ import fedora.server.errors.ServerException;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.types.Datastream;
+import fedora.server.Server;
 
 /**
  * @author wdn5e@virginia.edu
@@ -61,6 +62,19 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 	private File objectPolicyDirectory = null;
 	private File schemaFile = null;
 	private DOManager doManager;
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static Server fedoraServer;
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static void setServer() {
+        try {
+            fedoraServer = Server.getInstance(new File(System.getProperty("fedora.home")), false);
+        } catch (Throwable th) {
+            System.out.println("Server instance not found... will not log times.");
+            // no biggie, just won't logFinest
+        }
+    }
 
 	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager,
 		boolean validateRepositoryPolicies,
@@ -444,6 +458,10 @@ log(">>>>>>>>filepath=" + filepath);
     /* return a deny-biased policy set which includes all repository-wide and any object-specific policies
      */
     public PolicyFinderResult findPolicy(EvaluationCtx context) {
+
+        setServer();
+        long findStartTime = System.currentTimeMillis();
+
 		PolicyFinderResult policyFinderResult = null;
 		try {
 	    	List policies = new Vector(repositoryPolicies);
@@ -467,7 +485,12 @@ log(">>>>>>>>filepath=" + filepath);
 		} catch (Throwable e) {			
 			e.printStackTrace();
 			policyFinderResult = new PolicyFinderResult(new Status(ERROR_CODE_LIST, e.getMessage()));
-		}
+		} finally {
+            if (fedoraServer != null) {
+                long dur = System.currentTimeMillis() - findStartTime;
+                fedoraServer.logFinest("Finding the policy for this evaluation context took " + dur + "ms.");
+            }
+        }
 		return policyFinderResult;
     }
 
