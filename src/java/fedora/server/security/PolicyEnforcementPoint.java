@@ -1,4 +1,6 @@
 package fedora.server.security;
+
+import java.io.File;
 import java.util.Iterator;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,6 +24,7 @@ import com.sun.xacml.finder.PolicyFinder;
 
 import fedora.common.Constants;
 import fedora.server.Context;
+import fedora.server.Server;
 import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.authorization.AuthzOperationalException;
@@ -59,8 +62,22 @@ public class PolicyEnforcementPoint {
 	private final URI ACTION_CONTEXT_URI;
 	private final URI RESOURCE_ID_URI;
 	private final URI RESOURCE_NAMESPACE_URI;
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static Server fedoraServer;
+
+    // FIXME: This is only used for logging... when changing to log4j, remove it
+    private static void setServer() {
+        try {
+            fedoraServer = Server.getInstance(new File(System.getProperty("fedora.home")), false);
+        } catch (Throwable th) {
+            System.out.println("Server instance not found... will not log times.");
+            // no biggie, just won't logFinest
+        }
+    }
 	
 	private PolicyEnforcementPoint() {
+
 		URI xacmlSubjectIdUri = null;
 		URI xacmlActionIdUri = null;
 		URI xacmlResourceIdUri = null;
@@ -399,34 +416,38 @@ log("***debugging CombinedPolicyModule");
 	private final Set NULL_SET = new HashSet();
 
 	public final void enforce(String subjectId, String action, String api, String pid, String namespace, Context context) throws AuthzException {
-		synchronized (this) {
-			//wait, if pdp update is in progress
-		}
-		if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
-			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
-		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
-			log("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
-			throw new AuthzDeniedException("all requests are currently denied");	
-		} else if (! ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
-			log("denying request because enforceMode is invalid");
-			throw new AuthzOperationalException("invalid enforceMode from config");	
-		} else {
-			ResponseCtx response = null;
-			String contextIndex = null;
-			try {
-				contextIndex = (new Integer(next())).toString();
-				log("context index set=" + contextIndex);
-				Set subjects = wrapSubjects(subjectId);
-				Set actions = wrapActions(action, api, contextIndex);
-				Set resources = wrapResources(pid, namespace);
 
-				RequestCtx request = new RequestCtx(subjects, resources, actions, NULL_SET);
-				Set tempset = request.getAction();
-				Iterator tempit = tempset.iterator();
-				while (tempit.hasNext()) {
-					Attribute tempobj = (Attribute) tempit.next();
-					log("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
-				}
+        setServer();
+        long enforceStartTime = System.currentTimeMillis();
+        try {
+    		synchronized (this) {
+    			//wait, if pdp update is in progress
+    		}
+    		if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
+    			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
+    		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
+    			log("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
+    			throw new AuthzDeniedException("all requests are currently denied");	
+    		} else if (! ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
+    			log("denying request because enforceMode is invalid");
+    			throw new AuthzOperationalException("invalid enforceMode from config");	
+    		} else {
+    			ResponseCtx response = null;
+    			String contextIndex = null;
+    			try {
+    				contextIndex = (new Integer(next())).toString();
+    				log("context index set=" + contextIndex);
+    				Set subjects = wrapSubjects(subjectId);
+    				Set actions = wrapActions(action, api, contextIndex);
+    				Set resources = wrapResources(pid, namespace);
+    
+    				RequestCtx request = new RequestCtx(subjects, resources, actions, NULL_SET);
+    				Set tempset = request.getAction();
+    				Iterator tempit = tempset.iterator();
+    				while (tempit.hasNext()) {
+    					Attribute tempobj = (Attribute) tempit.next();
+    					log("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
+    				}
 				/*
 				Set testSubjects = request.getSubjects();
 				Iterator testIt = testSubjects.iterator();
@@ -456,27 +477,43 @@ log("***debugging CombinedPolicyModule");
 					log("test env attributeValue.toString()=" + testAttributeValue.toString());
 				}
 				*/
-				Logger logger = Logger.getLogger("com.sun.xacml");
-				logger.setLevel(Level.ALL);
-log("about to ref contextAttributeFinder=" + contextAttributeFinder);
-				contextAttributeFinder.registerContext(contextIndex, context);
-				response = pdp.evaluate(request);
-				log("in pep, after evaluate() called");
-			} catch (Throwable t) {
-				log("got me throwable:");			
-				t.printStackTrace();			
-				throw new AuthzOperationalException("");
-			} finally {
-				contextAttributeFinder.unregisterContext(contextIndex);
-			}
-			log("in pep, before denyBiasedAuthz() called");
-			if (! denyBiasedAuthz(response.getResults())) {
-				throw new AuthzDeniedException("");
-			}			
-		}	
-		if (context.getNoOp()) {
-			throw new AuthzPermittedException("noOp");
-		}		
+    				Logger logger = Logger.getLogger("com.sun.xacml");
+    				logger.setLevel(Level.ALL);
+                    log("about to ref contextAttributeFinder=" + contextAttributeFinder);
+    				contextAttributeFinder.registerContext(contextIndex, context);
+
+                    long st = System.currentTimeMillis();
+                    try {
+                        response = pdp.evaluate(request);
+                    } finally {
+                        if (fedoraServer != null) {
+                            long dur = System.currentTimeMillis() - st;
+                            fedoraServer.logFinest("Policy evaluation took " + dur + "ms.");
+                        }
+                    }
+
+    				log("in pep, after evaluate() called");
+    			} catch (Throwable t) {
+    				log("got me throwable:");			
+    				t.printStackTrace();			
+    				throw new AuthzOperationalException("");
+    			} finally {
+    				contextAttributeFinder.unregisterContext(contextIndex);
+    			}
+    			log("in pep, before denyBiasedAuthz() called");
+    			if (! denyBiasedAuthz(response.getResults())) {
+    				throw new AuthzDeniedException("");
+    			}			
+    		}	
+    		if (context.getNoOp()) {
+    			throw new AuthzPermittedException("noOp");
+    		}		
+        } finally {
+            if (fedoraServer != null) {
+                long dur = System.currentTimeMillis() - enforceStartTime;
+                fedoraServer.logFinest("Policy enforcement took " + dur + "ms.");
+            }
+        }
 	}
 	
 	private static final boolean denyBiasedAuthz(Set set) {
