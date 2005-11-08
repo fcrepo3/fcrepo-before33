@@ -184,10 +184,19 @@ public class ResourceIndexRebuilder implements Rebuilder {
     private void deleteRITables() throws SQLException {
         Connection conn = m_cPool.getConnection();
         Statement stmt = conn.createStatement();
-        String[] drop = {"DROP TABLE riMethodMimeType", "DROP TABLE riMethodImpl", 
-                         "DROP TABLE riMethodPermutation", "DROP TABLE riMethod"};
+        String[] drop = {"DROP TABLE riMethodMimeType", 
+                         "DROP TABLE riMethodImpl",
+                         "DROP TABLE riMethodImplBinding", 
+                         "DROP TABLE riMethodPermutation", 
+                         "DROP TABLE riMethod"};
         for (int i = 0; i < drop.length; i++) {
-            stmt.execute(drop[i]);
+            try { 
+                stmt.execute(drop[i]); 
+            } catch (Throwable th) {
+                System.out.println("WARNING: Failed to execute DDL: '" 
+                        + drop[i] + "'.  Stack trace follows.");
+                th.printStackTrace();
+            }
         }
     }
     
