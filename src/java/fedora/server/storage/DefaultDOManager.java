@@ -420,27 +420,40 @@ public class DefaultDOManager
 	 */
     public DOReader getReader(boolean cachedObjectRequired, Context context, String pid)
             throws ServerException {
-        if (cachedObjectRequired) {
-            return new FastDOReader(context, pid);
-        } else {
-            DOReader reader = null;
-            if (m_readerCache != null) {
-                reader = m_readerCache.get(pid);
-            }
-            if (reader == null) {
-                reader = new SimpleDOReader(context, 
-                                            this, 
-                                            m_translator,
-                                            m_defaultExportFormat, 
-                                            m_defaultStorageFormat,
-                                            m_storageCharacterEncoding,
-                                            getObjectStore().retrieve(pid), 
-                                            this);
+        long getReaderStartTime = System.currentTimeMillis();
+        String source = null;
+        try {
+            if (cachedObjectRequired) {
+                source = "database";
+                return new FastDOReader(context, pid);
+            } else {
+                DOReader reader = null;
                 if (m_readerCache != null) {
-                    m_readerCache.put(reader);
+                    reader = m_readerCache.get(pid);
                 }
+                if (reader == null) {
+                    reader = new SimpleDOReader(context, 
+                                                this, 
+                                                m_translator,
+                                                m_defaultExportFormat, 
+                                                m_defaultStorageFormat,
+                                                m_storageCharacterEncoding,
+                                                getObjectStore().retrieve(pid), 
+                                                this);
+                    source = "filesystem";
+                    if (m_readerCache != null) {
+                        m_readerCache.put(reader);
+                    }
+                } else {
+                    source = "memory";
+                }
+                return reader;
             }
-            return reader;
+        } finally {
+            if (loggingFinest()) {
+                long dur = System.currentTimeMillis() - getReaderStartTime;
+                logFinest("Got DOReader (source=" + source + ") for " + pid + " in " + dur + "ms.");
+            }
         }
     }
 	/**
