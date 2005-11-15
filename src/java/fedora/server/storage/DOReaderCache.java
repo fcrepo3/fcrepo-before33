@@ -78,7 +78,7 @@ public class DOReaderCache extends Thread {
     /**
      * Add a DOReader to the cache.
      *
-     * If it already exists in the cache, allow it to 
+     * If it already exists in the cache, refresh the DOReader in the cache.
      */
     public void put(DOReader reader) {
         String pid = null;
@@ -89,6 +89,10 @@ public class DOReaderCache extends Thread {
         l.add(time);
         synchronized (m_readers) {
             m_readers.put(pid, l);
+            if (m_pidList.contains(pid)) {
+                // ensure it only appears in the list once, at the end
+                m_pidList.remove(pid);
+            }
             m_pidList.add(pid);
             if (m_readers.size() > m_maxReaders) {
                 Object overflowPid = m_pidList.remove(0);
@@ -101,6 +105,7 @@ public class DOReaderCache extends Thread {
      * Get a DOReader from the cache.
      *
      * If it doesn't exist in the cache, return null.
+     * If it does exist, set its time to the current time and return it.
      */
     public DOReader get(String pid) {
         DOReader reader = null;
@@ -108,6 +113,11 @@ public class DOReaderCache extends Thread {
             List l = (List) m_readers.get(pid);
             if (l != null) {
                 reader = (DOReader) l.get(0);
+                l.remove(1);
+                l.add(new Long(System.currentTimeMillis()));
+                // move it to the end of the list so the list stays sorted
+                m_pidList.remove(pid);
+                m_pidList.add(pid);
             }
         }
         return reader;
