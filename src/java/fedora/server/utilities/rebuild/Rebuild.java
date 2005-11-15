@@ -35,7 +35,6 @@ public class Rebuild {
      * Rebuilders that the rebuild utility knows about.
      */
     public static String[] REBUILDERS = new String[] {
-            "fedora.server.utilities.rebuild.NoOpRebuilder",
             "fedora.server.resourceIndex.ResourceIndexRebuilder",
             "fedora.server.utilities.rebuild.SQLRebuilder" };
 

@@ -80,6 +80,8 @@ public class DefaultDOManager
     protected HashSet m_retainPIDs;
     protected ResourceIndex m_resourceIndex;
 
+    private DOReaderCache m_readerCache;
+
     protected ConnectionPool m_connectionPool;
     protected Connection m_connection;
 
@@ -172,6 +174,38 @@ public class DefaultDOManager
             m_storageCharacterEncoding="UTF-8";
         }
         initRetainPID();
+
+
+        // readerCacheSize and readerCacheSeconds (optional, defaults = 20, 5)
+        String rcSize = getParameter("readerCacheSize");
+        if (rcSize == null) {
+            getServer().logConfig("Parameter readerCacheSize not given, using 20");
+            rcSize = "20";
+        }
+        int readerCacheSize;
+        try {
+            readerCacheSize = Integer.parseInt(rcSize);
+            if (readerCacheSize < 0) throw new Exception("Cannot be less than zero");
+        } catch (Exception e) {
+            throw new ModuleInitializationException("Bad value for readerCacheSize parameter: " + e.getMessage(), getRole());
+        }
+
+        String rcSeconds = getParameter("readerCacheSeconds");
+        if (rcSeconds == null) {
+            getServer().logConfig("Parameter readerCacheSeconds not given, using 5");
+            rcSeconds = "5";
+        }
+        int readerCacheSeconds;
+        try {
+            readerCacheSeconds = Integer.parseInt(rcSeconds);
+            if (readerCacheSeconds < 1) throw new Exception("Cannot be less than one");
+        } catch (Exception e) {
+            throw new ModuleInitializationException("Bad value for readerCacheSeconds parameter: " + e.getMessage(), getRole());
+        }
+
+        if (readerCacheSize > 0) {
+            m_readerCache = new DOReaderCache(readerCacheSize, readerCacheSeconds);
+        }
     }
     
     protected void initRetainPID()
@@ -279,6 +313,12 @@ public class DefaultDOManager
 
     }
 
+    public void shutdownModule() {
+        if (m_readerCache != null) {
+            m_readerCache.close();
+        }
+    }
+
     public void releaseWriter(DOWriter writer) {
         
         // If this is a new object, but object was not successfully committed
@@ -293,7 +333,17 @@ public class DefaultDOManager
                     logWarning("Error unregistering object; Unable to obtain pid from writer.");
                 }
             }
-        }        
+        } else if (!writer.isNew() && writer.isCommitted() && m_readerCache != null) {
+            // If it's not a new object and a change was committed, 
+            // make sure the DOReaderCache entry for the object is invalidated
+            // so any subsequent reads will reflect the latest information.
+            try {
+                m_readerCache.remove(writer.GetObjectPID());
+            } catch (Exception e) {
+                logWarning("Error removing object from cache");
+            }
+        }
+
         writer.invalidate();
         // remove pid from tracked list...m_writers.remove(writer);
     }
@@ -373,10 +423,24 @@ public class DefaultDOManager
         if (cachedObjectRequired) {
             return new FastDOReader(context, pid);
         } else {
-            return new SimpleDOReader(context, this, m_translator,
-                    m_defaultExportFormat, m_defaultStorageFormat,
-                    m_storageCharacterEncoding,
-                    getObjectStore().retrieve(pid), this);
+            DOReader reader = null;
+            if (m_readerCache != null) {
+                reader = m_readerCache.get(pid);
+            }
+            if (reader == null) {
+                reader = new SimpleDOReader(context, 
+                                            this, 
+                                            m_translator,
+                                            m_defaultExportFormat, 
+                                            m_defaultStorageFormat,
+                                            m_storageCharacterEncoding,
+                                            getObjectStore().retrieve(pid), 
+                                            this);
+                if (m_readerCache != null) {
+                    m_readerCache.put(reader);
+                }
+            }
+            return reader;
         }
     }
 	/**
@@ -731,7 +795,7 @@ public class DefaultDOManager
             System.gc();
             logFiner("Done requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
         }
-        
+
         // OBJECT REMOVAL...
         if (remove) {
             logFinest("COMMIT: Entered doCommit (remove)");
