@@ -210,11 +210,11 @@ public class FOXMLDOSerializer
 				String altIdsAttr="";
 				String altIds=oneString(vds.DatastreamAltIDs);
 				if (altIds!=null && !altIds.equals("")) {
-					altIdsAttr=" ALT_IDS=\"" + altIds + "\"";
+					altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
 				}
 				String formatURIAttr="";
 				if (vds.DSFormatURI!=null && !vds.DSFormatURI.equals("")) {
-					formatURIAttr=" FORMAT_URI=\"" + vds.DSFormatURI + "\"";
+					formatURIAttr=" FORMAT_URI=\"" + StreamUtility.enc(vds.DSFormatURI) + "\"";
 				}
 				String dateAttr="";
 				if (vds.DSCreateDT!=null) {
