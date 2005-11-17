@@ -112,7 +112,7 @@ start() {
 	fi
 	
   	(exec nohup "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
-		-classpath "$TC"/bin/bootstrap.jar \
+		-classpath "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Djava.awt.fonts="$JAVA_HOME"/jre/lib/fonts \
@@ -122,7 +122,7 @@ start() {
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
 		-Dfedora.home="$FEDORA_HOME" \
 		-Dfedora.serverProfile=$SERVER_PROFILE \
-		-Dclasspath=$TC/bin/bootstrap.jar \
+		-Dclasspath=$TC/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djava.endorsed.dirs="$TC_ENDORSED" \
 		-Djava.security.manager \
 		-Djava.security.policy="$TC"/conf/catalina.policy \
@@ -185,7 +185,7 @@ debug() {
   	(exec nohup "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
 		-Xnoagent -Xdebug -Djava.compiler=none \
 		-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n \
-		-classpath "$TC"/bin/bootstrap.jar \
+		-classpath "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Djava.awt.fonts="$JAVA_HOME"/jre/lib/fonts \
@@ -195,7 +195,7 @@ debug() {
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
 		-Dfedora.home="$FEDORA_HOME" \
 		-Dfedora.serverProfile=$SERVER_PROFILE \
-		-Dclasspath=$TC/bin/bootstrap.jar \
+		-Dclasspath=$TC/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djava.endorsed.dirs="$TC_ENDORSED" \
 		-Djava.security.manager \
 		-Djava.security.policy="$TC"/conf/catalina.policy \
@@ -244,11 +244,11 @@ stop() {
 		fedora.server.utilities.ServerUtility shutdown)
 
 	# Stop Tomcat
-	(exec "$JAVA" -cp "$TC"/bin/bootstrap.jar \
+	(exec "$JAVA" -cp "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Dfedora.home="$FEDORA_HOME" \
-		-Dclasspath="$TC"/bin/bootstrap.jar \
+		-Dclasspath="$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djava.endorsed.dirs="$TC_ENDORSED" \
 		-Dcatalina.base="$TC" \
 		-Dcatalina.home="$TC" \
