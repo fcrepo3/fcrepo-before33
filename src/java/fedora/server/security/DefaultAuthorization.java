@@ -64,14 +64,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String VALIDATE_SURROGATE_POLICIES_KEY = "VALIDATE-SURROGATE-POLICIES";
 	private final String ALLOW_SURROGATE_POLICIES_KEY = "ALLOW-SURROGATE-POLICIES";
 	
-	private static final String XACML_DIST_BASE = "config/xacml-policies";	
-	private static final String DEFAULT_SURROGATE_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-surrogate-policies"; 
-	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-repository-policies-approximating-2.0"; 
-	private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/default/default-object-policies"; 
+	private static final String XACML_DIST_BASE = "fedora-internal-use";	
+	private static final String DEFAULT_SURROGATE_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-surrogate-policies"; 
+	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-repository-policies-approximating-2.0"; 
+	private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-object-policies"; 
 	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
 	private static final String BE_SECURITY_XML_LOCATION = "config/beSecurity.xml";	
-	private static final String BACKEND_POLICIES_ACTIVE_DIRECTORY = XACML_DIST_BASE + "/active/generated/backend-service-policies"; 
-	private static final String BACKEND_POLICIES_XSL_LOCATION = XACML_DIST_BASE + "/active/generated/build-backend-policy.xsl";
+	private static final String BACKEND_POLICIES_ACTIVE_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-backend-service-policies"; 
+	private static final String BACKEND_POLICIES_XSL_LOCATION = XACML_DIST_BASE + "/build-backend-policy.xsl";
  
 
 	
@@ -311,31 +311,18 @@ public class DefaultAuthorization extends Module implements Authorization {
 		filecopy(fedoraHome + File.separator + XACML_DIST_BASE + File.separator + "readme-policyguitool-generated-policies.txt", 
 				repositoryPolicyGuitoolDirectory + File.separator + "readme-policyguitool-generated-policies.txt");
 		add back > 2.1b ^^^^^ */ 
-		if (mkdir(repositoryPoliciesActiveDirectory)) {
-	      	log("in setupActivePolicyDirectories() b");		
-			if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {
-		      	log("in setupActivePolicyDirectories() c");		
-				dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory + File.separator + DEFAULT);
-		      	log("in setupActivePolicyDirectories() d");		
-			}
-	      	log("in setupActivePolicyDirectories() e");		
+		mkdir(repositoryPoliciesActiveDirectory);
+		if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {		
+			dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory + File.separator + DEFAULT);
+		}		
+		mkdir(objectPoliciesActiveDirectory);
+		if (mkdir(objectPoliciesActiveDirectory + File.separator + DEFAULT)) {	
+			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory + File.separator + DEFAULT);		
+		}		
+		mkdir(surrogatePoliciesActiveDirectory);    	
+		if (mkdir(surrogatePoliciesActiveDirectory + File.separator + DEFAULT)) {
+			dircopy(fedoraHome + File.separator + DEFAULT_SURROGATE_POLICIES_DIRECTORY, surrogatePoliciesActiveDirectory + File.separator + DEFAULT);
 		}
-      	log("in setupActivePolicyDirectories() f");		
-		if (mkdir(objectPoliciesActiveDirectory)) {
-	      	log("in setupActivePolicyDirectories() g");		
-			if (mkdir(objectPoliciesActiveDirectory + File.separator + DEFAULT)) {
-		      	log("in setupActivePolicyDirectories() h");		
-				dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory + File.separator + DEFAULT);
-		      	log("in setupActivePolicyDirectories() i");		
-			}
-	      	log("in setupActivePolicyDirectories() j");		
-		}
-    	log("in DefaultAuthorization.setupActivePolicyDirectories() k");		
-		if (mkdir(surrogatePoliciesActiveDirectory)) {
-			if (mkdir(surrogatePoliciesActiveDirectory + File.separator + DEFAULT)) {
-				dircopy(fedoraHome + File.separator + DEFAULT_SURROGATE_POLICIES_DIRECTORY, surrogatePoliciesActiveDirectory + File.separator + DEFAULT);
-			}
-		}    	
 		generateBackendPolicies();
     	log("in DefaultAuthorization.setupActivePolicyDirectories() l");		
 	}

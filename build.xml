@@ -824,21 +824,24 @@
 		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
 		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
 		<!-- xacml:  set up policy directories -->
-		<mkdir dir="dist/server/config/xacml-policies"/>
-		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/config/xacml-policies"/>
-		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/config/xacml-policies"/>
-		<copy file="src/xml/xacml-policies/readme-policyguitool-generated-policies.txt" todir="dist/server/config/xacml-policies"/>
-		<mkdir dir="dist/server/config/xacml-policies/default"/>
-		<copy todir="dist/server/config/xacml-policies/default/default-repository-policies-approximating-2.0">
+		<mkdir dir="dist/server/fedora-internal-use"/>
+		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/fedora-internal-use"/>
+		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/fedora-internal-use"/>
+		<!-- copy file="src/xml/xacml-policies/readme-policyguitool-generated-policies.txt" todir="dist/server/config/xacml-policies"/ -->
+		
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
+		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0">
 			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
 		</copy>
-		<copy todir="dist/server/config/xacml-policies/default/default-object-policies">
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-object-policies"/>		
+		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-object-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-object-policies"/>
 		</copy>
-		<copy todir="dist/server/config/xacml-policies/default/default-surrogate-policies">
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies"/>		
+		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-surrogate-policies"/>
 		</copy>		
-		<mkdir dir="dist/server/config/xacml-policies/examples"/>
+		<!-- mkdir dir="dist/server/config/xacml-policies/examples"/>
 		<copy todir="dist/server/config/xacml-policies/examples/example-repository-policies">
 			<fileset dir="src/xml/xacml-policies/examples/example-repository-policies"/>
 		</copy>
@@ -847,9 +850,16 @@
 		</copy>
 		<copy todir="dist/server/config/xacml-policies/examples/example-surrogate-policies">
 			<fileset dir="src/xml/xacml-policies/examples/example-surrogate-policies"/>
-		</copy>
-		<mkdir dir="dist/server/config/xacml-policies/active/generated/backend-service-policies"/>
-		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/config/xacml-policies/active/generated"/>
+		</copy -->
+		<mkdir dir="dist/server/fedora-internal-use"/>
+		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/fedora-internal-use"/>		
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
+		
+		
+		
+		
+		
+		
 		<!-- tomcat: web configuration files for the Fedora webapp -->
 		<copy file="src/web-app/fedora/server/web-secure-apim.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-secure-all.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
@@ -946,7 +956,7 @@
 				<include name="org/apache/commons/httpclient/contrib/ssl/**"/>
 			</fileset>
 		</copy>
-		<java classname="fedora.common.policy.Release2_1Namespace" classpath="${tomcat.server.dir}/classes;${lib.jrdf}" output="dist/server/config/xacml-policies/vocabulary.txt"/>
+		<java classname="fedora.common.policy.Release2_1Namespace" classpath="${tomcat.server.dir}/classes;${lib.jrdf}" output="dist/server/fedora-internal-use/vocabulary.txt"/>
 		<copy file="src/java/org/apache/catalina/realm/readme.txt" todir="${tomcat.server.dir}/classes/org/apache/catalina/realm"/>
 		<copy todir="${tomcat.deploy.dir}/ROOT">
 			<fileset dir="src/xsd"/>
