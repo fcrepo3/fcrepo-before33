@@ -120,23 +120,20 @@ public class ResourceIndexRebuilder implements Rebuilder {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+        System.out.println("Clearing directory " + tsPath + "...");
         deleteDirectory(tsPath);
+        File cleanDir = new File(tsPath);
+        cleanDir.mkdir();
+
         createDBTables();
         
         
-        
+        System.out.println("Initializing triplestore interface..."); 
         try {
             m_conn = TriplestoreConnector.init(tsConnector, tsTC);
             m_ri = new ResourceIndexImpl(riLevel, m_conn, m_cPool, aliasMap, null);
-        } catch (TrippiException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (ResourceIndexException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            throw new ResourceIndexException("Failed to initialize new Resource Index", e);
         }
     }
 
@@ -156,6 +153,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
     }
     
     private boolean deleteDirectory(String directory) {
+
         boolean result = false;
 
         if (directory != null) {
@@ -182,20 +180,28 @@ public class ResourceIndexRebuilder implements Rebuilder {
     }//deleteDirectory()
     
     private void deleteRITables() throws SQLException {
+        System.out.println("Dropping old database tables...");
         Connection conn = m_cPool.getConnection();
         Statement stmt = conn.createStatement();
         String[] drop = {"DROP TABLE riMethodMimeType", 
                          "DROP TABLE riMethodImpl",
                          "DROP TABLE riMethodImplBinding", 
                          "DROP TABLE riMethodPermutation", 
-                         "DROP TABLE riMethod"};
+                         "DROP TABLE riMethod",
+                         "DROP SEQUENCE RIMETHODIMPLBINDING_S1",
+                         "DROP SEQUENCE RIMETHODMIMETYPE_S1",
+                         "DROP SEQUENCE RIMETHODPERMUTATION_S1"};
         for (int i = 0; i < drop.length; i++) {
             try { 
                 stmt.execute(drop[i]); 
             } catch (Throwable th) {
-                System.out.println("WARNING: Failed to execute DDL: '" 
-                        + drop[i] + "'.  Stack trace follows.");
-                th.printStackTrace();
+                if (drop[i].startsWith("DROP TABLE")) {
+                    System.out.println("WARNING: Failed running '" 
+                            + drop[i] + "'.  Stack trace follows.");
+                    th.printStackTrace();
+                } else {
+                    // skip warning, DROP SEQUENCE is Oracle-only so it's OK
+                }
             }
         }
     }
@@ -240,6 +246,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
     }
     
     private void createDBTables() {
+        System.out.println("Creating clean database tables...");
         InputStream specIn;
         
         try {
