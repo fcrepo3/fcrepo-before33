@@ -841,7 +841,7 @@
 		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-surrogate-policies"/>
 		</copy>		
-		<!-- mkdir dir="dist/server/config/xacml-policies/examples"/>
+		<!-- removing from dist, as also in userodc and no obvious placment after other changes; mkdir dir="dist/server/config/xacml-policies/examples"/>
 		<copy todir="dist/server/config/xacml-policies/examples/example-repository-policies">
 			<fileset dir="src/xml/xacml-policies/examples/example-repository-policies"/>
 		</copy>
