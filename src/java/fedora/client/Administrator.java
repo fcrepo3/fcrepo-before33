@@ -148,19 +148,20 @@ public class Administrator extends JFrame {
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
-        m_aboutText=new JLabel("<html>Copyright 2002-2004, The Rector and Visitors of the<p>"
-                + "University of Virginia and Cornell University<p><p>"
-                + "This program is subject to the Mozilla Public License, Version 1.1<p>"
-                + "(the \"License\"); you may not use this program except in compliance<p>"
-                + "with the License. You may obtain a copy of the License at<p>"
-                + "http://www.mozilla.org/MPL<p><p>"
-                + "Software distributed under the License is distributed on an \"AS IS\"<p>"
-                + "basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.<p>"
-                + "See the License for the specific language governing rights and<p>"
-                + "limitations under the License.<p>"
-                + "<p>Version: " + VERSION
-                + "<p>Release Date: " + RELEASE_DATE
-                + "<p>See http://www.fedora.info/ for more information.");
+        m_aboutText=new JLabel("<html><p>Copyright 2002-2005, The Rector and Visitors of the</p>"
+        		+ "<p>University of Virginia and Cornell University. All rights reserved.</p><p></p>"
+        		+ "<p><b>License and Copyright: </b>This software is subject to the</p>"
+        		+ "<p>Educational Community License (the \"License\"); you may not use</p>"
+        		+ "<p>this software except in compliance with the License. You may</p>"
+        		+ "<p>obtain a copy of the License at:</p>"
+        		+ "<blockquote>http://www.opensource.org/licenses/ecl1.txt.</blockquote><p></p>"
+        		+ "<p>Software distributed under the License is distributed on an \"AS IS\"</p>"
+        		+ "<p>basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.</p>"
+        		+ "<p>See the License for the specific language governing rights and</p>"
+        		+ "<p>limitations under the License.</p><p></p>"
+                + "<p>Version: " + VERSION + "</p>"
+                + "<p>Release Date: " + RELEASE_DATE + "</p>"
+                + "<p>See http://www.fedora.info/ for more information.</p></html>");
 
         m_aboutText.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
         JPanel splashPicAndText=new JPanel();
