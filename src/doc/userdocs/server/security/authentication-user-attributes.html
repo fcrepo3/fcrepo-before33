@@ -14,10 +14,7 @@
     <a href="../index.html" id="logo"></a>
     <div id="title">
 		<h1>Fedora Security Architecture - Authentication and User Attributes</h1>
-		<h2>Fedora 2.1b</h2>
-		<p>
-		<img border="0" src="../../images/drafticon.jpg" width="245" height="112"></div>
-		</p>		
+		<h2>Fedora 2.1</h2>		
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 	</div>
@@ -26,59 +23,40 @@
     <h2>Table of Contents</h2>
     <div class="tocbox">
         <ol>
-            <li><a href="#INTRO">1 Introduction</a>
-            <li><a href="#MEMORY">2 tomcat-users (memory realm/loginmodule) conventions</a>
-            <li><a href="#JAAS">3 JAAS Edits</a>
-            <li><a href="#LDAP">4 LDAP Edits</a>            
-            <li><a href="#USERATTRIBUTES">5 Arbitrary User Attributes</a>
+            <li><a href="#INTRO">Introduction</a>                                 
+            <li><a href="#USERATTRIBUTES">Injecting Arbitrary User Attributes</a>
 		</ol>
     </div>
 </div>
 
   <div class="sect">
     <h2><a name="INTRO"></a>1 Introduction</h2>
-    
-<p>For a practical introduction to using Tomcat authentication for Fedora, see the <a href="securingrepo.html#AUTHN">Section 4</a> of 
-the document <a href="securingrepo.html">Securing Your Fedora Repository</a>.  The current document is a technical follow-on to that section.  
-The basics under Tomcat is covered in <a href="http://tomcat.apache.org/tomcat-5.0-doc/realm-howto.html">http://tomcat.apache.org/tomcat-5.0-doc/realm-howto.html</a>
-A few of the Tomcat source files were edited and compiled for use with Fedora. 
+<p>This document collects technical notes on how to supply user attributes for evaluation of Fedora's XACML authorization policies. 
+</p>    
+<p>For a practical introduction to using Tomcat authentication/authorization mechanisms for Fedora, see the <a href="securingrepo.html#AUTHN">Section 4</a> of 
+the document <a href="securingrepo.html">Securing Your Fedora Repository</a>.  The current document is a technical appendix to that section.  
 </p>
-  </div>
-  
-   <div class="sect">
-    <h2><a name="MEMORY"></a>2 Memory Realm / Login Module (tomcat-users.xml) Conventions</h2>
-    
-<p> 
-</p>
-  </div>
-  
-   <div class="sect">
-    <h2><a name="JAAS"></a>3 JAAS Edits</h2>
-    
-<p> 
-</p>
-  </div>
 
-   <div class="sect">
-    <h2><a name="LDAP"></a>4 LDAP Edits</h2>
-    
-<p> 
-</p>
   </div>
-
   
+    
      <div class="sect">
-    <h2><a name="USERATTRIBUTES"></a>5 Arbitrary User Attributes (e.g., for Shibboleth)</h2>
+    <h2><a name="USERATTRIBUTES"></a>2 Injecting Arbitrary User Attributes</h2>
     
-<p>Fedora 2.1b includes a string constant fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES and looks for an http servlet request 
-attribute named after that constant. The Fedora code now takes a request attribute found under that name, as a Map giving name => values of subject attributes. Currently, name must be a String and this is unlikely to change. Value must be a String, and later this might be relaxed to include String[], to allow attributes with multiple values. Other types of value are not serviced. The effect 
-within Fedora of having a key => value pair "a" => "b" in the Map is the same as having a Tomcat role "a=b", with the exception that the effect of having the same attribute key defined both places is right now undefined. (That is, don't do it. :)
+<p>Fedora 2.1 provides a mechanism to include user attributes from arbitrary source(s), and merge them with attributes provided by Tomcat realms or login modules.
+The Fedora code looks for a request attribute whose name equals the string constant fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES.
+A request attribute found under that name is taken as a Map, mapping names to values, and so giving additional user subject attributes. 
+Currently, name must be a String and this is unlikely to change. Value must also be a String, and later this might be relaxed to include String[], 
+to allow attributes with multiple values. Other types of value are not serviced. 
+The effect within Fedora of having a key => value pair "a" => "b" in the Map is the same as having a Tomcat role "a=b" provided by a realm or login module, 
+with the exception that the effect of having the same attribute key defined both places is undefined. (That is, don't do it. :)
 </p><p>
-        So your servlet filter needs only create the map and populate it, and put it into the http servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. Fedora will then look for it, and use the attributes in xacml authorization. This services any subject attribute source, and remains source-neutral, i.e., you could use it to link
-        in Shibboleth, but it doesn't favor Shibboleth.
+        So, e.g., a servlet filter need only create the map and populate it, and put it into the http servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. 
+        Fedora will then look for it, and use the attributes in xacml authorization. This services any subject attribute source, and remains source-neutral, 
+        i.e., you could use it to implement Shibboleth, but it doesn't favor Shibboleth.
 </p><p>        
         If doing this, it would be best to isolate your interface code to be independent both of being in a servlet filter and also of interacting with the Map. 
-        This is so you could later refactor the code into as a JAAS login module if needed. That would allow you to optionally authenticate as well,
+        This is so you could later refactor the code as a JAAS login module if needed. That would allow you to optionally authenticate as well,
         and also make the attributes available to security checks by Tomcat, i.e., through web.xml. 
         You may not end up doing that, but the way you code now could speed that up.
 </p><p>        
@@ -107,5 +85,5 @@ within Fedora of having a key => value pair "a" => "b" in the Map is the same as
     </div>
 </div>
 
-</div></body>
+</body>
 </html>
