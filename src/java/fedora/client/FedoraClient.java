@@ -8,10 +8,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -474,6 +477,37 @@ public class FedoraClient implements Constants {
             logger.debug("Server version is: " + m_serverVersion);
         }
         return m_serverVersion;
+    }
+
+    /**
+     * Return the current date as reported by the Fedora server.
+     *
+     * @throws IOException if the HTTP Date header is not provided by the server
+     *                     for any reason, or it is in the wrong format.
+     */
+    public Date getServerDate() throws IOException {
+        HttpInputStream in = get("/describe", false, false);
+        String dateString = null;
+        try {
+            Header header = in.getResponseHeader("Date");
+            if (header == null) {
+                throw new IOException("Date was not supplied in HTTP response "
+                        + "header for " + m_baseURL + "describe");
+            }
+            dateString = header.getValue();
+
+            // This is the date format recommended by RFC2616
+            SimpleDateFormat format = new SimpleDateFormat(
+                    "EEE, dd MMM yyyy HH:mm:ss z");
+            format.setTimeZone(TimeZone.getTimeZone("UTC"));
+            return format.parse(dateString);
+
+        } catch (ParseException e) {
+            throw new IOException("Unparsable date (" + dateString 
+                    + ") in HTTP response header for " + m_baseURL + "describe");
+        } finally {
+            in.close();
+        }
     }
 
     public Date getLastModifiedDate(String locator) throws IOException {
