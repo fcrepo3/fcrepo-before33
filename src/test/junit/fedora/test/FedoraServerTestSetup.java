@@ -82,6 +82,12 @@ public class FedoraServerTestSetup
     }
     
     public static ServerConfiguration getServerConfiguration() throws Exception {
+    	try {
+    		FileInputStream fis = new FileInputStream(FCFG);
+    	} catch (FileNotFoundException e) {
+    		ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-setup ssl-authenticate-apim");
+    	}
+    	
         return new ServerConfigurationParser(
                 new FileInputStream(FCFG)).parse();
     }

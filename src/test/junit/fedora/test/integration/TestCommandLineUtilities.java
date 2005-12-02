@@ -69,7 +69,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     {
         System.out.println("Purging object demo:5");
         purge("demo:5");
-        assertEquals(sbErr.size(), 0);
+        assertEquals(0, sbErr.size());
         System.out.println("Re-ingesting object demo:5");
         ingestFoxmlFile(new File("src/demo-objects/foxml/local-server-demos/simple-image-demo/obj_demo_5.xml"));
         String out = sbOut.toString();
