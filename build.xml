@@ -188,10 +188,12 @@
 	</path>
 	<!-- Set up the classpath arguments to be inserted into the Fedora startup scripts -->
 	<path id="AxisUtility-libs.path">
+		<pathelement location="${lib.activation}"/>
 		<pathelement location="${lib.axis}"/>
 		<pathelement location="${lib.commons-discovery}"/>
 		<pathelement location="${lib.commons-logging}"/>
 		<pathelement location="${lib.jaxrpc}"/>
+		<pathelement location="${lib.javamail}"/>
 		<pathelement location="${lib.saaj}"/>
 		<pathelement location="${lib.tt-bytecode}"/>
 		<pathelement location="${lib.wsdl4j}"/>
@@ -376,10 +378,8 @@
 		<!-- make securty-sensitive files readable only by owner -->
 		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx"/>
 		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx"/>
-		<chmod file="dist/server/config/fedora-secure-apim.fcfg" perm="go-rwx"/>
-		<chmod file="dist/server/config/fedora-secure-all.fcfg" perm="go-rwx"/>
-		<chmod file="dist/server/config/fedora-unsecure-apim.fcfg" perm="go-rwx"/>
-		<chmod file="dist/server/config/fedora-unsecure-all.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/fedora-base.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/config/my.properties" perm="go-rwx"/>
 		<chmod file="dist/server/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
 		<chmod file="dist/server/config/beSecurity-secure-all.xml" perm="go-rwx"/>
 		<chmod file="dist/server/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
@@ -984,7 +984,9 @@
 				<filter token="fedora.home" value="${env.FEDORA_HOME}"/>
 			</filterset>
 			<fileset dir="src/fcfg/server">
-				<include name="**/*.fcfg"/>
+				<include name="**/fedora-base.fcfg"/>
+				<include name="**/fedora-*.properties"/>
+				<include name="**/my.properties"/>
 				<include name="**/logging.properties"/>
 				<include name="**/*.xml"/>
 			</fileset>
@@ -1007,6 +1009,8 @@
 		</copy>
 		<copy file="${lib.junit}" todir="${tomcat.deploy.dir}/fedora/WEB-INF/lib"/>
 		<!-- testing new tomcat -->
+		<copy file="${lib.activation}" todir="${tomcat.dir}/common/lib"/>
+		<copy file="${lib.javamail}" todir="${tomcat.dir}/common/lib"/>
 		<copy file="${lib.xerces}" todir="${tomcat.dir}/common/lib"/>
 		<copy file="${lib.xml-apis}" todir="${tomcat.dir}/common/lib"/>
 		<copy file="${lib.axis}" todir="${tomcat.dir}/common/lib"/>

@@ -65,11 +65,32 @@ elif [ "$1" = "no-ssl-authenticate-all" ]; then
    CONFIG_SUFFIX="unsecure-all"
 fi
 
-echo
-echo "Copying"
-echo "   FROM: $FEDORA_HOME/server/config/fedora-$CONFIG_SUFFIX.fcfg"
-echo "     TO: $FEDORA_HOME/server/config/fedora.fcfg"
-cp $FEDORA_HOME/server/config/fedora-$CONFIG_SUFFIX.fcfg $FEDORA_HOME/server/config/fedora.fcfg
+# Apply properties to fedora-base.fcfg to create fedora.fcfg
+FCFG_HOME="$FEDORA_HOME"/server/config
+MY_PROPS="$FCFG_HOME"/my.properties
+
+FCFG_BASE="$FCFG_HOME"/fedora-base.fcfg
+PROPS="$FCFG_HOME"/fedora-"${CONFIG_SUFFIX}".properties
+OUT="$FCFG_HOME"/fedora.fcfg
+
+if [ -r "$MY_PROPS" ]; then
+	echo -e "\nApplying \n\t$MY_PROPS"
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+		  fedora.server.config.ServerConfiguration $FCFG_BASE $MY_PROPS > $OUT)
+		  
+	echo -e "\t$PROPS"
+	(exec mv $OUT ${OUT}.tmp)
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+		  fedora.server.config.ServerConfiguration ${OUT}.tmp $PROPS > $OUT)
+	(exec rm ${OUT}.tmp)
+else
+	echo -e "\nApplying \n\t$PROPS"
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+		  fedora.server.config.ServerConfiguration $FCFG_BASE $PROPS > $OUT)
+fi
+
+echo "Wrote"
+echo -e "\t$OUT\n"
 echo "Copying"
 echo "   FROM: $FEDORA_HOME/server/config/beSecurity-$CONFIG_SUFFIX.xml"
 echo "     TO: $FEDORA_HOME/server/config/beSecurity.xml"
@@ -82,7 +103,7 @@ cp $WEBAPP_DIR/web-$CONFIG_SUFFIX.xml $WEBAPP_DIR/web.xml
 echo
 echo "Fedora security setup complete!"
 echo "Configuration files in play are:"
-echo "   fedora-$CONFIG_SUFFIX.fcfg"
+echo "   fedora-$CONFIG_SUFFIX.properties"
 echo "   beSecurity-$CONFIG_SUFFIX.xml"
 echo "   web-$CONFIG_SUFFIX.xml"
 
