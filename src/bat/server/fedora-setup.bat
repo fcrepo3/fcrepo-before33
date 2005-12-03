@@ -4,7 +4,8 @@
 if "%FEDORA_HOME%" == "" goto envErr
 
 set TOMCAT_DIR=@tomcat.basename@
-set WEBAPP_DIR=%FEDORA_HOME%\server\%TOMCAT_DIR%\webapps\fedora\WEB-INF
+set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
+set WEBAPP_DIR=%TC%\webapps\fedora\WEB-INF
 
 if "%1" == "" goto usage
 if "%1" == "ssl-authenticate-apim" goto secureAPIM
@@ -30,10 +31,36 @@ set CONFIG_SUFFIX=unsecure-all
 goto setup
 
 :setup
-echo Copying
-echo    FROM: %FEDORA_HOME%\server\config\fedora-%CONFIG_SUFFIX%.fcfg 
-echo      TO: %FEDORA_HOME%\server\config\fedora.fcfg
-copy %FEDORA_HOME%\server\config\fedora-%CONFIG_SUFFIX%.fcfg %FEDORA_HOME%\server\config\fedora.fcfg
+
+rem Apply properties to fedora-base.fcfg to create fedora.fcfg
+set FCFG_HOME=%FEDORA_HOME%\server\config
+set MY_PROPS=%FCFG_HOME%\my.properties
+
+set FCFG_BASE=%FCFG_HOME%\fedora-base.fcfg
+set PROPS=%FCFG_HOME%\fedora-%CONFIG_SUFFIX%.properties
+set OUT=%FCFG_HOME%\fedora.fcfg
+
+if exist "%MY_PROPS%" goto applyMyProps
+goto applyProps
+:applyMyProps
+echo 
+echo Applying
+echo     %MY_PROPS%
+"%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes fedora.server.config.ServerConfiguration %FCFG_BASE% %MY_PROPS% > %OUT%
+echo     %PROPS%
+move %OUT% %OUT%.tmp
+"%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes fedora.server.config.ServerConfiguration %OUT%.tmp %PROP% > %OUT%
+del %OUT%.tmp
+goto copy
+
+:applyProps
+echo 
+echo Applying
+echo     %PROPS%
+"%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes fedora.server.config.ServerConfiguration %FCFG_BASE% %PROPS% > %OUT%
+goto copy
+
+:copy
 echo Copying
 echo    FROM: %FEDORA_HOME%\server\config\beSecurity-%CONFIG_SUFFIX%.xml 
 echo      TO: %FEDORA_HOME%\server\config\beSecurity.xml
@@ -43,8 +70,6 @@ echo    FROM: %WEBAPP_DIR%\web-%CONFIG_SUFFIX%.xml
 echo      TO: %WEBAPP_DIR%\web.xml
 copy %WEBAPP_DIR%\web-%CONFIG_SUFFIX%.xml %WEBAPP_DIR%\web.xml
 goto success
-
-
 
 :usage
 echo.
@@ -72,7 +97,7 @@ echo ERROR: Environment variable, FEDORA_HOME must be set.
 echo.
 echo Fedora security setup complete!
 echo Configuration files in play are:
-echo    fedora-%CONFIG_SUFFIX%.fcfg
+echo    fedora-%CONFIG_SUFFIX%.properties
 echo    beSecurity-%CONFIG_SUFFIX%.xml
 echo    web-%CONFIG_SUFFIX%.xml
 goto end
