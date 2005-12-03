@@ -201,9 +201,9 @@ public class BasicServer
 		Properties props = new Properties();
 		ResourceBundle res =
             ResourceBundle.getBundle(LOG4J_PROPS);
-		Enumeration enum = res.getKeys();
-		while(enum.hasMoreElements()) {
-			String key = (String)enum.nextElement();
+		Enumeration keys = res.getKeys();
+		while(keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
 			String value = res.getString(key);
 			Matcher matcher = pattern.matcher(key);
 			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
