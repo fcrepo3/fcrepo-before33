@@ -403,74 +403,74 @@ public class PolicyEditorInputkXML
      //   {"lt", new Integer(60)},        // < - less-than
      //   {"gt", new Integer(62)},        // > - greater-than
         {"nbsp", new Integer(160)},     // non-breaking space
-        {"copy", new Integer(169)},     // © - copyright
-        {"reg", new Integer(174)},      // ® - registered trademark
-        {"Agrave", new Integer(192)},   // À - uppercase A, grave accent
-        {"Aacute", new Integer(193)},   // Á - uppercase A, acute accent
-        {"Acirc", new Integer(194)},    // Â - uppercase A, circumflex accent
-        {"Atilde", new Integer(195)},   // Ã - uppercase A, tilde
-        {"Auml", new Integer(196)},     // Ä - uppercase A, umlaut
-        {"Aring", new Integer(197)},    // Å - uppercase A, ring
-        {"AElig", new Integer(198)},    // Æ - uppercase AE
-        {"Ccedil", new Integer(199)},   // Ç - uppercase C, cedilla
-        {"Egrave", new Integer(200)},   // È - uppercase E, grave accent
-        {"Eacute", new Integer(201)},   // É - uppercase E, acute accent
-        {"Ecirc", new Integer(202)},    // Ê - uppercase E, circumflex accent
-        {"Euml", new Integer(203)},     // Ë - uppercase E, umlaut
-        {"Igrave", new Integer(204)},   // Ì - uppercase I, grave accent
-        {"Iacute", new Integer(205)},   // Í - uppercase I, acute accent
-        {"Icirc", new Integer(206)},    // Î - uppercase I, circumflex accent
-        {"Iuml", new Integer(207)},     // Ï - uppercase I, umlaut
-        {"ETH", new Integer(208)},      // Ð - uppercase Eth, Icelandic
-        {"Ntilde", new Integer(209)},   // Ñ - uppercase N, tilde
-        {"Ograve", new Integer(210)},   // Ò - uppercase O, grave accent
-        {"Oacute", new Integer(211)},   // Ó - uppercase O, acute accent
-        {"Ocirc", new Integer(212)},    // Ô - uppercase O, circumflex accent
-        {"Otilde", new Integer(213)},   // Õ - uppercase O, tilde
-        {"Ouml", new Integer(214)},     // Ö - uppercase O, umlaut
-        {"Oslash", new Integer(216)},   // Ø - uppercase O, slash
-        {"Ugrave", new Integer(217)},   // Ù - uppercase U, grave accent
-        {"Uacute", new Integer(218)},   // Ú - uppercase U, acute accent
-        {"Ucirc", new Integer(219)},    // Û - uppercase U, circumflex accent
-        {"Uuml", new Integer(220)},     // Ü - uppercase U, umlaut
-        {"Yacute", new Integer(221)},   // Ý - uppercase Y, acute accent
-        {"THORN", new Integer(222)},    // Þ - uppercase THORN, Icelandic
-        {"szlig", new Integer(223)},    // ß - lowercase sharps, German
-        {"agrave", new Integer(224)},   // à - lowercase a, grave accent
-        {"aacute", new Integer(225)},   // á - lowercase a, acute accent
-        {"acirc", new Integer(226)},    // â - lowercase a, circumflex accent
-        {"atilde", new Integer(227)},   // ã - lowercase a, tilde
-        {"auml", new Integer(228)},     // ä - lowercase a, umlaut
-        {"aring", new Integer(229)},    // å - lowercase a, ring
-        {"aelig", new Integer(230)},    // æ - lowercase ae
-        {"ccedil", new Integer(231)},   // ç - lowercase c, cedilla
-        {"egrave", new Integer(232)},   // è - lowercase e, grave accent
-        {"eacute", new Integer(233)},   // é - lowercase e, acute accent
-        {"ecirc", new Integer(234)},    // ê - lowercase e, circumflex accent
-        {"euml", new Integer(235)},     // ë - lowercase e, umlaut
-        {"igrave", new Integer(236)},   // ì - lowercase i, grave accent
-        {"iacute", new Integer(237)},   // í - lowercase i, acute accent
-        {"icirc", new Integer(238)},    // î - lowercase i, circumflex accent
-        {"iuml", new Integer(239)},     // ï - lowercase i, umlaut
-        {"igrave", new Integer(236)},   // ì - lowercase i, grave accent
-        {"iacute", new Integer(237)},   // í - lowercase i, acute accent
-        {"icirc", new Integer(238)},    // î - lowercase i, circumflex accent
-        {"iuml", new Integer(239)},     // ï - lowercase i, umlaut
-        {"eth", new Integer(240)},      // ð - lowercase eth, Icelandic
-        {"ntilde", new Integer(241)},   // ñ - lowercase n, tilde
-        {"ograve", new Integer(242)},   // ò - lowercase o, grave accent
-        {"oacute", new Integer(243)},   // ó - lowercase o, acute accent
-        {"ocirc", new Integer(244)},    // ô - lowercase o, circumflex accent
-        {"otilde", new Integer(245)},   // õ - lowercase o, tilde
-        {"ouml", new Integer(246)},     // ö - lowercase o, umlaut
-        {"oslash", new Integer(248)},   // ø - lowercase o, slash
-        {"ugrave", new Integer(249)},   // ù - lowercase u, grave accent
-        {"uacute", new Integer(250)},   // ú - lowercase u, acute accent
-        {"ucirc", new Integer(251)},    // û - lowercase u, circumflex accent
-        {"uuml", new Integer(252)},     // ü - lowercase u, umlaut
-        {"yacute", new Integer(253)},   // ý - lowercase y, acute accent
-        {"thorn", new Integer(254)},    // þ - lowercase thorn, Icelandic
-        {"yuml", new Integer(255)},     // ÿ - lowercase y, umlaut
+        {"copy", new Integer(169)},     // ï¿½ - copyright
+        {"reg", new Integer(174)},      // ï¿½ - registered trademark
+        {"Agrave", new Integer(192)},   // ï¿½ - uppercase A, grave accent
+        {"Aacute", new Integer(193)},   // ï¿½ - uppercase A, acute accent
+        {"Acirc", new Integer(194)},    // ï¿½ - uppercase A, circumflex accent
+        {"Atilde", new Integer(195)},   // ï¿½ - uppercase A, tilde
+        {"Auml", new Integer(196)},     // ï¿½ - uppercase A, umlaut
+        {"Aring", new Integer(197)},    // ï¿½ - uppercase A, ring
+        {"AElig", new Integer(198)},    // ï¿½ - uppercase AE
+        {"Ccedil", new Integer(199)},   // ï¿½ - uppercase C, cedilla
+        {"Egrave", new Integer(200)},   // ï¿½ - uppercase E, grave accent
+        {"Eacute", new Integer(201)},   // ï¿½ - uppercase E, acute accent
+        {"Ecirc", new Integer(202)},    // ï¿½ - uppercase E, circumflex accent
+        {"Euml", new Integer(203)},     // ï¿½ - uppercase E, umlaut
+        {"Igrave", new Integer(204)},   // ï¿½ - uppercase I, grave accent
+        {"Iacute", new Integer(205)},   // ï¿½ - uppercase I, acute accent
+        {"Icirc", new Integer(206)},    // ï¿½ - uppercase I, circumflex accent
+        {"Iuml", new Integer(207)},     // ï¿½ - uppercase I, umlaut
+        {"ETH", new Integer(208)},      // ï¿½ - uppercase Eth, Icelandic
+        {"Ntilde", new Integer(209)},   // ï¿½ - uppercase N, tilde
+        {"Ograve", new Integer(210)},   // ï¿½ - uppercase O, grave accent
+        {"Oacute", new Integer(211)},   // ï¿½ - uppercase O, acute accent
+        {"Ocirc", new Integer(212)},    // ï¿½ - uppercase O, circumflex accent
+        {"Otilde", new Integer(213)},   // ï¿½ - uppercase O, tilde
+        {"Ouml", new Integer(214)},     // ï¿½ - uppercase O, umlaut
+        {"Oslash", new Integer(216)},   // ï¿½ - uppercase O, slash
+        {"Ugrave", new Integer(217)},   // ï¿½ - uppercase U, grave accent
+        {"Uacute", new Integer(218)},   // ï¿½ - uppercase U, acute accent
+        {"Ucirc", new Integer(219)},    // ï¿½ - uppercase U, circumflex accent
+        {"Uuml", new Integer(220)},     // ï¿½ - uppercase U, umlaut
+        {"Yacute", new Integer(221)},   // ï¿½ - uppercase Y, acute accent
+        {"THORN", new Integer(222)},    // ï¿½ - uppercase THORN, Icelandic
+        {"szlig", new Integer(223)},    // ï¿½ - lowercase sharps, German
+        {"agrave", new Integer(224)},   // ï¿½ - lowercase a, grave accent
+        {"aacute", new Integer(225)},   // ï¿½ - lowercase a, acute accent
+        {"acirc", new Integer(226)},    // ï¿½ - lowercase a, circumflex accent
+        {"atilde", new Integer(227)},   // ï¿½ - lowercase a, tilde
+        {"auml", new Integer(228)},     // ï¿½ - lowercase a, umlaut
+        {"aring", new Integer(229)},    // ï¿½ - lowercase a, ring
+        {"aelig", new Integer(230)},    // ï¿½ - lowercase ae
+        {"ccedil", new Integer(231)},   // ï¿½ - lowercase c, cedilla
+        {"egrave", new Integer(232)},   // ï¿½ - lowercase e, grave accent
+        {"eacute", new Integer(233)},   // ï¿½ - lowercase e, acute accent
+        {"ecirc", new Integer(234)},    // ï¿½ - lowercase e, circumflex accent
+        {"euml", new Integer(235)},     // ï¿½ - lowercase e, umlaut
+        {"igrave", new Integer(236)},   // ï¿½ - lowercase i, grave accent
+        {"iacute", new Integer(237)},   // ï¿½ - lowercase i, acute accent
+        {"icirc", new Integer(238)},    // ï¿½ - lowercase i, circumflex accent
+        {"iuml", new Integer(239)},     // ï¿½ - lowercase i, umlaut
+        {"igrave", new Integer(236)},   // ï¿½ - lowercase i, grave accent
+        {"iacute", new Integer(237)},   // ï¿½ - lowercase i, acute accent
+        {"icirc", new Integer(238)},    // ï¿½ - lowercase i, circumflex accent
+        {"iuml", new Integer(239)},     // ï¿½ - lowercase i, umlaut
+        {"eth", new Integer(240)},      // ï¿½ - lowercase eth, Icelandic
+        {"ntilde", new Integer(241)},   // ï¿½ - lowercase n, tilde
+        {"ograve", new Integer(242)},   // ï¿½ - lowercase o, grave accent
+        {"oacute", new Integer(243)},   // ï¿½ - lowercase o, acute accent
+        {"ocirc", new Integer(244)},    // ï¿½ - lowercase o, circumflex accent
+        {"otilde", new Integer(245)},   // ï¿½ - lowercase o, tilde
+        {"ouml", new Integer(246)},     // ï¿½ - lowercase o, umlaut
+        {"oslash", new Integer(248)},   // ï¿½ - lowercase o, slash
+        {"ugrave", new Integer(249)},   // ï¿½ - lowercase u, grave accent
+        {"uacute", new Integer(250)},   // ï¿½ - lowercase u, acute accent
+        {"ucirc", new Integer(251)},    // ï¿½ - lowercase u, circumflex accent
+        {"uuml", new Integer(252)},     // ï¿½ - lowercase u, umlaut
+        {"yacute", new Integer(253)},   // ï¿½ - lowercase y, acute accent
+        {"thorn", new Integer(254)},    // ï¿½ - lowercase thorn, Icelandic
+        {"yuml", new Integer(255)},     // ï¿½ - lowercase y, umlaut
         {"euro", new Integer(8364)},    // Euro symbol
     };
     static Map e2i = new HashMap();
