@@ -76,7 +76,7 @@ public class ViewObjectXML
                     exporter.getObjectXML(pid, out);
                     JTextComponent textEditor=new JTextArea();
                     textEditor.setFont(new Font("monospaced", Font.PLAIN, 12));
-                    textEditor.setText(new String(out.toByteArray()));
+                    textEditor.setText(new String(out.toString("UTF-8")));
                     textEditor.setCaretPosition(0);
                     textEditor.setEditable(false);
                     if (m_viewPane==null) {
