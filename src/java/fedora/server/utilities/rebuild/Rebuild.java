@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,8 @@ import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ProtocolPort;
 import fedora.server.utilities.ServerUtility;
+import fedora.utilities.FileComparator;
+
 import gnu.trove.TIntHashSet;
 
 /**
@@ -30,6 +33,8 @@ import gnu.trove.TIntHashSet;
  * @@version $Id$
  */
 public class Rebuild {
+
+    private static FileComparator _REVERSE_FILE_COMPARATOR = new FileComparator(true);
 
     /**
      * Rebuilders that the rebuild utility knows about.
@@ -102,15 +107,16 @@ public class Rebuild {
     }
 
     /**
-     * Recurse directories looking for files that contain searchString,
-     * and call rebuilder.addObject on them as long as their PIDs have
-     * not already been seen.
+     * Recurse directories in reverse order (latest time first) looking for 
+     * files that contain searchString, and call rebuilder.addObject on 
+     * them as long as their PIDs have not already been seen.
      */
     private void rebuildFromDirectory(Rebuilder rebuilder, 
                                       File dir, 
                                       String searchString,
                                       TIntHashSet saw) throws Exception {
         File[] files = dir.listFiles();
+        Arrays.sort(files, _REVERSE_FILE_COMPARATOR);
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
                 rebuildFromDirectory(rebuilder, files[i], searchString, saw);

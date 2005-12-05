@@ -18,6 +18,8 @@ import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.RepositoryInfo;
 
+import fedora.utilities.FileComparator;
+
 /**
  * <p><b>Title:</b> Ingest.java</p>
  * <p><b>Description: A utility class to initiate ingest of one or more objects.
@@ -27,6 +29,8 @@ import fedora.server.types.gen.RepositoryInfo;
 public class Ingest {
 
     public static String LAST_PATH;
+
+    private static FileComparator _FILE_COMPARATOR = new FileComparator();
 
     // if logMessage is null, will use original path in logMessage
     public static String oneFromFile(File file, 
@@ -111,6 +115,7 @@ public class Ingest {
                                            PrintStream log,
                                            IngestCounter c) throws Exception {
         File[] files = dir.listFiles();
+        Arrays.sort(files, _FILE_COMPARATOR);
         for (int i = 0; i < files.length; i++) {
             if (files[i].isDirectory()) {
                 multiFromDirectory(files[i], ingestFormat, fType, searchString,

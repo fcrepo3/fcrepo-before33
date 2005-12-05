@@ -65,7 +65,7 @@ public class TestFedoraConfigurations extends FedoraTestCase {
         File propDir = new File(FCFG_SRC_DIR);
         if (propDir.exists() && propDir.isDirectory()) {
             File[] files = propDir.listFiles();
-            Arrays.sort(files, new FileComparator());
+            Arrays.sort(files, new FileComparator(false, true));
             int count = files.length;
             for (int i = 0; i < count; i++) { //for each file:
                 File f = files[i];
