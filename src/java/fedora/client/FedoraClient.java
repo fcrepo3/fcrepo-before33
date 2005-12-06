@@ -1,6 +1,7 @@
 package fedora.client;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -11,10 +12,15 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
@@ -24,6 +30,7 @@ import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.jrdf.graph.Literal;
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
@@ -51,7 +58,9 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 
 public class FedoraClient implements Constants {
-
+	private static final String FEDORA_HOME = System.getProperty("fedora.home");
+	private static final String LOG4J_PROPS = "fedora.client.resources.log4j";
+    private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
     /** Seconds to wait before a connection is established. */
@@ -84,7 +93,8 @@ public class FedoraClient implements Constants {
     private String m_serverVersion;
 
     public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
-        m_baseURL = baseURL;
+        initLogger();
+    	m_baseURL = baseURL;
         m_user = user;
         m_pass = pass;
         if (!baseURL.endsWith("/")) m_baseURL += "/";
@@ -628,6 +638,25 @@ public class FedoraClient implements Constants {
             }
         }
         return encoded.toString();
+    }
+    
+    private void initLogger() {
+    	File logDir = new File(FEDORA_HOME, "client/logs");
+    	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
+		Properties props = new Properties();
+		ResourceBundle res = ResourceBundle.getBundle(LOG4J_PROPS);
+		Enumeration keys = res.getKeys();
+		while(keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
+			String value = res.getString(key);
+			Matcher matcher = pattern.matcher(key);
+			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
+			if (matcher.matches() && (value == null || value.equals(""))) {
+				value = new File(logDir, matcher.group(1).toLowerCase() + ".log").getAbsolutePath();
+			}
+			props.put(key, value);
+		}
+		PropertyConfigurator.configure(props);
     }
     
 	// for quick testing

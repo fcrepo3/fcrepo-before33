@@ -122,6 +122,7 @@
 	<fileset dir="${lib.dir}" id="server-libs.fileset" includes="${server-libs.list}"/>
 	<pathconvert pathsep="," property="client-libs.list">
 		<path id="client-libs.path">
+			<pathelement location="${lib.activation}"/>
 			<pathelement location="${lib.axis}"/>
 			<pathelement location="${lib.batik}"/>
 			<pathelement location="${lib.commons-dbcp}"/>
@@ -133,6 +134,7 @@
 			<pathelement location="${lib.getopt}"/>
 			<pathelement location="${lib.jai_codec}"/>
 			<pathelement location="${lib.jai_core}"/>
+			<pathelement location="${lib.javamail}"/>
 			<pathelement location="${lib.jaxrpc}"/>
 			<pathelement location="${lib.jhbasic}"/>
 			<pathelement location="${lib.jrdf}"/>
