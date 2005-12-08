@@ -130,29 +130,31 @@
     <blockquote>
       <p><b>fedora-start</b> </p>
       <p>or</p>
-	<p><b>fedora-start</b> mckoi</p>
+	  <p><b>fedora-start</b> mckoi</p>
+      <p>or</p>
+      <p><b>fedora-start</b> oracle</p>
     </blockquote>
 
     <p>Where:</p>
 
     <ul>
-      <li>when run <u>without</u> a parameter the fedora server is started using the 
-	database that has been specified in the configuration file (fedora.fcfg)
-	</li>
-      <li>when run <u>with</u> a parameter the fedora server is started using the 
-	mckoi database, overriding whatever database that is specified in the configuration 
-	file (fedora.fcfg)</li>
+      
+    <li>when run <u>without</u> a parameter the fedora server is started using 
+      the database that has been specified as the default (MySQL) in the configuration 
+      file (fedora.fcfg) </li>
+    <li>when run <u>with</u> a parameter the fedora server is started using the 
+      database specified by the parameter</li>
     </ul>Example:
 
     <blockquote>
       <p><b>fedora-start </b></p>
-	<p>Note: Before starting the Fedora server, a decision about what security configuration 
-	to use needs to be made (see fedora-config) and several decisions need to be made pertaining
-	to the overall setup of the fedora-server need to be made, (see the Fedora Installation and 
-	Configuration Guide) and the database that is to be used in conjunction with the Fedora server 
-	(either MySql or McKoi or some other custom solution) needs to be started and initialized.
-
-    </blockquote>
+	<p>Note: Before starting the Fedora server, a decision about what security 
+      configuration to use needs to be made (see <a href="#setup">fedora-setup</a>) and several decisions 
+      need to be made pertaining to the overall setup of the fedora-server need 
+      to be made, (see the <a href="../../distribution/installation.html">Fedora Installation and Configuration Guide</a>) and the 
+      database that is to be used in conjunction with the Fedora server (either 
+      MySql or McKoi or some other custom solution) needs to be started and initialized. 
+  </blockquote>
   </div>
 <br><br><br>
   <div class="sec1">
@@ -253,9 +255,11 @@
     <p>Where:</p>
 
     <ul>
-      <li><b>[fedoraDBUser]</b> - The Fedora username (e.g. fedoraAdmin).</li>
+      
+    <li><b>[fedoraDBUser]</b> - The Fedora database username (e.g. fedoraAdmin).</li>
 
-      <li><b>[fedoraDBPass]</b> - The Fedora user's password.</li>
+      
+    <li><b>[fedoraDBPass]</b> - The Fedora database user's password.</li>
     </ul>
 
     <p>Example:</p>
@@ -292,9 +296,13 @@
     <p>Where:</p>
 
     <ul>
-      <li><b>[fedoraDBUser]</b> - The Fedora username entered when then command mckoi-init was run.</li>
+      
+    <li><b>[fedoraDBUser]</b> - The Fedora database username entered when then 
+      command mckoi-init was run.</li>
 
-      <li><b>[fedoraDBPass]</b> - The Fedora user's password entered when then command mckoi-init was run.</li>
+      
+    <li><b>[fedoraDBPass]</b> - The Fedora database user's password entered when 
+      then command mckoi-init was run.</li>
     </ul>
 
     <p>The mckoi-stop command is used to stop the McKoi database, after it has been started 
@@ -336,9 +344,10 @@
 	<br>Note: If you are running versions of MySQL prior to 4.1, OMIT THIS PARAMETER.</li>
     </ul>
 
-    <p>The mysql-config command line builds all of the necessary tables within the MySQL database
-	so that the Fedora server can be run using MySQL as its backing store.  If you plan to use
-	the McKoi database, this command is not necessary. </p>
+    
+  <p>The mysql-config command line builds all of the necessary tables within the 
+    MySQL database so that the Fedora server can be run using MySQL as its backing 
+    store. If you plan to use the McKoi database, this command is not necessary.</p>
   </div>
 <br><br><br>
   <div class="sec1">
