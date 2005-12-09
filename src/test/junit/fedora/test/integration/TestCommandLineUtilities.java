@@ -191,7 +191,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         {
             System.out.println("Checking "+(expectValid ? "valid" : "invalid") +" policy: "+
                                testFiles[i].getName());
-            execute("/server/bin/validate-policy " + testFiles[i].getAbsolutePath());
+            execute("/server/bin/validate-policy", testFiles[i].getAbsolutePath());
             String out = sbOut.toString();
             String err = sbErr.toString();
              
@@ -217,7 +217,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     private void ingestFoxmlDirectory(File dir) 
     {
         //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
-        execute("/client/bin/fedora-ingest d " + dir.getAbsolutePath() + 
+        execute("/client/bin/fedora-ingest", "d " + dir.getAbsolutePath() + 
                 " foxml1.0 DMO " + getHost() + ":" + getPort() + " " + getUsername() + 
                 " " + getPassword() + " " + getProtocol() + " \"junit ingest\"");
     }
@@ -225,35 +225,35 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     private void ingestFoxmlFile(File f) 
     {
         //fedora-ingest f obj1.xml foxml1.0 myrepo.com:8443 jane jpw https
-        execute("/client/bin/fedora-ingest f " + f.getAbsolutePath() + 
+        execute("/client/bin/fedora-ingest", "f " + f.getAbsolutePath() + 
                 " foxml1.0 " + getHost() + ":" + getPort() + " " + getUsername() + 
                 " " + getPassword() + " " + getProtocol() + " junit-ingest");
     }
     
     private static void purge(String pid) 
     {
-        execute("/client/bin/fedora-purge " + getHost() + ":" + getPort() +
+        execute("/client/bin/fedora-purge", getHost() + ":" + getPort() +
                 " " + getUsername() + " " + getPassword() + " " + pid + " " + 
                 getProtocol() + " junit-purge");
     }
     
     private void batchBuild(File objectTemplateFile, File objectSpecificDir, File objectDir, File logFile)
     {
-        execute("/client/bin/fedora-batch-build " + objectTemplateFile.getAbsolutePath() + " " + 
+        execute("/client/bin/fedora-batch-build", objectTemplateFile.getAbsolutePath() + " " + 
                 objectSpecificDir.getAbsolutePath() + " " + objectDir.getAbsolutePath() + " " + 
                 logFile.getAbsolutePath() + " text");
     }
     
     private void batchIngest(File objectDir, File logFile)
     {
-        execute("/client/bin/fedora-batch-ingest " + objectDir.getAbsolutePath() + " " + 
+        execute("/client/bin/fedora-batch-ingest", objectDir.getAbsolutePath() + " " + 
                 logFile.getAbsolutePath() + " text foxml1.0 " + getHost() + ":" + getPort() +
                 " " + getUsername() + " " + getPassword() + " " + getProtocol() );
     }
     
     private void batchBuildIngest(File objectTemplateFile, File objectSpecificDir, File objectDir, File logFile)
     {
-        execute("/client/bin/fedora-batch-buildingest " + objectTemplateFile.getAbsolutePath() + " " + 
+        execute("/client/bin/fedora-batch-buildingest", objectTemplateFile.getAbsolutePath() + " " + 
                 objectSpecificDir.getAbsolutePath() + " " + objectDir.getAbsolutePath() + " " + 
                 logFile.getAbsolutePath() + " text " + getHost() + ":" + getPort() +
                     " " + getUsername() + " " + getPassword() + " " + getProtocol() );
@@ -261,29 +261,29 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     
     private void batchModify(File batchDirectives, File logFile)
     {
-        execute("/client/bin/fedora-modify " + getHost() + ":" + getPort() + " " + 
+        execute("/client/bin/fedora-modify", getHost() + ":" + getPort() + " " + 
                 getUsername() + " " + getPassword() + " " + batchDirectives.getAbsolutePath() + " " + 
                 logFile.getAbsolutePath() + " " + getProtocol() );
     }
 
     private void exportObj(String pid, File dir)
     {
-        execute("/client/bin/fedora-export " + getHost() + ":" + getPort() + " " + 
+        execute("/client/bin/fedora-export", getHost() + ":" + getPort() + " " + 
                 getUsername() + " " + getPassword() + " " + pid + " foxml1.0 public " + 
                 dir.getAbsolutePath() + " " + getProtocol() );
     }
     
-    public static void execute(String cmd) 
+    public static void execute(String cmd, String args) 
     {
         if (sbOut != null && sbErr != null)
         {
             sbOut.reset();
             sbErr.reset();
-            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd, sbOut, sbErr);
+            ExecUtility.execCommandLineUtility("\"" + FEDORA_HOME + cmd + "\" " + args, sbOut, sbErr);
         }
         else
         {
-            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd);
+            ExecUtility.execCommandLineUtility("\"" + FEDORA_HOME + cmd + "\" " + args);
         }
     }
     
