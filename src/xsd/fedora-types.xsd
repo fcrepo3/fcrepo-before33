@@ -191,11 +191,11 @@
 			<element name="label" type="string"/>
 			<element name="versionable" type="boolean"/>
 			<element name="MIMEType" type="string"/>
-			<element name="formatURI" type="string"/>
+			<element name="formatURI" minOccurs="0" nillable="true" type="string"/>
 			<element name="createDate" type="string"/>
 			<element name="size" type="long"/>
 			<element name="state" type="string"/>
-			<element name="location" type="string"/>
+			<element name="location" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="DatastreamDef">
