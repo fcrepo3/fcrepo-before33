@@ -130,7 +130,7 @@ public class FieldSearchResultSQLImpl
 			if (resultFields.length > 0) {
 				String delimiter = " ";
 				for (int i=0; i < resultFields.length; i++) {
-					String dbColumn = dcFixup(resultFields[i]);
+					String dbColumn = "doFields." + dcFixup(resultFields[i]);
 					resultFieldsString.append(delimiter + dbColumn);
 					delimiter = ", ";
 				}
