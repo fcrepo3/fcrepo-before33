@@ -354,7 +354,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
     } catch (Throwable e1) {
       	log("in DefaultAuthorization.postInitModule() 8");
-    	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole());
+    	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole(), e1);
     	throw e2;
     }
   }
