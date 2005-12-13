@@ -15,12 +15,12 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\client\client.jar goto clientNotFound
+if not exist "%FEDORA_HOME%\client\client.jar" goto clientNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava
-if not exist %THIS_JAVA_HOME%\bin\java.exe goto noJavaBin
-if not exist %THIS_JAVA_HOME%\bin\orbd.exe goto badJavaVersion
+if not exist "%THIS_JAVA_HOME%\bin\java.exe" goto noJavaBin
+if not exist "%THIS_JAVA_HOME%\bin\orbd.exe" goto badJavaVersion
 goto envOk
 
 :tryJavaHome

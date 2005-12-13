@@ -23,7 +23,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\client\client.jar goto clientNotFound
+if not exist "%FEDORA_HOME%\client\client.jar" goto clientNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 
