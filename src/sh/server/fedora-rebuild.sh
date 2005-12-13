@@ -27,7 +27,7 @@ AXIS_UTILITY_LIBS=@AxisUtility.unix.libs@
 SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
 
 SERVER_PROFILE="$1"
-(exec "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
+(exec "$JAVA" -server -Xmn64m -Xms256m -Xmx256m \
 	    	  -cp "$TC/webapps/fedora/WEB-INF/classes" \
   			  -Dfedora.home="$FEDORA_HOME" \
   			  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
