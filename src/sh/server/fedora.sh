@@ -111,7 +111,7 @@ start() {
 		echo "Using server profile: $SERVER_PROFILE"
 	fi
 	
-  	(exec nohup "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
+  	(exec nohup "$JAVA" -server -Xmn64m -Xms256m -Xmx256m \
 		-classpath "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
 		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
 		-Djavax.net.ssl.trustStorePassword=tomcat \
@@ -182,7 +182,7 @@ debug() {
 		echo "Using server profile: $SERVER_PROFILE"
 	fi
 	
-  	(exec nohup "$JAVA" -server -Xmn32m -Xms128m -Xmx128m \
+  	(exec nohup "$JAVA" -server -Xmn64m -Xms256m -Xmx256m \
 		-Xnoagent -Xdebug -Djava.compiler=none \
 		-Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n \
 		-classpath "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
