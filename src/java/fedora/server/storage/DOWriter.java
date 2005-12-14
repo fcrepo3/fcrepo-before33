@@ -98,7 +98,6 @@ public interface DOWriter
      * Adds a disseminator to the object.
      *
      * @param disseminator The disseminator.
-     * @return An internally-unique disseminator id.
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
