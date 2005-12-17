@@ -348,11 +348,11 @@
 			<element name="parmRequired" type="boolean"/>
 			<element name="parmLabel" type="string"/>
 			<element name="parmPassBy" type="string"/>
-			<element name="PASS_BY_REF" type="fedora-types:passByRef"/>
-			<element name="PASS_BY_VALUE" type="fedora-types:passByValue"/>
-			<element name="DATASTREAM_INPUT" type="fedora-types:datastreamInputType"/>
-			<element name="USER_INPUT" type="fedora-types:userInputType"/>
-			<element name="DEFAULT_INPUT" type="fedora-types:defaultInputType"/>
+			<element name="PASS_BY_REF" nillable="true"  type="fedora-types:passByRef"/>
+			<element name="PASS_BY_VALUE" nillable="true" type="fedora-types:passByValue"/>
+			<element name="DATASTREAM_INPUT" nillable="true" type="fedora-types:datastreamInputType"/>
+			<element name="USER_INPUT" nillable="true" type="fedora-types:userInputType"/>
+			<element name="DEFAULT_INPUT" nillable="true" type="fedora-types:defaultInputType"/>
 		</sequence>
 	</complexType>
 	<complexType name="MIMETypedStream">
@@ -362,7 +362,7 @@
 		<sequence>
 			<element name="MIMEType" type="string"/>
 			<element name="stream" type="base64Binary"/>
-			<element name="header" type="fedora-types:ArrayOfProperty"/>
+			<element name="header" nillable="true" type="fedora-types:ArrayOfProperty"/>
 		</sequence>
 	</complexType>
 	<complexType name="ObjectFields">
@@ -409,7 +409,7 @@
 			<element name="bDefPID" type="string"/>
 			<element name="methodName" type="string"/>
 			<element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
-			<element name="asOfDate" type="string"/>
+			<element name="asOfDate" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="ObjectProfile">
