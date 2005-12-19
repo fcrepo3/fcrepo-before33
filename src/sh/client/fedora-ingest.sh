@@ -6,9 +6,6 @@
 # ----------------------------------------------------------------------
 # Environment setup
 
-# Reset the input field separator to its default value
-IFS=
-
 # Reset the execution path 
 PATH=/bin:/usr/bin:/usr/local/bin:/opt/bin
 
