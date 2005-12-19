@@ -279,11 +279,11 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         {
             sbOut.reset();
             sbErr.reset();
-            ExecUtility.execCommandLineUtility("\"" + FEDORA_HOME + cmd + "\" " + args, sbOut, sbErr);
+            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd + " " + args, sbOut, sbErr);
         }
         else
         {
-            ExecUtility.execCommandLineUtility("\"" + FEDORA_HOME + cmd + "\" " + args);
+            ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd + " " + args);
         }
     }
     
