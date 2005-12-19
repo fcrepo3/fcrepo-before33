@@ -4,16 +4,6 @@ package fedora.utilities.policyEditor;
 * <p><b>Title:</b> RunnableCommand.java</p>
 * <p><b>Description:</b> </p>
 *
-* -----------------------------------------------------------------------------
-*
-* <p><b>Copyright: </b>
-*
-* <p>The entire file consists of original code.  Copyright &copy; 2004-2005 by The
-* Rector and Visitors of the University of Virginia.
-* All rights reserved.</p>
-*
-* -----------------------------------------------------------------------------
-*
 * @author Robert Haschart at The University of Virginia
 * @version $Id$
 */
