@@ -229,7 +229,6 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         ServerConfiguration fcfg = getServerConfiguration();
         String[] dirs = {
             fcfg.getParameter("object_store_base").getValue(),
-            fcfg.getParameter("temp_store_base").getValue(),
             fcfg.getParameter("datastream_store_base").getValue(),
             getRIStoreLocation()
         };
