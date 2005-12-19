@@ -89,10 +89,6 @@
              objects. This value should be adjusted based on your installation
              environment.</comment>
   </param>
-  <param name="temp_store_base" value="fedora21/store/temp">
-    <comment>Defines the root directory for Fedora temporary storage. This
-             value should be adjusted based on your installation environment.</comment>
-  </param>
   <param name="datastream_store_base" value="fedora21/store/datastreams">
     <comment>Defines the root directory for the internal storage of Managed
              Content datastreams. This value should be adjusted based on your

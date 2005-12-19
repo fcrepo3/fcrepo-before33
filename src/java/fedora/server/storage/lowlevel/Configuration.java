@@ -20,8 +20,6 @@ public class Configuration {
 	private final String[] objectStoreBases;
 	private final String datastreamStoreBase;
 	private final String[] datastreamStoreBases;
-	private final String tempStoreBase;
-	private final String[] tempStoreBases;
 	//private final boolean useSingleRegistry;
 	private final String algorithmClass;
 
@@ -78,7 +76,6 @@ public class Configuration {
 
 	private static final String FCFG_OBJECT_STORE_BASE = "object_store_base";
 	private static final String FCFG_DATASTREAM_STORE_BASE = "datastream_store_base";
-	private static final String FCFG_TEMP_STORE_BASE = "temp_store_base";
 
 	private static final String FCFG_OBJECT_TABLE_NAME = "object_table_name";
 	private static final String FCFG_DATASTREAM_TABLE_NAME = "datastream_table_name";
@@ -160,31 +157,21 @@ public class Configuration {
 				s_server.getParameter(FCFG_OBJECT_STORE_BASE);
 			String datastreamStoreBaseTemp = testConfig ? "C:\\fedora_datastreams" :
 				s_server.getParameter(FCFG_DATASTREAM_STORE_BASE);
-			String tempStoreBaseTemp = testConfig ? "C:\\fedora_temp" :
-				s_server.getParameter(FCFG_TEMP_STORE_BASE);
 			if (objectStoreBaseTemp == null) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_OBJECT_STORE_BASE);
 			}
 			if (datastreamStoreBaseTemp == null) {
 				throw new LowlevelStorageException(true,"must configure " + FCFG_DATASTREAM_STORE_BASE);
 			}
-			if (tempStoreBaseTemp == null) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_TEMP_STORE_BASE);
-			}
 
 // FIXME: thinks c:\temp and c:\temp2 overlap
 			if (objectStoreBaseTemp.startsWith(datastreamStoreBaseTemp)
-			||  objectStoreBaseTemp.startsWith(tempStoreBaseTemp)
-			||  datastreamStoreBaseTemp.startsWith(objectStoreBaseTemp)
-			||  datastreamStoreBaseTemp.startsWith(tempStoreBaseTemp)
-			||  tempStoreBaseTemp.startsWith(objectStoreBaseTemp)
-			||  tempStoreBaseTemp.startsWith(datastreamStoreBaseTemp)) {
-				throw new LowlevelStorageException(true, FCFG_OBJECT_STORE_BASE + ", " + FCFG_DATASTREAM_STORE_BASE + ", and " + FCFG_TEMP_STORE_BASE + " cannot overlap");
+			||  datastreamStoreBaseTemp.startsWith(objectStoreBaseTemp)) {
+				throw new LowlevelStorageException(true, FCFG_OBJECT_STORE_BASE + ", and " + FCFG_DATASTREAM_STORE_BASE + " cannot overlap");
 			}
 //		if (! backslashIsEscape) {
 			objectStoreBase = objectStoreBaseTemp;
 			datastreamStoreBase = datastreamStoreBaseTemp;
-			tempStoreBase = tempStoreBaseTemp;
 			separator = File.separator;
 /*
 		} else {
@@ -205,7 +192,6 @@ public class Configuration {
 */
 			objectStoreBases = new String[] {objectStoreBase};
 			datastreamStoreBases = new String[] {datastreamStoreBase};
-			tempStoreBases = new String[] {tempStoreBase};
 		}
 	}
 /*
@@ -224,12 +210,6 @@ public class Configuration {
 	}
 	public final String[] getDatastreamStoreBases() {
 		return datastreamStoreBases;
-	}
-	public final String getTempStoreBase() {
-		return tempStoreBase;
-	}
-	public final String[] getTempStoreBases() {
-		return tempStoreBases;
 	}
 	public final String getAlgorithmClass() {
 		return algorithmClass;

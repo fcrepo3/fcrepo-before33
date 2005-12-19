@@ -30,7 +30,6 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 	   class purposely unusable if these instantiations fail. */
 	private static final ILowlevelStorage objectStore;
 	private static final ILowlevelStorage datastreamStore;
-	private static final ILowlevelStorage tempStore;
 	static {
 		ILowlevelStorage tempObjectStore;
 		ILowlevelStorage tempDatastreamStore;
@@ -38,7 +37,6 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 		try {
 			tempObjectStore = new FileSystemLowlevelStorage(conf.getObjectRegistryTableName(),conf.getRegistryClass(),conf.getObjectStoreBase(), conf.getObjectStoreBases());
 			tempDatastreamStore = new FileSystemLowlevelStorage(conf.getDatastreamRegistryTableName(),conf.getRegistryClass(),conf.getDatastreamStoreBase(), conf.getDatastreamStoreBases());
-			tempTempStore = new FileSystemLowlevelStorage(conf.getTempRegistryTableName(),conf.getRegistryClass(),conf.getTempStoreBase(), conf.getTempStoreBases());
 		} catch (Exception e) {
 			tempObjectStore = null;
 			tempDatastreamStore = null;
@@ -46,7 +44,6 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 		}
 		objectStore = tempObjectStore;
 		datastreamStore = tempDatastreamStore;
-		tempStore = tempTempStore;
 	}
 
 	/** Path algorithm subfunctionality, loaded as per configuration data */
@@ -104,10 +101,6 @@ public class FileSystemLowlevelStorage implements ILowlevelStorage {
 
 	public static final ILowlevelStorage getDatastreamStore() {
 		return datastreamStore;
-	}
-
-	public static final ILowlevelStorage getTempStore() {
-		return tempStore;
 	}
 
 	/**

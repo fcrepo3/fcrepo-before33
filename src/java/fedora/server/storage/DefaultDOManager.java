@@ -71,7 +71,6 @@ public class DefaultDOManager
     protected PIDGenerator m_pidGenerator;
     protected DOTranslator m_translator;
     private ILowlevelStorage m_permanentStore;
-    private ILowlevelStorage m_tempStore;
     protected DOReplicator m_replicator;
     protected DOValidator m_validator;
     protected FieldSearch m_fieldSearch;
@@ -354,10 +353,6 @@ public class DefaultDOManager
 
     public ILowlevelStorage getDatastreamStore() {
         return FileSystemLowlevelStorage.getDatastreamStore();
-    }
-
-    public ILowlevelStorage getTempStore() {
-        return FileSystemLowlevelStorage.getTempStore();
     }
 
     public ConnectionPool getConnectionPool() {
