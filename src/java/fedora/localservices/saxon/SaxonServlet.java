@@ -25,7 +25,7 @@ import org.apache.commons.httpclient.methods.*;
  * reserved. The current project homepage for Saxon may be found at:
  * <a href="http://saxon.sourceforge.net/">http://saxon.sourceforge.net/</a>.
  *
- * Portions created for the Fedora Repository System are Copyright &copy; 2002-2005
+ * Portions created for the Fedora Repository System are Copyright &copy; 2002-2006
  * by The Rector and Visitors of the University of Virginia and Cornell
  * University. All rights reserved.
  * -----------------------------------------------------------------------------
