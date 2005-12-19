@@ -79,7 +79,6 @@ public class Configuration {
 
 	private static final String FCFG_OBJECT_TABLE_NAME = "object_table_name";
 	private static final String FCFG_DATASTREAM_TABLE_NAME = "datastream_table_name";
-	private static final String FCFG_TEMP_TABLE_NAME = "temp_table_name";
 
 	private Configuration () throws LowlevelStorageException {
 
