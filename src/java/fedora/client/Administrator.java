@@ -148,7 +148,7 @@ public class Administrator extends JFrame {
         cl=this.getClass().getClassLoader();
 
         m_aboutPic=new JLabel(new ImageIcon(cl.getResource("images/fedora/aboutadmin.gif")));
-        m_aboutText=new JLabel("<html><p>Copyright 2002-2005, The Rector and Visitors of the</p>"
+        m_aboutText=new JLabel("<html><p>Copyright 2002-2006, The Rector and Visitors of the</p>"
         		+ "<p>University of Virginia and Cornell University. All rights reserved.</p><p></p>"
         		+ "<p><b>License and Copyright: </b>This software is subject to the</p>"
         		+ "<p>Educational Community License (the \"License\"); you may not use</p>"
