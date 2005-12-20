@@ -148,12 +148,12 @@
 			<documentation>Audit information for a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="id" type="string"/>
-			<element name="processType" type="string"/>
-			<element name="action" type="string"/>
-			<element name="responsibility" type="string"/>
-			<element name="date" type="string"/>
-			<element name="justification" type="string"/>
+			<element name="id" nillable="true" type="string"/>
+			<element name="processType" nillable="true" type="string"/>
+			<element name="action" nillable="true" type="string"/>
+			<element name="responsibility" nillable="true" type="string"/>
+			<element name="date" nillable="true" type="string"/>
+			<element name="justification" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<simpleType name="ComparisonOperator">
@@ -174,9 +174,9 @@
 			<documentation>A property,operator,value expression that evaluates to true or false.</documentation>
 		</annotation>
 		<sequence>
-			<element name="property" type="string"/>
-			<element name="operator" type="fedora-types:ComparisonOperator"/>
-			<element name="value" type="string"/>
+			<element name="property" nillable="true" type="string"/>
+			<element name="operator" nillable="true" type="fedora-types:ComparisonOperator"/>
+			<element name="value" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="Datastream">
@@ -184,17 +184,17 @@
 			<documentation>content stream of a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="controlGroup" type="fedora-types:DatastreamControlGroup"/>
-			<element name="ID" type="string"/>
-			<element name="versionID" type="string"/>
-			<element name="altIDs" type="fedora-types:ArrayOfString"/>
-			<element name="label" type="string"/>
+			<element name="controlGroup" nillable="true" type="fedora-types:DatastreamControlGroup"/>
+			<element name="ID" nillable="true" type="string"/>
+			<element name="versionID" nillable="true" type="string"/>
+			<element name="altIDs" nillable="true" type="fedora-types:ArrayOfString"/>
+			<element name="label" nillable="true" type="string"/>
 			<element name="versionable" type="boolean"/>
-			<element name="MIMEType" type="string"/>
+			<element name="MIMEType" nillable="true" type="string"/>
 			<element name="formatURI" minOccurs="0" nillable="true" type="string"/>
-			<element name="createDate" type="string"/>
+			<element name="createDate" nillable="true" type="string"/>
 			<element name="size" type="long"/>
-			<element name="state" type="string"/>
+			<element name="state" nillable="true" type="string"/>
 			<element name="location" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
@@ -204,9 +204,9 @@
 			it contains abbreviated information regarding a datastream.</documentation>
 		</annotation>
 		<sequence>
-			<element name="ID" type="string"/>
-			<element name="label" type="string"/>
-			<element name="MIMEType" type="string"/>
+			<element name="ID" nillable="true" type="string"/>
+			<element name="label" nillable="true" type="string"/>
+			<element name="MIMEType" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="DatastreamBinding">
@@ -214,10 +214,10 @@
 			<documentation>content stream of a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="bindKeyName" type="string"/>
-			<element name="bindLabel" type="string"/>
-			<element name="datastreamID" type="string"/>
-			<element name="seqNo" type="string"/>
+			<element name="bindKeyName" nillable="true" type="string"/>
+			<element name="bindLabel" nillable="true" type="string"/>
+			<element name="datastreamID" nillable="true" type="string"/>
+			<element name="seqNo" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="DatastreamBindingMap">
@@ -225,11 +225,11 @@
 			<documentation>ordered list of datastream binding maps</documentation>
 		</annotation>
 		<sequence>
-			<element name="dsBindMapID" type="string"/>
-			<element name="dsBindMechanismPID" type="string"/>
-			<element name="dsBindMapLabel" type="string"/>
-			<element name="state" type="string"/>
-			<element name="dsBindings" type="fedora-types:ArrayOfDatastreamBinding"/>
+			<element name="dsBindMapID" nillable="true" type="string"/>
+			<element name="dsBindMechanismPID" nillable="true" type="string"/>
+			<element name="dsBindMapLabel" nillable="true" type="string"/>
+			<element name="state" nillable="true" type="string"/>
+			<element name="dsBindings" nillable="true" type="fedora-types:ArrayOfDatastreamBinding"/>
 		</sequence>
 	</complexType>
 	<simpleType name="DatastreamControlGroup">
@@ -265,14 +265,14 @@
 			<documentation>content stream of a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="bDefPID" type="string"/>
-			<element name="bMechPID" type="string"/>
-			<element name="createDate" type="string"/>
-			<element name="ID" type="string"/>
-			<element name="label" type="string"/>
-			<element name="versionID" type="string"/>
-			<element name="dsBindMap" type="fedora-types:DatastreamBindingMap"/>
-			<element name="state" type="string"/>
+			<element name="bDefPID" nillable="true" type="string"/>
+			<element name="bMechPID" nillable="true" type="string"/>
+			<element name="createDate" nillable="true" type="string"/>
+			<element name="ID" nillable="true" type="string"/>
+			<element name="label" nillable="true" type="string"/>
+			<element name="versionID" nillable="true" type="string"/>
+			<element name="dsBindMap" nillable="true" type="fedora-types:DatastreamBindingMap"/>
+			<element name="state" nillable="true" type="string"/>
 			<!-- missing bDefLabel and bMechLabel-->
 		</sequence>
 	</complexType>
@@ -281,8 +281,8 @@
 			<documentation>a full text or field-based query</documentation>
 		</annotation>
 		<choice>
-			<element name="conditions" type="fedora-types:ArrayOfCondition"/>
-			<element name="terms" type="string"/>
+			<element name="conditions" nillable="true" type="fedora-types:ArrayOfCondition"/>
+			<element name="terms" nillable="true" type="string"/>
 		</choice>
 	</complexType>
 	<complexType name="FieldSearchResult">
@@ -290,19 +290,19 @@
 			<documentation>the result of a single field search request.</documentation>
 		</annotation>
 		<sequence>
-			<element name="listSession" type="fedora-types:ListSession" minOccurs="0"/>
-			<element name="resultList" type="fedora-types:ArrayOfObjectFields"/>
+			<element name="listSession" nillable="true" type="fedora-types:ListSession" minOccurs="0"/>
+			<element name="resultList" nillable="true" type="fedora-types:ArrayOfObjectFields"/>
 		</sequence>
 	</complexType>
-	<element name="result" type="fedora-types:FieldSearchResult"/>
+	<element name="result" nillable="true" type="fedora-types:FieldSearchResult"/>
 	<complexType name="MethodDef">
 		<annotation>
 			<documentation>method definitions</documentation>
 		</annotation>
 		<sequence>
-			<element name="methodLabel" type="string"/>
-			<element name="methodName" type="string"/>
-			<element name="methodParms" type="fedora-types:ArrayOfMethodParmDef"/>
+			<element name="methodLabel" nillable="true" type="string"/>
+			<element name="methodName" nillable="true" type="string"/>
+			<element name="methodParms" nillable="true" type="fedora-types:ArrayOfMethodParmDef"/>
 			<!--		
 			<xsd:element name="httpBindingAddress" type="string"/>
 			<xsd:element name="httpBindingOperationLocation" type="string"/>
@@ -341,13 +341,13 @@
             a dissemination</documentation>
 		</annotation>
 		<sequence>
-			<element name="parmName" type="string"/>
-			<element name="parmType" type="string"/>
-			<element name="parmDefaultValue" type="string"/>
-			<element name="parmDomainValues" type="fedora-types:ArrayOfString"/>
+			<element name="parmName" nillable="true" type="string"/>
+			<element name="parmType" nillable="true" type="string"/>
+			<element name="parmDefaultValue" nillable="true" type="string"/>
+			<element name="parmDomainValues" nillable="true" type="fedora-types:ArrayOfString"/>
 			<element name="parmRequired" type="boolean"/>
-			<element name="parmLabel" type="string"/>
-			<element name="parmPassBy" type="string"/>
+			<element name="parmLabel" nillable="true" type="string"/>
+			<element name="parmPassBy" nillable="true" type="string"/>
 			<element name="PASS_BY_REF" nillable="true"  type="fedora-types:passByRef"/>
 			<element name="PASS_BY_VALUE" nillable="true" type="fedora-types:passByValue"/>
 			<element name="DATASTREAM_INPUT" nillable="true" type="fedora-types:datastreamInputType"/>
@@ -360,8 +360,8 @@
 			<documentation>a base-64 encoded stream of data with an associated MIME-type</documentation>
 		</annotation>
 		<sequence>
-			<element name="MIMEType" type="string"/>
-			<element name="stream" type="base64Binary"/>
+			<element name="MIMEType" nillable="true" type="string"/>
+			<element name="stream" nillable="true" type="base64Binary"/>
 			<element name="header" nillable="true" type="fedora-types:ArrayOfProperty"/>
 		</sequence>
 	</complexType>
@@ -372,32 +372,32 @@
             and any number of each of the 15 dublin core elements.</documentation>
 		</annotation>
 		<sequence>
-			<element name="pid" type="string" minOccurs="0"/>
-			<element name="label" type="string" minOccurs="0"/>
-			<element name="fType" type="string" minOccurs="0"/>
-			<element name="cModel" type="string" minOccurs="0"/>
-			<element name="state" type="string" minOccurs="0"/>
-			<element name="ownerId" type="string" minOccurs="0"/>
-			<element name="cDate" type="string" minOccurs="0"/>
-			<element name="mDate" type="string" minOccurs="0"/>
-			<element name="dcmDate" type="string" minOccurs="0"/>
-			<element name="bDef" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="bMech" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="title" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="creator" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="subject" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="description" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="publisher" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="contributor" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="date" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="type" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="format" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="identifier" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="source" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="language" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="relation" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="coverage" type="string" minOccurs="0" maxOccurs="unbounded"/>
-			<element name="rights" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="pid" nillable="true" type="string" minOccurs="0"/>
+			<element name="label" nillable="true" type="string" minOccurs="0"/>
+			<element name="fType" nillable="true" type="string" minOccurs="0"/>
+			<element name="cModel" nillable="true" type="string" minOccurs="0"/>
+			<element name="state" nillable="true" type="string" minOccurs="0"/>
+			<element name="ownerId" nillable="true" type="string" minOccurs="0"/>
+			<element name="cDate" nillable="true" type="string" minOccurs="0"/>
+			<element name="mDate" nillable="true" type="string" minOccurs="0"/>
+			<element name="dcmDate" nillable="true" type="string" minOccurs="0"/>
+			<element name="bDef" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="bMech" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="title" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="creator" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="subject" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="description" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="publisher" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="contributor" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="date" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="type" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="format" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="identifier" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="source" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="language" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="relation" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="coverage" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
+			<element name="rights" nillable="true" type="string" minOccurs="0" maxOccurs="unbounded"/>
 		</sequence>
 	</complexType>
 	<complexType name="ObjectMethodsDef">
@@ -405,10 +405,10 @@
 			<documentation>a Fedora data structure containing all method definitions for a digital object</documentation>
 		</annotation>
 		<sequence>
-			<element name="PID" type="string"/>
-			<element name="bDefPID" type="string"/>
-			<element name="methodName" type="string"/>
-			<element name="methodParmDefs" type="fedora-types:ArrayOfMethodParmDef"/>
+			<element name="PID" nillable="true" type="string"/>
+			<element name="bDefPID" nillable="true" type="string"/>
+			<element name="methodName" nillable="true" type="string"/>
+			<element name="methodParmDefs" nillable="true" type="fedora-types:ArrayOfMethodParmDef"/>
 			<element name="asOfDate" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
@@ -418,14 +418,14 @@
 			and URLs for the Dissemination Index and Item Index of the object.</documentation>
 		</annotation>
 		<sequence>
-			<element name="pid" type="string"/>
-			<element name="objLabel" type="string"/>
-			<element name="objContentModel" type="string"/>
-			<element name="objType" type="string"/>
-			<element name="objCreateDate" type="string"/>
-			<element name="objLastModDate" type="string"/>
-			<element name="objDissIndexViewURL" type="string"/>
-			<element name="objItemIndexViewURL" type="string"/>
+			<element name="pid" nillable="true" type="string"/>
+			<element name="objLabel" nillable="true" type="string"/>
+			<element name="objContentModel" nillable="true" type="string"/>
+			<element name="objType" nillable="true" type="string"/>
+			<element name="objCreateDate" nillable="true" type="string"/>
+			<element name="objLastModDate" nillable="true" type="string"/>
+			<element name="objDissIndexViewURL" nillable="true" type="string"/>
+			<element name="objItemIndexViewURL" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="RepositoryInfo">
@@ -434,19 +434,19 @@
 			repository server.</documentation>
 		</annotation>
 		<sequence>
-			<element name="repositoryName" type="string"/>
-			<element name="repositoryVersion" type="string"/>
-			<element name="repositoryBaseURL" type="string"/>
-			<element name="repositoryPIDNamespace" type="string"/>
-			<element name="defaultExportFormat" type="string"/>
-			<element name="OAINamespace" type="string"/>
-			<element name="adminEmailList" type="fedora-types:ArrayOfString"/>
-			<element name="samplePID" type="string"/>
-			<element name="sampleOAIIdentifier" type="string"/>
-			<element name="sampleSearchURL" type="string"/>
-			<element name="sampleAccessURL" type="string"/>
-			<element name="sampleOAIURL" type="string"/>
-			<element name="retainPIDs" type="fedora-types:ArrayOfString"/>
+			<element name="repositoryName" nillable="true" type="string"/>
+			<element name="repositoryVersion" nillable="true" type="string"/>
+			<element name="repositoryBaseURL" nillable="true" type="string"/>
+			<element name="repositoryPIDNamespace" nillable="true" type="string"/>
+			<element name="defaultExportFormat" nillable="true" type="string"/>
+			<element name="OAINamespace" nillable="true" type="string"/>
+			<element name="adminEmailList" nillable="true" type="fedora-types:ArrayOfString"/>
+			<element name="samplePID" nillable="true" type="string"/>
+			<element name="sampleOAIIdentifier" nillable="true" type="string"/>
+			<element name="sampleSearchURL" nillable="true" type="string"/>
+			<element name="sampleAccessURL" nillable="true" type="string"/>
+			<element name="sampleOAIURL" nillable="true" type="string"/>
+			<element name="retainPIDs" nillable="true" type="fedora-types:ArrayOfString"/>
 		</sequence>
 	</complexType>
 	<complexType name="UserInfo">
@@ -454,7 +454,7 @@
 			<documentation>Key information about a user</documentation>
 		</annotation>
 		<sequence>
-			<element name="id" type="string"/>
+			<element name="id" nillable="true" type="string"/>
 			<element name="administrator" type="boolean"/>
 		</sequence>
 	</complexType>
@@ -463,8 +463,8 @@
 			<documentation>a name-value pair.</documentation>
 		</annotation>
 		<sequence>
-			<element name="name" type="string"/>
-			<element name="value" type="string"/>
+			<element name="name" nillable="true" type="string"/>
+			<element name="value" nillable="true" type="string"/>
 		</sequence>
 	</complexType>
 	<complexType name="ListSession">
@@ -475,10 +475,10 @@
            </documentation>
 		</annotation>
 		<sequence>
-			<element name="token" type="string"/>
+			<element name="token" nillable="true" type="string"/>
 			<element name="cursor" type="nonNegativeInteger" minOccurs="0"/>
 			<element name="completeListSize" type="nonNegativeInteger" minOccurs="0"/>
-			<element name="expirationDate" type="string" minOccurs="0"/>
+			<element name="expirationDate" nillable="true" type="string" minOccurs="0"/>
 		</sequence>
 	</complexType>
 </schema>
