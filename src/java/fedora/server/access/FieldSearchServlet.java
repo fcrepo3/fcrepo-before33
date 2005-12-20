@@ -418,6 +418,7 @@ public class FieldSearchServlet
     /** Exactly the same behavior as doGet. */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	request.setCharacterEncoding("UTF-8");
         doGet(request, response);
     }
 
