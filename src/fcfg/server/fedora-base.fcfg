@@ -335,7 +335,7 @@
                       (shortcut) for the value, which is a URI prefix. For example:
                       name="alias:test" value="http://example.org/terms#" will allow a
                       query to use test:apple instead of http://example.org/terms#apple</comment>
-    <param name="level" value="1"/>
+    <param name="level" value="0"/>
     <param name="datastore" value="localKowariTriplestore"/>
     <param name="alias:test" value="http://example.org/terms#"/>
   </module>
