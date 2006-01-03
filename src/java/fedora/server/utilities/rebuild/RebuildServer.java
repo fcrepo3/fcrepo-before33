@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.text.MessageFormat;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -20,6 +22,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import fedora.logging.DatingFileHandler;
+import fedora.logging.SimpleXMLFormatter;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerInitializationException;
@@ -214,6 +218,35 @@ public class RebuildServer extends Server
                     MessageFormat.format(INIT_CONFIG_SEVERE_MALFORMEDXML,
                     new Object[] {configFile, saxe.getMessage()}));
         }
+    }
+
+    protected void initServer() throws ServerInitializationException {
+        setLogger(getLogger());
+    }
+
+    private static Logger getLogger() throws ServerInitializationException {
+
+        Logger logger=Logger.getAnonymousLogger();
+        logger.setUseParentHandlers(false);
+        logger.setLevel(Level.FINEST);
+
+        DatingFileHandler fh = null;
+        try {
+            File logDir = new File(LOG_DIR);
+            logDir.mkdirs();
+            fh = new DatingFileHandler(logDir, 
+                                       50 * 1024 * 1024, 
+                                       7,
+                                       0,
+                                       ".rebuild-log.xml",
+                    new SimpleXMLFormatter(true, "UTF-8"), 10);
+            fh.setLevel(Level.FINEST);
+        } catch (IOException ioe) {
+            throw new ServerInitializationException("Could not initialize "
+                    + "logger due to I/O error: " + ioe.getMessage());
+        }
+        logger.addHandler(fh);
+        return logger;
     }
 
 

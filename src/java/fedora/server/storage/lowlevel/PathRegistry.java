@@ -53,6 +53,7 @@ abstract class PathRegistry implements IPathRegistry {
 
 	private final void traverseFiles (File[] files, int operation, boolean stopOnError, int report) throws LowlevelStorageException {
 		for (int i = 0; i < files.length; i++) {
+          if (files[i].exists()) {
 			if (files[i].isDirectory()) {
 				traverseFiles(files[i].listFiles(), operation, stopOnError, report);
 			} else {
@@ -120,6 +121,7 @@ abstract class PathRegistry implements IPathRegistry {
 					}
 				}
 			}
+          }
 		}
 	}
 

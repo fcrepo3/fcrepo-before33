@@ -588,7 +588,12 @@ public class SQLRebuilder implements Rebuilder {
      */
     public void finish() 
     {
-        // nothing to free up
+        try {
+            s_server.shutdown(null);
+        } catch (Throwable th) {
+            System.out.println("Error shutting down RebuildServer:");
+            th.printStackTrace();
+        }
     }
 
 }
