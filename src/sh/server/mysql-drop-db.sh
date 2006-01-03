@@ -26,7 +26,7 @@
 # check for four input arguments
 
 if [ "$#" -lt 4 ] || [ "$#" -gt 5 ]; then
- echo "Usage: mysqlConfig.sh mysql_home mysql_dba_user mysql_dba_pass fedora_db_name mysql41_flag"
+ echo "Usage: mysql-drop-db mysql_home mysql_dba_user mysql_dba_pass fedora_db_name mysql41_flag"
   echo "mysql_home      - the path where MySQL is installed (e.g., /usr/local/mysql)"
   echo "mysql_dba_user  - the name of the MySQL user with dba privileges (e.g.,  root)"
   echo "mysql_dba_pass  - the password for the MySQL user with dba privileges"
