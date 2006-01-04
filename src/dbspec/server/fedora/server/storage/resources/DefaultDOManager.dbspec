@@ -126,7 +126,7 @@
              has been assigned, and the object is written to the definitive
              store, an entry is created here.
             </comment>
-		<column name="doPID" type="varchar(64)" notNull="true" binary="true" index="doPID">
+		<column name="doPID" type="varchar(64)" notNull="true" binary="true">
 			<comment>The PID of the object</comment>
 		</column>
 		<column name="foType" type="varchar(1)" notNull="true" default="O">
@@ -288,35 +288,35 @@
 	<table name="riMethod" primaryKey="methodId">
 		<comment>
 		</comment>
-		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
+		<column name="methodId" type="varchar(255)" notNull="true" default=""/>
 		<column name="bDefPid" type="varchar(255)" notNull="true" default="" index="bDefPid"/>
 		<column name="methodName" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="riMethodImpl" primaryKey="methodImplId">
 		<comment>
 		</comment>
-		<column name="methodImplId" type="varchar(255)" notNull="true" default="" index="methodImplID"/>
+		<column name="methodImplId" type="varchar(255)" notNull="true" default=""/>
 		<column name="bMechPid" type="varchar(255)" notNull="true" default="" index="bMechPid"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodId"/>
 	</table>
 	<table name="riMethodImplBinding" primaryKey="methodImplBindingId">
 		<comment>
 		</comment>
-		<column name="methodImplBindingId" type="int(11)" notNull="true" index="methodImplBindingId" autoIncrement="true"/>
+		<column name="methodImplBindingId" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="methodImplId" type="varchar(255)" notNull="true" default="" index="methodImplId"/>
 		<column name="dsBindKey" type="varchar(255)" notNull="true" default="" index="dsBindKey"/>
 	</table>
 	<table name="riMethodPermutation" primaryKey="permutationId">
 		<comment>
 		</comment>
-		<column name="permutationId" type="int(11)" notNull="true" index="permutationId" autoIncrement="true"/>
+		<column name="permutationId" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
 		<column name="permutation" type="text" notNull="true" default=""/>
 	</table>
 	<table name="riMethodMimeType" primaryKey="mimeTypeId">
 		<comment>
 		</comment>
-		<column name="mimeTypeId" type="int(11)" notNull="true" index="mimeTypeId" autoIncrement="true"/>
+		<column name="mimeTypeId" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="methodImplId" type="varchar(255)" notNull="true" default="0" index="methodImplId"/>
 		<column name="mimeType" type="varchar(255)" notNull="true" default=""/>
 	</table>
