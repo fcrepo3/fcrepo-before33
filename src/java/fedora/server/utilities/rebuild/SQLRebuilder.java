@@ -37,7 +37,7 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.SQLUtility;
 
 /**
- * A Rebuilder that doesn't do anything useful, for testing purposes.
+ * A Rebuilder for the SQL database.
  * 
  * @@version $Id$
  */
