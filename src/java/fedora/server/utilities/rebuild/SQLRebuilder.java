@@ -157,7 +157,7 @@ public class SQLRebuilder implements Rebuilder {
             HashSet existingTableSet=new HashSet();
             while (r.next()) 
             {
-                existing.add(r.getString("TABLE_NAME").toLowerCase());
+                existing.add(r.getString("TABLE_NAME"));
             }
             r.close();
             r = null;
