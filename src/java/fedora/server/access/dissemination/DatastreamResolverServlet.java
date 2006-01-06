@@ -221,7 +221,7 @@ public class DatastreamResolverServlet extends HttpServlet
            (  ServerUtility.isURLFedoraServer(dsPhysicalLocation)  ||
               dsControlGroupType.equals("M") || 
               dsControlGroupType.equals("X")) ){
-          if(fedora.server.Debug.DEBUG) System.out.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
+          if(fedora.server.Debug.DEBUG) System.err.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
           dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
       }      
       
@@ -235,7 +235,7 @@ public class DatastreamResolverServlet extends HttpServlet
           if (dm.callbackSSL) {
               dsPhysicalLocation = dsPhysicalLocation.replaceFirst("http:", "https:");
               dsPhysicalLocation = dsPhysicalLocation.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
-              if (fedora.server.Debug.DEBUG) System.out.println("*********************** DatastreamResolverServlet -- Was Fedora-to-Fedora call -- modified dsPhysicalLocation: "+dsPhysicalLocation);
+              if (fedora.server.Debug.DEBUG) System.err.println("*********************** DatastreamResolverServlet -- Was Fedora-to-Fedora call -- modified dsPhysicalLocation: "+dsPhysicalLocation);
           }
       }
       keyTimestamp = Timestamp.valueOf(ds.extractTimestamp(id));
@@ -278,17 +278,17 @@ public class DatastreamResolverServlet extends HttpServlet
       Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
       if (request.getRemoteUser() == null) {
       	  //non-authn:  must accept target role of ticket
-          if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: unAuthenticated request");
+          if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: unAuthenticated request");
       } else {
       	  //authn:  check user roles for target role of ticket
-          if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: Authenticated request getting user");
+          if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: Authenticated request getting user");
       	  if  (((request.getUserPrincipal() != null) 
             	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
           	  &&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
           	  &&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
         //user has target role
       	} else {
-      	    if (fedora.server.Debug.DEBUG) System.out.println("DatastreamResolverServlet: authZ exception in validating user");
+      	    if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: authZ exception in validating user");
       		throw new AuthzDeniedException("wrong user for this ticket");
       	}
       }
@@ -319,10 +319,10 @@ public class DatastreamResolverServlet extends HttpServlet
             System.err.println("another environment attribute from context " + name + "=" + value);            	
           }                    
       }
-      System.out.println("DatastreamResolverServlet: about to do final authZ check");
+      if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: about to do final authZ check");
       Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
       authorization.enforceResolveDatastream(context, keyTimestamp);
-      System.out.println("DatastreamResolverServlet: final authZ check suceeded.....");
+      if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: final authZ check suceeded.....");
 
       if (dsControlGroupType.equalsIgnoreCase("E"))
       {
@@ -336,7 +336,7 @@ public class DatastreamResolverServlet extends HttpServlet
       	  	  sb.append((String) headerValues.nextElement());
       	  	}
       	  	String value = sb.toString();
-      	  	System.out.println("DATASTREAMRESOLVERSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value); 		
+      	  	System.err.println("DATASTREAMRESOLVERSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value); 		
       	  }
       	}
 
@@ -359,7 +359,7 @@ public class DatastreamResolverServlet extends HttpServlet
           for(int i=0; i<headerArray.length; i++) {
               if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
                   response.addHeader(headerArray[i].name, headerArray[i].value);
-                  if (fedora.server.Debug.DEBUG) System.out.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
+                  if (fedora.server.Debug.DEBUG) System.err.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
               }              
           }
         }
