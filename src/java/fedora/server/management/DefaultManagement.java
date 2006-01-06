@@ -1064,9 +1064,9 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.getDatastreams");
 
-            System.err.println("in getDatastreams, before call to enforce");
+            if (fedora.server.Debug.DEBUG) System.err.println("in getDatastreams, before call to enforce");
 			m_fedoraXACMLModule.enforceGetDatastreams(context, pid, asOfDateTime, state);
-            System.err.println("in getDatastreams, after call to enforce");
+            if (fedora.server.Debug.DEBUG) System.err.println("in getDatastreams, after call to enforce");
            
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
     		return r.GetDatastreams(asOfDateTime, state);
@@ -1191,9 +1191,9 @@ public class DefaultManagement
             throws ServerException {
         try {
             getServer().logFinest("Entered DefaultManagement.getDisseminators");
-            System.err.println("in getDisseminators, before call to enforce");            
+            if (fedora.server.Debug.DEBUG) System.err.println("in getDisseminators, before call to enforce");            
 			m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
-            System.err.println("in getDisseminators, after call to enforce");            
+            if (fedora.server.Debug.DEBUG) System.err.println("in getDisseminators, after call to enforce");            
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDisseminators(asOfDateTime, dissState);
         } finally {
