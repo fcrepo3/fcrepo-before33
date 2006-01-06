@@ -336,12 +336,12 @@ public class DisseminationService
         }
         String datastreamResolverServletURL = dsMediatedCallbackHost + dsMediatedServletPath;        
         if (fedora.server.Debug.DEBUG) {
-            System.out.println("******************Checking backend service dsLocation: "+dissBindInfo.dsLocation);
-            System.out.println("******************Checking backend service dsControlGroupType: "+dissBindInfo.dsControlGroupType);
-            System.out.println("******************Checking backend service callbackBasicAuth: "+callbackBasicAuth);
-            System.out.println("******************Checking backend service callbackSSL: "+callbackSSL);
-            System.out.println("******************Checking backend service callbackRole: "+callbackRole);
-            System.out.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);            
+            System.err.println("******************Checking backend service dsLocation: "+dissBindInfo.dsLocation);
+            System.err.println("******************Checking backend service dsControlGroupType: "+dissBindInfo.dsControlGroupType);
+            System.err.println("******************Checking backend service callbackBasicAuth: "+callbackBasicAuth);
+            System.err.println("******************Checking backend service callbackSSL: "+callbackSSL);
+            System.err.println("******************Checking backend service callbackRole: "+callbackRole);
+            System.err.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);            
         }           		                    
         
         String currentKey = dissBindInfo.DSBindKey;
@@ -564,7 +564,7 @@ public class DisseminationService
           long interval = stopTime - startTime;
           s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
               + interval + " milliseconds.");
-          if (fedora.server.Debug.DEBUG) System.out.println("URL: "+dissURL);
+          if (fedora.server.Debug.DEBUG) System.err.println("URL: "+dissURL);
 	        
           // See if backend service reference is to fedora server itself or an external location.
           // We must examine URL to see if this is referencing a remote backend service or is
@@ -623,12 +623,12 @@ public class DisseminationService
 		    */
         
 	        if (fedora.server.Debug.DEBUG) {
-	            System.out.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
-	            System.out.println("******************getDisseminationContent beServiceCallBasicAuth: "+beServiceCallBasicAuth);
-	            System.out.println("******************getDisseminationContent beServiceCallSSL: "+beServiceCallSSL);
-	            System.out.println("******************getDisseminationContent beServiceCallUsername: "+beServiceCallUsername);
-	            System.out.println("******************getDisseminationContent beServiceCallPassword: "+beServiceCallPassword);
-	            System.out.println("******************getDisseminationContent dissURL: "+dissURL);	            
+	            System.err.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
+	            System.err.println("******************getDisseminationContent beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+	            System.err.println("******************getDisseminationContent beServiceCallSSL: "+beServiceCallSSL);
+	            System.err.println("******************getDisseminationContent beServiceCallUsername: "+beServiceCallUsername);
+	            System.err.println("******************getDisseminationContent beServiceCallPassword: "+beServiceCallPassword);
+	            System.err.println("******************getDisseminationContent dissURL: "+dissURL);	            
 	        }    	        
 	        
 	        // Dispatch backend service URL request authenticating as necessary based on beSecurity configuration
@@ -765,15 +765,15 @@ public class DisseminationService
         String beServiceCallUsername = (String) beHash.get("callUsername");
         String beServiceCallPassword = (String) beHash.get("callPassword");
         if (fedora.server.Debug.DEBUG) {
-            System.out.println("******************Registering datastream dsLocation: "+dsLocation);
-            System.out.println("******************Registering datastream dsControlGroupType: "+dsControlGroupType);
-            System.out.println("******************Registering datastream beServiceRole: "+beServiceRole);
-            System.out.println("******************Registering datastream beServiceCallbackBasicAuth: "+beServiceCallbackBasicAuth);
-            System.out.println("******************Registering datastream beServiceCallBasicAuth: "+beServiceCallBasicAuth);
-            System.out.println("******************Registering datastream beServiceCallbackSSL: "+beServiceCallbackSSL);
-            System.out.println("******************Registering datastream beServiceCallSSL: "+beServiceCallSSL);
-            System.out.println("******************Registering datastream beServiceCallUsername: "+beServiceCallUsername);
-            System.out.println("******************Registering datastream beServiceCallPassword: "+beServiceCallPassword);
+            System.err.println("******************Registering datastream dsLocation: "+dsLocation);
+            System.err.println("******************Registering datastream dsControlGroupType: "+dsControlGroupType);
+            System.err.println("******************Registering datastream beServiceRole: "+beServiceRole);
+            System.err.println("******************Registering datastream beServiceCallbackBasicAuth: "+beServiceCallbackBasicAuth);
+            System.err.println("******************Registering datastream beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+            System.err.println("******************Registering datastream beServiceCallbackSSL: "+beServiceCallbackSSL);
+            System.err.println("******************Registering datastream beServiceCallSSL: "+beServiceCallSSL);
+            System.err.println("******************Registering datastream beServiceCallUsername: "+beServiceCallUsername);
+            System.err.println("******************Registering datastream beServiceCallPassword: "+beServiceCallPassword);
         }           		                
         dm.callbackRole = beServiceRole;
         dm.callUsername = beServiceCallUsername;
@@ -909,32 +909,32 @@ public class DisseminationService
         s_server.logFinest(message);
             throw new GeneralException(message);
       }
-      if (fedora.server.Debug.DEBUG) System.out.println("********** Resolving Internal Datastream dsLocation: "+dsLocation);
+      if (fedora.server.Debug.DEBUG) System.err.println("********** Resolving Internal Datastream dsLocation: "+dsLocation);
       return dsLocation;
   }
 
   public static void printBindingInfo(DisseminationBindingInfo[] info) {
     for (int i = 0; i < info.length; i++) {
-      System.out.println("DisseminationBindingInfo[" + i + "]:");
-      System.out.println("  DSBindKey          : " + info[i].DSBindKey);
-      System.out.println("  dsLocation         : " + info[i].dsLocation);
-      System.out.println("  dsControlGroupType : " + info[i].dsControlGroupType);
-      System.out.println("  dsID               : " + info[i].dsID);
-      System.out.println("  dsVersionID        : " + info[i].dsVersionID);
-      System.out.println("  AddressLocation    : " + info[i].AddressLocation);
-      System.out.println("  OperationLocation  : " + info[i].OperationLocation);
-      System.out.println("  ProtocolType       : " + info[i].ProtocolType);
-      System.out.println("  dsState            : " + info[i].dsState);
+      System.err.println("DisseminationBindingInfo[" + i + "]:");
+      System.err.println("  DSBindKey          : " + info[i].DSBindKey);
+      System.err.println("  dsLocation         : " + info[i].dsLocation);
+      System.err.println("  dsControlGroupType : " + info[i].dsControlGroupType);
+      System.err.println("  dsID               : " + info[i].dsID);
+      System.err.println("  dsVersionID        : " + info[i].dsVersionID);
+      System.err.println("  AddressLocation    : " + info[i].AddressLocation);
+      System.err.println("  OperationLocation  : " + info[i].OperationLocation);
+      System.err.println("  ProtocolType       : " + info[i].ProtocolType);
+      System.err.println("  dsState            : " + info[i].dsState);
       for (int j = 0; j < info[i].methodParms.length; j++) {
         MethodParmDef def = info[i].methodParms[j];
-        System.out.println("  MethodParamDef[" + j + "]:");
-        System.out.println("    parmName         : " + def.parmName);
-        System.out.println("    parmDefaultValue : " + def.parmDefaultValue);
-        System.out.println("    parmRequired     : " + def.parmRequired);
-        System.out.println("    parmLabel        : " + def.parmLabel);
-        System.out.println("    parmPassBy       : " + def.parmPassBy);
+        System.err.println("  MethodParamDef[" + j + "]:");
+        System.err.println("    parmName         : " + def.parmName);
+        System.err.println("    parmDefaultValue : " + def.parmDefaultValue);
+        System.err.println("    parmRequired     : " + def.parmRequired);
+        System.err.println("    parmLabel        : " + def.parmLabel);
+        System.err.println("    parmPassBy       : " + def.parmPassBy);
         for (int k = 0; k < def.parmDomainValues.length; k++) {
-          System.out.println("    parmDomainValue  : " + def.parmDomainValues[k]);
+          System.err.println("    parmDomainValue  : " + def.parmDomainValues[k]);
         }
       }
     }
