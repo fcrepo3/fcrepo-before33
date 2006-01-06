@@ -50,7 +50,7 @@ public class SQLRebuilder implements Rebuilder {
     private Connection m_connection;
     private Context m_context;
     
-    private String m_echoString;
+    private String m_echoString = "Added PID";
 
     /**
      * Get a short phrase describing what the user can do with this rebuilder.

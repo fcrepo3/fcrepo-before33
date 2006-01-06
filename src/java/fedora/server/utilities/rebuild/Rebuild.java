@@ -50,28 +50,28 @@ public class Rebuild {
         System.setProperty("fedoraServerHost", serverConfig.getParameter("fedoraServerHost").getValue());
         System.setProperty("fedoraServerPort", serverConfig.getParameter("fedoraServerPort").getValue());
 
-        System.out.println();
-        System.out.println("                       Fedora Rebuild Utility");
-        System.out.println("                     ..........................");
-        System.out.println();
-        System.out.println("WARNING: Live rebuilds are not currently supported.");
-        System.out.println("         Make sure your server is stopped before continuing.");
-        System.out.println();
-        System.out.println("Server directory is " + serverDir.toString());
-        System.out.print  ("Server profile is ");
+        System.err.println();
+        System.err.println("                       Fedora Rebuild Utility");
+        System.err.println("                     ..........................");
+        System.err.println();
+        System.err.println("WARNING: Live rebuilds are not currently supported.");
+        System.err.println("         Make sure your server is stopped before continuing.");
+        System.err.println();
+        System.err.println("Server directory is " + serverDir.toString());
+        System.err.print  ("Server profile is ");
         if (profile == null) {
-            System.out.println("unspecified");
+            System.err.println("unspecified");
         } else {
-            System.out.println(profile);
+            System.err.println(profile);
         }
-        System.out.println();
-        System.out.println("---------------------------------------------------------------------");
-        System.out.println();
+        System.err.println();
+        System.err.println("---------------------------------------------------------------------");
+        System.err.println();
         Rebuilder rebuilder = getRebuilder(serverDir, serverConfig);
         if (rebuilder != null) {
-            System.out.println();
-            System.out.println(rebuilder.getAction());
-            System.out.println();
+            System.err.println();
+            System.err.println(rebuilder.getAction());
+            System.err.println();
             Map options = getOptions(rebuilder.init(serverDir, serverConfig));
             boolean serverIsRunning = false;
             try {
@@ -84,8 +84,8 @@ public class Rebuild {
             	ServerUtility.shutdown(protocolPort.getProtocol(), username, password);
             }
             if (options != null) {
-                System.out.println();
-                System.out.println("Rebuilding...");
+                System.err.println();
+                System.err.println("Rebuilding...");
                 try {
                     rebuilder.start(options);
                     // fedora.server.storage.lowlevel.Configuration conf = fedora.server.storage.lowlevel.Configuration.getInstance();
@@ -100,8 +100,8 @@ public class Rebuild {
                 finally {
                     rebuilder.finish();
                 }
-                System.out.println("Finished.");
-                System.out.println();
+                System.err.println("Finished.");
+                System.err.println();
             }
         }
     }
@@ -177,19 +177,19 @@ public class Rebuild {
 new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         if (c == 0) return options;
         if (c == 1) {
-            System.out.println();
+            System.err.println();
             return getOptions(descs);
         }
         return null;
     }
 
     private String getOptionValue(String name, String desc) throws IOException {
-        System.out.println("[" + name + "]");
-        System.out.println(desc);
-        System.out.println();
-        System.out.print("Enter a value --> ");
+        System.err.println("[" + name + "]");
+        System.err.println(desc);
+        System.err.println();
+        System.err.print("Enter a value --> ");
         String val = new BufferedReader(new InputStreamReader(System.in)).readLine();
-        System.out.println();
+        System.err.println();
         return val;
     }
 
@@ -220,14 +220,14 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
     private int getChoice(String title, String[] labels) throws IOException {
         boolean validChoice = false;
         int choiceIndex = -1;
-        System.out.println(title);
-        System.out.println();
+        System.err.println(title);
+        System.err.println();
         for (int i = 1; i <= labels.length; i++) {
-            System.out.println("  " + i + ") " + labels[i-1]);
+            System.err.println("  " + i + ") " + labels[i-1]);
         }
-        System.out.println();
+        System.err.println();
         while (!validChoice) {
-            System.out.print("Enter (1-" + labels.length + ") --> ");
+            System.err.print("Enter (1-" + labels.length + ") --> ");
             BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
             String line = in.readLine();
             try {
@@ -290,12 +290,12 @@ new String[] {"Yes", "No, let me re-enter the options.", "No, exit."});
         System.err.println("Error: " + message);
         System.err.println();
         if (showUsage) {
-            System.out.println("Usage: fedora-rebuild [server-profile]");
-            System.out.println();
-            System.out.println("server-profile : the argument you start Fedora with, such as 'mckoi'");
-            System.out.println("                 or 'oracle'.  If you start fedora with 'fedora-start'");
-            System.out.println("                 (without arguments), don't specify a server-profile here either.");
-            System.out.println();
+            System.err.println("Usage: fedora-rebuild [server-profile]");
+            System.err.println();
+            System.err.println("server-profile : the argument you start Fedora with, such as 'mckoi'");
+            System.err.println("                 or 'oracle'.  If you start fedora with 'fedora-start'");
+            System.err.println("                 (without arguments), don't specify a server-profile here either.");
+            System.err.println();
         }
         if (exit) {
             System.exit(1);
