@@ -133,7 +133,7 @@ public class Downloader {
             buf.append('/');
             buf.append(asOfDateTime);
         }
-        System.err.println("URL: "+buf.toString());
+        if (fedora.server.Debug.DEBUG) System.err.println("URL: "+buf.toString());
         return get(buf.toString());
     }    
     
