@@ -740,16 +740,16 @@ public class TestAPIM extends FedoraServerTestCase {
         // (4) test purgeDatastream
         System.out.println("Running TestAPIM.testPurgeDatastream...");
         // test specifying null for endDate
-        String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purgind datastream NEWDS3", false);
+        String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purging datastream NEWDS2", false);
         for (int i=0; i<results.length; i++) {
             //System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=null dsID: "+results[i]);
         }
         assertTrue(results.length > 0);
         
         // test specifying datetime for endDate
-        results = apim.purgeDatastream("demo:14", "NEWDS3", "2006-01-01T00:00:00.000Z", "purgind datastream NEWDS3", false);
+        results = apim.purgeDatastream("demo:14", "NEWDS3", "9999-01-01T00:00:00.000Z", "purging datastream NEWDS3", false);
         for (int i=0; i<results.length; i++) {
-            //System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"2006-01-01T00:00:00.000Z\" dsID: "+results[i]);
+            //System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"9999-01-01T00:00:00.000Z\" dsID: "+results[i]);
         }        
         assertTrue(results.length > 0);
 
@@ -780,9 +780,9 @@ public class TestAPIM extends FedoraServerTestCase {
         
                             
         // test getting datastream id FOPDISSEM for object demo:26 specifying datetime
-        ds = apim.getDatastream("demo:26", "FOPDISSEM", "2006-01-01T00:00:00.000Z");
+        ds = apim.getDatastream("demo:26", "FOPDISSEM", "9999-01-01T00:00:00.000Z");
         dsArray[0] = ds;
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", ,\"FOPDISSEM\", \"2006-01-01T00:00:00.000Z\")");
+        //System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", ,\"FOPDISSEM\", \"9999-01-01T00:00:00.000Z\")");
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastream");
         
         // assert datastream FOPDISSEM matches            
@@ -855,8 +855,8 @@ public class TestAPIM extends FedoraServerTestCase {
         }            
             
         // test getting all datastreams for object demo:26 specifying null for state
-        dsArray = apim.getDatastreams("demo:26", "2006-01-01T00:00:00.000Z", null);
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"2006-01-01T00:00:00.000Z\", null) number of Datastreams: "+dsArray.length);
+        dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", null);
+        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
@@ -906,8 +906,8 @@ public class TestAPIM extends FedoraServerTestCase {
         }            
         
         // test getting all disseminators for object demo:26 specifying both datetime and state
-        dsArray = apim.getDatastreams("demo:26", "2006-01-01T00:00:00.000Z", "A");
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"2006-01-01T00:00:00.000Z\", \"A\") number of Datastreams: "+dsArray.length);
+        dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", "A");
+        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
@@ -1062,9 +1062,9 @@ public class TestAPIM extends FedoraServerTestCase {
         result = apim.addDisseminator("demo:5", "demo:27", "demo:28", "Image Manip Disseminator", dsBindMap, "A", "adding new disseminator");
         
         // test specifying datetime for endDate
-        results = apim.purgeDisseminator("demo:5", "DISS2", "2006-01-01T00:00:00.000Z", "purging disseminator DISS2");
+        results = apim.purgeDisseminator("demo:5", "DISS2", "9999-01-01T00:00:00.000Z", "purging disseminator DISS2");
         for (int i=0; i<results.length; i++) {
-            //System.out.println("***** Testcase: TestAPIM.testPurgeDisseminator specifying endDate=\"2006-01-01T00:00:00.000Z\" dissID: "+results[i]);
+            //System.out.println("***** Testcase: TestAPIM.testPurgeDisseminator specifying endDate=\"9999-01-01T00:00:00.000Z\" dissID: "+results[i]);
         }          
         //assertTrue(results.length > 0);
         assertEquals("1","1");
@@ -1096,9 +1096,9 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[0].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
                 
         // test getting disseminator id DISS1 for object demo:26 specifying datetime
-        diss = apim.getDisseminator("demo:26", "DISS1", "2006-01-01T00:00:00.000Z");
+        diss = apim.getDisseminator("demo:26", "DISS1", "9999-01-01T00:00:00.000Z");
         dissArray[0] = diss;
-        //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", \"2006-01-01T00:00:00.000Z\")");
+        //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", \"9999-01-01T00:00:00.000Z\")");
         verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDisseminator");
 
         // assert DISS1 matches
@@ -1159,8 +1159,8 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");
         
         // test getting all disseminators for object demo:26 specifying null for state
-        dissArray = apim.getDisseminators("demo:26", "2006-01-01T00:00:00.000Z", null);
-        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"2006-01-01T00:00:00.000Z\", null) number of Disseminators: "+dissArray.length);
+        dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", null);
+        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
         verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDissemintors");
 
@@ -1197,8 +1197,8 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(dissArray[1].getDsBindMap().getDsBindings()[0].getSeqNo(),"");                    
 
         // test getting all disseminators for object demo:26 specifying both datetime and state
-        dissArray = apim.getDisseminators("demo:26", "2006-01-01T00:00:00.000Z", "A");
-        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"2006-01-01T00:00:00.000Z\", \"A\") number of Disseminators: "+dissArray.length);
+        dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", "A");
+        //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
         verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDissemintors");
 
