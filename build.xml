@@ -76,7 +76,8 @@
 			<pathelement location="${lib.kowari-jrdf}"/>
 			<!-- Kowari 1.1.0
 			<pathelement location="${lib.j2ee-connector}"/> -->
-			<pathelement location="${lib.dateutils}"/> <!--
+			<pathelement location="${lib.dateutils}"/>
+			<!--
 			<pathelement location="${lib.jotm-carol}"/>
 			<pathelement location="${lib.jotm-stubs}"/>
 			<pathelement location="${lib.jotm-patched}"/>
@@ -830,19 +831,20 @@
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/fedora-internal-use"/>
 		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/fedora-internal-use"/>
 		<!-- copy file="src/xml/xacml-policies/readme-policyguitool-generated-policies.txt" todir="dist/server/config/xacml-policies"/ -->
-		
 		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
 		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0">
 			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
 		</copy>
-		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-object-policies"/>		
+		<!--
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-object-policies"/>
 		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-object-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-object-policies"/>
 		</copy>
-		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies"/>		
+		-->
+		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies"/>
 		<copy todir="dist/server/fedora-internal-use/fedora-internal-use-surrogate-policies">
 			<fileset dir="src/xml/xacml-policies/default/default-surrogate-policies"/>
-		</copy>		
+		</copy>
 		<!-- removing from dist, as also in userodc and no obvious placment after other changes; mkdir dir="dist/server/config/xacml-policies/examples"/>
 		<copy todir="dist/server/config/xacml-policies/examples/example-repository-policies">
 			<fileset dir="src/xml/xacml-policies/examples/example-repository-policies"/>
@@ -854,14 +856,8 @@
 			<fileset dir="src/xml/xacml-policies/examples/example-surrogate-policies"/>
 		</copy -->
 		<mkdir dir="dist/server/fedora-internal-use"/>
-		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/fedora-internal-use"/>		
+		<copy file="src/xsl/security/build-backend-policy.xsl" todir="dist/server/fedora-internal-use"/>
 		<mkdir dir="dist/server/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
-		
-		
-		
-		
-		
-		
 		<!-- tomcat: web configuration files for the Fedora webapp -->
 		<copy file="src/web-app/fedora/server/web-secure-apim.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
 		<copy file="src/web-app/fedora/server/web-secure-all.xml" todir="${tomcat.deploy.dir}/fedora/WEB-INF"/>
@@ -1196,7 +1192,7 @@
 			<formatter type="plain" usefile="false"/>
 			<!--<test name="fedora.server.resourceIndex.AllTests"/>-->
 			<!--<test name="fedora.test.SuiteBaz"/>-->
-			<!--<test name="fedora.test.integration.AllAPITests"/>   -->
+			<!--<test name="fedora.test.integration.AllAPITests"/>-->
 			<!--<test name="fedora.test.integration.TestFedoraConfigurations"/> -->
 			<test name="fedora.test.integration.AllTests"/>
 		</junit>
