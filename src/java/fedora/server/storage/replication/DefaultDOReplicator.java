@@ -674,7 +674,7 @@ public class DefaultDOReplicator
                         // FIXME: this is a quick hack to fix the problem of versioned datastreams
                         // not being properly removed from LLStore at time of purge.
                         // Check for any Managed Content Datastreams that have been purged
-                        HashMap versions = new HashMap();
+                        /*HashMap versions = new HashMap();
                         Datastream[] ds = reader.GetDatastreams(null, null);
                         for (int i=0; i<ds.length; i++) {
                           if(ds[i].DSControlGrp.equalsIgnoreCase("M"))
@@ -710,7 +710,7 @@ public class DefaultDOReplicator
                         results=null;
                         if(isDeleted)
                           return true;
-
+*/
 // DELETE THE ABOVE LINES AND UN-COMMENT DefaultDOManager line 833 to fix
 
 

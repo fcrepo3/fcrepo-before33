@@ -924,7 +924,7 @@ public class DefaultDOManager
 //       and ends with if (isDeleted) return true; (it's around 40 lines)
 //       after 2.1 is released (or before if team says it's ok) - cwilper
 
-//                if (!obj.isNew()) deletePurgedDatastreams(obj, context);
+                if (!obj.isNew()) deletePurgedDatastreams(obj, context);
 
                 // DATASTREAM STORAGE:
                 // copy and store any datastreams of type Managed Content
