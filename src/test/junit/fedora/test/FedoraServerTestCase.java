@@ -139,12 +139,14 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         System.out.println("Replacing policies...");
         replacePolicies(new File(policyBaseDir, "repository-policies"), 
                         "REPOSITORY-POLICIES-DIRECTORY");
-        replacePolicies(new File(policyBaseDir, "object-policies"), 
-                        "OBJECT-POLICIES-DIRECTORY");
-        replacePolicies(new File(policyBaseDir, "surrogate-policies"), 
-                        "SURROGATE-POLICIES-DIRECTORY");
-        replacePolicies(new File(policyBaseDir, "repository-policies-generated-by-policyguitool"), 
-                        "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY");
+		replacePolicies(new File(policyBaseDir, "surrogate-policies"), 
+						"SURROGATE-POLICIES-DIRECTORY");
+        // SDP: object policies directory is obsoleted in 2.1
+        //replacePolicies(new File(policyBaseDir, "object-policies"), 
+        //                "OBJECT-POLICIES-DIRECTORY");
+		// SDP: gui tool policies directory is not used in 2.1
+        //replacePolicies(new File(policyBaseDir, "repository-policies-generated-by-policyguitool"), 
+        //                "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY");
 
         File backendSecurityReplacement = new File(dirName, "beSecurity.xml");
         if (backendSecurityReplacement.exists()) {

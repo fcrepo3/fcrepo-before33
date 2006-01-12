@@ -170,8 +170,9 @@ public class FedoraServerTestSetup
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
-        backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
-        backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+		// SDP: object policies directory is obsoleted in 2.1
+        //backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
     }
 
@@ -179,8 +180,9 @@ public class FedoraServerTestSetup
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
-        restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
-        restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+		// SDP: object policies directory is obsoleted in 2.1
+        //restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
     }
 
