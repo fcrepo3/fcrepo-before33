@@ -332,15 +332,6 @@ public class DefaultDOManager
                     logWarning("Error unregistering object; Unable to obtain pid from writer.");
                 }
             }
-        } else if (!writer.isNew() && writer.isCommitted() && m_readerCache != null) {
-            // If it's not a new object and a change was committed, 
-            // make sure the DOReaderCache entry for the object is invalidated
-            // so any subsequent reads will reflect the latest information.
-            try {
-                m_readerCache.remove(writer.GetObjectPID());
-            } catch (Exception e) {
-                logWarning("Error removing object from cache");
-            }
         }
 
         writer.invalidate();
@@ -1030,6 +1021,13 @@ public class DefaultDOManager
                     getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 }
                 
+                // INVALIDATE DOREADER CACHE:  
+                // now that the object xml is stored, make sure future DOReaders
+                // will get the latest copy
+                if (m_readerCache != null) {
+                    m_readerCache.remove(obj.getPid());
+                }
+
                 // REGISTRY:
 				// update systemVersion in doRegistry (add one)
                 logFinest("COMMIT: Updating registry...");
@@ -1068,6 +1066,7 @@ public class DefaultDOManager
                         s=null;
                     }
                 }
+
                 // REPLICATE:
                 // add to replication jobs table and do replication to db
                 logFinest("COMMIT: Adding replication job...");
