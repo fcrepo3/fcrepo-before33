@@ -90,7 +90,7 @@ public abstract class AxisUtility {
         return fault;
     }
 
-    public static AxisFault getFault(Exception e) {
+    public static AxisFault getFault(Throwable e) {
         AxisFault fault=new AxisFault(new QName(SOAP_FAULT_CODE_NAMESPACE,
                 "Uncaught"),
                 e.getClass().getName() + ":" + e.getMessage(), SOAP_ULTIMATE_RECEIVER,
