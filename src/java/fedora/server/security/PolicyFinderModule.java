@@ -265,7 +265,7 @@ log("is NOT a directory");
 		AbstractPolicy objectPolicyFromObject = null;
 		DOReader reader = null;
 		try {
-			reader = doManager.getReader(Server.USE_CACHE, ReadOnlyContext.EMPTY, pid);
+			reader = doManager.getReader(Server.USE_DEFINITIVE_STORE, ReadOnlyContext.EMPTY, pid);
 		} catch (ObjectNotInLowlevelStorageException ee) {
 			// nonexistent object is not an error (action is to create the object)			
 		} catch (Throwable e) {
@@ -275,7 +275,7 @@ log("is NOT a directory");
 		if (reader != null) {
 			Datastream policyDatastream = null;
 			try {
-				policyDatastream = reader.getDatastream("POLICY", null);
+				policyDatastream = reader.GetDatastream("POLICY", null);
 			} catch (ServerException e1) {
 				// policy in object is optional and is not an error
 			}
