@@ -44,7 +44,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	boolean enforceListObjectInResourceIndexResults = true;
 
 	private String repositoryPoliciesActiveDirectory = "";
-	private String objectPoliciesActiveDirectory = "";	
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private String objectPoliciesActiveDirectory = "";	
 	private String repositoryPolicyGuitoolDirectory = "";	
 	private String surrogatePoliciesActiveDirectory = "";
 
@@ -54,12 +55,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private final String SURROGATE_POLICIES_DIRECTORY_KEY = "SURROGATE-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICIES_DIRECTORY_KEY = "REPOSITORY-POLICIES-DIRECTORY";
 	private final String REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY = "REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY";	
-	private final String OBJECT_POLICIES_DIRECTORY_KEY = "OBJECT-POLICIES-DIRECTORY";
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private final String OBJECT_POLICIES_DIRECTORY_KEY = "OBJECT-POLICIES-DIRECTORY";
 	private final String COMBINING_ALGORITHM_KEY = "XACML-COMBINING-ALGORITHM";
 	private final String ENFORCE_MODE_KEY = "ENFORCE-MODE";
 	private final String POLICY_SCHEMA_PATH_KEY = "POLICY-SCHEMA-PATH";
 	private final String VALIDATE_REPOSITORY_POLICIES_KEY = "VALIDATE-REPOSITORY-POLICIES";
-	private final String VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY = "VALIDATE-OBJECT-POLICIES-FROM-FILE";
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private final String VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY = "VALIDATE-OBJECT-POLICIES-FROM-FILE";
 	private final String VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY = "VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM";
 	private final String VALIDATE_SURROGATE_POLICIES_KEY = "VALIDATE-SURROGATE-POLICIES";
 	private final String ALLOW_SURROGATE_POLICIES_KEY = "ALLOW-SURROGATE-POLICIES";
@@ -67,7 +70,8 @@ public class DefaultAuthorization extends Module implements Authorization {
 	private static final String XACML_DIST_BASE = "fedora-internal-use";	
 	private static final String DEFAULT_SURROGATE_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-surrogate-policies"; 
 	private static final String DEFAULT_REPOSITORY_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-repository-policies-approximating-2.0"; 
-	private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-object-policies"; 
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private static final String DEFAULT_OBJECT_POLICIES_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-object-policies"; 
 	private static final String BE_SECURITY_PROPERTIES_LOCATION = "config/beSecurity.properties"; 
 	private static final String BE_SECURITY_XML_LOCATION = "config/beSecurity.xml";	
 	private static final String BACKEND_POLICIES_ACTIVE_DIRECTORY = XACML_DIST_BASE + "/fedora-internal-use-backend-service-policies"; 
@@ -110,12 +114,15 @@ public class DefaultAuthorization extends Module implements Authorization {
 			(String) moduleParameters.get(REPOSITORY_POLICIES_DIRECTORY_KEY);
     	log("repositoryPoliciesDirectory=" + repositoryPoliciesActiveDirectory);
     }
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	/*
     if (moduleParameters.containsKey(OBJECT_POLICIES_DIRECTORY_KEY)) {
     	objectPoliciesActiveDirectory =
     		//((String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
 			(String) moduleParameters.get(OBJECT_POLICIES_DIRECTORY_KEY);
     	log("objectPoliciesDirectory=" + objectPoliciesActiveDirectory);
     }
+    */
     if (moduleParameters.containsKey(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)) {
     	repositoryPolicyGuitoolDirectory = 
     		//((String) moduleParameters.get(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)).startsWith(File.separator) ? "" : serverHome + 
@@ -144,9 +151,12 @@ public class DefaultAuthorization extends Module implements Authorization {
     	validateRepositoryPolicies = (new Boolean( (String) moduleParameters.get(VALIDATE_REPOSITORY_POLICIES_KEY))).booleanValue();
         log("set it = " + validateRepositoryPolicies);
     }
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	/*
     if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY)) {
     	validateObjectPoliciesFromFile = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_FILE_KEY));
     }
+    */
     if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY)) {
     	validateObjectPoliciesFromDatastream = Boolean.getBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY));
     }
@@ -171,7 +181,8 @@ public class DefaultAuthorization extends Module implements Authorization {
   
 	private String policySchemaPath = "";
   	private boolean validateRepositoryPolicies = false;
-  	private boolean validateObjectPoliciesFromFile = false;
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+  	//private boolean validateObjectPoliciesFromFile = false;
   	private boolean validateObjectPoliciesFromDatastream = false;
 	private boolean validateSurrogatePolicies = false;
 	private boolean allowSurrogatePolicies = false;
@@ -314,11 +325,14 @@ public class DefaultAuthorization extends Module implements Authorization {
 		mkdir(repositoryPoliciesActiveDirectory);
 		if (mkdir(repositoryPoliciesActiveDirectory + File.separator + DEFAULT)) {		
 			dircopy(fedoraHome + File.separator + DEFAULT_REPOSITORY_POLICIES_DIRECTORY, repositoryPoliciesActiveDirectory + File.separator + DEFAULT);
-		}		
+		}
+		// SDP: removed since object policies directory is obsolete in Fedora 2.1
+		/*		
 		mkdir(objectPoliciesActiveDirectory);
 		if (mkdir(objectPoliciesActiveDirectory + File.separator + DEFAULT)) {	
 			dircopy(fedoraHome + File.separator + DEFAULT_OBJECT_POLICIES_DIRECTORY, objectPoliciesActiveDirectory + File.separator + DEFAULT);		
-		}		
+		}
+		*/		
 		mkdir(surrogatePoliciesActiveDirectory);    	
 		if (mkdir(surrogatePoliciesActiveDirectory + File.separator + DEFAULT)) {
 			dircopy(fedoraHome + File.separator + DEFAULT_SURROGATE_POLICIES_DIRECTORY, surrogatePoliciesActiveDirectory + File.separator + DEFAULT);
@@ -345,8 +359,11 @@ public class DefaultAuthorization extends Module implements Authorization {
       			" validateRepositoryPolicies=" + validateRepositoryPolicies);
 		String fedoraHome = ((Module)this).getServer().getHomeDir().getAbsolutePath();   
       	log("in DefaultAuthorization.postInitModule() 6a fedoraHome=" + fedoraHome);
-        xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
-       		validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
+      	// SDP: removed method arguments having to do with object policies directory (obsolete in 2.1)
+        //xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, objectPoliciesActiveDirectory, m_manager, 
+       	//	validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
+		xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, m_manager, 
+			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
       	log("in DefaultAuthorization.postInitModule() 7");
         Transom.getInstance().setAllowSurrogate(allowSurrogatePolicies);
         Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesActiveDirectory);

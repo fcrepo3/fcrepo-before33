@@ -129,7 +129,6 @@
     <comment>Builds and manages Fedora's authorization structure.</comment>
     <param name="ALLOW-SURROGATES" value="true"/>
     <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
-    <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-xacml-policies/object-policies"/>
     <param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
     <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool">
       <comment>The parameter REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY is for future use.</comment>

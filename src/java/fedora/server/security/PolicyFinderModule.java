@@ -59,7 +59,8 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 	private String combiningAlgorithm = null;
 	private PolicyFinder finder;
 	private List repositoryPolicies = null;
-	private File objectPolicyDirectory = null;
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private File objectPolicyDirectory = null;
 	private File schemaFile = null;
 	private DOManager doManager;
 
@@ -76,9 +77,16 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
         }
     }
 
+	// SDP: removed constructor args related to object policies directory (obsoleted in 2.1)
+	/*
 	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromFile,
+		boolean validateObjectPoliciesFromDatastream, 
+		String policySchemaPath
+	*/
+	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, DOManager doManager,
+		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromDatastream, 
 		String policySchemaPath
 	) throws GeneralException {
@@ -102,17 +110,20 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		log("XXpolicySchemaPath="+policySchemaPath);
 		if (policySchemaPath == null) {
 			this.validateRepositoryPolicies = false;
-			this.validateObjectPoliciesFromFile = false;
+			// SDP: removed since object policies directory is obsolete in Fedora 2.1
+			//this.validateObjectPoliciesFromFile = false;
 			this.validateObjectPoliciesFromDatastream = false;
 		} else {
 			this.validateRepositoryPolicies = validateRepositoryPolicies;
-			this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
-			this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;			
-			if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromFile || this.validateObjectPoliciesFromDatastream) {
+			// SDP: removed since object policies directory is obsolete in Fedora 2.1
+			//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
+			this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
+			//if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromFile || this.validateObjectPoliciesFromDatastream) {			
+			if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromDatastream) {
 				schemaFile = new File(policySchemaPath);
 				if (! schemaFile.canRead()) {
 					this.validateRepositoryPolicies = false;
-					this.validateObjectPoliciesFromFile = false;
+					//this.validateObjectPoliciesFromFile = false;
 					this.validateObjectPoliciesFromDatastream = false;					
 				}
 			}
@@ -120,15 +131,18 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		
 		
 		repositoryPolicies = getRepositoryPolicies(filelist);
-		
+
+		// SDP: removed since object policies directory is obsolete in Fedora 2.1
+		/*		
 		File objectPolicyDirectory = new File(objectPolicyDirectoryPath);
-log("objectPolicyDirectory="+objectPolicyDirectory);
+		log("objectPolicyDirectory="+objectPolicyDirectory);
 		if (objectPolicyDirectory.isDirectory()) {
-log("is a directory");			
+			log("is a directory");			
 			this.objectPolicyDirectory = objectPolicyDirectory;
 		} else {
-log("is NOT a directory");
+			log("is NOT a directory");
 		}
+		*/
 		
 		this.doManager = doManager;
 
@@ -304,11 +318,12 @@ log("is NOT a directory");
 		return objectPolicyFromObject;
 	}
 
-
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	/*
     private AbstractPolicy getPolicyFromFile(String filepath) throws Exception {
 		AbstractPolicy objectPolicyFromObject = null;		
 		//String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
-log(">>>>>>>>filepath=" + filepath);
+		log(">>>>>>>>filepath=" + filepath);
 		File file = new File(filepath);
 		if (file.exists()) {
 			if (!file.canRead()) {
@@ -338,6 +353,7 @@ log(">>>>>>>>filepath=" + filepath);
 		}
 		return objectPolicyFromObject;
 	}
+	*/
 
 	
 	private static final void buildRepositoryPolicyFileList(File directory,  List filelist) {
@@ -356,8 +372,9 @@ log(">>>>>>>>filepath=" + filepath);
 	}
 
 	private boolean validateRepositoryPolicies = false;
-	private boolean validateObjectPoliciesFromFile = false;
 	private boolean validateObjectPoliciesFromDatastream = false;
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//private boolean validateObjectPoliciesFromFile = false;
 
 	
 	/**
@@ -471,11 +488,14 @@ log(">>>>>>>>filepath=" + filepath);
 		    	if (objectPolicyFromObject != null) {
 		    		policies.add(objectPolicyFromObject);
 		    	}
+				// SDP: removed since object policies directory is obsolete in Fedora 2.1
+				/*
 				String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
 		    	AbstractPolicy objectPolicyFromFile = getPolicyFromFile(filepath);
 		    	if (objectPolicyFromFile != null) {
 		    		policies.add(objectPolicyFromFile);
 		    	} 
+		    	*/
 			}
 			PolicyCombiningAlgorithm policyCombiningAlgorithm = (PolicyCombiningAlgorithm) Class.forName(combiningAlgorithm).newInstance();
 				//new OrderedDenyOverridesPolicyAlg();

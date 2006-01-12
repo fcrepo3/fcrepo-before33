@@ -184,8 +184,11 @@ log("before building policy finder");
 		PolicyFinderModule combinedPolicyModule = null;
 		//try {
 			log("***before constucting fedora policy finder module, policySchemaPath = " + policySchemaPath);
-			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, localPolicyConfig, manager,
-			validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
+			// SDP: removed method args related to object policies directory (obsoleted in 2.1)
+			//combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, localPolicyConfig, manager,
+			//validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
+			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, manager,
+				validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
 			log("after constucting fedora policy finder module");
 			/*
 		} catch (GeneralException e) {
@@ -220,19 +223,30 @@ log("***debugging CombinedPolicyModule");
 	String combiningAlgorithm = null;
 	String globalPolicyConfig = null; 
 	String globalBackendPolicyConfig = null; 
-	String globalPolicyGuiToolConfig = null; 
-	String localPolicyConfig = null; 
+	String globalPolicyGuiToolConfig = null;
 	DOManager manager = null;
 	boolean validateRepositoryPolicies = false;
-	boolean validateObjectPoliciesFromFile = false;
 	boolean validateObjectPoliciesFromDatastream = false; 
 	String policySchemaPath = null;
-	
+	// SDP: removed since object policies directory is obsolete in Fedora 2.1
+	//boolean validateObjectPoliciesFromFile = false; 
+	//String localPolicyConfig = null; 
+
+	// SDP: modified initPep method to remove arguments pertaining to object policies dir
+	// (which is obsoleted in 2.1)
+	/*
 	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
 			String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, String localPolicyConfig, 
 		DOManager manager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromFile,
+		boolean validateObjectPoliciesFromDatastream, 
+		String policySchemaPath	
+	*/
+	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
+		String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, 
+		DOManager manager,
+		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromDatastream, 
 		String policySchemaPath
 	) throws Exception {
@@ -250,10 +264,12 @@ log("***debugging CombinedPolicyModule");
 		this.globalPolicyConfig = globalPolicyConfig; 
 		this.globalBackendPolicyConfig = globalBackendPolicyConfig;
 		this.globalPolicyGuiToolConfig = globalPolicyGuiToolConfig;
-		this.localPolicyConfig = localPolicyConfig;
+		// SDP: removed since object policies directory is obsolete in Fedora 2.1
+		//this.localPolicyConfig = localPolicyConfig;
 		this.manager = manager;
 		this.validateRepositoryPolicies = validateRepositoryPolicies;
-		this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
+		// SDP: removed since object policies directory is obsolete in Fedora 2.1
+		//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 		this.policySchemaPath = policySchemaPath;
 		log ("***in initPep(), before calling newPdp()");	
