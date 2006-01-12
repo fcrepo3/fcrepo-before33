@@ -307,7 +307,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || behaviorDefs == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -443,10 +444,11 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || methodParms == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
-      // query Definitive storage area.
+      // query Definitive storage area.  
       try
       {
         loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
@@ -582,7 +584,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || methodDefs == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -694,7 +697,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || datastream == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -809,7 +813,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || datastreamArray==null)
     {
       // Requested object exists in the Definitve storage area; query
       // Definitive storage area.
@@ -1021,7 +1026,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || dissBindInfoArray == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -1127,7 +1133,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || disseminator == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -1246,7 +1253,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || disseminatorArray == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -1403,7 +1411,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore || versDateTime != null)
+    }
+    if (isFoundInDefinitiveStore || versDateTime != null || objectMethodsDefArray == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitve storage area.
@@ -1612,7 +1621,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore)
+    }
+    if (isFoundInDefinitiveStore || datastreamIDs == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
@@ -1722,7 +1732,8 @@ public class FastDOReader implements DOReader
           statement=null;
         }
       }
-    } else if (isFoundInDefinitiveStore)
+    }
+    if (isFoundInDefinitiveStore || disseminatorIDs == null)
     {
       // Requested object exists in Definitive storage area or is versioned;
       // query Definitive storage area.
