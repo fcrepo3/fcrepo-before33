@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <server xmlns="http://www.fedora.info/definitions/1/0/config/" class="fedora.server.BasicServer">
-  <param name="repositoryName" value="Fedora Repository">
-    <comment>Defines a human readable name for the Fedora server; default is
+	<param name="repositoryName" value="Fedora Repository">
+		<comment>Defines a human readable name for the Fedora server; default is
             Fedora Repository.</comment>
-  </param>
-  <param name="adminEmailList" value="bob@example.org sally@example.org">
-    <comment>Defines one or more email addresses for server administrators;
+	</param>
+	<param name="adminEmailList" value="bob@example.org sally@example.org">
+		<comment>Defines one or more email addresses for server administrators;
             list is space delimited.</comment>
-  </param>
-  <param name="adminUsername" value="fedoraAdmin">
-    <comment>Defines the username for the Fedora server; default is
+	</param>
+	<param name="adminUsername" value="fedoraAdmin">
+		<comment>Defines the username for the Fedora server; default is
             fedoraAdmin.</comment>
-  </param>
-  <param name="adminPassword" value="fedoraAdmin">
-    <comment>Defines the password for the Fedora server; default is
+	</param>
+	<param name="adminPassword" value="fedoraAdmin">
+		<comment>Defines the password for the Fedora server; default is
             fedoraAdmin.</comment>
-  </param>
-  <param name="log_max_size" value="5242880">
-    <comment>Defines the threshold at which a new log file is generated
+	</param>
+	<param name="log_max_size" value="20000000">
+		<comment>Defines the threshold at which a new log file is generated
             based on the size of the current log file in bytes; default is
             5242880 bytes.</comment>
-  </param>
-  <param name="log_max_days" value="7">
-    <comment>Defines the threshold at which a new log file is generated
+	</param>
+	<param name="log_max_days" value="7">
+		<comment>Defines the threshold at which a new log file is generated
             based on number of days since the server was started in days;
             default is 7 days.</comment>
-  </param>
-  <param name="log_dir" value="logs">
-    <comment>Defines the directory in which the Fedora logs will be written;
+	</param>
+	<param name="log_dir" value="logs">
+		<comment>Defines the directory in which the Fedora logs will be written;
             default is logs.</comment>
-  </param>
-  <param name="log_level" value="finest">
-    <comment>Defines the level of logging desired;default is finest;
+	</param>
+	<param name="log_level" value="finest">
+		<comment>Defines the level of logging desired;default is finest;
             possible levels include: - config denotes logging indicating what
             occurred during the server&apos;s (or a module&apos;s)
             configuration phase. - fine denotes logging indicating basic
@@ -46,119 +46,118 @@
             job. - warning denotes logging indicating that an undesired (but
             non-fatal) condition occured. - severe denotes logging indicating
             that the server is inoperable or unable to start.</comment>
-  </param>
-  <param name="log_flush_threshold" value="1">
-    <comment>Defines the flush threshold for logging in number of records;
+	</param>
+	<param name="log_flush_threshold" value="10">
+		<comment>Defines the flush threshold for logging in number of records;
             default is one log record.</comment>
-  </param>
-  <param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm">
-    <comment>Defines the java class used to determine the path algorithm for
+	</param>
+	<param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm">
+		<comment>Defines the java class used to determine the path algorithm for
             LowLevelStorage; default is
             fedora.server.storage.lowlevel.TimestampPathAlgorithm.</comment>
-  </param>
-  <param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem">
-    <comment>Defines the java class that determines the type of
+	</param>
+	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem">
+		<comment>Defines the java class that determines the type of
             implementation for LowLevelStorage; default is
             fedora.server.storage.lowlevel.GenericFileSystem.</comment>
-  </param>
-  <param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry">
-    <comment>Defines the java class used to determine the path registry for
+	</param>
+	<param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry">
+		<comment>Defines the java class used to determine the path registry for
             LowLevelStorage; default is
             fedora.server.storage.lowlevel.DBPathRegistry.</comment>
-  </param>
-  <param name="backslash_is_escape" value="yes" oraclevalue="no">
-    <comment>Defines whether the backing database (which include registry
+	</param>
+	<param name="backslash_is_escape" value="yes" oraclevalue="no">
+		<comment>Defines whether the backing database (which include registry
             tables) the backslash character to be the escape character (token
             beginning an escape sequence). This is needed to correctly store and
             retrieve filepaths from the registry tables, if running under
             Windows/DOS.</comment>
-  </param>
-  <param name="object_store_base" value="C:\fedora2_0_objects">
-    <comment>Defines the root directory for the internal storage of Fedora
+	</param>
+	<param name="object_store_base" value="C:\fedora2_0_objects">
+		<comment>Defines the root directory for the internal storage of Fedora
             objects. This value should be adjusted based on your installation
             environment; default assumes a Windows installation of
             C:\fedora2_0_objects.</comment>
-  </param>
-  <param name="temp_store_base" value="C:\fedora2_0_temp">
-    <comment>Defines the root directory for Fedora temporary storage. This
+	</param>
+	<param name="temp_store_base" value="C:\fedora2_0_temp">
+		<comment>Defines the root directory for Fedora temporary storage. This
             value should be adjusted based on your installation environment;
             default assumes a Windows installation of
         C:\fedora2_0_temp.</comment>
-  </param>
-  <param name="datastream_store_base" value="C:\fedora2_0_datastreams">
-    <comment>Defines the root directory for the internal storage of Managed
+	</param>
+	<param name="datastream_store_base" value="C:\fedora2_0_datastreams">
+		<comment>Defines the root directory for the internal storage of Managed
             Content datastreams. This value should be adjusted based on your
             installation environment; default assumes a Windows installation of
             C:\fedora2_0_datastreams.</comment>
-  </param>
-  <param name="debug" value="false">
-    <comment>A boolean toggle used to turn off/on internal debugging in the
+	</param>
+	<param name="debug" value="false">
+		<comment>A boolean toggle used to turn off/on internal debugging in the
             code.</comment>
-  </param>
-  <param name="datastreamExpirationLimit" value="300">
-    <comment>Controls the size of the datastream mediation hash by removing
+	</param>
+	<param name="datastreamExpirationLimit" value="300">
+		<comment>Controls the size of the datastream mediation hash by removing
             entries outside the specified threshold. The value is specified in
             seconds. Note this value must be greater than the limit specified
             for the datastreamMediationLimit.</comment>
-  </param>
-  <param name="datastreamMediationLimit" value="5000">
-    <comment>Determines the time interval in which external mechanisms must
+	</param>
+	<param name="datastreamMediationLimit" value="5000">
+		<comment>Determines the time interval in which external mechanisms must
             respond to requests by the Fedora server. The value is specified in
             milliseconds. The value specified should be set high enough to allow
             for an average response time from any single external mechanisms.
             Note this value must be less than the limit specified for the
             datastreamExpirationLimit.</comment>
-  </param>
-  <param name="fedoraServerPort" value="8080">
-    <comment>Defines the port number on which the Fedora server runs;
+	</param>
+	<param name="fedoraServerPort" value="8080">
+		<comment>Defines the port number on which the Fedora server runs;
             default is 8080.</comment>
-  </param>
-  <param name="fedoraShutdownPort" value="8005">
-    <comment>Defines the port number used to shutdown the Fedora sever;
+	</param>
+	<param name="fedoraShutdownPort" value="8005">
+		<comment>Defines the port number used to shutdown the Fedora sever;
             default is 8005.</comment>
-  </param>
-  <param name="fedoraRedirectPort" value="8443">
-    <comment>Defines the redirect port of the Fedora sever; default is
+	</param>
+	<param name="fedoraRedirectPort" value="8443">
+		<comment>Defines the redirect port of the Fedora sever; default is
         8443.</comment>
-  </param>
-  <param name="fedoraServerHost" value="localhost">
-    <comment>Defines the host name for the Fedora server, as seen from the
+	</param>
+	<param name="fedoraServerHost" value="localhost">
+		<comment>Defines the host name for the Fedora server, as seen from the
             outside world.</comment>
-  </param>
-  <module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
-    <comment>Builds and manages Fedora's authorization structure.</comment>
-    <param name="ALLOW-SURROGATES" value="false"/>
-    <param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
-    <param name="OBJECT-POLICIES-DIRECTORY" value="/fedora-xacml-policies/object-policies"/>
-    <param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
-    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
-    <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
-    <param name="ENFORCE-MODE" value="enforce-policies"/>
-    <param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-01.xsd"/>
-    <param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
-    <param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
-    <param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/>
-    <param name="VALIDATE-SURROGATE-POLICIES" value="false"/>
-  </module>
-  <module role="fedora.server.security.BackendSecurity" class="fedora.server.security.DefaultBackendSecurity">
-    <comment>Description: Interface to the backend service security configuration.
+	</param>
+	<module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
+		<comment>Builds and manages Fedora's authorization structure.</comment>
+		<param name="ALLOW-SURROGATES" value="false"/>
+		<param name="REPOSITORY-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies"/>
+		<param name="SURROGATE-POLICIES-DIRECTORY" value="/fedora-xacml-policies/surrogate-policies"/>
+		<param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="/fedora-xacml-policies/repository-policies-generated-by-policyguitool"/>
+		<param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
+		<param name="ENFORCE-MODE" value="enforce-policies"/>
+		<param name="POLICY-SCHEMA-PATH" value="xsd/cs-xacml-schema-policy-01.xsd"/>
+		<param name="VALIDATE-REPOSITORY-POLICIES" value="true"/>
+		<param name="VALIDATE-OBJECT-POLICIES-FROM-FILE" value="false"/>
+		<param name="VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM" value="false"/>
+		<param name="VALIDATE-SURROGATE-POLICIES" value="false"/>
+	</module>
+	<module role="fedora.server.security.BackendSecurity" class="fedora.server.security.DefaultBackendSecurity">
+		<comment>Description: Interface to the backend service security configuration.
         		This module initializes backend service security iinformation in the server
         		by parsing the beSecurity configuration file. This file is located in the
         		distribution in $FEDORA_HOME/dist/server/config/beSecurity.xml. The configuration
         		file is read once at server startup.</comment>
-    <param name="beSecurity_validation" value="false">
-      <comment>Controls whether beSecurity config file is validated against
+		<param name="beSecurity_validation" value="false">
+			<comment>Controls whether beSecurity config file is validated against
         		the beSecurityDescription schema. The default is &quot;false&quot;.
         		Valid values are &quot;true&quot; or &quot;false&quot;.</comment>
-    </param>
-    <param name="beSecurity_char_encoding" value="utf-8">
-      <comment>The character encoding used for the beSecurity configuration file.
+		</param>
+		<param name="beSecurity_char_encoding" value="utf-8">
+			<comment>The character encoding used for the beSecurity configuration file.
         		The default is &quot;utf-8&quot;. The value specified must correspond to the
         		character encoding used in the beSecurity configuration file.</comment>
-    </param>
-  </module>
-  <module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
-    <comment>Description: The interface to the storage subsystem. This
+		</param>
+	</module>
+	<module role="fedora.server.storage.DOManager" class="fedora.server.storage.DefaultDOManager">
+		<comment>Description: The interface to the storage subsystem. This
             provides context-appropriate DOReaders and DOWriters for reflecting
             on and writing to the objects stored in the repository. It also
             provides methods for reflecting on the contents of the repository as
@@ -181,22 +180,22 @@
             subsystem (see the ConnectionPoolManager module) -
             storageCharacterEncoding [default=UTF-8] If the serialization format
             is text-based, this is the character encoding that should be used.</comment>
-    <param name="pidNamespace" value="changeme"/>
-    <param name="retainPIDs" value="demo test changeme fedora-bdef             fedora-bmech       tutorial"/>
-    <param name="storagePool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-    <param name="storageCharacterEncoding" value="UTF-8"/>
-    <param name="defaultExportFormat" value="foxml1.0"/>
-  </module>
-  <module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
-    <comment>Description: The management subsystem. This implements the
+		<param name="pidNamespace" value="changeme"/>
+		<param name="retainPIDs" value="demo test changeme fedora-bdef             fedora-bmech       tutorial"/>
+		<param name="storagePool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+		<param name="storageCharacterEncoding" value="UTF-8"/>
+		<param name="defaultExportFormat" value="foxml1.0"/>
+	</module>
+	<module role="fedora.server.management.Management" class="fedora.server.management.DefaultManagement">
+		<comment>Description: The management subsystem. This implements the
             methods necessary to fulfill API-M requests without regard to: - how
             the service is exposed - how bytestreams and java types might be
             marshalled/demarshalled over the wire - how the storage subsystem is
             implemented. Parameters: - none (allowHosts and denyHosts now
             handled through xacml policies)</comment>
-  </module>
-  <module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
-    <comment>Description: The access subsystem. This implements the methods
+	</module>
+	<module role="fedora.server.access.Access" class="fedora.server.access.DefaultAccess">
+		<comment>Description: The access subsystem. This implements the methods
             necessary to fulfill API-A requests without regard to: - how the
             service is exposed - how bytestreams and java types might be
             marshalled/demarshalled over the wire - how the storage subsystem is
@@ -240,10 +239,10 @@
             that Datastream Mediation be disabled only for testing or cases
             where this security issue is not a concern. The default value of
             doMediateDatastreams is true.</comment>
-    <param name="doMediateDatastreams" value="true"/>
-  </module>
-  <module role="fedora.server.access.DynamicAccess" class="fedora.server.access.DynamicAccessModule">
-    <comment>Description: The dynamic behavior module for the access
+		<param name="doMediateDatastreams" value="true"/>
+	</module>
+	<module role="fedora.server.access.DynamicAccess" class="fedora.server.access.DynamicAccessModule">
+		<comment>Description: The dynamic behavior module for the access
             subsystem. This implements the methods necessary to fulfill API-A
             requests without regard to: - dynamically associating a default
             behavior definition and mechanism with objects - (Future)
@@ -268,13 +267,13 @@
             This class can be though of as implementing an "internal service"
             whereas other disseminators use external services (described by
             WSDL) to do their work.</comment>
-    <param name="fedora-system:1" value="fedora.server.access.internalservices.Bootstrap"/>
-    <param name="fedora-system:2" value="fedora.server.access.internalservices.BootstrapImpl"/>
-    <param name="fedora-system:3" value="fedora.server.access.defaultdisseminator.DefaultDisseminator"/>
-    <param name="fedora-system:4" value="fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl"/>
-  </module>
-  <module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchSQLModule">
-    <comment>Description: Supports the API-A simpleSearch and advancedSearch
+		<param name="fedora-system:1" value="fedora.server.access.internalservices.Bootstrap"/>
+		<param name="fedora-system:2" value="fedora.server.access.internalservices.BootstrapImpl"/>
+		<param name="fedora-system:3" value="fedora.server.access.defaultdisseminator.DefaultDisseminator"/>
+		<param name="fedora-system:4" value="fedora.server.access.defaultdisseminator.DefaultDisseminatorImpl"/>
+	</module>
+	<module role="fedora.server.search.FieldSearch" class="fedora.server.search.FieldSearchSQLModule">
+		<comment>Description: Supports the API-A simpleSearch and advancedSearch
             methods. Parameters: - maxResults (required, must be > 0) The
             maximum number of records to return as the result of a search. Even
             if a client requests more results at a time, this is the cutoff
@@ -298,12 +297,12 @@
             automated program or user to serially get a long list of results,
             and make sure you have a connectionPool large enough to accomodate
             your users.</comment>
-    <param name="maxResults" value="100"/>
-    <param name="maxSecondsPerSession" value="100"/>
-    <param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-  </module>
-  <module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
-    <comment>Description: Supports the ResourceIndex. Parameters: - level
+		<param name="maxResults" value="100"/>
+		<param name="maxSecondsPerSession" value="100"/>
+		<param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+	</module>
+	<module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
+		<comment>Description: Supports the ResourceIndex. Parameters: - level
             (required) Index level. Currently, only 0, 1 and 2 are supported
             levels. 0 = off: do not load the ResourceIndex 1 = basic: system
             metadata, RELS-EXT, disseminations 2 = basic + method permutations
@@ -316,44 +315,44 @@
             (shortcut) for the value, which is a URI prefix. For example:
             name="alias:test" value="http://example.org/terms#" will allow a
             query to use test:apple instead of http://example.org/terms#apple</comment>
-    <param name="level" value="0"/>
-    <param name="datastore" value="localKowariTriplestore"/>
-    <param name="alias:test" value="http://example.org/terms#"/>
-  </module>
-  <module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
-    <comment>Description: Exposes the repository for OAI harvesters.</comment>
-    <param name="repositoryName" value="Your Fedora Repository Name Here"/>
-    <param name="repositoryDomainName" value="example.org"/>
-    <param name="adminEmails" value="oai-admin@example.org bob@example.org"/>
-    <param name="friends" value="http://arXiv.org/oai2             http://memory.loc.gov/cgi-bin/oai2_0"/>
-    <param name="maxRecords" value="100"/>
-    <param name="maxHeaders" value="100"/>
-  </module>
-  <module role="fedora.server.storage.translation.DOTranslator" class="fedora.server.storage.translation.DOTranslatorModule">
-    <comment>Supports translation from DigitalObject to a stream of some
+		<param name="level" value="0"/>
+		<param name="datastore" value="localKowariTriplestore"/>
+		<param name="alias:test" value="http://example.org/terms#"/>
+	</module>
+	<module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
+		<comment>Description: Exposes the repository for OAI harvesters.</comment>
+		<param name="repositoryName" value="Your Fedora Repository Name Here"/>
+		<param name="repositoryDomainName" value="example.org"/>
+		<param name="adminEmails" value="oai-admin@example.org bob@example.org"/>
+		<param name="friends" value="http://arXiv.org/oai2             http://memory.loc.gov/cgi-bin/oai2_0"/>
+		<param name="maxRecords" value="100"/>
+		<param name="maxHeaders" value="100"/>
+	</module>
+	<module role="fedora.server.storage.translation.DOTranslator" class="fedora.server.storage.translation.DOTranslatorModule">
+		<comment>Supports translation from DigitalObject to a stream of some
             format, and vice-versa. The parameters below specify
             serializer/deserializer classes to be used for a given format. Those
             classes must implement the DOSerializer/DODeserializer interfaces.</comment>
-    <param name="serializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDOSerializer"/>
-    <param name="deserializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
-    <param name="serializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDOSerializer"/>
-    <param name="deserializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDODeserializer"/>
-  </module>
-  <module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
-    <comment>The pid generator.</comment>
-    <param name="pidgen_log_dir" value="pidgen"/>
-  </module>
-  <module role="fedora.server.storage.replication.DOReplicator" class="fedora.server.storage.replication.DefaultDOReplicator">
-    <comment>Supports synching data from definitive storage with
+		<param name="serializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDOSerializer"/>
+		<param name="deserializer_metslikefedora1" value="fedora.server.storage.translation.METSLikeDODeserializer"/>
+		<param name="serializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDOSerializer"/>
+		<param name="deserializer_foxml1.0" value="fedora.server.storage.translation.FOXMLDODeserializer"/>
+	</module>
+	<module role="fedora.server.management.PIDGenerator" class="fedora.server.management.BasicPIDGenerator">
+		<comment>The pid generator.</comment>
+		<param name="pidgen_log_dir" value="pidgen"/>
+	</module>
+	<module role="fedora.server.storage.replication.DOReplicator" class="fedora.server.storage.replication.DefaultDOReplicator">
+		<comment>Supports synching data from definitive storage with
             dissemination db.</comment>
-  </module>
-  <module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
-    <comment>This module facilitates obtaining ConnectionPools</comment>
-    <param name="defaultPoolName" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-    <param name="poolNames" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-  </module>
-  <module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
-    <comment>Description: Supports validation of digital objects, including
+	</module>
+	<module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
+		<comment>This module facilitates obtaining ConnectionPools</comment>
+		<param name="defaultPoolName" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+		<param name="poolNames" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+	</module>
+	<module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
+		<comment>Description: Supports validation of digital objects, including
             XML Schema validation, Schematron validation (to Fedora Rules schema
             written in Schematron language), and other programatic validation
             including referential integrity checking of existence and
@@ -372,25 +371,25 @@
             sheet for schematron processing - tempDir (required): this is a
             directory that the validation module can use as a work space, as
             when it must write a temporary file.</comment>
-    <param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd"/>
-    <param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd"/>
-    <param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd"/>
-    <param name="rules_metslikefedora1" value="schematron/metsExtRules1-0.xml"/>
-    <param name="rules_foxml1.0" value="schematron/foxmlRules1-0.xml"/>
-    <param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
-    <param name="tempDir" value="work"/>
-  </module>
-  <module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
-    <comment>This module facilitates obtaining external content via HTTP
+		<param name="xsd_metslikefedora1" value="xsd/mets-fedora-ext.xsd"/>
+		<param name="xsd_foxml1.0" value="xsd/foxml1-0.xsd"/>
+		<param name="xsd_xacml_policy1.0" value="xsd/cs-xacml-schema-policy-1.0.xsd"/>
+		<param name="rules_metslikefedora1" value="schematron/metsExtRules1-0.xml"/>
+		<param name="rules_foxml1.0" value="schematron/foxmlRules1-0.xml"/>
+		<param name="schtron_preprocessor" value="schematron/preprocessor.xslt"/>
+		<param name="tempDir" value="work"/>
+	</module>
+	<module role="fedora.server.storage.ExternalContentManager" class="fedora.server.storage.DefaultExternalContentManager">
+		<comment>This module facilitates obtaining external content via HTTP
             Parameters: - userAgent (optional...to make unspecified, comment out
             or delete the whole param line as opposed to using an empty string,
             default=Fedora): How to identify the Fedora server in HTTP requests.
             This defaults to something reasonable, but if you want to provide
             more information (such as an admin email address) in the User-Agent
             HTTP request header, put it here.</comment>
-  </module>
-  <module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
-    <comment>Prints basic information about the system memory and running
+	</module>
+	<module role="fedora.server.utilities.ThreadMonitor" class="fedora.server.utilities.ThreadMonitorModule">
+		<comment>Prints basic information about the system memory and running
             threads to the log periodically for diagnostic purposes. Parameters:
             - active (optional...to make unspecified, comment out or delete the
             whole param line as opposed to using an empty string, default=no):
@@ -400,12 +399,12 @@
             comment out or delete the whole param line as opposed to using an
             empty string, default=10000): how many milliseconds to wait between
             each polling.</comment>
-    <param name="active" value="false"/>
-    <param name="onlyMemory" value="false"/>
-    <param name="pollInterval" value="5000"/>
-  </module>
-  <datastore id="localMySQLPool">
-    <comment>MySQL database on localhost with db name of fedora20. Each
+		<param name="active" value="false"/>
+		<param name="onlyMemory" value="false"/>
+		<param name="pollInterval" value="5000"/>
+	</module>
+	<datastore id="localMySQLPool">
+		<comment>MySQL database on localhost with db name of fedora20. Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -439,25 +438,25 @@
             reached maximum number of active objects. Valid values are 0 (fail
             i.e., throw Exception), 1 (block i.e., wait), or 2 (grow i.e.,
             increase the size of the pool).</comment>
-    <param name="dbUsername" value="fedoraAdmin"/>
-    <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
-    <param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
-    <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
-    <param name="maxActive" value="100"/>
-    <param name="maxIdle" value="10"/>
-    <param name="maxWait" value="-1"/>
-    <param name="minIdle" value="0"/>
-    <param name="minEvictableIdleTimeMillis" value="1800000"/>
-    <param name="numTestsPerEvictionRun" value="3"/>
-    <param name="timeBetweenEvictionRunsMillis" value="-1"/>
-    <param name="testOnBorrow" value="true"/>
-    <param name="testOnReturn" value="true"/>
-    <param name="testWhileIdle" value="true"/>
-    <param name="whenExhaustedAction" value="1"/>
-  </datastore>
-  <datastore id="localMcKoiPool">
-    <comment>McKoi database on localhost running on port 9157 Each
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mysql://localhost/fedora20?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+		<param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
+		<param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
+		<param name="maxActive" value="100"/>
+		<param name="maxIdle" value="10"/>
+		<param name="maxWait" value="-1"/>
+		<param name="minIdle" value="0"/>
+		<param name="minEvictableIdleTimeMillis" value="1800000"/>
+		<param name="numTestsPerEvictionRun" value="3"/>
+		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
+		<param name="testOnBorrow" value="true"/>
+		<param name="testOnReturn" value="true"/>
+		<param name="testWhileIdle" value="true"/>
+		<param name="whenExhaustedAction" value="1"/>
+	</datastore>
+	<datastore id="localMcKoiPool">
+		<comment>McKoi database on localhost running on port 9157 Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -491,25 +490,25 @@
             reached maximum number of active objects. Valid values are 0 (fail
             i.e., throw Exception), 1 (block i.e., wait), or 2 (grow i.e.,
             increase the size of the pool).</comment>
-    <param name="dbUsername" value="fedoraAdmin"/>
-    <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:mckoi://localhost:9157/"/>
-    <param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
-    <param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
-    <param name="maxActive" value="100"/>
-    <param name="maxIdle" value="10"/>
-    <param name="maxWait" value="-1"/>
-    <param name="minIdle" value="0"/>
-    <param name="minEvictableIdleTimeMillis" value="1800000"/>
-    <param name="numTestsPerEvictionRun" value="3"/>
-    <param name="timeBetweenEvictionRunsMillis" value="-1"/>
-    <param name="testOnBorrow" value="true"/>
-    <param name="testOnReturn" value="true"/>
-    <param name="testWhileIdle" value="true"/>
-    <param name="whenExhaustedAction" value="1"/>
-  </datastore>
-  <datastore id="localOracle9iPool">
-    <comment>Oracle9i database on localhost with SID=fedora20 Each
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:mckoi://localhost:9157/"/>
+		<param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
+		<param name="ddlConverter" value="fedora.server.utilities.McKoiDDLConverter"/>
+		<param name="maxActive" value="100"/>
+		<param name="maxIdle" value="10"/>
+		<param name="maxWait" value="-1"/>
+		<param name="minIdle" value="0"/>
+		<param name="minEvictableIdleTimeMillis" value="1800000"/>
+		<param name="numTestsPerEvictionRun" value="3"/>
+		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
+		<param name="testOnBorrow" value="true"/>
+		<param name="testOnReturn" value="true"/>
+		<param name="testWhileIdle" value="true"/>
+		<param name="whenExhaustedAction" value="1"/>
+	</datastore>
+	<datastore id="localOracle9iPool">
+		<comment>Oracle9i database on localhost with SID=fedora20 Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -543,39 +542,39 @@
             reached maximum number of active objects. Valid values are 0 (fail
             i.e., throw Exception), 1 (block i.e., wait), or 2 (grow i.e.,
             increase the size of the pool).</comment>
-    <param name="dbUsername" value="fedoraAdmin"/>
-    <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora20"/>
-    <param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
-    <param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
-    <param name="maxActive" value="100"/>
-    <param name="maxIdle" value="10"/>
-    <param name="maxWait" value="-1"/>
-    <param name="minIdle" value="0"/>
-    <param name="minEvictableIdleTimeMillis" value="1800000"/>
-    <param name="numTestsPerEvictionRun" value="3"/>
-    <param name="timeBetweenEvictionRunsMillis" value="-1"/>
-    <param name="testOnBorrow" value="true"/>
-    <param name="testOnReturn" value="true"/>
-    <param name="testWhileIdle" value="true"/>
-    <param name="whenExhaustedAction" value="1"/>
-  </datastore>
-  <datastore id="localKowariTriplestore">
-    <comment>local Kowari Triplestore used by the Resource Index</comment>
-    <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
-    <param name="remote" value="false"/>
-    <param name="path" value="C:\fedora2_0_resourceIndex"/>
-    <param name="serverName" value="fedora"/>
-    <param name="modelName" value="ri"/>
-    <param name="poolInitialSize" value="3"/>
-    <param name="poolMaxGrowth" value="-1"/>
-    <param name="readOnly" value="false"/>
-    <param name="autoCreate" value="true"/>
-    <param name="autoTextIndex" value="false"/>
-    <param name="memoryBuffer" value="true"/>
-    <param name="autoFlushDormantSeconds" value="5"/>
-    <param name="autoFlushBufferSize" value="20000"/>
-    <param name="bufferFlushBatchSize" value="20000"/>
-    <param name="bufferSafeCapacity" value="40000"/>
-  </datastore>
+		<param name="dbUsername" value="fedoraAdmin"/>
+		<param name="dbPassword" value="fedoraAdmin"/>
+		<param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora20"/>
+		<param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
+		<param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
+		<param name="maxActive" value="100"/>
+		<param name="maxIdle" value="10"/>
+		<param name="maxWait" value="-1"/>
+		<param name="minIdle" value="0"/>
+		<param name="minEvictableIdleTimeMillis" value="1800000"/>
+		<param name="numTestsPerEvictionRun" value="3"/>
+		<param name="timeBetweenEvictionRunsMillis" value="-1"/>
+		<param name="testOnBorrow" value="true"/>
+		<param name="testOnReturn" value="true"/>
+		<param name="testWhileIdle" value="true"/>
+		<param name="whenExhaustedAction" value="1"/>
+	</datastore>
+	<datastore id="localKowariTriplestore">
+		<comment>local Kowari Triplestore used by the Resource Index</comment>
+		<param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
+		<param name="remote" value="false"/>
+		<param name="path" value="C:\fedora2_0_resourceIndex"/>
+		<param name="serverName" value="fedora"/>
+		<param name="modelName" value="ri"/>
+		<param name="poolInitialSize" value="3"/>
+		<param name="poolMaxGrowth" value="-1"/>
+		<param name="readOnly" value="false"/>
+		<param name="autoCreate" value="true"/>
+		<param name="autoTextIndex" value="false"/>
+		<param name="memoryBuffer" value="true"/>
+		<param name="autoFlushDormantSeconds" value="5"/>
+		<param name="autoFlushBufferSize" value="20000"/>
+		<param name="bufferFlushBatchSize" value="20000"/>
+		<param name="bufferSafeCapacity" value="40000"/>
+	</datastore>
 </server>
