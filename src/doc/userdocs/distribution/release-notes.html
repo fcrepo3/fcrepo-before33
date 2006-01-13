@@ -33,7 +33,7 @@
 
     <div class="tocbox">
       <ol>
-        <li><a href="#rel2.1b">Release 2.1b - October 21, 2005</a></li>
+        <li><a href="#rel2.1">Release 2.1 - January 13, 2006</a></li>
 		<li><a href="#rel2.0">Release 2.0 - January 31, 2005</a></li>
 
         <li><a href="#rel1.2.1">Release 1.2.1 (Bug Fix Release) -
@@ -61,10 +61,9 @@
   </div>
 
   <div class="sec1">
-    <h1><a id="rel2.1b" name="rel2.1b">1. Release 2.1b (beta) - October 21, 2005</a></h1>
+    <h1><a id="rel2.1" name="rel2.1">1. Release 2.1 - January 13, 2006</a></h1>
 	<h2>&nbsp;</h2>
-	<p>Fedora 2.1b is initially being released as beta, with a final release 
-	soon to follow.&nbsp; This is a very significant release of Fedora since it 
+	<p>Fedora 2.1 is a very significant release of Fedora since it 
 	introduces the new Fedora security architecture (with pluggable 
 	authentication and XACML-based policy enforcement), the Fedora Service 
 	Framework, and many other new features.&nbsp; The introduction of the new 
@@ -91,18 +90,18 @@
 	<p>&nbsp;</p>
 	<h2>A. Migrating from Fedora 2.0</h2>
 
-      <p>The move from Fedora 2.0 to Fedora 2.1b is quite simple and does not 
+      <p>The move from Fedora 2.0 to Fedora 2.1 is quite simple and does not 
 		require reloading of your repository.&nbsp; If you are upgrading from Fedora 
-		2.0 to Fedora 2.1b
+		2.0 to Fedora 2.1
       follow the steps below.&nbsp; More detail on these steps is found in the 
 		Fedora <a href="installation.html">Installation Guide</a> and the
 		<a href="migration.html">Upgrade and Migrate Guide</a>.&nbsp;&nbsp; If 
 		you are starting from a release prior to Fedora 2.0, consult the Fedora 
 		2.0 release notes and the Upgrade and Migration Guide for instructions 
-		on how to migrate to Fedora 2.0 before upgrading to Fedora 2.1b.</p>
+		on how to migrate to Fedora 2.0 before upgrading to Fedora 2.1.</p>
 	<p>&nbsp;</p>
 	<p><b>NOTE: </b>&nbsp;Please be aware the base URLs for the Fedora SOAP 
-	interfaces have changed in Fedora 2.1b.&nbsp; The path names for API-A and 
+	interfaces have changed in Fedora 2.1.&nbsp; The path names for API-A and 
 	API-M have changed to facilitate better security management.&nbsp;&nbsp; The 
 	new path names can be seen in the WSDL files for API-A and API-M and in the 
 	Fedora Tomcat web.xml file.&nbsp;&nbsp;&nbsp;
@@ -122,7 +121,7 @@
 	<p class="MsoNormal">&nbsp;</p>
 	<ol style="margin-top: 0in; margin-bottom: 0in" start="1" type="1">
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.ecl"></a>New Open-Source License (ECL)</b><br>
+		<a name="rel2.1.features.ecl"></a>New Open-Source License (ECL)</b><br>
 		For version 2.1 we have decided to move from Mozilla Public License 1.1 (MPL) 
 		to the Educational Community License 1.0 (ECL). The main difference 
 		between the two licenses is that the ECL imposes no compulsion to 
@@ -139,12 +138,12 @@
 		license.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.configs"></a>New Security Architecture - Four 
+		<a name="rel2.1.features.configs"></a>New Security Architecture - Four 
 		Security Configuration Options for a Repository<br>
-		</b>Fedora 2.1b introduces a configurable security architecture, that 
+		</b>Fedora 2.1 introduces a configurable security architecture, that 
 		provides options for SSL and authentication at the Fedora web service 
 		API level.&nbsp;&nbsp; There are
-		<a href="../server/security/securingrepo.html#CONFIG">four base security configurations</a> provided with the Fedora 2.1b 
+		<a href="../server/security/securingrepo.html#CONFIG">four base security configurations</a> provided with the Fedora 2.1 
     server distribution: (1) "ssl-authenticate-apim" configuration which uses 
 		SSL and enables authentication for API-M, (2) "ssl-authenticate-all" configuration 
 		which uses SSL and enables authentication for both API-M and API-A, 
@@ -161,11 +160,11 @@
     base security configurations.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
-		<a name="rel2.1b.features.authn"></a><b>New Security Architecture - 
+		<a name="rel2.1.features.authn"></a><b>New Security Architecture - 
 		Authentication<br>
 		</b>The Fedora repository server is built on top of Apache's Tomcat, and authentication is channeled through the normal Tomcat mechanisms 
 		(e.g., HTTP Basic Authentication, HTTPS Client Authentication).&nbsp; 
-		When you select one of <a href="#rel2.1b.features.configs">Fedora's four 
+		When you select one of <a href="#rel2.1.features.configs">Fedora's four 
 		security configurations</a>, an appropriate rendition of the Tomcat 
 		configuration file (web.xml) will be copied into the Fedora Tomcat 
 		configuration directory.&nbsp; This configuration file will set up 
@@ -181,7 +180,7 @@
 		interface (org.apache.catalina.Realm) that can be implemented by &quot;plug 
 		in&quot; components to &quot;connect&quot; a servlet container to some existing 
 		authentication database<font style="font-size: 9pt">.&nbsp;&nbsp; </font>
-		Fedora 2.1b comes pre-configured with a customized JAAS Realm whose 
+		Fedora 2.1 comes pre-configured with a customized JAAS Realm whose 
 		purpose is to multiplex several authentication sources.&nbsp;&nbsp; By 
 		default, Fedora's JAAS multiplexing Realm in configured to deal with a 
 		simple user/password file.&nbsp; There is also support for acquiring 
@@ -193,7 +192,7 @@
 		</b><br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.xacml"></a>New Security Architecture - XACML 
+		<a name="rel2.1.features.xacml"></a>New Security Architecture - XACML 
 		Policy Enforcement</b><br>
 		A major feature of the new Fedora security architecture is the 
 		introduction of the
@@ -205,14 +204,14 @@
 		specification of fine-grained, machine-readable policies that can be 
 		used to control access to Fedora web services, Fedora digital objects, 
 		datastreams, disseminations, and more.&nbsp;&nbsp;&nbsp; Since a policy 
-		is only worth its salt if it can be enforced, Fedora 2.1b introduces a 
+		is only worth its salt if it can be enforced, Fedora 2.1 introduces a 
 		new Authorization module implemented as part of the core Fedora 
 		repository service.&nbsp;&nbsp;&nbsp; The Authorization module is built 
 		upon the <a href="http://sunxacml.sourceforge.net">Sun XACML engine</a>.&nbsp; 
 		Each XACML policy defines: (1) a &quot;target&quot; describes what the policy 
 		applies to (by referring to attributes of users, operations, objects, 
 		datastreams, dates, and more), and (2) one or more &quot;rules&quot; to permit or 
-		deny access.&nbsp; Version 2.1b provides a Fedora-specific policy 
+		deny access.&nbsp; Version 2.1 provides a Fedora-specific policy 
 		vocabulary for referring Fedora operations and Fedora-specific entities 
 		within in XACML policies.&nbsp;&nbsp; For a description of how the 
 		policy enforcment module is implemented, see the document entitled &quot;<a href="../server/security/AuthorizationXACML.htm">Fedora 
@@ -238,7 +237,7 @@
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.reload"></a>Fedora Policy Reload Utility<br>
+		<a name="rel2.1.features.reload"></a>Fedora Policy Reload Utility<br>
 		</font>
 		<font face="Arial" style="font-size: 9pt; ">
 		The
@@ -263,14 +262,14 @@
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.policyvalid"></a>Fedora Policy Validation 
+		<a name="rel2.1.features.policyvalid"></a>Fedora Policy Validation 
 		Utility<br>
 		</font>
 		<font face="Arial" style="font-size: 9pt; ">
 		To support authoring and maintenance of XACML policyies for Fedora, the
 		<a href="../server/cmd-line/index.html#validate">policy validation 
 		utility</a> (i.e., &quot;validate-policy&nbsp; <i>{policyfile name}</i>&quot;on 
-		the command line) is provided with Fedora 2.1b.&nbsp; This utility will 
+		the command line) is provided with Fedora 2.1.&nbsp; This utility will 
 		validate an XACML policy against the XML schema defined by Sun for XACML.&nbsp; 
 		It is recommended that this utility be invoked on all policies before 
 		they are moved to the active policies storage location </font>
@@ -281,7 +280,7 @@
 		<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.besecurity"></a>New Security Architecture - 
+		<a name="rel2.1.features.besecurity"></a>New Security Architecture - 
 		Backend Security for Service call-backs<br>
 		</b>Backend security is applicable to repositories that contain digital 
 		object Disseminators that call upon external web services - <i>and where 
@@ -316,8 +315,8 @@
 		</font><br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.framework"></a>Fedora Service Framework<br>
-		</b></font><font style="font-size: 9pt" face="Arial">As of Fedora 2.1b, 
+		<a name="rel2.1.features.framework"></a>Fedora Service Framework<br>
+		</b></font><font style="font-size: 9pt" face="Arial">As of Fedora 2.1, 
 		the<a href="../server/features/serviceframework.htm"> Fedora Service 
 		Framework</a> is being introduced to facilitate the integration of new 
 		services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
@@ -356,7 +355,7 @@
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.diringest"></a>New Directory Ingest Service (DirIngest)<br>
+		<a name="rel2.1.features.diringest"></a>New Directory Ingest Service (DirIngest)<br>
 		</font><font style="font-size: 9pt" face="Arial">New as part of the 
 		Fedora Service Framework, is the new Directory Ingest Service, which is 
 		a stand-alone web 
@@ -372,7 +371,7 @@
 &nbsp;</li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.proai"></a>New OAI-Provider Service (PROAI)<br>
+		<a name="rel2.1.features.proai"></a>New OAI-Provider Service (PROAI)<br>
 		</font><font style="font-size: 9pt" face="Arial">New as part of the 
 		Fedora Service Framework, is the new Fedora OAI Provider Service, which 
 		is a stand-alone web 
@@ -386,7 +385,7 @@
 		functionality and better performance.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.ri"></a>Resource Index<br>
+		<a name="rel2.1.features.ri"></a>Resource Index<br>
 		</font>
 		<font face="Arial" style="font-size: 9pt; ">
 		The Resource Index has undergone significant testing and a number of 
@@ -396,12 +395,12 @@
 		corruption problems.&nbsp; (It should be noted that corrupted Resource 
 		Index can be restored using the Fedora Rebuilder Utility that was 
 		pre-release to those having the problem in Fedora 2.0.&nbsp; The 
-		Rebuilder is now part of Fedora 2.1b.)&nbsp;&nbsp; There have been minor 
+		Rebuilder is now part of Fedora 2.1.)&nbsp;&nbsp; There have been minor 
 		changes to the Resource Index data model.&nbsp; This should be 
 		transparent, unless you have written applications or middleware with 
 		static queries to the Resource Index, in which case you may have to make 
 		modifications to those queries.&nbsp; See the Resource Index Guide for 
-		more information.&nbsp; Also with Fedora 2.1b, a new indexing level is 
+		more information.&nbsp; Also with Fedora 2.1, a new indexing level is 
 		introduced for the resource index.&nbsp; This new level (Level 3), will 
 		index parameterized disseminations as concrete &quot;representations&quot; of 
 		digital objects, whenever there is a fixed domain of values for method 
@@ -412,11 +411,11 @@
 		community-specific properties about objects via RDF.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.relsext"></a>Relaxation of REL-EXT datastream 
+		<a name="rel2.1.features.relsext"></a>Relaxation of REL-EXT datastream 
 		constraints<br></font><font face="Arial" style="font-size: 9pt">In Fedora 2.0, the 
 		Relationships datastream in an object (identified as &quot;RELS-EXT&quot;) was 
 		reserved for assertions of object-to-object relationships.&nbsp;&nbsp; 
-		Now, in Fedora 2.1b, the RELS-EXT datastream can be used as a means of 
+		Now, in Fedora 2.1, the RELS-EXT datastream can be used as a means of 
 		creating extensible properties for digital objects (i.e., properties not 
 		defined in the FOXML schema).&nbsp; The benefit of putting such 
 		properties in the RELS-EXT datastream is that the are automatically 
@@ -427,7 +426,7 @@
 		</font><font face="Arial" style="font-size: 9pt">where the subject was 
 		the PID of the object containing the assertion, the predicate a 
 		relationship, and the object of the predicate was the PID of another 
-		Fedora object.&nbsp;&nbsp; New in Fedora 2.1b is that validation of the 
+		Fedora object.&nbsp;&nbsp; New in Fedora 2.1 is that validation of the 
 		RELS-EXT datastream has been relaxed so that it can be used to assert 
 		other kinds of custom properties about the digital object.&nbsp;&nbsp;&nbsp; 
 		Specifically, the object of the predicate of an assertion does NOT have 
@@ -443,7 +442,7 @@
 		&quot;doi:10.123/456<font style="font-size: 9pt">&quot; </font></b></i>and (3) 
 		<i><b>an object property (myns:owner) defined in custom namespace that has 
 		a value of&nbsp; &quot;Jane Doe.&quot;</b></i>&nbsp;&nbsp;&nbsp; The second and 
-		third assertions are examples of what is newly supported in Fedora 2.1b 
+		third assertions are examples of what is newly supported in Fedora 2.1 
 		that was not previously supported.&nbsp;&nbsp; The second assertion is 
 		in the form &quot;<i>PID</i> -- <i>someRelationshipName</i> -- <i>someURI</i>&quot; 
 		and the third assertion is in the form of&nbsp; &quot;<i>PID</i> -- <i>somePropertyName</i> -- 
@@ -463,7 +462,7 @@
 		<p><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.rebuild"></a>Rebuild Repository Utility<br>
+		<a name="rel2.1.features.rebuild"></a>Rebuild Repository Utility<br>
 		</font><font style="font-size: 9pt" face="Arial">The Fedora Rebuild 
 		utility is an interactive utility that can be used when the Fedora repository is somehow corrupted.&nbsp; 
 		The utility rebuilds the repository by crawling the repository storage 
@@ -471,7 +470,7 @@
 		utility can rebuild the SQL database (registries, search tables, and 
 		other tables), the Resource Index, or both.&nbsp;&nbsp;&nbsp; This is 
 		useful for a number of purposes, such as migrating from Fedora 2.0 to 
-		Fedora 2.1b, and also if a database or index becomes corrupted.&nbsp;&nbsp;  Additionally, if the 
+		Fedora 2.1, and also if a database or index becomes corrupted.&nbsp;&nbsp;  Additionally, if the 
 	Fedora administrator want to change from using the McKoi database to using the MySQL database, 
 	(or from MySQL to McKoi) the existing database can be purged, the fedora configuration file (fedora.fcfg) 
 	can be edited, and the fedora-rebuild utility can then be run to correctly populate the tables in the new
@@ -480,7 +479,7 @@
 		a problem or corruption occurs.<br>
 &nbsp;</font></li>
 		<li><font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.cmd"></a>Command-line utility syntax changes<br>
+		<a name="rel2.1.features.cmd"></a>Command-line utility syntax changes<br>
 		</font><font face="Arial" style="font-size: 9pt; ">With the introduction 
 		of the new security architecture for Fedora, the repository can be 
 		configured for SSL or non-SSL.&nbsp; Therefore, the syntax for Fedora 
@@ -490,7 +489,7 @@
 		Guide for the new syntax for each command line utiltiy.</font><font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; 
+		<a name="rel2.1.features.batch"></a>Batch Utility Enhancements:&nbsp;&nbsp; 
 		<br></font><font face="Arial" style="font-size: 9pt">You can now use either 
 		a FOXML or METS template file when building objects with the Fedora 
 		batch utility.&nbsp; The batch utility now detects the format of the template 
@@ -499,7 +498,7 @@
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.log4j"></a>Improved logging using log4j <br>
+		<a name="rel2.1.features.log4j"></a>Improved logging using log4j <br>
 		</font><font face="Arial" style="font-size: 9pt; ">Fedora server logging has been standardized to use log4j.&nbsp;&nbsp; In 
 		addition to the general repository server log (created each time the 
 		Fedora server is started and named with a date-time stamp), there are 
@@ -512,11 +511,11 @@
 		<font face="Arial" style="font-size: 9pt; font-weight: 700"><br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.fedoraclient"></a>FedoraClient utility class 
+		<a name="rel2.1.features.fedoraclient"></a>FedoraClient utility class 
 		for building new clients<br>&nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<a name="rel2.1b.features.perf"></a>Performance and Scale testing<br>
+		<a name="rel2.1.features.perf"></a>Performance and Scale testing<br>
 		</font><font style="font-size: 9pt" face="Arial">Bulk loading was performed on the NSDL repository, which provided 
 		a testbed of 1 million digital objects with approximately 75M&nbsp; 
 		triples in the Kowari-based Resource Index.&nbsp; These tests were run 
@@ -531,11 +530,30 @@
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt">
 		<span style="font-weight: 700">
-		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
+		<a name="rel2.1.features.tools"></a>New Tools Page for Software 
 		Contributions by Community<br>
 		</span>A new page now exists on the Fedora web site (<a href="http://www.fedora.info">www.fedora.info</a>) 
 		for downloading community-developed, open-source tools, applications, 
 		services that work with Fedora.&nbsp; Check it out!</font><br>&nbsp;</li>
+		
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt">
+		<span style="font-weight: 700">
+		<a name="rel2.1.features.java5"></a>Java 5 Compatibility and Axis Update<br>
+		</span>Fedora has been updated to support Java 5 (1.5). As part of this 
+		update, the Apache Axis library has been updated from 1.2 to 1.3.</font><br>&nbsp;</li>
+		
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt">
+		<span style="font-weight: 700">
+		<a name="rel2.1.features.fcfg"></a>Fedora Configuration (fedora.fcfg) Enhancements<br>
+		</span>As of version 2.1, Fedora no longer ships with a default Fedora 
+		Server Configuration file, fedora.fcfg. Instead, the Fedora setup utility 
+		(fedora-setup) now generates the server configuration file based on the 
+		selected security configuration. In addition, the Fedora setup utility 
+		now supports applying custom properties to the server configuration 
+		through the use of a properties file. See my.properties.example located 
+		in FEDORA_HOME/server/config for example usage.</font><br>&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>C.&nbsp; Bug Fixes</h2>
@@ -737,7 +755,7 @@
 		when bulk loading a repository that is estimated to have a very large 
 		Resource Index (i.e., triplestore &gt; 50M triples), it is recommended that 
 		the Fedora server be restarted periodically to optimize performance.&nbsp; 
-		Bulk load tests on Fedora 2.1b indicate that there may be a slow memory 
+		Bulk load tests on Fedora 2.1 indicate that there may be a slow memory 
 		leak when doing large numbers of delete/insert sequences on the Kowari 
 		triplestore.&nbsp;&nbsp;&nbsp; This potential issue is currently under 
 		investigation.&nbsp; As a cautionary measure, periodic stopping and 
@@ -764,7 +782,7 @@
 		yet supported, but will be made available in the next release of Fedora.
 		<br>&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">One 
-		early adopter of Fedora 2.1b reported anomalous 401 status codes 
+		early adopter of Fedora 2.1 reported anomalous 401 status codes 
 		returned after a period of normal server use.&nbsp; To date, this observation 
 		hasn't been replicated, and the cause is unknown.&nbsp; The problem was fixed 
 		by changing from option B to option C as described in the document 
@@ -774,6 +792,10 @@
 		fedora.server.errors.servletExceptionExtensions.Ok200Exception, (and 
 		associated stacktrace) is produced by fedora.server.ServerController and 
 		can safely be ignored.<br>&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Java 1.4.1 
+		incompatibility: one report that SOAP requests fail when Fedora 2.1
+		is run with Java 1.4.1. See <a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=132">Bug #132</a> 
+		for details.<br>&nbsp;</font></li>
 	</ol>
 	<p>&nbsp;</p><hr>
 	<h1>&nbsp;</h1>

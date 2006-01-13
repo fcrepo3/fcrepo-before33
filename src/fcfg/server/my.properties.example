@@ -1,0 +1,11 @@
+#
+# Example of custom properties file that overrides values in fedora-base.fcfg
+#
+
+server.fedoraServerPort        = 8082
+server.object_store_base     = /opt/fedora/objects
+server.datastream_store_base = /opt/fedora/datastreams
+
+module.fedora.server.access.Access.doMediateDatastreams = true
+
+datastore.localKowariTriplestore.path = /opt/fedora/resourceIndex

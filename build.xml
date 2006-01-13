@@ -984,7 +984,7 @@
 			<fileset dir="src/fcfg/server">
 				<include name="**/fedora-base.fcfg"/>
 				<include name="**/fedora-*.properties"/>
-				<include name="**/my.properties"/>
+				<include name="**/my.properties*"/>
 				<include name="**/logging.properties"/>
 				<include name="**/*.xml"/>
 			</fileset>
