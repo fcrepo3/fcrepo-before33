@@ -231,8 +231,16 @@ public class RebuildServer extends Server
         logger.setLevel(Level.FINEST);
 
         DatingFileHandler fh = null;
+
+        File logDir;
+        String fedoraHome = System.getProperty("fedora.home");
+        if (fedoraHome == null) {
+            System.out.println("fedora.home not set, writing log to /tmp");
+            logDir = new File("/tmp"); 
+        } else {
+            logDir = new File(new File(fedoraHome), "server/logs");
+        }
         try {
-            File logDir = new File(LOG_DIR);
             logDir.mkdirs();
             fh = new DatingFileHandler(logDir, 
                                        50 * 1024 * 1024, 
