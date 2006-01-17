@@ -7,7 +7,7 @@ rem
 rem ----- mysql_home      - the location where MySQL is installed (use double quotes if path contains spaces, e.g. "C:\Program Files\MySQL\MySQL server 4.1")
 rem ----- mysql_dba_user  - the name of the MySQL user with dba privileges (default: root)
 rem ----- mysql_dba_pass  - the password for the MySQL user with dba privileges (default" none)
-rem ----- mysql_db_name   - the name of the Fedora database (default: fedora20)
+rem ----- mysql_db_name   - the name of the Fedora database (default: fedora21)
 rem ----- mysql41_flag    - optional MySQL 4.1 flag. Any string value will indicate that you are running MySQL 4.1.x.
 
 rem ----- check for input arguments
@@ -82,7 +82,7 @@ echo.
 echo mysqlHome - The location where mySQL is installed (use double quotes if path contains spaces, e.g. "C:\Program Files\MySQL\MySQL server 4.1")
 echo mysqlDBAUser - mySQL username with DBA authority  (root if new install)
 echo mysqlDBAPass - mySQL password for DBA username    (none if new install)
-echo fedoraDbName - Fedora database name (use fedora20 as default)
+echo fedoraDbName - Fedora database name (use fedora21 as default)
 echo.
 goto end
 

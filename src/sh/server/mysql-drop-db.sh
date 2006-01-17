@@ -18,7 +18,7 @@
 #   mysql_home      - the path where MySQL is installed (e.g., /usr/local/mysql)
 #   mysql_dba_user  - the name of the MySQL user with dba privileges (e.g.,  root)
 #   mysql_dba_pass  - the password for the MySQL user with dba privileges
-#   fedora_db_name  - the name of the Fedora database to be removed (e.g., fedora20)
+#   fedora_db_name  - the name of the Fedora database to be removed (e.g., fedora21)
 #   mysql41_flag    - optional MySQL 4.1 flag. Any string value will indicate that
 #                     you are running MySQL 4.1.x.
 #
@@ -30,7 +30,7 @@ if [ "$#" -lt 4 ] || [ "$#" -gt 5 ]; then
   echo "mysql_home      - the path where MySQL is installed (e.g., /usr/local/mysql)"
   echo "mysql_dba_user  - the name of the MySQL user with dba privileges (e.g.,  root)"
   echo "mysql_dba_pass  - the password for the MySQL user with dba privileges"
-  echo "fedora_db_name  - the name of the Fedora database (e.g., fedora20)"
+  echo "fedora_db_name  - the name of the Fedora database (e.g., fedora21)"
   echo "mysql41_flag    - optional MySQL 4.1 flag. Any string value will indicate that you are running MySQL 4.1.x"
 
   exit 1
