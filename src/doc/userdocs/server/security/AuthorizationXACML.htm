@@ -67,7 +67,7 @@ is an XML-based markup language to encode access control policies.&nbsp; The
 policy language is flexible and enables the specification of fine-grained, 
 machine-readable policies that can be used to control access to Fedora web 
 services, Fedora digital objects, datastreams, disseminations, and more.&nbsp;&nbsp;&nbsp; 
-Since a policy is only worth its salt if it can be enforced, Fedora 2.1b 
+Since a policy is only worth its salt if it can be enforced, Fedora 2.1 
 introduces a new Authorization module implemented as part of the core Fedora 
 repository service.&nbsp;&nbsp;&nbsp; The Authorization module is built upon the
 <a href="http://sunxacml.sourceforge.net">Sun XACML engine</a>.&nbsp; Each XACML 
@@ -80,7 +80,7 @@ policies.&nbsp;&nbsp;&nbsp; Regarding policies, Fedora supports both
 repository-wide policies (that specify broad access controls that apply to the 
 entire repository), and object-specific policies (that specify rules for a 
 single object, and can even be stored within the object in a special 
-datastream).&nbsp; Fedora 2.1b comes out-of-the-box with a set of
+datastream).&nbsp; Fedora 2.1 comes out-of-the-box with a set of
 <a href="#DEFAULT">default repository-wide policies</a> that establish baseline 
 access controls that are equivalent to what was provided in Fedora 2.0.&nbsp;&nbsp; 
 These default policies restrict access to the Fedora management web service 
@@ -394,7 +394,7 @@ locations for a repository.</p>
 	(configured for the Authorization module in fedora.fcfg).&nbsp;&nbsp; These 
 	default policies are copied <b><i>from</i></b> the Fedora distribution 
 	directory $FEDORA_HOME/dist/server/config/xacml-policies/default.&nbsp;&nbsp; 
-	In Fedora 2.1b there are only <a href="#DEFAULT">default repository-wide 
+	In Fedora 2.1 there are only <a href="#DEFAULT">default repository-wide 
 	policies,</a> but no default object policies or surrogate policies.&nbsp; 
 	The default out-of-box policies will be <i><b>copied only once</b></i>.&nbsp; 
 	This is to prevent subsequent server restarts from clobbering any 
@@ -486,7 +486,7 @@ PDP.  The PEP SHALL deny access to the resource in all other cases.  An XACML
 response of “Permit” SHALL be considered valid only if the PEP understands all
 of the obligations contained in the response.”   </p>
 	<p style='text-autospace:none'>The Fedora Policy Enforcement
-Module fulfills the responsibilities of both the PEP, except that for 2.1b,
+Module fulfills the responsibilities of both the PEP, except that for 2.1,
 obligations are ignored.  (But neither are any coded in the default policies.)&nbsp; The 
 Fedora module wraps the Sun XACML implementation of the PDP.&nbsp;&nbsp; Fedora 
 module also implements custom attribute finders and a custom PEP.</p>
@@ -961,7 +961,7 @@ copied into this location. </i>&nbsp;</p>
 		access to the default OAI provider interface to the Fedora repository.&nbsp; 
 		In other words, OAI-PMH operations are completely open for use by any 
 		user/agent.&nbsp; (Note, this does not control access to the stand-alone 
-		PROAI service that is distributed with Fedora 2.1b.&nbsp; PROAI is a 
+		PROAI service that is distributed with Fedora 2.1.&nbsp; PROAI is a 
 		stand-alone web application that must be secured separately.</font></td>
 	</tr>
 </table>

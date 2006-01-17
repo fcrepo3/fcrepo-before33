@@ -153,7 +153,7 @@
           <li>
             <p>Unpack the archive in that directory. It will create
             its own directory, named according to the version...
-            like fedora-2.1b. This will be the home directory of
+            like fedora-2.1. This will be the home directory of
             Fedora.</p>
           </li>
 
@@ -163,7 +163,7 @@
             can execute them. For instance, if you installed in
             /usr/local, this can be done with the command
             <span class="emphasis"><em>chmod 755
-            /usr/local/fedora-2.1b/server/bin/*</em></span></p>
+            /usr/local/fedora-2.1/server/bin/*</em></span></p>
           </li>
         </ul>
       </div>
@@ -175,9 +175,9 @@
           <li>
             <p>If a server is already unpacked on the machine, put
             the client in the same place. That is, if your server
-            is unpacked into C:\fedora-2.1b\server\, go to C:\ and
+            is unpacked into C:\fedora-2.1\server\, go to C:\ and
             unpack the client from there. It will go into
-            C:\fedora-2.1b\client, so that now both the client and
+            C:\fedora-2.1\client, so that now both the client and
             server are under one common directory.</p>
           </li>
 
@@ -186,7 +186,7 @@
             server, decide where you want the client to reside. For
             example, C:\ or /usr/local. Then unpack the archive in
             that directory. It will create its own directory, named
-            according to the version... like fedora-2.1b. This will
+            according to the version... like fedora-2.1. This will
             be the home directory of Fedora.</p>
           </li>
 
@@ -196,7 +196,7 @@
             can execute them. For instance, if you installed in
             /usr/local, this can be done with the command
             <span class="emphasis"><em>chmod 755
-            /usr/local/fedora-2.1b/client/bin/*</em></span></p>
+            /usr/local/fedora-2.1/client/bin/*</em></span></p>
           </li>
         </ul>
       </div>
@@ -208,7 +208,7 @@
           <li>
             <p>Decide where you want to work with the source code
             and unpack it there. It will create its own directory,
-            named according to the version... like fedora-2.1b-src.
+            named according to the version... like fedora-2.1-src.
             This will be your Fedora development directory.</p>
           </li>
         </ul>
@@ -304,8 +304,8 @@
             <p>FEDORA_DEV should contain the directory under which
             the source was unpacked, including the version part of
             the path. For instance, if you installed the source in
-            C:\ and it unpacked into C:\fedora-src-2.1b\, FEDORA_DEV
-            should be C:\fedora-src-2.1b</p>
+            C:\ and it unpacked into C:\fedora-src-2.1\, FEDORA_DEV
+            should be C:\fedora-src-2.1</p>
           </li>
 
           <li>
@@ -1029,8 +1029,8 @@
               0 = off: do not load the ResourceIndex 1 = basic: system metadata, 
               RELS-EXT, disseminations 2 = basic + method permutations WARNING: 
               changing the level (except to 0) requires a full dump-and-load of 
-              the repository. In Fedora 2.1b, the default is level="1". In Fedora 
-              2.0, the default was to have the resource index turned off. For 
+              the repository. In Fedora 2.1, the default is level="0". In Fedora 
+              2.0 and 2.1b, the default was to have the resource index turned on. For 
               more information see the <a href="../server/resourceIndex/index.html">Resource 
               Index Guide</a>.</p>
           </dd>
