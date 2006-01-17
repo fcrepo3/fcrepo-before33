@@ -94,7 +94,6 @@ public class DefaultAuthorization extends Module implements Authorization {
           throws ModuleInitializationException
   {
     super(moduleParameters, server, role);
-    System.err.println("log4j.configuration=" + System.getProperty("log4j.configuration"));
 	String serverHome = null;
     try {
 		serverHome = server.getHomeDir().getCanonicalPath() + File.separator;
