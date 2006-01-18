@@ -28,9 +28,17 @@
       <dt><a href="#d0e185">Compiling a Source
       Distribution</a></dt>
 
-      <dt><a href="#d0e207">Setting up the Server</a></dt>
+      <dt><a href="#d0e207">Setting up the Server's Relational Database</a></dt>
 
-      <dt><a href="#d0e613">Running the Server</a></dt>
+      <dt><a href="#d0e349">Configuring the Fedora Server</a></dt>
+          <dd>
+			<ul>
+				<li><a href="#setup">Fedora Security Setup</a></li>
+				<li><a href="#config">Fedora Server Configuration File</a></li>
+			</ul>
+		</dd>
+	  
+	  <dt><a href="#d0e613">Running the Server</a></dt>
 
       <dt><a href="#d0e683">Configuring Fedora to Run on a
       Different Host or Port</a></dt>
@@ -296,7 +304,7 @@
         </ul>
       </div>
 
-      <p>For source code installations:</p>
+      <p><i><b>For source code installations</b></i>:</p>
 
       <div class="itemizedlist">
         <ul type="disc">
@@ -326,6 +334,7 @@
             $FEDORA_DEV/res/apache-ant-1.6.2/bin/*</em></span></p>
           </li>
         </ul>
+      	<hr>
       </div>
     </div>
   </div>
@@ -379,7 +388,7 @@
     <div class="titlepage">
       <div>
         <h2 class="title" style="clear: both"><a name="d0e207" id=
-        "d0e207"></a>Setting up the Server</h2>
+        "d0e207"></a>Setting up the Server's Relational Database</h2>
       </div>
     </div>
 
@@ -453,7 +462,10 @@
               <p><span class="emphasis"><em>installDir</em></span>
               is the location where MySQL is installed. In Unix,
               this might be /usr/local/mysql. In Windows, it might
-              be C:\mysql</p>
+              be C:\mysql.&nbsp;&nbsp; <i><b>In Windows, use double quotes if 
+				the path<br>
+				contains spaces</b></i>, e.g. &quot;C:\Program Files\MySQL\MySQL 
+				server 4.1&quot;)</p>
             </li>
 
             <li>
@@ -563,11 +575,10 @@
            "emphasis"><em>FEDORA_HOME/server/jakarta-tomcat-5.0.28/common/lib</em></span>.</p>
 
         <p>Then you should modify the
-        FEDORA_HOME/server/config/fedora.fcfg file and ensure that
+        Fedora Server Configuration File (FEDORA_HOME/server/config/fedora.fcfg) and ensure that
         the datastore entry (near the bottom) for Oracle points to
         the right host and database. The fedora.fcfg file that
-        comes with the distribution uses a database on the local
-        host called "fedora21".</p>
+        comes with the distribution uses a database on the local host named "fedora21".</p>
 
         <p>When you start fedora, be sure to use the parameter
         "oracle", as in <span class="emphasis"><em>fedora-start
@@ -594,8 +605,8 @@
               support common SQL-92 syntax. The driver will need to
               be put in the server's jakarta-tomcat-5.0.28/common/lib directory
               so that Fedora picks it up, and the JDBC url will
-              need to be configured appropriately in the server's
-              config/fedora.fcfg file.</p>
+              need to be configured appropriately in the Fedora Server 
+				Configuration File.</p>
             </li>
           </ul>
         </div>
@@ -636,6 +647,7 @@
         versions of Fedora (where the db schema will likely change)
         much easier for you if you plan on using that database
         later.</p>
+		<p>&nbsp;</p><hr>
       </div>
     </div>
 
@@ -643,34 +655,35 @@
       <div class="titlepage">
         <div>
           
-        <h3 class="title"><a name="d0e349" id="d0e349"></a>Configuring The Server</h3>
+        <h2 class="title" style="clear: both"><a name="d0e349" id="d0e349"></a>Configuring 
+		the Fedora Server</h2>
+		<h4 class="title"><a name="setup"></a>&nbsp;1. STEP ONE:&nbsp; Run the 
+		Fedora Setup Utility to establish your base security settings!</h4>
         </div>
       </div>
-
-      
-    <p>Beginning with Fedora 2.1b, the method of configuring the server has changed. 
-      Before starting for the first time, you will want to select a base security 
+	
+	  <p>Beginning with Fedora 2.1, the method of configuring the server has changed. 
+      Before starting for the first time, you must run the
+		<a href="../server/cmd-line/index.html#setup">Fedora Setup Utility </a>
+		(fedora-setup) to select a base security 
       configuration and initialize the server with your base configuration using 
       the <i>fedora-setup</i> command-line utility. This process is described 
       in detail in the <i><a href="../server/security/securingrepo.html#CONFIG">Securing 
       Your Repository</a></i> document. Once fedora-setup has been run you can 
       then customize the generated configuration files as needed.</p>
 
-      <div class="section">
-        <div class="titlepage">
-          <div>
             
-          <h4 class="title"><a name="d0e354" id=
-            "d0e354"></a>fedora.fcfg Configuration File</h4>
-          </div>
-        </div>
+     <h4 class="title"><a name="config"></a>2. STEP TWO:&nbsp; Edit the Fedora Server 
+     Configuration File (fedora.fcfg) to override default settings.</h4>
 
-        <p>The configuration file has a simple schema. It starts
-        with a server element, under which a series of param
+        <p>The Fedora server configuration file contains: (1) global parameters 
+		for the Fedora server, (2) configuration parameters for each server 
+		module, and configuration parameters for each persistent data store of 
+		the Fedora server.&nbsp;&nbsp; The configuration file is located at FEDORA_HOME/server/config/fedora.fcfg.</p>
+		<p>The configuration file has a simple schema.&nbsp; It starts
+        with a server element, under which a series of parameter
         elements occur, followed by a series of module elements,
-        followed by a series of datastore elements.</p>
-
-        <p>The param elements directly following the root server
+        followed by a series of datastore elements.&nbsp; The parameter elements directly following the root server
         element are used to control what are considered generic
         server functionality. Examples include the level of logging
         to do, the port on which the server should be exposed, and
@@ -701,7 +714,7 @@
         <div class="titlepage">
           <div>
             <h4 class="title"><a name="d0e365" id=
-            "d0e365"></a>Important Parameters</h4>
+            "d0e365"></a>Important Configuration Parameters</h4>
           </div>
         </div>
 
@@ -751,20 +764,23 @@
             </p>
           </dd>
 
-          <dt><span class="term"><font color="#FF0000">fedora_temp</font></span></dt>
+          <dt><span class="term"><font color="#FF0000">object_store_base</font></span></dt>
           <dd> 
-            <p>A temporary directory. This will be created if it doesn't already 
-              exist. This parameter must be given as an absolute path. The default 
-              value for this paramter is now <i>C:\fedora_2_1b_temp</i>.</p>
-          </dd>
-          <dt><span class="term"><font color="#FF0000">fedora_datastreams</font></span></dt>
-          <dd> 
-            <p>A directory where datastreams of digital objects will be stored. 
-              This will be created if it doesn't already exist. This parameter 
-              must be given as an absolute path. The default value for this paramter 
-              is now <i>C:\fedora_2_1b_datastreams</i>.</p>
-          </dd>
-          <dt><span class="term">fedoraServerPort</span></dt>
+            A directory where digital object XML wrappers (FOXML files) will be stored. 
+              This directory will be created if it doesn't already exist. The default value for this 
+			parameter is a the following relative directory path:&nbsp; 
+			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
+			another relative directory path or an absolute directory path.</dd>
+			<dt>&nbsp;</dt>
+			<dt><span class="term"><font color="#FF0000">datastreams_store_base</font></span></dt>
+			<dd>
+			A directory where datastreams of digital objects will be stored. 
+              This directory will be created if it doesn't already exist. The default value for this 
+			parameter is a the following relative directory path:&nbsp; 
+			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
+			another relative directory path or an absolute directory path.</dd>
+          <dt>&nbsp;</dt>
+			<dt><span class="term">fedoraServerPort</span></dt>
           <dd> 
             <p>The port on which the server should run. 8080 is often used, but 
               this can be anything your OS / user privleges will allow.</p>
@@ -791,85 +807,97 @@
               port number used to redirect the Fedora server to avoid potential 
               port conflicts with other servers.</p>
           </dd>
-          <dt><span class="term"><span class=
+			<dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">fedoraServerHost</font></b></span></span></dt>
-          <dd> 
-            <p>The <span class="emphasis"><em>fully qualified</em></span> host 
+			<dd>
+			The <span class="emphasis"><em>fully qualified</em></span> host 
               name of the machine on which Fedora runs. If the machine has aliases, 
               use the alias that will be used by people connecting to the server 
-              (be it via a web browser or one of the SOAP API exposures).</p>
-            <p>
-              <b>NOTE: If you are using Fedora's policy enforcement, read
-              the following:</b> Before you change this value to an IP address
-              or hostname other than 127.0.0.1 or localhost, you should start
-              the server once with the default value of localhost.  This will
-              cause the default policies to be put into play.  Then you can
-              shutdown the server and manually edit the repository policies
-              (they will be in the directory you specified for them in fedora.fcfg)
-              with the new IP address.  Next, after making the fedoraServerHost
-              change to fedora.fcfg, you can restart the Fedora server and your
-              policies will be accurate with respect to the IP address of the
-              local server.
-            </p>
-            <p>After you have successfully changed your server's hostname,
-               if you would like to ingest the demo objects, they will need to
-               be changed before they can be properly ingested.
-               You can do this by running the <span class="emphasis"><em>fedora-convert-demos</em></span> 
-               script. See the 
-              <i><a href="../server/cmd-line/index.html">Client Command-Line Utilities</a></i> 
-              document for instructions on using this and other scripts that come 
-              with Fedora.</p>
-            <p>
-            </p>
-            <p><b>If you have selected the base security configuration of <i>ssl-authenticate-all</i> 
-              or <i>no-ssl-authenticate-all</i> which use basic authentication 
-              for API-A, this hostname must have an externally resolvable IP address 
-              in order for custom disseminators with remote services to function 
-              properly. This hostname is used as the callback hostname for backend 
-              servicies communicating with Fedora and must be resolvable from 
-              remote hosts. In this case, you cannot use the default hostname 
-              of &quot;localhost&quot;.</b></p>
-          </dd>
-          <dt><span class="term"><span class=
+              (be it via a web browser or one of the SOAP API exposures).<p><b>NOTE</b>:&nbsp; <i><b>Ingesting Fedora demo objects:&nbsp; </b>
+			</i>If you have changed the values of either
+			<span class=
+          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
+			<em>fedoraServerPort</em></span>, then you must run the <i><b>demo 
+			object converter utility </b></i>script to change the host and/or 
+			port in the demo object ingest files.&nbsp;&nbsp; The demo objects 
+			are shipped with references to &quot;localhost:8080&quot; and these references 
+			must reflect the new values of <span class=
+          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
+			<em>fedoraServerPort</em></span> .&nbsp; Refer to the
+			<a href=
+          "../../../../../../../Documents%20and%20Settings/payette/client/cmd-line/index.html" target=
+          "_top">Command-line Utilities documentation</a> for additional details 
+          on running the demo object converter.</p></dd>
+			<dt>&nbsp;</dt>
+			<dd><b>WARNING: <i>If you are using Fedora's XACML-based policy 
+			enforcement</i> -</b> Before you change the server IP address
+              or hostname to something other than 127.0.0.1 (or &quot;localhost&quot;), you should 
+			<i><b>initially start the server </b></i><b>with the default 
+			hostname value</b> (i.e., 127.0.0.1 or &quot;localhost&quot;).&nbsp;&nbsp; 
+			This initial starting of the server will make sure that Fedora's 
+			default XACML policies are properly configured and placed in the 
+			proper directories.&nbsp;&nbsp; Once the default policies are in 
+			place, you can
+              shutdown the server and change the hostname at any time.&nbsp;&nbsp; 
+			Also see the instructions below on <a href="#d0e683">how to change 
+			the server IP address or hostname</a> for a checklist of places that 
+			you may need to make configuration changes.&nbsp;&nbsp;&nbsp; 
+			<p></p>
+			<p><b>WARNING:&nbsp; <i>If you plan to create custom disseminators on 
+			your digital objects AND if your server is setup to authenticate API-A 
+			requests</i> -&nbsp; </b>Make 
+			sure that the server hostname is an <i><b>externally resolvable IP address</b></i> 
+			(NOT &quot;localhost&quot;).&nbsp;&nbsp; Remember,&nbsp; API-A authentication is 
+			enabled if&nbsp; you ran <i>the <a href="#setup">Fedora Setup 
+			Utility</a></i> with either <i>&quot;ssl-authenticate-all&quot;</i> 
+              or <i>&quot;no-ssl-authenticate-all&quot;&nbsp; (&quot;-all&quot; means 
+			authenticate both API-A and API-M).&nbsp; </i>Since a disseminator 
+			uses an external service that must call back to the repository, the 
+			server must have a fixed IP address for the repository, resolvable 
+			via DNS.&nbsp;&nbsp; Once there is a fixed repository location for 
+			the external service to call back to, then you can set up 
+			authentication settings for the external services as described in
+		<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/beSecurityConfig.html">Backend Services 
+		Security Configuration</a>.&nbsp; NOTE:&nbsp; You do not need to worry 
+			about this if your server is NOT authenticating API-A&nbsp; (if you 
+			selected either <i>&quot;ssl-authenticate-apim&quot;</i> or <i>&quot;no-ssl-authenticate-apim&quot;</i> <i>
+			when you ran the <a href="#setup">Fedora Setup Utility</a>).</i>&nbsp;&nbsp; <b>&nbsp;</b></p></dd>
+			<dt>&nbsp;</dt>
+			<dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/REPOSITORY-POLICIES-DIRECTORY</font></b></span></span></dt>
-          <dd> 
-            <p>A directory where XACML repository-wide policies will be stored. 
+			<dd>
+			A directory where XACML repository-wide policies will be stored. 
               This will be created if it doesn't already exist. This parameter 
               must be given as an absolute path. The default value for this parameter 
-              is <i>/fedora-xacml-policies/repository-policies</i>. For additional 
-              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
-              XACML Policy Writing Guide</a></i>. </p>
-          </dd>
-          <dt><span class="term"><span class=
-            "bold"><b><font color="#FF0000">Authorization/OBJECT-POLICIES-DIRECTORY</font></b></span></span></dt>
-          <dd> 
-            <p>A directory where XACML object-specific policies will be stored. 
-              This will be created if it doesn't already exist. This parameter 
-              must be given as an absolute path. The default value for this parameter 
-              is <i>/fedora-xacml-policies/object-policies</i>. For additional 
-              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
-              XACML Policy Writing Guide</a></i>. </p>
-          </dd>
-          <dt><span class="term"><span class=
+              is <i>/fedora-xacml-policies/repository-policies</i>. For 
+			information on the policy enforcement module configuration, see
+			<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/AuthorizationXACML.htm">Fedora 
+			Authorization with XACML</a>.&nbsp;&nbsp;&nbsp; For information on 
+			writing policies see <i>
+			<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/XACMLPolicyGuide.htm">Fedora 
+              XACML Policy Writing Guide</a></i>. </dd>
+			<dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/SURROGATE-POLICIES-DIRECTORY</font></b></span></span></dt>
-          <dd> 
-            <p>A directory where XACML surrogate policies will be stored. This 
+			<dd>
+			A directory where XACML surrogate policies will be stored. This 
               will be created if it doesn't already exist. This parameter must 
               be given as an absolute path. The default value for this parameter 
-              is <i>/fedora-xacml-policies/surrogate-policies</i>. For additional 
-              information regarding policy writing see <i><a href="../server/security/XACMLPolicyGuide.htm">Fedora 
-              XACML Policy Writing Guide</a></i>. </p>
-          </dd>
-          <dt><span class="term"><span class=
+              is <i>/fedora-xacml-policies/surrogate-policies</i>.&nbsp; For 
+			information on the policy enforcement module configuration, see
+			<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/AuthorizationXACML.htm">Fedora 
+			Authorization with XACML</a>.&nbsp;&nbsp;&nbsp; For information on 
+			writing policies see <i>
+			<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/XACMLPolicyGuide.htm">Fedora 
+              XACML Policy Writing Guide</a></i>. </dd>
+			<dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY</font></b></span></span></dt>
-          <dd> 
-            <p>A directory where XACML policies generated by the future Policy 
+			<dd>
+			A directory where XACML policies generated by the future Policy 
               Tool GUI will be stored. This will be created if it doesn't already 
               exist. This parameter must be given as an absolute path. The default 
               value for this parameter is <i>/fedora-xacml-policies/repository-policies-generated-by-policyguitool</i>. 
               <b>This parameter is not currently active in the code and is for 
-              future use.</b></p>
-          </dd>
+              future use.</b></dd>
           <dt><span class="term"><span class=
             "bold"><b>DOManager/pidNamespace</b></span></span></dt>
           <dd> 
@@ -1022,18 +1050,33 @@
           <dd> 
             <p>The minimum number of idle instances in a connection pool.</p>
           </dd>
-          <dt><span class="term"><font color="#FF0000">resourceIndex/level</font></span></dt>
-          <dd> 
-            <p>A required parameter indicating the index level for the Resource 
-              Index. Index level. Currently, only 0, 1 and 2 are supported levels. 
-              0 = off: do not load the ResourceIndex 1 = basic: system metadata, 
-              RELS-EXT, disseminations 2 = basic + method permutations WARNING: 
-              changing the level (except to 0) requires a full dump-and-load of 
-              the repository. In Fedora 2.1, the default is level="0". In Fedora 
-              2.0 and 2.1b, the default was to have the resource index turned on. For 
-              more information see the <a href="../server/resourceIndex/index.html">Resource 
-              Index Guide</a>.</p>
-          </dd>
+			<dd>
+			&nbsp;</dd>
+			<dt><span class="term"><font color="#FF0000">resourceIndex/level</font></span></dt>
+			<dd>
+			A required parameter indicating the indexing level for the Resource 
+			Index. For more information see the
+			<a href="../../../../../../../Documents%20and%20Settings/payette/server/resourceIndex/index.html">Resource 
+              Index Guide</a>.&nbsp; The valid indexing settings are:</dd>
+			<dt>&nbsp;</dt>
+			<dd>
+			<b>0 = OFF</b>&nbsp; - this disables the Resource Index</dd>
+			<dd>
+			<b>1 = ON</b>&nbsp;&nbsp; - for each digital object, this will index 
+			key object properties, Dublin Core (DC datastream), RDF 
+			relationships/properties (RELS-EXT datastream), and any 
+			non-parameterized dissemination methods </dd>
+			<dd>
+			<b>2 = ON</b>&nbsp; - for each digital object, this will index 
+			everything at the level 1, plus any parameterized dissemination 
+			methods that have have a domain of fixed parameter values </dd>
+			<dt>&nbsp;</dt>
+			<dd>
+			<b>WARNING: 
+              </b>changing the level to either 1 or 2 requires a rebuild of the 
+			Resource Index.&nbsp; Consult the documentation for the Fedora
+			<a href="../server/cmd-line/index.html#rebuild">Rebuild Utility</a>.&nbsp; </dd>
+			<dt>&nbsp;</dt>
           <dt><span class="term">resourceIndex/datastore</span></dt>
           <dd> 
             <p>A required parameter indicating the ame of the triplestore to use. 
@@ -1069,14 +1112,15 @@
         <div class="titlepage">
           <div>
             <h4 class="title"><a name="d0e608" id=
-            "d0e608"></a>Other Settings</h4>
+            "d0e608"></a>Other Server Configuration Parameters</h4>
             
         </div>
         </div>
 
         
       <p>There are many other parameters you can configure with Fedora. See the 
-        fedora.fcfg file for documentation on all the parameters.</p>
+        Fedora Server Configuration File itself (fedora.fcfg) for internal documentation on all the parameters.</p>
+		<p>&nbsp;</p><hr>
       </div>
     </div>
   </div>
@@ -1166,6 +1210,7 @@
 
       <p>Other databases will have their own shutdown scripts or
       commands.</p>
+		<p>&nbsp;</p><hr>
     </div>
   </div>
 
@@ -1198,67 +1243,87 @@
     first time or making the change on a pre-existing Fedora
     server.</p>
 
-    <p>If you are installling Fedora for the first time and want to
-    run using a host or port other than the defaults, you need to
-    do the following:</p>
+    <p>If you are installing Fedora for the first time, or if you are changing 
+	the host or port on an existing Fedora installation, you need to make the 
+	following configuration changes:</p>
 
     <div class="itemizedlist">
       
-    <ul type="disc">
-      <li> 
-        <p>Change the values of <span class=
-          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis"><em>fedoraServerPort</em></span> 
-          to the values you want to use in the fedora.fcfg file.</p>
-      </li>
-      <li> 
-        <p>Run the demo object converter utility script to change the host and/or 
-          port in the demo objects from localhost and 8080 to the values you specified 
-          in the fedora.fcfg file. Refer to the <a href=
-          "../client/cmd-line/index.html" target=
+    <ol>
+		<li>
+		<b>Stop</b> the Fedora server if it is already running. <br>
+&nbsp;</li>
+		<li><i><b>Required</b></i>: Change the values of 
+		<span class=
+          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
+		<em>fedoraServerPort</em></span>&nbsp; in the Fedora server 
+		configuration file ($FEDORA_HOME/dist/server/config/fedora.fcfg).<br>
+&nbsp;</li>
+		<li><i>Optional</i> <i><b>(only if XACML</b> </i><b><i>Policy 
+		enforcement is enabled)</i></b>:&nbsp; If Fedora's Authorization module 
+		is enabled (i.e., ENFORCE_MODE=&quot;enforce-policies&quot;) AND&nbsp; you have 
+		created custom 
+		disseminators on digital objects, you must enter the fixed IP address of 
+		your server in two places:<br>
+		<br>
+		a.&nbsp; <i>Fedora's Backend Services Security Configuration</i>:&nbsp;&nbsp; 
+		Since custom disseminators typically use an external services to 
+		transform digital object content,&nbsp; these &quot;backend&quot; services must be 
+		configured to communicate securely with the Fedora repository server.&nbsp;&nbsp; Please consult the instructions found in
+		<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/beSecurityConfig.html">Backend Services 
+		Security Configuration</a>.&nbsp;&nbsp;&nbsp; This document will tell 
+		you how to use Fedora's&nbsp; web interface for 
+		backend service configuration.&nbsp; From the web form, you will enter the IP address of the 
+		server host for all of the following backend service entries:&nbsp; (1)
+		<i>&quot;fedoraInternalCall-1&quot;&nbsp; (2) &quot;fedoraInternalCall-2&quot;&nbsp; and (3)
+		</i>the services installed alongside the Fedora repository (on the same 
+		machine) to support the Fedora demo objects.&nbsp; Note that all of 
+		these service entries are pre-configured with the loopback IP address of 127.0.0.1 
+		and your job is to simply add the fixed IP address of your server for 
+		each backend service entry that already contains the loopback IP 
+		address.&nbsp;&nbsp; <br>
+		<br>
+		b.&nbsp; <i>Default XACML Policies:</i>&nbsp;&nbsp; It is also essential 
+		that you add your server's fixed IP address to the default XACML 
+		policies that ship with Fedora.&nbsp; Defaul policies are found in the 
+		/default subdirectory of the repository-policies you configured in the 
+		Authorization module for the server.&nbsp;&nbsp;&nbsp; The specific 
+		policies that must contain your server's fixed IP address are: <i>(1) 
+		deny-apim-if-not-localhost.xml, (2) 
+		deny-reloadPolicies-if-not-localhost.xml, and (3) deny-serverShutdown-if-not-localhost.xml</i>).&nbsp; 
+		If you edit the policy xml file, you will see the loopback IP address of 
+		127.0.0.1 in the policy condition.&nbsp; Simply add another entry below 
+		this with your fixed IP address.&nbsp;&nbsp; For more information on 
+		these policies, see&nbsp;
+		<a href="../../../../../../../Documents%20and%20Settings/payette/server/security/AuthorizationXACML.htm">Fedora 
+			Authorization with XACML</a>. <br>
+&nbsp;</li>
+		<li><b>Start</b> the Fedora server.</li>
+	</ol>
+    </div>
+
+    <p><b>NOTE:&nbsp; <i>Fedora Admin Client Usage:</i>&nbsp; </b>When invoking 
+	the Fedora admin-client, remember to specify the new host name and/or port 
+	number when invoking the client. e.g., fedora-admin hostname port 
+	fedora-username fedora-password.&nbsp; Please note that all user names and 
+	passwords are case sensitive</p>
+	<p><b>NOTE</b>:&nbsp; <i><b>Ingesting Fedora demo objects:&nbsp; </b></i>If 
+	you have changed the values of either <span class=
+          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis"><em>fedoraServerPort</em></span>, 
+	then you must run the <i><b>demo object converter utility </b></i>script to 
+	change the host and/or port in the demo object ingest files.&nbsp;&nbsp; The 
+	demo object conversion is only required if you are ingesting demo objects.&nbsp;&nbsp; 
+	If the demo objects are already ingested into the repository, they will be 
+	fine!&nbsp; The 
+	demo objects are shipped with references to &quot;localhost:8080&quot; and these 
+	references must reflect the new values of <span class=
+          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
+	<em>fedoraServerPort</em></span> .&nbsp; Refer to the 
+	<a href=
+          "../../../../../../../Documents%20and%20Settings/payette/client/cmd-line/index.html" target=
           "_top">Command-line Utilities documentation</a> for additional details 
           on running the demo object converter.</p>
-      </li>
-      <li> 
-        <p>Start the Fedora server.</p>
-      </li>
-      <li> 
-        <p>Ingest the demo objects.</p>
-      </li>
-      <li> 
-        <p>When invoking the Fedora admin-client, remember to specify the new 
-          host name and/or port number when invoking the client. e.g., fedora-admin 
-          hostname port fedora-username fedora-password</p>
-        <p>Please note that all user names and passwords are case sensitive.</p>
-      </li>
-    </ul>
-    </div>
-
-    <p>If you have an existing Fedora server already running and
-    you need to change the host name and/or port number on which
-    the server runs, you need to do the following:</p>
-
-    <div class="itemizedlist">
-      
-    <ul type="disc">
-      <li> 
-        <p>Stop the Fedora server.</p>
-      </li>
-      <li> 
-        <p>Change the values of <span class=
-          "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis"><em>fedoraServerPort</em></span> 
-          to the values you want to use in the fedora.fcfg file.</p>
-      </li>
-      <li> 
-        <p>Restart the Fedora server.</p>
-      </li>
-      <li> 
-        <p>When invoking the Fedora Admin Client, remember to specify the new 
-          host name and/or port number when invoking the client. e.g., fedora-admin 
-          hostname port fedora-username fedora-password. Please note that all 
-          user names and passwords are case sensitive.</p>
-      </li>
-    </ul>
-    </div>
+	<p>&nbsp;</p><hr>
   </div>
 
   <div class="section">
@@ -1274,6 +1339,7 @@
     in a simple XML format. You can use these logs to get more
     extensive information about what the server is doing or to
     diagnose problems.</p>
+	<p>&nbsp;</p><hr>
   </div>
 
   <div class="section">
