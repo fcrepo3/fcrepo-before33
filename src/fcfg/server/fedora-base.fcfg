@@ -58,7 +58,7 @@
                       denotes logging indicating that the server is 
                       inoperable or unable to start.</comment>
   </param>
-  <param name="log_flush_threshold" value="10">
+  <param name="log_flush_threshold" value="1">
     <comment>Defines the flush threshold for logging in number of records;
              default is one log record.</comment>
   </param>
