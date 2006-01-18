@@ -1314,8 +1314,7 @@ public class DefaultManagement
 		if (id.startsWith("uploaded://") || id.length()<12) {
 		    String internalId=id.substring(11);
 			if (m_uploadStartTime.get(internalId)!=null) {
-			    // found... remove from hash and return inputstream
-		        m_uploadStartTime.remove(internalId);
+			    // found... return inputstream
 				try {
 			        return new FileInputStream(new File(m_tempDir, internalId));
 				} catch (Exception e) {
