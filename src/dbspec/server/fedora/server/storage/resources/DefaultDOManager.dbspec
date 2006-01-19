@@ -85,14 +85,9 @@
 		<column name="token" type="varchar(64)" notNull="true" default="" unique="true"/>
 		<column name="path" type="varchar(255)" notNull="true" default=""/>
 	</table>
-	<table name="tempPaths" primaryKey="tokenDbID">
-		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="token" type="varchar(64)" notNull="true" default="" unique="true"/>
-		<column name="path" type="varchar(255)" notNull="true" default=""/>
-	</table>
 	<table name="datastreamPaths" primaryKey="tokenDbID">
 		<column name="tokenDbID" type="int(11)" notNull="true" autoIncrement="true"/>
-		<column name="token" type="varchar(103)" notNull="true" default="" unique="true"/>
+		<column name="token" type="varchar(199)" notNull="true" default="" unique="true"/>
 		<column name="path" type="varchar(255)" notNull="true" default=""/>
 	</table>
 	<table name="parm">
