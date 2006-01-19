@@ -26,9 +26,10 @@
             <li><a href="#CONFIG">Configuring the XACML Authorization Module</a></li>
                  <ul>
 					<li><a href="#CONFIG-ENABLE">2.1 Enabling/Disabling XACML Policy Enforcement</a></li>
-					<li><a href="#CONFIG-STORE">2.2 Configuring the &quot;Active&quot; Policies Storage Location</a></li>
-					<li><a href="#CONFIG-ACTIVATE">2.3 How to Activate and Load 
-					Policies</a></li>
+					<li><a href="#CONFIG-STORE">2.2 Configuring the Storage 
+					Locations of Policies</a></li>
+					<li><a href="#CONFIG-ACTIVATE">2.3 Activating and Loading 
+					Repository-Wide Policies</a></li>
 					<li><a href="#CONFIG-VALIDATE">2.4 Enabling/Disabling Policy Validation</a></li>
 					<li><a href="#CONFIG-SURROG">2.5 Configuring “Surrogate” Policies (and what are they?)</a></li>
 			</ul>
@@ -160,7 +161,6 @@ that controls XACML-based policy enforcement.</p>
 	<pre style="text-autospace:none">    &lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;ALLOW-SURROGATES&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
-	<pre style="text-autospace:none">    &lt;param name=&quot;OBJECT-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;SURROGATE-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</pre>
@@ -224,51 +224,21 @@ always in place regardless of the setting for parameter ENFORCE-MODE.</p>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
-<h3><a name="CONFIG-STORE">2</a><b><a name="CONFIG-STORE">.2 Configuring the Active Policies Storage Location</a></b></h3>
+<h3><a name="CONFIG-STORE">2</a><b><a name="CONFIG-STORE">.2 Configuring the 
+Storage Locations of Policies</a></b></h3>
 	<p>&nbsp;</p>
-<p>Active policies are those policies that are &quot;in play&quot; for the repository.&nbsp;&nbsp;&nbsp; 
-In the Authorization module section of the Fedora server configuration file 
-(fedora.fcfg),&nbsp; there are parameters to set the storage location for active 
-policies.&nbsp;&nbsp; <i><b>The Fedora repository will only know about policies 
-that are stored in the configured policy directories.&nbsp; Policies stored in 
-any other location will be invisible to the repository.&nbsp;&nbsp;&nbsp;&nbsp;
-</b></i></p>
-<p>The configuration parameters in the Authorization module provide the 
-repository administrator with a choice as to where XACML policy files are 
-stored.&nbsp;&nbsp; You can keep the default values, which will designate a 
-directory path at the root of the disk where the repository server is running.&nbsp;&nbsp; 
-The policy storage locations work just like the digital object and datastream 
-storage locations that are configured for the server (also in fedora.fcfg).&nbsp;&nbsp; 
-It is expected that repository administrators appropriately protect these 
-directories so that they cannot be tampered with.</p>
-<p>It should be noted that Fedora comes out-of-the-box with a set of default 
-repository-wide policies.&nbsp; The default policies are automatically copied 
-into the active policies storage location the first time the Fedora repository 
-server is started (i.e., copied into a subdirectory named &quot;/default&quot;).&nbsp;&nbsp;
-<b><i>Any changes to the default policies should be made in this active policy 
-directory .&nbsp; The policies located in the Fedora software distribution 
-directory ($FEDORA_HOME/dist/server/config/xacml-policies) are NOT active and 
-are not loaded by the repository!&nbsp;&nbsp; </i></b>It is recommended that 
-changes to the default repository-wide policies are made with extreme care.&nbsp;&nbsp; 
-These policies establish the baseline authorization rules for Fedora.&nbsp; 
-Refer to the documentation below&nbsp; on <a href="#DEFAULT">default repository 
-policies </a>for a description of what each policy does.&nbsp; </p>
-<p>In addition to the default policies,&nbsp; it is possible to create any 
+<p>Active policies are those policies that are &quot;in play&quot; for the repository.&nbsp; 
+There are two places that active policies can be stored:&nbsp; (a) in a file 
+system location configured for the repository, or (b) in digital objects within the 
+special &quot;POLICY&quot; datastream.&nbsp;&nbsp;&nbsp; It should be noted that Fedora 
+comes out-of-the-box with a set of default repository-wide policies.&nbsp; In addition to these default policies,&nbsp; it is possible to create any 
 number of custom XACML policies for a repository and for specific digital 
 objects.&nbsp;&nbsp; Consult the Fedora <a href="XACMLPolicyGuide.htm">XACML 
 Policy Writing Guide </a>for instructions on authoring new policies and a set of 
 sample policies for Fedora. </p>
 <p>&nbsp;</p>
-	<p><b><i><a name="STORE-REPO-WIDE"></a>a. </i></b>&nbsp;<b><i>Repository-wide policies stored in central location</i></b></p>
-	<p>&nbsp;</p>
-	<p>The storage location for active repository-wide policies can be set
-by the repository administrator using the follow parameter in Authorization
-module (in fedora.fcfg):   </p>
-<p>&nbsp;</p>
-<div class="code">
-	<pre style="text-autospace: none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
-</div>
-
+	<h4><a name="STORE-REPO-WIDE"></a>a.&nbsp;Storing Repository-Wide Policies in a 
+	Configured Location</h4>
 	<p>&nbsp;</p>
 	<p>Repository-wide policies are broad policies that are
 intended to be in play for the entire Fedora repository.  By saying that these
@@ -277,102 +247,157 @@ Repository-wide policies can  be fine-grained and they can be written to
 control access to any Fedora API operation, to groups of digital objects, or
 even to sets of specifically identified digital objects.  Repository-wide
 policies are distinguished from object-specific policies (described below) in
-that they will be evaluated for their applicability for every Fedora service
-request.  In contrast, object-specific policies are only evaluated for service
-requests that actually mention a specific object by its PID.   It should be
-noted that a repository-wide policy can still be written to address a specific
-digital object.  The disadvantage of putting such a policy in the
-repository-wide storage location is that it unnecessarily evaluated for
-requests that do not pertain to the specific digital object it is about.   As
-described below, there are better places to store a policy that pertains to a
-single digital object.</p>
-	<p>&nbsp;</p>
-	<p><b><i><a name="STORE-OBJ-SPECIFIC"></a>b. Object-specific policies stored in a central location</i></b></p>
-	<p><b><i>&nbsp;</i></b></p>
-<p>Object-specific policies can be stored in a
-centrally configured location, outside of the digital object that the policy is
-written for.   The location for active object-specific policies is configured in
-the following parameter of the Authorization module (in fedora.fcfg):</p>
-	<p>&nbsp;</p>
+that <i><b>they are stored in memory when the server is started and they are evaluated for their applicability 
+	on every Fedora service
+request.</b></i>  </p>
+<p>In the Authorization module section of the Fedora server configuration file 
+(fedora.fcfg),&nbsp; there are parameters to set the storage location for active 
+repository-wide policies.&nbsp;&nbsp; <i><b>The Fedora repository will only know about policies 
+that are stored within the configured policy directory location.&nbsp; 
+</b></i>Policies stored in 
+any other location will be invisible to the repository and will not be loaded 
+into the repository upon server startup!<b><i>&nbsp;&nbsp;&nbsp;&nbsp; </i>
+</b>The storage location for active repository-wide policies can be set
+by the repository administrator using the follow parameter in Authorization
+module (in fedora.fcfg):   </p>
+<p>&nbsp;</p>
 <div class="code">
-	<pre style="text-autospace: none">    &lt;param name=&quot;OBJECT-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/object-policies&quot;/&gt;</pre>
+	<pre style="text-autospace: none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
 </div>
 
 	<p>&nbsp;</p>
-<p>An object policy named “demo-5.xml” in this directory will
-be included only in the evaluation of policies for requests for the Fedora object whose
-PID is “demo:5.”   If this policy file is mistakenly put into
-repository-policies directory, it has the same effect at the time of policy
-evaluation and enforcement, if the best practice is followed of coding the policy to restrict 
-its application to that single object.   The configuration of the object-policies
-directory is not just a convenient way to easily distinguish between
-broader repository policies and policies that are intended to be applicable to
-a single digital object (but which are not stored inside the “POLICY” datastream of
-an object).  Only a single file in that directory is included in policy evaluation, whose filename
-matches the object PID.   </p>
+	<p>The configuration parameters in the Authorization module provide the 
+repository administrator with a choice as to where XACML repository-wide policy files are 
+stored.&nbsp;&nbsp; If you keep the default path value,&nbsp; then the 
+	repository-wide policy directory will be created at:&nbsp; FEDORA_HOME/data/fedora-xacml-policies/repository-policies.&nbsp;&nbsp; 
+	You can override this default with either a fully-qualified directory path 
+	or a relative directory path of your choice.&nbsp;&nbsp; 
+The policy storage location work just like the digital object and datastream 
+storage locations that are also configured for the server (in fedora.fcfg).&nbsp;&nbsp; 
+It is expected that repository administrators appropriately protect these 
+directories so that they cannot be tampered with.</p>
+<p>&nbsp;</p>
+<p><i><b>Default Repository-Wide Policies</b></i>:&nbsp; </p>
+<p>It should be noted that Fedora comes out-of-the-box with a set of default 
+repository-wide policies.&nbsp; The default policies are automatically copied 
+into the active policies storage location the first time the Fedora repository 
+server is started (i.e., copied into a subdirectory named &quot;/default&quot;).&nbsp;&nbsp;<b><i> </i></b>
+It is recommended that 
+changes to the default repository-wide policies are made with extreme care.&nbsp;&nbsp; 
+These policies establish the baseline authorization rules for Fedora.&nbsp; 
+Refer to the documentation below&nbsp; on <a href="#DEFAULT">default repository 
+policies </a>for a description of what each policy does.&nbsp; </p>
+<p>
+	<b>NOTE! </b>&nbsp; <b>&nbsp;</b>Any changes to the default policies or your own custom policies should be made 
+	in the /default subdirectory of the configured location for repository-wide 
+	policies.&nbsp; The original versions of the default policies are also 
+	maintained in the internal fedora staging directory named &quot;FEDORA_HOME/server/fedora-internal-use/&quot; 
+	from which the default policies are copied into the configured location.&nbsp;&nbsp;
+	<i><b>Do not edit the policies that are stored in this internal staging 
+	directory! </b></i>&nbsp; They are your record of how the default policies 
+	shipped with Fedora. </p>
 	<p>&nbsp;</p>
-	<p>As previously noted, if an object-specific policy mistakenly
-gets put into repository-policies directory, it has the same effect at
-enforcement time (again, if best practice is followed).   It will just be unnecessarily in scope for evaluation for
-service requests that it will never be applicable to.</p>
-<p>Object-specific policies stored as operating system files exist as a testing convenience, or
-for repositories with small numbers of objects.  
-Intended use is for an object to have at most one object-specific policy.
-If an object has two object-specific policies, 
-one as an operating system file and another in the object itself as a datastream (see following),
-they could easily subvert the intended authorization effect.
-If required, that single object-specific policy could be in fact an XACML policy set consisting
-of multiple XACML policies.  The point is that this would still reside in one location only.
-</p>
-
+<p><b><i>Custom</i></b><i><b> Repository-Wide Policies</b></i>:&nbsp;</p>
+<p>You can create your own custom repository-wide policies and put them in the 
+repository-wide policy directory.&nbsp; You can also create your own 
+subdirectories under the repository-wide directory to organize your policies.&nbsp;&nbsp; 
+It is recommended that you do NOT put your custom policies in the /default 
+subdirectory that was created by the Fedora server.&nbsp;&nbsp; This location is 
+reserved for the policies that are distributed with Fedora.&nbsp; Consult the 
+Fedora <a href="XACMLPolicyGuide.htm">XACML 
+Policy Writing Guide </a>for instructions on authoring new custom policies and 
+to view a set of 
+sample policies for Fedora. </p>
+<p>Custom repository-wide policies can be written to deny/permit access to 
+Fedora API operations, to control access to groups of objects, or to control 
+access to objects with certain attributes under certain conditions.&nbsp;&nbsp; 
+It should be noted that custom repository-wide policies can be also written to address a specific
+digital objects (identified by PID). &nbsp; This is in contrast to storing or referencing an 
+object-specific policy inside the digital object's POLICY datastream (described 
+below).&nbsp; The disadvantage of putting an object-specific policy in the
+repository-policies storage location is that the policy is unnecessarily evaluated for
+requests that do not pertain to the specific digital object it is about.   This 
+is because repsoitory-wide policies are stored in memory and are evaluated for 
+every Fedora API request.&nbsp; As described below, there are better places to 
+store a policy that pertains to a single digital object (or a small set of named 
+digital objects).</p>
 	<p>&nbsp;</p>
-	<p><b><i>c. Object-specific policies stored inside digital
-objects</i></b></p>
+	<h4>b. Storing Object-Specific Policies in a POLICY Datastream</h4>
 	<p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>An object-specific policy can be
 stored inside a digital object within the special reserved datastream whose
-datastream ID is &quot;POLICY&quot;.  It is good practice with object policy's
-to include a check of the PID in the policy.   One benefit of putting object
-specific policies inside digital objects is that the policies become <b><i>portable</i></b>
-with the object itself.   Another benefit is that it may provide for easier
-distribution of policy management responsibility.  For example, authors or
-owners of particular digital objects can be granted the rights to modify the
+	ID is &quot;POLICY&quot;. &nbsp; There are several benefits to storing 
+	object-specific policies in the POLICY datastream.&nbsp; First, these 
+	policies are only evaluated for those Fedora API requests that pertain to 
+	the digital object in which the policy &quot;resides.&quot;&nbsp;&nbsp; Policies that 
+	are stored in the POLICY datastream are not loaded into memory upon startup 
+	of the Fedora server (as are the repository-wide policies); therefore, the 
+	POLICY datastream approach may be a way to enhance performance in cases 
+	where a large number of object-specific policies will exist.&nbsp;&nbsp; 
+	Another benefit is that the POLICY datastream storage strategy may provide for easier
+distribution of policy management responsibilities  For example, authors or
+owners of particular digital objects can be granted the rights to view and modify the
 POLICY datastream of their objects, without having to obtain repository
-administrator privileges to modify policies in the configured policy storage
-locations for a repository.</p>
+administrator privileges to modify policies in a configured policy storage
+locations external to a repository.</p>
+<p style='text-autospace:none'>If a policy will only ever be used in the context 
+of a single digital object, it is considered good practice to name the object PID 
+within the Resource attribute specification within the target section of the 
+XACML policy. &nbsp; If a policy is intended to be shared by multiple digital 
+objects (i.e., stored in an external location where multiple digital objects can 
+point to it via a URL in the POLICY datastream), then it is not recommended that 
+the object PID(s) are named in the policy target. </p>
+<p style='text-autospace:none'><i><b>Policies as stored as Inline-XML (X) or 
+Managed-Content (M) Datastreams</b>:</i>&nbsp; One benefit of putting an object-specific policy inside 
+a digital object as a type X or M datastream is that the policy is stored within 
+the either in the object's XML wrapper file (i.e., FOXML), or it is stored in 
+the managed content datastream area of the repository.&nbsp; In either case, the 
+POLICY file itself is under the direct custodianship of the Fedora repository.&nbsp;&nbsp; 
+As such, these policies are managed like any other X or M datastreams, and the 
+policies become <b><i>portable</i></b>
+with their parent digital objects (e.g., the polcies goes with with an object, 
+as datastream content, when the object is exported from the repository).&nbsp;&nbsp; </p>
+<p style='text-autospace:none'><i><b>Policies as Externally Referenced (E) or 
+Redirected (R) Datastreams</b></i>:&nbsp; One benefit of putting object-specific 
+policies in the POLICY datastream in a by-reference fashion is that multiple 
+digital objects can point to the same policy.&nbsp; In this case, you probably 
+do not want to have the target of the XACML policy make reference particular 
+digital object PIDs.&nbsp;&nbsp;&nbsp; In this scenario, you can store the 
+policy external to the digital objects to which it pertains, and store the URL 
+of the external policy location in the E or R type datastream.&nbsp;&nbsp; 
+Fedora resolves such URLs at runtime, so when the policy enforcement module 
+needs to evaluate the XACML policy, Fedora will automatically retrieve the 
+policy file from its external location and pass it on the the policy enforcement 
+module for evaluation.&nbsp; </p>
 	<p><b><i>&nbsp;</i></b></p>
-<p style='text-autospace:none'>&nbsp;</p>
 
-<h3><a name="CONFIG-ACTIVATE">2<b>.3 How to Activate and Load Policies</b></a></h3>
+<h3><a name="CONFIG-ACTIVATE">2<b>.3 Activating and Loading Repository-Wide Policies</b></a></h3>
 	<p>
 	&nbsp;</p>
 <p>
-	Policies are not considered <i><b>active</b></i> unless they are placed in the
-	<a href="#CONFIG-ENABLE">active policy storage locations</a> specified in the 
-	Authorization module configuration (see fedora.fcfg).&nbsp;&nbsp; 
-	Once policies are placed in an active policy storage location, they are able to 
+	Repository-wide policies are not considered <i><b>active</b></i> unless they are placed in the
+	configured storage location specified in the 
+	Authorization module configuration (see fedora.fcfg).&nbsp;&nbsp; Once 
+	policies are placed either directly in this directory, or within 
+	subdirectories under it, they are able to 
 	be <i><b>loaded</b></i> by the Fedora repository server.&nbsp;&nbsp; 
-	To put new custom policies into play, simply add them to an active policies 
-	directory.&nbsp;&nbsp;&nbsp; To inactivate a policy, remove it from the 
-	active policy directory.&nbsp; To modify an existing policies, edit the 
-	policy in the active policy directories (or preferably, edit in another 
-	location and replace the existing policy in the active policy directory).</p>
+	To put new custom policies into play, simply add them to the configured 
+	repository-wide directory, or subdirectories within it.&nbsp;&nbsp;&nbsp; To inactivate a policy, remove it from the 
+	directory.&nbsp; To modify an existing policies, edit the 
+	policy in the configured policy directories (or preferably, edit in another 
+	location and replace the existing policy in the configured policy directory).</p>
 <p>
-	To activate and load policies take the following steps:</p>
+	To activate and load repository-wide policies take the following steps:</p>
 <ol>
 	<li><b>Validate</b> your policies using the
 	<a href="../cmd-line/index.html#validate">validate-policy</a> command line utility&nbsp;
 	<i>(optional, but recommended!)</i></li>
-	<li><b>Activate</b> your policies by copying them into the active policy 
-	storage location configured in the 
-	Authorization module (in fedora.fcfg).&nbsp; There are two active policy 
-	directories:<p>&nbsp;<ul>
+	<li><b>Activate</b> your policies by copying them into the configured 
+	storage location for repository-wide policies (configured in the 
+	Authorization module in fedora.fcfg).&nbsp; <p>&nbsp;<ul>
 		<li><a href="#STORE-REPO-WIDE">REPOSITORY-POLICIES-DIRECTORY </a>&nbsp; 
 		- put your custom repository-wide policies in any sub-directory under 
 		this configured directory</li>
-		<li><a href="#STORE-OBJ-SPECIFIC">OBJECT-POLICIES-DIRECTORY</a>&nbsp; -&nbsp; 
-		put your custom object-specific policies in this configured directory, 
-		with each policy named to match its object PID (e.g., demo-11.xml)</li>
 	</ul>
 	<p>&nbsp;</li>
 	<li><b>Load</b> your policies by starting the Fedora server (using the
@@ -382,25 +407,61 @@ locations for a repository.</p>
 	line utility.&nbsp; </li>
 </ol>
 <p>
-	It should be noted that all repository-wide policies are pre-loaded into 
-	Fedora server memory every time the server is started.&nbsp; For performance reasons, object-specific policies are not 
+	All repository-wide policies are loaded into 
+	the Fedora server's memory every time the server is started.&nbsp; For 
+	obvious performance reasons, object-specific policies stored in the POLICY 
+	datastreams of digital objects are not 
 	pre-loaded; instead they are loaded on an as-needed basis (i.e., when a 
 	request for that object is made).&nbsp; </p>
 <p>
 	<br>
-	It should also be noted that the <i><b>first time </b></i>the Fedora server 
-	is started, the <i><b>default out-of-the-box policies</b></i> will be copied 
-	into a subdirectory named &quot;/default&quot; under the appropriate active policy storage location 
-	(configured for the Authorization module in fedora.fcfg).&nbsp;&nbsp; These 
-	default policies are copied <b><i>from</i></b> the Fedora distribution 
-	directory $FEDORA_HOME/dist/server/config/xacml-policies/default.&nbsp;&nbsp; 
-	In Fedora 2.1 there are only <a href="#DEFAULT">default repository-wide 
-	policies,</a> but no default object policies or surrogate policies.&nbsp; 
-	The default out-of-box policies will be <i><b>copied only once</b></i>.&nbsp; 
-	This is to prevent subsequent server restarts from clobbering any 
-	customizations that may have been made to the default policies by a 
-	repository administrator.</p>
-	<p style='text-autospace:none'>
+	<b>WARNING: </b>It should be noted that the <i><b>first time </b></i>the Fedora server 
+	is started, the <b> <i>default </i> </b>repository-wide policies are copied 
+	into a subdirectory named &quot;/default&quot; under the repository-wide policy storage location.&nbsp;&nbsp;To 
+	make sure this happens correctly, you should initially start the server with 
+	the default value for the server hostname (see &quot;fedoraServerHost&quot; in 
+	fedora.fcfg).&nbsp; The default is 127.0.0.1 (or &quot;localhost&quot;).&nbsp;&nbsp; 
+			This initial starting of the server as &quot;localhost&quot; is necessary to make sure that 
+	the 
+			default XACML policies are properly configured and placed in the 
+	repository-wide policy directory.&nbsp;&nbsp; Once the default policies are 
+	in place, you can shutdown the server and change the hostname at any time.&nbsp; 
+	If you subsequently change the hostname to something other than &quot;localhost&quot; 
+	you must manually update some of the default policies to reflect the fixed 
+	IP address of your server.&nbsp; In the following default policies, you will see the loopback 
+	IP address of 127.0.0.1 in the policy condition:</p>
+<p>
+	<br>
+	<i>(1) 
+		deny-apim-if-not-localhost.xml, <br>
+	(2) 
+		deny-reloadPolicies-if-not-localhost.xml<br>
+	(3) deny-serverShutdown-if-not-localhost.xml</i>)</p>
+<p>
+	&nbsp;</p>
+<p>
+	Simply add the new IP address to the policy rule as follows:</p>
+<p>
+	&nbsp;</p>
+<div class="code">
+	<pre style="text-autospace: none">&lt;Rule RuleId=&quot;1&quot; Effect=&quot;Deny&quot;&gt;
+  &lt;Condition FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:not&quot;&gt;
+    &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:or&quot;&gt;
+      &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-at-least-one-member-of&quot;&gt;
+        &lt;EnvironmentAttributeDesignator AttributeId=&quot;urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress&quot; DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;/&gt;
+          &lt;Apply FunctionId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-bag&quot;&gt;
+            &lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;127.0.0.1&lt;/AttributeValue&gt;
+            <b>&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;111.22.333.4&lt;/AttributeValue&gt;</b>
+          &lt;/Apply&gt;
+      &lt;/Apply&gt;
+    &lt;/Apply&gt;
+  &lt;/Condition&gt;
+&lt;/Rule&gt;</pre>
+</div>
+
+	<p>
+	&nbsp;&nbsp;</p>
+<p style='text-autospace:none'>
 	<span style='font-size:10.0pt;
 font-family:"Courier New"'>&nbsp;</span></p>
 
@@ -906,7 +967,7 @@ repository that was previously configured for Fedora 2.0 release; however, as
 of Fedora 2.1b these basic access controls are now specified as XACML policies.&nbsp;&nbsp; 
 The default access control policies can be found within the Fedora software 
 distribution in the following directory: <span style="font-family: Courier New">&nbsp;</span></p>
-<p><span style="font-family: Courier New"><b>dist\server\config\xacml-policies\default\default-repository-policies-approximating-2.0</b></span></p>
+<p><b><span style="font-family: Courier New">FEDORA_HOME/data/fedora-xacml-policies/repository-policies/default</span></b></p>
 <p><i>The first time the Fedora repository server is started, these policies 
 will be automatically copied into the official <a href="#CONFIG-STORE">
 repository-wide policy storage location </a>that was specified in the Fedora 
@@ -1109,7 +1170,7 @@ access to certain kinds of datastreams and disseminations, for selectively
 permitting access to different API-M operations, and more.&nbsp;&nbsp; These 
 policies can be found within the Fedora software distribution in the following 
 directory:&nbsp;&nbsp;&nbsp;
-<span style="font-family: Courier New; font-weight: 700">dist\server\config\xacml-policies\examples</span></p>
+<b><span style="font-family: Courier New">FEDORA_HOME/userdocs/server/security/xacml-policies/examples</span></b></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
 <p style='text-autospace:none'>
