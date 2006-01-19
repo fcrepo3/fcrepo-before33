@@ -167,7 +167,7 @@ public class FedoraServerTestSetup
 
     private void backupPolicies() throws Exception {
 		System.out.println("Backing up poliices...");
-        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
+        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
 		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
@@ -177,7 +177,7 @@ public class FedoraServerTestSetup
     }
 
     private void restorePolicies() throws Exception {
-        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG_SRC)).parse();
+        ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
 		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
@@ -281,7 +281,7 @@ public class FedoraServerTestSetup
             System.out.println("fcfg.properties FOUND. Overriding fedora.fcfg...");
 
             // apply overrides in memory
-            FileInputStream fis = new FileInputStream(FCFG_SRC);
+            FileInputStream fis = new FileInputStream(FCFG);
             ServerConfigurationParser scp = new ServerConfigurationParser(fis);
             ServerConfiguration config = scp.parse();
             Properties overrides = new Properties();

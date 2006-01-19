@@ -56,13 +56,13 @@ public class TestFedoraConfigurations extends FedoraTestCase {
     }
     
     private static List getConfigurations() throws Exception {
-        FileInputStream fis = new FileInputStream(FCFG_SRC);
+        FileInputStream fis = new FileInputStream(FCFG);
         ServerConfigurationParser scp = new ServerConfigurationParser(fis);
         ServerConfiguration config = scp.parse();
         
         List configs = new ArrayList();
         configs.add(config);
-        File propDir = new File(FCFG_SRC_DIR);
+        File propDir = new File(JUNIT_PROPERTIES_SRC_DIR);
         if (propDir.exists() && propDir.isDirectory()) {
             File[] files = propDir.listFiles();
             Arrays.sort(files, new FileComparator(false, true));

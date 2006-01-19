@@ -56,7 +56,7 @@ public class TestServerConfiguration extends FedoraTestCase {
     */
     
     public void testFoo() throws Exception {
-        File originalFile = new File(FCFG_SRC);
+        File originalFile = new File(FCFG);
         FileInputStream fis = new FileInputStream(originalFile);
         ServerConfigurationParser scp = new ServerConfigurationParser(fis);
         ServerConfiguration config = scp.parse();
@@ -69,7 +69,7 @@ public class TestServerConfiguration extends FedoraTestCase {
     }
 
     public void testApplyProperties() throws Exception {
-        File originalFile = new File(FCFG_SRC);
+        File originalFile = new File(FCFG);
         FileInputStream fis = new FileInputStream(originalFile);
         ServerConfigurationParser scp = new ServerConfigurationParser(fis);
         ServerConfiguration config = scp.parse();
@@ -93,7 +93,7 @@ public class TestServerConfiguration extends FedoraTestCase {
     }
 
     public void testSerialize() throws Exception {
-        File originalFile = new File(FCFG_SRC);
+        File originalFile = new File(FCFG);
         FileInputStream fis = new FileInputStream(originalFile);
         ServerConfigurationParser scp = new ServerConfigurationParser(fis);
         ServerConfiguration config = scp.parse();

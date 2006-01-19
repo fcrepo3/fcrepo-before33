@@ -742,14 +742,14 @@ public class TestAPIM extends FedoraServerTestCase {
         // test specifying null for endDate
         String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purging datastream NEWDS2", false);
         for (int i=0; i<results.length; i++) {
-            //System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=null dsID: "+results[i]);
+            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=null dsID: "+results[i]);
         }
         assertTrue(results.length > 0);
         
         // test specifying datetime for endDate
         results = apim.purgeDatastream("demo:14", "NEWDS3", "9999-01-01T00:00:00.000Z", "purging datastream NEWDS3", false);
         for (int i=0; i<results.length; i++) {
-            //System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"9999-01-01T00:00:00.000Z\" dsID: "+results[i]);
+            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"9999-01-01T00:00:00.000Z\" dsID: "+results[i]);
         }        
         assertTrue(results.length > 0);
 
@@ -760,7 +760,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertNotNull(ds);
         Datastream[] dsArray = new Datastream[1];
         dsArray[0] = ds;
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", \"FOPDISSEM\", null)");
+        System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", \"FOPDISSEM\", null)");
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastream");
 
         // assert datastream FOPDISSEM matches            
@@ -782,7 +782,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // test getting datastream id FOPDISSEM for object demo:26 specifying datetime
         ds = apim.getDatastream("demo:26", "FOPDISSEM", "9999-01-01T00:00:00.000Z");
         dsArray[0] = ds;
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", ,\"FOPDISSEM\", \"9999-01-01T00:00:00.000Z\")");
+        System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", ,\"FOPDISSEM\", \"9999-01-01T00:00:00.000Z\")");
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastream");
         
         // assert datastream FOPDISSEM matches            
@@ -807,7 +807,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(dsArray.length > 0);
         assertEquals(dsArray.length, 3);      
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", null, null) number of Datastreams: "+dsArray.length);
+        System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", null, null) number of Datastreams: "+dsArray.length);
 
         // assert datastream FOPDISSEM matches            
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
@@ -856,7 +856,7 @@ public class TestAPIM extends FedoraServerTestCase {
             
         // test getting all datastreams for object demo:26 specifying null for state
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", null);
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Datastreams: "+dsArray.length);
+        System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
@@ -907,7 +907,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         // test getting all disseminators for object demo:26 specifying both datetime and state
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", "A");
-        //System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Datastreams: "+dsArray.length);
+        System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
         verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
@@ -963,7 +963,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(dsArray.length > 0);
         for (int i=0; i<dsArray.length; i++) {
             ds = dsArray[i];
-            //System.out.println("***** Testcase: TestAPIM.testGetDatastreamHistry createDate: "+ds.getCreateDate());
+            System.out.println("***** Testcase: TestAPIM.testGetDatastreamHistry createDate: "+ds.getCreateDate());
         }
         assertEquals(dsArray.length, 1);        
     }

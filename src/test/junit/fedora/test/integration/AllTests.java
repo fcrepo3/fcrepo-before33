@@ -22,14 +22,14 @@ public class AllTests {
     public static Test suite() {
 
         TestSuite defaultTests = new TestSuite("Default configuration tests");
-        defaultTests.addTest(TestIngestDemoObjects.suite());
-        defaultTests.addTest(TestCommandLineUtilities.suite());
-        defaultTests.addTest(AllAPITests.suite());
+        //defaultTests.addTest(TestIngestDemoObjects.suite());
+        //defaultTests.addTest(TestCommandLineUtilities.suite());
+        //defaultTests.addTest(AllAPITests.suite());
 
         TestSuite configTests = new TestSuite("Other configuration tests");
-        configTests.addTest(TestConfigExample.suite());
-        configTests.addTest(TestAPIALiteUnsecureAPIM.suite());
-        configTests.addTest(TestAPIALiteSecureAPIM.suite());        
+        //configTests.addTest(TestConfigExample.suite());
+        //configTests.addTest(TestAPIALiteUnsecureAPIM.suite());
+        //configTests.addTest(TestAPIALiteSecureAPIM.suite());        
         configTests.addTest(TestAPIALiteSecureAll.suite());        
 
         TestSuite allTests = new TestSuite("All tests");
