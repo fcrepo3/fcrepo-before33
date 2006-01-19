@@ -340,13 +340,11 @@ owners of particular digital objects can be granted the rights to view and modif
 POLICY datastream of their objects, without having to obtain repository
 administrator privileges to modify policies in a configured policy storage
 locations external to a repository.</p>
-<p style='text-autospace:none'>If a policy will only ever be used in the context 
-of a single digital object, it is considered good practice to name the object PID 
-within the Resource attribute specification within the target section of the 
-XACML policy. &nbsp; If a policy is intended to be shared by multiple digital 
-objects (i.e., stored in an external location where multiple digital objects can 
-point to it via a URL in the POLICY datastream), then it is not recommended that 
-the object PID(s) are named in the policy target. </p>
+<p style='text-autospace:none'>Unlike when an object-specific policy is placed 
+in the repository-wide policies directory, it is not necessary to specify the an 
+object PID in the target of the XACML policy target when the&nbsp; policy 
+resides in a POLICY datastream.&nbsp; The Fedora system will automatically make 
+this association during policy enforcement.&nbsp; </p>
 <p style='text-autospace:none'><i><b>Policies as stored as Inline-XML (X) or 
 Managed-Content (M) Datastreams</b>:</i>&nbsp; One benefit of putting an object-specific policy inside 
 a digital object as a type X or M datastream is that the policy is stored within 
