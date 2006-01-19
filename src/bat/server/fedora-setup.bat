@@ -36,8 +36,10 @@ rem Apply properties to fedora-base.fcfg to create fedora.fcfg
 set FCFG_HOME=%FEDORA_HOME%\server\config
 set MY_PROPS=%FCFG_HOME%\my.properties
 
-set FCFG_BASE=%FCFG_HOME%\fedora-base.fcfg
-set PROPS=%FCFG_HOME%\fedora-%CONFIG_SUFFIX%.properties
+set FEDORA_INTERNAL=%FEDORA_HOME%\server\fedora-internal-use
+
+set FCFG_BASE=%FEDORA_INTERNAL%\config\fedora-base.fcfg
+set PROPS=%FEDORA_INTERNAL%\config\fedora-%CONFIG_SUFFIX%.properties
 set OUT=%FCFG_HOME%\fedora.fcfg
 
 if exist "%MY_PROPS%" goto applyMyProps
@@ -62,9 +64,9 @@ goto copy
 
 :copy
 echo Copying
-echo    FROM: %FEDORA_HOME%\server\config\beSecurity-%CONFIG_SUFFIX%.xml 
+echo    FROM: %FEDORA_INTERNAL%\config\beSecurity-%CONFIG_SUFFIX%.xml 
 echo      TO: %FEDORA_HOME%\server\config\beSecurity.xml
-copy %FEDORA_HOME%\server\config\beSecurity-%CONFIG_SUFFIX%.xml %FEDORA_HOME%\server\config\beSecurity.xml
+copy %FEDORA_INTERNAL%\config\beSecurity-%CONFIG_SUFFIX%.xml %FEDORA_HOME%\server\config\beSecurity.xml
 echo Copying
 echo    FROM: %WEBAPP_DIR%\web-%CONFIG_SUFFIX%.xml 
 echo      TO: %WEBAPP_DIR%\web.xml

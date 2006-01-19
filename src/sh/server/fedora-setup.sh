@@ -67,10 +67,11 @@ fi
 
 # Apply properties to fedora-base.fcfg to create fedora.fcfg
 FCFG_HOME="$FEDORA_HOME"/server/config
+FEDORA_INTERNAL="$FEDORA_HOME"/server/fedora-internal-use
 MY_PROPS="$FCFG_HOME"/my.properties
 
-FCFG_BASE="$FCFG_HOME"/fedora-base.fcfg
-PROPS="$FCFG_HOME"/fedora-"${CONFIG_SUFFIX}".properties
+FCFG_BASE="$FEDORA_INTERNAL"/config/fedora-base.fcfg
+PROPS="$FEDORA_INTERNAL"/config/fedora-"${CONFIG_SUFFIX}".properties
 OUT="$FCFG_HOME"/fedora.fcfg
 
 if [ -r "$MY_PROPS" ]; then
@@ -92,9 +93,9 @@ fi
 echo "Wrote"
 echo -e "\t$OUT\n"
 echo "Copying"
-echo "   FROM: $FEDORA_HOME/server/config/beSecurity-$CONFIG_SUFFIX.xml"
+echo "   FROM: $FEDORA_INTERNAL/config/beSecurity-$CONFIG_SUFFIX.xml"
 echo "     TO: $FEDORA_HOME/server/config/beSecurity.xml"
-cp $FEDORA_HOME/server/config/beSecurity-$CONFIG_SUFFIX.xml $FEDORA_HOME/server/config/beSecurity.xml
+cp $FEDORA_INTERNAL/config/beSecurity-$CONFIG_SUFFIX.xml $FEDORA_HOME/server/config/beSecurity.xml
 echo "Copying"
 echo "   FROM: $WEBAPP_DIR/web-$CONFIG_SUFFIX.xml"
 echo "     TO: $WEBAPP_DIR/web.xml"

@@ -16,6 +16,32 @@
     <comment>Defines the password for the Fedora server; default is
              fedoraAdmin.</comment>
   </param>
+  <param name="fedoraServerPort" value="8080">
+    <comment>Defines the port number on which the Fedora server runs;
+             default is 8080.</comment>
+  </param>
+  <param name="fedoraShutdownPort" value="8005">
+    <comment>Defines the port number used to shutdown the Fedora sever;
+             default is 8005.</comment>
+  </param>
+  <param name="fedoraRedirectPort" value="8443">
+    <comment>Defines the redirect port of the Fedora sever; default is
+             8443.</comment>
+  </param>
+  <param name="fedoraServerHost" value="localhost">
+    <comment>Defines the host name for the Fedora server, as seen from the
+             outside world.</comment>
+  </param>
+  <param name="object_store_base" value="data/objects">
+    <comment>Defines the root directory for the internal storage of Fedora
+             objects. This value should be adjusted based on your installation
+             environment.</comment>
+  </param>
+  <param name="datastream_store_base" value="data/datastreams">
+    <comment>Defines the root directory for the internal storage of Managed
+             Content datastreams. This value should be adjusted based on your
+             installation environment.</comment>
+  </param>
   <param name="log_max_size" value="20000000">
     <comment>Defines the threshold at which a new log file is generated
              based on the size of the current log file in bytes; default is
@@ -84,16 +110,6 @@
              retrieve filepaths from the registry tables, if running under
              Windows/DOS.</comment>
   </param>
-  <param name="object_store_base" value="data/objects">
-    <comment>Defines the root directory for the internal storage of Fedora
-             objects. This value should be adjusted based on your installation
-             environment.</comment>
-  </param>
-  <param name="datastream_store_base" value="data/datastreams">
-    <comment>Defines the root directory for the internal storage of Managed
-             Content datastreams. This value should be adjusted based on your
-             installation environment.</comment>
-  </param>
   <param name="debug" value="false">
     <comment>A boolean toggle used to turn off/on internal debugging in the
              code.</comment>
@@ -111,22 +127,6 @@
              for an average response time from any single external mechanisms.
              Note this value must be less than the limit specified for the
              datastreamExpirationLimit.</comment>
-  </param>
-  <param name="fedoraServerPort" value="8080">
-    <comment>Defines the port number on which the Fedora server runs;
-             default is 8080.</comment>
-  </param>
-  <param name="fedoraShutdownPort" value="8005">
-    <comment>Defines the port number used to shutdown the Fedora sever;
-             default is 8005.</comment>
-  </param>
-  <param name="fedoraRedirectPort" value="8443">
-    <comment>Defines the redirect port of the Fedora sever; default is
-             8443.</comment>
-  </param>
-  <param name="fedoraServerHost" value="localhost">
-    <comment>Defines the host name for the Fedora server, as seen from the
-             outside world.</comment>
   </param>
   <module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
     <comment>Builds and manages Fedora's authorization structure.</comment>

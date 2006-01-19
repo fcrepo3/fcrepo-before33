@@ -378,15 +378,15 @@
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
-		<!-- make securty-sensitive files readable only by owner -->
+		<!-- make security-sensitive files readable only by owner -->
 		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx"/>
 		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx"/>
-		<chmod file="dist/server/config/fedora-base.fcfg" perm="go-rwx"/>
-		<chmod file="dist/server/config/my.properties" perm="go-rwx"/>
-		<chmod file="dist/server/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
-		<chmod file="dist/server/config/beSecurity-secure-all.xml" perm="go-rwx"/>
-		<chmod file="dist/server/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
-		<chmod file="dist/server/config/beSecurity-unsecure-all.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/fedora-base.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/my.properties" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-all.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-all.xml" perm="go-rwx"/>
 	</target>
 	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
 	</target>
@@ -815,19 +815,20 @@
 		<copy file="src/xml/schematron/metsExtRules1-0.xml" todir="dist/server/schematron"/>
 		<copy file="src/xml/schematron/foxmlRules1-0.xml" todir="dist/server/schematron"/>
 		<copy file="src/xsl/schematron/preprocessor.xslt" todir="dist/server/schematron"/>
+		<mkdir dir="dist/server/fedora-internal-use/config"/>
+		<mkdir dir="dist/server/fedora-internal-use/deploy"/>
 		<mkdir dir="dist/server/config"/>
-		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/config"/>
-		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/config/deployAPI-A.wsdd"/>
-		<copy file="temp/server/java/fedora/server/management/undeploy.wsdd" todir="dist/server/config"/>
-		<copy file="temp/server/java/fedora/server/access/undeploy.wsdd" tofile="dist/server/config/undeployAPI-A.wsdd"/>
-		<replace file="dist/server/config/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
-		<replace file="dist/server/config/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
-		<replace file="dist/server/config/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-		<replace file="dist/server/config/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-		<replace file="dist/server/config/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
-		<replace file="dist/server/config/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/fedora-internal-use/deploy"/>
+		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd"/>
+		<copy file="temp/server/java/fedora/server/management/undeploy.wsdd" todir="dist/server/fedora-internal-use/deploy"/>
+		<copy file="temp/server/java/fedora/server/access/undeploy.wsdd" tofile="dist/server/fedora-internal-use/deploy/undeployAPI-A.wsdd"/>
+		<replace file="dist/server/fedora-internal-use/deploy/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+		<replace file="dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+		<replace file="dist/server/fedora-internal-use/deploy/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+		<replace file="dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+		<replace file="dist/server/fedora-internal-use/deploy/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+		<replace file="dist/server/fedora-internal-use/deploy/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
 		<!-- xacml:  set up policy directories -->
-		<mkdir dir="dist/server/fedora-internal-use"/>
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/fedora-internal-use"/>
 		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/fedora-internal-use"/>
 		<!-- copy file="src/xml/xacml-policies/readme-policyguitool-generated-policies.txt" todir="dist/server/config/xacml-policies"/ -->
@@ -977,14 +978,14 @@
 			<fileset dir="src/dbspec/server"/>
 		</copy>
 		<!-- fedora configuration files -->
-		<copy todir="dist/server/config">
+		<copy todir="dist/server/fedora-internal-use/config">
 			<filterset>
 				<filter token="fedora.home" value="${env.FEDORA_HOME}"/>
 			</filterset>
 			<fileset dir="src/fcfg/server">
 				<include name="**/fedora-base.fcfg"/>
 				<include name="**/fedora-*.properties"/>
-				<include name="**/my.properties*"/>
+				<include name="**/my.properties"/>
 				<include name="**/logging.properties"/>
 				<include name="**/*.xml"/>
 			</fileset>
