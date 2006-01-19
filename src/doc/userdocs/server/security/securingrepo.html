@@ -216,12 +216,15 @@
       that is in the API-A module section is dependent on the authentication setting 
       for API-A. If authentication is disabled for API-A, then the setting for 
       "doMediateDatastreams" should be set to "false". If authentication is enabled 
-      for API-A, then "doMediateDatastreams" should be set to "true". This value 
-      is set appropriately in the four base configurations, but if you begin creating 
-      your own custom configuration, you need to be sure that the appropriate 
-      value is used for "doMediateDatastreams". Also remember that when doMediateDatastreams 
-      is set to true, the hostname used for the "fedoraServerHost" in fedora.fcfg 
-      must be a resolvable, fully qualified domain name. You cannot use just "localhost" 
+      for API-A, then "doMediateDatastreams" should be set to "true".&nbsp; 
+	Running &quot;fedora-setup&quot; will ensure that this parameter is set appropriately 
+	for the particular security configuration you have chosen.&nbsp; <i><b>It is 
+	recommended that you do NOT directly edit the &quot;doMediateDatastreams&quot; 
+	parameter.&nbsp;&nbsp; Instead, let &quot;fedora-setup&quot; control this setting.</b></i>&nbsp;&nbsp;&nbsp;&nbsp; 
+	Also, remember that if you ran &quot;fedora-setup&quot;&nbsp; with a setting that 
+	enables authentication for API-A (i.e., <i>ssl-authenticate-all</i> or <i>
+	no-ssl-authenticate-all</i>), the value of &quot;fedoraServerHost"  
+      must be a resolvable, fully-qualified domain name.&nbsp;&nbsp; You cannot use just "localhost" 
       since remote backend services use this hostname to communicate with the 
       fedora server.</p>
     <p>&nbsp;</p>
@@ -229,23 +232,27 @@
 	Fedora Tomcat web application directory under the Fedora Tomcat path ($FEDORA_HOME\server\jakarta-tomcat-5.0.28\webapps\fedora\WEB-INF).&nbsp;&nbsp; 
 	This file controls the settings for authentication and SSL forwarding for API-M and API-A.&nbsp;
 	<i><b>It is strongly recommended that you do not customize this file</b></i> unless you have very special needs that cannot be met by one of the four base configuration files. If you decide you have to customize this file, here are some helpful pointers to keep in mind:</p>
+	<p><i>Remember that settings web.xml for authentication and SSL can interact 
+	with settings in fedora.fcfg, beSecurity, and in XACML 
+        policies so exercise care when making customized changes to web.xml:</i></p>
 
 	<ul>
-      <li>fedora.fcfg - remember that if authentication is enabled for API-A, 
-        you must also set doMediateDatastreams to true in fedora.fcfg</li>
-      <li>beSecurity - remember that settings for authentication and SSL forwarding 
-        for API-A must mesh with settings in beSecurity.xml</li>
-      <li>XACML policies - remember that policies that use "Subject" attributes 
-        are only available if the corresponding API has authentication enabled</li>
-      <li>authentication and SSL - remember that settings for authentication and 
-        SSL can affect the settings in fedora.fcfg, beSecurity, and in written 
-        policies so exercise care when making changes</li>
+      <li>fedora.fcfg - if web.xml enables authentication for API-A, 
+        you must ensure that the doMediateDatastreams&nbsp; parm is set to <i>
+		<b>true</b></i> in fedora.fcfg</li>
+      <li>beSecurity - if web.xml enables authentication and SSL forwarding 
+        for API-A, these settings must be reflected in the backend service 
+		profiles in beSecurity.xml</li>
+      <li>XACML policies - if web.xml does NOT enable authentication for 
+		particular API, then XACML policy enforcement will not be able to match 
+		&quot;Subject&quot; attributes within a policy that targets that API.</li>
     </ul>
 
-	<p>&nbsp;</p><p><strong>beSecurity.xml</strong> -&nbsp; The Fedora backend security configuration file is 
+	<p>&nbsp;</p><p><strong>beSecurity.xml</strong> -&nbsp; <i><b>Customization of this file is only 
+	necessary for repositories that are using 
+	custom disseminators that point to external services</b></i>. The Fedora backend security configuration file is 
 	found in the Fedora configuration directory ($FEDORA_HOME\server\config).&nbsp; 
-	Customization of this file is only relevant for repositories that are using 
-	custom disseminators that point to external services.&nbsp; If you want to 
+	&nbsp; If you want to 
 	set up a totally secure repository, you must configure things up so that 
 	external services can securely call back to the Fedora repository.&nbsp;&nbsp; Customization of the beSecurity.xml configuration file is described in detail in the document entitled <i><a href="beSecurityConfig.html">beSecurity Configuration</a></i>. The main issue to remember when customizing beSecurity is that it controls how backend services communicate with the Fedora server and how the Fedora server communicates with backend services. Hence, you have to be aware of what setting you are using for API-A in regards to authentication and SSL support. For example, if you have authentication and SSL support turned off for API-A, it would not make sense to have a beSecurity setting that tries to enable authentication or SSL when a backend service is attempting to connect to the Fedora server. Note also that beSecurity is only needed if you are using custom disseminators and care about how backend services communicate with the Fedora server. If this is not a concern, you can use the minimal beSecurity configuration file that is part of the 
 	&quot;ssl-authenticate-apim&quot; or &quot;no-ssl-authenticate-apim&quot; configurations.</p>
@@ -638,7 +645,7 @@ default repository-wide XACML policies</a> that approximate the minimal security
           <li>Optionally customize fedora.fcfg for your repository</li>
           <li>Optionally customize beSecurity.xml for your custom disseminators<font size="-1">
             * </font></li>
-          <li>Optionally customize repository-wide and object-specific policies</li>
+          <li>Optionally customize XACML policies (repository-wide and object-specific policies)</li>
           <li>Optionally customize tomcat-users_fedoraTemplate.xml for your repository 
             and users</li>
           <li>Optionally customize server_fedoraTemplate.xml and/or jaas.config 
