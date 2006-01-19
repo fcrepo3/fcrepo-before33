@@ -20,11 +20,13 @@
 <div class="toc">
     <h2>Table of Contents</h2>
     <div class="tocbox">
-        <ol>
-          <li><a href="#intro">Introduction</a></li>
-			<li><a href="#migrate20-21b">Upgrading From Fedora 2.0 to Fedora 2.1b</a></li>
-          <li><a href="#migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></li>
-        </ol>
+        
+    <ol>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#migrate21-21b">Upgrading From Fedora 2.1b to Fedora 2.1</a></li>
+      <li><a href="#migrate20-21">Upgrading From Fedora 2.0 to Fedora 2.1</a></li>
+      <li><a href="#migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></li>
+    </ol>
     </div>
 </div>
 
@@ -36,22 +38,29 @@
       </div>
     </div>
 
-    <p>When moving from Fedora 2.0 to Fedora 2.1b you will be able to a simple software <i><b>upgrade</b></i> 
-	without having to migrate digital objects via a mass export and ingest.&nbsp;&nbsp; 
-	After you install Fedora 2.1b, you can configure it to point to your 
-	existing repository datastores (both the existing repository directory storage locations and 
-	the existing relational database).&nbsp; This involves changing parameters 
-	in the 
-	Fedora 2.1b server configuration file (fedora.fcfg) that define the storage 
-	directory paths and database location.&nbsp; See the instructions in section 
-	2 below for details.</p>
-	<p>When moving from Fedora Release 1.2.1, you must first migrate to Fedora 
-	2.0.&nbsp; Migration involves using the Fedora migration utility which will export 
-	objects from the old repository and ingest them into the new repository.&nbsp; 
-	Migration (as opposed to software upgrade) is necessary when either the FOXML schema or the relational database schema changes in a new release.&nbsp;&nbsp; 
-	This occurred between Fedora 1.2.1 and Fedora 2.0.&nbsp; See the 
-	instructions in section 3 below for migration, then move on the the instructions in 
-	section 2.</p>
+    
+  <p>If you have already upgraded to Fedora 2.1b and wish to migrate to the final 
+    Fedora 2.1 release, the procedure involves a simple software <i><b>upgrade</b></i> 
+    which is identical to upgrading from Fedora 2.0. See the instructions in section 
+    2 below for details.</p>
+	
+    
+  <p>When moving from Fedora 2.0 to Fedora 2.1 you will be able to do a simple 
+    software <i><b>upgrade</b></i> without having to migrate digital objects via 
+    a mass export and ingest.&nbsp;&nbsp; After you install Fedora 2.1, you can 
+    configure it to point to your existing repository datastores (both the existing 
+    repository directory storage locations and the existing relational database).&nbsp; 
+    This involves changing parameters in the Fedora 2.1 server configuration file 
+    (fedora.fcfg) that define the storage directory paths and database location.&nbsp; 
+    See the instructions in section 3 below for details.</p>
+  <p>When moving from Fedora Release 1.2.1, you must first migrate to Fedora 2.0.&nbsp; 
+    Migration involves using the Fedora migration utility which will export objects 
+    from the old repository and ingest them into the new repository.&nbsp; Migration 
+    (as opposed to software upgrade) is necessary when either the FOXML schema 
+    or the relational database schema changes in a new release.&nbsp;&nbsp; This 
+    occurred between Fedora 1.2.1 and Fedora 2.0.&nbsp; See the instructions in 
+    section 4 below for migration, then move on the the instructions in section 
+    3.</p>
 
     <p>If you are running a version of the Fedora software prior to
     version 1.2.1, you will need to migrate your server software up
@@ -63,77 +72,104 @@
 
     <div class="sec2">
       <h2>&nbsp;</h2>
-		<h2><a name="migrate20-21b" id="migrate0">2. Upgrading From Fedora 2.0 to Fedora 2.1b</a></h2>
+		<h2><a name="migrate21b-21" id="migrate00">2. Upgrading From Fedora 2.1b to Fedora 2.1</a></h2>
+
+		
+  <p>If you have already upgraded to Fedora 2.1b and wish to migrate to the final 
+    Fedora 2.1 release, the procedure involves a simple software <i><b>upgrade</b></i> 
+    which is identical to upgrading from Fedora 2.0. You can follow the same steps 
+    described in section 3 below. A bug (<a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=134">Bugzilla 
+    #134</a>) was fixed in the Fedora 2.1 that affects the length of the <i>token</i> 
+    field in the <i>datastreamPaths</i> SQL database table. The length of this 
+    field was changed form varachr(103) to varchar(199). It is recommend that 
+    you manually update the field length for this column table in your sql database 
+    using an appropriate database utility for your sql database. See the <a href="release-notes.html">Release 
+    Notes</a> for more details on this bug. There are also some minor changes 
+    in the fedora.fcfg file you may wish to review. Refer to the <a href="installation.html">Fedora 
+    Installation And Configuration Guide</a> for details on these changes.</p>
+	
+	</div>
+
+    <div class="sec2">
+      <h2>&nbsp;</h2>
+		<h2><a name="migrate20-21" id="migrate0">3. Upgrading From Fedora 2.0 to Fedora 2.1</a></h2>
 
       <p>The move from Fedora 2.0 to Fedora 2.1b is quite simple and does not 
-		require migration of objects.&nbsp; If you are upgrading from Fedora 2.0 to Fedora 2.1b
+		require migration of objects.&nbsp; If you are upgrading from Fedora 2.0 to Fedora 2.1
       follow these steps:</p>
-		<ol>
-
-        <li><b>Download: </b>download the Fedora 2.1b software from <a href=
+		
+  <ol>
+    <li><b>Download: </b>download the Fedora 2.1 software from <a href=
         "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
-
-        <li><b>Install</b>:&nbsp; install the Fedora 2.1b software</li>
-		<li><b>Backup:&nbsp; </b>it is highly recommended that you create a 
-		backup of your pre-existing Fedora 2.0 repository </li>
-		<li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1b, you can 
-		choose among four different security configurations. <b>&nbsp;</b>Consult 
-		the <a href="../server/security/securingrepo.html">Securing Your 
-		Repository Guide</a> for a description of security configuration 
-		options.&nbsp; To have an equivalent configuration to what was in Fedora 
-		2.0 (no SSL, API-M authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
-		option as demonstrated below.&nbsp; You can easily change to more secure 
-		configurations at any time by rerunning the Fedora Setup Utility.&nbsp;
-		<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</p></li>
-		<li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the object storage location 
-		to point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_0_objects</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp; </li>
-		<li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the datastream storage 
-		location to point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_datastreams</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li><b>Configure the Temporary Storage Location:</b> in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the temp storage location to 
-		point to that of of the Fedora 2.0 repository, for example:<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_temp</b>&quot;/&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1b 
-		server configuration file (fedora.fcfg) set the relational database 
-		location topoint to the pre-existing database (used by the Fedora 2.0 
-		repository), for example (if using MySQL):<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
+    <li><b>Install</b>:&nbsp; install the Fedora 2.1 software</li>
+    <li><b>Backup:&nbsp; </b>it is highly recommended that you create a backup 
+      of your pre-existing Fedora 2.0 repository </li>
+    <li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1, you can choose 
+      among four different security configurations. <b>&nbsp;</b>Consult the <a href="../server/security/securingrepo.html">Securing 
+      Your Repository Guide</a> for a description of security configuration options.&nbsp; 
+      To have an equivalent configuration to what was in Fedora 2.0 (no SSL, API-M 
+      authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
+      option as demonstrated below.&nbsp; You can easily change to more secure 
+      configurations at any time by rerunning the Fedora Setup Utility.&nbsp; 
+      <br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>C:\fedora-2.1-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;</p>
+    </li>
+    <li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1 server 
+      configuration file (fedora.fcfg) set the object storage location to point 
+      to that of of the Fedora 2.0 repository, for example:<br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_0_objects</b>&quot;/&gt;</pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp; 
+    </li>
+    <li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1 server 
+      configuration file (fedora.fcfg) set the datastream storage location to 
+      point to that of of the Fedora 2.0 repository, for example:<br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_datastreams</b>&quot;/&gt;</pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;
+    </li>
+    <li><b>Configure the Temporary Storage Location:</b> in the Fedora 2.1 server 
+      configuration file (fedora.fcfg) set the temp storage location to point 
+      to that of of the Fedora 2.0 repository, for example:<br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_temp</b>&quot;/&gt;</pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;
+    </li>
+    <li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1 server 
+      configuration file (fedora.fcfg) set the relational database location topoint 
+      to the pre-existing database (used by the Fedora 2.0 repository), for example 
+      (if using MySQL):<br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
   &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
   &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
   <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora20src?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
@@ -151,38 +187,45 @@
   &lt;param name=&quot;testWhileIdle&quot; value=&quot;true&quot;/&gt;
   &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
 &lt;/datastore&gt;</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;If you are using Oracle or mckoi as your database, update the 
-		appropriate datastore configuration.<br>
-&nbsp;</li>
-		<li><b>Rebuild the Fedora Resource Index. </b>&nbsp; Note that you <b>
-		MUST NOT </b>point your Fedora 2.1b repository server at the 
-		pre-existing Fedora 2.0 Resource Index.&nbsp;&nbsp; The Resource Index 
-		data model has changed slightly, and also there have been bug fixes on 
-		the Resource Index.&nbsp;&nbsp;&nbsp; The Resource Index can be easily 
-		rebuilt using the <a href="../server/cmd-line/index.html#rebuild">Fedora 
-		Rebuild Utility</a>, as shown below.&nbsp; When prompted for what you 
-		want to do, select option 2 to rebuild the Resource Index only.&nbsp;&nbsp; 
-		(Note: that you in lieu of Step 7 above, you could have chosen to 
-		rebuild a brand new SQL database, but this is not necessary.).<i><b>&nbsp;
-		<br>
-		<br>
-		NOTE: The Fedora server must not be running while rebuilding the 
-		Resource Index</b></i>.<br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-rebuild</b></pre>
-					<pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;If you are using Oracle or mckoi as your database, update the appropriate 
+        datastore configuration.<br>
+        &nbsp;
+    </li>
+    <li><b>Rebuild the Fedora Resource Index. </b>&nbsp; Note that you <b> MUST 
+      NOT </b>point your Fedora 2.1 repository server at the pre-existing Fedora 
+      2.0 Resource Index.&nbsp;&nbsp; The Resource Index data model has changed 
+      slightly, and also there have been bug fixes on the Resource Index.&nbsp;&nbsp;&nbsp; 
+      The Resource Index can be easily rebuilt using the <a href="../server/cmd-line/index.html#rebuild">Fedora 
+      Rebuild Utility</a>, as shown below.&nbsp; When prompted for what you want 
+      to do, select option 2 to rebuild the Resource Index only.&nbsp;&nbsp; (Note: 
+      that you in lieu of Step 7 above, you could have chosen to rebuild a brand 
+      new SQL database, but this is not necessary.). A bug (<a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=134">Bugzilla 
+      #134</a>) was fixed in the Fedora 2.1 that affects the length of the <i>token</i> 
+      field in the <i>datastreamPaths</i> SQL database table. The length of this 
+      field was changed form varachr(103) to varchar(199). If you do not rebuild 
+      the SQL database, it is recommend that you manually update the field length 
+      for this column table in your sql database using an appropriate database 
+      utility for your sql database. See the <a href="release-notes.html">Release 
+      Notes</a> for more details on this bug.<i><b>&nbsp; <br>
+      <br>
+      NOTE: The Fedora server must not be running while rebuilding the Resource 
+      Index</b></i>.<br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>C:\fedora-2.1-src&gt;<b> fedora-rebuild</b></pre>
+            <pre>
 Fedora Rebuild Utility
 ..........................
 
 WARNING: Live rebuilds are not currently supported.
 Make sure your server is stopped before continuing.
 
-Server directory is c:\fedora-2.1b-src\dist\server
+Server directory is c:\fedora-2.1-src\dist\server
 Server profile is unspecified
 
 ---------------------------------------------------------------------
@@ -207,29 +250,31 @@ Start rebuilding with the above options?
 Enter (1-3) --&gt; 1
 
 Rebuilding...</pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</li>
-		<li>Start the Fedora 2.1b server <br>
-&nbsp;<div class="code">
-			<blockquote>
-				<blockquote>
-					<pre>C:\fedora-2.1b-src&gt;<b> fedora-start
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;
+    </li>
+    <li>Start the Fedora 2.1 server <br>
+      &nbsp;
+      <div class="code"> 
+        <blockquote> 
+          <blockquote> 
+            <pre>C:\fedora-2.1-src&gt;<b> fedora-start
 </b>Starting Fedora server...
 Deploying API-M and API-A...
-Processing file c:\fedora-2.1b-src\dist\server\config\deployAPI-A.wsdd
+Processing file c:\fedora-2.1-src\dist\server\config\deployAPI-A.wsdd
 &lt;Admin&gt;Done processing&lt;/Admin&gt;
 audit parms deploy
-audit parms c:\fedora-2.1b-src\dist\server\config\deployAPI-A.wsdd
+audit parms c:\fedora-2.1-src\dist\server\config\deployAPI-A.wsdd
 audit parms 60
-Processing file c:\fedora-2.1b-src\dist\server\config\deploy.wsdd
+Processing file c:\fedora-2.1-src\dist\server\config\deploy.wsdd
 &lt;Admin&gt;Done processing&lt;/Admin&gt;
 audit parms deploy
-audit parms c:\fedora-2.1b-src\dist\server\config\deploy.wsdd
+audit parms c:\fedora-2.1-src\dist\server\config\deploy.wsdd
 audit parms 15
 Initializing Fedora Server instance...
-Fedora Version: 2.1b
+Fedora Version: 2.1
 Fedora Build: 1
 Server Host Name: localhost
 Server Port: 8080
@@ -237,15 +282,16 @@ Debugging: false
 log4j.configuration=null
 OK<b>
 Finished. To stop the server, use fedora-stop.
-C:\fedora-2.1b-src&gt;</b></pre>
-				</blockquote>
-			</blockquote>
-		</div>
-		<p>&nbsp;</p></li>
-		<li><i><b>You are done! </b></i></li>
-      </ol>
+C:\fedora-2.1-src&gt;</b></pre>
+          </blockquote>
+        </blockquote>
+      </div>
+      <p>&nbsp;</p>
+    </li>
+    <li><i><b>You are done! </b></i></li>
+  </ol>
 		<p>&nbsp;</p>
-		<h2><a name="migrate" id="migrate">3. Migrating
+		<h2><a name="migrate" id="migrate">4. Migrating
       From Fedora 1.2.1 to Fedora 2.0</a></h2>
 
       <p>If you are upgrading from Fedora 1.2.1 to Fedora 2.0
