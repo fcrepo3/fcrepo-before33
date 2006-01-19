@@ -1,5 +1,7 @@
 package fedora.server.storage.lowlevel;
 import java.io.File;
+
+import fedora.common.Constants;
 import fedora.server.Server;
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.InitializationException;
@@ -12,15 +14,13 @@ import fedora.server.errors.InitializationException;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-public class Configuration {
+public class Configuration implements Constants {
 
 	private final boolean backslashIsEscape;
-	private final String separator;
 	private final String objectStoreBase;
 	private final String[] objectStoreBases;
 	private final String datastreamStoreBase;
 	private final String[] datastreamStoreBases;
-	//private final boolean useSingleRegistry;
 	private final String algorithmClass;
 
 	private final String registryClass;
@@ -44,7 +44,8 @@ public class Configuration {
 		Server temp = null;
 		if (! testConfig) {
 			try {
-				temp = Server.getInstance(new File(System.getProperty("fedora.home")));
+				System.out.println("*** FEDORA_HOME: " + FEDORA_HOME);
+				temp = Server.getInstance(new File(FEDORA_HOME));
 			} catch (InitializationException ie) {
 				System.err.println(ie.getMessage());
 			}
@@ -77,9 +78,6 @@ public class Configuration {
 	private static final String FCFG_OBJECT_STORE_BASE = "object_store_base";
 	private static final String FCFG_DATASTREAM_STORE_BASE = "datastream_store_base";
 
-	private static final String FCFG_OBJECT_TABLE_NAME = "object_table_name";
-	private static final String FCFG_DATASTREAM_TABLE_NAME = "datastream_table_name";
-
 	private Configuration () throws LowlevelStorageException {
 
 		{
@@ -99,35 +97,6 @@ public class Configuration {
 			}
 			registryClass = registryClassTemp;
 		}
-
-		/*
-		{
-			String tableName = testConfig ? "objectPaths" :
-				s_server.getParameter(FCFG_OBJECT_TABLE_NAME);
-			if ((tableName == null) || tableName.equals("")) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_OBJECT_TABLE_NAME);
-			}
-			objectRegistryTableName = tableName;
-		}
-
-		{
-			String tableName = testConfig ? "tempPaths" :
-				s_server.getParameter(FCFG_TEMP_TABLE_NAME);
-			if ((tableName == null) || tableName.equals("")) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_TEMP_TABLE_NAME);
-			}
-			tempRegistryTableName = tableName;
-		}
-
-		{
-			String tableName = testConfig ? "datastreamPaths" :
-				s_server.getParameter(FCFG_DATASTREAM_TABLE_NAME);
-			if ((tableName == null) || tableName.equals("")) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_DATASTREAM_TABLE_NAME);
-			}
-			datastreamRegistryTableName = tableName;
-		}
-		*/
 
 		{
 			String fileSystemClassTemp = testConfig ? "fedora.server.storage.lowlevel.GenericFileSystem" :
@@ -152,52 +121,26 @@ public class Configuration {
 		}
 
 		{
-			String objectStoreBaseTemp = testConfig ? "C:\\fedora_objects" :
-				s_server.getParameter(FCFG_OBJECT_STORE_BASE);
+			String objectStoreBaseTemp = testConfig ? "C:\\fedora_objects" : 
+				s_server.getFileParameter(FCFG_OBJECT_STORE_BASE);
+			
 			String datastreamStoreBaseTemp = testConfig ? "C:\\fedora_datastreams" :
-				s_server.getParameter(FCFG_DATASTREAM_STORE_BASE);
-			if (objectStoreBaseTemp == null) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_OBJECT_STORE_BASE);
-			}
-			if (datastreamStoreBaseTemp == null) {
-				throw new LowlevelStorageException(true,"must configure " + FCFG_DATASTREAM_STORE_BASE);
-			}
+				s_server.getFileParameter(FCFG_DATASTREAM_STORE_BASE);
 
 // FIXME: thinks c:\temp and c:\temp2 overlap
 			if (objectStoreBaseTemp.startsWith(datastreamStoreBaseTemp)
 			||  datastreamStoreBaseTemp.startsWith(objectStoreBaseTemp)) {
 				throw new LowlevelStorageException(true, FCFG_OBJECT_STORE_BASE + ", and " + FCFG_DATASTREAM_STORE_BASE + " cannot overlap");
 			}
-//		if (! backslashIsEscape) {
+
 			objectStoreBase = objectStoreBaseTemp;
 			datastreamStoreBase = datastreamStoreBaseTemp;
-			separator = File.separator;
-/*
-		} else {
-			StringBuffer buffer = new StringBuffer();
-			String backslash = "\\";
-			String escapedBackslash = "\\\\";
-			for (int i = 0; i < storeBaseTemp.length(); i++) {
-				String s = storeBaseTemp.substring(i,i+1);
-				buffer.append(s.equals(backslash) ? escapedBackslash : s);
-			}
-			storeBase = buffer.toString();
-			if (File.separator.equals(backslash)) {
-				separator = escapedBackslash;
-			} else {
-				separator = File.separator;
-			}
-		}
-*/
+
 			objectStoreBases = new String[] {objectStoreBase};
 			datastreamStoreBases = new String[] {datastreamStoreBase};
 		}
 	}
-/*
-	public final String getSeparator() {
-		return separator;
-	}
-	*/
+	
 	public final String getObjectStoreBase() {
 		return objectStoreBase;
 	}

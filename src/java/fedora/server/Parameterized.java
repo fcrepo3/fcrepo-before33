@@ -1,8 +1,11 @@
 package fedora.server;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import fedora.common.Constants;
 
 /**
  * Abstract superclass of all Fedora components that can be configured by
@@ -20,7 +23,7 @@ import java.util.Map;
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
-public abstract class Parameterized {
+public abstract class Parameterized implements Constants {
 
     /** a reference to the provided params for this component */
     private Map m_parameters;
@@ -59,7 +62,27 @@ public abstract class Parameterized {
             m_parameters=new HashMap();
         }
     }
-
+    
+    /**
+     * Same as getParameter(String name) but prepends the location of 
+     * FEDORA_HOME if the parameter location does not specify an absolute 
+     * pathname.
+     * 
+     * @param name The parameter name
+     * @return Null if undefined, an absolute pathname (relative to FEDORA_HOME 
+     * if not absolute to begin with).
+     */
+    public final String getFileParameter(String name) {
+    	String param = getParameter(name);
+    	if (param != null) {
+	    	File f = new File(param);
+	    	if (!f.isAbsolute()) {
+				param = FEDORA_HOME + File.separator + param;
+			}
+    	}
+    	return param;
+    }
+    
     /**
      * Gets the value of a named configuration parameter.
      *
