@@ -178,53 +178,89 @@
 
     </blockquote>
 
-  <p>fedora-rebuild is an interactive utility that can be used when the Fedora repository is somehow corrupted.  
-	When this occurs either the SQL database of the Resource-Index become unusable, and usually the Fedora 
-	server will refuse to start.	The SQL database (either MySQL or McKoi) caches 	
-	some of the data stored in the repository to enable simple searching and to speed access to the repository.</p>
-  <p>In the past, under some circumstances the SQL database could become corrupt, which would then 
-	require the entire repository to be deleted and all of the digital objects in the repository to be 
-	manually re-ingested.  The fedora-rebuild utility allows the Fedora administrator to merely purge the 
+  <p>In case of corruption or failure of the repository, the Fedora Rebuild 
+	utility can <b><i>completely rebuild the repository by crawling the digital 
+	object XML source files</i></b> that are stored on disk.</p>
+	<p>The fedora-rebuild command launches the interactive Fedora Rebuild 
+	utility that restores the repository if it somehow became corrupted.&nbsp;&nbsp; 
+	Symptoms of repository corruption include underlying indexes or registries 
+	becoming unusable, or the server refusing to start.&nbsp;&nbsp; The 
+	components of the repository that can become corrupted are the SQL 
+	relational database and the RDF triplestore that underlie the Fedora 
+	repository service.&nbsp;&nbsp; The SQL database (e.g., MySQL, McKoi, or 
+	Oracle) contains a set of registries, as well as metadata to enable simple 
+	searching of the repository,&nbsp; and a cache of digital object profiles to speed 
+	up API-A access to the repository.&nbsp; The triplestore contains RDF 
+	triples for key properties of digital objects, datastreams, disseminations, 
+	and relationships to create an RDF-based index of the repository (used for more advanced 
+	RDF-based searching).</p>
+  <p>In prior versions of Fedora, under some circumstances the SQL relational database 
+	component could become corrupt, which would then 
+	require the entire repository to be deleted and all of the digital objects 
+	in the repository to be manually re-ingested. The Fedora Rebuild utility allows the 
+	repository administrator to merely purge the 
 	database used by the Fedora server, and re-configure the database (using either mysql-config or mckoi-init)
-	and then run this utility to restore the repository to a rational, usable state.  Additionally, if the 
-	Fedora administrator want to change from using the McKoi database to using the MySQL database, 
-	(or from MySQL to McKoi) the existing database can be purged, the fedora configuration file (fedora.fcfg) 
-	can be edited, and the fedora-rebuild utility can then be run to correctly populate the tables in the new
+	and then run the Fedora Rebuild utility to restore the repository to a rational, usable state.&nbsp;&nbsp; Additionally, if the administrator wants to change 
+	the underlying database system (e.g., change from McKoi to MySQL database, 
+	or MySQL to Oracle),&nbsp; the existing database can be purged, the Fedora Configuration 
+	File (fedora.fcfg) 
+	can be edited, and the Fedora Rebuild utility can then be run to correctly populate the tables in the new
 	database system.</p>
-  <p>Similarly, if the resource-index files (that are used for more advanced searching) become corrupted 
-    or the ResourceIndex "level" parameter is changed in fedora.fcfg, the rebuild utility can be used to bring
-	it back to its desired state.  The fedora-rebuild utility can 
-	also be used to rebuild the resource index files if this problem occurs.</p>
-  <p>Note that since the resource index also stores some information in some database tables in the 
-    same SQL database as is used by the rest of the Fedora server, if the SQL database becomes severely corrupted 
+  <p>Similarly, if the Resource Index becomes corrupted 
+    or the Resource Index triplestore files are deleted from disk, then the 
+	Fedora Rebuild utility can be used to completely rebuild the Resource Index 
+	and bring
+	it back to its desired state.  The Fedora Rebuild utility can also be used 
+	to rebuild the Resource Index whenever the <b><i>indexing level is changed</i></b> in 
+	the Fedora Server Configuration file (see: fedora.fcfg).&nbsp; A rebuild of 
+	the Resource Index will recreate the triplestore itself, and also populate 
+	utility tables in the SQL database component of Fedora.</p>
+  <p><i><b>Note! </b></i>&nbsp;There are some circumstances in which <i><b>both 
+	an SQL rebuild and a Resource Index rebuild must be run</b></i>.&nbsp;&nbsp; 
+	Although the Resource Index is primarily stored in the triplestore that 
+	configured with Fedora, it also stores some information in relational database tables 
+	(in the 
+    same SQL database used by the rest of the Fedora server),&nbsp;&nbsp; For 
+	example, if the SQL database becomes severely corrupted 
     such that the entire database needs to be deleted, or if the Fedora administrator plans to switch from using 
-    one database program or version to another, and if the fedora.fcfg file specifies that the resource index 
-    in to be used, the rebuild utility will have to be run twice.  Once to rebuild the tables in the database
-    used by the main portion of the Fedora server, and then again to cause the SQL tables used by the resource index
-    to be correctly re-populated.</p>
+    one database system to another,&nbsp; the Fedora Rebuild utility will have to be run twice.&nbsp; 
+	Once for an SQL Rebuild to recreate and repopulate the tables in the SQL database
+    used by the main portion of the Fedora server.&nbsp; Then a second time as a 
+	Resource Index rebuild to recreate the triplestore and repopulate the SQL tables used by the 
+	Resource Index.</p>
   <br>
-  <p>When you run the utility, a text menu appears, allowing you to specify whether you need to rebuild 
+  	When you run the Fedora Rebuild utility, a text menu appears, allowing you to specify whether you need to rebuild 
 	the SQL database or rebuild the resource index files.  See below for step-by-step descriptions of 
 	how to use the rebuild tool in the various instances when it might be needed:
-	<p>If the tables in the SQL database used by the Fedora server are corrupted:</p>
+  	<p>&nbsp;</p>
+	<p><b>SQL Rebuild: </b>&nbsp;If the tables in the SQL database used by the Fedora server are corrupted:</p>
 	<ol>
 	<li>Stop the Fedora server (if it is running) using <a href="#stop">fedora-stop</a>.</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate tables used by the Fedora server with the correct information.</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate SQL database 
+	tables used by the Fedora server with the correct information (<b>select 
+	menu option '2'</b>)</li>
 	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
 	</ol></p><br>
-	<p>If the resource index level is changed, or if the resource index is corrupted:</p>
+	<p><b>Resource Index Rebuild</b>: If the Resource Index level is changed, or if the 
+	Resource Index is corrupted:</p>
 	<ol>
 	<li>Stop the Fedora server (if it is running) using <a href="#stop">fedora-stop</a>.</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-construct the resource index files and the resource index tables in the SQL database.</li>
-	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-construct the Resource Index files and the 
+	Resource Index tables in the SQL database (<b>select menu option '1'</b>)</li>
+	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)<br>
+&nbsp;</li>
 	</ol></p>
-	<p>If SQL database becomes severely corrupted such that database is completely unusable, or if a different SQL database program or version is to be used.</p>
+	<p><b>Both</b>: If SQL database becomes severely corrupted such that database is completely unusable, or if a different SQL database program or version is to be used.</p>
 	<ol>
 	<li>Stop the Fedora server (if it is running) using <a href="#stop">fedora-stop</a>.</li>
 	<li>Delete the existing MySQL database used by Fedora. (using the <a href="#mysqldropdb">mysql-drop-db</a> command).</li>
 	<li>Re-configure the database for Fedora (using <a href="#mysqlconfig">mysql-config</a>)</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate tables used by the Fedora server with the correct information.</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> <u>again</u> to re-construct the resource index files and the resource index tables in the SQL database.</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate SQL database 
+	tables used by the Fedora server with the correct information (<b>select 
+	menu option '2'</b>)</li>
+	<li>Run <a href="#rebuild">fedora-rebuild</a> <u>again</u> to re-construct the 
+	Resource Index files and the Resource Index tables in the SQL database (<b>select 
+	menu option '1'</b>)</li>
 	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
 	</ol></p>
   </div>
