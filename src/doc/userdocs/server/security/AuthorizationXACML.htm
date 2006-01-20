@@ -166,7 +166,6 @@ that controls XACML-based policy enforcement.</p>
 	<pre style="text-autospace:none">    &lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</pre>
-	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">&lt;/module&gt;</pre>
@@ -472,7 +471,6 @@ to validate policies against the XML schema for XACML.    </p>
 <div class="code">
 	<pre style="text-autospace:none">&nbsp;&nbsp;&nbsp;&nbsp;&lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;    </pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</pre>
-	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;</pre>
 	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</pre>
 
@@ -506,25 +504,104 @@ Either of these policy validation checks can be enabled by the appropriate fedor
 <h3><a name="CONFIG-SURROG">2</a><b><a name="CONFIG-SURROG">.5 Configuring “Surrogate” Policies (and what are they?)</a></b></h3>
 <p style='text-autospace:none'>&nbsp;</p>
 	<p style='text-autospace:none'>
-	Web front ends or services can authenticate to Fedora as a surrogate 
-	representing an end-user.&nbsp; The surrogate user must provide Fedora with 
-	the identity of the end-user it is representing in the HTTP request 
-	header, From:.  If Fedora
-authenticates the front-end surrogate user - and there are policies allowing the front end to
-	<b>actAsSurrogateFor</b> the <b>subjectRepresented -</b> then the incoming service request 
-	is treated as if the end-user had been authenticated by
-	Fedora.   
-	The surrogate policies refer necessarily to the action <b>actAsSurrogateFor</b> and
-	optionally to the subject attribute <b>subjectRepresented</b> to determine whether the automatic authentication is permitted.
-	These two attributes are defined in the Fedora XACML vocabulary.   
-	From that point, i.e., if permitted, the actual end user identity is subject to 
-	authorization decisions based on the repository-wide and object-specific 
-	policies configured for the repository, but as if the end user represented were directly in play.<i>
-	User attributes are possible with properly configured JAAS login modules or using custom servlet filters.
-	</i>  
-	 </p>
+	This is an<i><b> experimental feature</b></i> provided with Fedora 2.1 that 
+	enables a higher level application or service (e.g., a
+	Web front end, middleware, or other web service) to authenticate to Fedora 
+	with its own identity, but pass along the identity of an end-user that 
+	authenticated with the service.&nbsp;&nbsp; The higher level application or 
+	service is thus acting as a &quot;surrogate&quot; for the ultimate end user.&nbsp;&nbsp; The surrogate user 
+	can pass through to Fedora the identity identity of the end-user it is representing in the HTTP request 
+	header (using the From: attribute).  If Fedora
+authenticates the identity of the service-as-surrogate, then the identity of the 
+	ultimate end user can be used in XACML policies.&nbsp;&nbsp; The way this is 
+	done is to create special &quot;surrogate&quot; policies that should reside in the 
+	special surrogate policies directory configured in the Fedora Server 
+	Configuration File (fedora.fcfg).&nbsp;&nbsp; To enable the surrogate policy 
+	feature, you must set the ALLOW-SURROGATES parameter to &quot;true&quot; as depicted 
+	below.&nbsp; Also note the setting for where surrogate policies are stored, 
+	as well as the option to have the server validate surrogate policies.</p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
+<div class="code">
+	<pre style="text-autospace:none">&lt;module role=&quot;fedora.server.security.Authorization&quot; class=&quot;fedora.server.security.DefaultAuthorization&quot;&gt;</pre>
+	<pre style="text-autospace:none">    &lt;comment&gt;Builds and manages Fedora's authorization structure.&lt;/comment&gt;</pre>
+	<pre style="text-autospace:none">   <b> &lt;param name=&quot;ALLOW-SURROGATES&quot; value=&quot;true&quot;/&gt;</b></pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;REPOSITORY-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/repository-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">   <b> &lt;param name=&quot;SURROGATE-POLICIES-DIRECTORY&quot; value=&quot;/fedora-xacml-policies/surrogate-policies&quot;/&gt;</b></pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;XACML-COMBINING-ALGORITHM&quot; value=&quot;com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;ENFORCE-MODE&quot; value=&quot;enforce-policies&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;POLICY-SCHEMA-PATH&quot; value=&quot;xsd/cs-xacml-schema-policy-01.xsd&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-REPOSITORY-POLICIES&quot; value=&quot;true&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-FILE&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">    &lt;param name=&quot;VALIDATE-OBJECT-POLICIES-FROM-DATASTREAM&quot; value=&quot;false&quot;/&gt;</pre>
+	<pre style="text-autospace:none">   <b> &lt;param name=&quot;VALIDATE-SURROGATE-POLICIES&quot; value=&quot;false&quot;/&gt;</b></pre>
+	<pre style="text-autospace:none">&lt;/module&gt;</pre>
+
+      </div>
+
+	<p>&nbsp;</p>
+<p style='text-autospace:none'>
+	Given that there are policies in the surrogate-policies directory that 
+	permit a service to act as a surrogate for and end user, <b>&nbsp;</b>then incoming 
+	Fedora API requests are treated as if the end-user had been authenticated by
+	Fedora.   
+	The surrogate policies refer necessarily to the action <b>&quot;actAsSurrogateFor&quot;</b> to determine whether the 
+	a service with a certain identity can participate in the surrogate policy 
+	enforcement capability.&nbsp; This attribute is defined in the Fedora XACML vocabulary.&nbsp; 
+	Once the surrogate identify is permitted by Fedora (via enforcement of&nbsp; 
+	a surrogate policy), then Fedora API requests can proceed further where they 
+	will ultimately be subject to any normal repository-wide or object-specific 
+	XACML policies that enforce policies based on actual end user identity.&nbsp;
+	<i>
+	&nbsp;</i></p>
+<p style='text-autospace:none'>
+	Below is an example of a surrogate policy that allows a web front-end 
+	application (whose identity is &quot;webfrontend&quot; to be permitted by Fedora to 
+	acts as a surrogate for other end-user identities:</p>
+<p style='text-autospace:none'>
+	&nbsp;</p>
+<div class="code">
+	<p style="text-autospace: none">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;<br>
+	&lt;Policy xmlns=&quot;urn:oasis:names:tc:xacml:1.0:policy&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; 
+	PolicyId=&quot;permit-surrogate&quot; RuleCombiningAlgId=&quot;urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable&quot;&gt;<br>
+	&lt;Description&gt;note that other policies may provide exceptions to this broad 
+	policy&lt;/Description&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;Target&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Subjects&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Subject&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;SubjectMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;webfrontend&lt;/AttributeValue&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;SubjectAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; 
+	AttributeId=&quot;fedoraRole&quot; MustBePresent=&quot;false&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/SubjectMatch&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Subject&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Subjects&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Resources&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;AnyResource/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Resources&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Actions&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;Action&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;ActionMatch MatchId=&quot;urn:oasis:names:tc:xacml:1.0:function:string-equal&quot;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;AttributeValue DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot;&gt;urn:fedora:names:fedora:2.1:<b>action:id-actAsSurrogateFor</b>&lt;/AttributeValue&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&lt;ActionAttributeDesignator DataType=&quot;http://www.w3.org/2001/XMLSchema#string&quot; 
+	AttributeId=&quot;urn:fedora:names:fedora:2.1:<b>action:id</b>&quot;/&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/ActionMatch&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &lt;/Action&gt;<br>
+&nbsp;&nbsp;&nbsp; &lt;/Actions&gt;<br>
+	&lt;/Target&gt;<br>
+	&lt;Rule RuleId=&quot;1&quot; Effect=&quot;Permit&quot;/&gt;<br>
+	&lt;/Policy&gt;</div>
+
+	<p>&nbsp;</p>
+<p style='text-autospace:none'>
+	<b>NOTE</b>!&nbsp; <i>Since surrogate policies is an <b>experimental feature</b> 
+	with Fedora 2.1 it is not fully guaranteed yet.&nbsp; However, please 
+	contact the Fedora team (<a href="http://www.fedora.info/about/contact.shtml">http://www.fedora.info/about/contact.shtml</a>) 
+	if you would like to experiment with this feature.</i></p>
 <p style='text-autospace:none'>
 	&nbsp;</p>
 <h2 style='text-autospace:none'>
