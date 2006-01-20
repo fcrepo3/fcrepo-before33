@@ -42,6 +42,12 @@ public class WebClient {
      */
     public int MAX_REDIRECTS = 3;
 
+    /** 
+     * What the "User-Agent" request header should say. Default is null,
+     * which indicates that the header should not be provided.
+     */
+    public String USER_AGENT = null;
+
     private MultiThreadedHttpConnectionManager m_cManager;
 
     public WebClient() {
@@ -82,12 +88,17 @@ public class WebClient {
         return get(url, failIfNotOK, null);
     }
 
+    public HttpInputStream get(String url, boolean failIfNotOK, String user, String pass) throws IOException {
+        return get(url, failIfNotOK, new UsernamePasswordCredentials(user, pass));
+    }
+
 	/**
 	 * Get an HTTP resource with the response as an InputStream, given a URL.
      *
      * If FOLLOW_REDIRECTS is true, up to MAX_REDIRECTS redirects will be
      * followed.  Note that if credentials are provided, for security
-     * reasons they will only be provided to the FIRST url.
+     * reasons they will only be provided to the FIRST url in a chain of
+     * redirects.
 	 *
 	 * Note that if the HTTP response has no body, the InputStream will
 	 * be empty.  The success of a request can be checked with
@@ -106,6 +117,7 @@ public class WebClient {
 
 		HttpClient client;
         GetMethod getMethod = new GetMethod(url);
+        if (USER_AGENT != null) getMethod.setRequestHeader("User-Agent", USER_AGENT);
 		if (creds == null) {
 		    client = getHttpClient();
         } else {
@@ -127,6 +139,7 @@ public class WebClient {
                         url = in.getResponseHeader("location").getValue();
                         in.close();
                         getMethod = new GetMethod(url);
+                        if (USER_AGENT != null) getMethod.setRequestHeader("User-Agent", USER_AGENT);
                         in = new HttpInputStream(client, getMethod, url);
                         status = in.getStatusCode();
                         count++;

@@ -32,7 +32,7 @@ public class HttpInputStream extends InputStream {
         try {
             m_code = m_client.executeMethod(m_method);
             m_in = m_method.getResponseBodyAsStream();
-            if (m_in == null) new ByteArrayInputStream(new byte[0]);
+            if (m_in == null) m_in = new ByteArrayInputStream(new byte[0]);
         } catch (IOException e) {
             m_method.releaseConnection();
             throw e;
@@ -68,10 +68,35 @@ public class HttpInputStream extends InputStream {
     }
 
     /**
-     * Get a header value.
+     * Get a specific response header.
      */
     public Header getResponseHeader(String name) {
         return m_method.getResponseHeader(name);
+    }
+
+    /**
+     * Get a response header value string, or <code>defaultValue</code>
+     * if the header is undefined or empty.
+     */
+    public String getResponseHeaderValue(String name, String defaultValue) {
+        Header header = m_method.getResponseHeader(name);
+        if (header == null) {
+            return defaultValue;
+        } else {
+            String value = header.getValue();
+            if (value == null || value.length() == 0) {
+                return defaultValue;
+            } else {
+                return header.getValue();
+            }
+        }
+    }
+
+    /**
+     * Get all response headers.
+     */
+    public Header[] getResponseHeaders() {
+        return m_method.getResponseHeaders();
     }
 
     /**
@@ -100,6 +125,5 @@ public class HttpInputStream extends InputStream {
     public void close() throws IOException {
         m_method.releaseConnection();
         m_in.close();
-        System.out.println("Released the connection and closed the stream.");
     }
 }

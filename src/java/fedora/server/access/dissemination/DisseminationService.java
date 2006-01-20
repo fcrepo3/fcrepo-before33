@@ -17,6 +17,8 @@ import java.util.Properties;
 import org.apache.commons.httpclient.Header;
 
 import fedora.common.HttpClient;
+import fedora.common.http.WebClient;
+import fedora.common.http.HttpInputStream;
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.DisseminationException;
@@ -92,6 +94,8 @@ public class DisseminationService
   
   private static BackendSecurity m_beSecurity;
 
+  private static WebClient s_http;
+
   /** Make sure we have a server instance for error logging purposes. */
   static
   {
@@ -135,6 +139,14 @@ public class DisseminationService
         } else
         {
           doDatastreamMediation = new Boolean(dsMediation).booleanValue();
+        }
+
+        // instantiate a WebClient to use for HTTP requests
+        // FIXME: this is currently only used conditionally,
+        //        if FEDORA_HOME/server/UseWebClient.txt exists!
+        if (new File(new File(fedoraHome), "server/UseWebClient.txt").exists()) {
+            s_http = new WebClient();
+            s_http.USER_AGENT = "Fedora";
         }
       }
 
@@ -939,6 +951,43 @@ public class DisseminationService
       }
     }
   }
+
+    /**
+     * Get a MIMETypedStream for the given URL.
+     *
+     * If user or password are <code>null</code>, basic authentication will 
+     * not be attempted.
+     */
+    private static MIMETypedStream get(String url,
+                                       String user,
+                                       String pass) throws GeneralException {
+        System.out.println("DisseminationService.get(" + url + ")");
+        try {
+            HttpInputStream response = s_http.get(url, true, user, pass);
+            String mimeType = response.getResponseHeaderValue("Content-Type",
+                                                              "text/plain");
+            Property[] headerArray = toPropertyArray(
+                                         response.getResponseHeaders());
+  		    return new MIMETypedStream(mimeType, response, headerArray);
+        } catch (Exception e) {
+            throw new GeneralException("Error getting " + url, e);
+        }
+    }
+
+    /**
+     * Convert the given HTTP <code>Headers</code> to an array of 
+     * <code>Property</code> objects.
+     */
+    private static Property[] toPropertyArray(Header[] headers) {
+
+        Property[] props = new Property[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            props[i] = new Property();
+            props[i].name = headers[i].getName();
+            props[i].value = headers[i].getValue();
+        }
+        return props;
+    }
   
   /**
    * A method that reads the contents of the specified URL and returns the
@@ -951,6 +1000,10 @@ public class DisseminationService
    */
   public MIMETypedStream getDisseminationContent(String url, Context context, String user, String pass)
       throws GeneralException, HttpServiceNotFoundException {
+
+    // FIXME: Decide whether to make this unconditional
+    if (s_http != null) return get(url, user, pass);
+
   	log("in getDisseminationContent(), url=" + url);
   	MIMETypedStream httpContent = null;
   	HttpClient client = new HttpClient(url);

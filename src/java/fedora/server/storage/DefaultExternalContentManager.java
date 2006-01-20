@@ -7,6 +7,8 @@ import java.util.Map;
 import org.apache.commons.httpclient.Header;
 
 import fedora.common.HttpClient;
+import fedora.common.http.WebClient;
+import fedora.common.http.HttpInputStream;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -38,6 +40,8 @@ public class DefaultExternalContentManager extends Module
   private String fedoraServerHost;
   private String fedoraServerPort;
   private String fedoraServerRedirectPort;
+
+  private WebClient m_http;
 
   /**
    * <p> Creates a new DefaultExternalContentManager.</p>
@@ -79,7 +83,13 @@ public class DefaultExternalContentManager extends Module
       fedoraServerHost = s_server.getParameter("fedoraServerHost");
       fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
 
-
+      // instantiate a WebClient to use for HTTP requests
+      // FIXME: this is currently only used conditionally,
+      //        if FEDORA_HOME/server/UseWebClient.txt exists!
+      if (new java.io.File(getServer().getHomeDir(), "UseWebClient.txt").exists()) {
+          m_http = new WebClient();
+          m_http.USER_AGENT = m_userAgent;
+      }
     } catch (Throwable th)
     {
       throw new ModuleInitializationException("[DefaultExternalContentManager] "
@@ -88,7 +98,44 @@ public class DefaultExternalContentManager extends Module
           + th.getClass().getName() + "The message was \""
           + th.getMessage() + "\".", getRole());
     }
-  }
+  }              
+
+    /**
+     * Get a MIMETypedStream for the given URL.
+     *
+     * If user or password are <code>null</code>, basic authentication will 
+     * not be attempted.
+     */
+    private MIMETypedStream get(String url,
+                                String user,
+                                String pass) throws GeneralException {
+        System.out.println("DefaultExternalContentManager.get(" + url + ")");
+        try {
+            HttpInputStream response = m_http.get(url, true, user, pass);
+            String mimeType = response.getResponseHeaderValue("Content-Type",
+                                                              "text/plain");
+            Property[] headerArray = toPropertyArray(
+                                         response.getResponseHeaders());
+  		    return new MIMETypedStream(mimeType, response, headerArray);
+        } catch (Exception e) {
+            throw new GeneralException("Error getting " + url, e);
+        }
+    }
+
+    /**
+     * Convert the given HTTP <code>Headers</code> to an array of 
+     * <code>Property</code> objects.
+     */
+    private static Property[] toPropertyArray(Header[] headers) {
+
+        Property[] props = new Property[headers.length];
+        for (int i = 0; i < headers.length; i++) {
+            props[i] = new Property();
+            props[i].name = headers[i].getName();
+            props[i].value = headers[i].getValue();
+        }
+        return props;
+    }
 
   /**
    * A method that reads the contents of the specified URL and returns the
@@ -132,6 +179,10 @@ public class DefaultExternalContentManager extends Module
 		   	System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
 		   	System.out.println("************************* doAuthnGetURL: "+modURL);
 		}
+
+        // FIXME: Decide whether to make this unconditional
+        if (m_http != null) return get(modURL, backendUsername, backendPassword);
+
 		client = new HttpClient(modURL);
   		client.doAuthnGet(20000, 25, backendUsername, backendPassword, 1);
   		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
