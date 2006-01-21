@@ -138,9 +138,60 @@
 		2.1. All earlier versions continue to be covered by their original 
 		license.<br>
 &nbsp;</font></li>
+		<li class="MsoNormal">
+		<font face="Arial" style="font-size: 9pt">
+		<span style="font-weight: 700">
+		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
+		Contributions by the Fedora Community<br>
+		</span>A new page now exists on the Fedora web site (<a href="http://www.fedora.info/tools">www.fedora.info/tools</a>) 
+		for downloading community-developed, open-source tools, applications, 
+		services that work with Fedora.&nbsp; Check it out!&nbsp; There are a 
+		number of nice open-source clients for creating institutional 
+		repositories with Fedora (e.g., Fez, VALET, Elated), as well as other 
+		useful services and tools.<br>
+&nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.configs"></a>New Security Architecture ? Four 
-		Security Configuration Options for a Repository<br>
+		<a name="rel2.1b.features.framework"></a>Fedora Service Framework<br>
+		</b>As of Fedora 2.1b, 
+		the<a href="../server/features/serviceframework.htm"> Fedora Service 
+		Framework</a> is being introduced to facilitate the integration of new 
+		services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
+		The framework takes a service-oriented architecture approach to building 
+		new functionality around a Fedora repository.&nbsp; While the Fedora 
+		repository, itself, exposes its functionality as a set of web service 
+		interfaces, all of these interfaces belong to the Fedora web application 
+		that runs in its own Tomcat&nbsp;&nbsp; The new Fedora Service Framework 
+		allows new services to be built around the core repository - <i>as 
+		stand-alone web applications that run independently of the Fedora 
+		repository.</i>&nbsp;&nbsp; While Fedora repository functionality can 
+		still be extended with new modules, the intent is to keep the repository 
+		service focused on the core functions of a repository.&nbsp;&nbsp; Yet, 
+		there are many other services that are beneficial companions to a 
+		repository, such as specialized ingest services, workflow services, 
+		preservation services, and many others.&nbsp;&nbsp; These are the kinds 
+		of services that the framework is intended to support.&nbsp;&nbsp; There 
+		are two main benefits to the service framework approach:&nbsp; (1) it 
+		allows new functionality to be added as</font> atomic, modular services 
+		that can interact with Fedora repositories, yet not be part of the 
+		repository, (2) it makes co-development of new services for Fedora 
+		easier since each service can be independently developed and plugged&nbsp; 
+		into the framework.&nbsp;&nbsp; The Fedora development team has 
+		developed an initial set of services (Directory Ingest and PROAI 
+		described below), and will continue to develop new services over the 
+		coarse of Fedora Phase 2 (205-2007), especially services for workflow, 
+		preservation, and search.&nbsp;&nbsp; New services will be part of the 
+		main Fedora distribution and will be kept up to date with new versions 
+		of the core Fedora repository distribution.&nbsp;&nbsp; Members of the 
+		Fedora community will be collaborating on the development of services 
+		and will contributed back to the Fedora Project.&nbsp;&nbsp;&nbsp; 
+		Further documentation will be provided to establish guidelines on how 
+		services should be designed to effectively plug into the framework.&nbsp; 
+		In the mean time, developers of new services can follow the design 
+		patterns of the Directory Ingest and PROAI services. <br>
+&nbsp;</font></li>
+		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
+		<a name="rel2.1b.features.configs"></a>New Security Architecture - Four 
+		Security Configuration Options for the Repository<br>
 		</b>Fedora 2.1b introduces a configurable security architecture, that 
 		provides options for SSL and authentication at the Fedora web service 
 		API level.&nbsp;&nbsp; There are
@@ -161,8 +212,7 @@
     base security configurations.<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
-		<a name="rel2.1b.features.authn"></a><b>New Security Architecture ? 
-		Authentication<br>
+		<a name="rel2.1b.features.authn"></a><b>New Security Architecture - Authentication<br>
 		</b>The Fedora repository server is built on top of Apache's Tomcat, and authentication is channeled through the normal Tomcat mechanisms 
 		(e.g., HTTP Basic Authentication, HTTPS Client Authentication).&nbsp; 
 		When you select one of <a href="#rel2.1b.features.configs">Fedora's four 
@@ -281,8 +331,7 @@
 		<br>
 &nbsp;</font></li>
 		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.besecurity"></a>New Security Architecture ? 
-		Backend Security for Service call-backs<br>
+		<a name="rel2.1b.features.besecurity"></a>New Security Architecture - Backend Security for Service call-backs<br>
 		</b>Backend security is applicable to repositories that contain digital 
 		object Disseminators that call upon external web services - <i>and where 
 		a high level of security is desired</i>.&nbsp;&nbsp; Repositories that 
@@ -314,45 +363,6 @@
 		on configuring backend security refer to the document entitled &quot;<a href="../server/security/beSecurityConfig.html">Backend 
 		Services Security Configuration</a>.&quot;<font style="font-size: 9pt">
 		</font><br>
-&nbsp;</font></li>
-		<li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>
-		<a name="rel2.1b.features.framework"></a>Fedora Service Framework<br>
-		</b></font><font style="font-size: 9pt" face="Arial">As of Fedora 2.1b, 
-		the<a href="../server/features/serviceframework.htm"> Fedora Service 
-		Framework</a> is being introduced to facilitate the integration of new 
-		services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
-		The framework takes a service-oriented architecture approach to building 
-		new functionality around a Fedora repository.&nbsp; While the Fedora 
-		repository, itself, exposes its functionality as a set of web service 
-		interfaces, all of these interfaces belong to the Fedora web application 
-		that runs in its own Tomcat&nbsp;&nbsp; The new Fedora Service Framework 
-		allows new services to be built around the core repository - <i>as 
-		stand-alone web applications that run independently of the Fedora 
-		repository.</i>&nbsp;&nbsp; While Fedora repository functionality can 
-		still be extended with new modules, the intent is to keep the repository 
-		service focused on the core functions of a repository.&nbsp;&nbsp; Yet, 
-		there are many other services that are beneficial companions to a 
-		repository, such as specialized ingest services, workflow services, 
-		preservation services, and many others.&nbsp;&nbsp; These are the kinds 
-		of services that the framework is intended to support.&nbsp;&nbsp; There 
-		are two main benefits to the service framework approach:&nbsp; (1) it 
-		allows new functionality to be added as</font> atomic, modular services 
-		that can interact with Fedora repositories, yet not be part of the 
-		repository, (2) it makes co-development of new services for Fedora 
-		easier since each service can be independently developed and plugged&nbsp; 
-		into the framework.&nbsp;&nbsp; The Fedora development team has 
-		developed an initial set of services (Directory Ingest and PROAI 
-		described below), and will continue to develop new services over the 
-		coarse of Fedora Phase 2 (205-2007), especially services for workflow, 
-		preservation, and search.&nbsp;&nbsp; New services will be part of the 
-		main Fedora distribution and will be kept up to date with new versions 
-		of the core Fedora repository distribution.&nbsp;&nbsp; Members of the 
-		Fedora community will be collaborating on the development of services 
-		and will contributed back to the Fedora Project.&nbsp;&nbsp;&nbsp; 
-		Further documentation will be provided to establish guidelines on how 
-		services should be designed to effectively plug into the framework.&nbsp; 
-		In the mean time, developers of new services can follow the design 
-		patterns of the Directory Ingest and PROAI services. <br>
 &nbsp;</font></li>
 		<li class="MsoNormal">
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
@@ -467,7 +477,7 @@
 		</font><font style="font-size: 9pt" face="Arial">The Fedora Rebuild 
 		utility is an interactive utility that can be used when the Fedora repository is somehow corrupted.&nbsp; 
 		The utility rebuilds the repository by crawling the repository storage 
-		directories where the FOXML digital objects reside.&nbsp;&nbsp; The 
+		directories where the FOXML digital objects source files reside.&nbsp;&nbsp; The 
 		utility can rebuild the SQL database (registries, search tables, and 
 		other tables), the Resource Index, or both.&nbsp;&nbsp;&nbsp; This is 
 		useful for a number of purposes, such as migrating from Fedora 2.0 to 
@@ -527,15 +537,7 @@
 		results of these tests will be published soon on 
 		<a href="http://www.fedora.info">www.fedora.info</a>.&nbsp;</font>
 		<font face="Arial" style="font-size: 9pt; font-weight: 700">
-		<br>&nbsp;</font></li>
-		<li class="MsoNormal">
-		<font face="Arial" style="font-size: 9pt">
-		<span style="font-weight: 700">
-		<a name="rel2.1b.features.tools"></a>New Tools Page for Software 
-		Contributions by Community<br>
-		</span>A new page now exists on the Fedora web site (<a href="http://www.fedora.info">www.fedora.info</a>) 
-		for downloading community-developed, open-source tools, applications, 
-		services that work with Fedora.&nbsp; Check it out!</font><br>&nbsp;</li>
+		<br></font><br>&nbsp;</li>
 	</ol>
 	<p class="MsoNormal">&nbsp;</p>
 	<h2>C.&nbsp; Bug Fixes</h2>
