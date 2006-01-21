@@ -30,6 +30,7 @@ SERVER_PROFILE="$1"
 (exec "$JAVA" -server -Xmn64m -Xms256m -Xmx256m \
 	    	  -cp "$TC/webapps/fedora/WEB-INF/classes" \
   			  -Dfedora.home="$FEDORA_HOME" \
+          -Dfedora.serverProfile=$SERVER_PROFILE \
   			  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
   			  -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
 			  -Djava.endorsed.dirs="$TC_COMMON:$TC/webapps/fedora/WEB-INF/lib" \
