@@ -1,11 +1,14 @@
 package fedora.server.config;
 
+import java.io.File;
 import java.util.*;
+
+import fedora.common.Constants;
 
 /**
  *
  */
-public class Parameter {
+public class Parameter implements Constants {
 
     private String m_name;
     private String m_value;
@@ -28,6 +31,22 @@ public class Parameter {
 
     public String getValue() {
         return m_value;
+    }
+    
+    /**
+     * 
+     * @return parameter value as an absolute path (resolved relative to 
+     * FEDORA_HOME as necessary)
+     */
+    public String getValueAsAbsolutePath() {
+    	String path = m_value;
+    	if (path != null) {
+	    	File f = new File(path);
+	    	if (!f.isAbsolute()) {
+	    		path = FEDORA_HOME + File.separator + path;
+			}
+    	}
+    	return path;
     }
 
     public void setValue(String newValue) {

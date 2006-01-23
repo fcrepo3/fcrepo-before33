@@ -169,8 +169,8 @@ public class FedoraServerTestSetup
 		System.out.println("Backing up poliices...");
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
-		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
+		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
 		// SDP: object policies directory is obsoleted in 2.1
         //backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
@@ -179,8 +179,8 @@ public class FedoraServerTestSetup
     private void restorePolicies() throws Exception {
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(), null);
-		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(), null);
+        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
+		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
 		// SDP: object policies directory is obsoleted in 2.1
         //restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
@@ -409,14 +409,14 @@ public class FedoraServerTestSetup
         ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");
         String datastore = mcfg.getParameter("datastore").getValue();
         DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(datastore);
-        return dcfg.getParameter("path").getValue();
+        return dcfg.getParameter("path").getValueAsAbsolutePath();
     }
     
     private void deleteStore() throws Exception {
         ServerConfiguration fcfg = getServerConfiguration();
         String[] dirs = {
-            fcfg.getParameter("object_store_base").getValue(),
-            fcfg.getParameter("datastream_store_base").getValue(),
+            fcfg.getParameter("object_store_base").getValueAsAbsolutePath(),
+            fcfg.getParameter("datastream_store_base").getValueAsAbsolutePath(),
             getRIStoreLocation()
         };
         for (int i = 0; i < dirs.length; i++) {
