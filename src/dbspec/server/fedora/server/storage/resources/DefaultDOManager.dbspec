@@ -23,7 +23,7 @@
 		<column name="dsMIME" type="varchar(64)" notNull="true" default=""/>
 		<column name="dsLocation" type="text" notNull="false" default=""/>
 		<column name="dsControlGroupType" type="varchar(1)" notNull="true"/>
-		<column name="dsCurrentVersionID" type="varchar(64)" notNull="true"/>
+		<column name="dsCurrentVersionID" type="varchar(69)" notNull="true"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
 		<column name="dsState" type="varchar(1)" notNull="true" default="I"/>
 	</table>

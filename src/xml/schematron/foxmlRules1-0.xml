@@ -64,7 +64,7 @@
 		</sch:rule>
 		<sch:rule context="foxml:datastreamVersion">
 			<sch:assert test="string(@ID)">Datastream version must have a datastream id.   (foxml:datastreamVersion: value of ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 64">Datastream version ID must not exceed length of 64 (foxml:datastreamVersion ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 69">Datastream version ID must not exceed length of 69 (foxml:datastreamVersion ID)</sch:assert>
 			<sch:report test="contains(@ID, '+')">Datastream version ID must not contain a plus sign (+) (foxml:datastreamVersion ID)</sch:report>
 			<sch:report test="contains(@ID, ':')">Datastream version ID must not contain a colon (:) (foxml:datastreamVersion ID)</sch:report>
 		</sch:rule>
@@ -75,7 +75,7 @@
 		</sch:rule>
 		<sch:rule context="foxml:disseminatorVersion">
 			<sch:assert test="string(@ID)">Disseminator version must have a disseminator id.  (foxml:disseminatorVersion: value of ID is missing)</sch:assert>
-			<sch:assert test="string-length(@ID) &lt;= 64">Disseminator vesrion ID must not exceed length of 64 (foxml:disseminatorVersion ID)</sch:assert>
+			<sch:assert test="string-length(@ID) &lt;= 69">Disseminator vesrion ID must not exceed length of 69 (foxml:disseminatorVersion ID)</sch:assert>
 			<sch:assert test="string(@BMECH_SERVICE_PID)">Disseminator must have a behavior mechanism id.   (foxml:disseminatorVersion: value of BMECH_SERVICE_PID is missing)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
