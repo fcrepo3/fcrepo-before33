@@ -35,12 +35,15 @@ public class ServerConfiguration
 
     /**
      * Apply the given properties to this ServerConfiguration.
+     *
+     * Trims leading and trailing spaces from the property values
+     * before applying them.
      */
     public void applyProperties(Properties props) {
         Iterator iter = props.keySet().iterator();
         while (iter.hasNext()) {
             String fullName = (String) iter.next();
-            String value = props.getProperty(fullName);
+            String value = props.getProperty(fullName).trim();
             if (fullName.indexOf(".") != -1 && value != null && value.length() > 0) {
                 String name = fullName.substring(fullName.lastIndexOf(".") + 1);
                 if (fullName.startsWith("server.")) {
