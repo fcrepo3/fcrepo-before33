@@ -90,7 +90,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
         if (tsRemote) {
             throw new ResourceIndexException("Rebuilder does not currently support remote triplestores.");
         }
-        String tsPath = tsDC.getParameter("path").getValue();
+        String tsPath = tsDC.getParameter("path").getValueAsAbsolutePath();
         
         Iterator it;
         Parameter p;

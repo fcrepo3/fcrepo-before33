@@ -182,7 +182,7 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     
     private void replacePolicies(File fromDir, String toDirProp) throws Exception {
         Configuration config = getServerConfiguration().getModuleConfiguration("fedora.server.security.Authorization");
-        File toDir = new File(config.getParameter(toDirProp).getValue());
+        File toDir = new File(config.getParameter(toDirProp).getValueAsAbsolutePath());
         if (toDir.exists()) {
 			// clear out the active policy directory
 			System.out.println("LOOK! replacing active policies at: " + toDir.getAbsolutePath());
