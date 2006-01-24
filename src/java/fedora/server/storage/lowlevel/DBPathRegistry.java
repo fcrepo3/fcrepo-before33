@@ -226,7 +226,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	public void rebuild (/*String[] storeBases*/) throws LowlevelStorageException {
 		int report = FULL_REPORT;
 		try {
-			executeSql("DELETE FROM " + getRegistryName() + " WHERE 1");
+			executeSql("DELETE FROM " + getRegistryName());
 		} catch (ObjectNotInLowlevelStorageException e1) {
 		} catch (LowlevelStorageInconsistencyException e2) {
 		}
