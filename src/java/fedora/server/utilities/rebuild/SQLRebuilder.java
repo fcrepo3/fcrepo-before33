@@ -35,6 +35,7 @@ import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.SQLUtility;
+import fedora.server.utilities.TableSpec;
 
 /**
  * A Rebuilder for the SQL database.
@@ -184,20 +185,26 @@ public class SQLRebuilder implements Rebuilder {
     }
 
     
-    
-    public void blankExistingTables( )
+    /**
+     * Delete all rows from all Fedora-related tables (except the resource index
+     * ones) that exist in the database.
+     */
+    private void blankExistingTables( )
     {
         Connection connection = null;
         try {
             connection = m_connectionPool.getConnection();
             List existingTables = getExistingTables(connection);
+            List fedoraTables = getFedoraTables();
             for (int i = 0; i < existingTables.size(); i++)
             {
-                String tableName = existingTables.get(i).toString();
-                if (!tableName.startsWith("ri"))
+                String origTableName = existingTables.get(i).toString();
+                String tableName = origTableName.toUpperCase();
+                if (fedoraTables.contains(tableName) && !tableName.startsWith("RI"))
                 {
+                    System.out.println("Cleaning up table: " + origTableName);
                     try {
-                        executeSql(connection, "DELETE FROM " + tableName + " WHERE 1");
+                        executeSql(connection, "DELETE FROM " + origTableName);
                     }
                     catch (LowlevelStorageException lle)
                     {
@@ -223,6 +230,29 @@ public class SQLRebuilder implements Rebuilder {
         }
 
 
+    }
+
+    /**
+     * Get the names of all Fedora tables listed in the server's dbSpec file.
+     *
+     * Names will be returned in ALL CAPS so that case-insensitive comparisons
+     * can be done.
+     */
+    private List getFedoraTables() {
+        try {
+            String dbSpecLocation = "fedora/server/storage/resources/DefaultDOManager.dbspec";
+            InputStream in = getClass().getClassLoader().getResourceAsStream(dbSpecLocation);
+            List specs = TableSpec.getTableSpecs(in);
+            ArrayList names = new ArrayList();
+            for (int i = 0; i < specs.size(); i++) {
+                TableSpec spec = (TableSpec) specs.get(i);
+                names.add(spec.getName().toUpperCase());
+            }
+            return names;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unexpected error reading dbspec file", e);
+        }
     }
     
     public void executeSql(Connection connection, String sql ) 
