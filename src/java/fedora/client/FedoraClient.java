@@ -58,6 +58,7 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 
 public class FedoraClient implements Constants {
+
 	private static final String FEDORA_HOME = System.getProperty("fedora.home");
 	private static final String LOG4J_PROPS = "fedora.client.resources.log4j";
     private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
@@ -67,19 +68,22 @@ public class FedoraClient implements Constants {
     public int TIMEOUT_SECONDS = 20;
 
     /** Seconds to wait while waiting for data over the socket (SO_TIMEOUT). */
-    public int SOCKET_TIMEOUT_SECONDS = 120;
+    public int SOCKET_TIMEOUT_SECONDS = 150;
 
     /** Maxiumum http connections per host (for REST calls only). */
-    public int MAX_CONNECTIONS_PER_HOST = 5;
+    public int MAX_CONNECTIONS_PER_HOST = 15;
 
     /** Maxiumum total http connections (for REST calls only). */
-    public int MAX_TOTAL_CONNECTIONS = 20;
+    public int MAX_TOTAL_CONNECTIONS = 30;
 
     /** Whether to automatically follow HTTP redirects. */
     public boolean FOLLOW_REDIRECTS = true;
 
     private static final Logger logger =
         Logger.getLogger(FedoraClient.class.getName());
+
+    private SOAPEndpoint m_accessEndpoint = new SOAPEndpoint("access");
+    private SOAPEndpoint m_managementEndpoint = new SOAPEndpoint("management");
 
     private String m_baseURL;
     private String m_user;
@@ -296,181 +300,69 @@ public class FedoraClient implements Constants {
     }
     
 	/**
-	 * Get SOAP stub for APIA with SSL redirect.  If the SOAP service endpoint 
-	 * is configured for SSL auto-redirect, then get a stub that points to the 
-	 * SSL redirect location.
-	 * 
-	 * Use of this stub will prevent the client from receiving a exception due
-	 * to underlying HTTP 302 status (SSL redirect) being returned from server.
-	 * @return
-	 * @throws Exception
+	 * Get a new SOAP stub for API-A.
+	 *
+	 * If the baseURL for this <code>FedoraClient</code> specifies "http", 
+	 * regular HTTP communication will be attempted first.  If the server 
+	 * redirects this client to use HTTPS instead, the redirect will be 
+	 * followed and SSL will be used automatically.
 	 */
 	public FedoraAPIA getAPIA() throws Exception {
-		URL baseURL = new URL(m_baseURL);		
-		String protocol = baseURL.getProtocol();
-		String host = baseURL.getHost();
-		int port = baseURL.getPort();
-		String path = baseURL.getPath();
-		if (port == -1) port = baseURL.getDefaultPort();
-		APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
-		// Note that SSL auto redirect not supported in Fedora 2.0 
-		// so we don't look for a redirect URL.
-		if (getServerVersion().equals("2.0")) {
-			return APIAStubFactory.getStubAltPath(protocol,
-												  host, 
-												  port,
-												  baseURL.getPath() + "access/soap",  
-												  m_user,
-												  m_pass);
-		} else {
-			// Check whether there is SSL redirecting at the server for APIM 
-			// (HTTP status 302) and get appropriate SOAP stub.
-			URL redirectURL = getSSLRedirectLocationAPIA();
-			if (redirectURL == null){
-				//System.out.println("Using APIA stub with original URL...");
-				return APIAStubFactory.getStubAltPath(protocol,
-													  host, 
-													  port,
-													  baseURL.getPath() + "services/access",  
-													  m_user,
-													  m_pass);
-			} else {
-				//System.out.println("Using APIA stub with redirect URL: " + redirectURL);
-				return APIAStubFactory.getStubAltPath(redirectURL.getProtocol(),
-													  redirectURL.getHost(), 
-													  redirectURL.getPort(),
-													  redirectURL.getPath(),  
-													  m_user,
-													  m_pass);				
-			}
-		}
-	}
+        return (FedoraAPIA) getSOAPStub(m_accessEndpoint);
+    }
+
+    public URL getAPIAEndpointURL() throws IOException {
+        return m_accessEndpoint.getURL();
+    }
 	
 	/**
-	 * Get SOAP stub for APIM with SSL redirect.  If the SOAP service endpoint 
-	 * is configured for SSL auto-redirect, then get a stub that points to the 
-	 * SSL redirect location.
-	 * 
-	 * Use of this stub will prevent the client from receiving a exception due
-	 * to underlying HTTP 302 status (SSL redirect) being returned from server.
-	 * @return
-	 * @throws Exception
-	 */   
+	 * Get a new SOAP stub for API-M.
+	 *
+	 * If the baseURL for this <code>FedoraClient</code> specifies "http", 
+	 * regular HTTP communication will be attempted first.  If the server 
+	 * redirects this client to use HTTPS instead, the redirect will be 
+	 * followed and SSL will be used automatically.
+	 */
 	public FedoraAPIM getAPIM() throws Exception {
+        return (FedoraAPIM) getSOAPStub(m_managementEndpoint);
+    }
 
-		URL baseURL = new URL(m_baseURL);
-		
-		String protocol = baseURL.getProtocol();
-		String host = baseURL.getHost();
-		int port = baseURL.getPort();
-		String path = baseURL.getPath();
-		if (port == -1) port = baseURL.getDefaultPort();
-		APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS; 
-		// Note that SSL auto redirect not supported in Fedora 2.0
-		// so we don't look for a redirect URL.     
-		if (getServerVersion().equals("2.0")) {
-			return APIMStubFactory.getStubAltPath(protocol,
-												  host, 
-												  port,
-												  baseURL.getPath() + "management/soap",  
-												  m_user,
-												  m_pass);
-		} else {
-			// Check whether there is SSL redirecting at the server for APIM
-			// (HTTP status 302) and get appropriate SOAP stub.
-			URL redirectURL = getSSLRedirectLocationAPIM();
-			if (redirectURL == null){
-				//System.out.println("Using APIM stub with original URL...");
-				return APIMStubFactory.getStubAltPath(protocol,
-													  host, 
-													  port,
-													  baseURL.getPath() + "services/management",   
-													  m_user,
-													  m_pass);			
-			} else {
-				//System.out.println("Using APIM stub with redirect URL: " + redirectURL);
-				return APIMStubFactory.getStubAltPath(redirectURL.getProtocol(),
-													  redirectURL.getHost(), 
-													  redirectURL.getPort(),
-													  redirectURL.getPath(),  
-													  m_user,
-													  m_pass);				
-			}
-
-		}
-	}
+    public URL getAPIMEndpointURL() throws IOException {
+        return m_managementEndpoint.getURL();
+    }
 	
-	/**
-	 * Ping the APIM SOAP endpoint to see if an HTTP 302 status 
-	 * code is returned.  If so, this means the server has set 
-	 * up an SSL redirect on that endpoint.  We obtain the redirect 
-	 * URL from the HTTP header for later use.
-	 * 
-	 * @return  URL  the URL that the server returns as the SSL redirect location
-	 *               or null if there is no redirect location
-	 * @throws IOException
-	 */    
-	private URL getSSLRedirectLocationAPIM() throws IOException {
+    /**
+     * Get the appropriate API-A/M stub, given a SOAPEndpoint.
+     */
+    private Object getSOAPStub(SOAPEndpoint endpoint) throws Exception {
 
-		URL redirectURL = null;
-		HttpInputStream in = null;
-			
-		// Ping APIM service endpoint and get a redirect URL if one exists.
-		try {
-			in = get("/services/management", false, false);		
-			logger.debug("Check for SSL redirect on APIM... HTTP STATUS=" + in.getStatusCode());
-			//System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
-			if (in.getStatusCode() == 302) {
-				Header h = in.getResponseHeader("location");
-				if (h != null) {
-					logger.debug("Detected SSL redirect for APIM: " + h.getValue());
-					redirectURL = new URL(h.getValue());	
-				}
-			}
-			//in.close();
-			return redirectURL;
-		} finally {
-			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-		}
-	}
-	
-	/**
-	 * Ping the APIA SOAP endpoint to see if an HTTP 302 status 
-	 * code is returned.  If so, this means the server has set 
-	 * up an SSL redirect on that endpoint.  We obtain the redirect 
-	 * URL from the HTTP header for later use.
-	 * 
-	 * @return  URL  the URL that the server returns as the SSL redirect location
-	 *               or null if there is no redirect location
-	 * @throws IOException
-	 */    
-	private URL getSSLRedirectLocationAPIA() throws IOException {
+        URL url = endpoint.getURL();
 
-		URL redirectURL = null;
-		HttpInputStream in = null;
-		
-		// Ping APIA service endpoint and get a redirect URL if one exists.
-		try {
-			in = get("/services/access", false, false);		
-			logger.debug("Check for SSL redirect on APIA... HTTP STATUS=" + in.getStatusCode());
-			//System.out.println("HTTP STATUS CODE = " + in.getStatusCode());
-			if (in.getStatusCode() == 302) {
-				Header h = in.getResponseHeader("location");
-				if (h != null) {
-					logger.debug("Detected SSL redirect for APIA: " + h.getValue());
-					redirectURL = new URL(h.getValue());	
-				}
-			}
-			//in.close();
-			return redirectURL;
-		} finally {
-			try { in.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-		}
-	}
-    
+        String protocol = url.getProtocol();
+        String host     = url.getHost();
+        int    port     = url.getPort();   
+        String path     = url.getPath();
+        if (port == -1) port = url.getDefaultPort();
+
+        if (endpoint == m_accessEndpoint) {
+		    APIAStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS;
+            return APIAStubFactory.getStubAltPath(protocol, host, port, 
+                                                  url.getPath(), m_user, m_pass);
+        } else if (endpoint == m_managementEndpoint) {
+		    APIMStubFactory.SOCKET_TIMEOUT_SECONDS = SOCKET_TIMEOUT_SECONDS; 
+            return APIMStubFactory.getStubAltPath(protocol, host, port,
+                                                  url.getPath(), m_user, m_pass);
+        } else {
+            throw new Exception("Unrecognized endpoint: " + endpoint.getName());
+        }
+    }
+
+    /**
+     * Get the version reported by the remote Fedora server.
+     */
     public String getServerVersion() throws IOException {
+        // only do this once -- future invocations will use the known value
         if (m_serverVersion == null) {
-            
             // Make the APIA call for describe repository
             // and make sure that HTTP 302 status is handled.
 			String desc = getResponseAsString("/describe?xml=true", true, true);
@@ -641,7 +533,7 @@ public class FedoraClient implements Constants {
     }
     
     private void initLogger() {
-    	File logDir = new File(FEDORA_HOME, "client/logs");
+        File logDir = new File(FEDORA_HOME, "client/logs");
     	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
 		Properties props = new Properties();
 		ResourceBundle res = ResourceBundle.getBundle(LOG4J_PROPS);
@@ -671,6 +563,7 @@ public class FedoraClient implements Constants {
 			FedoraClient fc =  
 				new FedoraClient(baseURL, "fedoraAdmin", "fedoraAdmin");
 				//new FedoraClient("https://localhost:8443/fedora", "fedoraAdmin", "fedoraAdmin");
+                /*
 			URL newAPIM = fc.getSSLRedirectLocationAPIM();
 			if (newAPIM != null) {
 				System.out.println(">>>Redirect location for APIM is: " + newAPIM.toExternalForm());
@@ -679,6 +572,7 @@ public class FedoraClient implements Constants {
 			if (newAPIA != null) {
 				System.out.println(">>>Redirect location for APIA is: " + newAPIA.toExternalForm());
 			}
+            */
 
 			Administrator.APIA=fc.getAPIA();
 			Administrator.APIM=fc.getAPIM();
@@ -690,5 +584,85 @@ public class FedoraClient implements Constants {
 			System.out.println("ERROR: " + e.getClass().getName() + " : " + e.getMessage());
 		}
 	}
+
+    /**
+     * Class for storing a Fedora SOAP endpoint, which consists of an
+     * endpoint name and a URL.
+     *
+     * The endpoint name is provided to the constructor.
+     * The URL is determined automatically, once, based on:
+     * <ul>
+     *   <li> The baseURL provided to the FedoraClient instance.</li>
+     *   <li> The server version.</li>
+     *   <li> Whether the server automatically redirects non-SSL SOAP
+     *        requests to an SSL endpoint.</li>
+     * </ul>
+     */
+    public class SOAPEndpoint {
+
+        String m_name;
+        URL m_url;
+
+        public SOAPEndpoint(String name) {
+            m_name = name;
+        }
+
+        public String getName() {
+            return m_name;
+        }
+
+        public URL getURL() throws IOException {
+            // only do this once -- future invocations will use the saved value.
+            if (m_url == null) {
+                // The endpoint URL has not been determined yet.
+                // It will be determined in the following manner:
+                //
+                // If the Fedora server version is 2.0:
+                //   url = (baseURL)/(endpointName)/soap
+                // Otherwise, the Fedora server version must be 2.1+:
+                //   If (baseURL) specifies "http":
+                //     Hit (baseURL)/services/(endpointName).
+                //     If it redirects:
+                //       url = (redirectURL)
+                //     Otherwise:
+                //       url = (baseURL)/services/(endpointName)
+                //   Otherwise:
+                //       url = (baseURL)/services/(endpointName)
+                //
+                if (getServerVersion().equals("2.0")) {
+                    m_url = new URL(m_baseURL + m_name + "/soap");
+                } else {
+                    if (m_baseURL.startsWith("http:")) {
+                        m_url = getRedirectURL("/services/" + m_name);                        
+                    }
+                    if (m_url == null) {
+                        m_url = new URL(m_baseURL + "services/" + m_name);
+                    }
+                }
+            }
+            return m_url;
+        }
+
+        /**
+         * Ping the given endpoint to see if an HTTP 302 status code is returned.  
+         *
+         * If so, return the location given in the HTTP response header.
+         * If not, return null.
+         */    
+        private URL getRedirectURL(String location) throws IOException {
+            HttpInputStream in = get(location, false, false);
+            try {
+                if (in.getStatusCode() == 302) {
+                    Header h = in.getResponseHeader("location");
+                    if (h != null) {
+                        return new URL(h.getValue());
+                    }
+                }
+                return null;
+            } finally {
+                try { in.close(); } catch (Exception e) { }
+            }
+        }
+    }
 
 }

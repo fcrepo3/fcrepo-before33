@@ -141,13 +141,8 @@ public class DisseminationService
           doDatastreamMediation = new Boolean(dsMediation).booleanValue();
         }
 
-        // instantiate a WebClient to use for HTTP requests
-        // FIXME: this is currently only used conditionally,
-        //        if FEDORA_HOME/server/UseWebClient.txt exists!
-        if (new File(new File(fedoraHome), "server/UseWebClient.txt").exists()) {
-            s_http = new WebClient();
-            s_http.USER_AGENT = "Fedora";
-        }
+        s_http = new WebClient();
+        s_http.USER_AGENT = "Fedora";
       }
 
     } catch (InitializationException ie)
@@ -961,7 +956,7 @@ public class DisseminationService
     private static MIMETypedStream get(String url,
                                        String user,
                                        String pass) throws GeneralException {
-        System.out.println("DisseminationService.get(" + url + ")");
+        s_server.logFinest("DisseminationService.get(" + url + ")");
         try {
             HttpInputStream response = s_http.get(url, true, user, pass);
             String mimeType = response.getResponseHeaderValue("Content-Type",
@@ -1000,55 +995,7 @@ public class DisseminationService
    */
   public MIMETypedStream getDisseminationContent(String url, Context context, String user, String pass)
       throws GeneralException, HttpServiceNotFoundException {
-
-    // FIXME: Decide whether to make this unconditional
-    if (s_http != null) return get(url, user, pass);
-
-  	log("in getDisseminationContent(), url=" + url);
-  	MIMETypedStream httpContent = null;
-  	HttpClient client = new HttpClient(url);
-  	try {  			
-  		client = new HttpClient(url); 
-		Properties serverProperties = ServerUtility.getServerProperties();    
-  		client.doAuthnGet(20000, 25, user, pass, 1);
-  		if (client.getStatusCode() != HttpURLConnection.HTTP_OK) {
-  			log("in getDisseminationContent(), got bad code=" + client.getStatusCode());
-  			throw new StreamIOException(
-                "Server returned a non-200 response code ("
-                + client.getStatusCode() + ") from GET request of URL: "
-                + url);
-  		}          
-  		log("in getDisseminationContent(), got 200");
-  		Header[] headers = client.getGetMethod().getResponseHeaders();
-  		Property[] headerArray = new Property[headers.length];
-  		for (int i = 0; i < headers.length; i++) {
-  			headerArray[i] = new Property();
-  			headerArray[i].name = headers[i].getName();
-  			headerArray[i].value = headers[i].getValue();
-  			log("in getDisseminationContent(), (after loop) " + headerArray[i].name + "=" + headerArray[i].value);
-  		}
-  		String contentType = "text/plain";
-  		if (client.getGetMethod().getResponseHeader("Content-Type") != null) {
-  			contentType = client.getGetMethod().getResponseHeader("Content-Type").getValue();
-  		}
-  		log("in getDisseminationContent(), contentType=" + contentType);
-  		for (int ha=0; ha<headerArray.length; ha++) {
-  			log("in getDisseminationContent(), header=" + headerArray[ha].name + "=" + headerArray[ha].value);
-  		}
-  		httpContent = new MIMETypedStream(contentType, client.getGetMethod().getResponseBodyAsStream(), headerArray);
-  		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream. 
-  		log("in getDisseminationContent(), httpContent=" + httpContent);
-  	} catch (Throwable th) {
-  		th.printStackTrace();
-  		throw new HttpServiceNotFoundException("[DisseminationService] "
-  			+ "returned an error.  The underlying error was a "
-			+ th.getClass().getName() + "  The message "
-			+ "was  \"" + th.getMessage() + "\"  .  ");
-  	} finally {
-  		log("in getDisseminationContent(), in finally");
-  		//WRONG PLACE FOR HttpClient.thisUseFinished();
-  	}    	
-	return(httpContent);
+    return get(url, user, pass);
   }  
   
   private final void log(String msg) {
