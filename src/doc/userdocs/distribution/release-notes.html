@@ -87,7 +87,21 @@
     open-source applications, tools, and services that work with Fedora repositories.&nbsp;&nbsp; 
     There are already many tools that are available, so check it out!</p>
   <p>&nbsp;</p>
-  <h2>A. Migrating from Fedora 2.0</h2>
+  <h2>A. Migrating from Fedora 2.1b</h2>
+  <p>If you have previously migrated to the beta release of Fedora 2.1 and want 
+    to upgrade to the final release, the move from Fedora 2.1b to Fedora 2.1 is 
+    quite simple and does not require reloading of your repository.&nbsp; If you 
+    are upgrading from Fedora 2.1b to Fedora 2.1 follow the steps found in the 
+    Fedora <a href="installation.html">Installation Guide</a> and the <a href="migration.html">Upgrade 
+    and Migrate Guide</a>.&nbsp;&nbsp; There were a number of performance enhancements 
+    and bug fixes applied since the Fedora 2.1b release; see the sections below 
+    on <a href="#rel2.1b.features.perfpolicy">New Features</a> , <a href="#rel2.1b.bugs">Bug 
+    Fixes</a>, and <a href="#rel2.1b.issues">Known Issues</a> for details. If you are starting from a release prior to Fedora 
+    2.0, consult the Fedora 2.0 release notes and the Upgrade and Migration Guide 
+    for instructions on how to migrate to Fedora 2.0 before upgrading to Fedora 
+    2.1.</p>
+  <p>&nbsp;</p>  
+  <h2>B. Migrating from Fedora 2.0</h2>
   <p>The move from Fedora 2.0 to Fedora 2.1 is quite simple and does not require 
     reloading of your repository.&nbsp; If you are upgrading from Fedora 2.0 to 
     Fedora 2.1 follow the steps below.&nbsp; More detail on these steps is found 
@@ -503,72 +517,65 @@
       large numbers of objects.&nbsp;&nbsp; The results of these tests will be 
       published soon on <a href="http://www.fedora.info">www.fedora.info</a>.</font></li>
     <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.perfpolicy"></a>Performance Fix<br>
+      <a name="rel2.1b.features.perfpolicy"></a>Performance Enhancement (added 
+      post 2.1b) <br>
       </font><font style="font-size: 9pt" face="Arial">Runtime performance degradation 
-      was reported when Fedora XACML-based policy enforcement was enabled. This 
-      was traced to Fedora's XACML attribute finder module that gets information 
-      from a Fedora object when evaluating an XACML policy. The problem was traced 
-      to the lack of caching of digital object readers for the duration of a Fedora 
-      API request. During the processing of a Fedora API request, the policy enforcement 
-      module obtains an instance of a digital object reader to get attributes 
-      of the object. A new reader was instantiated for every object attribute 
-      that was needed for a particular XACML policy. This resulted in FOXML XML 
-      files being parsed numerous times for one API request. The fix was to ensure 
-      that a cached instance of the digital object reader was available for the 
-      duration of the API request, thus eliminating the excessive and wasteful 
-      file I/O and SAX parsing. &nbsp;</font></li>
+      was reported when Fedora XACML-based policy enforcement was enabled in Fedora 
+      2.1b. This was traced to Fedora's XACML attribute finder module that gets 
+      information from a Fedora object when evaluating an XACML policy. The problem 
+      was traced to the lack of caching of digital object readers for the duration 
+      of a Fedora API request. During the processing of a Fedora API request, 
+      the policy enforcement module obtains an instance of a digital object reader 
+      to get attributes of the object. A new reader was instantiated for every 
+      object attribute that was needed for a particular XACML policy. This resulted 
+      in FOXML XML files being parsed numerous times for one API request. The 
+      fix was to ensure that a cached instance of the digital object reader was 
+      available for the duration of the API request, thus eliminating the excessive 
+      and wasteful file I/O and SAX parsing. &nbsp;</font></li>
     <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.perfrebuiler"></a>Performance Fix<br>
-      </font><font style="font-size: 9pt" face="Arial">SQL Rebuilder utility inadvertently 
-      logging to memory. In the Fedora Rebuild Utility (fedora-rebuild) the SQL 
-      Rebuild had degrading performance for rebuilds of very large repositories. 
-      The SQL Rebuild code did not properly set server logging and therefore kept 
-      all of its log messages in memory while the rebuild was running. This explains 
-      why users were not seeing server log files while the SQL rebuild was happening, 
-      and also explains the excessive java heap size in later stages of the rebuild. 
-      This problem was fixed by setting the logging to go to disk (where it was 
-      supposed to be going). </font></li>
-    <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.perfindexes"></a>Performance Fix<br>
-      </font><font style="font-size: 9pt" face="Arial">Double indexes were created 
-      on some tables used by the Fedora Rebuild Utility (both PRIMARY and INDEX). 
-      To prevent extra overhead that could negatively affect Rebuild performance, 
-      extra indexes were removed from the dbspec file for the following tables:<br>
-      <ol>
-        a. doRegistry<br>
-        b. riMethod<br>
-        c. riMethodImpl<br>
-        d. riMethodMimeType<br>
-        e. riMethodPermutation<br>
-      </ol>
+      <a name="rel2.1b.features.perfrebuiler"></a>Performance Enhancement (added 
+      post 2.1b)<br>
+      </font><font style="font-size: 9pt" face="Arial">In Fedora 2.1b, it was 
+      noted that the SQL Rebuilder utility was inadvertently logging to memory. 
+      In the Fedora Rebuild Utility (fedora-rebuild) the SQL Rebuild had degrading 
+      performance for rebuilds of very large repositories. The SQL Rebuild code 
+      did not properly set server logging and therefore kept all of its log messages 
+      in memory while the rebuild was running. This explains why users were not 
+      seeing server log files while the SQL rebuild was happening, and also explains 
+      the excessive java heap size in later stages of the rebuild. This problem 
+      was fixed by setting the logging to go to its proper location on disk.. 
       </font></li>
     <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.perf2\objpolicy"></a>Performance Fix<br>
-      </font><font style="font-size: 9pt" face="Arial">New: The object-policies 
-      directory was removed in 2.1 final since it was intended mostly for testing. 
-      Object specific policies should be put in either the POLICY datastream of 
-      an object, or they can be put in the repository-policies directory if they 
-      have the object PID named in the policy target. See documentation for pros 
-      and cons of each choice. </font></li>
+      <a name="rel2.1b.features.perf2\objpolicy"></a>Object Policy Directory Removed 
+      (added post 2.1b)<br>
+      </font><font style="font-size: 9pt" face="Arial">The object-policies directory 
+      was removed in 2.1 final since it was intended mostly for testing. Object 
+      specific policies should be put in either the POLICY datastream of an object, 
+      or they can be put in the repository-policies directory if they have the 
+      object PID named in the policy target. See documentation for pros and cons 
+      of each choice. </font></li>
     <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.java1.5"></a>Performance Fix<br>
-      </font><font style="font-size: 9pt" face="Arial">New: Fedora upgraded for 
-      Java 1.5 compatibility. The server can now be compiled and run with Java 
-      1.5. Fedora source code updates were made to support this, plus key libraries 
-      in the Fedora distribution were updated to the latest versions (most notably 
-      Apache Axis). Note that Fedora 2.1 is no longer compatible with Java 1.4.1 
-      since the latest Axis libraries do not work with Fedora under this older 
-      Java release. You should run Java 1.4.2 or higher with Fedora 2.1. </font></li>
+      <a name="rel2.1b.features.java1.5"></a>Java 1.5 Compatibility (added post 
+      2.1b) <br>
+      </font><font style="font-size: 9pt" face="Arial">The Fedora codebase is 
+      upgraded for Java 1.5 compatibility. The server can now be compiled and 
+      run with Java 1.5. Fedora source code updates were made to support this, 
+      plus key libraries in the Fedora distribution were updated to the latest 
+      versions (most notably Apache Axis). Note that Fedora 2.1 is no longer compatible 
+      with Java 1.4.1 since the latest Axis libraries do not work with Fedora 
+      under this older Java release. You should run Java 1.4.2 or higher with 
+      Fedora 2.1. </font></li>
     <li class="MsoNormal"> <font face="Arial" style="font-size: 9pt; font-weight: 700"> 
-      <a name="rel2.1b.features.config"></a>Performance Fix<br>
-      </font><font style="font-size: 9pt" face="Arial">New: Fedora Server 
-      Configuration Changes. In the Fedora server configuration file (fedora.fcfg), 
-      the default values for the storage locations for digital objects, datastreams, 
-      and xacml policies have been changed to relative directory paths to better 
-      support cross-platform compatibility. If the default path values are not 
-      changed, directories will now be created under FEDORA_HOME/data/. You can 
-      still override the default paths with either a fully-qualified directory 
-      path or another relative path of your choice. </font></li><br>
+      <a name="rel2.1b.features.config"></a>Fedora Server Configuration Changes 
+      (added post 2.1b)<br>
+      </font><font style="font-size: 9pt" face="Arial">In the Fedora server configuration 
+      file (fedora.fcfg), the default values for the storage locations for digital 
+      objects, datastreams, and xacml policies have been changed to relative directory 
+      paths to better support cross-platform compatibility. If the default path 
+      values are not changed, directories will now be created relative to FEDORA_HOME. 
+      You can still override the default paths with either a fully-qualified directory 
+      path or another relative path of your choice. </font></li>
+    <br>
     &nbsp; 
   </ol>
 </div>
@@ -740,25 +747,34 @@
       The fix was to encode them.&nbsp; The problem also existed when encoding 
       the FORMAT_URI property, so that was fixed also.<br>
       &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b><a name="rel2.1b.bugs">Bugzilla 
+      #130 (fixed post 2.1b):&nbsp; FieldSearch module ambiguous reference 'pid' 
+      when doing dc date search: &nbsp;&nbsp;</a></b>The problem was that 
+      in the case where a join is used (which is the case when doing a query comparing 
+      the dc 'date'), the 'pid' reference in the SELECT clause becomes ambiguous 
+      and the query fails. This is fixed in CVS and will go out with 2.1-final. 
+      The fix was to always qualify the fields in the SELECT clause with &quot;doFields.&quot;<br>
+      &nbsp;</font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
-      #130:&nbsp; FieldSearch module ambiguous reference 'pid' when doing dc date 
-      search: </b>&nbsp;&nbsp; </font>The problem was that in the case where a 
-      join is used (which is the case when doing a query comparing the dc 'date'), 
-      the 'pid' reference in the SELECT clause becomes ambiguous and the query 
-      fails. This is fixed in CVS and will go out with 2.1-final. The fix was 
-      to always qualify the fields in the SELECT clause with &quot;doFields.&quot;<br>
-      &nbsp;</li>
-    <li class="MsoNormal"><font face="Arial"><b> <font style="font-size: 9pt">Bugzilla 
-      #131: No index on pid column in dcDate table: </font></b></font>&nbsp;The 
+      #131 (fixed post 2.1b): No index on pid column in dcDate table: </b>&nbsp;The 
       lack of an index on the PID column of dcDate table in the Fedora relational 
       database resulted in some incremental performance degradation on ingest 
       and SQL database rebuilds in large repositories.&nbsp; The effect was became 
       apparent when the repository had over 1 million objects.&nbsp;&nbsp; The 
       problem was fixed by adding an index to dbspec file so it would automatically 
       be created on this table. <br>
-      &nbsp;</li>
-    <li class="MsoNormal"><font face="Arial"><b> <font style="font-size: 9pt">Bugzilla 
-      #134: length of datastreamPaths.token column: </font></b></font>&nbsp;In 
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #133 (fixed post 2.1b): Uploaded content not getting deleted properly: </b>&nbsp;When 
+      the upload servlet was used to upload content to Fedora, the temporary content 
+      file was not getting properly deleted. It would only get deleted after server 
+      startup. The fix was the removal of a line in DefaultManagement.java that 
+      had the effect of &quot;forgetting&quot; that the content had been uploaded 
+      when it was downloaded, thereby causing the content to remain on the server 
+      until startup.<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #134 (fixed post 2.1b): length of datastreamPaths.token column: </b>&nbsp;In 
       Fedora 2.0, the length of PIDs and datastream IDs was expanded in the SQL 
       database schema from 32 to 64 characters to accomodate longer PIDs and datastream 
       IDs. The &quot;token&quot; column in the datastreamPaths table was not updated 
@@ -766,19 +782,47 @@
       column has been updated from varchar(103) to varchar(199). If you plan to 
       use datastream IDs that exceed 32 characters, it is recommended that you 
       update the length of this column in your sql database.<br>
-      &nbsp;</li>
-    <li class="MsoNormal"><font face="Arial"><b> <font style="font-size: 9pt">Bugzilla 
-      #137: embedded POLICY datastream policy not enforced: </font></b></font>&nbsp;6. 
-      Bug Fix (bug introduced in Fedora 2.1b): In line 278 of the PolicyFinderModule 
-      a call to GetDatastream vs getDatastream was used for retrieving a POLICY 
-      datastream out of an object for use in policy enforcement. The unfortunate 
-      ambiguous naming of these two methods, and the wrong one being called, resulted 
-      in the policy finder module returning null for policy datastream content. 
-      This resulted in policy datastreams not being in scope as expected. This 
-      was fixed, and the developers will never name two methods in this ambiguous 
-      manner again. 
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #135 (fixed post 2.1b): Server profile ignored when doing SQL rebuild: </b>&nbsp;When 
+      invoked with an argument indicating the &quot;server profile&quot; (for 
+      example, &quot;oracle&quot;), the SQLRebuilder doesn't pick up the right 
+      configuration values from fedora.fcfg (for example, the values specified 
+      in the &quot;oracleValue&quot; attribute). The solution was to make sure 
+      the -Dfedora.serverProfile parameter was passed to java in the fedora-rebuild.bat/sh 
+      scripts, because the SQLRebuilder depends on fedora.server.Server to parse 
+      fedora.fcfg, and fedora.server.Server uses the fedora.serverProfile property 
+      to decide which, if any, server profile to use.<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #136 (fixed post 2.1b): Oracle SQLRebuilds fail with 'invalid relational 
+      operator': </b>&nbsp;When running fedora-2.1b's SQL rebuilder 
+      against Oracle, a series of Oracle error messages are reported: 'invalid 
+      relational operator'. Rebuilding subsequently fails. This was caused by 
+      a &quot;WHERE 1&quot; clause at the end of a DELETE FROM statement that 
+      should have deleted all rows. MySQL is more lenient here, but Oracle complains.The 
+      solution was to remove the WHERE clause altogether. Fixing this issue also 
+      revealed another oracle-related bug where the SQLRebuilder was previously 
+      attempting to remove rows from ALL tables returned by getDatabaseMetadata. 
+      This works fine in MySQL because the list of tables is isolated to the fedora 
+      database.The problem is that this command in Oracle returns MANY non-Fedora 
+      tables (system tables, etc) from this method. In effect, this was attempting 
+      to remove all tables, even those from other tablespaces in the Oracle installation. 
+      The fix for this bug was to only remove rows from tables that exist in the 
+      database and are Fedora tables (the list of Fedora tables comes from DefaultDOManager.dbspec).<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #137 (fixed post 2.1b): embedded POLICY datastream policy not enforced: 
+      </b>&nbsp;6. Bug Fix (bug introduced in Fedora 2.1b): In line 
+      278 of the PolicyFinderModule a call to GetDatastream vs getDatastream was 
+      used for retrieving a POLICY datastream out of an object for use in policy 
+      enforcement. The unfortunate ambiguous naming of these two methods, and 
+      the wrong one being called, resulted in the policy finder module returning 
+      null for policy datastream content. This resulted in policy datastreams 
+      not being in scope as expected. This was fixed, and the developers will 
+      never name two methods in this ambiguous manner again. 
       <p><br>
-        &nbsp; 
+        &nbsp;</font> 
     </li>
   </ol>
   <p class="MsoNormal">&nbsp;</p>
@@ -855,14 +899,47 @@
       stacktrace) is produced by fedora.server.ServerController and can safely 
       be ignored.<br>
       &nbsp;</font></li>
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">A minor adjustment 
-      was made to the length of the dsBind.dsCurrentVersionID column in the sql 
-      database schema to accomodate datastreamIDs that are between 59 and 64 characters 
-      in length. This column was increased from varchar(64) to varchar(69) to 
-      allow for the maximum of 5 additional characters that are part of the version 
-      ID. If you use datastream IDs that are between 59 and 64 characters in length, 
-      we recommend that you update the dsBind.dsCurrentVersionID column in your 
-      sql database from varchar(64) to varchar(69). <br>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b><a name="rel2.1b.issues">(post 2.1b issue)</b></a> Note 
+      that Fedora 2.1 is no longer compatible with Java 1.4.1 since the latest 
+      Axis libraries do not work with Fedora under this older Java release. You 
+      should run Java 1.4.2 or higher with Fedora 2.1. <br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b issue)</b> If 
+      you have configured ssl and authenticate all on the Fedora server, then 
+      if you log into Fedora Administrator client with the non ssl port (e.g., 
+      8080) and non ssl protocol (http), you may run into problems with the client 
+      hanging when opening objects with the object editor. This is caused by ssl 
+      redirecting not working properly for some requests. To avoid this, log into 
+      Fedora Administrator with the redirect port (e.g., 8443) and ssl protocol 
+      (https) if your fedora repository is configured for ssl and authentication.<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b issue)</b> In Fedora 
+      2.1b, it was noted that double indexes were specified on some tables (both 
+      PRIMARY and INDEX) defined in the db schema. To prevent extra overhead that 
+      could negatively affect performance, the extraneous indexes were removed 
+      from the dbspec file for the following tables:<br>
+      <ol>
+        a. doRegistry<br>
+        b. riMethod<br>
+        c. riMethodImpl<br>
+        d. riMethodMimeType<br>
+        e. riMethodPermutation<br>
+      </ol>
+      These db schema changes will only be applied to new databases created with 
+      Fedora 2.1 or databases rebuilt under 2.1 using the Fedora Rebuilder utility. 
+      These changes may also be applied to an existing SQL database by simply 
+      removing (dropping) the duplicate index using an appropriate database utility. 
+      <br>
+      &nbsp;
+      </font></li>	  
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b 
+      issue)</b> A minor adjustment was made to the length of the dsBind.dsCurrentVersionID 
+      column in the sql database schema to accomodate datastreamIDs that are between 
+      59 and 64 characters in length. This column was increased from varchar(64) 
+      to varchar(69) to allow for the maximum of 5 additional characters that 
+      are part of the version ID. If you use datastream IDs that are between 59 
+      and 64 characters in length, we recommend that you update the dsBind.dsCurrentVersionID 
+      column in your sql database from varchar(64) to varchar(69). <br>
       &nbsp;</font></li>
   </ol>
   <p>&nbsp;</p>
