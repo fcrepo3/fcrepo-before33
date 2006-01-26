@@ -821,17 +821,59 @@
       &nbsp;</font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
       #137 (fixed post 2.1b): embedded POLICY datastream policy not enforced: 
-      </b>&nbsp;6. Bug Fix (bug introduced in Fedora 2.1b): In line 278 of the 
-      PolicyFinderModule a call to GetDatastream vs getDatastream was used for 
-      retrieving a POLICY datastream out of an object for use in policy enforcement. 
-      The unfortunate ambiguous naming of these two methods, and the wrong one 
-      being called, resulted in the policy finder module returning null for policy 
-      datastream content. This resulted in policy datastreams not being in scope 
-      as expected. This was fixed, and the developers will never name two methods 
-      in this ambiguous manner again. 
+      </b> In line 278 of the PolicyFinderModule a call to GetDatastream vs getDatastream 
+      was used for retrieving a POLICY datastream out of an object for use in 
+      policy enforcement. The unfortunate ambiguous naming of these two methods, 
+      and the wrong one being called, resulted in the policy finder module returning 
+      null for policy datastream content. This resulted in policy datastreams 
+      not being in scope as expected. This was fixed, and the developers will 
+      never name two methods in this ambiguous manner again. 
       <p><br>
-        &nbsp;
+        &nbsp; 
       </font> </li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #138 (fixed post 2.1b): HTTP Connections in CLOSE_WAIT: </b>&nbsp; After 
+      serving many dissemination requests that hit a backend service, NSDL reported 
+      the error of &quot;Too many files open&quot;. It was determined that this 
+      was actually a socket problem. By listing the contents of /proc/pid/fd/ 
+      on the Linux box, we saw that many, many sockets from the process had been 
+      left in the CLOSE_WAIT state. Fedora had exhausted available file handles 
+      for the process. The problem was isolated to requests for datastreams by-reference, 
+      and requests for disseminations that hit a backend service. The two relevent 
+      pieces of code are DisseminationService.java and DefaultExternalContentManager.java. 
+      They each have a method to get content via HTTP into a MIMETypedStream object, 
+      and they both use fedora.common.HttpClient. We determined that the implementation 
+      for releasing connections was potentially flawed and could result in piling 
+      up lots of unused http connections which would leave connections in the 
+      CLOSE_WAIT state. The fix was to implement a different strategy for releasing 
+      connections and sharing a MultiThreadedHttpConnectionManager, similar to 
+      the behavior of FedoraClient. <br>
+      &nbsp; </font> </li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #139 (fixed post 2.1b): commons-httpclient connections hanging: </b>&nbsp;After 
+      applying fix to bug #138, NSDL noted that Fedora would seem to hang after 
+      five or so back-to-back dissemination requests from the oai provider service. 
+      After further investigation and testing, the lockup turned out NOT to be 
+      coming from the Fedora server, but coming from the commons-httpclient connection 
+      pool used by FedoraClient, which is used by the NSDL repo code (this is 
+      the NSDL's back-end dissemination service). But what looked like a &quot;lockup&quot; 
+      was actually commons-httpclient behaving normally: it was waiting for a 
+      connection to become available from the pool.The reason this situation occurred 
+      was: 1) The commons-httpclient connection pool was configured to only allow 
+      5 simultaneous connections per host. 2) More than 5 simultaneous connections 
+      were needed in the normal course of events for the NSDL client code. 3) 
+      Part of the reason for #2 was the redirect behavior of FedoraClient: whenever 
+      a SOAP stub (APIA or APIM) was requested, a connection would be tied up 
+      just for the purpose of determining whether the Fedora server was going 
+      to redirect the client. The fix involved two changes to the code: 1) the 
+      default # of simultaneous connections for FedoraClient was increased. 2) 
+      re-implemented the APIA/APIM-SOAP redirect behavior so that it only makes 
+      the &quot;redirect&quot; determination ONCE per instance of FedoraClient, 
+      instead of every time an APIA or APIM stub is requested. These changes reduce 
+      the number of required http connections and as a bonus, improves performance 
+      in situations (like the NSDL's) where getAPIA() and getAPIM() are called 
+      multiple times on the same FedoraClient instance.<br>
+      &nbsp; </font> </li>
   </ol>
   <p class="MsoNormal">&nbsp;</p>
   <h2>D.&nbsp; Known Issues</h2>
