@@ -271,7 +271,14 @@ module.fedora.server.storage.ConnectionPoolManager.defaultPoolName = localMcKoiP
               <p>Note: Ant 1.6 suffers from a JUnit affliction described at 
               <a href="http://ant.apache.org/faq.html#delegating-classloader">http://ant.apache.org/faq.html#delegating-classloader</a>.
               Ensuring junit.jar is in ANT_HOME/lib should do the trick.</p>
+              <p>As of Fedora 2.1, it's necessary to run <code>fedora-setup</code> 
+              and to start and stop the server before running the tests so that 
+              the required configuration files are in play. 
               <div class="code"><pre>
+$ ant server
+$ fedora-setup
+$ fedora-start
+$ fedora-stop
 $ ant junit</pre></div>
               
               
