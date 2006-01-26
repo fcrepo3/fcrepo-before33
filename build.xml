@@ -378,15 +378,6 @@
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/client/bin" perm="ugo+x" includes="**/*"/>
-		<!-- make security-sensitive files readable only by owner -->
-		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx"/>
-		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/fedora-base.fcfg" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/my.properties" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-all.xml" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
-		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-all.xml" perm="go-rwx"/>
 	</target>
 	<target name="client" depends="clientunixstuff,clientmostly" description="Client distribution">
 	</target>
@@ -793,6 +784,15 @@
 		</exec>
 		<!-- add execute permission to script files in distribution tree; this is only run in unix environments -->
 		<chmod dir="dist/server/bin" perm="ugo+x" includes="**/*"/>
+		<!-- make security-sensitive files readable only by owner -->
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml" perm="go-rwx"/>
+		<chmod file="dist/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/fedora-base.fcfg" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-secure-all.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-apim.xml" perm="go-rwx"/>
+		<chmod file="dist/server/fedora-internal-use/config/beSecurity-unsecure-all.xml" perm="go-rwx"/>
+		<chmod file="dist/server/config/my.properties" perm="go-rwx"/>
 	</target>
 	<target name="server" depends="serverunixstuff,servermostly">
 	</target>
