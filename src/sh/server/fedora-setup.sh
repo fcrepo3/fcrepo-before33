@@ -90,6 +90,9 @@ else
 		  fedora.server.config.ServerConfiguration $FCFG_BASE $PROPS > $OUT)
 fi
 
+# set permissions on fedora.fcfg
+chmod go-rwx $OUT
+
 echo "Wrote"
 echo -e "\t$OUT\n"
 echo "Copying"
