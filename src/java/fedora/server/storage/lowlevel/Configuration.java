@@ -44,7 +44,6 @@ public class Configuration implements Constants {
 		Server temp = null;
 		if (! testConfig) {
 			try {
-				System.out.println("*** FEDORA_HOME: " + FEDORA_HOME);
 				temp = Server.getInstance(new File(FEDORA_HOME));
 			} catch (InitializationException ie) {
 				System.err.println(ie.getMessage());
