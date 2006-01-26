@@ -87,7 +87,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                    new File("dist/client/logs/build.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        assertEquals(err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1, true );
+        assertEquals(err, true, err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1);
         System.out.println("Ingesting batch objects");
         batchIngest(new File("dist/client/demo/batch-demo/objects"), 
                     new File("dist/client/logs/ingest.log"));
