@@ -8,7 +8,7 @@
                   </p><div class="itemizedlist"><p class="title"><b></b></p><ul type="disc"><li><p>Recent Windows releases (NT4/2k, 95/98/Me,
                           XP)</p></li><li><p>Modern Unix flavors (Linux, Solaris,
                           etc.)</p></li></ul></div><p>
-            </p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e38"></a>Tools/Programs</h3></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e41"></a>Java</h4></div></div><p>A JDK v1.4+, with any IDE you prefer. Note: In this guide,
+            </p></div><div class="section"><div class="titlepage"><div><h3 class="title"><a name="d0e38"></a>Tools/Programs</h3></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e41"></a>Java</h4></div></div><p>A JDK v1.4.2+, with any IDE you prefer. Note: In this guide,
                       no particular IDE is assumed - instructions will be
                       written assuming none.</p></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e46"></a>CVS Client</h4></div></div><p>CVS is used for revision control.  It comes with most
                       modern unix installations by default.  For windows users,
@@ -155,7 +155,7 @@
                   page on the SourceForge site</a>.  When you commit
                   changes to the CVS repository from your working copy, they
                   will be reflected on the site.</p><p>A description of the cvs mellon/ directory structure
-                  follows.</p><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e254"></a>build.xml</h4></div></div><p>The makefile for the entire project, in ant (v1.4) format.
+                  follows.</p><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e254"></a>build.xml</h4></div></div><p>The makefile for the entire project, in ant (v1.6) format.
                       (Ant is a cross-platform build tool similar to make...
                       <a href="http://jakarta.apache.org/ant" target="_top">Read more
                       about it here, if you're interested</a>.). This
@@ -167,7 +167,7 @@
                       the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e267"></a>lib/client/</h5></div></div><p>For client builds/dists only.</p></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="dir_res"></a>res/</h4></div></div><p>Components that help in compiling the project to its
                       final form(s), but are neither 1) part of the
                       intellectual basis of the project, nor 2) necessary
-                      for the final form(s) of the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e277"></a>res/ant</h5></div></div><p>The ant tool, v1.4.  This is necessary for builds.</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e282"></a>res/docbook-xsl</h5></div></div><p>Stylesheets for converting docbook XML (.dbx) files
+                      for the final form(s) of the project.</p><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e277"></a>res/ant</h5></div></div><p>The ant tool, v1.6.  This is necessary for builds.</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e282"></a>res/docbook-xsl</h5></div></div><p>Stylesheets for converting docbook XML (.dbx) files
                           to various formats.</p></div><div class="section"><div class="titlepage"><div><h5 class="title"><a name="d0e287"></a>res/xalan</h5></div></div><p>An xslt engine used for xml translation during
                           builds.</p></div></div><div class="section"><div class="titlepage"><div><h4 class="title"><a name="d0e292"></a>inc/</h4></div></div><p>Files and directories that are included with the final
                       form(s) of the project, but are not 1) part of the
@@ -279,6 +279,9 @@
                   to do concurrent mods on separate sections of the file, in which
                   case CVS will do the merging for you at commit-time)</p></div></div></div><div class="appendix"><h2 class="title" style="clear: both"><a name="d0e502"></a>B. Revision History</h2><p>Here is the revision history of this guide:</p><div class="literallayout"><p><br>
 &nbsp;&nbsp;&nbsp;&nbsp;$Log$
+&nbsp;&nbsp;&nbsp;&nbsp;Revision 1.2  2006/01/26 19:55:52  eddie
+&nbsp;&nbsp;&nbsp;&nbsp;minor corrections. this document actually needs a lot of edits
+&nbsp;&nbsp;&nbsp;&nbsp;
 &nbsp;&nbsp;&nbsp;&nbsp;Revision 1.1  2005/01/27 05:12:36  eddie
 &nbsp;&nbsp;&nbsp;&nbsp;moved all devdoc-related files to src/doc/devdocs,
 &nbsp;&nbsp;&nbsp;&nbsp;edited buildfile accordingly
