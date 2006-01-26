@@ -990,6 +990,14 @@
 				<include name="**/*.xml"/>
 			</fileset>
 		</copy>
+		<copy todir="dist/server/config">
+			<filterset>
+				<filter token="fedora.home" value="${env.FEDORA_HOME}"/>
+			</filterset>
+			<fileset dir="src/fcfg/server">
+				<include name="**/my.properties"/>
+			</fileset>
+		</copy>
 		<mkdir dir="dist/server/bin"/>
 		<copy todir="dist/server/bin">
 			<fileset dir="src/bat/server"/>
@@ -1195,6 +1203,7 @@
 			<!--<test name="fedora.test.SuiteBaz"/>-->
 			<!--<test name="fedora.test.integration.AllAPITests"/>-->
 			<!--<test name="fedora.test.integration.TestFedoraConfigurations"/> -->
+			<!--<test name="fedora.test.config.TestAPIALiteSecureAll"/>-->
 			<test name="fedora.test.integration.AllTests"/>
 		</junit>
 	</target>
