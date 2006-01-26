@@ -190,7 +190,6 @@ public class FedoraServerTestSetup
 
         // make sure the original exists
         File origDir = new File(fromDirName);
-        System.out.println("LOOK! backing up orig dir: " + fromDirName);
         if (!origDir.exists()) {
             throw new IOException(fromDirName + " does not exist!  To remedy, run Fedora with default configuration first!!");
         }
@@ -218,8 +217,6 @@ public class FedoraServerTestSetup
             }
             // SDP: recurse directories
             else if (sourceFiles[i].isDirectory()){
-            	System.out.println("LOOK!! copying orig dir: " + sourceFiles[i].getAbsolutePath());
-				System.out.println("LOOK!! to target dir: " + newDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());          	
             	backupDir(sourceFiles[i].getAbsolutePath(), 
             			  newDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
             }
@@ -258,8 +255,6 @@ public class FedoraServerTestSetup
 			}
 			// SDP: recurse directories
 			else if (sourceFiles[i].isDirectory()){
-				System.out.println("LOOK! restoring from backup dir: " + sourceFiles[i].getAbsolutePath());
-				System.out.println("LOOK! to active dir: " + activeDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
 				restoreDir(activeDir.getAbsolutePath() + File.separator + sourceFiles[i].getName(),
 						   fromDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
 			}

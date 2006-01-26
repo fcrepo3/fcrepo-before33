@@ -85,7 +85,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         } else {
             port = getServerConfiguration().getParameter("fedoraRedirectPort").getValue();
         }
-        System.out.println("***** Port based on SSL setting in beSecurity: "+port);
         return port;
     }
     
@@ -117,7 +116,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
                 System.out.println("Unable to close BufferdReader");
             }
         }
-        System.out.println("**** SSL setting from beSecurity: "+ssl); 
         return ssl;
     }
     
@@ -161,7 +159,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     }
 
     private final void showFiles (File dir, String label) {
-    	System.out.println("LOOK! " + dir.getPath() + " CONTENTS  " + label + ":");
     	//String[] files = dir.list();
     	File[] files = dir.listFiles();
     	
@@ -185,17 +182,12 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         File toDir = new File(config.getParameter(toDirProp).getValueAsAbsolutePath());
         if (toDir.exists()) {
 			// clear out the active policy directory
-			System.out.println("LOOK! replacing active policies at: " + toDir.getAbsolutePath());
-        	showFiles(toDir, "before clearing");
             clearDir(toDir);
-        	showFiles(toDir, "after clearing");
         	
         	// copy junit config policy files into active directory
             if (fromDir.exists()) {
-            	System.out.println(fromDir.getPath() + " exists");
                 copyFiles(fromDir, toDir);
             }
-        	showFiles(toDir, "after copying");
         }
     }
 
@@ -229,7 +221,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
         // SDP recursive
 		for (int i = 0; i < files.length; i++) {
 			if (!files[i].isDirectory() && files[i].canRead()) {
-				System.out.println("LOOK! copying file: " + files[i].getName());
 				FedoraServerTestSetup.copy(files[i], new File(toDir, files[i].getName()));
 			}
 			// SDP: recurse directories
@@ -237,7 +228,6 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
 				if (files[i].getName().equalsIgnoreCase("CVS")) { 
 					continue;     	
 				} else {
-					System.out.println("LOOK! copying dir: " + files[i].getName());
 					copyFiles(files[i], 
 							  new File(toDir.getAbsolutePath() + File.separator + files[i].getName()));
 				}

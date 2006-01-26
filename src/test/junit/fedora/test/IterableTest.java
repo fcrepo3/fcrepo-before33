@@ -75,15 +75,13 @@ public abstract class IterableTest extends FedoraServerTestCase {
     		Trial trial = (Trial) it.next(); 
     		String policies = trial.policies;
     		if (samePolicies(policies, lastPolicies)) {
-    			System.out.println("staying with policies==" + policies);
+    			//System.out.println("staying with policies==" + policies);
     		} else {
-    			System.out.println("changing to policies==" + policies);
+    			//System.out.println("changing to policies==" + policies);
 	            usePolicies(policies);
     			lastPolicies = policies;    			
     		}
     		HttpDataSource httpDataSource = (HttpDataSource) dataSource;
-    		System.out.println("*** in Iterable.iterate()");
-    		System.out.println("\t" + policies);
         	run(testXml, testXhtml, dataSource, trial.username, trial.password, label);
     	}
     } 
@@ -96,18 +94,12 @@ public abstract class IterableTest extends FedoraServerTestCase {
     	if (TEST_XML && (testXml != null) && testXml.handlesXml()) {
     		if (testXml.again()) {
     			if ("wellspringrathole".equals(username + password)) {
-    				kount++;
-        			System.out.println("wellspring/rathole of " + kount);    				
+    				kount++;  				
     			}
-    			System.out.println("encountered loop " + count++ + " times");
     		}
     		while (testXml.again()) { //URL MAY NEED FIXUP, CONSIDER DS.RESET()
     			is = null;
-    			System.out.println("local loop it of " + loopcount++ + " dataSource.usecount==" + dataSource.usecount);
-
         		dataSource.reset(testXml, XML, username, password);
-    			System.out.println("*** in Iterable.run(), b4 assertTrue()");
-            	System.out.println("X:  " +  username + " " + password + " " + testXml.getUrl(XML) + " " + label);    			
     			assertTrue(dataSource.expectedStatusObtained());
             	Document results = null;
                 if (dataSource.expectingSuccess()) {
@@ -135,7 +127,6 @@ public abstract class IterableTest extends FedoraServerTestCase {
     		while (testXhtml.again()) {
     			is = null;
     			dataSource.reset(testXhtml, XHTML, username, password);
-    			System.out.println("*** in Iterable.run(), b4 assertTrue()");
     			assertTrue(dataSource.expectedStatusObtained());
             	Document results = null;
                 if (dataSource.expectingSuccess()) {
