@@ -21,7 +21,7 @@
     <h2>Table of Contents</h2>
     <div class="tocbox">
         <ol>
-            <li><a href="#INTRO">Introduction</a><li><a href="#FRAMEWORK2">Fedora Service Framework (2005-2007)</a><li>
+            <li><a href="#INTRO">Introduction</a><li><a href="#FRAMEWORK1">Fedora Service Framework (2005-2007)</a><li>
 			<a href="#REPO">Fedora 
 			Core Repository Service</a></ol>
 		<p>&nbsp;</p>
@@ -31,7 +31,7 @@
 <div class=Section1>
 
 <h2><a name="INTRO"></a>1&nbsp; Introduction</h2>
-<p><font style="font-size: 9pt" face="Arial">As of Fedora 2.1b, the<a href="serviceframework.htm"> 
+<p><font style="font-size: 9pt" face="Arial">As of Fedora 2.1, the<a href="serviceframework.htm"> 
 Fedora Service Framework</a> is being introduced to facilitate the integration 
 of new services with the Fedora repository. <font style="font-size: 9pt">&nbsp; 
 The framework takes a service-oriented architecture approach to building new 
@@ -51,17 +51,20 @@ service framework approach:&nbsp; (1) it allows new functionality to be added as
 atomic, modular services that can interact with Fedora repositories, yet not be 
 part of the repository, (2) it makes co-development of new services for Fedora 
 easier since each service can be independently developed and plugged&nbsp; into 
-the framework.&nbsp;&nbsp; The Fedora development team has developed an initial 
-set of services (Directory Ingest and PROAI described below), and will continue 
+the framework.&nbsp;&nbsp; As of Fedora 2.1, the Fedora development team has 
+released an initial 
+set of services (<a href="../../services/diringest-service.html">Directory Ingest</a> and
+<a href="../../services/oaiprovider-service.html">OAI Provider </a>described below), and will continue 
 to develop new services over the coarse of Fedora Phase 2 (2005-2007), especially 
-services for workflow, preservation, and search.&nbsp;&nbsp; New services will 
-be part of the main Fedora distribution and will be kept up to date with new 
-versions of the core Fedora repository distribution.&nbsp;&nbsp; Members of the 
+services for workflow, preservation, and search.&nbsp;&nbsp; Services that are 
+part of the framework will 
+be packaged as part of the Fedora open-source software distribution and will be kept up to date with new 
+versions of the core Fedora repository service.&nbsp;&nbsp; Members of the 
 Fedora community will be collaborating on the development of services and will 
 contributed back to the Fedora Project.&nbsp;&nbsp;&nbsp; Further documentation 
 will be provided to establish guidelines on how services should be designed to 
 effectively plug into the framework.&nbsp; In the mean time, developers of new 
-services can follow the design patterns of the Directory Ingest and PROAI 
+services can follow the design patterns of the Directory Ingest and OAI Provider 
 services. </font></p>
 <h2>&nbsp;</h2>
 <h2><a name="FRAMEWORK1">2 </a>&nbsp; The Fedora Service Framework (2005-2007)</h2>
@@ -70,34 +73,71 @@ services. </font></p>
 the core Fedora repository service.&nbsp; The framework allows for the creation of 
 atomic, modular services that can interact with the Fedora repository or each 
 other.&nbsp;&nbsp;&nbsp; The diagram below depicts the Fedora Service Framework 
-with the two services introduced with Fedora 2.1b.&nbsp;&nbsp; Over time, both 
-the Fedora development team, and the Fedora community will develop new services 
-to fit into the framework.&nbsp; As of Fedora 2.1 there are two services that 
-are complete:&nbsp; the OAI Provider (PROAI) and the Directory Ingest services.&nbsp;&nbsp; 
-The Fedora Search and Workflow services are planned for Fedora 2.2.&nbsp; Other 
-services will be developed in 2006-2007.</p>
-<p>&nbsp;</p>
-<p>The Fedora Service Framework can evolve to include new services conceived of 
-by the Fedora community. &nbsp;&nbsp; Depicted below 
-are services that are already envisioned. </p>
-<ul>
-	<li>Preservation Integrity Service</li>
-	<li>Workflow Service</li>
-	<li>Search Service</li>
-	<li>Persistent Identifier (PID) Resolution Service</li>
-	<li>Preservation Monitoring Service(s)</li>
-	<li>Event Notification Service (Publish/Subscribe)</li>
-	<li>Open URL Access Point (for cross-repository interoperability as defined 
-	by the <a href="http://www.infosci.cornell.edu/pathways/">Pathways Project</a> 
-	(Cornell/LANL)</li>
-</ul>
+as it is envision to evolve during 2005-2007.&nbsp;&nbsp; The first two services introduced with Fedora 2.1 
+are depicted in orange: the OAI Provider and the Directory Ingest services.&nbsp;&nbsp; &nbsp; 
+During Phase 2 of the Fedora Project (2005-2007), both 
+the Fedora development team, and the Fedora community will develop the other 
+services to fit into the framework.&nbsp; The Fedora Search and Workflow 
+services are planned for Fedora 2.2 (estimated early Q3 2006).</p>
 <p>&nbsp;</p>
 <p><img border="0" src="images/svcframe2.jpg" width="947" height="576"></p>
 
 </div>
 
-<p>The Fedora Service Framework provides building blocks for higher level 
-services and user applications.&nbsp; </p>
+<p>The Fedora Service Framework can evolve to include new services conceived of 
+by the Fedora community. &nbsp;&nbsp; Listed below 
+is a brief description of each service, links to specifications when available, 
+and status. </p>
+<ul>
+	<li><b><a href="../../services/oaiprovider-service.html">OAI Provider</a>
+	</b>(Fedora 2.1):&nbsp; a configurable OAI Provider service for harvesting 
+	metadata out of a Fedora repository via OAI-PMH.&nbsp; The service can be 
+	configured to harvest any type datastream of dissemination from objects in 
+	the repository.&nbsp; It also supports OAI sets.<br>
+&nbsp;</li>
+	<li><b><a href="../../services/diringest-service.html">Directory Ingest</a>
+	</b>(Fedora 2.1):&nbsp; a service to ingest a hierarchical directory of 
+	files into a Fedora repository.&nbsp;&nbsp; The service will accept a 
+	Submission Information Package (SIP) in the form of a .zip archive that 
+	contains directories of files along with a METS-based manifest file that 
+	describes the directory hierarchy.&nbsp; The default parent-child 
+	relationships that characterize a directory hierarchy can be overridden and 
+	refined to have other semantic meaning (e.g., collection-member, 
+	folder-document).&nbsp; Upon receipt of the SIP, the Directory Ingest 
+	service will process the .zip archive and create a Fedora digital object in 
+	the repository for every file and every directory, plus it will record the 
+	relationships among them in Fedora's RDF-based relationships datastream.&nbsp;&nbsp;&nbsp;
+	<i>A new web-based client for creating the SIP will be made available in Q2 
+	2006.&nbsp; This client will enable a user select files from a file system, 
+	add metadata about files, and assert semantically-meaningful relationships, 
+	and ultimately submit the SIP to a Fedora repository.&nbsp; </i><br>
+&nbsp;</li>
+	<li><b>Search Service</b> (planned for Fedora 2.2):&nbsp; a configurable 
+	search service that can index any datastream or dissemination of Fedora 
+	digital objects.&nbsp; The service is pluggable, and will provide adapters 
+	for Lucene and Zebra as the default backend search engines.&nbsp; Other 
+	search adapters can be developed to plug into other engines.<br>
+&nbsp;</li>
+	<li><b>Workflow and Orchestration Service</b> (planned in beta in Q3 2006)<br>
+&nbsp;</li>
+	<li><b>Preservation Integrity Service</b> (currently under specification by 
+	Fedora Preservation Working Group)<br>
+&nbsp;</li>
+	<li><b>Preservation Monitoring and Alerting Services </b>(currently under 
+	specification by Fedora Preservation Working Group)<br>
+&nbsp;</li>
+	<li><b>Event Notification Service (Publish/Subscribe)</b><br>
+&nbsp;</li>
+	<li><b>Persistent Identifier Resolution Service</b><br>
+&nbsp;</li>
+	<li><b>Open URL Access Point:</b>&nbsp; an OpenURL interface to a Fedora 
+	repository to facilitate cross-repository interoperability as defined 
+	by the <a href="http://www.infosci.cornell.edu/pathways/">Pathways Project</a> 
+	(Cornell/LANL)</li>
+</ul>
+
+<p>The Fedora Service Framework provides building blocks for higher-level 
+customized services and user applications.&nbsp;&nbsp; </p>
 <p>&nbsp;</p>
 <h2><a name="REPO"></a>3&nbsp; Fedora Core Repository Service </h2>
 <p>&nbsp;</p>
@@ -105,12 +145,26 @@ services and user applications.&nbsp; </p>
 <p>As of Fedora 2.1, the Fedora Core Repository Service can now be situated 
 within the Fedora Service Framework, where a suite of companion services can be 
 loosely coupled with the core repository to provide additional functionality 
-that is essential to ensuring that the repository can be well integrated into a 
+that is essential to ensuring that the repository can be well-integrated into a 
 broader service or application environment.&nbsp;&nbsp; The Fedora repository service was 
 developed with the vision that it would to fit into a broader service-based architecture (SOA), and it 
-provide web services interfaces to its core functionality.&nbsp; The Fedora 
-repository service is depicted below from the perspective of how it maps to the 
-Open Archival Information System (OAIS) reference model which has been approved 
+provide web services interfaces to its core functionality.&nbsp; The core 
+repository service actually has several web service APIs:&nbsp; an interface for 
+repository management (API-M); an interface for repository access (API-A); 
+interface for basic repository search; and an interface for RDF-based search of 
+the Resource Index.&nbsp;&nbsp; All of these web service interfaces are 
+available on the Fedora repository server web application that runs in Tomcat.&nbsp;&nbsp; 
+The repository service is built in a modular manner, so that each inner function 
+is implemented as a java-based module.&nbsp;&nbsp; The inner modules are 
+configurable, and they can be replaced with alternate implementations.&nbsp;&nbsp; </p>
+<p>&nbsp;</p>
+<p>The Fedora repository service is the core service in the Fedora Service 
+Framework, and was depicted in the above diagram in the center of all other 
+services.&nbsp;&nbsp; Below, the Fedora 
+repository service is depicted in more detail, with its inner modules exposed, 
+and all repository interfaces.&nbsp;&nbsp; The diagram depicts the repository 
+service from the perspective of how it maps to the 
+<a href="http://ssdoo.gsfc.nasa.gov/nost/isoas/">Open Archival Information System (OAIS)</a> reference model which has been approved 
 as an ISO standard.</p>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
