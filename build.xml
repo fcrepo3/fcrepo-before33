@@ -443,7 +443,7 @@
 	</target>
 	<target name="utilclasses" depends="prep">
 		<mkdir dir="temp/util"/>
-		<javac srcdir="${java.src.dir}" destdir="temp/util" classpath="${lib.md5}" includes="fedora/utilities/**" optimize="${build.optimize}" debug="${build.debug}"/>
+		<javac srcdir="${java.src.dir}" destdir="temp/util" classpath="${lib.md5}" includes="fedora/utilities/**" excludes="fedora/utilities/policyEditor/**" optimize="${build.optimize}" debug="${build.debug}"/>
 		<jar jarfile="temp/fedora-utilities.jar" basedir="temp/util"/>
 	</target>
 	<target name="makepatch" depends="utilclasses">
