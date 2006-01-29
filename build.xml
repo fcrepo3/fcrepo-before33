@@ -275,10 +275,19 @@
 		<tar longfile="gnu" tarfile="dist/release/fedora-${fedora.version}-server.tar">
 			<tarfileset dir="${release.dir}" mode="755">
 				<include name="fedora-${fedora.version}/server/bin/**"/>
+				<exclude name="fedora-${fedora.version}/server/fedora-internal-use/config/beSecurity*.xml"/>
+				<exclude name="fedora-${fedora.version}/server/fedora-internal-use/config/*.fcfg"/>
 			</tarfileset>
 			<tarfileset dir="${release.dir}">
 				<include name="fedora-${fedora.version}/server/**"/>
 				<exclude name="fedora-${fedora.version}/server/bin/**"/>
+				<exclude name="fedora-${fedora.version}/server/fedora-internal-use/config/beSecurity*.xml"/>
+				<exclude name="fedora-${fedora.version}/server/fedora-internal-use/config/*.fcfg"/>
+			</tarfileset>
+			<tarfileset dir="${release.dir}" mode="600">
+				<include name="fedora-${fedora.version}/server/fedora-internal-use/config/beSecurity*.xml"/>
+				<include name="fedora-${fedora.version}/server/fedora-internal-use/config/*.fcfg"/>
+				<include name="fedora-${fedora.version}/server/config/*"/>
 			</tarfileset>
 		</tar>
 		<gzip zipfile="dist/release/fedora-${fedora.version}-server.tar.gz" src="${release.dir}/fedora-${fedora.version}-server.tar"/>
