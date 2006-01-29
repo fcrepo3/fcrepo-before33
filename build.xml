@@ -288,6 +288,8 @@
 				<include name="fedora-${fedora.version}/server/fedora-internal-use/config/beSecurity*.xml"/>
 				<include name="fedora-${fedora.version}/server/fedora-internal-use/config/*.fcfg"/>
 				<include name="fedora-${fedora.version}/server/config/*"/>
+				<include name="fedora-${fedora.version}/server/jakarta-tomcat-5.0.28/conf/tomcat-users.xml"/>
+				<include name="fedora-${fedora.version}/server/jakarta-tomcat-5.0.28/conf/tomcat-users_fedoraTemplate.xml"/>
 			</tarfileset>
 		</tar>
 		<gzip zipfile="dist/release/fedora-${fedora.version}-server.tar.gz" src="${release.dir}/fedora-${fedora.version}-server.tar"/>
