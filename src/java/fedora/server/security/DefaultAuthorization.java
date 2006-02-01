@@ -288,20 +288,29 @@ public class DefaultAuthorization extends Module implements Authorization {
 		log("tempfiles=" + tempfiles);					
 		log("tempfiles.length=" + tempfiles.size());							
 		TransformerFactory tfactory = TransformerFactory.newInstance();
-		Iterator iterator = tempfiles.keySet().iterator();
-		while (iterator.hasNext()) {
-			log("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
-			File f = new File(fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION); //<<stylesheet location
-			StreamSource ss = new StreamSource(f);
-		    Transformer transformer = tfactory.newTransformer(ss); //xformPath
-		    String key = (String) iterator.next();
-			log("key=" + key);
-		    File infile = new File((String)tempfiles.get(key));
-			FileInputStream fis = new FileInputStream(infile);
-			log("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
-			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + key);
-			transformer.transform(new StreamSource(fis), new StreamResult(fos));
-		}
+        try {
+    		Iterator iterator = tempfiles.keySet().iterator();
+    		while (iterator.hasNext()) {
+    			log("fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION=" + fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION);
+    			File f = new File(fedoraHome + File.separator + BACKEND_POLICIES_XSL_LOCATION); //<<stylesheet location
+    			StreamSource ss = new StreamSource(f);
+    		    Transformer transformer = tfactory.newTransformer(ss); //xformPath
+    		    String key = (String) iterator.next();
+    			log("key=" + key);
+    		    File infile = new File((String)tempfiles.get(key));
+    			FileInputStream fis = new FileInputStream(infile);
+    			log("fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName()=" + fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + infile.getName());			
+    			FileOutputStream fos = new FileOutputStream(fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY + File.separator + key);
+    			transformer.transform(new StreamSource(fis), new StreamResult(fos));
+    		}
+        } finally {
+            // we're done with temp files now, so delete them
+            Iterator iter = tempfiles.keySet().iterator();
+            while (iter.hasNext()) {
+                File tempFile = (File) iter.next();
+                tempFile.delete();
+            }
+        }
 	}
 	
 	private static final String DEFAULT = "default";
