@@ -307,7 +307,7 @@ public class DefaultAuthorization extends Module implements Authorization {
             // we're done with temp files now, so delete them
             Iterator iter = tempfiles.keySet().iterator();
             while (iter.hasNext()) {
-                File tempFile = (File) iter.next();
+                File tempFile = new File((String) tempfiles.get(iter.next()));
                 tempFile.delete();
             }
         }
