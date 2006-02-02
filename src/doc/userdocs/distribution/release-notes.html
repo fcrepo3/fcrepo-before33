@@ -827,10 +827,8 @@
       and the wrong one being called, resulted in the policy finder module returning 
       null for policy datastream content. This resulted in policy datastreams 
       not being in scope as expected. This was fixed, and the developers will 
-      never name two methods in this ambiguous manner again. 
-      <br>
-        &nbsp; 
-      </font> </li>
+      never name two methods in this ambiguous manner again. <br>
+      &nbsp; </font> </li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
       #138 (fixed post 2.1b): HTTP Connections in CLOSE_WAIT: </b>&nbsp; After 
       serving many dissemination requests that hit a backend service, NSDL reported 
@@ -874,6 +872,43 @@
       in situations (like the NSDL's) where getAPIA() and getAPIM() are called 
       multiple times on the same FedoraClient instance.<br>
       &nbsp; </font> </li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #143 (fixed post 2.1b): temp files not being properly cleaned up: </b> It 
+      was noted that some types of temporary files were accumulating in the temp 
+      directory and not being properly cleaned up. <br><br>
+	  <ul>
+	  DefaultAuthorization(backend policy generation):
+	  <ul>
+      Temporary transform files used to construct the set of backend policies 
+      were not being removed after the backend policies had been constructed. This 
+      was fixed in DefaultAuthorization , and updated in Fedora CVS.
+	  </ul>
+      Trippi:
+	  <ul>
+      The servlet we use for &quot;risearch&quot; is included in the trippi library, 
+      and has configurable behavior to pre-save the results on the server before sending 
+      them. These files weren't being deleted which was leaving old copies of 
+      query results in the server tempdir whenever the resource index was enabled 
+      and &quot;risearch&quot; was used. This was fixed in trippi, and the new 
+      jar was checked into the core Fedora CVS.
+	  </ul>
+      Proai:
+	  <ul>
+        Proai is the library that the OAIProvider service uses. At the end of 
+        a cache update cycle, it prunes any out-of-date files from the cache 
+        directories. Part of this process creates a temporary file that is a simple 
+        list of files in the cache. This file wasn't being deleted properly. I 
+        fixed this and checked the latest proai.jar into the oai provider cvs.
+		</ul>
+      OAIProvider:
+	  <ul>
+        For each update cycle, this creates three temporary query result files 
+        per-format. These are automatically deleted under normal circumstances, but 
+        I put some defensive code in place that also attempts to delete them when the 
+        object that's reading them is garbage collected.
+		</ul>
+		</ul>
+		&nbsp; </font> </li>
   </ol>
   <p class="MsoNormal">&nbsp;</p>
   <h2>D.&nbsp; Known Issues</h2>
@@ -907,44 +942,55 @@
       64 bit architecture, Kowari scales well to 250M triples (see: <a href="http://www.itee.uq.edu.au/~dwood/docs/www2005-kowari.pdf"> 
       http://www.itee.uq.edu.au/~dwood/docs/www2005-kowari.pdf</a>).<br>
       &nbsp; </font></li>
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
-Also, when bulk loading a repository that is estimated to have a very large Resource Index (i.e., triplestore > 50M triples), it is recommended that the Fedora server be restarted periodically.  Bulk load tests on Fedora 2.1 indicate that there may be a slow memory leak when doing large numbers of delete/insert sequences on the Kowari triplestore.    This potential issue is currently under investigation.  As a cautionary measure, periodic stopping and restarting of the Fedora repository server will reclaim memory and prevent the possibility of an out-of-memory exception (which might have unpredictable effects on the Kowari triplestore). Here are some sample guidelines:
-
-<ul>
-  <li> Restart daily if:
-    <ul>
-      <li> a very large ingest takes up to a day to complete</li>
-      <li> you are using the Fedora 2.1 default values for start/max heap size of 256M</li>
-      <li> you invoke garbage collection on every commit (default in Fedora 2.1)</li>
-    </ul>
-  <li> Restart every 8 hours if:
-    <ul>
-      <li> everything is the same as above, but you have configured <code>fedora.GCOnCommit</code> to be false, as discussed in issue #4 below.</li>
-    </ul>
-  </li>
-</ul>
-
-<p>In either case if you change the start/max heap size for the fedora server, you can adjust the restart frequency by the same factor. e.g., Using the second scenario, if you increased the start/max heap size to 768M (triple the default), then you could ingest at 3x the rate of the first scenario and only need to restart the sever once a day. </p>
-
-<em>Note: this is only a precautionary measure when attempting very large bulk ingests on respositories estimated to have a very large Resource Index.</em>
-<br/>&nbsp;
-</font></li>
-    <li class="MsoNormal"><font style="font-size: 9pt" face="Arial">
-    Java garbage collection (GC) is run each time an object is ingested via 
-    API-M.  This is a temporary safety precaution that came about because of 
-    issue #3.  If issue #3 does not apply to your environment, you can disable 
-    this behavior and improve ingest performance by setting the 
-    <code>fedora.GCOnCommit</code> system property to <code>false</code>.  
-    This will cause garbage collection to be forced on ingest <em>only when 
-    the available java heap space is down to 1/3 of its maximum</em>.  This can 
-    be done by manually editing the <code>server/bin/fedora.sh</code> or 
-    <code>server\bin\fedora-start.bat</code> script, depending on whether 
-    you are running Fedora in Unix or Windows.  For an example of doing 
-    this, please see 
-    <a href="http://comm.nsdl.org/pipermail/fedora-users/2006-January/001190.html">this 
-    recent post on the fedora-users mailing list</a>.
-    </font></li>
-<br/>&nbsp;
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"> Also, when 
+      bulk loading a repository that is estimated to have a very large Resource 
+      Index (i.e., triplestore > 50M triples), it is recommended that the Fedora 
+      server be restarted periodically. Bulk load tests on Fedora 2.1 indicate 
+      that there may be a slow memory leak when doing large numbers of delete/insert 
+      sequences on the Kowari triplestore. This potential issue is currently under 
+      investigation. As a cautionary measure, periodic stopping and restarting 
+      of the Fedora repository server will reclaim memory and prevent the possibility 
+      of an out-of-memory exception (which might have unpredictable effects on 
+      the Kowari triplestore). Here are some sample guidelines: 
+      <ul>
+        <li> Restart daily if: 
+          <ul>
+            <li> a very large ingest takes up to a day to complete</li>
+            <li> you are using the Fedora 2.1 default values for start/max heap 
+              size of 256M</li>
+            <li> you invoke garbage collection on every commit (default in Fedora 
+              2.1)</li>
+          </ul>
+          <li> Restart every 8 hours if: 
+            <ul>
+              <li> everything is the same as above, but you have configured <code>fedora.GCOnCommit</code> 
+                to be false, as discussed in issue #4 below.</li>
+            </ul>
+          </li>
+      </ul>
+      <p>In either case if you change the start/max heap size for the fedora server, 
+        you can adjust the restart frequency by the same factor. e.g., Using the 
+        second scenario, if you increased the start/max heap size to 768M (triple 
+        the default), then you could ingest at 3x the rate of the first scenario 
+        and only need to restart the sever once a day. </p>
+      <em>Note: this is only a precautionary measure when attempting very large 
+      bulk ingests on respositories estimated to have a very large Resource Index.</em> 
+      <br/>
+      &nbsp; </font></li>
+    <li class="MsoNormal"><font style="font-size: 9pt" face="Arial"> Java garbage 
+      collection (GC) is run each time an object is ingested via API-M. This is 
+      a temporary safety precaution that came about because of issue #3. If issue 
+      #3 does not apply to your environment, you can disable this behavior and 
+      improve ingest performance by setting the <code>fedora.GCOnCommit</code> 
+      system property to <code>false</code>. This will cause garbage collection 
+      to be forced on ingest <em>only when the available java heap space is down 
+      to 1/3 of its maximum</em>. This can be done by manually editing the <code>server/bin/fedora.sh</code> 
+      or <code>server\bin\fedora-start.bat</code> script, depending on whether 
+      you are running Fedora in Unix or Windows. For an example of doing this, 
+      please see <a href="http://comm.nsdl.org/pipermail/fedora-users/2006-January/001190.html">this 
+      recent post on the fedora-users mailing list</a>. </font></li>
+    <br/>
+    &nbsp; 
     <li class="MsoNormal"><font style="font-size: 9pt" face="Arial">Under certain 
       situations, the HTTP error response generated by a dissemination request 
       can mask the true underlying error. For example, consider a backend service 
@@ -985,26 +1031,28 @@ Also, when bulk loading a repository that is estimated to have a very large Reso
       IE and is not a problem with the Fedora server. The problem does not show 
       up when using Netscape, Mozilla, or FireFox browsers with the pdf-related 
       disseminators.<br>
-      &nbsp;</font></li>	  
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><a name="rel2.1b.issues"><b>(post 2.1b issue)</b></a> Note 
-      that Fedora 2.1 is no longer compatible with Java 1.4.1 since the latest 
-      Axis libraries do not work with Fedora under this older Java release. You 
-      should run Java 1.4.2 or higher with Fedora 2.1. <br>
       &nbsp;</font></li>
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b issue)</b> If 
-      you have configured ssl and authenticate all on the Fedora server, then 
-      if you log into Fedora Administrator client with the non ssl port (e.g., 
-      8080) and non ssl protocol (http), you may run into problems with the client 
-      hanging when opening objects with the object editor. This is caused by ssl 
-      redirecting not working properly for some requests. To avoid this, log into 
-      Fedora Administrator with the redirect port (e.g., 8443) and ssl protocol 
-      (https) if your fedora repository is configured for ssl and authentication.<br>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><a name="rel2.1b.issues"><b>(post 
+      2.1b issue)</b></a> Note that Fedora 2.1 is no longer compatible with Java 
+      1.4.1 since the latest Axis libraries do not work with Fedora under this 
+      older Java release. You should run Java 1.4.2 or higher with Fedora 2.1. 
+      <br>
       &nbsp;</font></li>
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b issue)</b> In Fedora 
-      2.1b, it was noted that double indexes were specified on some tables (both 
-      PRIMARY and INDEX) defined in the db schema. To prevent extra overhead that 
-      could negatively affect performance, the extraneous indexes were removed 
-      from the dbspec file for the following tables:<br>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b 
+      issue)</b> If you have configured ssl and authenticate all on the Fedora 
+      server, then if you log into Fedora Administrator client with the non ssl 
+      port (e.g., 8080) and non ssl protocol (http), you may run into problems 
+      with the client hanging when opening objects with the object editor. This 
+      is caused by ssl redirecting not working properly for some requests. To 
+      avoid this, log into Fedora Administrator with the redirect port (e.g., 
+      8443) and ssl protocol (https) if your fedora repository is configured for 
+      ssl and authentication.<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b 
+      issue)</b> In Fedora 2.1b, it was noted that double indexes were specified 
+      on some tables (both PRIMARY and INDEX) defined in the db schema. To prevent 
+      extra overhead that could negatively affect performance, the extraneous 
+      indexes were removed from the dbspec file for the following tables:<br>
       <ol>
         a. doRegistry<br>
         b. riMethod<br>
@@ -1017,8 +1065,7 @@ Also, when bulk loading a repository that is estimated to have a very large Reso
       These changes may also be applied to an existing SQL database by simply 
       removing (dropping) the duplicate index using an appropriate database utility. 
       <br>
-      &nbsp;
-      </font></li>	  
+      &nbsp; </font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b 
       issue)</b> A minor adjustment was made to the length of the dsBind.dsCurrentVersionID 
       column in the sql database schema to accomodate datastreamIDs that are between 
@@ -1028,6 +1075,37 @@ Also, when bulk loading a repository that is estimated to have a very large Reso
       and 64 characters in length, we recommend that you update the dsBind.dsCurrentVersionID 
       column in your sql database from varchar(64) to varchar(69). Otherwise, 
       you can leave the settings at their current values.<br>
+      &nbsp;</font></li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b>(post 2.1b 
+      issue)</b> Problems have been reported during ingest when using certain 
+      builds of MySQL (verified with 4.1.12 for Ubuntu Linux 5.10) with the ResourceIndex 
+      active (level 1 or 2). The resulting error generates a stack trace similar 
+      to the following: 
+      <pre>
+	  Caused by: java.sql.BatchUpdateException: Duplicate entry '' for key 1
+        at com.mysql.jdbc.ServerPreparedStatement.executeBatch(ServerPreparedStatement.java:642)
+        at org.apache.commons.dbcp.DelegatingStatement.executeBatch(DelegatingStatement.java:294)
+        at fedora.server.resourceIndex.ResourceIndexImpl.addBDefMethodMapDatastream(ResourceIndexImpl.java:751)
+	  </pre>
+      According to reports, the problem should in fact manifest anytime PreparedStatements 
+      are used. One of the MySQL developers suggests that the issue may be the 
+      result of the combination of GCC 4.0.3 and glibc2.3.5 used to build MySQL 
+      (which might explain why only some builds of the same version exhibit the 
+      problem).<br>
+      <br>
+      Workarounds include:<br>
+	  <ul>
+        <li>using a different build of MySQL, e.g. one of the official builds 
+          from mysql.com</li>
+        <li>using useServerPrepStmts=false (e.g., in fedora.fcfg, edit the localMySQLPool 
+          jdbcURL to include &quot;useServerPrepStmts=false&quot;). This should 
+          incur a marked performance penalty. </li>
+        <li>Although not rigorously tested, using the MySQL ConnectorJ 5.0.0-beta 
+          JDBC driver also appears to fix the problem</li>
+      </ul>
+	  <br>
+      See bugzilla <a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=142">#142</a> 
+      for additional details. <br>
       &nbsp;</font></li>
   </ol>
   <p>&nbsp;</p>
