@@ -84,4 +84,36 @@ public class Datastream
       return null;
   }
 
+  // Get a complete copy of this datastream
+  public Datastream copy() {
+      Datastream ds = new Datastream();
+      copy(ds);
+      return ds;
+  }
+
+  // Copy this instance into target
+  public void copy(Datastream target) {
+
+      target.isNew = isNew;
+      target.DatastreamID = DatastreamID;
+      if (DatastreamAltIDs != null) {
+          target.DatastreamAltIDs = new String[DatastreamAltIDs.length];
+          for (int i = 0; i < DatastreamAltIDs.length; i++) {
+              target.DatastreamAltIDs[i] = DatastreamAltIDs[i];
+          }
+      }
+      target.DSFormatURI = DSFormatURI;
+      target.DSMIME = DSMIME; 
+      target.DSControlGrp = DSControlGrp;
+      target.DSInfoType = DSInfoType;
+      target.DSState = DSState;
+      target.DSVersionable = DSVersionable;
+      target.DSVersionID = DSVersionID;
+      target.DSLabel = DSLabel;
+      target.DSCreateDT = DSCreateDT;
+      target.DSSize = DSSize;
+      target.DSLocation = DSLocation;
+      target.DSLocationType = DSLocationType;
+  }
+
 }

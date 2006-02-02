@@ -371,7 +371,9 @@ public abstract class DOTranslationUtility {
 	 *
 	 * @return
 	 */
-	public static Datastream normalizeDSLocationURLs(String PID, Datastream ds, int transContext) {
+	public static Datastream normalizeDSLocationURLs(String PID, Datastream origDS, int transContext) {
+
+        Datastream ds = origDS.copy();
 
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")) {

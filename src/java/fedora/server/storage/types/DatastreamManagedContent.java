@@ -19,6 +19,12 @@ public class DatastreamManagedContent
     public DatastreamManagedContent() {
     }
 
+    public Datastream copy() {
+        DatastreamManagedContent ds = new DatastreamManagedContent();
+        copy(ds);
+        return ds;
+    }
+
     public InputStream getContentStream()
             throws StreamIOException
     {

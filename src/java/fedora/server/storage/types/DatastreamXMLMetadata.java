@@ -57,6 +57,19 @@ public class DatastreamXMLMetadata extends Datastream
       m_encoding=encoding;
   }
 
+  public Datastream copy() {
+      DatastreamXMLMetadata ds = new DatastreamXMLMetadata(m_encoding);
+      copy(ds);
+      if (xmlContent != null) {
+          ds.xmlContent = new byte[xmlContent.length];
+          for (int i = 0; i < xmlContent.length; i++) {
+              ds.xmlContent[i] = xmlContent[i];
+          }
+      }
+      ds.DSMDClass = DSMDClass;
+      return ds;
+  }
+
   public InputStream getContentStream()
   {
     return(new ByteArrayInputStream(xmlContent));

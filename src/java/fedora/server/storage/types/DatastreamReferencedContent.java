@@ -19,6 +19,12 @@ public class DatastreamReferencedContent
     public DatastreamReferencedContent() {
     }
 
+    public Datastream copy() {
+        DatastreamReferencedContent ds = new DatastreamReferencedContent();
+        copy(ds);
+        return ds;
+    }
+
     /**
      * Gets an InputStream to the content of this externally-referenced
      * datastream.
