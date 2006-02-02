@@ -108,8 +108,8 @@ public class ResourceIndexModule extends Module
         }
         // params ok, let's init the triplestore
         try {
-            m_conn = TriplestoreConnector.init(connectorClassName,
-                                               map);
+            System.out.print("Initializing Triplestore...");
+            m_conn = TriplestoreConnector.init(connectorClassName, map);
 
             // Make a MultiConnector if any mirrors are specified
             String mirrors = getParameter("mirrors");
@@ -141,6 +141,7 @@ public class ResourceIndexModule extends Module
                 throw new ModuleInitializationException("Error initializing "
                        + "connection pool.", getRole(), e);
             } 
+            System.out.println("done");
         } catch (ClassNotFoundException e) {
             throw new ModuleInitializationException("Connector class \"" 
                     + connectorClassName + "\" not in classpath.", getRole(), e);

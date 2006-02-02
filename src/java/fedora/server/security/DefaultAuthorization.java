@@ -344,6 +344,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
   public void postInitModule() throws ModuleInitializationException {
+    System.out.print("Initializing XACML Authorization Module...");
   	log("in DefaultAuthorization.postInitModule() 1");
     DOManager m_manager = (DOManager) getServer().getModule("fedora.server.storage.DOManager");
   	log("in DefaultAuthorization.postInitModule() 2");
@@ -371,6 +372,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesActiveDirectory);
         Transom.getInstance().setValidateSurrogatePolicies(validateSurrogatePolicies);
         Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
+        System.out.println("done");
     } catch (Throwable e1) {
       	log("in DefaultAuthorization.postInitModule() 8");
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole(), e1);
