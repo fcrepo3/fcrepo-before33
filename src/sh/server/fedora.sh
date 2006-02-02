@@ -141,7 +141,7 @@ start() {
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 15 "")
+		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 60 "")
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar \
@@ -149,7 +149,7 @@ start() {
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Dfedora.home="$FEDORA_HOME" \
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 15 "")
+		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 60 "")
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
@@ -214,7 +214,7 @@ debug() {
 		-Dfedora.home="$FEDORA_HOME" \
 		-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 15 "")
+		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 60 "")
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
@@ -222,7 +222,7 @@ debug() {
 		-Djavax.net.ssl.trustStorePassword=tomcat \
 		-Dfedora.home="$FEDORA_HOME" \
 		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 15 "")
+		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 60 "")
 	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
 	
 	echo "Initializing Fedora Server instance..."
