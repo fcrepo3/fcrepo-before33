@@ -1022,15 +1022,12 @@
       be ignored.<br>
       &nbsp;</font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">Users have 
-      reported problems with viewing the pdf-related disseminators in the demo 
-      objects (e.g., demo:21,demo:26 and getPDF method) when using IE 5.x and 
-      higher. The reported behavior varies and is either an error message from 
-      the browser like &quot;Internet Explorer cannot download getPDF from localhost 
-      - the file could not be written to the cache&quot; or the browser hangs 
-      and displays a blank page. This appears to be a browser-related issue with 
-      IE and is not a problem with the Fedora server. The problem does not show 
-      up when using Netscape, Mozilla, or FireFox browsers with the pdf-related 
-      disseminators.<br>
+      reported problems in creating C# class files using C# wsdl converter tools 
+      with Fedora-API-A.wsdl and fedora-types.xsd. There appear to be some differences 
+      between C# converter tools and the Axis wsdl2java converter tool used by 
+      Fedora. Refer to bugzilla <a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=140"> 
+      #bug140 </a> and <a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=141">bug#141</a> 
+      for additional details. <br>
       &nbsp;</font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><a name="rel2.1b.issues"><b>(post 
       2.1b issue)</b></a> Note that Fedora 2.1 is no longer compatible with Java 
@@ -1094,7 +1091,7 @@
       problem).<br>
       <br>
       Workarounds include:<br>
-	  <ul>
+      <ul>
         <li>using a different build of MySQL, e.g. one of the official builds 
           from mysql.com</li>
         <li>using useServerPrepStmts=false (e.g., in fedora.fcfg, edit the localMySQLPool 
@@ -1103,7 +1100,7 @@
         <li>Although not rigorously tested, using the MySQL ConnectorJ 5.0.0-beta 
           JDBC driver also appears to fix the problem</li>
       </ul>
-	  <br>
+      <br>
       See bugzilla <a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=142">#142</a> 
       for additional details. <br>
       &nbsp;</font></li>
