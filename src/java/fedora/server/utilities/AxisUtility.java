@@ -125,9 +125,6 @@ public abstract class AxisUtility {
                            int timeoutSeconds=Integer.parseInt(args[2]);
                            if (ServerUtility.pingServletContainerStartup("/", timeoutSeconds)) {
                                AdminClient.main(parms);
-                               for (int i=0; i<args.length; i++) {
-                               	System.err.println("audit parms " + args[i]);
-                               }
                                if ((3 < args.length) && (args[3] != null) && ! "".equals(args[3])) {
                                		ServerUtility.pingServletContainerRunning(args[3], 2);
                                }
