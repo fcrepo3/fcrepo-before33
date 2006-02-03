@@ -33,7 +33,7 @@
 
     <div class="tocbox">
       <ol>
-        <li><a href="#rel2.1">Release 2.1 - January 27, 2006</a></li>
+        <li><a href="#rel2.1">Release 2.1 - February 3, 2006</a></li>
         <li><a href="#rel2.1b">Release 2.1b - October 21, 2005</a></li>
 		<li><a href="#rel2.0">Release 2.0 - January 31, 2005</a></li>
 
@@ -63,7 +63,7 @@
 
   
 <div class="sec1"> 
-  <h1><a id="rel2.1" name="rel2.1">1. Release 2.1 - January 27, 2006</a></h1>
+  <h1><a id="rel2.1" name="rel2.1">1. Release 2.1 - February 3, 2006</a></h1>
   <h2>&nbsp;</h2>
   <p>Fedora 2.1 is a very significant release of Fedora since it introduces the 
     new Fedora security architecture (with pluggable authentication and XACML-based 
@@ -1009,12 +1009,14 @@
       of Behavior Definition and Behavior Mechanism objects not yet supported, 
       but will be made available in the next release of Fedora. <br>
       &nbsp;</font></li>
-    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">One early 
-      adopter of Fedora 2.1 reported anomalous 401 status codes returned after 
-      a period of normal server use.&nbsp; To date, this observation hasn't been 
-      replicated, and the cause is unknown.&nbsp; The problem was fixed by changing 
-      from option B to option C as described in the document titled &quot;Securing 
-      Your Fedora Repository&quot;, section 4.<br>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">
+      An early adopter of Fedora 2.1 reported anomalous 401 status codes returned
+      after a period of normal server use.  This problem is difficult to replicate,
+      and the cause is unknown.  A workaround to this problem is to instruct
+      Tomcat to use a MemoryRealm instead of a JAASRealm.  Detailed instructions
+      on applying this workaround are
+      available at <a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=144">bugzilla 
+      #144</a>.<br>
       &nbsp;</font></li>
     <li class="MsoNormal"><font face="Arial" style="font-size: 9pt">The exception 
       fedora.server.errors.servletExceptionExtensions.Ok200Exception, (and associated 
