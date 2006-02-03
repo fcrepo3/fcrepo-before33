@@ -241,7 +241,11 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
 
   <div class="sect">
     <h2><a name="app">3. Application Interface</a></h2>
-    <p>The RISearch service can be programmatically accessed via HTTP GET.  As with the
+    <p>The RISearch service can be programmatically accessed via HTTP GET or POST.
+    To avoid character encoding issues, POST should always be used when the query is passed in by value
+    and contains non-ASCII characters.
+    </p>
+    <p>As with the
     user interface, it can be invoked to retrieve tuples or triples.  The syntax is described below while
     the meaning of each parameter is described in the above section.
     </p>
