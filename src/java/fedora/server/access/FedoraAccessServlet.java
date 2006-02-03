@@ -399,9 +399,13 @@ public class FedoraAccessServlet extends HttpServlet
           logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
             + "GetDatastreamDissemination: " + interval + " milliseconds.");
       }
-    } catch (AuthzException ae) {          
+    } catch (AuthzException ae) {    
+    	logger.logWarning("[FedoraAccessServlet] AuthzException: "
+    	    + ae.getMessage() + " Request: " + requestURI + " actionLabel: " + actionLabel);
+    	ae.printStackTrace();
         throw RootException.getServletException(ae, request, actionLabel, new String[0]);   		
     } catch (Throwable th) {
+    	th.printStackTrace();
     	throw new InternalError500Exception("", th, request, actionLabel, "", new String[0]);
     }
   }

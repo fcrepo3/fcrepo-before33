@@ -151,6 +151,8 @@ public class DatastreamResolverServlet extends HttpServlet
     Timestamp currentTimestamp = null;
     PrintWriter out = null;
     ServletOutputStream outStream = null;
+    String requestURI = request.getRequestURL().toString() + "?"
+    + request.getQueryString();
 
     id = request.getParameter("id").replaceAll("T"," ");
     logger.logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
@@ -420,7 +422,11 @@ public class DatastreamResolverServlet extends HttpServlet
         logger.logWarning("[DatastreamResolverServlet] Unknown "
             + "dsControlGroupType: " + dsControlGroupType);
       }
-	} catch (AuthzException ae) {            
+	} catch (AuthzException ae) {   
+    	logger.logWarning("[FedoraAccessServlet] AuthzException: "
+        	    + ae.getMessage() + " Request: " + requestURI + " actionLabel: " 
+        	    + ACTION_LABEL);
+    	ae.printStackTrace();
         throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	     
     } catch (Throwable th)
     {
