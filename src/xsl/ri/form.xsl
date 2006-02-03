@@ -124,7 +124,7 @@ function showPane(paneId, activeTab) {
         <xsl:otherwise>tupleForm</xsl:otherwise>
       </xsl:choose>
     </xsl:attribute>
-    <form method="GET" target="TrippiQueryResults">
+    <form method="POST" target="TrippiQueryResults">
       <xsl:attribute name="action">
         <xsl:value-of select="/query-service/@href"/>
       </xsl:attribute>
