@@ -85,6 +85,7 @@ public class FieldSearchServlet
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+    	request.setCharacterEncoding("UTF-8");
     	String actionLabel = "Field Search";
         try {
 		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);            
@@ -418,7 +419,6 @@ public class FieldSearchServlet
     /** Exactly the same behavior as doGet. */
     public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	request.setCharacterEncoding("UTF-8");
         doGet(request, response);
     }
 
