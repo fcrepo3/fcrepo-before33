@@ -143,7 +143,7 @@
       <blockquote>
 	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin demo:1 foxml1.0 migrate http</b></p>
   	<p>Exports demo:1 for migration in FOXML format  (from example.com:80 to the current directory).</p>
-	<br></br>
+	<br>
 	<p><b>fedora-export example.com:80 fedoraAdmin fedoraAdmin DMO default default /tmp/fedoradump http</b></p>
   	<p>Exports all objects in the default export format and context (from example.com:80 to directory /tmp/fedoradump).</p>
       </blockquote>
@@ -308,7 +308,7 @@
     <p>Example:</p>
 
     <blockquote>
-      <p><b>fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin</b></p>
+      <p><b>fedora-ingest-demos localhost 8080 fedoraAdmin fedoraAdmin http</b></p>
     </blockquote>
 
     <p>A convenient script to ingest all included demo objects for
@@ -351,7 +351,8 @@
     <p>Example:</p>
 
     <blockquote>
-      <p><b>fedora-convert-demos http localhost 8080 https www.fedora.info 80 c:\fedora-2.0</b></p>
+      
+    <p><b>fedora-convert-demos http localhost 8080 http www.fedora.info 80 c:\fedora-2.0</b></p>
     </blockquote>
 
     <p>Converts URLs in the demo objects from one protocol/host/port
