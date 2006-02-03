@@ -909,6 +909,17 @@
 		</ul>
 		</ul>
 		&nbsp; </font> </li>
+    <li class="MsoNormal"><font face="Arial" style="font-size: 9pt"><b> Bugzilla 
+      #124 (fixed post 2.1b): API-A Lite search was not supporting international
+      characters</b> This was fixed for the FieldSearch servlet by explicitly 
+      assuming the encoding of the request parameters to be UTF-8 within the 
+      servlet code.  In the case of the RISearch interface, it was fixed by
+      changing the HTTP method to POST in the stylesheet that produces the
+      html interface, and noting in the risearch documentation that POST
+      should be used when the query is given by value and might contain
+      international characters.
+      <br>
+      &nbsp; </font> </li>
   </ol>
   <p class="MsoNormal">&nbsp;</p>
   <h2>D.&nbsp; Known Issues</h2>
