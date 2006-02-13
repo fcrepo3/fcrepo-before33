@@ -112,16 +112,22 @@
   &lt;serviceSecurityDescription role=&quot;fedoraInternalCall-2&quot; callBasicAuth=&quot;false&quot; callSSL=&quot;false&quot; callbackBasicAuth=&quot;false&quot; callbackSSL=&quot;false&quot; iplist=&quot;127.0.0.1&quot;/&gt;</pre> 
 	</div>
 
-    <p>Care needs to be exercised when editing these two special entries in the beSecurity 
-      configuration file or problems can result in how backend services communicate 
-      with the Fedora server. In the first entry for "fedoraInternalCall-1", changes 
-      can be made to the "callUsername" or "callPassword" attributes, but you 
-      must also make corresponding changes in the tomcat-users_fedoraTemplate.xml 
+    <p>Care needs to be exercised when editing these two special entries in the 
+      beSecurity configuration file or problems can result in how backend services 
+      communicate with the Fedora server. In the first entry for "fedoraInternalCall-1", 
+      changes can be made to the "callUsername" or "callPassword" attributes, 
+      but you must also make corresponding changes in the tomcat-users_fedoraTemplate.xml 
       file before the changes will be recognized. Changes can also be made to 
       the "iplist" attribute. The "iplist" should be the same as the IP address 
       of the Fedora server as specified in the fedora.fcfg file. The attribute 
       for "role" should never be edited. The second entry for "fedoraInternalCall-2" 
-      should never be edited.</p>
+      should never be edited except to modify the &quot;iplist&quot; attribute. 
+      By default the &quot;iplist&quot; attribute is set to the value of &quot;127.0.0.1&quot; 
+      which matches the default setting of &quot;localhost&quot; for &quot;fedoraServerHost&quot;. 
+      If you change the hostname used by the fedora server in fedora.fcfg, you 
+      must also update the &quot;iplist&quot; attribute entries in beSecurity.xml 
+      with the new IP address. Refer to the <a href="../../distribution/installation.html#d0e683">Installation Guide</a> for additional 
+      details concerning running your server on a different port.</p>
 
 <p>In addition to the two special entries for the Fedora server, you can optionally add entries for each backend service. If no additional entries are provided, then a backend service defaults to the values of no basic authentication, no SSL, and no IP restriction. The only criteria used to restrict access is that the role matches the bmech PID of the backend service. Refer to the section on "beSecurity Examples" for examples of several beSecurity configurations.</p>
 
