@@ -65,6 +65,18 @@ public class FedoraClient implements Constants {
     private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
 
+    /** 
+     * Should FedoraClient take over log4j configuration?
+     *
+     * FIXME: This is a hack until we come up with a sensible way of
+     *        dealing with log4j logging without assuming too much about
+     *        the calling app's logging desires.  For now, this gives
+     *        the calling app a chance to bypass this forced configuration
+     *        by setting FedoraClient.FORCE_LOG4J_CONFIGURATION to false
+     *        before instantiating a FedoraClient for the first time.
+     */
+    public static boolean FORCE_LOG4J_CONFIGURATION = true;
+
     /** Seconds to wait before a connection is established. */
     public int TIMEOUT_SECONDS = 20;
 
@@ -98,7 +110,7 @@ public class FedoraClient implements Constants {
     private String m_serverVersion;
 
     public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
-        initLogger();
+        if (FORCE_LOG4J_CONFIGURATION) initLogger();
     	m_baseURL = baseURL;
         m_user = user;
         m_pass = pass;
