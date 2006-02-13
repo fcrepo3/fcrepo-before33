@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -400,7 +401,7 @@ public class FedoraClient implements Constants {
 
             // This is the date format recommended by RFC2616
             SimpleDateFormat format = new SimpleDateFormat(
-                    "EEE, dd MMM yyyy HH:mm:ss z");
+                    "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             format.setTimeZone(TimeZone.getTimeZone("UTC"));
             return format.parse(dateString);
 
