@@ -101,6 +101,10 @@ public class ResourceIndexRebuilder implements Rebuilder {
             p = (Parameter)it.next();
             tsTC.put(p.getName(), p.getValue());
         }
+
+        // make sure the "path" parameter if not absolute, is relative to 
+        // FEDORA_HOME
+        tsTC.put("path", tsPath);
         
         Map aliasMap = new HashMap();
         it = riMC.getParameters().iterator();
