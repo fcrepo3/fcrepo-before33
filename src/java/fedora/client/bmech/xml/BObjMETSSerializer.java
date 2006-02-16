@@ -149,7 +149,9 @@ public abstract class BObjMETSSerializer
     root.setAttributeNS(XMLNS, "xmlns:xlink", XLINK);
     root.setAttributeNS(XSI, "xsi:schemaLocation", SCHEMALOC);
     String pid = (bObjData.getbObjPID() == null) ? "" : bObjData.getbObjPID();
-    root.setAttribute("OBJID", pid);
+    if (!pid.equals("")) {
+    	root.setAttribute("OBJID", pid);
+    }
     String label = (bObjData.getbObjLabel() == null) ? "" : bObjData.getbObjLabel();
     root.setAttribute("LABEL", label);
     Attr[] attrSet = getVariableRootAttrs();
