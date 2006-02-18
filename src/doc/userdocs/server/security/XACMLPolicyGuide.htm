@@ -149,14 +149,14 @@ automatically generated on Fedora build and can be found in the Fedora software 
 <p>
         &nbsp;Under Windows:</p>
       <div class="code">
-<pre>    %FEDORA_HOME%\server\config\xacml-policies\vocabulary.txt</pre>
+      <pre>    %FEDORA_HOME%\server\fedora-internal-use\vocabulary.txt</pre>
 </div>
       <p style='text-autospace:none'>&nbsp;</p>
 
 <p>
         &nbsp;Under Unix:</p>
       <div class="code">
-<pre>    $FEDORA_HOME\server\config\xacml-policies\vocabulary.txt</pre>
+      <pre>    $FEDORA_HOME\server\fedora-internal-use\vocabulary.txt</pre>
 </div>
 	<p>&nbsp;</p>
 	<p>This vocabulary provides a set of identifiers (URNs) that can appear in XACML
@@ -526,8 +526,8 @@ policy Target to determine if the policy is applicable to the incoming request.
   For example, to define a policy that is applicable to any kind of user or agent,
 the following is specified:</p>
 
-<p>
-        &nbsp;</p>
+<p>&nbsp;
+        </p>
       <div class="code">
 <pre>    &lt;Subjects&gt;
         &lt;AnySubject/&gt;
@@ -686,8 +686,8 @@ particular rule.&nbsp; </p>
 Refer to the documentation above for the <a href="#POLICY-TARGET">Defining a 
 Policy Target </a>for the structure of a Target, since rule and policy Targets 
 are defined using the same elements.&nbsp;&nbsp;&nbsp; </p>
-<p style='text-autospace:none'>
-&nbsp;</p>
+<p style='text-autospace:none'>&nbsp;
+</p>
 <p style='text-autospace:none'><b>
 <span style='font-size:10.0pt;
 font-family:"Courier New";background:white'>&lt;Condition&gt;</span></b></p>
@@ -811,8 +811,8 @@ constraining rule Target), and (2) if a Condition is specified,&nbsp; the condit
 predicate evaluates to TRUE.&nbsp;&nbsp; An applicable rule will result in a 
 Permit or Deny for an incoming request, based on what is specified in the Rule 
 Effect.</p>
-<p style='text-autospace:none'>
-	&nbsp;</p>
+<p style='text-autospace:none'>&nbsp;
+	</p>
 <h3><a name="POLICY-OPT-ATTRS">2<b>.6 Required vs. Optional Attributes in a Policy</b></a></h3>
 <p>There are times when an attribute that is referred to by a policy target will 
 not be available on an incoming service request.&nbsp; By default, when the 
