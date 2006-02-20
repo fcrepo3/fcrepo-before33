@@ -60,8 +60,8 @@
 						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 					</ResourceMatch>
 					<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">TEISOURCE</AttributeValue>
+						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 					</ResourceMatch>
 				</Resource>
 				<Resource>
@@ -70,8 +70,8 @@
 						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 					</ResourceMatch>
 					<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
-						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 						<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">FOPDISSEM</AttributeValue>
+						<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:datastream:id" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 					</ResourceMatch>
 				</Resource>
 			</Resources>
