@@ -297,6 +297,9 @@ import com.sun.xacml.ctx.Status;
 		} else if (temp instanceof String[]) {
 			log("AttributeFinder:findAttribute" + " will return a " + "String[] " + iAm());
 			for (int i = 0; i < ((String[])temp).length; i++) {
+				if (((String[])temp)[i] == null) {
+					continue;
+				}
 				if (attributeType.toString().equals(StringAttribute.identifier)) {
 					set.add(new StringAttribute(((String[])temp)[i]));				
 				} else if (attributeType.toString().equals(DateTimeAttribute.identifier)) {
