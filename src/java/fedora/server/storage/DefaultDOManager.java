@@ -5,34 +5,47 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.sql.SQLException;
 
+import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
-import fedora.server.errors.*;
+import fedora.server.errors.ConnectionPoolNotFoundException;
+import fedora.server.errors.GeneralException;
+import fedora.server.errors.InvalidContextException;
+import fedora.server.errors.LowlevelStorageException;
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
+import fedora.server.errors.ObjectDependencyException;
+import fedora.server.errors.ObjectExistsException;
+import fedora.server.errors.ObjectLockedException;
+import fedora.server.errors.ObjectNotFoundException;
+import fedora.server.errors.ObjectNotInLowlevelStorageException;
+import fedora.server.errors.ServerException;
+import fedora.server.errors.StorageDeviceException;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
-import fedora.server.resourceIndex.*;
+import fedora.server.resourceIndex.ResourceIndex;
 import fedora.server.search.Condition;
 import fedora.server.search.FieldSearch;
-import fedora.server.search.FieldSearchResult;
 import fedora.server.search.FieldSearchQuery;
-import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
+import fedora.server.search.FieldSearchResult;
 import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
+import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -40,14 +53,12 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MIMETypedStream;
-import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.utilities.DCFields;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.DOValidator;
 import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.RelsExtValidator;
-import fedora.common.Constants;
 
 /**
  *
@@ -241,6 +252,7 @@ public class DefaultDOManager
             throw new ModuleInitializationException(
                     "Management module not loaded.", getRole());
 		}
+		
         // get ref to contentmanager module
         m_contentManager = (ExternalContentManager)
           getServer().getModule("fedora.server.storage.ExternalContentManager");
@@ -309,6 +321,15 @@ public class DefaultDOManager
                     + "check for and create non-existing table(s): "
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
         }
+        
+        // get ref to lowlevelstorage module
+        m_permanentStore=(ILowlevelStorage) getServer().
+        		getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
+        if (m_permanentStore==null) {
+            logFinest("LowlevelStorage not loaded");
+            throw new ModuleInitializationException(
+                    "LowlevelStorage not loaded", getRole());
+        }
 
     }
 
@@ -336,14 +357,6 @@ public class DefaultDOManager
 
         writer.invalidate();
         // remove pid from tracked list...m_writers.remove(writer);
-    }
-
-    public ILowlevelStorage getObjectStore() {
-        return FileSystemLowlevelStorage.getObjectStore();
-    }
-
-    public ILowlevelStorage getDatastreamStore() {
-        return FileSystemLowlevelStorage.getDatastreamStore();
     }
 
     public ConnectionPool getConnectionPool() {
@@ -424,7 +437,7 @@ public class DefaultDOManager
                                                 m_defaultExportFormat, 
                                                 m_defaultStorageFormat,
                                                 m_storageCharacterEncoding,
-                                                getObjectStore().retrieve(pid), 
+                                                m_permanentStore.retrieveObject(pid), 
                                                 this);
                     source = "filesystem";
                     if (m_readerCache != null) {
@@ -454,7 +467,7 @@ public class DefaultDOManager
             return new SimpleBMechReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
-                    getObjectStore().retrieve(pid), this);
+                    m_permanentStore.retrieveObject(pid), this);
         }
     }
 
@@ -470,7 +483,7 @@ public class DefaultDOManager
             return new SimpleBDefReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
-                    getObjectStore().retrieve(pid), this);
+                    m_permanentStore.retrieveObject(pid), this);
         }
     }
     
@@ -485,7 +498,7 @@ public class DefaultDOManager
 			// TODO: make sure there's no SESSION lock on a writer for the pid
 
 			BasicDigitalObject obj=new BasicDigitalObject();
-			m_translator.deserialize(getObjectStore().retrieve(pid), obj,
+			m_translator.deserialize(m_permanentStore.retrieveObject(pid), obj,
 					m_defaultStorageFormat, m_storageCharacterEncoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
 			DOWriter w=new SimpleDOWriter(context, this, m_translator,
@@ -848,7 +861,7 @@ public class DefaultDOManager
                       + dmc.DSVersionID;
                   logInfo("COMMIT: Deleting ManagedContent datastream. " + "id: " + id);
                   try {
-                    getDatastreamStore().remove(id);
+                	  m_permanentStore.removeDatastream(id);
                   } catch (LowlevelStorageException llse) {
                     logWarning("COMMIT: While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
                   }
@@ -858,7 +871,7 @@ public class DefaultDOManager
             // STORAGE:
             // remove digital object from persistent storage
             try {
-                getObjectStore().remove(obj.getPid());
+            	m_permanentStore.removeObject(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
                 logWarning("COMMIT: Object wasn't found in permanent low level store, but that might be ok...continuing with purge.");
             }
@@ -946,7 +959,7 @@ public class DefaultDOManager
 						} else if (dmc.DSLocation.startsWith("copy://"))  {
                             // make a copy of the pre-existing content
                             mimeTypedStream=new MIMETypedStream(null,
-                                    getDatastreamStore().retrieve(
+                            		m_permanentStore.retrieveDatastream(
                                             dmc.DSLocation.substring(7)), null);
 						} else {
                             mimeTypedStream = m_contentManager.
@@ -957,14 +970,14 @@ public class DefaultDOManager
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                                   + dmc.DSVersionID;
                         if (obj.isNew()) {
-                            getDatastreamStore().add(id, mimeTypedStream.getStream());
+                        	m_permanentStore.addDatastream(id, mimeTypedStream.getStream());
                         } else {
                             // object already existed...so we may need to call
                             // replace if "add" indicates that it was already there
                             try {
-                                getDatastreamStore().add(id, mimeTypedStream.getStream());
+                            	m_permanentStore.addDatastream(id, mimeTypedStream.getStream());
                             } catch (ObjectAlreadyInLowlevelStorageException oailse) {
-                                getDatastreamStore().replace(id, mimeTypedStream.getStream());
+                            	m_permanentStore.replaceDatastream(id, mimeTypedStream.getStream());
                             }
                         }
                         // Reset dsLocation in object to new internal location.
@@ -1016,9 +1029,9 @@ public class DefaultDOManager
                 // write XML serialization of object to persistent storage
                 logFinest("COMMIT: Storing digital object...");
                 if (obj.isNew()) {
-                    getObjectStore().add(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                	m_permanentStore.addObject(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 } else {
-                    getObjectStore().replace(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
+                	m_permanentStore.replaceObject(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 }
                 
                 // INVALIDATE DOREADER CACHE:  
@@ -1046,7 +1059,6 @@ public class DefaultDOManager
                     }
                     int systemVersion=results.getInt("systemVersion");
                     systemVersion++;
-                    Date now=new Date();
                     s.executeUpdate("UPDATE doRegistry SET systemVersion="
                             + systemVersion + " "
                             + "WHERE doPID='" + obj.getPid() + "'");
@@ -1138,7 +1150,7 @@ public class DefaultDOManager
                             String token = obj.getPid() + "+" + dsID + "+" + 
                                     reader.GetDatastream(dsID, dt).DSVersionID;
                             try {
-                                getDatastreamStore().remove(token);
+                            	m_permanentStore.removeDatastream(token);
                                 logInfo("Removed purged datastream version "
                                     + "from low level storage (token = " 
                                     + token + ")"); 

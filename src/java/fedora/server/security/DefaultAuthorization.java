@@ -102,11 +102,11 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
     if (moduleParameters.containsKey(SURROGATE_POLICIES_DIRECTORY_KEY)) {
-    	surrogatePoliciesActiveDirectory = getFileParameter(SURROGATE_POLICIES_DIRECTORY_KEY);
+    	surrogatePoliciesActiveDirectory = getParameter(SURROGATE_POLICIES_DIRECTORY_KEY, true);
     	log("surrogatePoliciesDirectory=" + surrogatePoliciesActiveDirectory);
     }
     if (moduleParameters.containsKey(REPOSITORY_POLICIES_DIRECTORY_KEY)) {
-    	repositoryPoliciesActiveDirectory = getFileParameter(REPOSITORY_POLICIES_DIRECTORY_KEY);
+    	repositoryPoliciesActiveDirectory = getParameter(REPOSITORY_POLICIES_DIRECTORY_KEY, true);
     	log("repositoryPoliciesDirectory=" + repositoryPoliciesActiveDirectory);
     }
 	// SDP: removed since object policies directory is obsolete in Fedora 2.1
@@ -119,7 +119,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     }
     */
     if (moduleParameters.containsKey(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY)) {
-    	repositoryPolicyGuitoolDirectory = getFileParameter(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY);
+    	repositoryPolicyGuitoolDirectory = getParameter(REPOSITORY_POLICY_GUITOOL_DIRECTORY_KEY, true);
     	log("repositoryPolicyGuitoolDirectory=" + repositoryPolicyGuitoolDirectory);
     }        
     if (moduleParameters.containsKey(COMBINING_ALGORITHM_KEY)) {

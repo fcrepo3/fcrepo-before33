@@ -1,20 +1,17 @@
 package fedora.server.storage.lowlevel;
 
-import java.io.File;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.ConnectionPoolManager;
-import fedora.server.Server;
-import fedora.server.errors.ConnectionPoolNotFoundException;
-import fedora.server.errors.InitializationException;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
+import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.SQLUtility;
 
 /**
@@ -25,55 +22,14 @@ import fedora.server.utilities.SQLUtility;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-class DBPathRegistry extends PathRegistry implements IPathRegistry {
-	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
-
-	private static LowlevelStorageException staticException = null;
-	private static final Configuration conf = Configuration.getInstance();
-	private static ConnectionPool commonConnectionPool = null;
-	static {
-		if (Configuration.getTestConfig()) {
-			try {
-				commonConnectionPool = new ConnectionPool("com.mysql.jdbc.Driver",
-						"jdbc:mysql://localhost/fedora20",
-						"fedoraAdmin", "fedoraAdmin", 
-						100, 10, -1, 0, 1800000, 3, -1, true, true, true, new Byte("1").byteValue() );
-			} catch (SQLException sqlException) {
-				System.out.println("\n*****didn't make connectionPool*****[[[[[");
-				System.out.println(sqlException.getMessage() + "\n]]]]]*****");
-			}
-		} else {
-			Server s_server = null;
-			try {
-				s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
-			} catch (InitializationException ie) {
-				System.err.println(ie.getMessage());
-			}
-			ConnectionPoolManager cpmgr=(ConnectionPoolManager) s_server.getModule(
-				"fedora.server.storage.ConnectionPoolManager");
-			if (cpmgr==null) {
-				staticException = new LowlevelStorageException(true,
-					"Server module not loaded: "
-					+ "fedora.server.storage.ConnectionPoolManager");
-			} else {
-				try {
-					commonConnectionPool=cpmgr.getPool();
-				} catch (ConnectionPoolNotFoundException cpnfe) {
-					staticException = new LowlevelStorageException(true,
-						"Lowlevel storage can't get default pool.", cpnfe);
-				}
-			}
-		}
-	}
-
+public class DBPathRegistry extends PathRegistry {
 	private ConnectionPool connectionPool = null;
+	private boolean backslashIsEscape;
 
-	public DBPathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
-		super(registryName,storeBases);
-		if (commonConnectionPool == null) {
-			throw staticException;
-		}
-		connectionPool = commonConnectionPool;
+	public DBPathRegistry(Map configuration) {
+		super(configuration);
+		connectionPool = (ConnectionPool)configuration.get("connectionPool");
+		backslashIsEscape = Boolean.valueOf((String)configuration.get("backslashIsEscape")).booleanValue();
 	}
 
 	public String get(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
@@ -146,7 +102,7 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 	}
 
 	public void put (String pid, String path)  throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException  {
-		if (conf.getBackslashIsEscape()) {
+		if (backslashIsEscape) {
 			StringBuffer buffer = new StringBuffer();
 			String backslash = "\\"; //Java quotes will interpolate this as 1 backslash
 			String escapedBackslash = "\\\\"; //Java quotes will interpolate these as 2 backslashes
@@ -181,8 +137,27 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 			throw new LowlevelStorageInconsistencyException("[" + pid + "] deleted from db registry -multiple- times", e2);
 		}
 	}
+	
+	public void rebuild () throws LowlevelStorageException {
+		int report = FULL_REPORT;
+		try {
+			executeSql("DELETE FROM " + getRegistryName());
+		} catch (ObjectNotInLowlevelStorageException e1) {
+		} catch (LowlevelStorageInconsistencyException e2) {
+		}
+		try {
+			System.err.println("\nbegin rebuilding registry from files");
+			traverseFiles(storeBases, REBUILD, false, report); // continues, ignoring bad files
+			System.err.println("end rebuilding registry from files (ending normally)");
+		} catch (Exception e) {
+			if (report != NO_REPORT) {
+				System.err.println("ending rebuild unsuccessfully: " + e.getMessage());
+			}
+			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
+		}
+	}
 
-	public void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException {
+	public void auditFiles () throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  files-against-registry");
 		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
 		System.err.println("end audit:  files-against-registry (ending normally)");
@@ -222,26 +197,6 @@ class DBPathRegistry extends PathRegistry implements IPathRegistry {
 		}
 		return hashtable.keys();
 	}
-
-	public void rebuild (/*String[] storeBases*/) throws LowlevelStorageException {
-		int report = FULL_REPORT;
-		try {
-			executeSql("DELETE FROM " + getRegistryName());
-		} catch (ObjectNotInLowlevelStorageException e1) {
-		} catch (LowlevelStorageInconsistencyException e2) {
-		}
-		try {
-			System.err.println("\nbegin rebuilding registry from files");
-			traverseFiles(storeBases, REBUILD, false, report); // continues, ignoring bad files
-			System.err.println("end rebuilding registry from files (ending normally)");
-		} catch (Exception e) {
-			if (report != NO_REPORT) {
-				System.err.println("ending rebuild unsuccessfully: " + e.getMessage());
-			}
-			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
-		}
-	}
-
 }
 
 

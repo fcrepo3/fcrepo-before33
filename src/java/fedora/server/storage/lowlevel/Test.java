@@ -18,7 +18,8 @@ import java.io.IOException;
  * @version $Id$
  */
 class Test {
-	private static final ILowlevelStorage lowlevelStorage = FileSystemLowlevelStorage.getPermanentStore();
+	/*
+	private static final ILowlevelStorage lowlevelStorage = DefaultLowlevelStorage.getPermanentStore();
 	private Test() {
 	}
 
@@ -123,4 +124,5 @@ class Test {
 			System.err.println("problem reading System.in");
 		}
 	}
+	*/
 }

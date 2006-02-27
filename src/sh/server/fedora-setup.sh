@@ -76,7 +76,8 @@ OUT="$FCFG_HOME"/fedora.fcfg
 
 if [ -r "$MY_PROPS" ]; then
 	echo -e "\nApplying \n\t$MY_PROPS"
-	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes \
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/common/lib/jrdf-0.3.3.jar \
+		  -Dfedora.home="$FEDORA_HOME" \
 		  fedora.server.config.ServerConfiguration $FCFG_BASE $MY_PROPS > $OUT)
 		  
 	echo -e "\t$PROPS"

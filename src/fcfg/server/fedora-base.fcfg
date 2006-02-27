@@ -32,16 +32,6 @@
     <comment>Defines the host name for the Fedora server, as seen from the
              outside world.</comment>
   </param>
-  <param name="object_store_base" value="data/objects">
-    <comment>Defines the root directory for the internal storage of Fedora
-             objects. This value should be adjusted based on your installation
-             environment.</comment>
-  </param>
-  <param name="datastream_store_base" value="data/datastreams">
-    <comment>Defines the root directory for the internal storage of Managed
-             Content datastreams. This value should be adjusted based on your
-             installation environment.</comment>
-  </param>
   <param name="log_max_size" value="20000000">
     <comment>Defines the threshold at which a new log file is generated
              based on the size of the current log file in bytes; default is
@@ -88,28 +78,6 @@
     <comment>Defines the flush threshold for logging in number of records;
              default is one log record.</comment>
   </param>
-  <param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm">
-    <comment>Defines the java class used to determine the path algorithm for
-             LowLevelStorage; default is
-             fedora.server.storage.lowlevel.TimestampPathAlgorithm.</comment>
-  </param>
-  <param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem">
-    <comment>Defines the java class that determines the type of
-             implementation for LowLevelStorage; default is
-             fedora.server.storage.lowlevel.GenericFileSystem.</comment>
-  </param>
-  <param name="registry" value="fedora.server.storage.lowlevel.DBPathRegistry">
-    <comment>Defines the java class used to determine the path registry for
-             LowLevelStorage; default is
-             fedora.server.storage.lowlevel.DBPathRegistry.</comment>
-  </param>
-  <param name="backslash_is_escape" value="yes" oraclevalue="no">
-    <comment>Defines whether the backing database (which include registry
-             tables) the backslash character to be the escape character (token
-             beginning an escape sequence). This is needed to correctly store and
-             retrieve filepaths from the registry tables, if running under
-             Windows/DOS.</comment>
-  </param>
   <param name="debug" value="false">
     <comment>A boolean toggle used to turn off/on internal debugging in the
              code.</comment>
@@ -128,12 +96,48 @@
              Note this value must be less than the limit specified for the
              datastreamExpirationLimit.</comment>
   </param>
+  <module role="fedora.server.storage.lowlevel.ILowlevelStorage" class="fedora.server.storage.lowlevel.DefaultLowlevelStorageModule">
+  	<comment>Description: 
+  		Parameters:
+  			- object_store_base
+  				The root directory for the internal storage of Fedora objects. 
+  				This value should be adjusted based on your installation
+				environment. This value should not point to the same location as
+				datastream_store_base
+			- datastream_store_base
+				The root directory for the internal storage of Managed Content 
+				datastreams. This value should be adjusted based on your 
+				installation environment. This value should not point to the 
+				same location as object_store_base.
+  			- path_registry
+  				The java class used to determine the path registry; default is 
+  				fedora.server.storage.lowlevel.DBPathRegistry.
+  			- path_algorithm
+  				The java class used to determine the path algorithm; default is
+				fedora.server.storage.lowlevel.TimestampPathAlgorithm.
+			- file_system
+				The java class that determines the implementation class; default is
+				fedora.server.storage.lowlevel.GenericFileSystem.
+			- backslash_is_escape
+				Whether the escape character (i.e. (the token beginning an 
+				escape sequence) for the backing database (which includes 
+				registry tables) is the backslash character. This is needed to 
+				correctly store and retrieve filepaths from the registry 
+				tables, if running under Windows/DOS.
+  				</comment>
+	<param name="object_store_base" value="data/objects" isFilePath="true"/>
+	<param name="datastream_store_base" value="data/datastreams" isFilePath="true"/>
+  	<param name="path_registry" value="fedora.server.storage.lowlevel.DBPathRegistry"/>
+    <param name="path_algorithm" value="fedora.server.storage.lowlevel.TimestampPathAlgorithm"/>
+	<param name="file_system" value="fedora.server.storage.lowlevel.GenericFileSystem"/>
+  	<param name="backslash_is_escape" value="true" oraclevalue="false"/>
+  </module>
   <module role="fedora.server.security.Authorization" class="fedora.server.security.DefaultAuthorization">
     <comment>Builds and manages Fedora's authorization structure.</comment>
     <param name="ALLOW-SURROGATES" value="false"/>
-    <param name="REPOSITORY-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies"/>
-    <param name="SURROGATE-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/surrogate-policies"/>
-    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies-generated-by-policyguitool">
+    <param name="REPOSITORY-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies" isFilePath="true"/>
+    <param name="SURROGATE-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/surrogate-policies" isFilePath="true"/>
+    <param name="REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY" value="data/fedora-xacml-policies/repository-policies-generated-by-policyguitool" isFilePath="true">
       <comment>The parameter REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY is for future use.</comment>
     </param>
     <param name="XACML-COMBINING-ALGORITHM" value="com.sun.xacml.combine.OrderedDenyOverridesPolicyAlg"/>
@@ -629,7 +633,7 @@
     <comment>local Kowari Triplestore used by the Resource Index</comment>
     <param name="connectorClassName" value="org.trippi.impl.kowari.KowariConnector"/>
     <param name="remote" value="false"/>
-    <param name="path" value="data/resourceIndex"/>
+    <param name="path" value="data/resourceIndex" isFilePath="true"/>
     <param name="serverName" value="fedora"/>
     <param name="modelName" value="ri"/>
     <param name="poolInitialSize" value="3"/>

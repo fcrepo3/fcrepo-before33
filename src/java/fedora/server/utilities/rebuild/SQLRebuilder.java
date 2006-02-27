@@ -1,13 +1,20 @@
 package fedora.server.utilities.rebuild;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -29,7 +36,7 @@ import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.DOWriter;
-import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
@@ -113,11 +120,13 @@ public class SQLRebuilder implements Rebuilder {
             String reason = "registry";
 
             blankExistingTables( );
-
+            
+            ILowlevelStorage llstore = (ILowlevelStorage) s_server.
+            getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
             try
             {
-                FileSystemLowlevelStorage.getObjectStore().rebuild();
-                FileSystemLowlevelStorage.getDatastreamStore().rebuild();
+                llstore.rebuildObject();
+                llstore.rebuildDatastream();
             } 
             catch (LowlevelStorageException e)
             {

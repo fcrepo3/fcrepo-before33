@@ -12,15 +12,18 @@ public class Parameter implements Constants {
 
     private String m_name;
     private String m_value;
+    private boolean m_isFilePath;
     private String m_comment;
     private Map m_profileValues;
 
     public Parameter(String name,
                      String value,
+                     boolean isFilePath,
                      String comment,
                      Map profileValues) {
         m_name = name;
         m_value = value;
+        m_isFilePath = isFilePath;
         m_comment = comment;
         m_profileValues = profileValues;
     }
@@ -29,22 +32,32 @@ public class Parameter implements Constants {
         return m_name;
     }
 
+    /**
+     * Gets the value of the parameter. Same as getValue(false).
+     * @return The value of the parameter
+     */
     public String getValue() {
-        return m_value;
+    	return getValue(false);
     }
     
     /**
+     * Gets the value of the parameter.
+     * Prepends the location of FEDORA_HOME if asAbsolutePath is true and the 
+     * parameter location does not already specify an absolute pathname.
      * 
-     * @return parameter value as an absolute path (resolved relative to 
-     * FEDORA_HOME as necessary)
+     * @param asAbsolutePath Whether to return the parameter value as an 
+     * absolute file path relative to FEDORA_HOME.
+     * @return The value, null if undefined.
      */
-    public String getValueAsAbsolutePath() {
+    public String getValue(boolean asAbsolutePath) {
     	String path = m_value;
-    	if (path != null) {
-	    	File f = new File(path);
-	    	if (!f.isAbsolute()) {
-	    		path = FEDORA_HOME + File.separator + path;
-			}
+    	if (asAbsolutePath) {
+        	if (path != null && m_isFilePath) {
+    	    	File f = new File(path);
+    	    	if (!f.isAbsolute()) {
+    	    		path = FEDORA_HOME + File.separator + path;
+    			}
+        	}
     	}
     	return path;
     }
@@ -55,6 +68,14 @@ public class Parameter implements Constants {
 
     public Map getProfileValues() {
         return m_profileValues;
+    }
+    
+    public void setIsFilePath(boolean newValue) {
+    	m_isFilePath = newValue;
+    }
+    
+    public boolean getIsFilePath() {
+    	return m_isFilePath;
     }
 
     public String getComment() {

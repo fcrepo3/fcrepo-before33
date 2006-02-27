@@ -90,7 +90,7 @@ public class Rebuild {
                     rebuilder.start(options);
                     // fedora.server.storage.lowlevel.Configuration conf = fedora.server.storage.lowlevel.Configuration.getInstance();
                     // String objStoreBaseStr = conf.getObjectStoreBase();
-                    String objStoreBaseStr = serverConfig.getParameter("object_store_base").getValueAsAbsolutePath();
+                    String objStoreBaseStr = serverConfig.getParameter("object_store_base").getValue(true);
                     File dir = new File(objStoreBaseStr);
                     TIntHashSet saw = new TIntHashSet();
                     rebuildFromDirectory(rebuilder, dir, "FedoraBDefObject", saw);

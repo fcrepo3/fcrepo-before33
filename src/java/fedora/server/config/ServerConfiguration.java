@@ -128,6 +128,9 @@ public class ServerConfiguration
     private String getParamXMLString(Parameter p, int indentBy) {
         StringBuffer out = new StringBuffer();
         out.append(spaces(indentBy) + "<param name=\"" + p.getName() + "\" value=\"" + enc(p.getValue()) + "\"");
+        if (p.getIsFilePath() != false) {
+        	out.append(" isFilePath=\"true\"");
+        }
         if (p.getProfileValues() != null) {
             Iterator iter = p.getProfileValues().keySet().iterator();
             while (iter.hasNext()) {

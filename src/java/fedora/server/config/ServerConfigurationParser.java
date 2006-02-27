@@ -31,6 +31,7 @@ public class ServerConfigurationParser
     private String m_paramName;
     private String m_paramValue;
     private String m_paramComment;
+    private boolean m_paramIsFilePath;
     private Map m_profileValues;
 
     private List m_moduleOrDatastoreParameters;  // module/datastore
@@ -87,6 +88,8 @@ public class ServerConfigurationParser
             m_inParam = true;
             m_paramName = a.getValue("name");
             m_paramValue = a.getValue("value");
+            String isFilePath = a.getValue("isFilePath");
+            m_paramIsFilePath = isFilePath != null && isFilePath.equalsIgnoreCase("true");
             m_paramComment = null;
             m_profileValues = new HashMap();
             for (int i = 0; i < a.getLength(); i++) {
@@ -128,7 +131,7 @@ public class ServerConfigurationParser
             }
         } else if (localName.equals("param")) {
             m_inParam = false;
-            m_lastParam = new Parameter(m_paramName, m_paramValue, m_paramComment, m_profileValues);
+            m_lastParam = new Parameter(m_paramName, m_paramValue, m_paramIsFilePath, m_paramComment, m_profileValues);
             if (m_inModuleOrDatastore) {
                 m_moduleOrDatastoreParameters.add(m_lastParam);
             } else {

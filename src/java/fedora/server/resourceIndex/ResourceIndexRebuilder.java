@@ -90,7 +90,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
         if (tsRemote) {
             throw new ResourceIndexException("Rebuilder does not currently support remote triplestores.");
         }
-        String tsPath = tsDC.getParameter("path").getValueAsAbsolutePath();
+        String tsPath = tsDC.getParameter("path").getValue(true);
         
         Iterator it;
         Parameter p;
@@ -99,12 +99,8 @@ public class ResourceIndexRebuilder implements Rebuilder {
         it = tsDC.getParameters().iterator();
         while (it.hasNext()) {
             p = (Parameter)it.next();
-            tsTC.put(p.getName(), p.getValue());
+            tsTC.put(p.getName(), p.getValue(p.getIsFilePath()));
         }
-
-        // make sure the "path" parameter if not absolute, is relative to 
-        // FEDORA_HOME
-        tsTC.put("path", tsPath);
         
         Map aliasMap = new HashMap();
         it = riMC.getParameters().iterator();
@@ -113,7 +109,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
             String pName = p.getName();
             String[] parts = pName.split(":");
             if ((parts.length == 2) && (parts[0].equals("alias"))) {
-                aliasMap.put(parts[1], p.getValue());
+                aliasMap.put(parts[1], p.getValue(p.getIsFilePath()));
             }
         }
 

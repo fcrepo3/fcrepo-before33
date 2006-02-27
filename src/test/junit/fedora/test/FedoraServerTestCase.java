@@ -1,12 +1,13 @@
 package fedora.test;
 
-import java.io.File;
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 
-import fedora.client.*;
+import fedora.client.FedoraClient;
 import fedora.server.config.Configuration;
+import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 
 /**
@@ -179,7 +180,8 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     
     private void replacePolicies(File fromDir, String toDirProp) throws Exception {
         Configuration config = getServerConfiguration().getModuleConfiguration("fedora.server.security.Authorization");
-        File toDir = new File(config.getParameter(toDirProp).getValueAsAbsolutePath());
+        Parameter p = config.getParameter(toDirProp);
+        File toDir = new File(p.getValue(p.getIsFilePath()));
         if (toDir.exists()) {
 			// clear out the active policy directory
             clearDir(toDir);

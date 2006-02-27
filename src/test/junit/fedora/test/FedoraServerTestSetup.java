@@ -1,18 +1,33 @@
 package fedora.test;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 import junit.extensions.TestSetup;
 import junit.framework.Test;
 import fedora.server.config.Configuration;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
+import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.lowlevel.DefaultLowlevelStorage;
+import fedora.server.storage.lowlevel.FileSystem;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableSpec;
@@ -34,6 +49,7 @@ public class FedoraServerTestSetup
     private File m_configDir;
     static ByteArrayOutputStream sbOut = null;
     static ByteArrayOutputStream sbErr = null;    
+    static FileSystem filesystem;
     
     /**
      * @param test
@@ -161,7 +177,7 @@ public class FedoraServerTestSetup
 
         ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-stop");
         dropDBTables();
-        deleteStore();
+        deleteStores();
         if (m_configDir != null) unswapConfigurationFiles();
     }
 
@@ -169,8 +185,8 @@ public class FedoraServerTestSetup
 		System.out.println("Backing up poliices...");
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
-		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
+        backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(true), null);
+		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(true), null);
 		// SDP: object policies directory is obsoleted in 2.1
         //backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
@@ -179,8 +195,8 @@ public class FedoraServerTestSetup
     private void restorePolicies() throws Exception {
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
-        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
-		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValueAsAbsolutePath(), null);
+        restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(true), null);
+		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(true), null);
 		// SDP: object policies directory is obsoleted in 2.1
         //restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
         //restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
@@ -364,7 +380,7 @@ public class FedoraServerTestSetup
         }
     }
     
-    private void dropDBTables() throws Exception {
+    public static void dropDBTables() throws Exception {
         ConnectionPool cPool = SQLUtility.getConnectionPool(getServerConfiguration());
         Connection conn = cPool.getConnection();
         Statement stmt = conn.createStatement();
@@ -380,7 +396,7 @@ public class FedoraServerTestSetup
 	            tableSpec = (TableSpec)tableSpecs.next();
 	            commands = ddlConverter.getDDL(tableSpec).iterator();
 	            while (commands.hasNext()) {
-	                command = ddlConverter.getDropDDL((String)commands.next());
+	                command = ddlConverter.getDeleteDDL((String)commands.next());
 	                stmt.execute(command);
 	            }
 	        }
@@ -390,7 +406,7 @@ public class FedoraServerTestSetup
         }
     }
     
-    private DDLConverter getDDLConverter() throws Exception {
+    private static DDLConverter getDDLConverter() throws Exception {
         ServerConfiguration fcfg = getServerConfiguration();
         ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
         String defaultPoolName = mcfg.getParameter("defaultPoolName").getValue();
@@ -399,27 +415,36 @@ public class FedoraServerTestSetup
         return (DDLConverter)Class.forName(ddlConverterClassName).newInstance();
     }
     
-    private String getRIStoreLocation() throws Exception {
+    private static String getRIStoreLocation() throws Exception {
         ServerConfiguration fcfg = getServerConfiguration();
         ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");
         String datastore = mcfg.getParameter("datastore").getValue();
         DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(datastore);
-        return dcfg.getParameter("path").getValueAsAbsolutePath();
+        return dcfg.getParameter("path").getValue(true);
     }
     
-    private void deleteStore() throws Exception {
-        ServerConfiguration fcfg = getServerConfiguration();
-        String[] dirs = {
-            fcfg.getParameter("object_store_base").getValueAsAbsolutePath(),
-            fcfg.getParameter("datastream_store_base").getValueAsAbsolutePath(),
-            getRIStoreLocation()
-        };
-        for (int i = 0; i < dirs.length; i++) {
-            deleteDirectory(dirs[i]);
-        }
+    public static void deleteStores() throws Exception {
+    	ServerConfiguration fcfg = getServerConfiguration();
+        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.lowlevel.ILowlevelStorage");
+    	Iterator params = mcfg.getParameters().iterator();
+    	Map storeConfig = new HashMap();
+    	while (params.hasNext()) {
+    		Parameter param = (Parameter)params.next();
+    		storeConfig.put(param.getName(), param.getValue(param.getIsFilePath()));
+    	}
+    	
+    	Object[] parameters = new Object[] {storeConfig};
+		Class[] parameterTypes = new Class[] {Map.class};
+    	ClassLoader loader = ClassLoader.getSystemClassLoader();
+    	Class fsClass = loader.loadClass((String)storeConfig.get(DefaultLowlevelStorage.FILESYSTEM));
+		Constructor constructor = fsClass.getConstructor(parameterTypes);
+		FileSystem filesystem = (FileSystem) constructor.newInstance(parameters);
+		filesystem.deleteDirectory((String)storeConfig.get(DefaultLowlevelStorage.OBJECT_STORE_BASE));
+		filesystem.deleteDirectory((String)storeConfig.get(DefaultLowlevelStorage.DATASTREAM_STORE_BASE));
+		deleteDirectory(getRIStoreLocation());		
     }
     
-    protected boolean deleteDirectory(String directory) {
+    private static boolean deleteDirectory(String directory) {
         boolean result = false;
 
         if (directory != null) {

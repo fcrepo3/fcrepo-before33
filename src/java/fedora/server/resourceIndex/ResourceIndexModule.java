@@ -100,7 +100,7 @@ public class ResourceIndexModule extends Module
         String connectorClassName = (String) map.get("connectorClassName");
         // make sure the "path" parameter if not absolute, is relative to 
         // FEDORA_HOME
-        map.put("path", conf.getFileParameter("path"));
+        map.put("path", conf.getParameter("path", true));
         if (connectorClassName == null || connectorClassName.equals("")) {
             throw new ModuleInitializationException(
                       "Datastore \"" + datastore + "\" must specify a "

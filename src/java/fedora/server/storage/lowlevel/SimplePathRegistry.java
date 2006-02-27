@@ -1,9 +1,10 @@
 package fedora.server.storage.lowlevel;
 
-import java.util.Hashtable;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Map;
+
 import fedora.server.errors.LowlevelStorageException;
-import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 
 /**
@@ -14,26 +15,15 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-class SimplePathRegistry extends PathRegistry implements IPathRegistry {
+class SimplePathRegistry extends PathRegistry {
 	private Hashtable hashtable = null;
 
-
-	/** encapsulates all configuration data for this package */
-	private static final Configuration conf = Configuration.getInstance();
-
-	public SimplePathRegistry(String registryName, String[] storeBases) throws LowlevelStorageException {
-		super(registryName, storeBases);
-		rebuild(); //<<<===!!!
-	}
-
-	/*
-	public void init () throws LowlevelStorageException {
-		//super.init();
+	public SimplePathRegistry(Map configuration) throws LowlevelStorageException {
+		super(configuration);
 		rebuild();
 	}
-	*/
 
-	public String get (String pid)  throws LowlevelStorageException, ObjectNotInLowlevelStorageException {
+	public String get(String pid) throws LowlevelStorageException {
 		String result;
 		try {
 			result = (String) hashtable.get(pid);
@@ -46,7 +36,7 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		return result;
 	}
 
-	public void put (String pid, String path)  throws LowlevelStorageException {
+	public void put(String pid, String path) throws LowlevelStorageException {
 		try {
 			hashtable.put(pid,path);
 		} catch (Exception e) {
@@ -54,8 +44,7 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		}
 	}
 
-	public void remove (String pid) throws LowlevelStorageException, ObjectNotInLowlevelStorageException {
-		String result = (String) hashtable.get(pid);
+	public void remove(String pid) throws LowlevelStorageException {
 		try {
 			hashtable.remove(pid);
 		} catch (Exception e) {
@@ -63,17 +52,13 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 		}
 	}
 
-	public void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException {
+	public void auditFiles() throws LowlevelStorageException {
 		System.err.println("\nbegin audit:  files-against-registry");
 		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
 		System.err.println("end audit:  files-against-registry (ending normally)");
 	}
 
-	protected Enumeration keys() throws LowlevelStorageException, LowlevelStorageInconsistencyException {
-		return hashtable.keys();
-	}
-
-	public void rebuild (/*String[] storeBases*/) throws LowlevelStorageException {
+	public void rebuild() throws LowlevelStorageException {
 		int report = FULL_REPORT;
 		Hashtable temp = this.hashtable;
 		this.hashtable = new Hashtable();
@@ -88,5 +73,9 @@ class SimplePathRegistry extends PathRegistry implements IPathRegistry {
 			}
 			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
 		}
+	}
+	
+	protected Enumeration keys() throws LowlevelStorageException {
+		return hashtable.keys();
 	}
 }

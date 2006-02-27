@@ -28,7 +28,7 @@ public abstract class Configuration {
     public void setParameterValue(String name, String value, boolean autoCreate) {
         Parameter param = getParameter(name);
         if (param == null) {
-            m_parameters.add(new Parameter(name, value, null, new HashMap()));
+            m_parameters.add(new Parameter(name, value, false, null, new HashMap()));
         } else {
             param.setValue(value);
         }

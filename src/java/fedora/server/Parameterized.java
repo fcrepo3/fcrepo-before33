@@ -64,23 +64,25 @@ public abstract class Parameterized implements Constants {
     }
     
     /**
+     * Gets the value of a named configuration parameter.
      * Same as getParameter(String name) but prepends the location of 
-     * FEDORA_HOME if the parameter location does not specify an absolute 
-     * pathname.
+     * FEDORA_HOME if asAbsolutePath is true and the parameter location does not 
+     * already specify an absolute pathname.
      * 
-     * @param name The parameter name
-     * @return Null if undefined, an absolute pathname (relative to FEDORA_HOME 
-     * if not absolute to begin with).
+     * @param name The parameter name.
+     * @param asAbsolutePath Whether to return the parameter value as an 
+     * absolute path relative to FEDORA_HOME.
+     * @return The value, null if undefined.
      */
-    public final String getFileParameter(String name) {
-    	String param = getParameter(name);
-    	if (param != null) {
-	    	File f = new File(param);
+    public final String getParameter(String name, boolean asAbsolutePath) {
+    	String paramValue = (String) m_parameters.get(name);
+    	if (asAbsolutePath && paramValue != null) {
+	    	File f = new File(paramValue);
 	    	if (!f.isAbsolute()) {
-				param = FEDORA_HOME + File.separator + param;
+	    		paramValue = FEDORA_HOME + File.separator + paramValue;
 			}
     	}
-    	return param;
+    	return paramValue;
     }
     
     /**
@@ -90,7 +92,7 @@ public abstract class Parameterized implements Constants {
      * @return String The value, null if undefined.
      */
     public final String getParameter(String name) {
-        return (String) m_parameters.get(name);
+        return getParameter(name, false);
     }
 
     protected final void setParameter(String name, String value) {

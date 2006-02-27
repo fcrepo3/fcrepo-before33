@@ -22,6 +22,7 @@
 	<property name="junit.build.dir" location="${test.build.dir}/junit"/>
 	<property name="dist.dir" location="dist"/>
 	<property name="server.dist.dir" location="${dist.dir}/server"/>
+	<property name="tomcat.dist.dir" location="${server.dist.dir}/jakarta-tomcat-5.0.28"/>
 	<property name="lib.dir" location="lib"/>
 	<property name="release.dir" location="${dist.dir}/release"/>
 	<property name="properties.dir" location="${src.dir}/properties"/>
@@ -1172,9 +1173,6 @@
 		<pathelement path="${lib.groboutils}"/>
 		<pathelement path="${lib.mysql-connector}"/>
 		<pathelement path="${lib.mckoi-jdbc}"/>
-		<!--
-			  <pathelement path="${lib.xml-apis}"/>
-			  -->
 		<pathelement path="${test.build.dir}/fedora-server.jar"/>
 		<pathelement path="${test.build.dir}/fedora-client.jar"/>
 		<pathelement path="temp/fedora-utilities.jar"/>
@@ -1182,6 +1180,15 @@
 		<pathelement path="${test.build.dir}"/>
 		<path refid="server-libs.path"/>
 		<path refid="client-libs.path"/>
+		<pathelement path="dist/server/jakarta-tomcat-5.0.28/webapps/fedora/WEB-INF/lib/jargon_v1.4.19.jar"/>
+		<pathelement path="dist/server/jakarta-tomcat-5.0.28/webapps/fedora/WEB-INF/lib/srbLowlevel.jar"/>
+			
+		<fileset dir="${tomcat.dist.dir}/webapps/fedora/WEB-INF/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${tomcat.dist.dir}/common/lib">
+			<include name="**/*.jar"/>
+		</fileset>
 	</path>
 	<target name="junit-prep" depends="serverandclient">
 		<mkdir dir="${test.build.dir}"/>

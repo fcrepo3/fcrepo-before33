@@ -126,8 +126,8 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
                     new File("dist/client/logs/modify.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-        assertEquals(out.indexOf("24 modify directives successfully processed.")!= -1, true );
-        assertEquals(out.indexOf("0 modify directives failed.")!= -1, true );
+        assertEquals(err, true, out.indexOf("24 modify directives successfully processed.")!= -1);
+        assertEquals(err, true, out.indexOf("0 modify directives failed.")!= -1);
         System.out.println("Purging batch modify object");
         purge("demo:32");
         System.out.println("Batch modify test succeeded");

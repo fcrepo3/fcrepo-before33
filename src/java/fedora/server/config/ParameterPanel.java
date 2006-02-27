@@ -111,7 +111,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
                     if (p.getName().equals(paramName)) param = p;
                 }
                 if (param == null) {
-                    param = new Parameter(paramName, "Enter value here.", "Enter description here.", new HashMap());
+                    param = new Parameter(paramName, "Enter value here.", false, "Enter description here.", new HashMap());
                     m_model.addElement(param);
                     addParamValueCard(param);
                 }

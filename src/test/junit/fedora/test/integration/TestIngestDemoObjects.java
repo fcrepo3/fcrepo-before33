@@ -2,11 +2,8 @@ package fedora.test.integration;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -24,14 +21,6 @@ import org.w3c.dom.Document;
 
 import fedora.client.FedoraClient;
 import fedora.client.search.SearchResultParser;
-import fedora.client.utility.ingest.Ingest;
-import fedora.server.config.DatastoreConfiguration;
-import fedora.server.config.ModuleConfiguration;
-import fedora.server.config.ServerConfiguration;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.utilities.DDLConverter;
-import fedora.server.utilities.SQLUtility;
-import fedora.server.utilities.TableSpec;
 import fedora.test.FedoraServerTestCase;
 import fedora.test.FedoraServerTestSetup;
 import fedora.utilities.ExecUtility;
@@ -134,7 +123,7 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
         return false;
     }
     
-    public static void ingestDemoObjects() {        
+    public static void ingestDemoObjects() {
         ExecUtility.execCommandLineUtility(FEDORA_HOME + "/client/bin/fedora-ingest-demos " + 
                 getHost() + " " + getPort() + " " + getUsername() + " " + 
                 getPassword() + " " + getProtocol());
@@ -175,92 +164,11 @@ public class TestIngestDemoObjects extends FedoraServerTestCase {
                     getPassword() + " " + (String)it.next() + " " + getProtocol() + 
                     " for testing");
         }*/
-        deleteDBTables();
-        deleteStore();
+        FedoraServerTestSetup.dropDBTables();
+        FedoraServerTestSetup.deleteStores();
     }
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TestIngestDemoObjects.class);
-    }
-    public static void deleteDBTables() throws Exception {
-        ConnectionPool cPool = SQLUtility.getConnectionPool(getServerConfiguration());
-        Connection conn = cPool.getConnection();
-        Statement stmt = conn.createStatement();
-        DDLConverter ddlConverter = getDDLConverter();
-        try {
-	        FileInputStream fis = new FileInputStream("src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec");
-	        Iterator tableSpecs = TableSpec.getTableSpecs(fis).iterator();	        
-	        
-	        TableSpec tableSpec;
-	        Iterator commands;
-	        String command;
-	        while (tableSpecs.hasNext()) {
-	            tableSpec = (TableSpec)tableSpecs.next();
-	            commands = ddlConverter.getDDL(tableSpec).iterator();
-	            while (commands.hasNext()) {
-	                command = ddlConverter.getDeleteDDL((String)commands.next());
-	                stmt.execute(command);
-	            }
-	        }
-        } finally {
-	        if (stmt != null) stmt.close();
-	        if (conn != null) conn.close();
-        }
     }  
-         
-    private static DDLConverter getDDLConverter() throws Exception {
-        ServerConfiguration fcfg = getServerConfiguration();
-        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
-        String defaultPoolName = mcfg.getParameter("defaultPoolName").getValue();
-        DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(defaultPoolName);
-        String ddlConverterClassName = dcfg.getParameter("ddlConverter").getValue();
-        return (DDLConverter)Class.forName(ddlConverterClassName).newInstance();
-    }
-    
-    private static String getRIStoreLocation() throws Exception {
-        ServerConfiguration fcfg = getServerConfiguration();
-        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");
-        String datastore = mcfg.getParameter("datastore").getValue();
-        DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(datastore);
-        return dcfg.getParameter("path").getValueAsAbsolutePath();
-    }
-    
-    private static void deleteStore() throws Exception {
-        ServerConfiguration fcfg = getServerConfiguration();
-        String[] dirs = {
-            fcfg.getParameter("object_store_base").getValueAsAbsolutePath(),
-            fcfg.getParameter("datastream_store_base").getValueAsAbsolutePath(),
-            getRIStoreLocation()
-        };
-        for (int i = 0; i < dirs.length; i++) {
-            deleteDirectory(dirs[i]);
-        }
-    }
-    
-    private static boolean deleteDirectory(String directory) {
-        boolean result = false;
-
-        if (directory != null) {
-            File file = new File(directory);
-            if (file.exists() && file.isDirectory()) {
-                // 1. delete content of directory:
-                File[] files = file.listFiles();
-                result = true; //init result flag
-                int count = files.length;
-                for (int i = 0; i < count; i++) { //for each file:
-                    File f = files[i];
-                    if (f.isFile()) {
-                        result = result && f.delete();
-                    } else if (f.isDirectory()) {
-                        result = result && deleteDirectory(f.getAbsolutePath());
-                    }
-                }//next file
-
-                file.delete(); //finally delete (empty) input directory
-            }//else: input directory does not exist or is not a directory
-        }//else: no input value
-
-        return result;
-    }//deleteDirectory()   
-    
 }

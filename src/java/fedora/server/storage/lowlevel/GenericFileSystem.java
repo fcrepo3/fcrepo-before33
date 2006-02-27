@@ -4,13 +4,15 @@
 
 //check existing low-level in file model, cp w/ properties
 package fedora.server.storage.lowlevel;
-import java.io.IOException;
 import java.io.File;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Date;
+import java.util.Map;
+
 import fedora.server.errors.LowlevelStorageException;
 
 /**
@@ -21,10 +23,10 @@ import fedora.server.errors.LowlevelStorageException;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-class GenericFileSystem implements IFileSystem {
+public class GenericFileSystem extends FileSystem {
 	private static int delay = 0;
-	GenericFileSystem() {
-		//this.delay = 5000;
+	public GenericFileSystem(Map configuration) {
+		super(configuration);
 	}
 
 	void log(String string) {
@@ -168,18 +170,14 @@ if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} /
 
 			/* compiler complains on new array[long], i.e., on new byte[file.length()];
 			   also, signature fileInputStream.read(byte[],int,int) balks on ...,long,long) */
-			int fileLength; {
-				long lFileLength;
-				try {
-					lFileLength = file.length();
-				} catch (Exception eCaughtStatFile) { //<== make specific
-					throw new LowlevelStorageException(true, "file " + getPath(file) + "couldn't be statted for reading", eCaughtStatFile);
-				}
-				if (lFileLength > Integer.MAX_VALUE) {
-					throw new LowlevelStorageException(true, "file " + getPath(file) + "too large for reading");
-				}
-
-				fileLength = (int) lFileLength;
+			long lFileLength;
+			try {
+				lFileLength = file.length();
+			} catch (Exception eCaughtStatFile) { //<== make specific
+				throw new LowlevelStorageException(true, "file " + getPath(file) + "couldn't be statted for reading", eCaughtStatFile);
+			}
+			if (lFileLength > Integer.MAX_VALUE) {
+				throw new LowlevelStorageException(true, "file " + getPath(file) + "too large for reading");
 			}
 			try {
 				fileInputStream = new FileInputStream(file);

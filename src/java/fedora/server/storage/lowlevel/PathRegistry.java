@@ -2,9 +2,10 @@ package fedora.server.storage.lowlevel;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Map;
+
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
-import fedora.server.errors.ObjectNotInLowlevelStorageException;
 
 /**
  *
@@ -14,7 +15,7 @@ import fedora.server.errors.ObjectNotInLowlevelStorageException;
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
-abstract class PathRegistry implements IPathRegistry {
+public abstract class PathRegistry {
 
 	protected static final int NO_REPORT = 0; //<=========????????
 	protected static final int ERROR_REPORT = 1;
@@ -24,18 +25,40 @@ abstract class PathRegistry implements IPathRegistry {
 	protected static final int AUDIT_FILES = 1;
 	protected static final int REBUILD = 2;
 
-	//protected static final Configuration configuration = Configuration.getInstance();
-
-	public void init () throws LowlevelStorageException {
-	}
-
 	protected final String registryName;
 	protected final String[] storeBases;
-	//private static final IPathAlgorithm pathAlgorithm = new CNullPathAlgorithm();
-	public PathRegistry(String registryName, String storeBases[]) {
-		this.registryName = registryName;
-		this.storeBases = storeBases;
+
+	public PathRegistry(Map configuration) {
+		this.registryName = (String)configuration.get("registryName");
+		this.storeBases = (String[])configuration.get("storeBases");
 	}
+	
+	public abstract String get (String pid)  throws LowlevelStorageException;
+	public abstract void put (String pid, String path)  throws LowlevelStorageException;
+	public abstract void remove (String pid)  throws LowlevelStorageException;
+	public abstract void rebuild () throws LowlevelStorageException;
+	public abstract void auditFiles () throws LowlevelStorageException;
+	
+	public void auditRegistry () throws LowlevelStorageException {
+		System.err.println("\nbegin audit:  registry-against-files");
+		Enumeration keys = keys();
+		while (keys.hasMoreElements()) {
+			String pid = (String) keys.nextElement();
+			try {
+				String path = get(pid);
+				File file = new File(path);
+				boolean fileExists = file.exists();
+				System.err.println((fileExists ? "" : "ERROR: ") +
+					"registry has [" + pid + "] => [" + path + "] " +
+					(fileExists ? "and" : "BUT") +
+					" file does " + (fileExists ? "" : "NOT") + "exist");
+			} catch (LowlevelStorageException e) {
+				System.err.println("ERROR: registry has [" + pid + "] => []");
+			}
+	 	}
+		System.err.println("end audit:  registry-against-files (ending normally)");
+	}
+
 
 	protected final String getRegistryName() {
 		return registryName;
@@ -44,12 +67,6 @@ abstract class PathRegistry implements IPathRegistry {
 	public static final boolean stringNull(String string) {
 		return (null == string) || (string.equals(""));
 	}
-
-	public abstract String get (String pid)  throws LowlevelStorageException, ObjectNotInLowlevelStorageException;
-
-	public abstract void put (String pid, String path)  throws LowlevelStorageException;
-
-	public abstract void remove (String pid)  throws LowlevelStorageException, ObjectNotInLowlevelStorageException;
 
 	private final void traverseFiles (File[] files, int operation, boolean stopOnError, int report) throws LowlevelStorageException {
 		for (int i = 0; i < files.length; i++) {
@@ -138,46 +155,5 @@ abstract class PathRegistry implements IPathRegistry {
 		traverseFiles(files, operation, stopOnError, report);
 	}
 
-	public abstract void rebuild (/*String[] storeBases*/) throws LowlevelStorageException;
-	public abstract void auditFiles (/*String[] storeBases*/) throws LowlevelStorageException;
-	//public abstract void auditRegistry () throws FOSExecutionException, FOSBadParmException;
-
-	public void auditRegistry () throws LowlevelStorageException {
-		System.err.println("\nbegin audit:  registry-against-files");
-		//System.err.println("aR0");
-		Enumeration keys = keys();
-		//System.err.println("aR1");
-		while (keys.hasMoreElements()) {
-		//System.err.println("aR2");
-			String pid = (String) keys.nextElement();
-		//System.err.println("aR3");
-			try {
-				String path = get(pid);
-		//System.err.println("aR4");
-				File file = new File(path);
-		//System.err.println("aR5");
-				boolean fileExists = file.exists();
-		//System.err.println("aR6");
-				System.err.println((fileExists ? "" : "ERROR: ") +
-					"registry has [" + pid + "] => [" + path + "] " +
-					(fileExists ? "and" : "BUT") +
-					" file does " + (fileExists ? "" : "NOT") + "exist");
-			} catch (LowlevelStorageException e) {
-				System.err.println("ERROR: registry has [" + pid + "] => []");
-			}
-	 	}
-		System.err.println("end audit:  registry-against-files (ending normally)");
-	}
-
 	protected abstract Enumeration keys() throws LowlevelStorageException, LowlevelStorageInconsistencyException;
-
-	private static final String getPath(File file) { //<===================
-		String temp;
-		try {
-			temp = file.getCanonicalPath();
-		} catch (Exception eCaughtFiles) {
-			temp = "";
-		}
-		return temp;
-	}
 }

@@ -48,7 +48,7 @@ goto applyProps
 echo 
 echo Applying
 echo     %MY_PROPS%
-"%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes fedora.server.config.ServerConfiguration %FCFG_BASE% %MY_PROPS% > %OUT%
+"%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes;"%TC%"\common\lib\jrdf-0.3.3.jar \ fedora.server.config.ServerConfiguration %FCFG_BASE% %MY_PROPS% > %OUT%
 echo     %PROPS%
 move %OUT% %OUT%.tmp
 "%JAVA_HOME%\bin\java" -cp %WEBAPP_DIR%\classes fedora.server.config.ServerConfiguration %OUT%.tmp %PROP% > %OUT%

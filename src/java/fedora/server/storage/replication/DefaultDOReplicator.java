@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 import fedora.server.errors.*;
 import fedora.server.storage.*;
-import fedora.server.storage.lowlevel.FileSystemLowlevelStorage;
+import fedora.server.storage.lowlevel.DefaultLowlevelStorage;
 import fedora.server.storage.types.*;
 import fedora.server.utilities.SQLUtility;
 
