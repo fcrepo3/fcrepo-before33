@@ -166,8 +166,8 @@
 	*******************************************************************************************************************************************-->
 	<foxml:datastream CONTROL_GROUP="M" ID="DRAWING-BETTER" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DRAWING-BETTER.0" MIMETYPE="image/jpeg" LABEL="Architectural Drawing Pavilion III (med res)" CREATED="2004-12-10T00:21:58.000Z">
-			<foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/>
-			<!-- <foxml:contentLocation REF="demo:999+DRAWING-BETTER+DRAWING-BETTER.0" TYPE="INTERNAL_ID"/> -->
+			<!-- <foxml:contentLocation REF="http://icarus.lib.virginia.edu/images/iva/archerd05medium1.jpg" TYPE="URL"/> -->
+			<foxml:contentLocation REF="demo:999+DRAWING-BETTER+DRAWING-BETTER.0" TYPE="INTERNAL_ID"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<!--*******************************************************************************************************************************************
