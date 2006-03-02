@@ -158,6 +158,9 @@ public class FileComparator implements Comparator {
 
         Arrays.sort(files, new FileComparator());
         print("Sorted with FileComparator", files);
+        
+        Arrays.sort(files, new FileComparator(true));
+        print("Sorted with FileComparator in reverse", files);
     }
 
     // for testing via main
