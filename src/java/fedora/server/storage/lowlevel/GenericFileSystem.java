@@ -25,6 +25,7 @@ import fedora.server.errors.LowlevelStorageException;
  */
 public class GenericFileSystem extends FileSystem {
 	private static int delay = 0;
+    
 	public GenericFileSystem(Map configuration) {
 		super(configuration);
 	}
@@ -189,5 +190,13 @@ if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} /
 
 	public final void delete(File file) throws LowlevelStorageException {
 		file.delete();
+	}
+
+	public String[] list(File d) {
+		return d.list();
+	}
+
+	public boolean isDirectory(File f) {
+		return f.isDirectory();
 	}
 }

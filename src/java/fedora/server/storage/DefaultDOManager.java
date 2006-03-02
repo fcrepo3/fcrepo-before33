@@ -81,7 +81,7 @@ public class DefaultDOManager
     private String m_storageCharacterEncoding;
     protected PIDGenerator m_pidGenerator;
     protected DOTranslator m_translator;
-    private ILowlevelStorage m_permanentStore;
+    protected ILowlevelStorage m_permanentStore;
     protected DOReplicator m_replicator;
     protected DOValidator m_validator;
     protected FieldSearch m_fieldSearch;
@@ -378,6 +378,7 @@ public class DefaultDOManager
                 "fedora.server.management.PIDGenerator",
                 "fedora.server.search.FieldSearch",
                 "fedora.server.storage.ConnectionPoolManager",
+                "fedora.server.storage.lowlevel.ILowlevelStorage",
                 "fedora.server.storage.ExternalContentManager",
                 "fedora.server.storage.translation.DOTranslator",
                 "fedora.server.storage.replication.DOReplicator",
@@ -498,6 +499,7 @@ public class DefaultDOManager
 			// TODO: make sure there's no SESSION lock on a writer for the pid
 
 			BasicDigitalObject obj=new BasicDigitalObject();
+			InputStream is = m_permanentStore.retrieveObject(pid);
 			m_translator.deserialize(m_permanentStore.retrieveObject(pid), obj,
 					m_defaultStorageFormat, m_storageCharacterEncoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);

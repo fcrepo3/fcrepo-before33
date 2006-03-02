@@ -13,6 +13,7 @@ import fedora.server.search.FieldSearch;
 import fedora.server.storage.ConnectionPoolManager;
 import fedora.server.storage.DefaultDOManager;
 import fedora.server.storage.ExternalContentManager;
+import fedora.server.storage.lowlevel.ILowlevelStorage;
 import fedora.server.storage.replication.DOReplicator;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.utilities.SQLUtility;
@@ -131,6 +132,15 @@ public class RebuildDOManager  extends DefaultDOManager
             throw new ModuleInitializationException("Error while attempting to "
                     + "check for and create non-existing table(s): "
                     + e.getClass().getName() + ": " + e.getMessage(), getRole());
+        }
+        
+        // get ref to lowlevelstorage module
+        m_permanentStore=(ILowlevelStorage) getServer().
+        		getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
+        if (m_permanentStore==null) {
+            logFinest("LowlevelStorage not loaded");
+            throw new ModuleInitializationException(
+                    "LowlevelStorage not loaded", getRole());
         }
 
 }

@@ -20,8 +20,7 @@ public abstract class FileSystem {
 	public abstract void write(File file, InputStream content) throws LowlevelStorageException;
 	public abstract void rewrite(File file, InputStream content) throws LowlevelStorageException;
 	public abstract void delete(File file) throws LowlevelStorageException;
-	
-	
+
 	/**
 	 * THIS IS ONLY FOR TESTING. Use of this method on a production system 
 	 * may cause irreparable data loss. YOU HAVE BEEN WARNED.
@@ -54,4 +53,7 @@ public abstract class FileSystem {
 
         return result;
 	}
+	
+	public abstract String[] list(File directory);
+	public abstract boolean isDirectory(File file);
 }

@@ -44,9 +44,7 @@ public class DefaultLowlevelStorageModule extends Module implements ILowlevelSto
 		// FIXME object/datastream store location sanity checks (e.g. no overlapping)
 		
 		String filesystem = getModuleParameter(DefaultLowlevelStorage.FILESYSTEM, false);
-		
 		String pathAlgorithm = getModuleParameter(DefaultLowlevelStorage.PATH_ALGORITHM, false);
-		
 		String pathRegistry = getModuleParameter(DefaultLowlevelStorage.PATH_REGISTRY, false);
 		
 		// parameter required by DBPathRegistry

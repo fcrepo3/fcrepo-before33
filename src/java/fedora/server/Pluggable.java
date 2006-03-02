@@ -80,7 +80,7 @@ public abstract class Pluggable
      * @return The roles.
      */
     public String[] getRequiredModuleRoles() {
-        return new String[0];
+        return EMPTY_STRING_ARRAY;
     }
 
 }
