@@ -2,6 +2,7 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -12,30 +13,38 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.trippi.RDFFormat;
 import org.trippi.TriplestoreConnector;
 
-import fedora.common.Constants;
 import fedora.server.DummyLogging;
-import fedora.server.Parameterized;
+import fedora.server.config.DatastoreConfiguration;
+import fedora.server.config.ModuleConfiguration;
+import fedora.server.config.Parameter;
+import fedora.server.config.ServerConfiguration;
+import fedora.server.config.ServerConfigurationParser;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.translation.METSLikeDODeserializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.utilities.ConfigurationLoader;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 import fedora.test.FedoraTestCase;
+import fedora.utilities.ExecUtility;
 
 /**
  * @author Edwin Shin
  */
-public abstract class TestResourceIndex extends FedoraTestCase implements Constants {
+public abstract class TestResourceIndex extends FedoraTestCase {
+	static {
+		Logger logger = Logger.getRootLogger();
+		logger.setLevel(Level.WARN);
+	}
     protected static final String DEMO_OBJECTS_ROOT_DIR = "src/test/junit/foxmlTestObjects";
     
     protected static String m_triplestorePath;
-    protected static String m_fedoraHome = System.getProperty(PROP_FEDORA_HOME);
     protected ResourceIndex m_ri;
     protected ConnectionPool m_cPool;
     protected TriplestoreConnector m_conn;
@@ -48,38 +57,37 @@ public abstract class TestResourceIndex extends FedoraTestCase implements Consta
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
-        if (m_fedoraHome == null || m_fedoraHome.equals("")) {
-            m_fedoraHome = "dist";
-        }
-        
-        ConfigurationLoader cl = new ConfigurationLoader(m_fedoraHome, "fedora.fcfg"); 
-        
-        Map riMP = cl.getModuleParameters("fedora.server.resourceIndex.ResourceIndex");
-        int level = Integer.parseInt((String)riMP.get("level"));
-        String datastore = (String)riMP.get("datastore");
-        
-        Map cpMP = cl.getModuleParameters("fedora.server.storage.ConnectionPoolManager");
-        String cPoolName = (String)cpMP.get("defaultPoolName");
-        
-        Parameterized cpConf = cl.getDatastoreConfig(cPoolName);
-        Map cpP = cpConf.getParameters();
-        String cpUserName = (String)cpP.get("dbUsername");
-        String cpPassword = (String)cpP.get("dbPassword");
-        String cpURL = (String)cpP.get("jdbcURL");
-        String cpDriver = (String)cpP.get("jdbcDriverClass");
-        String cpDDLConverter = (String)cpP.get("ddlConverter");
-        int cpMaxActive = Integer.parseInt((String)cpP.get("maxActive"));
-        int cpMaxIdle = Integer.parseInt((String)cpP.get("maxIdle"));
-        long cpMaxWait = Long.parseLong((String)cpP.get("maxWait")); 
-        int cpMinIdle = Integer.parseInt((String)cpP.get("minIdle"));
-        long cpMinEvictableIdleTimeMillis = Long.parseLong((String)cpP.get("minEvictableIdleTimeMillis"));
-        int cpNumTestsPerEvictionRun = Integer.parseInt((String)cpP.get("numTestsPerEvictionRun"));
-        long cpTimeBetweenEvictionRunsMillis = Long.parseLong((String)cpP.get("timeBetweenEvictionRunsMillis"));
-        boolean cpTestOnBorrow = Boolean.getBoolean((String)cpP.get("testOnBorrow"));
-        boolean cpTestOnReturn = Boolean.getBoolean((String)cpP.get("testOnReturn"));
-        boolean cpTestWhileIdle = Boolean.getBoolean((String)cpP.get("testWhileIdle"));
-        byte cpWhenExhaustedAction = Byte.parseByte((String)cpP.get("whenExhaustedAction"));        
+    	ServerConfiguration serverConfig = getServerConfiguration();
+    	
+    	ModuleConfiguration riConfig = serverConfig.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");
+        Parameter riLevel = riConfig.getParameter("level");
+        int level = 2;//Integer.parseInt(riLevel.getValue());
+        Parameter riDatastore = riConfig.getParameter("datastore");
+        String datastore = riDatastore.getValue();
+    	
+    	ModuleConfiguration cpmConfig = serverConfig.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
+    	Parameter cpmPool = cpmConfig.getParameter("defaultPoolName");
+    	String cPoolName = cpmPool.getValue();
+    	
+    	DatastoreConfiguration dsConfig = serverConfig.getDatastoreConfiguration(cPoolName);
+        String cpUserName = dsConfig.getParameter("dbUsername").getValue();
+        String cpPassword = dsConfig.getParameter("dbPassword").getValue();
+        String cpURL = dsConfig.getParameter("jdbcURL").getValue();
+        String cpDriver = dsConfig.getParameter("jdbcDriverClass").getValue();
+        String cpDDLConverter = dsConfig.getParameter("ddlConverter").getValue();
+        int cpMaxActive = Integer.parseInt(dsConfig.getParameter("maxActive").getValue());
+        int cpMaxIdle = Integer.parseInt(dsConfig.getParameter("maxIdle").getValue());
+        long cpMaxWait = Long.parseLong(dsConfig.getParameter("maxWait").getValue()); 
+        int cpMinIdle = Integer.parseInt(dsConfig.getParameter("minIdle").getValue());
+        long cpMinEvictableIdleTimeMillis = Long.parseLong(dsConfig.getParameter("minEvictableIdleTimeMillis").getValue());
+        int cpNumTestsPerEvictionRun = Integer.parseInt(dsConfig.getParameter("numTestsPerEvictionRun").getValue());
+        long cpTimeBetweenEvictionRunsMillis = Long.parseLong(dsConfig.getParameter("timeBetweenEvictionRunsMillis").getValue());
+        boolean cpTestOnBorrow = Boolean.getBoolean(dsConfig.getParameter("testOnBorrow").getValue());
+        boolean cpTestOnReturn = Boolean.getBoolean(dsConfig.getParameter("testOnReturn").getValue());
+        boolean cpTestWhileIdle = Boolean.getBoolean(dsConfig.getParameter("testWhileIdle").getValue());
+        byte cpWhenExhaustedAction = Byte.parseByte(dsConfig.getParameter("whenExhaustedAction").getValue());        
         DDLConverter ddlConverter=null;
+
         if (cpDDLConverter != null) {
             ddlConverter=(DDLConverter) Class.forName(cpDDLConverter).newInstance();
         }
@@ -98,10 +106,15 @@ public abstract class TestResourceIndex extends FedoraTestCase implements Consta
         }
         SQLUtility.createNonExistingTables(m_cPool, specIn, new DummyLogging());
         
-        Parameterized tsConf = cl.getDatastoreConfig(datastore);
-        Map tsP = tsConf.getParameters();
-        String connectorClassName = (String) tsP.get("connectorClassName");
-        m_triplestorePath = (String)tsP.get("path");
+        DatastoreConfiguration tsConfig = serverConfig.getDatastoreConfiguration(datastore);
+        Map tsP = new HashMap();
+        Iterator it = tsConfig.getParameters().iterator();
+        while (it.hasNext()) {
+        	Parameter param = (Parameter)it.next();
+        	tsP.put(param.getName(), param.getValue(param.getIsFilePath()));
+        }
+        String connectorClassName = tsConfig.getParameter("connectorClassName").getValue();
+        m_triplestorePath = tsConfig.getParameter("path").getValue(true);
         
         m_conn = TriplestoreConnector.init(connectorClassName, tsP);
         
@@ -110,12 +123,13 @@ public abstract class TestResourceIndex extends FedoraTestCase implements Consta
         // and its value in the alias map.
         //
         HashMap aliasMap = new HashMap();
-        Iterator iter = riMP.keySet().iterator();
+        Iterator iter = riConfig.getParameters().iterator();
         while (iter.hasNext()) {
-            String pName = (String) iter.next();
-            String[] parts = pName.split(":");
+            Parameter param = (Parameter)iter.next();
+            
+            String[] parts = (param.getName()).split(":");
             if ((parts.length == 2) && (parts[0].equals("alias"))) {
-                aliasMap.put(parts[1], riMP.get(pName));
+                aliasMap.put(parts[1], param.getValue(param.getIsFilePath()));
             }
         }
         
@@ -227,5 +241,16 @@ public abstract class TestResourceIndex extends FedoraTestCase implements Consta
     
     protected void export(String path) throws Exception {
         m_ri.export(new FileOutputStream(path), RDFFormat.RDF_XML);
+    }
+    
+    public static ServerConfiguration getServerConfiguration() throws Exception {
+    	FileInputStream fis;
+    	try {
+    		fis = new FileInputStream(FCFG);
+    	} catch (FileNotFoundException e) {
+    		ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-setup ssl-authenticate-apim");
+    		fis = new FileInputStream(FCFG);
+    	}
+        return new ServerConfigurationParser(fis).parse();
     }
 }

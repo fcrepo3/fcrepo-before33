@@ -340,4 +340,8 @@ public class ResourceIndexModule extends Module
 	public int getBufferSize() {
 		return m_resourceIndex.getBufferSize();
 	}
+
+	public List getBufferedTriples() {
+		return m_resourceIndex.getBufferedTriples();
+	}
 }

@@ -1,23 +1,5 @@
 package fedora.server.resourceIndex;
 
-import fedora.client.bmech.data.MethodParm;
-import fedora.common.PID;
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
-import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.ConnectionPool;
-import fedora.server.storage.service.ServiceMapper;
-import fedora.server.storage.types.*;
-import fedora.server.utilities.DCFields;
-
-import javax.wsdl.WSDLException;
-import javax.wsdl.extensions.ExtensibilityElement;
-import javax.wsdl.extensions.mime.MIMEContent;
-import javax.wsdl.factory.*;
-import javax.wsdl.xml.*;
-import javax.wsdl.*;
-import javax.xml.namespace.QName;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -30,8 +12,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,23 +23,50 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.wsdl.Binding;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.ExtensibilityElement;
+import javax.wsdl.extensions.mime.MIMEContent;
+import javax.wsdl.factory.WSDLFactory;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
+
 import org.apache.log4j.Logger;
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
-
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
-import org.trippi.TripleMaker;
 import org.trippi.TripleIterator;
+import org.trippi.TripleMaker;
+import org.trippi.TripleUpdate;
 import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreReader;
 import org.trippi.TriplestoreWriter;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
-
 import org.xml.sax.InputSource;
+
+import fedora.client.bmech.data.MethodParm;
+import fedora.common.PID;
+import fedora.server.Logging;
+import fedora.server.StdoutLogging;
+import fedora.server.errors.ResourceIndexException;
+import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.service.ServiceMapper;
+import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.DSBinding;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.MethodDef;
+import fedora.server.storage.types.MethodParmDef;
+import fedora.server.utilities.DCFields;
 
 /**
  * Implementation of the ResourceIndex interface.
@@ -70,6 +80,17 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     //		- subsequent insert/edits/deletes
     //		- changes in levels
     //      - clean up/separate out sql/database calls
+	
+	private static final String INSERT_METHOD = 
+		"INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)";
+	private static final String INSERT_PERMUTATION = 
+		"INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)";
+	private static final String INSERT_METHOD_IMPL_BINDING = 
+		"INSERT INTO riMethodImplBinding (methodImplId, dsBindKey) VALUES (?, ?)";
+	private static final String INSERT_METHOD_IMPL = 
+		"INSERT INTO riMethodImpl (methodImplId, bMechPid, methodId) VALUES (?, ?, ?)";
+	private static final String INSERT_METHOD_MIME_TYPE =
+		"INSERT INTO riMethodMimeType (methodImplId, mimeType) VALUES (?, ?)";
 	
 	private static final Logger logger =
         Logger.getLogger(ResourceIndex.class.getName());
@@ -280,7 +301,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             	conn = m_cPool.getConnection();
             	select = conn.createStatement();
             	rs = select.executeQuery(query);
-            	String permutation, mimeType, method, rep, repType, dsBindKey, dsURI;
+            	String permutation, mimeType, method, dsBindKey, dsURI;
             	while (rs.next()) {
             		method = doIdentifier + "/" + rs.getString("methodId");
             		if (methods.add(method)) {
@@ -345,10 +366,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
-        
-        // flush buffer before deletes, or findTriples may be incomplete
-        commit();
-        
+
+        Set subjectsToDelete = new HashSet();
+
         String pid = digitalObject.getPid();
         logger.debug("- deleting " + pid);
         Iterator it;
@@ -356,26 +376,35 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Delete disseminators
         it = digitalObject.disseminatorIdIterator();
         while (it.hasNext()) {
-            deleteDisseminator(digitalObject, (String)it.next());          
+            deleteDisseminator(subjectsToDelete, digitalObject, (String)it.next());          
         }
         
         // Delete datastreams
         it = digitalObject.datastreamIdIterator();
         while (it.hasNext()) {
-            deleteDatastream(digitalObject, (String)it.next());
+            deleteDatastream(subjectsToDelete, digitalObject, (String)it.next());
         }
         
         // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
+        subjectsToDelete.add(doURI);
+        String subject;
         try {
-        	deleteTriples(findTriples(TripleMaker.createResource(doURI), null, null, 0), false);
+        	it = subjectsToDelete.iterator();
+        	while (it.hasNext()) {
+            	subject = (String)it.next();
+            	deleteTriples(findTriples(TripleMaker.createResource(subject), null, null, 0), false);
+            	delete(findBufferedTriplesBySubject(subject), false);
+            }
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
-        }
+        } catch (IOException e) {
+        	throw new ResourceIndexException(e.getMessage(), e);
+		}
         logger.debug("- deleted " + pid);
 	}
 
-	private void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
+	private void deleteDatastream(Collection subjectsToDelete, DigitalObject digitalObject, String datastreamID) throws ResourceIndexException {
 	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -384,12 +413,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String doURI = getDOURI(digitalObject);
         String datastreamURI = getDSURI(doURI, datastreamID);
 
-        // DELETE statements where datastreamURI is subject
-        try {
-            deleteTriples(findTriples(TripleMaker.createResource(datastreamURI), null, null, 0), false);
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        }
+        subjectsToDelete.add(datastreamURI);
         
         // handle special system datastreams, e.g.: DC, METHODMAP, RELS-EXT
         if (datastreamID.equalsIgnoreCase("DC")) {
@@ -407,7 +431,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
 	}
 
-	private void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
+	private void deleteDisseminator(Collection subjectsToDelete, DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException {
         if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
@@ -418,6 +442,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         String bDefPID = diss.bDefID;
         String bMechPID = diss.bMechID;
         
+        /*
+         * Shouldn't need to do this, as the general "delete all triples
+         * whose subject is the digital object" will catch this
         // delete bMech reference: 
         try {
             deleteTriples(findTriples(TripleMaker.createResource(doIdentifier), 
@@ -428,6 +455,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         } catch (TrippiException e) {
             throw new ResourceIndexException(e.getMessage(), e);
         }
+        */
         
         // delete statements where rep is the subject
         String query = "SELECT permutation " +
@@ -447,7 +475,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             while (rs.next()) {
                 permutation = rs.getString("permutation");
                 rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                deleteTriples(findTriples(TripleMaker.createResource(rep), null, null, 0), false);
+                subjectsToDelete.add(rep);
             }
             delete = conn.createStatement();
             if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_BMECH_OBJECT) {
@@ -457,9 +485,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             }
         } catch (SQLException e) {
             throw new ResourceIndexException(e.getMessage(), e);
-        } catch (TrippiException e) {
-            throw new ResourceIndexException(e.getMessage(), e);
-        } finally {
+		} finally {
             try {
                 if (rs != null) {
                     rs.close();
@@ -685,7 +711,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
         
-        String doURI = getDOURI(digitalObject);
+        //String doURI = getDOURI(digitalObject);
         String bDefPid = digitalObject.getPid();
         MethodDef[] mdef = getMethodDefs(bDefPid, ds);
         List permutations = new ArrayList();
@@ -697,8 +723,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         PreparedStatement insertMethod = null, insertPermutation = null;
         try {
             conn = m_cPool.getConnection();
-            insertMethod = conn.prepareStatement("INSERT INTO riMethod (methodId, bDefPid, methodName) VALUES (?, ?, ?)");
-            insertPermutation = conn.prepareStatement("INSERT INTO riMethodPermutation (methodId, permutation) VALUES (?, ?)");
+            insertMethod = conn.prepareStatement(INSERT_METHOD);
+            insertPermutation = conn.prepareStatement(INSERT_PERMUTATION);
 
             for (int i = 0; i < mdef.length; i++) {
                 methodName = mdef[i].methodName;
@@ -791,7 +817,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
         
-        String doURI = getDOURI(digitalObject);
+        //String doURI = getDOURI(digitalObject);
         String bMechPid = digitalObject.getPid();
         MethodDef[] mdef = getMethodDefs(bMechPid, ds);
         String methodName, methodImplFK;
@@ -801,7 +827,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 
         try {
             conn = m_cPool.getConnection();
-            insertMethodImplBinding = conn.prepareStatement("INSERT INTO riMethodImplBinding (methodImplId, dsBindKey) VALUES (?, ?)");
+            insertMethodImplBinding = conn.prepareStatement(INSERT_METHOD_IMPL_BINDING);
 
             for (int i = 0; i < mdef.length; i++) {
                 methodName = mdef[i].methodName;
@@ -863,7 +889,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             return;
         }
 
-        String doURI = getDOURI(digitalObject);
+        //String doURI = getDOURI(digitalObject);
         String bDefPid = getBDefPid(digitalObject);
         String bMechPid = digitalObject.getPid();
         DatastreamXMLMetadata wsdlDS = (DatastreamXMLMetadata)ds;
@@ -885,8 +911,8 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             
             String methodName, mimeType;
             conn = m_cPool.getConnection();
-            insertMethodImpl = conn.prepareStatement("INSERT INTO riMethodImpl (methodImplId, bMechPid, methodId) VALUES (?, ?, ?)");
-            insertMethodMimeType = conn.prepareStatement("INSERT INTO riMethodMimeType (methodImplId, mimeType) VALUES (?, ?)");
+            insertMethodImpl = conn.prepareStatement(INSERT_METHOD_IMPL);
+            insertMethodMimeType = conn.prepareStatement(INSERT_METHOD_MIME_TYPE);
             String riMethodImplPK, riMethodFK;
             QName mimeContentQName = new QName("http://schemas.xmlsoap.org/wsdl/mime/", "content");
             while (it.hasNext()) {
@@ -1080,7 +1106,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
     private BMechDSBindSpec getDSBindSpec(String pid, Datastream ds) throws ResourceIndexException {
         DatastreamXMLMetadata dsInSpecDS = (DatastreamXMLMetadata)ds;
         ServiceMapper serviceMapper = new ServiceMapper(pid);
-        BMechDSBindSpec dsBindSpec;
+        //BMechDSBindSpec dsBindSpec;
         try {
             return serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
         } catch (Throwable t) {
@@ -1485,5 +1511,31 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		return m_writer.getBufferSize();
 	}
 
-
+	public List getBufferedTriples() {
+		return m_writer.getBufferedTriples();
+	}
+	
+	/**
+	 * Returns the triples from Trippi's buffer that are:
+	 * 	1. waiting to be ADDed, and
+	 *  2. whose subject equals the subject parameter
+	 * 
+	 * @param subject
+	 * @return
+	 */
+	private List findBufferedTriplesBySubject(String subject) {
+		List toDelete = new ArrayList();
+		Iterator it = getBufferedTriples().iterator();
+		while (it.hasNext()) {
+			TripleUpdate tup = (TripleUpdate)it.next();
+			if (tup.type == TripleUpdate.ADD) {
+				Triple t = tup.triple;
+				String sub = t.getSubject().toString();
+				if (subject.equals(sub)) {
+					toDelete.add(t);
+				}
+			}
+		}
+		return toDelete;
+	}
 }

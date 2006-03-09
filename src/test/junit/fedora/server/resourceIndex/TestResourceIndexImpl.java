@@ -25,6 +25,9 @@ public class TestResourceIndexImpl extends TestResourceIndex {
      * @see TestCase#setUp()
      */
     protected void setUp() throws Exception {
+    	if (FEDORA_HOME == null) {
+    		throw new Exception("FEDORA_HOME is null");
+    	}
         super.setUp();
         
         bdef = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR

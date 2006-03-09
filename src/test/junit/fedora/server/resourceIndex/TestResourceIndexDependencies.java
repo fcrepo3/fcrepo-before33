@@ -43,7 +43,7 @@ public class TestResourceIndexDependencies extends TestResourceIndex {
         m_ri.addDigitalObject(bmech);
         m_ri.addDigitalObject(dobj);
         m_ri.commit();
-        export("/tmp/rdf/out.rdf");
+        export("/tmp/out.rdf");
         
         //query2();
         //dobj.
