@@ -439,7 +439,6 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
         String doIdentifier = getDOURI(digitalObject);
         
-        String bDefPID = diss.bDefID;
         String bMechPID = diss.bMechID;
         
         /*
@@ -457,11 +456,9 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         }
         */
         
-        // delete statements where rep is the subject
-        String query = "SELECT permutation " +
-                       "FROM riMethodPermutation, riMethodImpl " +
-                       "WHERE riMethodPermutation.methodId = riMethodImpl.methodId " +
-                       "AND riMethodImpl.bMechPid = '" + bMechPID + "'";
+        // delete statements where the object + bdef + method is the subject
+        String query = "SELECT methodId FROM riMethodImpl " +
+        			   "WHERE bMechPid = '" + bMechPID + "'";
         Connection conn = null;
         Statement select = null;
         Statement delete = null;
@@ -471,12 +468,13 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
             conn = m_cPool.getConnection();
             select = conn.createStatement();
             rs = select.executeQuery(query);
-            String permutation, rep;
-            while (rs.next()) {
-                permutation = rs.getString("permutation");
-                rep = doIdentifier + "/" + bDefPID + "/" + permutation;
-                subjectsToDelete.add(rep);
+            String methodId, rep;
+            while (rs.next()) {               
+            	methodId = rs.getString("methodId");
+            	rep = doIdentifier + "/" + methodId;
+            	subjectsToDelete.add(rep);                
             }
+
             delete = conn.createStatement();
             if (digitalObject.getFedoraObjectType() == DigitalObject.FEDORA_BMECH_OBJECT) {
                 String deleteRIMIB = "DELETE FROM riMethodImplBinding " +
