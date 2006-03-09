@@ -499,7 +499,6 @@ public class DefaultDOManager
 			// TODO: make sure there's no SESSION lock on a writer for the pid
 
 			BasicDigitalObject obj=new BasicDigitalObject();
-			InputStream is = m_permanentStore.retrieveObject(pid);
 			m_translator.deserialize(m_permanentStore.retrieveObject(pid), obj,
 					m_defaultStorageFormat, m_storageCharacterEncoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
@@ -912,6 +911,7 @@ public class DefaultDOManager
                 try {
                     logInfo("COMMIT: Deleting from ResourceIndex...");
                     m_resourceIndex.deleteDigitalObject(obj);
+                    logInfo("COMMIT: Finished deleting from ResourceIndex...");
                 } catch (ServerException se) {
                     logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
                 }
