@@ -246,21 +246,31 @@ $b &lt;urn:example:isRelatedTo&gt; $a</pre></div>
     and contains non-ASCII characters.
     </p>
     <p>As with the
-    user interface, it can be invoked to retrieve tuples or triples.  The syntax is described below while
-    the meaning of each parameter is described in the above section.
+    user interface, it can be invoked to retrieve tuples or triples.  The syntax is described below.
     </p>
     <p>Note:</p>
     <ul>
       <li> Square brackets ( "[" and "]" ) indicate that the parameter is optional.</li>
       <li> As with all HTTP parameters, unsafe URI characters should be URI-escaped.
     For reability purposes, URI escaping is not shown below.</li>
-      <li> The query and template parameters optionally take the value by <em>reference</em> -- that is,
+      <li> The <em>query</em> and <em>template</em> parameters optionally take the value by <em>reference</em> -- that is,
            a URL to a query or template can be given instead of the actual text.</li>
+      <li> The <em>flush</em> parameter tells the resource index to ensure that any 
+           recently-added/modified/deleted triples are flushed to the 
+           triplestore before executing the query.  This option can be desirable
+           in certain scenarios, but for performance reasons, should be 
+           used sparingly when a process is making many API-M calls to Fedora
+           in a short period of time:
+           We have found that the underlying triplestore (Kowari) generally 
+           achieves a much better overall update rate with large batches of 
+           triples.</li>
+</li>
     </ul>
     <div class="subsect">
       <h3><a name="app.tuples">Syntax for Requesting Tuples</a></h3>
       <div class="code"><pre>
 http://localhost:8080/fedora/risearch?type=tuples
+                                     &amp;flush=[<strong>true</strong> (default is false)]
                                      &amp;lang=<strong>iTQL|RDQL</strong>
                                      &amp;format=<strong>CSV|Simple|Sparql|TSV</strong>
                                      &amp;limit=[<strong>1</strong> (default is no limit)]
@@ -272,6 +282,7 @@ http://localhost:8080/fedora/risearch?type=tuples
       <h3><a name="app.triples">Syntax for Requesting Triples</a></h3>
       <div class="code"><pre>
 http://localhost:8080/fedora/risearch?type=triples
+                                     &amp;flush=[<strong>true</strong> (default is false)]
                                      &amp;lang=<strong>SPO|iTQL|RDQL</strong>
                                      &amp;format=<strong>N-Triples|Notation 3|RDF/XML|Turtle</strong>
                                      &amp;limit=[<strong>1</strong> or more (default is no limit)]
