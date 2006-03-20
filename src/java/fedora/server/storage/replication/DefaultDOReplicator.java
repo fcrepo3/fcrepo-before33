@@ -345,14 +345,50 @@ public class DefaultDOReplicator
                         results=null;
                     }
 
-                    // Update the diss table with all new, correct values.
-                    logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
-                                        + SQLUtility.aposEscape(diss.dissLabel)
-                                        + "', bMechDbID=" + newBMechDbID + ", "
-                                        + "dissID='" + diss.dissID + "', "
-                                        + "dissState='" + diss.dissState + "' "
-                                        + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID
-                                        + " AND bMechDbID=" + bMechDbID);
+                    // Update the diss/doDissAssoc tables as appropriate
+                    boolean changedAssoc = false;
+                    if (newBMechDbID != bMechDbID) {
+                        // The bMech changed.  Are any other objects using the original diss row?
+                        results = logAndExecuteQuery(st, "SELECT COUNT(*) "
+                                                       + "FROM doDissAssoc "
+                                                       + "WHERE doDbID <> " + doDbID + " "
+                                                       + "AND dissDbID = " + dissDbID);
+                        results.next();
+                        int numOtherObjects = results.getInt(1);
+                        results.close();
+                        results = null;
+                        if (numOtherObjects > 0) {
+                            // Yes, so check if there's an appropriate diss row
+                            // to latch on to, or create a new one.  Then, modify
+                            // the existing doDissAssoc row to point to the diss row.
+                            int newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
+                            if (newDissDbID == -1) {
+                                logAndExecuteUpdate(st, 
+                                        "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) "
+                                      + "VALUES (" + bDefDbID + ", "
+                                                   + newBMechDbID + ", "
+                                                   + "'" + diss.dissID + "', "
+                                                   + "'" + SQLUtility.aposEscape(diss.dissLabel) + "', "
+                                                   + "'" + diss.dissState + "')");
+                                newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
+                            }
+                            logAndExecuteUpdate(st,
+                                    "UPDATE doDissAssoc "
+                                  + "SET dissDbID = " + newDissDbID + " "
+                                  + "WHERE doDbID = " + doDbID + " "
+                                  + "AND dissDbID = " + dissDbID);
+                            changedAssoc = true;
+                        }
+                    }
+                    if (!changedAssoc) {
+                        logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
+                                            + SQLUtility.aposEscape(diss.dissLabel)
+                                            + "', bMechDbID=" + newBMechDbID + ", "
+                                            + "dissID='" + diss.dissID + "', "
+                                            + "dissState='" + diss.dissState + "' "
+                                            + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID
+                                            + " AND bMechDbID=" + bMechDbID);
+                    }
                 }
 
                 // Compare the latest version of the disseminator's bindMap with what's in the db
@@ -542,6 +578,32 @@ public class DefaultDOReplicator
         logFinest("DefaultDOReplicator.updateComponents: Exiting ------");
         return true;
     }
+
+    private int getDissDbID(Statement st, 
+                            int bDefDbID, 
+                            int bMechDbID, 
+                            String dissID, 
+                            String dissState) throws SQLException {
+        StringBuffer query = new StringBuffer();
+        query.append("SELECT dissDbID ");
+        query.append("FROM diss ");
+        query.append("WHERE bDefDbID = " + bDefDbID + " ");
+        query.append("AND bMechDbID = " + bMechDbID + " ");
+        query.append("AND dissID = '" + dissID + "' ");
+        query.append("AND dissState = '" + dissState + "'");
+        ResultSet result = logAndExecuteQuery(st, query.toString());
+        try {
+            if (result.next()) {
+                return result.getInt(1);
+            } else {
+                return -1;
+            }
+        } finally {
+            result.close();
+            result = null;
+        }
+    }
+
 
     private boolean addNewComponents(DOReader reader)
             throws ReplicationException {
