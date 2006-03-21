@@ -35,6 +35,7 @@
 		</sch:rule>
 		<sch:rule context="METS:mets">
 			<sch:assert test="string-length(@OBJID) &lt;= 64">Object PID must not exceed length of 64 (mets:mets OBJID)</sch:assert>
+			<sch:assert test="not(@LABEL) or string-length(@LABEL) &lt;= 255">Object label must not exceed length of 255 (mets:mets LABEL)</sch:assert>
 			<sch:assert test="@TYPE = 'FedoraObject' or @TYPE = 'FedoraBDefObject' or @TYPE = 'FedoraBMechObject'">Object must be of type "FedoraObject|FedoraBDefObject|FedoraBMechObject" (mets:mets: TYPE)</sch:assert>
 			<sch:report test="METS:dmdSec">The METS:dmdSec element is not supported by Fedora.   Use the METS:dmdSecFedora element instead (see the Fedora extension of the METS 1.0 schema)</sch:report>
 		</sch:rule>
@@ -66,6 +67,9 @@
 			<sch:assert test="@ID">Every Datastream must have a Datastream Version ID (mets:digiprovMD: ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 69">Datastream Version ID must not exceed length of 69 (mets:digiprovMD ID)</sch:assert>
 		</sch:rule>
+		<sch:rule context="METS:mdWrap">
+			<sch:assert test="not(@LABEL) or string-length(@LABEL) &lt;= 255">Datastream label must not exceed length of 255 (mets:mdWrap LABEL)</sch:assert>
+		</sch:rule>
 		<sch:rule context="METS:fileSec">
 			<sch:assert test="METS:fileGrp[@ID]">All Datastreams must have a DatastreamID (mets:fileGrp: ID is missing or empty)</sch:assert>
 			<sch:assert test="METS:fileGrp[@ID='DATASTREAMS']">Datastreams section encoding error (mets:fileSec: must have child fileGrp whose ID is "DATASTREAMS"</sch:assert>
@@ -85,6 +89,9 @@
 			<sch:assert test="string(@OWNERID)">Datastream control group must be recorded (mets:file: OWNERID missing or empty)</sch:assert>
 			<sch:assert test="@OWNERID='R' or @OWNERID = 'E' or @OWNERID = 'M' or @OWNERID = 'X'">Datastream control group must be "E" for External-Ref, "M" for Managed-Content, "R" for Redirect, or "X" for Inline-XML-Metadata.  (mets:file: OWNERID)</sch:assert>
 		</sch:rule>
+		<sch:rule context="METS:FLocat">
+			<sch:assert test="not(@xlink:title) or string-length(@xlink:title) &lt;= 255">Datastream label must not exceed length of 255 (mets:FLocat xlink:title)</sch:assert>
+        </sch:rule>
 		<sch:rule context="METS:structMap">
 			<sch:assert test="string(@ID)">Datastream Binding Map ID is missing (mets:structMap: ID is missing or empty)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream Binding Map ID must not exceed length of 64 (mets:structMap ID)</sch:assert>
@@ -98,6 +105,7 @@
 			<sch:assert test="string-length(@ID) &lt;= 64">Disseminator ID must not exceed length of 64 (mets:behaviorSec ID)</sch:assert>
 			<sch:assert test="METS:serviceBinding[@ID]">Disseminator must have a Version ID (mets:serviceBinding: ID is missing or empty)</sch:assert>
 			<sch:assert test="METS:serviceBinding[string-length(@ID) &lt;= 69]">Disseminator Version ID must not exceed length of 69 (mets:serviceBinding: ID)</sch:assert>
+			<sch:assert test="not(METS:serviceBinding[@LABEL]) or string-length(METS:serviceBinding[@LABEL]) &lt;= 255">Disseminator label must not exceed length of 255 (mets:serviceBinding: LABEL)</sch:assert>
 			<sch:assert test="METS:serviceBinding/METS:interfaceMD[string(@xlink:href)]">Disseminator must point to a Behavior Definition Object (mets:interfaceMD: xlink:href is missing or empty)</sch:assert>
 			<sch:assert test="METS:serviceBinding/METS:serviceBindMD[string(@xlink:href)]">Disseminator must point to a Behavior Mechanism Object (mets:serviceBindMD: xlink:href is missing or empty)</sch:assert>
 		</sch:rule>

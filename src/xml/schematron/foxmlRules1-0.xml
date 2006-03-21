@@ -51,7 +51,10 @@
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/view#lastModifiedDate']) = 0">DUPLICATE object property: modification date (foxml:property NAME='info:fedora/fedora-system:def/model#lastModifiedDate' )</sch:assert>
 			<sch:assert test="count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 1 or count(foxml:property[@NAME='info:fedora/fedora-system:def/model#contentModel']) = 0">DUPLICATE object property: content model (foxml:property NAME='info:fedora/fedora-system:def/model#contentModel')</sch:assert>
 		</sch:rule>
-		<!-- RULE:  check that required attributes are not missing. -->
+		<!-- RULE: check that attributes do not exceed length limits and are not missing if required. -->
+		<sch:rule context="foxml:property[@NAME='info:fedora/fedora-system:def/model#label']">
+            <sch:assert test="string-length(@VALUE) &lt;= 255">Object label must not exceed 255 characters (foxml:property NAME='info:fedora/fedora-system:def/model#label')</sch:assert>
+        </sch:rule>
 		<sch:rule context="foxml:datastream">
 			<sch:assert test="string(@ID)">Datastream must have  a datastream id.  (foxml:datastream: value of ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 64">Datastream ID must not exceed length of 64 (foxml:datastream ID)</sch:assert>
@@ -67,6 +70,7 @@
 			<sch:assert test="string-length(@ID) &lt;= 69">Datastream version ID must not exceed length of 69 (foxml:datastreamVersion ID)</sch:assert>
 			<sch:report test="contains(@ID, '+')">Datastream version ID must not contain a plus sign (+) (foxml:datastreamVersion ID)</sch:report>
 			<sch:report test="contains(@ID, ':')">Datastream version ID must not contain a colon (:) (foxml:datastreamVersion ID)</sch:report>
+            <sch:assert test="not(@LABEL) or string-length(@LABEL) &lt;= 255">Datastream label must not exceed 255 characters (foxml:datastreamVersion LABEL)</sch:assert>
 		</sch:rule>
 		<sch:rule context="foxml:disseminator">
 			<sch:assert test="string(@ID)">Disseminator must have a disseminator id.   (foxml:disseminator: value of ID is missing)</sch:assert>
@@ -76,6 +80,7 @@
 		<sch:rule context="foxml:disseminatorVersion">
 			<sch:assert test="string(@ID)">Disseminator version must have a disseminator id.  (foxml:disseminatorVersion: value of ID is missing)</sch:assert>
 			<sch:assert test="string-length(@ID) &lt;= 69">Disseminator vesrion ID must not exceed length of 69 (foxml:disseminatorVersion ID)</sch:assert>
+            <sch:assert test="not(@LABEL) or string-length(@LABEL) &lt;= 255">Disseminator label must not exceed 255 characters (foxml:disseminatorVersion LABEL)</sch:assert>
 			<sch:assert test="string(@BMECH_SERVICE_PID)">Disseminator must have a behavior mechanism id.   (foxml:disseminatorVersion: value of BMECH_SERVICE_PID is missing)</sch:assert>
 		</sch:rule>
 	</sch:pattern>
