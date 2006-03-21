@@ -811,34 +811,39 @@ public class DefaultDOManager
 
         // OBJECT REMOVAL...
         if (remove) {
+
             logFinest("COMMIT: Entered doCommit (remove)");
+
             // REFERENTIAL INTEGRITY:
             // Before removing an object, verify that there are no other objects
             // in the repository that depend on the object being deleted.
-            FieldSearchResult result = findObjects(context,
-                new String[] {"pid"}, 10,
-                new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
-            if (result.objectFieldsList().size() > 0)
-            {
-                throw new ObjectDependencyException("The digital object \""
-                    + obj.getPid() + "\" is used by one or more other objects "
-                    + "in the repository. All related objects must be removed "
-                    + "before this object may be deleted. Use the search "
-                    + "interface with the query \"bDef~" + obj.getPid()
-                    + "\" to obtain a list of dependent objects.");
+            int fType = obj.getFedoraObjectType();
+            if (fType == DigitalObject.FEDORA_BDEF_OBJECT) {
+                FieldSearchResult result = findObjects(context,
+                    new String[] {"pid"}, 10,
+                    new FieldSearchQuery(Condition.getConditions("bDef~"+obj.getPid())));
+                if (result.objectFieldsList().size() > 0) {
+                    throw new ObjectDependencyException("The digital object \""
+                        + obj.getPid() + "\" is used by one or more other objects "
+                        + "in the repository. All related objects must be removed "
+                        + "before this object may be deleted. Use the search "
+                        + "interface with the query \"bDef~" + obj.getPid()
+                        + "\" to obtain a list of dependent objects.");
+                }
+            } else if (fType == DigitalObject.FEDORA_BMECH_OBJECT) {
+                FieldSearchResult result = findObjects(context,
+                    new String[] {"pid"}, 10,
+                    new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
+                if (result.objectFieldsList().size() > 0) {
+                    throw new ObjectDependencyException("The digital object \""
+                        + obj.getPid() + "\" is used by one or more other objects "
+                        + "in the repository. All related objects must be removed "
+                        + "before this object may be deleted. Use the search "
+                        + "interface with the query \"bMech~" + obj.getPid()
+                        + "\" to obtain a list of dependent objects.");
+                }
             }
-            result = findObjects(context,
-                new String[] {"pid"}, 10,
-                new FieldSearchQuery(Condition.getConditions("bMech~"+obj.getPid())));
-            if (result.objectFieldsList().size() > 0)
-            {
-              throw new ObjectDependencyException("The digital object \""
-                  + obj.getPid() + "\" is used by one or more other objects "
-                  + "in the repository. All related objects must be removed "
-                  + "before this object may be deleted. Use the search "
-                  + "interface with the query \"bMech~" + obj.getPid()
-                  + "\" to obtain a list of dependent objects.");
-            }
+
             // DATASTREAM STORAGE:
             // remove any managed content datastreams associated with object
             // from persistent storage.
