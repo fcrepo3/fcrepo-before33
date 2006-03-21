@@ -173,6 +173,8 @@ public class DefaultManagement
 
             m_fedoraXACMLModule.enforceModifyObject(context, pid, state); 
 
+            checkObjectLabel(label);
+
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             if (state!=null && !state.equals("")) {
                 if (!state.equals("A") && !state.equals("D") && !state.equals("I")) {
@@ -183,8 +185,9 @@ public class DefaultManagement
                 w.setState(state);
             }
             //if (label!=null && !label.equals(""))
-			if (label!=null)
+			if (label!=null) {
                 w.setLabel(label);
+            }
             w.commit(logMessage);
             return w.getLastModDate();
         } finally {
@@ -325,8 +328,13 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             getServer().logFinest("Entered DefaultManagement.addDatastream");
+
 			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
 					formatURI, dsLocation, controlGroup, dsState);
+
+            checkDatastreamID(dsID);
+            checkDatastreamLabel(dsLabel);
+
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Datastream ds;
             if (controlGroup.equals("X")) {
@@ -438,6 +446,9 @@ public class DefaultManagement
     			
     			m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
     					bDefPid, bMechPid, dissState);
+
+                checkDisseminatorLabel(dissLabel);
+
 				w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
 				Disseminator diss = new Disseminator();
 				diss.isNew=true;
@@ -503,6 +514,7 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
 			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, dsState);
+            checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
 			Date nowUTC; // variable for ds modified date
@@ -655,6 +667,7 @@ public class DefaultManagement
             
 			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, dsState);
 
+            checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             
@@ -797,6 +810,8 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
 			m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
+
+            checkDisseminatorLabel(dissLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Disseminator orig=w.GetDisseminator(disseminatorId, null);
             
@@ -1580,6 +1595,54 @@ public class DefaultManagement
 			if (message == null) message = e.getClass().getName();
 			throw new GeneralException("RELS-EXT validation failed: " + message);
 		}
+    }
+
+    private void checkDatastreamID(String id) throws ValidationException {
+        checkString(id, "Datastream id", 
+                    ValidationConstants.DATASTREAM_ID_MAXLEN,
+                    ValidationConstants.DATASTREAM_ID_BADCHARS);
+    }
+    
+    private void checkDatastreamLabel(String label) throws ValidationException {
+        checkString(label, "Datastream label", 
+                    ValidationConstants.DATASTREAM_LABEL_MAXLEN, null);
+    }
+    
+    private void checkDisseminatorID(String id) throws ValidationException {
+        checkString(id, "Disseminator id", 
+                    ValidationConstants.DISSEMINATOR_ID_MAXLEN,
+                    ValidationConstants.DISSEMINATOR_ID_BADCHARS);
+    }
+    
+    private void checkDisseminatorLabel(String label) throws ValidationException {
+        checkString(label, "Disseminator label", 
+                    ValidationConstants.DISSEMINATOR_LABEL_MAXLEN, null);
+    }
+    
+    private void checkObjectLabel(String label) throws ValidationException {
+        checkString(label, "Object label", 
+                    ValidationConstants.OBJECT_LABEL_MAXLEN, null);
+    }
+
+    private void checkString(String string,
+                             String kind,
+                             int maxLen,
+                             char[] badChars) throws ValidationException {
+        if (string != null) {
+            if (string.length() > maxLen) {
+                throw new ValidationException(kind + " is too long. Maximum "
+                        + "length is " + maxLen + " characters.");
+            } else if (badChars != null) {
+                for (int i = 0; i < badChars.length; i++) {
+                    char c = badChars[i];
+                    if (string.indexOf(c) != -1) {
+                        throw new ValidationException(kind + " contains a "
+                                + "'" + c + "', but that character is not "
+                                + "allowed.");
+                    }
+                }
+            }
+        }
     }
     
     public boolean adminPing(Context context)

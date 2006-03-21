@@ -754,41 +754,6 @@ public class DefaultDOManager
 		}
 	}
 
-	/**
-	 * Gets a writer on a new, empty object.
-	 */
-	/*
-	public synchronized DOWriter getIngestWriter(Context context)
-			throws ServerException {
-		getServer().logFinest("INGEST: Entered DefaultDOManager.getIngestWriter(Context)");
-		if (cachedObjectRequired(context)) {
-			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
-		} else {
-			BasicDigitalObject obj=new BasicDigitalObject();
-			getServer().logFinest("Creating object, need a new PID.");
-			String p=null;
-			try {
-				p=m_pidGenerator.generatePID(m_pidNamespace);
-			} catch (Exception e) {
-				throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
-						+ e.getClass().getName() + ") - " + e.getMessage());
-			}
-			getServer().logFiner("Generated PID: " + p);
-			obj.setPid(p);
-			if (objectExists(obj.getPid())) {
-				throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
-			}
-			// make a record of it in the registry
-			// FIXME: this method is incomplete...
-			// obj.setNew(true);
-			//registerObject(obj.getPid(), obj.getFedoraObjectType(), getUserId(context));
-
-			// serialize to disk, then validate.. if that's ok, go on.. else unregister it!
-		}
-		return null;
-	}
-	*/
-
     /**
      * The doCommit method finalizes an ingest/update/remove of a digital object. 
      * The process makes updates the object modified date, stores managed content 
@@ -929,11 +894,6 @@ public class DefaultDOManager
                 // MANAGED DATASTREAM PURGE:
                 // find out which, if any, managed datastreams were purged,
                 // then remove them from low level datastream storage
-
-// TODO: Uncomment the next line of code, and delete the chunk in 
-//       DefaultDOReplicator.purgeComponents that starts with "FIXME: this is a quick hack"
-//       and ends with if (isDeleted) return true; (it's around 40 lines)
-//       after 2.1 is released (or before if team says it's ok) - cwilper
 
                 if (!obj.isNew()) deletePurgedDatastreams(obj, context);
 
@@ -1328,6 +1288,8 @@ public class DefaultDOManager
 
     /**
      * Adds a new object.
+     * The caller *must* ensure the object does not already exist in the
+     * registry before calling this method.
      */
     private void registerObject(String pid, int fedoraObjectType, String userId,
             String label, String contentModelId, Date createDate, Date lastModDate)
@@ -1361,6 +1323,11 @@ public class DefaultDOManager
             st=conn.createStatement();
             st.executeUpdate(query);
         } catch (SQLException sqle) {
+            // clean up if the INSERT didn't succeeed
+            try {
+                unregisterObject(pid);
+            } catch (Throwable th) { }
+            // ...then notify the caller with the original exception
             throw new StorageDeviceException("Unexpected error from SQL database while registering object: " + sqle.getMessage());
         } finally {
             try {
