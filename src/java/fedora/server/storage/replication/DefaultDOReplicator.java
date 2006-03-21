@@ -411,19 +411,9 @@ public class DefaultDOReplicator
                 // Is this a new bindingMap?
                 if (!newDSBindMapID.equals(origDSBindMapID)) {
 
-                    // Yes, dsBindingMap was modified so remove original bindingMap and datastreams.
-                    // BindingMaps can be shared by other objects so first check to see if
-                    // the orignial bindingMap is bound to datastreams of any other objects.
-                    Statement st2 = connection.createStatement();
-                    results=logAndExecuteQuery(st2,"SELECT DISTINCT doDbID,dsBindMapDbID FROM dsBind WHERE dsBindMapDbID="+origDSBindMapDbID);
-                    int numRows = 0;
-                    while (results.next()) {
-                        numRows++;
-                    }
-                    st2.close();
-                    st2=null;
-                    results.close();
-                    results=null;
+                    // Yes, dsBindingMap was modified so remove original datastream bindings.
+                    // The original dsBindingMap row will be left alone -- it will be cleaned
+                    // up when the bmech is purged, if need be.
 
                     // Remove all datastreams for this binding map.
                     // If anything has changed, they will all be added back
@@ -434,21 +424,6 @@ public class DefaultDOReplicator
                             + " AND dsBindMapDbID="+dsBindMapDBID);
                     logFinest("DefaultDOReplicator.updateComponents: deleted "
                               + rowCount + " rows from dsBind");
-
-                    // Is bindingMap shared?
-                    if(numRows == 1) {
-
-                        // No, the bindingMap is NOT shared by any other objects and can be removed.
-                        rowCount = logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE dsBindMapDbID="
-                                + origDSBindMapDbID);
-                        logFinest("DefaultDOReplicator.updateComponents: deleted "
-                                  + rowCount + " rows from dsBindMapDbID");
-                    } else {
-
-                        //Yes, the bindingMap IS shared by other objects so leave bindingMap untouched.
-                        logFinest("DefaultDOReplicator.updateComponents: dsBindMapID: "
-                                  + origDSBindMapID + " is shared by other objects; it will NOT be deleted");
-                    }
 
                     // Now add back new datastreams and dsBindMap associated with this disseminator
                     // using current info in xml object.
@@ -730,51 +705,6 @@ public class DefaultDOReplicator
                         int doDbID=results.getInt("doDbID");
                         results.close();
                         results=null;
-
-// DELETE THE BELOW LINES AND UN-COMMENT DefaultDOManager line 833 to fix
-
-                        // FIXME: this is a quick hack to fix the problem of versioned datastreams
-                        // not being properly removed from LLStore at time of purge.
-                        // Check for any Managed Content Datastreams that have been purged
-                        /*HashMap versions = new HashMap();
-                        Datastream[] ds = reader.GetDatastreams(null, null);
-                        for (int i=0; i<ds.length; i++) {
-                          if(ds[i].DSControlGrp.equalsIgnoreCase("M"))
-                          {
-                            java.util.Date[] dates = reader.getDatastreamVersions(ds[i].DatastreamID);
-                            for (int j=0; j<dates.length; j++)
-                            {
-                              Datastream d = reader.GetDatastream(ds[i].DatastreamID, dates[j]);
-                              versions.put(d.DSVersionID, d.DSLocation);
-                            }
-                          }
-                        }
-                        HashMap dsPaths = new HashMap();
-                        results=logAndExecuteQuery(st,"SELECT token FROM "
-                            + "datastreamPaths WHERE token LIKE '"
-                            + doPID + "+%'");
-                        boolean isDeleted = false;
-                        while (results.next())
-                        {
-                          String token = results.getString("token");
-                          if(!versions.containsValue(token))
-                          {
-                            logInfo("Deleting ManagedContent datastream. " + "id: " + token);
-                            isDeleted = true;
-                            try {
-                              FileSystemLowlevelStorage.getDatastreamStore().remove(token);
-                            } catch (LowlevelStorageException llse) {
-                              logWarning("While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
-                            }
-                          }
-                        }
-                        results.close();
-                        results=null;
-                        if(isDeleted)
-                          return true;
-*/
-// DELETE THE ABOVE LINES AND UN-COMMENT DefaultDOManager line 833 to fix
-
 
                         // Get all disseminators that are in db for this object
                         HashSet dissDbIds = new HashSet();
@@ -1853,40 +1783,6 @@ public class DefaultDOReplicator
             results=null;
             logFinest("DefaultDOReplicator.deleteDigitalObject: Found " + bmapIds.size() + " dsBindMapDbID(s).");
 
-            // Iterate over bmapIds and separate those that are unique
-            // (i.e., not shared by other objects)
-            iterator = bmapIds.iterator();
-            HashSet bmapIdsNotShared = new HashSet();
-            while (iterator.hasNext() )
-            {
-              Integer id = (Integer)iterator.next();
-              ResultSet rs = null;
-              logFinest("DefaultDOReplicator.deleteDigitalObject: Getting associated bmapId(s) that are unique "
-                  + "for this object in diss table...");
-              st2 = connection.createStatement();
-              rs=logAndExecuteQuery(st2, "SELECT DISTINCT doDbID FROM "
-                  + "dsBind WHERE dsBindMapDbID=" + id);
-              int rowCount = 0;
-              while (rs.next())
-              {
-                rowCount++;
-              }
-              if ( rowCount == 1 )
-              {
-                // A bmapId that occurs only once indicates that
-                // a bmapId is not used by other objects. In this case, we
-                // want to keep track of this bpamId.
-                bmapIdsNotShared.add(id);
-                logFinest("DefaultDOReplicator.deleteDigitalObject: added "
-                    + "dsBindMapDbId that was not shared: " + id);
-              }
-
-              rs.close();
-              rs=null;
-              st2.close();
-              st2=null;
-            }
-
             //
             // WRITE
             //
@@ -1914,12 +1810,7 @@ public class DefaultDOReplicator
             logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBindMap "
                     + "table...");
 
-            // Since bmapIds can be shared by other objects in db, only remove
-            // thos Ids that are not shared.
-            rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap "
-                    + "WHERE " + inIntegerSetWhereConditionString(
-                    "dsBindMapDbID", bmapIdsNotShared));
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
+            // Leave dsBindMap rows -- they'll be cleaned up if the bMech is removed
         } finally {
             try {
                 if (results != null) results.close();
@@ -2962,41 +2853,8 @@ public class DefaultDOReplicator
                 results=null;
               }
 
-              // Iterate over bmapIds and separate those that are unique
-              // (i.e., not shared by other objects)
               logFinest("DefaultDOReplicator.purgeDisseminators: Found "
                   + bmapIds.size() + " dsBindMapDbId(s). ");
-              iterator = bmapIds.iterator();
-              HashSet bmapIdsInUse = new HashSet();
-              HashSet bmapIdsShared = new HashSet();
-              HashSet bmapIdsNotShared = new HashSet();
-              while (iterator.hasNext() )
-              {
-                Integer id = (Integer)iterator.next();
-                ResultSet rs = null;
-                logFinest("DefaultDOReplicator.purgeDisseminators: Getting associated bmapId(s) that are unique "
-                    + "for this object in diss table...");
-                st2 = connection.createStatement();
-                rs=logAndExecuteQuery(st2, "SELECT DISTINCT doDbID FROM "
-                    + "dsBind WHERE dsBindMapDbID=" + id);
-                int rowCount = 0;
-                while (rs.next())
-                {
-                  rowCount++;
-                }
-                if ( rowCount == 1 )
-                {
-                  // A dsBindMapDbId that occurs only once indicates that
-                  // the dsBindMapId is not used by other objects. In this case,
-                  // we want to keep track of this dsBindMapDbId.
-                  bmapIdsNotShared.add(id);
-                }
-
-                rs.close();
-                rs=null;
-                st2.close();
-                st2=null;
-              }
 
               //
               // WRITE
@@ -3026,14 +2884,7 @@ public class DefaultDOReplicator
                       + inIntegerSetWhereConditionString("dissDbID", dissIdsNotShared));
               logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s).");
 
-              // In dsBindMap table, dsBindMapIds can be shared by other objects
-              // so only remove dsBindMapIds that are not shared.
-              logFinest("DefaultDOReplicator.purgeDisseminators: Attempting row deletion from dsBindMap "
-                      + "table...");
-              rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap "
-                      + "WHERE " + inIntegerSetWhereConditionString(
-                      "dsBindMapDbID", bmapIdsNotShared));
-              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s).");
+              // Leave entries in dsBindMap table -- they will be cleaned up when the bMech is deleted
 
           } finally {
               try {
