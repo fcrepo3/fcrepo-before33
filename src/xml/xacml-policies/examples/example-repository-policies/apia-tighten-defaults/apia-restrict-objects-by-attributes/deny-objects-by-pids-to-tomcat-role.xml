@@ -23,20 +23,20 @@ C:\eclipse\workspace\fedora\dist\server\xsd\cs-xacml-schema-policy-01.xsd">
 		</Subjects>
 		<!-- *********************************************************************************************************************************************************-->
 		<!--  This policy is applicable to a specific set of objects, identified by their PIDs.  The object PIDs are specified in the -->
-		<!--  ResourceMatch elements, where the PID is a attribute of the object (urn:fedora:names:fedora:2.1:resource:bmech:pid)   -->
+		<!--  ResourceMatch elements, where the PID is a attribute of the object (urn:fedora:names:fedora:2.1:resource:object:pid)   -->
 		<!--  the AttributeValue specifies the actual PID value. -->
 		<!-- *********************************************************************************************************************************************************-->
 		<Resources>
 			<Resource>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:7</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:bmech:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 			</Resource>
 			<Resource>
 				<ResourceMatch MatchId="urn:oasis:names:tc:xacml:1.0:function:string-equal">
 					<AttributeValue DataType="http://www.w3.org/2001/XMLSchema#string">demo:11</AttributeValue>
-					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:bmech:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
+					<ResourceAttributeDesignator AttributeId="urn:fedora:names:fedora:2.1:resource:object:pid" DataType="http://www.w3.org/2001/XMLSchema#string"/>
 				</ResourceMatch>
 			</Resource>
 		</Resources>
