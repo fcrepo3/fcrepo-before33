@@ -53,7 +53,7 @@
 	</table>
 	<table name="doDissAssoc" primaryKey="doDbID,dissDbID">
 		<column name="doDbID" type="int(11)" notNull="true" default="0"/>
-		<column name="dissDbID" type="int(11)" notNull="true" default="0"/>
+		<column name="dissDbID" type="int(11)" notNull="true" default="0" index="dissDbID"/>
 	</table>
 	<table name="diss" primaryKey="dissDbID">
 		<column name="dissDbID" type="int(11)" notNull="true" autoIncrement="true"/>
