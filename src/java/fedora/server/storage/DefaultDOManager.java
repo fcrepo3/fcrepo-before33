@@ -103,10 +103,10 @@ public class DefaultDOManager
     private static boolean GC_ON_COMMIT;
 
     static {
-        GC_ON_COMMIT = true;
+        GC_ON_COMMIT = false;
         try {
-            if (System.getProperty("fedora.GCOnCommit").toLowerCase().equals("false")) {
-                GC_ON_COMMIT = false;
+            if (System.getProperty("fedora.GCOnCommit").toLowerCase().equals("true")) {
+                GC_ON_COMMIT = true;
             }
         } catch (Throwable th) { }
         THIRD_HEAPSIZE = Runtime.getRuntime().totalMemory() / 3;
