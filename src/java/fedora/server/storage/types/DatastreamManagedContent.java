@@ -24,19 +24,9 @@ import fedora.server.storage.lowlevel.ILowlevelStorage;
  */
 public class DatastreamManagedContent extends Datastream {
 
-	private static ILowlevelStorage m_llstore;
-
-	static {
-		try {
-			Server s_server = Server.getInstance(new File(Constants.FEDORA_HOME));
-			m_llstore = (ILowlevelStorage)s_server.getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
-		} catch (InitializationException ie) {
-			System.err.println(ie.getMessage());
-		}
-	}
+	private static ILowlevelStorage s_llstore;
 
 	public DatastreamManagedContent() {
-		
 	}
 
 	public Datastream copy() {
@@ -45,10 +35,21 @@ public class DatastreamManagedContent extends Datastream {
 		return ds;
 	}
 
+    private ILowlevelStorage getLLStore() throws Exception {
+        if (s_llstore == null) {
+		    try {
+		    	Server server = Server.getInstance(new File(Constants.FEDORA_HOME), false);
+		    	s_llstore = (ILowlevelStorage) server.getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
+    		} catch (InitializationException ie) {
+                throw new Exception("Unable to get LLStore Module: " + ie.getMessage(), ie);
+    		}
+        }
+        return s_llstore;
+    }
+
 	public InputStream getContentStream() throws StreamIOException {
 		try {
-			return m_llstore.retrieveDatastream(this.DSLocation);
-
+			return getLLStore().retrieveDatastream(this.DSLocation);
 		} catch (Throwable th) {
 			throw new StreamIOException("[DatastreamManagedContent] returned "
 					+ " the error: \"" + th.getClass().getName()
