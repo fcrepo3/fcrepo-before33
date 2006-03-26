@@ -346,48 +346,36 @@ public class DefaultDOReplicator
                     }
 
                     // Update the diss/doDissAssoc tables as appropriate
-                    boolean changedAssoc = false;
                     if (newBMechDbID != bMechDbID) {
-                        // The bMech changed.  Are any other objects using the original diss row?
-                        results = logAndExecuteQuery(st, "SELECT COUNT(*) "
-                                                       + "FROM doDissAssoc "
-                                                       + "WHERE doDbID <> " + doDbID + " "
-                                                       + "AND dissDbID = " + dissDbID);
-                        results.next();
-                        int numOtherObjects = results.getInt(1);
-                        results.close();
-                        results = null;
-                        if (numOtherObjects > 0) {
-                            // Yes, so check if there's an appropriate diss row
-                            // to latch on to, or create a new one.  Then, modify
-                            // the existing doDissAssoc row to point to the diss row.
-                            int newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
-                            if (newDissDbID == -1) {
-                                logAndExecuteUpdate(st, 
-                                        "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) "
-                                      + "VALUES (" + bDefDbID + ", "
-                                                   + newBMechDbID + ", "
-                                                   + "'" + diss.dissID + "', "
-                                                   + "'" + SQLUtility.aposEscape(diss.dissLabel) + "', "
-                                                   + "'" + diss.dissState + "')");
-                                newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
-                            }
-                            logAndExecuteUpdate(st,
-                                    "UPDATE doDissAssoc "
-                                  + "SET dissDbID = " + newDissDbID + " "
-                                  + "WHERE doDbID = " + doDbID + " "
-                                  + "AND dissDbID = " + dissDbID);
-                            changedAssoc = true;
+                        // The bMech changed, so for this disseminator, 
+                        // the object needs to use a different diss row.
+
+                        // First, check if there's an appropriate diss row to latch on to.
+                        int newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
+                        if (newDissDbID == -1) {
+                            // None to latch on to, so create a new one
+                            logAndExecuteUpdate(st, 
+                                    "INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) "
+                                  + "VALUES (" + bDefDbID + ", "
+                                               + newBMechDbID + ", "
+                                               + "'" + diss.dissID + "', "
+                                               + "'" + SQLUtility.aposEscape(diss.dissLabel) + "', "
+                                               + "'" + diss.dissState + "')");
+                            newDissDbID = getDissDbID(st, bDefDbID, newBMechDbID, diss.dissID, diss.dissState);
                         }
-                    }
-                    if (!changedAssoc) {
+                        // Finally, modify the existing doDissAssoc row to point
+                        // to the different diss row.
+                        logAndExecuteUpdate(st,
+                                "UPDATE doDissAssoc "
+                              + "SET dissDbID = " + newDissDbID + " "
+                              + "WHERE doDbID = " + doDbID + " "
+                              + "AND dissDbID = " + dissDbID);
+                    } else {
+                        // bMech did not change, so just update the appropriate diss row
                         logAndExecuteUpdate(st, "UPDATE diss SET dissLabel='"
                                             + SQLUtility.aposEscape(diss.dissLabel)
-                                            + "', bMechDbID=" + newBMechDbID + ", "
-                                            + "dissID='" + diss.dissID + "', "
-                                            + "dissState='" + diss.dissState + "' "
-                                            + " WHERE dissDbID=" + dissDbID + " AND bDefDbID=" + bDefDbID
-                                            + " AND bMechDbID=" + bMechDbID);
+                                            + "', dissState='" + diss.dissState + "' "
+                                            + " WHERE dissDbID=" + dissDbID);
                     }
                 }
 
@@ -1639,26 +1627,33 @@ public class DefaultDOReplicator
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindSpec "
                     + "table...");
+
+            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindSpec table..");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                     + "dsBindSpec WHERE bMechDbID=" + dbid);
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsMIME table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsMIME WHERE "
                     + inIntegerSetWhereConditionString("dsBindKeyDbID",
                     dsBindingKeyIds));
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
-            //logFinest("Attempting row deletion from StructMapType table...");
-            //rowCount=logAndExecuteUpdate(st, "DELETE FROM StructMapType WHERE "
-            //        + "SMType_DBID=" + smtype_dbid);
-            //logFinest("Deleted " + rowCount + " row(s).");
+
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindMap table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE "
                     + "bMechDbID=" + dbid);
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+
+            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from diss table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
+                    + "bMechDbID=" + dbid);
+            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from mechImpl table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM mechImpl WHERE "
                     + "bMechDbID=" + dbid);
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from mechDefParm table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM mechDefParm "
                 + "WHERE bMechDbID=" + dbid);
@@ -1726,63 +1721,6 @@ public class DefaultDOReplicator
             logFinest("DefaultDOReplicator.deleteDigitalObject: " + pid + " was found in do table (DBID="
                     + dbid + ")");
 
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Getting dissDbID(s) from doDissAssoc "
-                    + "table...");
-            HashSet dissIds=new HashSet();
-            HashSet dissIdsNotShared = new HashSet();
-
-            // Get all dissIds in db for this object
-            results=logAndExecuteQuery(st, "SELECT dissDbID from "
-                    + "doDissAssoc WHERE doDbID=" + dbid);
-            while (results.next()) {
-                dissIds.add(new Integer(results.getInt("dissDbID")));
-            }
-            results.close();
-            results=null;
-
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Found " + dissIds.size() + " dissDbID(s).");
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Getting dissDbID(s) from doDissAssoc "
-                    + "table unique to this object...");
-            Iterator iterator = dissIds.iterator();
-
-            // Iterate over dissIds and separate those that are unique
-            // (i.e., not shared by other objects)
-            while (iterator.hasNext())
-            {
-              Integer id = (Integer)iterator.next();
-              logFinest("DefaultDOReplicator.deleteDigitalObject: Getting occurrences of dissDbID(s) in "
-                    + "doDissAssoc table...");
-              results=logAndExecuteQuery(st, "SELECT COUNT(*) from "
-                    + "doDissAssoc WHERE dissDbID=" + id);
-              while (results.next())
-              {
-                Integer i1 = new Integer(results.getInt("COUNT(*)"));
-                if ( i1.intValue() == 1 )
-                {
-                  // A dissDbID that occurs only once indicates that the
-                  // disseminator is not used by other objects. In this case, we
-                  // want to keep track of this dissDbID.
-                  dissIdsNotShared.add(id);
-                  logFinest("DefaultDOReplicator.deleteDigitalObject: added "
-                    + "dissDbId that was not shared: " + id);
-                }
-              }
-              results.close();
-              results=null;
-
-            }
-
-            // Get all binding map Ids in db for this object.
-            HashSet bmapIds=new HashSet();
-            results=logAndExecuteQuery(st, "SELECT dsBindMapDbID FROM "
-                    + "dsBind WHERE doDbID=" + dbid);
-            while (results.next()) {
-                bmapIds.add(new Integer(results.getInt("dsBindMapDbID")));
-            }
-            results.close();
-            results=null;
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Found " + bmapIds.size() + " dsBindMapDbID(s).");
-
             //
             // WRITE
             //
@@ -1790,27 +1728,20 @@ public class DefaultDOReplicator
             logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from do table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM do "
                     + "WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
+            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from do.");
             logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from doDissAssoc "
                     + "table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                     + "doDissAssoc WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
+            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from doDissAssoc.");
             logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBind table..");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                     + "WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
+            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from dsBind.");
 
-            // Since dissIds can be shared by other objects in db, only remove
-            // those Ids that are not shared.
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from diss table...");
-            rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
-                    + inIntegerSetWhereConditionString("dissDbID", dissIdsNotShared));
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s).");
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBindMap "
-                    + "table...");
+            // Leave any orphaned diss rows -- they'll be cleaned up if the bMech is removed
+            // Leave any orphaned dsBindMap rows -- they'll be cleaned up if the bMech is removed
 
-            // Leave dsBindMap rows -- they'll be cleaned up if the bMech is removed
         } finally {
             try {
                 if (results != null) results.close();
@@ -2819,43 +2750,6 @@ public class DefaultDOReplicator
               logFinest("DefaultDOReplicator.purgeDisseminators: " + pid + " was found in do table (DBID="
                       + dbid + ")");
 
-              logFinest("DefaultDOReplicator.purgeDisseminators: Getting dissDbID(s) from doDissAssoc "
-                      + "table...");
-
-              HashSet dissIdsNotShared = new HashSet();
-              logFinest("DefaultDOReplicator.purgeDisseminators: Getting dissDbID(s) from doDissAssoc "
-                      + "table unique to this object...");
-              logFinest("DefaultDOReplicator.purgeDisseminators: Found "
-                  + dissIds.size() + " dissDbId(s). ");
-
-              // Iterate over dissIds and separate those that are unique
-              // (i.e., not shared by other objects)
-              Iterator iterator = dissIds.iterator();
-              while (iterator.hasNext())
-              {
-                Integer id = (Integer)iterator.next();
-                logFinest("DefaultDOReplicator.purgeDisseminators: Getting occurrences of dissDbID(s) in "
-                      + "doDissAssoc table...");
-                results=logAndExecuteQuery(st, "SELECT COUNT(*) from "
-                      + "doDissAssoc WHERE dissDbID=" + id);
-                while (results.next())
-                {
-                  Integer i1 = new Integer(results.getInt("COUNT(*)"));
-                  if ( i1.intValue() == 1 )
-                  {
-                    // A dissDbID that occurs only once indicates that the
-                    // disseminator is not used by other objects. In this case,
-                    // we want to keep track of this dissDbID.
-                    dissIdsNotShared.add(id);
-                  }
-                }
-                results.close();
-                results=null;
-              }
-
-              logFinest("DefaultDOReplicator.purgeDisseminators: Found "
-                  + bmapIds.size() + " dsBindMapDbId(s). ");
-
               //
               // WRITE
               //
@@ -2868,7 +2762,7 @@ public class DefaultDOReplicator
               rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                       + "doDissAssoc WHERE doDbID=" + dbid
                       + " AND ( " + inIntegerSetWhereConditionString("dissDbID", dissIds) + " )");
-              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s).");
+              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s). from doDissAssoc");
 
               // In dsBind table, we are removing rows specific to the doDbID,
               // so remove all dsBindMapIds (both shared and nonShared).
@@ -2876,15 +2770,10 @@ public class DefaultDOReplicator
               rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                       + "WHERE doDbID=" + dbid
                       + " AND ( " + inIntegerSetWhereConditionString("dsBindMapDbID", bmapIds) + " )");
+              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s) from dsBind.");
 
-              // In diss table, dissDbIds can be shared by other objects so only
-              // remove dissDbIds that are not shared.
-              logFinest("DefaultDOReplicator.purgeDisseminators: Attempting row deletion from diss table...");
-              rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
-                      + inIntegerSetWhereConditionString("dissDbID", dissIdsNotShared));
-              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s).");
-
-              // Leave entries in dsBindMap table -- they will be cleaned up when the bMech is deleted
+              // Leave any orphaned diss rows -- they'll be cleaned up if the bMech is removed
+              // Leave any orphaned dsBindMap rows -- they'll be cleaned up if the bMech is removed
 
           } finally {
               try {
