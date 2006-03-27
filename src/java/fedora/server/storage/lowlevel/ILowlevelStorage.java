@@ -29,7 +29,7 @@ public interface ILowlevelStorage {
 
 	/**
 	 * @param pid
-	 * @return
+	 * @return bytestream containing data object
 	 * @throws LowlevelStorageException
 	 */
 	public InputStream retrieveObject(String pid)
@@ -69,7 +69,7 @@ public interface ILowlevelStorage {
 
 	/**
 	 * @param pid
-	 * @return
+	 * @return bytestream containing datastream
 	 * @throws LowlevelStorageException
 	 */
 	public InputStream retrieveDatastream(String pid)
