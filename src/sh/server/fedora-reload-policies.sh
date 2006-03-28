@@ -26,5 +26,5 @@ SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
 
 echo "Reloading Fedora policies..."
 
-(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" -Dfedora.home="$FEDORA_HOME" fedora.server.utilities.ServerUtility reloadPolicies "$1")
+(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" -Dfedora.home="$FEDORA_HOME" fedora.server.utilities.ServerUtility reloadPolicies $1)
 restoreJavaHome
