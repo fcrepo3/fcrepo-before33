@@ -37,6 +37,7 @@
 		<servlet-class>
         	fedora.server.ServerController
     		</servlet-class>
+        <load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>DatastreamResolverServlet</servlet-name>

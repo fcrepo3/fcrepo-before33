@@ -713,27 +713,27 @@ public abstract class Server
             sie.printStackTrace();
             logSevere(sie.getMessage());
             try {
-                shutdownServer();
-            } catch (ServerShutdownException sse) {
-                logSevere(sse.getMessage());
+                shutdown(null);
+            } catch (Throwable th) {
+                logSevere("Error shutting down server after failed startup: " + th.getMessage());
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
             mie.printStackTrace();
             logSevere(mie.getRole() + ": " + mie.getMessage());
             try {
-                shutdownServer();
-            } catch (ServerShutdownException sse) {
-                logSevere(sse.getMessage());
+                shutdown(null);
+            } catch (Throwable th) {
+                logSevere("Error shutting down server after failed startup: " + th.getMessage());
             }
             throw mie;
         } catch (Throwable th) {
             th.printStackTrace();
             logSevere(th.getMessage());
             try {
-                shutdownServer();
-            } catch (ServerShutdownException sse) {
-                logSevere(sse.getMessage());
+                shutdown(null);
+            } catch (Throwable oth) {
+                logSevere("Error shutting down server after failed startup: " + oth.getMessage());
             }
             throw new RuntimeException("Fatal error starting server", th);
         }
@@ -1431,22 +1431,28 @@ public abstract class Server
      */
     public final void shutdown(Context context)
             throws ServerShutdownException, ModuleShutdownException, AuthzException {
-    	if (context != null) { // fixup for xacml
-    		((Authorization)getModule("fedora.server.security.Authorization")).enforceServerShutdown(context);
-    	}
         Iterator roleIterator=loadedModuleRoles();
         logInfo("Server shutdown requested.");
+        ModuleShutdownException mse = null;
         while (roleIterator.hasNext()) {
             Module m=getModule((String) roleIterator.next());
             logFinest("Started shutting down module for role \"" + m.getRole()
                     + "\"");
-            m.shutdownModule();
-            logFinest("Finished shutting down module for role \"" + m.getRole()
-                    + "\"");
+            try {
+                m.shutdownModule();
+            } catch (ModuleShutdownException e) {
+                logWarning("Error shutting down module for role \"" + m.getRole()
+                        + "\": " + e.getMessage());
+                mse = e; 
+            } finally {
+                logFinest("Finished shutting down module for role \"" + m.getRole()
+                        + "\"");
+            }
         }
         logFinest("Shutting down server instance.");
         shutdownServer();
         s_instances.remove(getHomeDir());
+        if (mse != null) throw mse;
     }
 
     /**

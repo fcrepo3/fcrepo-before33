@@ -45,6 +45,8 @@ public class ServerController
         if (action==null) {
             throw new BadRequest400Exception(request, actionLabel, "no action", new String[0]);	
         } 
+
+/*
         if (action.equals("startup")) {
         	actionLabel = "starting server";
         	boolean serverHasInstance = false;
@@ -95,6 +97,7 @@ public class ServerController
             }
             throw new Ok200Exception(request, actionLabel, "server shut down successfully", new String[0]);	            
         }
+*/
         if (action.equals("status")) {
         	actionLabel = "getting server status";
         	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
@@ -162,10 +165,30 @@ public class ServerController
         throw new BadRequest400Exception(request, actionLabel, "bad action:  " + action, new String[0]);
     }
 
-    public void init() {
+    public void init() throws ServletException {
+        try {
+            s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
+            System.out.println("Fedora Server initialized");
+        } catch (Throwable th) {
+            System.out.println("Fedora Server initialization failed");
+            th.printStackTrace();
+            throw new ServletException("Fedora Server initialization failed", th);
+        }
     }
 
     public void destroy() {
+
+        if (s_server == null) {
+            System.out.println("Fedora Server not initialized; skipping shutdown");
+        } else {
+            try {
+                s_server.shutdown(null);
+                System.out.println("Fedora Server shutdown successful");
+            } catch (Throwable th) {
+                System.out.println("Fedora Server shutdown finished with error");
+                th.printStackTrace();
+            }
+        }
     }
     
 	public static boolean log = false; 

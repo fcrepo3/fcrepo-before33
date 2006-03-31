@@ -36,7 +36,8 @@
 		<display-name>Fedora Controller Servlet (start, stop, get server status)</display-name>
 		<servlet-class>
         	fedora.server.ServerController
-    		</servlet-class>
+        </servlet-class>
+        <load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>DatastreamResolverServlet</servlet-name>
