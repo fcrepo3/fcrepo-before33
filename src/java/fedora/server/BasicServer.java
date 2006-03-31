@@ -230,7 +230,10 @@ public class BasicServer
         return new String[] {"fedora.server.storage.DOManager"};
     }
 
-    public static void main(String[] args) throws Exception {
+    /**
+     * Print an error message and return errorlevel 1 if there's any failure.
+     */
+    public static void main(String[] args) {
         // prepare for an in-tomcat-instance run of the server by
         // reading the adminPassword and fedoraServerPort from fedora.fcfg,
         // and sending it to <FEDORA_HOME>/<tomcatConfDir>
@@ -239,14 +242,18 @@ public class BasicServer
         String tomcatConfDir = "server/" + tomcatDir + "/conf/";
         if (fedoraHome==null || fedoraHome.equals("")) {
             System.out.println("ERROR: fedora.home property not set.");
+            System.exit(1);
         } else if (tomcatDir == null || tomcatDir.equals("")) {
             System.out.println("ERROR: tomcat.dir property not set.");
+            System.exit(1);
         } else {
             File fedoraServerHomeDir=new File(new File(fedoraHome), "server");
             File fcfgFile=new File(fedoraServerHomeDir, "config/fedora.fcfg");
             if (!fcfgFile.exists()) {
                 System.out.println("ERROR: fedora.fcfg not found in FEDORA_HOME/server/config/ -- is fedora.home set properly?");
-            } else {
+                System.exit(1);
+            }
+            try {
            		Properties serverProperties = ServerUtility.getServerProperties();            	
                 File serverTemplate=new File(fedoraHome, tomcatConfDir + "server_fedoraTemplate.xml");
                 BufferedReader in=new BufferedReader(new FileReader(serverTemplate));
@@ -288,6 +295,9 @@ public class BasicServer
                 }                
                 in.close();
                 out.close();
+            } catch (Throwable th) {
+                th.printStackTrace();
+                System.exit(1);
             }
         }
     }
