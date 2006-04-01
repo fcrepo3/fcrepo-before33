@@ -32,7 +32,6 @@ TC_ENDORSED="$TC"/common/endorsed
 AXIS_UTILITY_LIBS=@AxisUtility.unix.libs@
 SERVER_LIBS=@Server.unix.libs@
 SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
-DEPLOY="$FEDORA_HOME"/server/fedora-internal-use/deploy
 
 # Before starting server, check if configuration files exist.
 # If not, lof which files are missing and inform user
@@ -134,24 +133,6 @@ start() {
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
 		org.apache.catalina.startup.Bootstrap start &)
 	
-	echo "Deploying API-M and API-A..."
-	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar \
-		-Dfedora.home="$FEDORA_HOME" \
-		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
-		-Djavax.net.ssl.trustStorePassword=tomcat \
-		-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
-		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 60 "")
-	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
-	
-	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar \
-		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
-		-Djavax.net.ssl.trustStorePassword=tomcat \
-		-Dfedora.home="$FEDORA_HOME" \
-		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 60 "")
-	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
-
     echo "Finished.  To stop server, use fedora-stop."
 	restoreJavaHome
 }
@@ -202,30 +183,6 @@ debug() {
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
 		org.apache.catalina.startup.Bootstrap start &)
 	
-	echo "Deploying API-M and API-A..."
-	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
-		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
-		-Djavax.net.ssl.trustStorePassword=tomcat \
-		-Dfedora.home="$FEDORA_HOME" \
-		-Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
-		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deployAPI-A.wsdd 60 "")
-	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
-	
-	(exec "$JAVA" -cp "$AXIS_UTILITY_LIBS":"$TC"/webapps/fedora/WEB-INF/classes \
-		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
-		-Djavax.net.ssl.trustStorePassword=tomcat \
-		-Dfedora.home="$FEDORA_HOME" \
-		-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-		fedora.server.utilities.AxisUtility deploy "$DEPLOY"/deploy.wsdd 60 "")
-	trap "Error deploying (see above)... to stop the server, use fedora-stop." 1 2 15
-	
-	echo "Initializing Fedora Server instance..."
-	(exec "$JAVA" -cp "$TC"/webapps/fedora/WEB-INF/classes:"$TC"/webapps/fedora/WEB-INF/lib/commons-httpclient-2.0.1.jar:"$TC"/webapps/fedora/WEB-INF/lib/commons-logging.jar:"$SERVER_CONTROLLER_LIBS" \
-		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
-		-Djavax.net.ssl.trustStorePassword=tomcat \
-		-Dfedora.home="$FEDORA_HOME" \
-		fedora.server.utilities.ServerUtility startup)
     echo "Starting jdb..."
     (exec "$JAVA_HOME/bin/jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
 	restoreJavaHome
