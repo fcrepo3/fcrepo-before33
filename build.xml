@@ -721,32 +721,6 @@
 			<arg path="temp/wsdl2java/Fedora-API-A.wsdl"/>
 		</exec>
 	</target>
-	<target name="testdeploy" depends="testdeployM,testdeployA"/>
-	<target name="testclient">
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.saaj};${lib.commons-discovery};${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.tt-bytecode};${tomcat.deploy.dir}/fedora/WEB-INF/classes"/>
-			<arg value="fedora.server.test.TestClient"/>
-		</exec>
-	</target>
-	<target name="testdeployA">
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.tt-bytecode};${lib.saaj};${lib.commons-discovery};${tomcat.deploy.dir}/fedora/WEB-INF/classes"/>
-			<arg value="org.apache.axis.client.AdminClient"/>
-			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-			<arg value="dist/server/config/deployAPI-A.wsdd"/>
-		</exec>
-	</target>
-	<target name="testdeployM">
-		<exec executable="java">
-			<arg value="-classpath"/>
-			<arg path="${lib.axis};${lib.commons-logging};${lib.jaxrpc};${lib.wsdl4j};${lib.tt-bytecode};${lib.saaj};${lib.commons-discovery};${tomcat.deploy.dir}/fedora/WEB-INF/classes"/>
-			<arg value="org.apache.axis.client.AdminClient"/>
-			<arg value="-lhttp://localhost:8080/fedora/AdminService"/>
-			<arg value="dist/server/config/deploy.wsdd"/>
-		</exec>
-	</target>
 	<target name="serverunixstuff" if="buildingOnUnix" depends="servermostly">
 		<!-- add symlinks for shell scripts in unix -->
 		<exec dir="./dist/server/bin" executable="/bin/ln">
@@ -830,6 +804,8 @@
 		<mkdir dir="dist/server/fedora-internal-use/config"/>
 		<mkdir dir="dist/server/fedora-internal-use/deploy"/>
 		<mkdir dir="dist/server/config"/>
+
+        <!-- Copy and modify Axis deployment files -->
 		<copy file="temp/server/java/fedora/server/management/deploy.wsdd" todir="dist/server/fedora-internal-use/deploy"/>
 		<copy file="temp/server/java/fedora/server/access/deploy.wsdd" tofile="dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd"/>
 		<copy file="temp/server/java/fedora/server/management/undeploy.wsdd" todir="dist/server/fedora-internal-use/deploy"/>
@@ -840,6 +816,20 @@
 		<replace file="dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
 		<replace file="dist/server/fedora-internal-use/deploy/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
 		<replace file="dist/server/fedora-internal-use/deploy/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+
+        <!-- Deploy API-M and API-A offline (updates existing server-config.wsdd) -->
+        <java classname="org.apache.axis.utils.Admin" 
+              fork="true" 
+              dir="${tomcat.deploy.dir}/fedora/WEB-INF"> 
+          <arg value="server"/> 
+          <arg value="${basedir}/dist/server/fedora-internal-use/deploy/deploy.wsdd"/> 
+          <arg value="${basedir}/dist/server/fedora-internal-use/deploy/deployAPI-A.wsdd"/> 
+          <classpath> 
+             <pathelement location="temp/server/classes"/> 
+             <path refid="AxisUtility-libs.path"/> 
+          </classpath> 
+        </java> 
+
 		<!-- xacml:  set up policy directories -->
 		<copy file="src/xml/xacml-policies/readme.txt" todir="dist/server/fedora-internal-use"/>
 		<copy file="src/xml/xacml-policies/readme-design-choices.txt" todir="dist/server/fedora-internal-use"/>
