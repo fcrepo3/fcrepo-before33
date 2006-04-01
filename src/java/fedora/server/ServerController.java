@@ -2,10 +2,12 @@ package fedora.server;
 
 import java.io.File;
 import java.io.IOException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+
 import fedora.common.Constants;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerInitializationException;
@@ -19,6 +21,7 @@ import fedora.server.errors.servletExceptionExtensions.InternalError500Exception
 import fedora.server.errors.servletExceptionExtensions.Ok200Exception;
 import fedora.server.errors.servletExceptionExtensions.Unavailable503Exception;
 import fedora.server.security.Authorization;
+import fedora.server.utilities.ServerUtility;
 import fedora.server.Server;
 
 /**
@@ -166,13 +169,17 @@ public class ServerController
     }
 
     public void init() throws ServletException {
+
         try {
+
+            // Start the Fedora instance
+            System.out.println("Starting Fedora Server instance...");
             s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
-            System.out.println("Fedora Server initialized");
+            System.out.println("Fedora startup complete");
         } catch (Throwable th) {
-            System.out.println("Fedora Server initialization failed");
+            System.out.println("Fedora startup failed");
             th.printStackTrace();
-            throw new ServletException("Fedora Server initialization failed", th);
+            throw new ServletException("Fedora startup failed", th);
         }
     }
 
@@ -183,11 +190,12 @@ public class ServerController
         } else {
             try {
                 s_server.shutdown(null);
-                System.out.println("Fedora Server shutdown successful");
+                System.out.println("Fedora Server has been shut down");
             } catch (Throwable th) {
-                System.out.println("Fedora Server shutdown finished with error");
+                System.out.println("Fedora Server has been shut down (with error)");
                 th.printStackTrace();
             }
+            s_server = null;
         }
     }
     
