@@ -320,6 +320,10 @@ public class DefaultManagement
                                 String controlGroup,
                                 String dsState,
                                 String logMessage) throws ServerException {
+
+        if (MIMEType == null || MIMEType.length() == 0) {
+            throw new GeneralException("New datastream must specify a non-empty MIME Type");
+        }
                                    	
         if ( dsID!=null && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
 			throw new GeneralException("Creation of a datastream with an"

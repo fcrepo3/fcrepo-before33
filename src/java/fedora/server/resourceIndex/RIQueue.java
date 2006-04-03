@@ -257,6 +257,10 @@ public class RIQueue implements Constants {
     }
     
     private void addPlainTriple(String subject, String predicate, String object) throws ResourceIndexException {
+        if (object == null || object.length() == 0) {
+            throw new ResourceIndexException("Cannot enqueue triple whose "
+                    + "object is null or empty");
+        }
         try {
             m_triples.add(TripleMaker.createPlain(subject, predicate, object));
         } catch (TrippiException e) {
