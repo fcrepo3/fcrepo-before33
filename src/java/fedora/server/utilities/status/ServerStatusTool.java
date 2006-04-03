@@ -41,10 +41,26 @@ public class ServerStatusTool {
     }
 
     /**
-     * Initialize the status file to indicate that the server
-     * has not yet indicated that it is starting (NOT_STARTING).
+     * If the server appears not to be running, initialize the status file to 
+     * indicate that the server is not running and has not yet indicated that 
+     * it is starting (NOT_STARTING).
+     *
+     * Otherwise, throw an exception.
      */
     public void init() throws Exception {
+
+        // If the status file exists, make sure it doesn't indicate
+        // that the server is running!
+        if (_statusFile.exists()) {
+            ServerStatusMessage[] messages = getAllMessages();
+            ServerStatusMessage lastMessage = messages[messages.length - 1];
+            if (lastMessage.getState() == ServerState.STARTED) {
+                throw new Exception("The server is already running or was shut down unexpectedly.\n"
+                        + "If the server has shut down unexpectedly, you must manually delete\n"
+                        + "the following file: " + _statusFile.getPath() + "\n"
+                        + "then try again.");
+            }
+        }
 
         _statusFile.clear();
         _statusFile.append(ServerState.NOT_STARTING, 

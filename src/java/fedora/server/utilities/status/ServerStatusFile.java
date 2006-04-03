@@ -42,6 +42,10 @@ public class ServerStatusFile {
         _file = new File(serverHome, FILENAME);
     }
 
+    public String getPath() {
+        return _file.getPath();
+    }
+
     public synchronized void clear() throws Exception {
 
         if (_file.exists()) {
