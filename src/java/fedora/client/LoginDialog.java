@@ -267,104 +267,38 @@ public class LoginDialog
         public static void tryLogin(String protocol, String host, int port, String user, String pass) 
                 throws Exception {
                 	
-			// Get SOAP stubs for the source repository.
-			// NOTE! For backward compatibility with Fedora 2.0
-			// we will immediately try a describe repository
-			// request on the API-A stub to see if it works.  If it
-			// fails, we will try obtaining a stub with the OLD
-			// SOAP URL syntax.  This is because the path in the 
-			// SOAP URLs were changed in Fedora 2.1 to be more standard.
-			RepositoryInfo info = null;        
 			try {
-            	//Administrator.APIA=APIAStubFactory.getStub(protocol, host, port, user, pass);
-            	//Administrator.APIM=APIMStubFactory.getStub(protocol, host, port, user, pass);
-            	
-				// ******************************************************
-				// NEW: use the new client utility class FedoraClient
-				// FIXME:  Get around hardcoding the path in the baseURL
+
+                // get a FedoraClient
 				String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, user, pass);
-				Administrator.APIA=fc.getAPIA();
-				Administrator.APIM=fc.getAPIM();
-				//*******************************************************
-            	
-            	System.out.println("trying describeRepository...");
-				info=Administrator.APIA.describeRepository();
-			} catch (Exception e) {
-				// As a fallback, try the old SOAP URL syntax
-				// (different path in Fedora 2.0 and prior releases).
-				//System.out.println("Fallback: getting stubs with OLD path...");
-				
-				/*
-				Administrator.APIA=APIAStubFactory.getStubAltPath(
-											   	protocol,
-											   	host, 
-											   	port,
-											   	"/fedora/access/soap", 
-											   	user,
-											   	pass);
-				Administrator.APIM=APIMStubFactory.getStubAltPath(
-												protocol,
-											   	host, 
-											   	port,
-											   	"/fedora/management/soap",  
-											   	user,
-											   	pass);
-				try {
-					info=Administrator.APIA.describeRepository();
-				} catch (Exception e2) {
-					throw new IOException("Server connection failed on describeRepository for target: "
-							+ protocol + "://" + host + ":" + port);
 
-				}
-				*/
-				
-				//System.out.println("server version = " + info.getRepositoryVersion());
-				//System.out.println("client version = " + Administrator.VERSION);				
-				if (!info.getRepositoryVersion().equals(Administrator.VERSION)) {
-					throw new IOException("Server is version "
-							+ info.getRepositoryVersion() + ", but this"
-							+ " client only works with version" +  Administrator.VERSION);
-				} else {
-					throw new IOException("Server connection failed on describeRepository for target: "
-							+ protocol + "://" + host + ":" + port);
-				}
-			}
-			
-           /*
-            Enumeration enm = AxisProperties.propertyNames();
-        	System.err.println("1 are there any AxisProperties?=" + enm.hasMoreElements());
-            while(enm.hasMoreElements()) {
-            	String name = (String) enm.nextElement();
-            	System.err.println("another axis property = " + name);
-            }
-            
-            AxisProperties.setProperty("axis.socketSecureFactory", 
-    		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
-            enm = AxisProperties.propertyNames();
-        	System.err.println("2 are there any AxisProperties?=" + enm.hasMoreElements());
-            while(enm.hasMoreElements()) {
-            	String name = (String) enm.nextElement();
-            	System.err.println("another axis property = " + name);
-            }
-		*/  
+                // attempt to connect via REST
+				String version = fc.getServerVersion();
 
-/*
-            System.setProperty("axis.socketSecureFactory", 
-            		"org.apache.axis.components.net.SunFakeTrustSocketFactory");  
-            		"axis.socketSecureFactory" system property to "org.apache.axis.components.net.FakeTrustSocketFactory"          
-          
-            System.setProperty("javax.net.ssl.trustStore","c:\\j2sdk1.4.2_03\\jre\\lib\\security\\cacerts");
-            System.setProperty("java.protocol.handler.pkgs","com.sun.net.ssl.internal.www.protocol");       
-            Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());   
-*/
-            // do a simple API-M call, and if it doesn't come back
-            // unauthorized, assume all is ok.
-            try {
-                UserInfo inf=Administrator.APIM.describeUser(user);
+                // verify client and server versions are compatible
+                if (!version.equals(Administrator.VERSION)) {
+					throw new IOException("Server is version " + version
+							+ ", but this client only works with version " 
+                            +  Administrator.VERSION);
+                }
+
+                // set SOAP stubs for Administrator
+                Administrator.APIA = fc.getAPIA();
+                Administrator.APIM = fc.getAPIM();
+
+                // attempt an API-M (SOAP) operation
+                UserInfo inf = fc.getAPIM().describeUser(user);
+
             } catch (Exception e) {
                 if (e.getMessage().indexOf("Unauthorized")!=-1 || e.getMessage().indexOf("Unrecognized")!=-1) {
                     throw new IOException("Bad username or password.");
+                } else {
+                    if (e.getMessage() != null) {
+                        throw new IOException(e.getClass().getName() + ": " + e.getMessage());
+                    } else {
+                        throw new IOException(e.getClass().getName());
+                    }
                 }
             }
         }
@@ -459,7 +393,8 @@ public class LoginDialog
                     Administrator.INSTANCE.setLoginInfo(protocol, host, port, username, pass);
                     m_loginDialog.dispose();
                 } catch (Exception e) {
-                	Administrator.showErrorDialog(m_loginDialog, "Login Error", e.getMessage(), e);           	
+                    String msg = e.getMessage();
+                	Administrator.showErrorDialog(m_loginDialog, "Login Error", msg, e);           	
                     Administrator.APIA=oldAPIA;
                     Administrator.APIM=oldAPIM;
                 }
