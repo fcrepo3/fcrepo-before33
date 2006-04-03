@@ -10,7 +10,7 @@ public class ServerStatusTool {
      * the state to change from NOT_STARTING to STARTING before 
      * giving up.
      */
-    public static final int DEFAULT_STARTING_TIMEOUT = 60;
+    public static final int DEFAULT_STARTING_TIMEOUT = 45;
 
     /**
      * Default number of seconds watch-startup should wait
@@ -24,7 +24,7 @@ public class ServerStatusTool {
      * the state to change from STARTED to STOPPING before 
      * giving up.
      */
-    public static final int DEFAULT_STOPPING_TIMEOUT = 60;
+    public static final int DEFAULT_STOPPING_TIMEOUT = 45;
 
     /**
      * Default number of seconds watch-shutdown should wait for 
@@ -176,6 +176,11 @@ public class ServerStatusTool {
     public void watchShutdown(int stoppingTimeout,
                               int shutdownTimeout) throws Exception {
 
+        if (!_statusFile.exists()) {
+            _statusFile.append(ServerState.STOPPING, 
+                               "WARNING: Server status file did not exist; re-created");
+        }
+
         // use this for timeout checks later
         long startTime = System.currentTimeMillis();
 
@@ -292,23 +297,22 @@ public class ServerStatusTool {
     }
 
     // get all messages in the status file, validating that
-    // it exists and contains at least one message, and the first
-    // message's state is ServerState.NOT_STARTING
+    // it exists and contains at least one message. 
+    // if the first message's state is not ServerState.NOT_STARTING,
+    // print a warning
     private ServerStatusMessage[] getAllMessages() throws Exception {
 
         ServerStatusMessage[] messages = _statusFile.getMessages(null);
         if (messages.length == 0) {
-            throw new Exception("Server status file exists but contains no messages");
-        } else {
-            ServerState firstState = messages[0].getState();
-            if (firstState != ServerState.NOT_STARTING) {
-                throw new Exception("Server status file first message's "
-                        + "state is '" + firstState.toString() + "', not "
-                        + "'" + ServerState.NOT_STARTING + "' as expected.");
-            } else {
-                return messages;
-            }
+            System.out.println("WARNING: Server status file is empty; re-creating");
+            init();
+            messages = _statusFile.getMessages(null);
         }
+        ServerState firstState = messages[0].getState();
+        if (firstState != ServerState.NOT_STARTING) {
+            System.out.println("WARNING: Server status file is missing one or more messages");
+        }
+        return messages;
     }
 
     private static void showUsage(String err) {
