@@ -15,7 +15,7 @@
     <div id="title">
       <h1>Fedora Installation and Configuration Guide</h1>
 
-      <h2>Fedora Release 2.1</h2>
+      <h2>Fedora Release 2.1.1</h2>
     </div>
   </div>
 
@@ -161,7 +161,7 @@
           <li>
             <p>Unpack the archive in that directory. It will create
             its own directory, named according to the version...
-            like fedora-2.1. This will be the home directory of
+            like fedora-2.1.1. This will be the home directory of
             Fedora.</p>
           </li>
 
@@ -171,7 +171,7 @@
             can execute them. For instance, if you installed in
             /usr/local, this can be done with the command
             <span class="emphasis"><em>chmod 755
-            /usr/local/fedora-2.1/server/bin/*</em></span></p>
+            /usr/local/fedora-2.1.1/server/bin/*</em></span></p>
           </li>
         </ul>
       </div>
@@ -183,9 +183,9 @@
           <li>
             <p>If a server is already unpacked on the machine, put
             the client in the same place. That is, if your server
-            is unpacked into C:\fedora-2.1\server\, go to C:\ and
+            is unpacked into C:\fedora-2.1.1\server\, go to C:\ and
             unpack the client from there. It will go into
-            C:\fedora-2.1\client, so that now both the client and
+            C:\fedora-2.1.1\client, so that now both the client and
             server are under one common directory.</p>
           </li>
 
@@ -194,7 +194,7 @@
             server, decide where you want the client to reside. For
             example, C:\ or /usr/local. Then unpack the archive in
             that directory. It will create its own directory, named
-            according to the version... like fedora-2.1. This will
+            according to the version... like fedora-2.1.1. This will
             be the home directory of Fedora.</p>
           </li>
 
@@ -204,7 +204,7 @@
             can execute them. For instance, if you installed in
             /usr/local, this can be done with the command
             <span class="emphasis"><em>chmod 755
-            /usr/local/fedora-2.1/client/bin/*</em></span></p>
+            /usr/local/fedora-2.1.1/client/bin/*</em></span></p>
           </li>
         </ul>
       </div>
@@ -216,7 +216,7 @@
           <li>
             <p>Decide where you want to work with the source code
             and unpack it there. It will create its own directory,
-            named according to the version... like fedora-2.1-src.
+            named according to the version... like fedora-2.1.1-src.
             This will be your Fedora development directory.</p>
           </li>
         </ul>
@@ -312,8 +312,8 @@
             <p>FEDORA_DEV should contain the directory under which
             the source was unpacked, including the version part of
             the path. For instance, if you installed the source in
-            C:\ and it unpacked into C:\fedora-src-2.1\, FEDORA_DEV
-            should be C:\fedora-src-2.1</p>
+            C:\ and it unpacked into C:\fedora-src-2.1.1\, FEDORA_DEV
+            should be C:\fedora-src-2.1.1</p>
           </li>
 
           <li>
@@ -754,7 +754,6 @@
               sensitive. As noted for username, any changes to this value must 
               also be reflected in your authentication database.</p>
           </dd>
-
           <dt><span class="term"><font color="#FF0000">log_level</font></span></dt>
           <dd> 
             <p>Indicates the amount of detail to include in the server logs.
@@ -763,23 +762,10 @@
             purposes, set this value to <b>finest</b>.
             </p>
           </dd>
-
-          <dt><span class="term"><font color="#FF0000">object_store_base</font></span></dt>
-          <dd> 
-            A directory where digital object XML wrappers (FOXML files) will be stored. 
-              This directory will be created if it doesn't already exist. The default value for this 
-			parameter is a the following relative directory path:&nbsp; 
-			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
-			another relative directory path or an absolute directory path.</dd>
-			<dt>&nbsp;</dt>
-			<dt><span class="term"><font color="#FF0000">datastreams_store_base</font></span></dt>
-			<dd>
-			A directory where datastreams of digital objects will be stored. 
-              This directory will be created if it doesn't already exist. The default value for this 
-			parameter is a the following relative directory path:&nbsp; 
-			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
-			another relative directory path or an absolute directory path.</dd>
-          <dt>&nbsp;</dt>
+          <dt><span class="term"><font color="#FF0000"><s>object_store_base</s></font></span></dt>
+          <dd>This parameter has been relocated beneath ILowlevelStorage.</dd>
+			<dt><span class="term"><font color="#FF0000"><s>datastream_store_base</s></font></span></dt>
+			<dd>This parameter has been relocated beneath ILowlevelStorage.</dd>
 			<dt><span class="term">fedoraServerPort</span></dt>
           <dd> 
             <p>The port on which the server should run. 8080 is often used, but 
@@ -863,6 +849,20 @@
 			selected either <i>&quot;ssl-authenticate-apim&quot;</i> or <i>&quot;no-ssl-authenticate-apim&quot;</i> <i>
 			when you ran the <a href="#setup">Fedora Setup Utility</a>).</i>&nbsp;&nbsp; <b>&nbsp;</b></p></dd>
 			<dt>&nbsp;</dt>
+			<dt><span class="term"><font color="#FF0000">ILowlevelStorage/object_store_base</font></span></dt>
+          <dd>
+            A directory where digital object XML wrappers (FOXML files) will be stored. 
+              This directory will be created if it doesn't already exist. The default value for this 
+			parameter is a the following relative directory path:&nbsp; 
+			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
+			another relative directory path or an absolute directory path.</dd>
+			<dt><span class="term"><font color="#FF0000">ILowlevelStorage/datastream_store_base</font></span></dt>
+			<dd>
+			A directory where datastreams of digital objects will be stored. 
+              This directory will be created if it doesn't already exist. The default value for this 
+			parameter is a the following relative directory path:&nbsp; 
+			fedora21/store/datastreams.&nbsp;&nbsp; You can change this to 
+			another relative directory path or an absolute directory path.</dd>
 			<dt><span class="term"><span class=
             "bold"><b><font color="#FF0000">Authorization/REPOSITORY-POLICIES-DIRECTORY</font></b></span></span></dt>
 			<dd>
