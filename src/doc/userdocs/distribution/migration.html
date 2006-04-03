@@ -13,7 +13,7 @@
     <a href="../index.html" id="logo"></a>
     <div id="title">
         <h1>Fedora Upgrade and Migration Guide</h1>
-        <h2>Fedora Release 2.1</h2>
+        <h2>Fedora Release 2.1.1</h2>
     </div>
 </div>
 
@@ -22,655 +22,172 @@
     <div class="tocbox">
         
     <ol>
-      <li><a href="#intro">Introduction</a></li>
-      <li><a href="#migrate21-21b">Upgrading From Fedora 2.1b to Fedora 2.1</a></li>
-      <li><a href="#migrate20-21">Upgrading From Fedora 2.0 to Fedora 2.1</a></li>
-      <li><a href="#migrate">Migrating From Fedora 1.2.1 to Fedora 2.0</a></li>
+		<li><a href="#migrate21-211">Upgrading from Fedora 2.1 to Fedora 2.1.1</a></li>
+		<li><a href="#migrate20-211">Upgrading from Fedora 2.0 to Fedora 2.1.1</a></li>
+		<li><a href="#migrate121-211">Upgrading from Fedora 1.2.1 to Fedora 2.1.1</a></li>
+		<li><a href="#migratepre121">Upgrading from versions prior to 1.2.1</a></li>
     </ol>
     </div>
 </div>
 
-  <div class="sec1">
-    <div class="titlepage">
-      <div>
-        <h2 class="title" style="clear: both"><a name="intro" id=
-        "intro"></a>1. Introduction</h2>
-      </div>
-    </div>
+<div class="sec2">
+  <h2><a name="migrate21-211" id="migrate0">1. Upgrading From Fedora 2.1 to Fedora 
+    2.1.1</a></h2>
 
-    
-  <p>If you have already upgraded to Fedora 2.1b and wish to migrate to the final 
-    Fedora 2.1 release, the procedure involves a simple software <i><b>upgrade</b></i> 
-    which is similar to upgrading from Fedora 2.0. See the instructions in section 
-    2 below for details.</p>
-	
-    
-  <p>When moving from Fedora 2.0 to Fedora 2.1 you will be able to do a simple 
+	<p>The move from Fedora 2.1 to Fedora 2.1.1 is quite simple and does not 
+	require migration of objects or rebuilding of the resource index. There are, 
+	however, important configuration changes between 2.1 and 2.1.1 as a result 
+	of refactoring LowlevelStorage as a module: the server parameters related to LowLevelStorage (namely, 
+	<tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
+	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
+	<tt>backslash_is_escape</tt> are now found in the LowLevelStorage module 
+	configuration section of the Fedora Configuration. If you are 
+	upgrading from Fedora 2.1 to Fedora 2.1.1 follow these steps:</p>
+		
+  <ol>
+  	<li><b>Backup:</b> it is highly recommended that you create a backup 
+      of your existing Fedora 2.1 repository </li>
+    <li><b>Download: </b>download the Fedora 2.1.1 software from <a href=
+        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
+    <li><b>Install</b>: install the Fedora 2.1.1 software</li>
+
+    <li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1.1, you can choose 
+      among four different security configurations. <b>&nbsp;</b>Consult the <a href="../server/security/securingrepo.html">Securing 
+      Your Repository Guide</a> for a description of security configuration options.&nbsp; 
+      To have an equivalent configuration to what was in Fedora 2.0 (no SSL, API-M 
+      authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
+      option as demonstrated below.&nbsp; You can easily change to more secure 
+      configurations at any time by rerunning the Fedora Setup Utility.&nbsp; 
+      <br>
+      &nbsp; 
+      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre></div>
+      <p>&nbsp;</p>
+    </li>
+    <li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1.1 server 
+      configuration file (fedora.fcfg) set the object storage location to point 
+      to that of of the Fedora 2.1.1 repository, for example:<br>
+      &nbsp; 
+      <div class="code"><pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_1_objects</b>&quot; isFilePath=&quot;true&quot;/&gt;</pre></div>
+      <p>&nbsp; 
+    </li>
+    <li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1.1 server 
+      configuration file (fedora.fcfg) set the datastream storage location to 
+      point to that of of the Fedora 2.1 repository, for example:<br>
+      &nbsp; 
+      <div class="code"><pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_1_datastreams</b>&quot; isFilePath=&quot;true&quot;/&gt;</pre></div>
+      <p>&nbsp; 
+    </li>
+    <li><b>Configure the Resource Index Storage Location:</b> in the Fedora 2.1.1 
+      server configuration file (fedora.fcfg) set the resource index storage location 
+      to point to that of of the Fedora 2.1 repository, for example:<br>
+      &nbsp; 
+      <div class="code"><pre>&lt;datastore id=&quot;localKowariTriplestore&quot;&gt;<br>  &lt;comment&gt;local Kowari Triplestore used by the Resource Index&lt;/comment&gt;<br>  &lt;param name=&quot;connectorClassName&quot; value=&quot;org.trippi.impl.kowari.KowariConnector&quot;/&gt;<br>  &lt;param name=&quot;remote&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;path&quot; value=&quot;C:\fedora2_1_resourceIndex&quot;/&gt;<br>  &lt;param name=&quot;serverName&quot; value=&quot;fedora&quot;/&gt;<br>  &lt;param name=&quot;modelName&quot; value=&quot;ri&quot;/&gt;<br>  &lt;param name=&quot;poolInitialSize&quot; value=&quot;3&quot;/&gt;<br>  &lt;param name=&quot;poolMaxGrowth&quot; value=&quot;-1&quot;/&gt;<br>  &lt;param name=&quot;readOnly&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;autoCreate&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoTextIndex&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;memoryBuffer&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoFlushDormantSeconds&quot; value=&quot;5&quot;/&gt;<br>  &lt;param name=&quot;autoFlushBufferSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferFlushBatchSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferSafeCapacity&quot; value=&quot;40000&quot;/&gt;<br>&lt;/datastore&gt;</pre></div>
+      <p>&nbsp; 
+    </li>	
+    <li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1.1 server 
+      configuration file (fedora.fcfg) set the relational database location topoint 
+      to the pre-existing database (used by the Fedora 2.1 repository), for example 
+      (if using MySQL):<br>
+      &nbsp; 
+      <div class="code"><pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
+  &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
+  &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
+  <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora21?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
+  &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
+  &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
+  &lt;param name=&quot;maxActive&quot; value=&quot;100&quot;/&gt;
+  &lt;param name=&quot;maxIdle&quot; value=&quot;10&quot;/&gt;
+  &lt;param name=&quot;maxWait&quot; value=&quot;-1&quot;/&gt;
+  &lt;param name=&quot;minIdle&quot; value=&quot;0&quot;/&gt;
+  &lt;param name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot;/&gt;
+  &lt;param name=&quot;numTestsPerEvictionRun&quot; value=&quot;3&quot;/&gt;
+  &lt;param name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;-1&quot;/&gt;
+  &lt;param name=&quot;testOnBorrow&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;testOnReturn&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;testWhileIdle&quot; value=&quot;true&quot;/&gt;
+  &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
+&lt;/datastore&gt;</pre></div>
+      <p>&nbsp;If you are using Oracle or mckoi as your database, update the appropriate 
+        datastore configuration.<br>
+        &nbsp;
+    </li>
+    <li><b>Configure the fedoraServerHost and fedoraServerPort:</b> in the Fedora 
+      2.1.1 server configuration file (fedora.fcfg) set the values for fedoraServerHost 
+      and fedoraServerPort to match those of your Fedora 2.1 server configuration, 
+      for example:<br>
+      &nbsp; 
+      <div class="code"><pre>&lt;param name=&quot;fedoraServerPort&quot; value=&quot;8080&quot;&gt;<br>  &lt;comment&gt;Defines the port number on which the Fedora server runs;<br>           default is 8080.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraShutdownPort&quot; value=&quot;8005&quot;&gt;<br>  &lt;comment&gt;Defines the port number used to shutdown the Fedora sever;<br>           default is 8005.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraRedirectPort&quot; value=&quot;8443&quot;&gt;<br>  &lt;comment&gt;Defines the redirect port of the Fedora sever; default is<br>           8443.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraServerHost&quot; value=&quot;localhost&quot;&gt;<br>  &lt;comment&gt;Defines the host name for the Fedora server, as seen from the<br>           outside world.&lt;/comment&gt;<br>&lt;/param&gt;</pre></div>
+      <p>&nbsp; 
+    </li>
+    <li>Start the Fedora 2.1.1 server <br>
+      &nbsp; 
+      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-start
+</b>Starting Fedora server...
+Deploying API-M and API-A...
+Processing file c:\fedora-2.1.1\server\config\deployAPI-A.wsdd
+&lt;Admin&gt;Done processing&lt;/Admin&gt;
+audit parms deploy
+audit parms c:\fedora-2.1.1\server\config\deployAPI-A.wsdd
+audit parms 60
+Processing file c:\fedora-2.1.1\server\config\deploy.wsdd
+&lt;Admin&gt;Done processing&lt;/Admin&gt;
+audit parms deploy
+audit parms c:\fedora-2.1.1\server\config\deploy.wsdd
+audit parms 15
+Initializing Fedora Server instance...
+Fedora Version: 2.1.1
+Fedora Build: 1
+Server Host Name: localhost
+Server Port: 8080
+Debugging: false
+log4j.configuration=null
+OK<b>
+Finished. To stop the server, use fedora-stop.
+C:\fedora-2.1.1&gt;</b></pre></div>
+      <p>&nbsp;</p>
+    </li>
+    <li><i><b>You are done! </b></i></li>
+  </ol>
+</div>
+
+<div class="sec2">
+	<h2><a name="migrate20-211" id="migrate0">2. Upgrading From Fedora 2.0 to 
+	Fedora 2.1.1</a></h2>
+    <p>When moving from Fedora 2.0 to Fedora 2.1.1 you will be able to do a simple 
     software <i><b>upgrade</b></i> without having to migrate digital objects via 
-    a mass export and ingest.&nbsp;&nbsp; After you install Fedora 2.1, you can 
+    a mass export and ingest. After you install Fedora 2.1, you can 
     configure it to point to your existing repository datastores (both the existing 
     repository directory storage locations and the existing relational database).&nbsp; 
-    This involves changing parameters in the Fedora 2.1 server configuration file 
+    This involves changing parameters in the Fedora 2.1.1 server configuration file 
     (fedora.fcfg) that define the storage directory paths and database location.&nbsp; 
-    See the instructions in section 3 below for details.</p>
-  <p>When moving from Fedora Release 1.2.1, you must first migrate to Fedora 2.0.&nbsp; 
-    Migration involves using the Fedora migration utility which will export objects 
-    from the old repository and ingest them into the new repository.&nbsp; Migration 
-    (as opposed to software upgrade) is necessary when either the FOXML schema 
-    or the relational database schema changes in a new release.&nbsp;&nbsp; This 
-    occurred between Fedora 1.2.1 and Fedora 2.0.&nbsp; See the instructions in 
-    section 4 below for migration, then move on the the instructions in section 
-    3.</p>
+    See the instructions in section 1 above for details.</p>
+    
+    <p>Note that the Resource Index model changed between 2.0 and 2.1, hence a 
+    rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.1.1. 
+    See the intructions for 
+    <a href="http://fedora.info/download/2.1/userdocs/distribution/migration.html">rebuilding the Resource Index</a>.</p>
+</div>
 
-    <p>If you are running a version of the Fedora software prior to
+<div class="sec2">
+	<h2><a name="migrate121-211" id="migrate0">3. Upgrading From Fedora 1.2.1 to 
+	Fedora 2.1.1</a></h2>
+    <p>If upgrading from Fedora Release 1.2.1, you must first 
+    <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate your 
+    server software to version 2.0</a>.</p>
+    
+</div>
+
+<div class="sec2">
+	<h2><a name="migratepre121" id="migrate0">4. Upgrading versions prior to 1.2.1</a></h2>
+	<p>If you are running a version of the Fedora software prior to
     version 1.2.1, you will need to migrate your server software up
     to version 1.2.1 first, and then proceed with the migration
-    from Fedora 1.2.1 to Fedora 2.0. Steps for migrating to Fedora
+    from Fedora 1.2.1 to Fedora 2.1.1. Steps for migrating to Fedora
     1.2.1 can be found in the release notes section for 
     <a href="release-notes.html#rel1.2.1">Fedora 1.2.1.</a> </p>
-  </div>
+</div>
 
-
-
-    <div class="sec2">
-      <h2>&nbsp;</h2>
-		
-  <h2><a name="migrate21-21b" id="migrate0">2. Upgrading From Fedora 2.1b to Fedora 
-    2.1</a></h2>
-
-      
-  <p>The move from Fedora 2.1b to Fedora 2.1 is quite simple and does not require 
-    migration of objects or rebuilding of the resource index.&nbsp; There are 
-    a number of performance enhancements and bugs fizes made since the 2.1b. Refer 
-    to the <a href="release-notes.html">Fedora 2.1 Release Notes</a> for more details regarding the changes post 
-    Fedora 2.1b. If you are upgrading from Fedora 2.1b to Fedora 2.1 follow these 
-    steps:</p>
-		
-  <ol>
-    <li><b>Download: </b>download the Fedora 2.1 software from <a href=
-        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
-    <li><b>Install</b>:&nbsp; install the Fedora 2.1 software</li>
-    <li><b>Backup:&nbsp; </b>it is highly recommended that you create a backup 
-      of your pre-existing Fedora 2.1b repository </li>
-    <li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1, you can choose 
-      among four different security configurations. <b>&nbsp;</b>Consult the <a href="../server/security/securingrepo.html">Securing 
-      Your Repository Guide</a> for a description of security configuration options.&nbsp; 
-      To have an equivalent configuration to what was in Fedora 2.0 (no SSL, API-M 
-      authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
-      option as demonstrated below.&nbsp; You can easily change to more secure 
-      configurations at any time by rerunning the Fedora Setup Utility.&nbsp; 
-      <br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>C:\fedora-2.1&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;</p>
-    </li>
-    <li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the object storage location to point 
-      to that of of the Fedora 2.1b repository, for example:<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_1b_objects</b>&quot;/&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>
-    <li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the datastream storage location to 
-      point to that of of the Fedora 2.1b repository, for example:<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_1b_datastreams</b>&quot;/&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>
-    <li><b>Configure the Resource Index Storage Location:</b> in the Fedora 2.1 
-      server configuration file (fedora.fcfg) set the resource index storage location 
-      to point to that of of the Fedora 2.1b repository, for example:<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;datastore id=&quot;localKowariTriplestore&quot;&gt;<br>  &lt;comment&gt;local Kowari Triplestore used by the Resource Index&lt;/comment&gt;<br>  &lt;param name=&quot;connectorClassName&quot; value=&quot;org.trippi.impl.kowari.KowariConnector&quot;/&gt;<br>  &lt;param name=&quot;remote&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;path&quot; value=&quot;C:\fedora2_1b_resourceIndex&quot;/&gt;<br>  &lt;param name=&quot;serverName&quot; value=&quot;fedora&quot;/&gt;<br>  &lt;param name=&quot;modelName&quot; value=&quot;ri&quot;/&gt;<br>  &lt;param name=&quot;poolInitialSize&quot; value=&quot;3&quot;/&gt;<br>  &lt;param name=&quot;poolMaxGrowth&quot; value=&quot;-1&quot;/&gt;<br>  &lt;param name=&quot;readOnly&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;autoCreate&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoTextIndex&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;memoryBuffer&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoFlushDormantSeconds&quot; value=&quot;5&quot;/&gt;<br>  &lt;param name=&quot;autoFlushBufferSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferFlushBatchSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferSafeCapacity&quot; value=&quot;40000&quot;/&gt;<br>&lt;/datastore&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>	
-    <li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the relational database location topoint 
-      to the pre-existing database (used by the Fedora 2.1b repository), for example 
-      (if using MySQL):<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
-  &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora21b?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
-  &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
-  &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
-  &lt;param name=&quot;maxActive&quot; value=&quot;100&quot;/&gt;
-  &lt;param name=&quot;maxIdle&quot; value=&quot;10&quot;/&gt;
-  &lt;param name=&quot;maxWait&quot; value=&quot;-1&quot;/&gt;
-  &lt;param name=&quot;minIdle&quot; value=&quot;0&quot;/&gt;
-  &lt;param name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot;/&gt;
-  &lt;param name=&quot;numTestsPerEvictionRun&quot; value=&quot;3&quot;/&gt;
-  &lt;param name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;-1&quot;/&gt;
-  &lt;param name=&quot;testOnBorrow&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;testOnReturn&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;testWhileIdle&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
-&lt;/datastore&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;If you are using Oracle or mckoi as your database, update the appropriate 
-        datastore configuration.<br>
-        &nbsp;
-    </li>
-    <li><b>Configure the fedoraServerHost and fedoraServerPort:</b> in the Fedora 
-      2.1 server configuration file (fedora.fcfg) set the values for fedoraServerHost 
-      and fedoraServerPort to match those of your Fedora 2.1b server configuration, 
-      for example:<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;fedoraServerPort&quot; value=&quot;8080&quot;&gt;<br>  &lt;comment&gt;Defines the port number on which the Fedora server runs;<br>           default is 8080.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraShutdownPort&quot; value=&quot;8005&quot;&gt;<br>  &lt;comment&gt;Defines the port number used to shutdown the Fedora sever;<br>           default is 8005.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraRedirectPort&quot; value=&quot;8443&quot;&gt;<br>  &lt;comment&gt;Defines the redirect port of the Fedora sever; default is<br>           8443.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraServerHost&quot; value=&quot;localhost&quot;&gt;<br>  &lt;comment&gt;Defines the host name for the Fedora server, as seen from the<br>           outside world.&lt;/comment&gt;<br>&lt;/param&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>
-    <li>Start the Fedora 2.1 server <br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>C:\fedora-2.1&gt;<b> fedora-start
-</b>Starting Fedora server...
-Deploying API-M and API-A...
-Processing file c:\fedora-2.1\server\config\deployAPI-A.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1\server\config\deployAPI-A.wsdd
-audit parms 60
-Processing file c:\fedora-2.1\server\config\deploy.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1\server\config\deploy.wsdd
-audit parms 15
-Initializing Fedora Server instance...
-Fedora Version: 2.1
-Fedora Build: 1
-Server Host Name: localhost
-Server Port: 8080
-Debugging: false
-log4j.configuration=null
-OK<b>
-Finished. To stop the server, use fedora-stop.
-C:\fedora-2.1&gt;</b></pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;</p>
-    </li>
-    <li><i><b>You are done! </b></i></li>
-  </ol>
-		<p>&nbsp;</p>
-
-    </div>
-
-    <div class="sec2">
-      <h2>&nbsp;</h2>
-		<h2><a name="migrate20-21" id="migrate0">3. Upgrading From Fedora 2.0 to Fedora 2.1</a></h2>
-
-      <p>The move from Fedora 2.0 to Fedora 2.1b is quite simple and does not 
-		require migration of objects.&nbsp; If you are upgrading from Fedora 2.0 to Fedora 2.1
-      follow these steps:</p>
-		
-  <ol>
-    <li><b>Download: </b>download the Fedora 2.1 software from <a href=
-        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
-    <li><b>Install</b>:&nbsp; install the Fedora 2.1 software</li>
-    <li><b>Backup:&nbsp; </b>it is highly recommended that you create a backup 
-      of your pre-existing Fedora 2.0 repository </li>
-    <li><b>Run the Fedora Setup Utility.</b>&nbsp; In Fedora 2.1, you can choose 
-      among four different security configurations. <b>&nbsp;</b>Consult the <a href="../server/security/securingrepo.html">Securing 
-      Your Repository Guide</a> for a description of security configuration options.&nbsp; 
-      To have an equivalent configuration to what was in Fedora 2.0 (no SSL, API-M 
-      authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
-      option as demonstrated below.&nbsp; You can easily change to more secure 
-      configurations at any time by rerunning the Fedora Setup Utility.&nbsp; 
-      <br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>C:\fedora-2.1-src&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;</p>
-    </li>
-    <li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the object storage location to point 
-      to that of of the Fedora 2.0 repository, for example:<br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_0_objects</b>&quot;/&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>
-    <li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the datastream storage location to 
-      point to that of of the Fedora 2.0 repository, for example:<br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_0_datastreams</b>&quot;/&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;
-    </li>
-    <li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1 server 
-      configuration file (fedora.fcfg) set the relational database location topoint 
-      to the pre-existing database (used by the Fedora 2.0 repository), for example 
-      (if using MySQL):<br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
-  &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  &lt;param name=&quot;dbPassword&quot; value=&quot;fedoraAdmin&quot;/&gt;
-  <b>&lt;param name=&quot;jdbcURL&quot; value=&quot;jdbc:mysql://localhost/fedora20?useUnicode=true&amp;amp;characterEncoding=UTF-8&amp;amp;autoReconnect=true&quot;/&gt;</b>
-  &lt;param name=&quot;jdbcDriverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot;/&gt;
-  &lt;param name=&quot;ddlConverter&quot; value=&quot;fedora.server.utilities.MySQLDDLConverter&quot;/&gt;
-  &lt;param name=&quot;maxActive&quot; value=&quot;100&quot;/&gt;
-  &lt;param name=&quot;maxIdle&quot; value=&quot;10&quot;/&gt;
-  &lt;param name=&quot;maxWait&quot; value=&quot;-1&quot;/&gt;
-  &lt;param name=&quot;minIdle&quot; value=&quot;0&quot;/&gt;
-  &lt;param name=&quot;minEvictableIdleTimeMillis&quot; value=&quot;1800000&quot;/&gt;
-  &lt;param name=&quot;numTestsPerEvictionRun&quot; value=&quot;3&quot;/&gt;
-  &lt;param name=&quot;timeBetweenEvictionRunsMillis&quot; value=&quot;-1&quot;/&gt;
-  &lt;param name=&quot;testOnBorrow&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;testOnReturn&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;testWhileIdle&quot; value=&quot;true&quot;/&gt;
-  &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
-&lt;/datastore&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;If you are using Oracle or mckoi as your database, update the appropriate 
-        datastore configuration.<br>
-        &nbsp;
-    </li>
-    <li><b>Configure the fedoraServerHost and fedoraServerPort:</b> in the Fedora 
-      2.1 server configuration file (fedora.fcfg) set the values for fedoraServerHost 
-      and fedoraServerPort to match those of your Fedora 2.0 server configuration, 
-      for example:<br>
-      &nbsp; 
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>&lt;param name=&quot;fedoraServerPort&quot; value=&quot;8080&quot;&gt;<br>  &lt;comment&gt;Defines the port number on which the Fedora server runs;<br>           default is 8080.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraShutdownPort&quot; value=&quot;8005&quot;&gt;<br>  &lt;comment&gt;Defines the port number used to shutdown the Fedora sever;<br>           default is 8005.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraRedirectPort&quot; value=&quot;8443&quot;&gt;<br>  &lt;comment&gt;Defines the redirect port of the Fedora sever; default is<br>           8443.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraServerHost&quot; value=&quot;localhost&quot;&gt;<br>  &lt;comment&gt;Defines the host name for the Fedora server, as seen from the<br>           outside world.&lt;/comment&gt;<br>&lt;/param&gt;</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp; 
-    </li>	
-    <li><b>Rebuild the Fedora Resource Index. </b>&nbsp; Note that you <b> MUST 
-      NOT </b>point your Fedora 2.1 repository server at the pre-existing Fedora 
-      2.0 Resource Index.&nbsp;&nbsp; The Resource Index data model has changed 
-      slightly, and also there have been bug fixes on the Resource Index.&nbsp;&nbsp;&nbsp; 
-      The Resource Index can be easily rebuilt using the <a href="../server/cmd-line/index.html#rebuild">Fedora 
-      Rebuild Utility</a>, as shown below.&nbsp; When prompted for what you want 
-      to do, select option 2 to rebuild the Resource Index only.&nbsp;&nbsp; (Note: 
-      that you in lieu of Step 7 above, you could have chosen to rebuild a brand 
-      new SQL database, but this is not necessary.). A bug (<a href="http://phad.lib.virginia.edu/bugs/show_bug.cgi?id=134">Bugzilla 
-      #134</a>) was fixed in the Fedora 2.1 that affects the length of the <i>token</i> 
-      field in the <i>datastreamPaths</i> SQL database table. The length of this 
-      field was changed form varachr(103) to varchar(199). If you do not rebuild 
-      the SQL database, it is recommend that you manually update the field length 
-      for this column table in your sql database using an appropriate database 
-      utility for your sql database. See the <a href="release-notes.html">Release 
-      Notes</a> for more details on this bug.<i><b>&nbsp; <br>
-      <br>
-      NOTE: The Fedora server must not be running while rebuilding the Resource 
-      Index</b></i>.<br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>C:\fedora-2.1-src&gt;<b> fedora-rebuild</b></pre>
-            <pre>
-Fedora Rebuild Utility
-..........................
-
-WARNING: Live rebuilds are not currently supported.
-Make sure your server is stopped before continuing.
-
-Server directory is c:\fedora-2.1-src\dist\server
-Server profile is unspecified
-
----------------------------------------------------------------------
-
-What do you want to do?
-
-1) Test the rebuilder interface.
-2) Rebuild the Resource Index.
-3) Rebuild SQL database.
-4) Exit
-
-Enter (1-4) --&gt; 2
-
-Rebuild the Resource Index.
-
-Start rebuilding with the above options?
-
-1) Yes
-2) No, let me re-enter the options.
-3) No, exit.
-
-Enter (1-3) --&gt; 1
-
-Rebuilding...</pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;
-    </li>
-    <li>Start the Fedora 2.1 server <br>
-      &nbsp;
-      <div class="code"> 
-        <blockquote> 
-          <blockquote> 
-            <pre>C:\fedora-2.1-src&gt;<b> fedora-start
-</b>Starting Fedora server...
-Deploying API-M and API-A...
-Processing file c:\fedora-2.1-src\dist\server\config\deployAPI-A.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1-src\dist\server\config\deployAPI-A.wsdd
-audit parms 60
-Processing file c:\fedora-2.1-src\dist\server\config\deploy.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1-src\dist\server\config\deploy.wsdd
-audit parms 15
-Initializing Fedora Server instance...
-Fedora Version: 2.1
-Fedora Build: 1
-Server Host Name: localhost
-Server Port: 8080
-Debugging: false
-log4j.configuration=null
-OK<b>
-Finished. To stop the server, use fedora-stop.
-C:\fedora-2.1-src&gt;</b></pre>
-          </blockquote>
-        </blockquote>
-      </div>
-      <p>&nbsp;</p>
-    </li>
-    <li><i><b>You are done! </b></i></li>
-  </ol>
-		<p>&nbsp;</p>
-		<h2><a name="migrate" id="migrate">4. Migrating
-      From Fedora 1.2.1 to Fedora 2.0</a></h2>
-
-      <p>If you are upgrading from Fedora 1.2.1 to Fedora 2.0
-      follow these steps:</p>
-
-      <ol>
-        <li>Download patch number 2 from
-        <a href="http://www.fedora.info/download/1.2.1/patch2">
-        http://www.fedora.info/download/1.2.1/patch2.</a></li>
-
-        <li>Make sure you are running v1.2.1 of the Fedora server
-        software.
-
-          <p>DO NOT APPLY THIS PATCH TO ANY OTHER VERSION OF
-          FEDORA!</p>
-
-          <p>To check your repository's version, check the
-          "describe" page. For instance, if you're running Fedora
-          on localhost:8080, visit
-          http://localhost:8080/fedora/describe</p>
-        </li>
-
-        <li>Shut down your Fedora 1.2.1 server (using
-        fedora-stop)</li>
-
-        <li>Make a backup of the METSLikeExportDOSerializer.class
-        file.
-
-          <p>Under Windows, make a backup of the following
-          file:</p>
-
-          <div class="code">
-            <pre>
-%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation\METSLikeExportDOSerializer.class
-</pre>
-          </div>
-
-          <p>Under Unix, make a backup of the following file:</p>
-
-          <div class="code">
-            <pre>
-$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation/METSLikeExportDOSerializer.class
-</pre>
-          </div>
-        </li>
-
-        <li>Copy the METSLikeExportDOSerializer.class from this
-        patch into the above directory replacing the one there.
-
-          <p>Under Windows, copy the
-          METSLikeExportDOSerializer.class from patch into the
-          following directory</p>
-
-          <div class="code">
-            <pre>
-%FEDORA_HOME%\server\tomcat41\webapps\fedora\WEB-INF\classes\fedora\server\storage\translation 
-</pre>
-          </div>
-
-          <p>OVER THE EXISTING FILE.</p>
-
-          <p>Under Unix, copy the METSLikeExportDOSerializer.class
-          from patch into the following directory</p>
-
-          <div class="code">
-            <pre>
-$FEDORA_HOME/server/tomcat41/webapps/fedora/WEB-INF/classes/fedora/server/storage/translation 
-</pre>
-          </div>
-
-          <p>OVER THE EXISTING FILE.</p>
-        </li>
-
-        <li>(OPTIONAL) If you installed the source code
-        distribution of Fedora, you should also copy the included
-        METSLikeExportDOSerializer.java file into your source
-        directory.
-
-          <p>Under Windows, copy the
-          METSLikeExportDOSerializer.java file from the patch into
-          the following directory</p>
-
-          <div class="code">
-            <pre>
-%FEDORA_HOME%\src\java\fedora\server\storage\translation
-</pre>
-          </div>
-
-          <p>OVER THE EXISTING FILE.</p>
-
-          <p>Under Unix, copy the METSLikeExportDOSerializer.java
-          file from the patch into the following directory</p>
-
-          <div class="code">
-            <pre>
-$FEDORA_HOME/src/java/fedora/server/storage/translation
-</pre>
-          </div>
-
-          <p>OVER THE EXISTING FILE.</p>
-        </li>
-
-        <li>Re-start your Fedora 1.2.1 server (using fedora-start).
-        Your Fedora 1.2.1 repository is now ready for exporting its
-        objects to the new server.</li>
-
-        <li>Download the Fedora 2.0 software from <a href=
-        "http://www.fedora.info/download">http://www.fedora.info/download</a></li>
-
-        <li>Install and configure the new Fedora 2.0 repository
-        with a different host and port than the Fedora 1.2.1
-        server.</li>
-
-        <li>Start the Fedora 2.0 server (using fedora-start).</li>
-
-        <li>There are two ways to ingest objects from the 1.2.1
-        server: 1) use the admin GUI client to ingest the objects
-        from the 1.2.1 repository or 2) use the fedora-ingest
-        command-line utility to ingest the objects from the 1.2.1
-        repository
-
-          <ol type="a">
-            <li>Using the admin GUI client to ingest objects from
-            the 1.2.1 repository
-
-              <ol type="i">
-                <li>Start the fedora admin GUI client (using
-                fedora-admin).</li>
-
-                <li>Under the File menu item, select File, Ingest,
-                Object By Type, From Repository.</li>
-
-                <li>Specify the hostname and port of the Fedora
-                1.2.1 server from which you want to ingest objects.
-                Specify the administrator username and password for
-                the 1.2.1 repository.</li>
-
-                <li>Select all three object types including
-                Behavior Definition, Behavior Mechanism, and Data
-                object and click OK.</li>
-
-                <li>The Fedora 2.0 server will now ingest all
-                objects from the 1.2.1 repository.</li>
-              </ol>OR
-            </li>
-
-            <li>Using the fedora-ingest command-line utility to
-            ingest objects from the 1.2.1 repository.
-
-              <ol type="i">
-                <li>Run the fedora-ingest command-line utility
-                which is found in the client/bin directory.
-
-                  <p>Under Windows, this file is found in:</p>
-
-                  <div class="code">
-                    <pre>
-%FEDORA_HOME%\client\bin\fedora-ingest.bat
-</pre>
-                  </div>
-
-                  <p>Under Unix, this file is found in:</p>
-
-                  <div class="code">
-                    <pre>
-$FEDORA_HOME/client/bin/fedora-ingest.sh
-</pre>
-                  </div>
-                </li>
-
-                <li>Arguments for the fedora-ingest utility should
-                include the following:
-
-                  <ul>
-                    <li>Type of ingest: specify R for
-                    repository</li>
-
-                    <li>Hostname and port of the 1.2.1 repository
-                    from which you wish to ingest objects:
-                    source-host:source-port</li>
-
-                    <li>Administrator username of the 1.2.1
-                    repository: fedoraAdmin</li>
-
-                    <li>Password for the administrator username of
-                    the 1.2.1 repository: fedoraAdmin is the
-                    default</li>
-
-                    <li>Type of objects to ingest: specify DMO for
-                    all three object types.</li>
-
-                    <li>Hostname and port of the 2.0 repository
-                    into which you are ingesting the objects:
-                    destination-host:destination-port</li>
-
-                    <li>Administrator username of the 2.0
-                    repository: fedoraAdmin</li>
-
-                    <li>Password for the administrator username of
-                    the 2.0 repository: fedoraAdmin is the
-                    default</li>
-
-                    <li>Log message: use "" for no message.
-
-                      <p>For example:</p>
-
-                      <div class="code">
-                        <pre>
-fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-port fedoraAdmin fedoraAdmin ""
-</pre>
-                      </div>
-                    </li>
-                  </ul>
-                </li>
-              </ol>
-            </li>
-          </ol>
-        </li>
-
-        <li>After successfully ingesting all objects from the 1.2.1
-        repository, shutdown the 1.2.1 repository (using
-        fedora-stop).</li>
-
-        <li>If you desire to run the Fedora 2.0 repository under
-        the same hostname and port as the 1.2.1 repository, you can
-        now shutdown the 2.0 repository using fedora-stop,
-        reconfigure the host and port in the fedora.fcfg file for
-        the 2.0 repository to match those of the previous 1.2.1
-        repository, and restart the Fedora 2.0 repository.</li>
-      </ol>
-    </div>
-
-  <div id="footer">
+<div id="footer">
     <div id="copyright">
       Copyright &#xA9; 2006 Fedora Project
     </div>
@@ -685,6 +202,6 @@ fedora-ingest r src-host:src-port fedoraAdmin fedoraAdmin DMO dest-host:dest-por
       //]]>
       </script>
     </div>
-  </div>
+</div>
 </body>
 </html>
