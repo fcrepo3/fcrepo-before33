@@ -34,6 +34,9 @@ public abstract class IterableTest extends FedoraServerTestCase {
     
     protected static Set demoObjects;
     protected static final Set badPids = new HashSet();
+
+    private String _lastPolicies = null;
+
     static {
     	badPids.add("hoo%20doo:%20TheClash"); //unacceptable syntax
     }
@@ -68,18 +71,13 @@ public abstract class IterableTest extends FedoraServerTestCase {
     }
     
     public void iterate(Set trials, DataSource dataSource, IndividualTest testXml, IndividualTest testXhtml, String label) throws Exception {
-    	String lastPolicies = null;
-    	//if (trials == null) return;
     	Iterator it = trials.iterator();
     	while (it.hasNext()) {
     		Trial trial = (Trial) it.next(); 
     		String policies = trial.policies;
-    		if (samePolicies(policies, lastPolicies)) {
-    			//System.out.println("staying with policies==" + policies);
-    		} else {
-    			//System.out.println("changing to policies==" + policies);
+    		if (!samePolicies(policies, _lastPolicies)) {
 	            usePolicies(policies);
-    			lastPolicies = policies;    			
+    			_lastPolicies = policies;    			
     		}
     		HttpDataSource httpDataSource = (HttpDataSource) dataSource;
         	run(testXml, testXhtml, dataSource, trial.username, trial.password, label);
