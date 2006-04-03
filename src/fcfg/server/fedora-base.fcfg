@@ -327,11 +327,11 @@
                        Index level. Currently, only 0, 1 and 2 are supported
                        levels. 0 = off: do not load the ResourceIndex 1 = basic: system
                        metadata, RELS-EXT, disseminations 2 = basic + method permutations
-                       WARNING: changing the level (except to 0) requires a full
-                       dump-and-load of the repository.
+                       WARNING: changing the level (except to 0) requires 
+                       running the Resource Index Rebuilder.
                  - datastore (required) 
-                       Name of the triplestore to use. WARNING: changing the triplestore requires a
-                       full dump-and-load of the repository.
+                       Name of the triplestore to use. WARNING: changing the 
+                       triplestore running the Resource Index Rebuilder.
                  - aliases (optional) 
                        Aliases that can be used for queries. The param name of an alias starts with
                        the string "alias:" and is followed by the name of the alias
