@@ -22,6 +22,8 @@ import fedora.server.errors.servletExceptionExtensions.Ok200Exception;
 import fedora.server.errors.servletExceptionExtensions.Unavailable503Exception;
 import fedora.server.security.Authorization;
 import fedora.server.utilities.ServerUtility;
+import fedora.server.utilities.status.ServerStatusFile;
+import fedora.server.utilities.status.ServerState;
 import fedora.server.Server;
 
 /**
@@ -36,6 +38,8 @@ public class ServerController
         extends HttpServlet {
 
     private static Server s_server;
+
+    private ServerStatusFile _status;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -169,17 +173,36 @@ public class ServerController
     }
 
     public void init() throws ServletException {
+       
+        // make sure fedora.home is defined first
+        String fedoraHome = System.getProperty("fedora.home");
+        if (fedoraHome == null) {
+            String msg = "FATAL ERROR: System property fedora.home is undefined";
+            System.out.println(msg);
+            throw new ServletException(msg);
+        }
+        File fedoraHomeDir = new File(fedoraHome);
+
+        // get file for writing startup status
+        try {
+            _status = new ServerStatusFile(new File(fedoraHomeDir, "server"));
+        } catch (Throwable th) {
+            th.printStackTrace();
+            throw new ServletException(th);
+        }
 
         try {
 
             // Start the Fedora instance
-            System.out.println("Starting Fedora Server instance...");
-            s_server = Server.getInstance(new File(System.getProperty("fedora.home")));
-            System.out.println("Fedora startup complete");
+            _status.append(ServerState.STARTING, "Starting Fedora Server instance");
+            s_server = Server.getInstance(fedoraHomeDir);
+            _status.append(ServerState.STARTED, null);
         } catch (Throwable th) {
-            System.out.println("Fedora startup failed");
-            th.printStackTrace();
-            throw new ServletException("Fedora startup failed", th);
+            String msg = "Fedora startup failed";
+            try {
+                _status.appendError(ServerState.STARTUP_FAILED, th);
+            } catch (Exception e) { }
+            throw new ServletException(msg, th);
         }
     }
 
@@ -189,11 +212,13 @@ public class ServerController
             System.out.println("Fedora Server not initialized; skipping shutdown");
         } else {
             try {
+                _status.append(ServerState.STOPPING, "Shutting down Fedora Server and modules");
                 s_server.shutdown(null);
-                System.out.println("Fedora Server has been shut down");
+                _status.append(ServerState.STOPPED, "Shutdown Successful");
             } catch (Throwable th) {
-                System.out.println("Fedora Server has been shut down (with error)");
-                th.printStackTrace();
+                try {
+                    _status.appendError(ServerState.STOPPED_WITH_ERR, th);
+                } catch (Exception e) { }
             }
             s_server = null;
         }

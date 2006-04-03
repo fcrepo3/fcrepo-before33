@@ -8,6 +8,8 @@ import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.security.Authorization;
+import fedora.server.utilities.status.ServerState;
+import fedora.server.utilities.status.ServerStatusFile;
 
 import java.io.IOException;
 import java.io.File;
@@ -521,6 +523,11 @@ public abstract class Server
     private boolean m_initialized;
 
     /**
+     * The server status File.
+     */
+    private ServerStatusFile m_statusFile;
+
+    /**
      * What server profile should be used?
      */
     private static String s_serverProfile=System.getProperty("fedora.serverProfile");
@@ -551,6 +558,9 @@ public abstract class Server
             m_startupLogRecords=new ArrayList(); // prepare for startup log queueing
             m_loadedModules=new HashMap();
             m_homeDir=new File(homeDir, "server");
+
+            m_statusFile = new ServerStatusFile(m_homeDir);
+
             File logDir=new File(m_homeDir, LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdir(); // try to create dir if doesn't exist
@@ -596,6 +606,7 @@ public abstract class Server
 
             // initialize the server
             logConfig("started initting server...");
+            m_statusFile.append(ServerState.STARTING, "Initializing Server");
             initServer();
             logConfig("finished initting server...");
 
@@ -610,6 +621,7 @@ public abstract class Server
             }
 
             // initialize each module
+            m_statusFile.append(ServerState.STARTING, "Initializing Modules");
             Iterator mRoles=moduleParams.keySet().iterator();
             while (mRoles.hasNext()) {
                 String role=(String) mRoles.next();
@@ -677,6 +689,7 @@ public abstract class Server
             // Do postInitModule for all Modules, verifying beforehand that
             // the required module roles (dependencies) have been fulfilled
             // for that module.
+            m_statusFile.append(ServerState.STARTING, "Post-Initializing Modules");
             mRoles=moduleParams.keySet().iterator();
             while (mRoles.hasNext()) {
                 String r=(String) mRoles.next();
@@ -943,6 +956,15 @@ public abstract class Server
      */
     public final boolean hasInitialized() {
         return m_initialized;
+    }
+
+    /**
+     * Get the status file for the server.
+     *
+     * Important messages pertaining to startup and shutdown go here.
+     */
+    public ServerStatusFile getStatusFile() {
+        return m_statusFile;
     }
 
     /**
