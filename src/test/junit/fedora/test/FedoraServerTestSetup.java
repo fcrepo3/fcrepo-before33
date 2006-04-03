@@ -125,60 +125,42 @@ public class FedoraServerTestSetup
     }
     
     private void startServer() throws Exception {
-        System.out.println("+ doing setUp(): starting server...");
-		System.out.println("Suite configuration package is: " + m_configDir);
+
+		System.out.println("Starting server with configuration package: " + m_configDir);
 
         if (m_configDir != null) swapConfigurationFiles();
 
         String cmd = FEDORA_HOME + "/server/bin/fedora-start";
-        
-        String osName = System.getProperty("os.name" );
 
-        if (osName.startsWith("Windows")) {
-            cmd = "cmd.exe /C " + cmd;
-        }
-        
-        try {
-	        Process cp = Runtime.getRuntime().exec(cmd, null);
-	        String line;
-            BufferedReader input = new BufferedReader(
-                    new InputStreamReader(cp.getInputStream()));
-            BufferedReader error = new BufferedReader(
-                    new InputStreamReader(cp.getErrorStream()));
-	        boolean done = false;
-            while (!done)
-            {            
-                line = null;
-                while (!input.ready() && !error.ready()) 
-                {
-    	            Thread.sleep(10);
-                }
-                if (error.ready())
-                {
-                    line = error.readLine();
-                }
-                else if (input.ready())
-                {
-                    line = input.readLine();
-                }
-                System.out.println(line);
-	            // If there's a better way to do this, please go ahead
-	            if ( line.equals("OK") ) break;
-	        }
-	        input.close();
-            error.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Process cp = ExecUtility.execCommandLineUtility(cmd);
+        int exitCode = cp.waitFor();
+
+        if (exitCode != 0) {
+            throw new Exception("fedora-start returned exit code: " + exitCode);
+        } else {
+            System.out.println("Server startup successful");
         }
     }
     
     private void stopServer() throws Exception {
-        System.out.println("- doing tearDown(): stopping server...");
 
-        ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-stop");
+        System.out.println("Shutting down server and dropping tables...");
+
+        String cmd = FEDORA_HOME + "/server/bin/fedora-stop";
+
+        Process cp = ExecUtility.execCommandLineUtility(cmd);
+        int exitCode = cp.waitFor();
+
         dropDBTables();
         deleteStores();
         if (m_configDir != null) unswapConfigurationFiles();
+
+        if (exitCode != 0) {
+            throw new Exception("fedora-stop returned exit code: " + exitCode);
+        } else {
+            System.out.println("Server shutdown successful");
+        }
+
     }
 
     private void backupPolicies() throws Exception {
