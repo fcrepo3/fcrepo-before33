@@ -4,6 +4,8 @@ import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.utilities.ServerUtility;
+import fedora.server.utilities.status.ServerState;
+import fedora.server.utilities.status.ServerStatusFile;
 
 import fedora.logging.DatingFileHandler;
 import fedora.logging.SimpleXMLFormatter;
@@ -65,10 +67,11 @@ public class BasicServer
             throw new ServerInitializationException("Parameter fedoraServerPort "
                 + "not given, but it's required.");
         }
-        System.out.println("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
-        System.out.println("Fedora Build: " + BUILD_NUMBER);
-        System.out.println("Server Host Name: " + fedoraServerHost);
-        System.out.println("Server Port: " + fedoraServerPort);
+
+//        System.out.println("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
+//        System.out.println("Fedora Build: " + BUILD_NUMBER);
+//        System.out.println("Server Host Name: " + fedoraServerHost);
+//        System.out.println("Server Port: " + fedoraServerPort);
         
         logInfo("Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
         logInfo("Fedora Build: " + BUILD_NUMBER);
@@ -84,9 +87,20 @@ public class BasicServer
                 offOrOn = "ON";
             }
         }
-        System.out.println("Debugging: " + debugString);
         if (offOrOn.equals("ON")) {
             fedora.server.Debug.DEBUG = true;
+        }
+
+        ServerStatusFile status = getStatusFile();
+        try {
+            status.append(ServerState.STARTING, "Fedora Version: " + VERSION_MAJOR + "." + VERSION_MINOR);
+            status.append(ServerState.STARTING, "Fedora Build: " + BUILD_NUMBER);
+            status.append(ServerState.STARTING, "Server Host Name: " + fedoraServerHost);
+            status.append(ServerState.STARTING, "Server Port: " + fedoraServerPort);
+            status.append(ServerState.STARTING, "Debugging: " + offOrOn);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ServerInitializationException("Unable to write to status file: " + e.getMessage());
         }
     }
 

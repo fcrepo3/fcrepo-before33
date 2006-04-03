@@ -10,7 +10,7 @@ public class ServerStatusTool {
      * the state to change from NOT_STARTING to STARTING before 
      * giving up.
      */
-    public static final int DEFAULT_STARTING_TIMEOUT = 10;
+    public static final int DEFAULT_STARTING_TIMEOUT = 60;
 
     /**
      * Default number of seconds watch-startup should wait
@@ -24,7 +24,7 @@ public class ServerStatusTool {
      * the state to change from STARTED to STOPPING before 
      * giving up.
      */
-    public static final int DEFAULT_STOPPING_TIMEOUT = 10;
+    public static final int DEFAULT_STOPPING_TIMEOUT = 60;
 
     /**
      * Default number of seconds watch-shutdown should wait for 
