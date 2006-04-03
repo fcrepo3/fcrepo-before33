@@ -104,6 +104,23 @@ start() {
 		-Dtomcat.dir="$TC_BASENAME" \
 		fedora.server.BasicServer)
 
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
+
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+		-Djavax.net.ssl.trustStorePassword=tomcat \
+		-Dfedora.home="$FEDORA_HOME" \
+		-Dtomcat.dir="$TC_BASENAME" \
+		fedora.server.utilities.status.ServerStatusTool init)
+
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
+
 	# start Tomcat
 	if [ -z "${SERVER_PROFILE}" ]; then
 		echo "Using the default server profile"
@@ -133,6 +150,21 @@ start() {
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
 		org.apache.catalina.startup.Bootstrap start &)
 	
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+		-Djavax.net.ssl.trustStorePassword=tomcat \
+		-Dfedora.home="$FEDORA_HOME" \
+		-Dtomcat.dir="$TC_BASENAME" \
+		fedora.server.utilities.status.ServerStatusTool watch-startup)
+
+    if [ $? != 0 ]; then
+        echo "Stopping Tomcat due to startup failure..."
+        sleep 5
+        stopTomcat
+    	restoreJavaHome
+        exit 1
+    fi
+
     echo "Finished.  To stop server, use fedora-stop."
 	restoreJavaHome
 }
@@ -151,6 +183,23 @@ debug() {
 		-Dfedora.home="$FEDORA_HOME" \
 		-Dtomcat.dir="$TC_BASENAME" \
 		fedora.server.BasicServer)
+
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
+
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+		-Djavax.net.ssl.trustStorePassword=tomcat \
+		-Dfedora.home="$FEDORA_HOME" \
+		-Dtomcat.dir="$TC_BASENAME" \
+		fedora.server.utilities.status.ServerStatusTool init)
+
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
 
 	# start Tomcat
 	if [ -z "${SERVER_PROFILE}" ]; then
@@ -183,6 +232,21 @@ debug() {
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
 		org.apache.catalina.startup.Bootstrap start &)
 	
+	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+		-Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+		-Djavax.net.ssl.trustStorePassword=tomcat \
+		-Dfedora.home="$FEDORA_HOME" \
+		-Dtomcat.dir="$TC_BASENAME" \
+		fedora.server.utilities.status.ServerStatusTool watch-startup)
+
+    if [ $? != 0 ]; then
+        echo "Stopping Tomcat due to startup failure..."
+        sleep 5
+        stopTomcat
+    	restoreJavaHome
+        exit 1
+    fi
+
     echo "Starting jdb..."
     (exec "$JAVA_HOME/bin/jdb" -connect com.sun.jdi.SocketAttach:hostname=localhost,port=8000)
 	restoreJavaHome
@@ -190,6 +254,29 @@ debug() {
 
 stop() {
 	echo "Stopping the Fedora Server..."
+    stopTomcat
+
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
+
+    (exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+        -Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+        -Djavax.net.ssl.trustStorePassword=tomcat \
+        -Dfedora.home="$FEDORA_HOME" \
+        -Dtomcat.dir="$TC_BASENAME" \
+        fedora.server.utilities.status.ServerStatusTool watch-shutdown)
+
+    if [ $? != 0 ]; then
+    	restoreJavaHome
+        exit 1
+    fi
+
+	restoreJavaHome
+}
+
+stopTomcat() {
 
 	# Stop Tomcat
 	(exec "$JAVA" -cp "$TC"/bin/bootstrap.jar:"$JAVA_HOME"/lib/tools.jar \
@@ -202,7 +289,6 @@ stop() {
 		-Dcatalina.home="$TC" \
 		-Djava.io.tmpdir="$TC"/temp \
 		org.apache.catalina.startup.Bootstrap stop)
-	restoreJavaHome
 }
 
 restart() {
@@ -212,7 +298,13 @@ restart() {
 }
 
 status() {
-	echo "Sorry, this method is not yet supported."
+    (exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
+        -Djavax.net.ssl.trustStore="$FEDORA_HOME"/server/truststore \
+        -Djavax.net.ssl.trustStorePassword=tomcat \
+        -Dfedora.home="$FEDORA_HOME" \
+        -Dtomcat.dir="$TC_BASENAME" \
+        fedora.server.utilities.status.ServerStatusTool show-status)
+    exit $?
 }
 
 # ----------------------------------------------------------------------

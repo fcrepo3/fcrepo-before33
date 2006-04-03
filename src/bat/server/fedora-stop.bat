@@ -1,5 +1,4 @@
 @echo off
-@rem usage is fedora-stop http(s) port adminuser adminpasswd
 
 goto checkEnv
 
@@ -12,15 +11,12 @@ set OLD_JAVA_HOME=%JAVA_HOME%
 set JAVA_HOME=%THIS_JAVA_HOME%
 set SERVER_CONTROLLER_LIBS=@ServerController.windows.libs@
 
-:undeploy
-
-echo Shutting down Fedora Servers and associated Modules...
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;%TC%\webapps\fedora\WEB-INF\lib\commons-httpclient-2.0.1.jar;%TC%\webapps\fedora\WEB-INF\lib\commons-logging.jar;%SERVER_CONTROLLER_LIBS% -Dfedora.home=%FEDORA_HOME% fedora.server.utilities.ServerUtility shutdown
-
-echo Shutting down Fedora-Server service...
+echo Stopping the Fedora Server...
 "%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
 set JAVA_HOME=%OLD_JAVA_HOME%
-
+if errorlevel 1 goto endWithError
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.utilities.status.ServerStatusTool watch-shutdown
+if errorlevel 1 goto endWithError
 goto end
 
 :checkEnv
@@ -60,6 +56,9 @@ goto end
 echo ERROR: java was found in %THIS_JAVA_HOME%, but it was not version 1.4
 echo Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base.
 goto end
+
+:endWithError
+exit /B 1
 
 :end
 

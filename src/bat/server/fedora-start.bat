@@ -4,7 +4,7 @@
 goto checkEnv
 :envOk
 
-echo Starting Fedora server...
+echo Starting the Fedora server...
 
 set TOMCAT_DIR=@tomcat.basename@
 set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
@@ -23,36 +23,40 @@ if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto noFedoraConfig
 if not exist %FEDORA_HOME%\server\config\beSecurity.xml goto noBeSecurityConfig
 if not exist %TC%\webapps\fedora\WEB-INF\web.xml goto noWebXmlConfig
 
-if exist %FEDORA_HOME%\server\logs\startup.log goto logDirExists
+if exist %FEDORA_HOME%\server\logs\startup.log goto initStartup
 mkdir %FEDORA_HOME%\server\logs > NUL
 
-:logDirExists
+:initStartup
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
+if errorlevel 1 goto endWithError
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.utilities.status.ServerStatusTool init
+if errorlevel 1 goto endWithError
+
 if "%OS%" == "" goto runMinimized
 
 :runInBackground
 if "%1" == "" goto bgNoProfile
 echo [DEBUG] running in background
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
 start "fedoraBG" /B "%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp %TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%1 -Dclasspath=%TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config -Djava.util.logging.config.file=%FEDORA_HOME%\server\config\logging.properties org.apache.catalina.startup.Bootstrap start
-goto finish
+goto finishStartup
 
 :bgNoProfile
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat  -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
 start "fedoraBGNP" /B "%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp %TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config -Djava.util.logging.config.file=%FEDORA_HOME%\server\config\logging.properties org.apache.catalina.startup.Bootstrap start
-goto finish
+goto finishStartup
 
 :runMinimized
 if "%1" == "" goto minNoProfile
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat  -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
 start "fedoraMinimized" /m "%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp %TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%1 -Dclasspath=%TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config -Djava.util.logging.config.file=%FEDORA_HOME%\server\config\logging.properties org.apache.catalina.startup.Bootstrap start
-goto finish
+goto finishStartup
 
 :minNoProfile
-"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat  -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.BasicServer
 start "fedoraMinimizedNP" /m "%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp %TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar;"%JAVA_HOME%"\lib\tools.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp -Djava.security.auth.login.config=%TC%/conf/jaas.config -Djava.util.logging.config.file=%FEDORA_HOME%\server\config\logging.properties org.apache.catalina.startup.Bootstrap start
 
-:finish
-echo Finished.  To stop the server, use fedora-stop.
+:finishStartup
+"%JAVA_HOME%\bin\java" -cp %TC%\webapps\fedora\WEB-INF\classes;"%SERVER_LIBS%" -Djavax.net.ssl.trustStore="%FEDORA_HOME%\server\truststore" -Djavax.net.ssl.trustStorePassword=tomcat -Dfedora.home=%FEDORA_HOME% -Dtomcat.dir=%TOMCAT_DIR% fedora.server.utilities.status.ServerStatusTool watch-startup
+if errorlevel 1 goto abortStartup
+
+echo Finished.  To stop server, use fedora-stop.
 set JAVA_HOME=%OLD_JAVA_HOME%
 
 goto end
@@ -134,6 +138,14 @@ echo       no-ssl-authenticate-all  - API-M with basicAuth but no SSL
 echo                                - API-A with basicAuth but no SSL  
 echo.
 goto end
+
+:abortStartup
+echo Stopping Tomcat due to startup failure...
+sleep 5
+"%JAVA_HOME%\bin\java" -Xms64m -Xmx96m -cp %TC%\bin\bootstrap.jar -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.home=%FEDORA_HOME% -Dclasspath=%TC%\bin\bootstrap.jar -Djava.endorsed.dirs=%TC%\common\endorsed -Djava.security.manager -Djava.security.policy=%TC%\conf\catalina.policy -Dcatalina.base=%TC% -Dcatalina.home=%TC% -Djava.io.tmpdir=%TC%\temp org.apache.catalina.startup.Bootstrap stop
+
+:endWithError
+exit /B 1
 
 :end
 
