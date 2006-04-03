@@ -12,23 +12,12 @@ Note: This is just a copy of web-secure.xml
 	<display-name>Fedora Repository Server</display-name>
 	<!-- Servlets defined for SOAP-based web service interfaces to the Fedora Repository Server-->
 	<servlet>
-		<servlet-name>AdminServlet</servlet-name>
-		<display-name>Axis Admin Servlet</display-name>
-		<servlet-class>
-	        org.apache.axis.transport.http.AdminServlet
-	    </servlet-class>
-		<init-param>
-			<param-name>enableRemoteAdmin</param-name>
-			<param-value>true</param-value>
-		</init-param>
-		<load-on-startup>100</load-on-startup>
-	</servlet>
-	<servlet>
 		<servlet-name>AxisServlet</servlet-name>
 		<display-name>Apache-Axis Servlet</display-name>
 		<servlet-class>
 	        org.apache.axis.transport.http.AxisServlet
 	    </servlet-class>
+        <load-on-startup>2</load-on-startup>
 	</servlet>
 	<!-- Servlets defined for REST-based interfaces to the Fedora Repository Server-->
 	<servlet>
@@ -43,7 +32,8 @@ Note: This is just a copy of web-secure.xml
 		<display-name>Fedora Controller Servlet (start, stop, get server status)</display-name>
 		<servlet-class>
         	fedora.server.ServerController
-    		</servlet-class>
+    	</servlet-class>
+        <load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet>
 		<servlet-name>DatastreamResolverServlet</servlet-name>
@@ -140,10 +130,6 @@ Note: This is just a copy of web-secure.xml
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/services/*</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisServlet</servlet-name>
-		<url-pattern>/AdminService</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
