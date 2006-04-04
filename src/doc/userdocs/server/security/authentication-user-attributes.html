@@ -14,7 +14,7 @@
     <a href="../index.html" id="logo"></a>
     <div id="title">
 		<h1>Fedora Security Architecture - Authentication and User Attributes</h1>
-		<h2>Fedora 2.1</h2>		
+		<h2>Fedora 2.1.1</h2>		
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 	</div>
@@ -43,7 +43,7 @@ the document <a href="securingrepo.html">Securing Your Fedora Repository</a>.  T
      <div class="sect">
     <h2><a name="USERATTRIBUTES"></a>2 Injecting Arbitrary User Attributes</h2>
     
-<p>Fedora 2.1 provides a mechanism to include user attributes from arbitrary source(s), and merge them with attributes provided by Tomcat realms or login modules.
+<p>Fedora 2.1.1 provides a mechanism to include user attributes from arbitrary source(s), and merge them with attributes provided by Tomcat realms or login modules.
 The Fedora code looks for a request attribute whose name equals the string constant fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES.
 A request attribute found under that name is taken as a Map, mapping names to values, and so giving additional user subject attributes. 
 Currently, name must be a String and this is unlikely to change. Value must also be a String, and later this might be relaxed to include String[], 

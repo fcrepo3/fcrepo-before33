@@ -14,7 +14,7 @@
     <a href="../index.html" id="logo"></a>
     <div id="title">
 		<h1>Securing Your Fedora Repository</h1>
-		<h2>Fedora 2.1</h2>
+		<h2>Fedora 2.1.1</h2>
     </div>
     <p><b><span style='font-size:16.0pt'>&nbsp;</span></b></p>
 	</div>
@@ -55,7 +55,7 @@
   <div class="sect">
     <h2><a name="INTRO"></a>1 Introduction</h2>
     
-    <p>Fedora 2.1 represents the first release of Fedora that includes support for authentication, SSL, and authorization using XACML policies. This document provides an overview of the security configurations that ship with Fedora 2.1 and describes how to setup and configure Fedora to run in each of the four base security modes.</p>
+    <p>Fedora 2.1 represented the first release of Fedora that included support for authentication, SSL, and authorization using XACML policies. This document provides an overview of the security configurations that ship with Fedora 2.1.1 and describes how to setup and configure Fedora to run in each of the four base security modes.</p>
     <p>Fedora 2.0 provided a very minimal level of security that consisted of the following:</p>
     <blockquote>
 	<ul>
@@ -65,10 +65,10 @@
 	  <li>no SSL support</li>
 	</ul>
     </blockquote>
-    <p>In Fedora 2.0, these security measures were handled through the fedora.fcfg file and special use of the single super user name(fedoraAdmin) in the codebase. In Fedora 2.1, these security measures are now handled through a set of XACML policies and with authentication information provided through Tomcat or external authentication sources.</p>
+    <p>In Fedora 2.0, these security measures were handled through the fedora.fcfg file and special use of the single super user name(fedoraAdmin) in the codebase. As of Fedora 2.1, these security measures are now handled through a set of XACML policies and with authentication information provided through Tomcat or external authentication sources.</p>
 
     
-  <p>There are four base security configurations provided with the Fedora 2.1 
+  <p>There are four base security configurations provided with the Fedora 2.1.1 
     server distribution: (1) "ssl-authenticate-apim" configuration, (2) "ssl-authenticate-all" configuration, 
     (3) "no-ssl-authenticate-apim" configuration, and (4) "no-ssl-authenticate-all" configuration. Unlike 
     Fedora 2.0, there is no longer a "default" configuration. Before starting 
@@ -281,7 +281,7 @@
 	configuration options for Fedora (i.e., options A, B anc C), described 
 	below.&nbsp; Note that option B is the default configuration with Fedora 
 	out-of-the-box.&nbsp;&nbsp; First, we describe the two authentication 
-	sources available in Fedora 2.1:</p>
+	sources available in Fedora 2.1.1:</p>
 	<ol>
 	  <li><p>tomcat-users.xml - simple user/password file</p>
 
@@ -484,7 +484,7 @@ This file is located:</p>
 	</blockquote></p>
 
 
-		<p>The jaas.config file includes one or more login module configurations. The default shipped with Fedora 2.1 provides an entry for the basic JAASMemoryLoginModule that uses the tomcat-users.xml file.
+		<p>The jaas.config file includes one or more login module configurations. The default shipped with Fedora 2.1.1 provides an entry for the basic JAASMemoryLoginModule that uses the tomcat-users.xml file.
 		The entry appears twice so that it applies to the Fedora webapp and also to other urls in the webserver which aren't more
 		specifically identified.  The examples below show only a single entry.  Any editing should be done to both entry identifically.
 		Two comments are shown for reference, in case you change that file and need later to undo your edit. 
@@ -616,12 +616,12 @@ Editing of the configuration files is the same as for option B.
 	  <h2>&nbsp;</h2>
 		<h2><a name="AUTHZ"></a>5 Authorization via XACML</h2>
 		<p>Fedora 2.0 hardcoded minimal authorization constraints, beyond those provided by specifications in Tomcat's web.xml file.
-		Fedora 2.1 instead exposes these to customization by encoding them in the XACML standard.  A complete 
+		Fedora 2.1.1 instead exposes these to customization by encoding them in the XACML standard.  A complete 
 		description can be found in the documentation for the
 		<a href="AuthorizationXACML.htm">Fedora Authorization with XACML Policy Enforcement</a>.</p>
 		<h3><a name="AUTHZ-DEFAULT"></a>5.1 Default Repository Policies</h3>
 
-<p>Fedora 2.1 ships with a set of <a href="AuthorizationXACML.htm#DEFAULT">
+<p>Fedora 2.1.1 ships with a set of <a href="AuthorizationXACML.htm#DEFAULT">
 default repository-wide XACML policies</a> that approximate the minimal security level provided by Fedora 2.0.&nbsp; This set of repository-wide policies includes the following policies:</p>
 
 
@@ -637,7 +637,7 @@ default repository-wide XACML policies</a> that approximate the minimal security
 		<h2><a name="STEP-BY-STEP"></a>6 Step-By-Step Guide to Securing Your 
 		Repository</h2>
 
-<p>Here is a brief step-by-step guide that describes what you will need to do to configure your fedora repository. It is recommended that you start with one of the base security configurations and set of default policies and become familiar with the new security features of Fedora 2.1. Then you can go back and experiment with customizing various aspects of your repository configuration and policies.</p>
+<p>Here is a brief step-by-step guide that describes what you will need to do to configure your fedora repository. It is recommended that you start with one of the base security configurations and set of default policies and become familiar with the new security features of Fedora 2.1.1. Then you can go back and experiment with customizing various aspects of your repository configuration and policies.</p>
 
 	<blockquote>
 	    <ol>
