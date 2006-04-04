@@ -4,7 +4,7 @@
                       
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-    <title>Fedora Migration Utility Guide</title>
+    <title>Fedora Upgrade and Migration Guide</title>
     <link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
@@ -24,8 +24,7 @@
     <ol>
 		<li><a href="#migrate21-211">Upgrading from Fedora 2.1 to Fedora 2.1.1</a></li>
 		<li><a href="#migrate20-211">Upgrading from Fedora 2.0 to Fedora 2.1.1</a></li>
-		<li><a href="#migrate121-211">Upgrading from Fedora 1.2.1 to Fedora 2.1.1</a></li>
-		<li><a href="#migratepre121">Upgrading from versions prior to 1.2.1</a></li>
+		<li><a href="#migratepre20">Upgrading from versions prior to 2.0</a></li>
     </ol>
     </div>
 </div>
@@ -36,13 +35,34 @@
 
 	<p>The move from Fedora 2.1 to Fedora 2.1.1 is quite simple and does not 
 	require migration of objects or rebuilding of the resource index. There are, 
-	however, important configuration changes between 2.1 and 2.1.1 as a result 
-	of refactoring LowlevelStorage as a module: the server parameters related to LowLevelStorage (namely, 
-	<tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
-	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
-	<tt>backslash_is_escape</tt> are now found in the LowLevelStorage module 
-	configuration section of the Fedora Configuration. If you are 
-	upgrading from Fedora 2.1 to Fedora 2.1.1 follow these steps:</p>
+	however, important configuration and script changes between 2.1 and 2.1.1.
+    These changes include the following:</p>
+    <ul>
+      <li> <b>fedora.fcfg</b> - Fedora's Lowlevel storage was refactored
+          into a module and the following configuration values were moved into
+          a that new module's configuration section:
+          <tt>object_store_base</tt>, 
+          <tt>datastream_store_base</tt>, 
+          <tt>path_registry</tt>, 
+          <tt>path_algorithm</tt>, 
+          <tt>file_system</tt>, and 
+          <tt>backslash_is_escape</tt>
+      </li>
+      <li> <b>web.xml</b> - This file was modified so that the Fedora 
+           webapp starts as part of the tomcat startup process,
+           rather than being triggered by a special HTTP request
+           to the ServerController servlet.
+      </li>
+      <li> <b>fedora-start and fedora-stop scripts</b> - These were
+           modified to print the server's status at startup and
+           shutdown time, and to return appropriate error codes.
+           The fedora-start script also now includes logic to stop
+           Tomcat automatically if Fedora webapp initialization fails.
+      </li>
+    </ul>
+    
+    <p>Follow these steps to upgrade your Fedora server from 2.1 to
+       2.1.1.</p>
 		
   <ol>
   	<li><b>Backup:</b> it is highly recommended that you create a backup 
@@ -121,28 +141,21 @@
     </li>
     <li>Start the Fedora 2.1.1 server <br>
       &nbsp; 
-      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-start
-</b>Starting Fedora server...
-Deploying API-M and API-A...
-Processing file c:\fedora-2.1.1\server\config\deployAPI-A.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1.1\server\config\deployAPI-A.wsdd
-audit parms 60
-Processing file c:\fedora-2.1.1\server\config\deploy.wsdd
-&lt;Admin&gt;Done processing&lt;/Admin&gt;
-audit parms deploy
-audit parms c:\fedora-2.1.1\server\config\deploy.wsdd
-audit parms 15
-Initializing Fedora Server instance...
-Fedora Version: 2.1.1
-Fedora Build: 1
-Server Host Name: localhost
-Server Port: 8080
-Debugging: false
-log4j.configuration=null
-OK<b>
-Finished. To stop the server, use fedora-stop.
+      <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-start</b>
+Starting the Fedora server...
+2006-04-04 12:37:57PM EDT - Waiting for startup to begin
+2006-04-04 12:38:12PM EDT - Starting Fedora Server instance
+2006-04-04 12:38:12PM EDT - Initializing Server
+2006-04-04 12:38:13PM EDT - Fedora Version: 2.1.1
+2006-04-04 12:38:13PM EDT - Fedora Build: 1
+2006-04-04 12:38:13PM EDT - Server Host Name: localhost
+2006-04-04 12:38:13PM EDT - Server Port: 8080
+2006-04-04 12:38:13PM EDT - Debugging: OFF
+2006-04-04 12:38:13PM EDT - Initializing Modules
+2006-04-04 12:38:16PM EDT - Post-Initializing Modules
+2006-04-04 12:38:17PM EDT - Initializing XACML Authorization Module
+2006-04-04 12:38:24PM EDT - Started
+<b>Finished. To stop server, use fedora-stop.
 C:\fedora-2.1.1&gt;</b></pre></div>
       <p>&nbsp;</p>
     </li>
@@ -155,7 +168,7 @@ C:\fedora-2.1.1&gt;</b></pre></div>
 	Fedora 2.1.1</a></h2>
     <p>When moving from Fedora 2.0 to Fedora 2.1.1 you will be able to do a simple 
     software <i><b>upgrade</b></i> without having to migrate digital objects via 
-    a mass export and ingest. After you install Fedora 2.1, you can 
+    a mass export and ingest. After you install Fedora 2.1.1, you can 
     configure it to point to your existing repository datastores (both the existing 
     repository directory storage locations and the existing relational database).&nbsp; 
     This involves changing parameters in the Fedora 2.1.1 server configuration file 
@@ -165,26 +178,14 @@ C:\fedora-2.1.1&gt;</b></pre></div>
     <p>Note that the Resource Index model changed between 2.0 and 2.1, hence a 
     rebuild of the Resource Index is necessary if upgrading from 2.0 to 2.1.1. 
     See the intructions for 
-    <a href="http://fedora.info/download/2.1/userdocs/distribution/migration.html">rebuilding the Resource Index</a>.</p>
+    <a href="../server/cmd-line/index.html#rebuild">rebuilding the Resource Index</a>.</p>
 </div>
 
 <div class="sec2">
-	<h2><a name="migrate121-211" id="migrate0">3. Upgrading From Fedora 1.2.1 to 
-	Fedora 2.1.1</a></h2>
-    <p>If upgrading from Fedora Release 1.2.1, you must first 
-    <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate your 
-    server software to version 2.0</a>.</p>
-    
-</div>
-
-<div class="sec2">
-	<h2><a name="migratepre121" id="migrate0">4. Upgrading versions prior to 1.2.1</a></h2>
-	<p>If you are running a version of the Fedora software prior to
-    version 1.2.1, you will need to migrate your server software up
-    to version 1.2.1 first, and then proceed with the migration
-    from Fedora 1.2.1 to Fedora 2.1.1. Steps for migrating to Fedora
-    1.2.1 can be found in the release notes section for 
-    <a href="release-notes.html#rel1.2.1">Fedora 1.2.1.</a> </p>
+	<h2><a name="migratepre20" id="migrate0">3. Upgrading from versions prior to 2.0</a></h2>
+    <p>To upgrade from a Fedora version prior to 2.0, you must first
+       <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate to version 2.0</a>, then follow the appropriate upgrade steps above.</p>
+    </p> 
 </div>
 
 <div id="footer">
