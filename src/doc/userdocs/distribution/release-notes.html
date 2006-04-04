@@ -35,37 +35,55 @@
 </div>
 
 <div id="introduction">
-	<p>Fedora 2.1.1 is a maintenance release that provides a significant 
-	performance boost for Fedora 2.1.&nbsp;&nbsp; It also resolves a 
-	number of reported bugs.&nbsp; </p>
-	<p>If you are not already familiar with Fedora 2.1, please refer to the Fedora 
-	2.1 release notes for a full description of the many new features that were 
-	introduced with Fedora 2.1, including enhanced RDF capabilities, XACML-based 
-	policy enforcement, etc.&nbsp;&nbsp; </p>
-	<p>A detailed analysis of the 
-	performance of Fedora API operations is available [here].</p>
-	
-	<p>In Fedora 2.1.1, the LowLevelStorage component has been refactored as a 
-	module. If you are upgrading from a previous version of Fedora, you should 
-	note that the server parameters related to LowLevelStorage (namely, 
-	<tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
-	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
-	<tt>backslash_is_escape</tt> are now found in the LowLevelStorage module 
-	configuration section of the Fedora Configuration.</p>
 	<p>&nbsp;</p>
+	<p class="MsoNormal">The Fedora Project (http://www.fedora.info) is proud to 
+	announce the release of version 2.1.1 of the Fedora open-source digital 
+	repository system.&nbsp; Fedora 2.1.1 is a maintenance release that provides a <b>
+	<i>significant 
+	performance boost</i></b>&nbsp; for Fedora 2.1.&nbsp;&nbsp; It also resolves 
+	a number of reported bugs.&nbsp;
 </div>
 
 <div id="relnotes">
 	<ol>
 		<!--<li><a id="features" name="features">New Features</a></li>-->
 		<li><a name="fedora21">Fedora 2.1 Release</a></li>
-		<p>Fedora 2.1 was a significant release that included many new features.&nbsp;&nbsp; 
-		Please consult the <a href="release-notes-history.html#rel2.1">Fedora 2.1 Release Notes</a> before installing the Fedora 
-		2.1.1 maintenance release.&nbsp; </p>
-		<li><a name="tune">Performance Tuning</a><br>
-&nbsp;</li>
+		<p><br>
+		If you are not already familiar with Fedora 2.1, please consult the <a href="release-notes-history.html#rel2.1">Fedora 2.1 Release Notes</a> before installing the 
+		new Fedora 
+		2.1.1 maintenance release.&nbsp;</p>
+		<p>Since Fedora 2.1.1 is a maintenance release, it contains all of the 
+		same features as Fedora 2.1.&nbsp; Please refer to the
+		<a href="http://www.fedora.info/download/2.1/userdocs/">Fedora 2.1 documentation</a> 
+		for a complete description of Fedora 2.1 and 2.1.1 functionality.&nbsp;&nbsp;Fedora 
+		2.1 contains all of the standard Fedora features built around web 
+		services, XML, and RDF, as well as many new features such as the new 
+		Fedora security architecture, the Fedora Service Framework, significant 
+		performance improvement, and many other new features and enhancements.&nbsp; 
+		Now, Fedora provides an even more powerful, flexible, and secure 
+		foundation for a wide variety information management applications, 
+		including institutional repositories, digital libraries, e-research, 
+		e-scholarship, records management, digital archives, and educational 
+		software. 
+		</p>
+		<p>&nbsp;</p>
+		<li><a name="tune">Performance Tuning</a></li>		
+		<p><br>
+		In response to user feedback, a complete analysis of 
+		<a href="http://memex.cs.cornell.edu:8000/APIM-Performance/Fedora-2.1.1/index.html">Fedora API-M 
+		Performance</a> was conducted which revealed bottlenecks on several 
+		operations, most notably modifyDatastreamByValue, purgeDisseminator, and 
+		purgeObject.&nbsp;&nbsp;&nbsp; The Fedora server has been significantly 
+		tuned so that these bottlenecks are eliminated.&nbsp; Now, every Fedora 
+		API-M operation will complete in milliseconds.&nbsp;&nbsp; Please 
+		consult the
+		<a href="http://memex.cs.cornell.edu:8000/APIM-Performance/Fedora-2.1.1/index.html">
+		final report</a> report which contains before/after performance 
+		measurements for every API-M operation.</p>
+		<p>&nbsp;</p>
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
-		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
+		<p><br>
+		Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
 		for full descriptions of the resolved bugs.</p>
 		<ul>
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=145">Bug #145</a>: 
@@ -89,11 +107,10 @@
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=157">Bug #157</a>: 
 				Deleting digital object leaves behind triples in Resource Index</li>
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158</a>: 
-				purgeObject and purgeDisseminator take unreasonably long in large repositories<br>
-&nbsp;</li>
+				purgeObject and purgeDisseminator take unreasonably long in large repositories<br>&nbsp;</li>
 		</ul></li>
-		<li><a id="issues" name="issues">Known Issues</a>
-		<ul>
+		<li><a id="issues" name="issues">Known Issues</a><br>
+&nbsp;<ul>
 			<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
 				codes returned after a period of normal server use. This problem 
 				is difficult to replicate, and the cause is unknown. A 
@@ -106,14 +123,31 @@
 			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
 			<li>fedora-reload-policies.sh gives usage error if run with no 
 				arguments. Reported as
-			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.<br>
-&nbsp;</li>
+			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.<br>&nbsp;</li>
 		</ul></li>
 		<li><a id="install" name="features">Installation</a>
-		<p>For installations and upgrades of Fedora, please see the 
+		<p><br>
+		For instructions on installing and upgrading Fedora, please consult the 
 		<a href="installation.html">Installation Guide</a>  and the 
-		<a href="migration.html">Upgrade and Migrate Guide</a>.</p></li>
-		
+		<a href="migration.html">Upgrade and Migrate Guide</a>.<br>
+		<br>
+		<i><b>NOTE</b></i>:&nbsp; In Fedora 2.1.1, the repository persistent 
+		storage layer (i.e., LowLevelStorage) has been refactored into a 
+		configurable module.&nbsp;&nbsp; This is to make it consistent with the 
+		overall Fedora repository design where each piece of functionality 
+		exists as a module in the Fedora server.&nbsp;&nbsp; Modules can easily 
+		be replaced with alternative implementations of the core functionality.&nbsp;&nbsp; 
+		For example, in the next release of Fedora will will ship two different 
+		LowLevelStore implementations:&nbsp; the existing file system 
+		implementation, and a Storage Resource Broker (SRB) implementation.&nbsp; If you are upgrading from a previous version of Fedora, you should 
+	note that&nbsp; all storage-related server configuration parameters now 
+		exist in the LowLevelStorage module section of the Fedora Configuration 
+		file (fedora.fcfg).&nbsp;&nbsp; Previously, these parameters were 
+		stand-alone parameters in the Fedora Configuration file.&nbsp; These 
+		parameters are:&nbsp; <tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
+	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
+	<tt>backslash_is_escape</tt>. </p>
+		<p>&nbsp;</p></li>
 		<li><a name="history">Historic Release Notes</a></li>
 		
 	</ol>
@@ -124,18 +158,17 @@
 </div>
   
 <div>
-Previous versions of the release notes: 
-	<a href="release-notes-history.html#rel2.1">2.1</a>, 
-	<a href="release-notes-history.html#rel2.1b">2.1b</a>, 
-	<a href="release-notes-history.html#rel2.0">2.0</a>,
-<a href="release-notes-history.html#rel1.2.1">1.2.1</a>, 
-	<a href="release-notes-history.html#rel1.2">1.2</a>, 
-	<a href="release-notes-history.html#rel1.1.1">1.1.1</a>, 
-	<a href="release-notes-history.html#rel1.1">1.1</a>, 
-	<a href="release-notes-history.html#rel1.0">1.0</a>, 
-	<a href="release-notes-history.html#rel0.9">0.9</a>, 
-	<a href="release-notes-history.html#relbeta1">Beta 1</a>, 
-	<a href="release-notes-history.html#relalpha1">Alpha 1</a>
+&nbsp;&nbsp;&nbsp;&nbsp; Release notes for previous versions of Fedora: [<a href="release-notes-history.html#rel2.1">2.1</a>], 
+	[<a href="release-notes-history.html#rel2.1b">2.1b</a>], 
+	[<a href="release-notes-history.html#rel2.0">2.0</a>],
+[<a href="release-notes-history.html#rel1.2.1">1.2.1</a>], 
+	[<a href="release-notes-history.html#rel1.2">1.2</a>], 
+	[<a href="release-notes-history.html#rel1.1.1">1.1.1</a>], 
+	[<a href="release-notes-history.html#rel1.1">1.1</a>], 
+	[<a href="release-notes-history.html#rel1.0">1.0</a>], 
+	[<a href="release-notes-history.html#rel0.9">0.9</a>], 
+	[<a href="release-notes-history.html#relbeta1">Beta 1</a>], 
+	[<a href="release-notes-history.html#relalpha1">Alpha 1</a>]
 	
 </div>
 
