@@ -14,7 +14,7 @@
 	<a href="../index.html" id="logo"></a>
 	<div id="title">
 		<h1>Fedora 2.1.1 Release Notes</h1>
-		<h2>April 7, 2006</h2>
+		<h2>April 4, 2006</h2>
 	</div>
 </div>
 
@@ -24,16 +24,25 @@
 	<div id="tocbox">
 		<ol>
 			<!--<li><a href="#features">New Features</a></li>-->
-			<li><a href="#bugs">Notable Bug Fixes</a></li>
+			<li><a href="#fedora21">Fedora 2.1 Release</a></li>
+			<li><a href="#tune">Performance Tuning</a></li>
+			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
 			<li><a href="#install">Installation</a></li>
+			<li><a href="#history">Historic Release Notes (prior releases)</a></li>
 		</ol>
 	</div>
 </div>
 
 <div id="introduction">
-	<p>Fedora 2.1.1 is a maintenance release that addresses a number of 
-	bugs and performance issues in the 2.1 release. A detailed analysis of the 
+	<p>Fedora 2.1.1 is a maintenance release that provides a significant 
+	performance boost for Fedora 2.1.&nbsp;&nbsp; It also resolves a 
+	number of reported bugs.&nbsp; </p>
+	<p>If you are not already familiar with Fedora 2.1, please refer to the Fedora 
+	2.1 release notes for a full description of the many new features that were 
+	introduced with Fedora 2.1, including enhanced RDF capabilities, XACML-based 
+	policy enforcement, etc.&nbsp;&nbsp; </p>
+	<p>A detailed analysis of the 
 	performance of Fedora API operations is available [here].</p>
 	
 	<p>In Fedora 2.1.1, the LowLevelStorage component has been refactored as a 
@@ -43,72 +52,69 @@
 	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
 	<tt>backslash_is_escape</tt> are now found in the LowLevelStorage module 
 	configuration section of the Fedora Configuration.</p>
+	<p>&nbsp;</p>
 </div>
 
 <div id="relnotes">
 	<ol>
 		<!--<li><a id="features" name="features">New Features</a></li>-->
-		<li><a id="bugs" name="bugs">Notable Bug Fixes</a>
+		<li><a name="fedora21">Fedora 2.1 Release</a></li>
+		<p>Fedora 2.1 was a significant release that included many new features.&nbsp;&nbsp; 
+		Please consult the <a href="release-notes-history.html#rel2.1">Fedora 2.1 Release Notes</a> before installing the Fedora 
+		2.1.1 maintenance release.&nbsp; </p>
+		<li><a name="tune">Performance Tuning</a><br>
+&nbsp;</li>
+		<li><a id="bugs" name="bugs">Bug Fixes</a>
 		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
 		for full descriptions of the resolved bugs.</p>
-			<ul>
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=145">Bug #145</a>: 
+		<ul>
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=145">Bug #145</a>: 
 				FedoraClient's HTTP header date parsing fails in non-english locales</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=146">Bug #146</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=146">Bug #146</a>: 
 				ResourceIndex Rebuilder error with relative path for triplestore</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=147">Bug #147</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=147">Bug #147</a>: 
 				SQL database left in corrupted state after ingest of object with label exceeding 255 characters</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=148">Bug #148</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=148">Bug #148</a>: 
 				Admin client bDef/bMech builders fail when specifying system generated PID</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=149">Bug #149</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=149">Bug #149</a>: 
 				adding sample policy results in NullPointerException</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=151">Bug #151</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=151">Bug #151</a>: 
 				surrogate policies generate errors in console log</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=152">Bug #152</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=152">Bug #152</a>: 
 				modifyDatastreamByValue delay when resourceIndex on</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=154">Bug #154</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=154">Bug #154</a>: 
 				Resource Index datastore parameter, poolMaxGrowth, doesn't behave as documented</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=156">Bug #156</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=156">Bug #156</a>: 
 				Modifying a disseminator's bmech breaks disseminations for other objects</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=157">Bug #157</a>: 
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=157">Bug #157</a>: 
 				Deleting digital object leaves behind triples in Resource Index</li>
-				
-				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158</a>: 
-				purgeObject and purgeDisseminator take unreasonably long in large repositories</li>
-			</ul>
-		</li>
+			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158</a>: 
+				purgeObject and purgeDisseminator take unreasonably long in large repositories<br>
+&nbsp;</li>
+		</ul></li>
 		<li><a id="issues" name="issues">Known Issues</a>
-			<ul>
-				<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
+		<ul>
+			<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
 				codes returned after a period of normal server use. This problem 
 				is difficult to replicate, and the cause is unknown. A 
 				workaround to this problem is to instruct Tomcat to use a 
-				MemoryRealm instead of a JAASRealm. See  
-				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">Bug 144</a> 
+				MemoryRealm instead of a JAASRealm. See
+			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">Bug 144</a> 
 				for detailed instructions on applying this workaround.</li>
-				
-				<li>Ingest validation error when namespace for in-line XML 
-				datastreams is in root element. Reported as 
-				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
-				
-				<li>fedora-reload-policies.sh gives usage error if run with no 
-				arguments. Reported as 
-				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.</li>
-			</ul>
-		</li>
+			<li>Ingest validation error when namespace for in-line XML 
+				datastreams is in root element. Reported as
+			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
+			<li>fedora-reload-policies.sh gives usage error if run with no 
+				arguments. Reported as
+			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.<br>
+&nbsp;</li>
+		</ul></li>
 		<li><a id="install" name="features">Installation</a>
 		<p>For installations and upgrades of Fedora, please see the 
 		<a href="installation.html">Installation Guide</a>  and the 
 		<a href="migration.html">Upgrade and Migrate Guide</a>.</p></li>
+		
+		<li><a name="history">Historic Release Notes</a></li>
 		
 	</ol>
 
@@ -119,16 +125,17 @@
   
 <div>
 Previous versions of the release notes: 
-	<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>, 
-	<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>, 
-	<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>, 
-	<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>, 
-	<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>, 
-	<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>, 
-	<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>, 
-	<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>, 
-	<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>, 
-	<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>
+	<a href="release-notes-history.html#rel2.1">2.1</a>, 
+	<a href="release-notes-history.html#rel2.1b">2.1b</a>, 
+	<a href="release-notes-history.html#rel2.0">2.0</a>,
+<a href="release-notes-history.html#rel1.2.1">1.2.1</a>, 
+	<a href="release-notes-history.html#rel1.2">1.2</a>, 
+	<a href="release-notes-history.html#rel1.1.1">1.1.1</a>, 
+	<a href="release-notes-history.html#rel1.1">1.1</a>, 
+	<a href="release-notes-history.html#rel1.0">1.0</a>, 
+	<a href="release-notes-history.html#rel0.9">0.9</a>, 
+	<a href="release-notes-history.html#relbeta1">Beta 1</a>, 
+	<a href="release-notes-history.html#relalpha1">Alpha 1</a>
 	
 </div>
 
