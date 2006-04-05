@@ -1,0 +1,230 @@
+<log>
+<client>
+Object PID: test:PurgeMe
+Object state (A or I or D): A
+Object label: label
+Log message: msg
+
+Invoke how many times? 3
+
+Run 1/3 of modifyObject...returned '2006-03-04T18:25:09.154Z' in 714ms.
+Run 2/3 of modifyObject...returned '2006-03-04T18:25:09.980Z' in 6390ms.
+Run 3/3 of modifyObject...returned '2006-03-04T18:25:16.259Z' in 6362ms.
+</client>
+
+
+
+  <finest time="1141496708723" thread="40">fedora.server.management.DefaultManagement: Entered DefaultManagement.modifyObject</finest>
+  <finest time="1141496708723" thread="40">Entered enforceModifyObject</finest>
+  <finest time="1141496708723" thread="40">Policy enforcement took 0ms.</finest>
+  <finest time="1141496708723" thread="40">Exiting enforceModifyObject</finest>
+  <finer time="1141496708942" thread="40">fedora.server.storage.DefaultDOManager: Requesting full GC.  Free bytes = 502225648</finer>
+  <finer time="1141496709149" thread="40">fedora.server.storage.DefaultDOManager: Done requesting full GC.  Free bytes = 502160112</finer>
+  <finest time="1141496709149" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Entered doCommit (add/modify)</finest>
+  <finest time="1141496709154" thread="40">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMe in 5ms.</finest>
+  <finest time="1141496709154" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Serializing digital object for persistent storage...</finest>
+  <finest time="1141496709155" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Adding to ResourceIndex...</finest>
+  <finest time="1141496709361" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Finished adding to ResourceIndex.</finest>
+  <finest time="1141496709361" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Storing digital object...</finest>
+  <finest time="1141496709363" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Updating registry...</finest>
+  <finest time="1141496709363" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Adding replication job...</finest>
+  <info time="1141496709364" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Attempting replication as normal object: test:PurgeMe</info>
+  <finest time="1141496709368" thread="40">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMe in 4ms.</finest>
+  <finest time="1141496709368" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.purgeComponents: Entering -----</finest>
+  <finest time="1141496709368" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496709368" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496709368" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dissDbId(s). </finest>
+  <finest time="1141496709369" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMapDbID  FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496709369" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dsBindMapDbId(s). </finest>
+  <finest time="1141496709369" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetMetadataAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496709369" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 24 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496709369" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='ListMetadataFormatsAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 11 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetRecordAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 25 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='DescribeAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 13 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dissDbId(s). </finest>
+  <finest time="1141496709370" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:122'  AND diss.dissID='GetMetadataAPI' AND dsBindMapID='GetMetadataAPI1.0b'</finest>
+  <finest time="1141496709371" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 24 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496709371" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:116'  AND diss.dissID='ListMetadataFormatsAPI' AND dsBindMapID='ListMetadataFormatsAPI1.0b'</finest>
+  <finest time="1141496709371" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 11 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496709371" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:110'  AND diss.dissID='GetRecordAPI' AND dsBindMapID='GetRecordAPI1.0b'</finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 25 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:102'  AND diss.dissID='DescribeAPI' AND dsBindMapID='DescribeAPI1.0b'</finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 13 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dsBindMapDbId(s). </finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: No disseminators have been removed from object; Assuming this a case of UpdateComponents</finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsPurged: false</finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Entering ------</finest>
+  <finest time="1141496709372" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID,doState,doLabel FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496709373" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496709373" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.updateComponents: No datastream labels or locations changed.</finest>
+  <finest time="1141496709373" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496709374" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=13</finest>
+  <finest time="1141496709374" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=30</finest>
+  <finest time="1141496709374" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: DescribeAPI1.0b origDSBindMapID: DescribeAPI1.0b</finest>
+  <finest time="1141496709374" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=11</finest>
+  <finest time="1141496709375" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=34</finest>
+  <finest time="1141496709375" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: ListMetadataFormatsAPI1.0b origDSBindMapID: ListMetadataFormatsAPI1.0b</finest>
+  <finest time="1141496709375" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=25</finest>
+  <finest time="1141496709376" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=29</finest>
+  <finest time="1141496709376" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetRecordAPI1.0b origDSBindMapID: GetRecordAPI1.0b</finest>
+  <finest time="1141496709376" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=24</finest>
+  <finest time="1141496709377" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=25</finest>
+  <finest time="1141496709377" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetMetadataAPI1.0b origDSBindMapID: GetMetadataAPI1.0b</finest>
+  <finest time="1141496709377" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Exiting ------</finest>
+  <finest time="1141496709377" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsUpdated: true</finest>
+  <info time="1141496709377" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Updating FieldSearch indexes...</info>
+  <finest time="1141496709377" thread="40">fedora.server.search.FieldSearchSQLModule: Entering update(DOReader)</finest>
+  <fine time="1141496709378" thread="40">fedora.server.search.FieldSearchSQLModule: Had DC Metadata datastream for this object.</fine>
+  <fine time="1141496709379" thread="40">fedora.server.search.FieldSearchSQLModule: Formulating SQL and inserting/updating...</fine>
+  <finer time="1141496709379" thread="40">fedora.server.search.FieldSearchSQLModule: SQLUtility.executeUpdate, trying: UPDATE doFields
+SET pid = 'test:PurgeMe', label = 'label', fType = 'o', cModel = 'nsdl:repository', state = 'a', ownerId = NULL, cDate = 1127220430511, mDate = 1141496709154, dcmDate = 1127220430511, bDef = ' nsdl:121 nsdl:115 nsdl:109 nsdl:101 .', bMech = ' nsdl:122 nsdl:116 nsdl:110 nsdl:102 .', dcTitle = ' nsdl repository agent metadata .', dcCreator = NULL, dcSubject = NULL, dcDescription = NULL, dcPublisher = NULL, dcContributor = NULL, dcDate = NULL, dcType = NULL, dcFormat = NULL, dcIdentifier = ' test:purgeme oai.nsdl.org:oai:nsdl%3a4000 .', dcSource = NULL, dcLanguage = NULL, dcRelation = NULL, dcCoverage = NULL, dcRights = NULL
+WHERE pid = 'test:PurgeMe'</finer>
+  <finest time="1141496709380" thread="40">fedora.server.search.FieldSearchSQLModule: Exiting update(DOReader)</finest>
+  <finest time="1141496709380" thread="40">Memory: 490618600 bytes free of 531955712 available.</finest>
+  <finest time="1141496709380" thread="40">Exiting DefaultManagement.modifyObject</finest>
+  <finest time="1141496709437" thread="29">fedora.server.management.DefaultManagement: Entered DefaultManagement.modifyObject</finest>
+  <finest time="1141496709437" thread="29">Entered enforceModifyObject</finest>
+  <finest time="1141496709437" thread="29">Policy enforcement took 0ms.</finest>
+  <finest time="1141496709437" thread="29">Exiting enforceModifyObject</finest>
+  <finer time="1141496709722" thread="29">fedora.server.storage.DefaultDOManager: Requesting full GC.  Free bytes = 503451888</finer>
+  <finer time="1141496709980" thread="29">fedora.server.storage.DefaultDOManager: Done requesting full GC.  Free bytes = 503318728</finer>
+  <finest time="1141496709980" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Entered doCommit (add/modify)</finest>
+  <finest time="1141496709980" thread="29">fedora.server.storage.DefaultDOManager: Got DOReader (source=memory) for test:PurgeMe in 0ms.</finest>
+  <finest time="1141496709980" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Serializing digital object for persistent storage...</finest>
+  <finest time="1141496709981" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Adding to ResourceIndex...</finest>
+  <finest time="1141496715752" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Finished adding to ResourceIndex.</finest>
+  <finest time="1141496715752" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Storing digital object...</finest>
+  <finest time="1141496715754" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Updating registry...</finest>
+  <finest time="1141496715754" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Adding replication job...</finest>
+  <info time="1141496715755" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Attempting replication as normal object: test:PurgeMe</info>
+  <finest time="1141496715759" thread="29">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMe in 4ms.</finest>
+  <finest time="1141496715759" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.purgeComponents: Entering -----</finest>
+  <finest time="1141496715759" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496715759" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dissDbId(s). </finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMapDbID  FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dsBindMapDbId(s). </finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetMetadataAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 24 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496715760" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='ListMetadataFormatsAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 11 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetRecordAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 25 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='DescribeAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 13 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dissDbId(s). </finest>
+  <finest time="1141496715761" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:122'  AND diss.dissID='GetMetadataAPI' AND dsBindMapID='GetMetadataAPI1.0b'</finest>
+  <finest time="1141496715762" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 24 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496715762" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:116'  AND diss.dissID='ListMetadataFormatsAPI' AND dsBindMapID='ListMetadataFormatsAPI1.0b'</finest>
+  <finest time="1141496715762" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 11 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496715762" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:110'  AND diss.dissID='GetRecordAPI' AND dsBindMapID='GetRecordAPI1.0b'</finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 25 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:102'  AND diss.dissID='DescribeAPI' AND dsBindMapID='DescribeAPI1.0b'</finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 13 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dsBindMapDbId(s). </finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: No disseminators have been removed from object; Assuming this a case of UpdateComponents</finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsPurged: false</finest>
+  <finest time="1141496715763" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Entering ------</finest>
+  <finest time="1141496715764" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID,doState,doLabel FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496715764" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496715764" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.updateComponents: No datastream labels or locations changed.</finest>
+  <finest time="1141496715764" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496715765" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=13</finest>
+  <finest time="1141496715765" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=30</finest>
+  <finest time="1141496715765" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: DescribeAPI1.0b origDSBindMapID: DescribeAPI1.0b</finest>
+  <finest time="1141496715766" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=11</finest>
+  <finest time="1141496715766" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=34</finest>
+  <finest time="1141496715766" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: ListMetadataFormatsAPI1.0b origDSBindMapID: ListMetadataFormatsAPI1.0b</finest>
+  <finest time="1141496715766" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=25</finest>
+  <finest time="1141496715767" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=29</finest>
+  <finest time="1141496715767" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetRecordAPI1.0b origDSBindMapID: GetRecordAPI1.0b</finest>
+  <finest time="1141496715767" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=24</finest>
+  <finest time="1141496715768" thread="29">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=25</finest>
+  <finest time="1141496715768" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetMetadataAPI1.0b origDSBindMapID: GetMetadataAPI1.0b</finest>
+  <finest time="1141496715768" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Exiting ------</finest>
+  <finest time="1141496715768" thread="29">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsUpdated: true</finest>
+  <info time="1141496715768" thread="29">fedora.server.storage.DefaultDOManager: COMMIT: Updating FieldSearch indexes...</info>
+  <finest time="1141496715768" thread="29">fedora.server.search.FieldSearchSQLModule: Entering update(DOReader)</finest>
+  <fine time="1141496715769" thread="29">fedora.server.search.FieldSearchSQLModule: Had DC Metadata datastream for this object.</fine>
+  <fine time="1141496715770" thread="29">fedora.server.search.FieldSearchSQLModule: Formulating SQL and inserting/updating...</fine>
+  <finer time="1141496715770" thread="29">fedora.server.search.FieldSearchSQLModule: SQLUtility.executeUpdate, trying: UPDATE doFields
+SET pid = 'test:PurgeMe', label = 'label', fType = 'o', cModel = 'nsdl:repository', state = 'a', ownerId = NULL, cDate = 1127220430511, mDate = 1141496709980, dcmDate = 1127220430511, bDef = ' nsdl:121 nsdl:115 nsdl:109 nsdl:101 .', bMech = ' nsdl:122 nsdl:116 nsdl:110 nsdl:102 .', dcTitle = ' nsdl repository agent metadata .', dcCreator = NULL, dcSubject = NULL, dcDescription = NULL, dcPublisher = NULL, dcContributor = NULL, dcDate = NULL, dcType = NULL, dcFormat = NULL, dcIdentifier = ' test:purgeme oai.nsdl.org:oai:nsdl%3a4000 .', dcSource = NULL, dcLanguage = NULL, dcRelation = NULL, dcCoverage = NULL, dcRights = NULL
+WHERE pid = 'test:PurgeMe'</finer>
+  <finest time="1141496715771" thread="29">fedora.server.search.FieldSearchSQLModule: Exiting update(DOReader)</finest>
+  <finest time="1141496715771" thread="29">Memory: 483679616 bytes free of 531955712 available.</finest>
+  <finest time="1141496715771" thread="29">Exiting DefaultManagement.modifyObject</finest>
+  <finest time="1141496715824" thread="40">fedora.server.management.DefaultManagement: Entered DefaultManagement.modifyObject</finest>
+  <finest time="1141496715824" thread="40">Entered enforceModifyObject</finest>
+  <finest time="1141496715824" thread="40">Policy enforcement took 0ms.</finest>
+  <finest time="1141496715824" thread="40">Exiting enforceModifyObject</finest>
+  <finer time="1141496716046" thread="40">fedora.server.storage.DefaultDOManager: Requesting full GC.  Free bytes = 502193912</finer>
+  <finer time="1141496716259" thread="40">fedora.server.storage.DefaultDOManager: Done requesting full GC.  Free bytes = 501926944</finer>
+  <finest time="1141496716259" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Entered doCommit (add/modify)</finest>
+  <finest time="1141496716259" thread="40">fedora.server.storage.DefaultDOManager: Got DOReader (source=memory) for test:PurgeMe in 0ms.</finest>
+  <finest time="1141496716259" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Serializing digital object for persistent storage...</finest>
+  <finest time="1141496716261" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Adding to ResourceIndex...</finest>
+  <finest time="1141496722114" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Finished adding to ResourceIndex.</finest>
+  <finest time="1141496722114" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Storing digital object...</finest>
+  <finest time="1141496722116" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Updating registry...</finest>
+  <finest time="1141496722117" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Adding replication job...</finest>
+  <info time="1141496722117" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Attempting replication as normal object: test:PurgeMe</info>
+  <finest time="1141496722121" thread="40">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMe in 4ms.</finest>
+  <finest time="1141496722121" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.purgeComponents: Entering -----</finest>
+  <finest time="1141496722121" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496722122" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496722122" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dissDbId(s). </finest>
+  <finest time="1141496722122" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMapDbID  FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496722122" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dsBindMapDbId(s). </finest>
+  <finest time="1141496722122" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetMetadataAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 24 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='ListMetadataFormatsAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 11 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='GetRecordAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 25 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496722123" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309928 AND diss.dissID='DescribeAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1141496722124" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 13 to list of Existing dissDbId(s). </finest>
+  <finest time="1141496722124" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dissDbId(s). </finest>
+  <finest time="1141496722124" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:122'  AND diss.dissID='GetMetadataAPI' AND dsBindMapID='GetMetadataAPI1.0b'</finest>
+  <finest time="1141496722124" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 24 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496722124" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:116'  AND diss.dissID='ListMetadataFormatsAPI' AND dsBindMapID='ListMetadataFormatsAPI1.0b'</finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 11 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:110'  AND diss.dissID='GetRecordAPI' AND dsBindMapID='GetRecordAPI1.0b'</finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 25 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID, dsBindMapID FROM dsBindMap,bMech,diss WHERE dsBindMap.bMechDbID=bMech.bMechDbID AND bMech.bMechPID='nsdl:102'  AND diss.dissID='DescribeAPI' AND dsBindMapID='DescribeAPI1.0b'</finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dsBindMapDbId: 13 to list of Existing dsBindMapDbId(s). </finest>
+  <finest time="1141496722125" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4 existing dsBindMapDbId(s). </finest>
+  <finest time="1141496722126" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: No disseminators have been removed from object; Assuming this a case of UpdateComponents</finest>
+  <finest time="1141496722126" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsPurged: false</finest>
+  <finest time="1141496722126" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Entering ------</finest>
+  <finest time="1141496722126" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID,doState,doLabel FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141496722126" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141496722127" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.updateComponents: No datastream labels or locations changed.</finest>
+  <finest time="1141496722127" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141496722127" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=13</finest>
+  <finest time="1141496722128" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=30</finest>
+  <finest time="1141496722128" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: DescribeAPI1.0b origDSBindMapID: DescribeAPI1.0b</finest>
+  <finest time="1141496722128" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=11</finest>
+  <finest time="1141496722128" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=34</finest>
+  <finest time="1141496722129" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: ListMetadataFormatsAPI1.0b origDSBindMapID: ListMetadataFormatsAPI1.0b</finest>
+  <finest time="1141496722129" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=25</finest>
+  <finest time="1141496722129" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=29</finest>
+  <finest time="1141496722130" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetRecordAPI1.0b origDSBindMapID: GetRecordAPI1.0b</finest>
+  <finest time="1141496722130" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=24</finest>
+  <finest time="1141496722130" thread="40">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMap.dsBindMapID,dsBindMap.dsBindMapDbID FROM dsBind,dsBindMap WHERE dsBind.doDbID=2309928 AND dsBindMap.dsBindMapDbID=dsBind.dsBindMapDbID AND dsBindMap.bMechDbID=25</finest>
+  <finest time="1141496722131" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: newDSBindMapID: GetMetadataAPI1.0b origDSBindMapID: GetMetadataAPI1.0b</finest>
+  <finest time="1141496722131" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Exiting ------</finest>
+  <finest time="1141496722131" thread="40">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsUpdated: true</finest>
+  <info time="1141496722131" thread="40">fedora.server.storage.DefaultDOManager: COMMIT: Updating FieldSearch indexes...</info>
+  <finest time="1141496722131" thread="40">fedora.server.search.FieldSearchSQLModule: Entering update(DOReader)</finest>
+  <fine time="1141496722131" thread="40">fedora.server.search.FieldSearchSQLModule: Had DC Metadata datastream for this object.</fine>
+  <fine time="1141496722132" thread="40">fedora.server.search.FieldSearchSQLModule: Formulating SQL and inserting/updating...</fine>
+  <finer time="1141496722133" thread="40">fedora.server.search.FieldSearchSQLModule: SQLUtility.executeUpdate, trying: UPDATE doFields
+SET pid = 'test:PurgeMe', label = 'label', fType = 'o', cModel = 'nsdl:repository', state = 'a', ownerId = NULL, cDate = 1127220430511, mDate = 1141496716259, dcmDate = 1127220430511, bDef = ' nsdl:121 nsdl:115 nsdl:109 nsdl:101 .', bMech = ' nsdl:122 nsdl:116 nsdl:110 nsdl:102 .', dcTitle = ' nsdl repository agent metadata .', dcCreator = NULL, dcSubject = NULL, dcDescription = NULL, dcPublisher = NULL, dcContributor = NULL, dcDate = NULL, dcType = NULL, dcFormat = NULL, dcIdentifier = ' test:purgeme oai.nsdl.org:oai:nsdl%3a4000 .', dcSource = NULL, dcLanguage = NULL, dcRelation = NULL, dcCoverage = NULL, dcRights = NULL
+WHERE pid = 'test:PurgeMe'</finer>
+  <finest time="1141496722133" thread="40">fedora.server.search.FieldSearchSQLModule: Exiting update(DOReader)</finest>
+  <finest time="1141496722133" thread="40">Memory: 482202896 bytes free of 532086784 available.</finest>
+  <finest time="1141496722133" thread="40">Exiting DefaultManagement.modifyObject</finest>
+</log>

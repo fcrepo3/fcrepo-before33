@@ -1,0 +1,12 @@
+<log>
+<client>
+Invoke which method? (1-24, U to upload, or 0 to exit): U
+
+Filename to upload: apimtool.sh
+Uploading...returned 'uploaded://1' in 198ms.
+</client>
+  <finest time="1141497712532" thread="40">Entered enforceUpload</finest>
+  <finest time="1141497712533" thread="40">Policy enforcement took 0ms.</finest>
+  <finest time="1141497712533" thread="40">Exiting enforceUpload</finest>
+  <fine time="1141497712563" thread="40">fedora.server.management.UploadServlet: Successful upload, id=uploaded://1</fine>
+</log>

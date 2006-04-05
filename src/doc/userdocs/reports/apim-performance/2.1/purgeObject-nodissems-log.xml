@@ -1,0 +1,65 @@
+<log>
+<client>
+Object PID: test:PurgeMe
+Log message: msg
+Force (true or false): false
+
+Invoke how many times? 1
+
+Run 1/1 of purgeObject...returned '2006-03-04T20:06:58.772Z' in 17469ms.
+</client>
+  <finest time="1141502801356" thread="51">fedora.server.management.DefaultManagement: Entered DefaultManagement.purgeObject</finest>
+  <finest time="1141502801356" thread="51">Entered enforcePurgeObject</finest>
+  <finest time="1141502801367" thread="51">Policy enforcement took 0ms.</finest>
+  <finest time="1141502801367" thread="51">Exiting enforcePurgeObject</finest>
+  <finer time="1141502802053" thread="51">fedora.server.storage.DefaultDOManager: Requesting full GC.  Free bytes = 484530592</finer>
+  <finer time="1141502802264" thread="51">fedora.server.storage.DefaultDOManager: Done requesting full GC.  Free bytes = 484530592</finer>
+  <finest time="1141502802264" thread="51">fedora.server.storage.DefaultDOManager: COMMIT: Entered doCommit (remove)</finest>
+  <finest time="1141502802401" thread="51">fedora.server.search.FieldSearchSQLModule: SELECT doFields.pid FROM doFields WHERE doFields.bDef LIKE '% test:PurgeMe %'</finest>
+  <finest time="1141502814466" thread="51">fedora.server.search.FieldSearchSQLModule: SELECT doFields.pid FROM doFields WHERE doFields.bMech LIKE '% test:PurgeMe %'</finest>
+  <info time="1141502818406" thread="51">fedora.server.storage.DefaultDOManager: COMMIT: Deleting ManagedContent datastream. id: test:PurgeMe+DM+DM.0</info>
+  <info time="1141502818470" thread="51">fedora.server.storage.DefaultDOManager: COMMIT: Deleting ManagedContent datastream. id: test:PurgeMe+DM+DM.1</info>
+  <finest time="1141502818561" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.delete: Entering -----</finest>
+  <finest time="1141502818561" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorDefinition: Entering -----</finest>
+  <finest time="1141502818562" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorDefinition: Checking BehaviorDefinition table for test:PurgeMe...</finest>
+  <finest time="1141502818562" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT bDefDbID FROM bDef WHERE bDefPID='test:PurgeMe'</finest>
+  <finest time="1141502818569" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorDefinition: test:PurgeMe wasn't found in BehaviorDefinition table...skipping deletion as such.</finest>
+  <finest time="1141502818569" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorDefinition: Exiting -----</finest>
+  <finest time="1141502818569" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorMechanism: Entering -----</finest>
+  <finest time="1141502818569" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorMechanism: Checking bMech table for test:PurgeMe...</finest>
+  <finest time="1141502818569" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT bMechDbID FROM bMech WHERE bMechPID='test:PurgeMe'</finest>
+  <finest time="1141502818570" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorMechanism: test:PurgeMe wasn't found in bMech table...skipping deletion as such.</finest>
+  <finest time="1141502818570" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteBehaviorMechanism: Exiting -----</finest>
+  <finest time="1141502818570" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Entering -----</finest>
+  <finest time="1141502818570" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Checking do table for test:PurgeMe...</finest>
+  <finest time="1141502818570" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMe'</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: test:PurgeMe was found in do table (DBID=2309928)</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Getting dissDbID(s) from doDissAssoc table...</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID from doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Found 0 dissDbID(s).</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Getting dissDbID(s) from doDissAssoc table unique to this object...</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsBindMapDbID FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Found 0 dsBindMapDbID(s).</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from do table...</finest>
+  <finest time="1141502818612" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing update: DELETE FROM do WHERE doDbID=2309928</finest>
+  <finest time="1141502818647" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Deleted 1 row(s).</finest>
+  <finest time="1141502818647" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from doDissAssoc table...</finest>
+  <finest time="1141502818647" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing update: DELETE FROM doDissAssoc WHERE doDbID=2309928</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Deleted 0 row(s).</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBind table..</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing update: DELETE FROM dsBind WHERE doDbID=2309928</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Deleted 0 row(s).</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from diss table...</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing update: DELETE FROM diss WHERE 1=2</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Deleted 0 row(s).</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBindMap table...</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: Executing update: DELETE FROM dsBindMap WHERE 1=2</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Deleted 0 row(s).</finest>
+  <finest time="1141502818648" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.deleteDigitalObject: Exiting -----</finest>
+  <finest time="1141502818649" thread="51">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.delete: Exiting -----</finest>
+  <info time="1141502818649" thread="51">fedora.server.storage.DefaultDOManager: COMMIT: Deleting from FieldSearch indexes...</info>
+  <finest time="1141502818649" thread="51">fedora.server.search.FieldSearchSQLModule: Entering delete(String)</finest>
+  <finest time="1141502818683" thread="51">fedora.server.search.FieldSearchSQLModule: Exiting delete(String)</finest>
+  <info time="1141502818683" thread="51">fedora.server.storage.DefaultDOManager: COMMIT: Deleting from ResourceIndex...</info>
+  <finest time="1141502818772" thread="51">fedora.server.management.DefaultManagement: Exiting DefaultManagement.purgeObject</finest>
+</log>

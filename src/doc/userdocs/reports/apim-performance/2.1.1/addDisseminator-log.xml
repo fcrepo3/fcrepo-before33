@@ -1,0 +1,109 @@
+<log>
+<client>
+Object PID: test:PurgeMeToo
+Behavior Definition PID: nsdl:109
+Behavior Mechanism PID: nsdl:110
+Disseminator label: label
+How many datastream bindings? : 1
+DatastreamBinding[0].bindingKey: metadata
+DatastreamBinding[0].datastreamID: format_nsdl_dc
+DatastreamBinding[0].seqNo: 0
+Disseminator state (A or I or D): A
+Log message: msg
+
+Invoke how many times? 1
+
+Run 1/1 of addDisseminator...returned 'DISS1' in 463ms.
+</client>
+  <finest time="1143047530204" thread="11">Entered DefaultManagement.addDisseminator</finest>
+  <finest time="1143047530204" thread="11">Entered DefaultAuthorization.enforceAddDisseminator</finest>
+  <finest time="1143047530205" thread="11">Policy enforcement took 0ms.</finest>
+  <finest time="1143047530205" thread="11">Exiting enforceAddDisseminator</finest>
+  <finest time="1143047530450" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Entered doCommit (add/modify)</finest>
+  <finest time="1143047530464" thread="11">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMeToo in 14ms.</finest>
+  <finest time="1143047530464" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Serializing digital object for persistent storage...</finest>
+  <finest time="1143047530468" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Adding to ResourceIndex...</finest>
+  <finest time="1143047530522" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Finished adding to ResourceIndex.</finest>
+  <finest time="1143047530522" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Storing digital object...</finest>
+  <finest time="1143047530524" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Updating registry...</finest>
+  <finest time="1143047530525" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Adding replication job...</finest>
+  <info time="1143047530526" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Attempting replication as normal object: test:PurgeMeToo</info>
+  <finest time="1143047530536" thread="11">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for test:PurgeMeToo in 10ms.</finest>
+  <finest time="1143047530536" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.purgeComponents: Entering -----</finest>
+  <finest time="1143047530537" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMeToo'</finest>
+  <finest time="1143047530537" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309961</finest>
+  <finest time="1143047530538" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dissDbId(s). </finest>
+  <finest time="1143047530538" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT DISTINCT dsBindMapDbID  FROM dsBind WHERE doDbID=2309961</finest>
+  <finest time="1143047530538" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Found 4dsBindMapDbId(s). </finest>
+  <finest time="1143047530538" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='GetMetadataAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530539" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 24 to list of Existing dissDbId(s). </finest>
+  <finest time="1143047530539" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='ListMetadataFormatsAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530540" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 11 to list of Existing dissDbId(s). </finest>
+  <finest time="1143047530540" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='GetRecordAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530540" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Adding  dissDbId: 25 to list of Existing dissDbId(s). </finest>
+  <finest time="1143047530540" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='DISS1' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530541" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.purgeComponents: Disseminator not found in db; Assuming this is case of AddNewComponents</finest>
+  <finest time="1143047530541" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsPurged: false</finest>
+  <finest time="1143047530541" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.updateComponents: Entering ------</finest>
+  <finest time="1143047530541" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID,doState,doLabel FROM do WHERE doPID='test:PurgeMeToo'</finest>
+  <finest time="1143047530542" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dsID, dsLabel, dsLocation, dsCurrentVersionID, dsState FROM dsBind WHERE doDbID=2309961</finest>
+  <finest time="1143047530544" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.updateComponents: No datastream labels or locations changed.</finest>
+  <finest time="1143047530544" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT dissDbID FROM doDissAssoc WHERE doDbID=2309961</finest>
+  <finest time="1143047530545" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplication.updateComponents: Object either has no disseminators or a new disseminatorhas been added; components dont need updating.</finest>
+  <finest time="1143047530545" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- componentsUpdated: false</finest>
+  <finest time="1143047530546" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addNewComponents: Entering ------</finest>
+  <finest time="1143047530546" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT doDbID FROM do WHERE doPID='test:PurgeMeToo'</finest>
+  <finest time="1143047530547" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addNewComponents: Disseminators found: 5</finest>
+  <finest time="1143047530547" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='GetMetadataAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530548" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='ListMetadataFormatsAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530548" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='GetRecordAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530549" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='DISS1' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530549" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addNewComponents: Added new disseminator dissID: DISS1</finest>
+  <finest time="1143047530550" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Executing query: SELECT diss.dissDbID FROM doDissAssoc, diss WHERE doDissAssoc.doDbID=2309961 AND diss.dissID='DescribeAPI' AND doDissAssoc.dissDbID=diss.dissDbID</finest>
+  <finest time="1143047530550" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: Entering ------</finest>
+  <finest time="1143047530550" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT doDbID FROM do WHERE doPID = 'test:PurgeMeToo'</finest>
+  <finest time="1143047530551" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bDefDbID FROM bDef WHERE bDefPID = 'nsdl:109'</finest>
+  <finest time="1143047530552" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:110'</finest>
+  <finest time="1143047530552" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dissDbID FROM diss WHERE bDefDbID = 29 AND bMechDbID = 29 AND dissID = 'DISS1'</finest>
+  <finest time="1143047530553" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO diss (bDefDbID, bMechDbID, dissID, dissLabel, dissState) VALUES ('29', '29', 'DISS1', 'label', 'A')</finest>
+  <finest time="1143047530553" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dissDbID FROM diss WHERE bDefDbID = 29 AND bMechDbID = 29 AND dissID = 'DISS1'</finest>
+  <finest time="1143047530554" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO doDissAssoc (doDbID, dissDbID) VALUES ('2309961', '32')</finest>
+  <finest time="1143047530554" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:122'</finest>
+  <finest time="1143047530555" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =25 AND dsBindMapID = 'GetMetadataAPI1.0b'</finest>
+  <finest time="1143047530555" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindKeyDbID FROM dsBindSpec WHERE bMechDbID =25 AND dsBindSpecName = 'dc'</finest>
+  <finest time="1143047530556" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: ----- adding dsBind row: DC</finest>
+  <finest time="1143047530556" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('2309961', '43', '24', '0', 'DC', 'Dublin Core Metadata', 'text/xml', 'test:PurgeMeToo+DC+DC1.0', 'X', 'DC1.0', '1', 'A')</finest>
+  <finest time="1143047530557" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:116'</finest>
+  <finest time="1143047530557" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =34 AND dsBindMapID = 'ListMetadataFormatsAPI1.0b'</finest>
+  <finest time="1143047530558" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindKeyDbID FROM dsBindSpec WHERE bMechDbID =34 AND dsBindSpecName = 'DC'</finest>
+  <finest time="1143047530558" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: ----- adding dsBind row: DC</finest>
+  <finest time="1143047530559" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('2309961', '52', '11', '0', 'DC', 'Dublin Core Metadata', 'text/xml', 'test:PurgeMeToo+DC+DC1.0', 'X', 'DC1.0', '1', 'A')</finest>
+  <finest time="1143047530559" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:110'</finest>
+  <finest time="1143047530560" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =29 AND dsBindMapID = 'GetRecordAPI1.0b'</finest>
+  <finest time="1143047530560" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindKeyDbID FROM dsBindSpec WHERE bMechDbID =29 AND dsBindSpecName = 'metadata'</finest>
+  <finest time="1143047530561" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: ----- adding dsBind row: format_nsdl_dc</finest>
+  <finest time="1143047530561" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('2309961', '47', '25', '0', 'format_nsdl_dc', '', 'text/xml', 'test:PurgeMeToo+format_nsdl_dc+format_nsdl_dc.0', 'X', 'format_nsdl_dc.0', '1', 'A')</finest>
+  <finest time="1143047530562" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:110'</finest>
+  <finest time="1143047530562" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =29 AND dsBindMapID = 'DISS1.0b'</finest>
+  <finest time="1143047530563" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBindMap (bMechDbID, dsBindMapID, dsBindMapLabel) VALUES ('29', 'DISS1.0b', '')</finest>
+  <finest time="1143047530563" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =29 AND dsBindMapID = 'DISS1.0b'</finest>
+  <finest time="1143047530564" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindKeyDbID FROM dsBindSpec WHERE bMechDbID =29 AND dsBindSpecName = 'metadata'</finest>
+  <finest time="1143047530564" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: ----- adding dsBind row: format_nsdl_dc</finest>
+  <finest time="1143047530564" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('2309961', '47', '33', '1', 'format_nsdl_dc', '', 'text/xml', 'test:PurgeMeToo+format_nsdl_dc+format_nsdl_dc.0', 'X', 'format_nsdl_dc.0', '1', 'A')</finest>
+  <finest time="1143047530565" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT bMechDbID FROM bMech WHERE bMechPID = 'nsdl:102'</finest>
+  <finest time="1143047530565" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindMapDbID FROM dsBindMap WHERE bMechDbID =30 AND dsBindMapID = 'DescribeAPI1.0b'</finest>
+  <finest time="1143047530566" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing Query: SELECT dsBindKeyDbID FROM dsBindSpec WHERE bMechDbID =30 AND dsBindSpecName = 'DC'</finest>
+  <finest time="1143047530567" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addDisseminators: ----- adding dsBind row: DC</finest>
+  <finest time="1143047530567" thread="11">fedora.server.storage.replication.DefaultDOReplicator: Doing DB Insert: INSERT INTO dsBind (doDbID, dsBindKeyDbID, dsBindMapDbID, dsBindKeySeq, dsID, dsLabel, dsMIME, dsLocation, dsControlGroupType, dsCurrentVersionID, policyDbID, dsState) VALUES ('2309961', '48', '13', '0', 'DC', 'Dublin Core Metadata', 'text/xml', 'test:PurgeMeToo+DC+DC1.0', 'X', 'DC1.0', '1', 'A')</finest>
+  <finest time="1143047530568" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.addNewComponents: Exiting ------</finest>
+  <finest time="1143047530568" thread="11">fedora.server.storage.replication.DefaultDOReplicator: DefaultDOReplicator.replicate: ----- newComponentsAdded: true</finest>
+  <info time="1143047530568" thread="11">fedora.server.storage.DefaultDOManager: COMMIT: Updating FieldSearch indexes...</info>
+  <finest time="1143047530568" thread="11">fedora.server.search.FieldSearchSQLModule: Entering update(DOReader)</finest>
+  <fine time="1143047530569" thread="11">fedora.server.search.FieldSearchSQLModule: Had DC Metadata datastream for this object.</fine>
+  <fine time="1143047530571" thread="11">fedora.server.search.FieldSearchSQLModule: Formulating SQL and inserting/updating...</fine>
+  <finer time="1143047530572" thread="11">fedora.server.search.FieldSearchSQLModule: SQLUtility.executeUpdate, trying: UPDATE doFields
+SET pid = 'test:PurgeMeToo', label = 'nsdl repository agent metadata', fType = 'o', cModel = 'nsdl:repository', state = 'a', ownerId = NULL, cDate = 1127220430511, mDate = 1143047530464, dcmDate = 1127220430511, bDef = ' nsdl:121 nsdl:115 nsdl:109 nsdl:109 nsdl:101 .', bMech = ' nsdl:122 nsdl:116 nsdl:110 nsdl:110 nsdl:102 .', dcTitle = ' nsdl repository agent metadata .', dcCreator = NULL, dcSubject = NULL, dcDescription = NULL, dcPublisher = NULL, dcContributor = NULL, dcDate = NULL, dcType = NULL, dcFormat = NULL, dcIdentifier = ' test:purgemetoo oai.nsdl.org:oai:nsdl%3a4000 .', dcSource = NULL, dcLanguage = NULL, dcRelation = NULL, dcCoverage = NULL, dcRights = NULL
+WHERE pid = 'test:PurgeMeToo'</finer>
+  <finest time="1143047530574" thread="11">fedora.server.search.FieldSearchSQLModule: Exiting update(DOReader)</finest>
+  <finest time="1143047530575" thread="11">Exiting DefaultManagement.addDisseminator</finest>
+</log>

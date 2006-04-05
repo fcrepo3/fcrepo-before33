@@ -1,0 +1,12 @@
+<log>
+<client>
+UserID: fedoraAdmin
+
+Invoke how many times? 1
+
+Run 1/1 of describeUser...returned in 81ms.
+</client>
+  <finest time="1143046214206" thread="11">Entered enforceAdminPing</finest>
+  <finest time="1143046214207" thread="11">Policy enforcement took 0ms.</finest>
+  <finest time="1143046214207" thread="11">Exiting enforceAdminPing</finest>
+</log>

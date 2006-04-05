@@ -1,0 +1,17 @@
+<log>
+  <client>
+Object PID: nsdl:4000
+Object format (foxml or mets): mets
+Export context (public or migrate or archive): migrate
+
+Invoke how many times? 1
+
+Run 1/1 of export...returned xml, written to dump2.xml in 320ms.
+  </client>
+  <finest time="1141493347522" thread="40">fedora.server.management.DefaultManagement: Entered DefaultManagement.exportObject</finest>
+  <finest time="1141493347522" thread="40">Entered enforceExportObject</finest>
+  <finest time="1141493347523" thread="40">Policy enforcement took 0ms.</finest>
+  <finest time="1141493347523" thread="40">Exiting enforceExportObject</finest>
+  <finest time="1141493347527" thread="40">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for nsdl:4000 in 4ms.</finest>
+  <finest time="1141493347626" thread="40">fedora.server.management.DefaultManagement: Exiting DefaultManagement.exportObject</finest>
+</log>

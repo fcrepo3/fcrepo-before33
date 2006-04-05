@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<foxml:digitalObject xmlns:foxml="info:fedora/fedora-system:def/foxml#"
+           xmlns:fedoraxsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:audit="info:fedora/fedora-system:def/audit#"
+           fedoraxsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd"
+           PID="test:PurgeMe">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="Active"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="NSDL Repository Agent Metadata"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2005-09-20T12:47:10.511Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/view#lastModifiedDate" VALUE="2005-10-06T14:53:03.294Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="nsdl:repository"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="RELS-EXT" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Relationships to other objects" CREATED="2005-09-20T12:47:10.511Z" MIMETYPE="text/xml" SIZE="622">
+            <foxml:xmlContent>
+
+
+        <rdf:RDF xmlns:nsdl="http://ns.nsdl.org/api/relationships#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+          <rdf:Description rdf:about="info:fedora/test:PurgeMe">
+            <nsdl:metadataFor rdf:resource="info:fedora/nsdl:1000"></nsdl:metadataFor>
+            <nsdl:metadataProvidedBy rdf:resource="info:fedora/nsdl:3000"></nsdl:metadataProvidedBy>
+            <nsdl:objectType>Metadata</nsdl:objectType>
+            <nsdl:itemId>oai:nsdl.org:nsdl:3000:test:PurgeMe</nsdl:itemId>
+          </rdf:Description>
+        </rdf:RDF>
+                              </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="DC" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="DC1.0" LABEL="Dublin Core Metadata" CREATED="2005-09-20T12:47:10.511Z" MIMETYPE="text/xml" SIZE="300">
+            <foxml:xmlContent>
+
+<oai_dc:dc xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <dc:title>NSDL Repository Agent Metadata</dc:title>
+  <dc:identifier>test:PurgeMe</dc:identifier>
+  <dc:identifier>oai.nsdl.org:oai:nsdl%3A4000</dc:identifier>
+</oai_dc:dc>
+                        </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="format_nsdl_dc_info" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="format_nsdl_dc_info.0" LABEL="" CREATED="2005-08-04T12:40:23.323Z" MIMETYPE="text/xml" SIZE="746">
+            <foxml:xmlContent>
+
+
+        <info>
+          <nsdlAboutCategory>item</nsdlAboutCategory>
+          <harvestDate>2005-07-07T07:57:48Z</harvestDate>
+          <harvestHarvestType>OAI2.0</harvestHarvestType>
+          <harvestDatasource>http://content.nsdl.org/wbr/SPT--OAI.php</harvestDatasource>
+          <harvestIdentifier>oai:content.nsdl.org:nsdlwhiteboard-926</harvestIdentifier>
+          <harvestRecordDatestamp>2004-03-02</harvestRecordDatestamp>
+          <repositoryPrimaryIdentifier>http://content.nsdl.org/wbr/Issue.php?issue=48</repositoryPrimaryIdentifier>
+          <harvestDatasourcePublic>true</harvestDatasourcePublic>
+          <link>some value</link>
+          <metadataNamespace>2004-03-02</metadataNamespace>
+        </info>
+                              </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:datastream ID="format_nsdl_dc" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+        <foxml:datastreamVersion ID="format_nsdl_dc.0" LABEL="" CREATED="2005-08-04T12:26:51.575Z" MIMETYPE="text/xml" SIZE="752">
+            <foxml:xmlContent>
+
+
+        <nsdl_dc:nsdl_dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dct="http://purl.org/dc/terms/" xmlns:nsdl_dc="http://ns.nsdl.org/nsdl_dc_v1.02/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="1.02.000" xsi:schemaLocation="http://ns.nsdl.org/nsdl_dc_v1.02/ http://ns.nsdl.org/schemas/nsdl_dc/nsdl_dc_v1.02.xsd">
+          <dc:identifier>test:PurgeMe</dc:identifier>
+          <dc:identifier>oai.nsdl.org:oai:nsdl%3A4000</dc:identifier>
+          <dc:language>en</dc:language>
+          <dc:contributor>Ellen Cramer</dc:contributor>
+          <dc:title>NSDL Repository Agent Metadata</dc:title>
+          <dc:description>NSDL Repository Agent metadata object</dc:description>
+        </nsdl_dc:nsdl_dc>
+                              </foxml:xmlContent>
+        </foxml:datastreamVersion>
+    </foxml:datastream>
+    <foxml:disseminator ID="GetMetadataAPI" BDEF_CONTRACT_PID="nsdl:121" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="GetMetadataAPI1.0" BMECH_SERVICE_PID="nsdl:122" CREATED="2005-08-04T13:49:31.219Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="dc" DATASTREAM_ID="DC" LABEL="Binding to Dublin Core Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="ListMetadataFormatsAPI" BDEF_CONTRACT_PID="nsdl:115" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="ListMetadataFormatsAPI1.0" LABEL="ListMetadataFormatsAPI" BMECH_SERVICE_PID="nsdl:116" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DC" DATASTREAM_ID="DC" LABEL="Binding to Dublin Core Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="GetRecordAPI" BDEF_CONTRACT_PID="nsdl:109" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="GetRecordAPI1.0" LABEL="Enter a label here." BMECH_SERVICE_PID="nsdl:110" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="metadata" DATASTREAM_ID="format_nsdl_dc" LABEL="Binding to NSDL_DC Metadata" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+    <foxml:disseminator ID="DescribeAPI" BDEF_CONTRACT_PID="nsdl:101" STATE="A" VERSIONABLE="true">
+        <foxml:disseminatorVersion ID="DescribeAPI1.0" LABEL="Produces NSDL descriptiveXML" BMECH_SERVICE_PID="nsdl:102" CREATED="2005-09-20T12:47:10.511Z">
+            <foxml:serviceInputMap>
+                <foxml:datastreamBinding KEY="DC" DATASTREAM_ID="DC" LABEL="DC" ORDER="0"/>
+            </foxml:serviceInputMap>
+        </foxml:disseminatorVersion>
+    </foxml:disseminator>
+</foxml:digitalObject>

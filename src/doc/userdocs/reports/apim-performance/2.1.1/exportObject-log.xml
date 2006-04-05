@@ -1,0 +1,15 @@
+<log>
+<client>
+Object PID: nsdl:4000
+
+Invoke how many times? 1
+
+Run 1/1 of exportObject...returned xml, written to dump1.xml in 259ms.
+</client>
+  <finest time="1143045661605" thread="13">fedora.server.management.DefaultManagement: Entered DefaultManagement.exportObject</finest>
+  <finest time="1143045661605" thread="13">Entered enforceExportObject</finest>
+  <finest time="1143045661606" thread="13">Policy enforcement took 0ms.</finest>
+  <finest time="1143045661606" thread="13">Exiting enforceExportObject</finest>
+  <finest time="1143045661618" thread="13">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for nsdl:4000 in 12ms.</finest>  <finest time="1143045661620" thread="13">fedora.server.management.DefaultManagement: Exiting DefaultManagement.exportObject</finest>
+
+</log>

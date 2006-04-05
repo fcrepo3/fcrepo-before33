@@ -1,0 +1,16 @@
+<log>
+<client>
+Object PID: nsdl:4000
+asOfDateTime (YYYY-MM-DDTHH:mm:ss.SSSZ-formatted date, or 'null'): null
+Disseminator state (A or I or D): A
+
+Invoke how many times? 1
+
+Run 1/1 of getDisseminators...returned in 142ms.
+</client>
+  <finest time="1143048151631" thread="11">Entered DefaultManagement.getDisseminators</finest>
+  <finest time="1143048151631" thread="11">Entered enforceGetDisseminators</finest>
+  <finest time="1143048151632" thread="11">Policy enforcement took 0ms.</finest>
+  <finest time="1143048151632" thread="11">Exiting enforceGetDisseminators</finest>
+  <finest time="1143048151659" thread="11">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for nsdl:4000 in 26ms.</finest>  <finest time="1143048151659" thread="11">Exiting DefaultManagement.getDisseminators</finest>
+</log>

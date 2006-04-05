@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+
+<head>
+  <title>Fedora API-M Performance Report</title>
+  <meta name="robots" content="all"/>
+  <link href="../../docstyle.css" rel="stylesheet" type="text/css"/>
+  <script language="Javascript">
+    
+  </script>
+</head>
+
+<body>
+  <div id="header">
+      <a href="../../index.html" id="logo"></a>
+      <div id="title">
+        <h1>API-M Performance Report</h1>
+       </div>
+  </div>
+ <div class="toc">
+    <h2>Table of Contents</h2>
+    <div class="tocbox">
+      <ol>
+        <li> <a href="#intro">Introduction</a></li>
+        <li> <a href="#environ">Test Environment</a></li>
+        <li> <a href="#results">Test Results</a></li>
+      </ol>
+    </div>
+  </div>
+  
+  <div class="sec1">
+    <a name="intro"><h2>Introduction</h2></a>
+
+    <p>
+      Following the release of Fedora 2.1, we received several reports of
+      poor API-M performance, especially when modifying and removing 
+      existing Fedora objects.
+    </p>
+    <p>
+      To fully understand the problem, we enabled detailed server logging and
+      executed a series of tests against all API-M methods.  After making
+      several improvements to the Fedora server code we re-ran the original 
+      tests.
+    </p>
+    <p>
+      The results included in this report illustrate the significant 
+      performance boost we experienced after making these changes.
+    </p>
+  </div>
+
+  <div class="sec2">
+    <a name="environ"><h2>Test Environment</h2></a>
+
+    <p>
+      Hardware:
+      <ul>
+        <li> CPUs: (4) Intel Xeon 3.60GHz (2MB cache)</li>
+        <li> Physical Memory: 6GB</li>
+      </ul>
+    </p>
+
+    <p>
+      Software:
+      <ul>
+        <li> OS: Linux 2.6.9-11 (64-bit)</li>
+        <li> Database: MySQL v4.1.10a (local instance)</li>
+        <li> Java: 1.5.0_05-b05 (64-bit)</li>
+      </ul>
+    </p>
+
+    <p>
+      All tests were performed on a single Fedora server with:
+      <ul>
+        <li> 2.1 million digital objects, each with:
+             <ul>
+                <li> 3-5 "X" (inline XML) datastreams</li>
+                <li> 0-1 "R" (redirect) datastream</li>
+                <li> 2-4 disseminators</li>
+                <li> An average FOXML size of 10kb</li>
+             </ul>
+        </li>
+        <li> 160 million triples in the Resource Index (indexing at level 2)</li>
+        <li> 512MB maximum Java heap size for Tomcat (this is 2x the default)</li>
+        <li> Disabled policy enforcement (this is enabled by default in fedora.fcfg)</li>
+        <li> Disabled JAASLoginModule for authentication (using MemoryRealm instead)</li>
+      </ul>
+    </p>
+  </div>
+
+  <div class="sec2">
+    <a name="results"><h2>Test Results</h2></a>
+
+    <p>
+      Each API-M method was tested and individual logs were saved for each test.
+      The following object was used in all tests:
+      <ul>
+        <li> <a href="test_PurgeMe.xml">test:PurgeMe</a></li>
+      </ul>
+    </p>
+
+    <p>
+      Test results:
+      <ul>
+        <li> <a href="2.1/index.html">Fedora 2.1 API-M Test Results</a></li>
+        <li> <a href="2.1.1/index.html">Fedora 2.1.1 API-M Test Results</a></li>
+      </ul>
+    </p>
+
+    <p>
+      Note: The following changes were made before the second test:
+      <ul>
+        <li> <a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=152">Bug #152, "modifyDatastreamByValue delay when resourceIndex on"</a> was fixed</li>
+        <li> <a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=156">Bug #156, "Modifying a disseminator's bmech breaks disseminations for other objects"</a> was fixed</li>
+        <li> <a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158, "purgeObject and purgeDisseminator take unreasonably long in large repositories"</a> was fixed</li>
+        <li> Fedora was started with GCOnCommit = false (this is now the default bahavior for Fedora 2.1.1)</li>
+      </ul>
+    </p>
+
+
+  </div>
+
+
+  <div id="footer">
+    <div id="copyright">
+      Copyright &copy; 2005 Fedora Project
+    </div>
+
+    <div id="lastModified">
+      Last Modified <script type="text/javascript">
+      //<![CDATA[
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+      //]]>
+      </script>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<log>
+<client>
+Object PID: nsdl:4000
+Disseminator ID: GetMetadataAPI
+
+Invoke how many times? 1
+
+Run 1/1 of getDisseminatorHistory...returned in 112ms.
+</client>
+  <finest time="1141494606248" thread="29">Entered enforceGetDisseminatorHistory</finest>
+  <finest time="1141494606249" thread="29">Policy enforcement took 0ms.</finest>
+  <finest time="1141494606249" thread="29">Exiting enforceGetDisseminatorHistory</finest>
+  <finest time="1141494606252" thread="29">fedora.server.storage.DefaultDOManager: Got DOReader (source=filesystem) for nsdl:4000 in 3ms.</finest>
+  <finest time="1141494606300" thread="29">Exiting DefaultManagement.getDisseminatorHistory</finest>
+</log>
