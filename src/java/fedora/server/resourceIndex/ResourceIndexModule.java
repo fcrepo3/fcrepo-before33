@@ -342,7 +342,10 @@ public class ResourceIndexModule extends Module
 		return m_resourceIndex.getBufferSize();
 	}
 
-	public List getBufferedTriples() {
-		return m_resourceIndex.getBufferedTriples();
+	public List findBufferedUpdates(SubjectNode subject, 
+									PredicateNode predicate, 
+									ObjectNode object, 
+									int updateType) {
+		return m_resourceIndex.findBufferedUpdates(subject, predicate, object, updateType);
 	}
 }

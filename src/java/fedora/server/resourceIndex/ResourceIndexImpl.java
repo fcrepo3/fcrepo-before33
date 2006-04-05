@@ -39,6 +39,7 @@ import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
+import org.jrdf.graph.URIReference;
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
 import org.trippi.TripleIterator;
@@ -49,6 +50,7 @@ import org.trippi.TriplestoreReader;
 import org.trippi.TriplestoreWriter;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
+import org.trippi.impl.base.UpdateBuffer;
 import org.xml.sax.InputSource;
 
 import fedora.client.bmech.data.MethodParm;
@@ -388,12 +390,12 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         // Delete all statements where doURI is the subject
         String doURI = getDOURI(digitalObject);
         subjectsToDelete.add(doURI);
-        String subject;
+        URIReference subject;
         try {
         	it = subjectsToDelete.iterator();
         	while (it.hasNext()) {
-            	subject = (String)it.next();
-            	deleteTriples(findTriples(TripleMaker.createResource(subject), null, null, 0), false);
+            	subject = TripleMaker.createResource((String)it.next());
+            	deleteTriples(findTriples(subject, null, null, 0), false);
             	delete(findBufferedTriplesBySubject(subject), false);
             }
         } catch (TrippiException e) {
@@ -1509,30 +1511,24 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 		return m_writer.getBufferSize();
 	}
 
-	public List getBufferedTriples() {
-		return m_writer.getBufferedTriples();
+	public List findBufferedUpdates(SubjectNode subject, 
+			PredicateNode predicate, 
+			ObjectNode object, 
+			int updateType) {
+		return m_writer.findBufferedUpdates(subject, predicate, object, updateType);
 	}
 	
 	/**
-	 * Returns the triples from Trippi's buffer that are:
-	 * 	1. waiting to be ADDed, and
-	 *  2. whose subject equals the subject parameter
 	 * 
 	 * @param subject
 	 * @return
 	 */
-	private List findBufferedTriplesBySubject(String subject) {
+	private List findBufferedTriplesBySubject(SubjectNode subject) {
 		List toDelete = new ArrayList();
-		Iterator it = getBufferedTriples().iterator();
+		Iterator it = findBufferedUpdates(subject, null, null, UpdateBuffer.ADD_UPDATE_TYPE).iterator();
 		while (it.hasNext()) {
 			TripleUpdate tup = (TripleUpdate)it.next();
-			if (tup.type == TripleUpdate.ADD) {
-				Triple t = tup.triple;
-				String sub = t.getSubject().toString();
-				if (subject.equals(sub)) {
-					toDelete.add(t);
-				}
-			}
+			toDelete.add(tup.triple);
 		}
 		return toDelete;
 	}
