@@ -89,13 +89,8 @@ public abstract class AxisUtility {
         return fault;
     }
 
-    public static AxisFault getFault(Throwable e) {
-        AxisFault fault = new AxisFault(
-        				  	new QName(SOAP_FAULT_CODE_NAMESPACE, "Uncaught"),
-        				  e.getClass().getName() + ":" + e.getMessage(), 
-        				  SOAP_ULTIMATE_RECEIVER,
-        				  null);
-        return fault;
+    public static AxisFault getFault(Throwable th) {
+    	return AxisFault.makeFault(new Exception("Uncaught exception from Fedora Server", th));
     }
 
 }
