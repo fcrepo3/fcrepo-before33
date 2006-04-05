@@ -1086,6 +1086,11 @@ public class DefaultDOManager
                     doCommit(cachedObjectRequired, context, obj, logMessage, true);
                 }
                 throw se;
+            } catch (Throwable th) {
+                if (obj.isNew()) {
+                    doCommit(cachedObjectRequired, context, obj, logMessage, true);
+                }
+                throw new GeneralException("Unable to add or modify object (commit canceled)", th);
             }
         }
     }
