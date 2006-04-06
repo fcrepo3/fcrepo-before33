@@ -52,9 +52,6 @@ public class RIQueue implements Constants {
      * @throws ResourceIndexException
      */
     protected void queueContentModel(String digitalObjectURI, String cModel) throws ResourceIndexException {
-        if (cModel == null || cModel.equals("")) {
-            return;
-        }
         addPlainTriple(digitalObjectURI, 
                        MODEL.CONTENT_MODEL.uri, 
                        cModel);
@@ -75,11 +72,9 @@ public class RIQueue implements Constants {
      * Add the plain literal for the given DC property if it's non-empty.
      */
     protected void queueDC(String digitalObjectURI, String property, String value) throws ResourceIndexException {
-        if (value != null && value.length() > 0) {
-            addPlainTriple(digitalObjectURI, 
-                           property, 
-                           value);
-        }
+        addPlainTriple(digitalObjectURI, 
+                       property, 
+                       value);
     }
     
     protected void queueDefinesMethod(String bDefURI, String method) throws ResourceIndexException {
@@ -140,9 +135,6 @@ public class RIQueue implements Constants {
      * @throws ResourceIndexException
      */
     protected void queueLabel(String subject, String label) throws ResourceIndexException {
-        if (label == null || label.equals("")) {
-            return;
-        }
         addPlainTriple(subject, 
                        MODEL.LABEL.uri, 
                        label);
@@ -257,9 +249,8 @@ public class RIQueue implements Constants {
     }
     
     private void addPlainTriple(String subject, String predicate, String object) throws ResourceIndexException {
-        if (object == null || object.length() == 0) {
-            throw new ResourceIndexException("Cannot enqueue triple whose "
-                    + "object is null or empty");
+        if (object == null) {
+            object = "";
         }
         try {
             m_triples.add(TripleMaker.createPlain(subject, predicate, object));
