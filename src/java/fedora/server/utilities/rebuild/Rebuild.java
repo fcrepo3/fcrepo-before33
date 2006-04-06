@@ -205,6 +205,9 @@ public class Rebuild implements Constants {
 								rebuilder.addObject(obj);
 								saw.add(hashCode);
 							}
+						} catch (Exception e) {
+                            System.out.println("WARNING: Skipped " + f.getAbsoluteFile() + " due to following exception:");
+                            e.printStackTrace();
 						} finally {
 							try {
 								in.close();
