@@ -11,10 +11,12 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -368,6 +370,32 @@ public class FedoraClient implements Constants {
         } else {
             throw new Exception("Unrecognized endpoint: " + endpoint.getName());
         }
+    }
+
+    public static String getVersion() {
+
+       ResourceBundle bundle = ResourceBundle.getBundle("fedora.client.resources.Client");
+       return bundle.getString("version");
+    }
+
+    public static List getCompatibleServerVersions() {
+
+        ResourceBundle bundle = ResourceBundle.getBundle("fedora.client.resources.Client");
+        List list = new ArrayList();
+
+        String versions = bundle.getString("compatibleServerVersions");
+        if (versions != null && versions.trim().length() > 0) {
+            String[] va = versions.trim().split(" ");
+            for (int i = 0; i < va.length; i++) {
+                list.add(va[i]);
+            }
+        }
+        String clientVersion = getVersion();
+        if (!list.contains(clientVersion)) {
+            list.add(getVersion());
+        }
+
+        return list;
     }
 
     /**

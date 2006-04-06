@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
 import javax.swing.AbstractAction;
@@ -274,13 +275,35 @@ public class LoginDialog
 				FedoraClient fc = new FedoraClient(baseURL, user, pass);
 
                 // attempt to connect via REST
-				String version = fc.getServerVersion();
+				String serverVersion = fc.getServerVersion();
 
-                // verify client and server versions are compatible
-                if (!version.equals(Administrator.VERSION)) {
-					throw new IOException("Server is version " + version
-							+ ", but this client only works with version " 
-                            +  Administrator.VERSION);
+                // ensure client is compatible with server
+				List compatibleVersions = fc.getCompatibleServerVersions();
+                if (!compatibleVersions.contains(serverVersion)) {
+                    StringBuffer endText = new StringBuffer();
+                    if (compatibleVersions.size() == 1) {
+                        // version A
+                        endText.append("version " + (String) compatibleVersions.get(0));
+                    } else {
+                        // versions A and B
+                        // versions A, B, and C
+                        endText.append("versions ");
+                        for (int i = 0; i < compatibleVersions.size(); i++) {
+                            if (i > 0) {
+                                if (i == compatibleVersions.size() - 1) {
+                                    if (i > 1) {
+                                        endText.append(",");
+                                    }
+                                    endText.append(" and ");
+                                } else {
+                                    endText.append(", ");
+                                }
+                            }
+                            endText.append((String) compatibleVersions.get(i));
+                        }
+                    }
+                    throw new IOException("Server is version " + serverVersion
+                            + ", but this client only works with " + endText.toString());
                 }
 
                 // set SOAP stubs for Administrator
