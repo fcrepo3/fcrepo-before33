@@ -2,12 +2,16 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jrdf.graph.Triple;
 import org.trippi.TripleIterator;
 import org.trippi.TripleMaker;
 
 import fedora.common.PID;
+import fedora.server.errors.ResourceIndexException;
+import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -38,7 +42,7 @@ public class TestResourceIndexImpl extends TestResourceIndex {
                 DEMO_OBJECTS_ROOT_DIR + "/dataobjects/demo_ri10.xml"));
     }
 
-    public void testAddDigitalObject() throws Exception {
+    public void testAddDigitalObject() throws Exception {    	
         DigitalObject obj = getFoxmlObject(new File(DEMO_OBJECTS_ROOT_DIR
                 + "/dataobjects/demo_ri1000.xml"));
         m_ri.addDigitalObject(obj);
@@ -70,20 +74,21 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, a);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(29, a);
+            assertEquals(32, a);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(29, a);
+            assertEquals(32, a);
         }
         
         m_ri.addDigitalObject(bmech);
         m_ri.commit();
         int b = m_ri.countTriples(null, null, null, 0);
+        export("/tmp/b.rdf");
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, b);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(75, b);
+            assertEquals(84, b);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(75, b);
+            assertEquals(84, b);
         }
         
         m_ri.addDigitalObject(dataobject);
@@ -94,13 +99,14 @@ public class TestResourceIndexImpl extends TestResourceIndex {
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
             assertEquals(166, c);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(206, c);
+            assertEquals(187, c);
         }
-        
         m_ri.deleteDigitalObject(dataobject);
+        
         m_ri.commit();
+        export("/tmp/d.rdf");
         int d = m_ri.countTriples(null, null, null, 0);
-        assertTrue(d == b);
+        assertTrue("Expected " + b + " but was " + d, d == b);
         
         m_ri.deleteDigitalObject(bmech);
         m_ri.commit();
@@ -141,5 +147,37 @@ public class TestResourceIndexImpl extends TestResourceIndex {
     	m_ri.commit();
     	int b = m_ri.countTriples(null, null, null, 0);
     	assertEquals(a, b);
+    	
+    	// test adding a datastream with a null mimetype
+    	Datastream ds = getLatestDatastream(dataobject.datastreams("DC"));
+    	ds.DSMIME = null;
+    	m_ri.modifyDigitalObject(dataobject);
+    	m_ri.commit();
+    	b = m_ri.countTriples(null, null, null, 0);
+    	assertEquals(a, b);
+    	
+    	// test adding a datastream with a null mimetype
+    	ds = getLatestDatastream(dataobject.datastreams("DC"));
+    	ds.DSMIME = "";
+    	m_ri.modifyDigitalObject(dataobject);
+    	m_ri.commit();
+    	b = m_ri.countTriples(null, null, null, 0);
+    	assertEquals(a, b);
+    }
+    
+    private Datastream getLatestDatastream(List datastreams) throws ResourceIndexException {
+        Iterator it = datastreams.iterator();
+        long latestDSCreateDT = -1;
+        Datastream ds, latestDS = null;
+        while (it.hasNext()) {
+            ds = (Datastream)it.next();
+            if (ds.DSCreateDT == null) {
+                throw new ResourceIndexException("Datastream, " + ds.DSVersionID + ", is missing create date");
+            } else if (ds.DSCreateDT.getTime() > latestDSCreateDT) {
+                latestDS = ds;
+                latestDSCreateDT = ds.DSCreateDT.getTime();
+            }
+        }
+        return latestDS;
     }
 }

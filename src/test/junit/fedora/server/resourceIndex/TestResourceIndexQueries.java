@@ -6,9 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.ObjectNode;
-
+import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.Triple;
+import org.trippi.TripleIterator;
 import org.trippi.TupleIterator;
 
 import fedora.server.storage.types.DigitalObject;
@@ -92,12 +93,27 @@ public class TestResourceIndexQueries extends TestResourceIndex {
     public void testCount() throws Exception {
         int count = m_ri.countTriples(null, null, null, 0);
         
+        //
+        TripleIterator tit = m_ri.findTriples(null, null, null, 0);
+        Triple tr;
+        System.out.println("\n\n");
+		while (tit.hasNext()) {
+			tr = (Triple)tit.next();
+			String obj = tr.getObject().toString();
+			if (obj == null || obj.equals("")) {
+				System.out.println(tr.getSubject() + " " + tr.getPredicate() + " " + tr.getObject());
+			}
+		}
+		System.out.println("\n\n");
+        
+        //
+        
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(106, count);
+            assertEquals(113, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(106, count);
+            assertEquals(113, count);
         }
         export("/tmp/out.rdf");
     }
@@ -109,12 +125,13 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         int count;
         it = m_ri.findTuples("rdql", query, 0, true);
         count = it.count();
+        
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(102, count);
+            assertEquals(109, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(102, count);
+            assertEquals(109, count);
         }
         
         it = m_ri.findTuples("rdql", query, 0, false);
@@ -122,9 +139,9 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_OFF) {
             assertEquals(0, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_ON) {
-            assertEquals(106, count);
+            assertEquals(113, count);
         } else if (m_ri.getIndexLevel() == ResourceIndex.INDEX_LEVEL_PERMUTATIONS) {
-            assertEquals(106, count);
+            assertEquals(113, count);
         }
         
     }
@@ -163,7 +180,7 @@ public class TestResourceIndexQueries extends TestResourceIndex {
         TupleIterator it;
         it = m_ri.findTuples("rdql", query, 0, true);
         Map tuples;
-        List dates = new ArrayList();
+        //List dates = new ArrayList();
         while (it.hasNext()) {
             tuples = it.next();
             System.out.println( "***date: " + ((ObjectNode)tuples.get("date")).toString() );

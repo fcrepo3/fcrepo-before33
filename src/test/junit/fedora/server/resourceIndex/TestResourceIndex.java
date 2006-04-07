@@ -61,7 +61,7 @@ public abstract class TestResourceIndex extends FedoraTestCase {
     	
     	ModuleConfiguration riConfig = serverConfig.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");
         Parameter riLevel = riConfig.getParameter("level");
-        int level = 2;//Integer.parseInt(riLevel.getValue());
+        int level = Integer.parseInt(riLevel.getValue());
         Parameter riDatastore = riConfig.getParameter("datastore");
         String datastore = riDatastore.getValue();
     	
@@ -240,7 +240,8 @@ public abstract class TestResourceIndex extends FedoraTestCase {
     }
     
     protected void export(String path) throws Exception {
-        m_ri.export(new FileOutputStream(path), RDFFormat.RDF_XML);
+        //m_ri.export(new FileOutputStream(path), RDFFormat.RDF_XML);
+        m_ri.export(new FileOutputStream(path), RDFFormat.N_TRIPLES);
     }
     
     public static ServerConfiguration getServerConfiguration() throws Exception {
