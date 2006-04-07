@@ -52,6 +52,9 @@ public class RIQueue implements Constants {
      * @throws ResourceIndexException
      */
     protected void queueContentModel(String digitalObjectURI, String cModel) throws ResourceIndexException {
+        if (cModel == null || cModel.equals("")) {
+            return;
+        }
         addPlainTriple(digitalObjectURI, 
                        MODEL.CONTENT_MODEL.uri, 
                        cModel);
@@ -72,9 +75,11 @@ public class RIQueue implements Constants {
      * Add the plain literal for the given DC property if it's non-empty.
      */
     protected void queueDC(String digitalObjectURI, String property, String value) throws ResourceIndexException {
-        addPlainTriple(digitalObjectURI, 
-                       property, 
-                       value);
+        if (value != null && value.length() > 0) {
+            addPlainTriple(digitalObjectURI, 
+                           property, 
+                           value);
+        }
     }
     
     protected void queueDefinesMethod(String bDefURI, String method) throws ResourceIndexException {
@@ -135,6 +140,9 @@ public class RIQueue implements Constants {
      * @throws ResourceIndexException
      */
     protected void queueLabel(String subject, String label) throws ResourceIndexException {
+        if (label == null || label.equals("")) {
+            return;
+        }
         addPlainTriple(subject, 
                        MODEL.LABEL.uri, 
                        label);
