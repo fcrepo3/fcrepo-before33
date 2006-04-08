@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- A minimal foxml representation of a data object plus DC and UTF-8 -->
+<foxml:digitalObject 
+	PID="demo:ri3000"
+    xmlns:foxml="info:fedora/fedora-system:def/foxml#" 
+    xmlns:fedora-model="info:fedora/fedora-system:def/model#"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="info:fedora/fedora-system:def/foxml# http://www.fedora.info/definitions/1/0/foxml1-0.xsd">
+    <foxml:objectProperties>
+        <foxml:property NAME="http://www.w3.org/1999/02/22-rdf-syntax-ns#type" VALUE="FedoraObject"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#createdDate" VALUE="2006-04-06T00:01:02.345Z"/>
+        <foxml:property NAME="info:fedora/fedora-system:def/model#state" VALUE="A"/>
+    </foxml:objectProperties>
+    <foxml:datastream ID="DC" CONTROL_GROUP="X" STATE="A">
+		<foxml:datastreamVersion ID="DC1.0" MIMETYPE="text/xml" CREATED="2000-08-22T06:32:00Z" LABEL="DC for demo:ri3000">
+			<foxml:xmlContent>
+				<oai_dc:dc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
+					<dc:creator>신</dc:creator>
+					<dc:subject>François-Barthélemy</dc:subject>
+					<dc:subject>你 好</dc:subject>
+					<dc:subject>おなかすいた</dc:subject>
+					<dc:publisher>Fedora</dc:publisher>
+				</oai_dc:dc>
+			</foxml:xmlContent>
+		</foxml:datastreamVersion>
+	</foxml:datastream>
+</foxml:digitalObject>
