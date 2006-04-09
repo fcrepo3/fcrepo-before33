@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+              "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+  <title>Configuration Reference</title>
+  <link rel="stylesheet" type="text/css" href="../docstyle.css" />
+</head>
+<body>
+<div id="header">
+  <a href="../index.html" id="logo"></a>
+  <div id="title">
+    <h1>Fedora OAI Provider Service</h1>
+    <h2>Configuration Reference</h1>
+  </div>
+</div>
+<div id="toc">
+  <h2>Table of Contents</h2>
+  <div class="tocbox">
+    <ol>
+      <li> <a href="#frontendoaipmhbehavior">Front-End OAI-PMH Behavior</a></li>
+      <li> <a href="#backendupdatebehavior">Back-End Update Behavior</a></li>
+      <li> <a href="#filestoragelocations">File Storage Locations</a></li>
+      <li> <a href="#primarydatabaseconfiguration">Primary Database Configuration</a></li>
+      <li> <a href="#advanceddatabaseconfiguration">Advanced Database Configuration</a></li>
+      <li> <a href="#fedoradrivergeneralsettings">Fedora Driver: General Settings</a></li>
+      <li> <a href="#fedoradrivermetadataformatconfiguration">Fedora Driver: Metadata Format Configuration</a></li>
+      <li> <a href="#fedoradriversetmembershipconfiguration">Fedora Driver: Set Membership Configuration</a></li>
+      <li> <a href="#fedoradriveradvancedconfiguration">Fedora Driver: Advanced Configuration</a></li>
+    </ol>
+  </div>
+</div>
+
+<div class="sec2">
+  <h2><a name="frontendoaipmhbehavior">1. Front-End OAI-PMH Behavior</a></h2>
+  <ul>
+    <li> <code><b>proai.secondsBetweenRequests</b></code>
+      <p>
+        For multi-part OAI responses, this specifies the maximum time to wait
+between requests before cleaning up the session.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.incompleteRecordListSize</b></code>
+      <p>
+        The maximum number of records to include in each part of a
+ListRecords response.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.incompleteIdentifierListSize</b></code>
+      <p>
+        The maximum number of record headers to include in each part of a
+ListIdentifiers response.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.incompleteSetListSize</b></code>
+      <p>
+        The maximum number of sets to include in each part of a
+ListSets response.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="backendupdatebehavior">2. Back-End Update Behavior</a></h2>
+  <ul>
+    <li> <code><b>proai.driverPollSeconds</b></code>
+      <p>
+        How often Proai should poll the driver for updates.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.driverPollingEnabled</b></code>
+      <p>
+        Set this to false to start the service without polling enabled.
+Note: You can also change polling behavior while the service is running
+by executing the following SQL against the database:
+<pre>
+    UPDATE rcAdmin SET pollingEnabled = 0 (or 1 to enable it)
+</pre>
+The value configured via this property will always be put into effect
+when the service is started.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.maxWorkers</b></code>
+      <p>
+        The maximum number of worker threads to use while retrieving new/updated
+OAI records from the driver.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.maxWorkBatchSize</b></code>
+      <p>
+        How many requests each worker thread should make before returning the
+batch to the database to be committed.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.maxFailedRetries</b></code>
+      <p>
+        If a request of the driver for a specific record fails for any reason,
+this is the maximum number of times that record should be automatically
+retried before giving up on that record.  If this is exceeded, the
+record information will remain in the rcFailure table until it is dealt
+with manually.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.maxCommitQueueSize</b></code>
+      <p>
+        The maximum size the in-memory record commit queue is allowed to reach.
+If this threshold is reached, it means that worker threads are returning
+results faster than they can be committed to the database by the commit
+thread.  If this occurs, workers will have to wait until more items have
+been committed before they can add any more to the queue.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.maxRecordsPerTransaction</b></code>
+      <p>
+        The maximum number of record updates (from the in-memory commit queue)
+that should be committed to the database at one time.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="filestoragelocations">3. File Storage Locations</a></h2>
+  <ul>
+    <li> <code><b>proai.cacheBaseDir</b></code>
+      <p>
+        The directory where cache files should be stored. This will be created
+if it doesn't exist.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.sessionBaseDir</b></code>
+      <p>
+        Where OAI-PMH session data will be stored when needed.
+This directory will be created at startup if it doesn't already exist.
+Each session consists of a series of small data files in a uniquely-named
+subdirectory beneath this one.  They are automatically created and
+removed as needed.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="primarydatabaseconfiguration">4. Primary Database Configuration</a></h2>
+  <ul>
+    <li> <code><b>proai.db.url</b></code>
+      <p>
+        The JDBC connection URL for the database that will be used by the cache.
+<p>Embedded McKoi example:<br/>
+   <code>jdbc:mckoi:local://build/test/mckoi/mckoi.conf?create_or_boot=true</code>
+</p>
+<p>Local McKoi example:<br/>
+   <code>jdbc:mckoi://localhost/</code>
+</p>
+<p>Local MySQL example:<br/>
+   <code>jdbc:mysql://localhost/proai?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true</code>
+</p>
+<p>Local Oracle example:<br/>
+   <code>jdbc:oracle:thin:@localhost:1521:proai</code>
+</p>
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.driverClassName</b></code>
+      <p>
+        The class name of the JDBC driver appropriate for use
+with the connection url.  The appropriate library must be
+in the classpath.
+Mckoi example:
+  proai.db.driverClassName = com.mckoi.JDBCDriver
+MySQL example:
+  proai.db.driverClassName = com.mysql.jdbc.Driver
+Oracle example:
+  proai.db.driverClassName = oracle.jdbc.driver.OracleDriver
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.username</b></code>
+      <p>
+        The database user.  This user should already exist in the database
+and must have permission to create, modify, and query tables.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.password</b></code>
+      <p>
+        The password for the database user.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="advanceddatabaseconfiguration">5. Advanced Database Configuration</a></h2>
+  <ul>
+    <li> <code><b>proai.db.maxActive</b></code>
+      <p>
+        The maxiumum number of connections from the pool that may be active
+(leased) at once.  If unspecified, this defaults to 8.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.maxWait</b></code>
+      <p>
+        The maximum number of milliseconds to wait for a connection from the
+pool if none are available.  If unspecified, this defaults to -1,
+which means "indefinite".
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.*</b></code>
+      <p>
+        proai.db.*
+Any other properties defined by the Apache commons-DBCP project
+can be specified.  See the full list (and documentation) at
+http://jakarta.apache.org/commons/dbcp/configuration.html
+To use standard DBCP properties, just prefix them with "proai.db."
+here.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>proai.db.connection.*</b></code>
+      <p>
+        proai.db.connection.*
+To use JDBC driver-specific properties (in DBCP, these
+are called "connectionProperties"), prefix them with
+"proai.db.connection.".
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.ddlConverter</b></code>
+      <p>
+        The Java class responsible for creating the database tables required
+by Proai's record cache.
+<p>The name of the property should be the driverClassName of the JDBC
+driver you're using, plus ".ddlConverter".</p>
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.backslashIsEscape</b></code>
+      <p>
+        Whether the database interprets backslashes in SQL strings as
+escape characters.  This is needed to that Proai can formulate
+proper queries against the database.
+<p>The name of the property should be the driverClassName of the JDBC
+driver you're using plus ".backslashIsEscape".  If unspecified,
+backslashIsEscape will be assumed true.</p>
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="fedoradrivergeneralsettings">6. Fedora Driver: General Settings</a></h2>
+  <ul>
+    <li> <code><b>proai.driverClassName</b></code>
+      <p>
+        The class name of the proai.driver.OAIDriver implementation to use.
+This value should never need changing -- it just informs Proai that
+we're using the Fedora driver.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.queryFactory</b></code>
+      <p>
+        The class name of the fedora.services.oaiprovider.QueryFactory
+implementation to use.
+This is intended to make the triplestore implementation pluggable.
+Currently, ITQLQueryFactory is the only known implementation
+of this interface, so you should keep this as-is :)
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.baseURL</b></code>
+      <p>
+        The base URL of the Fedora repository to query and get records from.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.user</b></code>
+      <p>
+        Identifies a Fedora user that has privileges to do a resource index
+query via the risearch interface, and can get all needed disseminations
+that represent OAI records in the Fedora repository.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.pass</b></code>
+      <p>
+        Password for the Fedora user.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.queryConnectionTimeout</b></code>
+      <p>
+        When querying the resource index, the maximum number of seconds to
+wait for the http connection to be established before giving up.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.querySocketTimeout</b></code>
+      <p>
+        When querying the resource index, the maximum number of seconds of
+socket inactivity to allow before giving up.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.disseminationConnectionTimeout</b></code>
+      <p>
+        When getting xml data from Fedora, the maximum number of seconds to
+wait for the http connection to be established before giving up.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.disseminationSocketTimeout</b></code>
+      <p>
+        When getting xml data from Fedora, the maximum number of seconds of
+socket inactivity to allow before giving up.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.identify</b></code>
+      <p>
+        The location of the XML that should be used to respond to OAI
+"Identify" requests.
+This can be any URL, but typically it points to a manually-created
+datastream within the same Fedora repository that hosts the OAI records.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.itemID</b></code>
+      <p>
+        The name of the RELS-EXT property whose value (a plain literal)
+contains the OAI item ID for records that are provided by an object.
+A value for this property *must* exist in RELS-EXT before any of an
+object's disseminations will be considered to be OAI records.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="fedoradrivermetadataformatconfiguration">7. Fedora Driver: Metadata Format Configuration</a></h2>
+  <ul>
+    <li> <code><b>driver.fedora.md.formats</b></code>
+      <p>
+        Metadata formats to make available.
+This is a space-delimited list of all formats provided,
+identified by OAI metadata prefix.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.loc</b></code>
+      <p>
+        The location of the W3C schema for each format.
+Example property name:
+<code>driver.fedora.md.format.your_format.loc</code>.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.uri</b></code>
+      <p>
+        The namespace URI for each format.
+Example property name:
+<code>driver.fedora.md.format.your_format.uri</code>.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.dissType</b></code>
+      <p>
+        The Fedora dissemination type for each format.
+<p>A Fedora dissemination type is a URI starting with
+<code>info:fedora/*/</code> and ending with a datastream ID (such as "DC"),
+a Behavior Definition PID followed by "/methodName",
+or a Behavior Definition PID followed by "/methodName?name=value".</p>
+<p>The dissType is the key to mapping an OAI metadata format to
+a kind of Fedora dissemination.  Here are a few examples:</p>
+<pre>
+info:fedora/*/DC                  ; identifies the "DC" datastream
+info:fedora/*/demo:1/getDC        ; identifies the "getDC" method of the
+                                  ; demo:1 behavior definition
+info:fedora/*/demo:1/getMD?fmt=dc ; identifies the "getMD" method of the
+                                  ; demo:1 behavior definition, when
+                                  ; invoked with the required "fmt"
+                                  ; parameter
+</pre>
+When the OAI provider queries Fedora for records in your_format,
+it uses this special value to constrain the query to only those
+disseminations that are in the expected format.
+Thus, all records that the OAI provider considers to be in
+your_format must have this dissemination type.
+Example property name:
+<code>driver.fedora.md.format.your_format.dissType</code>.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>*.about.dissType</b></code>
+      <p>
+        The Fedora dissemination type for each format.
+This optional property identifies the OAI "about" dissemination
+type for your_format. If specified for your_format, then the OAI provider
+will attempt to find disseminations of this type for each object
+that has a matching your_format.dissType.  If such a dissemination
+is found, for that particular object, the information therein
+will be used as the "about" metadata for the record.
+Example property name:
+<code>driver.fedora.md.format.your_format.about.dissType</code>.
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="fedoradriversetmembershipconfiguration">8. Fedora Driver: Set Membership Configuration</a></h2>
+  <ul>
+    <li> <code><b>driver.fedora.setSpec</b></code>
+      <p>
+        The name of the RELS-EXT property that indicates the unique setSpec
+string of a Fedora object representing an OAI set.
+This property must exist on any Fedora object that should
+represent an OAI set.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.setSpec.name</b></code>
+      <p>
+        The name of the RELS-EXT property that indicates the name of
+a Fedora object representing an OAI set.
+In addition to setSpec, this property must also exist on any
+Fedora object that should represent an OAI set.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.setSpec.desc.dissType</b></code>
+      <p>
+        The dissemination type for the XML that describes a set.
+If a dissemination of this type is available for a Fedora object
+representing an OAI set, the content of the dissemination will
+be used in ListSets responses.
+
+      </p><p>&nbsp;</p>
+    </li>
+    <li> <code><b>driver.fedora.itemSetSpecPath</b></code>
+      <p>
+        The "triple pattern" identifying the path from objects to the
+setsSpecs (short names) of sets they are members of.
+<p>The path must contain $item and $setSpec, with the $item
+variable representing a Fedora object in the resource index,
+and the $setSpec representing the setSpec name.</p>
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+<div class="sec2">
+  <h2><a name="fedoradriveradvancedconfiguration">9. Fedora Driver: Advanced Configuration</a></h2>
+  <ul>
+    <li> <code><b>driver.fedora.deleted</b></code>
+      <p>
+        driver.fedora.deleted
+This is the name of the RELS-EXT predicate that indicates the state
+of all records within the object.
+<p>The normal behavior is that the Fedora-controlled "state" property
+of the dissemination (or datastream) itself indicates the oai deleted
+status.  This can be used to specify the status via any object
+property, if desired.</p>
+
+      </p><p>&nbsp;</p>
+    </li>
+  </ul>
+</div>
+</body>
+</html>
