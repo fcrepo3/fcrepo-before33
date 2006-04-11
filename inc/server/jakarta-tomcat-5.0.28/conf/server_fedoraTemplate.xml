@@ -6,14 +6,14 @@
     <Connector port="#1"
                enableLookups="true" redirectPort="#3" acceptCount="15"
                maxThreads="300" maxSpareThreads="75" minSpareThreads="6"
-               debug="0"
-               maxPostSize="0" />
+               debug="0" maxPostSize="0" URIEncoding="UTF-8"/>
 	<!-- comment out next connector (with port="#3") to disable https/ssl -->
     <Connector className="org.apache.coyote.tomcat5.CoyoteConnector"
                port="#3" minProcessors="5" maxProcessors="75"
                enableLookups="true"
                acceptCount="10" debug="4" scheme="https" secure="true"
-               useURIValidationHack="false" keystoreFile="conf/keystore">
+               useURIValidationHack="false" keystoreFile="conf/keystore"
+               URIEncoding="UTF-8">
       <Factory className="org.apache.coyote.tomcat5.CoyoteServerSocketFactory"
                clientAuth="false" protocol="TLS" />
     </Connector>
