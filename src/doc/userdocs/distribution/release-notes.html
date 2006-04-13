@@ -35,61 +35,56 @@
 </div>
 
 <div id="introduction">
-	<p>&nbsp;</p>
-	<p class="MsoNormal">The <a href="http://www.fedora.info">Fedora Project</a> 
+	<p>The <a href="http://www.fedora.info">Fedora Project</a> 
 	is proud to announce the release of version 2.1.1 of the Fedora open-source 
-	digital repository system.&nbsp; Fedora 2.1.1 is a maintenance release that provides a
-	<b><i>significant 
-	performance boost</i></b>&nbsp; for Fedora 2.1.&nbsp;&nbsp; It also resolves 
-	a number of reported bugs.&nbsp;
+	digital repository system. Fedora 2.1.1 is a maintenance release that provides a
+	<b><i>significant performance boost</i></b> for Fedora 2.1. It also resolves 
+	a number of reported bugs.</p>
 </div>
 
 <div id="relnotes">
 	<ol>
 		<!--<li><a id="features" name="features">New Features</a></li>-->
-		<li><a name="fedora21">Fedora 2.1 Release</a></li>
-		<p><br>
-		If you are not already familiar with Fedora 2.1, please consult the 
-		<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">Fedora 2.1 Release Notes</a> before installing the 
-		new Fedora 
-		2.1.1 maintenance release.&nbsp;</p>
+		
+		<li><a name="fedora21">Fedora 2.1 Release</a>
+		<p>If you are not already familiar with Fedora 2.1, please consult the 
+		<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">Fedora 2.1 Release Notes</a> 
+		before installing the new Fedora 2.1.1 maintenance release.</p>
 		<p>Since Fedora 2.1.1 is a maintenance release, it contains all of the 
-		same features as Fedora 2.1.&nbsp; Please refer to the
+		same features as Fedora 2.1. Please refer to the
 		<a href="http://www.fedora.info/download/2.1/userdocs/">Fedora 2.1 documentation</a> 
-		for a complete description of Fedora 2.1 and 2.1.1 functionality.&nbsp;&nbsp;Fedora 
+		for a complete description of Fedora 2.1 and 2.1.1 functionality.Fedora 
 		2.1 contains all of the standard Fedora features built around web 
 		services, XML, and RDF, as well as many new features such as the new 
 		Fedora security architecture, XACML-based policy enforcement, the Fedora 
 		Service Framework, the new OAI Provider service, the Repository 
-		Rebuilder, and many other new features and enhancements.&nbsp; Now, Fedora 
+		Rebuilder, and many other new features and enhancements. Now, Fedora 
 		provides an even more powerful, flexible, and secure foundation for a 
 		wide variety information management applications, including 
 		institutional repositories, digital libraries, e-research, 
 		e-scholarship, records management, digital archives, and educational 
-		software. 
-		</p>
-		<p>&nbsp;</p>
-		<li><a name="tune">Performance Tuning</a></li>		
-		<p><br>
-		With the addition of the Fedora 2.1.1 maintenance release, a Fedora 
+		software.</p>
+		</li>
+		
+		<li><a name="tune">Performance Tuning</a>	
+		<p>With the addition of the Fedora 2.1.1 maintenance release, a Fedora 
 		repository will now <i><b>perform each management operation within 
 		milliseconds</b></i> per API-M SOAP request.</p>
 		<p>In response to user feedback, a complete analysis of 
 		Fedora API-M performance was conducted which revealed bottlenecks on 
 		several operations, most notably modifyDatastreamByValue, 
-		purgeDisseminator, and purgeObject.&nbsp;&nbsp;&nbsp; The Fedora server 
-		has been significantly tuned so that these bottlenecks are eliminated.&nbsp; 
+		purgeDisseminator, and purgeObject. The Fedora server 
+		has been significantly tuned so that these bottlenecks are eliminated. 
 		Please consult the
 		<a href="../reports/apim-performance/index.html">
 		final report</a> which contains before/after performance 
 		measurements for every API-M operation.</p>
-		<p><img border="0" src="images/newstar.jpg" width="48" height="43">&nbsp;
-		<a href="../reports/apim-performance/index.html">
-		Fedora API-M Performance Report</a></p>
-		<p>&nbsp;</p>
+		<p><img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
+		<a href="../reports/apim-performance/index.html">Fedora API-M Performance Report</a></p>
+		</li>
+
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
-		<p><br>
-		Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
+		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
 		for full descriptions of the resolved bugs.</p>
 		<ul>
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=145">Bug #145</a>: 
@@ -118,77 +113,71 @@
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158</a>: 
 				Performance issue: purgeObject and purgeDisseminator take unreasonably long in large repositories</li>
 			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=159">
-			Bug #159</a>: Error in sample policy (deny-objects-by-pids-to-tomcat-role.xml)<br>
-&nbsp;</li>
-		</ul></li>
-		<li><a id="issues" name="issues">Known Issues</a><br>
-&nbsp;<ul>
+			Bug #159</a>: Error in sample policy (deny-objects-by-pids-to-tomcat-role.xml)</li>
+		</ul>
+		</li>
+		
+		<li><a id="issues" name="issues">Known Issues</a>
+		<ul>
 			<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
 				codes returned after a period of normal server use. This problem 
 				is difficult to replicate, and the cause is unknown. A 
 				workaround to this problem is to instruct Tomcat to use a 
-				MemoryRealm instead of a JAASRealm. See
-			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">Bug 144</a> 
+				MemoryRealm instead of a JAASRealm. See 
+				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">Bug 144</a> 
 				for detailed instructions on applying this workaround.</li>
 			<li>Ingest validation error when namespace for in-line XML 
-				datastreams is in root element. Reported as
-			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
+				datastreams is in root element. Reported as 
+				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
 			<li>fedora-reload-policies.sh gives usage error if run with no 
-				arguments. Reported as
-			<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.<br>&nbsp;</li>
-		</ul></li>
-		<li><a id="install" name="features">Installation</a>
-		<p><br>
-		For instructions on installing and upgrading Fedora, please consult the 
-		<a href="installation.html">Installation Guide</a>  and the 
-		<a href="migration.html">Upgrade and Migrate Guide</a>.<br>
-		<br>
-		<i><b>NOTE</b></i>:&nbsp; In Fedora 2.1.1, the repository persistent 
-		storage layer (i.e., LowLevelStorage) has been refactored into a 
-		configurable module.&nbsp;&nbsp; This is to make it consistent with the 
-		overall Fedora repository design where each piece of functionality 
-		exists as a module in the Fedora server.&nbsp;&nbsp; Modules can easily 
-		be replaced with alternative implementations of the core functionality.&nbsp;&nbsp; 
-		For example, in the next release of Fedora will will ship two different 
-		LowLevelStore implementations:&nbsp; the existing file system 
-		implementation, and a Storage Resource Broker (SRB) implementation.&nbsp; If you are upgrading from a previous version of Fedora, you should 
-	note that&nbsp; all storage-related server configuration parameters now 
-		exist in the LowLevelStorage module section of the Fedora Configuration 
-		file (fedora.fcfg).&nbsp;&nbsp; Previously, these parameters were 
-		stand-alone parameters in the Fedora Configuration file.&nbsp; These 
-		parameters are:&nbsp; <tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
-	<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
-	<tt>backslash_is_escape</tt>. </p>
-		<p>
-		<i><b>NOTE</b></i>:&nbsp; In Fedora 2.1.1, the Resource Index is OFF by 
-		default.&nbsp; To turn it on, modify the Fedora Configuration file (fedora.fcfg) 
-		so that the Resource Index module is configured to level 1 or 2.&nbsp; 
-		(Default is level 0). </p>
-		<p>&nbsp;</p>
-		<p>&nbsp;</p></li>
-		<li><a name="history">Historic Release Notes</a></li>
+				arguments. Reported as 
+				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.</li>
+		</ul>
+		</li>
 		
+		<li><a id="install" name="features">Installation</a>
+		<p>For instructions on installing and upgrading Fedora, please consult the 
+		<a href="installation.html">Installation Guide</a>  and the 
+		<a href="migration.html">Upgrade and Migrate Guide</a>.</p>
+		<p><b><i>NOTE</i></b>: In Fedora 2.1.1, the repository persistent 
+		storage layer (i.e., LowLevelStorage) has been refactored into a 
+		configurable module. This is to make it consistent with the 
+		overall Fedora repository design where each piece of functionality 
+		exists as a module in the Fedora server. Modules can easily 
+		be replaced with alternative implementations of the core functionality. 
+		For example, in the next release of Fedora will will ship two different 
+		LowLevelStore implementations: the existing file system implementation, 
+		and a Storage Resource Broker (SRB) implementation. If you are upgrading 
+		from a previous version of Fedora, you should note that all 
+		storage-related server configuration parameters now exist in the 
+		LowLevelStorage module section of the Fedora Configuration file 
+		(fedora.fcfg). Previously, these parameters were stand-alone parameters 
+		in the Fedora Configuration file. These parameters are: 
+		<tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
+		<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, 
+		and <tt>backslash_is_escape</tt>.</p>
+		<p><b><i>NOTE</i></b>: In Fedora 2.1.1, the Resource Index is OFF by 
+		default. To turn it on, modify the Fedora Configuration file (fedora.fcfg) 
+		so that the Resource Index module is configured to level 1 or 2. 
+		(Default is level 0).</p>
+		</li>
+		
+		<li><a name="history">Historic Release Notes</a>
+		<p>Release notes for previous versions of Fedora:
+		[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
+		[<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 
+		[<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>], 
+		[<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>], 
+		[<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>], 
+		[<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>], 
+		[<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>], 
+		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>], 
+		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>], 
+		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>], 
+		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>]</p>
+		</li>
 	</ol>
 
-
-  
- 
-</div>
-  
-<div>
-&nbsp;&nbsp;&nbsp;&nbsp; Release notes for previous versions of Fedora:  
-	[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
-	[<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 
-	[<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>], 
-[<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>], 
-	[<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>], 
-	[<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>], 
-	[<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>], 
-	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>], 
-	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>], 
-	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>], 
-	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>]
-	
 </div>
 
 <div id="footer">
