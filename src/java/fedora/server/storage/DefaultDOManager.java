@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,6 +19,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.xml.sax.SAXException;
 
 import fedora.common.Constants;
 import fedora.server.Context;
@@ -36,6 +39,7 @@ import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
+import fedora.server.errors.StreamIOException;
 import fedora.server.management.Management;
 import fedora.server.management.PIDGenerator;
 import fedora.server.resourceIndex.ResourceIndex;
@@ -928,6 +932,18 @@ public class DefaultDOManager
                             mimeTypedStream=new MIMETypedStream(null,
                             		m_permanentStore.retrieveDatastream(
                                             dmc.DSLocation.substring(7)), null);
+						} else if (dmc.DSLocation.startsWith("temp://"))  {
+							File file = new File(dmc.DSLocation.substring(7));
+				            logFinest("COMMIT: Retrieving base64 decoded datastream spooled from archive.");
+							try {
+								InputStream str = new FileInputStream(file);
+	                            mimeTypedStream = new MIMETypedStream(dmc.DSMIME, str, null);
+							}
+							catch (FileNotFoundException fnfe)
+							{
+			                    logWarning("COMMIT: Unable to read temp file created for datastream from archive.");
+								throw new StreamIOException("Error reading from temporary file created for binary content");				 
+							}
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString(), context);
@@ -947,8 +963,14 @@ public class DefaultDOManager
                             	m_permanentStore.replaceDatastream(id, mimeTypedStream.getStream());
                             }
                         }
+						if (dmc.DSLocation.startsWith("temp://"))  
+						{
+							// delete the temp file created to store the binary content from archive
+							File file = new File(dmc.DSLocation.substring(7));
+							file.delete();
+						}
                         // Reset dsLocation in object to new internal location.
-                        dmc.DSLocation = id;
+						dmc.DSLocation = id;
                         logInfo("COMMIT: Replacing ManagedContent datastream with "
                             + "internal id: " + id);
                         //bais = null;

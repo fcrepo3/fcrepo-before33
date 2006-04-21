@@ -20,6 +20,7 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.utilities.StringUtility;
 
 /**
  *
@@ -381,7 +382,7 @@ public class METSLikeDOSerializer
     }
 
     private void appendFileSecs(DigitalObject obj, StringBuffer buf)
-            throws ObjectIntegrityException {
+            throws ObjectIntegrityException, StreamIOException {
         Iterator iter=obj.datastreamIdIterator();
         boolean didFileSec=false;
         while (iter.hasNext()) {
@@ -419,13 +420,26 @@ public class METSLikeDOSerializer
                             + sizeAttr
                             + " OWNERID=\"" + dsc.DSControlGrp 
                             + "\">\n");
-                    buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
-                            + " LOCTYPE=\"URL\" " 
-                            + m_XLinkPrefix + ":href=\""
-							+ StreamUtility.enc(
-								DOTranslationUtility.normalizeDSLocationURLs(
-									obj.getPid(), dsc, m_transContext).DSLocation)
-					        + "\"/>\n");
+				    if (dsc.DSControlGrp.equalsIgnoreCase("M")) 
+				    {
+				    	if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE)
+				    	{
+							buf.append("          <" + METS_PREFIX + ":FContent> \n"
+									+ StringUtility.splitAndIndent(
+											StreamUtility.encodeBase64(dsc.getContentStream()), 14, 80)
+									+  "          </" + METS_PREFIX + ":FContent> \n");							
+				    	}
+				    	else
+				    	{
+				    		buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
+		                            + " LOCTYPE=\"URL\" " 
+		                            + m_XLinkPrefix + ":href=\""
+									+ StreamUtility.enc(
+										DOTranslationUtility.normalizeDSLocationURLs(
+											obj.getPid(), dsc, m_transContext).DSLocation)
+							        + "\"/>\n");
+				    	}
+				    }
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
                 buf.append("      </" + METS_PREFIX + ":fileGrp>\n");

@@ -1,5 +1,6 @@
 package fedora.server.utilities;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -119,5 +120,19 @@ public abstract class StreamUtility {
     public static String encodeBase64(byte[] data) {
         return Base64.encode(data);
     }
+    
+    public static String encodeBase64(InputStream is)
+    {
+    	ByteArrayOutputStream os = new ByteArrayOutputStream();
+   		try {
+   			pipeStream(is, os, 1024);
+   		}
+   		catch (IOException ioe)
+   		{
+            System.err.println("Error: Could not read stream.");   		
+   		}
+        return Base64.encode(os.toByteArray());
+    }
+    
 
 }

@@ -18,7 +18,7 @@ public abstract class ValidationUtility {
         try {
             URL goodURL = new URL(url);
         } catch (MalformedURLException murle) {
-            if (url.startsWith("copy://") || url.startsWith("uploaded://")) return;
+            if (url.startsWith("copy://") || url.startsWith("uploaded://") || url.startsWith("temp://")) return;
 			if (fedora.server.Debug.DEBUG) {
 				System.out.println("ValidationUtility.validateURL: malformed URL " + url);
 			}

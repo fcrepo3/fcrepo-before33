@@ -119,6 +119,31 @@ public abstract class DOTranslationUtility {
 	 */
 	public static final int SERIALIZE_STORAGE_INTERNAL=3;
 	
+	/**
+	 *
+	 * 	SERIALIZE_EXPORT_ARCHIVE:  Serialize digital object to XML
+	 *  in a manner appropriate for creating a stand alone archive of objects 
+	 *  from a repository that will NOT be available after objects have been 
+	 *  exported. 
+	 * 
+	 *  For External (E) and Redirected (R)datastreams, any URLs that are 
+	 *  relative to the local repository will be expressed with the Fedora 
+	 *  local URL syntax (which consists of the string "local.fedora.server" 
+	 *  standing in place of the actual "hostname:port").
+	 *  This enables a new repository to ingest the serialization and maintain
+	 *  the relative nature of the URLs (they will become relative to the *new*
+	 *  repository.    Also, for Managed Content (M) datastreams, the internal 
+	 *  identifiers in dsLocation are converted to default dissemination URLs, 
+	 *  and the contents of the URL's are included inline via base-64 encoding.
+	 *  This enables the new repository recreate the content bytestream to be 
+	 *  stored in the new repository, when the original repository is no longer
+	 *  available.
+	 *  Also, within selected inline XML datastreams (i.e., WSDL and
+	 *  SERVICE_PROFILE) any URLs that are relative to the local repository
+	 *  will also be expressed with the Fedora local URL syntax. 
+	 */
+	public static final int SERIALIZE_EXPORT_ARCHIVE=4;
+	
 	// Fedora URL LOCALIZATION Pattern:
 	// Pattern that is used as the internal replacement syntax for URLs that
 	// refer back to the local repository.  This pattern virtualized the
@@ -368,6 +393,7 @@ public abstract class DOTranslationUtility {
 	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC
 	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE
 	 *             3=DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL
+	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE
 	 *
 	 * @return
 	 */
@@ -429,6 +455,26 @@ public abstract class DOTranslationUtility {
 				// MAKE INTERNAL IDENTIFIERS (PID+DSID+DSVersionID)
 				ds.DSLocation = PID + "+" + ds.DatastreamID + "+" + ds.DSVersionID;
 			}
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE) {
+			if (ds.DSControlGrp.equals("E") || ds.DSControlGrp.equals("R")){
+				// MAKE FEDORA LOCAL REPO URLs
+				ds.DSLocation=makeFedoraLocalURLs(ds.DSLocation);
+			} else if (ds.DSControlGrp.equals("M")) {
+				// MAKE DISSEMINATION URLs
+				if (ds.DSCreateDT==null) {
+					ds.DSLocation = s_localDissemUrlStart
+							+ PID
+							+ "/"
+							+ ds.DatastreamID;
+				} else {
+					ds.DSLocation = s_localDissemUrlStart
+						+ PID
+						+ "/"
+						+ ds.DatastreamID
+						+ "/"
+						+ DateUtility.convertDateToString(ds.DSCreateDT);
+				}
+			}
 		}
 		
 		// In any event, look for the deprecated getItem method of the default disseminator
@@ -459,9 +505,11 @@ public abstract class DOTranslationUtility {
 	 *             1=DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC
 	 *             2=DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE
 	 *             3=DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL
+	 *             4=DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE
 	 * @return   the inline XML contents with appropriate conversions.
 	 */
-	public static String normalizeInlineXML(String xml, int transContext) {
+	public static String normalizeInlineXML(String xml, int transContext) 
+	{
 		if (transContext==DOTranslationUtility.DESERIALIZE_INSTANCE) {
 			// MAKE ABSOLUTE REPO URLs
 			return makeAbsoluteURLs(xml);
@@ -474,6 +522,9 @@ public abstract class DOTranslationUtility {
 		} else if (transContext==DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL) {
 			// MAKE FEDORA LOCAL REPO URLs
 			return makeFedoraLocalURLs(xml);
+		} else if (transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE) {
+		    // MAKE FEDORA LOCAL REPO URLs
+		    return makeFedoraLocalURLs(xml);
 		}
 		return xml;
 	}
@@ -540,7 +591,8 @@ public abstract class DOTranslationUtility {
 		return ds;
 	}
 
-	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException {
+	public static Disseminator setDisseminatorDefaults(Disseminator diss) throws ObjectIntegrityException 
+	{
 
 		// Until future when we implement selective versioning,
 		// set default to true.

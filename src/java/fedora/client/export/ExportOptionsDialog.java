@@ -181,7 +181,7 @@ public class ExportOptionsDialog
 				}
 			}
 		);
-		archiveButton.setEnabled(false);
+		//archiveButton.setEnabled(false);
 		contextPanel.add(archiveButton, gbc);		
 		
 		

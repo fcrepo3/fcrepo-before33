@@ -21,6 +21,7 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.DSBinding;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
+import fedora.server.utilities.StringUtility;
 
 /**
  *
@@ -241,13 +242,23 @@ public class FOXMLDOSerializer
 							+ "\"/>\n");	
 				// if M insert ds content location as an internal identifier				
 				} else if (vds.DSControlGrp.equalsIgnoreCase("M")) {
-					buf.append("            <" + FOXML_PREFIX 
+					if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE)
+				    {
+						buf.append("            <" + FOXML_PREFIX + ":binaryContent> \n"
+								+ StringUtility.splitAndIndent(
+										StreamUtility.encodeBase64(vds.getContentStream()), 14, 80)
+								+  "            </" + FOXML_PREFIX + ":binaryContent> \n");							
+				    }
+					else 
+				    {
+						buf.append("            <" + FOXML_PREFIX 
 						+ ":contentLocation TYPE=\"" + "INTERNAL_ID\""
 						+ " REF=\"" 
 						+ StreamUtility.enc(
 							DOTranslationUtility.normalizeDSLocationURLs(
 								obj.getPid(), vds, m_transContext).DSLocation) 
 						+ "\"/>\n");	
+				    }
 				// if X insert inline XML
 				} else if (vds.DSControlGrp.equalsIgnoreCase("X")) {
 					appendInlineXML(obj.getFedoraObjectType(), 

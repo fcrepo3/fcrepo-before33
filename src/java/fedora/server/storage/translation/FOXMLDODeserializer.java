@@ -18,6 +18,9 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -34,6 +37,8 @@ import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
+import org.apache.axis.encoding.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -82,6 +87,7 @@ public class FOXMLDODeserializer
     private boolean m_rootElementFound;
 	private String m_objPropertyName;
 	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
+	private File m_binaryContentTempFile;
 	private boolean m_inXMLMetadata;	
 	// Indicator for FOXML within FOXML (inline XML datastream contains FOXML)
 	private int m_xmlDataLevel;
@@ -395,7 +401,19 @@ public class FOXMLDODeserializer
                 }
             } else if (localName.equals("binaryContent")) {
 				// FIXME: implement support for this in Fedora 1.2
-				m_readingBinaryContent=true;
+            	if (m_dsControlGrp.equalsIgnoreCase("M")) 
+                {
+            		m_readingBinaryContent=true;
+					m_binaryContentTempFile = null;
+					try { 
+						m_binaryContentTempFile = File.createTempFile("binary-datastream", null);
+					}
+					catch (IOException ioe)
+					{
+						throw new SAXException(new StreamIOException("Unable to create temporary file for binary content"));
+					}
+                }
+				
 			//==================
 			// DISSEMINATORS...
 			//==================
@@ -528,7 +546,7 @@ public class FOXMLDODeserializer
         }
     }
 
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
 		//==================
 		// INLINE XML...
 		//==================
@@ -606,6 +624,29 @@ public class FOXMLDODeserializer
         } else if (uri.equals(F) && localName.equals("binaryContent")) {
 			// FIXME: Implement functionality for inline base64 datastreams
 			// in a future version (post 2.0)
+        	if (m_binaryContentTempFile != null)
+            {
+				try {
+	            	FileOutputStream os = new FileOutputStream(m_binaryContentTempFile);
+	            	// remove all spaces and newlines, this might not be necessary.
+	            	String elementStr = m_elementContent.toString().replaceAll("\\s", "");
+	        		byte elementBytes[] =  StreamUtility.decodeBase64(elementStr);
+	        		os.write(elementBytes);
+	        		os.close();
+	            	m_dsLocationType="INTERNAL_ID";
+					m_dsLocation="temp://"+m_binaryContentTempFile.getAbsolutePath();
+					instantiateDatastream(new DatastreamManagedContent());
+				}
+				catch (FileNotFoundException fnfe)
+				{
+					throw new SAXException(new StreamIOException("Unable to open temporary file created for binary content"));
+				}
+				catch (IOException fnfe)
+				{
+					throw new SAXException(new StreamIOException("Error writing to temporary file created for binary content"));				 
+				}
+            }
+        	m_binaryContentTempFile = null;
 			m_readingBinaryContent=false;
 		} else if (uri.equals(F) && localName.equals("datastreamVersion")) {
 			// reinitialize datastream version-level attributes...

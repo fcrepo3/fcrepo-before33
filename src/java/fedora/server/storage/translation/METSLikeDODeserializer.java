@@ -17,6 +17,9 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -114,7 +117,10 @@ public class METSLikeDODeserializer
     private StringBuffer m_dsXMLBuffer;
 
     // are we reading binary in an FContent element? (base64-encoded)
-    private boolean m_readingContent;
+	private boolean m_readingContent; // indicates reading base64-encoded content
+	private boolean m_readingBinaryContent; // indicates reading base64-encoded content
+	private File m_binaryContentTempFile;
+	private StringBuffer m_elementContent; // single element
 
     /** While parsing, are we inside XML metadata? */
     private boolean m_inXMLMetadata;
@@ -447,6 +453,20 @@ public class METSLikeDODeserializer
             } else if (localName.equals("FContent")) {
                 // signal that we want to suck it in
                 m_readingContent=true;
+				m_elementContent = new StringBuffer();
+            	if (m_dsControlGrp.equalsIgnoreCase("M")) 
+                {
+            		m_readingBinaryContent=true;
+					m_binaryContentTempFile = null;
+					try { 
+						m_binaryContentTempFile = File.createTempFile("binary-datastream", null);
+					}
+					catch (IOException ioe)
+					{
+						throw new SAXException(new StreamIOException("Unable to create temporary file for binary content"));
+					}
+                }
+
             } else if (localName.equals("structMap")) {
                 // this is a component of a disseminator.  here we assume the rest
                 // of the disseminator's information will be seen later, so we
@@ -620,13 +640,49 @@ public class METSLikeDODeserializer
                 StreamUtility.enc(ch, start, length, m_dsXMLBuffer);
             }
         } else if (m_readingContent) {
-            // append it to something...
+    		// read normal element content into a string buffer
+    		if (m_elementContent !=null)
+    		{
+    			m_elementContent.append(ch, start, length);
+    		}
         }
     }
 
-    public void endElement(String uri, String localName, String qName) {
+    public void endElement(String uri, String localName, String qName) throws SAXException {
         m_readingContent=false;
-        if (m_inXMLMetadata) {
+        if (m_readingBinaryContent)
+        {
+        	if (uri.equals(M) && localName.equals("FContent"))
+        	{
+            	if (m_binaryContentTempFile != null)
+                {
+    				try {
+    	            	FileOutputStream os = new FileOutputStream(m_binaryContentTempFile);
+    	            	// remove all spaces and newlines, this might not be necessary.
+    	            	String elementStr = m_elementContent.toString().replaceAll("\\s", "");
+    	        		byte elementBytes[] =  StreamUtility.decodeBase64(elementStr);
+    	        		os.write(elementBytes);
+    	        		os.close();
+    	            	m_dsLocationType="INTERNAL_ID";
+    					m_dsLocation="temp://"+m_binaryContentTempFile.getAbsolutePath();
+    					instantiateDatastream(new DatastreamManagedContent());
+    				}
+    				catch (FileNotFoundException fnfe)
+    				{
+    					throw new SAXException(new StreamIOException("Unable to open temporary file created for binary content"));
+    				}
+    				catch (IOException fnfe)
+    				{
+    					throw new SAXException(new StreamIOException("Error writing to temporary file created for binary content"));				 
+    				}
+                }
+        	}
+        	m_binaryContentTempFile = null;
+			m_readingBinaryContent=false;
+			m_elementContent = null;
+        }
+        if (m_inXMLMetadata) 
+        {
             if (uri.equals(M) && localName.equals("xmlData")
                     && m_xmlDataLevel==0) {
                 // finished all xml metadata for this datastream

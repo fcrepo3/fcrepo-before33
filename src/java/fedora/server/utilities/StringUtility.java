@@ -57,6 +57,48 @@ public class StringUtility
      }
     return sb.toString();
   }
+ 
+  /**
+   * <p> Method that attempts to break a string up into lines no longer
+   * than the specified line length. The string is assumed to a large chunk 
+   * of undifferentiated text such as base 64 encoded binary data</p>
+   *
+   *
+   * @param in The input string to be split into lines.
+   * @param indent The number of spaces to insert at the start of each line.
+   * @param lineLength The maximum length of each line (not counting the indent spaces).
+   *
+   * @return A string split into multiple indented lines whose length is less than the
+   *         specified length + indent amount. 
+   */
+  public static String splitAndIndent(String str, int indent, int numChars)
+  {
+	StringBuffer sb = new StringBuffer();
+	StringBuffer ib = new StringBuffer();
+    for (int i = 0; i < indent; i++)
+    {
+  	  ib.append(" ");
+    }
+    String indentStr = ib.toString();
+    int offset = 0;
+    int totalLength = str.length();
+    while (totalLength > numChars) 
+    {
+      String s = str.substring(offset, offset+numChars);
+      sb.append(indentStr);
+  	  sb.append(s);
+  	  sb.append("\n");
+  	  offset += numChars;
+  	  totalLength -= numChars;
+    }
+    String s = str.substring(offset);
+    sb.append(indentStr);
+	sb.append(s);
+	sb.append("\n");
+    
+    return sb.toString();
+
+  }
 
   public static void main(String[] args)
   {
