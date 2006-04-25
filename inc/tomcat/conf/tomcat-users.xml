@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='utf-8'?>
+<tomcat-users>
+  <role rolename="fedoraRole=administrator"/>
+  <user username="fedoraAdmin" password="fedoraAdmin" roles="fedoraRole=administrator"/>
+  <user name="fedoraIntCallUser" password="changeme" roles="fedoraRole=fedoraInternalCall-1"/>
+  <user name="surrogate64" password="surrogate64" roles="webfrontend"/>
+  <user username="tomcat" password="tomcat" roles="tomcat"/>
+  <user username="role1" password="tomcat" roles="role1"/>
+  <user username="both" password="tomcat" roles="tomcat,role1"/>
+</tomcat-users>

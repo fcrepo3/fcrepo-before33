@@ -111,7 +111,7 @@
 	<!--          datastream. This info is currently maintained in the      -->
 	<!--          object, but not acted on.                                 -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum thumbnail jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-thumb.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 2nd datastream to demo:32 object. The new datastream will be -->
@@ -119,7 +119,7 @@
 	<!-- no dsID is specified and this is the second datastream for this    -->
 	<!-- object.                                                            -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum medium jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-medium.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 3rd datastream to demo:32 object. The new datastream will be -->
@@ -127,7 +127,7 @@
 	<!-- no dsID is specified and this is the third datastream for this     -->
 	<!-- object.                                                            -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum high jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 4th datastream to demo:32 object. The new datastream will be -->
@@ -135,7 +135,7 @@
 	<!-- since no dsID is specified and this is the fourth datastream for   -->
 	<!-- this object.                                                       -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsLabel="Thorny's Coliseum veryhigh jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-veryhigh.jpg" dsControlGroupType="M" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 5th datastream to demo:32 object. The new datastream will be -->
@@ -143,7 +143,7 @@
 	<!-- will also have values assigned for alternate IDs, formatURI, and   -->
 	<!-- is declared not to be versionable.                                 -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsID="SCREEN" altIDs="AlternateID1 AlternateID2" formatURI="info:fedora/demo/content/JPEG#" versionable="false" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsID="SCREEN" altIDs="AlternateID1 AlternateID2" formatURI="info:fedora/demo/content/JPEG#" versionable="false" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="E" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Add a 6th datastream to demo:32 object. The new datastream will be -->
@@ -193,7 +193,7 @@
 	<!-- duplicate of the screen size image that will be deleted later in   -->
 	<!-- this set of directives. It will have a dsID of SCREENDUP.          -->
 	<!-- ****************************************************************** -->
-	<fbm:addDatastream pid="demo:32" dsID="SCREENDUP" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A" logMessage="BatchModify - addDatastream"/>
+	<fbm:addDatastream pid="demo:32" dsID="SCREENDUP" dsLabel="Thorny's Coliseum screen size jpg image" dsMIME="image/jpeg" dsLocation="http://localhost:8080/fedora/demo/simple-image-demo/coliseum-high.jpg" dsControlGroupType="R" dsState="A" logMessage="BatchModify - addDatastream"/>
 	
 	<!-- ****************************************************************** -->
 	<!-- Modify datastream DS1 of demo:5 object by changing its label.      -->

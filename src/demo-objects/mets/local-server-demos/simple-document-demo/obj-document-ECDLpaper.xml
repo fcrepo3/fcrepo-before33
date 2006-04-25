@@ -51,17 +51,17 @@
 		<METS:fileGrp ID="DATASTREAMS">
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<METS:file ID="DS1.0" MIMETYPE="application/msword" OWNERID="M" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.doc" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in MSWord)"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/simple-document-demo/ecdl2002pay.doc" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in MSWord)"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="A">
 				<METS:file ID="DS2.0" MIMETYPE="application/pdf" OWNERID="M" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.pdf" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PDF)"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/simple-document-demo/ecdl2002pay.pdf" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PDF)"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3" STATUS="A">
 				<METS:file ID="DS3.0" MIMETYPE="application/ps" OWNERID="M" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/simple-document-demo/ecdl2002pay.ps" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PS)"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/simple-document-demo/ecdl2002pay.ps" xlink:title="The Mellon Fedora Project: Digital Library Architecture Meets XML and Web Services (Formatted in PS)"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

@@ -30,12 +30,12 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="MediumSize.jpg"> 
     <foxml:datastreamVersion ID="MediumSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Medium-size image">
-      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyPens-MediumSize.jpg" TYPE="URL"/>
+      <foxml:contentLocation REF="http://local.fedora.server/fedora/demo/image-collection-demo/SmileyPens-MediumSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="FullSize.jpg"> 
     <foxml:datastreamVersion ID="FullSize.jpg.0" MIMETYPE="image/jpeg" LABEL="Full-size image">
-      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyPens-FullSize.jpg" TYPE="URL"/>
+      <foxml:contentLocation REF="http://local.fedora.server/fedora/demo/image-collection-demo/SmileyPens-FullSize.jpg" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:disseminator BDEF_CONTRACT_PID="demo:DualResImage" ID="DualResImage">

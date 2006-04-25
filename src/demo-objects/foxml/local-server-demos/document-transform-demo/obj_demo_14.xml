@@ -28,17 +28,17 @@
 	</foxml:datastream>
 	<foxml:datastream ID="DS1" CONTROL_GROUP="M" STATE="A">
 		<foxml:datastreamVersion ID="DS1.0" MIMETYPE="text/xml" LABEL="XML source for Fedora Access Web Service Definition (WSDL)">
-			<foxml:contentLocation REF="http://localhost:8080/demo/document-transform-demo/Fedora-API-A.wsdl" TYPE="URL"/>
+			<foxml:contentLocation REF="http://localhost:8080/fedora/demo/document-transform-demo/Fedora-API-A.wsdl" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="DS2" CONTROL_GROUP="M" STATE="A">
 		<foxml:datastreamVersion ID="DS2.0" MIMETYPE="text/xml" LABEL="XSL Stylesheet to transform WSDL to HTML">
-			<foxml:contentLocation REF="http://localhost:8080/demo/document-transform-demo/wsdlToAPIDoc.xsl" TYPE="URL"/>
+			<foxml:contentLocation REF="http://localhost:8080/fedora/demo/document-transform-demo/wsdlToAPIDoc.xsl" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream ID="DS3" CONTROL_GROUP="M" STATE="A">
 		<foxml:datastreamVersion ID="DS3.0" MIMETYPE="text/xml" LABEL="Alt. XSL Stylesheet to transform WSDL to HTML">
-			<foxml:contentLocation REF="http://localhost:8080/demo/document-transform-demo/wsdlToSummaryTbl.xsl" TYPE="URL"/>
+			<foxml:contentLocation REF="http://localhost:8080/fedora/demo/document-transform-demo/wsdlToSummaryTbl.xsl" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator ID="DISS1" BDEF_CONTRACT_PID="demo:12" STATE="A">

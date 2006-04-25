@@ -38,20 +38,20 @@
 			<METS:fileGrp ID="DS1" STATUS="A">
 				<!--exhibit xml file -->
 				<METS:file ID="DS1.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/Fedora-API-A.wsdl" xlink:title="XML source for Fedora Access Web Service Definition (WSDL)"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/document-transform-demo/Fedora-API-A.wsdl" xlink:title="XML source for Fedora Access Web Service Definition (WSDL)"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS2" STATUS="A">
 				<!--elly's exhibit stylesheet file -->
 				<METS:file ID="DS2.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/wsdlToAPIDoc.xsl" xlink:title="XSL Stylesheet to transform WSDL to HTML"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/document-transform-demo/wsdlToAPIDoc.xsl" xlink:title="XSL Stylesheet to transform WSDL to HTML"/>
 				</METS:file>
 			</METS:fileGrp>
 			<METS:fileGrp ID="DS3" STATUS="A">
 				<!--ted's exhibit stylesheet file -->
 				<METS:file ID="DS3.0" MIMETYPE="text/xml" OWNERID="M" STATUS="A">
 					<!--TED, insert your own URL below.  I just repeated the URL for Elly's stylesheet to fill things in -->
-					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/demo/document-transform-demo/wsdlToSummaryTbl.xsl" xlink:title="Alt. XSL Stylesheet to transform WSDL to HTML"/>
+					<METS:FLocat LOCTYPE="URL" xlink:href="http://localhost:8080/fedora/demo/document-transform-demo/wsdlToSummaryTbl.xsl" xlink:title="Alt. XSL Stylesheet to transform WSDL to HTML"/>
 				</METS:file>
 			</METS:fileGrp>
 		</METS:fileGrp>

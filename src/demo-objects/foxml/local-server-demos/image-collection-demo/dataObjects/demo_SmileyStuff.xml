@@ -8,7 +8,7 @@
   </foxml:objectProperties>
   <foxml:datastream CONTROL_GROUP="E" ID="MemberQuery.txt"> 
     <foxml:datastreamVersion ID="MemberQuery.txt.0" MIMETYPE="text/plain" LABEL="RDF Query to list members">
-      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyStuff-MemberQuery.txt" TYPE="URL"/>
+      <foxml:contentLocation REF="http://local.fedora.server/fedora/demo/image-collection-demo/SmileyStuff-MemberQuery.txt" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="X" ID="DC"> 
@@ -24,7 +24,7 @@
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="ViewStylesheet.xsl">
     <foxml:datastreamVersion ID="ViewStylesheet.xsl.0" MIMETYPE="text/xml" LABEL="Stylesheet to view list dissemination as html">
-      <foxml:contentLocation REF="http://local.fedora.server/demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
+      <foxml:contentLocation REF="http://local.fedora.server/fedora/demo/image-collection-demo/SmileyStuff-ViewStylesheet.xsl" TYPE="URL"/>
     </foxml:datastreamVersion>
   </foxml:datastream>
   <foxml:datastream CONTROL_GROUP="E" ID="MemberList.xml">
