@@ -1,0 +1,9 @@
+<Context path="/fedora" 
+         docBase="fedora.war" 
+         privileged="true">
+    <Realm className="org.apache.catalina.realm.JAASRealm"
+           appName="fedora"
+           debug="0"
+           userClassNames="org.apache.catalina.realm.IdPasswordPrincipal"
+           roleClassNames="org.apache.catalina.realm.RolePrincipal" />
+</Context>
