@@ -129,7 +129,7 @@ public class DefaultDOManager
      */
     public void initModule()
             throws ModuleInitializationException {
-        // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-')
+        // pidNamespace (required, 1-17 chars, a-z, A-Z, 0-9 '-' '.')
         m_pidNamespace=getParameter("pidNamespace");
         if (m_pidNamespace==null) {
             throw new ModuleInitializationException(
@@ -150,6 +150,8 @@ public class DefaultDOManager
             } else if (c>='A' && c<='Z') {
                 invalid=false;
             } else if (c=='-') {
+                invalid=false;
+            } else if (c=='.') {
                 invalid=false;
             }
             if (invalid) {
