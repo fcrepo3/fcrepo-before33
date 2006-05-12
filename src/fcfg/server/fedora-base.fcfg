@@ -177,7 +177,7 @@
                  - pidNamespace (required) 
                        This is the namespace id for pids of newly-created objects. 
                        This should be unique for a repository. It can be from 1 to 17 
-                       characters, and may only contain A-Z, a-z, 0-9, and '-' (dash).
+                       characters, and may only contain A-Z, a-z, 0-9, '.', or '-' (dash)
                  - retainPIDs [default="demo test"] 
                        Namespaces of PIDs to retain during the ingest process. When 
                        an object is ingested, Fedora normally allocates a unique PID 
