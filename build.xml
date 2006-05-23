@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--  $Id$ -->
-<project name="Fedora" default="serverdist" basedir=".">
+<project name="Fedora" default="dist" basedir=".">
     <description>The Fedora Project</description>
     
     <!-- set global properties for this build -->
