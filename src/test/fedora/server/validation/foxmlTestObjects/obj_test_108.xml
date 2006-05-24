@@ -12,8 +12,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 	</foxml:objectProperties>
-	<foxml:datastream CONTROL_GROUP="E" ID="DS1" MIMETYPE="image/x-mrsid-image" STATE="A" VERSIONABLE="true">
-		<foxml:datastreamVersion ID="DS1.0" LABEL="Pavilion III, University of Virginia">
+	<foxml:datastream CONTROL_GROUP="E" ID="DS1" STATE="A" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="DS1.0" LABEL="Pavilion III, University of Virginia" MIMETYPE="image/x-mrsid-image">
 			<foxml:contentLocation REF="http://iris.lib.virginia.edu/mrsid/mrsid_images/iva/archerp01.sid" TYPE="URL"/>
 		</foxml:datastreamVersion>
 	</foxml:datastream>

@@ -12,8 +12,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 	</foxml:objectProperties>
-		<foxml:datastream ID="UVATECH" STATE="A" MIMETYPE="text/xml" CONTROL_GROUP="X" VERSIONABLE="true">
-		<foxml:datastreamVersion ID="UVATECH.0" LABEL="UVA Technical Metadata Record">
+		<foxml:datastream ID="UVATECH" STATE="A" CONTROL_GROUP="X" VERSIONABLE="true">
+		<foxml:datastreamVersion ID="UVATECH.0" LABEL="UVA Technical Metadata Record" MIMETYPE="text/xml">
 			<foxml:xmlContent>
 				<uvalibadmin:admin xmlns:uvalibadmin="http://virginia.lib.edu/uvalibadmin:tech">
 					<uvalibadmin:technical BAD

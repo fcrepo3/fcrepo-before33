@@ -12,8 +12,8 @@
 		<foxml:property NAME="info:fedora/fedora-system:def/model#label" VALUE="Sandy's Test Object"/>
 		<foxml:property NAME="info:fedora/fedora-system:def/model#contentModel" VALUE="TEST"/>
 	</foxml:objectProperties>
-	<foxml:datastream ID="RELS-EXT" MIMETYPE="text/xml" CONTROL_GROUP="X">
-		<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Fedora Relationship Metadata">
+	<foxml:datastream ID="RELS-EXT" CONTROL_GROUP="X">
+		<foxml:datastreamVersion ID="RELS-EXT.0" LABEL="Fedora Relationship Metadata" MIMETYPE="text/xml">
 			<foxml:xmlContent>
 				<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:fedora="info:fedora/fedora-system:def/relations-external#" xmlns:myns="http://www.nsdl.org/ontologies/relationships#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:oai_dc="http://www.openarchives.org/OAI/2.0/oai_dc/">
 					<rdf:Description rdf:about="info:fedora/test:113">
