@@ -2,7 +2,7 @@
 <%@page isErrorPage="true" %>
 <!-- http://java.sun.com/developer/EJTechTips/2003/tt0114.html -->
 <%
-        response.setStatus(HttpServletResponse.SC_UNAVAILABLE);
+        response.setStatus(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
         response.addHeader("Content-Type", "text/html; charset=UTF8");        
 %>
 <html><head>
