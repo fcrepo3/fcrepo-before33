@@ -253,8 +253,7 @@
 		<location>/internal-error-500.jsp</location>
 	</error-page-->	
 	<error-page>
-		<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>	
-		<exception-type>javax.servlet.ServletException</exception-type>
+		<exception-type>fedora.server.errors.servletExceptionExtensions.InternalError500Exception</exception-type>
 		<location>/internal-error-500.jsp</location>
 	</error-page>		
 	<error-page>
