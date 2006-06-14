@@ -1,9 +1,9 @@
 package fedora.server.storage.types;
 
-import fedora.common.HttpClient;
 import fedora.server.errors.StreamIOException;
 import java.io.InputStream;
-import org.apache.commons.httpclient.methods.GetMethod;
+import fedora.common.http.HttpInputStream;
+import fedora.common.http.WebClient;
 
 /**
  *
@@ -16,6 +16,12 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class DatastreamReferencedContent
         extends Datastream {
 
+	private static WebClient s_http;
+	
+	static {
+		s_http = new WebClient();
+	}
+	
     public DatastreamReferencedContent() {
     }
 
@@ -42,34 +48,19 @@ public class DatastreamReferencedContent
      */
     public InputStream getContentStream()
             throws StreamIOException {
-      	InputStream contentStream = null;
-      	HttpClient client = null;
+
+      	HttpInputStream contentStream = null;
       	try {
-      		client = new HttpClient(DSLocation);
-      		GetMethod getMethod = client.doNoAuthnGet(20000, 25, 1);
-      		DSSize = client.getContentLength();
-      		contentStream = getMethod.getResponseBodyAsStream();
-      		//get.releaseConnection() before stream is read would give java.io.IOException: Attempted read on closed stream.
+            contentStream = s_http.get(DSLocation, true, null, null);
+            DSSize = new Long(contentStream.getResponseHeaderValue("content-length","0")).longValue();
       	} catch (Throwable th) {
       		th.printStackTrace();
       		throw new StreamIOException("[DatastreamReferencedContent] "
       			+ "returned an error.  The underlying error was a "
     			+ th.getClass().getName() + "  The message "
     			+ "was  \"" + th.getMessage() + "\"  .  ");
-      	} finally {
-      		log("in getContentStream(), in finally");     	
-      		//WRONG PLACE FOR HttpClient.thisUseFinished();
-      	}    	
+      	}  	
     	return(contentStream);
-    }
-    
-    
-    private boolean log = false;
-    
-    private final void log(String msg) {
-    	if (log) {
-  	  	System.err.println(msg);	  		
-    	}
     }    
     
 }
