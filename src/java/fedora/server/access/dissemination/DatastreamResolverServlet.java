@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.realm.GenericPrincipal;
 
 import fedora.common.Constants;
-import fedora.common.HttpClient;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -437,7 +436,6 @@ public class DatastreamResolverServlet extends HttpServlet
       logger.logWarning(message);
       throw new ServletException(message);
     } finally {
-    	HttpClient.thisUseFinished();
       if (out != null) out.close();
       if (outStream != null) outStream.close();
 	    dsRegistry.remove(id);
