@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URLEncoder;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -12,11 +11,9 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.Properties;
 
 import org.apache.commons.httpclient.Header;
 
-import fedora.common.HttpClient;
 import fedora.common.http.WebClient;
 import fedora.common.http.HttpInputStream;
 import fedora.server.Context;
@@ -28,7 +25,6 @@ import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ServerInitializationException;
-import fedora.server.errors.StreamIOException;
 import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
