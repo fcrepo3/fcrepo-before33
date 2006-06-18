@@ -165,6 +165,9 @@
                    source="${javac.source}" 
                    srcdir="@{srcdir}"
                    target="${javac.target}"/>
+            <copy todir="@{destdir}">
+                <fileset dir="@{srcdir}" includes="**/*.properties"/>
+            </copy>
         </sequential>
     </macrodef>
     
@@ -246,7 +249,7 @@
         <md-compile srcdir="${java.src.dir}/fedora/localservices" 
                     destdir="${localservices.build.dir}"/>
     </target>
-    
+
     <target name="compile-server" depends="init, wsdl2java">
         <md-compile 
             srcdir="${java.src.dir}:${wsdl.build.dir}" 
