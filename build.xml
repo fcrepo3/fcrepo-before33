@@ -165,9 +165,6 @@
                    source="${javac.source}" 
                    srcdir="@{srcdir}"
                    target="${javac.target}"/>
-            <copy todir="@{destdir}">
-                <fileset dir="@{srcdir}" includes="**/*.properties"/>
-            </copy>
         </sequential>
     </macrodef>
     
