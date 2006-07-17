@@ -79,12 +79,18 @@ public class DSInputSpecGenerator
       dsInput.setAttribute("DSOrdinality", order.trim());
       Element dsLabel = document.createElementNS(FBS, "fbs:DSInputLabel");
       dsLabel.appendChild(document.createTextNode(label));
-      Element dsMIME = document.createElementNS(FBS, "fbs:DSMIME");
-      dsMIME.appendChild(document.createTextNode(mime));
       Element dsInstr = document.createElementNS(FBS, "fbs:DSInputInstruction");
       dsInstr.appendChild(document.createTextNode(instr));
       dsInput.appendChild(dsLabel);
-      dsInput.appendChild(dsMIME);
+      // rlw - bugfix #182
+      // DSInputParms can contain multiple mime types separate by commas.
+      // If more than one mimetype exists, split each mimetype out into a separate fbs:DSMIME element
+      String[] mimetypes = mime.split(",");
+      for (int j=0; j<mimetypes.length; j++) {
+    	  Element dsMIME = document.createElementNS(FBS, "fbs:DSMIME");
+    	  dsMIME.appendChild(document.createTextNode(mimetypes[j]));
+    	  dsInput.appendChild(dsMIME);
+      }
       dsInput.appendChild(dsInstr);
       root.appendChild(dsInput);
     }
