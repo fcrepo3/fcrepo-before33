@@ -32,17 +32,13 @@ public abstract class FedoraServerTestCase extends FedoraTestCase {
     }
 
     private void initConfigDir() {
-        String testHome = System.getProperty(PROP_TEST_HOME);
-        if (testHome == null) {
+        if (FEDORA_HOME == null) {
             throw new RuntimeException("Required system property not set: " 
-                    + PROP_TEST_HOME);
+                    + FEDORA_HOME);
         }
-
-        //m_configDir = new File(new File(testHome), 
-        //                       this.getClass().getName().replaceAll("\\.", "/"));
-
-		m_configDir = new File(new File(testHome), 
-							   (this.getClass().getName().replaceAll("\\.", "/")) + "CFG");
+        
+		//m_configDir = new File(new File(testHome), 
+		//					   (this.getClass().getName().replaceAll("\\.", "/")) + "CFG");
     }
 
     public static void main(String[] args) {

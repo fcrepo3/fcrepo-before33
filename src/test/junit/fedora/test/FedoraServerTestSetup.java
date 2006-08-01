@@ -61,15 +61,9 @@ public class FedoraServerTestSetup
     public FedoraServerTestSetup(Test test, String suiteClassName) {
         super(test);
 
-        String testHome = System.getProperty(PROP_TEST_HOME);
-        if (testHome == null) {
-            throw new RuntimeException("Required system property not set: " 
-                    + PROP_TEST_HOME);
-        }
-
-		System.out.println("Using suite configuration package: " + suiteClassName + "CFG");
-        m_configDir = new File(new File(testHome), 
-                               (suiteClassName.replaceAll("\\.", "/")) + "CFG");
+		//System.out.println("Using suite configuration package: " + suiteClassName + "CFG");
+        //m_configDir = new File(new File(testHome), 
+        //                       (suiteClassName.replaceAll("\\.", "/")) + "CFG");
     }
 
     public void setUp() throws Exception {
@@ -77,7 +71,7 @@ public class FedoraServerTestSetup
         
         if (doSetup) {
             // setup actions go here      
-            startServer();
+            //startServer();
         } else {
             System.out.println("    skipping setUp()");
         }
@@ -91,7 +85,7 @@ public class FedoraServerTestSetup
         if (doSetup) {
             System.setProperty(PROP_SETUP, "true");
             // tear down actions go here
-            stopServer();
+            //stopServer();
         } else {
             System.out.println("    skipping tearDown()");
         }

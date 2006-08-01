@@ -12,11 +12,9 @@ public interface FedoraTestConstants extends Constants {
 	
     public static final String PROP_SETUP = "fedora.test.setup";
     public static final String PROP_FEDORA_HOME = "fedora.home";
-    public static final String PROP_TEST_HOME = "fedora.test.home";
     public static final String PROP_TOMCAT_BASENAME = "tomcat.basename";
 
     public static final String FCFG = FEDORA_HOME + "/server/config/fedora.fcfg";
-    //public static final String FCFG_SRC = "src/fcfg/server/fedora-base.fcfg";
 
     public static final String BESECURITY_PATH = FEDORA_HOME + "/server/config/beSecurity.xml";
 
