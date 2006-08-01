@@ -41,10 +41,10 @@ public class TestAPIMLite extends FedoraServerTestCase {
     
     public void testGetNextPID() throws Exception {
         Document result;
-        result = getQueryResult("/mgmt/getNextPID?xml=true");
+        result = getQueryResult("/management/getNextPID?xml=true");
         assertXpathEvaluatesTo("1", "count(/pidList/pid)", result);
         
-        result = getQueryResult("/mgmt/getNextPID?numpids=10&namespace=demo&xml=true");
+        result = getQueryResult("/management/getNextPID?numpids=10&namespace=demo&xml=true");
         assertXpathEvaluatesTo("10", "count(/pidList/pid)", result);
     }
     
