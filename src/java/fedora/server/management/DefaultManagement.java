@@ -14,6 +14,7 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 import org.apache.xml.serialize.*;
+import org.apache.commons.betwixt.XMLUtils;
 
 import fedora.server.*;
 import fedora.server.errors.*;
@@ -323,7 +324,15 @@ public class DefaultManagement
 
         // empty MIME types are allowed.  assume they meant "" if they provide it as null.
         if (MIMEType == null) MIMEType = "";
-                                   	
+            
+        // check for valid xml name for datastream ID
+        if ( dsID!=null) {
+        	if(!XMLUtils.isWellFormedXMLName(dsID)) {
+        		throw new InvalidXMLNameException("Invalid syntax for datastream ID. The datastream ID of \""+dsID+"\" is"
+        				+ "not a valid XML Name");
+        	}
+        }
+        
         if ( dsID!=null && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
 			throw new GeneralException("Creation of a datastream with an"
 				+ " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
@@ -508,6 +517,16 @@ public class DefaultManagement
                                             String logMessage,
                                             boolean force)
             throws ServerException {
+    	
+    	
+        // check for valid xml name for datastream ID
+        if ( datastreamId!=null) {
+        	if(!XMLUtils.isWellFormedXMLName(datastreamId)) {
+        		throw new InvalidXMLNameException("Invalid syntax for datastream ID. The datastream ID of \""+datastreamId+"\" is"
+        				+ "not a valid XML Name");
+        	}
+        }
+        
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
@@ -659,6 +678,14 @@ public class DefaultManagement
                                         boolean force)
             throws ServerException {
 
+        // check for valid xml name for datastream ID
+        if ( datastreamId!=null) {
+        	if(!XMLUtils.isWellFormedXMLName(datastreamId)) {
+        		throw new InvalidXMLNameException("Invalid syntax for datastream ID. The datastream ID of \""+datastreamId+"\" is"
+        				+ "not a valid XML Name");
+        	}
+        }    	
+    	
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
