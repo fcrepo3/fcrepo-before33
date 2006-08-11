@@ -95,6 +95,7 @@
             
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.saxon}"/>
+            <pathelement location="${lib.commons-betwixt}"/>
             
             <!-- prev in common/lib -->
             <pathelement location="${lib.axis}"/>
