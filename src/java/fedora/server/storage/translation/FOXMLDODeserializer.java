@@ -319,7 +319,6 @@ public class FOXMLDODeserializer
 				// Never allow the AUDIT datastream to be versioned
 				// since it naturally represents a system-controlled
 				// view of changes over time.
-				checkMETSFormat(m_dsFormatURI);
 				if (m_dsId.equals("AUDIT")) {
 					m_dsVersionable=false;
 				}
@@ -338,6 +337,7 @@ public class FOXMLDODeserializer
 				if (m_dsFormatURI.length() == 0) {
 					m_dsFormatURI = null;
 				}
+				checkMETSFormat(m_dsFormatURI);
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				String sizeString=grab(a, F, "SIZE");
 				if (sizeString!=null && !sizeString.equals("")) {
