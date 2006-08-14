@@ -113,6 +113,9 @@ public class METSLikeDODeserializer
 	private String m_dsLocationType;
     private String m_dsMimeType;
     private String m_dsControlGrp;
+    private boolean m_dsVersionable;
+    private String m_dsFormatURI;
+    private String[] m_dsAltIDs;
 
     private StringBuffer m_dsXMLBuffer;
 
@@ -319,14 +322,32 @@ public class METSLikeDODeserializer
             } else if (localName.equals("amdSec")) {
                 m_dsId=grab(a, M, "ID");
                 m_dsState=grab(a, M, "STATUS");
+                String dsVersionable = grab(a, M, "VERSIONABLE");
+                if (dsVersionable!=null && !dsVersionable.equals("")) {
+                	m_dsVersionable=new Boolean(grab(a, M, "VERSIONABLE")).booleanValue();
+                } else {
+                	m_dsVersionable = true;
+                }                
             } else if (localName.equals("dmdSecFedora")) {
                 m_dsId=grab(a, M, "ID");
                 m_dsState=grab(a, M, "STATUS");
+                String dsVersionable = grab(a, M, "VERSIONABLE");
+                if (dsVersionable!=null && !dsVersionable.equals("")) {
+                	m_dsVersionable=new Boolean(grab(a, M, "VERSIONABLE")).booleanValue();
+                } else {
+                	m_dsVersionable = true;
+                }
             } else if (localName.equals("techMD") || localName.equals("descMD")
                     || localName.equals("sourceMD")
                     || localName.equals("rightsMD")
                     || localName.equals("digiprovMD")) {
                 m_dsVersId=grab(a, M, "ID");
+                /*String dsVersionable = grab(a, M, "VERSIONABLE");
+                if (dsVersionable!=null) {
+                	m_dsVersionable=new Boolean(grab(a, M, "VERSIONABLE")).booleanValue();
+                } else {
+                	m_dsVersionable = true;
+                }*/
                 if (localName.equals("techMD")) {
                     m_dsMDClass=DatastreamXMLMetadata.TECHNICAL;
                 }
@@ -352,17 +373,35 @@ public class METSLikeDODeserializer
 				m_dsOtherInfoType=grab(a, M, "OTHERMDTYPE");
                 m_dsLabel=grab(a, M, "LABEL");
                 m_dsMimeType=grab(a, M, "MIMETYPE");
+                String formatURI=grab(a, M, "FORMAT_URI");
+                if (formatURI!=null && !formatURI.equals("")) {
+                	m_dsFormatURI=formatURI;
+                }
+				String altIDs = grab(a, M, "ALT_IDS");
+				if (altIDs.length() == 0) {
+					m_dsAltIDs = new String[0];
+				} else {
+					m_dsAltIDs = altIDs.split(" ");
+				}               
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
                 m_xmlDataLevel=0;
                 m_inXMLMetadata=true;
             } else if (localName.equals("fileGrp")) {
                 m_dsId=grab(a, M, "ID");
+                String dsVersionable = grab(a, M, "VERSIONABLE");
+                if (dsVersionable!=null && !dsVersionable.equals("")) {
+                	m_dsVersionable=new Boolean(grab(a, M, "VERSIONABLE")).booleanValue();
+                } else {
+                	m_dsVersionable = true;
+                }                
                 // reset the values for the next file
                 m_dsVersId="";
                 m_dsCreateDate=null;
                 m_dsMimeType="";
                 m_dsControlGrp="";
+                m_dsFormatURI="";
+                m_dsAltIDs=new String[0];
                 m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
             } else if (localName.equals("file")) {
@@ -409,6 +448,16 @@ public class METSLikeDODeserializer
                                 + "SIZE attribute must be an xsd:long.");
                     }
                 }
+                String formatURI=grab(a, M, "FORMAT_URI");
+                if (formatURI!=null && !formatURI.equals("")) {
+                	m_dsFormatURI=formatURI;
+                }
+                String altIDs=grab(a, M, "ALT_IDS");
+				if (altIDs.length() == 0) {
+					m_dsAltIDs = new String[0];
+				} else {
+					m_dsAltIDs = altIDs.split(" ");
+				}                 
                 // inside a "file" element, it's either going to be
                 // FLocat (a reference) or FContent (inline)
             } else if (localName.equals("FLocat")) {
@@ -745,8 +794,9 @@ public class METSLikeDODeserializer
 
 		// set datastream variables with values grabbed from the SAX parse     	  	
 		ds.DatastreamID=m_dsId;
-		ds.DSVersionable=true; // FOXML only. In METS it's null;
-		ds.DSFormatURI="";   // FOXML only. In METS it's null;
+		ds.DSVersionable=m_dsVersionable;
+		ds.DSFormatURI=m_dsFormatURI;
+		ds.DatastreamAltIDs=m_dsAltIDs;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
@@ -789,8 +839,9 @@ public class METSLikeDODeserializer
 		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
-		ds.DSVersionable=true; // FOXML only. In METS it's null;
-		ds.DSFormatURI="";   // FOXML only. In METS it's null;
+		ds.DSVersionable=m_dsVersionable;
+		ds.DSFormatURI=m_dsFormatURI;
+		ds.DatastreamAltIDs=m_dsAltIDs;
 		ds.DSVersionID=m_dsVersId;
 		ds.DSLabel=m_dsLabel;
 		ds.DSCreateDT=m_dsCreateDate;
@@ -993,7 +1044,8 @@ public class METSLikeDODeserializer
 		// set the attrs common to all datastream versions
 		ds.DatastreamID="RELS-INT";
 		ds.DSVersionable=false;
-		ds.DSFormatURI="";   // FOXML only. In METS it's null;
+		ds.DSFormatURI=m_dsFormatURI;
+		ds.DatastreamAltIDs=m_dsAltIDs;
 		ds.DSVersionID="RELS-INT.0";
 		ds.DSLabel="DO NOT EDIT: System-generated datastream to preserve METS DMDID/ADMID relationships.";
 		ds.DSCreateDT=new Date();
@@ -1076,11 +1128,12 @@ public class METSLikeDODeserializer
 		// temporary variables for processing datastreams		
 		m_dsId="";
 		//m_dsURI="";  // FOXML only.
-		//m_dsVersionable=""; // FOXML only.
+		m_dsVersionable=true; // FOXML only.
 		m_dsVersId="";
 		m_dsCreateDate=null;
 		m_dsState="";
-		//m_dsFormatURI=""; // FOXML only.
+		m_dsFormatURI="";
+		m_dsAltIDs=new String[0];
 		m_dsSize=-1;
 		m_dsLocationType="";
 		m_dsLocationURL=null;

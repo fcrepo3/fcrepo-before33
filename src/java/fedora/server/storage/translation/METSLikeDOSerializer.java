@@ -204,6 +204,7 @@ public class METSLikeDOSerializer
         		(DatastreamXMLMetadata) XMLMetadata.get(0));
         buf.append("  <" + METS_PREFIX + ":" + outerName + " ID=\""
                 + first.DatastreamID + "\" STATUS=\"" + first.DSState 
+                + "\" VERSIONABLE=\"" + first.DSVersionable
                 + "\">\n");
         for (int i=0; i<XMLMetadata.size(); i++) {
 			DatastreamXMLMetadata ds=
@@ -232,10 +233,23 @@ public class METSLikeDOSerializer
             if ( ds.DSLabel!=null && !ds.DSLabel.equals("") ) {
                 labelAttr=" LABEL=\"" + StreamUtility.enc(ds.DSLabel) + "\"";
             }
+			// FORMAT_URI attribute is optional so check if non-empty
+            String formatURIAttr = "";
+            if(ds.DSFormatURI!=null && !ds.DSFormatURI.equals("")) {
+            	formatURIAttr=" FORMAT_URI=\"" + StreamUtility.enc(ds.DSFormatURI) + "\"";
+            }
+			// ALT_IDS attribute is optional so check if non-empty
+			String altIdsAttr="";
+			String altIds=oneString(ds.DatastreamAltIDs);
+			if (altIds!=null && !altIds.equals("")) {
+				altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
+			}
             buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME + "\""
                     + " MDTYPE=\"" + mdType + "\"" 
                     + otherAttr
-                    + labelAttr 
+                    + labelAttr
+                    + formatURIAttr
+                    + altIdsAttr
                     + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             
@@ -287,7 +301,7 @@ public class METSLikeDOSerializer
             throws ObjectIntegrityException {
         if (obj.getAuditRecords().size()>0) {
 			buf.append("  <" + METS_PREFIX + ":amdSec ID=\"AUDIT\"" 
-				+ " STATUS=\"A\">\n");
+				+ " STATUS=\"A\" VERSIONABLE=\"false\">\n");
             for (int i=0; i<obj.getAuditRecords().size(); i++) {
                 AuditRecord audit=(AuditRecord) obj.getAuditRecords().get(i);
                 // The audit record is created by the system, so programmatic
@@ -398,6 +412,7 @@ public class METSLikeDOSerializer
                 buf.append("      <" + METS_PREFIX + ":fileGrp ID=\""
                         + ds.DatastreamID 
                         + "\" STATUS=\"" + ds.DSState 
+                        + "\" VERSIONABLE=\"" + ds.DSVersionable
                         + "\">\n");
                 Iterator contentIter=obj.datastreams(ds.DatastreamID).iterator();
                 while (contentIter.hasNext()) {
@@ -413,33 +428,40 @@ public class METSLikeDOSerializer
 						dateAttr=" CREATED=\"" + DateUtility.convertDateToString(dsc.DSCreateDT) + "\"";
 					}
                     String sizeAttr=" SIZE=\"" + dsc.DSSize + "\"";
-
+					// FORMAT_URI attribute is optional so check if non-empty
+                    String formatURIAttr = "";
+                    if(dsc.DSFormatURI!=null && !dsc.DSFormatURI.equals("")) {
+                    	formatURIAttr=" FORMAT_URI=\"" + StreamUtility.enc(dsc.DSFormatURI) + "\"";
+                    }
+					// ALT_IDS attribute is optional so check if non-empty
+    				String altIdsAttr="";
+    				String altIds=oneString(dsc.DatastreamAltIDs);
+    				if (altIds!=null && !altIds.equals("")) {
+    					altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
+    				}
                     buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
                     		+ dateAttr
                             + " MIMETYPE=\"" + dsc.DSMIME + "\"" 
                             + sizeAttr
+                            + formatURIAttr
+                            + altIdsAttr
                             + " OWNERID=\"" + dsc.DSControlGrp 
                             + "\">\n");
-				    if (dsc.DSControlGrp.equalsIgnoreCase("M")) 
-				    {
-				    	if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE)
-				    	{
-							buf.append("          <" + METS_PREFIX + ":FContent> \n"
-									+ StringUtility.splitAndIndent(
-											StreamUtility.encodeBase64(dsc.getContentStream()), 14, 80)
-									+  "          </" + METS_PREFIX + ":FContent> \n");							
-				    	}
-				    	else
-				    	{
-				    		buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
-		                            + " LOCTYPE=\"URL\" " 
-		                            + m_XLinkPrefix + ":href=\""
-									+ StreamUtility.enc(
-										DOTranslationUtility.normalizeDSLocationURLs(
-											obj.getPid(), dsc, m_transContext).DSLocation)
-							        + "\"/>\n");
-				    	}
-				    }
+				    if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE &&
+				    		dsc.DSControlGrp.equalsIgnoreCase("M")) {
+						buf.append("          <" + METS_PREFIX + ":FContent> \n"
+								+ StringUtility.splitAndIndent(
+										StreamUtility.encodeBase64(dsc.getContentStream()), 14, 80)
+								+  "          </" + METS_PREFIX + ":FContent> \n");							
+				    } else {
+			    		buf.append("          <" + METS_PREFIX + ":FLocat" + labelAttr
+	                            + " LOCTYPE=\"URL\" " 
+	                            + m_XLinkPrefix + ":href=\""
+								+ StreamUtility.enc(
+									DOTranslationUtility.normalizeDSLocationURLs(
+										obj.getPid(), dsc, m_transContext).DSLocation)
+						        + "\"/>\n");
+			    	}
                     buf.append("        </" + METS_PREFIX + ":file>\n");
                 }
                 buf.append("      </" + METS_PREFIX + ":fileGrp>\n");
@@ -576,4 +598,15 @@ public class METSLikeDOSerializer
             }
         }
     }
+    
+	private String oneString(String[] idList){
+		StringBuffer out=new StringBuffer();
+		for (int i=0; i<idList.length; i++) {
+			if (i>0) {
+				out.append(' ');
+			}
+			out.append((String) idList[i]);
+		}
+		return out.toString();
+	}    
 }
