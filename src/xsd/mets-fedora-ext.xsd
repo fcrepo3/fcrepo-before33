@@ -288,8 +288,14 @@
 			The dmdSecType has two attributes, ID (XML ID) and STATUS:
 			1. ID: XML ID for the descriptive metadata section
 			2. STATUS:  a string to define the current status (or state) of the descriptive metadata section.
-			The status indicator is system-defined.  Examples are "withdrawn"
-			"marked for deletion" and "broken link."  (FEDORA EXTENSION) </xsd:documentation>
+			The status indicator is system-defined.  Examples are "A for Active"
+			"D for marked for deletion" and "I for Inactive."  (FEDORA EXTENSION)
+			3. VERSIONABLE: a true/false indication as to whether the datastream should be versioned 
+			by the Fedora repository service.  In Fedora 2.0, all datastreams are set to
+			VERSIONABLE="true".  As of Fedora 2.2, selective datastream versioning is enabled 
+			and	this attribute can then be user-assigned. In Fedora 2.2, a value of "true" is
+			assigned if this attribute is omitted. (FEDORA EXTENSION)
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="descMD" type="mdSecType" minOccurs="0" maxOccurs="unbounded">
@@ -308,7 +314,7 @@
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
 		<xsd:attribute name="VERSIONABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION:  add attribute STATUS to dmdSec -->
-		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to dmdSec 8-3-2006 -->
+		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to dmdSec (8-16-2006) -->
 	</xsd:complexType>
 	<xsd:complexType name="amdSecType">
 		<xsd:annotation>
@@ -318,7 +324,17 @@
 			rightsMD (intellectual property rights metadata), sourceMD (analog/digital source 
 			metadata), and digiprovMD (digital provenance metadata, that is, the
 			history of migrations/translations performed on a digital library object from
-			it's original digital capture/encoding).  amdSecType has a single attribute, ID (XML ID).</xsd:documentation>
+			it's original digital capture/encoding).  amdSecType has a single attribute, ID (XML ID).
+			1. ID: XML ID for the administrative metadata section
+			2. STATUS:  a string to define the current status (or state) of the administrative metadata section.
+			The status indicator is system-defined.  Examples are "A for Active"
+			"D for marked for deletion" and "I for Inactive."  (FEDORA EXTENSION)			
+			3. VERSIONABLE: a true/false indication as to whether the datastream should be versioned 
+			by the Fedora repository service.  In Fedora 2.0, all datastreams are set to 
+			VERSIONABLE="true".  As of Fedora 2.2, selective datastream versioning is enabled 
+			and	this attribute can then be user-assigned. In Fedora 2.2, a value of "true" is
+			assigned if this attribute is omitted. (FEDORA EXTENSION)	
+			</xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
 			<xsd:element name="techMD" type="mdSecType" minOccurs="0" maxOccurs="unbounded">
@@ -373,7 +389,7 @@
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
 		<xsd:attribute name="VERSIONABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION:  add attribute STATUS to amdSec -->
-		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to dmdSec 8-3-2006 -->		
+		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to amdSec (8-16-2006) -->		
 	</xsd:complexType>
 	<xsd:complexType name="fileGrpType">
 		<xsd:annotation>
@@ -394,8 +410,14 @@
 					5. LABEL: a string to describe the nature of the fileGrp (FEDORA EXTENSION)
 					6. STATUS:  a string to define the current status (or state) of the fileGrp. 
 					This is used to mark the file group with an internal system status indicator. 
-					The status indicator is system-defined.  Examples are "withdrawn from circulation"
-					"marked for deletion" and "broken link."  (FEDORA EXTENSION) 
+					The status indicator is system-defined.  Examples are "A for Active"
+					"D for marked for deletion" and "I for Inactive."  (FEDORA EXTENSION) 
+					7. VERSIONABLE: a true/false indication as to whether the datastream should be versioned 
+					by the Fedora repository service.  In Fedora 2.0, all datastreams are set to 
+					VERSIONABLE="true".  As of Fedora 2.2, selective datastream versioning is enabled 
+					and	this attribute can then be user-assigned. In Fedora 2.2, a value of "true" is
+					assigned if this attribute is omitted. (FEDORA EXTENSION)
+				
 				</xsd:documentation>
 		</xsd:annotation>
 		<xsd:choice>
@@ -424,8 +446,14 @@
 							applicable to this file.  (FEDORA EXTENSION)
 							11 STATUS:  a string to define the current status (or state) of the file. 
 							This is used to mark the file with an internal system status indicator. 
-							The status indicator is system-defined.  Examples are "withdrawn from circulation"
-							"marked for deletion" and "broken link."  (FEDORA EXTENSION) 
+							The status indicator is system-defined.  Examples are "A for active"
+							"D for marked for deletion" and "I for Inactive."  (FEDORA EXTENSION) 
+							12. ALT_IDS: a string that defines a user-assigned set of alternative identifiers 
+							for the datastream,	with the identifiers separated by spaces (FEDORA EXTENSION)
+							13. FORMAT_URI: a string that defines a user-assigned URI used to identify the media 
+							type of the bytestream referred to by the LOCATION attribute on the FLocat element 
+							that is more specific than MIME type. (FEDORA EXTENSION) 
+						
 						</xsd:documentation>
 				</xsd:annotation>
 				<xsd:complexType>
@@ -491,7 +519,7 @@
 					<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 					<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
 					<!-- FEDORA EXTENSION:  additional attributes DMDID and STATUS on file -->
-					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on mdWrap 8-3-2006 -->
+					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on file (8-16-2006) -->
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:choice>
@@ -503,7 +531,7 @@
 		<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
 		<xsd:attribute name="VERSIONABLE" type="xsd:boolean" use="optional"/>
 		<!-- FEDORA EXTENSION: additional attributes DMDID LABEL STATUS on fileGrp -->
-		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to fileGrp 8-3-2006 -->
+		<!-- FEDORA EXTENSION: add new attribute VERSIONABLE to fileGrp (8-16-2006) -->
 	</xsd:complexType>
 	<xsd:complexType name="structMapType">
 		<xsd:annotation>
@@ -522,7 +550,7 @@
 			(e.g., both logical and physical structMap).
 			4. STATUS:  a string to define the current status (or state) of the structmap. 
 			This is used to mark the file with an internal system status indicator. 
-			The status indicator is system-defined.  Examples are "withdrawn from circulation"
+			The status indicator is system-defined.  Examples are " from circulation"
 			"marked for deletion" and "broken link."  (FEDORA EXTENSION) </xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
@@ -772,7 +800,7 @@
 			<xsd:documentation>behaviorSecType:  a container for serviceBindings.
 			1. ID: XML ID for the descriptive metadata section
 			2. STATUS:  a string to define the current status (or state) of the behavior section.
-			The status indicator is system-defined.  Examples are "withdrawn"
+			The status indicator is system-defined.  Examples are ""
 			"marked for deletion" and "broken link."  (FEDORA PROPOSAL) </xsd:documentation>
 		</xsd:annotation>
 		<xsd:sequence>
@@ -852,7 +880,7 @@
 			metadata sections.  Typically, this will be used to facilitate versioning of metadata sections. (FEDORA EXTENSION)
 			4. STATUS:  a string to define the current status (or state) of the mdSecType. This is used to mark the metadata section 
 			with an internal system status indicator.	The status indicator is system-defined.  
-			Examples are "withdrawn from circulation," "marked for deletion," and "broken link."  (FEDORA EXTENSION)</xsd:documentation>
+			Examples are "A for Active," "D for marked for deletion," and "I for Inactive."  (FEDORA EXTENSION)</xsd:documentation>
 		</xsd:annotation>
 		<xsd:all>
 			<xsd:element name="mdRef" minOccurs="0">
@@ -905,6 +933,11 @@
 						4. OTHERMDTYPE: a string indicating an alternative MDTYPE when the MDTYPE
 						attribute value is set to "OTHER.";
 						5. LABEL: a label to display to the viewer of the METS document identifying the metadata.
+						6. ALT_IDS: a string that defines a user-assigned set of alternative identifiers 
+						for the datastream,	with the identifiers separated by spaces (FEDORA EXTENSION)
+						7. FORMAT_URI: a string that defines a user-assigned URI used to identify the media 
+						type of the bytestream referred to by the LOCATION attribute on the FLocat element 
+						that is more specific than MIME type. (FEDORA EXTENSION) 						
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:complexType>
@@ -928,7 +961,7 @@
 					<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
 					<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 					<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
-					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on mdWrap 8-3-2006 -->
+					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on mdWrap (8-16-2006) -->
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:all>
