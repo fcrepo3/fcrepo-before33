@@ -92,7 +92,7 @@ public interface DOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void addDatastream(Datastream datastream) throws ServerException;
+    public void addDatastream(Datastream datastream, boolean addNewVersion) throws ServerException;
 
     /**
      * Adds a disseminator to the object.

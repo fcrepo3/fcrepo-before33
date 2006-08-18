@@ -708,7 +708,7 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", true, "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "A", "modified datastream", false);
+        result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "modified datastream", false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
@@ -724,7 +724,7 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("Running TestAPIM.testModifyDatastreamByValue...");
         altIds = new String[1];
         altIds[0] = "Datastream 2 Modified Alternate ID";
-        result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", true, "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "A", "modified datastream", false);
+        result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "modified datastream", false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
@@ -740,16 +740,16 @@ public class TestAPIM extends FedoraServerTestCase {
         // (4) test purgeDatastream
         System.out.println("Running TestAPIM.testPurgeDatastream...");
         // test specifying null for endDate
-        String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, "purging datastream NEWDS2", false);
+        String[] results = apim.purgeDatastream("demo:14", "NEWDS2", null, null, "purging datastream NEWDS2", false);
         for (int i=0; i<results.length; i++) {
-            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=null dsID: "+results[i]);
+            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying startDate=null and endDate=null dsID: "+results[i]);
         }
         assertTrue(results.length > 0);
         
         // test specifying datetime for endDate
-        results = apim.purgeDatastream("demo:14", "NEWDS3", "9999-01-01T00:00:00.000Z", "purging datastream NEWDS3", false);
+        results = apim.purgeDatastream("demo:14", "NEWDS3", "1900-01-01T00:00:00.000Z", "9999-01-01T00:00:00.000Z", "purging datastream NEWDS3", false);
         for (int i=0; i<results.length; i++) {
-            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying endDate=\"9999-01-01T00:00:00.000Z\" dsID: "+results[i]);
+            System.out.println("***** Testcase: TestAPIM.testPurgeDatastream specifying startDate=\"1900-01-01T00:00:00.000Z\" endDate=\"9999-01-01T00:00:00.000Z\" dsID: "+results[i]);
         }        
         assertTrue(results.length > 0);
 

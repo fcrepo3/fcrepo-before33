@@ -1011,6 +1011,29 @@ public class DefaultAuthorization extends Module implements Authorization {
         getServer().logFinest("Exiting enforceSetDatastreamState");
 	}
 	}
+    
+    public final void enforceSetDatastreamVersionable(Context context, String pid, String datastreamId, boolean datastreamNewVersionable) 
+    throws AuthzException {
+    try {
+        getServer().logFinest("Entered enforceSetDatastreamState");     
+        String target = Constants.ACTION.SET_DATASTREAM_STATE.uri;
+        log("enforcing " + target);
+        context.setActionAttributes(null);
+        MultiValueMap resourceAttributes = new MultiValueMap();
+        String name = "";
+        try {
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
+//            name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_STATE.uri, datastreamNewVersionable);    
+        } catch (Exception e) {
+            context.setResourceAttributes(null);        
+            throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+        }
+        context.setResourceAttributes(resourceAttributes);  
+        xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+    } finally {
+        getServer().logFinest("Exiting enforceSetDatastreamVersionable");
+    }
+    }
 	
 	public final void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
 	throws AuthzException {

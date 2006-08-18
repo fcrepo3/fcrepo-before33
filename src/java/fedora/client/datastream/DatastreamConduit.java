@@ -60,11 +60,9 @@ public class DatastreamConduit {
                                                    String dsId, 
                                                    String[] altIDs, 
                                                    String dsLabel, 
-                                                   boolean versionable, 
                                                    String mimeType, 
                                                    String formatURI,
                                                    String location, 
-                                                   String state, 
                                                    String logMessage,
                                                    boolean force)
             throws RemoteException {
@@ -72,11 +70,9 @@ public class DatastreamConduit {
                                              dsId, 
                                              altIDs,
                                              dsLabel, 
-                                             versionable,
                                              mimeType,
                                              formatURI,
                                              location, 
-                                             state,
                                              logMessage,
                                              force);
     }
@@ -85,11 +81,9 @@ public class DatastreamConduit {
                                             String dsId, 
                                             String[] altIDs, 
                                             String dsLabel, 
-                                            boolean versionable, 
                                             String mimeType, 
                                             String formatURI,
                                             String location, 
-                                            String state, 
                                             String logMessage,
                                             boolean force)
             throws RemoteException {
@@ -98,11 +92,9 @@ public class DatastreamConduit {
                                     dsId, 
                                     altIDs,
                                     dsLabel, 
-                                    versionable,
                                     mimeType,
                                     formatURI,
                                     location, 
-                                    state,
                                     logMessage,
                                     force);
     }
@@ -112,11 +104,9 @@ public class DatastreamConduit {
                                                String dsId, 
                                                String[] altIDs,
                                                String dsLabel, 
-                                               boolean versionable,
                                                String mimeType,
                                                String formatURI,
                                                byte[] content, 
-                                               String state,
                                                String logMessage,
                                                boolean force)
             throws RemoteException {
@@ -124,11 +114,9 @@ public class DatastreamConduit {
                                          dsId, 
                                          altIDs,
                                          dsLabel, 
-                                         versionable,
                                          mimeType,
                                          formatURI,
                                          content, 
-                                         state,
                                          logMessage,
                                          force);
     }
@@ -150,11 +138,9 @@ public class DatastreamConduit {
                                 dsId, 
                                 altIDs,
                                 dsLabel, 
-                                versionable,
-                                mimeType,
+                                 mimeType,
                                 formatURI,
                                 content, 
-                                state,
                                 logMessage,
                                 force);
     }
@@ -162,20 +148,22 @@ public class DatastreamConduit {
     public static String[] purgeDatastream(FedoraAPIM skeleton,
                                            String pid, 
                                            String dsId, 
+                                           String startDT, 
                                            String endDT, 
                                            String logMessage, 
                                            boolean force)
             throws RemoteException {
-        return skeleton.purgeDatastream(pid, dsId, endDT, logMessage, force);
+        return skeleton.purgeDatastream(pid, dsId, startDT, endDT, logMessage, force);
     }
 
     public String[] purgeDatastream(String pid, 
                                     String dsId, 
+                                    String startDT, 
                                     String endDT, 
                                     String logMessage, 
                                     boolean force)
             throws RemoteException {
-        return purgeDatastream(m_apim, pid, dsId, endDT, logMessage, force);
+        return purgeDatastream(m_apim, pid, dsId, startDT, endDT, logMessage, force);
     }
 
     public static Datastream[] getDatastreamHistory(FedoraAPIM skeleton,

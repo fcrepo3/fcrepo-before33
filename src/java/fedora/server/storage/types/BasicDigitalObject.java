@@ -155,6 +155,28 @@ public class BasicDigitalObject
         return ret;
     }
 
+    public void addDatastreamVersion(Datastream ds, boolean addNewVersion)
+    {
+    	List datastreams = datastreams(ds.DatastreamID);
+    	if (!addNewVersion)
+    	{
+            Iterator dsIter = datastreams.iterator();
+            Datastream latestCreated = null;
+            long latestCreateTime=-1;
+    	    while (dsIter.hasNext()) 
+    	    {
+    	    	Datastream ds1 =(Datastream) dsIter.next();
+    	        if (ds1.DSCreateDT.getTime() > latestCreateTime) 
+    	        {
+    	        	latestCreateTime = ds1.DSCreateDT.getTime();
+    	            latestCreated = ds1;
+    	        }
+    	    }
+    	    datastreams.remove(latestCreated);
+    	}
+   		datastreams.add(ds);
+    }
+    
     public Iterator disseminatorIdIterator() {
         return copyOfKeysForNonEmptyLists(m_disseminators).iterator();
     }

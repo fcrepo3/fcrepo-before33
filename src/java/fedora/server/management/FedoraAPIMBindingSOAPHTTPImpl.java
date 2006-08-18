@@ -334,11 +334,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                               String datastreamID,
                                               String[] altIDs,
                                               String dsLabel, 
-                                              boolean versionable,
                                               String mimeType,
                                               String formatURI,
                                               String dsLocation, 
-                                              String dsState,
                                               String logMessage, 
                                               boolean force)
             throws java.rmi.RemoteException {
@@ -352,11 +350,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             datastreamID, 
                             altIDs,
                             dsLabel, 
-                            versionable,
                             mimeType,
                             formatURI,
                             dsLocation, 
-                            dsState,
                             logMessage, 
                             force));
         } catch (AuthzException a) {
@@ -376,11 +372,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                           String datastreamID, 
                                           String[] altIDs,
                                           String dsLabel, 
-                                          boolean versionable,
                                           String mimeType,
                                           String formatURI,
                                           byte[] dsContent, 
-                                          String dsState,
                                           String logMessage, 
                                           boolean force) 
                 throws java.rmi.RemoteException {
@@ -397,11 +391,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                          datastreamID, 
                                                          altIDs,
                                                          dsLabel, 
-                                                         versionable,
                                                          mimeType,
                                                          formatURI,
                                                          byteStream, 
-                                                         dsState,
                                                          logMessage, 
                                                          force));
         } catch (AuthzException a) {
@@ -440,6 +432,30 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
 
+    public String setDatastreamVersionable(String PID, 
+                                            String datastreamID, 
+                                            boolean versionable, 
+                                            String logMessage) throws java.rmi.RemoteException 
+    {
+        assertInitialized();
+        try {
+        return DateUtility.convertDateToString(
+            s_management.setDatastreamVersionable(ReadOnlyContext.getSoapContext(), 
+                                                   PID,
+                                                   datastreamID, 
+                                                   versionable, 
+                                                   logMessage));
+        } catch (AuthzException a) {
+            throw AxisUtility.getFault(a); 
+        } catch (ServerException se) {
+            logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Throwable th) {
+            logStackTrace(th);
+            throw AxisUtility.getFault(th);
+        }
+    }
+
     public String setDisseminatorState(String PID, 
                                        String disseminatorID, 
                                        String dissState, 
@@ -465,6 +481,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 
     public String[] purgeDatastream(String PID, 
                                     String datastreamID, 
+                                    String startDT,
                                     String endDT,
                                     String logMessage,
                                     boolean force) 
@@ -477,6 +494,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             ReadOnlyContext.getSoapContext(), 
                             PID, 
                             datastreamID,
+                            DateUtility.convertStringToDate(startDT),
                             DateUtility.convertStringToDate(endDT),
                             logMessage,
                             force));

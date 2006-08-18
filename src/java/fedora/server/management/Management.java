@@ -70,11 +70,9 @@ public interface Management {
                                             String datastreamID, 
                                             String[] altIDs,
                                             String dsLabel, 
-                                            boolean versionable,
                                             String mimeType,
                                             String formatURI,
                                             String dsLocation, 
-                                            String dsState,
                                             String logMessage, 
                                             boolean force) throws ServerException;
 
@@ -83,17 +81,16 @@ public interface Management {
                                         String datastreamID, 
                                         String[] altIDs,
                                         String dsLabel, 
-                                        boolean versionable,
                                         String mimeType,
                                         String formatURI,
                                         InputStream dsContent, 
-                                        String dsState,
                                         String logMessage,
                                         boolean force) throws ServerException;
 
     public Date[] purgeDatastream(Context context, 
                                   String pid, 
                                   String datastreamID, 
+                                  Date startDT,
                                   Date endDT,
                                   String logMessage,
                                   boolean force) throws ServerException;
@@ -156,10 +153,16 @@ public interface Management {
     public InputStream getTempStream(String id) throws ServerException;
 
     public Date setDatastreamState(Context context, 
-                                   String pid, 
-                                   String dsID, 
-                                   String dsState, 
-                                   String logMessage) throws ServerException;
+                                    String pid, 
+                                    String dsID, 
+                                    String dsState, 
+                                    String logMessage) throws ServerException;
+
+    public Date setDatastreamVersionable(Context context, 
+                                        String pid, 
+                                        String dsID, 
+                                        boolean versionable, 
+                                        String logMessage) throws ServerException;
 
     public Date setDisseminatorState(Context context,
                                      String pid, 

@@ -5,6 +5,9 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.event.*;
 
 import fedora.client.Administrator;
@@ -744,11 +747,9 @@ public class DatastreamPane
 			                                               m_ds.getID(), 
 	                                                       altIDs,
 			                                               label, 
-	                                                       true, // DEFAULT_VERSIONABLE
 	                                                       mimeType,
 	                                                       formatURI,
 			                                               content, 
-			                                               state,
 			                                               logMessage, 
 	                                                       force);
 			} else if (M) {
@@ -765,11 +766,9 @@ public class DatastreamPane
 	                                                           m_ds.getID(),
 	                                                           altIDs,
 	                                                           label, 
-	                                                           true, // DEFAULT_VERSIONABLE
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           loc, 
-	                                                           state,
 	                                                           logMessage, 
 	                                                           force);
 	        } else {
@@ -778,11 +777,9 @@ public class DatastreamPane
 	                                                           m_ds.getID(),
 	                                                           altIDs,
 	                                                           label, 
-	                                                           true, // DEFAULT_VERSIONABLE
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           m_locationTextField.getText(), 
-	                                                           state,
 	                                                           logMessage, 
 	                                                           force);
 			}
@@ -1015,37 +1012,57 @@ public class DatastreamPane
             }
         }
 
-        public void actionPerformed(ActionEvent evt) {
-            int sIndex=0;
+        public void actionPerformed(ActionEvent evt) 
+        {
+            int sIndex1=0;
+            int sIndex2=0;
             boolean canceled=false;
-            if (m_versions.length>1) {
+            if (m_versions.length>1) 
+            {
                 String defaultValue=evt.getActionCommand(); // default date string
-                String selected=(String) JOptionPane.showInputDialog(
-                        Administrator.getDesktop(),
-                        "Choose the latest version to purge:",
-                        "Purge version(s) from datastream " + m_versions[0].getID(),
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        m_dateStrings,
-                        defaultValue);
-                if (selected==null) {
-                    canceled=true;
-                } else {
-                    sIndex=((Integer) m_dsIndex.get(selected)).intValue();
+                PurgeDataStreamDialog purgeDialog = new PurgeDataStreamDialog(Administrator.getInstance(), m_versions[0].getID(), defaultValue, m_dateStrings);
+//                String selected=(String) JOptionPane.showInputDialog(
+//                        Administrator.getDesktop(),
+//                        "Choose the latest version to purge:",
+//                        "Purge version(s) from datastream " + m_versions[0].getID(),
+//                        JOptionPane.QUESTION_MESSAGE,
+//                        null,
+//                        m_dateStrings,
+//                        defaultValue);
+//                if (selected==null) 
+//                {
+//                    canceled=true;
+//                } 
+//                else {
+//                    sIndex=((Integer) m_dsIndex.get(selected)).intValue();
+//                }
+                if (purgeDialog.isCanceled())
+                {
+                    canceled = true;
+                }
+                else
+                {
+                    sIndex1 = ((Integer) m_dsIndex.get(purgeDialog.getStartDate())).intValue();
+                    sIndex2 = ((Integer) m_dsIndex.get(purgeDialog.getEndDate())).intValue();
                 }
             }
             if (!canceled) {
                 // do warning
                 boolean removeAll=false;
                 String detail;
-                if (sIndex==0) {
+                if (sIndex1==0 && sIndex2 == m_dsIndex.size()-1) 
+                {
                     detail="the entire datastream.";
                     removeAll=true;
-                } else if (sIndex==m_versions.length-1) {
-                    detail="the oldest version of the datastream.";
-                } else {
-                    int num=m_versions.length-sIndex;
-                    detail="the oldest " + num + " versions of the datastream.";
+                } 
+                else if (sIndex1==sIndex2) 
+                {
+                    detail="one version of the datastream.";
+                } 
+                else 
+                {
+                    int num = sIndex2 - sIndex1 + 1;
+                    detail="" + num + " versions of the datastream.";
                 }
                 int n = JOptionPane.showOptionDialog(Administrator.getDesktop(),
                         "This will permanently remove " + detail + "\n"
@@ -1058,9 +1075,12 @@ public class DatastreamPane
                         "Yes"); //default button title
                 if (n==0) {
                     try {
+//                        System.out.println("date1 = " + m_versions[sIndex1].getCreateDate() +
+//                                "\ndate2 = " + m_versions[sIndex2].getCreateDate());
                         Administrator.APIM.purgeDatastream(m_pid, 
-                                m_versions[sIndex].getID(),
-                                m_versions[sIndex].getCreateDate(),
+                                m_versions[sIndex1].getID(),
+                                m_versions[sIndex2].getCreateDate(),
+                                m_versions[sIndex1].getCreateDate(),
                                 "DatastreamPane generated this logMessage.", // DEFAULT_LOGMESSAGE
                                 false); // DEFAULT_FORCE_PURGE
                         if (removeAll) {
@@ -1079,6 +1099,86 @@ public class DatastreamPane
         }
     }
 
+    public class PurgeDataStreamDialog extends JDialog implements ActionListener
+    {
+        Object startDate, endDate;
+        boolean canceled;
+        private JList list;
+    
+        public PurgeDataStreamDialog(JFrame parent, String datastreamName, String defaultVal, Object[] dateStrings)
+        {
+            super(parent, "Purge Datastream", true);
+//            System.out.println("parent location & size = ("+parent.getBounds().x+", "+parent.getBounds().y+
+//                    ") ["+parent.getBounds().width + ", " + parent.getBounds().height + "]");
+            JLabel label = new JLabel("Choose versions of datastream "+datastreamName + " to purge:");
+            getContentPane().add(label, BorderLayout.NORTH);
+            label.setBorder(new EmptyBorder(10, 10, 0, 10));
+            list = new JList(dateStrings);
+            list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+            JScrollPane scroll = new JScrollPane(list);
+            scroll.setBorder(new CompoundBorder(new EmptyBorder(10, 10, 10, 10), new LineBorder(Color.BLACK)));
+            getContentPane().add(scroll, BorderLayout.CENTER);
+            for (int i = 0; i < dateStrings.length; i++)
+            {
+                if (dateStrings[i].toString().equals(defaultVal))
+                {
+                    list.setSelectionInterval(i, i);
+                }
+            }
+            JPanel buttons = new JPanel();
+            getContentPane().add(buttons, BorderLayout.SOUTH);
+            JButton purge = new JButton("Purge"); purge.addActionListener(this);
+            JButton cancel = new JButton("Cancel"); cancel.addActionListener(this);
+            buttons.add(purge);
+            buttons.add(cancel);
+            list.setSize(500, 600);
+            pack();
+            Rectangle bounds = this.getOwner().getBounds();
+            Rectangle mybounds = this.getBounds();
+            int x = bounds.x + (bounds.width - mybounds.width ) / 2;
+            int y = bounds.y + (bounds.height - mybounds.height ) / 2;
+//            System.out.println("Setting location to "+ x + ", " + y);
+//            System.out.println("dialog location & size = ("+mybounds.x+", "+mybounds.y+
+//                    ") ["+mybounds.width + ", " + mybounds.height + "]");
+            setLocation(x, y);       
+            canceled = true;
+            setVisible(true);
+        }
+                
+        public void actionPerformed(ActionEvent e)
+        {
+            if (e.getActionCommand() == "Purge")
+            {
+                canceled = false; 
+                Object sel[] = list.getSelectedValues();
+                startDate = sel[0];
+                endDate = sel[sel.length-1];
+                setVisible(false);
+            }
+            if (e.getActionCommand() == "Cancel")
+            {
+                canceled = true;
+                setVisible(false);
+            }
+        }
+    
+        public Object getEndDate()
+        {
+            return endDate;
+        }
+    
+        public Object getStartDate()
+        {
+            return startDate;
+        }
+    
+        public boolean isCanceled()
+        {
+            return canceled;
+        }
+    }
+
+    
     public class ExportActionListener 
 	        implements ActionListener {
 

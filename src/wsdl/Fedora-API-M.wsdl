@@ -217,11 +217,6 @@
 		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
-		<part name="versionable" type="xsd:boolean">
-			<documentation>whether Fedora should maintain old versions of the 
-			datastream when it is modified, or it should just over-write the 
-			old content.</documentation>
-		</part>
 		<part name="MIMEType" type="xsd:string">
 			<documentation>the mime type.</documentation>
 		</part>
@@ -230,9 +225,6 @@
 		</part>
 		<part name="dsLocation" type="xsd:string">
 			<documentation>the url to the datastream.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state of the datastream.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a message about the change.</documentation>
@@ -259,11 +251,6 @@
 		<part name="dsLabel" type="xsd:string">
 			<documentation>the label for the datastream.</documentation>
 		</part>
-		<part name="versionable" type="xsd:boolean">
-			<documentation>whether Fedora should maintain old versions of the 
-			datastream when it is modified, or it should just over-write the 
-			old content.</documentation>
-		</part>
 		<part name="MIMEType" type="xsd:string">
 			<documentation>the mime type.</documentation>
 		</part>
@@ -273,9 +260,6 @@
 		</part>
 		<part name="dsContent" type="xsd:base64Binary">
 			<documentation>the content of the datastream.</documentation>
-		</part>
-		<part name="dsState" type="xsd:string">
-			<documentation>the state of the datastream.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>a message about the change.</documentation>
@@ -335,6 +319,25 @@
 		</part>
 	</message>
 	<message name="setDatastreamStateResponse">
+		<part name="response" type="xsd:string">
+			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
+		</part>
+	</message>
+	<message name="setDatastreamVersionableRequest">
+		<part name="pid" type="xsd:string">
+			<documentation>the pid of the object.</documentation>
+		</part>
+		<part name="dsID" type="xsd:string">
+			<documentation>the ID of the datastream.</documentation>
+		</part>
+		<part name="versionable" type="xsd:boolean">
+			<documentation>the state to be set on the datastream.</documentation>
+		</part>
+		<part name="logMessage" type="xsd:string">
+			<documentation>a message about the change.</documentation>
+		</part>
+	</message>
+	<message name="setDatastreamVersionableResponse">
 		<part name="response" type="xsd:string">
 			<documentation>The timestamp of the operation according to the server, in ISO8601 format.</documentation>
 		</part>
@@ -461,10 +464,15 @@
 		<part name="dsID" type="xsd:string">
 			<documentation>the ID of the datastream.</documentation>
 		</part>
+		<part name="startDT" type="xsd:string">
+			<documentation>the (inclusive) starting date-time stamp of the range. If 
+          null, this is taken to be the smallest possible value.</documentation>
+		</part>
 		<part name="endDT" type="xsd:string">
 			<documentation>the (inclusive) ending date-time stamp of the range. If 
           null, this is taken to be the greatest possible value, and thus,
-          the entire version history of the datastream will be purged.</documentation>
+          if both startDT and endDT are null the entire version history of the 
+          datastream will be purged.</documentation>
 		</part>
 		<part name="logMessage" type="xsd:string">
 			<documentation>an explanation of the purge.</documentation>
@@ -625,6 +633,11 @@
 			<documentation>Sets the state of a datastream to the specified state value.</documentation>
 			<input message="fedora-api:setDatastreamStateRequest"/>
 			<output message="fedora-api:setDatastreamStateResponse"/>
+		</operation>
+		<operation name="setDatastreamVersionable">
+			<documentation>Sets whether subsequent modifications to the datastream will replace the most recent version or add a new one.</documentation>
+			<input message="fedora-api:setDatastreamVersionableRequest"/>
+			<output message="fedora-api:setDatastreamVersionableResponse"/>
 		</operation>
 		<operation name="setDisseminatorState">
 			<documentation>Sets the state of a disseminator to the specified value.</documentation>
@@ -798,6 +811,15 @@
 		</operation>
 		<operation name="setDatastreamState">
 			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamState"/>
+			<input>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</input>
+			<output>
+				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
+			</output>
+		</operation>
+		<operation name="setDatastreamVersionable">
+			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamVersionable"/>
 			<input>
 				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
 			</input>

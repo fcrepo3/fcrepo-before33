@@ -694,7 +694,7 @@ public class DefaultDOManager
 					if (obj.getLabel()!=null && !(obj.getLabel().equals(""))) {
 						dcf.titles().add(obj.getLabel());
 					}
-					w.addDatastream(dc);
+					w.addDatastream(dc, dc.DSVersionable);
 				} else {
 					dcf=new DCFields(new ByteArrayInputStream(dc.xmlContent));
 				}

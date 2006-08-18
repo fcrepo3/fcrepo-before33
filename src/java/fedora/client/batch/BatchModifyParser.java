@@ -99,6 +99,7 @@ public class BatchModifyParser extends DefaultHandler
     private boolean modifyDatastream = false;
     private boolean purgeDatastream = false;
     private boolean setDatastreamState = false;
+    private boolean setDatastreamVersionable = false;
     private boolean addDisseminator = false;
     private boolean purgeDisseminator = false;
     private boolean modifyDisseminator = false;
@@ -462,11 +463,11 @@ public class BatchModifyParser extends DefaultHandler
                     } else {
                         m_ds.dsLabel = dsOrig.getLabel();
                     }
-                    if ( attrs.getValue("dsState") != null) {
-                        m_ds.dsState = attrs.getValue("dsState");
-                    } else {
-                        m_ds.dsState = dsOrig.getState();
-                    }
+//                    if ( attrs.getValue("dsState") != null) {
+//                        m_ds.dsState = attrs.getValue("dsState");
+//                    } else {
+//                        m_ds.dsState = dsOrig.getState();
+//                    }
                     if ( attrs.getValue("dsLocation") != null) {
                         m_ds.dsLocation = attrs.getValue("dsLocation");
                     } else {
@@ -482,11 +483,11 @@ public class BatchModifyParser extends DefaultHandler
                     } else {
                         m_ds.force = false;
                     }                    
-                    if ( attrs.getValue("versionable") != null) {
-                        m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
-                    } else {
-                        m_ds.versionable = dsOrig.isVersionable();
-                    }     
+//                    if ( attrs.getValue("versionable") != null) {
+//                        m_ds.versionable = new Boolean(attrs.getValue("versionable")).booleanValue();
+//                    } else {
+//                        m_ds.versionable = dsOrig.isVersionable();
+//                    }     
                     if ( attrs.getValue("altIDs") != null) {
                         m_ds.altIDs = attrs.getValue("altIDs").split(" ");
                     } else {
@@ -525,6 +526,23 @@ public class BatchModifyParser extends DefaultHandler
                 m_ds.dsState = attrs.getValue("dsState");
                 m_ds.logMessage = attrs.getValue("logMessage");
                 setDatastreamState = true;
+
+            } catch (Exception e) {
+                failedCount++;
+                logFailedDirective(m_ds.objectPID, localName, e, "");
+            }
+        } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("setDatastreamVersionable")) {
+
+            try {
+                m_ds = new Datastream();
+                setDatastreamVersionable = false;
+
+                // Get require attributes
+                m_ds.objectPID = attrs.getValue("pid");
+                m_ds.dsID = attrs.getValue("dsID");
+                m_ds.dsState = attrs.getValue("versionable");
+                m_ds.logMessage = attrs.getValue("logMessage");
+                setDatastreamVersionable = true;
 
             } catch (Exception e) {
                 failedCount++;
@@ -1033,7 +1051,7 @@ public class BatchModifyParser extends DefaultHandler
                 if (purgeDatastream) {
                     String[] versionsPurged = null;
                     versionsPurged = APIM.purgeDatastream(m_ds.objectPID,
-                        m_ds.dsID, m_ds.asOfDate, m_ds.logMessage, m_ds.force);
+                        m_ds.dsID, null, m_ds.asOfDate, m_ds.logMessage, m_ds.force);
                     if (versionsPurged.length > 0) {
                         succeededCount++;
                         if (m_ds.asOfDate!=null) {
@@ -1073,11 +1091,9 @@ public class BatchModifyParser extends DefaultHandler
                     if (m_ds.dsControlGrp.equalsIgnoreCase("X")) {
                         APIM.modifyDatastreamByValue(m_ds.objectPID, m_ds.dsID, 
                                 m_ds.altIDs, m_ds.dsLabel,
-                                m_ds.versionable,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
                                 m_ds.xmlContent, 
-                                m_ds.dsState,
                                 m_ds.logMessage, 
                                 m_ds.force);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
@@ -1086,11 +1102,9 @@ public class BatchModifyParser extends DefaultHandler
                         APIM.modifyDatastreamByReference(m_ds.objectPID, m_ds.dsID, 
                                 m_ds.altIDs, 
                                 m_ds.dsLabel,
-                                m_ds.versionable,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
                                 m_ds.dsLocation, 
-                                m_ds.dsState,
                                 m_ds.logMessage,
                                 m_ds.force);
                     }

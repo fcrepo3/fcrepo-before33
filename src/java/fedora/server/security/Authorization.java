@@ -100,8 +100,11 @@ public interface Authorization {
 	public void enforcePurgeObject(Context context, String pid) 
 	throws AuthzException;
 
-	public void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
-	throws AuthzException;
+    public void enforceSetDatastreamState(Context context, String pid, String datastreamId, String datastreamNewState) 
+    throws AuthzException;
+    
+    public void enforceSetDatastreamVersionable(Context context, String pid, String datastreamId, boolean versionableNewState) 
+    throws AuthzException;
 
 	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
 	throws AuthzException;

@@ -181,6 +181,19 @@ public interface DigitalObject {
     public List datastreams(String id);
 
     /**
+     * Adds a datastream to a digital object, respecting the versionable  
+     * flag of that datastream.  Appending a new version of the datastream 
+     * if the datastream is marked as versionable or replacing the existing
+     * version(s) of the datastream is it is marked as non-versionable
+     * identifier.  
+     *
+     * @param ds The datastream to add.
+     * @param addNewVersion Controls whether to add a new version, or replace existing version.
+     * @return The list, possibly of zero size but never null.
+     */
+    public void addDatastreamVersion(Datastream ds, boolean addNewVersion);
+    
+    /**
      * Gets an Iterator over the disseminator ids in this object.
      * <p></p>
      * The Iterator is not tied to the underlying Collection and cannot

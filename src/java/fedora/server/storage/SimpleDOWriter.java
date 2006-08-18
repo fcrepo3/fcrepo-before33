@@ -147,11 +147,12 @@ public class SimpleDOWriter
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public void addDatastream(Datastream datastream)
+    public void addDatastream(Datastream datastream, boolean addNewVersion)
             throws ServerException {
         assertNotInvalidated();
         assertNotPendingRemoval();
-        m_obj.datastreams(datastream.DatastreamID).add(datastream);
+        // use this call to handle versionable
+        m_obj.addDatastreamVersion(datastream, addNewVersion);
     }
 
     /**
@@ -187,11 +188,14 @@ public class SimpleDOWriter
         assertNotPendingRemoval();
         List versions=m_obj.datastreams(id);
         ArrayList removeList=new ArrayList();
-        for (int i=0; i<versions.size(); i++) {
+        for (int i=0; i<versions.size(); i++) 
+        {
             Datastream ds=(Datastream) versions.get(i);
             boolean doRemove=false;
-            if (start!=null) {
-                if (end!=null) {
+            if (start!=null) 
+            {
+                if (end!=null) 
+                {
                     if ( (ds.DSCreateDT.compareTo(start)>=0)
                             && (ds.DSCreateDT.compareTo(end)<=0) ) {
                         doRemove=true;
@@ -210,7 +214,8 @@ public class SimpleDOWriter
                     doRemove=true;
                 }
             }
-            if (doRemove) {
+            if (doRemove) 
+            {
                 // Note: We don't remove old audit records by design.
 
                 // add this datastream to the datastream to-be-removed list.
