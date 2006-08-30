@@ -110,7 +110,7 @@ public class OptionDefinition {
 
     public void validateValue(String value, boolean bundled) 
             throws OptionValidationException {
-        throw new OptionValidationException("not implemented", getId());
+        //throw new OptionValidationException("not implemented", getId());
     }
 
 }

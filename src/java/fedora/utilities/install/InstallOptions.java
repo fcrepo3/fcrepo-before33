@@ -50,6 +50,15 @@ public class InstallOptions {
         _bundled = bundled;
         _map = new HashMap();
 
+        System.out.println();
+        System.out.println("*******************************");
+        System.out.println("  Fedora Installation Options  ");
+        System.out.println("*******************************");
+        System.out.println();
+        System.out.println("Please answer the following questions to install Fedora.");
+        System.out.println("You can enter CANCEL at any time to abort installation.");
+        System.out.println();
+
         inputOption(FEDORA_HOME);
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
@@ -76,9 +85,20 @@ public class InstallOptions {
                     inputOption(KEYSTORE_FILE);
                 }
             }
+
+            inputOption(XACML_ENABLED);
+            inputOption(DEPLOY_LOCAL_SERVICES);
         }
 
         inputOption(JDBC_JAR_FILE);
+    }
+
+    private String dashes(int len) {
+        StringBuffer out = new StringBuffer();
+        for (int i = 0; i < len; i++) {
+            out.append('-');
+        }
+        return out.toString();
     }
 
     /**
@@ -93,11 +113,68 @@ public class InstallOptions {
         OptionDefinition opt = OptionDefinition.get(optionId);
 
         System.out.println(opt.getLabel());
-        System.out.println();
+        System.out.println(dashes(opt.getLabel().length()));
         System.out.println(opt.getDescription(_bundled));
+
         System.out.println();
 
-        throw new InstallationCancelledException("not implemented");
+        String[] valids = opt.getValidValues(_bundled);
+        if (valids != null) {
+            System.out.print("Valid values : ");
+            for (int i = 0; i < valids.length; i++) {
+                if (i > 0) System.out.print(", ");
+                System.out.print(valids[i]);
+            }
+            System.out.println();
+        }
+
+        String defaultVal = opt.getDefaultValue();
+        if (defaultVal != null) {
+            System.out.println("Default value: " + defaultVal);
+        }
+
+        if (valids != null || defaultVal != null) {
+            System.out.println();
+        }
+
+        boolean gotValidValue = false;
+
+        while (!gotValidValue) {
+
+            System.out.print("Enter a value ");
+            if (defaultVal != null) {
+                System.out.print("[" + defaultVal + "] ");
+            }
+            System.out.print(":");
+
+            String value = readLine().trim();
+            if (value.length() == 0 && defaultVal != null) {
+                value = defaultVal;
+            }
+            System.out.println();
+            System.out.println();
+            if (value.equalsIgnoreCase("cancel")) {
+                throw new InstallationCancelledException("Cancelled by user.");
+            }
+
+            try {
+                opt.validateValue(value, _bundled);
+                gotValidValue = true;
+                _map.put(optionId, value);
+            } catch (OptionValidationException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+        }
+
+    }
+
+    private String readLine() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            return reader.readLine();
+        } catch (Exception e) {
+            throw new RuntimeException("Error: Unable to read from STDIN");
+        }
     }
 
     /**
@@ -183,7 +260,12 @@ public class InstallOptions {
      */
     private void validateAll() throws OptionValidationException {
 
-        throw new OptionValidationException("not implemented", "");
+        Iterator keys = getOptionNames();
+        while (keys.hasNext()) {
+            String optionId = (String) keys.next();
+            OptionDefinition opt = OptionDefinition.get(optionId);
+            opt.validateValue(getValue(optionId), _bundled);
+        }
     }
 
 }
