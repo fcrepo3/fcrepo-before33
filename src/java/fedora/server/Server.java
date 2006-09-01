@@ -1,6 +1,8 @@
 package fedora.server;
 
 import fedora.common.*;  // PID, MalformedPIDException
+import fedora.server.Context;
+import fedora.server.errors.GeneralException;
 import fedora.server.errors.MalformedPidException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ModuleShutdownException;
@@ -8,6 +10,7 @@ import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.ServerShutdownException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.security.Authorization;
+import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
 
@@ -15,10 +18,13 @@ import java.io.IOException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -723,8 +729,7 @@ public abstract class Server
             // 1) so they can be logged in the startup log, and
             // 2) so an attempt can be made to free resources tied up thus far
             //    via shutdown()
-            sie.printStackTrace();
-            logSevere(sie.getMessage());
+            logSevere(sie.getMessage() + "\n" + getStackTrace(sie));
             try {
                 shutdown(null);
             } catch (Throwable th) {
@@ -732,8 +737,7 @@ public abstract class Server
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
-            mie.printStackTrace();
-            logSevere(mie.getRole() + ": " + mie.getMessage());
+            logSevere(mie.getRole() + ": " + mie.getMessage() + "\n" + getStackTrace(mie));
             try {
                 shutdown(null);
             } catch (Throwable th) {
@@ -741,8 +745,7 @@ public abstract class Server
             }
             throw mie;
         } catch (Throwable th) {
-            th.printStackTrace();
-            logSevere(th.getMessage());
+            logSevere(th.getMessage() + "\n" + getStackTrace(th));
             try {
                 shutdown(null);
             } catch (Throwable oth) {
@@ -750,6 +753,15 @@ public abstract class Server
             }
             throw new RuntimeException("Fatal error starting server", th);
         }
+    }
+
+    private static final String getStackTrace(Throwable th) {
+
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        th.printStackTrace(pw);
+        pw.flush();
+        return sw.toString();
     }
 
     protected boolean overrideModuleRole(String moduleRole)
@@ -1635,6 +1647,31 @@ public abstract class Server
             return PID.fromFilename(filename);
         } catch (MalformedPIDException e) {
             throw new MalformedPidException(e.getMessage());
+        }
+    }
+
+    /**
+     * Get the current date from the context.
+     *
+     * If the context doesn't specify a value for the current date,
+     * or the specified value cannot be parsed as an ISO8601 date string,
+     * a GeneralException will be thrown.
+     */
+    public static Date getCurrentDate(Context context) throws GeneralException {
+
+        String propName = Constants.ENVIRONMENT.CURRENT_DATE_TIME.uri;
+        String dateTimeValue = context.getEnvironmentValue(propName);
+        if (dateTimeValue == null) {
+            throw new GeneralException("Missing value for environment "
+                    + "context attribute: " + propName);
+        }
+
+        Date currentDate = DateUtility.convertStringToDate(dateTimeValue);
+        if (currentDate == null) {
+            throw new GeneralException("Unparsable dateTime string: '"
+                    + dateTimeValue + "'");
+        } else {
+            return currentDate;
         }
     }
 
