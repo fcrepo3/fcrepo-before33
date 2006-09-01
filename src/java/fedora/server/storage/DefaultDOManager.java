@@ -1598,4 +1598,45 @@ public class DefaultDOManager
               + ioe.getClass().getName() + ") - " + ioe.getMessage());
         }
     }
+
+    public void reservePIDs(String[] pidList) throws ServerException {
+
+        try {
+            for (int i = 0; i < pidList.length; i++) {
+                m_pidGenerator.neverGeneratePID(pidList[i]);
+            }
+        } catch (IOException e) {
+            throw new GeneralException("Error reserving PIDs", e);
+        }
+    }
+
+    public String getRepositoryHash() throws ServerException {
+
+        // This implementation returns a string containing the 
+        // total number of objects in the repository, followed by the
+        // number of objects with with systemVersion 1 through 3, 
+        // in the format: "20|10,5,2"
+
+        Connection conn = null;
+        try {
+            conn = m_connectionPool.getConnection();
+
+            StringBuffer hash = new StringBuffer();
+            hash.append(getNumObjectsWithVersion(conn, 0));
+            hash.append("|");
+
+            for (int i = 1; i < 4; i++) {
+                if (i > 1) hash.append(",");
+                hash.append(getNumObjectsWithVersion(conn, i));
+            }
+
+            return hash.toString();
+
+        } catch (SQLException e) {
+            throw new GeneralException("SQL error encountered while computing "
+                    + "repository hash", e);
+        } finally {
+            if (conn != null) m_connectionPool.free(conn);
+        }
+    }
 }
