@@ -1691,4 +1691,30 @@ public class DefaultDOManager
             if (conn != null) m_connectionPool.free(conn);
         }
     }
+
+    /**             
+     * Get the number of objects in the registry whose system version
+     * is equal to the given value.
+     *
+     * If n is less than one, return the total number of objects in the
+     * registry.
+     */
+    private int getNumObjectsWithVersion(Connection conn,
+                                         int n) throws SQLException {
+
+        Statement st = null;
+        try {
+            st = conn.createStatement();
+            StringBuffer query = new StringBuffer();
+            query.append("SELECT COUNT(*) FROM doRegistry");
+            if (n > 0) {
+                query.append(" WHERE systemVersion = " + n);
+            }
+            ResultSet results = st.executeQuery(query.toString());
+            results.next();
+            return results.getInt(1);
+        } finally {
+            if (st != null) st.close();
+        }
+    }
 }

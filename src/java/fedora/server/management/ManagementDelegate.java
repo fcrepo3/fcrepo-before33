@@ -1,3 +1,5 @@
+package fedora.server.management;
+
 /**
  *
  * <p><b>Title:</b> ManagementDelegate.java</p>
