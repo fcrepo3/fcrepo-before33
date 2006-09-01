@@ -19,12 +19,14 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.xml.sax.SAXException;
 
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
+import fedora.server.RecoveryContext;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.GeneralException;
@@ -96,6 +98,8 @@ public class DefaultDOManager
 
     private DOReaderCache m_readerCache;
 
+    private Set m_lockedPIDs;
+
     protected ConnectionPool m_connectionPool;
     protected Connection m_connection;
 
@@ -122,6 +126,7 @@ public class DefaultDOManager
     public DefaultDOManager(Map moduleParameters, Server server, String role)
             throws ModuleInitializationException {
         super(moduleParameters, server, role);
+        m_lockedPIDs = new HashSet();
     }
 
     /**
@@ -362,7 +367,29 @@ public class DefaultDOManager
         }
 
         writer.invalidate();
-        // remove pid from tracked list...m_writers.remove(writer);
+
+        try {
+            releaseWriteLock(writer.GetObjectPID());
+        } catch (ServerException e) {
+            logWarning("Error releasing object lock; Unable to obtain pid from writer.");
+        }       
+    }   
+        
+    private void releaseWriteLock(String pid) {
+        synchronized (m_lockedPIDs) {
+            m_lockedPIDs.remove(pid);
+        }
+    }       
+                
+    private void getWriteLock(String pid) throws ObjectLockedException {
+        synchronized (m_lockedPIDs) {
+            if (m_lockedPIDs.contains(pid)) {
+                throw new ObjectLockedException(pid + " is currently being "
+                        + "modified by another thread");
+            } else {
+                m_lockedPIDs.add(pid);
+            }
+        }
     }
 
     public ConnectionPool getConnectionPool() {
@@ -502,8 +529,6 @@ public class DefaultDOManager
 		if (cachedObjectRequired) {
 			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
 		} else {
-			// TODO: make sure there's no SESSION lock on a writer for the pid
-
 			BasicDigitalObject obj=new BasicDigitalObject();
 			m_translator.deserialize(m_permanentStore.retrieveObject(pid), obj,
 					m_defaultStorageFormat, m_storageCharacterEncoding, 
@@ -511,8 +536,7 @@ public class DefaultDOManager
 			DOWriter w=new SimpleDOWriter(context, this, m_translator,
 					m_defaultStorageFormat,
 					m_storageCharacterEncoding, obj, this);
-			// add to internal list...somehow..think...
-			System.gc();
+            getWriteLock(obj.getPid());
 			return w;
 		}
 	}
@@ -537,6 +561,9 @@ public class DefaultDOManager
 			throws ServerException {
 		getServer().logFinest("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
 
+        DOWriter w = null;
+        BasicDigitalObject obj = null;
+
 		File tempFile = null;
 		if (cachedObjectRequired) {
 			throw new InvalidContextException("A DOWriter is unavailable in a cached context.");
@@ -545,7 +572,7 @@ public class DefaultDOManager
 				// CURRENT TIME:
 				// Get the current time to use for created dates on object
 				// and object components (if they are not already there).
-				Date nowUTC=new Date();
+				Date nowUTC = Server.getCurrentDate(context);
 				
 				// TEMP STORAGE:
 				// write ingest input stream to a temporary file
@@ -560,7 +587,7 @@ public class DefaultDOManager
 
 				// DESERIALIZE:
 				// deserialize the ingest input stream into a digital object instance
-				BasicDigitalObject obj=new BasicDigitalObject();
+				obj = new BasicDigitalObject();
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
 				obj.setNew(true);
@@ -641,7 +668,18 @@ public class DefaultDOManager
 						// yes... so do that, then set it in the obj.
 						String p=null;
 						try {
-							p=m_pidGenerator.generatePID(m_pidNamespace).toString();
+                            // If the context contains a recovery PID, use that.
+                            // Otherwise, generate a new PID as usual.
+                            if (context instanceof RecoveryContext) {
+                                RecoveryContext rContext = (RecoveryContext) context;
+                                p = rContext.getRecoveryValue(Constants.RECOVERY.PID.uri);
+                            }
+                            if (p == null) {
+                                p=m_pidGenerator.generatePID(m_pidNamespace).toString();
+                            } else {
+                                getServer().logFinest("INGEST: Using new PID from recovery context");
+                                m_pidGenerator.neverGeneratePID(p);
+                            }
 						} catch (Exception e) {
 							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
 									+ e.getClass().getName() + ") - " + e.getMessage());
@@ -663,9 +701,13 @@ public class DefaultDOManager
 				// get an object writer configured with the DEFAULT export format
 				if (fedora.server.Debug.DEBUG) System.out.println("Getting new writer with default export format: " + m_defaultExportFormat);
 				logFinest("INGEST: Instantiating a SimpleDOWriter...");
-				DOWriter w=new SimpleDOWriter(context, this, m_translator,
+				w=new SimpleDOWriter(context, this, m_translator,
 						m_defaultExportFormat,
 						m_storageCharacterEncoding, obj, this);
+
+                // WRITE LOCK:
+                // ensure no one else can modify the object now
+                getWriteLock(obj.getPid());
                 
 				// DEFAULT DUBLIN CORE DATASTREAM:
 				logFinest("INGEST: Adding/Checking default DC record...");
@@ -735,11 +777,21 @@ public class DefaultDOManager
 					obj.getCreateDate(), obj.getLastModDate());
 				return w;
 			} catch (IOException e) {
+
+                if (w != null) {
+                    releaseWriteLock(obj.getPid());
+                }
+
 				String message = e.getMessage();
 				if (message == null) message = e.getClass().getName();
 				e.printStackTrace();
 				throw new GeneralException("Error reading/writing temporary ingest file: " + message);
 			} catch (Exception e) {
+
+                if (w != null) {
+                    releaseWriteLock(obj.getPid());
+                }
+
 				if (e instanceof ServerException) {
 					ServerException se = (ServerException) e;
 					throw se;
@@ -983,7 +1035,7 @@ public class DefaultDOManager
 
                 // MODIFIED DATE:
                 // set digital object last modified date, in UTC
-                obj.setLastModDate(new Date());
+                obj.setLastModDate(Server.getCurrentDate(context));
                     ByteArrayOutputStream out = new ByteArrayOutputStream();
 
 				// FINAL XML SERIALIZATION:
