@@ -21,6 +21,7 @@ public interface Constants {
     public static final FedoraModelNamespace    MODEL         = new FedoraModelNamespace();
     public static final FedoraRelsExtNamespace  RELS_EXT      = new FedoraRelsExtNamespace();
     public static final FedoraViewNamespace     VIEW          = new FedoraViewNamespace();
+    public static final RecoveryNamespace       RECOVERY      = new RecoveryNamespace();
     public static final RDFSyntaxNamespace      RDF           = new RDFSyntaxNamespace();
     public static final TucanaNamespace         TUCANA        = new TucanaNamespace();
     public static final XSDNamespace            XSD           = new XSDNamespace();
