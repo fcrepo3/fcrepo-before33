@@ -102,62 +102,55 @@ public class GenericFileSystem extends FileSystem {
 		}
 	}
 
-	public void rewrite(File file, InputStream content) throws LowlevelStorageException {
-		//buffered writer?
-		if (! file.exists()) {
-			throw new LowlevelStorageException(true, "couldn't open old file for writing " + getPath(file));
-		}
+    public void rewrite(File file, InputStream content) throws LowlevelStorageException {
 
-		long now; {
-			Date date = new Date();
-			now = date.getTime();
-		}
+        File backupFile = wrappedNewFile(file, ".bak");
 
-		File temp = wrappedNewFile(file, ".temp." + now);
+        if (!file.renameTo(backupFile)) {
+            try { content.close(); } catch (IOException e) { }
+            throw new LowlevelStorageException(true, "failed to rename with "
+                    + ".bak extension " + getPath(file));
+        }
 
-		File old = wrappedNewFile(file, ".old." + now);
+        boolean needToRevert = false;
+        String err = null;
+        FileOutputStream out = null;
 
-		FileOutputStream fileOutputStream = null;
-		try {
-			fileOutputStream = new FileOutputStream(temp);
-		} catch (Exception eCaughtOpen) {
-			throw new LowlevelStorageException(true, "file couldn't be opened for writing " + getPath(temp), eCaughtOpen);
-		}
-		try {
-			stream2streamCopy (content, fileOutputStream);
-		} catch (Exception eCaughtWrite) {
-			throw new LowlevelStorageException(true, "file couldn't be opened for renaming " + getPath(old), eCaughtWrite);
-		} finally {
-			try {
-				fileOutputStream.close();
-				content.close();
-			} catch (Exception eCaughtCloseFile) {
-				throw new LowlevelStorageException(true, "file couldn't be opened for writing " + getPath(temp), eCaughtCloseFile);
-			}
-		}
-if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} // so to watch file creation/renaming/deletion
-		try {
-			file.renameTo(old);
-		} catch (Exception eCaughtRenameOld) {
-			throw new LowlevelStorageException(true, "file " + getPath(file) + "couldn't be renamed to " + getPath(old), eCaughtRenameOld);
-		}
-if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} // so to watch file creation/renaming/deletion
-		try {
-			temp.renameTo(file);
-		} catch (Exception eCaughtRenameTemp) {
-			throw new LowlevelStorageException(true, "file " + getPath(file) + "couldn't be renamed to " + getPath(temp), eCaughtRenameTemp);
-		}
+        try {
+            out = new FileOutputStream(file);
+            stream2streamCopy(content, out);
+        } catch (IOException e) {
+            needToRevert = true;
+            err = "failed to write content to file " + file.getPath();
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log("WARN: Could not close file for writing " + file.getPath());
+                }
+            }
+            try {
+                content.close();
+            } catch (IOException e) {
+                log("WARN: Could not close content stream for reading");
+            }
+        }
 
-if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} // so to watch file creation/renaming/deletion
-		try {
-			if (! old.delete()) {
-				throw new LowlevelStorageException(true, "file " + getPath(temp) + " couldn't be deleted");
-			}
-		} catch (Exception eCaughtDelete) {
-			throw new LowlevelStorageException(true, "file " + getPath(temp) + " couldn't be deleted", eCaughtDelete);
-		}
-if (0 < delay) {try {Thread.sleep(delay);} catch (InterruptedException ie) {}} // so to watch file creation/renaming/deletion
-}
+        if (needToRevert) {
+            if (backupFile.renameTo(file)) {
+                err += ", so reverted to original";
+            } else {
+                err += ", AND failed to revert to original from .bak!";
+            }
+            throw new LowlevelStorageException(true, err);
+        } else {
+            if (!backupFile.delete()) {
+                log("WARN: Could not delete backup file " + backupFile.getPath());
+            }
+        }
+
+    }
 
 	public final InputStream read(File file) throws LowlevelStorageException {
 		//buffered reader?
