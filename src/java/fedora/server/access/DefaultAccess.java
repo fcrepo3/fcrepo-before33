@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.net.URLDecoder;
 
 import fedora.common.Constants;
 import fedora.server.Context;
@@ -303,11 +304,15 @@ public class DefaultAccess extends Module implements Access
           if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) {
             this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
             String pdv=defaultMethodParms[i].parmDefaultValue;
-            if (pdv.equalsIgnoreCase("$pid")) {
-                pdv=PID;
-            } else if (pdv.equalsIgnoreCase("$objuri")) {
-                pdv="info:fedora/" + PID;
-            }
+            try {
+                // here we make sure the PID is decoded so that encoding
+                // later won't doubly-encode it
+                if (pdv.equalsIgnoreCase("$pid")) {
+                    pdv=URLDecoder.decode(PID, "UTF-8");
+                } else if (pdv.equalsIgnoreCase("$objuri")) {
+                    pdv="info:fedora/" + URLDecoder.decode(PID, "UTF-8");
+                }
+            } catch (UnsupportedEncodingException uee) { }
             this.getServer().logFinest("addedDefaultValue: "+pdv);
             h_userParms.put(defaultMethodParms[i].parmName, pdv);
           }
