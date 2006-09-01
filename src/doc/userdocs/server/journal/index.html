@@ -1,0 +1,761 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+    <title>Journalling Guide</title>
+    <link rel="stylesheet" type="text/css" href="../../docstyle.css" />
+    <style type="text/css">
+        .boxed {
+            margin: 10px 5px 10px 5px;
+            border: thin solid black;
+            padding: 5px 30px 5px 5px;
+        }
+        
+        ul.parameter {
+            list-style-type: disc;
+            font-family: Arial, Helvetica, sans-serif;
+            font-style: normal;
+            font-weight: bold;
+        }
+        ul.domain {
+            list-style-type: circle;
+            font-family: monospace, Courier, Courier New;
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        li.optional {
+            font-style: italic;
+        }
+        
+        .description {
+            font-family: serif;
+            font-style: normal;
+            font-weight: normal;
+        }
+        
+        .caption {
+            font-size: smaller;
+            font-weight: bolder;
+            font-style: italic;
+            padding-bottom: 0px;
+        }
+        
+        .code {
+        	font-size: smaller;
+        }
+    </style>
+</head>
+<body>
+
+<div id="header">
+    <a href="../../index.html" id="logo"></a>
+    <div id="title">
+        <h1>Journalling Guide</h1>
+        <h2>Fedora Release 2.1.1</h2>
+    </div>
+</div>
+
+<div id="toc">
+    <h2>Table of Contents</h2>
+    <div id="tocbox">
+        <ol>
+            <li><a href="#intro">Introduction</a></li>
+                <ol>
+                    <li><a href="#intro.goals">Goals</a></li>
+                    <li><a href="#intro.equiv">Repository equivalence</a></li>
+                    <li><a href="#intro.forensic">Forensic information</a></li>
+                    <li><a href="#intro.status">Status</a></li>
+                </ol>
+            </li>
+            <li><a href="#design">Design</a></li>
+                <ol>
+                    <li><a href="#design.decorator">A decorator on the Management module</a></li>
+                    <li><a href="#design.modes">Modes of operation</a></li>
+                    <li><a href="#design.context">Extended Context interface</a></li>
+                    <li><a href="#design.hash">The repository hash</a></li>
+                    <li><a href="#design.repeat">Repeatability</a></li>
+                    <li><a href="#design.extend">Extensibility</a></li>
+                </ol>
+            </li>
+            <li><a href="#options">Options</a></li>
+                <ol>
+                    <li><a href="#options.general">General options</a></li>
+                    <li><a href="#options.single">Options for single-file operation</a></li>
+                    <li><a href="#options.multi">Options for multi-file operation</a></li>
+                    <li><a href="#options.log">Options for recovery log</a></li>
+                </ol>
+            </li>
+            <li><a href="#impl">Implementation</a></li>
+                <ol>
+                    <li><a href="#impl.fcfg">Configurations in fedora.fcfg</a></li>
+                    <li><a href="#impl.journal">Journal content example</a></li>
+                    <li><a href="#impl.log">Recovery log examples</a></li>
+                    <li><a href="#impl.sequence">Sequence diagrams</a></li>
+                </ol>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div id="introduction" class="sect">
+	<h2><a name="intro">1. Introduction</a></h2>
+	<p>The Fedora configuration now includes an optional Journalling module. 
+	This module creates Journal files which capture all calls 
+	against the Fedora Management API – or rather, all calls that have changed the 
+	state of the repository. The Journal files can be replayed against another 
+	Fedora instance with the same initial state, resulting in a repository 
+	which is a mirror of the original.</p>
+
+	<div class="subsect">
+		<h3><a name="intro.goals">A. Goals</a></h3>
+		<p>The Journalling module can increase Fedora availability in 
+		one of two ways: server recovery to the level of the most recent action, or the 
+		creation of a standby server for fast failover.</p>
+		<p>Without Journalling, a Fedora environment which fails for any reason can 
+		only be recovered to the most recent backup. Actions which have 
+		occurred since the backup are lost. With Journalling, the environment can be
+		reconstructed to the point of the failure. All successful actions will be 
+		recovered, and the server can then resume normal operation.</p>
+		<p>It is also possible to have two Fedora servers operating in a 
+		"leader/follower" configuration. The leading server handles requests from 
+		users, and creates Journal files to reflect those requests. The following 
+		server processes each Journal file as it is completed. If the leading 
+		server should fail, the following server will very quickly be ready to
+		take over the handling of user requests.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="intro.equiv">B. Repository equivalence</a></h3>
+		<p>When recovering from a failure, the recovered 
+		repository must match the original in all significant ways. PIDs must match 
+		those that were initially generated. 
+		Timestamps in "create date" or "last modified" fields must 
+		reflect the date of the original API call, not the date of 
+		the recovery. Generation of PIDs must resume with the same sequence as the 
+		original server would have used.</p>
+		<p>The need for deterministic Journalling places limits on Fedora's ability to 
+		conduct simultaneous multi-threaded operations. When the Journal module is 
+		installed, it synchronizes the calls to the Management module in order to 
+		insure that those calls can be replayed in the correct sequence.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="intro.forensic">C. Forensic information</a></h3>
+		<p>The Journal files contain the information that is needed to 
+		reconstruct the repository, and some extra information as well. These 
+		additional fields are included to permit analysis of the Journal files.
+		Tools that scan the Journal files can easily determine the user and IP address 
+		that initiated each API call, as well as the time of the call. Other information 
+		may be added to the Journal files to assist in analyzing the server 
+		operation.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="intro.status">D. Status</a></h3>
+		<p>The Journalling module currently writes Journal files to a disk directory, 
+		and recovers from that same directory. If a "leader/follower" configuration 
+		exists with Fedora instances on different servers, those servers must somehow 
+		share the directory where the Journal files are written.</p>
+		<p>The Journalling module is designed to permit additional transport mechanisms 
+		for Journal data, and current plans call for a transport that uses JMS (Java 
+		Message Service) instead of file-based transport. No date has been set for this 
+		enhancement.</p>
+	</div>
+</div>
+
+
+<div class="sect">
+	<h2><a name="design">2. Design</a></h2>
+	
+	<div class="subsect">
+		<h3><a name="design.decorator">A. A decorator on the Management module</a></h3>
+		<p>The Journalling module uses the Decorator design pattern. 
+		The Journaller module implements the Management interface, and adds 
+		functionality to each of the methods of that interface before delegating the 
+		calls to another Management instance.</p>
+		<p>The design pattern is slightly modified, since the convention 
+		in Fedora is that each module will implement its own interface. A new interface 
+		was created, called ManagementDelegate, and the Journaller requires a module 
+		that implements that interface to use as its delegate.</p>
+		<p>Here is a class diagram for the Management interface, and its implementing 
+		class, followed by an excerpt from fedora.fcfg, showing how the module is 
+		configured (without Journalling).</p>
+		<p class="caption">Class diagram for Management module </p>
+		<img src="./images/ClassDiagramManagement.png" 
+			alt="Class diagram for Management module">
+		<p class="caption">Configuring the Management module within fedora.fcfg:</p>
+		<div class="code"><pre>&lt;module role="fedora.server.management.Management"
+    class="fedora.server.management.DefaultManagement"&gt;
+&lt;/module&gt;</pre></div>
+		<p>The next class diagram shows the addition of the Journaller module, 
+		followed by another excerpt from fedora.fcfg with both Journaller and 
+		Management modules. Notice how the Journaller class implements the 
+		Management module interface, while the 
+		DefaultManagement class has moved to implement ManagementDelegate.
+		<p class="caption">Class diagram for the Journaller and Management modules</p>
+		<img src="./images/ClassDiagramJournalManagement.png" 
+			alt="Class diagram for the Journaller and Management modules">
+		<p class="caption">Configuring the Journaller and Management modules within fedora.fcfg:</p>
+		<div class="code"><pre>&lt;module role="fedora.server.management.Management"
+    class="fedora.server.journal.Journaller"&gt;
+&lt;/module&gt;
+&lt;module role="fedora.server.management.ManagementDelegate"
+    class="fedora.server.management.DefaultManagement"&gt;
+&lt;/module&gt;</pre></div>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="design.modes">B. Modes of operation</a></h3>
+		<p>The Journal operates in one of two modes: "normal", or "recover".</p>
+		<p>In normal mode, each call to the Management API is 
+		intercepted and passed to the ManagementDelegate. The arguments and the 
+		return value from that call are recorded in the Journal.</p>
+		<p>In recover mode, a worker thread processes the Journal files and makes 
+		appropriate calls to the ManagementDelegate. Any call from a user is 
+		blocked, returning an Exception message.</p>
+		<p>One might expect a third mode of operation, to be used when following 
+		another server. In fact, this is implemented using recover mode with a 
+		different JournalReader implementation class. This is illustrated in the 
+		section "<a href="#impl.fcfg">Configurations in fedora.fcfg</a>"</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="design.context">C. Extended Context interface</a></h3>
+		<p>The behavior of the Management module changes slightly when it is acting 
+		as a delegate for the Journaller module. This is accomplished by adding a 
+		"recovery" namespace to the Context object that is passed to the methods of 
+		the Management module.</p>
+		<p>In normal mode, the Journaller stores information in the recovery namespace
+		of the Context. This information is needed in addition to the arguments and 
+		return value of the API method called, in order to fully capture the state of 
+		the repository for recovery.</p>
+		<p>When recovering, the Management module will look for this additional 
+		information, and use it when executing the API method.</p>
+		<p>For example, if the IngestObject method is called and the ingested FOXML 
+		does not supply a PID for the object, Fedora will generate one. However, 
+		to insure that the same PID is assigned during recovery, the Journaller 
+		records the PID, and on recovery the Management module will 
+		assign the recorded PID to the new object, instead of generating a new PID 
+		which might be different.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="design.hash">D. The repository hash</a></h3>
+		<p>Each Journal file is tagged with a "repository hash" value, which indicates 
+		the internal state of the repository when the Journal file was created.  
+		In recover mode, the hash value in the file is compared to the hash value of 
+		the new repository. If the values do not match, the recovery is aborted.</p>
+		<p>The repository hash value insures that Journal files are not applied in 
+		the wrong order, and that no files are skipped during the recovery. Either 
+		of these problems will be detected by comparing the hash values.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="design.repeat">E. Repeatability</a></h3>
+		<p>A basic concept of Journalling is the repeatability of actions. If a series 
+		of actions is executed on two Fedora servers, the result must be two equivalent 
+		Fedora repositories.</p>
+		<p>The need for repeatability limits Fedora's ability to use multi-threading 
+		in API calls. Multi-threaded operation is non-deterministic by nature, but a 
+		Journal file must record a series of events must occur in a particular order, 
+		and that order must reflect the actual execution of the events. Otherwise, it 
+		would be possible to execute two actions successfully, and to have those same 
+		two actions fail on another server, because they were executed in a different 
+		order.</p>
+		<p>By careful implementation, this single-threaded sequencing can be reduced 
+		to the smallest possible interval, but it cannot be eliminated without 
+		breaking the repeatability of the Journal.</p>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="design.extend">F. Extensibility</a></h3>
+		<p>Some components of the Journaller module are dynamically loaded at server 
+		startup time, based on parameter values. The storage and transport mechanisms 
+		for the Journals are controlled by these components. It is fairly simple to 
+		implement an alternative file structure for the Journal files, or to use a 
+		message-based transport instead of simple flat files.</p>
+		<p>The recovery log that is generated by the Journaller is controlled by a 
+		similar set of parameters, and can be extended or replaced in the same 
+		manner.</p>
+	</div>
+</div>
+
+<div class="sect">
+<h2><a name="options">3. Options</a></h2>
+<p>These options are recognized by the Journaller module, or by its 
+configurable components. See the section 
+"<a href="#impl.fcfg">Configurations in fedora.fcfg</a>"
+for examples of how the options are used in fedora.fcfg</p>
+
+<div class="subsect">
+<h3><a name="options.general">A. General options</a></h3>
+<p>These options are recognized by the Journaller module, and can be used 
+with any configurable components.
+<div class="boxed">
+<ul class="parameter">
+    <li>journalMode
+        <div class="description">
+            Sets the operating mode of the Journaller module. Optional. Default 
+            is "normal".
+        </div>
+        <ul class="domain">
+            <li>normal
+                <div class="description">
+                    API calls are performed normally, and a Journal 
+                    is written. 
+                </div>
+            </li>
+            <li>recover
+                <div class="description">
+                    The Journal is read and executed, while API calls from 
+                    outside are rejected. 
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>continueOnHashError
+        <div class="description">
+            Permits the recovery to continue, even if the repository hash does
+            not match the value recorded in the Journal file. Optional. Applies
+            only to recover mode. The default is "false".
+        </div>
+        <ul class="domain">
+            <li>true
+                <div class="description">
+                    Errors in the repository hash value will be recorded in the
+                    recovery log, but will not cause the recovery to terminate.
+                </div>
+            </li>
+            <li>false
+                <div class="description">
+                	Any error in the repository hash value will cause the 
+                	recovery to terminate immediately.
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>journalWriterClassname
+        <div class="description">
+            Specifies the configurable component that writes the Journal during
+            normal mode operation. This class must be an extension of 
+            <code>fedora.server.journal.JournalWriter</code>. Required for 
+            normal mode. There is no default. Note that this component may 
+            require additional parameters.
+        </div>
+        <ul class="domain">
+            <li>fedora.server.journal.readerwriter.singlefile.SingleFileJournalWriter
+                <div class="description">
+                    Writes a single Journal file. This writer is likely to be
+                    useful only for testing, since the Journal file will quickly
+                    become too large to handle during normal operation.
+                </div>
+            </li>
+            <li>fedora.server.journal.readerwriter.multifile.MultiFileJournalWriter
+                <div class="description">
+                    Writes a collection of Journal files to a specified 
+                    directory on disk.
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>journalReaderClassname
+        <div class="description">
+            Specifies the configurable component that reads the Journal during
+            recover mode operation. This class must be an extension of 
+            <code>fedora.server.journal.JournalReader</code>. Required for 
+            recover mode. There is no default. Note that this component may 
+            require additional parameters.
+        </div>
+        <ul class="domain">
+            <li>fedora.server.journal.readerwriter.singlefile.SingleFileJournalReader
+                <div class="description">
+                    Reads a single Journal file. When the file has been 
+                    processed, recovery is complete. This reader is likely to be
+                    useful only for testing, since the Journal file will quickly
+                    become too large to handle during normal operation.
+                </div>
+            </li>
+            <li>fedora.server.journal.readerwriter.multifile.MultiFileJournalReader
+                <div class="description">
+                    Reads a collection of Journal files from a specified 
+                    directory on disk. As each file is processed, it is moved
+                    to an "archive" directory. When all files have been 
+                    processed, recovery is complete.
+                </div>
+            </li>
+            <li>fedora.server.journal.readerwriter.multifile.MultiFileFollowingJournalReader
+                <div class="description">
+                    Monitors a specified directory on disk for the existence of
+                    new Journal files. As each file is found, it is processed
+                    and moved to the "archive" directory. When all files have
+                    been processed, the server will continue to poll the 
+                    directory for new files. This reader enables a server to
+                    "follow" another.
+                </div>
+            </li>
+        </ul>
+    </li>
+    <li>journalRecoveryLogClassname
+        <div class="description">
+            Specifies the configurable component that writes the recovery log
+            during recover mode operation. This class must be an extension of 
+            <code>fedora.server.journal.recoverylog.JournalRecoveryLog</code>. 
+            Required for recover mode. There is no default. Note that this 
+            component may require additional parameters.
+        </div>
+        <ul class="domain">
+            <li>fedora.server.journal.recoverylog.BufferedJournalRecoveryLog
+                <div class="description">
+                    Accumulates log messages in a StringBuffer and writes them
+                    to disk only when recovery is complete. This component is 
+                    useful for testing, since it gives a clear external 
+                    indication of completion. It will almost certainly be too 
+                    memory-intensive for normal operation.
+                </div>
+            </li>
+            <li>fedora.server.journal.recoverylog.UnbufferedJournalRecoveryLog
+                <div class="description">
+                    Writes a log messages to a disk file as soon as they are 
+                    initiated. Best for normal operation.
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>
+</div>
+</div>
+
+<div class="subsect">
+<h3><a name="options.single">B. Options for single-file operation</a></h3>
+<p>These options are recognized by the reader and writer components in the 
+<code>fedora.server.journal.readerwriter.singlefile</code> package.</p>
+<div class="boxed">
+<ul class="parameter">
+    <li>journalFilename
+        <div class="description">
+            The full path to the journal file. Required. There is no default.
+        </div>
+    </li>
+</ul>
+</div>
+</div>
+
+<div class="subsect">
+<h3><a name="options.multi">C. Options for multi-file operation</a></h3>
+<p>These options are recognized by the reader and writer components in the 
+<code>fedora.server.journal.readerwriter.multifile</code> package.</p>
+<div class="boxed">
+<ul class="parameter">
+    <li>journalDirectory
+        <div class="description">
+            The full path to the directory where the journal files are written.
+            Required. There is no default.
+        </div>
+    </li>
+    <li>archiveDirectory
+        <div class="description">
+            The full path to the directory where the journal files are archived
+            after being processed in recover mode. Required for recover mode. 
+            There is no default.
+        </div>
+    </li>
+    <li>journalFilenamePrefix
+        <div class="description">
+            The name of each Journal file will consist of this prefix followed
+            by a timestamp to insure uniqueness. Optional. The default is 
+            "fedoraJournal".
+        </div>
+    </li>
+    <li>journalFileSizeLimit
+        <div class="description">
+            When a Journal file exceeds this size, it is closed. Subsequent
+            API calls will be recorded in a new Journal file. The value must be
+            an integer number of bytes, optionally followed by "K", "M", or 
+            "G" to indicate Kilobytes, Megabytes, or Gigabytes, respectively.
+            Optional. The default is "5M".
+        </div>
+    </li>
+    <li>journalFileAgeLimit
+        <div class="description">
+            When the age of a Journal file exceeds this value, it is closed. 
+            Subsequent API calls will be recorded in a new Journal file. The 
+            value must be an integer number of seconds, optionally followed 
+            by "M", "H", or "D" to indicate Minutes, Hours, or Days, 
+            respectively. Optional. The default is "1D".
+        </div>
+    </li>
+</ul>
+</div>
+</div>
+
+<div class="subsect">
+<h3><a name="options.log">D. Options for the recovery log</a></h3>
+<p>These options are recognized by all of the current RecoveryLog 
+components.</p>
+<div class="boxed">
+<ul class="parameter">
+    <li>recoveryLogFilename
+        <div class="description">
+            The full path of the disk file that will contain the recovery log.
+            Required for recover mode. There is no default.
+        </div>
+    </li>
+    <li>recoveryLogLevel
+        <div class="description">
+            Specifies the amount of information that is written to the 
+            recovery log. Optional. The default is "high".
+        </div>
+        <ul class="domain">
+            <li>high
+                <div class="description">
+                    Verbose logging. Writes all Journal information to the log,
+                    including method identifiers, arguments, and context.
+                </div>
+            </li>
+            <li>medium
+                <div class="description">
+                    Writes partial information to the log, including method
+                    identifiers and arguments, but omitting contexts.
+                </div>
+            </li>
+            <li>low
+                <div class="description">
+                    Terse logging. Writes only method identifiers to the log,
+                    omitting contexts and arguments.
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>
+</div>
+</div>
+
+<div class="sect">
+	<h2><a name="impl">4. Implementation</a></h2>
+	<p>This section contains some details of the Journaller implementation,
+	including how to configure it, what it produces, and how it operates.</p>
+	
+	<div class="subsect">
+		<h3><a name="impl.fcfg">A. Configurations in fedora.fcfg</a></h3>
+		<p>These excerpts from fedora.fcfg show three different examples of how
+			to configure the Journaller module.</p>
+		<p class="caption">Configuring for normal mode:</p>
+		<div class="code"><pre>&lt;module role="fedora.server.management.Management" 
+    class="fedora.server.journal.Journaller"&gt;
+  &lt;param name="journalWriterClassname" 
+    value="fedora.server.journal.readerwriter.multifile.MultiFileJournalWriter"/&gt;
+  &lt;param name="journalDirectory" value="C:\\FedoraJournalFiles"/&gt;
+&lt;/module&gt;
+&lt;module role="fedora.server.management.ManagementDelegate" 
+    class="fedora.server.management.DefaultManagement"&gt;
+&lt;/module&gt;</pre></div>
+
+		<p class="caption">Configuring for recover mode:</p>
+		<div class="code"><pre>&lt;module role="fedora.server.management.Management" 
+    class="fedora.server.journal.Journaller"&gt;
+  &lt;param name="journalMode" value="recover"/&gt;
+  &lt;param name="journalReaderClassname" 
+    value="fedora.server.journal.readerwriter.multifile.MultiFileJournalReader"/&gt;
+  &lt;param name="journalDirectory" value="C:\\FedoraJournalFiles"/&gt;
+  &lt;param name="archiveDirectory" value="C:\\FedoraArchiveFiles"/&gt;
+  &lt;param name="recoveryLogLevel" value="high"/&gt;
+  &lt;param name="journalRecoveryLogClassname" 
+    value="fedora.server.journal.recoverylog.UnbufferedJournalRecoveryLog"/&gt;
+  &lt;param name="recoveryLogFilename" value="C:\\fedora.recovery.log"/&gt;
+&lt;/module&gt;
+&lt;module role="fedora.server.management.ManagementDelegate" 
+    class="fedora.server.management.DefaultManagement"&gt;
+&lt;/module&gt;</pre></div>
+
+		<p class="caption">Configuring for recover mode in a "following" server:</p>
+		<div class="code"><pre>&lt;module role="fedora.server.management.Management" 
+    class="fedora.server.journal.Journaller"&gt;
+  &lt;param name="journalMode" value="recover"/&gt;
+  &lt;param name="journalReaderClassname" 
+    value="fedora.server.journal.readerwriter.multifile.MultiFileFollowingJournalReader"/&gt;
+  &lt;param name="journalDirectory" value="C:\\FedoraJournalFiles"/&gt;
+  &lt;param name="archiveDirectory" value="C:\\FedoraArchiveFiles"/&gt;
+  &lt;param name="recoveryLogLevel" value="high"/&gt;
+  &lt;param name="journalRecoveryLogClassname" 
+    value="fedora.server.journal.recoverylog.UnbufferedJournalRecoveryLog"/&gt;
+  &lt;param name="recoveryLogFilename" value="C:\\fedora.recovery.log"/&gt;
+&lt;/module&gt;
+&lt;module role="fedora.server.management.ManagementDelegate" 
+    class="fedora.server.management.DefaultManagement"&gt;
+&lt;/module&gt;</pre></div>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="impl.journal">B. Journal content example</a></h3>
+		<p>This shows the possible content of an entry in the Journal file.
+		The Context structure was simplified for this example. In normal
+		operation a Context will probably contain more keys and values.</p>
+		<div class="code"><pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;FedoraJournal repositoryHash="3|2,1,0" timestamp="2006-06-15T09:45:35.683-0400"&gt;
+  &lt;JournalEntry method="purgeObject" timestamp="2006-06-15T09:45:35.683-0400" 
+      clientIpAddress="127.0.0.1" loginId="fedoraAdmin"&gt;
+    &lt;context&gt;
+      &lt;password&gt;fedoraAdmin&lt;/password&gt;
+      &lt;noOp&gt;false&lt;/noOp&gt;
+      &lt;now&gt;2006-06-15T09:45:35.683-0400&lt;/now&gt;
+      &lt;multimap name="environment"&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:environment:httpRequest:authType"&gt;
+          &lt;multimapvalue&gt;BASIC&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:environment:httpRequest:serverIpAddress"&gt;
+          &lt;multimapvalue&gt;127.0.0.1&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:environment:httpRequest:serverPort"&gt;
+          &lt;multimapvalue&gt;8080&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:environment:httpRequest:method"&gt;
+          &lt;multimapvalue&gt;POST&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:environment:httpRequest:protocol"&gt;
+          &lt;multimapvalue&gt;HTTP/1.1&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+      &lt;/multimap&gt;
+      &lt;multimap name="subject"&gt;
+        &lt;multimapkey name="fedoraRole"&gt;
+          &lt;multimapvalue&gt;administrator&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+        &lt;multimapkey name="urn:fedora:names:fedora:2.1:subject:loginId"&gt;
+          &lt;multimapvalue&gt;fedoraAdmin&lt;/multimapvalue&gt;
+        &lt;/multimapkey&gt;
+      &lt;/multimap&gt;
+      &lt;multimap name="action"&gt;&lt;/multimap&gt;
+      &lt;multimap name="resource"&gt;&lt;/multimap&gt;
+      &lt;multimap name="recovery"&gt;&lt;/multimap&gt;
+    &lt;/context&gt;
+    &lt;argument name="pid" type="string"&gt;demo:99&lt;/argument&gt;
+    &lt;argument name="message" type="string"&gt;That dog's gonnna die.&lt;/argument&gt;
+    &lt;argument name="force" type="boolean"&gt;false&lt;/argument&gt;
+  &lt;/JournalEntry&gt;
+&lt;/FedoraJournal&gt;
+</pre></div>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="impl.log">C. Recovery log examples</a></h3>
+		<p>These examples show excerpts from recovery logs that were created
+			with different "recoveryLogLevel" settings.</p>
+		<p class="caption">Excerpt of recovery log, recoveryLogLevel=low:</p>
+		<div class="code"><pre>2006-06-15T09:45:36.605-0400: Event: method='getNextPid', 
+            file='C:\fedoraJournal20060615.134531.152Z', 
+            entry='2006-06-15T09:45:30.167-0400'
+2006-06-15T09:45:36.714-0400: Call complete:getNextPid</pre></div>
+
+		<p class="caption">Excerpt of recovery log, recoveryLogLevel=medium:</p>
+		<div class="code"><pre>2006-06-15T09:45:36.605-0400: Event: method='getNextPid', 
+            file='C:\fedoraJournal20060615.134531.152Z', 
+            entry='2006-06-15T09:45:30.167-0400'
+    arguments
+        numPids='4'
+        namespace='newPIDs'
+2006-06-15T09:45:36.714-0400: Call complete:getNextPid
+</pre></div>
+
+		<p class="caption">Excerpt of recovery log, recoveryLogLevel=high:</p>
+		<div class="code"><pre>2006-06-15T09:45:36.605-0400: Event: method='getNextPid', 
+            file='C:\fedoraJournal20060615.134531.152Z', 
+            entry='2006-06-15T09:45:30.167-0400'
+    context=fedora.server.journal.entry.JournalEntryContext
+        environmentAttributes
+            urn:fedora:names:fedora:2.1:environment:httpRequest:authType
+                BASIC
+            urn:fedora:names:fedora:2.1:environment:httpRequest:security
+                urn:fedora:names:fedora:2.1:environment:httpRequest:security-insecure
+            urn:fedora:names:fedora:2.1:environment:currentDate
+                2006-06-15Z
+            urn:fedora:names:fedora:2.1:environment:currentTime
+                13:45:30.027Z
+            urn:fedora:names:fedora:2.1:environment:httpRequest:sessionStatus
+                invalid
+            urn:fedora:names:fedora:2.1:environment:httpRequest:scheme
+                http
+            urn:fedora:names:fedora:2.1:environment:httpRequest:clientIpAddress
+                127.0.0.1
+            urn:fedora:names:fedora:2.1:environment:httpRequest:contentLength
+                576
+            urn:fedora:names:fedora:2.1:environment:httpRequest:clientFqdn
+                localhost
+            urn:fedora:names:fedora:2.1:environment:httpRequest:serverIpAddress
+                127.0.0.1
+            urn:fedora:names:fedora:2.1:environment:httpRequest:serverPort
+                8080
+            urn:fedora:names:fedora:2.1:environment:currentDateTime
+                2006-06-15T13:45:30.027Z
+            urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol
+                urn:fedora:names:fedora:2.1:environment:httpRequest:messageProtocol-soap
+            urn:fedora:names:fedora:2.1:environment:httpRequest:method
+                POST
+            urn:fedora:names:fedora:2.1:environment:httpRequest:contentType
+                text/xml; charset=utf-8
+            urn:fedora:names:fedora:2.1:environment:httpRequest:serverFqdn
+                localhost
+            urn:fedora:names:fedora:2.1:environment:httpRequest:protocol
+                HTTP/1.1
+        subjectAttributes
+            fedoraRole
+                administrator
+            urn:fedora:names:fedora:2.1:subject:loginId
+                fedoraAdmin
+        actionAttributes
+        resourceAttributes
+            urn:fedora:names:fedora:2.1:resource:object:nPids
+                4
+        recoveryAttributes
+            info:fedora/fedora-system:def/recovery#pidList
+                newPIDs:1
+                newPIDs:2
+                newPIDs:3
+                newPIDs:4
+        password='*********'
+        noOp=false
+        now=false
+    arguments
+        numPids='4'
+        namespace='newPIDs'
+2006-06-15T09:45:36.714-0400: Call complete:getNextPid</pre></div>
+	</div>
+	
+	<div class="subsect">
+		<h3><a name="impl.sequence">D. Sequence diagrams</a></h3>
+		<p>These UML diagrams give an overview of the control sequences used in
+		creating a Journal (normal mode) or consuming a Journal (recover 
+		mode).</p>
+		<p class="caption">Creating the journal (click on image to enlarge).</p>
+		<a href="./images/CreatingtheJournal.png">
+			<img src="./images/CreatingtheJournalReduced.png" 
+				alt="Sequence diagram for creating the Journal">
+		</a>
+		<p class="caption">Consuming the journal (click on image to enlarge).</p>
+		<a href="./images/ConsumingtheJournal.png">
+			<img src="./images/ConsumingtheJournalReduced.png" 
+				alt="Sequence diagram for consuming the Journal">
+		</a>
+
+	</div>
+</div>	
+
+
+<div id="footer">
+    <div id="copyright">
+        Copyright &copy; 2006 Fedora Project
+    </div>
+    <div id="lastModified">
+        Last Modified
+        <script type="text/javascript">
+            var cvsDate = "$Date$";
+            var parts = cvsDate.split(" ");
+            var modifiedDate = parts[1];
+            document.write(modifiedDate);
+        </script>
+    </div>
+</div>
+    
+</body>
+</html>
