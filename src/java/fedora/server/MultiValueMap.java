@@ -73,7 +73,12 @@ public class MultiValueMap {
     }
 
     public String[] getStringArray(String name) {
-        return (String[]) attributes.get(name);
+        Object value = attributes.get(name);
+        if (value instanceof String) {
+            return new String[] {(String) value};
+        } else {
+            return (String[]) value;
+        }
     }
     
     public String toString() {
