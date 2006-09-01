@@ -84,4 +84,21 @@ public interface DOManager
 
     public String[] getNextPID(int numPIDs, String namespace) throws ServerException;
 
+    /**
+     * Reserve a series of PIDs so that they are never used for
+     * subsequent PID generations.
+     */
+    public void reservePIDs(String[] pidList) throws ServerException;
+
+    /**
+     * Get a "hash" of the repository.
+     *
+     * This value can be compared to a previous value to determine whether
+     * the content of the repository has changed.  It is not necessary for
+     * this value to precisely reflect the state of the repository, but
+     * if the repository hasn't changed, subsequent calls should return the
+     * same value.
+     */
+    public String getRepositoryHash() throws ServerException;
+
 }
