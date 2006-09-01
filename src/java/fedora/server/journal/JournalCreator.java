@@ -1,23 +1,3 @@
-/*
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Educational Community License (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.opensource.org/licenses/ecl1.txt">
- * http://www.opensource.org/licenses/ecl1.txt.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2006 by 
- * The Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
- */
-
 package fedora.server.journal;
 
 import java.io.InputStream;
@@ -257,6 +237,25 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
             cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
+            cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
+            return (Date) cje.invokeMethod(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+    }
+
+    /**
+     * Create a journal entry, add the arguments, and invoke the method.
+     */
+    public Date setDatastreamVersionable(Context context, String pid, 
+            String dsID, boolean versionable, String logMessage) 
+            throws ServerException {
+        try {
+            CreatorJournalEntry cje = new CreatorJournalEntry(
+                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
+            cje.addArgument(ARGUMENT_NAME_PID, pid);
+            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
+            cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             return (Date) cje.invokeMethod(delegate, writer);
         } catch (JournalException e) {

@@ -1,23 +1,3 @@
-/*
- * -----------------------------------------------------------------------------
- *
- * <p><b>License and Copyright: </b>The contents of this file are subject to the
- * Educational Community License (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of the License
- * at <a href="http://www.opensource.org/licenses/ecl1.txt">
- * http://www.opensource.org/licenses/ecl1.txt.</a></p>
- *
- * <p>Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.</p>
- *
- * <p>The entire file consists of original code.  Copyright &copy; 2002-2006 by 
- * The Rector and Visitors of the University of Virginia and Cornell University.
- * All rights reserved.</p>
- *
- * -----------------------------------------------------------------------------
- */
-
 package fedora.server.journal;
 
 import javax.xml.namespace.QName;
@@ -103,6 +83,7 @@ public interface JournalConstants {
     String METHOD_MODIFY_DATASTREAM_BY_REFERENCE = "modifyDatastreamByReference";
     String METHOD_MODIFY_DATASTREAM_BY_VALUE = "modifyDatastreamByValue";
     String METHOD_SET_DATASTREAM_STATE = "setDatastreamState";
+    String METHOD_SET_DATASTREAM_VERSIONABLE = "setDatastreamVersionable";
     String METHOD_PURGE_DATASTREAM = "purgeDatastream";
     String METHOD_ADD_DISSEMINATOR = "addDisseminator";
     String METHOD_MODIFY_DISSEMINATOR = "modifyDisseminator";
