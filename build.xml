@@ -96,6 +96,10 @@
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.saxon}"/>
             <pathelement location="${lib.commons-betwixt}"/>
+
+            <pathelement location="${lib.staxapi}"/>
+            <pathelement location="${lib.sjsxp}"/>
+            <pathelement location="${lib.staxutil}"/>
             
             <!-- prev in common/lib -->
             <pathelement location="${lib.axis}"/>
