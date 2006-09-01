@@ -148,6 +148,7 @@ start() {
 		-Djava.io.tmpdir="$TC"/temp \
 		-Djava.security.auth.login.config="$TC"/conf/jaas.config \
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
+		$FEDORA_JAVA_OPTIONS \
 		org.apache.catalina.startup.Bootstrap start &)
 	
 	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
@@ -230,6 +231,7 @@ debug() {
 		-Djava.io.tmpdir="$TC"/temp \
 		-Djava.security.auth.login.config="$TC"/conf/jaas.config \
 		-Djava.util.logging.config.file="$FEDORA_HOME"/server/fedora-internal-use/config/logging.properties\
+		$FEDORA_JAVA_OPTIONS \
 		org.apache.catalina.startup.Bootstrap start &)
 	
 	(exec "$JAVA" -classpath "$TC"/webapps/fedora/WEB-INF/classes:"$SERVER_LIBS" \
