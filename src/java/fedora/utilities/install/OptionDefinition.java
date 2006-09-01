@@ -110,7 +110,95 @@ public class OptionDefinition {
 
     public void validateValue(String value, boolean bundled) 
             throws OptionValidationException {
-        //throw new OptionValidationException("not implemented", getId());
+        if (value.length() == 0) {
+            throw new OptionValidationException("Must specify a value", _id);
+        }
+        String[] valids = getValidValues(bundled);
+        if (valids != null) {
+            boolean isValid = false;
+            for (int i = 0; i < valids.length; i++) {
+                if (valids[i].equals(value)) {
+                    isValid = true;
+                }
+            }
+            if (!isValid) {
+                throw new OptionValidationException("Not a valid value: " 
+                        + value, _id);
+            }
+        } else {
+            if (_id.equals(InstallOptions.FEDORA_HOME)) {
+                File dir = new File(value);
+                if (dir.isDirectory()) {
+                    throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+                } else {
+                    // must be creatable
+                    boolean created = dir.mkdir();
+                    if (!created) {
+                        throw new OptionValidationException("Unable to create specified directory", _id);
+                    } else {
+                        dir.delete();
+                    }
+                }
+            } else if (_id.equals(InstallOptions.TOMCAT_HOME)) {
+                File dir = new File(value);
+                if (dir.exists()) {
+                    // must have webapps subdir
+                    File webapps = new File(dir, "webapps");
+                    if (!webapps.exists()) {
+                        throw new OptionValidationException("Directory exists but does not contain a webapps subdirectory", _id);
+                    }
+                } else {
+                    // or must be creatable
+                    boolean created = dir.mkdir();
+                    if (!created) {
+                        throw new OptionValidationException("Unable to create specified directory", _id);
+                    } else {
+                        dir.delete();
+                    }
+                }
+            } else if (_id.equals(InstallOptions.TOMCAT_SHUTDOWN_PORT)) {
+                validatePort(value);
+            } else if (_id.equals(InstallOptions.TOMCAT_HTTP_PORT)) {
+                validatePort(value);
+            } else if (_id.equals(InstallOptions.TOMCAT_SSL_PORT)) {
+                validatePort(value);
+            } else if (_id.equals(InstallOptions.KEYSTORE_FILE)) {
+                if (!value.equals("default")) {
+                    validateExistingFile(value);
+                }
+            } else if (_id.equals(InstallOptions.JDBC_JAR_FILE)) {
+                if (!bundled) {
+                    validateExistingFile(value);
+                } else {
+                    if (!value.equals("bundledMySQL") && !value.equals("bundledMcKoi")) {
+                        File f = new File(value);
+                        if (!f.exists()) {
+                            throw new OptionValidationException(
+                                    "No such file; must specify a file path, "
+                                  + "bundledMySQL, or bundledMcKoi", _id);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private void validateExistingFile(String val) throws OptionValidationException {
+        File f = new File(val);
+        if (!f.exists()) {
+            throw new OptionValidationException("No such file", _id);
+        }
+    }
+
+    private void validatePort(String val) throws OptionValidationException {
+        try {
+            int port = Integer.parseInt(val);
+            if (port < 0 || port > 65535) {
+                throw new OptionValidationException("Not a valid port number", _id);
+            }
+        } catch (NumberFormatException e) {
+            throw new OptionValidationException("Not an integer", _id);
+        }
     }
 
 }

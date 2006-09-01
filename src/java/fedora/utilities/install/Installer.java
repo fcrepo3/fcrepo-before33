@@ -32,11 +32,12 @@ public class Installer {
             Distribution dist = new ClassLoaderDistribution();
             InstallOptions opts = null;
 
+            boolean testBundled = System.getProperty("testBundled") != null;
             if (args.length == 0) {
-                opts = new InstallOptions(dist.isBundled());
+                opts = new InstallOptions(dist.isBundled() || testBundled);
             } else if (args.length == 1) {
                 Properties props = loadProperties(new File(args[0]));
-                opts = new InstallOptions(props, dist.isBundled());
+                opts = new InstallOptions(props, dist.isBundled() || testBundled);
             } else {
                 System.err.println("ERROR: Too many arguments.");
                 System.err.println("Usage: java -jar fedora-install.jar [options-file]");
