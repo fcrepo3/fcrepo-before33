@@ -14,6 +14,7 @@ import javax.xml.parsers.*;
 import org.w3c.dom.*;
 
 import org.apache.xml.serialize.*;
+import org.apache.commons.betwixt.XMLUtils;
 
 import fedora.server.*;
 import fedora.server.errors.*;
@@ -333,6 +334,15 @@ public class DefaultManagement
                 getServer().logFinest("Using new dsID from recovery context");
             }
         }
+
+        // check for valid xml name for datastream ID
+        if (dsID != null) {
+            if (!XMLUtils.isWellFormedXMLName(dsID)) {
+                throw new InvalidXMLNameException("Invalid syntax for datastream ID. "
+                        + "The datastream ID of \""+dsID+"\" is" 
+                        + "not a valid XML Name");
+            }
+        }
                                    	
         if ( dsID!=null && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
 			throw new GeneralException("Creation of a datastream with an"
@@ -433,7 +443,7 @@ public class DefaultManagement
             audit.date=nowUTC;
             audit.justification=logMessage;
             w.getAuditRecords().add(audit);
-            w.addDatastream(ds);
+            w.addDatastream(ds, true);
             w.commit("Added a new datastream");
             return ds.DatastreamID;
         } finally {
@@ -522,14 +532,22 @@ public class DefaultManagement
                                             String datastreamId, 
                                             String[] altIDs,
                                             String dsLabel, 
-                                            boolean versionable,
                                             String mimeType,
                                             String formatURI,
                                             String dsLocation, 
-                                            String dsState,
                                             String logMessage,
                                             boolean force)
             throws ServerException {
+
+         // check for valid xml name for datastream ID   
+         if ( datastreamId!=null) {      
+             if(!XMLUtils.isWellFormedXMLName(datastreamId)) {   
+                 throw new InvalidXMLNameException("Invalid syntax for "
+                         + "datastream ID. The datastream ID of \""
+                         +datastreamId+"\" is not a valid XML Name");      
+             }   
+         }
+
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
 				+ " datastream is not permitted.");
@@ -538,7 +556,11 @@ public class DefaultManagement
         DOWriter w = null;
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
-			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, dsState);
+
+            // Warning: enforceModifyDatastreamByReference expects a parameter of dsState, we no longer have on.
+            
+            // I'm passing in a value of "" but this could cause a problem.
+			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, "");
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
@@ -573,17 +595,6 @@ public class DefaultManagement
 			} else {
                 ValidationUtility.validateURL(dsLocation, false);
             }
-			if (dsState==null || dsState.equals("")) {
-			  // If state unspecified leave state unchanged
-			  dsState = orig.DSState;
-			}
-			
-			// just as a double check, make sure we have a valid ds state
-			if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-				throw new InvalidStateException("The datastream state of \"" + dsState
-						+ "\" is invalid. The allowed values for state are: "
-						+ " A (active), D (deleted), and I (inactive).");
-			}
             
             // if "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
@@ -610,8 +621,8 @@ public class DefaultManagement
 			newds.DSControlGrp=orig.DSControlGrp;
 			newds.DSInfoType=orig.DSInfoType;
 			// next, those that can be changed by client...
-			newds.DSVersionable=versionable;
-			newds.DSState = dsState;
+			newds.DSState = orig.DSState;
+			newds.DSVersionable=orig.DSVersionable;
                      
 			// update ds version-level attributes, and
 			// make sure ds gets a new version id
@@ -629,15 +640,8 @@ public class DefaultManagement
 			newds.DSLocation=dsLocation;
 			
 			// next, add the datastream via the object writer
-			w.addDatastream(newds);
-			// if state was changed, set new state across all versions
-			if (!orig.DSState.equals(newds.DSState)) {
-				w.setDatastreamState(datastreamId, newds.DSState); 
-			}
-			// if versionable was changed, set new versionable across all versions
-			if (orig.DSVersionable != newds.DSVersionable) {
-				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
-			}
+			w.addDatastream(newds, orig.DSVersionable);
+
 			// add the audit record
 			fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
 			audit.id=w.newAuditRecordID();
@@ -672,14 +676,21 @@ public class DefaultManagement
                                         String datastreamId, 
                                         String[] altIDs,
                                         String dsLabel, 
-                                        boolean versionable,
                                         String mimeType,
                                         String formatURI,
                                         InputStream dsContent,
-                                        String dsState,
                                         String logMessage,
                                         boolean force)
             throws ServerException {
+
+         // check for valid xml name for datastream ID   
+         if ( datastreamId!=null) {     
+             if(!XMLUtils.isWellFormedXMLName(datastreamId)) {    
+                 throw new InvalidXMLNameException("Invalid syntax for "
+                         + "datastream ID. The datastream ID of \""
+                         +datastreamId+"\" is not a valid XML Name");    
+             }      
+         }
 
 		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
 			throw new GeneralException("Modification of the system-controlled AUDIT"
@@ -690,7 +701,10 @@ public class DefaultManagement
         try {
             getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
             
-			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, dsState);
+            // Warning: enforceModifyDatastreamByReference expects a parameter of dsState, we no longer have on.
+            
+            // I'm passing in a value of "" but this could cause a problem.
+			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, "");
 
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -719,20 +733,6 @@ public class DefaultManagement
 			if (formatURI == null) formatURI = orig.DSFormatURI;
 			if (altIDs == null) altIDs = orig.DatastreamAltIDs;
 			
-			// In cases where an empty attribute value is not allowed, then
-			// NULL or EMPTY PARM means no change to ds attribute...
-			if (dsState==null || dsState.equals("")) {
-			  // If state unspecified leave state unchanged
-			  dsState = orig.DSState;
-			}
-			
-			// just as a double check, make sure we have a valid ds state
-			if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
-				throw new InvalidStateException("The datastream state of \"" + dsState
-						+ "\" is invalid. The allowed values for state are: "
-						+ " A (active), D (deleted), and I (inactive).");
-			}
-            
             // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
@@ -767,8 +767,8 @@ public class DefaultManagement
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
 			// next, those that can be changed by client...
-			newds.DSVersionable=versionable;
-			newds.DSState = dsState;
+			newds.DSState = orig.DSState;
+			newds.DSVersionable = orig.DSVersionable;
             
 			// update ds version level attributes, and
 			// make sure ds gets a new version id
@@ -781,15 +781,7 @@ public class DefaultManagement
 			newds.DSCreateDT=nowUTC;
 			
             // next, add the datastream via the object writer
-            w.addDatastream(newds);
-            // if state was changed, set new state
-            if (!orig.DSState.equals(newds.DSState)) {
-            	w.setDatastreamState(datastreamId, newds.DSState); 
-            }
-			// if versionable was changed, set new versionable across all versions
-			if (orig.DSVersionable != newds.DSVersionable) {
-				w.setDatastreamVersionable(datastreamId, newds.DSVersionable);
-			}
+            w.addDatastream(newds, orig.DSVersionable);
 						
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -945,6 +937,7 @@ public class DefaultManagement
     public Date[] purgeDatastream(Context context, 
                                   String pid,
                                   String datastreamID, 
+                                  Date startDT,
                                   Date endDT,
                                   String logMessage,
                                   boolean force)
@@ -960,8 +953,7 @@ public class DefaultManagement
 			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID, endDT);
 
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-            Date start=null;
-            Date[] deletedDates=w.removeDatastream(datastreamID, start, endDT);
+            Date[] deletedDates=w.removeDatastream(datastreamID, startDT, endDT);
             // check if there's at least one version with this id...
             if (w.GetDatastream(datastreamID, null)==null) {
                 // if deleting would result in no versions remaining,
@@ -1011,7 +1003,7 @@ public class DefaultManagement
             }
             logMessage += getPurgeLogMessage("datastream", 
                                              datastreamID,
-                                             start, 
+                                             startDT, 
                                              endDT, 
                                              deletedDates);
             Date nowUTC = Server.getCurrentDate(context);
@@ -1451,6 +1443,49 @@ public class DefaultManagement
           }
           getServer().logFinest("Exiting DefaultManagement.setDatastreamState");
         }
+    }
+
+    public Date setDatastreamVersionable(Context context,   
+             String pid,     
+             String datastreamID,    
+             boolean versionable,    
+             String logMessage)      
+             throws ServerException      
+    {   
+        DOWriter w=null;    
+        try {   
+            getServer().logFinest("Entered DefaultManagement.setDatastreamVersionable");      
+    
+            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context, pid, datastreamID, versionable);   
+    
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
+            fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
+            w.setDatastreamVersionable(datastreamID, versionable);      
+    
+            // add the audit record     
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
+            audit.id=w.newAuditRecordID();      
+            audit.processType="Fedora API-M";   
+            audit.action="setDatastreamVersionable";    
+            audit.componentID=datastreamID;     
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
+            Date nowUTC=new Date();     
+            audit.date=nowUTC;      
+            audit.justification=logMessage;     
+            w.getAuditRecords().add(audit);     
+    
+            // if all went ok, commit   
+            w.commit(logMessage);   
+            return nowUTC;      
+        }   
+        finally     
+        {   
+            if (w!=null)    
+             {   
+                m_manager.releaseWriter(w);     
+            }   
+            getServer().logFinest("Exiting DefaultManagement.setDatastreamVersionable");    
+        }   
     }
 
     public Date setDisseminatorState(Context context, 
