@@ -71,7 +71,8 @@ public class InstallOptions {
         inputOption(APIA_AUTH_REQUIRED);
         inputOption(SSL_AVAILABLE);
 
-        if (getBooleanValue(SSL_AVAILABLE, true)) {
+        boolean sslAvailable = getBooleanValue(SSL_AVAILABLE, true);
+        if (sslAvailable) {
             inputOption(APIA_SSL_REQUIRED);
             inputOption(APIM_SSL_REQUIRED);
         }
@@ -79,17 +80,14 @@ public class InstallOptions {
         inputOption(SERVLET_ENGINE);
 
         if (!getValue(SERVLET_ENGINE).equals(OTHER)) {
-
             inputOption(TOMCAT_HOME);
-
-            if (getValue(SERVLET_ENGINE).equals(BUNDLED_TOMCAT)) {
-
-                inputOption(FEDORA_ADMIN_PASS);
-                inputOption(TOMCAT_SHUTDOWN_PORT);
-                inputOption(TOMCAT_HTTP_PORT);
-                inputOption(TOMCAT_SSL_PORT);
-
-                if (getBooleanValue(SSL_AVAILABLE, true)) {
+            inputOption(FEDORA_ADMIN_PASS);
+            inputOption(TOMCAT_SHUTDOWN_PORT);
+            inputOption(TOMCAT_HTTP_PORT);
+            
+            if (sslAvailable) {
+            	inputOption(TOMCAT_SSL_PORT);
+            	if (getValue(SERVLET_ENGINE).equals(BUNDLED_TOMCAT)) {
                     inputOption(KEYSTORE_FILE);
                 }
             }
