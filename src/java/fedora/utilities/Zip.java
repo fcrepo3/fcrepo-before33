@@ -22,9 +22,15 @@ public class Zip {
 	private static final int BUFFER = 2048;
 	
 	public static void zip(File destination, File source) throws FileNotFoundException, IOException {
+		zip(destination, new File[] {source});
+	}
+	
+	public static void zip(File destination, File[] source) throws FileNotFoundException, IOException {
 		FileOutputStream dest = new FileOutputStream(destination);
 		ZipOutputStream zout = new ZipOutputStream(new BufferedOutputStream(dest));
-		zip(null, source, zout);
+		for (int i = 0; i < source.length; i++) {
+			zip(null, source[i], zout);
+		}
 		zout.close();
 	}
 	
@@ -33,7 +39,7 @@ public class Zip {
         ZipInputStream zis = new ZipInputStream(new BufferedInputStream(is));
         ZipEntry entry;
         while((entry = zis.getNextEntry()) != null) {
-           System.out.println("Extracting: " + entry);
+           //System.out.println("Extracting: " + entry);
            if (entry.isDirectory()) {
         	   // Otherwise, empty directories do not get created
         	   (new File(destDir, entry.getName())).mkdirs();
@@ -102,7 +108,7 @@ public class Zip {
 			entry = new ZipEntry(baseDir + source.getName());
 		}
 		zout.putNextEntry(entry);
-		System.out.println("Adding " + entry.getName());
+		//System.out.println("Adding " + entry.getName());
 		
 		if (!source.isDirectory()) {
 			byte data[] = new byte[BUFFER];
