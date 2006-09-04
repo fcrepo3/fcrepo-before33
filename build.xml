@@ -13,6 +13,8 @@
     
     <property name="build.dir"                 location="build"/>
     <property name="client.build.dir"          location="${build.dir}/client"/>
+	<property name="fedora.home.build.dir"     location="${build.dir}/home"/>
+	<property name="install.build.dir"		   location="${build.dir}/install"/>
     <property name="localservices.build.dir"   location="${build.dir}/localservices"/>
     <property name="server.build.dir"          location="${build.dir}/server"/>
     <property name="stubwrappers.build.dir"    location="${build.dir}/stubwrappers"/>
@@ -74,10 +76,12 @@
             <pathelement location="${lib.castor}"/>
             <pathelement location="${lib.cos}"/>
             <pathelement location="${lib.dateutils}"/>
+        	<pathelement location="${lib.dom4j}"/>
             <pathelement location="${lib.fop}"/>
             <pathelement location="${lib.ij}"/>
             <pathelement location="${lib.jai_codec}"/>
             <pathelement location="${lib.jai_core}"/>
+        	<pathelement location="${lib.jaxen}"/>
             <pathelement location="${lib.jena}"/>
             <pathelement location="${lib.kowari-driver}"/>
             <pathelement location="${lib.log4j}"/>
@@ -173,26 +177,6 @@
         </sequential>
     </macrodef>
     
-    <macrodef name="make-fcfg">
-        <attribute name="input"/>
-        <attribute name="output"/>
-        <attribute name="properties"/>
-        <sequential>
-            <java classname="fedora.server.config.ServerConfiguration"
-                  fork="true"
-                  output="@{output}"
-                  failonerror="true">
-                <jvmarg value="-Dfedora.home=${server.build.dir}/home"/>
-                <classpath>
-                    <pathelement location="${server.build.dir}/classes"/>
-                    <pathelement location="${jrdf.jar}"/>
-                </classpath>
-                <arg value="@{input}"/>
-                <arg value="@{properties}"/>
-            </java>
-        </sequential>
-    </macrodef>
-    
     <macrodef name="md-localservice">
         <attribute name="service"/>
         <attribute name="libs.path"/>
@@ -251,7 +235,7 @@
         <md-compile srcdir="${java.src.dir}/fedora/localservices" 
                     destdir="${localservices.build.dir}"/>
     </target>
-
+    
     <target name="compile-server" depends="init, wsdl2java">
         <md-compile 
             srcdir="${java.src.dir}:${wsdl.build.dir}" 
@@ -282,98 +266,98 @@
     
     <target name="server" depends="compile-server"
             description="">
-        <mkdir dir="${server.build.dir}/home/access"/>
-        <mkdir dir="${server.build.dir}/home/bin"/>
-        <mkdir dir="${server.build.dir}/home/config"/>
-        <mkdir dir="${server.build.dir}/home/management"/>
-        <mkdir dir="${server.build.dir}/home/schematron"/>
-        <mkdir dir="${server.build.dir}/home/xsd"/>
-        <mkdir dir="${server.build.dir}/home/fedora-internal-use/config"/>
-        <mkdir dir="${server.build.dir}/home/fedora-internal-use/deploy"/>
-        <mkdir dir="${server.build.dir}/home/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
-        <mkdir dir="${server.build.dir}/home/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
-        <mkdir dir="${server.build.dir}/home/fedora-internal-use/fedora-internal-use-surrogate-policies"/>
+        <mkdir dir="${fedora.home.build.dir}/server/access"/>
+        <mkdir dir="${fedora.home.build.dir}/server/bin"/>
+        <mkdir dir="${fedora.home.build.dir}/server/config"/>
+        <mkdir dir="${fedora.home.build.dir}/server/management"/>
+        <mkdir dir="${fedora.home.build.dir}/server/schematron"/>
+        <mkdir dir="${fedora.home.build.dir}/server/xsd"/>
+        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/config"/>
+        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/deploy"/>
+        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-backend-service-policies"/>
+        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0"/>
+        <mkdir dir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-surrogate-policies"/>
         
         <copy todir="${server.build.dir}/classes">
             <fileset dir="${src.dir}/properties/server"/>
             <fileset dir="${src.dir}/dbspec/server"/>
         </copy>  
         
-        <copy file="inc/truststore" todir="${server.build.dir}/home"/>
+        <copy file="inc/truststore" todir="${fedora.home.build.dir}/server"/>
         
-        <copy todir="${server.build.dir}/home/access">
+        <copy todir="${fedora.home.build.dir}/server/access">
             <fileset dir="${xsl.src.dir}/access">
                 <include name="*.xslt"/>
             </fileset>
         </copy>
         
-        <copy todir="${server.build.dir}/home/bin">
+        <copy todir="${fedora.home.build.dir}/server/bin">
             <fileset dir="${src.dir}/bat/server"/>
             <fileset dir="${src.dir}/sh/server"/>
         </copy>
         
         <chmod perm="ugo+x" type="file">
-            <fileset dir="${server.build.dir}/home/bin">
+            <fileset dir="${fedora.home.build.dir}/server/bin">
                 <include name="*.sh"/>
             </fileset>
         </chmod>
         
-        <copy todir="${server.build.dir}/home/config">
+        <copy todir="${fedora.home.build.dir}/server/config">
             <fileset dir="${src.dir}/fcfg/server">
                 <include name="**/my.properties"/>
             </fileset>
         </copy>
         
-        <copy todir="${server.build.dir}/home/management">
+        <copy todir="${fedora.home.build.dir}/server/management">
             <fileset dir="${xsl.src.dir}/management">
                 <include name="*.xslt"/>
             </fileset>
         </copy>
         
-        <copy todir="${server.build.dir}/home/schematron">
+        <copy todir="${fedora.home.build.dir}/server/schematron">
             <fileset dir="${src.dir}/schematron">
                 <include name="*.xml"/>
                 <include name="*.xslt"/>
             </fileset>
         </copy>
         
-        <copy todir="${server.build.dir}/home/xsd">
+        <copy todir="${fedora.home.build.dir}/server/xsd">
             <fileset dir="${src.dir}/xsd">
                 <include name="**/*.xsd"/>
             </fileset>
         </copy>
 
         <!-- Copy and modify Axis deployment files -->
-        <copy file="${wsdl.build.dir}/fedora/server/management/deploy.wsdd" todir="${server.build.dir}/home/fedora-internal-use/deploy"/>
-        <copy file="${wsdl.build.dir}/fedora/server/access/deploy.wsdd" tofile="${server.build.dir}/home/fedora-internal-use/deploy/deployAPI-A.wsdd"/>
-        <copy file="${wsdl.build.dir}/fedora/server/management/undeploy.wsdd" todir="${server.build.dir}/home/fedora-internal-use/deploy"/>
-        <copy file="${wsdl.build.dir}/fedora/server/access/undeploy.wsdd" tofile="${server.build.dir}/home/fedora-internal-use/deploy/undeployAPI-A.wsdd"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
-        <replace file="${server.build.dir}/home/fedora-internal-use/deploy/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+        <copy file="${wsdl.build.dir}/fedora/server/management/deploy.wsdd" todir="${fedora.home.build.dir}/server/fedora-internal-use/deploy"/>
+        <copy file="${wsdl.build.dir}/fedora/server/access/deploy.wsdd" tofile="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deployAPI-A.wsdd"/>
+        <copy file="${wsdl.build.dir}/fedora/server/management/undeploy.wsdd" todir="${fedora.home.build.dir}/server/fedora-internal-use/deploy"/>
+        <copy file="${wsdl.build.dir}/fedora/server/access/undeploy.wsdd" tofile="${fedora.home.build.dir}/server/fedora-internal-use/deploy/undeployAPI-A.wsdd"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deploy.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deployAPI-A.wsdd" token="*&quot;/&gt;" value="*&quot;/&gt;&lt;parameter name=&quot;scope&quot; value=&quot;application&quot;/&gt;"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/undeploy.wsdd" token="Fedora-API-M-Port-SOAPHTTP" value="management"/>
+        <replace file="${fedora.home.build.dir}/server/fedora-internal-use/deploy/undeployAPI-A.wsdd" token="Fedora-API-A-Port-SOAPHTTP" value="access"/>
 
         <!-- xacml:  set up policy directories -->
-        <copy file="${xacml.src.dir}/readme.txt" todir="${server.build.dir}/home/fedora-internal-use"/>
-        <copy file="${xacml.src.dir}/readme-design-choices.txt" todir="${server.build.dir}/home/fedora-internal-use"/>
-        <copy todir="${server.build.dir}/home/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0">
+        <copy file="${xacml.src.dir}/readme.txt" todir="${fedora.home.build.dir}/server/fedora-internal-use"/>
+        <copy file="${xacml.src.dir}/readme-design-choices.txt" todir="${fedora.home.build.dir}/server/fedora-internal-use"/>
+        <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-repository-policies-approximating-2.0">
             <fileset dir="${xacml.src.dir}/default/default-repository-policies-approximating-2.0"/>
         </copy>
-        <copy todir="${server.build.dir}/home/fedora-internal-use/fedora-internal-use-surrogate-policies">
+        <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/fedora-internal-use-surrogate-policies">
             <fileset dir="${xacml.src.dir}/default/default-surrogate-policies"/>
         </copy>
         
         <java classname="fedora.common.policy.Release2_1Namespace" 
             classpath="${server.build.dir}/classes;${lib.jrdf}" 
-            output="${server.build.dir}/home/fedora-internal-use/vocabulary.txt"/>
+            output="${fedora.home.build.dir}/server/fedora-internal-use/vocabulary.txt"/>
             
         <copy file="${xsl.src.dir}/security/build-backend-policy.xsl" 
-            todir="${server.build.dir}/home/fedora-internal-use"/>        
+            todir="${fedora.home.build.dir}/server/fedora-internal-use"/>        
         
         <!-- fedora configuration files -->
-        <copy todir="${server.build.dir}/home/fedora-internal-use/config">
+        <copy todir="${fedora.home.build.dir}/server/fedora-internal-use/config">
             <fileset dir="src/fcfg/server">
                 <include name="**/fedora-base.fcfg"/>
                 <include name="**/fedora-*.properties"/>
@@ -383,16 +367,16 @@
         </copy>
         
         <!-- copy initial setup defaults (in lieu of fedora-setup) -->
-        <copy file="${server.build.dir}/home/fedora-internal-use/config/beSecurity-unsecure-apim.xml" 
-            tofile="${server.build.dir}/home/config/beSecurity.xml"/>
-        
-        <available file="${server.build.dir}/home/config/my.properties" 
-                   property="my.properties.present"/>
-        <antcall target="fcfg-my.properties"/>
-        <antcall target="fcfg"/>
+        <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/beSecurity-unsecure-apim.xml" 
+            tofile="${fedora.home.build.dir}/server/config/beSecurity.xml"/>
     </target>
+	
+	<target name="fedorahome" depends="server, client">
+		<zip destfile="${dist.dir}/fedorahome.zip"
+			basedir="${fedora.home.build.dir}"/>
+	</target>
     
-    <target name="war" depends="server, client"
+    <target name="war" depends="server"
         description="Build the Fedora Web Application aRchive">
         
         <!-- FIXME risearch content (src/xsl/ri) and images-->
@@ -400,8 +384,6 @@
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/classes"/>
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/lib"/>
         <mkdir dir="${fedora.war.build.dir}/demo"/>
-        <mkdir dir="${fedora.war.build.dir}/home/client"/>
-        <mkdir dir="${fedora.war.build.dir}/home/server"/>
         <mkdir dir="${fedora.war.build.dir}/images"/>
         
         <!-- Deploy API-M and API-A offline (updates existing server-config.wsdd) -->
@@ -409,15 +391,13 @@
             fork="true" 
             dir="${fedora.war.build.dir}/WEB-INF"> 
             <arg value="server"/> 
-            <arg value="${server.build.dir}/home/fedora-internal-use/deploy/deploy.wsdd"/> 
-            <arg value="${server.build.dir}/home/fedora-internal-use/deploy/deployAPI-A.wsdd"/> 
+            <arg value="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deploy.wsdd"/> 
+            <arg value="${fedora.home.build.dir}/server/fedora-internal-use/deploy/deployAPI-A.wsdd"/> 
             <classpath> 
                 <pathelement location="${server.build.dir}/classes"/> 
                 <path refid="axis.classpath"/> 
             </classpath> 
         </java>
-        
-        <copy todir="${fedora.war.build.dir}/home/server" file="inc/tomcat/conf/jaas.config"/>
         
         <copy todir="${fedora.war.build.dir}/demo">
             <fileset dir="${src.dir}/demo-content"/>
@@ -435,37 +415,7 @@
             <fileset refid="server-libs.fileset"/>
         </copy>
         
-        <copy todir="${fedora.war.build.dir}/home/server">
-            <fileset dir="${server.build.dir}/home"/>
-        </copy>
-        
-        <!-- copy client files-->
-        <copy todir="${fedora.war.build.dir}/home/client">
-            <fileset dir="${client.build.dir}/home"/>
-        </copy>
-        
         <jar jarfile="${dist.dir}/fedora.war" basedir="${fedora.war.build.dir}"/>
-    </target>
-    
-    <!-- The fcfg target are just a temporary hack -->
-    <target name="fcfg-my.properties" if="my.properties.present">
-        <make-fcfg 
-            input="${server.build.dir}/home/fedora-internal-use/config/fedora-base.fcfg"
-            output="${server.build.dir}/home/config/fedora.fcfg.tmp"
-            properties="${server.build.dir}/home/config/my.properties"/>
-                   
-        <make-fcfg 
-            input="${server.build.dir}/home/config/fedora.fcfg.tmp"
-            output="${server.build.dir}/home/config/fedora.fcfg"
-            properties="${server.build.dir}/home/fedora-internal-use/config/fedora-secure-apim.properties"/>
-        <delete file="${server.build.dir}/home/config/fedora.fcfg.tmp"/>
-    </target>
-    
-    <target name="fcfg" unless="my.properties.present">
-        <make-fcfg 
-            input="${server.build.dir}/home/fedora-internal-use/config/fedora-base.fcfg"
-            output="${server.build.dir}/home/config/fedora.fcfg"
-            properties="${server.build.dir}/home/fedora-internal-use/config/fedora-unsecure-apim.properties"/>
     </target>
     
     <target name="wsdl2java" depends="init" 
@@ -510,51 +460,51 @@
     
     <target name="client" depends="compile-client, client-jar"
         description="">
-        <mkdir dir="${client.build.dir}/home/bin"/>
-        <mkdir dir="${client.build.dir}/home/demo/batch-demo/object-specifics"/>
-        <mkdir dir="${client.build.dir}/home/demo/batch-demo/objects"/>
-        <mkdir dir="${client.build.dir}/home/demo/foxml"/>
-        <mkdir dir="${client.build.dir}/home/demo/mets"/>
-        <mkdir dir="${client.build.dir}/home/demo/soapclient"/>
-        <mkdir dir="${client.build.dir}/home/lib"/>
+        <mkdir dir="${fedora.home.build.dir}/client/bin"/>
+        <mkdir dir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics"/>
+        <mkdir dir="${fedora.home.build.dir}/client/demo/batch-demo/objects"/>
+        <mkdir dir="${fedora.home.build.dir}/client/demo/foxml"/>
+        <mkdir dir="${fedora.home.build.dir}/client/demo/mets"/>
+        <mkdir dir="${fedora.home.build.dir}/client/demo/soapclient"/>
+        <mkdir dir="${fedora.home.build.dir}/client/lib"/>
         
-        <copy file="inc/truststore" toFile="${client.build.dir}/truststore"/>
+        <copy file="inc/truststore" toFile="${fedora.home.build.dir}/client/truststore"/>
         
-        <copy todir="${client.build.dir}/home/lib">
+        <copy todir="${fedora.home.build.dir}/client/lib">
             <fileset refid="client-libs.fileset"/>
         </copy>
         
-        <copy todir="${client.build.dir}/home/bin">
+        <copy todir="${fedora.home.build.dir}/client/bin">
             <fileset dir="${src.dir}/bat/client"/>
             <fileset dir="${src.dir}/sh/client"/>
         </copy>
 
         <chmod perm="ugo+x" type="file">
-            <fileset dir="${client.build.dir}/home/bin">
+            <fileset dir="${fedora.home.build.dir}/client/bin">
                 <include name="*.sh"/>
             </fileset>
         </chmod>
         
-        <copy todir="${client.build.dir}/home/demo/foxml">
+        <copy todir="${fedora.home.build.dir}/client/demo/foxml">
             <fileset dir="${src.dir}/demo-objects/foxml"/>
         </copy>
-        <copy todir="${client.build.dir}/home/demo/mets">
+        <copy todir="${fedora.home.build.dir}/client/demo/mets">
             <fileset dir="${src.dir}/demo-objects/mets"/>
         </copy>
         <!-- SOAP demo client (simple java reference client) -->
-        <copy todir="${client.build.dir}/home/demo/soapclient">
+        <copy todir="${fedora.home.build.dir}/client/demo/soapclient">
             <fileset dir="${src.dir}/demo-soapclient"/>
         </copy>
         
         <!-- Prepare batch demo-->
         <!-- Why are these being copied to lib? -->
-        <copy file="${src.dir}/xsl/batchtool/mets-merge.xsl" todir="${client.build.dir}/home/lib"/>
-        <copy file="${src.dir}/xsl/batchtool/foxml-merge.xsl" todir="${client.build.dir}/home/lib"/>
+        <copy file="${src.dir}/xsl/batchtool/mets-merge.xsl" todir="${fedora.home.build.dir}/client/lib"/>
+        <copy file="${src.dir}/xsl/batchtool/foxml-merge.xsl" todir="${fedora.home.build.dir}/client/lib"/>
         
-        <copy todir="${client.build.dir}/home/demo/batch-demo">
+        <copy todir="${fedora.home.build.dir}/client/demo/batch-demo">
             <fileset dir="${src.dir}/demo-objects/mets/batch-demo"/>
         </copy>
-        <copy todir="${client.build.dir}/home/demo/batch-demo/object-specifics">
+        <copy todir="${fedora.home.build.dir}/client/demo/batch-demo/object-specifics">
             <fileset dir="${src.dir}/xml/batch-demo/object-specifics"/>
         </copy>        
     </target>
@@ -563,7 +513,7 @@
             description="">
         <mkdir dir="${client.build.dir}/classes/help"/>
         <mkdir dir="${client.build.dir}/classes/images"/>
-        <mkdir dir="${client.build.dir}/home"/>
+        <mkdir dir="${fedora.home.build.dir}/client"/>
         
         <copy todir="${client.build.dir}/classes/images">
             <fileset dir="${src.dir}/images/client"/>
@@ -588,7 +538,7 @@
             <map from="${lib.dir}${file.separator}" to="lib/"/>
         </pathconvert>
         
-        <jar destfile="${client.build.dir}/home/client.jar" 
+        <jar destfile="${fedora.home.build.dir}/client/client.jar" 
              basedir="${client.build.dir}/classes">
             <manifest>
                 <attribute name="Main-Class" value="fedora.client.Administrator"/>
@@ -646,7 +596,7 @@
         </java>
     </target>
     
-    <target name="dist" depends="war, localservices"/>
+    <target name="dist" depends="fedorahome, war, localservices"/>
     
     <target name="generatedCode" depends="stubwrappers" 
             description="Builds all autogenerated code (e.g. WSDL)">
@@ -676,4 +626,46 @@
             description="">
         <!-- placeholder -->
     </target>
+	
+	<target name="compile-installer" depends="">
+		<md-compile srcdir="${java.src.dir}"
+            destdir="${install.build.dir}"
+            includes="fedora/utilities/install/**"/>
+		<copy file="${java.src.dir}/fedora/utilities/install/OptionDefinition.properties" todir="${install.build.dir}/fedora/utilities/install"/>
+		<jar jarfile="${install.build.dir}/install.jar" 
+		             basedir="${install.build.dir}"
+		             includes="fedora/**">
+			<manifest>
+				<attribute name="Main-Class" value="fedora.utilities.install.Installer"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<!-- FIXME this is just a skeleton for the installer task.-->
+	<target name="installer" depends="war, fedorahome, compile-installer, localservices"
+		description="Builds an executable jar for installing the Fedora server">
+		<loadproperties srcFile="${properties.src.dir}/install.properties"/>
+		
+		<mkdir dir="${install.build.dir}/resources"/>
+		<copy todir="${install.build.dir}/resources">
+			<fileset dir="${properties.src.dir}" includes="install.properties"/>
+			<fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.mysql}"/>
+			<fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war"/>
+			<fileset dir="inc" includes="${install.tomcat} ${install.mckoi} keystore jaas.config"/>
+		</copy>
+		
+		<mkdir dir="${install.build.dir}/boot"/>
+		<mkdir dir="${install.build.dir}/main"/>
+		<mkdir dir="${install.build.dir}/lib"/>
+		<copy file="${lib.dom4j}" todir="${install.build.dir}/lib"/>
+		<copy file="${lib.jaxen}" todir="${install.build.dir}/lib"/>
+		<move file="${install.build.dir}/install.jar" todir="${install.build.dir}/main"/>
+		<unjar src="${lib.one-jar}" dest="${install.build.dir}/boot"/>
+		<jar jarfile="${dist.dir}/fedorainstaller.jar" 
+			 manifest="${install.build.dir}/boot/boot-manifest.mf">
+			<fileset dir="${install.build.dir}/boot"/>
+			<fileset dir="${install.build.dir}"
+					 includes="main/** lib/** resources/**"/>
+		</jar>
+	</target>
 </project>
