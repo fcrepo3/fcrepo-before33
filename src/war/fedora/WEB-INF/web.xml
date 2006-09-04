@@ -1,106 +1,116 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE web-app PUBLIC 
-"-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN" 
-"http://java.sun.com/dtd/web-app_2_3.dtd">
-<web-app>
-    <display-name>Fedora Repository Server</display-name>
-
-    <!-- Servlets for SOAP-based web service interfaces to the Fedora Repository Server-->
+<web-app id="WebApp_ID" 
+		 version="2.4" 
+		 xmlns="http://java.sun.com/xml/ns/j2ee" 
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		 xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+		 
+	<display-name>Fedora Repository Server</display-name>
+	
+	<!-- Servlets for SOAP-based web service interfaces to the Fedora Repository Server-->
     <servlet>
+    	<display-name>Apache-Axis Servlet</display-name>
         <servlet-name>AxisServlet</servlet-name>
-        <display-name>Apache-Axis Servlet</display-name>
         <servlet-class>org.apache.axis.transport.http.AxisServlet</servlet-class>
-        <load-on-startup>2</load-on-startup>
+        <load-on-startup>3</load-on-startup>
     </servlet>
-
+    
     <!-- Servlets for REST-based interfaces to the Fedora Repository Server-->
     <servlet>
+    	<display-name>Fedora Access Servlet</display-name>
         <servlet-name>AccessServlet</servlet-name>
-        <display-name>Fedora Access Servlet</display-name>
         <servlet-class>fedora.server.access.FedoraAccessServlet</servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Controller Servlet (start, stop, get server status)</display-name>
         <servlet-name>ControlServlet</servlet-name>
-        <display-name>Fedora Controller Servlet (start, stop, get server status)</display-name>
         <servlet-class>fedora.server.ServerController</servlet-class>
-        <load-on-startup>1</load-on-startup>
+        <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet>
+    	<display-name>Fedora Datastream Resolver Servlet</display-name>
         <servlet-name>DatastreamResolverServlet</servlet-name>
-        <display-name>Fedora Datastream Resolver Servlet</display-name>
-        <servlet-class> fedora.server.access.dissemination.DatastreamResolverServlet
+        <servlet-class>fedora.server.access.dissemination.DatastreamResolverServlet
         </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Repository Description Servlet</display-name>
         <servlet-name>DescribeRepositoryServlet</servlet-name>
-        <display-name>Fedora Repository Description Servlet</display-name>
-        <servlet-class> fedora.server.access.DescribeRepositoryServlet </servlet-class>
+        <servlet-class> fedora.server.access.DescribeRepositoryServlet</servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Search Servlet</display-name>
         <servlet-name>FieldSearchServlet</servlet-name>
-        <display-name>Fedora Search Servlet</display-name>
-        <servlet-class> fedora.server.access.FieldSearchServlet </servlet-class>
+        <servlet-class>fedora.server.access.FieldSearchServlet</servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora PID Generator Servlet</display-name>
         <servlet-name>GetNextPIDServlet</servlet-name>
-        <display-name>Fedora PID Generator Servlet</display-name>
         <servlet-class> fedora.server.management.GetNextPIDServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Backend Security Configuration Servlet</display-name>
         <servlet-name>BESecurityServlet</servlet-name>
-        <display-name>Fedora Backend Security Configuration Servlet</display-name>
         <servlet-class> fedora.server.management.BESecurityServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Object History Servlet</display-name>
         <servlet-name>GetObjectHistoryServlet</servlet-name>
-        <display-name>Fedora Object History Servlet</display-name>
         <servlet-class> fedora.server.access.GetObjectHistoryServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora List Datastreams Servlet</display-name>
         <servlet-name>ListDatastreamsServlet</servlet-name>
-        <display-name>Fedora List Datastreams Servlet</display-name>
         <servlet-class> fedora.server.access.ListDatastreamsServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora List Methods Servlet</display-name>
         <servlet-name>ListMethodsServlet</servlet-name>
-        <display-name>Fedora List Methods Servlet</display-name>
         <servlet-class> fedora.server.access.ListMethodsServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Method Parm Resolver Servlet</display-name>
         <servlet-name>MethodParameterResolverServlet</servlet-name>
-        <display-name>Fedora Method Parm Resolver Servlet</display-name>
         <servlet-class> fedora.server.access.MethodParameterResolverServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora OAI Provider Servlet</display-name>
         <servlet-name>OAIProviderServlet</servlet-name>
-        <display-name>Fedora OAI Provider Servlet</display-name>
         <servlet-class> fedora.server.oai.FedoraOAIProviderServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Report Servlet</display-name>
         <servlet-name>ReportServlet</servlet-name>
-        <display-name>Fedora Report Servlet</display-name>
         <servlet-class> fedora.server.access.ReportServlet </servlet-class>
     </servlet>
     <servlet>
+    	<display-name>Fedora Resource Index Search Servlet</display-name>
         <servlet-name>RISearchServlet</servlet-name>
-        <display-name>Fedora Resource Index Search Servlet</display-name>
         <servlet-class> fedora.server.access.RISearchServlet </servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>UploadServlet</servlet-name>
-        <display-name>Fedora Upload Servlet (accepts HTTP POST to upload a file and sends back an
+    	<display-name>Fedora Upload Servlet (accepts HTTP POST to upload a file and sends back an
             identifier)</display-name>
+        <servlet-name>UploadServlet</servlet-name>
         <servlet-class> fedora.server.management.UploadServlet </servlet-class>
     </servlet>
-	<servlet>
-		<servlet-name>AxisWSDLFilterServlet</servlet-name>
-		<display-name>Axis WSDL Filter Servlet</display-name>
-		<servlet-class>
-			fedora.server.utilities.AxisWSDLFilterServlet
-		</servlet-class>
-	</servlet>    
-
+    <servlet>
+    	<display-name>Fedora Manager</display-name>
+    	<servlet-name>ManagerServlet</servlet-name>
+    	<servlet-class>fedora.server.webmanager</servlet-class>
+    	<init-param>
+        	<param-name>fedora.home</param-name>
+			<param-value></param-value>
+        </init-param>
+    	<load-on-startup>1</load-on-startup>
+   	</servlet>
+    
     <!-- Servlet Mappings for Fedora Repository Server -->
+    <servlet-mapping>
+        <servlet-name>ManagerServlet</servlet-name>
+        <url-pattern>/manager</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>/services/*</url-pattern>
@@ -109,10 +119,18 @@
         <servlet-name>AxisServlet</servlet-name>
         <url-pattern>*.jws</url-pattern>
     </servlet-mapping>
+    <servlet>
+    	<display-name>Axis WSDL Filter Servlet</display-name>
+		<servlet-name>AxisWSDLFilterServlet</servlet-name>
+		<servlet-class>
+			fedora.server.utilities.AxisWSDLFilterServlet
+		</servlet-class>
+	</servlet>
+<!-- 
     <servlet-mapping>
-        <servlet-name>default</servlet-name>
         <url-pattern>/index.html</url-pattern>
     </servlet-mapping>
+-->
     <servlet-mapping>
         <servlet-name>AccessServlet</servlet-name>
         <url-pattern>/get/*</url-pattern>
@@ -178,19 +196,32 @@
         <url-pattern>/management/upload</url-pattern>
     </servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/servlet/AxisServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>*.jws</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>AxisServlet</servlet-name>
+		<url-pattern>/services/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>AxisWSDLFilterServlet</servlet-name>
 		<url-pattern>/access/wsdl</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>AxisWSDLFilterServlet</servlet-name>
 		<url-pattern>/management/wsdl</url-pattern>
-	</servlet-mapping>    
-    
-    <welcome-file-list id="WelcomeFileList_1">
-        <welcome-file>index.html</welcome-file>
-    </welcome-file-list>
-    
-    <error-page>
+	</servlet-mapping> 
+ 
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+	
+	<error-page>
         <error-code>100</error-code>
         <location>/jsp/continue-100.jsp</location>
     </error-page>
@@ -238,283 +269,13 @@
         <exception-type>fedora.server.errors.servletExceptionExtensions.Unavailable503Exception</exception-type>
         <location>/jsp/unavailable-503.jsp</location>
     </error-page>
-    
-    <!-- Security Constraints for the Fedora Repository Server web app -->
-    <!-- First, lock down as the default case (no access to any roles) -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/</url-pattern>
-            <http-method>CONNECT</http-method>
-            <http-method>DELETE</http-method>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>OPTIONS</http-method>
-            <http-method>POST</http-method>
-            <http-method>PUT</http-method>
-            <http-method>TRACE</http-method>
-        </web-resource-collection>
-        <auth-constraint/>
-
-    </security-constraint>
-    <!-- Security Constraints for general access points-->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/index.html</url-pattern>
-            <!--url-pattern>*.html</url-pattern-->
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/demo/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>*.jsp</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        
-    </security-constraint>
-    
-    <!-- Security Constraints on SOAP-based API-M interface to the Fedora Repository Server -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/services/management</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-
-    </security-constraint>
-    
-    <!-- Security Constraints on REST-based management interfaces to Fedora
-        Repository Server -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/management/control</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <!-- note that xacml authz requires started server,
-                so server start must be protected here, if at all-->
-            <role-name>*</role-name>
-        </auth-constraint>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/management/getNextPID</url-pattern>
-            <!-- preferred -->
-            <url-pattern>/mgmt/getNextPID</url-pattern>
-            <!-- deprecated -->
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/management/upload</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-
-    </security-constraint>
-    <!-- Security Constraints on REST-based backend-security interfaces to Fedora Repository Server -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/management/backendSecurity</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/getDS</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/getDSAuthenticated</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-        <auth-constraint>
-            <role-name>*</role-name>
-        </auth-constraint>
-    </security-constraint>
-    
-    <!-- Security Constraints on SOAP-based API-A interface to the Fedora Repository Server -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/services/access</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    
-    <!-- Security Constraints on REST-based API-A interfaces to Fedora Repository Server -->
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/describe</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/get/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/search</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/getObjectHistory/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/listDatastreams/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/listMethods/*</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/getAccessParmResolver</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/oai</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/report</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-    <security-constraint>
-        <web-resource-collection>
-            <web-resource-name>Fedora Repository Server</web-resource-name>
-            <url-pattern>/risearch</url-pattern>
-            <http-method>GET</http-method>
-            <http-method>HEAD</http-method>
-            <http-method>POST</http-method>
-        </web-resource-collection>
-    </security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Fedora Repository Server</web-resource-name>
-			<url-pattern>/access/wsdl</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-	</security-constraint>
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>Fedora Repository Server</web-resource-name>
-			<url-pattern>/management/wsdl</url-pattern>
-			<http-method>GET</http-method>
-			<http-method>HEAD</http-method>
-			<http-method>POST</http-method>
-		</web-resource-collection>
-	</security-constraint>    
-    
-    <login-config>
-        <auth-method>BASIC</auth-method>
-        <realm-name>Fedora Repository Server</realm-name>
-    </login-config>
-    
-    <security-role>
-        <role-name>administrator</role-name>
+		
+	<login-config>
+		<auth-method>BASIC</auth-method>
+		<realm-name>Fedora Repository Server</realm-name>
+	</login-config>
+	
+	<security-role>
+		<role-name>administrator</role-name>
     </security-role>
 </web-app>
