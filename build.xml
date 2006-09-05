@@ -203,7 +203,9 @@
 
     <!-- targets -->
     <target name="init">
-        <tstamp/>
+        <tstamp>
+        	<format property="build.tstamp" pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" timezone="UTC"/>
+    	</tstamp>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${dist.dir}"/>
     </target>
@@ -281,7 +283,10 @@
         <copy todir="${server.build.dir}/classes">
             <fileset dir="${src.dir}/properties/server"/>
             <fileset dir="${src.dir}/dbspec/server"/>
-        </copy>  
+        	<filterset>
+                <filter token="buildNumber" value="${build.tstamp}"/>
+            </filterset>
+        </copy>
         
         <copy file="inc/truststore" todir="${fedora.home.build.dir}/server"/>
         
