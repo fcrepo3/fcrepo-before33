@@ -129,9 +129,10 @@ public class Installer {
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "enforce-policies");
         } else {
-        	// in theory, someone might want deny-all-requests...
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "permit-all-requests");
         }
+        
+        props.put("module.fedora.server.access.Access.doMediateDatastreams", _opts.getValue(InstallOptions.APIA_AUTH_REQUIRED));
         
         // FIXME any others?
         
