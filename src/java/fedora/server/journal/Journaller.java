@@ -204,12 +204,11 @@ public class Journaller extends Module implements Management, JournalConstants {
      */
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            String dsLocation, String dsState, String logMessage, boolean force)
-            throws ServerException {
+            String mimeType, String formatURI, String dsLocation, 
+            String logMessage, boolean force) throws ServerException {
         return worker.modifyDatastreamByReference(context, pid, datastreamID,
-                altIDs, dsLabel, versionable, mimeType, formatURI, dsLocation,
-                dsState, logMessage, force);
+                altIDs, dsLabel, mimeType, formatURI, dsLocation, logMessage, 
+                force);
     }
 
     /**
@@ -217,22 +216,22 @@ public class Journaller extends Module implements Management, JournalConstants {
      */
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            InputStream dsContent, String dsState, String logMessage,
-            boolean force) throws ServerException {
+            String mimeType, String formatURI, InputStream dsContent, 
+            String logMessage, boolean force) throws ServerException {
         return worker.modifyDatastreamByValue(context, pid, datastreamID,
-                altIDs, dsLabel, versionable, mimeType, formatURI, dsContent,
-                dsState, logMessage, force);
+                altIDs, dsLabel, mimeType, formatURI, dsContent, logMessage, 
+                force);
     }
 
     /**
      * Delegate to the JournalWorker.
      */
     public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date endDT, String logMessage, boolean force)
+            String datastreamID, Date startDT, Date endDT, String logMessage, 
+            boolean force)
             throws ServerException {
-        return worker.purgeDatastream(context, pid, datastreamID, endDT,
-                logMessage, force);
+        return worker.purgeDatastream(context, pid, datastreamID, startDT, 
+                endDT, logMessage, force);
     }
 
     /**
@@ -345,7 +344,7 @@ public class Journaller extends Module implements Management, JournalConstants {
     public Date setDatastreamVersionable(Context context, String pid, 
             String dsID, boolean versionable, String logMessage) 
             throws ServerException {
-        return worker.setDatastreamVersionable(context, pid, dsId,
+        return worker.setDatastreamVersionable(context, pid, dsID,
                 versionable, logMessage);
     }
 

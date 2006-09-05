@@ -27,6 +27,7 @@ public class PurgeDatastreamMethod extends ManagementMethod {
         return delegate.purgeDatastream(parent.getContext(), parent
                 .getStringArgument(ARGUMENT_NAME_PID), parent
                 .getStringArgument(ARGUMENT_NAME_DS_ID), parent
+                .getDateArgument(ARGUMENT_NAME_START_DATE), parent
                 .getDateArgument(ARGUMENT_NAME_END_DATE), parent
                 .getStringArgument(ARGUMENT_NAME_LOG_MESSAGE), parent
                 .getBooleanArgument(ARGUMENT_NAME_FORCE));

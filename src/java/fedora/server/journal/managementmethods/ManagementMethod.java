@@ -41,6 +41,8 @@ public abstract class ManagementMethod implements JournalConstants {
             return new ModifyDatastreamByValueMethod(parent);
         } else if (METHOD_SET_DATASTREAM_STATE.equals(methodName)) {
             return new SetDatastreamStateMethod(parent);
+        } else if (METHOD_SET_DATASTREAM_VERSIONABLE.equals(methodName)) {
+            return new SetDatastreamVersionableMethod(parent);
         } else if (METHOD_PURGE_DATASTREAM.equals(methodName)) {
             return new PurgeDatastreamMethod(parent);
         } else if (METHOD_ADD_DISSEMINATOR.equals(methodName)) {

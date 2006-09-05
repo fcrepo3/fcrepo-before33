@@ -153,8 +153,8 @@ public class JournalConsumer implements JournalWorker {
      */
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            String dsLocation, String dsState, String logMessage, boolean force)
+            String mimeType, String formatURI, String dsLocation, 
+            String logMessage, boolean force)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
@@ -164,9 +164,8 @@ public class JournalConsumer implements JournalWorker {
      */
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            InputStream dsContent, String dsState, String logMessage,
-            boolean force) throws ServerException {
+            String mimeType, String formatURI, InputStream dsContent, 
+            String logMessage, boolean force) throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -174,7 +173,8 @@ public class JournalConsumer implements JournalWorker {
      * Reject API calls from outside while we are in recovery mode.
      */
     public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date endDT, String logMessage, boolean force)
+            String datastreamID, Date startDT, Date endDT, String logMessage, 
+            boolean force)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }

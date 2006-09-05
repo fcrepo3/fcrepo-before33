@@ -118,6 +118,7 @@ public interface JournalConstants {
     String ARGUMENT_NAME_DS_LOCATION = "dsLocation";
     String ARGUMENT_NAME_DS_STATE = "dsState";
     String ARGUMENT_NAME_ENCODING = "encoding";
+    String ARGUMENT_NAME_START_DATE = "startDT";
     String ARGUMENT_NAME_END_DATE = "endDT";
     String ARGUMENT_NAME_FORCE = "force";
     String ARGUMENT_NAME_FORMAT = "format";

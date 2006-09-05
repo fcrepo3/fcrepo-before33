@@ -175,9 +175,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
      */
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            InputStream dsContent, String dsState, String logMessage,
-            boolean force) throws ServerException {
+            String mimeType, String formatURI, InputStream dsContent, 
+            String logMessage, boolean force) throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_MODIFY_DATASTREAM_BY_VALUE, context);
@@ -185,11 +184,9 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
             cje.addArgument(ARGUMENT_NAME_DS_LABEL, dsLabel);
-            cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
             cje.addArgument(ARGUMENT_NAME_MIME_TYPE, mimeType);
             cje.addArgument(ARGUMENT_NAME_FORMAT_URI, formatURI);
             cje.addArgument(ARGUMENT_NAME_DS_CONTENT, dsContent);
-            cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
             return (Date) cje.invokeMethod(delegate, writer);
@@ -203,9 +200,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
      */
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            String dsLocation, String dsState, String logMessage, boolean force)
-            throws ServerException {
+            String mimeType, String formatURI, String dsLocation, 
+            String logMessage, boolean force) throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_MODIFY_DATASTREAM_BY_REFERENCE, context);
@@ -213,11 +209,9 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
             cje.addArgument(ARGUMENT_NAME_ALT_IDS, altIDs);
             cje.addArgument(ARGUMENT_NAME_DS_LABEL, dsLabel);
-            cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
             cje.addArgument(ARGUMENT_NAME_MIME_TYPE, mimeType);
             cje.addArgument(ARGUMENT_NAME_FORMAT_URI, formatURI);
             cje.addArgument(ARGUMENT_NAME_DS_LOCATION, dsLocation);
-            cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
             return (Date) cje.invokeMethod(delegate, writer);
@@ -267,13 +261,15 @@ public class JournalCreator implements JournalWorker, JournalConstants {
      * Create a journal entry, add the arguments, and invoke the method.
      */
     public Date[] purgeDatastream(Context context, String pid,
-            String datastreamID, Date endDT, String logMessage, boolean force)
+            String datastreamID, Date startDT, Date endDT, String logMessage, 
+            boolean force)
             throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
                     METHOD_PURGE_DATASTREAM, context);
             cje.addArgument(ARGUMENT_NAME_PID, pid);
             cje.addArgument(ARGUMENT_NAME_DS_ID, datastreamID);
+            cje.addArgument(ARGUMENT_NAME_START_DATE, startDT);
             cje.addArgument(ARGUMENT_NAME_END_DATE, endDT);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
