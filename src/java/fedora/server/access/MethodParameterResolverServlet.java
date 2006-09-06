@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -91,7 +90,6 @@ public class MethodParameterResolverServlet
     String versDateTime = null;
     StringBuffer methodParms = new StringBuffer();
     response.setContentType(HTML_CONTENT_TYPE);
-    URLDecoder decoder = new URLDecoder();
     Hashtable h_methodParms = new Hashtable();
 
     // Get parameters passed from web form.
@@ -101,16 +99,16 @@ public class MethodParameterResolverServlet
       String name = new String((String)parms.nextElement());
       if (name.equals("PID"))
       {
-        PID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
+        PID = request.getParameter(name);
       } else if (name.equals("bDefPID"))
       {
-        bDefPID = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
+        bDefPID = request.getParameter(name);
       } else if (name.equals("methodName"))
       {
-        methodName = URLDecoder.decode((String)request.getParameter(name), "UTF-8");
+        methodName = request.getParameter(name);
       } else if (name.equals("asOfDateTime"))
       {
-        versDateTime = ((String)request.getParameter(name)).trim();
+        versDateTime = request.getParameter(name).trim();
         if (versDateTime.equalsIgnoreCase("null") || versDateTime.equalsIgnoreCase(""))
         {
         	versDateTime = null;
@@ -121,8 +119,8 @@ public class MethodParameterResolverServlet
       {
         // Any remaining parameters are assumed to be method parameters so
         // decode and place in hashtable.
-        h_methodParms.put(URLDecoder.decode(name, "UTF-8"),
-            URLDecoder.decode((String)request.getParameter(name), "UTF-8"));
+        h_methodParms.put(name,
+                          request.getParameter(name));
       }
     }
 
