@@ -32,6 +32,7 @@ public class DatastreamPane
 
     private Hashtable[] m_labelTables;
     private JComboBox m_stateComboBox;
+    private JComboBox m_versionableComboBox;
     private JSlider m_versionSlider;
     private JPanel m_valuePane;
     private CardLayout m_versionCardLayout;
@@ -43,7 +44,8 @@ public class DatastreamPane
     private JTextArea m_dtLabel;
     private JPanel m_dateLabelAndValue;
     private Datastream[] m_versions;
-
+    private final static int NEW_VERSION_ON_UPDATE = 0;
+    private final static int REPLACE_ON_UPDATE = 1;
     /**
      * Build the pane.
      */
@@ -66,9 +68,11 @@ public class DatastreamPane
 
                     // LEFT: labels
                     JLabel stateLabel=new JLabel("State");
+                    JLabel versionableLabel=new JLabel("Versionable");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel[] leftCommonLabels=new JLabel[] { 
                             stateLabel, 
+                            versionableLabel,
                             controlGroupLabel};
 
                     // RIGHT: values
@@ -102,6 +106,12 @@ public class DatastreamPane
                             m_owner.colorTabForState(m_mostRecent.getID(), curState);
                         }
                     });
+                    
+                    String[] comboBoxStrings2={"Updates will create new version", "Updates will replace most recent version"};
+                    m_versionableComboBox=new JComboBox(comboBoxStrings2);
+                    Administrator.constrainHeight(m_versionableComboBox);
+                    m_versionableComboBox.setSelectedIndex(mostRecent.isVersionable()? NEW_VERSION_ON_UPDATE : REPLACE_ON_UPDATE);
+                    m_versionableComboBox.addActionListener(dataChangeListener);
 
                     JTextArea controlGroupValueLabel=new JTextArea(
                             getControlGroupString(
@@ -110,7 +120,8 @@ public class DatastreamPane
                     controlGroupValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     controlGroupValueLabel.setEditable(false);
                     JComponent[] leftCommonValues = 
-                            new JComponent[] { m_stateComboBox, 
+                            new JComponent[] { m_stateComboBox,
+                                               m_versionableComboBox,
                                                controlGroupValueLabel};
     
                 JPanel leftCommonPane=new JPanel();
@@ -210,6 +221,11 @@ public class DatastreamPane
         if (stateIndex!=m_stateComboBox.getSelectedIndex()) {
             return true;
         }
+        int versionableIndex = m_mostRecent.isVersionable()? NEW_VERSION_ON_UPDATE : REPLACE_ON_UPDATE;
+        if (versionableIndex != m_versionableComboBox.getSelectedIndex())
+        {
+            return true;
+        }        
         if (m_currentVersionPane.isDirty()) {
             return true;
         }
@@ -228,8 +244,8 @@ public class DatastreamPane
         }
     }
 
-    public void saveChanges(String logMessage) 
-            throws Exception {
+    public void saveChanges(String logMessage) throws Exception 
+    {
         String state=null;
         int i=m_stateComboBox.getSelectedIndex();
         if (i==0)
@@ -238,15 +254,28 @@ public class DatastreamPane
            state="I";
         if (i==2)
            state="D";
-		if (m_currentVersionPane.isDirty()) { 
+        if (state != m_mostRecent.getState()) 
+        {
+            Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
+                    state, logMessage);
+        }
+        if ((m_mostRecent.isVersionable()? NEW_VERSION_ON_UPDATE : REPLACE_ON_UPDATE)!= m_versionableComboBox.getSelectedIndex())
+        {
+            boolean newVersionableSetting = (m_versionableComboBox.getSelectedIndex() == NEW_VERSION_ON_UPDATE) ? true : false;
+            Administrator.APIM.setDatastreamVersionable(m_pid, m_mostRecent.getID(), newVersionableSetting, logMessage);
+        }
+        if (m_currentVersionPane.isDirty()) 
+        { 
 		    // defer to the currentVersionPane if anything else changed
             try {
-     		    m_currentVersionPane.saveChanges(state, 
-     		                                     logMessage, 
+     		    m_currentVersionPane.saveChanges(logMessage, 
      		                                     false);
-            } catch (Exception e) {
-                if (e.getMessage() == null 
-                        || e.getMessage().indexOf(" would invalidate ") == -1) {
+            } 
+            catch (Exception e) 
+            {
+                if (e.getMessage() == null ||
+                    e.getMessage().indexOf(" would invalidate ") == -1) 
+                {
                     throw e;
                 }
                 // ask if they want to force it.
@@ -255,18 +284,15 @@ public class DatastreamPane
                         e.getMessage() + "\n\nForce it?",
                         "Warning", JOptionPane.DEFAULT_OPTION, 
                         JOptionPane.WARNING_MESSAGE, null, options, options[1]);
-                if (selected==0) {
-     		        m_currentVersionPane.saveChanges(state,  
-     		                                         logMessage, 
+                if (selected==0) 
+                {
+     		        m_currentVersionPane.saveChanges(logMessage, 
      		                                         true);
                 }
             }
-		} else {
-		    // since only state changed, we can take care of it here
-			Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
-			        state, logMessage);
-		}
+        }      
     }
+
 
     public void changesSaved() {
         m_owner.refresh(m_mostRecent.getID());
@@ -283,6 +309,10 @@ public class DatastreamPane
         } else if (m_mostRecent.getState().equals("D")) {
             m_stateComboBox.setSelectedIndex(2);
             m_stateComboBox.setBackground(Administrator.DELETED_COLOR);
+        }
+        if ((m_mostRecent.isVersionable()? NEW_VERSION_ON_UPDATE : REPLACE_ON_UPDATE)!= m_versionableComboBox.getSelectedIndex())
+        {
+            m_versionableComboBox.setSelectedIndex(m_mostRecent.isVersionable()? NEW_VERSION_ON_UPDATE : REPLACE_ON_UPDATE);
         }
         m_owner.colorTabForState(m_mostRecent.getID(), m_mostRecent.getState());
         m_currentVersionPane.undoChanges();
@@ -724,13 +754,9 @@ public class DatastreamPane
             viewFrame.toFront();
         }
 
-		public void saveChanges(String state, 
-		                        //String mimeType, 
-		                        //String formatURI,
-		                        //String[] altIDs,
-		                        String logMessage,
-		                        boolean force)
-	            throws Exception {
+		public void saveChanges(String logMessage, boolean force)
+	            throws Exception 
+	    {
 	        String label=m_labelTextField.getText().trim();
 			String mimeType=m_MIMETextField.getText().trim();
 	        String formatURI=m_formatURITextField.getText().trim();
