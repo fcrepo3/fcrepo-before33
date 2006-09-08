@@ -64,8 +64,6 @@ public class ResourceIndexRebuilder implements Rebuilder {
         m_serverConfig = serverConfig;
         Map m = new HashMap();
 
-//        m.put("startupDelay", 
-//              "Milliseconds to delay at start of rebuild. Default is zero.");
         return m;
     }
 
@@ -86,11 +84,14 @@ public class ResourceIndexRebuilder implements Rebuilder {
         
         DatastoreConfiguration tsDC = m_serverConfig.getDatastoreConfiguration(riDatastore);
         String tsConnector = tsDC.getParameter("connectorClassName").getValue();
-        boolean tsRemote = Boolean.valueOf(tsDC.getParameter("remote").getValue()).booleanValue();
-        if (tsRemote) {
-            throw new ResourceIndexException("Rebuilder does not currently support remote triplestores.");
+
+        String tsPath = null;
+        if (tsConnector.equals("org.trippi.impl.kowari.KowariConnector")) {
+            Parameter remoteParm = tsDC.getParameter("remote");
+            if (remoteParm != null && remoteParm.getValue().equalsIgnoreCase("false")) {
+                tsPath = tsDC.getParameter("path").getValue(true);
+            }
         }
-        String tsPath = tsDC.getParameter("path").getValue(true);
         
         Iterator it;
         Parameter p;
@@ -120,10 +121,23 @@ public class ResourceIndexRebuilder implements Rebuilder {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
-        System.out.println("Clearing directory " + tsPath + "...");
-        deleteDirectory(tsPath);
-        File cleanDir = new File(tsPath);
-        cleanDir.mkdir();
+
+        if (tsPath == null) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            System.out.println();
+            System.out.println("NOTE: You must now manually re-initialize (clear) ");
+            System.out.println("      the existing triplestore.  The RI rebuilder");
+            System.out.println("      cannot yet automatically perform this step ");
+            System.out.println("      for this type of triplestore.  Press enter");
+            System.out.println("      when finished.");
+            try { reader.readLine(); } catch (IOException e) { }
+            System.out.println("OK, continuing...");
+        } else {
+            System.out.println("Clearing directory " + tsPath + "...");
+            deleteDirectory(tsPath);
+            File cleanDir = new File(tsPath);
+            cleanDir.mkdir();
+        }
 
         createDBTables();
         
