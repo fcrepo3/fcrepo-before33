@@ -146,10 +146,12 @@
 -->
 
 	<!-- Servlet Mappings for Fedora Repository Server -->
+<!--	
 	<servlet-mapping>
 		<servlet-name>ManagerServlet</servlet-name>
 		<url-pattern>/manager</url-pattern>
 	</servlet-mapping>
+-->	
 
 	<servlet-mapping>
 		<servlet-name>AxisServlet</servlet-name>
