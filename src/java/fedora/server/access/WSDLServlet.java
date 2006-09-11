@@ -54,8 +54,8 @@ public class WSDLServlet extends HttpServlet {
     static {
         _WSDL_PATHS.put("API-A",         "access/Fedora-API-A.wsdl");
         _WSDL_PATHS.put("API-A-LITE",    "access/Fedora-API-A-LITE.wsdl");
-        _WSDL_PATHS.put("API-M",         "management/Fedora-API-A.wsdl");
-        _WSDL_PATHS.put("API-M-LITE",    "management/Fedora-API-A-LITE.wsdl");
+        _WSDL_PATHS.put("API-M",         "management/Fedora-API-M.wsdl");
+        _WSDL_PATHS.put("API-M-LITE",    "management/Fedora-API-M-LITE.wsdl");
 
         _SERVICE_PATHS.put("API-A",      "services/access");
         _SERVICE_PATHS.put("API-A-LITE", "");
@@ -97,7 +97,7 @@ public class WSDLServlet extends HttpServlet {
      */
     private String getIndex() {
         StringBuffer out = new StringBuffer();
-        out.append("<html><body><ul>\n");
+        out.append("<html><body>WSDL Index<ul>\n");
         Iterator names = _WSDL_PATHS.keySet().iterator();
         while (names.hasNext()) {
             String name = (String) names.next();
@@ -130,7 +130,7 @@ public class WSDLServlet extends HttpServlet {
             StringWriter stringWriter = new StringWriter();
             PrintWriter out = new PrintWriter(stringWriter);
 
-            wsdl.write(out);
+            wsdl.serialize(out);
             out.flush();
             out.close();
 

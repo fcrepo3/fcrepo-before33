@@ -132,6 +132,15 @@
 			fedora.server.management.UploadServlet
 		</servlet-class>
 	</servlet>
+    <servlet>
+        <display-name>
+            WSDL Servlet
+        </display-name>
+        <servlet-name>WSDLServlet</servlet-name>
+        <servlet-class>
+            fedora.server.access.WSDLServlet
+        </servlet-class>
+    </servlet>
 <!--
 	<servlet>
 		<display-name>Fedora Manager</display-name>
@@ -161,18 +170,6 @@
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>*.jws</url-pattern>
 	</servlet-mapping>
-	<servlet>
-		<display-name>Axis WSDL Filter Servlet</display-name>
-		<servlet-name>AxisWSDLFilterServlet</servlet-name>
-		<servlet-class>
-			fedora.server.utilities.AxisWSDLFilterServlet
-		</servlet-class>
-	</servlet>
-	<!-- 
-		<servlet-mapping>
-		<url-pattern>/index.html</url-pattern>
-		</servlet-mapping>
-	-->
 	<servlet-mapping>
 		<servlet-name>AccessServlet</servlet-name>
 		<url-pattern>/get/*</url-pattern>
@@ -249,14 +246,10 @@
 		<servlet-name>AxisServlet</servlet-name>
 		<url-pattern>/services/*</url-pattern>
 	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisWSDLFilterServlet</servlet-name>
-		<url-pattern>/access/wsdl</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>AxisWSDLFilterServlet</servlet-name>
-		<url-pattern>/management/wsdl</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+		<servlet-name>WSDLServlet</servlet-name>
+		<url-pattern>/wsdl</url-pattern>
+    </servlet-mapping>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -365,6 +358,7 @@
 			<url-pattern>/listMethods/*</url-pattern>
 			<url-pattern>/listDatastreams/*</url-pattern>
 			<url-pattern>/report</url-pattern>
+			<url-pattern>/wsdl</url-pattern>
 			<url-pattern>/get/*</url-pattern>
 			<http-method>POST</http-method>
 			<http-method>HEAD</http-method>

@@ -294,6 +294,8 @@
             <fileset dir="${xsl.src.dir}/access">
                 <include name="*.xslt"/>
             </fileset>
+            <fileset file="${wsdl.src.dir}/Fedora-API-A.wsdl"/>
+            <fileset file="${wsdl.src.dir}/Fedora-API-A-LITE.wsdl"/>
         </copy>
         
         <copy todir="${fedora.home.build.dir}/server/bin">
@@ -317,6 +319,8 @@
             <fileset dir="${xsl.src.dir}/management">
                 <include name="*.xslt"/>
             </fileset>
+            <fileset file="${wsdl.src.dir}/Fedora-API-M.wsdl"/>
+            <fileset file="${wsdl.src.dir}/Fedora-API-M-LITE.wsdl"/>
         </copy>
         
         <copy todir="${fedora.home.build.dir}/server/schematron">
