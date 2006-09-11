@@ -1,360 +1,215 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-WSDL">
-	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
-	<types>
-		<documentation>
-			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-			<wsdldoc:type name="xsd:nonNegativeInteger" url="http://www.w3.org/TR/xmlschema-2/#nonNegativeInteger
-"/>
-			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
-			<wsdldoc:type name="fedora-types:ArrayOfCondition" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfCondition"/>
-			<wsdldoc:type name="fedora-types:ArrayOfString" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfString"/>
-			<wsdldoc:type name="fedora-types:ArrayOfObjectFields" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfObjectFields"/>
-			<wsdldoc:type name="fedora-types:ArrayOfProperty" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfProperty"/>
-			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
-			<wsdldoc:type name="fedora-types:ArrayOfMethodDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfMethodDef"/>
-			<wsdldoc:type name="fedora-types:ObjectProfile" url="http://www.fedora.info/definitions/1/0/types/#ObjectProfile"/>
-			<wsdldoc:type name="fedora-types:RepositoryInfo" url="http://www.fedora.info/definitions/1/0/types/#RepositoryInfo"/>
-			<wsdldoc:type name="fedora-types:FieldSearchResult" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"/>
-			<wsdldoc:type name="fedora-types:FieldSearchQuery" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchQuery"/>
-			<wsdldoc:type name="fedora-types:ArrayOfObjectMethodsDef" url="http://www.fedora.info/definitions/1/0/types/#ArrayOfObjectMethodsDef"/>
-		</documentation>
-	</types>
-	<message name="describeRepositoryRequest">
-	</message>
-	<message name="describeRepositoryResponse">
-		<part name="response" type="fedora-types:RepositoryInfo">
-			<documentation>A data structure that contains key metadata
-				describing the Fedora repository server including repository name, 
-				version, base URL, pid namespace, and sample request URLs.
-			</documentation>
-		</part>
-	</message>
-	<message name="getObjectProfileRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-				object.  If null, the current view of the object (the most recent time) 
-				is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getObjectProfileResponse">
-		<part name="response" type="fedora-types:ObjectProfile">
-			<documentation>A data structure that contains key metadata
-				about the object, including URLs to view the Dissemination
-				Index and the Item Index for the object.
-			</documentation>
-		</part>
-	</message>
-	<message name="listMethodsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="listMethodsResponse">
-		<part name="response" type="fedora-types:ArrayOfObjectMethodsDef">
-			<documentation>A set of method definitions that represent 
-				all possible disseminations that can be run on the object.
-			</documentation>
-		</part>
-	</message>
-	<message name="listDatastreamsRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-			      object.  If null, the current view of the object (the most recent time) 
-			      is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="listDatastreamsResponse">
-		<part name="response" type="fedora-types:ArrayOfDatastreamDef">
-			<documentation>A set of method definitions that represent 
-				all possible disseminations that can be run on the object.
-			</documentation>
-		</part>
-	</message>
-	<message name="getDatastreamDisseminationRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the persistent identifier of the object.</documentation>
-		</part>
-		<part name="dsID" type="xsd:string">
-			<documentation>the identifier of the datastream to get.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying that the dissemination should reflect
-				what the object looked like at a certain date and time.  If this part is not present 
-				in the request, or if it is empty,  the current view of the object (the most recent time)
-				 is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getDatastreamDisseminationResponse">
-		<part name="response" type="fedora-types:MIMETypedStream">
-			<documentation>the datastream as a mime-typed stream.</documentation>
-		</part>
-	</message>
-	<message name="getDisseminationRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-		<part name="bDefPid" type="xsd:string">
-			<documentation>the pid of the behavior definition.</documentation>
-		</part>
-		<part name="methodName" type="xsd:string">
-			<documentation>the name of the method to invoke.</documentation>
-		</part>
-		<part name="parameters" type="fedora-types:ArrayOfProperty">
-			<documentation>a set of name-value pairs that act as parameters to the method.</documentation>
-		</part>
-		<part name="asOfDateTime" type="xsd:string">
-			<documentation>the date/time stamp specifying the desired view of the 
-				object.  If null, the current view of the object (the most recent time) 
-				is assumed.
-			</documentation>
-		</part>
-	</message>
-	<message name="getDisseminationResponse">
-		<part name="response" type="fedora-types:MIMETypedStream">
-			<documentation>the desired view of the object as a mime-typed stream.</documentation>
-		</part>
-	</message>
-	<message name="findObjectsRequest">
-		<part name="resultFields" type="fedora-types:ArrayOfString">
-			<documentation>an array of unique object fields
-            from fedora-types:ObjectFields.  This tells the server which fields
-            should be returned from the query.</documentation>
-		</part>
-		<part name="maxResults" type="xsd:nonNegativeInteger">
-			<documentation>the maximum number of results that the server should
-                provide at once.  This may be null, in which case the server
-                will return the maximum number of results it has been configured
-                to return.</documentation>
-		</part>
-		<part name="query" type="fedora-types:FieldSearchQuery">
-			<documentation>the terms or conditions for the search.</documentation>
-		</part>
-	</message>
-	<message name="findObjectsResponse">
-		<part name="response" type="fedora-types:FieldSearchResult">
-			<documentation>containing an array of ObjectFields and, possibly,
-            a listSession.</documentation>
-		</part>
-	</message>
-	<message name="resumeFindObjectsRequest">
-		<part name="sessionToken" type="xsd:string">
-			<documentation>the token of the session in which the next few
-                results can be found.</documentation>
-		</part>
-	</message>
-	<message name="getObjectHistoryRequest">
-		<part name="pid" type="xsd:string">
-			<documentation>the pid of the object.</documentation>
-		</part>
-	</message>
-	<message name="getObjectHistoryResponse">
-		<part name="response" type="fedora-types:ArrayOfString">
-			<documentation>a list of timestamps indicating when components in the object were created or modified.</documentation>
-		</part>
-	</message>
-	<portType name="Fedora-API-A">
-		<documentation>The Fedora Access service defines an open interface for
-		    accessing digital objects.  The access operations include methods to do
-		    reflection on a digital object (i.e., to discover the kinds of
-		    disseminations that are available on the object), and to request
-		    disseminations.  The major function of the Fedora Access service is 
-		    to fulfill a client's request for dissemination.  To support disseminations,
-		    the underlying repository system must evaluate the behavior associations
-		    specified in a digital object, and figure out how to dispatch a service
-		    request to a supporting service with which the digital object associates.
-		    The supporting service may be internal to the repository system, or it may
-		    be an external web service that the repository must call upon.  The
-		    underlying repostitory system facilitates all external service bindings
-		    on behalf of the client, simply returning a dissemination result via the
-		    Access service layer.
-		</documentation>
-		<operation name="describeRepository">
-			<documentation>Gets key metadata fields that describe the Fedora 
-				repository server including repository name, version, baseURL,
-				pid namespace, sample request URLs.
-			</documentation>
-			<input message="fedora-api:describeRepositoryRequest"/>
-			<output message="fedora-api:describeRepositoryResponse"/>
-		</operation>
-		<operation name="getObjectProfile">
-			<documentation>Gets a profile of the object which includes key
-				metadata fields and URLs for the object Dissemination 
-				Index and the object Item Index.  Can be thought of as a
-				default view of the object.
-			</documentation>
-			<input message="fedora-api:getObjectProfileRequest"/>
-			<output message="fedora-api:getObjectProfileResponse"/>
-		</operation>
-		<operation name="listMethods">
-			<documentation>Inquires upon all object Disseminators to obtain Behavior Definition pids,
-				and methodNames supported by a digital object.  This returns a set of method definitions
-				that represent all possible disseminations that can be run on the object.
-			</documentation>
-			<input message="fedora-api:listMethodsRequest"/>
-			<output message="fedora-api:listMethodsResponse"/>
-		</operation>
-		<operation name="listDatastreams">
-			<documentation>Inquires upon all object Datastreams to obtain datastreams contained
-				by a digital object.  This returns a set of datastream locations
-				that represent all possible datastreams available in the object.
-			</documentation>
-			<input message="fedora-api:listDatastreamsRequest"/>
-			<output message="fedora-api:listDatastreamsResponse"/>
-		</operation>
-		<operation name="getDatastreamDissemination">
-			<documentation>Gets a datastream in the digital object.  This is
-            a shorter, convenience method for getDissemination 
-            http://hostname:port/fedora/get/pid/fedora-system:3/getItem?itemID=dsID.
-            Note that if a particular date/timestamped view of a datastream is
-            needed, getDissemination still must be used.  When making direct 
-            links to datastreams within web pages or applications, this
-            syntax is recommended.
-            </documentation>
-			<input message="fedora-api:getDatastreamDisseminationRequest"/>
-			<output message="fedora-api:getDatastreamDisseminationResponse"/>
-		</operation>
-		<operation name="getDissemination">
-			<documentation>Gets a MIME-typed view of a digital object,
-				given the behavior definition id, a behavior method name, and any behavior 
-				method parameters.	Information about behavior method names and parameters is
-				obtained via other APA-A operations	(see getObjectMethods,	getBehaviorMethods,
-				and getBehaviorMethodsXML). The getDissemination operation essentially
-				encapsulates another operation (a behavior method on the Fedora object). 
-				The getDissemination operation hides from the client the details of
-				how a behavior method is fulfilled (i.e., what behavior mechanism 
-				performs the work, and how the request is invoked upon the behavior
-				mechanism).
-			</documentation>
-			<input message="fedora-api:getDisseminationRequest"/>
-			<output message="fedora-api:getDisseminationResponse"/>
-		</operation>
-		<operation name="findObjects">
-			<documentation>Gets the requested ObjectFields on all objects in the
-                repository matching the given criteria.
-			</documentation>
-			<input message="fedora-api:findObjectsRequest"/>
-			<output message="fedora-api:findObjectsResponse"/>
-		</operation>
-		<operation name="resumeFindObjects">
-			<documentation>Gets the next list of results from a truncated
-                findObjects response.
-			</documentation>
-			<input message="fedora-api:resumeFindObjectsRequest"/>
-			<output message="fedora-api:findObjectsResponse"/>
-		</operation>
-		<operation name="getObjectHistory">
-			<documentation>Gets a list of timestamps indicating when components changed in an object.  This is a set of timestamps indicating when a datastream or disseminator was created or modified in the object. These timestamps can be used to request a timestamped dissemination request to view the object as it appeared at a specific point in time.
-			</documentation>
-			<input message="fedora-api:getObjectHistoryRequest"/>
-			<output message="fedora-api:getObjectHistoryResponse"/>
-		</operation>
-	</portType>
-	<binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
-		<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
-		<operation name="describeRepository">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#describeRepository"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getObjectProfile">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProfile"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="listMethods">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listMethods"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="listDatastreams">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreams"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getDatastreamDissemination">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamDissemination"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getDissemination">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="findObjects">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#findObjects"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="resumeFindObjects">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#resumeFindObjects"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-		<operation name="getObjectHistory">
-			<soap:operation style="rpc" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectHistory"/>
-			<input>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</input>
-			<output>
-				<soap:body use="encoded" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://www.fedora.info/definitions/1/0/api/"/>
-			</output>
-		</operation>
-	</binding>
-	<service name="Fedora-API-A-Service">
-		<port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
-			<soap:address location="http://localhost:8080/fedora/services/access"/>
-		</port>
-		<port name="Fedora-API-A-Port-SOAPHTTPS" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
-			<soap:address location="https://localhost:8443/fedora/services/access"/>
-		</port>
-	</service>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/"
+             xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/"
+             targetNamespace="http://www.fedora.info/definitions/1/0/api/"
+             name="Fedora-API-A-WSDL">
+
+  <types>
+    <schema xmlns="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.fedora.info/definitions/1/0/types/">
+      <include schemaLocation="fedora-types.xsd"/>
+    </schema>
+  </types>
+
+  <message name="describeRepositoryRequest">
+    <part name="parameters" element="fedora-types:describeRepository"/>
+  </message>
+  <message name="describeRepositoryResponse">
+    <part name="parameters" element="fedora-types:describeRepositoryResponse"/>
+  </message>
+
+  <message name="getObjectProfileRequest">
+    <part name="parameters" element="fedora-types:getObjectProfile"/>
+  </message>
+  <message name="getObjectProfileResponse">
+    <part name="parameters" element="fedora-types:getObjectProfileResponse"/>
+  </message>
+
+  <message name="listMethodsRequest">
+    <part name="parameters" element="fedora-types:listMethods"/>
+  </message>
+  <message name="listMethodsResponse">
+    <part name="parameters" element="fedora-types:listMethodsResponse"/>
+  </message>
+
+  <message name="listDatastreamsRequest">
+    <part name="parameters" element="fedora-types:listDatastreams"/>
+  </message>
+  <message name="listDatastreamsResponse">
+    <part name="parameters" element="fedora-types:listDatastreamsResponse"/>
+  </message>
+
+  <message name="getDatastreamDisseminationRequest">
+    <part name="parameters" element="fedora-types:getDatastreamDissemination"/>
+  </message>
+  <message name="getDatastreamDisseminationResponse">
+    <part name="parameters" element="fedora-types:getDatastreamDisseminationResponse"/>
+  </message>
+
+  <message name="getDisseminationRequest">
+    <part name="parameters" element="fedora-types:getDissemination"/>
+  </message>
+  <message name="getDisseminationResponse">
+    <part name="parameters" element="fedora-types:getDisseminationResponse"/>
+  </message>
+
+  <message name="findObjectsRequest">
+    <part name="parameters" element="fedora-types:findObjects"/>
+  </message>
+  <message name="findObjectsResponse">
+    <part name="parameters" element="fedora-types:findObjectsResponse"/>
+  </message>
+
+  <message name="resumeFindObjectsRequest">
+    <part name="parameters" element="fedora-types:resumeFindObjects"/>
+  </message>
+  <message name="resumeFindObjectsResponse">
+    <part name="parameters" element="fedora-types:resumeFindObjectsResponse"/>
+  </message>
+
+  <message name="getObjectHistoryRequest">
+    <part name="parameters" element="fedora-types:getObjectHistory"/>
+  </message>
+  <message name="getObjectHistoryResponse">
+    <part name="parameters" element="fedora-types:getObjectHistoryResponse"/>
+  </message>
+
+
+  <portType name="Fedora-API-A">
+    <operation name="describeRepository">
+      <input message="fedora-api:describeRepositoryRequest"/>
+      <output message="fedora-api:describeRepositoryResponse"/>
+    </operation>
+    <operation name="getObjectProfile">
+      <input message="fedora-api:getObjectProfileRequest"/>
+      <output message="fedora-api:getObjectProfileResponse"/>
+    </operation>
+    <operation name="listMethods">
+      <input message="fedora-api:listMethodsRequest"/>
+      <output message="fedora-api:listMethodsResponse"/>
+    </operation>
+    <operation name="listDatastreams">
+      <input message="fedora-api:listDatastreamsRequest"/>
+      <output message="fedora-api:listDatastreamsResponse"/>
+    </operation>
+    <operation name="getDatastreamDissemination">
+      <input message="fedora-api:getDatastreamDisseminationRequest"/>
+      <output message="fedora-api:getDatastreamDisseminationResponse"/>
+    </operation>
+    <operation name="getDissemination">
+      <input message="fedora-api:getDisseminationRequest"/>
+      <output message="fedora-api:getDisseminationResponse"/>
+    </operation>
+    <operation name="findObjects">
+      <input message="fedora-api:findObjectsRequest"/>
+      <output message="fedora-api:findObjectsResponse"/>
+    </operation>
+    <operation name="resumeFindObjects">
+      <input message="fedora-api:resumeFindObjectsRequest"/>
+      <output message="fedora-api:findObjectsResponse"/>
+    </operation>
+    <operation name="getObjectHistory">
+      <input message="fedora-api:getObjectHistoryRequest"/>
+      <output message="fedora-api:getObjectHistoryResponse"/>
+    </operation>
+  </portType>
+
+
+  <binding name="Fedora-API-A-Binding-SOAPHTTP" type="fedora-api:Fedora-API-A">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="describeRepository">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#describeRepository"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getObjectProfile">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectProfile"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listMethods">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#listMethods"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="listDatastreams">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#listDatastreams"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getDatastreamDissemination">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDatastreamDissemination"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getDissemination">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getDissemination"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="findObjects">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#findObjects"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="resumeFindObjects">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#resumeFindObjects"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="getObjectHistory">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#getObjectHistory"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <service name="Fedora-API-A-Service">
+    <port name="Fedora-API-A-Port-SOAPHTTP" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
+      <soap:address location="http://localhost:8080/fedora/services/access"/>
+    </port>
+    <port name="Fedora-API-A-Port-SOAPHTTPS" binding="fedora-api:Fedora-API-A-Binding-SOAPHTTP">
+      <soap:address location="https://localhost:8443/fedora/services/access"/>
+    </port>
+  </service>
+
 </definitions>

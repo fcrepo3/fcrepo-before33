@@ -1,12 +1,22 @@
-<wsdl:definitions xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" targetNamespace="http://www.fedora.info/definitions/1/0/api/" name="Fedora-API-M-LITE-WSDL">
-	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
-	<wsdl:types>
-		<documentation>
-			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-		</documentation>
-	</wsdl:types>
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" 
+             xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
+             xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+             xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+             targetNamespace="http://www.fedora.info/definitions/1/0/api/" 
+             name="Fedora-API-M-LITE-WSDL">
+
+	<types>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema"
+                targetNamespace="http://www.fedora.info/definitions/1/0/types/">
+            <include schemaLocation="fedora-types.xsd"/>
+        </schema>
+	</types>
+
 	<message name="getNextPIDRequest">
-		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="numPids" type="xsd:string">
 			<documentation>a string value indicating the number of requested pid(s). Fedora will assume a default value of "1" if the numPids part is not specified.</documentation>
 		</part>
@@ -24,6 +34,7 @@
 			<documentation>The getNextPID response contains a list of the requested next available pids.</documentation>
 		</part>
 	</message>
+
 	<portType name="Fedora-API-M-LITE">
 		<documentation>  This is a simple URI-oriented service definition for the Management service 
 			of a Fedora repository.  It is intended to support a REST-like style of access to the 
@@ -51,6 +62,7 @@
 			<output message="fedora-api:getNextPIDResponse"/>
 		</operation>
 	</portType>
+
 	<binding name="Fedora-API-M-LITE-Binding" type="fedora-api:Fedora-API-M-LITE">
 		<http:binding verb="GET"/>
 		<operation name="getNextPID">
@@ -82,6 +94,7 @@
 			</output>
 		</operation>
 	</binding>
+
 	<service name="Fedora-API-M-LITE">
 		<port name="Fedora-API-M-LITE-Port" binding="fedora-api:Fedora-API-M-LITE-Binding">
 			<http:address location="http://localhost:8080/fedora/management/"/>
@@ -90,4 +103,5 @@
 			<http:address location="https://localhost:8443/fedora/management/"/>
 		</port>
 	</service>
-</wsdl:definitions>
+
+</definitions>

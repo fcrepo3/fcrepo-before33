@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Fedora-API-A-LITE:  This is the WSDL definition for Fedora API-A-LITE which is a simple HTTP-oriented service definition for the Fedora Access web service. -->
-<!-- Version:  1.0 -->
-<!-- Author:  Sandy Payette,  payette@cs.cornell.edu -->
-<!-- Author:  Ross Wayland,  rlw@virginia.edu -->
-<!-- Author:  Chris Wilper,  cwilper@cs.cornell.edu -->
-<!-- Description:  Fedora API-A-LITE is a  URI-oriented service definition that is intended to support a REST style binding to the Fedora Access web service (in contrast to a traditional SOAP web service binding).  This means that we define a simple URL syntax that can be used to issue service requests to the Fedora Access service. API-A-Lite does not provide service bindings for all of the operations defined in the complete Fedora Access web service (see Fedora-API-A).  API-A-Lite only provides bindings for getDissemination and getObjectProfile.  The result of the getDissemination request is a MIME-typed stream.  The result of the getObjectProfile request is either HTML or XML, whichever the client requested. The main purpose of defining API-A-Lite is to provide a simple way to run Fedora disseminations via a URL. -->
-<definitions targetNamespace="http://www.fedora.info/definitions/1/0/api/" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdldoc="http://www.cs.cornell.edu/~cwilper/wsdldoc/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:apachesoap="http://xml.apache.org/xml-soap/" xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" name="Fedora-API-A-LITE-WSDL">
-	<import namespace="http://www.fedora.info/definitions/1/0/types/" location="fedora-types.xsd"/>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+             xmlns:fedora-api="http://www.fedora.info/definitions/1/0/api/" 
+             xmlns:fedora-types="http://www.fedora.info/definitions/1/0/types/" 
+             xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" 
+             xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" 
+             targetNamespace="http://www.fedora.info/definitions/1/0/api/" 
+             name="Fedora-API-A-LITE-WSDL">
+
 	<types>
-		<documentation>
-			<wsdldoc:type name="xsd:string" url="http://www.w3.org/TR/2001/REC-xmlschema-2-20010502/#string"/>
-			<wsdldoc:type name="wsdl:tDefinitions" url="http://www.w3.org/TR/2001/NOTE-wsdl-20010315#_document-s"/>
-			<wsdldoc:type name="fedora-types:MIMETypedStream" url="http://www.fedora.info/definitions/1/0/types/#MIMETypedStream"/>
-			<wsdldoc:type name="fedora-types:FieldSearchResult" url="http://www.fedora.info/definitions/1/0/types/#FieldSearchResult"/>
-			<wsdldoc:type name="fedora-types:RepositoryInfo" url="http://www.fedora.info/definitions/1/0/types/#RepositoryInfo"/>
-		</documentation>
+        <schema xmlns="http://www.w3.org/2001/XMLSchema"
+                targetNamespace="http://www.fedora.info/definitions/1/0/types/">
+            <include schemaLocation="fedora-types.xsd"/>
+        </schema>
 	</types>
+
 	<message name="describeRepositoryRequest">
-		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="xml" type="xsd:string">
 			<documentation>a string value of "true" or "false" indicating that the repository info should be XML encoded. 
 				Fedora will assume a default of "false" if the xml part is not specified.
@@ -33,7 +32,6 @@
 		</part>
 	</message>
 	<message name="getObjectProfileRequest">
-		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
@@ -114,7 +112,6 @@
 		</part>
 	</message>
 	<message name="getDisseminationRequest">
-		<!-- NOTE!!  all message parts are defined as type xsd:string since messages will be constructed as URLs using HTTP-only bindings -->
 		<part name="pid" type="xsd:string">
 			<documentation>the persistent identifier of the object.</documentation>
 		</part>
@@ -441,14 +438,6 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			<output message="fedora-api:getObjectHistoryResponse"/>
 		</operation>
 	</portType>
-	<service name="Fedora-API-A-LITE">
-		<port name="Fedora-API-A-LITE-Port" binding="fedora-api:Fedora-API-A-LITE-Binding">
-			<http:address location="http://localhost:8080/fedora/"/>
-		</port>
-		<port name="Fedora-API-A-LITE-Port-SSL" binding="fedora-api:Fedora-API-A-LITE-Binding">
-			<http:address location="https://localhost:8443/fedora/"/>
-		</port>
-	</service>
 	<binding name="Fedora-API-A-LITE-Binding" type="fedora-api:Fedora-API-A-LITE">
 		<http:binding verb="GET"/>
 		<operation name="describeRepository">
@@ -651,4 +640,12 @@ It asks for up to 50 results at a time from the server, and requests that the re
 			</output>
 		</operation>
 	</binding>
+	<service name="Fedora-API-A-LITE">
+		<port name="Fedora-API-A-LITE-Port" binding="fedora-api:Fedora-API-A-LITE-Binding">
+			<http:address location="http://localhost:8080/fedora/"/>
+		</port>
+		<port name="Fedora-API-A-LITE-Port-SSL" binding="fedora-api:Fedora-API-A-LITE-Binding">
+			<http:address location="https://localhost:8443/fedora/"/>
+		</port>
+	</service>
 </definitions>
