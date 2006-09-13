@@ -21,6 +21,7 @@ public class InstallOptions {
     public static final String TOMCAT_SSL_PORT       = "tomcat.ssl.port";
     public static final String KEYSTORE_FILE         = "keystore.file";
     public static final String JDBC_JAR_FILE         = "jdbc.jar.file";
+    public static final String TOMCAT_REALM          = "tomcat.realm";
     public static final String XACML_ENABLED         = "xacml.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
 
@@ -92,10 +93,11 @@ public class InstallOptions {
                 }
             }
 
-            inputOption(XACML_ENABLED);
+            inputOption(TOMCAT_REALM);
             inputOption(DEPLOY_LOCAL_SERVICES);
         }
 
+        inputOption(XACML_ENABLED);
         inputOption(JDBC_JAR_FILE);
     }
 
