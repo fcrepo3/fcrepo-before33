@@ -376,7 +376,7 @@
         </copy>
         
         <!-- copy initial setup defaults (in lieu of fedora-setup) -->
-        <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/beSecurity-unsecure-apim.xml" 
+        <copy file="${fedora.home.build.dir}/server/fedora-internal-use/config/beSecurity-secure-apim.xml" 
             tofile="${fedora.home.build.dir}/server/config/beSecurity.xml"/>
     </target>
 	
