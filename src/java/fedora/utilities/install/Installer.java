@@ -5,12 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Properties;
 
 import org.dom4j.DocumentException;
 
 import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
+import fedora.server.security.BESecurityConfig;
+import fedora.server.security.DefaultRoleConfig;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
@@ -39,23 +42,14 @@ public class Installer {
     	
     	Container container = Container.getContainer(_dist, _opts);
     	container.install();
-    	try {
-    		File fedoraWAR = buildWAR();
-    		System.out.println("Deploying fedora.war...");
-			container.deploy(fedoraWAR);
-		} catch (IOException e) {
-			throw new InstallationFailedException(e.getMessage(), e);
-		}
-		
-		installFCFG();
-		
+		container.deploy(buildWAR());
 		if (_opts.getBooleanValue(InstallOptions.DEPLOY_LOCAL_SERVICES, true)) {
-			System.out.println("Deploying local services (fop, imagemanip, saxon)...");
 			deployLocalService(container, Distribution.FOP_WAR);
 			deployLocalService(container, Distribution.IMAGEMANIP_WAR);
 			deployLocalService(container, Distribution.SAXON_WAR);
 		}
 		
+		//FIXME install JDBC driver
 		System.out.println("Installation complete.");
     }
     
@@ -75,6 +69,10 @@ public class Installer {
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
+		
+		installFCFG();
+		installBESecurity();
+		installMcKoi();
     }
     
     private File buildWAR() throws InstallationFailedException {
@@ -105,19 +103,26 @@ public class Installer {
     }
     
     private void installFCFG() throws InstallationFailedException {
-    	System.out.println("Installing fedora.fcfg");
+    	System.out.println("\tInstalling fedora.fcfg");
     	File fcfgBase = new File(fedoraHome, "server/fedora-internal-use/config/fedora-base.fcfg");
     	File fcfg = new File(fedoraHome, "server/config/fedora.fcfg");
         
         Properties props = new Properties();
-        props.put("server.adminPassword", _opts.getValue(InstallOptions.FEDORA_ADMIN_PASS));
-        props.put("server.fedoraServerPort", _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT));
-        props.put("server.fedoraShutdownPort", _opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT));
-        props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
+        if (_opts.getValue(InstallOptions.FEDORA_ADMIN_PASS) != null) {
+        	props.put("server.adminPassword", _opts.getValue(InstallOptions.FEDORA_ADMIN_PASS));
+        }
+        if (_opts.getValue(InstallOptions.TOMCAT_HTTP_PORT) != null) {
+        	props.put("server.fedoraServerPort", _opts.getValue(InstallOptions.TOMCAT_HTTP_PORT));
+        }
+        if (_opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT) != null) {
+        	props.put("server.fedoraShutdownPort", _opts.getValue(InstallOptions.TOMCAT_SHUTDOWN_PORT));
+        }
+        if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null) {
+        	props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
+        }
         String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
         if (container.equals(InstallOptions.BUNDLED_TOMCAT) && 
         		_opts.getValue(InstallOptions.JDBC_JAR_FILE).equals("bundledMcKoi")) {
-        	installMcKoi();
         	props.put("datastore.localMcKoiPool.jdbcURL", 
         			"jdbc:mckoi:local://" + fedoraHome.getAbsolutePath() + 
         			"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true");
@@ -146,22 +151,128 @@ public class Installer {
     	}
     }
     
+    private void installBESecurity() throws InstallationFailedException {
+    	System.out.println("\tInstalling beSecurity");
+    	File beSecurity = new File(fedoraHome, "/server/config/beSecurity.xml");
+    	boolean apiaAuth = _opts.getBooleanValue(InstallOptions.APIA_AUTH_REQUIRED, false);
+    	boolean apiaSSL = _opts.getBooleanValue(InstallOptions.APIA_SSL_REQUIRED, false);
+    	//boolean apimSSL = _opts.getBooleanValue(InstallOptions.APIM_SSL_REQUIRED, false);
+    	
+    	PrintWriter pwriter;
+		try {
+			pwriter = new PrintWriter(beSecurity);
+		} catch (FileNotFoundException e) {
+			throw new InstallationFailedException(e.getMessage(), e);
+		}
+    	BESecurityConfig becfg = new BESecurityConfig();
+
+    	becfg.setDefaultConfig(new DefaultRoleConfig());
+    	becfg.setInternalBasicAuth(new Boolean(apiaAuth));
+    	becfg.setInternalIPList(new String[] {"127.0.0.1"});
+    	becfg.setInternalPassword("changeme");
+    	becfg.setInternalSSL(new Boolean(apiaSSL));
+    	becfg.setInternalUsername("fedoraIntCallUser");
+    	becfg.write(true, true, pwriter);
+    	pwriter.close();
+    	
+    	/**
+    	 * secure-all
+    	 <serviceSecurityDescription 
+	    	 role="fedoraInternalCall-1" 
+	    	 callBasicAuth="true" 
+	    	 callSSL="true" 
+	    	 callbackBasicAuth="true" 
+	    	 callbackSSL="true" 
+	    	 callUsername="fedoraIntCallUser" 
+	    	 callPassword="changeme" 
+	    	 iplist="127.0.0.1"/>
+    	 <serviceSecurityDescription 
+    	 	role="fedoraInternalCall-2" 
+    	 	callBasicAuth="false" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="false" 
+    	 	callbackSSL="false" 
+    	 	iplist="127.0.0.1"/>
+    	 	
+    	 * secure-apim
+    	 <serviceSecurityDescription 
+    	 	role="fedoraInternalCall-1" 
+    	 	callBasicAuth="false" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="false" 
+    	 	callbackSSL="false" 
+    	 	callUsername="fedoraIntCallUser" 
+    	 	callPassword="changeme" 
+    	 	iplist="127.0.0.1"/>
+	 	<serviceSecurityDescription 
+    	 	role="fedoraInternalCall-2" 
+    	 	callBasicAuth="false" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="false" 
+    	 	callbackSSL="false" 
+    	 	iplist="127.0.0.1"/>
+    	 	
+    	 	* unsecure-all
+    	 <serviceSecurityDescription 
+    	 	role="fedoraInternalCall-1" 
+    	 	callBasicAuth="true" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="true" 
+    	 	callbackSSL="false" 
+    	 	callUsername="fedoraIntCallUser" 
+    	 	callPassword="changeme" 
+    	 	iplist="127.0.0.1"/>
+	 	<serviceSecurityDescription 
+    	 	role="fedoraInternalCall-2" 
+    	 	callBasicAuth="false" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="false" 
+    	 	callbackSSL="false" 
+    	 	iplist="127.0.0.1"/>
+    	 	
+    	 	* unsecure-apim
+    	 <serviceSecurityDescription 
+    	 	role="fedoraInternalCall-1" 
+    	 	callBasicAuth="false" 
+    	 	callSSL="false" 
+    	 	callbackBasicAuth="false" 
+    	 	callbackSSL="false" 
+    	 	callUsername="fedoraIntCallUser" 
+    	 	callPassword="changeme" 
+    	 	iplist="127.0.0.1"/>
+	 	<serviceSecurityDescription 
+	 		role="fedoraInternalCall-2" 
+	 		callBasicAuth="false" 
+	 		callSSL="false" 
+	 		callbackBasicAuth="false" 
+	 		callbackSSL="false" 
+	 		iplist="127.0.0.1"/>
+        </serviceSecurityDescription>
+    	 */
+    }
+    
     private void installMcKoi() throws InstallationFailedException {
-    	System.out.println("Installing (bundled) McKoi...");
+    	if (!_opts.getValue(InstallOptions.JDBC_JAR_FILE).equals("bundledMcKoi")) {
+    		return;
+    	}
+    	
+    	System.out.println("\tInstalling (bundled) McKoi...");
     	try {
-    		// FIXME hardcoded file
 			Zip.unzip(_dist.get(Distribution.MCKOI), fedoraHome);
 			File mckoiHome = new File(fedoraHome, Distribution.MCKOI_BASENAME);
-			File f = new File(mckoiHome, "mckoidb.jar");
-			// FIXME hack
-			File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
-			FileUtils.copy(new FileInputStream(f),new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
 			
 			// Default is to create data and log dirs relative to JVM, not conf location
 			File mckoiProps = new File(mckoiHome, "db.conf");
 			Properties mckoiConf = loadProperties(mckoiProps);
 			mckoiConf.setProperty("root_path", "configuration");
 			mckoiConf.store(new FileOutputStream(mckoiProps), null);
+			
+			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
+			if (container.equals(InstallOptions.BUNDLED_TOMCAT)) {
+				File f = new File(mckoiHome, "mckoidb.jar");
+				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
+				FileUtils.copy(new FileInputStream(f),new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
+			}
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
     	}

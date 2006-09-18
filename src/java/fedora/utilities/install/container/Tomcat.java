@@ -27,9 +27,14 @@ public abstract class Tomcat extends Container {
 		common_lib = new File(tomcatHome, "common" + File.separator + "lib" + File.separator);
 	}
 
-	public void deploy(File war) throws IOException {
+	public void deploy(File war) throws InstallationFailedException {
+		System.out.println("Deploying " + war.getName() + "...");
         File dest = new File(webapps, war.getName());
-        FileUtils.copy(war, dest);
+        try {
+			FileUtils.copy(war, dest);
+		} catch (IOException e) {
+			throw new InstallationFailedException(e.getMessage(), e);
+		}
 	}
 
 	public void install() throws InstallationFailedException {

@@ -4,7 +4,6 @@
 package fedora.utilities.install.container;
 
 import java.io.File;
-import java.io.IOException;
 
 import fedora.utilities.install.Distribution;
 import fedora.utilities.install.InstallOptions;
@@ -34,7 +33,7 @@ public abstract class Container {
 		}
 	}
 	
-	public abstract void deploy(File war) throws IOException;
+	public abstract void deploy(File war) throws InstallationFailedException;
 	
 	public abstract void install() throws InstallationFailedException;
 	

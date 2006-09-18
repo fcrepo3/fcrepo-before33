@@ -79,10 +79,9 @@ public class InstallOptions {
         }
 
         inputOption(SERVLET_ENGINE);
-
+        
         if (!getValue(SERVLET_ENGINE).equals(OTHER)) {
             inputOption(TOMCAT_HOME);
-            inputOption(FEDORA_ADMIN_PASS);
             inputOption(TOMCAT_SHUTDOWN_PORT);
             inputOption(TOMCAT_HTTP_PORT);
             
@@ -94,11 +93,12 @@ public class InstallOptions {
             }
 
             inputOption(TOMCAT_REALM);
-            inputOption(DEPLOY_LOCAL_SERVICES);
         }
-
+        
+        inputOption(FEDORA_ADMIN_PASS);
         inputOption(XACML_ENABLED);
         inputOption(JDBC_JAR_FILE);
+        inputOption(DEPLOY_LOCAL_SERVICES);
     }
 
     private String dashes(int len) {
