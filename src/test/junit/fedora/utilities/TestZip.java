@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 
@@ -38,11 +39,13 @@ public class TestZip extends TestCase {
 	
 	protected void tearDown() throws Exception {
         super.tearDown();
-        Zip.deleteDirectory(TEST_DIR);
+        //Zip.deleteDirectory(TEST_DIR);
     }
 	
 	public void testZip() throws Exception {
-		Zip.zip(ZIP_FILE, TMP_DIR + File.separator + "test");
+		File dir = new File(TMP_DIR + File.separator + "test");
+		//Zip.zip(ZIP_FILE, TMP_DIR + File.separator + "test");
+		Zip.zip(new File(ZIP_FILE), dir.listFiles());
 	}
 	
 	public void testUnzip() throws Exception {
