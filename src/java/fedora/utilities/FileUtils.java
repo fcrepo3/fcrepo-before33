@@ -41,29 +41,32 @@ public class FileUtils {
 		}
     }
 	
-	public static boolean deleteDirectory(String directory) {
-        boolean result = false;
+	public static boolean delete(File file) {
+        boolean result = true;
 
-        if (directory != null) {
-            File file = new File(directory);
-            if (file.exists() && file.isDirectory()) {
+        if (file == null) {
+        	return false;
+        }
+        if (file.exists()) {
+        	if (file.isDirectory()) {
                 // 1. delete content of directory:
-                File[] files = file.listFiles();
-                result = true; //init result flag
-                int count = files.length;
-                for (int i = 0; i < count; i++) { //for each file:
-                    File f = files[i];
-                    if (f.isFile()) {
-                        result = result && f.delete();
-                    } else if (f.isDirectory()) {
-                        result = result && deleteDirectory(f.getAbsolutePath());
-                    }
+                File[] children = file.listFiles();
+                for (int i = 0; i < children.length; i++) { //for each file:
+                    File child = children[i];
+                    result = result && delete(child);
                 }//next file
-
-                file.delete(); //finally delete (empty) input directory
-            }//else: input directory does not exist or is not a directory
-        }//else: no input value
-
+        	}
+        	result = result && file.delete();
+        } //else: input directory does not exist or is not a directory
         return result;
-    }//deleteDirectory()
+    }
+	
+	/**
+	 * 
+	 * @param file File or directory to delete
+	 * @return 
+	 */
+	public static boolean delete(String file) {
+        return delete(new File(file));
+    }
 }
