@@ -36,9 +36,7 @@ public class ConsoleSendButtonListener
 
     public void actionPerformed(ActionEvent event) {
         ConsoleCommand command=(ConsoleCommand) m_model.getSelectedItem();
-        JFrame dummy=new JFrame();
-        dummy.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("images/standard/general/SendMail16.gif")).getImage());
-        JDialog jd=new JDialog(dummy, "Send Command", true);
+        JDialog jd=new JDialog(m_mainFrame, "Send Command", true);
         JPanel panel=new JPanel();
         panel.setLayout(new BorderLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
@@ -57,8 +55,7 @@ public class ConsoleSendButtonListener
         panel.add(okCancelPanel, BorderLayout.SOUTH);
         jd.getContentPane().add(panel, BorderLayout.CENTER);
         jd.pack();
-        jd.setLocation(m_mainFrame.getCenteredPos(jd.getWidth(),
-        jd.getHeight()));
-        jd.show();
+        jd.setLocation(m_mainFrame.getCenteredPos(jd.getWidth(),jd.getHeight()));
+        jd.setVisible(true);
     }
 }

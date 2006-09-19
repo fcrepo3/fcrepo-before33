@@ -594,10 +594,9 @@ public class Administrator extends JFrame {
           }
         });
 
-        JFrame dummy=new JFrame();
-        dummy.setIconImage(new ImageIcon(cl.getResource("images/standard/general/About16.gif")).getImage());
-        m_aboutDialog=new JDialog(dummy, "About Fedora Administrator", true);
-
+    //    JFrame dummy=new JFrame(this.getInstance);
+        m_aboutDialog=new JDialog(this, "About Fedora Administrator", true);
+        
         m_aboutDialog.getContentPane().add(m_aboutPic, BorderLayout.CENTER);
         JButton aboutClose=new JButton("Close");
 
@@ -617,19 +616,17 @@ public class Administrator extends JFrame {
         m_aboutDialog.getContentPane().add(infoAndButton, BorderLayout.SOUTH);
         aboutClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                m_aboutDialog.hide();
+                m_aboutDialog.setVisible(false);
             }
         });
         m_aboutDialog.pack();
-
-
 
         JMenuItem helpAbout=new JMenuItem("About Fedora Administrator",KeyEvent.VK_A);
         helpAbout.setToolTipText("Gives brief information this application");
         helpAbout.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 m_aboutDialog.setLocation(getCenteredPos(m_aboutDialog.getWidth(), m_aboutDialog.getHeight()));
-                m_aboutDialog.show();
+                m_aboutDialog.setVisible(true);
             }
         });
 
