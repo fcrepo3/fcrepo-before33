@@ -32,6 +32,19 @@ public class WebXML extends XMLDocument {
 		options = new WebXMLOptions(installOptions);
 	}
 	
+	/**
+	 * Sets the init-param/param-value for all servlet elements with init-param/param-name=fedora.home
+	 *
+	 */
+	public void setFedoraHome() {
+		List list = getDocument().selectNodes("/web-app/*[local-name()='servlet']/*[local-name()='init-param'][*[local-name()='param-name']='fedora.home']");
+		Iterator iter = list.iterator();
+		while (iter.hasNext()) {
+			Element ip = (Element) iter.next();
+			ip.element("param-value").setText(options.fedoraHome.getAbsolutePath());
+		}
+	}
+	
 	public void setSecurityConstraints() {
 		// clear out any Fedora-generated security constraint blocks
 		removeSecurityConstraints();

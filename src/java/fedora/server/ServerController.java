@@ -3,14 +3,12 @@ package fedora.server;
 import java.io.File;
 import java.io.IOException;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import fedora.common.Constants;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.authorization.AuthzDeniedException;
 import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.authorization.AuthzPermittedException;
@@ -21,10 +19,8 @@ import fedora.server.errors.servletExceptionExtensions.InternalError500Exception
 import fedora.server.errors.servletExceptionExtensions.Ok200Exception;
 import fedora.server.errors.servletExceptionExtensions.Unavailable503Exception;
 import fedora.server.security.Authorization;
-import fedora.server.utilities.ServerUtility;
-import fedora.server.utilities.status.ServerStatusFile;
 import fedora.server.utilities.status.ServerState;
-import fedora.server.Server;
+import fedora.server.utilities.status.ServerStatusFile;
 
 /**
  *
@@ -173,13 +169,19 @@ public class ServerController
     }
 
     public void init() throws ServletException {
-       
-        // make sure fedora.home is defined first
-        String fedoraHome = System.getProperty("fedora.home");
+    	// make sure fedora.home is defined first
+    	String fedoraHome;
+    	fedoraHome = getInitParameter("fedora.home");
         if (fedoraHome == null) {
-            String msg = "FATAL ERROR: System property fedora.home is undefined";
-            System.out.println(msg);
-            throw new ServletException(msg);
+        	// try again
+        	fedoraHome = System.getProperty("fedora.home");
+        	if (fedoraHome == null) {
+	            String msg = "FATAL ERROR: System property fedora.home is undefined";
+	            System.out.println(msg);
+	            throw new ServletException(msg);
+        	}
+        } else {
+        	System.setProperty("fedora.home", fedoraHome);
         }
         File fedoraHomeDir = new File(fedoraHome);
 
