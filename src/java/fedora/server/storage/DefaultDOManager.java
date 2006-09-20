@@ -949,11 +949,6 @@ public class DefaultDOManager
         } else {
             logFinest("COMMIT: Entered doCommit (add/modify)");
             try {
-                // MANAGED DATASTREAM PURGE:
-                // find out which, if any, managed datastreams were purged,
-                // then remove them from low level datastream storage
-
-                if (!obj.isNew()) deletePurgedDatastreams(obj, context);
 
                 // DATASTREAM STORAGE:
                 // copy and store any datastreams of type Managed Content
@@ -1032,6 +1027,18 @@ public class DefaultDOManager
                     }
                   }
                 }
+                
+                // MANAGED DATASTREAM PURGE:
+                // find out which, if any, managed datastreams were purged,
+                // then remove them from low level datastream storage
+                // this was moved because in the case of modifying a datastream 
+                // with versioning turned off, if a modification didn't involve new
+                // content a special url of the form copy:... would be used to 
+                // indicate the content for the new datastream version, which would
+                // point to the content of the most recent version.  Which (if this code
+                // had been executed earlier) would no longer exist in the low-level store.
+                
+                if (!obj.isNew()) deletePurgedDatastreams(obj, context);
 
                 // MODIFIED DATE:
                 // set digital object last modified date, in UTC
