@@ -22,7 +22,7 @@ public class MechanismInputPanel
     private Map m_loadedPanels;
     private JComponent m_containerToValidate;
     private Dimension m_preferredLabelSize;
-    private Datastream[] m_currentDatastreamVersions;
+//    private Datastream[] m_currentDatastreamVersions;
     private ObjectEditorFrame m_gramps;
     private ValidityListener m_owner;
     private String m_bDefPID;
@@ -44,14 +44,14 @@ public class MechanismInputPanel
     public MechanismInputPanel(String bDefPID, 
                                JComponent containerToValidate,
                                Dimension preferredLabelSize,
-                               Datastream[] currentDatastreamVersions,
+//                               Datastream[] currentDatastreamVersions,
                                ObjectEditorFrame gramps,
                                ValidityListener owner) 
            throws IOException {
 
         m_containerToValidate=containerToValidate;
         m_preferredLabelSize=preferredLabelSize;
-        m_currentDatastreamVersions=currentDatastreamVersions;
+//        m_currentDatastreamVersions=currentDatastreamVersions;
         m_gramps=gramps;
         m_owner=owner; 
 
@@ -269,13 +269,12 @@ public class MechanismInputPanel
             DatastreamInputSpec spec=Util.getInputSpec(bMechPID);
             DatastreamBindingPane bPane=
                     new DatastreamBindingPane(
-                                 m_currentDatastreamVersions,
+                                 m_gramps,
                                  new DatastreamBinding[0],
                                  bMechPID,
                                  spec,
                                  m_owner,
                                  null);
-            m_gramps.addDatastreamListener(bPane);           
             m_datastreamBindingPanes.put(bMechPID, bPane);
 
             // put it together and return it

@@ -67,15 +67,18 @@ public class DatastreamPane
             // NORTH: commonPane(state, controlGroup)
 
                     // LEFT: labels
+                    JLabel idLabel=new JLabel("ID");
                     JLabel stateLabel=new JLabel("State");
                     JLabel versionableLabel=new JLabel("Versionable");
                     JLabel controlGroupLabel=new JLabel("Control Group");
                     JLabel[] leftCommonLabels=new JLabel[] { 
+                            idLabel,
+                            controlGroupLabel,
                             stateLabel, 
-                            versionableLabel,
-                            controlGroupLabel};
+                            versionableLabel };
 
                     // RIGHT: values
+                    
                     String[] comboBoxStrings={"Active", "Inactive", "Deleted"};
                     m_stateComboBox=new JComboBox(comboBoxStrings);
                     Administrator.constrainHeight(m_stateComboBox);
@@ -120,9 +123,10 @@ public class DatastreamPane
                     controlGroupValueLabel.setBackground(Administrator.BACKGROUND_COLOR);
                     controlGroupValueLabel.setEditable(false);
                     JComponent[] leftCommonValues = 
-                            new JComponent[] { m_stateComboBox,
-                                               m_versionableComboBox,
-                                               controlGroupValueLabel};
+                            new JComponent[] { new JLabel(mostRecent.getID()),
+                                               controlGroupValueLabel,
+                                               m_stateComboBox,
+                                               m_versionableComboBox};
     
                 JPanel leftCommonPane=new JPanel();
                 GridBagLayout leftCommonGridBag=new GridBagLayout();
@@ -1047,21 +1051,6 @@ public class DatastreamPane
             {
                 String defaultValue=evt.getActionCommand(); // default date string
                 PurgeDataStreamDialog purgeDialog = new PurgeDataStreamDialog(Administrator.getInstance(), m_versions[0].getID(), defaultValue, m_dateStrings);
-//                String selected=(String) JOptionPane.showInputDialog(
-//                        Administrator.getDesktop(),
-//                        "Choose the latest version to purge:",
-//                        "Purge version(s) from datastream " + m_versions[0].getID(),
-//                        JOptionPane.QUESTION_MESSAGE,
-//                        null,
-//                        m_dateStrings,
-//                        defaultValue);
-//                if (selected==null) 
-//                {
-//                    canceled=true;
-//                } 
-//                else {
-//                    sIndex=((Integer) m_dsIndex.get(selected)).intValue();
-//                }
                 if (purgeDialog.isCanceled())
                 {
                     canceled = true;
@@ -1101,8 +1090,6 @@ public class DatastreamPane
                         "Yes"); //default button title
                 if (n==0) {
                     try {
-//                        System.out.println("date1 = " + m_versions[sIndex1].getCreateDate() +
-//                                "\ndate2 = " + m_versions[sIndex2].getCreateDate());
                         Administrator.APIM.purgeDatastream(m_pid, 
                                 m_versions[sIndex1].getID(),
                                 m_versions[sIndex2].getCreateDate(),
@@ -1134,8 +1121,6 @@ public class DatastreamPane
         public PurgeDataStreamDialog(JFrame parent, String datastreamName, String defaultVal, Object[] dateStrings)
         {
             super(parent, "Purge Datastream", true);
-//            System.out.println("parent location & size = ("+parent.getBounds().x+", "+parent.getBounds().y+
-//                    ") ["+parent.getBounds().width + ", " + parent.getBounds().height + "]");
             JLabel label = new JLabel("Choose versions of datastream "+datastreamName + " to purge:");
             getContentPane().add(label, BorderLayout.NORTH);
             label.setBorder(new EmptyBorder(10, 10, 0, 10));
@@ -1159,14 +1144,7 @@ public class DatastreamPane
             buttons.add(cancel);
             list.setSize(500, 600);
             pack();
-            Rectangle bounds = this.getOwner().getBounds();
-            Rectangle mybounds = this.getBounds();
-            int x = bounds.x + (bounds.width - mybounds.width ) / 2;
-            int y = bounds.y + (bounds.height - mybounds.height ) / 2;
-//            System.out.println("Setting location to "+ x + ", " + y);
-//            System.out.println("dialog location & size = ("+mybounds.x+", "+mybounds.y+
-//                    ") ["+mybounds.width + ", " + mybounds.height + "]");
-            setLocation(x, y);       
+            setLocation(Administrator.getInstance().getCenteredPos(getWidth(), getHeight()));       
             canceled = true;
             setVisible(true);
         }

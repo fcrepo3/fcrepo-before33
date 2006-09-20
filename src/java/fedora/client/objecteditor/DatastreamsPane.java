@@ -150,35 +150,9 @@ public class DatastreamsPane
                     + versions[0].getControlGroup().toString() + ")");
             colorTabForState(dsID, versions[0].getState());
             setDirty(dsID, false);
-            fireDatastreamModified(versions[0]);
         } catch (Exception e) {
         	Administrator.showErrorDialog(Administrator.getDesktop(), "Error while refreshing", 
         			e.getMessage() + "\nTry re-opening the object viewer.", e);
-        }
-    }
-
-    public void addDatastreamListener(DatastreamListener dsl) {
-        m_dsListeners.add(dsl);
-    }
-
-    protected void fireDatastreamAdded(Datastream ds) {
-        for (int i=0; i<m_dsListeners.size(); i++) {
-            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
-            l.datastreamAdded(ds);
-        }
-    }
-
-    protected void fireDatastreamModified(Datastream ds) {
-        for (int i=0; i<m_dsListeners.size(); i++) {
-            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
-            l.datastreamModified(ds);
-        }
-    }
-
-    protected void fireDatastreamPurged(String dsID) {
-        for (int i=0; i<m_dsListeners.size(); i++) {
-            DatastreamListener l=(DatastreamListener) m_dsListeners.get(i);
-            l.datastreamPurged(dsID);
         }
     }
 
@@ -205,7 +179,6 @@ public class DatastreamsPane
         colorTabForState(dsID, versions[0].getState());
         m_tabbedPane.setSelectedIndex(newIndex);
         doNew(XML_MIMETYPE, false);
-        fireDatastreamAdded(versions[0]);
     }
 
     protected void remove(String dsID) {
@@ -224,7 +197,6 @@ public class DatastreamsPane
         m_datastreamPanes=newArray;
         // then make sure dirtiness indicators are corrent
         m_owner.indicateDirtiness();
-        fireDatastreamPurged(dsID);
     }
 
     public boolean isDirty() {
@@ -302,17 +274,21 @@ public class DatastreamsPane
                 + "it from being proxied.";
 
         private JComboBox m_stateComboBox;
+        private JComboBox m_versionableComboBox;
         private String m_initialState;
+        private final static int NEW_VERSION_ON_UPDATE = 0;
+        private final static int REPLACE_ON_UPDATE = 1;
 
         public NewDatastreamPane(String[] dropdownMimeTypes) {
 
-            JComponent[] left=new JComponent[] { new JLabel("State"),
-                                                 new JLabel("ID"),
-                                                 new JLabel("Label"),
+            JComponent[] left=new JComponent[] { new JLabel("ID"),
+                                                 new JLabel("Control Group"),
+                                                 new JLabel("State"),                                                 
+                                                 new JLabel("Versionable"),
                                                  new JLabel("MIME Type"),
+                                                 new JLabel("Label"),
                                                  new JLabel("Format URI"),
-                                                 new JLabel("Alternate IDs"),
-                                                 new JLabel("Control Group") };
+                                                 new JLabel("Alternate IDs") };
 
             m_stateComboBox=new JComboBox(new String[] {"Active",
                                                         "Inactive",
@@ -332,6 +308,11 @@ public class DatastreamsPane
                     }
                 }
             });
+            String[] comboBoxStrings2={"Updates will create new version", 
+                                       "Updates will replace most recent version"};
+            m_versionableComboBox=new JComboBox(comboBoxStrings2);
+            Administrator.constrainHeight(m_versionableComboBox);
+            m_versionableComboBox.setSelectedIndex( NEW_VERSION_ON_UPDATE );
 
             m_labelTextField=new JTextField("Enter a label here.");
 
@@ -374,13 +355,14 @@ public class DatastreamsPane
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
 
-            JComponent[] right=new JComponent[] { m_stateComboBox, 
-                                                  m_idTextField, 
-                                                  m_labelTextField, 
+            JComponent[] right=new JComponent[] { m_idTextField, 
+                                                  controlGroupOuterPanel,
+                                                  m_stateComboBox, 
+                                                  m_versionableComboBox,
                                                   m_mimeComboBox, 
+                                                  m_labelTextField, 
                                                   m_formatURITextField,
-                                                  m_altIDsTextField,
-                                                  controlGroupOuterPanel };
+                                                  m_altIDsTextField };
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -636,12 +618,13 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
+                    boolean versionable = m_versionableComboBox.getSelectedIndex() == NEW_VERSION_ON_UPDATE ? true : false;
                     String newID = Administrator.APIM.addDatastream(
                                        pid, 
                                        dsID, 
                                        altIDs,
                                        label,
-                                       true, // DEFAULT_VERSIONABLE
+                                       versionable, // DEFAULT_VERSIONABLE
                                        mimeType, 
                                        formatURI,
                                        location, 

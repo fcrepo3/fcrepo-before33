@@ -123,10 +123,6 @@ public class ObjectEditorFrame
         return versions;
     }
 
-    public void addDatastreamListener(DatastreamListener dl) {
-        m_datastreamsPane.addDatastreamListener(dl);
-    }
-
     private void doTitle(boolean dirty) {
         String d="";
         if (dirty) d="*";

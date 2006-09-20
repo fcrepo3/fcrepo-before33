@@ -271,7 +271,7 @@ public class DisseminatorsPane
                     new MechanismInputPanel(null, 
                                             this, 
                                             labelDims, 
-                                            m_owner.getCurrentDatastreamVersions(),
+//                                            m_owner.getCurrentDatastreamVersions(),
                                             m_owner,
                                             this);
             //

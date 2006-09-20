@@ -19,10 +19,10 @@ import fedora.server.types.gen.DatastreamBinding;
  */
 public class DatastreamBindingPane
         extends JPanel
-        implements DatastreamListener, 
-                   PotentiallyDirty {
+        implements PotentiallyDirty {
 
-    private Datastream[] m_datastreams;
+//    private Datastream[] m_datastreams;
+    private ObjectEditorFrame m_gramps;
     private DatastreamInputSpec m_spec;
     private HashMap m_ruleForKey;
     private HashMap m_perkyPanels;
@@ -35,15 +35,16 @@ public class DatastreamBindingPane
     private JTabbedPane m_bindingTabbedPane;
     private ValidityListener m_validityListener;
 
-    public DatastreamBindingPane(Datastream[] currentVersions,
+    public DatastreamBindingPane(ObjectEditorFrame gramps,
                                  DatastreamBinding[] initialBindings,
                                  String bMechPID,
                                  DatastreamInputSpec spec,
                                  ValidityListener validityListener,  // ok if null
                                  EditingPane owner) {  // ok if null
         m_validityListener=validityListener;
+        m_gramps = gramps;
         m_owner=owner;
-        m_datastreams=currentVersions;
+//        m_datastreams=currentVersions;
         m_spec=spec;
         m_perkyPanels=new HashMap();
         // put rules in a hash by key so they're easy to use later
@@ -167,39 +168,22 @@ public class DatastreamBindingPane
         }
     }
 
-    public void datastreamAdded(Datastream ds) {
-        // append to the end of the array
-        Datastream[] newArray=new Datastream[m_datastreams.length+1];
-        for (int i=0; i<m_datastreams.length; i++) {
-            newArray[i]=m_datastreams[i];
-        }
-        newArray[m_datastreams.length]=ds;
-        m_datastreams=newArray;
-    }
-
-    public void datastreamModified(Datastream ds) {
-        // swap the value in the array
-        for (int i=0; i<m_datastreams.length; i++) {
-            if (ds.getID().equals(m_datastreams[i].getID())) {
-                m_datastreams[i]=ds;
-            }
-        }
-    }
-
     // each string will be ID - mime/type - Label
     public String[] getCandidates(DatastreamBindingRule rule, String[] usedIDs) {
         ArrayList possible=new ArrayList();
-        for (int i=0; i<m_datastreams.length; i++) {
+        for (int i=0; i < m_gramps.getCurrentDatastreamVersions().length; i++) {
             boolean alreadyUsed=false;
-            for (int j=0; j<usedIDs.length; j++) {
-                if (m_datastreams[i].getID().equals(usedIDs[j])) {
+            for (int j=0; j<usedIDs.length; j++) 
+            {
+                if (m_gramps.getCurrentDatastreamVersions()[i].getID().equals(usedIDs[j])) 
+                {
                     alreadyUsed=true;
                 }
             }
-            if (!alreadyUsed && rule.accepts(m_datastreams[i].getMIMEType())) {
-                possible.add(m_datastreams[i].getID()
-                        + " - " + m_datastreams[i].getMIMEType()
-                        + " - " + m_datastreams[i].getLabel());
+            if (!alreadyUsed && rule.accepts(m_gramps.getCurrentDatastreamVersions()[i].getMIMEType())) {
+                possible.add(m_gramps.getCurrentDatastreamVersions()[i].getID()
+                        + " - " + m_gramps.getCurrentDatastreamVersions()[i].getMIMEType()
+                        + " - " + m_gramps.getCurrentDatastreamVersions()[i].getLabel());
             }
         }
         String[] out=new String[possible.size()];
@@ -207,27 +191,6 @@ public class DatastreamBindingPane
             out[i]=(String) possible.get(i);
         }
         return out;
-    }
-
-    public void datastreamPurged(String dsID) {
-        // remove the datastream from the array, if it's there
-        int where=-1;
-        for (int i=0; i<m_datastreams.length; i++) {
-            if (dsID.equals(m_datastreams[i].getID())) {
-                where=i;
-            }
-        }
-        if (where!=-1) {
-            Datastream[] newArray=new Datastream[m_datastreams.length-1];
-            for (int i=0; i<m_datastreams.length-1; i++) {
-                if (i<where) {
-                    newArray[i]=m_datastreams[i];
-                } else if (i>where) {
-                    newArray[i-1]=m_datastreams[i];
-                }
-            }
-            m_datastreams=newArray;
-        }
     }
 
     /**
@@ -322,7 +285,7 @@ public class DatastreamBindingPane
                         // if that succeeds, we need to tell the model
                         // to update itself and fire change events
                         String[] parts=selected.split(" - ");
-                        m_tableModel.addRow(parts[0], "Binding to " + parts[2]);
+                        m_tableModel.addRow(parts[0], "Binding to " + (parts.length > 2 ? parts[2] : ""));
                     }
                 }
             });

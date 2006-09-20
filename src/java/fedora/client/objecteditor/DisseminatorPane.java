@@ -401,10 +401,9 @@ public class DisseminatorPane
                     bindings=new DatastreamBinding[0];
                 }
                 DatastreamBindingPane dsBindingPane=new DatastreamBindingPane(
-                        m_gramps.getCurrentDatastreamVersions(),
+                        m_gramps,
                         bindings,
                         bMechPID, spec, null, m_editingPane);
-                m_gramps.addDatastreamListener(dsBindingPane);
                 m_bindingPanes.put(bMechPID, dsBindingPane);
                 m_stackedBindingPane.add(dsBindingPane, bMechPID);
             }
