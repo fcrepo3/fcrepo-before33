@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
 public class FileUtils {
 	public static final int BUFFER = 2048;
@@ -68,5 +69,19 @@ public class FileUtils {
 	 */
 	public static boolean delete(String file) {
         return delete(new File(file));
+    }
+	
+	/**
+     * Load properties from the given file.
+     */
+    public static Properties loadProperties(File f) throws IOException {
+        Properties props = new Properties();
+        FileInputStream in = new FileInputStream(f);
+        try {
+            props.load(in);
+            return props;
+        } finally {
+            try { in.close(); } catch (IOException e) { }
+        }
     }
 }
