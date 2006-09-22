@@ -48,8 +48,9 @@ public class Installer {
 			deployLocalService(container, Distribution.IMAGEMANIP_WAR);
 			deployLocalService(container, Distribution.SAXON_WAR);
 		}
-		
-		//FIXME install JDBC driver
+		if (_opts.getValue(InstallOptions.DATABASE).equals(InstallOptions.EMBEDDED_MCKOI)) {
+			installEmbeddedMcKoi();
+		}
 		System.out.println("Installation complete.");
     }
     
@@ -72,7 +73,6 @@ public class Installer {
 		
 		installFCFG();
 		installBESecurity();
-		installMcKoi();
     }
     
     private File buildWAR() throws InstallationFailedException {
@@ -120,16 +120,19 @@ public class Installer {
         if (_opts.getValue(InstallOptions.TOMCAT_SSL_PORT) != null) {
         	props.put("server.fedoraRedirectPort", _opts.getValue(InstallOptions.TOMCAT_SSL_PORT));
         }
-        String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
-        if (container.equals(InstallOptions.BUNDLED_TOMCAT) && 
-        		_opts.getValue(InstallOptions.JDBC_JAR_FILE).equals("bundledMcKoi")) {
-        	props.put("datastore.localMcKoiPool.jdbcURL", 
-        			"jdbc:mckoi:local://" + fedoraHome.getAbsolutePath() + 
+        String database = _opts.getValue(InstallOptions.DATABASE);
+        if (database.equals(InstallOptions.BUNDLED_MCKOI) || database.equals(InstallOptions.MCKOI)) {
+        	setDatabasePools(props, "localMcKoiPool");
+        } else if (database.equals(InstallOptions.BUNDLED_MYSQL) || database.equals(InstallOptions.MYSQL)) {
+        	setDatabasePools(props, "localMySQLPool");
+        } else if (database.equals(InstallOptions.EMBEDDED_MCKOI)) {
+        	setDatabasePools(props, "localMcKoiPool");
+        	props.put("datastore.localMcKoiPool.jdbcURL", "jdbc:mckoi:local://" + fedoraHome.getAbsolutePath() + 
         			"/" + Distribution.MCKOI_BASENAME +"/db.conf?create_or_boot=true");
-        	props.put("module.fedora.server.storage.DOManager.storagePool", "localMcKoiPool");
-        	props.put("module.fedora.server.search.FieldSearch.connectionPool", "localMcKoiPool");
-        	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", "localMcKoiPool");
-        	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", "localMcKoiPool");
+        } else if (database.equals("oracle")) {
+        	setDatabasePools(props, "localOracle9iPool");
+        } else {
+        	throw new InstallationFailedException("unable to configure for unknown database: " + database);
         }
         if (_opts.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
         	props.put("module.fedora.server.security.Authorization.ENFORCE-MODE", "enforce-policies");
@@ -174,104 +177,25 @@ public class Installer {
     	becfg.setInternalUsername("fedoraIntCallUser");
     	becfg.write(true, true, pwriter);
     	pwriter.close();
-    	
-    	/**
-    	 * secure-all
-    	 <serviceSecurityDescription 
-	    	 role="fedoraInternalCall-1" 
-	    	 callBasicAuth="true" 
-	    	 callSSL="true" 
-	    	 callbackBasicAuth="true" 
-	    	 callbackSSL="true" 
-	    	 callUsername="fedoraIntCallUser" 
-	    	 callPassword="changeme" 
-	    	 iplist="127.0.0.1"/>
-    	 <serviceSecurityDescription 
-    	 	role="fedoraInternalCall-2" 
-    	 	callBasicAuth="false" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="false" 
-    	 	callbackSSL="false" 
-    	 	iplist="127.0.0.1"/>
-    	 	
-    	 * secure-apim
-    	 <serviceSecurityDescription 
-    	 	role="fedoraInternalCall-1" 
-    	 	callBasicAuth="false" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="false" 
-    	 	callbackSSL="false" 
-    	 	callUsername="fedoraIntCallUser" 
-    	 	callPassword="changeme" 
-    	 	iplist="127.0.0.1"/>
-	 	<serviceSecurityDescription 
-    	 	role="fedoraInternalCall-2" 
-    	 	callBasicAuth="false" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="false" 
-    	 	callbackSSL="false" 
-    	 	iplist="127.0.0.1"/>
-    	 	
-    	 	* unsecure-all
-    	 <serviceSecurityDescription 
-    	 	role="fedoraInternalCall-1" 
-    	 	callBasicAuth="true" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="true" 
-    	 	callbackSSL="false" 
-    	 	callUsername="fedoraIntCallUser" 
-    	 	callPassword="changeme" 
-    	 	iplist="127.0.0.1"/>
-	 	<serviceSecurityDescription 
-    	 	role="fedoraInternalCall-2" 
-    	 	callBasicAuth="false" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="false" 
-    	 	callbackSSL="false" 
-    	 	iplist="127.0.0.1"/>
-    	 	
-    	 	* unsecure-apim
-    	 <serviceSecurityDescription 
-    	 	role="fedoraInternalCall-1" 
-    	 	callBasicAuth="false" 
-    	 	callSSL="false" 
-    	 	callbackBasicAuth="false" 
-    	 	callbackSSL="false" 
-    	 	callUsername="fedoraIntCallUser" 
-    	 	callPassword="changeme" 
-    	 	iplist="127.0.0.1"/>
-	 	<serviceSecurityDescription 
-	 		role="fedoraInternalCall-2" 
-	 		callBasicAuth="false" 
-	 		callSSL="false" 
-	 		callbackBasicAuth="false" 
-	 		callbackSSL="false" 
-	 		iplist="127.0.0.1"/>
-        </serviceSecurityDescription>
-    	 */
     }
     
-    private void installMcKoi() throws InstallationFailedException {
-    	if (!_opts.getValue(InstallOptions.JDBC_JAR_FILE).equals("bundledMcKoi")) {
-    		return;
-    	}
-    	
-    	System.out.println("\tInstalling (bundled) McKoi...");
+    private void installEmbeddedMcKoi() throws InstallationFailedException {
+    	System.out.println("Installing embedded McKoi...");
     	try {
 			Zip.unzip(_dist.get(Distribution.MCKOI), fedoraHome);
 			File mckoiHome = new File(fedoraHome, Distribution.MCKOI_BASENAME);
 			
 			// Default is to create data and log dirs relative to JVM, not conf location
 			File mckoiProps = new File(mckoiHome, "db.conf");
-			Properties mckoiConf = loadProperties(mckoiProps);
+			Properties mckoiConf = FileUtils.loadProperties(mckoiProps);
 			mckoiConf.setProperty("root_path", "configuration");
 			mckoiConf.store(new FileOutputStream(mckoiProps), null);
 			
 			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
 			if (container.equals(InstallOptions.BUNDLED_TOMCAT)) {
-				File f = new File(mckoiHome, "mckoidb.jar");
 				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
-				FileUtils.copy(new FileInputStream(f),new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
+				FileUtils.copy(new FileInputStream(new File(mckoiHome, "mckoidb.jar")),
+						new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
 			}
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
@@ -288,6 +212,13 @@ public class Installer {
 		}
     }
     
+    private void setDatabasePools(Properties props, String poolName) {
+    	props.put("module.fedora.server.storage.DOManager.storagePool", poolName);
+    	props.put("module.fedora.server.search.FieldSearch.connectionPool", poolName);
+    	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", poolName);
+    	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", poolName);
+    }
+    
     /**
      * Command-line entry point.
      */
@@ -300,7 +231,7 @@ public class Installer {
             if (args.length == 0) {
                 opts = new InstallOptions(dist.isBundled());
             } else if (args.length == 1) {
-                Properties props = loadProperties(new File(args[0]));
+                Properties props = FileUtils.loadProperties(new File(args[0]));
                 opts = new InstallOptions(props, dist.isBundled());
             } else {
                 System.err.println("ERROR: Too many arguments.");
@@ -313,20 +244,6 @@ public class Installer {
         } catch (Exception e) {
             printException(e);
             System.exit(1);
-        }
-    }
-
-    /**
-     * Load properties from the given file.
-     */
-    private static Properties loadProperties(File f) throws IOException {
-        Properties props = new Properties();
-        FileInputStream in = new FileInputStream(f);
-        try {
-            props.load(in);
-            return props;
-        } finally {
-            try { in.close(); } catch (IOException e) { }
         }
     }
 

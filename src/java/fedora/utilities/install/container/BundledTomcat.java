@@ -45,6 +45,10 @@ public class BundledTomcat extends Tomcat {
 	
 	protected void installKeystore() throws InstallationFailedException {
 		String keystoreFile = getOptions().getValue(InstallOptions.KEYSTORE_FILE);
+		if (keystoreFile == null) {
+			// nothing to do
+			return;
+		}
 		try {
 			InputStream is;
 			File keystore = new File(getConf(), Distribution.KEYSTORE);;

@@ -128,8 +128,13 @@ public class OptionDefinition {
         } else {
             if (_id.equals(InstallOptions.FEDORA_HOME)) {
                 File dir = new File(value);
-                if (dir.isDirectory()) {
-                    throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+                if (dir.isDirectory() && dir.listFiles().length != 0) {
+                	System.out.println("Warning: Directory exists. Overwrite? (yes or no) [default is no] ==> ");
+                	String confirm = readLine().trim();
+                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
+                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+                    }
+                    //throw new OptionValidationException("Directory exists; delete it or choose another", _id);
                 } else {
                     // must be creatable
                     boolean created = dir.mkdir();
@@ -166,23 +171,19 @@ public class OptionDefinition {
                 if (!value.equals("default")) {
                     validateExistingFile(value);
                 }
-            } else if (_id.equals(InstallOptions.JDBC_JAR_FILE)) {
-                if (!bundled) {
-                    validateExistingFile(value);
-                } else {
-                    if (!value.equals("bundledMySQL") && !value.equals("bundledMcKoi")) {
-                        File f = new File(value);
-                        if (!f.exists()) {
-                            throw new OptionValidationException(
-                                    "No such file; must specify a file path, "
-                                  + "bundledMySQL, or bundledMcKoi", _id);
-                        }
-                    }
-                }
             }
         }
     }
-
+    
+    private String readLine() {
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            return reader.readLine();
+        } catch (Exception e) {
+            throw new RuntimeException("Error: Unable to read from STDIN");
+        }
+    }
+    
     private void validateExistingFile(String val) throws OptionValidationException {
         File f = new File(val);
         if (!f.exists()) {

@@ -1,7 +1,6 @@
 package fedora.utilities.install.container;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -55,22 +54,19 @@ public abstract class Tomcat extends Container {
 	protected abstract void installJAASConfig() throws InstallationFailedException;
 	
 	protected void installJDBCDriver() throws InstallationFailedException {
-		String jdbcDriver = getOptions().getValue(InstallOptions.JDBC_JAR_FILE);
+		String database = getOptions().getValue(InstallOptions.DATABASE);
         InputStream is;
         File driver;
         try {
-	        if (jdbcDriver.equals("bundledMcKoi")) {
+	        if (database.equals(InstallOptions.BUNDLED_MCKOI)) {
 	        	is = getDist().get(Distribution.JDBC_MCKOI);
 	        	driver = new File(getCommonLib(), Distribution.JDBC_MCKOI);
-	        } else if (jdbcDriver.equals("bundledMySQL")) {
+	        	FileUtils.copy(is, new FileOutputStream(driver));
+	        } else if (database.equals(InstallOptions.BUNDLED_MYSQL)) {
 	        	is = getDist().get(Distribution.JDBC_MYSQL);
 	        	driver = new File(getCommonLib(), Distribution.JDBC_MYSQL);
-	        } else {
-	        	File other = new File(jdbcDriver);
-	        	is = new FileInputStream(other);
-	        	driver = new File(getCommonLib(), other.getName());
+	        	FileUtils.copy(is, new FileOutputStream(driver));
 	        }
-	        FileUtils.copy(is, new FileOutputStream(driver));
         } catch (IOException e) {
         	throw new InstallationFailedException(e.getMessage(), e);
 		}

@@ -20,7 +20,13 @@ public class InstallOptions {
     public static final String TOMCAT_HTTP_PORT      = "tomcat.http.port";
     public static final String TOMCAT_SSL_PORT       = "tomcat.ssl.port";
     public static final String KEYSTORE_FILE         = "keystore.file";
-    public static final String JDBC_JAR_FILE         = "jdbc.jar.file";
+    public static final String DATABASE		         = "database";
+    public static final String EMBEDDED_MCKOI		 = "embeddedMcKoi";
+    public static final String BUNDLED_MCKOI		 = "bundledMcKoi";
+    public static final String BUNDLED_MYSQL		 = "bundledMySQL";
+    public static final String MCKOI				 = "mckoi";
+    public static final String MYSQL				 = "mysql";
+    public static final String ORACLE		 		 = "oracle";
     public static final String TOMCAT_REALM          = "tomcat.realm";
     public static final String XACML_ENABLED         = "xacml.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
@@ -97,7 +103,7 @@ public class InstallOptions {
         
         inputOption(FEDORA_ADMIN_PASS);
         inputOption(XACML_ENABLED);
-        inputOption(JDBC_JAR_FILE);
+        inputOption(DATABASE);
         inputOption(DEPLOY_LOCAL_SERVICES);
     }
 

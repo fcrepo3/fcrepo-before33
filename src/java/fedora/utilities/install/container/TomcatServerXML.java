@@ -85,7 +85,7 @@ public class TomcatServerXML extends XMLDocument {
 			}
 		}
 		
-		if (options.getBooleanValue(InstallOptions.XACML_ENABLED, true)) {
+		if (options.getValue(InstallOptions.TOMCAT_REALM).equalsIgnoreCase("jaas")) {
 			realm.addAttribute("className", "org.apache.catalina.realm.JAASRealm");
 			realm.addAttribute("appName", "fedora");
 			realm.addAttribute("userClassNames", "org.apache.catalina.realm.IdPasswordPrincipal");
