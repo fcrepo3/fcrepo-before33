@@ -87,6 +87,7 @@ public class Installer {
 			System.out.println("Processing web.xml");
 	        File distWebXML = new File(warStage, "WEB-INF/web.xml");
 	        WebXML webXML = new WebXML(distWebXML, _opts);
+	        webXML.setFedoraHome();
 	        webXML.setSecurityConstraints();	        
 	        webXML.write(distWebXML.getAbsolutePath());
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
