@@ -250,4 +250,24 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 
     }
 
+	public Date modifyDatastreamByReference(Context context, String pid, String datastreamID, String[] altIDs, String dsLabel, String mimeType, String formatURI, String dsLocation, String logMessage, boolean force) throws ServerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Date modifyDatastreamByValue(Context context, String pid, String datastreamID, String[] altIDs, String dsLabel, String mimeType, String formatURI, InputStream dsContent, String logMessage, boolean force) throws ServerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Date[] purgeDatastream(Context context, String pid, String datastreamID, Date startDT, Date endDT, String logMessage, boolean force) throws ServerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Date setDatastreamVersionable(Context context, String pid, String dsID, boolean versionable, String logMessage) throws ServerException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
