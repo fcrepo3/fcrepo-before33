@@ -1,13 +1,11 @@
 package fedora.test;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
@@ -32,12 +30,11 @@ import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.TableSpec;
 import fedora.utilities.ExecUtility;
+import fedora.utilities.FileUtils;
 
 /**
- * A wrapper (decorator) for Test responsible for starting and stopping a 
- * Fedora server test fixture.
- * 
- * n.b. This class makes many assumptions about various filesystem locations.
+ * This should be refactored as a kind of FedoraTestCase, perhaps one whose setup
+ * and/or teardown are responsible for purging the repository
  * 
  * @author Edwin Shin
  */
@@ -45,7 +42,6 @@ public class FedoraServerTestSetup
   extends    TestSetup 
   implements FedoraTestConstants {
 
-    private boolean doSetup;
     private File m_configDir;
     static ByteArrayOutputStream sbOut = null;
     static ByteArrayOutputStream sbErr = null;    
@@ -67,14 +63,7 @@ public class FedoraServerTestSetup
     }
 
     public void setUp() throws Exception {
-        doSetup = getSetup();
-        
-        if (doSetup) {
-            // setup actions go here      
-            //startServer();
-        } else {
-            System.out.println("    skipping setUp()");
-        }
+
     }
    
     /**
@@ -82,78 +71,6 @@ public class FedoraServerTestSetup
      * can be started again by setting PROP_SETUP to true).
      */
     public void tearDown() throws Exception {
-        if (doSetup) {
-            System.setProperty(PROP_SETUP, "true");
-            // tear down actions go here
-            //stopServer();
-        } else {
-            System.out.println("    skipping tearDown()");
-        }
-    }
-    
-    public static ServerConfiguration getServerConfiguration() throws Exception {
-    	try {
-    		FileInputStream fis = new FileInputStream(FCFG);
-    	} catch (FileNotFoundException e) {
-    		ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-setup ssl-authenticate-apim");
-    	}
-    	
-        return new ServerConfigurationParser(
-                new FileInputStream(FCFG)).parse();
-    }
-
-    /**
-     * Tell whether the Fedora server should be started.
-     *
-     * If PROP_SETUP is undefined or true, set it to false then return true.
-     * Else return false.
-     */
-    private boolean getSetup() {
-        String setup = System.getProperty(PROP_SETUP);
-        if (setup == null || setup.equalsIgnoreCase("true")) {
-            System.setProperty(PROP_SETUP, "false");
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    private void startServer() throws Exception {
-
-		System.out.println("Starting server with configuration package: " + m_configDir);
-
-        if (m_configDir != null) swapConfigurationFiles();
-
-        String cmd = FEDORA_HOME + "/server/bin/fedora-start";
-
-        Process cp = ExecUtility.execCommandLineUtility(cmd);
-        int exitCode = cp.waitFor();
-
-        if (exitCode != 0) {
-            throw new Exception("fedora-start returned exit code: " + exitCode);
-        } else {
-            System.out.println("Server startup successful");
-        }
-    }
-    
-    private void stopServer() throws Exception {
-
-        System.out.println("Shutting down server and dropping tables...");
-
-        String cmd = FEDORA_HOME + "/server/bin/fedora-stop";
-
-        Process cp = ExecUtility.execCommandLineUtility(cmd);
-        int exitCode = cp.waitFor();
-
-        dropDBTables();
-        deleteStores();
-        if (m_configDir != null) unswapConfigurationFiles();
-
-        if (exitCode != 0) {
-            throw new Exception("fedora-stop returned exit code: " + exitCode);
-        } else {
-            System.out.println("Server shutdown successful");
-        }
 
     }
 
@@ -162,10 +79,7 @@ public class FedoraServerTestSetup
         ServerConfiguration config = new ServerConfigurationParser(new FileInputStream(FCFG)).parse();
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         backupDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(true), null);
-		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(true), null);
-		// SDP: object policies directory is obsoleted in 2.1
-        //backupDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
-        //backupDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
+		backupDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(true), null);;
     }
 
     private void restorePolicies() throws Exception {
@@ -173,55 +87,14 @@ public class FedoraServerTestSetup
         Configuration authzConfig = config.getModuleConfiguration("fedora.server.security.Authorization");
         restoreDir(authzConfig.getParameter("REPOSITORY-POLICIES-DIRECTORY").getValue(true), null);
 		restoreDir(authzConfig.getParameter("SURROGATE-POLICIES-DIRECTORY").getValue(true), null);
-		// SDP: object policies directory is obsoleted in 2.1
-        //restoreDir(authzConfig.getParameter("OBJECT-POLICIES-DIRECTORY").getValue(), null);
-        //restoreDir(authzConfig.getParameter("REPOSITORY-POLICY-GUITOOL-POLICIES-DIRECTORY").getValue());
-    }
-
-    private void backupDir(String fromDirName, String toDirName) throws Exception {
-
-        // make sure the original exists
-        File origDir = new File(fromDirName);
-        if (!origDir.exists()) {
-            throw new IOException(fromDirName + " does not exist!  To remedy, run Fedora with default configuration first!!");
-        }
-
-		File newDir = null;
-		if (toDirName == null){
-			newDir = new File(fromDirName + "_ORIG");
-			deleteDirectory(newDir.getPath());
-			newDir.mkdirs();
-			
-		} else {
-			newDir = new File(toDirName);
-			deleteDirectory(newDir.getPath());
-			newDir.mkdirs();
-		}
-        //File newDir = new File(dirName + "_ORIG");
-        //deleteDirectory(newDir.getPath());
-        //newDir.mkdirs();
-
-        // copy all files from origDir to newDir
-        File[] sourceFiles = origDir.listFiles();
-        for (int i = 0; i < sourceFiles.length; i++) {
-            if (!sourceFiles[i].isDirectory() && sourceFiles[i].canRead()) {
-                copy(sourceFiles[i], new File(newDir, sourceFiles[i].getName()));
-            }
-            // SDP: recurse directories
-            else if (sourceFiles[i].isDirectory()){
-            	backupDir(sourceFiles[i].getAbsolutePath(), 
-            			  newDir.getAbsolutePath() + File.separator + sourceFiles[i].getName());
-            }
-        }
     }
 
     private void restoreDir(String toDirName, String sourceDirName) throws Exception {
         
         // clear out the active directory
         File activeDir = new File(toDirName);
-        deleteDirectory(activeDir.getPath());
+        FileUtils.delete(activeDir);
         activeDir.mkdirs();
-
 
         File fromDir = null;
         File[] sourceFiles = null;
@@ -314,18 +187,6 @@ public class FedoraServerTestSetup
         backup.delete();
         source.renameTo(backup);
     }
-
-    public static void copy(File source, File dest) throws Exception {
-        FileInputStream in = new FileInputStream(source);
-        FileOutputStream out = new FileOutputStream(dest);
-        int c;
-
-        while ((c = in.read()) != -1)
-           out.write(c);
-
-        in.close();
-        out.close();
-    }
     
     private void unswapConfigurationFiles() throws Exception {
         System.out.println("Replacing original configuration files...");
@@ -356,40 +217,7 @@ public class FedoraServerTestSetup
         }
     }
     
-    public static void dropDBTables() throws Exception {
-        ConnectionPool cPool = SQLUtility.getConnectionPool(getServerConfiguration());
-        Connection conn = cPool.getConnection();
-        Statement stmt = conn.createStatement();
-        DDLConverter ddlConverter = getDDLConverter();
-        try {
-	        FileInputStream fis = new FileInputStream("src/dbspec/server/fedora/server/storage/resources/DefaultDOManager.dbspec");
-	        Iterator tableSpecs = TableSpec.getTableSpecs(fis).iterator();	        
-	        
-	        TableSpec tableSpec;
-	        Iterator commands;
-	        String command;
-	        while (tableSpecs.hasNext()) {
-	            tableSpec = (TableSpec)tableSpecs.next();
-	            commands = ddlConverter.getDDL(tableSpec).iterator();
-	            while (commands.hasNext()) {
-	                command = ddlConverter.getDeleteDDL((String)commands.next());
-	                stmt.execute(command);
-	            }
-	        }
-        } finally {
-	        if (stmt != null) stmt.close();
-	        if (conn != null) conn.close();
-        }
-    }
     
-    private static DDLConverter getDDLConverter() throws Exception {
-        ServerConfiguration fcfg = getServerConfiguration();
-        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
-        String defaultPoolName = mcfg.getParameter("defaultPoolName").getValue();
-        DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(defaultPoolName);
-        String ddlConverterClassName = dcfg.getParameter("ddlConverter").getValue();
-        return (DDLConverter)Class.forName(ddlConverterClassName).newInstance();
-    }
     
     private static String getRIStoreLocation() throws Exception {
         ServerConfiguration fcfg = getServerConfiguration();
@@ -398,66 +226,15 @@ public class FedoraServerTestSetup
         DatastoreConfiguration dcfg = fcfg.getDatastoreConfiguration(datastore);
         return dcfg.getParameter("path").getValue(true);
     }
-    
-    public static void deleteStores() throws Exception {
-    	ServerConfiguration fcfg = getServerConfiguration();
-        ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.lowlevel.ILowlevelStorage");
-    	Iterator params = mcfg.getParameters().iterator();
-    	Map storeConfig = new HashMap();
-    	while (params.hasNext()) {
-    		Parameter param = (Parameter)params.next();
-    		storeConfig.put(param.getName(), param.getValue(param.getIsFilePath()));
-    	}
-    	
-    	Object[] parameters = new Object[] {storeConfig};
-		Class[] parameterTypes = new Class[] {Map.class};
-    	ClassLoader loader = ClassLoader.getSystemClassLoader();
-    	Class fsClass = loader.loadClass((String)storeConfig.get(DefaultLowlevelStorage.FILESYSTEM));
-		Constructor constructor = fsClass.getConstructor(parameterTypes);
-		FileSystem filesystem = (FileSystem) constructor.newInstance(parameters);
-		filesystem.deleteDirectory((String)storeConfig.get(DefaultLowlevelStorage.OBJECT_STORE_BASE));
-		filesystem.deleteDirectory((String)storeConfig.get(DefaultLowlevelStorage.DATASTREAM_STORE_BASE));
-		deleteDirectory(getRIStoreLocation());		
-    }
-    
-    private static boolean deleteDirectory(String directory) {
-        boolean result = false;
 
-        if (directory != null) {
-            File file = new File(directory);
-            if (file.exists() && file.isDirectory()) {
-                // 1. delete content of directory:
-                File[] files = file.listFiles();
-                result = true; //init result flag
-                int count = files.length;
-                for (int i = 0; i < count; i++) { //for each file:
-                    File f = files[i];
-                    if (f.isFile()) {
-                        result = result && f.delete();
-                    } else if (f.isDirectory()) {
-                        result = result && deleteDirectory(f.getAbsolutePath());
-                    }
-                }//next file
 
-                file.delete(); //finally delete (empty) input directory
-            }//else: input directory does not exist or is not a directory
-        }//else: no input value
-
-        return result;
-    }//deleteDirectory()
-
-    public static void execute(String cmd) 
-    {
-        if (sbOut != null && sbErr != null)
-        {
+    public static void execute(String cmd) {
+        if (sbOut != null && sbErr != null) {
             sbOut.reset();
             sbErr.reset();
             ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd, sbOut, sbErr);
-        }
-        else
-        {
+        } else {
             ExecUtility.execCommandLineUtility(FEDORA_HOME + cmd);
         }
     }
-    
 }
