@@ -15,6 +15,7 @@
     <property name="client.build.dir"          location="${build.dir}/client"/>
 	<property name="fedora.home.build.dir"     location="${build.dir}/home"/>
 	<property name="install.build.dir"		   location="${build.dir}/install"/>
+	<property name="junit.build.dir"		   location="${build.dir}/junit"/>
     <property name="localservices.build.dir"   location="${build.dir}/localservices"/>
     <property name="server.build.dir"          location="${build.dir}/server"/>
     <property name="stubwrappers.build.dir"    location="${build.dir}/stubwrappers"/>
@@ -28,6 +29,7 @@
     
     <property name="src.dir"                   location="src"/>
     <property name="java.src.dir"              location="${src.dir}/java"/>
+	<property name="junit.src.dir"             location="${src.dir}/test/junit"/>
     <property name="properties.src.dir"        location="${src.dir}/properties"/>
     <property name="war.src.dir"               location="${src.dir}/war"/>
     <property name="war-fedora.src.dir"        location="${war.src.dir}/fedora"/>
@@ -231,6 +233,11 @@
                       fedora/swing/jtable/**,
                       fedora/swing/mdi/**"/>
     </target>
+	
+	<target name="compile-junit" depends="">
+		<md-compile srcdir="${junit.src.dir}"
+					destdir="${junit.build.dir}"/>
+	</target>
     
     <target name="compile-localservices" depends="init" 
             description="Generate java classes for local services">
@@ -631,11 +638,6 @@
         <!-- placeholder -->
     </target>
     
-    <target name="junit" depends=""
-            description="">
-        <!-- placeholder -->
-    </target>
-	
 	<target name="compile-installer" depends="">
 		<md-compile srcdir="${java.src.dir}"
             destdir="${install.build.dir}"
@@ -676,5 +678,14 @@
 			<fileset dir="${install.build.dir}"
 					 includes="main/** lib/** resources/**"/>
 		</jar>
+	</target>
+	
+	<target name="junit" depends="compile-junit">
+		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
+			<sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
+			<classpath refid="compile.path"/>
+			<formatter type="plain" usefile="false"/>
+			<test name="fedora.test.api.TestAPIA"/>
+		</junit>
 	</target>
 </project>
