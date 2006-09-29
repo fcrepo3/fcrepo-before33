@@ -216,11 +216,14 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 		if (principal != null) {
 			state = ACK;
 		}
-		boolean rc = authenticate ? false : (state == ACK);
-		//rc indicates whether this module has logged in
-		//attributeStoreOnly whether this module itself counts toward login
-		//original wording was equiv. to rc = (state == ACK)
-		//attributeStoreOnly == true will be UVa usage; == false may be what Cornell wants
+		
+		boolean rc = authenticate && (state == ACK);
+		//2006.09.13 corrects bug from changing variable "attributeStoreOnly" to "authenticate", 
+		//and missing here how that negated sense requires rewrite of this logic 
+		//faulty logic was:  boolean rc = authenticate ? false : (state == ACK);
+		//this worked for tested uva usage, but not when using ldap to authenticate
+		//tested 2006.09.13, using uva ldap unixuid as faux password attribute
+			
 		log("/login(): " + rc);
 		return rc;
 	}
@@ -234,10 +237,10 @@ public final class JAASJNDILoginModule extends JNDIRealm implements LoginModule 
 			log("commit(): namespace=" + namespace);
 			log("commit(): principal=" + principal);
 			log("commit(): no id subject here, chap!!!");
-			if (! authenticate) {
+			if (authenticate) { //changed sense:  see comment above for 2006.09.13
 	        	subject.getPrincipals().add(new IdPrincipal(namespace, principal.getName()));				
 			}
-			if (authenticate && subject.getPrincipals().isEmpty()) {
+			if ((!authenticate) && subject.getPrincipals().isEmpty()) { //changed sense:  see comment above for 2006.09.13
 				log("login():  prev. login modules were not successful; do -not- return roles");
 			} else {
 	           	String[] roles = principal.getRoles();
