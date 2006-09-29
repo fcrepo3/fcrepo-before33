@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.security.Principal;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
@@ -15,9 +16,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.catalina.realm.GenericPrincipal;
-
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -283,15 +281,25 @@ public class DatastreamResolverServlet extends HttpServlet
       } else {
       	  //authn:  check user roles for target role of ticket
           if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: Authenticated request getting user");
-      	  if  (((request.getUserPrincipal() != null) 
-            	&&  (request.getUserPrincipal() instanceof GenericPrincipal)
-          	  &&  (((GenericPrincipal)request.getUserPrincipal()).getRoles() != null)
-          	  &&  contains(((GenericPrincipal)request.getUserPrincipal()).getRoles(), targetRole))) {			
+    	  	String[] roles = null;
+	  	  	Principal principal = request.getUserPrincipal();
+	  	  	if (principal == null) {
+	  	  		//no principal to grok roles from!!				
+	  	  	} else {
+	  	  		try {
+		  	  		roles = ReadOnlyContext.getRoles(principal);
+		  	  	} catch (Throwable t) {
+		  	  	}
+	  	  	}
+	  	  	if (roles == null) {
+	  	  		roles = new String[0];
+	  	  	}
+      	  if  (contains(roles, targetRole)) {			
         //user has target role
-      	} else {
-      	    if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: authZ exception in validating user");
-      		throw new AuthzDeniedException("wrong user for this ticket");
-      	}
+      	  } else {
+      		  if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: authZ exception in validating user");
+      		  throw new AuthzDeniedException("wrong user for this ticket");
+      	  }
       }
 
       if (fedora.server.Debug.DEBUG) {

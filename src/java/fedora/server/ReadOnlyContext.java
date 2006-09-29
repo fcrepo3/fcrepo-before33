@@ -1,17 +1,19 @@
 package fedora.server;
 
+import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
-
+import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.apache.catalina.realm.GenericPrincipal;
 
 import fedora.common.Constants;
 import fedora.server.utilities.DateUtility;
+
+
 
 /**
  *
@@ -200,6 +202,138 @@ public class ReadOnlyContext implements Context {
   		return getContext(existingContext.getEnvironmentAttributes(), subjectId, password, roles, existingContext.getNoOp());
     }
     */
+
+    private static final Class STRING_ARRAY_CLASS;
+    static {
+    	String[] temp = {""};
+    	STRING_ARRAY_CLASS = temp.getClass();
+    }
+    
+    public static final String GETPASSWORD_METHOD_NAME = "getPassword";
+
+    public static final String GETROLES_METHOD_NAME = "getRoles";
+    
+    public static final String getPassword(Principal principal) throws Exception {
+    	return getPassword(principal, GETPASSWORD_METHOD_NAME);
+    }
+    
+    public static final String getPassword(Principal principal, String getPasswordMethodName) throws Exception {
+        final String here = ReadOnlyContext.class.getName() + ".getPassword()";
+		slog(here);
+    	
+		Class principalClass = principal.getClass();
+		
+		String password = null;			
+		if ((getPasswordMethodName == null) || "".equals(getPasswordMethodName)) {
+			String msg = here + ": getpassword method not configured";
+			slog(msg);
+			throw new Exception(msg);
+		} else {
+			slog(here + ": cando getpassword");
+			Method getPasswordMethod = null;
+			try {
+				getPasswordMethod = principalClass.getDeclaredMethod(getPasswordMethodName, null);
+			} catch (NoSuchMethodException nsme) {
+				String msg = here + ": Principal-implementing class has no get-password method";
+				slog(msg);
+				throw new Exception();
+			}					
+			Class passwordClass = getPasswordMethod.getReturnType();
+			if (passwordClass != String.class) {
+				String msg = here + ": get-password method does not return a String";
+				slog(msg);
+				throw new Exception();		
+			}
+			try {
+				password = (String) getPasswordMethod.invoke(principal, null);
+			} catch (Throwable t) {
+				String msg = here + ": get-password method failed";
+				slog(msg);
+				throw new Exception();
+			}
+			slog(here + ": extracted password");
+			if (slog) {
+				slog(here + ": password==" + password); 
+			}
+		}
+		return password;
+    }
+
+    public static final String[] getRoles(Principal principal) throws Exception {
+    	return getRoles(principal, GETROLES_METHOD_NAME);
+    }
+
+    
+    public static final String[] getRoles(Principal principal, String getRolesMethodName) throws Exception {
+        final String here = ReadOnlyContext.class.getName() + ".getRoles()";
+		slog(here);
+
+		Class principalClass = principal.getClass();
+		
+		String[] roles = null;			
+		if ((getRolesMethodName == null) || "".equals(getRolesMethodName)) {
+			String msg = here + ": getroles method not configured";
+			slog(msg);
+			throw new Exception(msg);
+		} else {
+			slog(here + ": cando getroles");
+			Method getRolesMethod = null;
+			try {
+				getRolesMethod = principalClass.getDeclaredMethod(getRolesMethodName, null);
+			} catch (NoSuchMethodException nsme) {
+				String msg = here + ": Principal-implementing class has no get-roles method";
+				slog(msg);
+				throw new Exception(msg);
+			} catch (Throwable t) {
+				String msg = here + ": trouble getting get-roles method";
+				slog(msg);
+	  	  		slog(here + ": msg==" + t.getMessage());
+	  	  		slog(here + ": class==" + t.getClass().getName());				
+	  	  		if (t.getCause() != null) slog(here + ": causemsg==" + t.getCause().getMessage());
+				throw new Exception(msg);				
+			}					
+
+			if (getRolesMethod == null) {
+				String msg = here + ": null get-roles method";
+				slog(msg);
+				throw new Exception(msg);				
+			}
+			
+			Class rolesClass = null;
+			try {
+				rolesClass = getRolesMethod.getReturnType();
+			} catch (Throwable t) {
+				String msg = here + ": trouble getting get-role method return type";
+				slog(msg);
+				throw new Exception(msg);
+			}
+
+			slog(ReadOnlyContext.class.getName() + ": rolesClass==" + " " + rolesClass);
+			if (rolesClass != STRING_ARRAY_CLASS) {
+				String msg = here + ": get-roles method does not return a String array";
+				slog(msg);
+				throw new Exception(msg);		
+			}
+			
+			try {
+				slog(here + ": about to get roles");
+				roles = (String[]) getRolesMethod.invoke(principal, null);
+				slog(here + ": get-roles method succeeded"); //, roles==" + roles);
+			} catch (Throwable t) {
+				String msg = here + ": get-roles method failed";
+				slog(msg);
+				throw new Exception(msg);
+			}
+			slog(here + ": extracted roles");
+		}
+		if (slog && (roles != null)) {
+			for (int i = 0; i < roles.length; i++) {
+				slog(here + ": another role==" + roles[i]);					
+			}
+		}		
+		return roles;
+    }
+    
     
     private static final ReadOnlyContext getContext(MultiValueMap environmentMap, String subjectId, String password, String[] roles, Map auxSubjectRoles, boolean noOp) {
     	MultiValueMap subjectMap = new MultiValueMap(); 
@@ -305,22 +439,14 @@ public class ReadOnlyContext implements Context {
 	  	
   	  	String subjectId = request.getRemoteUser();
   	  	String password = null;
-  	  	if (request.getUserPrincipal() == null) {
+	  	Principal principal = request.getUserPrincipal();
+  	  	if (principal == null) {
   	  		slog("in context, no principal to grok password from!!");				
   	  	} else {
-			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
-				slog("in context, principal is -not- GenericPrincipal, so I'm not groking password from it!!");
-			} else {
-				slog("in context, principal is GenericPrincipal, so I can grok password from it!!");
-  	  	  	  	if (((GenericPrincipal) request.getUserPrincipal()).getPassword() != null ) {
-  	  	  	  		if (password == null) {
-  	  	  	  			password = ((GenericPrincipal) request.getUserPrincipal()).getPassword();
-  	  	  	  		}
-  	  	  	  		if (password == null) {
-  	  	  	  			password = "";
-  	  	  	  		}
-  	  	  	  	}
-			}
+  	  		try {
+	  	  		password = getPassword(principal);
+	  	  	} catch (Throwable t) {
+	  	  	}
   	  	}
   	  	if (subjectId == null) {
   	  		subjectId = "";
@@ -355,16 +481,20 @@ public class ReadOnlyContext implements Context {
      */
     //form context from optional servlet request, overriding request for added parms    
     public static final ReadOnlyContext getContext(String messageProtocol, HttpServletRequest request) {
+        final String here = ReadOnlyContext.class.getName() + ".getContext(String, HttpServletRequest)";
+		slog(here);
   	  	String[] roles = null;
-  	  	if (request.getUserPrincipal() == null) {
-  	  		slog("in context, no principal to grok roles from!!");				
+	  	Principal principal = request.getUserPrincipal();
+  	  	if (principal == null) {
+  	  		slog(here + ": no principal to grok roles from!!");				
   	  	} else {
-			if (! (request.getUserPrincipal() instanceof GenericPrincipal)) {
-				slog("in context, principal is -not- GenericPrincipal, so I'm not groking roles from it!!");
-			} else {
-				slog("in context, principal is GenericPrincipal, so I can grok roles from it!!");
-  	  	  		roles = ((GenericPrincipal) request.getUserPrincipal()).getRoles();
-			}
+  	  		try {
+	  	  		roles = getRoles(principal);
+	  	  	} catch (Throwable t) {
+	  	  		slog(here + ": exception calling getRoles()");
+	  	  		slog(here + ": msg==" + t.getMessage());
+	  	  		if (t.getCause() != null) slog(here + ": causemsg==" + t.getCause().getMessage());
+	  	  	}
   	  	}
   	  	if (roles == null) {
   	  		roles = new String[0];
@@ -404,14 +534,14 @@ public class ReadOnlyContext implements Context {
     	return noOp;
     }
   	
-	public static boolean log = false; 
+	public static boolean log = true; 
 	
 	protected final void log(String msg) {
 		if (! log) return;
 		System.err.println(msg);
 	}
 	
-	public static boolean slog = false; 
+	public static boolean slog = true; 
 	
 	protected static final void slog(String msg) {
 		if (! slog) return;
