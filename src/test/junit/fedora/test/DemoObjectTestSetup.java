@@ -16,6 +16,6 @@ public class DemoObjectTestSetup extends TestSetup implements FedoraTestConstant
 	
 	public void tearDown() throws Exception {
 		System.out.println("Purging demo objects...");
-		//FedoraServerTestCase.purgeDemoObjects();
+		FedoraServerTestCase.purgeDemoObjects();
 	}
 }
