@@ -73,6 +73,20 @@ public class HttpInputStream extends InputStream {
     public Header getResponseHeader(String name) {
         return m_method.getResponseHeader(name);
     }
+    
+    /**
+     * Get CONTENT-TYPE
+     */
+    public String getContentType() {
+    	return getResponseHeader("CONTENT-TYPE").getValue();
+    }
+    
+    /**
+     * Get CONTENT-LENGTH in bytes.
+     */
+    public int getContentLength() {
+    	return Integer.parseInt(getResponseHeader("CONTENT-LENGTH").getValue());
+    }
 
     /**
      * Automatically close on garbage collection.
