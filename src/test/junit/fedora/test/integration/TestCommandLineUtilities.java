@@ -3,14 +3,11 @@ package fedora.test.integration;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import junit.extensions.TestSetup;
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
 import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.test.FedoraServerTestCase;
-import fedora.test.FedoraServerTestSetup;
 import fedora.utilities.ExecUtility;
 
 /**
@@ -25,6 +22,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     public static Test suite() 
     {
         TestSuite suite = new TestSuite(TestCommandLineUtilities.class);
+        /*
         TestSetup wrapper = new FedoraServerTestSetup(suite) 
         {
             public void setUp() throws Exception 
@@ -42,6 +40,8 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
             }
         };
         return new FedoraServerTestSetup(wrapper);
+        */
+        return suite;
                 
     }
     
