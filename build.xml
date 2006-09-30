@@ -22,6 +22,7 @@
     <property name="util.build.dir"            location="${build.dir}/util"/>
     <property name="war.build.dir"             location="${build.dir}/war"/>
     <property name="fedora.war.build.dir"      location="${war.build.dir}/fedora"/>
+	<property name="demo.war.build.dir"        location="${war.build.dir}/demo"/>
     <property name="wsdl.build.dir"            location="${build.dir}/wsdl"/>
 
     <property name="dist.dir"                  location="dist"/>
@@ -69,6 +70,15 @@
             <include name="**/*.jar"/>
         </fileset>
     </path>
+	
+	<path id="junit.classpath">
+		<path refid="compile.classpath"/>
+		<pathelement path="src/properties/server"/>
+		<pathelement path="${junit.build.dir}"/>
+		<pathelement path="${client.build.dir}/classes"/>
+		<pathelement path="${server.build.dir}/classes"/>
+		<pathelement path="${util.build.dir}"/>
+	</path>
     
     <pathconvert pathsep="," property="server-libs.list">
         <path id="server-libs.path">
@@ -234,9 +244,11 @@
                       fedora/swing/mdi/**"/>
     </target>
 	
-	<target name="compile-junit" depends="">
+	<target name="compile-junit" depends="compile-server, compile-client, compile-util">
 		<md-compile srcdir="${junit.src.dir}"
-					destdir="${junit.build.dir}"/>
+					destdir="${junit.build.dir}"
+					excludes="fedora/server/journal/**"
+					classpathref="junit.classpath"/>
 	</target>
     
     <target name="compile-localservices" depends="init" 
@@ -399,7 +411,6 @@
         
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/classes"/>
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/lib"/>
-        <mkdir dir="${fedora.war.build.dir}/demo"/>
         <mkdir dir="${fedora.war.build.dir}/images"/>
         
         <!-- Deploy API-M and API-A offline (updates existing server-config.wsdd) -->
@@ -415,9 +426,7 @@
             </classpath> 
         </java>
         
-        <copy todir="${fedora.war.build.dir}/demo">
-            <fileset dir="${src.dir}/demo-content"/>
-        </copy>
+    	<copy file="${src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images"/>
         
         <copy todir="${fedora.war.build.dir}">
             <fileset dir="${war-fedora.src.dir}"/>
@@ -681,11 +690,24 @@
 	</target>
 	
 	<target name="junit" depends="compile-junit">
+		<copy todir="${junit.build.dir}" includeEmptyDirs="false">
+	        <fileset dir="src/test/junit">
+                <exclude name="**/*.java"/>
+	        </fileset>
+        </copy>
 		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
 			<sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
-			<classpath refid="compile.path"/>
+			<classpath refid="junit.classpath"/>
 			<formatter type="plain" usefile="false"/>
 			<test name="fedora.test.api.TestAPIA"/>
 		</junit>
+	</target>
+	
+	<target name="demo">
+		<mkdir dir="${demo.war.build.dir}"/>
+		<copy todir="${demo.war.build.dir}">
+            <fileset dir="${src.dir}/demo-content"/>
+        </copy>
+		<jar destfile="${dist.dir}/fedora-demo.war" basedir="${demo.war.build.dir}"/>
 	</target>
 </project>
