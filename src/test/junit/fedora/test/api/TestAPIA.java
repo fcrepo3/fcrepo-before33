@@ -35,7 +35,7 @@ public class TestAPIA extends FedoraServerTestCase {
 	private FedoraAPIA apia;
 	
 	public static Test suite() {
-		TestSuite suite = new TestSuite();
+		TestSuite suite = new TestSuite("APIA TestSuite");
 		suite.addTestSuite(TestAPIA.class);
 		return new DemoObjectTestSetup(suite);
 	}
