@@ -9,6 +9,7 @@ public abstract class Distribution {
 	public static final String IMAGEMANIP_WAR = "imagemanip.war";
 	public static final String SAXON_WAR = "saxon.war";
 	public static final String FOP_WAR = "fop.war";
+	public static final String DEMO_WAR = "fedora-demo.war";
 	public static final String FEDORA_HOME = "fedorahome.zip";
 	public static final String KEYSTORE = "keystore";
 	public static final String TRUSTSTORE = "truststore";

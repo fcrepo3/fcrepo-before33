@@ -662,7 +662,7 @@
 	</target>
 	
 	<!-- FIXME this is just a skeleton for the installer task.-->
-	<target name="installer" depends="war, fedorahome, compile-installer, localservices"
+	<target name="installer" depends="war, fedorahome, compile-installer, localservices, demo"
 		description="Builds an executable jar for installing the Fedora server">
 		<loadproperties srcFile="${properties.src.dir}/install.properties"/>
 		
@@ -670,7 +670,7 @@
 		<copy todir="${install.build.dir}/resources">
 			<fileset dir="${properties.src.dir}" includes="install.properties"/>
 			<fileset dir="${lib.dir}" includes="${install.jdbc.mckoi} ${install.jdbc.mysql}"/>
-			<fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war"/>
+			<fileset dir="${dist.dir}" includes="fedorahome.zip fedora.war fop.war imagemanip.war saxon.war fedora-demo.war"/>
 			<fileset dir="inc" includes="${install.tomcat} ${install.mckoi} keystore jaas.config"/>
 		</copy>
 		

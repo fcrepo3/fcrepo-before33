@@ -47,6 +47,7 @@ public class Installer {
 			deployLocalService(container, Distribution.FOP_WAR);
 			deployLocalService(container, Distribution.IMAGEMANIP_WAR);
 			deployLocalService(container, Distribution.SAXON_WAR);
+			deployLocalService(container, Distribution.DEMO_WAR);
 		}
 		if (_opts.getValue(InstallOptions.DATABASE).equals(InstallOptions.EMBEDDED_MCKOI)) {
 			installEmbeddedMcKoi();
