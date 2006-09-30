@@ -1,23 +1,27 @@
 package fedora.client.utility.ingest;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 import fedora.client.FedoraClient;
-import fedora.client.utility.export.AutoExporter;
-import fedora.client.utility.ingest.AutoIngestor;
 import fedora.client.utility.AutoFinder;
-
-import fedora.server.management.FedoraAPIM;
+import fedora.client.utility.export.AutoExporter;
 import fedora.server.access.FedoraAPIA;
-
-import fedora.server.types.gen.Condition;
+import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.ComparisonOperator;
+import fedora.server.types.gen.Condition;
 import fedora.server.types.gen.FieldSearchQuery;
 import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.ObjectFields;
 import fedora.server.types.gen.RepositoryInfo;
-
 import fedora.utilities.FileComparator;
 
 /**
@@ -39,7 +43,6 @@ public class Ingest {
                                      FedoraAPIM targetRepoAPIM, 
                                      String logMessage)
             throws Exception {
-        System.out.println("Ingesting from file " + file.getPath());
         LAST_PATH=file.getPath();
         String pid=AutoIngestor.ingestAndCommit(targetRepoAPIA, 
                                                 targetRepoAPIM,
@@ -100,7 +103,6 @@ public class Ingest {
                                           PrintStream log,
                                           IngestCounter c) throws Exception {
         String searchString = getSearchString(fType);
-        System.out.println("Ingesting all " + searchString + "s in " + dir.getPath());
         multiFromDirectory(dir, ingestFormat, fType, searchString, 
                            targetRepoAPIA, targetRepoAPIM, logMessage, log, c);
     }
@@ -165,7 +167,6 @@ public class Ingest {
                                            FedoraAPIM targetRepoAPIM,
                                            String logMessage)
                                            throws Exception {
-        System.out.println("Ingesting " + pid + " from source repository.");
 
         // EXPORT from source repository
         // The export context is set to "migrate" since the intent
@@ -224,7 +225,6 @@ public class Ingest {
                                 sourceExportFormat, 'O', targetRepoAPIA,
                                 targetRepoAPIM, logMessage, log, c);
         }
-        System.out.println("Finished ingesting.");
     }
 
    public static void multiFromRepository(String sourceProtocol,
@@ -239,10 +239,6 @@ public class Ingest {
                                           String logMessage, 
                                           PrintStream log, 
                                           IngestCounter c) throws Exception {
-        String searchString = getSearchString(fType);
-        System.out.println("Ingesting all " + getSearchString(fType) + "s from " 
-                + sourceHost + ":" + sourcePort);
-
         // prepare the FieldSearch query
         String fTypeString = "" + fType;
         FieldSearchQuery query = new FieldSearchQuery();
