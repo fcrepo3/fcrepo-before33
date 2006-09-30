@@ -186,7 +186,7 @@ public class BESecurityServlet extends HttpServlet {
         writer.println("<html><head><title>Saved Backend Security Configuration</title></head><body>");
         writer.println("<table border=\"0\" width=\"850\">");
         writer.println("    <tr>");
-        writer.println("       <td><img src=\"/images/newlogo2.jpg\" width=\"70\" height=\"67\"></td>");
+        writer.println("       <td><img src=\"/fedora/images/newlogo2.jpg\" width=\"70\" height=\"67\"></td>");
         writer.println("       <td valign=\"top\">");
         writer.println("          <center><span style=\"font-weight: bold; color: #000000; margin-top: 4px; margin-bottom: 4px; font-size: 24px; line-height: 110%; padding-top: 8px; padding-bottom: 4px;\">Backend Security Configuration<br/>[Changes Saved]</span>");
         writer.println("             </nobr>");
