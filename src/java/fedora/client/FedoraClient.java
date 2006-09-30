@@ -61,8 +61,6 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 
 public class FedoraClient implements Constants {
-
-	private static final String FEDORA_HOME = System.getProperty("fedora.home");
 	private static final String LOG4J_PROPS = "fedora.client.resources.log4j";
     private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
