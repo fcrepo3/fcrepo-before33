@@ -2,7 +2,6 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -23,7 +22,6 @@ import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
 import fedora.server.config.ServerConfiguration;
-import fedora.server.config.ServerConfigurationParser;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.translation.METSLikeDODeserializer;
@@ -32,7 +30,6 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
 import fedora.test.FedoraTestCase;
-import fedora.utilities.ExecUtility;
 
 /**
  * @author Edwin Shin
@@ -242,16 +239,5 @@ public abstract class TestResourceIndex extends FedoraTestCase {
     protected void export(String path) throws Exception {
         //m_ri.export(new FileOutputStream(path), RDFFormat.RDF_XML);
         m_ri.export(new FileOutputStream(path), RDFFormat.N_TRIPLES);
-    }
-    
-    public static ServerConfiguration getServerConfiguration() throws Exception {
-    	FileInputStream fis;
-    	try {
-    		fis = new FileInputStream(FCFG);
-    	} catch (FileNotFoundException e) {
-    		ExecUtility.execCommandLineUtility(FEDORA_HOME + "/server/bin/fedora-setup ssl-authenticate-apim");
-    		fis = new FileInputStream(FCFG);
-    	}
-        return new ServerConfigurationParser(fis).parse();
     }
 }

@@ -87,11 +87,6 @@ public class TestServerConfiguration extends FedoraTestCase {
         assertXMLEqual(original, generated);
     }
     
-    public static ServerConfiguration getServerConfiguration() throws Exception {
-        return new ServerConfigurationParser(
-                new FileInputStream(FCFG_BASE)).parse();
-    }
-    
     private Document getDocument(ByteArrayOutputStream out) throws Exception {
         return builder.parse(new ByteArrayInputStream(out.toByteArray()));
     }
