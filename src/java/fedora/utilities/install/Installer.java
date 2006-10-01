@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.Properties;
 
@@ -52,6 +53,15 @@ public class Installer {
 		if (_opts.getValue(InstallOptions.DATABASE).equals(InstallOptions.EMBEDDED_MCKOI)) {
 			installEmbeddedMcKoi();
 		}
+		
+		// Write out the install options used to a properties file in the install directory
+		try {
+			OutputStream out = new FileOutputStream(new File(installDir, "install.properties"));
+			_opts.dump(out);
+			out.close();
+		} catch (Exception e) {
+			throw new InstallationFailedException(e.getMessage(), e);
+		}
 		System.out.println("Installation complete.");
     }
     
@@ -68,6 +78,13 @@ public class Installer {
 		System.out.println("Preparing FEDORA_HOME...");
 		try {
 			Zip.unzip(_dist.get(Distribution.FEDORA_HOME), fedoraHome);
+			
+			// Make scripts executable on *nix systems
+			String os = System.getProperty("os.name");
+			if (os != null && !os.startsWith("Windows")) {
+				Runtime.getRuntime().exec("chmod " + fedoraHome.getAbsolutePath() + File.separator + "server" + File.separator + "bin" + "*.sh");
+				Runtime.getRuntime().exec("chmod " + fedoraHome.getAbsolutePath() + File.separator + "client" + File.separator + "bin" + "*.sh");
+			}
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
