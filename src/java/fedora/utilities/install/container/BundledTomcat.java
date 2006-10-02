@@ -68,6 +68,11 @@ public class BundledTomcat extends Tomcat {
 			InputStream is = getDist().get(Distribution.JAAS_CONFIG);
 	        File jaasConfig = new File(getConf(), Distribution.JAAS_CONFIG);
 	        FileUtils.copy(is, new FileOutputStream(jaasConfig));
+	        
+	        System.out.println("Before starting Tomcat, please ensure that JAVA_OPTS points to the location of " +
+	        		"jaas.config, e.g.: \n\t" +
+	        		"export JAVA_OPTS=\"-Djava.security.auth.login.config=" + 
+	        		jaasConfig.getAbsolutePath() + "\".");
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}

@@ -27,7 +27,6 @@ public class ExistingTomcat extends Tomcat {
 	}
 
 	protected void installServerXML() throws InstallationFailedException {
-		// TODO present instructions for JAAS Realm, SSL
 		try {
 	        File distServerXML = new File(getConf(), "server.xml");
 	        TomcatServerXML serverXML = new TomcatServerXML(distServerXML, getOptions());
@@ -35,7 +34,9 @@ public class ExistingTomcat extends Tomcat {
 	        
 	        File example = new File(installDir, "server.xml");
 	        serverXML.write(example.getAbsolutePath());
-	        System.out.println("Will not overwrite existing server.xml. Wrote example server.xml to: \n\t" +
+	        System.out.println("Will not overwrite existing " + 
+	        		distServerXML.getAbsolutePath() + ".\n" +
+	        		"Wrote example server.xml to: \n\t" +
 	        		example.getAbsolutePath());
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
@@ -75,12 +76,16 @@ public class ExistingTomcat extends Tomcat {
 			InputStream is = getDist().get(Distribution.JAAS_CONFIG);
 	        File jaasConfig = new File(getConf(), Distribution.JAAS_CONFIG);
 	        if (jaasConfig.exists()) {
-	        	System.out.println("Will not overwrite existing " + jaasConfig.getAbsolutePath() + ".");
-	        	jaasConfig = new File(installDir, Distribution.JAAS_CONFIG);
-	        	System.out.println("Wrote example to: \n\t" +
-	        			jaasConfig.getAbsolutePath());
+	        	File example = new File(installDir, Distribution.JAAS_CONFIG);
+	        	System.out.println("Will not overwrite existing " + 
+	        			jaasConfig.getAbsolutePath() + ".\n" + 
+	        			"Wrote example to: \n\t" + example.getAbsolutePath());
 	        }
 	        FileUtils.copy(is, new FileOutputStream(jaasConfig));
+	        System.out.println("Before starting Tomcat, please ensure that JAVA_OPTS points to the location of " +
+	        		"jaas.config, e.g.: \n\t" +
+	        		"export JAVA_OPTS=\"-Djava.security.auth.login.config=" + 
+	        		jaasConfig.getAbsolutePath() + "\".");
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
