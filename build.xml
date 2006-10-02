@@ -406,9 +406,7 @@
     
     <target name="war" depends="server"
         description="Build the Fedora Web Application aRchive">
-        
-        <!-- FIXME risearch content (src/xsl/ri) and images-->
-        
+
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/classes"/>
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/lib"/>
         <mkdir dir="${fedora.war.build.dir}/images"/>
