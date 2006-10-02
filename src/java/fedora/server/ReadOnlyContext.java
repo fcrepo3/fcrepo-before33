@@ -466,6 +466,7 @@ public class ReadOnlyContext implements Context {
   		slog("noOp="+ noOp);
  
   	} catch (Exception e) {
+  		slog(e.getMessage());
   	}
   	Map auxSubjectRoles = null;
   	Object testFedoraAuxSubjectAttributes = request.getAttribute(FEDORA_AUX_SUBJECT_ATTRIBUTES);
