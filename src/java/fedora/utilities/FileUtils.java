@@ -2,6 +2,7 @@ package fedora.utilities;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -82,6 +83,40 @@ public class FileUtils {
             return props;
         } finally {
             try { in.close(); } catch (IOException e) { }
+        }
+    }
+    
+    public static FileFilter getPrefixFileFilter(String prefix) {
+    	return new PrefixFileFilter(prefix);
+    }
+    
+    public static FileFilter getSuffixFileFilter(String suffix) {
+    	return new SuffixFileFilter(suffix);
+    }
+    
+    private static class PrefixFileFilter implements FileFilter {
+        private final String filenamePrefix;
+
+        PrefixFileFilter(String filenamePrefix) {
+            this.filenamePrefix = filenamePrefix;
+        }
+
+        public boolean accept(File file) {
+            String filename = file.getName();
+            return filename.startsWith(this.filenamePrefix);
+        }
+    }
+    
+    private static class SuffixFileFilter implements FileFilter {
+        private final String filenameSuffix;
+
+        SuffixFileFilter(String filenameSuffix) {
+            this.filenameSuffix = filenameSuffix;
+        }
+
+        public boolean accept(File file) {
+            String filename = file.getName();
+            return filename.endsWith(this.filenameSuffix);
         }
     }
 }
