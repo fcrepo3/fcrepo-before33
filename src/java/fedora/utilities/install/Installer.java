@@ -211,7 +211,7 @@ public class Installer {
 			mckoiConf.store(new FileOutputStream(mckoiProps), null);
 			
 			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
-			if (container.equals(InstallOptions.BUNDLED_TOMCAT)) {
+			if (container.equals(InstallOptions.BUNDLED_TOMCAT) || container.equals(InstallOptions.EXISTING_TOMCAT)) {
 				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
 				FileUtils.copy(new FileInputStream(new File(mckoiHome, "mckoidb.jar")),
 						new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
