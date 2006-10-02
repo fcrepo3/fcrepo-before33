@@ -786,7 +786,7 @@
     <sequence>
       <element name="MIMEType" nillable="true" type="xsd:string"/>
       <element name="stream" nillable="true" type="xsd:base64Binary"/>
-      <element name="header">
+      <element name="header" nillable="true">
         <complexType>
           <sequence>
             <element name="property" minOccurs="0" maxOccurs="unbounded" type="fedora-types:Property"/>
