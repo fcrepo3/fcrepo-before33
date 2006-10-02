@@ -128,7 +128,7 @@ public class OptionDefinition {
         } else {
             if (_id.equals(InstallOptions.FEDORA_HOME)) {
                 File dir = new File(value);
-                if (dir.isDirectory() && dir.listFiles().length != 0) {
+                if (dir.isDirectory()) {
                 	System.out.println("Warning: Directory exists. Overwrite? (yes or no) [default is no] ==> ");
                 	String confirm = readLine().trim();
                     if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
