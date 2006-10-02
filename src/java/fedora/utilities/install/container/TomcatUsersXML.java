@@ -14,6 +14,8 @@ import fedora.utilities.XMLDocument;
 
 public class TomcatUsersXML extends XMLDocument {
 	public static final String FEDORA_ADMIN_ROLE = "fedoraRole=administrator";
+	public static final String FEDORA_BACKEND_ROLE = "fedoraRole=fedoraInternalCall-1";
+	public static final String FEDORA_BACKEND_PASSWORD = "changeme";
 	
 	private Document document;
 	
@@ -39,6 +41,27 @@ public class TomcatUsersXML extends XMLDocument {
 			adminUser.addAttribute("username", "fedoraAdmin");
 			adminUser.addAttribute("password", password);
 			adminUser.addAttribute("roles", FEDORA_ADMIN_ROLE);
+		} else {
+			for (int i = 0; i < adminUsers.length; i++) {
+				adminUsers[i].addAttribute("password", password);
+			}
+		}
+	}
+	
+	public void setFedoraBackendRole() {
+		String password = "changeme";
+		Element adminRole = getRole(FEDORA_BACKEND_ROLE);
+		if (adminRole == null) {
+			adminRole = document.getRootElement().addElement("role");
+			adminRole.addAttribute("rolename", FEDORA_BACKEND_ROLE);
+		}
+		
+		Element[] adminUsers = getUsers(FEDORA_BACKEND_ROLE);
+		if (adminUsers.length == 0) {
+			Element adminUser = document.getRootElement().addElement("user");
+			adminUser.addAttribute("username", "fedoraIntCallUser");
+			adminUser.addAttribute("password", password);
+			adminUser.addAttribute("roles", FEDORA_BACKEND_ROLE);
 		} else {
 			for (int i = 0; i < adminUsers.length; i++) {
 				adminUsers[i].addAttribute("password", password);

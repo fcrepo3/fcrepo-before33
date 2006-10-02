@@ -79,6 +79,7 @@ public abstract class Tomcat extends Container {
 		try {
 			tomcatUsersXML = new TomcatUsersXML(distTomcatUsersXML);
 			tomcatUsersXML.setFedoraAdminPassword(fedoraAdminPass);
+			tomcatUsersXML.setFedoraBackendRole();
 	        tomcatUsersXML.write(distTomcatUsersXML.getAbsolutePath());
 		} catch (DocumentException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
