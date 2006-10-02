@@ -412,6 +412,7 @@
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/classes"/>
         <mkdir dir="${fedora.war.build.dir}/WEB-INF/lib"/>
         <mkdir dir="${fedora.war.build.dir}/images"/>
+    	<mkdir dir="${fedora.war.build.dir}/ri"/>
         
         <!-- Deploy API-M and API-A offline (updates existing server-config.wsdd) -->
         <java classname="org.apache.axis.utils.Admin" 
@@ -428,6 +429,10 @@
         
     	<copy file="${src.dir}/images/server/newlogo2.jpg" todir="${fedora.war.build.dir}/images"/>
         
+    	<copy todir="${fedora.war.build.dir}/ri">
+            <fileset dir="src/xsl/ri"/>
+        </copy>
+    	
         <copy todir="${fedora.war.build.dir}">
             <fileset dir="${war-fedora.src.dir}"/>
         </copy>

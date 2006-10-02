@@ -1,17 +1,18 @@
 package fedora.server.access;
 
-import java.io.*;
+import java.io.File;
 
-import javax.servlet.*;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.trippi.*;
+import org.trippi.TriplestoreReader;
+import org.trippi.TriplestoreWriter;
 import org.trippi.server.TrippiServer;
-import org.trippi.server.http.*;
+import org.trippi.server.http.TrippiServlet;
 
-import fedora.server.*;
+import fedora.server.Server;
 import fedora.server.resourceIndex.ResourceIndex;
 
 public class RISearchServlet extends TrippiServlet {
@@ -57,8 +58,8 @@ public class RISearchServlet extends TrippiServlet {
     }
 
     public boolean closeOnDestroy() { return false; }
-    public String getIndexStylesheetLocation() { return "/ROOT/ri/index.xsl"; }
-    public String getFormStylesheetLocation() { return "/ROOT/ri/form.xsl"; }
-    public String getErrorStylesheetLocation() { return "/ROOT/ri/error.xsl"; }
-    public String getContext(String origContext) { return "/ri"; }
+    public String getIndexStylesheetLocation() { return "/fedora/ri/index.xsl"; }
+    public String getFormStylesheetLocation() { return "/fedora/ri/form.xsl"; }
+    public String getErrorStylesheetLocation() { return "/fedora/ri/error.xsl"; }
+    public String getContext(String origContext) { return "/fedora/ri"; }
 }
