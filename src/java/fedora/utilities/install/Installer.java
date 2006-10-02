@@ -1,6 +1,7 @@
 package fedora.utilities.install;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,6 +16,7 @@ import fedora.server.config.ServerConfiguration;
 import fedora.server.config.ServerConfigurationParser;
 import fedora.server.security.BESecurityConfig;
 import fedora.server.security.DefaultRoleConfig;
+import fedora.utilities.ExecUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
@@ -82,8 +84,11 @@ public class Installer {
 			// Make scripts executable on *nix systems
 			String os = System.getProperty("os.name");
 			if (os != null && !os.startsWith("Windows")) {
-				Runtime.getRuntime().exec("chmod " + fedoraHome.getAbsolutePath() + File.separator + "server" + File.separator + "bin" + "*.sh");
-				Runtime.getRuntime().exec("chmod " + fedoraHome.getAbsolutePath() + File.separator + "client" + File.separator + "bin" + "*.sh");
+				FileFilter scripts = FileUtils.getSuffixFileFilter(".sh");
+				File clientBin = new File(fedoraHome, "/client/bin/");
+				File serverBin = new File(fedoraHome, "/server/bin/");
+				setExecutable(clientBin, scripts);
+				setExecutable(serverBin, scripts);
 			}
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
@@ -236,6 +241,18 @@ public class Installer {
     	props.put("module.fedora.server.search.FieldSearch.connectionPool", poolName);
     	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", poolName);
     	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", poolName);
+    }
+    
+    private void setExecutable(File dir, FileFilter filter) {
+    	File[] files;
+    	if (filter != null) {
+    		files = dir.listFiles(filter);
+    	} else {
+    		files = dir.listFiles();
+    	}
+		for (int i = 0; i < files.length; i++) {
+			ExecUtility.exec("chmod +x " + files[i].getAbsolutePath());
+		}
     }
     
     /**

@@ -30,6 +30,7 @@ public class InstallOptions {
     public static final String TOMCAT_REALM          = "tomcat.realm";
     public static final String XACML_ENABLED         = "xacml.enabled";
     public static final String DEPLOY_LOCAL_SERVICES = "deploy.local.services";
+    public static final String UNATTENDED 			 = "unattended";
 
     private Map _map;
     private boolean _bundled;
@@ -278,12 +279,12 @@ public class InstallOptions {
      * It might check whether a given directory exists, for example.
      */
     private void validateAll() throws OptionValidationException {
-
+    	boolean unattended = getBooleanValue(UNATTENDED, false);
         Iterator keys = getOptionNames();
         while (keys.hasNext()) {
             String optionId = (String) keys.next();
             OptionDefinition opt = OptionDefinition.get(optionId);
-            opt.validateValue(getValue(optionId), _bundled);
+            opt.validateValue(getValue(optionId), _bundled, unattended);
         }
     }
 

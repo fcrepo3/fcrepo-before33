@@ -107,8 +107,12 @@ public class OptionDefinition {
     public String getDefaultValue() {
         return _defaultValue;
     }
+    
+    public void validateValue(String value, boolean bundled) throws OptionValidationException {
+    	validateValue(value, bundled, false);
+    }
 
-    public void validateValue(String value, boolean bundled) 
+    public void validateValue(String value, boolean bundled, boolean unattended) 
             throws OptionValidationException {
         if (value.length() == 0) {
             throw new OptionValidationException("Must specify a value", _id);
@@ -129,12 +133,15 @@ public class OptionDefinition {
             if (_id.equals(InstallOptions.FEDORA_HOME)) {
                 File dir = new File(value);
                 if (dir.isDirectory()) {
-                	System.out.println("Warning: Directory exists. Overwrite? (yes or no) [default is no] ==> ");
-                	String confirm = readLine().trim();
-                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
-                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
-                    }
-                    //throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+                	if (unattended) {
+                		System.out.println("WARNING: Overwriting existing directory: " + dir.getAbsolutePath());
+                	} else {
+	                	System.out.println("WARNING: " + dir.getAbsolutePath() + " already exists. Overwrite? (yes or no) [default is no] ==> ");
+	                	String confirm = readLine().trim();
+	                    if (confirm.length() == 0 || confirm.equalsIgnoreCase("no")) {
+	                    	throw new OptionValidationException("Directory exists; delete it or choose another", _id);
+	                    }
+                	}
                 } else {
                     // must be creatable
                     boolean created = dir.mkdir();
