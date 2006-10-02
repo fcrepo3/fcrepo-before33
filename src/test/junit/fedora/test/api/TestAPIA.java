@@ -2,6 +2,9 @@ package fedora.test.api;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
 import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.DatastreamDef;
@@ -191,6 +194,12 @@ public class TestAPIA extends FedoraServerTestCase {
 	public void setUp() throws Exception {
 		FedoraClient client = getFedoraClient();
 		apia = client.getAPIA();
+        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+    }
+	
+	public void tearDown() {
+    	SimpleXpathEngine.clearNamespaces();
     }
 	
 	public static void main(String[] args) {
