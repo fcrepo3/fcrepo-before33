@@ -1,6 +1,9 @@
 package fedora.test.api;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -440,7 +443,8 @@ public class TestAPIM extends FedoraServerTestCase {
         // 3) export
         // 4) purgeObject
         
-        
+        Set serverAssignedPIDs = new HashSet();
+    	
         // (1) test ingest
         System.out.println("Running TestAPIM.testIngest...");
         String pid = apim.ingest(demo998FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
@@ -461,6 +465,7 @@ public class TestAPIM extends FedoraServerTestCase {
         pid = apim.ingest(changeme1FOXMLObjectXML, "foxml1.0", "ingesting new foxml object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme1FOXML: "+pid);
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);
         
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -491,6 +496,7 @@ public class TestAPIM extends FedoraServerTestCase {
         pid = apim.ingest(changeme2METSObjectXML, "metslikefedora1", "ingesting new mets object");
         //System.out.println("***** Testcase: TestAPIM.testIngestObject ingest changeme2METS: "+pid);
         assertNotNull(pid);
+        serverAssignedPIDs.add(pid);
         
         objectXML = apim.getObjectXML(pid);
         assertTrue(objectXML.length > 0);
@@ -610,17 +616,12 @@ public class TestAPIM extends FedoraServerTestCase {
         
         // (4) test purgeObject
         System.out.println("Running TestAPIM.testPurgeObject...");
-        // test puring object demo:999
-        result = apim.purgeObject("demo:999", "purging object demo:999", false);
-        //System.out.println("***** Testcase: TestAPIM.testPurgeObject demo:999\n");
-        assertNotNull(result);   
-        result = apim.purgeObject("demo:998", "purging object demo:998", false);
-        assertNotNull(result); 
-        result = apim.purgeObject("changeme:1", "purging object changeme:1", false);
-        assertNotNull(result); 
-        result = apim.purgeObject("changeme:2", "purging object changeme:2", false);
-        assertNotNull(result);         
-        
+        Iterator it = serverAssignedPIDs.iterator();
+        while (it.hasNext()) {
+        	pid = (String)it.next();
+        	result = apim.purgeObject(pid, "purging object " + pid, false);
+        	assertNotNull(result);
+        }
     }
     
     public void testDatastreamMethods() throws Exception {
