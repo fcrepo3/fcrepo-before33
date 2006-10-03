@@ -694,12 +694,24 @@
 	
 	<target name="junit" depends="compile-junit">
 		<copy todir="${junit.build.dir}" includeEmptyDirs="false">
-	        <fileset dir="src/test/junit">
+	        <fileset dir="${junit.src.dir}">
                 <exclude name="**/*.java"/>
 	        </fileset>
         </copy>
+		
+		<condition property="fedora.home" value="${env.FEDORA_HOME}">
+			<not><isset property="fedora.home"/></not>
+		</condition>
+		
+		<condition property="javax.net.ssl.trustStore" value="inc/keystore">
+			<not><isset property="javax.net.ssl.trustStore"/></not>
+		</condition>
+		
 		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
-			<sysproperty key="fedora.home" value="${env.FEDORA_HOME}"/>
+			<syspropertyset id="junit.sysproperties">
+				<propertyref name="fedora.home"/>
+				<propertyref name="javax.net.ssl.trustStore"/>
+			</syspropertyset>
 			<classpath refid="junit.classpath"/>
 			<formatter type="plain" usefile="false"/>
 			<test name="fedora.test.api.TestAPIA"/>
