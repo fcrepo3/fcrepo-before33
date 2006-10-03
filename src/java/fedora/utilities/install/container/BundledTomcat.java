@@ -51,7 +51,7 @@ public class BundledTomcat extends Tomcat {
 		}
 		try {
 			InputStream is;
-			File keystore = new File(getConf(), Distribution.KEYSTORE);;
+			File keystore = new File(getConf(), Distribution.KEYSTORE);
 	        if (keystoreFile.equals("default")) {
 	        	is = getDist().get(Distribution.KEYSTORE);
 	        } else {
