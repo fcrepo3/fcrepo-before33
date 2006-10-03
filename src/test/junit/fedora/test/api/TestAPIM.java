@@ -613,7 +613,13 @@ public class TestAPIM extends FedoraServerTestCase {
         // test puring object demo:999
         result = apim.purgeObject("demo:999", "purging object demo:999", false);
         //System.out.println("***** Testcase: TestAPIM.testPurgeObject demo:999\n");
-        assertNotNull(result);       
+        assertNotNull(result);   
+        result = apim.purgeObject("demo:998", "purging object demo:998", false);
+        assertNotNull(result); 
+        result = apim.purgeObject("changeme:1", "purging object changeme:1", false);
+        assertNotNull(result); 
+        result = apim.purgeObject("changeme:2", "purging object changeme:2", false);
+        assertNotNull(result);         
         
     }
     
