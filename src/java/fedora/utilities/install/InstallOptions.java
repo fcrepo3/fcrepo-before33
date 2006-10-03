@@ -94,7 +94,7 @@ public class InstallOptions {
             
             if (sslAvailable) {
             	inputOption(TOMCAT_SSL_PORT);
-            	if (getValue(SERVLET_ENGINE).equals(BUNDLED_TOMCAT)) {
+            	if (getValue(SERVLET_ENGINE).equals(BUNDLED_TOMCAT) || getValue(SERVLET_ENGINE).equals(EXISTING_TOMCAT)) {
                     inputOption(KEYSTORE_FILE);
                 }
             }
