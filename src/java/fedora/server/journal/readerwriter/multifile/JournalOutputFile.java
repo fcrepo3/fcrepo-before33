@@ -252,7 +252,9 @@ class JournalOutputFile implements MultiFileJournalConstants {
                  * console? If we throw it, where will it be recorded?
                  */
                 e.printStackTrace();
-                throw new IllegalStateException(e);
+                IllegalStateException ise = new IllegalStateException();
+                ise.initCause(e);
+                throw ise;
             }
         }
     }

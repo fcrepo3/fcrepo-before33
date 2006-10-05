@@ -76,7 +76,9 @@ public class JournalEntryContext implements RecoveryContext {
         try {
             map.set(key, values);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e);
+            IllegalArgumentException iae = new IllegalArgumentException();
+            iae.initCause(e);
+            throw iae;
         }
     }
 

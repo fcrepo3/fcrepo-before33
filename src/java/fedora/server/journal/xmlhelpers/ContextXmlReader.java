@@ -90,7 +90,7 @@ public class ContextXmlReader extends AbstractXmlReader {
             throws XMLStreamException, JournalException {
         readStartTag(reader, QNAME_TAG_NOOP);
         String value = readCharactersUntilEndTag(reader, QNAME_TAG_NOOP);
-        return Boolean.parseBoolean(value);
+        return Boolean.valueOf(value).booleanValue();
     }
 
     /**

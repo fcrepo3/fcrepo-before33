@@ -58,7 +58,7 @@ public abstract class JournalEntry {
     }
 
     public void addArgument(String key, int value) {
-        addArgument(key, Integer.valueOf(value));
+        addArgument(key, new Integer(value));
     }
 
     public void addArgument(String key, Object value) {
