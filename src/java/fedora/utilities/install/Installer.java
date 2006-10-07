@@ -187,7 +187,7 @@ public class Installer {
     	
     	PrintWriter pwriter;
 		try {
-			pwriter = new PrintWriter(beSecurity);
+			pwriter = new PrintWriter(new FileOutputStream(beSecurity));
 		} catch (FileNotFoundException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
