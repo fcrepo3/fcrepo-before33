@@ -171,7 +171,11 @@ public class ServerUtility {
     }
 
     public static final int shutdown (String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	return serverAction(SHUTDOWN, protocol, null, null);
+        return serverAction(SHUTDOWN, protocol, null, null);
+    }
+    
+    public static final int reloadPolicies (String protocol, String optionalUsername, String optionalPassword) throws Exception {
+        return serverAction(RELOAD_POLICIES, protocol, optionalUsername, optionalPassword);
     }
     
     private static final int serverAction (String action, String protocol, String optionalUsername, String optionalPassword) throws Exception {
