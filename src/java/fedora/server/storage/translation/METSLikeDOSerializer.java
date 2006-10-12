@@ -244,7 +244,7 @@ public class METSLikeDOSerializer
 			if (altIds!=null && !altIds.equals("")) {
 				altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
 			}
-            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + ds.DSMIME + "\""
+            buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + StreamUtility.enc(ds.DSMIME) + "\""
                     + " MDTYPE=\"" + mdType + "\"" 
                     + otherAttr
                     + labelAttr
@@ -441,7 +441,7 @@ public class METSLikeDOSerializer
     				}
                     buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
                     		+ dateAttr
-                            + " MIMETYPE=\"" + dsc.DSMIME + "\"" 
+                            + " MIMETYPE=\"" + StreamUtility.enc(dsc.DSMIME) + "\"" 
                             + sizeAttr
                             + formatURIAttr
                             + altIdsAttr

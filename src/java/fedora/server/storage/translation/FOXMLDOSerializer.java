@@ -226,7 +226,7 @@ public class FOXMLDOSerializer
 					+ " LABEL=\"" + StreamUtility.enc(vds.DSLabel) + "\""
 					+ dateAttr
 					+ altIdsAttr
-					+ " MIMETYPE=\"" + vds.DSMIME + "\""
+					+ " MIMETYPE=\"" + StreamUtility.enc(vds.DSMIME) + "\""
 					+ formatURIAttr
 					+ " SIZE=\"" + vds.DSSize +  "\">\n");
 			
