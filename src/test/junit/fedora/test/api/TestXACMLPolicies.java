@@ -1,0 +1,556 @@
+package fedora.test.api;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
+import fedora.client.FedoraClient;
+import fedora.server.access.FedoraAPIA;
+import fedora.server.errors.authorization.AuthzException;
+import fedora.server.management.FedoraAPIM;
+import fedora.server.types.gen.MIMETypedStream;
+import fedora.server.types.gen.Property;
+import fedora.server.utilities.ServerUtility;
+import fedora.server.utilities.StreamUtility;
+import fedora.test.DemoObjectTestSetup;
+import fedora.test.FedoraServerTestCase;
+
+/**
+ * Test of the Fedora Access Service (API-A).
+ * 		describeRepository
+ * 		findObjects
+ * 		getDatastreamDissemination
+ * 		getDissemination
+ * 		getObjectHistory
+ * 		getObjectProfile
+ * 		listDatastreams
+ * 		listMethods
+ * 		resumeFindObjects
+ * 
+ * See: http://www.fedora.info/definitions/1/0/api/Fedora-API-A.html
+ * 
+ * @author Edwin Shin
+ *
+ */
+public class TestXACMLPolicies extends FedoraServerTestCase {
+    private FedoraClient admin;
+    private FedoraClient testuser1;
+    private FedoraClient testuserroleA;
+    private FedoraClient testuser2;
+    private FedoraClient testuser3;
+    private FedoraClient testuserroleB;
+    private FedoraClient testuserroleC;
+    private FedoraClient testuser4;
+	private static int EXPECT_FAILURE = 0;
+    private static int EXPECT_SUCCESS = 1;
+    
+    
+	public static Test suite() {
+		TestSuite suite = new TestSuite("XACML Policy TestSuite");
+		suite.addTestSuite(TestXACMLPolicies.class);
+		return new DemoObjectTestSetup(suite);
+	}
+	
+	public void testXACMLAPIMAccess() throws Exception 
+    {
+        String dateOfFirstSuccess=null;
+        String dateOfSecondSuccess=null;
+        String dateOfThirdSuccess=null;
+        String dateOfFourthSuccess=null;
+        String URL1 = getBaseURL()+"-demo/simple-image-demo/col1.jpg";
+        String URL2 = getBaseURL()+"-demo/simple-image-demo/col2.jpg";
+        String URL3 = getBaseURL()+"-demo/simple-image-demo/col3.jpg";
+        Class modDSArgs[] = { String.class, String.class, String[].class, String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
+        Object modDSParms1[] = { "demo:5", "DS3", null, null, null, null, null, null, Boolean.FALSE };
+//        Object modDSParms2[] = { "demo:5", "DS3", null, ", null, null, null, null, false };
+        Class purgeDSArgs[] = { String.class, String.class, String.class, String.class, String.class, Boolean.TYPE };
+        Object purgeDSParms1[] = { "demo:5", "DS3", null, null, null, Boolean.FALSE };
+        Class setVersionableArgs[] = { String.class, String.class, Boolean.TYPE, String.class };
+        Object setVersionableFalse[] = { "demo:5", "DS3", Boolean.FALSE, null };
+        Object setVersionableTrue[] = { "demo:5", "DS3", Boolean.TRUE, null };
+        
+        //        Object modDSParms2[] = { "demo:5", "DS3", null, null, null, null, URL2, null, false };
+//        Object modDSParms3[] = { "demo:5", "DS3", null, null, null, null, null, null, false };
+//        Object modDSParms4[] = { "demo:5", "DS3", null, null, null, null, URL3, null, false };
+        
+        // APIM access by user without access- should fail
+        // testuserroleA does not have permission to modify a datastream, so this should fail
+        invokeAPIMFailure(testuserroleA, "testuserroleA", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+        
+        // APIM access by user without access- should fail
+        // testuserroleA does not have permission to modify a datastream, so this should fail
+        invokeAPIMFailure(testuser2, "testuser2", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+         
+        //APIM accesses by users with access- should succeed
+        modDSParms1[6] = URL1;
+        dateOfFirstSuccess = invokeAPIMSuccessString(testuser1, "testuser1", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+        System.out.println("    URL = "+ modDSParms1[6]);
+        assertTrue(dateOfFirstSuccess != null);
+        System.out.println("  Modify datastream from testuser1 succeeded.");
+
+        System.out.println("Disabling versioning.");
+        invokeAPIMSuccess(admin, "admin", "setDatastreamVersionable", setVersionableArgs, setVersionableFalse);
+
+        modDSParms1[6] = URL2;
+        System.out.println("Testing modify datastream from admin with versioning off.");
+        dateOfSecondSuccess = invokeAPIMSuccessString(admin, "admin", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+        System.out.println("    URL = "+ modDSParms1[6]);
+        assertTrue(dateOfSecondSuccess != null);
+        System.out.println("  Modify datastream from admin succeeded.");
+
+        modDSParms1[6] = null;
+        modDSParms1[3] = "The Colliseum with Graffiti";
+        System.out.println("Testing modify datastream from admin with versioning off just changing label.");
+        dateOfThirdSuccess = invokeAPIMSuccessString(admin, "admin", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+        System.out.println("    Label = "+ modDSParms1[3]);
+        assertTrue(dateOfThirdSuccess != null);
+        System.out.println("  Modify datastream from admin succeeded.");
+
+        System.out.println("Re-enabling versioning.");
+        invokeAPIMSuccess(admin, "admin", "setDatastreamVersionable", setVersionableArgs, setVersionableTrue);
+ 
+        modDSParms1[6] = URL3;
+        modDSParms1[3] = null;
+        dateOfFourthSuccess = invokeAPIMSuccessString(testuser1, "testuser1", "modifyDatastreamByReference", modDSArgs, modDSParms1);
+        System.out.println("    URL = "+ modDSParms1[6]);
+        assertTrue(dateOfFourthSuccess != null);
+        System.out.println("  Modify datastream from testuser1 succeeded.");
+        
+        // APIM access by user without access- should fail
+        purgeDSParms1[2] = dateOfFirstSuccess;
+        purgeDSParms1[3] = dateOfFourthSuccess;
+        // testuser1 does not have permission to modify a datastream, so this should fail
+        invokeAPIMFailure(testuser1, "testuser1", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+
+        // APIM access by user without access- should fail
+        purgeDSParms1[2] = dateOfFirstSuccess;
+        purgeDSParms1[3] = dateOfFourthSuccess;
+        // testuser1 does not have permission to modify a datastream, so this should fail
+        invokeAPIMFailure(testuser2, "testuser2", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+        
+        //APIM access by user with access- should succeed
+        // testuser1 does not have permission to modify a datastream, so this should fail
+        String purged[] = invokeAPIMSuccessStringArray(testuserroleA, "testuserroleA", "purgeDatastream", purgeDSArgs, purgeDSParms1);
+        System.out.println("    Checking number of versions purged.");
+        assertEquals(purged.length, 2);
+        System.out.println("    Checking dates of versions purged.");            
+        assertEquals(purged[0], dateOfThirdSuccess);
+        assertEquals(purged[1], dateOfFourthSuccess);
+        System.out.println("Purge Datastreams successful.");            
+ 	}
+	
+    public void testXACMLAPIAAccess() throws Exception 
+    {
+        if (isAPIAAuthzOn())
+        {
+            Class getDDArgs[] = { String.class, String.class, String.class };
+            Object getDDParms[] = { "demo:5", "DS3", null };
+            Object getDDParms2[] = { "demo:29", "DS1", null };
+
+            Class getDissArgs[] = { String.class, String.class, String.class, Property[].class, String.class };
+            Object getDissParms[] = {"demo:5", "demo:1", "getHigh", null, null };
+            Object getDissParms2[] = {"demo:29", "demo:27", "grayscaleImage", null, null};
+            
+            
+            // APIA access by user without access- should fail
+            // testuser2 does not have permission to access api-a at all, so this should fail
+            invokeAPIAFailure(testuser2, "testuser2", "getDatastreamDissemination", getDDArgs, getDDParms);
+
+            // APIA access by user without access- should fail
+            // testuser3 does not have permission to access Datastreams named DS3, so this should fail
+            invokeAPIAFailure(testuser3, "testuser3", "getDatastreamDissemination", getDDArgs, getDDParms);
+            
+            // APIA access by user without access- should fail
+            // testuserroleB does not have permission to access HighRes Dissemenations, so this should fail
+            invokeAPIAFailure(testuserroleB, "testuserroleB", "getDissemination", getDissArgs, getDissParms);
+            
+            // APIA access by user without access- should fail
+            // testuser4 does not have permission to access demo:29 at all, so this should fail
+            invokeAPIAFailure(testuser4, "testuser4", "getDatastreamDissemination", getDDArgs, getDDParms2);
+
+            // APIA access by user without access- should fail
+            // testuser4 does not have permission to access demo:29 at all, so this should fail
+            invokeAPIAFailure(testuser4, "testuser4", "getDissemination", getDissArgs, getDissParms2);
+
+            // APIA access by user without access- should fail
+            // testuser1 does not have permission to access demo:29 datastreams, so this should fail
+            invokeAPIAFailure(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms2);
+
+            // APIA access by user with access- should succeed
+            // testuserroleC does have permission to access demo:29 datastreams, so this should succeed
+            invokeAPIASuccess(testuserroleC, "testuserroleC", "getDatastreamDissemination", getDDArgs, getDDParms2);
+
+            // APIA access by user with access- should succeed
+            // testuser1 does have permission to access demo:5 datastreams, so this should succeed
+            invokeAPIASuccess(testuser1, "testuser1", "getDatastreamDissemination", getDDArgs, getDDParms);       
+        }
+        else
+        {
+            System.out.println("Authorization is not enabled for APIA");
+            System.out.println("Testing Policies for APIA access will not work.");
+        }
+    }
+    
+    public void invokeAPIMFailure(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        // APIA access by user without access- should fail
+        try {
+            System.out.println("Testing "+ functionToTest + " from invalid user: "+ username);
+    
+            FedoraAPIM apim1 = user.getAPIM();
+            Method func = apim1.getClass().getMethod(functionToTest, args);
+            Object result = func.invoke(apim1, parms);
+            fail("Illegal access allowed");
+        }
+        catch (InvocationTargetException ite)
+        {
+            Throwable cause = ite.getCause();
+            if (cause instanceof org.apache.axis.AxisFault)
+            {
+                org.apache.axis.AxisFault af = (org.apache.axis.AxisFault)(cause);
+                System.out.println("    Reason = " +af.getFaultReason().substring(af.getFaultReason().lastIndexOf(".")+1));
+                assertTrue(af.getFaultReason().contains("AuthzDeniedException"));
+                System.out.println("Access denied correctly");
+            }
+            else
+            {
+                System.out.println("Got exception: " + cause.getClass().getName());
+                fail("Illegal access dis-allowed for some other reason");
+            }
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("    Reason = " +ioe.getMessage().substring(ioe.getMessage().lastIndexOf("[")));
+            assertTrue(ioe.getMessage().contains("[403 Forbidden]"));
+            System.out.println("Access denied correctly");
+            // exception was expected, all is A-OK
+        }
+        catch (Exception ae)
+        {
+            System.out.println("Some other exception: " + ae.getClass().getName());
+            fail("Some other exception");
+        }
+    }
+    
+    public String invokeAPIMSuccessString(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        Object result = invokeAPIMSuccess(user, username, functionToTest, args, parms);
+        return(String)result;
+    }
+   
+    public String[] invokeAPIMSuccessStringArray(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        Object result = invokeAPIMSuccess(user, username, functionToTest, args, parms);
+        return(String[])result;
+    }
+   
+    
+    public Object invokeAPIMSuccess(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        // APIA access by user with access- should succeed
+        try {
+            // testuser1 does have permission to access demo:5 datastreams, so this should succeed
+            System.out.println("Testing "+ functionToTest + " from valid user: "+ username);
+            FedoraAPIM apim1 = user.getAPIM();
+            Method func = apim1.getClass().getMethod(functionToTest, args);
+            Object result = func.invoke(apim1, parms);
+            assertTrue(result != null);
+            return(result);
+        }
+        catch (InvocationTargetException ite)
+        {
+            Throwable cause = ite.getCause();
+            if (cause instanceof org.apache.axis.AxisFault)
+            {
+                org.apache.axis.AxisFault af = (org.apache.axis.AxisFault)(cause);
+                System.out.println("Got exception: " + af.getClass().getName());
+                System.out.println("Reason = " +af.getFaultReason());
+                System.out.println("Message = " +af.getMessage());
+                fail("Legal access dis-allowed");                    
+            }
+            else
+            {
+                System.out.println("Got exception: " + cause.getClass().getName());
+                fail("Legal access dis-allowed");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Got exception: " +e.getClass().getName());
+            fail("Legal access dis-allowed");
+        }
+        
+        return(null);
+    }   
+    
+    public void invokeAPIAFailure(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        // APIA access by user without access- should fail
+        try {
+            System.out.println("Testing "+ functionToTest + " from invalid user: "+ username);
+    
+            FedoraAPIA apia1 = user.getAPIA();
+            Method func = apia1.getClass().getMethod(functionToTest, args);
+            Object result = func.invoke(apia1, parms);
+            fail("Illegal access allowed");
+        }
+        catch (InvocationTargetException ite)
+        {
+            Throwable cause = ite.getCause();
+            if (cause instanceof org.apache.axis.AxisFault)
+            {
+                org.apache.axis.AxisFault af = (org.apache.axis.AxisFault)(cause);
+                System.out.println("    Reason = " +af.getFaultReason().substring(af.getFaultReason().lastIndexOf(".")+1));
+                assertTrue(af.getFaultReason().contains("AuthzDeniedException"));
+                System.out.println("Access denied correctly");
+            }
+            else
+            {
+                System.out.println("Got exception: " + cause.getClass().getName());
+                fail("Illegal access dis-allowed for some other reason");
+            }
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("    Reason = " +ioe.getMessage().substring(ioe.getMessage().lastIndexOf("[")));
+            assertTrue(ioe.getMessage().contains("[403 Forbidden]"));
+            System.out.println("Access denied correctly");
+            // exception was expected, all is A-OK
+        }
+        catch (Exception ae)
+        {
+            System.out.println("Some other exception: " + ae.getClass().getName());
+            fail("Illegal access dis-allowed for some other reason");
+        }
+    }
+        
+    public Object invokeAPIASuccess(FedoraClient user, String username, String functionToTest, Class args[], Object parms[])
+    {
+        // APIA access by user with access- should succeed
+        try {
+            // testuser1 does have permission to access demo:5 datastreams, so this should succeed
+            System.out.println("Testing "+ functionToTest + " from valid user: "+ username);
+            FedoraAPIA apia1 = user.getAPIA();
+            Method func = apia1.getClass().getMethod(functionToTest, args);
+            Object result = func.invoke(apia1, parms);
+            assertTrue(result != null);
+            System.out.println("Access succeeded");
+            return(result);
+        }
+        catch (InvocationTargetException ite)
+        {
+            Throwable cause = ite.getCause();
+            if (cause instanceof org.apache.axis.AxisFault)
+            {
+                org.apache.axis.AxisFault af = (org.apache.axis.AxisFault)(cause);
+                System.out.println("Got exception: " + af.getClass().getName());
+                System.out.println("Reason = " +af.getFaultReason());
+                System.out.println("Message = " +af.getMessage());
+                fail("Legal access dis-allowed");                    
+            }
+            else
+            {
+                System.out.println("Got exception: " + cause.getClass().getName());
+                fail("Legal access dis-allowed");
+            }
+        }
+        catch (Exception e)
+        {
+            System.out.println("Got exception: " +e.getClass().getName());
+            fail("Legal access dis-allowed");
+        }
+        
+        return(null);
+    }   
+    
+    public boolean isAPIAAuthzOn() throws IOException
+    {
+        File installProperties = new File(FEDORA_HOME,"install/install.properties");
+        BufferedReader prop = null;
+        try{
+            prop = new BufferedReader(new FileReader(installProperties));
+            String line = null;
+            while ((line = prop.readLine())!= null)
+            {
+                if (line.startsWith("apia.auth.required"))
+                {
+                    if (line.equals("apia.auth.required=true"))
+                    {
+                        return(true);
+                    }
+                    if (line.equals("apia.auth.required=false"))
+                    {
+                        return(false);
+                    }
+                }
+            }
+            return(false);
+        }
+        finally 
+        {
+            if (prop != null)  prop.close();
+        }      
+    }
+    
+	public void installJunitPolicies()
+    {
+        System.out.println("Copying Policies For Testing");
+        File junitDir = new File("src/test/junit/XACMLTestPolicies/junit");
+        File junitsaveDir = new File(FEDORA_HOME, "data/fedora-xacml-policies/repository-policies/junit");
+        if (!junitsaveDir.exists())
+        {
+            junitsaveDir.mkdir();
+        }
+        File list[] = getFilesInDir(junitDir);
+        traverseAndCopy(list, junitsaveDir);
+        
+        System.out.println("Copying Policies succeeded");
+    }
+    
+    private void deleteJunitPolicies()
+    {
+        System.out.println("Removing Policies For Testing");
+        File junitsaveDir = new File(FEDORA_HOME, "data/fedora-xacml-policies/repository-policies/junit");
+        if (junitsaveDir.exists())
+        {
+            File list[] = getFilesInDir(junitsaveDir);
+            traverseAndDelete(list);
+            junitsaveDir.delete();
+        }
+    }
+    
+    private File[] getFilesInDir(File dir)
+    {
+        File srcFiles[] = dir.listFiles(new java.io.FilenameFilter()
+            {
+                public boolean accept(File dir, String name)
+                {
+                    if ((name.toLowerCase().startsWith("permit") ||
+                         name.toLowerCase().startsWith("deny")) &&
+                         name.endsWith(".xml"))
+                    {
+                        return(true);
+                    }
+                    return(false);
+                }
+            } 
+        );
+    
+        return(srcFiles);
+    }
+
+    private void traverseAndCopy(File srcFiles[], File destDir)
+    {
+  //      assertEquals(testDir.isDirectory(), true);
+        for ( int i = 0; i < srcFiles.length; i++)
+        {
+            File destFile = new File(destDir, srcFiles[i].getName());
+            System.out.println("Copying policy: "+ srcFiles[i].getName());
+            if (!destFile.exists())
+            {
+                try
+                {
+                    destFile.createNewFile();
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            copyFile(srcFiles[i], destFile);
+        }        
+    }
+    
+    private void traverseAndDelete(File newFiles[])
+    {
+        for ( int i = 0; i < newFiles.length; i++)
+        {
+            System.out.println("Deleting policy: "+ newFiles[i].getName());
+            newFiles[i].delete();
+        }        
+    }
+
+	private boolean copyFile(File src, File dest)
+    {
+        InputStream in;
+        try
+        {
+            in = new FileInputStream(src);
+            OutputStream out = new FileOutputStream(dest);
+            StreamUtility.pipeStream(in, out, 1024);
+        }
+        catch (FileNotFoundException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return(false);
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return(false);
+        }
+        return(true);
+    }
+    
+    private void reloadPolicies()
+    {
+        System.out.println("Reloading Policies...");
+        try
+        {
+            ServerUtility.reloadPolicies (getProtocol(), getUsername(), getPassword());
+            System.out.println("  Done Reloading Policies");
+        }
+        catch (Exception e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+    
+    public void setUp() throws Exception {
+        
+        System.out.println("setting Up XACML test");
+        admin = getFedoraClient();
+
+        SimpleXpathEngine.registerNamespace("oai_dc", "http://www.openarchives.org/OAI/2.0/oai_dc/");
+        SimpleXpathEngine.registerNamespace("uvalibadmin", "http://dl.lib.virginia.edu/bin/admin/admin.dtd/");
+        installJunitPolicies();
+        reloadPolicies();
+        System.out.println("creating alternate users");
+        testuser1 = new FedoraClient(getBaseURL(), "testuser1", "testuser1");
+        testuserroleA = new FedoraClient(getBaseURL(), "testuserroleA", "testuserroleA");
+        testuser2 = new FedoraClient(getBaseURL(), "testuser2", "testuser2");
+        testuser3 = new FedoraClient(getBaseURL(), "testuser3", "testuser3");
+        testuserroleB = new FedoraClient(getBaseURL(), "testuserroleB", "testuserroleB");
+        testuserroleC = new FedoraClient(getBaseURL(), "testuserroleC", "testuserroleC");
+        testuser4 = new FedoraClient(getBaseURL(), "testuser4", "testuser4");
+        System.out.println("done setting up");
+    }
+    
+	public void tearDown() 
+    {
+    	SimpleXpathEngine.clearNamespaces();
+        deleteJunitPolicies();
+        reloadPolicies();
+    }
+	    
+	public static void main(String[] args) {
+		junit.textui.TestRunner.run(TestXACMLPolicies.class);
+	}
+
+}

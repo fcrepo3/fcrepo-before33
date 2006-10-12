@@ -19,6 +19,7 @@ public class AllAPITests {
         suite.addTest(TestAPIALite.suite());
         suite.addTest(TestAPIM.suite());
         suite.addTest(TestAPIMLite.suite());
+        suite.addTest(TestXACMLPolicies.suite());
         return suite;
     }
 }
