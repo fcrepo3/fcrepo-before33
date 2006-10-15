@@ -68,7 +68,7 @@
     <path id="compile.classpath">
         <fileset dir="${lib.dir}">
             <include name="**/*.jar"/>
-        </fileset>
+        </fileset>                    
     </path>
 	
 	<path id="junit.classpath">
@@ -247,7 +247,6 @@
 	<target name="compile-junit" depends="compile-server, compile-client, compile-util">
 		<md-compile srcdir="${junit.src.dir}"
 					destdir="${junit.build.dir}"
-					excludes="fedora/server/journal/**"
 					classpathref="junit.classpath"/>
 	</target>
     
@@ -445,8 +444,18 @@
         
         <jar jarfile="${dist.dir}/fedora.war" basedir="${fedora.war.build.dir}"/>
     </target>
+
+    <target name="check-wsdl2java">
+        <uptodate property="wsdl2java.uptodate"
+                  targetfile="${wsdl.build.dir}/Fedora-API-M.wsdl">
+            <srcfiles dir="." includes="${wsdl.src.dir}/*.wsdl,
+                                        ${xsd.src.dir}/*.xsd"/>
+        </uptodate>
+    </target>
     
-    <target name="wsdl2java" depends="init" 
+    <target name="wsdl2java" 
+            depends="init,check-wsdl2java" 
+            unless="wsdl2java.uptodate"
             description="Generate Java classes from WSDL for API-M and API-A">
         <mkdir dir="${wsdl.build.dir}"/>
         <copy file="${wsdl.src.dir}/Fedora-API-M.wsdl" todir="${wsdl.build.dir}"/>
