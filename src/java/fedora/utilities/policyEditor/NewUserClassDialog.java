@@ -67,7 +67,7 @@ public class NewUserClassDialog extends JDialog implements ActionListener, ListS
 
         makeNewUserPanel();
         pack();
-        show();
+        setVisible(true);
         
     }
         
@@ -240,7 +240,7 @@ public class NewUserClassDialog extends JDialog implements ActionListener, ListS
         }
         else if (e.getActionCommand().equals("Cancel"))
         {
-            this.hide();
+            this.setVisible(false);
             this.dispose();
         }
         else if (e.getActionCommand().startsWith("Create New"))
@@ -281,7 +281,7 @@ public class NewUserClassDialog extends JDialog implements ActionListener, ListS
             {
                 createTemplateClass();
             }
-            this.hide();
+            this.setVisible(false);
             this.dispose();
 
         }

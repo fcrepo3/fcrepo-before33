@@ -75,7 +75,7 @@ public class EditUserClassDialog extends JDialog implements ActionListener
             paramPanel.add(field);
         } 
         pack();
-        show();        
+        setVisible(true);
     }
     
     private JButton makeButton(String label, boolean enabled)
@@ -93,7 +93,7 @@ public class EditUserClassDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("Cancel"))
         {
-            this.hide();
+            this.setVisible(false);
             this.dispose();
         }
         else if (e.getActionCommand().equals("Change Parameters"))
@@ -112,7 +112,7 @@ public class EditUserClassDialog extends JDialog implements ActionListener
             group.rebuildFromTemplate(template, parmString);
             changed = true;
         }
-        this.hide();
+        this.setVisible(false);
         this.dispose();
 
             

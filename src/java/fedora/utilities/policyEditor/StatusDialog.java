@@ -69,7 +69,7 @@ public class StatusDialog extends JDialog implements ActionListener
     {
         if (e.getActionCommand().equals("Close"))
         { 
-            this.hide();
+            this.setVisible(false);
             this.dispose();
         }                       
     }

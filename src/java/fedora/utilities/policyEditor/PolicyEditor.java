@@ -107,7 +107,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         mainWin.setTitle("Policy Editor Tool");
         mainWin.clearDirty();
         mainWin.pack();
-        mainWin.show();
+        mainWin.setVisible(true);
     }
 
     public static void loadGeneratedPolicyDirFromConfig(String fedoraHome, String configDir)
@@ -502,7 +502,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         Thread th = new Thread(com);
         th.start();
         status.pack();
-        status.show();
+        status.setVisible(true);
     }
     
    /* (non-Javadoc)

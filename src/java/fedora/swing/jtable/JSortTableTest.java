@@ -60,7 +60,7 @@ public class JSortTableTest
     frame.getContentPane().setLayout(new GridLayout());
     frame.getContentPane().add(new JSortTableTest());
     frame.pack();
-    frame.show();
+    frame.setVisible(true);
   }
 }
 
