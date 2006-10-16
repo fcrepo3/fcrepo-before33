@@ -10,6 +10,8 @@
     <property name="javac.optimize"            value="off"/>
     <property name="javac.source"              value="1.4"/>
     <property name="javac.target"              value="1.4"/>
+
+    <property name="unit.test"                 value="fedora.FedoraUnitTestSuite"/>
     
     <property name="build.dir"                 location="build"/>
     <property name="client.build.dir"          location="${build.dir}/client"/>
@@ -608,8 +610,18 @@
         </path>
         <md-localservice service="saxon" libs.path="saxon-libs.path"/>
     </target>
+
+    <target name="check-stubwrappers">
+        <uptodate property="stubwrappers.uptodate"
+                  targetfile="${stubwrappers.build.dir}/uptodate.txt">
+            <srcfiles dir="." includes="${wsdl.build.dir}/**,
+                                        ${java.src.dir}/fedora/client/FedoraStubWrapper.template"/>
+        </uptodate>
+    </target>
     
-    <target name="stubwrappers" depends="init, compile-util, wsdl2java" 
+    <target name="stubwrappers" 
+            depends="init, compile-util, wsdl2java, check-stubwrappers" 
+            unless="stubwrappers.uptodate"
             description="Builds API wrapper stubs">
 
         <mkdir dir="${stubwrappers.build.dir}/fedora/client"/>
@@ -631,6 +643,7 @@
             <arg value="APIAStubWrapper"/>
             <arg path="${stubwrappers.build.dir}/fedora/client/APIAStubWrapper.java"/>
         </java>
+        <touch file="${stubwrappers.build.dir}/uptodate.txt"/>
     </target>
     
     <target name="dist" depends="fedorahome, war, localservices"/>
@@ -726,6 +739,14 @@
 			<test name="fedora.test.api.TestAPIA"/>
 		</junit>
 	</target>
+
+    <target name="unit-test" depends="compile-junit">
+		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
+			<classpath refid="junit.classpath"/>
+			<formatter type="plain" usefile="false"/>
+			<test name="${unit.test}"/>
+		</junit>
+    </target>
 	
 	<target name="demo">
 		<mkdir dir="${demo.war.build.dir}"/>
