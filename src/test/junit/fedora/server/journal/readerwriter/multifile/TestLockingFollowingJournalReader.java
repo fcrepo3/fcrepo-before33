@@ -15,6 +15,8 @@ import fedora.server.journal.ServerInterface;
 
 public class TestLockingFollowingJournalReader extends TestCase implements
         JournalConstants, MultiFileJournalConstants {
+    private static final int WAIT_INTERVAL = 5;
+
     private static final String JOURNAL_FILENAME_PREFIX = "unit";
 
     private static final String DUMMY_HASH_VALUE = "Dummy Hash";
@@ -93,7 +95,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             JournalConsumer consumer = new JournalConsumer(parameters, role,
                     server);
             startConsumerThread(consumer);
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             consumer.shutdown();
 
             assertEquals("Expected to see 3 ingests", 3, delegate
@@ -129,7 +131,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
             // we should see the lock accepted and no processing going on.
             waitForLockAccepted();
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("Journal files should not be processed", 0, delegate
                     .getIngestCalls());
             assertEquals("Journal files should not be processed", 3,
@@ -142,7 +144,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             // processing should run to completion.
             removeLockRequest();
             waitForLockReleased();
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             consumer.shutdown();
 
             assertEquals("Expected to see 3 ingests", 3, delegate
@@ -183,7 +185,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             // we should see the lock accepted and processing stop after the
             // second file.
             waitForLockAccepted();
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("We should stop after the second ingest", 2, delegate
                     .getIngestCalls());
             assertEquals("One Journal file should not be processed", 1,
@@ -196,7 +198,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             // processing should run to completion.
             removeLockRequest();
             waitForLockReleased();
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             consumer.shutdown();
 
             assertEquals("Expected to see 3 ingests", 3, delegate
@@ -233,7 +235,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             startConsumerThread(consumer);
 
             // the file should be processed and we being polling.
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("The first file should have been processed.", 1,
                     delegate.getIngestCalls());
             assertEquals("The first file should have been processed.", 0,
@@ -247,7 +249,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
 
             // create another Journal file, but it won't be processed.
             createJournalFileFromString(getSimpleIngestString());
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             assertEquals("The second file should not have been processed.", 1,
                     delegate.getIngestCalls());
             assertEquals("The second file should not have been processed.", 1,
@@ -259,7 +261,7 @@ public class TestLockingFollowingJournalReader extends TestCase implements
             // remove the lock and the file is processed.
             removeLockRequest();
             waitForLockReleased();
-            waitWhileThreadRuns(2);
+            waitWhileThreadRuns(WAIT_INTERVAL);
             consumer.shutdown();
 
             assertEquals("Expected to see 2 ingests", 2, delegate
@@ -354,8 +356,10 @@ public class TestLockingFollowingJournalReader extends TestCase implements
     }
 
     private int getNumberOfCurrentThreads() {
-        return Thread.currentThread().getThreadGroup()
-                .enumerate(new Thread[50]);
+        int i = Thread.currentThread().getThreadGroup()
+                .enumerate(new Thread[500]);
+        System.out.println("There are " + i + " threads in the group");
+        return i;
     }
 
     private void createJournalFileFromString(String text) throws IOException {
