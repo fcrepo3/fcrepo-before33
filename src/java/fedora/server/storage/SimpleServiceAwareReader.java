@@ -14,6 +14,7 @@ import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.Datastream;
 import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DigitalObject;
 
 /**
  *
@@ -37,6 +38,21 @@ public class SimpleServiceAwareReader
                 exportFormat, storageFormat, 
                 encoding,
                 serializedObject, logTarget);
+    }
+
+    /**
+     * Alternate constructor for when a DigitalObject is already
+     * available for some reason.
+     */
+    public SimpleServiceAwareReader(Context context,
+                                    RepositoryReader repoReader,
+                                    DOTranslator translator,
+                                    String exportFormat,
+                                    String encoding,
+                                    DigitalObject obj,
+                                    Logging logTarget) {
+        super(context, repoReader, translator, exportFormat,
+                encoding, obj, logTarget);
     }
 
     protected DatastreamXMLMetadata getWSDLDatastream(Date versDateTime)

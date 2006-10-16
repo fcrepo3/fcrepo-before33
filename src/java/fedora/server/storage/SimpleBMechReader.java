@@ -17,6 +17,7 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.RepositoryReader;
 import fedora.server.storage.types.BMechDSBindSpec;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MethodDefOperationBind;
@@ -48,6 +49,22 @@ public class SimpleBMechReader
                 exportFormat, storageFormat, 
                 encoding,
                 serializedObject, logTarget);
+        serviceMapper = new ServiceMapper(GetObjectPID());
+    }
+
+    /**
+     * Alternate constructor for when a DigitalObject is already
+     * available for some reason.
+     */
+    public SimpleBMechReader(Context context,
+                             RepositoryReader repoReader,
+                             DOTranslator translator,
+                             String exportFormat,
+                             String encoding,
+                             DigitalObject obj,
+                             Logging logTarget) {
+        super(context, repoReader, translator, exportFormat,
+                encoding, obj, logTarget);
         serviceMapper = new ServiceMapper(GetObjectPID());
     }
 

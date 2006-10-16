@@ -15,6 +15,7 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.RepositoryReader;
+import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.service.ServiceMapper;
 import org.xml.sax.InputSource;
@@ -46,6 +47,23 @@ public class SimpleBDefReader
                 serializedObject, logTarget);
         serviceMapper = new ServiceMapper(GetObjectPID());
     }
+
+    /**
+     * Alternate constructor for when a DigitalObject is already
+     * available for some reason.
+     */
+    public SimpleBDefReader(Context context,
+                            RepositoryReader repoReader,
+                            DOTranslator translator,
+                            String exportFormat,
+                            String encoding,
+                            DigitalObject obj,
+                            Logging logTarget) {
+        super(context, repoReader, translator, exportFormat,
+                encoding, obj, logTarget);
+        serviceMapper = new ServiceMapper(GetObjectPID());
+    }
+
 
     public MethodDef[] getAbstractMethods(Date versDateTime)
             throws DatastreamNotFoundException, ObjectIntegrityException,
