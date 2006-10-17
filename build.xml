@@ -250,6 +250,7 @@
 		<md-compile srcdir="${junit.src.dir}"
 					destdir="${junit.build.dir}"
 					classpathref="junit.classpath"/>
+        <copy todir="${junit.build.dir}" file="${junit.src.dir}/log4j.xml"/>
 	</target>
     
     <target name="compile-localservices" depends="init" 
