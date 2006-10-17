@@ -508,7 +508,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	private void deleteTriples(TripleIterator ti, boolean flush) throws ResourceIndexException {
 		File tempFile = null;
 		try {
-			if (logger.isDebugEnabled()) {
+//			if (logger.isDebugEnabled()) {
 				tempFile = File.createTempFile("trippi-deltriples", "txt");
                 FileOutputStream fout = new FileOutputStream(tempFile);
                 ti.toStream(fout, RDFFormat.TURTLE);
@@ -528,7 +528,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 				*/
 				ti.close();
 				ti = TripleIterator.fromStream(new FileInputStream(tempFile), RDFFormat.TURTLE);
-			}
+//			}
 			m_writer.delete(ti, flush);
 		} catch (IOException e) {
 			throw new ResourceIndexException(e.getMessage(), e);

@@ -13,6 +13,8 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 import junit.swingui.TestRunner;
 
+import org.apache.log4j.Logger;
+
 import org.jrdf.graph.Triple;
 
 import org.trippi.RDFFormat;
@@ -25,6 +27,8 @@ import fedora.server.TestLogging;
 import fedora.server.storage.ConnectionPool;
 
 import fedora.server.storage.types.BasicDigitalObject;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -34,6 +38,14 @@ import fedora.server.storage.types.DigitalObject;
  * @author cwilper@cs.cornell.edu
  */
 public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
+
+    private static final Logger LOG = 
+            Logger.getLogger(
+            ResourceIndexImplTrippiIntegrationTest.class.getName());
+
+    private static final int BASE_TRIPLES_PER_OBJECT = 6;
+    
+    private static final int TRIPLES_PER_DATASTREAM = 7;
 
     private static final String TEST_DIR    = "build/junit";
 
@@ -118,8 +130,12 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
 
     }
 
+    /**
+     * Initialize the RI at the given level.
+     *
+     * This should be called in a test prior to accessing the RI.
+     */
     private void init(int indexLevel) throws Exception {
-        // construct the ri
         _ri = new ResourceIndexImpl(indexLevel, 
                                     getConnector(),
                                     _dbPool,
@@ -148,8 +164,8 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
         config.put("jdbcURL",                 DB_URL);
         config.put("username",                DB_USERNAME);
         config.put("password",                DB_PASSWORD);
-        config.put("poolInitialSize", "2");
-        config.put("poolMaxSize", "5");
+        config.put("poolInitialSize",         "5");
+        config.put("poolMaxSize",             "10");
 
         return TriplestoreConnector.init("org.trippi.impl.mpt.MPTConnector",
                                          config);
@@ -179,7 +195,8 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
             out = null;
 
             // load all from temp file
-            triples = TripleIterator.fromStream(new FileInputStream(dump), RDFFormat.TURTLE);
+            triples = TripleIterator.fromStream(new FileInputStream(dump), 
+                                                RDFFormat.TURTLE);
             _ri.delete(triples, true);
         } finally {
             if (out != null) out.close();
@@ -206,110 +223,108 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
     // Tests
 
     public void testAddEmptyObjectLevelZero() throws Exception {
+        // ri level 0, expect 0 triples
         doAddEmptyObjectCountTest(0, 0);
     }
 
     public void testAddEmptyObjectLevelOne() throws Exception {
-        doAddEmptyObjectCountTest(1, 6);
+        // ri level 1, expect base triples
+        doAddEmptyObjectCountTest(1, BASE_TRIPLES_PER_OBJECT);
     }
 
-    public void testAddEmptyObjectLevelTwo() throws Exception {
-        doAddEmptyObjectCountTest(1, 6);
+    public void testAddEmptyObject() throws Exception {
+        // 1 obj, 0 datastreams, 0 mods, don't flush till end
+        doModifyObjectsTest(1, 0, 0, false);
     }
 
-    public void testAddTenEmptyObjectsLevelTwo() throws Exception {
-        init(2);
-        for (int i = 0; i < 10; i++) {
-            _ri.addDigitalObject(createObject("test:empty" + i, 
-                                              "label" + i));
-        }
-        _ri.flushBuffer();
-        int count = _ri.countTriples(null, null, null, -1);
-        assertEquals("Wrong number of triples in RI after adding 10 empty "
-                + "objects at indexing level 2", 60, count);
-    }
-/*
-    public void testModifyEmptyObject1000Times() throws Exception {
-        doModifyEmptyObject1000TimesTest(false);
-    }
-*/
-
-    public void testModifyEmptyObject1000TimesWhileFlushing() throws Exception {
-        doModifyEmptyObject1000TimesTest(true);
-    }
-/*
-    public void testModify10EmptyObjects100TimesEach() throws Exception {
-        doModify10EmptyObjects1000TimesEach(false);
+    public void testAddSeveralObjectsWithDatastreams() throws Exception {
+        // 10 obj, 10 datastreams, 0 mods, don't flush until end
+        doModifyObjectsTest(10, 10, 0, false);
     }
 
-    public void testModify10EmptyObjects100TimesEachWhileFlushing() throws Exception {
-        doModify10EmptyObjects1000TimesEach(true);
+    public void testModifyOneObjectSeveralTimes() throws Exception {
+        // 1 obj, 10 datastreams, 10 mods, don't flush till end
+        doModifyObjectsTest(1, 10, 10, false); 
     }
-*/
+
+    public void testModifyOneObjectSeveralTimesWhileFlushing() throws Exception {
+        // 20 obj, 10 datastreams, 10 mods, flush while modifying
+        doModifyObjectsTest(20, 10, 10, true); 
+    }
 
     // Utility methods for tests
 
-    public void doModify10EmptyObjects1000TimesEach(boolean whileFlushing) throws Exception {
+    /**
+     * Create some number of test objects with some number of datastreams
+     * each, modify them each some number of times, and verify we end up
+     * with the number of triples expected.
+     */
+    public void doModifyObjectsTest(int numObjects,
+                                    int datastreamsPerObject,
+                                    int modificationsPerObject,
+                                    boolean whileFlushing) throws Exception {
+
+        int expectedCount = (numObjects * BASE_TRIPLES_PER_OBJECT)
+                          + (numObjects * 
+                            (datastreamsPerObject * TRIPLES_PER_DATASTREAM));
+
+        // initialize ri at level 2
         init(2);
-        DigitalObject[] objs = new DigitalObject[10];
-        for (int i = 1; i <= objs.length; i++) {
-            objs[i - 1] = createObject("test:object" + i, "label0");
-            _ri.addDigitalObject(objs[i - 1]);
+
+        // start by instantiating and adding all objects
+        DigitalObject[] objects = new DigitalObject[numObjects];
+        for (int i = 1; i <= numObjects; i++) {
+            objects[i - 1] = createObject("test:object" + i,
+                                          "first label",
+                                          datastreamsPerObject);
+            _ri.addDigitalObject(objects[i - 1]);
         }
-        Flusher flusher = new Flusher(0);
+
+        // start the flusher if necessary
+        Flusher flusher = new Flusher(10);
         if (whileFlushing) {
             flusher.start();
         }
-        for (int i = 0; i < objs.length; i++) {
-            modify1000Times(objs[i]);
+
+        // do the mods for each object
+        for (int i = 0; i < numObjects; i++) {
+            doModifyLoop(objects[i], modificationsPerObject);
         }
+
+        // let the flusher finish
         if (whileFlushing) {
             flusher.finish();
         }
+
+        // flush at end
         _ri.flushBuffer();
+
+        // determine the count
         int count = _ri.countTriples(null, null, null, -1);
-        if (count != 60) {
+
+        // if not what's expected, log the triples and fail the test
+        if (count != expectedCount) {
+            String msg = "Wrong number of triples in RI after modification "
+                    + "test.  Expected " + expectedCount + ", got "
+                    + count + ".";
+            StringBuffer allTriples = new StringBuffer();
             TripleIterator triples = _ri.findTriples(null, null, null, -1);
             int i = 0;
             while (triples.hasNext()) {
                 i++;
                 Triple triple = triples.next();
-                System.out.println("Triple #" + i + "/" + count + " : " + RDFUtil.toString(triple));
+                allTriples.append("\n" + RDFUtil.toString(triple));
             }
+            LOG.warn(msg + "  Triples follow." + allTriples.toString());
+            fail(msg + "  Triples have been logged.");
         }
-        assertEquals("Wrong number of triples in RI after modifying 10 empty "
-                + "objects 1000 times each", 60, count);
     }
 
-    public void doModifyEmptyObject1000TimesTest(boolean whileFlushing) throws Exception {
-        init(2);
-        DigitalObject obj = createObject("test:empty", "label0");
-        _ri.addDigitalObject(obj);
-        Flusher flusher = new Flusher(0);
-        if (whileFlushing) {
-            flusher.start();
-        }
-        modify1000Times(obj);
-        if (whileFlushing) {
-            flusher.finish();
-        }
-        _ri.flushBuffer();
-        int count = _ri.countTriples(null, null, null, -1);
-        if (count != 6) {
-            TripleIterator triples = _ri.findTriples(null, null, null, -1);
-            int i = 0;
-            while (triples.hasNext()) {
-                i++;
-                Triple triple = triples.next();
-                System.out.println("Triple #" + i + "/" + count + " : " + RDFUtil.toString(triple));
-            }
-        }
-        assertEquals("Wrong number of triples in RI after modifying empty "
-                + "object 100 times", 6, count);
-    }
-
-    private void modify1000Times(DigitalObject obj) throws Exception {
-        for (int i = 1; i <= 1000; i++) {
+    /**
+     * Modify the given object in a trivial way a given number of times.
+     */
+    private void doModifyLoop(DigitalObject obj, int num) throws Exception {
+        for (int i = 1; i <= num; i++) {
             obj.setLabel("label" + i);
             _ri.modifyDigitalObject(obj);
         }
@@ -319,20 +334,32 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
                                            int expectedCount) 
             throws Exception {
         init(level);
-        _ri.addDigitalObject(createObject("test:empty", "label"));
+        _ri.addDigitalObject(createObject("test:empty", "label", 0));
         _ri.flushBuffer();
         int count = _ri.countTriples(null, null, null, -1);
         assertEquals("Wrong number of triples in RI after adding empty "
                 + "object at indexing level " + level, expectedCount, count);
     }
 
+    /**
+     * Create a simple test object with the given number of datastreams.
+     */
     private static DigitalObject createObject(String pid,
-                                              String label) {
+                                              String label,
+                                              int numDatastreams) {
         Date now = new Date();
-        return createObject(pid, DigitalObject.FEDORA_OBJECT, "A", 
+        DigitalObject obj = createObject(pid, DigitalObject.FEDORA_OBJECT, "A", 
                 "fedoraAdmin", label, null, now, now);
+        for (int i = 1; i <= numDatastreams; i++) {
+            String id = "DS" + i;
+            obj.datastreams(id).add(createEDatastream(id));
+        }
+        return obj;
     }
 
+    /**
+     * Create a test object with the given properties.
+     */
     private static DigitalObject createObject(String pid,
                                               int fedoraObjectType,
                                               String state,
@@ -353,20 +380,51 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
         return obj;
     }
 
+    /**
+     * Create an externally-referenced datastream version for a datastream
+     * with the given id.
+     */
+    private static Datastream createEDatastream(String id) {
+        DatastreamReferencedContent ds = new DatastreamReferencedContent();
+        ds.DatastreamID = id;
+        ds.DSMIME = "text/plain";
+        ds.DSControlGrp = "E";
+        ds.DSState = "A";
+        ds.DSVersionable = true;
+        ds.DSVersionID = id + ".0";
+        ds.DSLabel = "ds label";
+        ds.DSCreateDT = new Date();
+        ds.DSSize = 100;
+        ds.DSLocation = "http://www.nowhere.com/hi.txt";
+        ds.DSLocationType = "URL";
+        return ds;
+    }
+
+    /**
+     * A Thread that continuously flushes the buffer.
+     */
     public class Flusher extends Thread {
 
         private int _sleepMS;
         private boolean _shouldFinish = false;
         private Exception _error;
 
+        /**
+         * Construct a flusher that sleeps the given number of milliseconds
+         * between flush attempts.
+         *
+         * @param sleepMS milliseconds to sleep.  Will simply yield between
+         *                flush attempts if less than 1.
+         */
         public Flusher(int sleepMS) {
             _sleepMS = sleepMS;
         }
 
         /**
          * Set signal for flusher to finish and wait for it.
-         * If the flusher encountered an error any time while it was running,
-         * it will be thrown here.
+         *
+         * @throws Exception if the flusher encountered an error any time 
+         *                   while it was running.
          */
         public void finish() throws Exception {
             _shouldFinish = true;
@@ -378,6 +436,10 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
             }
         }
 
+        /**
+         * Flush the buffer until the finish signal arrives from another
+         * thread.
+         */
         public void run() {
             try {
                 while (!_shouldFinish) {
