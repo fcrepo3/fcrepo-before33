@@ -29,7 +29,6 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.ProtocolPort;
 import fedora.server.utilities.ServerUtility;
 import fedora.utilities.FileComparator;
-import gnu.trove.TIntHashSet;
 
 /**
  * Entry-point for rebuilding various aspects of the repository.
@@ -124,12 +123,9 @@ public class Rebuild implements Constants {
 					String objStoreBaseStr = param.getValue(param
 							.getIsFilePath());
 					File dir = new File(objStoreBaseStr);
-					TIntHashSet saw = new TIntHashSet();
-					rebuildFromDirectoryX(rebuilder, dir, "FedoraBDefObject",
-							saw);
-					rebuildFromDirectoryX(rebuilder, dir, "FedoraBMechObject",
-							saw);
-					rebuildFromDirectoryX(rebuilder, dir, "FedoraObject", saw);
+					rebuildFromDirectory(rebuilder, dir, "FedoraBDefObject");
+					rebuildFromDirectory(rebuilder, dir, "FedoraBMechObject");
+					rebuildFromDirectory(rebuilder, dir, "FedoraObject");
 				} finally {
 					rebuilder.finish();
 				}
@@ -158,8 +154,12 @@ public class Rebuild implements Constants {
 
 	}
 
-	private void rebuildFromDirectoryX(Rebuilder rebuilder, File dir,
-			String searchString, TIntHashSet saw) throws Exception {
+	/**
+	 * Recurse directories in reverse order (latest time first) looking for
+	 * files that contain searchString, and call rebuilder.addObject on them.
+	 */
+	private void rebuildFromDirectory(Rebuilder rebuilder, File dir,
+			String searchString) throws Exception {
 		String[] filenames = fs.list(dir);
 		if (filenames == null) {
 			return;
@@ -169,7 +169,7 @@ public class Rebuild implements Constants {
 			File f = new File(dir.getAbsolutePath() + File.separator
 					+ filenames[i]);
 			if (fs.isDirectory(f)) {
-				rebuildFromDirectoryX(rebuilder, f, searchString, saw);
+				rebuildFromDirectory(rebuilder, f, searchString);
 			} else {
 				BufferedReader reader = null;
 				InputStream in;
@@ -197,82 +197,10 @@ public class Rebuild implements Constants {
 											obj,
 											"UTF-8",
 											DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-							int hashCode = obj.getPid().hashCode();
-							if (saw.contains(hashCode)) {
-								System.out.println("Skipping (already saw "
-										+ obj.getPid() + ")");
-							} else {
-								rebuilder.addObject(obj);
-								saw.add(hashCode);
-							}
+						    rebuilder.addObject(obj);
 						} catch (Exception e) {
                             System.out.println("WARNING: Skipped " + f.getAbsoluteFile() + " due to following exception:");
                             e.printStackTrace();
-						} finally {
-							try {
-								in.close();
-							} catch (Exception e) {
-							}
-						}
-					}
-				} finally {
-					if (reader != null)
-						try {
-							reader.close();
-						} catch (Exception e) {
-						}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Recurse directories in reverse order (latest time first) looking for
-	 * files that contain searchString, and call rebuilder.addObject on them as
-	 * long as their PIDs have not already been seen.
-	 */
-	private void rebuildFromDirectory(Rebuilder rebuilder, File dir,
-			String searchString, TIntHashSet saw) throws Exception {
-		File[] files = dir.listFiles();
-		Arrays.sort(files, _REVERSE_FILE_COMPARATOR);
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isDirectory()) {
-				rebuildFromDirectory(rebuilder, files[i], searchString, saw);
-			} else {
-				BufferedReader reader = null;
-				InputStream in;
-				try {
-					in = null;
-					reader = new BufferedReader(new InputStreamReader(
-							new FileInputStream(files[i]), "UTF-8"));
-					String line = reader.readLine();
-					while (line != null) {
-						if (line.indexOf(searchString) != -1) {
-							in = new FileInputStream(files[i]);
-							line = null;
-						} else {
-							line = reader.readLine();
-						}
-					}
-					if (in != null) {
-						try {
-							System.out.println(files[i].getAbsoluteFile());
-							DigitalObject obj = new BasicDigitalObject();
-							DODeserializer deser = new FOXMLDODeserializer();
-							deser
-									.deserialize(
-											in,
-											obj,
-											"UTF-8",
-											DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
-							int hashCode = obj.getPid().hashCode();
-							if (saw.contains(hashCode)) {
-								System.out.println("Skipping (already saw "
-										+ obj.getPid() + ")");
-							} else {
-								rebuilder.addObject(obj);
-								saw.add(hashCode);
-							}
 						} finally {
 							try {
 								in.close();
