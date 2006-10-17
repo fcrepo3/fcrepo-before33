@@ -247,9 +247,9 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
         doModifyObjectsTest(1, 10, 10, false); 
     }
 
-    public void testModifyOneObjectSeveralTimesWhileFlushing() throws Exception {
-        // 20 obj, 10 datastreams, 10 mods, flush while modifying
-        doModifyObjectsTest(20, 10, 10, true); 
+    public void testModifySeveralObjectsSeveralTimesWhileFlushing() throws Exception {
+        // 5 obj, 10 datastreams, 10 mods, flush while modifying
+        doModifyObjectsTest(5, 10, 10, true); 
     }
 
     // Utility methods for tests
@@ -281,7 +281,7 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
         }
 
         // start the flusher if necessary
-        Flusher flusher = new Flusher(10);
+        Flusher flusher = new Flusher(0);
         if (whileFlushing) {
             flusher.start();
         }
