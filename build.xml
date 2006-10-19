@@ -8,8 +8,8 @@
     <property name="javac.debug"               value="on"/>
     <property name="javac.deprecation"         value="on"/>
     <property name="javac.optimize"            value="off"/>
-    <property name="javac.source"              value="1.4"/>
-    <property name="javac.target"              value="1.4"/>
+    <property name="javac.source"              value="1.5"/>
+    <property name="javac.target"              value="1.5"/>
 
     <property name="unit.test"                 value="fedora.FedoraUnitTestSuite"/>
     
