@@ -3,7 +3,9 @@ package fedora.server.utilities;
 import java.io.InputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
@@ -11,6 +13,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fedora.common.Constants;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -115,6 +118,34 @@ public class DCFields
         } else if (localName.equals("rights")) {
             rights().add(m_currentContent.toString());
         }
+    }
+
+    /**
+     * Returns a Map with RDFName keys, each value containing List
+     * of String values for that field.
+     *
+     * TODO: Use generics for better type safety
+     */
+    public Map getMap() {
+        Map map = new HashMap();
+
+        map.put(Constants.DC.TITLE, m_titles);
+        map.put(Constants.DC.CREATOR, m_creators);
+        map.put(Constants.DC.SUBJECT, m_subjects);
+        map.put(Constants.DC.DESCRIPTION, m_descriptions);
+        map.put(Constants.DC.PUBLISHER, m_publishers);
+        map.put(Constants.DC.CONTRIBUTOR, m_contributors);
+        map.put(Constants.DC.DATE, m_dates);
+        map.put(Constants.DC.TYPE, m_types);
+        map.put(Constants.DC.FORMAT, m_formats);
+        map.put(Constants.DC.IDENTIFIER, m_identifiers);
+        map.put(Constants.DC.SOURCE, m_sources);
+        map.put(Constants.DC.LANGUAGE, m_languages);
+        map.put(Constants.DC.RELATION, m_relations);
+        map.put(Constants.DC.COVERAGE, m_coverages);
+        map.put(Constants.DC.RIGHTS, m_rights);
+
+        return map;
     }
 
     public List titles() {
