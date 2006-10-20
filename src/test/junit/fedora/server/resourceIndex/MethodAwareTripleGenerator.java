@@ -18,7 +18,7 @@ import fedora.server.storage.types.Disseminator;
 
 /**
  * Generates RDF triples for Fedora objects with the help of a 
- * <code>BMechInfoProvider</code>.
+ * <code>MethodInfoProvider</code>.
  *
  * This implementation produces a superset of the triples generated
  * by <code>BaseTripleGenerator</code>.  Specifically, it includes
@@ -39,19 +39,19 @@ import fedora.server.storage.types.Disseminator;
  *
  * @author cwilper@cs.cornell.edu
  */
-public class BMechAwareTripleGenerator extends BaseTripleGenerator {
+public class MethodAwareTripleGenerator extends BaseTripleGenerator {
 
     /**
-     * The provider this instance will use for behavior mechanism info.
+     * The provider this instance will use for method information.
      */
-    private BMechInfoProvider _provider;
+    private MethodInfoProvider _provider;
 
     /**
      * Construct an instance that will use the given provider.
      *
      * @param provider the provider to use for behavior mechanism info.
      */
-    public BMechAwareTripleGenerator(BMechInfoProvider provider) {
+    public MethodAwareTripleGenerator(MethodInfoProvider provider) {
         _provider = provider;
     }
 
@@ -105,9 +105,8 @@ public class BMechAwareTripleGenerator extends BaseTripleGenerator {
 
                 String bMech = disseminators[i].bMechID;
                 DSBinding[] bindings = disseminators[i].dsBindMap.dsBindings;
-                Set<BMechMethodInfo> infoSet = _provider.getMethodInfo(bMech);
 
-                for (BMechMethodInfo method : infoSet) {
+                for (MethodInfo method : _provider.getMethodInfo(bMech)) {
                     addMethodTriples(reader, 
                                      disseminators[i], 
                                      method,
@@ -130,7 +129,7 @@ public class BMechAwareTripleGenerator extends BaseTripleGenerator {
      */
     private void addMethodTriples(DOReader reader,
                                   Disseminator disseminator,
-                                  BMechMethodInfo method,
+                                  MethodInfo method,
                                   Set<Datastream> inputDatastreams,
                                   Set<Triple> set) 
             throws Exception {
@@ -197,13 +196,30 @@ public class BMechAwareTripleGenerator extends BaseTripleGenerator {
         add(disseminationURI, VIEW.IS_VOLATILE, isVolatile, set);
     }
 
-    private static Set getInputDatastreams(BMechMethodInfo method,
+    /**
+     * Return the subset of the given datastreams that act as input
+     * to the given method.
+     */
+    private static Set getInputDatastreams(MethodInfo method,
                                            DSBinding[] bindings,
                                            Datastream[] allDatastreams) {
 
-        Set<Datastream> inputs = new HashSet<Datastream>();
+        // get the dsid for each binding with a key we're interested in.
+        Set<String> keys = method.getBindingKeys();
+        Set<String> dsIds = new HashSet<String>();
+        for (int i = 0; i < bindings.length; i++) {
+            if (keys.contains(bindings[i].bindKeyName)) {
+                dsIds.add(bindings[i].datastreamID);
+            }
+        }
 
-        // TODO: implement matching logic here
+        // get the datastreams that match the dsids we just found
+        Set<Datastream> inputs = new HashSet<Datastream>();
+        for (int i = 0; i < allDatastreams.length; i++) {
+            if (dsIds.contains(allDatastreams[i].DatastreamID)) {
+                inputs.add(allDatastreams[i]);
+            }
+        }
 
         return inputs;
     }

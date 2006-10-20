@@ -3,11 +3,11 @@ package fedora.server.resourceIndex;
 import java.util.Set;
 
 /**
- * Key information about a method of a behavior mechanism object.
+ * Key information about an implemented service method.
  *
  * @author cwilper@cs.cornell.edu
  */
-public class BMechMethodInfo {
+public class MethodInfo {
 
     private String _name;
 
@@ -17,7 +17,7 @@ public class BMechMethodInfo {
 
     private Set<String> _permutations;
 
-    public BMechMethodInfo(String name,
+    public MethodInfo(String name,
                            Set<String> bindingKeys,
                            Set<String> returnTypes,
                            Set<String> permutations) {
