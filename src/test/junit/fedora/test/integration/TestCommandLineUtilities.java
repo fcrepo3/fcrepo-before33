@@ -56,7 +56,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         assertEquals(err, true, err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1);
         System.out.println("Ingesting batch objects");
         batchIngest(new File(FEDORA_HOME + "/client/demo/batch-demo/objects"), 
-                    new File(FEDORA_HOME + "/client/logs/ingest.log"));
+                    new File(FEDORA_HOME + "/server/logs/junit_ingest.log"));
         out = sbOut.toString();
         err = sbErr.toString();
         assertEquals(err.indexOf("10 objects successfully ingested into Fedora")!= -1, true ); 
@@ -73,7 +73,7 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
         batchBuildIngest(new File(FEDORA_HOME + "/client/demo/batch-demo/foxml-template.xml"),
                    new File(FEDORA_HOME + "/client/demo/batch-demo/object-specifics"),
                    new File(FEDORA_HOME + "/client/demo/batch-demo/objects"),
-                   new File(FEDORA_HOME + "/client/logs/buildingest.log"));
+                   new File(FEDORA_HOME + "/server/logs/junit_buildingest.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
         assertEquals("Response did not contain expected string re: FOXML XML documents: <reponse>" + err + "</response>", err.indexOf("10 Fedora FOXML XML documents successfully created")!= -1, true );
@@ -89,11 +89,14 @@ public class TestCommandLineUtilities extends FedoraServerTestCase
     {
         System.out.println("Running batch modify of objects");
         batchModify(new File(FEDORA_HOME + "/client/demo/batch-demo/modify-batch-directives.xml"),
-                    new File(FEDORA_HOME + "/client/logs/modify.log"));
+                    new File(FEDORA_HOME + "/server/logs/junit_modify.log"));
         String out = sbOut.toString();
         String err = sbErr.toString();
-//        System.out.println(" out = " + out);
-//        System.out.println(" err = " + err);
+        if (out.indexOf("24 modify directives successfully processed.")== -1)
+        {
+            System.out.println(" out = " + out);
+            System.out.println(" err = " + err);
+        }
         assertEquals(false, out.indexOf("24 modify directives successfully processed.")== -1);
         assertEquals(false, out.indexOf("0 modify directives failed.")== -1);
         System.out.println("Purging batch modify object");
