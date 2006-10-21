@@ -39,6 +39,21 @@ public class MethodInfo {
         return _returnTypes;
     }
 
+    /**
+     * Return all permutations of the method.
+     *
+     * A "permutation" is a known runtime method invocation, and is formatted
+     * as in the following examples:
+     * <ul>
+     *   <li> methodName</li>
+     *   <li> methodName?parm1=val1&amp;parm2=val1</li>
+     *   <li> methodName?parm1=val1&amp;parm2=val2</li>
+     *   <li> methodName?parm1=val2&amp;parm2=val1</li>
+     *   <li> methodName?parm1=val2&amp;parm2=val2</li>
+     * </ul>
+     *
+     * @return the set of invokable permutations for the method.
+     */
     public Set<String> getPermutations() {
         return _permutations;
     }
