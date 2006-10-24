@@ -13,36 +13,73 @@ import java.util.Properties;
 public class FileUtils {
 	public static final int BUFFER = 2048;
 	
-	public static void copy(InputStream source, OutputStream destination) throws IOException {
+	/**
+	 * Copy an InputStream to an OutputStream.
+	 * 
+	 * @param source
+	 * @param destination
+	 * @return <code>true</code> if the operation was successful;
+	 * 		   <code>false</code> otherwise (which includes a null input).
+	 */
+	public static boolean copy(InputStream source, OutputStream destination) {
     	int count;
     	byte data[] = new byte[BUFFER];
     	BufferedOutputStream dest = new BufferedOutputStream(destination, BUFFER);
-    	while ((count = source.read(data, 0, BUFFER)) != -1) {
-              dest.write(data, 0, count);
+    	
+    	try {
+	    	while ((count = source.read(data, 0, BUFFER)) != -1) {
+	    		dest.write(data, 0, count);
+	    	}
+			dest.flush();
+			dest.close();
+			return true;
+    	} catch (IOException e) {
+    		return false;
     	}
-       dest.flush();
-       dest.close();
     }
 	
-	public static void copy(File source, File destination) throws IOException {
+	/**
+	 * Copy a File.
+	 * 
+	 * @param source
+	 * @param destination
+	 * @return <code>true</code> if the operation was successful;
+	 * 		   <code>false</code> otherwise (which includes a null input).
+	 */
+	public static boolean copy(File source, File destination) {
+		boolean result = true;
 		if (!destination.exists() && destination.isDirectory()) {
-			destination.mkdirs();
+			result = result && destination.mkdirs();
 		}
 		if (source.isDirectory()) {
 			File[] children = source.listFiles();
 			for (int i = 0; i < children.length; i++) {
-				copy(new File(source, children[i].getName()), 
+				result = result && copy(new File(source, children[i].getName()), 
 						new File(destination, children[i].getName()));
 			}
+			return result;
 		} else {
-			InputStream in = new FileInputStream(source);
-	    	OutputStream out = new FileOutputStream(destination);
-	    	copy(in, out);
-	    	out.close();
-	    	in.close();
+			try {
+				InputStream in = new FileInputStream(source);
+		    	OutputStream out = new FileOutputStream(destination);
+		    	result = result && copy(in, out);
+		    	out.close();
+		    	in.close();
+		    	return result;
+			} catch (IOException e) {
+	    		return false;
+	    	}
 		}
     }
 	
+	/**
+	 * Delete a File.
+	 * 
+	 * @param file the File to delete.
+	 * 
+	 * @return <code>true</code> if the operation was successful;
+	 * 		   <code>false</code> otherwise (which includes a null input).
+	 */
 	public static boolean delete(File file) {
         boolean result = true;
 
@@ -64,13 +101,37 @@ public class FileUtils {
     }
 	
 	/**
-	 * 
+	 * Delete the specified file or directory.
 	 * @param file File or directory to delete
-	 * @return 
+	 * @return <code>true</code> if the operation was successful;
+	 * 		   <code>false</code> otherwise (which includes a null input).
 	 */
 	public static boolean delete(String file) {
         return delete(new File(file));
     }
+	
+	/**
+	 * Move a File.
+	 * Initally attempts to move the File using java.io.File.renameTo(). 
+	 * However, should this operation fail (e.g. when source and destination 
+	 * are across different filesystems), will attempt to copy and then delete 
+	 * the source. 
+	 * 
+	 * @param source
+	 * @param destination
+	 * @return <code>true</code> if the operation was successful;
+	 * 		   <code>false</code> otherwise (which includes a null input).
+	 */
+	public static boolean move(File source, File destination) {
+		if (source == null || destination == null) {
+			return false;
+		}
+		if (source.renameTo(destination)) {
+			return true;
+		} else {
+			return copy(source, destination) && delete(source);
+		}
+	}
 	
 	/**
      * Load properties from the given file.
