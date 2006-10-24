@@ -10,8 +10,6 @@
     <property name="javac.optimize"            value="off"/>
     <property name="javac.source"              value="1.5"/>
     <property name="javac.target"              value="1.5"/>
-
-    <property name="unit.test"                 value="fedora.FedoraUnitTestSuite"/>
     
     <property name="build.dir"                 location="build"/>
     <property name="client.build.dir"          location="${build.dir}/client"/>
@@ -716,19 +714,15 @@
 	</target>
 	
 	<target name="junit" depends="compile-junit">
+		<property name="fedora.home" value="${env.FEDORA_HOME}"/>
+		<property name="javax.net.ssl.trustStore" value="inc/keystore"/>
+		<property name="test" value="fedora.test.AllAPITests"/>
+		
 		<copy todir="${junit.build.dir}" includeEmptyDirs="false">
 	        <fileset dir="${junit.src.dir}">
                 <exclude name="**/*.java"/>
 	        </fileset>
         </copy>
-		
-		<condition property="fedora.home" value="${env.FEDORA_HOME}">
-			<not><isset property="fedora.home"/></not>
-		</condition>
-		
-		<condition property="javax.net.ssl.trustStore" value="inc/keystore">
-			<not><isset property="javax.net.ssl.trustStore"/></not>
-		</condition>
 		
 		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
 			<syspropertyset id="junit.sysproperties">
@@ -737,17 +731,9 @@
 			</syspropertyset>
 			<classpath refid="junit.classpath"/>
 			<formatter type="plain" usefile="false"/>
-			<test name="fedora.test.api.TestAPIA"/>
+			<test name="${test}"/>
 		</junit>
 	</target>
-
-    <target name="unit-test" depends="compile-junit">
-		<junit printsummary="yes" fork="yes" haltonfailure="yes" showoutput="yes">
-			<classpath refid="junit.classpath"/>
-			<formatter type="plain" usefile="false"/>
-			<test name="${unit.test}"/>
-		</junit>
-    </target>
 	
 	<target name="demo">
 		<mkdir dir="${demo.war.build.dir}"/>
