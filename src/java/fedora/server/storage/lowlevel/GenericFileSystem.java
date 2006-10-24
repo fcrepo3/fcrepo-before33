@@ -10,7 +10,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import java.util.Map;
 
 import fedora.server.errors.LowlevelStorageException;
@@ -24,7 +23,6 @@ import fedora.server.errors.LowlevelStorageException;
  * @version $Id$
  */
 public class GenericFileSystem extends FileSystem {
-	private static int delay = 0;
     
 	public GenericFileSystem(Map configuration) {
 		super(configuration);
