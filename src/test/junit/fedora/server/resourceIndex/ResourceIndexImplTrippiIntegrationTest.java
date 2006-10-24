@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
-import junit.swingui.TestRunner;
 
 import org.apache.log4j.Logger;
 

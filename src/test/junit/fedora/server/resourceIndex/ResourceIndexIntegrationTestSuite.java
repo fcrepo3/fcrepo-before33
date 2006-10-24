@@ -3,7 +3,6 @@ package fedora.server.resourceIndex;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import junit.swingui.TestRunner;
 
 public class ResourceIndexIntegrationTestSuite extends TestCase {
 

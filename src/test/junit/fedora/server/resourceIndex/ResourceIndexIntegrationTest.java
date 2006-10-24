@@ -15,7 +15,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import junit.swingui.TestRunner;
 
 import org.apache.log4j.Logger;
 
