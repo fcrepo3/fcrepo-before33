@@ -218,8 +218,13 @@ public class Installer {
 			String container = _opts.getValue(InstallOptions.SERVLET_ENGINE);
 			if (container.equals(InstallOptions.BUNDLED_TOMCAT) || container.equals(InstallOptions.EXISTING_TOMCAT)) {
 				File tomcatHome = new File(_opts.getValue(InstallOptions.TOMCAT_HOME));
-				FileUtils.copy(new FileInputStream(new File(mckoiHome, "mckoidb.jar")),
-						new FileOutputStream(new File(tomcatHome, "common/lib/mckoidb.jar")));
+				File mckoidbSrc = new File(mckoiHome, "mckoidb.jar");
+				File mckoidbDest = new File(tomcatHome, "common/lib/mckoidb.jar");
+				if (!FileUtils.copy(new FileInputStream(mckoidbSrc),
+						new FileOutputStream(mckoidbDest))) {
+					throw new InstallationFailedException("Copy to " + 
+							mckoidbDest.getAbsolutePath() + " failed.");
+				}
 			}
     	} catch(IOException e) {
     		throw new InstallationFailedException(e.getMessage(), e);
@@ -229,7 +234,10 @@ public class Installer {
     private void deployLocalService(Container container, String filename) throws InstallationFailedException {
     	try {
 			File war = new File(installDir, filename);
-			FileUtils.copy(_dist.get(filename), new FileOutputStream(war));
+			if (!FileUtils.copy(_dist.get(filename), new FileOutputStream(war))) {
+				throw new InstallationFailedException("Copy to " + 
+	        			war.getAbsolutePath() + " failed.");
+			}
 			container.deploy(war);
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);

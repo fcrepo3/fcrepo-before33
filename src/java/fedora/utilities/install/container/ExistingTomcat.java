@@ -65,7 +65,10 @@ public class ExistingTomcat extends Tomcat {
 	        	System.out.println("Wrote example to: \n\t" +
 	        			keystore.getAbsolutePath());
 	        }
-	        FileUtils.copy(is, new FileOutputStream(keystore));
+	        if (!FileUtils.copy(is, new FileOutputStream(keystore))) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			keystore.getAbsolutePath() + " failed.");
+	        }
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
@@ -81,7 +84,10 @@ public class ExistingTomcat extends Tomcat {
 	        			jaasConfig.getAbsolutePath() + ".\n" + 
 	        			"Wrote example to: \n\t" + example.getAbsolutePath());
 	        }
-	        FileUtils.copy(is, new FileOutputStream(jaasConfig));
+	        if (!FileUtils.copy(is, new FileOutputStream(jaasConfig))) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			jaasConfig.getAbsolutePath() + " failed.");
+	        }
 	        System.out.println("Before starting Tomcat, please ensure that JAVA_OPTS points to the location of " +
 	        		"jaas.config, e.g.: \n\t" +
 	        		"export JAVA_OPTS=\"-Djava.security.auth.login.config=" + 

@@ -29,10 +29,9 @@ public abstract class Tomcat extends Container {
 	public void deploy(File war) throws InstallationFailedException {
 		System.out.println("Deploying " + war.getName() + "...");
         File dest = new File(webapps, war.getName());
-        try {
-			FileUtils.copy(war, dest);
-		} catch (IOException e) {
-			throw new InstallationFailedException(e.getMessage(), e);
+        if (!FileUtils.copy(war, dest)) {
+			throw new InstallationFailedException("Deploy failed: unable to copy " + 
+					war.getAbsolutePath() + " to " + dest.getAbsolutePath());
 		}
 	}
 
@@ -56,16 +55,21 @@ public abstract class Tomcat extends Container {
 	protected void installJDBCDriver() throws InstallationFailedException {
 		String database = getOptions().getValue(InstallOptions.DATABASE);
         InputStream is;
-        File driver;
+        File driver = null;
+        boolean success = false;
         try {
 	        if (database.equals(InstallOptions.BUNDLED_MCKOI)) {
 	        	is = getDist().get(Distribution.JDBC_MCKOI);
 	        	driver = new File(getCommonLib(), Distribution.JDBC_MCKOI);
-	        	FileUtils.copy(is, new FileOutputStream(driver));
+	        	success = FileUtils.copy(is, new FileOutputStream(driver));
 	        } else if (database.equals(InstallOptions.BUNDLED_MYSQL)) {
 	        	is = getDist().get(Distribution.JDBC_MYSQL);
 	        	driver = new File(getCommonLib(), Distribution.JDBC_MYSQL);
-	        	FileUtils.copy(is, new FileOutputStream(driver));
+	        	success = FileUtils.copy(is, new FileOutputStream(driver));
+	        }
+	        if (!success) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			driver.getAbsolutePath() + " failed.");
 	        }
         } catch (IOException e) {
         	throw new InstallationFailedException(e.getMessage(), e);

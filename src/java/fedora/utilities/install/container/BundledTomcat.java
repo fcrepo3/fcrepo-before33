@@ -27,7 +27,10 @@ public class BundledTomcat extends Tomcat {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
 		File f = new File(System.getProperty("java.io.tmpdir"), Distribution.TOMCAT_BASENAME);
-		f.renameTo(getTomcatHome());
+		if (!FileUtils.move(f, getTomcatHome())) {
+			throw new InstallationFailedException("Move to " + 
+					getTomcatHome().getAbsolutePath() + " failed.");
+		}
 	}
 	
 	protected void installServerXML() throws InstallationFailedException {
@@ -57,7 +60,10 @@ public class BundledTomcat extends Tomcat {
 	        } else {
 	        	is = new FileInputStream(keystoreFile);
 	        }
-	        FileUtils.copy(is, new FileOutputStream(keystore));
+	        if (!FileUtils.copy(is, new FileOutputStream(keystore))) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			keystore.getAbsolutePath() + " failed.");
+	        }
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
@@ -67,7 +73,10 @@ public class BundledTomcat extends Tomcat {
 		try {
 			InputStream is = getDist().get(Distribution.JAAS_CONFIG);
 	        File jaasConfig = new File(getConf(), Distribution.JAAS_CONFIG);
-	        FileUtils.copy(is, new FileOutputStream(jaasConfig));
+	        if (!FileUtils.copy(is, new FileOutputStream(jaasConfig))) {
+	        	throw new InstallationFailedException("Copy to " + 
+	        			jaasConfig.getAbsolutePath() + " failed.");
+	        }
 	        
 	        System.out.println("Before starting Tomcat, please ensure that JAVA_OPTS points to the location of " +
 	        		"jaas.config, e.g.: \n\t" +
