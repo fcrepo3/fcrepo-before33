@@ -2,9 +2,6 @@ package fedora.server.resourceIndex;
 
 import java.io.File;
 
-import org.jrdf.graph.Triple;
-import org.trippi.TripleMaker;
-
 import fedora.server.storage.types.DigitalObject;
 
 /**

@@ -1,20 +1,18 @@
 package fedora.server.storage;
 
-import java.net.HttpURLConnection;
 import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.httpclient.Header;
 
-import fedora.common.http.WebClient;
 import fedora.common.http.HttpInputStream;
+import fedora.common.http.WebClient;
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.HttpServiceNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.StreamIOException;
 import fedora.server.security.BackendPolicies;
 import fedora.server.security.BackendSecurity;
 import fedora.server.security.BackendSecuritySpec;

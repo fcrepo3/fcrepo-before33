@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
-import fedora.server.errors.ModuleShutdownException;
 import fedora.server.journal.JournalException;
 import fedora.server.journal.JournalWriter;
 import fedora.server.journal.ServerInterface;

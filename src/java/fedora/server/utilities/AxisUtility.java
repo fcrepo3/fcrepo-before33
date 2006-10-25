@@ -1,10 +1,8 @@
 package fedora.server.utilities;
 
-import java.io.File;
-import java.util.Properties;
 import javax.xml.namespace.QName;
+
 import org.apache.axis.AxisFault;
-import org.apache.axis.client.AdminClient;
 
 import fedora.server.errors.ServerException;
 import fedora.server.errors.authorization.AuthzDeniedException;

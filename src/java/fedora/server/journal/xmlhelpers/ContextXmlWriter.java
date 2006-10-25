@@ -4,8 +4,6 @@ import java.util.Iterator;
 
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.events.Attribute;
-import javax.xml.stream.events.StartElement;
 
 import fedora.server.Context;
 import fedora.server.MultiValueMap;

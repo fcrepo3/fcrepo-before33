@@ -3,15 +3,15 @@ package fedora.test.integration;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import org.custommonkey.xmlunit.SimpleXpathEngine;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.custommonkey.xmlunit.SimpleXpathEngine;
+
 import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.test.DemoObjectTestSetup;
 import fedora.test.FedoraServerTestCase;
-import fedora.test.api.TestXACMLPolicies;
 import fedora.utilities.ExecUtility;
 
 /**

@@ -1,7 +1,6 @@
 package fedora.server.resourceIndex;
 
 import java.net.URI;
-
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -13,7 +12,6 @@ import org.jrdf.graph.PredicateNode;
 import org.jrdf.graph.SubjectNode;
 import org.jrdf.graph.Triple;
 import org.jrdf.graph.URIReference;
-
 import org.trippi.RDFFormat;
 import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
@@ -21,9 +19,7 @@ import org.trippi.TripleIterator;
 import fedora.common.Constants;
 import fedora.common.PID;
 import fedora.common.rdf.RDFName;
-
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.errors.ServerException;
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.DOReader;

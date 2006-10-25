@@ -34,7 +34,6 @@ import javax.swing.event.DocumentListener;
 
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.RepositoryInfo;
 import fedora.server.types.gen.UserInfo;
 
 /**

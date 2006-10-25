@@ -445,7 +445,7 @@ public class ResourceIndexImplTrippiIntegrationTest extends TestCase {
                     if (_sleepMS > 0) {
                         try { Thread.sleep(_sleepMS); } catch (InterruptedException e) { }
                     } else {
-                        this.yield();
+                        Thread.yield();
                     }
                     _ri.flushBuffer();
                 }

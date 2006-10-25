@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.xml.sax.SAXException;
-
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;

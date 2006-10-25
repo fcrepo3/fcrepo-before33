@@ -1,18 +1,21 @@
 package fedora.server.resourceIndex;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.trippi.TriplestoreConnector;
-import org.trippi.TrippiException;
 
 import fedora.server.DummyLogging;
-import fedora.server.utilities.DDLConverter;
-import fedora.server.utilities.SQLUtility;
-import fedora.server.utilities.rebuild.*;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
@@ -21,6 +24,9 @@ import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.utilities.DDLConverter;
+import fedora.server.utilities.SQLUtility;
+import fedora.server.utilities.rebuild.Rebuilder;
 
 /**
  * A Rebuilder for the resource index.

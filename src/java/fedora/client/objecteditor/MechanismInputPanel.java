@@ -1,15 +1,25 @@
 package fedora.client.objecteditor;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import fedora.client.Administrator;
 import fedora.client.actions.ViewObject;
 import fedora.client.objecteditor.types.DatastreamInputSpec;
-import fedora.server.types.gen.Datastream;
 import fedora.server.types.gen.DatastreamBinding;
 
 /**

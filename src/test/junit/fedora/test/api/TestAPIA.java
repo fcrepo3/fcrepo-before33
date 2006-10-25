@@ -3,11 +3,14 @@ package fedora.test.api;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.apache.axis.types.NonNegativeInteger;
 import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
 import fedora.server.types.gen.DatastreamDef;
+import fedora.server.types.gen.FieldSearchQuery;
+import fedora.server.types.gen.FieldSearchResult;
 import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.MethodParmDef;
 import fedora.server.types.gen.ObjectMethodsDef;
@@ -50,7 +53,11 @@ public class TestAPIA extends FedoraServerTestCase {
 	
 	public void testFindObjects() throws Exception {
 		//TODO
-		//apia.findObjects();
+		String[] resultFields = {"pid"};
+		NonNegativeInteger maxResults = new NonNegativeInteger("" + 100);
+		FieldSearchQuery query = null;
+		FieldSearchResult result = apia.findObjects(resultFields, maxResults, query);
+		assertEquals(result, result);
 	}
 	
 	public void testGetDatastreamDissemination() throws Exception {

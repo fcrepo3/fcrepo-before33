@@ -1,7 +1,5 @@
 package fedora.server.security;
 
-import java.util.*;
-
 public class MethodRoleConfig extends AbstractRoleConfig {
 
     private String m_role;

@@ -1,9 +1,6 @@
 package fedora.server.resourceIndex;
 
-import java.util.Set;
-
 import fedora.server.errors.ResourceIndexException;
-
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 

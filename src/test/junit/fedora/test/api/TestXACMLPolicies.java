@@ -19,9 +19,7 @@ import org.custommonkey.xmlunit.SimpleXpathEngine;
 
 import fedora.client.FedoraClient;
 import fedora.server.access.FedoraAPIA;
-import fedora.server.errors.authorization.AuthzException;
 import fedora.server.management.FedoraAPIM;
-import fedora.server.types.gen.MIMETypedStream;
 import fedora.server.types.gen.Property;
 import fedora.server.utilities.ServerUtility;
 import fedora.server.utilities.StreamUtility;

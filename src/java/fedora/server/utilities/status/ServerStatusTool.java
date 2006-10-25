@@ -1,7 +1,6 @@
 package fedora.server.utilities.status;
 
 import java.io.File;
-import java.util.Date;
 
 public class ServerStatusTool {
 

@@ -1,10 +1,8 @@
 package fedora.server.journal.readerwriter.multifile;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import fedora.server.Context;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.management.ManagementDelegate;

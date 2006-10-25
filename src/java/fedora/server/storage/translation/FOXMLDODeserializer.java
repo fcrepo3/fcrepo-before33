@@ -1,28 +1,10 @@
 package fedora.server.storage.translation;
 
-import fedora.common.Constants;
-import fedora.server.errors.ObjectIntegrityException;
-import fedora.server.errors.RepositoryConfigurationException;
-import fedora.server.errors.StreamIOException;
-import fedora.server.errors.ValidationException;
-import fedora.server.storage.types.AuditRecord;
-import fedora.server.storage.types.DigitalObject;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.DatastreamManagedContent;
-import fedora.server.storage.types.DatastreamReferencedContent;
-import fedora.server.storage.types.DatastreamXMLMetadata;
-import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.DSBindingMap;
-import fedora.server.storage.types.DSBinding;
-import fedora.server.utilities.DateUtility;
-import fedora.server.utilities.StreamUtility;
-import fedora.server.validation.ValidationUtility;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -31,17 +13,35 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.axis.encoding.Base64;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import fedora.common.Constants;
+import fedora.server.errors.ObjectIntegrityException;
+import fedora.server.errors.RepositoryConfigurationException;
+import fedora.server.errors.StreamIOException;
+import fedora.server.errors.ValidationException;
+import fedora.server.storage.types.AuditRecord;
+import fedora.server.storage.types.DSBinding;
+import fedora.server.storage.types.DSBindingMap;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamManagedContent;
+import fedora.server.storage.types.DatastreamReferencedContent;
+import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.Disseminator;
+import fedora.server.utilities.DateUtility;
+import fedora.server.utilities.StreamUtility;
+import fedora.server.validation.ValidationUtility;
 
 /**
  *

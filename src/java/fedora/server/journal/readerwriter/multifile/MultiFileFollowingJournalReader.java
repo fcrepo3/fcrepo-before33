@@ -1,8 +1,6 @@
 package fedora.server.journal.readerwriter.multifile;
 
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import fedora.server.journal.JournalException;
 import fedora.server.journal.ServerInterface;
