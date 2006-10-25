@@ -443,7 +443,7 @@ public class TestAPIM extends FedoraServerTestCase {
         // 3) export
         // 4) purgeObject
         
-        Set serverAssignedPIDs = new HashSet();
+        Set<String> serverAssignedPIDs = new HashSet<String>();
     	
         // (1) test ingest
         System.out.println("Running TestAPIM.testIngest...");
@@ -640,9 +640,10 @@ public class TestAPIM extends FedoraServerTestCase {
         // test adding M type datastream
         String[] altIds = new String[1];
         altIds[0] = "Datastream 1 Alternate ID";
-        String result = apim.addDatastream("demo:14", "NEWDS1", altIds, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "adding new datastream");
+        String datastreamId = apim.addDatastream("demo:14", "NEWDS1", altIds, "A New M-type Datastream", true, "text/xml", "info:myFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream1.xml", "M", "A", "adding new datastream");
 
         // test that datastream was added
+        assertEquals(datastreamId, "NEWDS1");
         byte [] objectXML = apim.getObjectXML("demo:14");
         assertTrue(objectXML.length > 0);
         String xmlIn = new String(objectXML, "UTF-8");
@@ -654,7 +655,7 @@ public class TestAPIM extends FedoraServerTestCase {
         
         //test adding X type datastream
         altIds[0] = "Datastream 2 Alternate ID";
-        result = apim.addDatastream("demo:14", "NEWDS2", altIds, "A New X-type Datastream", true, "text/xml", "info:myFormatURI/Xtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "X", "A", "adding new datastream");
+        datastreamId = apim.addDatastream("demo:14", "NEWDS2", altIds, "A New X-type Datastream", true, "text/xml", "info:myFormatURI/Xtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "X", "A", "adding new datastream");
 
         // test that datastream was added
         objectXML = apim.getObjectXML("demo:14");
@@ -667,7 +668,7 @@ public class TestAPIM extends FedoraServerTestCase {
         assertXpathEvaluatesTo("6", "count(//foxml:datastream[@ID!='AUDIT'])",xmlIn);
         
         altIds[0] = "Datastream 3 Alternate ID";
-        result = apim.addDatastream("demo:14", "NEWDS3", altIds, "A New E-type Datastream", true, "text/xml", "info:myFormatURI/Etype/stuff#junk", "http://www.fedora.info/junit/datastream3.xml", "E", "A", "adding new datastream");
+        datastreamId = apim.addDatastream("demo:14", "NEWDS3", altIds, "A New E-type Datastream", true, "text/xml", "info:myFormatURI/Etype/stuff#junk", "http://www.fedora.info/junit/datastream3.xml", "E", "A", "adding new datastream");
 
         // test adding E type datastream
         objectXML = apim.getObjectXML("demo:14");
@@ -683,7 +684,7 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("Running TestAPIM.testModifyDatastreamByReference...");
         altIds = new String[1];
         altIds[0] = "Datastream 1 Modified Alternate ID";
-        result = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "modified datastream", false);
+        datastreamId = apim.modifyDatastreamByReference("demo:14", "NEWDS1", altIds, "Modified M-type Datastream", "text/xml", "info:newMyFormatURI/Mtype/stuff#junk", "http://www.fedora.info/junit/datastream2.xml", "modified datastream", false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
@@ -699,7 +700,7 @@ public class TestAPIM extends FedoraServerTestCase {
         System.out.println("Running TestAPIM.testModifyDatastreamByValue...");
         altIds = new String[1];
         altIds[0] = "Datastream 2 Modified Alternate ID";
-        result = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "modified datastream", false);
+        datastreamId = apim.modifyDatastreamByValue("demo:14", "NEWDS2", altIds, "Modified X-type Datastream", "text/xml", "info:newMyFormatURI/Xtype/stuff#junk", dsXML, "modified datastream", false);
 
         // test that datastream was modified
         objectXML = apim.getObjectXML("demo:14");
@@ -736,7 +737,6 @@ public class TestAPIM extends FedoraServerTestCase {
         Datastream[] dsArray = new Datastream[1];
         dsArray[0] = ds;
         System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", \"FOPDISSEM\", null)");
-        verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastream");
 
         // assert datastream FOPDISSEM matches            
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
@@ -758,7 +758,6 @@ public class TestAPIM extends FedoraServerTestCase {
         ds = apim.getDatastream("demo:26", "FOPDISSEM", "9999-01-01T00:00:00.000Z");
         dsArray[0] = ds;
         System.out.println("***** Testcase: TestAPIM.testGetDatastream getDatastream(\"demo:26\", ,\"FOPDISSEM\", \"9999-01-01T00:00:00.000Z\")");
-        verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastream");
         
         // assert datastream FOPDISSEM matches            
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
@@ -781,7 +780,6 @@ public class TestAPIM extends FedoraServerTestCase {
         dsArray = apim.getDatastreams("demo:26", null, null);
         assertTrue(dsArray.length > 0);
         assertEquals(dsArray.length, 3);      
-        verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", null, null) number of Datastreams: "+dsArray.length);
 
         // assert datastream FOPDISSEM matches            
@@ -833,7 +831,6 @@ public class TestAPIM extends FedoraServerTestCase {
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", null);
         System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
-        verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
         // assert datastream FOPDISSEM matches            
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
@@ -884,7 +881,6 @@ public class TestAPIM extends FedoraServerTestCase {
         dsArray = apim.getDatastreams("demo:26", "9999-01-01T00:00:00.000Z", "A");
         System.out.println("***** Testcase: TestAPIM.testGetDatastreams getDatastreams(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Datastreams: "+dsArray.length);
         assertEquals(dsArray.length, 3);
-        verifyDatastreams(dsArray, "***** Testcase: TestAPIM.testGetDatastreams");
         
         // assert datastream FOPDISSEM matches            
         assertEquals(dsArray[0].getID(),"FOPDISSEM");
@@ -1052,7 +1048,6 @@ public class TestAPIM extends FedoraServerTestCase {
         Disseminator[] dissArray = new Disseminator[1];
         dissArray[0] = diss;
         //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", null)");
-        verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDisseminator");
 
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
@@ -1074,7 +1069,6 @@ public class TestAPIM extends FedoraServerTestCase {
         diss = apim.getDisseminator("demo:26", "DISS1", "9999-01-01T00:00:00.000Z");
         dissArray[0] = diss;
         //System.out.println("***** Testcase: TestAPIM.testGetDisseminator getDisseminator(\"demo:26\", \"DISS1\", \"9999-01-01T00:00:00.000Z\")");
-        verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDisseminator");
 
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
@@ -1099,7 +1093,6 @@ public class TestAPIM extends FedoraServerTestCase {
         assertTrue(dissArray.length > 0);
         //System.out.println("***** Testcase: TestAPIM.testGetDisseminators getDisseminators(\"demo:26\", null, null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
-        verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDisseminators");
 
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
@@ -1137,7 +1130,6 @@ public class TestAPIM extends FedoraServerTestCase {
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", null);
         //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", null) number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
-        verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDissemintors");
 
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
@@ -1175,7 +1167,6 @@ public class TestAPIM extends FedoraServerTestCase {
         dissArray = apim.getDisseminators("demo:26", "9999-01-01T00:00:00.000Z", "A");
         //System.out.println("***** Testcase: TestAPIM.testGetDissemintors getDisseminators(\"demo:26\", \"9999-01-01T00:00:00.000Z\", \"A\") number of Disseminators: "+dissArray.length);
         assertEquals(dissArray.length, 2);
-        verifyDisseminators(dissArray, "***** Testcase: TestAPIM.testGetDissemintors");
 
         // assert DISS1 matches
         assertEquals(dissArray[0].getBDefPID(),"demo:19");
@@ -1275,149 +1266,6 @@ public class TestAPIM extends FedoraServerTestCase {
         assertEquals(pids.length,2);
         assertTrue(pids[0].startsWith("namespace:"));
         assertTrue(pids[1].startsWith("namespace:"));
-    }    
-     
-    public void verifyDatastreams(Datastream[] dsArray, String msg) throws Exception {
-
-        String dsID = null;
-        String createDate = null;
-        String state = null;
-        String label = null;
-        String formatURI = null;
-        String dsLocation = null;
-        String versionID = null;
-        String dsControlGrp = null;
-        String [] altIds = null;
-        String mimeType = null;
-        long size = 0;
-        boolean isVersionable = false;
-        Datastream ds = null;
-        
-        for (int i=0; i<dsArray.length; i++) {
-            ds = dsArray[i];
-            dsID = ds.getID();
-            createDate = ds.getCreateDate();
-            state = ds.getState();
-            formatURI = ds.getFormatURI();
-            dsLocation = ds.getLocation();
-            label = ds.getLabel();
-            versionID = ds.getVersionID();
-            dsControlGrp = ds.getControlGroup().getValue();
-            altIds = ds.getAltIDs();
-            if (altIds.length==0) {
-                altIds = new String[1];
-                altIds[0] = "";
-            }
-            mimeType = ds.getMIMEType();
-            size = ds.getSize();
-            isVersionable = ds.isVersionable();
-            /*System.out.println(msg + " datastreams["+i+"] "
-                    + "dissID: "+dsID);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "dsControlGroup: "+dsControlGrp);            
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "createDate: "+createDate);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + " state: "+state);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "formatURI: "+formatURI);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "altIds[0]: "+altIds[0]);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "label: '"+label+"'");
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "versionID: "+versionID);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "dsLocation: "+dsLocation);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "mimeType: "+mimeType);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "size: "+size);
-            System.out.println(msg + " datastreams["+i+"] "
-                    + "isVersionable: "+isVersionable);
-            */
-
-        }
-        
-    }    
-    
-    public void verifyDisseminators(Disseminator[] dissArray, String msg) throws Exception {
-        
-        String dissID = null;
-        String createDate = null;
-        String state = null;
-        String label = null;
-        String bDefPid = null;
-        String bMechPid = null;
-        String versionID = null;
-        String dsBindMapID = null;
-        String dsBindMapLabel = null;
-        String dsBindMapBmechPid = null;
-        String dsBindMapState = null;
-        String dsBindKeyName = null;
-        String dsBindKeyLabel = null;
-        String dsSeqNo = null;
-        String dsID = null;
-        Disseminator diss = null;
-        DatastreamBindingMap dsBindMap = null;
-        DatastreamBinding[] dsBindings = null;
-        
-        for (int i=0; i<dissArray.length; i++) {
-            diss = dissArray[i];
-            dissID = diss.getID();
-            createDate = diss.getCreateDate();
-            state = diss.getState();
-            bDefPid = diss.getBDefPID();
-            bMechPid = diss.getBMechPID();
-            label = diss.getLabel();
-            versionID = diss.getVersionID();
-            dsBindMap = diss.getDsBindMap();
-            dsBindings = dsBindMap.getDsBindings();
-            dsBindMapID = dsBindMap.getDsBindMapID();
-            dsBindMapLabel = dsBindMap.getDsBindMapLabel();
-            dsBindMapBmechPid = dsBindMap.getDsBindMechanismPID();
-            dsBindMapState = dsBindMap.getState();
-            /*System.out.println(msg + " disseminators["+i+"] "
-                    + "dissID: "+dissID);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "createDate: "+createDate);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + " state: "+diss.getState());
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "bDefPid: "+bDefPid);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "bMechPid: "+bMechPid);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "label: '"+label+"'");
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "versionID: "+versionID);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "dsBindMapID: "+dsBindMapID);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "dsBindMapLabel: '"+dsBindMapLabel+"'");
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "dsBindMapBmechPid: "+dsBindMapBmechPid);
-            System.out.println(msg + " disseminators["+i+"] "
-                    + "dsBindMapState: "+dsBindMapState);
-            */
-            
-            for (int j=0; j<dsBindings.length; j++) {
-                
-                dsBindKeyName = dsBindings[0].getBindKeyName();
-                dsBindKeyLabel = dsBindings[0].getBindLabel();
-                dsID = dsBindings[0].getDatastreamID();
-                dsSeqNo = dsBindings[0].getSeqNo();                
-                /*System.out.println(msg + " dsBindings["+j+"] "
-                        + "dsBindKeyName: "+dsBindKeyName);
-                System.out.println(msg + " dsBindings["+j+"] "
-                        + "dsBindKeyLabel: '"+dsBindKeyLabel+"'");
-                System.out.println(msg + " dsBindings["+j+"] "
-                        + "dsID: "+dsID);
-                System.out.println(msg + " dsBindings["+j+"] "
-                        + "dsSeqNo: "+dsSeqNo);
-                */
-            }
-        }  
     }
     
     public static void main(String[] args) {
