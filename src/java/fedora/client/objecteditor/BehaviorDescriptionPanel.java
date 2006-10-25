@@ -17,7 +17,7 @@ public class BehaviorDescriptionPanel
         extends JPanel {
 
 	private static final long serialVersionUID = 1L;
-    private Map m_loadedPanels;
+    private Map<String, JPanel> m_loadedPanels;
     private JComponent m_containerToValidate;
 
     /**
@@ -32,7 +32,7 @@ public class BehaviorDescriptionPanel
            throws IOException {
         m_containerToValidate=containerToValidate;
         setLayout(new BorderLayout());
-        m_loadedPanels=new HashMap();
+        m_loadedPanels=new HashMap<String, JPanel>();
         if (bDefPID!=null) {
             setBDef(bDefPID);
         }

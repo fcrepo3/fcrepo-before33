@@ -30,7 +30,7 @@ import java.util.Iterator;
 public class BasisDataStream
         extends DataStream {
 
-    private HashSet m_descriptiveStreams=new HashSet();
+    private HashSet<InlineDataStream> m_descriptiveStreams=new HashSet<InlineDataStream>();
     private boolean m_internallyStored=true;
     private String m_location;
 

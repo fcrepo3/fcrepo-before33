@@ -18,7 +18,7 @@ public class SearchResultParser
 
     private StringBuffer m_currentPID;
     private StringBuffer m_sessionToken;
-    private Set m_pids=new HashSet();
+    private Set<String> m_pids=new HashSet<String>();
 
     public SearchResultParser(InputStream xml) 
             throws IOException {
@@ -70,7 +70,7 @@ public class SearchResultParser
         }
     }
 
-    public Set getPIDs() {
+    public Set<String> getPIDs() {
         return m_pids;
     }
 

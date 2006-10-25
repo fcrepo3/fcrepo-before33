@@ -133,7 +133,7 @@ public class BackendPolicies {
 	private Hashtable writePolicies() throws Exception {
     	log("in BackendPolicies.newWritePolicies() 1");			
 		StringBuffer sb = null;
-		Hashtable tempfiles = new Hashtable();
+		Hashtable<String, String> tempfiles = new Hashtable<String, String>();
 		Iterator coarseIterator = backendSecuritySpec.listRoleKeys().iterator();
 		while (coarseIterator.hasNext()) {
 			String key = (String) coarseIterator.next();

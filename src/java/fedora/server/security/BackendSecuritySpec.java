@@ -33,10 +33,10 @@ public class BackendSecuritySpec {
 	 * 		   	 - BackendSecurityDeserializer.CALLBACK_SSL
 	 * 		   	 - BackendSecurityDeserializer.IPLIST
 	 */	
-	private Hashtable rolePropertiesTable;	
+	private Hashtable<String, Hashtable<String, String>> rolePropertiesTable;	
 	
 	public BackendSecuritySpec() {
-		rolePropertiesTable = new Hashtable();
+		rolePropertiesTable = new Hashtable<String, Hashtable<String, String>>();
 
 	}
 		
@@ -54,7 +54,7 @@ public class BackendSecuritySpec {
 	 *        will be recorded.  
 	 * @param properties
 	 */	
-	public void setSecuritySpec(String serviceRoleID, String methodName, Hashtable properties) 
+	public void setSecuritySpec(String serviceRoleID, String methodName, Hashtable<String, String> properties) 
 		throws GeneralException {
 			
 		if (fedora.server.Debug.DEBUG) {

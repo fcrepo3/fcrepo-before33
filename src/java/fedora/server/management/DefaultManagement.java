@@ -41,7 +41,7 @@ public class DefaultManagement
     private int m_uploadStorageMinutes;
     private int m_lastId;
     private File m_tempDir;
-    private Hashtable m_uploadStartTime;
+    private Hashtable<String, Long> m_uploadStartTime;
     private ExternalContentManager m_contentManager;
     private Authorization m_fedoraXACMLModule;
 
@@ -90,7 +90,7 @@ public class DefaultManagement
     		    m_tempDir.mkdirs();
     		}
 			// put leftovers in hash, while saving highest id as m_lastId
-			m_uploadStartTime=new Hashtable();
+			m_uploadStartTime=new Hashtable<String, Long>();
 			String[] fNames=m_tempDir.list();
 			Long leftoverStartTime=new Long(System.currentTimeMillis());
             m_lastId=0;
@@ -208,7 +208,7 @@ public class DefaultManagement
 
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
             
-			ArrayList props = new ArrayList();
+			ArrayList<Property> props = new ArrayList<Property>();
 			DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
 			
 			props.add(new Property(
@@ -962,7 +962,7 @@ public class DefaultManagement
                 // to do this, we must look through all versions of every
                 // disseminator, regardless of state
                 SimpleDateFormat formatter=new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-                ArrayList usedList=new ArrayList();
+                ArrayList<String> usedList=new ArrayList<String>();
                 if (datastreamID.equals("DC")) {
                     usedList.add("The default disseminator");
                 }
@@ -1311,7 +1311,7 @@ public class DefaultManagement
     	m_fedoraXACMLModule.enforceUpload(context);
 		// first clean up after old stuff
 		long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
-                ArrayList removeList=new ArrayList();
+                ArrayList<String> removeList=new ArrayList<String>();
 		Iterator iter=m_uploadStartTime.keySet().iterator();
         while (iter.hasNext()) {
 		    String id=(String) iter.next();
@@ -1620,7 +1620,7 @@ public class DefaultManagement
                                                   DOReader doReader,
                                                   String dsID)
             throws ServerException {
-        HashMap map = new HashMap();
+        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
         // for all disseminators in the object,
         Disseminator[] disses = doReader.GetDisseminators(null, null);
         for (int i = 0; i < disses.length; i++) {
@@ -1643,7 +1643,7 @@ public class DefaultManagement
 
     private Map getNewFailedValidationReports(Map oldReport,
                                               Map newReport) {
-        HashMap map = new HashMap();
+        HashMap<Disseminator, String> map = new HashMap<Disseminator, String>();
         Iterator newIter = newReport.keySet().iterator();
         // For each disseminator in the new report:
         while (newIter.hasNext()) {

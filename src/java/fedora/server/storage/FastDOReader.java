@@ -11,8 +11,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import fedora.server.Context;
 import fedora.server.Server;
@@ -22,13 +22,14 @@ import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StorageDeviceException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.storage.types.Datastream;
-import fedora.server.storage.types.Disseminator;
-import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.types.AuditRecord;
 import fedora.server.storage.types.DSBindingMapAugmented;
-import fedora.server.storage.types.ObjectMethodsDef;
+import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DisseminationBindingInfo;
+import fedora.server.storage.types.Disseminator;
 import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
+import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.utilities.SQLUtility;
 
 /**
@@ -238,7 +239,7 @@ public class FastDOReader implements DOReader
   public String[] GetBehaviorDefs(Date versDateTime)
       throws GeneralException
   {
-    Vector queryResults = new Vector();
+    Vector<String> queryResults = new Vector<String>();
     String[] behaviorDefs = null;
     Connection connection = null;
     Statement statement = null;
@@ -341,7 +342,7 @@ public class FastDOReader implements DOReader
   {
     MethodParmDef[] methodParms = null;
     MethodParmDef methodParm = null;
-    Vector queryResults = new Vector();
+    Vector<MethodParmDef> queryResults = new Vector<MethodParmDef>();
     Connection connection = null;
     Statement statement = null;
     ResultSet rs = null;
@@ -490,7 +491,7 @@ public class FastDOReader implements DOReader
   {
     MethodDef[] methodDefs = null;
     MethodDef methodDef = null;
-    Vector queryResults = new Vector();
+    Vector<MethodDef> queryResults = new Vector<MethodDef>();
     Connection connection = null;
     Statement statement = null;
     ResultSet rs = null;
@@ -615,7 +616,7 @@ public class FastDOReader implements DOReader
   public Datastream GetDatastream(String datastreamID, Date versDateTime)
       throws GeneralException
   {
-    Vector queryResults = new Vector();
+    Vector<Datastream> queryResults = new Vector<Datastream>();
     Datastream[] datastreams = null;
     Datastream datastream = null;
     Connection connection = null;
@@ -728,7 +729,7 @@ public class FastDOReader implements DOReader
   public Datastream[] GetDatastreams(Date versDateTime, String state)
       throws GeneralException
   {
-    Vector queryResults = new Vector();
+    Vector<Datastream> queryResults = new Vector<Datastream>();
     Datastream[] datastreamArray = null;
     Datastream datastream = null;
     Connection connection = null;
@@ -893,7 +894,7 @@ public class FastDOReader implements DOReader
           throws GeneralException {
     DisseminationBindingInfo dissBindInfo = null;
     DisseminationBindingInfo[] dissBindInfoArray = null;
-    Vector queryResults = new Vector();
+    Vector<DisseminationBindingInfo> queryResults = new Vector<DisseminationBindingInfo>();
     Connection connection = null;
     Statement statement = null;
     ResultSet rs = null;
@@ -958,7 +959,7 @@ public class FastDOReader implements DOReader
         // Note: When more than one datastream matches the DSBindingKey
         // or there are multiple DSBindingKeys associated with the method
         // in the dissemination query, multiple rows are returned.
-        HashMap uniqueHash = new HashMap();
+        HashMap<String, String> uniqueHash = new HashMap<String, String>();
         while (rs.next())
         {
           results = new String[cols];
@@ -1166,7 +1167,7 @@ public class FastDOReader implements DOReader
   {
     Disseminator[] disseminatorArray = null;
     Disseminator disseminator = null;
-    Vector queryResults = new Vector();
+    Vector<Disseminator> queryResults = new Vector<Disseminator>();
     Connection connection = null;
     Statement statement = null;
     ResultSet rs = null;
@@ -1325,7 +1326,7 @@ public class FastDOReader implements DOReader
   {
     ObjectMethodsDef[] objectMethodsDefArray = null;
     ObjectMethodsDef objectMethodsDef = null;
-    Vector queryResults = new Vector();
+    Vector<ObjectMethodsDef> queryResults = new Vector<ObjectMethodsDef>();
     Connection connection = null;
     Statement statement = null;
     ResultSet rs = null;
@@ -1496,7 +1497,7 @@ public class FastDOReader implements DOReader
       return definitiveDOReader.getOwnerId();
   }
 
-  public List getAuditRecords()
+  public List<AuditRecord> getAuditRecords()
           throws ServerException, StorageDeviceException, ObjectNotFoundException {
     loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
       return definitiveDOReader.getAuditRecords();
@@ -1545,7 +1546,7 @@ public class FastDOReader implements DOReader
   public String[] ListDatastreamIDs(String state)
       throws GeneralException
   {
-    Vector queryResults = new Vector();
+    Vector<Datastream> queryResults = new Vector<Datastream>();
     String[] datastreamIDs = null;
     Datastream datastream = null;
     Connection connection = null;
@@ -1654,7 +1655,7 @@ public class FastDOReader implements DOReader
   public String[] ListDisseminatorIDs(String state)
       throws GeneralException
   {
-    Vector queryResults = new Vector();
+    Vector<Disseminator> queryResults = new Vector<Disseminator>();
     Disseminator disseminator = null;
     String[] disseminatorIDs = null;
     Connection connection = null;

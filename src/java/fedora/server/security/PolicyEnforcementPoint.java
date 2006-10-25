@@ -139,7 +139,7 @@ public class PolicyEnforcementPoint {
 	
 	public final void newPdp() throws Exception {
 		AttributeFinder attrFinder = new AttributeFinder();
-		List attrModules = new ArrayList();
+		List<AttributeFinderModule> attrModules = new ArrayList<AttributeFinderModule>();
 		//AttributeFinderModule attrModule = SSIAttributeFinder.getInstance(servletContext);
 		//attrModules.add(attrModule);
 		
@@ -179,7 +179,7 @@ log("before building policy finder");
 		PolicyFinder policyFinder = new PolicyFinder();
 		
 		log("just constructed policy finder");
-		Set policyModules = new HashSet();
+		Set<PolicyFinderModule> policyModules = new HashSet<PolicyFinderModule>();
 		log("just constructed policy module hashset");
 		PolicyFinderModule combinedPolicyModule = null;
 		//try {
@@ -302,7 +302,7 @@ log("***debugging CombinedPolicyModule");
 		StringAttribute stringAttribute = new StringAttribute("");
 		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
 		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
-		Set subjectAttributes = new HashSet();
+		Set<Attribute> subjectAttributes = new HashSet<Attribute>();
 		subjectAttributes.add(subjectAttribute);
 		if ((subjectLoginId != null) && ! "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
@@ -347,14 +347,14 @@ log("***debugging CombinedPolicyModule");
 		}
 */
 		Subject singleSubject = new Subject(subjectAttributes);
-		Set subjects = new HashSet();
+		Set<Subject> subjects = new HashSet<Subject>();
 		subjects.add(singleSubject);
 		return subjects;
 	}
 
 	
 	private final Set wrapActions(String actionId, String actionApi, String contextIndex) {
-		Set actions = new HashSet();
+		Set<Attribute> actions = new HashSet<Attribute>();
 		Attribute action = new Attribute(XACML_ACTION_ID_URI, null, null, new StringAttribute(""));
 		actions.add(action);
 		action = new Attribute(ACTION_ID_URI, null, null, new StringAttribute(actionId));
@@ -368,7 +368,7 @@ log("***debugging CombinedPolicyModule");
 	
 	
 	private final Set wrapResources(String pid, String namespace) throws AuthzOperationalException {
-		Set resources = new HashSet();
+		Set<Attribute> resources = new HashSet<Attribute>();
 		Attribute attribute = null;
 		attribute = new Attribute(XACML_RESOURCE_ID_URI, null, null, new StringAttribute(""));
 		resources.add(attribute);

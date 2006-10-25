@@ -349,7 +349,7 @@ public class BESecurityServlet extends HttpServlet {
      * servlet parameters names.
      */ 
     private static Map getBMechToMethodList(Set names) {
-        Map map = new HashMap();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
         Iterator iter = names.iterator();
         while (iter.hasNext()) {
             String name = (String) iter.next();
@@ -357,7 +357,7 @@ public class BESecurityServlet extends HttpServlet {
                 String[] parts = name.split("/");
                 if (parts.length == 3) { // it's a bdef, not a method
                     String pid = parts[0];
-                    List methods = new ArrayList();
+                    List<String> methods = new ArrayList<String>();
                     Iterator mIter = names.iterator();
                     while (mIter.hasNext()) {
                         String n = (String) mIter.next();
@@ -449,9 +449,8 @@ public class BESecurityServlet extends HttpServlet {
      * as they currently exist in the repository.
      */
     private Map getAllBMechMethods(Context context) throws Exception {
-        Map map = new HashMap();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
         String[] resultFields = new String[] { "pid" };
-        List conditions = new ArrayList();
         FieldSearchQuery query = new FieldSearchQuery(
                                      Condition.getConditions("fType=M"));
         FieldSearchResult result = m_fieldSearch.findObjects(resultFields,
@@ -479,8 +478,8 @@ public class BESecurityServlet extends HttpServlet {
      * Get the list of method names for the given bMech as it currently
      * exists in the repository.
      */
-    private List getMethods(String bMechPID, Context context) throws Exception {
-        List list = new ArrayList();
+    private List<String> getMethods(String bMechPID, Context context) throws Exception {
+        List<String> list = new ArrayList<String>();
         BMechReader reader = m_doManager.getBMechReader(false, context, bMechPID);
         MethodDef[] defs = reader.getServiceMethods(null);
         for (int i = 0; i < defs.length; i++) {

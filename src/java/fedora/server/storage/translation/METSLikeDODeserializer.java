@@ -91,9 +91,9 @@ public class METSLikeDODeserializer
     private DigitalObject m_obj;
 
     /** Namespace prefix-to-URI mapping info from SAX2 startPrefixMapping events. */
-    private HashMap m_prefixMap;
-    private HashMap m_localPrefixMap;
-    private ArrayList m_prefixList;
+    private HashMap<String, String> m_prefixMap;
+    private HashMap<String, String> m_localPrefixMap;
+    private ArrayList<String> m_prefixList;
 
 	/** Variables to parse into */
     private boolean m_rootElementFound;
@@ -428,7 +428,7 @@ public class METSLikeDODeserializer
                 }
 				String DMDID=grab(a,M,"DMDID");
 				if ((DMDID!=null) && (!"".equals(DMDID))) {
-					ArrayList al=new ArrayList();
+					ArrayList<String> al=new ArrayList<String>();
 					if (DMDID.indexOf(" ")!=-1) {
 						String[] dmdIds=DMDID.split(" ");
 						for (int idi=0; idi<dmdIds.length; idi++) {
@@ -981,7 +981,7 @@ public class METSLikeDODeserializer
 			while (dsIds.hasNext()) {
 				// initialize hash sets to keep a list of
 				// unique DMDIDs or ADMIDs at the datatream id level.
-				HashSet uniqueDMDIDs = new HashSet();
+				HashSet<String> uniqueDMDIDs = new HashSet<String>();
 				HashSet uniqueADMIDs = new HashSet();
 				// get list of datastream *versions*
 				List dsVersionList=m_obj.datastreams((String) dsIds.next());
@@ -1121,7 +1121,7 @@ public class METSLikeDODeserializer
 		//m_objPropertyName="";
 		//m_readingBinaryContent=false; // future
 		m_inXMLMetadata=false;
-        m_prefixMap = new HashMap();
+        m_prefixMap = new HashMap<String, String>();
         m_localPrefixMap = new HashMap();
         m_prefixList = new ArrayList();
 

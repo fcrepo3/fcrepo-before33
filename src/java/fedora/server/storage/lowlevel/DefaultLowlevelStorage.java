@@ -31,18 +31,18 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 	private Store objectStore;
 	private Store datastreamStore;
 
-	public DefaultLowlevelStorage(Map configuration) throws LowlevelStorageException {
+	public DefaultLowlevelStorage(Map<String, Object> configuration) throws LowlevelStorageException {
 		String objectStoreBase = (String)configuration.get(OBJECT_STORE_BASE);
 		String datastreamStoreBase = (String)configuration.get(DATASTREAM_STORE_BASE);
 		
-		Map objConfig = new HashMap();
+		Map<String, Object> objConfig = new HashMap<String, Object>();
 		objConfig.putAll(configuration);
 		objConfig.put(REGISTRY_NAME, OBJECT_REGISTRY_TABLE);
 		objConfig.put("storeBase", objectStoreBase);
 		objConfig.put("storeBases", new String[] {objectStoreBase});
 		objectStore = new Store(objConfig);
 		
-		Map dsConfig = new HashMap();
+		Map<String, Object> dsConfig = new HashMap<String, Object>();
 		dsConfig.putAll(configuration);
 		dsConfig.put(REGISTRY_NAME, DATASTREAM_REGISTRY_TABLE);
 		dsConfig.put("storeBase", datastreamStoreBase);

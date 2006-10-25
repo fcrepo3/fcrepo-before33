@@ -63,7 +63,7 @@ public class BindingMapXmlReader extends AbstractXmlReader {
      */
     private DSBinding[] readBindingsUntilEndOfMap(XMLEventReader reader)
             throws XMLStreamException, JournalException {
-        List bindings = new ArrayList();
+        List<DSBinding> bindings = new ArrayList<DSBinding>();
         while (true) {
             XMLEvent event = reader.nextTag();
             if (isStartTagEvent(event, QNAME_TAG_DS_BINDING)) {

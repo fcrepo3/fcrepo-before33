@@ -102,8 +102,8 @@ class BatchIngest {
 		good2go = true;
 	}
 
-	private Hashtable pidMaps = null;
-	private Vector keys = null;
+	private Hashtable<String, String> pidMaps = null;
+	private Vector<String> keys = null;
 
 	/* package */ Hashtable getPidMaps() {
 		return pidMaps;
@@ -115,8 +115,8 @@ class BatchIngest {
 
 	final void process() throws Exception {
     		//System.err.println("in BatchIngest.process()");
-		pidMaps = new Hashtable();
-		keys = new Vector();
+		pidMaps = new Hashtable<String, String>();
+		keys = new Vector<String>();
 		//AutoIngestor autoIngestor = new AutoIngestor(protocol, host, port, username, password);
 		AutoIngestor autoIngestor = new AutoIngestor(APIA, APIM);
 

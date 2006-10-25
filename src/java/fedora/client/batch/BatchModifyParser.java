@@ -83,13 +83,13 @@ public class BatchModifyParser extends DefaultHandler
     /**
      * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
      */
-    private HashMap nsPrefixMap;
-    private HashMap m_prefixUris;
+    private HashMap<String, String> nsPrefixMap;
+    private HashMap<String, String> m_prefixUris;
 
     /** Variables for keeping state during SAX parse. */
     private StringBuffer m_dsXMLBuffer;
     private StringBuffer m_dsFirstElementBuffer;
-    private ArrayList m_dsPrefixes;
+    private ArrayList<String> m_dsPrefixes;
     private boolean m_inXMLMetadata;
     private boolean m_firstInlineXMLElement;
     private boolean addObject = false;
@@ -110,7 +110,7 @@ public class BatchModifyParser extends DefaultHandler
     private DatastreamBindingMap m_dsBindingMap;
     private DatastreamBinding m_dsBinding;
     private DatastreamBinding[] m_origBinding;
-    private HashMap m_dsBindings;
+    private HashMap<String, DatastreamBinding> m_dsBindings;
 
     /**
      * <p>Constructor allows this class to initiate the parsing.</p>
@@ -196,8 +196,8 @@ public class BatchModifyParser extends DefaultHandler
 
     public void startDocument() throws SAXException
     {
-        nsPrefixMap = new HashMap();
-        m_prefixUris = new HashMap();
+        nsPrefixMap = new HashMap<String, String>();
+        m_prefixUris = new HashMap<String, String>();
     }
 
 
@@ -552,7 +552,7 @@ public class BatchModifyParser extends DefaultHandler
             m_inXMLMetadata = true;
             m_dsXMLBuffer=new StringBuffer();
             m_dsFirstElementBuffer=new StringBuffer();
-            m_dsPrefixes=new ArrayList();
+            m_dsPrefixes=new ArrayList<String>();
             m_firstInlineXMLElement=true;
         } else if (namespaceURI.equalsIgnoreCase(FBM) && localName.equalsIgnoreCase("addDatastreamBinding")) {
 
@@ -671,7 +671,7 @@ public class BatchModifyParser extends DefaultHandler
 
             try {
                 addDisseminator = false;
-                m_dsBindings = new HashMap();
+                m_dsBindings = new HashMap<String, DatastreamBinding>();
                 m_diss = new Disseminator();
 
                 // Get required attributes
@@ -698,7 +698,7 @@ public class BatchModifyParser extends DefaultHandler
 
             try {
                 modifyDisseminator = false;
-                m_dsBindings = new HashMap();
+                m_dsBindings = new HashMap<String, DatastreamBinding>();
                 m_diss = new Disseminator();
                 fedora.server.types.gen.Disseminator origDiss = new fedora.server.types.gen.Disseminator();
 
@@ -1349,7 +1349,7 @@ public class BatchModifyParser extends DefaultHandler
     public static Map getBDefLabelMap()
             throws IOException {
         try {
-            HashMap labelMap=new HashMap();
+            HashMap<String, String> labelMap=new HashMap<String, String>();
             FieldSearchQuery query=new FieldSearchQuery();
             Condition[] conditions=new Condition[1];
             conditions[0]=new Condition();
@@ -1391,7 +1391,7 @@ public class BatchModifyParser extends DefaultHandler
     public static Map getBMechLabelMap(String bDefPID)
             throws IOException {
         try {
-            HashMap labelMap=new HashMap();
+            HashMap<String, String> labelMap=new HashMap<String, String>();
             FieldSearchQuery query=new FieldSearchQuery();
             Condition[] conditions=new Condition[2];
             conditions[0]=new Condition();

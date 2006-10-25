@@ -75,7 +75,7 @@ public class AutoFinder {
         InputStream in=dLoader.get(url);
         String token="";
         SearchResultParser resultParser;
-        HashSet pids=new HashSet();
+        HashSet<String> pids=new HashSet<String>();
         while (token!=null) {
             resultParser=new SearchResultParser(in);
             if (resultParser.getToken()!=null) {

@@ -29,7 +29,7 @@ public class AutoIngestor {
 
 	private FedoraAPIA m_apia;
     private FedoraAPIM m_apim;
-    private static HashMap s_repoInfo=new HashMap();
+    private static HashMap<FedoraAPIA, RepositoryInfo> s_repoInfo=new HashMap<FedoraAPIA, RepositoryInfo>();
 
     //public AutoIngestor(String protocol, String host, int port, String user, String pass)
     //        throws MalformedURLException, ServiceException {

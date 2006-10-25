@@ -77,9 +77,9 @@ public class MethodPropertiesDialog extends JDialog {
 	private MethodProperties mp;
 
 	// These are used to load JComboBox table columns
-	private HashMap parmTypeTbl = new HashMap();
+	private HashMap<String, String> parmTypeTbl = new HashMap<String, String>();
 
-	private HashMap parmTypeToDisplayTbl = new HashMap();
+	private HashMap<String, String> parmTypeToDisplayTbl = new HashMap<String, String>();
 
 	private void loadParmTypeTbl() {
 		parmTypeTbl.put("USER", MethodParm.USER_INPUT);
@@ -93,9 +93,9 @@ public class MethodPropertiesDialog extends JDialog {
 		parmTypeToDisplayTbl.put(MethodParm.DEFAULT_INPUT, "DEFAULT");
 	}
 
-	private HashMap passByTbl = new HashMap();
+	private HashMap<String, String> passByTbl = new HashMap<String, String>();
 
-	private HashMap passByToDisplayTbl = new HashMap();
+	private HashMap<String, String> passByToDisplayTbl = new HashMap<String, String>();
 
 	private void loadPassByTbl() {
 		passByTbl.put("URL_REF", MethodParm.PASS_BY_REF);
@@ -107,9 +107,9 @@ public class MethodPropertiesDialog extends JDialog {
 		passByToDisplayTbl.put(MethodParm.PASS_BY_VALUE, "VALUE");
 	}
 
-	private HashMap parmReqTbl = new HashMap();
+	private HashMap<String, String> parmReqTbl = new HashMap<String, String>();
 
-	private HashMap parmReqToDisplayTbl = new HashMap();
+	private HashMap<String, String> parmReqToDisplayTbl = new HashMap<String, String>();
 
 	private void loadParmReqTbl() {
 		parmReqTbl.put("YES", "true");
@@ -548,9 +548,9 @@ public class MethodPropertiesDialog extends JDialog {
 
 	private boolean parmsFromURLMissing(String http_URL, MethodParm[] parms) {
 		// set up
-		Vector firstPassTokens = new Vector();
-		Vector parmsInURL = new Vector();
-		Vector tableParms = new Vector();
+		Vector<String> firstPassTokens = new Vector<String>();
+		Vector<String> parmsInURL = new Vector<String>();
+		Vector<String> tableParms = new Vector<String>();
 		for (int i = 0; i < parms.length; i++) {
 			tableParms.add(parms[i].parmName);
 		}
@@ -723,7 +723,7 @@ public class MethodPropertiesDialog extends JDialog {
 	}
 
 	private String[] filterDSBindingKeys(MethodParm[] parms) {
-		Vector dsbindkeys = new Vector();
+		Vector<String> dsbindkeys = new Vector<String>();
 		for (int i = 0; i < parms.length; i++) {
 			if (parms[i].parmType.equalsIgnoreCase(MethodParm.DATASTREAM_INPUT)) {
 				dsbindkeys.add(parms[i].parmName);
@@ -736,7 +736,7 @@ public class MethodPropertiesDialog extends JDialog {
 		if (parmTable.isEditing()) {
 			parmTable.getCellEditor().stopCellEditing();
 		}
-		HashMap parmMap = new HashMap();
+		HashMap<String, MethodParm> parmMap = new HashMap<String, MethodParm>();
 		int rowcount = parmTable.getModel().getRowCount();
 		// System.out.println("parmTable rowcount=" + rowcount);
 		for (int i = 0; i < rowcount; i++) {
@@ -760,7 +760,7 @@ public class MethodPropertiesDialog extends JDialog {
 				parm.parmDefaultValue = ((String) parmTable.getValueAt(i, 4));
 				parm.parmLabel = ((String) parmTable.getValueAt(i, 5));
 
-				Vector domainValues = new Vector();
+				Vector<String> domainValues = new Vector<String>();
 				String values;
 				if ((values = (String) parmTable.getValueAt(i, 6)) != null) {
 					String normalizedString = normalizeString(values);
@@ -781,7 +781,7 @@ public class MethodPropertiesDialog extends JDialog {
 	}
 
 	private String[] unloadReturnTypes() {
-		Vector mimeTypes = new Vector();
+		Vector<String> mimeTypes = new Vector<String>();
 		String normalizedString = normalizeString(returnMIMES.getText());
 		StringTokenizer st = new StringTokenizer(normalizedString, ",");
 		while (st.hasMoreElements()) {

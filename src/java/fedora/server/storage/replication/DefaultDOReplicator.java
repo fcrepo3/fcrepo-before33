@@ -216,7 +216,7 @@ public class DefaultDOReplicator
             String doLabel=results.getString("doLabel");
             results.close();
             results=null;
-            ArrayList updates=new ArrayList();
+            ArrayList<String> updates=new ArrayList<String>();
 
             // Check if state has changed for the digital object.
             String objState = reader.GetObjectState();
@@ -279,9 +279,9 @@ public class DefaultDOReplicator
             // first get a list of disseminator db IDs
             results=logAndExecuteQuery(st, "SELECT dissDbID FROM doDissAssoc WHERE "
                     + "doDbID="+doDbID);
-            HashSet dissDbIDs = new HashSet();
+            HashSet<Integer> dissDbIDs = new HashSet<Integer>();
             while (results.next()) {
-                dissDbIDs.add(new Integer(results.getInt("dissDbID")));
+                dissDbIDs.add(results.getInt("dissDbID"));
             }
 
             if (dissDbIDs.size()==0 || reader.GetDisseminators(null, null).length!=dissDbIDs.size()) {
@@ -301,7 +301,7 @@ public class DefaultDOReplicator
                 // Get disseminator info for this disseminator.
                 results=logAndExecuteQuery(st, "SELECT diss.bDefDbID, diss.bMechDbID, bMech.bMechPID, diss.dissID, diss.dissLabel, diss.dissState "
                         + "FROM diss,bMech WHERE bMech.bMechDbID=diss.bMechDbID AND diss.dissDbID=" + dissDbID);
-                updates=new ArrayList();
+                updates=new ArrayList<String>();
                 int bDefDbID = 0;
                 int bMechDbID = 0;
                 String dissID=null;
@@ -612,7 +612,7 @@ public class DefaultDOReplicator
             results=null;
 
             Disseminator[] dissArray = reader.GetDisseminators(null, null);
-            HashSet newDisseminators = new HashSet();
+            HashSet<Disseminator> newDisseminators = new HashSet<Disseminator>();
             int dissDBID = 0;
             logFinest("DefaultDOReplicator.addNewComponents: Disseminators found: "
                       + dissArray.length);
@@ -711,7 +711,7 @@ public class DefaultDOReplicator
                         results=null;
 
                         // Get all disseminators that are in db for this object
-                        HashSet dissDbIds = new HashSet();
+                        HashSet<Integer> dissDbIds = new HashSet<Integer>();
                         results=logAndExecuteQuery(st, "SELECT dissDbID"
                             + " FROM doDissAssoc"
                             + " WHERE doDbID=" + doDbID);
@@ -725,12 +725,11 @@ public class DefaultDOReplicator
                             + dissDbIds.size() + "dissDbId(s). ");
 
                         // Get all binding maps that are in db for this object
-                        HashSet dsBindMapIds = new HashSet();
+                        HashSet<Integer> dsBindMapIds = new HashSet<Integer>();
                         results=logAndExecuteQuery(st, "SELECT DISTINCT dsBindMapDbID "
                             + " FROM dsBind WHERE doDbID=" + doDbID);
                         while (results.next()) {
-                          Integer id = new Integer(results.getInt("dsBindMapDbID"));
-                          dsBindMapIds.add(id);
+                          dsBindMapIds.add(results.getInt("dsBindMapDbID"));
                         }
                         results.close();
                         results=null;
@@ -739,8 +738,8 @@ public class DefaultDOReplicator
 
                         // Now get all existing disseminators that are in xml object for this object
                         Disseminator[] dissArray = reader.GetDisseminators(null, null);
-                        HashSet existingDisseminators = new HashSet();
-                        HashSet purgedDisseminators = new HashSet();
+                        HashSet<Integer> existingDisseminators = new HashSet<Integer>();
+                        HashSet<Integer> purgedDisseminators = new HashSet<Integer>();
                         for (int j=0; j< dissArray.length; j++)
                         {
                                 // Find disseminators that have been removed within an existing object
@@ -768,8 +767,8 @@ public class DefaultDOReplicator
                             + existingDisseminators.size() + " existing dissDbId(s). ");
 
                         // Now get all existing dsbindmapids that are in xml object for this object
-                        HashSet existingDsBindMapIds = new HashSet();
-                        HashSet purgedDsBindMapIds = new HashSet();
+                        HashSet<Integer> existingDsBindMapIds = new HashSet<Integer>();
+                        HashSet<Integer> purgedDsBindMapIds = new HashSet<Integer>();
                         for (int j=0; j< dissArray.length; j++)
                         {
                                 // Find disseminators that have been removed within an existing object
@@ -786,7 +785,6 @@ public class DefaultDOReplicator
                                   return false;
                                 } else {
                                   Integer dsBindMapDbId = new Integer(results.getInt("dsBindMapDbID"));
-                                  String dsBindMapID = results.getString("dsBindMapID");
                                   existingDsBindMapIds.add(dsBindMapDbId);
                                   logFinest("DefaultDOReplicator.purgeComponents: Adding "
                                       + " dsBindMapDbId: " + dsBindMapDbId + " to list of Existing dsBindMapDbId(s). ");
@@ -921,7 +919,7 @@ public class DefaultDOReplicator
             String bDefState=results.getString("bDefState");
             results.close();
             results=null;
-            ArrayList updates=new ArrayList();
+            ArrayList<String> updates=new ArrayList<String>();
             // check if state has changed for the bdef object
             String objState = reader.GetObjectState();
             if (!bDefState.equalsIgnoreCase(objState)) {
@@ -1011,7 +1009,7 @@ public class DefaultDOReplicator
             String bMechState=results.getString("bMechState");
             results.close();
             results=null;
-            ArrayList updates=new ArrayList();
+            ArrayList<String> updates=new ArrayList<String>();
             // check if state has changed for the bdef object
             String objState = reader.GetObjectState();
             if (!bMechState.equalsIgnoreCase(objState)) {
@@ -1622,12 +1620,11 @@ public class DefaultDOReplicator
                     + dbid);
             logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Getting dsBindKeyDbID(s) from dsBindSpec "
                     + "table...");
-            HashSet dsBindingKeyIds=new HashSet();
+            HashSet<Integer> dsBindingKeyIds=new HashSet<Integer>();
             results=logAndExecuteQuery(st, "SELECT dsBindKeyDbID from "
                     + "dsBindSpec WHERE bMechDbID=" + dbid);
             while (results.next()) {
-                dsBindingKeyIds.add(new Integer(
-                        results.getInt("dsBindKeyDbID")));
+                dsBindingKeyIds.add(results.getInt("dsBindKeyDbID"));
             }
             results.close();
             results=null;

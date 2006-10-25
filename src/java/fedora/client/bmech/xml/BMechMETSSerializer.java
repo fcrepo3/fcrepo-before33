@@ -40,7 +40,7 @@ public class BMechMETSSerializer extends BObjMETSSerializer
 
   protected Attr[] getVariableRootAttrs()
   {
-    Vector v_attrs = new Vector();
+    Vector<Attr> v_attrs = new Vector<Attr>();
     Attr type = document.createAttribute("TYPE");
     type.setValue("FedoraBMechObject");
     v_attrs.add(type);
@@ -52,7 +52,7 @@ public class BMechMETSSerializer extends BObjMETSSerializer
 
   protected Element[] getVariableStructMapDivs()
   {
-    Vector v_divs = new Vector();
+    Vector<Element> v_divs = new Vector<Element>();
     
 	Element serviceProfileDiv =
 	  setDiv("SERVICE-PROFILE",
@@ -83,7 +83,7 @@ public class BMechMETSSerializer extends BObjMETSSerializer
 
   protected Element[] getInlineMD() throws BMechBuilderException
   {
-    Vector v_elements = new Vector();
+    Vector<Element> v_elements = new Vector<Element>();
     v_elements.add(setDC(in_dc));
 	v_elements.add(setServiceProfile(in_profile));
     v_elements.add(setDSInputSpec(in_dsInputSpec));

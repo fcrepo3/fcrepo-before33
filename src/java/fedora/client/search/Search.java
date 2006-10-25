@@ -42,7 +42,7 @@ public class Search
         extends JInternalFrame {
 
 	private static final long serialVersionUID = 1L;
-    private List m_displayFields;
+    private List<String> m_displayFields;
     private JTextField m_simpleQueryField;
     private ConditionsTableModel m_model;
     private JTabbedPane m_tabbedPane;
@@ -66,7 +66,7 @@ public class Search
               true, //maximizable
               true);//iconifiable
 
-        m_displayFields=new ArrayList();
+        m_displayFields=new ArrayList<String>();
         m_displayFields.add("pid");
         m_displayFields.add("cDate");
         m_displayFields.add("title");
@@ -297,7 +297,7 @@ public class Search
 
     	private static final long serialVersionUID = 1L;
     	
-        private List m_selectedFields;
+        private List<String> m_selectedFields;
 
         private JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
                           formatBox, fTypeBox, titleBox, identifierBox,
@@ -433,7 +433,7 @@ public class Search
         }
 
         public void updateSelectedFields() {
-            m_selectedFields=new ArrayList();
+            m_selectedFields=new ArrayList<String>();
             if (pidBox.isSelected()) m_selectedFields.add("pid");
             if (labelBox.isSelected()) m_selectedFields.add("label");
             if (fTypeBox.isSelected()) m_selectedFields.add("fType");
@@ -704,17 +704,17 @@ public class Search
 
     	private static final long serialVersionUID = 1L;
     	
-        List m_conditions;
+        List<Condition> m_conditions;
 
         public ConditionsTableModel() {
-            m_conditions=new ArrayList();
+            m_conditions=new ArrayList<Condition>();
         }
 
-        public ConditionsTableModel(List conditions) {
+        public ConditionsTableModel(List<Condition> conditions) {
             m_conditions=conditions;
         }
 
-        public List getConditions() {
+        public List<Condition> getConditions() {
             return m_conditions;
         }
 

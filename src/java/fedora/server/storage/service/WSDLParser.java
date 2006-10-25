@@ -39,7 +39,7 @@ class WSDLParser extends DefaultHandler
   /**
    * URI-to-namespace prefix mapping info from SAX2 startPrefixMapping events.
    */
-  private HashMap nsPrefixMap;
+  private HashMap<String, String> nsPrefixMap;
 
   // Variables for keeping state during SAX parse.
   private boolean inWSDLTypes = false;
@@ -70,23 +70,23 @@ class WSDLParser extends DefaultHandler
 
   // Working variables and tables...
 
-  private Hashtable wsdlTypeTbl;        // typeName, Type object
-  private Hashtable wsdlMessageTbl;     // messageName, Message object
-  private Hashtable wsdlPortBindingTbl; // portName, name of binding
-  private Hashtable wsdlBindingTbl;     // bindingName, Binding object
-  private Hashtable wsdlAbstrOperTbl;   // operationName, AbstractOperation object
-  private Vector tmp_enum;
-  private Vector tmp_parts;
-  private Vector tmp_operations;
+  private Hashtable<String, SimpleType> wsdlTypeTbl;        // typeName, Type object
+  private Hashtable<String, Message> wsdlMessageTbl;     // messageName, Message object
+  private Hashtable<String, String> wsdlPortBindingTbl; // portName, name of binding
+  private Hashtable<String, Binding> wsdlBindingTbl;     // bindingName, Binding object
+  private Hashtable<String, AbstractOperation> wsdlAbstrOperTbl;   // operationName, AbstractOperation object
+  private Vector<String> tmp_enum;
+  private Vector<Part> tmp_parts;
+  private Vector<AbstractOperation> tmp_operations;
   private String tmp_portBindingName;
   private String tmp_portBindingLocalName;
-  private Vector tmp_ports;
+  private Vector<Port> tmp_ports;
   private String tmp_operationName;
   private String tmp_bindingName;
   private String tmp_bindingPortTypeName;
   private String tmp_bindingPortTypeLocalName;
-  private Vector tmp_bindOperations;
-  private Vector tmp_MIMEContent;
+  private Vector<AbstractOperation> tmp_bindOperations;
+  private Vector<MIMEContent> tmp_MIMEContent;
 
     /**
    *   Constructor to enable another class to initiate the parsing
@@ -136,12 +136,12 @@ class WSDLParser extends DefaultHandler
 
   public void startDocument() throws SAXException
   {
-    nsPrefixMap = new HashMap();
-    wsdlTypeTbl = new Hashtable();
-    wsdlMessageTbl = new Hashtable();
-    wsdlPortBindingTbl = new Hashtable();
-    wsdlBindingTbl = new Hashtable();
-    wsdlAbstrOperTbl = new Hashtable();
+    nsPrefixMap = new HashMap<String, String>();
+    wsdlTypeTbl = new Hashtable<String, SimpleType>();
+    wsdlMessageTbl = new Hashtable<String, Message>();
+    wsdlPortBindingTbl = new Hashtable<String, String>();
+    wsdlBindingTbl = new Hashtable<String, Binding>();
+    wsdlAbstrOperTbl = new Hashtable<String, AbstractOperation>();
   }
 
   public void endDocument() throws SAXException
@@ -200,7 +200,7 @@ class WSDLParser extends DefaultHandler
         if (namespaceURI.equalsIgnoreCase(XSD) && localName.equalsIgnoreCase("restriction"))
         {
           inRestriction = true;
-          tmp_enum = new Vector();
+          tmp_enum = new Vector<String>();
           wsdlSimpleType.baseTypeName = attrs.getValue("base");
           String nsprefix = null;
           StringTokenizer st = new StringTokenizer(wsdlSimpleType.baseTypeName, ":");
@@ -239,7 +239,7 @@ class WSDLParser extends DefaultHandler
       inMessage = true;
       wsdlMessage = new Message();
       wsdlMessage.messageName = attrs.getValue("name");
-      tmp_parts = new Vector();
+      tmp_parts = new Vector<Part>();
     }
     else if (inMessage && namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("part"))
     {
@@ -255,7 +255,7 @@ class WSDLParser extends DefaultHandler
       inPortType = true;
       wsdlPortType = new PortType();
       wsdlPortType.portTypeName = attrs.getValue("name");
-      tmp_operations = new Vector();
+      tmp_operations = new Vector<AbstractOperation>();
     }
     else if (inPortType)
     {
@@ -305,7 +305,7 @@ class WSDLParser extends DefaultHandler
       inService = true;
       wsdlService = new Service();
       wsdlService.serviceName = attrs.getValue("name");
-      tmp_ports = new Vector();
+      tmp_ports = new Vector<Port>();
     }
     else if (inService)
     {
@@ -364,7 +364,7 @@ class WSDLParser extends DefaultHandler
         wsdlBinding.bindingName = tmp_bindingName;
         wsdlBinding.portTypeLocalName = tmp_bindingPortTypeLocalName;
         ((HTTPBinding)wsdlBinding).bindingVerb = attrs.getValue("verb");
-        tmp_bindOperations = new Vector();
+        tmp_bindOperations = new Vector<AbstractOperation>();
       }
       else if (namespaceURI.equalsIgnoreCase(SOAP) && localName.equalsIgnoreCase("binding"))
       {
@@ -373,7 +373,7 @@ class WSDLParser extends DefaultHandler
         wsdlBinding.portTypeLocalName = tmp_bindingPortTypeLocalName;
         ((SOAPBinding)wsdlBinding).bindingStyle = attrs.getValue("style");
         ((SOAPBinding)wsdlBinding).bindingTransport = attrs.getValue("transport");
-        tmp_bindOperations = new Vector();
+        tmp_bindOperations = new Vector<AbstractOperation>();
       }
       else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("operation"))
       {
@@ -400,13 +400,13 @@ class WSDLParser extends DefaultHandler
         {
           inInput = true;
           wsdlHTTPOpInOut = new HTTPOperationInOut();
-          tmp_MIMEContent = new Vector();
+          tmp_MIMEContent = new Vector<MIMEContent>();
         }
         else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("output"))
         {
           inOutput = true;
           wsdlHTTPOpInOut = new HTTPOperationInOut();
-          tmp_MIMEContent = new Vector();
+          tmp_MIMEContent = new Vector<MIMEContent>();
         }
         else if (namespaceURI.equalsIgnoreCase(WSDL) && localName.equalsIgnoreCase("fault"))
         {

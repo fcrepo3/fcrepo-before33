@@ -19,17 +19,17 @@ public class ChangeObjectState
         extends AbstractAction {
 
 	private static final long serialVersionUID = 1L;
-    private Set m_pids;
+    private Set<String> m_pids;
     private String m_newState;
 
     public ChangeObjectState(String pid, String stateString) {
         super(stateString);
-        m_pids=new HashSet();
+        m_pids=new HashSet<String>();
         m_pids.add(pid);
         m_newState=stateString.toUpperCase().substring(0, 1);
     }
 
-    public ChangeObjectState(Set pids, String stateString) {
+    public ChangeObjectState(Set<String> pids, String stateString) {
         super(stateString);
         m_pids=pids;
         m_newState=stateString.toUpperCase().substring(0, 1);

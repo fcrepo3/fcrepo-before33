@@ -14,6 +14,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fedora.common.Constants;
+import fedora.common.rdf.RDFName;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -34,21 +35,21 @@ public class DCFields
 	public static final String DC_PREFIX="dc";
 	public static final String DC_NS="http://purl.org/dc/elements/1.1/";
 			
-    private ArrayList m_titles=new ArrayList();
-    private ArrayList m_creators=new ArrayList();
-    private ArrayList m_subjects=new ArrayList();
-    private ArrayList m_descriptions=new ArrayList();
-    private ArrayList m_publishers=new ArrayList();
-    private ArrayList m_contributors=new ArrayList();
-    private ArrayList m_dates=new ArrayList();
-    private ArrayList m_types=new ArrayList();
-    private ArrayList m_formats=new ArrayList();
-    private ArrayList m_identifiers=new ArrayList();
-    private ArrayList m_sources=new ArrayList();
-    private ArrayList m_languages=new ArrayList();
-    private ArrayList m_relations=new ArrayList();
-    private ArrayList m_coverages=new ArrayList();
-    private ArrayList m_rights=new ArrayList();
+    private ArrayList<String> m_titles=new ArrayList<String>();
+    private ArrayList<String> m_creators=new ArrayList<String>();
+    private ArrayList<String> m_subjects=new ArrayList<String>();
+    private ArrayList<String> m_descriptions=new ArrayList<String>();
+    private ArrayList<String> m_publishers=new ArrayList<String>();
+    private ArrayList<String> m_contributors=new ArrayList<String>();
+    private ArrayList<String> m_dates=new ArrayList<String>();
+    private ArrayList<String> m_types=new ArrayList<String>();
+    private ArrayList<String> m_formats=new ArrayList<String>();
+    private ArrayList<String> m_identifiers=new ArrayList<String>();
+    private ArrayList<String> m_sources=new ArrayList<String>();
+    private ArrayList<String> m_languages=new ArrayList<String>();
+    private ArrayList<String> m_relations=new ArrayList<String>();
+    private ArrayList<String> m_coverages=new ArrayList<String>();
+    private ArrayList<String> m_rights=new ArrayList<String>();
 
     private StringBuffer m_currentContent;
 
@@ -124,10 +125,9 @@ public class DCFields
      * Returns a Map with RDFName keys, each value containing List
      * of String values for that field.
      *
-     * TODO: Use generics for better type safety
      */
-    public Map getMap() {
-        Map map = new HashMap();
+    public Map<RDFName, List<String>> getMap() {
+        Map<RDFName, List<String>> map = new HashMap<RDFName, List<String>>();
 
         map.put(Constants.DC.TITLE, m_titles);
         map.put(Constants.DC.CREATOR, m_creators);
@@ -148,63 +148,63 @@ public class DCFields
         return map;
     }
 
-    public List titles() {
+    public List<String> titles() {
         return m_titles;
     }
 
-    public List creators() {
+    public List<String> creators() {
         return m_creators;
     }
 
-    public List subjects() {
+    public List<String> subjects() {
         return m_subjects;
     }
 
-    public List descriptions() {
+    public List<String> descriptions() {
         return m_descriptions;
     }
 
-    public List publishers() {
+    public List<String> publishers() {
         return m_publishers;
     }
 
-    public List contributors() {
+    public List<String> contributors() {
         return m_contributors;
     }
 
-    public List dates() {
+    public List<String> dates() {
         return m_dates;
     }
 
-    public List types() {
+    public List<String> types() {
         return m_types;
     }
 
-    public List formats() {
+    public List<String> formats() {
         return m_formats;
     }
 
-    public List identifiers() {
+    public List<String> identifiers() {
         return m_identifiers;
     }
 
-    public List sources() {
+    public List<String> sources() {
         return m_sources;
     }
 
-    public List languages() {
+    public List<String> languages() {
         return m_languages;
     }
 
-    public List relations() {
+    public List<String> relations() {
         return m_relations;
     }
 
-    public List coverages() {
+    public List<String> coverages() {
         return m_coverages;
     }
 
-    public List rights() {
+    public List<String> rights() {
         return m_rights;
     }
 

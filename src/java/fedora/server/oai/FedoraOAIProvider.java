@@ -38,13 +38,13 @@ public class FedoraOAIProvider
     private String m_localname;
     private String m_relpath;
     private Set m_adminEmails;
-    private Set m_descriptions;
-    private List m_setInfos;
+    private Set<String> m_descriptions;
+    private List<SimpleSetInfo> m_setInfos;
     private long m_maxSets;
     private long m_maxRecords;
     private long m_maxHeaders;
     private FieldSearch m_fieldSearch;
-    private Set m_formats;
+    private Set<SimpleMetadataFormat> m_formats;
     private static Set s_emptySet=new HashSet();
     private static String[] s_headerFields=new String[] {"pid", "dcmDate",
             "fType"};
@@ -67,7 +67,7 @@ public class FedoraOAIProvider
         m_maxRecords=maxRecords;
         m_maxHeaders=maxHeaders;
         m_fieldSearch=fieldSearch;
-        m_descriptions=new HashSet();
+        m_descriptions=new HashSet<String>();
         StringBuffer buf=new StringBuffer();
         buf.append("      <oai-identifier xmlns=\"http://www.openarchives.org/OAI/2.0/oai-identifier\"\n");
         buf.append("          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n");
@@ -92,11 +92,11 @@ public class FedoraOAIProvider
             buf.append("      </friends>");
             m_descriptions.add(buf.toString());
         }
-        m_formats=new HashSet();
+        m_formats=new HashSet<SimpleMetadataFormat>();
         m_formats.add(new SimpleMetadataFormat("oai_dc",
                 "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));
-        m_setInfos=new ArrayList();
+        m_setInfos=new ArrayList<SimpleSetInfo>();
         m_setInfos.add(new SimpleSetInfo("Data Objects", "objects", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Mechanism Objects", "bmechs", s_emptySet));
         m_setInfos.add(new SimpleSetInfo("Behavior Definition Objects", "bdefs", s_emptySet));
@@ -196,7 +196,7 @@ public class FedoraOAIProvider
         if (l.size()==0) {
             throw new NoRecordsMatchException("No records match the given criteria.");
         }
-        ArrayList ret=new ArrayList();
+        ArrayList<Object> ret=new ArrayList<Object>();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
             ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
@@ -213,7 +213,7 @@ public class FedoraOAIProvider
     private Header getHeader(ObjectFields f) {
         String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
         Date datestamp=f.getDCMDate();
-        HashSet setSpecs=new HashSet();
+        HashSet<String> setSpecs=new HashSet<String>();
         String fType=f.getFType();
         if (fType.equals("D")) {
             setSpecs.add("bdefs");
@@ -333,7 +333,7 @@ public class FedoraOAIProvider
         if (l.size()==0) {
             throw new NoRecordsMatchException("No records match the given criteria.");
         }
-        ArrayList ret=new ArrayList();
+        ArrayList<Object> ret=new ArrayList<Object>();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
             ret.add(new SimpleRecord(getHeader(f), getDCXML(f), s_emptySet));
@@ -410,12 +410,12 @@ public class FedoraOAIProvider
         if (l.size()==0) {
             throw new NoRecordsMatchException("No records match the given criteria.");
         }
-        ArrayList ret=new ArrayList();
+        ArrayList<Object> ret=new ArrayList<Object>();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
             String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp=f.getDCMDate();
-            HashSet setSpecs=new HashSet();
+            HashSet<String> setSpecs=new HashSet<String>();
             String fType=f.getFType();
             if (fType.equals("D")) {
                 setSpecs.add("bdefs");
@@ -454,12 +454,12 @@ public class FedoraOAIProvider
         if (l.size()==0) {
             throw new NoRecordsMatchException("No records match the given criteria.");
         }
-        ArrayList ret=new ArrayList();
+        ArrayList<Object> ret=new ArrayList<Object>();
         for (int i=0; i<l.size(); i++) {
             ObjectFields f=(ObjectFields) l.get(i);
             String identifier="oai:" + m_repositoryDomainName + ":" + f.getPid();
             Date datestamp=f.getDCMDate();
-            HashSet setSpecs=new HashSet();
+            HashSet<String> setSpecs=new HashSet<String>();
             String fType=f.getFType();
             if (fType.equals("D")) {
                 setSpecs.add("bdefs");

@@ -146,9 +146,9 @@ import com.sun.xacml.ctx.Status;
 		
 	protected final HashSet attributesDenied = new HashSet();
 	
-	private final Hashtable attributeIdUris = new Hashtable();	
-	private final Hashtable attributeTypes = new Hashtable();
-	private final Hashtable attributeTypeUris = new Hashtable();
+	private final Hashtable<String, URI> attributeIdUris = new Hashtable<String, URI>();	
+	private final Hashtable<String, String> attributeTypes = new Hashtable<String, String>();
+	private final Hashtable<String, URI> attributeTypeUris = new Hashtable<String, URI>();
 	protected final void registerAttribute(String id, String type) throws URISyntaxException {
 		log("registering attribute " + iAm() + " " +  id);
 		attributeIdUris.put(id, new URI(id));
@@ -182,10 +182,10 @@ import com.sun.xacml.ctx.Status;
 	}
 	
 	private static final Set NULLSET = new HashSet();
-	private final Set supportedDesignatorTypes = new HashSet();
+	private final Set<Integer> supportedDesignatorTypes = new HashSet<Integer>();
 	protected final void registerSupportedDesignatorType(int designatorType) {
 		log("registerSupportedDesignatorType() "  + iAm());
-		supportedDesignatorTypes.add(new Integer(designatorType));
+		supportedDesignatorTypes.add(designatorType);
 	}
 	
 	public Set getSupportedDesignatorTypes() {
@@ -259,7 +259,7 @@ import com.sun.xacml.ctx.Status;
 			return new EvaluationResult(BagAttribute.createEmptyBag(attributeType));			
 		}
 
-		Set set = new HashSet();
+		Set<AttributeValue> set = new HashSet<AttributeValue>();
 		if (temp instanceof String) {
 			log("AttributeFinder:findAttribute" + " will return a " + "String " + iAm());
 			if (attributeType.toString().equals(StringAttribute.identifier)) {

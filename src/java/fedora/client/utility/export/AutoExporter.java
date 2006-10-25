@@ -33,7 +33,7 @@ public class AutoExporter {
 
     private FedoraAPIM m_apim;
 	private FedoraAPIA m_apia;
-    private static HashMap s_repoInfo=new HashMap();
+    private static HashMap<FedoraAPIA, RepositoryInfo> s_repoInfo=new HashMap<FedoraAPIA, RepositoryInfo>();
 
     //public AutoExporter(String protocol, String host, int port, String user, String pass)
     //        throws MalformedURLException, ServiceException {

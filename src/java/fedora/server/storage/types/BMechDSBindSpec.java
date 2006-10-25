@@ -36,7 +36,7 @@ public class BMechDSBindSpec
         for (int i = 0; i < dsBindRules.length; i++) {
             BMechDSBindRule rule = dsBindRules[i];
             String key = rule.bindingKeyName;
-            List bindingsForThisRule = new ArrayList();
+            List<DSBindingAugmented> bindingsForThisRule = new ArrayList<DSBindingAugmented>();
             for (int j = 0; j < augBindings.length; j++) {
                 if (augBindings[j].bindKeyName.equals(key)) {
                     bindingsForThisRule.add(augBindings[j]);

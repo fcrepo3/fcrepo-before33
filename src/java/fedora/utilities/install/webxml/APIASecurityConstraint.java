@@ -17,7 +17,7 @@ public class APIASecurityConstraint extends SecurityConstraint {
 	private static final Set httpMethods;
 	
 	static {
-		urlPatterns = new HashSet(Arrays.asList(new String[] {"/services/access",
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"/services/access",
 				"/describe",
 				"/get/*",
 				"/getObjectHistory/*",
@@ -28,7 +28,7 @@ public class APIASecurityConstraint extends SecurityConstraint {
 				"/report",
 				"/risearch",
 				"/search"}));
-		httpMethods = new HashSet(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
+		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
 	}
 	
 	public APIASecurityConstraint(Document document, WebXMLOptions options) {

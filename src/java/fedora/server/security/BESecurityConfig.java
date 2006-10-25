@@ -2,6 +2,7 @@ package fedora.server.security;
 
 import java.io.*;
 import java.util.*;
+
 import javax.xml.parsers.*;
 
 import org.w3c.dom.*;
@@ -64,7 +65,7 @@ public class BESecurityConfig {
     /**
      * A sorted, PID-keyed map of <code>BMechRoleConfig</code>s.
      */
-    private SortedMap         m_bMechConfigs;
+    private SortedMap<String, BMechRoleConfig>         m_bMechConfigs;
 
     /**
      * Create an empty BESecurityConfig with an empty map of 
@@ -72,7 +73,7 @@ public class BESecurityConfig {
      * everything else.
      */
     public BESecurityConfig() {
-        m_bMechConfigs = new TreeMap();
+        m_bMechConfigs = new TreeMap<String, BMechRoleConfig>();
     }
 
     /**
@@ -258,7 +259,7 @@ public class BESecurityConfig {
     /**
      * Get the mutable, sorted, PID-keyed map of <code>BMechRoleConfig</code>s.
      */
-    public SortedMap getBMechConfigs() {
+    public SortedMap<String, BMechRoleConfig> getBMechConfigs() {
         return m_bMechConfigs;
     }
 
@@ -571,12 +572,12 @@ public class BESecurityConfig {
         if (args.length == 1) {
             BESecurityConfig config = BESecurityConfig.fromStream(
                     new FileInputStream(new File(args[0])));
-            List methodNames = new ArrayList();
+            List<String> methodNames = new ArrayList<String>();
             methodNames.add("methodOne");
             methodNames.add("methodTwo");
-            Map pidToMethodList = new HashMap();
+            Map<String, List> pidToMethodList = new HashMap<String, List>();
             pidToMethodList.put("demo:bMechOne", methodNames);
-            methodNames = new ArrayList();
+            methodNames = new ArrayList<String>();
             methodNames.add("getFriday");
             pidToMethodList.put("demo:13", methodNames);
             config.addEmptyConfigs(pidToMethodList);

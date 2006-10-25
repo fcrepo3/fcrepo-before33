@@ -73,7 +73,7 @@ public class DefaultLowlevelStorageModule extends Module implements ILowlevelSto
                     + "connectionPool.", getRole());
 		}
 		
-		Map configuration = new HashMap();
+		Map<String, Object> configuration = new HashMap<String, Object>();
 		configuration.put(DefaultLowlevelStorage.FILESYSTEM, filesystem);
 		configuration.put(DefaultLowlevelStorage.PATH_ALGORITHM, pathAlgorithm);
 		configuration.put(DefaultLowlevelStorage.PATH_REGISTRY, pathRegistry);

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fedora.oai.OAIProvider;
 import fedora.oai.*;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -63,7 +62,7 @@ public class FedoraOAIProviderModule
         if (aes==null) {
             throw new ModuleInitializationException("adminEmails must be specified.", getRole());
         }
-        HashSet adminEmails=new HashSet();
+        HashSet<String> adminEmails=new HashSet<String>();
         if (aes.indexOf(" ")==-1) {
             adminEmails.add(aes);
         } else {
@@ -72,7 +71,7 @@ public class FedoraOAIProviderModule
                 adminEmails.add(emails[i]);
             }
         }
-        HashSet friends=new HashSet();
+        HashSet<String> friends=new HashSet<String>();
         if (getParameter("friends")!=null) {
             String f=getParameter("friends");
             if (f.indexOf(" ")==-1) {

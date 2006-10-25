@@ -13,18 +13,18 @@ import org.dom4j.Document;
  *
  */
 public class APIMSecurityConstraint extends SecurityConstraint {
-	private static final Set urlPatterns;
-	private static final Set httpMethods;
+	private static final Set<String> urlPatterns;
+	private static final Set<String> httpMethods;
 	
 	static {
-		urlPatterns = new HashSet(Arrays.asList(new String[] {"/index.html", 
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"/index.html", 
 				"*.jws",
 				"/services/management",
 				"/management/backendSecurity",
 				"/management/getNextPID",
 				"/management/upload",
 				"/getDSAuthenticated"}));
-		httpMethods = new HashSet(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
+		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
 	}
 	
 	public APIMSecurityConstraint(Document document, WebXMLOptions options) {

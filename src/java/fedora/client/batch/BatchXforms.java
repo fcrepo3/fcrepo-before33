@@ -33,7 +33,7 @@ class BatchXforms {
     private static final String JAXP_SCHEMA_SOURCE =
         "http://java.sun.com/xml/jaxp/properties/schemaSource";
     
-    private HashMap formatMap = new HashMap();
+    private HashMap<String, String> formatMap = new HashMap<String, String>();
 
 
       private String additionsPath = null;
@@ -93,7 +93,7 @@ class BatchXforms {
 		good2go = true;
 	}
 
-	private Vector keys = null;
+	private Vector<String> keys = null;
 
 	/* package */ Vector getKeys() {
 		return keys;
@@ -105,7 +105,7 @@ class BatchXforms {
 		//SAXTransformerFactory tfactory = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 		TransformerFactory tfactory = TransformerFactory.newInstance(); //try this from RunXSLT
     		//System.err.println("after TransformerFactory.newInstance(); tf is null?=" + (tfactory == null)); //<<==
-		keys = new Vector();
+		keys = new Vector<String>();
 		if (good2go) {
 			int count = 0;
 			File file4catch = null;

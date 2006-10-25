@@ -51,7 +51,7 @@ public abstract class BObjMETSSerializer
   protected Element root;
   //protected Element header;
   protected Element bObjFileSec;
-  protected Vector docDSIDs = new Vector();
+  protected Vector<String> docDSIDs = new Vector<String>();
   protected Element bObjStructMap;
   protected Element bObjBehaviorSec;
   protected BObjTemplate bObjData;

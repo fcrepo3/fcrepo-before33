@@ -2,17 +2,17 @@ package fedora.server.security;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
-import java.util.Set;
 import java.util.Iterator;
-import java.util.HashMap;
+import java.util.Set;
 
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -30,9 +30,6 @@ import fedora.server.errors.StreamIOException;
  * @version $Id$
  */
 public class BackendSecurityDeserializer extends DefaultHandler {
-
-	private String inFilePath = null;
-	private String outFilePath = null;	
 	
 	/** The namespace and attributes in the beSecurity spec file */
 	public static final String BE="info:fedora/fedora-system:def/beSecurity#";
@@ -51,29 +48,24 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 	
 	/** Target objects for deserialization. */
 	private BackendSecuritySpec beSS;
-	private Hashtable beProperties = new Hashtable();
+	private Hashtable<String, String> beProperties = new Hashtable<String, String>();
 
     
 	/** Temp variables for SAX parse */
 	private SAXParser tmp_parser;
-	private String tmp_characterEncoding;
-	private HashMap tmp_prefixMap;
 	private boolean tmp_rootElementFound;
 	private int tmp_level;
 	private String tmp_parentRole;
-	private Hashtable tmp_rootProperties;
-	private Hashtable tmp_serviceProperties;
+	private Hashtable<String, String> tmp_rootProperties;
+	private Hashtable<String, String> tmp_serviceProperties;
 	private String tmp_role;
 	
 	
 	public BackendSecurityDeserializer(String characterEncoding, boolean validate)
 			throws FactoryConfigurationError, ParserConfigurationException,
 			SAXException, UnsupportedEncodingException {
-				
-		tmp_characterEncoding=characterEncoding;
 		StringBuffer buf=new StringBuffer();
 		buf.append("test");
-		byte[] temp=buf.toString().getBytes(tmp_characterEncoding);
 		SAXParserFactory spf = SAXParserFactory.newInstance();
 		spf.setValidating(validate);
 		spf.setNamespaceAware(true);
@@ -81,7 +73,7 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 		
 		// set up objects for the parsed information
 		beSS = new BackendSecuritySpec();
-		beProperties = new Hashtable();
+		beProperties = new Hashtable<String, String>();
 	}
 	
 	public BackendSecuritySpec deserialize(String inFilePath)
@@ -121,7 +113,7 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 			}
 			
 			tmp_role = grab(a, BE, ROLE);
-			beProperties = new Hashtable();				
+			beProperties = new Hashtable<String, String>();				
 			setProperty(CALL_BASIC_AUTH, grab(a, BE, CALL_BASIC_AUTH));
 			setProperty(CALL_SSL, grab(a, BE, CALL_SSL));
 			setProperty(CALL_USERNAME, grab(a, BE, CALL_USERNAME));
@@ -135,13 +127,13 @@ public class BackendSecurityDeserializer extends DefaultHandler {
 			try {
 				if (tmp_level == 0) {
 					tmp_rootElementFound=true;
-					tmp_rootProperties = new Hashtable();
+					tmp_rootProperties = new Hashtable<String, String>();
 					tmp_rootProperties.putAll(beProperties);
 					validateProperties();
 					beSS.setSecuritySpec("default", null, beProperties);
 				} else if (tmp_level == 1){
 					tmp_parentRole = tmp_role;
-					tmp_serviceProperties = new Hashtable();
+					tmp_serviceProperties = new Hashtable<String, String>();
 					tmp_serviceProperties.putAll(beProperties);
 					inheritProperties(tmp_rootProperties);
 					validateProperties();

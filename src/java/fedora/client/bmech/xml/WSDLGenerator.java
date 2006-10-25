@@ -45,7 +45,7 @@ public class WSDLGenerator
   private Document document;
   private Element root;
   private Element types;
-  private Vector messageElements;
+  private Vector<Element> messageElements;
   private Element portType;
   private Element service;
   private Element binding;
@@ -75,7 +75,7 @@ public class WSDLGenerator
     }
     root = (Element)document.createElementNS(WSDL, "wsdl:definitions");
     types = (Element)document.createElementNS(WSDL, "wsdl:types");
-    messageElements = new Vector();
+    messageElements = new Vector<Element>();
     portType = (Element)document.createElementNS(WSDL, "wsdl:portType");
     service = (Element)document.createElementNS(WSDL, "wsdl:service");
     binding = (Element)document.createElementNS(WSDL, "wsdl:binding");
@@ -156,7 +156,7 @@ public class WSDLGenerator
   {
     Element schema = (Element)document.createElementNS(XSD, "xsd:schema");
     schema.setAttribute("targetNamespace", THIS);
-    HashMap parmUnion = new HashMap();
+    HashMap<String, MethodParm> parmUnion = new HashMap<String, MethodParm>();
 
     for (int m=0; m<methods.length; m++)
     {
@@ -182,18 +182,18 @@ public class WSDLGenerator
         {
           MethodParm existingParm = (MethodParm)parmUnion.get(parms[p].parmName);
           String[] existingDomain = existingParm.parmDomainValues;
-          HashSet oldVals = new HashSet();
+          HashSet<String> oldVals = new HashSet<String>();
           for (int p1=0; p1<existingDomain.length; p1++)
           {
             oldVals.add(existingDomain[p1]);
           }
           String[] newDomain = parms[p].parmDomainValues;
-          HashSet newVals = new HashSet();
+          HashSet<String> newVals = new HashSet<String>();
           for (int p2=0; p2<newDomain.length; p2++)
           {
             newVals.add(newDomain[p2]);
           }
-          Set unionVals = new HashSet(oldVals);
+          Set<String> unionVals = new HashSet<String>(oldVals);
           unionVals.addAll(newVals);
           existingParm.parmDomainValues =
             (String[])unionVals.toArray(new String[0]);

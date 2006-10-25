@@ -304,7 +304,7 @@ public class BMechBuilder extends JInternalFrame {
 
 				// we need to update the BMechTemplate object with the latest
 				// datastream binding keys that are defined as method parms
-				Vector dsBindingKeys = new Vector();
+				Vector<String> dsBindingKeys = new Vector<String>();
 				for (int m = 0; m < methods.length; m++) {
 					MethodProperties props = methods[m].methodProperties;
 					if (props != null) {
@@ -331,7 +331,6 @@ public class BMechBuilder extends JInternalFrame {
 	}
 
 	protected boolean validateBMechTemplate() {
-		boolean validBMech = false;
 		Component[] tabs = tabpane.getComponents();
 		for (int i = 0; i < tabs.length; i++) {
 			if (tabs[i].getName().equalsIgnoreCase("GeneralTab")) {

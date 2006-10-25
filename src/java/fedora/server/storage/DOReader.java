@@ -73,7 +73,7 @@ public interface DOReader
      * @throws ServerException If any type of error occurred fulfilling the
      *         request.
      */
-    public List getAuditRecords() throws ServerException;
+    public List<AuditRecord> getAuditRecords() throws ServerException;
 
     /**
      * Gets the content of the entire digital object as XML.  The object will

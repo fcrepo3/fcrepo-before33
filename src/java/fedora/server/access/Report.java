@@ -113,7 +113,7 @@ public class Report
 		return values;
 	} 
 
-	private static final HashSet multivalued = new HashSet();
+	private static final HashSet<String> multivalued = new HashSet<String>();
 	static {
 		String[] temp = {
 			"bDef", "bMech", "title", "creator", "subject", "description", "publisher", 
@@ -128,7 +128,7 @@ public class Report
 		return multivalued.contains(name);
 	}
 	
-	protected static final HashSet allFields = new HashSet(multivalued);
+	protected static final HashSet<String> allFields = new HashSet<String>(multivalued);
 	static {
 		String[] temp = {
 			"pid", "label", "fType", "cModel", "state", "ownerId", "cDate", "mDate", "dcmDate"
@@ -138,7 +138,7 @@ public class Report
 		}		
 	}
 	
-	protected static final HashSet parms = new HashSet();
+	protected static final HashSet<String> parms = new HashSet<String>();
 	static {
 		String[] temp = {
 			"sessionToken", "maxResults", "newBase"
@@ -149,7 +149,7 @@ public class Report
 	}
  
 	
-	private static final HashSet needsEnc = new HashSet();
+	private static final HashSet<String> needsEnc = new HashSet<String>();
 	static {
 		String[] temp = {"label", "cModel"};
 		for (int i=0; i<temp.length; i++) {
@@ -189,7 +189,7 @@ public class Report
 	private static final String FORM_TITLE = "Repository Reports";
 	private static final String FORM_SUBTITLE = "select a report";
 	private static final String REPORT_TITLE = "Report on Repository";
-	private static final HashSet reportNames = new HashSet(); 
+	private static final HashSet<String> reportNames = new HashSet<String>(); 
 	static {
 		final String[] temp = {HTMLFORM, 
 			OBJECTS, ACTIVEOBJECTS, INACTIVEOBJECTS,
@@ -223,7 +223,7 @@ public class Report
 	private static final String INACTIVEBMECHSQUERY = "fType='M' state='I'";
 	private static final String[] INACTIVEBMECHSFIELDSARRAY = {"mDate", "pid", "label"};	
 
-	private static final Hashtable queries = new Hashtable(); 
+	private static final Hashtable<String, String> queries = new Hashtable<String, String>(); 
 	static {
 		queries.put(OBJECTS, OBJECTSQUERY); 
 		queries.put(ACTIVEOBJECTS, ACTIVEOBJECTSQUERY);
@@ -239,7 +239,7 @@ public class Report
 		return (String) queries.get(name);
 	}
 
-	private static final Hashtable fieldArrays = new Hashtable(); 
+	private static final Hashtable<String, String[]> fieldArrays = new Hashtable<String, String[]>(); 
 	static {
 		fieldArrays.put(OBJECTS, OBJECTSFIELDSARRAY); 
 		fieldArrays.put(ACTIVEOBJECTS, ACTIVEOBJECTSFIELDSARRAY);
@@ -282,7 +282,7 @@ public class Report
 	
 	private static final Hashtable dateRangeLabels; 
 	static {
-		Hashtable t = new Hashtable();
+		Hashtable<String, String> t = new Hashtable<String, String>();
 		t.put(NONE, "(regardless of when created or last modified)");
 		t.put(CREATED_LT_24_HRS_AGO,"created within past 24 hours");
 		t.put(MODIFIED_LT_24_HRS_AGO,"last modified within past 24 hours");
@@ -478,7 +478,7 @@ public class Report
 	protected static final String HTML_XSLT = "reportHtml.xslt";	
 	protected static final String XML_XSLT = "reportXml.xslt";	
 
-	private static final Hashtable xslts = new Hashtable(); 
+	private static final Hashtable<String, String> xslts = new Hashtable<String, String>(); 
 	static {
 		xslts.put("REQUEST_HTML_XSLT",REQUEST_HTML_XSLT);
 		xslts.put("HTML_XSLT",HTML_XSLT);
@@ -504,7 +504,7 @@ public class Report
 		return report;
 	}
  
- 	private static final void putOr(Hashtable hashtable, String key, String value) {
+ 	private static final void putOr(Hashtable<String, String> hashtable, String key, String value) {
  		if (value != null) {
  			hashtable.put(key,value);
  		}
@@ -517,7 +517,7 @@ public class Report
 			out = new PrintWriter(new OutputStreamWriter(ultOut, "UTF-8"));
 			x = new DirectWriter(out);
 		} else {
-			Hashtable params = new Hashtable();
+			Hashtable<String, String> params = new Hashtable<String, String>();
 			params.put("REQUEST-TYPE",Integer.toString(requestType));
 			switch (requestType) {
 				case HTMLFORM_ONLY:

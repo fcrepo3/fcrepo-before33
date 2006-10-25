@@ -50,7 +50,7 @@ public class FieldSearchServlet
     private static Access s_access=null;
 
     private String[] getFieldsArray(HttpServletRequest req) {
-        ArrayList l=new ArrayList();
+        ArrayList<String> l=new ArrayList<String>();
         if ( (req.getParameter("pid")!=null) && (req.getParameter("pid").equalsIgnoreCase("true")) ) l.add("pid");
         if ( (req.getParameter("label")!=null) && (req.getParameter("label").equalsIgnoreCase("true")) ) l.add("label");
         if ( (req.getParameter("fType")!=null) && (req.getParameter("fType").equalsIgnoreCase("true")) ) l.add("fType");
@@ -93,7 +93,7 @@ public class FieldSearchServlet
 		    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);            
 
 		    String[] fieldsArray=getFieldsArray(request);
-            HashSet fieldHash=new HashSet();
+            HashSet<String> fieldHash=new HashSet<String>();
             if (fieldsArray!=null) {
                 for (int i=0; i<fieldsArray.length; i++) {
                     fieldHash.add(fieldsArray[i]);

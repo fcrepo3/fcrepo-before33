@@ -10,13 +10,13 @@ public class ServerConfiguration
         extends Configuration {
 
     private String m_className;
-    private List m_moduleConfigurations;
-    private List m_datastoreConfigurations;
+    private List<ModuleConfiguration> m_moduleConfigurations;
+    private List<DatastoreConfiguration> m_datastoreConfigurations;
 
     public ServerConfiguration(String className,
                                List parameters,
-                               List moduleConfigurations,
-                               List datastoreConfigurations) {
+                               List<ModuleConfiguration> moduleConfigurations,
+                               List<DatastoreConfiguration> datastoreConfigurations) {
         super(parameters);
         m_className = className;
         m_moduleConfigurations = moduleConfigurations;

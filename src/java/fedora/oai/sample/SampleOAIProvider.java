@@ -71,11 +71,11 @@ public class SampleOAIProvider
     private SimpleRecord m_rec1;
 
     public SampleOAIProvider() {
-        HashSet s=new HashSet();
+        HashSet<String> s=new HashSet<String>();
         s.add("cs");
         s.add("cornell");
         m_head1=new SimpleHeader(s_rec1_identifier, new Date(), s, true);
-        HashSet a=new HashSet();
+        HashSet<String> a=new HashSet<String>();
         a.add(s_rec1_about);
         m_rec1=new SimpleRecord(m_head1, s_rec1_metadata, a);
     }
@@ -105,7 +105,7 @@ public class SampleOAIProvider
     }
 
     public Set getAdminEmails() {
-        HashSet s=new HashSet();
+        HashSet<String> s=new HashSet<String>();
         s.add("nobody@nowhere.com");
         return s;
     }
@@ -132,7 +132,7 @@ public class SampleOAIProvider
             String set) {
             // throws CannotDisseminateFormatException,
             // NoRecordsMatchException, NoSetHierarchyException;
-        ArrayList a=new ArrayList();
+        ArrayList<SimpleRecord> a=new ArrayList<SimpleRecord>();
         a.add(m_rec1);
         return a;
     }
@@ -144,7 +144,7 @@ public class SampleOAIProvider
 
     public List getHeaders(Date from, Date until, String metadataPrefix,
             String set) {
-        ArrayList a=new ArrayList();
+        ArrayList<SimpleHeader> a=new ArrayList<SimpleHeader>();
         a.add(m_head1);
         return a;
     }
@@ -155,7 +155,7 @@ public class SampleOAIProvider
     }
 
     public List getSets() {
-        ArrayList a=new ArrayList();
+        ArrayList<SimpleSetInfo> a=new ArrayList<SimpleSetInfo>();
         a.add(new SimpleSetInfo("Computer Science", "cs", new HashSet()));
         a.add(new SimpleSetInfo("Cornell University", "cornell", new HashSet()));
         return a;
@@ -167,7 +167,7 @@ public class SampleOAIProvider
     }
 
     public Set getMetadataFormats(String id) {
-        HashSet s=new HashSet();
+        HashSet<SimpleMetadataFormat> s=new HashSet<SimpleMetadataFormat>();
         s.add(new SimpleMetadataFormat("oai_dc",
                 "http://www.openarchives.org/OAI/2.0/oai_dc.xsd",
                 "http://www.openarchives.org/OAI/2.0/oai_dc/"));

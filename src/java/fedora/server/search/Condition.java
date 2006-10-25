@@ -72,7 +72,7 @@ public class Condition {
         StringBuffer prop=new StringBuffer();
         Operator oper=null;
         StringBuffer val=new StringBuffer();
-        ArrayList ret=new ArrayList();
+        ArrayList<Condition> ret=new ArrayList<Condition>();
         boolean inProp=true;
         boolean inValue=false;
         boolean firstValueChar=false;

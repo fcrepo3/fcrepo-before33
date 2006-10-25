@@ -24,7 +24,7 @@ public class BasicDigitalObject
     private boolean m_isNew;
     private int m_fedoraObjectType;
     private String m_pid;
-    private String m_uri;
+    //private String m_uri;
     private String m_state;
     private String m_ownerId;
     private String m_label;
@@ -32,16 +32,16 @@ public class BasicDigitalObject
     private Date m_createDate;
     private Date m_lastModDate;
     private ArrayList m_auditRecords;
-    private HashMap m_datastreams;
-    private HashMap m_disseminators;
+    private HashMap<String, ArrayList<Datastream>> m_datastreams;
+    private HashMap<String, ArrayList<Disseminator>> m_disseminators;
     private Map m_prefixes;
-	private Map m_extProperties;
+	private Map<String, String> m_extProperties;
 
     public BasicDigitalObject() {
         m_auditRecords=new ArrayList();
-        m_datastreams=new HashMap();
-        m_disseminators=new HashMap();
-        m_extProperties=new HashMap();
+        m_datastreams=new HashMap<String, ArrayList<Datastream>>();
+        m_disseminators=new HashMap<String, ArrayList<Disseminator>>();
+        m_extProperties=new HashMap<String, String>();
 		setNew(false);
     }
 
@@ -134,7 +134,7 @@ public class BasicDigitalObject
     }
 
     private static Set copyOfKeysForNonEmptyLists(HashMap map) {
-        HashSet set=new HashSet();
+        HashSet<String> set=new HashSet<String>();
         Iterator iter=map.keySet().iterator();
         while (iter.hasNext()) {
             String key=(String) iter.next();
@@ -146,10 +146,10 @@ public class BasicDigitalObject
         return set;
     }
 
-    public List datastreams(String id) {
-        ArrayList ret=(ArrayList) m_datastreams.get(id);
+    public List<Datastream> datastreams(String id) {
+        ArrayList<Datastream> ret=(ArrayList<Datastream>) m_datastreams.get(id);
         if (ret==null) {
-            ret=new ArrayList();
+            ret=new ArrayList<Datastream>();
             m_datastreams.put(id, ret);
         }
         return ret;
@@ -157,7 +157,7 @@ public class BasicDigitalObject
 
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion)
     {
-    	List datastreams = datastreams(ds.DatastreamID);
+    	List<Datastream> datastreams = datastreams(ds.DatastreamID);
     	if (!addNewVersion)
     	{
             Iterator dsIter = datastreams.iterator();
@@ -181,10 +181,10 @@ public class BasicDigitalObject
         return copyOfKeysForNonEmptyLists(m_disseminators).iterator();
     }
 
-    public List disseminators(String id) {
-        ArrayList ret=(ArrayList) m_disseminators.get(id);
+    public List<Disseminator> disseminators(String id) {
+        ArrayList<Disseminator> ret=(ArrayList<Disseminator>) m_disseminators.get(id);
         if (ret==null) {
-            ret=new ArrayList();
+            ret=new ArrayList<Disseminator>();
             m_disseminators.put(id, ret);
         }
         return ret;
@@ -195,7 +195,7 @@ public class BasicDigitalObject
     }
 
     public String newDatastreamID(String id) {
-        ArrayList versionIDs=new ArrayList();
+        ArrayList<String> versionIDs = new ArrayList<String>();
         Iterator iter=((ArrayList) m_datastreams.get(id)).iterator();
         while (iter.hasNext()) {
             Datastream ds=(Datastream) iter.next();
@@ -209,7 +209,7 @@ public class BasicDigitalObject
     }
 
     public String newDisseminatorID(String id) {
-        ArrayList versionIDs=new ArrayList();
+        ArrayList<String> versionIDs=new ArrayList<String>();
         Iterator iter=((ArrayList) m_disseminators.get(id)).iterator();
         while (iter.hasNext()) {
             Disseminator diss=(Disseminator) iter.next();
@@ -219,7 +219,7 @@ public class BasicDigitalObject
     }
 
     public String newDatastreamBindingMapID() {
-        ArrayList mapIDs=new ArrayList(); // the list we'll put
+        ArrayList<String> mapIDs=new ArrayList<String>(); // the list we'll put
                                           // allbinding map ids in
         Iterator dissIter=m_disseminators.keySet().iterator();
         // for every List of disseminators...
@@ -239,7 +239,7 @@ public class BasicDigitalObject
     }
 
     public String newAuditRecordID() {
-        ArrayList auditIDs=new ArrayList();
+        ArrayList<String> auditIDs=new ArrayList<String>();
         Iterator iter=m_auditRecords.iterator();
         while (iter.hasNext()) {
             AuditRecord record=(AuditRecord) iter.next();
