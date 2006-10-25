@@ -30,12 +30,16 @@
 		<!-- createdDate after ingest.                                                                                                                                                                                -->
 		<!-- <foxml:datastreamVersion CREATED="2005-03-15T12:57:07.241Z" ID="DC.0" LABEL="template: Dublin Core Metadata" MIMETYPE="text/xml"> -->
 		<foxml:datastreamVersion ID="DC.0" LABEL="template: Dublin Core Metadata" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="DESC" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DESC.0" LABEL="template: UVA descriptive metadata" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="E" ID="DS1" STATE="A" VERSIONABLE="true">
@@ -45,22 +49,30 @@
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV1" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DIGIPROV1.0" LABEL="template: UVA digiprov metadata for THUMBNAIL res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE1" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="SOURCE1.0" LABEL="template: UVA source metadata for THUMBNAIL res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="TECH1" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="TECH1.0" LABEL="template: UVA technical metadata for THUMBNAIL image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS1" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="RIGHTS1.0" LABEL="template: UVA access rights/policy metadata for THUMBNAIL res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="E" ID="DS2" STATE="A" VERSIONABLE="true">
@@ -70,22 +82,30 @@
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV2" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DIGIPROV2.0" LABEL="template: UVA digiprov metadata for MEDRES res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE2" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="SOURCE2.0" LABEL="template: UVA source metadata for MEDIUM res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="TECH2" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="TECH2.0" LABEL="template: UVA technical metadata for MED res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS2" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="RIGHTS2.0" LABEL="template: UVA access rights/policy metadata for MEDRES res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="E" ID="DS3" STATE="A" VERSIONABLE="true">
@@ -95,22 +115,30 @@
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV3" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DIGIPROV3.0" LABEL="template: UVA digiprov metadata for HIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE3" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="SOURCE3.0" LABEL="template: UVA source metadata for HIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="TECH3" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="TECH3.0" LABEL="template: UVA technical metadata for HIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS3" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="RIGHTS3.0" LABEL="template: UVA access rights/policy metadata for HIGHRES res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="E" ID="DS4" STATE="A" VERSIONABLE="true">
@@ -120,22 +148,30 @@
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="DIGIPROV4" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="DIGIPROV4.0" LABEL="template: UVA digiprov metadata for VERYHIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="SOURCE4" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="SOURCE4.0" LABEL="template: UVA source metadata for VERYHIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="TECH4" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="TECH4.0" LABEL="template: UVA technical metadata for VERYHIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:datastream CONTROL_GROUP="X" ID="RIGHTS4" STATE="A" VERSIONABLE="true">
 		<foxml:datastreamVersion ID="RIGHTS4.0" LABEL="template: UVA access rights/policy metadata for VERYHIGH res image" MIMETYPE="text/xml">
-			<foxml:xmlContent/>
+			<foxml:xmlContent>
+				<dummy/>
+			</foxml:xmlContent>
 		</foxml:datastreamVersion>
 	</foxml:datastream>
 	<foxml:disseminator BDEF_CONTRACT_PID="demo:1" ID="DISS1" STATE="A" VERSIONABLE="true">
