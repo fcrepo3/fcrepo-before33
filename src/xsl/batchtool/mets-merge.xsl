@@ -85,17 +85,17 @@ xmlns:fbm="http://www.fedora.info/definitions/"
 					<xsl:apply-templates select="$substitutions/fbm:input/fbm:metadata/fbm:metadata[@ID=$metadataID]/node()" />
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:apply-templates select="node()"/>
+					<xsl:choose>
+						<xsl:when test="$substitutions/fbm:input/fbm:datastreams/fbm:datastream[@ID=$metadataID]/fbm:xmlContent">
+							<xsl:apply-templates select="$substitutions/fbm:input/fbm:datastreams/fbm:datastream[@ID=$metadataID]/fbm:xmlContent/node()" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="node()"/>
+						</xsl:otherwise>
+					</xsl:choose>					
+					<!--<xsl:apply-templates select="node()"/>-->
 				</xsl:otherwise>
-			</xsl:choose>		
-			<xsl:choose>
-				<xsl:when test="$substitutions/fbm:input/fbm:datastreams/fbm:datastream[@ID=$metadataID]/fbm:xmlContent">
-					<xsl:apply-templates select="$substitutions/fbm:input/fbm:datastreams/fbm:datastream[@ID=$metadataID]/fbm:xmlContent/node()" />
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="node()"/>
-				</xsl:otherwise>
-			</xsl:choose>				
+			</xsl:choose>						
     		</xsl:copy>
 	</xsl:template>
 
