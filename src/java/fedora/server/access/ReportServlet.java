@@ -68,7 +68,7 @@ public class ReportServlet
 
 		String sessionToken = request.getParameter("sessionToken");
 		
-		String remoteAddr = remoteAddr = request.getRemoteAddr();
+		String remoteAddr = request.getRemoteAddr();
 		
 		String query = request.getParameter("query");
 
