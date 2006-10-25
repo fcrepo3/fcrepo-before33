@@ -20,7 +20,8 @@ import fedora.client.utility.export.AutoExporter;
  */
 public class ViewObjectXML
         extends AbstractAction {
-
+	
+	private static final long serialVersionUID = 1L;
     private Set m_pids;
     private boolean m_prompt;
     private JPanel m_viewPane;

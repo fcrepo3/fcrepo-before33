@@ -16,6 +16,8 @@ import fedora.server.Server;
 import fedora.server.resourceIndex.ResourceIndex;
 
 public class RISearchServlet extends TrippiServlet {
+	private static final long serialVersionUID = 1L;
+	
 	private static final Logger logger =
         Logger.getLogger(ResourceIndex.class.getName());
 	

@@ -11,6 +11,8 @@ package fedora.server.errors;
 public class QueryParseException
         extends ServerException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates a QueryParseException.
      *

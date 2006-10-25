@@ -11,6 +11,8 @@ package fedora.server.errors;
 public class DisseminatorNotFoundException
         extends StorageException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates a DisseminatorNotFoundException.
      *

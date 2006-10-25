@@ -16,6 +16,7 @@ import fedora.client.objecteditor.types.ParameterDefinition;
 public class BehaviorDescriptionPanel
         extends JPanel {
 
+	private static final long serialVersionUID = 1L;
     private Map m_loadedPanels;
     private JComponent m_containerToValidate;
 
@@ -127,6 +128,7 @@ public class BehaviorDescriptionPanel
     class ParameterPanel
             extends JPanel {
 
+    	private static final long serialVersionUID = 1L;
         private CardLayout m_cardLayout;
 
         public ParameterPanel(java.util.List methodDefs) {

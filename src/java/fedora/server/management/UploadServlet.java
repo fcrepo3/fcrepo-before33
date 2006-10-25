@@ -42,6 +42,8 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 public class UploadServlet 
         extends HttpServlet implements Logging {
 
+	private static final long serialVersionUID = 1L;
+	
     /** Content type for all responses. */
     private static final String CONTENT_TYPE_TEXT = "text/plain";
 

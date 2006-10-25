@@ -80,6 +80,7 @@ import org.apache.commons.httpclient.methods.GetMethod;
  */
 public class ImageManipulation extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
     private String inputMimeType;
     private boolean alreadyConvertedToRGB=false;
     private MultiThreadedHttpConnectionManager cManager=

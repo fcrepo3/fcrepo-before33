@@ -37,6 +37,7 @@ import fedora.server.access.FedoraAPIAServiceLocator;
 public class AccessConsole
         extends JInternalFrame
         implements Console {
+	private static final long serialVersionUID = 1L;
 
     private Administrator m_mainFrame;
     private FedoraAPIAServiceLocator m_locator;

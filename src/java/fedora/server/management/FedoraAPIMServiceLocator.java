@@ -16,6 +16,7 @@ package fedora.server.management;
  */
 public class FedoraAPIMServiceLocator extends org.apache.axis.client.Service implements fedora.server.management.FedoraAPIMService {
 
+	private static final long serialVersionUID = 1L;
 	// Use to get a proxy class for FedoraAPIMPortSOAPHTTP and FedoraAPIMPortSOAPHTTPS (secure)
     private final java.lang.String FedoraAPIMPortSOAPHTTP_address = "http://localhost:0/fedora/services/management"; //port replaced in external code
 	private final java.lang.String FedoraAPIMPortSOAPHTTPS_address = "https://localhost:0/fedora/services/management"; //port replaced in external code

@@ -45,6 +45,7 @@ import fedora.client.Administrator;
 public class ImportDialog
         extends JDialog {
 
+	private static final long serialVersionUID = 1L;
     public File file=null;
     public String url=null;
 
@@ -114,6 +115,7 @@ public class ImportDialog
                 gridBag, inputPane);
 
         JButton cancelButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }
@@ -157,6 +159,8 @@ public class ImportDialog
     public class ImportAction
             extends AbstractAction {
 
+    	private static final long serialVersionUID = 1L;
+    	
         public ImportAction() {
             super("Import");
         }

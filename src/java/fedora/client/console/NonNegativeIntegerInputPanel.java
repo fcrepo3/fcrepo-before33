@@ -21,6 +21,8 @@ import org.apache.axis.types.NonNegativeInteger;
 public class NonNegativeIntegerInputPanel
         extends InputPanel {
 
+	private static final long serialVersionUID = 1L;
+	
     private JRadioButton m_nullRadioButton;
     private JTextField m_textField;
 

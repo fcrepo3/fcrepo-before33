@@ -33,6 +33,7 @@ import fedora.server.utilities.*;
  * @author cwilper@cs.cornell.edu
  */
 public class BESecurityServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 
     /** 
      * If true, changes won't be saved on POST.  Instead, an XML document

@@ -19,7 +19,9 @@ import fedora.client.Administrator;
 public class FTypeDialog
         extends JDialog {
         
-    private String selections;
+	private static final long serialVersionUID = 1L;
+
+	private String selections;
     
     private JCheckBox dButton;
     private JCheckBox mButton;
@@ -50,7 +52,9 @@ public class FTypeDialog
         inputPane.add(oButton);
 
         JButton okButton=new JButton(new AbstractAction() {
-            public void actionPerformed(ActionEvent evt) {
+			private static final long serialVersionUID = 1L;
+
+			public void actionPerformed(ActionEvent evt) {
                 selections="";
                 if (dButton.isSelected()) {
                     selections+="D";
@@ -67,6 +71,7 @@ public class FTypeDialog
         });
         okButton.setText("OK");
         JButton cancelButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }

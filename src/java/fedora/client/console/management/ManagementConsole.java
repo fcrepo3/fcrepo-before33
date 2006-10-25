@@ -38,6 +38,7 @@ public class ManagementConsole
         extends JInternalFrame
         implements Console {
 
+	private static final long serialVersionUID = 1L;
     private Administrator m_mainFrame;
     private FedoraAPIMServiceLocator m_locator;
     private JTextArea m_outputArea;

@@ -33,11 +33,14 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.utilities.StreamUtility;
 
 /**
- * <p><b>Title: </b>DescribeRepositoryServlet.java</p>
- * <p><b>Description: </b>Implements the "getNextPID" functionality
- * of the Fedora Management LITE (API-M-LITE) interface using a
- * java servlet front end. The syntax defined by API-M-LITE for getting
- * a list of the next available PIDs has the following binding:
+ * <p>
+ * <b>Title: </b>DescribeRepositoryServlet.java
+ * </p>
+ * <p>
+ * <b>Description: </b>Implements the "getNextPID" functionality of the Fedora
+ * Management LITE (API-M-LITE) interface using a java servlet front end. The
+ * syntax defined by API-M-LITE for getting a list of the next available PIDs
+ * has the following binding:
  * <ol>
  * <li>getNextPID URL syntax:
  * protocol://hostname:port/fedora/management/getNextPID[?numPIDs=NUMPIDS&namespace=NAMESPACE&xml=BOOLEAN]
@@ -45,12 +48,12 @@ import fedora.server.utilities.StreamUtility;
  * determines the number of requested PIDS to generate. If omitted, numPIDs
  * defaults to 1. The namespace parameter determines the namespace to be used in
  * generating the PIDs. If omitted, namespace defaults to the namespace defined
- * in the fedora.fcfg configuration file for the parameter pidNamespace.
- * The xml parameter determines the type of output returned.
- * If the parameter is omitted or has a value of "false", a MIME-typed stream
- * consisting of an html table is returned providing a browser-savvy means
- * of viewing the object profile. If the value specified is "true", then
- * a MIME-typed stream consisting of XML is returned.</li>
+ * in the fedora.fcfg configuration file for the parameter pidNamespace. The xml
+ * parameter determines the type of output returned. If the parameter is omitted
+ * or has a value of "false", a MIME-typed stream consisting of an html table is
+ * returned providing a browser-savvy means of viewing the object profile. If
+ * the value specified is "true", then a MIME-typed stream consisting of XML is
+ * returned.</li>
  * <ul>
  * <li>protocol - either http or https.</li>
  * <li>hostname - required hostname of the Fedora server.</li>
@@ -58,440 +61,480 @@ import fedora.server.utilities.StreamUtility;
  * <li>fedora - required name of the Fedora access service.</li>
  * <li>describe - required verb of the Fedora service.</li>
  * <li>numPIDs - an optional parameter indicating the number of PIDs to be
- *               generated. If omitted, it defaults to 1.</li>
- * <li>namespace - an optional parameter indicating the namesapce to be used
- *                 in generating the PIDs. If omitted, it defaults to the
- *                 namespace defined in the <code>fedora.fcfg</code>
- *                 configuration file for the parameter pidNamespace.</li>
- * <li>xml - an optional parameter indicating the requested output format.
- *           A value of "true" indicates a return type of text/xml; the
- *           absence of the xml parameter or a value of "false"
- *           indicates format is to be text/html.</li>
+ * generated. If omitted, it defaults to 1.</li>
+ * <li>namespace - an optional parameter indicating the namesapce to be used in
+ * generating the PIDs. If omitted, it defaults to the namespace defined in the
+ * <code>fedora.fcfg</code> configuration file for the parameter pidNamespace.</li>
+ * <li>xml - an optional parameter indicating the requested output format. A
+ * value of "true" indicates a return type of text/xml; the absence of the xml
+ * parameter or a value of "false" indicates format is to be text/html.</li>
  * </ul>
- *
+ * 
  * @author rlw@virginia.edu
  * @version $Id$
  */
-public class GetNextPIDServlet extends HttpServlet implements Logging
-{
-  /** Content type for html. */
-  private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
+public class GetNextPIDServlet extends HttpServlet implements Logging {
+	private static final long serialVersionUID = 1L;
 
-  /** Content type for xml. */
-  private static final String CONTENT_TYPE_XML  = "text/xml; charset=UTF-8";
+	/** Content type for html. */
+	private static final String CONTENT_TYPE_HTML = "text/html; charset=UTF-8";
 
-  /** Instance of the Fedora server. */
-  private static Server s_server = null;
+	/** Content type for xml. */
+	private static final String CONTENT_TYPE_XML = "text/xml; charset=UTF-8";
 
-  /** Instance of the Management subsystem. */
-  private static Management s_management = null;
+	/** Instance of the Fedora server. */
+	private static Server s_server = null;
 
-  /** Instance of URLDecoder */
-  private URLDecoder decoder = new URLDecoder();
-  
-  /** HTTP protocol **/
-  private static String HTTP = "http";
-  
-  /** HTTPS protocol **/
-  private static String HTTPS = "https";
-  
-  public static final String ACTION_LABEL = "Get Pid";
-  
-  /** Configured Fedora server hostname */
-  private static String fedoraServerHost = null;
+	/** Instance of the Management subsystem. */
+	private static Management s_management = null;
 
-  /**
-   * <p>Process the Fedora API-M-LITE request to generate a list of next
-   * available PIDs. Parse and validate the servlet input parameters and then
-   * execute the specified request.</p>
-   *
-   * @param request  The servlet request.
-   * @param response servlet The servlet response.
-   * @throws ServletException If an error occurs that effects the servlet's
-   *         basic operation.
-   * @throws IOException If an error occurrs with an input or output operation.
-   */
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException
-  {
-    boolean xml = false;
-    int numPIDs = 1;
-    String namespace = null;
-    String requestURL = request.getRequestURL().toString();
+	/** Instance of URLDecoder */
+	private URLDecoder decoder = new URLDecoder();
 
-    Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
+	/** HTTP protocol * */
+	private static String HTTP = "http";
 
-    // Get optional supplied parameters.
-    for ( Enumeration e = request.getParameterNames(); e.hasMoreElements();)
-    {
-      String name = URLDecoder.decode((String)e.nextElement(), "UTF-8");
-      if (name.equalsIgnoreCase("xml"))
-      {
-        xml = new Boolean(request.getParameter(name)).booleanValue();
-      }
-      if (name.equalsIgnoreCase("numPIDs"))
-      {
-        numPIDs = new Integer(URLDecoder.decode(request.getParameter(name), "UTF-8")).intValue();
-      }
-      if (name.equalsIgnoreCase("namespace"))
-      {
-        namespace = URLDecoder.decode(request.getParameter(name), "UTF-8");
-      }
-    }
-    String actionLabel = "Getting Next Pid";
-    try
-    {
-      getNextPID(context, numPIDs, namespace, xml, response);
-	} catch (AuthzException ae) {            
-        throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	 				      
-    } catch (Throwable th)
-      {
-        String message = "[GetNextPIDServlet] An error has occured in "
-            + "accessing the Fedora Management Subsystem. The error was \" "
-            + th.getClass().getName()
-            + " \". Reason: "  + th.getMessage()
-            + "  Input Request was: \"" + request.getRequestURL().toString();
-        logWarning(message);
-        th.printStackTrace();
-    }
-  }
+	/** HTTPS protocol * */
+	private static String HTTPS = "https";
 
-  /**
-   * <p> Get the requested list of next Available PIDs by invoking the
-   * approriate method from the Management subsystem.</p>
-   *
-   * @param context The context of this request.
-   * @param numPIDs The number of PIDs requested.
-   * @param namespace The namespace of the requested PIDs.
-   * @param xml Boolean that determines format of response; true indicates
-   *            response format is xml; false indicates response format
-   *            is html.
-   * @param response The servlet response.
-   * @throws ServerException If an error occurred while accessing the Fedora
-   *                         Management subsystem.
-   */
-  public void getNextPID(Context context, int numPIDs, String namespace,
-        boolean xml, HttpServletResponse response) throws ServerException
-  {
+	public static final String ACTION_LABEL = "Get Pid";
 
-    OutputStreamWriter out = null;
-    PipedWriter pw = null;
-    PipedReader pr = null;
+	/** Configured Fedora server hostname */
+	private static String fedoraServerHost = null;
 
-    try
-    {
-      pw = new PipedWriter();
-      pr = new PipedReader(pw);
-      String[] pidList = s_management.getNextPID(context, numPIDs, namespace);
-      if (pidList.length > 0)
-      {
-        // Repository info obtained.
-        // Serialize the RepositoryInfo object into XML
-        new GetNextPIDSerializerThread(context, pidList, pw).start();
-        if (xml)
-        {
-          // Return results as raw XML
-          response.setContentType(CONTENT_TYPE_XML);
+	/**
+	 * <p>
+	 * Process the Fedora API-M-LITE request to generate a list of next
+	 * available PIDs. Parse and validate the servlet input parameters and then
+	 * execute the specified request.
+	 * </p>
+	 * 
+	 * @param request
+	 *            The servlet request.
+	 * @param response
+	 *            servlet The servlet response.
+	 * @throws ServletException
+	 *             If an error occurs that effects the servlet's basic
+	 *             operation.
+	 * @throws IOException
+	 *             If an error occurrs with an input or output operation.
+	 */
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		boolean xml = false;
+		int numPIDs = 1;
+		String namespace = null;
+		String requestURL = request.getRequestURL().toString();
 
-          // Insures stream read from PipedReader correctly translates utf-8
-          // encoded characters to OutputStreamWriter.
-          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
-          int bufSize = 4096;
-          char[] buf=new char[bufSize];
-          int len=0;
-          while ( (len = pr.read(buf, 0, bufSize)) != -1) {
-              out.write(buf, 0, len);
-          }
-          out.flush();
-        } else
-        {
-          // Transform results into an html table
-          response.setContentType(CONTENT_TYPE_HTML);
-          out = new OutputStreamWriter(response.getOutputStream(),"UTF-8");
-          File xslFile = new File(s_server.getHomeDir(), "management/getNextPIDInfo.xslt");
-          TransformerFactory factory = TransformerFactory.newInstance();
-          Templates template = factory.newTemplates(new StreamSource(xslFile));
-          Transformer transformer = template.newTransformer();
-          Properties details = template.getOutputProperties();
-          transformer.transform(new StreamSource(pr), new StreamResult(out));
-        }
-        out.flush();
+		Context context = ReadOnlyContext.getContext(
+				Constants.HTTP_REQUEST.REST.uri, request);
 
-      } else
-      {
-        // GetNextPID request returned no PIDs.
-        String message = "[GetNextPIDServlet] No PIDs returned.";
-        logInfo(message);
-      }
-    } catch (Throwable th)
-    {
-      String message = "[GetNextPIDServlet] An error has occured. "
-                     + " The error was a \" "
-                     + th.getClass().getName()
-                     + " \". Reason: "  + th.getMessage();
-      logWarning(message);
-      th.printStackTrace();
-      throw new GeneralException(message);
-    } finally
-    {
-      try
-      {
-        if (pr != null) pr.close();
-        if (out != null) out.close();
-      } catch (Throwable th)
-      {
-        String message = "[GetNextPIDServlet] An error has occured. "
-                       + " The error was a \" "
-                       + th.getClass().getName()
-                     + " \". Reason: "  + th.getMessage();
-        throw new StreamIOException(message);
-      }
-    }
-  }
+		// Get optional supplied parameters.
+		for (Enumeration e = request.getParameterNames(); e.hasMoreElements();) {
+			String name = URLDecoder.decode((String) e.nextElement(), "UTF-8");
+			if (name.equalsIgnoreCase("xml")) {
+				xml = new Boolean(request.getParameter(name)).booleanValue();
+			}
+			if (name.equalsIgnoreCase("numPIDs")) {
+				numPIDs = new Integer(URLDecoder.decode(request
+						.getParameter(name), "UTF-8")).intValue();
+			}
+			if (name.equalsIgnoreCase("namespace")) {
+				namespace = URLDecoder.decode(request.getParameter(name),
+						"UTF-8");
+			}
+		}
+		String actionLabel = "Getting Next Pid";
+		try {
+			getNextPID(context, numPIDs, namespace, xml, response);
+		} catch (AuthzException ae) {
+			throw RootException.getServletException(ae, request, ACTION_LABEL,
+					new String[0]);
+		} catch (Throwable th) {
+			String message = "[GetNextPIDServlet] An error has occured in "
+					+ "accessing the Fedora Management Subsystem. The error was \" "
+					+ th.getClass().getName() + " \". Reason: "
+					+ th.getMessage() + "  Input Request was: \""
+					+ request.getRequestURL().toString();
+			logWarning(message);
+			th.printStackTrace();
+		}
+	}
 
-  /**
-   * <p> A Thread to serialize an array of PIDs into XML.</p>
-   *
-   */
-  public class GetNextPIDSerializerThread extends Thread
-  {
-    private PipedWriter pw = null;
-    private String[] pidList = null;
-    private String fedoraServerProtocol = null;
-    private String fedoraServerPort = null;
+	/**
+	 * <p>
+	 * Get the requested list of next Available PIDs by invoking the approriate
+	 * method from the Management subsystem.
+	 * </p>
+	 * 
+	 * @param context
+	 *            The context of this request.
+	 * @param numPIDs
+	 *            The number of PIDs requested.
+	 * @param namespace
+	 *            The namespace of the requested PIDs.
+	 * @param xml
+	 *            Boolean that determines format of response; true indicates
+	 *            response format is xml; false indicates response format is
+	 *            html.
+	 * @param response
+	 *            The servlet response.
+	 * @throws ServerException
+	 *             If an error occurred while accessing the Fedora Management
+	 *             subsystem.
+	 */
+	public void getNextPID(Context context, int numPIDs, String namespace,
+			boolean xml, HttpServletResponse response) throws ServerException {
 
-    /**
-     * <p> Constructor for GetNextPIDSerializerThread.</p>
-     *
-     * @param pidList An array of the requested next available PIDs.
-     * @param pw A PipedWriter to which the serialization info is written.
-     */
-    public GetNextPIDSerializerThread(Context context, String[] pidList, PipedWriter pw)
-    {
-      this.pw = pw;
-      this.pidList = pidList;
-      fedoraServerPort = context.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);   
-      if (Constants.HTTP_REQUEST.SECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
-          fedoraServerProtocol = HTTPS;
-      } else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
-          fedoraServerProtocol = HTTP;
-      }            
-    }
+		OutputStreamWriter out = null;
+		PipedWriter pw = null;
+		PipedReader pr = null;
 
-    /**
-     * <p> This method executes the thread.</p>
-     */
-    public void run()
-    {
-      if (pw != null)
-      {
-        try
-        {
-          pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
-          pw.write("<pidList "
-              + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
-              + " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
-              + " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/ "
-              + StreamUtility.enc(fedoraServerProtocol) + "://" + StreamUtility.enc(fedoraServerHost) + ":" + StreamUtility.enc(fedoraServerPort)
-              + "/getNextPIDInfo.xsd\">\n");
+		try {
+			pw = new PipedWriter();
+			pr = new PipedReader(pw);
+			String[] pidList = s_management.getNextPID(context, numPIDs,
+					namespace);
+			if (pidList.length > 0) {
+				// Repository info obtained.
+				// Serialize the RepositoryInfo object into XML
+				new GetNextPIDSerializerThread(context, pidList, pw).start();
+				if (xml) {
+					// Return results as raw XML
+					response.setContentType(CONTENT_TYPE_XML);
 
-          // PID array serialization
-          for (int i=0; i<pidList.length; i++) {
-          pw.write("  <pid>" + pidList[i] + "</pid>\n");
-          }
-          pw.write("</pidList>\n");
-          pw.flush();
-          pw.close();
-        } catch (IOException ioe) {
-          System.err.println("WriteThread IOException: " + ioe.getMessage());
-        } finally
-        {
-          try
-          {
-            if (pw != null) pw.close();
-          } catch (IOException ioe)
-          {
-            System.err.println("WriteThread IOException: " + ioe.getMessage());
-          }
-        }
-      }
-    }
-  }
+					// Insures stream read from PipedReader correctly translates
+					// utf-8
+					// encoded characters to OutputStreamWriter.
+					out = new OutputStreamWriter(response.getOutputStream(),
+							"UTF-8");
+					int bufSize = 4096;
+					char[] buf = new char[bufSize];
+					int len = 0;
+					while ((len = pr.read(buf, 0, bufSize)) != -1) {
+						out.write(buf, 0, len);
+					}
+					out.flush();
+				} else {
+					// Transform results into an html table
+					response.setContentType(CONTENT_TYPE_HTML);
+					out = new OutputStreamWriter(response.getOutputStream(),
+							"UTF-8");
+					File xslFile = new File(s_server.getHomeDir(),
+							"management/getNextPIDInfo.xslt");
+					TransformerFactory factory = TransformerFactory
+							.newInstance();
+					Templates template = factory.newTemplates(new StreamSource(
+							xslFile));
+					Transformer transformer = template.newTransformer();
+					Properties details = template.getOutputProperties();
+					transformer.transform(new StreamSource(pr),
+							new StreamResult(out));
+				}
+				out.flush();
 
-  /**
-   * <p>For now, treat a HTTP POST request just like a GET request.</p>
-   *
-   * @param request The servet request.
-   * @param response The servlet response.
-   * @throws ServletException If thrown by <code>doGet</code>.
-   * @throws IOException If thrown by <code>doGet</code>.
-   */
-  public void doPost(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException
-  {
-    doGet(request, response);
-  }
+			} else {
+				// GetNextPID request returned no PIDs.
+				String message = "[GetNextPIDServlet] No PIDs returned.";
+				logInfo(message);
+			}
+		} catch (Throwable th) {
+			String message = "[GetNextPIDServlet] An error has occured. "
+					+ " The error was a \" " + th.getClass().getName()
+					+ " \". Reason: " + th.getMessage();
+			logWarning(message);
+			th.printStackTrace();
+			throw new GeneralException(message);
+		} finally {
+			try {
+				if (pr != null)
+					pr.close();
+				if (out != null)
+					out.close();
+			} catch (Throwable th) {
+				String message = "[GetNextPIDServlet] An error has occured. "
+						+ " The error was a \" " + th.getClass().getName()
+						+ " \". Reason: " + th.getMessage();
+				throw new StreamIOException(message);
+			}
+		}
+	}
 
-  /**
-   * <p>Initialize servlet.</p>
-   *
-   * @throws ServletException If the servet cannot be initialized.
-   */
-  public void init() throws ServletException
-  {
-    try
-    {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")), false);
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      s_management = (Management) s_server.getModule("fedora.server.management.Management");
-    } catch (InitializationException ie)
-    {
-      throw new ServletException("Unable to get Fedora Server instance."
-          + ie.getMessage());
-    }
-  }
+	/**
+	 * <p>
+	 * A Thread to serialize an array of PIDs into XML.
+	 * </p>
+	 * 
+	 */
+	public class GetNextPIDSerializerThread extends Thread {
+		private PipedWriter pw = null;
 
-  /**
-   * <p>Cleans up servlet resources.</p>
-   */
-  public void destroy()
-  {}
+		private String[] pidList = null;
 
-  /**
-   * <p>Get an instance of the Fedora server.</p>
-   *
-   * @return An instance of the Fedora server.
-   */
-  private Server getServer() {
-      return s_server;
-  }
+		private String fedoraServerProtocol = null;
 
-  /**
-   * Logs a SEVERE message, indicating that the server is inoperable or
-   * unable to start.
-   *
-   * @param message The message.
-   */
-  public final void logSevere(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logSevere(m.toString());
-  }
+		private String fedoraServerPort = null;
 
-  public final boolean loggingSevere() {
-      return getServer().loggingSevere();
-  }
+		/**
+		 * <p>
+		 * Constructor for GetNextPIDSerializerThread.
+		 * </p>
+		 * 
+		 * @param pidList
+		 *            An array of the requested next available PIDs.
+		 * @param pw
+		 *            A PipedWriter to which the serialization info is written.
+		 */
+		public GetNextPIDSerializerThread(Context context, String[] pidList,
+				PipedWriter pw) {
+			this.pw = pw;
+			this.pidList = pidList;
+			fedoraServerPort = context
+					.getEnvironmentValue(Constants.HTTP_REQUEST.SERVER_PORT.uri);
+			if (Constants.HTTP_REQUEST.SECURE.uri.equals(context
+					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+				fedoraServerProtocol = HTTPS;
+			} else if (Constants.HTTP_REQUEST.INSECURE.uri.equals(context
+					.getEnvironmentValue(Constants.HTTP_REQUEST.SECURITY.uri))) {
+				fedoraServerProtocol = HTTP;
+			}
+		}
 
-  /**
-   * Logs a WARNING message, indicating that an undesired (but non-fatal)
-   * condition occured.
-   *
-   * @param message The message.
-   */
-  public final void logWarning(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logWarning(m.toString());
-  }
+		/**
+		 * <p>
+		 * This method executes the thread.
+		 * </p>
+		 */
+		public void run() {
+			if (pw != null) {
+				try {
+					pw.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+					pw
+							.write("<pidList "
+									+ " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+									+ " xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+									+ " xsi:schemaLocation=\"http://www.fedora.info/definitions/1/0/management/ "
+									+ StreamUtility.enc(fedoraServerProtocol)
+									+ "://"
+									+ StreamUtility.enc(fedoraServerHost) + ":"
+									+ StreamUtility.enc(fedoraServerPort)
+									+ "/getNextPIDInfo.xsd\">\n");
 
-  public final boolean loggingWarning() {
-      return getServer().loggingWarning();
-  }
+					// PID array serialization
+					for (int i = 0; i < pidList.length; i++) {
+						pw.write("  <pid>" + pidList[i] + "</pid>\n");
+					}
+					pw.write("</pidList>\n");
+					pw.flush();
+					pw.close();
+				} catch (IOException ioe) {
+					System.err.println("WriteThread IOException: "
+							+ ioe.getMessage());
+				} finally {
+					try {
+						if (pw != null)
+							pw.close();
+					} catch (IOException ioe) {
+						System.err.println("WriteThread IOException: "
+								+ ioe.getMessage());
+					}
+				}
+			}
+		}
+	}
 
-  /**
-   * Logs an INFO message, indicating that something relatively uncommon and
-   * interesting happened, like server or module startup or shutdown, or
-   * a periodic job.
-   *
-   * @param message The message.
-   */
-  public final void logInfo(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logInfo(m.toString());
-  }
+	/**
+	 * <p>
+	 * For now, treat a HTTP POST request just like a GET request.
+	 * </p>
+	 * 
+	 * @param request
+	 *            The servet request.
+	 * @param response
+	 *            The servlet response.
+	 * @throws ServletException
+	 *             If thrown by <code>doGet</code>.
+	 * @throws IOException
+	 *             If thrown by <code>doGet</code>.
+	 */
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		doGet(request, response);
+	}
 
-  public final boolean loggingInfo() {
-      return getServer().loggingInfo();
-  }
+	/**
+	 * <p>
+	 * Initialize servlet.
+	 * </p>
+	 * 
+	 * @throws ServletException
+	 *             If the servet cannot be initialized.
+	 */
+	public void init() throws ServletException {
+		try {
+			s_server = Server.getInstance(new File(System
+					.getProperty("fedora.home")), false);
+			fedoraServerHost = s_server.getParameter("fedoraServerHost");
+			s_management = (Management) s_server
+					.getModule("fedora.server.management.Management");
+		} catch (InitializationException ie) {
+			throw new ServletException("Unable to get Fedora Server instance."
+					+ ie.getMessage());
+		}
+	}
 
-  /**
-   * Logs a CONFIG message, indicating what occurred during the server's
-   * (or a module's) configuration phase.
-   *
-   * @param message The message.
-   */
-  public final void logConfig(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logConfig(m.toString());
-  }
+	/**
+	 * <p>
+	 * Cleans up servlet resources.
+	 * </p>
+	 */
+	public void destroy() {
+	}
 
-  public final boolean loggingConfig() {
-      return getServer().loggingConfig();
-  }
+	/**
+	 * <p>
+	 * Get an instance of the Fedora server.
+	 * </p>
+	 * 
+	 * @return An instance of the Fedora server.
+	 */
+	private Server getServer() {
+		return s_server;
+	}
 
-  /**
-   * Logs a FINE message, indicating basic information about a request to
-   * the server (like hostname, operation name, and success or failure).
-   *
-   * @param message The message.
-   */
-  public final void logFine(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFine(m.toString());
-  }
+	/**
+	 * Logs a SEVERE message, indicating that the server is inoperable or unable
+	 * to start.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logSevere(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logSevere(m.toString());
+	}
 
-  public final boolean loggingFine() {
-      return getServer().loggingFine();
-  }
+	public final boolean loggingSevere() {
+		return getServer().loggingSevere();
+	}
 
-  /**
-   * Logs a FINER message, indicating detailed information about a request
-   * to the server (like the full request, full response, and timing
-   * information).
-   *
-   * @param message The message.
-   */
-  public final void logFiner(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFiner(m.toString());
-  }
+	/**
+	 * Logs a WARNING message, indicating that an undesired (but non-fatal)
+	 * condition occured.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logWarning(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logWarning(m.toString());
+	}
 
-  public final boolean loggingFiner() {
-      return getServer().loggingFiner();
-  }
+	public final boolean loggingWarning() {
+		return getServer().loggingWarning();
+	}
 
-  /**
-   * Logs a FINEST message, indicating method entry/exit or extremely
-   * verbose information intended to aid in debugging.
-   *
-   * @param message The message.
-   */
-  public final void logFinest(String message) {
-      StringBuffer m=new StringBuffer();
-      m.append(getClass().getName());
-      m.append(": ");
-      m.append(message);
-      getServer().logFinest(m.toString());
-  }
+	/**
+	 * Logs an INFO message, indicating that something relatively uncommon and
+	 * interesting happened, like server or module startup or shutdown, or a
+	 * periodic job.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logInfo(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logInfo(m.toString());
+	}
 
-  public final boolean loggingFinest() {
-      return getServer().loggingFinest();
-  }
+	public final boolean loggingInfo() {
+		return getServer().loggingInfo();
+	}
+
+	/**
+	 * Logs a CONFIG message, indicating what occurred during the server's (or a
+	 * module's) configuration phase.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logConfig(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logConfig(m.toString());
+	}
+
+	public final boolean loggingConfig() {
+		return getServer().loggingConfig();
+	}
+
+	/**
+	 * Logs a FINE message, indicating basic information about a request to the
+	 * server (like hostname, operation name, and success or failure).
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logFine(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logFine(m.toString());
+	}
+
+	public final boolean loggingFine() {
+		return getServer().loggingFine();
+	}
+
+	/**
+	 * Logs a FINER message, indicating detailed information about a request to
+	 * the server (like the full request, full response, and timing
+	 * information).
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logFiner(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logFiner(m.toString());
+	}
+
+	public final boolean loggingFiner() {
+		return getServer().loggingFiner();
+	}
+
+	/**
+	 * Logs a FINEST message, indicating method entry/exit or extremely verbose
+	 * information intended to aid in debugging.
+	 * 
+	 * @param message
+	 *            The message.
+	 */
+	public final void logFinest(String message) {
+		StringBuffer m = new StringBuffer();
+		m.append(getClass().getName());
+		m.append(": ");
+		m.append(message);
+		getServer().logFinest(m.toString());
+	}
+
+	public final boolean loggingFinest() {
+		return getServer().loggingFinest();
+	}
 
 }

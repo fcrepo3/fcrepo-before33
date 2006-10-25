@@ -11,6 +11,7 @@ import javax.swing.event.*;
  */
 public class ParameterPanel extends JPanel implements ListSelectionListener, ActionListener {
 
+	private static final long serialVersionUID = 1L;
     private JList m_paramList;
     private ItemListModel m_model;
     private JPanel m_paramValuePanel;
@@ -153,6 +154,7 @@ public class ParameterPanel extends JPanel implements ListSelectionListener, Act
      */
     public class ParamValueCard extends JPanel {
 
+    	private static final long serialVersionUID = 1L;
         private Parameter m_param;
 
         private JTextArea m_descArea;

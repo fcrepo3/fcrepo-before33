@@ -27,6 +27,8 @@ import org.apache.avalon.framework.logger.Logger;
  * @version $Id$
  */
 public class FOPServlet extends HttpServlet {
+	
+	private static final long serialVersionUID = 1L;
 
     public static final String FO_REQUEST_PARAM = "source";
     Logger log = null;

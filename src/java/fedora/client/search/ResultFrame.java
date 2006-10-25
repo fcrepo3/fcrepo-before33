@@ -31,6 +31,7 @@ import fedora.server.types.gen.FieldSearchResult;
 public class ResultFrame
         extends JInternalFrame {
 
+	private static final long serialVersionUID = 1L;
     private JSortTable m_table;
     private String[] m_rowPids;
     private JButton m_moreButton;
@@ -252,6 +253,8 @@ public class ResultFrame
     public class SingleSelectionPopup
             extends JPopupMenu {
 
+    	private static final long serialVersionUID = 1L;
+    	
         private String m_pid;
 
         public SingleSelectionPopup(String pid) {
@@ -287,6 +290,8 @@ public class ResultFrame
     public class MultiSelectionPopup
             extends JPopupMenu {
 
+    	private static final long serialVersionUID = 1L;
+    	
         private Set m_pids;
 
         public MultiSelectionPopup(Set pids) {

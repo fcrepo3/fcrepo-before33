@@ -18,7 +18,8 @@ import fedora.client.objecteditor.ObjectEditorFrame;
  */
 public class ViewObject
         extends AbstractAction {
-
+	
+	private static final long serialVersionUID = 1L;
     private Set m_pids;
     private boolean m_prompt;
 

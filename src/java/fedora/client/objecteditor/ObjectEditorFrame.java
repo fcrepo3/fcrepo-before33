@@ -21,6 +21,7 @@ public class ObjectEditorFrame
         extends JInternalFrame 
         implements PotentiallyDirty {
 
+	private static final long serialVersionUID = 1L;
     private ObjectPane m_objectPane;
     private DatastreamsPane m_datastreamsPane;
     private DisseminatorsPane m_disseminatorsPane;

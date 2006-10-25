@@ -10,6 +10,7 @@ package fedora.server.errors;
  */
 public class ValidationException
         extends ObjectIntegrityException {
+	private static final long serialVersionUID = 1L;
 
     public ValidationException(String bundleName, String code, String[] values,
             String[] details, Throwable cause) {

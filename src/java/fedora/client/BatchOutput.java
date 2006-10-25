@@ -17,6 +17,7 @@ import java.util.Calendar; //2003.12.03 niebel
  * @version $Id$
  */
 public class BatchOutput extends JInternalFrame {
+	private static final long serialVersionUID = 1L;
 	JTextArea jTextArea = null;
 	String directoryPath = null; //2003.12.03 niebel
 

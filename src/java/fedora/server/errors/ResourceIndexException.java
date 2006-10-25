@@ -5,6 +5,8 @@ package fedora.server.errors;
  * @author eddie
  */
 public class ResourceIndexException extends ServerException {
+	
+	private static final long serialVersionUID = 1L;
 
     /**
      * Creates a ResourceIndexException.

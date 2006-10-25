@@ -10,6 +10,7 @@ package fedora.server.errors;
  */
 public class ObjectLockedException
         extends StorageException {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Creates an ObjectLockedException.

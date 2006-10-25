@@ -13,6 +13,9 @@ import javax.swing.table.TableCellEditor;
      * @version $Id$
      */
     public class ComboBoxTableCellEditor extends AbstractCellEditor implements TableCellEditor {
+    	
+    	private static final long serialVersionUID = 1L;
+    	
         // This is the component that will handle the editing of the cell value
         JComponent component;
 

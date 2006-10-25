@@ -48,6 +48,7 @@ import fedora.server.types.gen.UserInfo;
 public class LoginDialog
         extends JDialog {
 
+	private static final long serialVersionUID = 1L;
     private JComboBox m_serverComboBox;
 	private JComboBox m_protocolComboBox;
     private JComboBox m_usernameComboBox;
@@ -109,6 +110,7 @@ public class LoginDialog
                 gridBag, inputPane);
 
         JButton cancelButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }
@@ -278,7 +280,7 @@ public class LoginDialog
 				String serverVersion = fc.getServerVersion();
 
                 // ensure client is compatible with server
-				List compatibleVersions = fc.getCompatibleServerVersions();
+				List compatibleVersions = FedoraClient.getCompatibleServerVersions();
                 if (!compatibleVersions.contains(serverVersion)) {
                     StringBuffer endText = new StringBuffer();
                     if (compatibleVersions.size() == 1) {
@@ -363,6 +365,7 @@ public class LoginDialog
     public class LoginAction
             extends AbstractAction {
 
+    	private static final long serialVersionUID = 1L;
         LoginDialog m_loginDialog;
         JButton m_button;
 

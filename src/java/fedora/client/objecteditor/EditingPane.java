@@ -57,6 +57,7 @@ public abstract class EditingPane
             // SOUTH: saveUndoPane(saveButton, undoButton)
 
                 m_saveButton=new JButton(new AbstractAction() {
+                	private static final long serialVersionUID = 1L;
                     public void actionPerformed(ActionEvent e) {
                         String logMessage=
                             JOptionPane.showInputDialog("Enter a log message.");
@@ -78,6 +79,7 @@ public abstract class EditingPane
                 Administrator.constrainHeight(m_saveButton);
                 m_saveButton.setEnabled(false);
                 m_undoButton=new JButton(new AbstractAction() {
+                	private static final long serialVersionUID = 1L;
                     public void actionPerformed(ActionEvent e) {
                         undoChanges();
                         updateButtonVisibility();

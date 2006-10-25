@@ -14,6 +14,8 @@ package fedora.oai;
 public class NoSetHierarchyException
         extends OAIException {
 
+	private static final long serialVersionUID = 1L;
+	
     public NoSetHierarchyException() {
         super("noSetHierarchy", null);
     }

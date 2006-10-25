@@ -39,6 +39,7 @@ import fedora.server.types.gen.UserInfo;
 public class SourceRepoDialog
         extends JDialog {
         
+	private static final long serialVersionUID = 1L;
     private JTextField m_serverField;
 	private JTextField m_protocolField;
     private JTextField m_usernameField;
@@ -90,6 +91,7 @@ public class SourceRepoDialog
                 gridBag, inputPane);
 
         JButton okButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) {
                 // construct apia and apim after doing some field validation
                 if (m_passwordField.getPassword().length == 0 || m_usernameField.getText().equals("")) {
@@ -215,6 +217,7 @@ public class SourceRepoDialog
         });
         okButton.setText("OK");
         JButton cancelButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) {
                 dispose();
             }

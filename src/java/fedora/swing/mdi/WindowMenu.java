@@ -24,6 +24,7 @@ import java.beans.*;
  * @version $Id$
  */
 public class WindowMenu extends JMenu {
+	private static final long serialVersionUID = 1L;
     private MDIDesktopPane desktop;
     private JMenuItem cascade=new JMenuItem("Cascade");
     private JMenuItem tile=new JMenuItem("Tile");
@@ -105,6 +106,7 @@ public class WindowMenu extends JMenu {
     /* This JCheckBoxMenuItem descendant is used to track the child frame that corresponds
        to a give menu. */
     class ChildMenuItem extends JCheckBoxMenuItem {
+    	private static final long serialVersionUID = 1L;
         private JInternalFrame frame;
 
         public ChildMenuItem(JInternalFrame frame) {

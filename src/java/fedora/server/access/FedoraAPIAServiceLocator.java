@@ -16,6 +16,7 @@ package fedora.server.access;
  */
 public class FedoraAPIAServiceLocator extends org.apache.axis.client.Service implements fedora.server.access.FedoraAPIAService {
 
+	private static final long serialVersionUID = 1L;
     // Use to get a proxy class for FedoraAPIAPortSOAPHTTP and FedoraAPIAPortSOAPHTTPS (secure)
     private final java.lang.String FedoraAPIAPortSOAPHTTP_address = "http://localhost:0/fedora/services/access"; //port replaced in external code
 	private final java.lang.String FedoraAPIAPortSOAPHTTPS_address = "https://localhost:0/fedora/services/access"; //port replaced in external code

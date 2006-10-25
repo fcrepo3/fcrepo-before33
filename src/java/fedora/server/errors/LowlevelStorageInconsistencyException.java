@@ -9,6 +9,8 @@ package fedora.server.errors;
  * @version $Id$
  */
 public class LowlevelStorageInconsistencyException extends LowlevelStorageException {
+	private static final long serialVersionUID = 1L;
+	
 	public LowlevelStorageInconsistencyException(String message, Throwable cause) {
 		super(true, message, cause);
 	}

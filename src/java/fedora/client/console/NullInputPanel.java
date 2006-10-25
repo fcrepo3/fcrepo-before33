@@ -13,6 +13,8 @@ import javax.swing.JLabel;
 public class NullInputPanel
         extends InputPanel {
 
+	private static final long serialVersionUID = 1L;
+	
     private static NullInputPanel s_instance=new NullInputPanel();
 
     protected NullInputPanel() {

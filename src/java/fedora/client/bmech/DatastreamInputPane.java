@@ -25,6 +25,7 @@ import fedora.client.bmech.data.*;
  */
 public class DatastreamInputPane extends JPanel
 {
+	private static final long serialVersionUID = 1L;
     private BMechBuilder parent;
     private JTable dsinputTable;
 

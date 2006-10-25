@@ -33,6 +33,8 @@ import fedora.server.utilities.status.ServerStatusFile;
 public class ServerController
         extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
+	
     private static Server s_server;
 
     private ServerStatusFile _status;

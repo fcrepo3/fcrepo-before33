@@ -12,6 +12,8 @@ package fedora.server.errors;
 public class StorageDeviceException
         extends StorageException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates a StorageDeviceException.
      *

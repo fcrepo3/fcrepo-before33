@@ -28,6 +28,8 @@ import fedora.client.bmech.data.ServiceSoftware;
 public class ServiceProfilePane
         extends JPanel {
 
+	private static final long serialVersionUID = 1L;
+	
     private JTextField serviceName;
     private JTextField serviceLabel;
     private JTextField serviceTestURL;

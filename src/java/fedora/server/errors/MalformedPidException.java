@@ -10,6 +10,8 @@ package fedora.server.errors;
  */
 public class MalformedPidException
         extends ServerException {
+	
+	private static final long serialVersionUID = 1L;
 
     /**
      * Creates a MalformedPIDException.

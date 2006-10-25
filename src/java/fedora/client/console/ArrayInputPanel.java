@@ -13,7 +13,8 @@ import java.util.ArrayList;
  */
 public class ArrayInputPanel
         extends InputPanel {
-
+	private static final long serialVersionUID = 1L;
+	
     private ArrayList m_inputPanels;
 
     public ArrayInputPanel(Class cl) {

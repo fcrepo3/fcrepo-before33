@@ -16,6 +16,8 @@ package fedora.oai;
 public class CannotDisseminateFormatException
         extends OAIException {
 
+	private static final long serialVersionUID = 1L;
+	
     public CannotDisseminateFormatException() {
         super("cannotDisseminateFormat", null);
     }

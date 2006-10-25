@@ -15,6 +15,8 @@ import fedora.client.LoginDialog;
 public class Login
         extends AbstractAction {
 
+	private static final long serialVersionUID = 1L;
+	
     public Login() {
         super("Change Repository...");
     }

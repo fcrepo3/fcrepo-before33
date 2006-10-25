@@ -23,6 +23,7 @@ public class DisseminatorPane
         extends EditingPane
         implements ChangeListener {
 
+	private static final long serialVersionUID = 1L;
     private String m_pid;
     private Disseminator[] m_versions;
     private DisseminatorsPane m_owner;
@@ -267,6 +268,7 @@ public class DisseminatorPane
             extends JPanel
             implements PotentiallyDirty {
 
+    	private static final long serialVersionUID = 1L;
         private CardLayout m_bindingsCard;
         private JPanel m_stackedBindingPane;
         private Disseminator m_diss;
@@ -494,6 +496,8 @@ public class DisseminatorPane
     public class PriorVersionPane
             extends JPanel {
 
+    	private static final long serialVersionUID = 1L;
+    	
         private Disseminator m_diss;
 
         private JTextField m_labelTextField;

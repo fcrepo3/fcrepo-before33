@@ -4,6 +4,7 @@ package fedora.utilities.install;
  * Signals that an option's value was not valid.
  */
 public class OptionValidationException extends Exception {
+	private static final long serialVersionUID = 1L;
 
     private String _id;
 

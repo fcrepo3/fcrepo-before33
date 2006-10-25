@@ -15,6 +15,8 @@ import fedora.oai.RepositoryException;
 public class SampleOAIProviderServlet
         extends OAIProviderServlet {
 
+	private static final long serialVersionUID = 1L;
+	
     private OAIResponder m_responder;
 
     public OAIResponder getResponder()

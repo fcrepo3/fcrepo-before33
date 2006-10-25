@@ -11,7 +11,9 @@ package fedora.server.errors;
 public class InitializationException
         extends ServerException {
 
-    /**
+	private static final long serialVersionUID = 1L;
+
+	/**
      * Creates an InitializationException.
      *
      * @param message An informative message explaining what happened and

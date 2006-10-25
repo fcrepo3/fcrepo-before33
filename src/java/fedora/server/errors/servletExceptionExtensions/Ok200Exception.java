@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 public class Ok200Exception
         extends RootException {
 
+	private static final long serialVersionUID = 1L;
+	
     public Ok200Exception(HttpServletRequest request, String action, String detail, String[] details) {
         super(request, action, detail, details);
     }

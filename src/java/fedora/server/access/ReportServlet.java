@@ -34,6 +34,8 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 public class ReportServlet
         extends HttpServlet
         implements Logging {
+	
+	private static final long serialVersionUID = 1L;
 
 	private Server s_server=null;
 

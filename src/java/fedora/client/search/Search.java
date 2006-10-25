@@ -41,6 +41,7 @@ import fedora.server.types.gen.FieldSearchQuery;
 public class Search
         extends JInternalFrame {
 
+	private static final long serialVersionUID = 1L;
     private List m_displayFields;
     private JTextField m_simpleQueryField;
     private ConditionsTableModel m_model;
@@ -294,6 +295,8 @@ public class Search
     public class SelectFieldsDialog
             extends JDialog {
 
+    	private static final long serialVersionUID = 1L;
+    	
         private List m_selectedFields;
 
         private JCheckBox pidBox, bDefBox, typeBox, labelBox, bMechBox,
@@ -523,6 +526,7 @@ public class Search
     public class ModConditionDialog
             extends JDialog {
 
+    	private static final long serialVersionUID = 1L;
         private ConditionsTableModel m_model;
         private int m_rowNum;
         private JComboBox m_fieldBox;
@@ -698,6 +702,8 @@ public class Search
     public class ConditionsTableModel
             extends AbstractTableModel {
 
+    	private static final long serialVersionUID = 1L;
+    	
         List m_conditions;
 
         public ConditionsTableModel() {

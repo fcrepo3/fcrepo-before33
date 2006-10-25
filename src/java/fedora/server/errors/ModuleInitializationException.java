@@ -12,6 +12,8 @@ package fedora.server.errors;
 public class ModuleInitializationException
         extends InitializationException {
 
+	private static final long serialVersionUID = 1L;
+	
     /** The role of the module in which the error occurred */
     private String m_role;
 

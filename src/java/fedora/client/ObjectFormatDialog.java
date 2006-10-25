@@ -17,6 +17,7 @@ import fedora.client.Administrator;
 public class ObjectFormatDialog
         extends JDialog implements ActionListener {
         
+	private static final long serialVersionUID = 1L;
     private String selections;
     
     private JRadioButton foxmlButton;
@@ -59,6 +60,7 @@ public class ObjectFormatDialog
         inputPane.add(metsfButton);
         
         JButton okButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) { 
                 dispose();
             }
@@ -66,6 +68,7 @@ public class ObjectFormatDialog
         okButton.setText("OK");
         
 		JButton cancelButton=new JButton(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent evt) {
 				fmt_chosen=null;
 				dispose();

@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 public class Unauthorized401Exception
         extends RootException {
 
+	private static final long serialVersionUID = 1L;
+	
     public Unauthorized401Exception(HttpServletRequest request, String action, String detail, String[] details) {
         super(request, action, detail, details);
     }

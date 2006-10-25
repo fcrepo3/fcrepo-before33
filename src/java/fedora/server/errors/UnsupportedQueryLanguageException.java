@@ -6,6 +6,8 @@ package fedora.server.errors;
  */
 public class UnsupportedQueryLanguageException extends ResourceIndexException {
 
+	private static final long serialVersionUID = 1L;
+	
 	/**
 	 * @param message
 	 */

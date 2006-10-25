@@ -25,6 +25,7 @@ import fedora.server.utilities.StringUtility;
 public class PurgeObject
         extends AbstractAction {
 
+	private static final long serialVersionUID = 1L;
     private Set m_pids;
     private boolean m_prompt;
     private ObjectEditorFrame m_parent;

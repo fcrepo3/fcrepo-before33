@@ -11,6 +11,7 @@ package fedora.server.errors;
  */
 public class ObjectIntegrityException
         extends StorageException {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Creates an ObjectIntegrityException.

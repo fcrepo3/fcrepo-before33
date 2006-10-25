@@ -22,6 +22,7 @@ import fedora.client.bmech.data.Datastream;
  */
 public class DocumentsPane
         extends JPanel {
+	private static final long serialVersionUID = 1L;
 
     private JTextField docLabel1;
     private JTextField docURL1;

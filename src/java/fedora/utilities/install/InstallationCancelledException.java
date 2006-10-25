@@ -5,6 +5,8 @@ package fedora.utilities.install;
  */
 public class InstallationCancelledException extends Exception {
 
+	private static final long serialVersionUID = 1L;
+	
     public InstallationCancelledException() {
     }
 

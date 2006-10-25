@@ -20,7 +20,8 @@ import fedora.server.types.gen.Datastream;
 public class DatastreamsPane
         extends JPanel
         implements PotentiallyDirty, TabDrawer {
-
+	
+	private static final long serialVersionUID = 1L;
     private String m_pid;
     private JTabbedPane m_tabbedPane;
     private DatastreamPane[] m_datastreamPanes;
@@ -234,6 +235,7 @@ public class DatastreamsPane
     public class NewDatastreamPane
             extends JPanel implements ActionListener {
 
+    	private static final long serialVersionUID = 1L;
         JTextField m_labelTextField;
         JTextField m_idTextField;
         JTextField m_formatURITextField;

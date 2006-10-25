@@ -1,16 +1,48 @@
 package fedora.client.objecteditor;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
-import java.util.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.SortedMap;
+import java.util.SortedSet;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.DefaultCellEditor;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.TableModel;
 
 import fedora.client.Administrator;
-import fedora.client.objecteditor.types.DatastreamInputSpec;
 import fedora.client.objecteditor.types.DatastreamBindingRule;
-import fedora.server.types.gen.Datastream;
+import fedora.client.objecteditor.types.DatastreamInputSpec;
 import fedora.server.types.gen.DatastreamBinding;
 
 /**
@@ -20,6 +52,8 @@ import fedora.server.types.gen.DatastreamBinding;
 public class DatastreamBindingPane
         extends JPanel
         implements PotentiallyDirty {
+	
+	private static final long serialVersionUID = 1L;
 
 //    private Datastream[] m_datastreams;
     private ObjectEditorFrame m_gramps;
@@ -214,6 +248,7 @@ public class DatastreamBindingPane
             implements TableModelListener,
                        PotentiallyDirty {
 
+    	private static final long serialVersionUID = 1L;
         private DatastreamBindingTableModel m_tableModel;
         private JTable m_table;
         private JLabel m_statusLabel;
@@ -593,6 +628,7 @@ public class DatastreamBindingPane
     class NonCancelingCellEditor
             extends DefaultCellEditor {
 
+    	private static final long serialVersionUID = 1L;
         private int m_row;
         private int m_column;
         private TableModel m_model;
@@ -644,6 +680,7 @@ public class DatastreamBindingPane
             extends AbstractTableModel 
             implements PotentiallyDirty {
 
+    	private static final long serialVersionUID = 1L;
         public DatastreamBinding[] m_bindings;        
         public DatastreamBinding[] m_originalBindings;        
         public String m_bindingKey;

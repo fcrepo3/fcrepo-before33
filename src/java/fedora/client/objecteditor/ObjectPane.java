@@ -20,6 +20,7 @@ import fedora.client.actions.ViewObjectXML;
 public class ObjectPane
         extends EditingPane {
 
+	private static final long serialVersionUID = 1L;
     private String m_pid;
     private String m_state;
     private String m_label;

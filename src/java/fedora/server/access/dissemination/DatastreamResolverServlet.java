@@ -38,421 +38,542 @@ import fedora.server.utilities.Logger;
 import fedora.server.utilities.ServerUtility;
 
 /**
- * <p><b>Title: </b>DatastreamResolverServlet.java</p>
- * <p><b>Description: </b>This servlet acts as a proxy to resolve the physical location
- * of datastreams. It requires a single parameter named <code>id</code> that
- * denotes the temporary id of the requested datastresm. This id is in the form
- * of a DateTime stamp. The servlet will perform an in-memory hashtable lookup
- * using the temporary id to obtain the actual physical location of the
+ * <p>
+ * <b>Title: </b>DatastreamResolverServlet.java
+ * </p>
+ * <p>
+ * <b>Description: </b>This servlet acts as a proxy to resolve the physical
+ * location of datastreams. It requires a single parameter named <code>id</code>
+ * that denotes the temporary id of the requested datastresm. This id is in the
+ * form of a DateTime stamp. The servlet will perform an in-memory hashtable
+ * lookup using the temporary id to obtain the actual physical location of the
  * datastream and then return the contents of the datastream as a MIME-typed
- * stream. This servlet is invoked primarily by external mechanisms needing
- * to retrieve the contents of a datastream.</p>
- * <p>The servlet also requires that an external mechanism request a datastream
- * within a finite time interval of the tempID's creation. This is to lessen
- * the risk of unauthorized access. The time interval within which a mechanism
- * must repond is set by the Fedora configuration parameter named
- * datastreamMediationLimit and is speci207fied in milliseconds. If this parameter
- * is not supplied it defaults to 5000 miliseconds.</p>
- *
+ * stream. This servlet is invoked primarily by external mechanisms needing to
+ * retrieve the contents of a datastream.
+ * </p>
+ * <p>
+ * The servlet also requires that an external mechanism request a datastream
+ * within a finite time interval of the tempID's creation. This is to lessen the
+ * risk of unauthorized access. The time interval within which a mechanism must
+ * repond is set by the Fedora configuration parameter named
+ * datastreamMediationLimit and is speci207fied in milliseconds. If this
+ * parameter is not supplied it defaults to 5000 miliseconds.
+ * </p>
+ * 
  * @author rlw@virginia.edu
- * @version $Id$
+ * @version $Id: DatastreamResolverServlet.java,v 1.50 2006/09/29 20:29:12 wdn5e
+ *          Exp $
  */
-public class DatastreamResolverServlet extends HttpServlet
-{
+public class DatastreamResolverServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 
-  private static Server s_server;
-  private static DOManager m_manager;
-  private static Hashtable dsRegistry;
-  private static int datastreamMediationLimit;
-  private static final String HTML_CONTENT_TYPE = "text/html";
-  private static Logger logger;
-  private static String fedoraServerHost;
-  private static String fedoraServerPort;
-  private static String fedoraServerRedirectPort;
+	private static Server s_server;
 
-  /**
-   * <p>Initialize servlet.</p>
-   *
-   * @throws ServletException If the servet cannot be initialized.
-   */
-  public void init() throws ServletException
-  {
-    try
-    {
-      s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-      fedoraServerPort = s_server.getParameter("fedoraServerPort");
-      fedoraServerRedirectPort = s_server.getParameter("fedoraRedirectPort");
-      fedoraServerHost = s_server.getParameter("fedoraServerHost");
-      logger = new Logger();
-      m_manager = (DOManager) s_server.getModule("fedora.server.storage.DOManager");
-      String expireLimit = s_server.getParameter("datastreamMediationLimit");
-      if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
-      {
-        logger.logWarning("DatastreamResolverServlet was unable to "
-            + "resolve the datastream expiration limit from the configuration "
-            + "file.  The expiration limit has been set to 5000 milliseconds.  ");
-        datastreamMediationLimit = 5000;
-      } else
-      {
-        datastreamMediationLimit = new Integer(expireLimit).intValue();
-        logger.logFinest("datastreamMediationLimit: "
-            + datastreamMediationLimit);
-      }
-    } catch (InitializationException ie) {
-      throw new ServletException("Unable to get an instance of Fedora server "
-          + "-- " + ie.getMessage());
-    } catch (Throwable th)
-    {
-      String message = "Unable to init DatastreamResolverServlet.  The "
-          + "underlying error was a " + th.getClass().getName()
-          + "  The message " + "was \"" + th.getMessage() + "\"  ";
-      th.printStackTrace();
-      logger.logWarning(message);
-    }
-  }
-  
-  private static final boolean contains(String[] array, String item) {
-  	boolean contains = false;
-  	for (int i = 0; i < array.length; i++) {
-  		if (array[i].equals(item)) {
-  			contains = true;
-  			break;
-  		}
-  	}
-  	return contains;
-  }
-  
-  public static final String ACTION_LABEL = "Resolve Datastream";
+	private static DOManager m_manager;
 
-  /**
-   * <p>Processes the servlet request and resolves the physical location of
-   * the specified datastream.</p>
-   *
-   * @param request  The servlet request.
-   * @param response servlet The servlet response.
-   * @throws ServletException If an error occurs that effects the servlet's
-   *         basic operation.
-   * @throws IOException If an error occurrs with an input or output operation.
-   */
-  public void doGet(HttpServletRequest request, HttpServletResponse response)
-      throws ServletException, IOException
-  {
-    String id = null;
-    String dsPhysicalLocation = null;
-    String dsControlGroupType = null;
-    String user = null;
-    String pass = null;
-    MIMETypedStream mimeTypedStream = null;
-    DisseminationService ds = null;
-    Timestamp keyTimestamp = null;
-    Timestamp currentTimestamp = null;
-    PrintWriter out = null;
-    ServletOutputStream outStream = null;
-    String requestURI = request.getRequestURL().toString() + "?"
-    + request.getQueryString();
+	private static Hashtable dsRegistry;
 
-    id = request.getParameter("id").replaceAll("T"," ");
-    logger.logFinest("[DatastreamResolverServlet] datastream tempID: " + id);
+	private static int datastreamMediationLimit;
 
-    try
-    {
-      // Check for required id parameter.
-      if (id == null || id.equalsIgnoreCase(""))
-      {
-        String message = "[DatastreamResolverServlet] No datastream ID "
-            + "specified in servlet request:  " + request.getRequestURI()
-            + "  .  ";
-        logger.logWarning(message);
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
-        return;
-      }
-      id=id.replaceAll("T", " ").replaceAll("/", "").trim();
+	private static final String HTML_CONTENT_TYPE = "text/html";
 
-      // Get in-memory hashtable of mappings from Fedora server.
-      ds = new DisseminationService();
-      dsRegistry = DisseminationService.dsRegistry;
-      DatastreamMediation dm = (DatastreamMediation)dsRegistry.get(id);
-      if (dm==null) {
-        StringBuffer entries=new StringBuffer();
-        Iterator eIter=dsRegistry.keySet().iterator();
-        while (eIter.hasNext()) {
-            entries.append("'" + (String) eIter.next() + "' ");
-        }
-        throw new IOException("Cannot find datastream in temp registry by key: " + id + "\n"
-                + "Reg entries: " + entries.toString());
-      }
-      dsPhysicalLocation = dm.dsLocation;
-      dsControlGroupType = dm.dsControlGroupType;
-      user = dm.callUsername;
-      pass = dm.callPassword;
-      if (fedora.server.Debug.DEBUG) {
-		      System.err.println("**************************** DatastreamResolverServlet dm.dsLocation: "+dm.dsLocation);
-		      System.err.println("**************************** DatastreamResolverServlet dm.dsControlGroupType: "+dm.dsControlGroupType);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callUsername: "+dm.callUsername);
-		      System.err.println("**************************** DatastreamResolverServlet dm.Password: "+dm.callPassword);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callbackRole: "+dm.callbackRole);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callbackBasicAuth: "+dm.callbackBasicAuth);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callBasicAuth: "+dm.callBasicAuth);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callbackSSl: "+dm.callbackSSL);
-		      System.err.println("**************************** DatastreamResolverServlet dm.callSSl: "+dm.callSSL);
-		      System.err.println("**************************** DatastreamResolverServlet non ssl port: "+fedoraServerPort);
-		      System.err.println("**************************** DatastreamResolverServlet ssl port: "+fedoraServerRedirectPort);
-      }
-      
-      // DatastreamResolverServlet maps to two distinct servlet mappings in fedora web.xml.
-      // getDS - is used when the backend service is incapable of basicAuth or SSL
-      // getDSAuthenticated - is used when the backend service has basicAuth and SSL enabled
-      // Since both the getDS and getDSAuthenticated servlet targets map to the same servlet
-      // code and the Context used to initialize policy enforcement is based on the incoming 
-      // HTTPRequest, the code must provide special handling for requests using the getDS
-      // target. When the incoming URL to DatastreamResolverServlet contains the getDS target, 
-      // there are several conditions that must be checked to insure that the correct role is
-      // assigned to the request before policy enforcement occurs.
-      // 1) if the mapped dsPhysicalLocation of the request is actually a callback to the
-      //    Fedora server itself, then assign the role as BACKEND_SERVICE_CALL_UNSECURE so
-      //    the basicAuth and SSL constraints will match those of the getDS target.
-      // 2) if the mapped dsPhysicalLocation of the request is actually a Managed Content
-      //    or Inline XML Content datastream, then assign the role as BACKEND_SERVICE_CALL_UNSECURE so
-      //    the basicAuth and SSL constraints will match the getDS target.
-      // 3) Otherwise, leave the targetrole unchanged.
-      if ( request.getRequestURI().endsWith("getDS") &&
-           (  ServerUtility.isURLFedoraServer(dsPhysicalLocation)  ||
-              dsControlGroupType.equals("M") || 
-              dsControlGroupType.equals("X")) ){
-          if(fedora.server.Debug.DEBUG) System.err.println("*********************** Changed role from: "+dm.callbackRole+"  to: "+BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
-          dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
-      }      
-      
-      // If callback is to fedora server itself and callback is over SSL, adjust the protocol and port
-      // on the URL to match settings of Fedora server. This is necessary since the SSL settings for the
-      // backend service may have specified basicAuth=false, but contained datastreams that are callbacks
-      // to the local Fedora server which requires SSL. The version of HttpClient currently in use does 
-      // not handle autoredirecting from http to https so it is necessary to set the protocol and port 
-      // to the appropriate secure port.
-      if (dm.callbackRole.equals(BackendPolicies.FEDORA_INTERNAL_CALL)) {
-          if (dm.callbackSSL) {
-              dsPhysicalLocation = dsPhysicalLocation.replaceFirst("http:", "https:");
-              dsPhysicalLocation = dsPhysicalLocation.replaceFirst(fedoraServerPort, fedoraServerRedirectPort);
-              if (fedora.server.Debug.DEBUG) System.err.println("*********************** DatastreamResolverServlet -- Was Fedora-to-Fedora call -- modified dsPhysicalLocation: "+dsPhysicalLocation);
-          }
-      }
-      keyTimestamp = Timestamp.valueOf(ds.extractTimestamp(id));
-      currentTimestamp = new Timestamp(new Date().getTime());
-      logger.logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
-          + dsPhysicalLocation);
-      logger.logFinest("[DatastreamResolverServlet] dsControlGroupType: "
-          + dsControlGroupType);
+	private static Logger logger;
 
-      // Deny mechanism requests that fall outside the specified time interval.
-      // The expiration limit can be adjusted using the Fedora config parameter
-      // named "datastreamMediationLimit" which is in milliseconds.
-      logger.logFiner("[DatastreamResolverServlet] TimeStamp differential "
-          + "for Mechanism's response: " + ((long)currentTimestamp.getTime() -
-          (long)keyTimestamp.getTime()) + " milliseconds");
-      if (currentTimestamp.getTime() - keyTimestamp.getTime() >
-          (long) datastreamMediationLimit)
-      {
-        out = response.getWriter();
-        response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br><b>[DatastreamResolverServlet] Error:</b>"
-            + "<font color=\"red\"> Mechanism has failed to respond "
-            + "to the DatastreamResolverServlet within the specified "
-            + "time limit of \"" + datastreamMediationLimit + "\""
-            + "milliseconds. Datastream access denied.");
-        logger.logWarning("[DatastreamResolverServlet] Error: "
-            + "Mechanism has failed to respond "
-            + "to the DatastreamResolverServlet within the specified "
-            + "time limit of  \"" + datastreamMediationLimit + "\""
-            + "  milliseconds. Datastream access denied.");
-        out.close();
-        return;
-      }
+	private static String fedoraServerHost;
 
-      if (dm.callbackRole == null) {
-          throw new AuthzOperationalException("no callbackRole for this ticket");
-      } 
-      String targetRole = Authorization.FEDORA_ROLE_KEY + "=" + dm.callbackRole; //restrict access to role of this ticket
-      String[] targetRoles = {targetRole};
-      Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
-      if (request.getRemoteUser() == null) {
-      	  //non-authn:  must accept target role of ticket
-          if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: unAuthenticated request");
-      } else {
-      	  //authn:  check user roles for target role of ticket
-          if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: Authenticated request getting user");
-    	  	String[] roles = null;
-	  	  	Principal principal = request.getUserPrincipal();
-	  	  	if (principal == null) {
-	  	  		//no principal to grok roles from!!				
-	  	  	} else {
-	  	  		try {
-		  	  		roles = ReadOnlyContext.getRoles(principal);
-		  	  	} catch (Throwable t) {
-		  	  	}
-	  	  	}
-	  	  	if (roles == null) {
-	  	  		roles = new String[0];
-	  	  	}
-      	  if  (contains(roles, targetRole)) {			
-        //user has target role
-      	  } else {
-      		  if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: authZ exception in validating user");
-      		  throw new AuthzDeniedException("wrong user for this ticket");
-      	  }
-      }
+	private static String fedoraServerPort;
 
-      if (fedora.server.Debug.DEBUG) {
-          System.err.println("debugging backendService role");   
-          System.err.println("targetRole=" + targetRole);
-          int targetRolesLength = targetRoles.length;
-          System.err.println("targetRolesLength=" + targetRolesLength);
-          if (targetRolesLength > 0) {
-              System.err.println("targetRoles[0]=" + targetRoles[0]);      	
-          }
-          int nSubjectValues = context.nSubjectValues(targetRole);
-          System.err.println("nSubjectValues=" + nSubjectValues);
-          if (nSubjectValues > 0) {
-          	System.err.println("context.getSubjectValue(targetRole)=" + context.getSubjectValue(targetRole));   
-          }
-          Iterator it = context.subjectAttributes();
-          while (it.hasNext()) {
-          	String name = (String) it.next();
-          	String value = context.getSubjectValue(name);
-            System.err.println("another subject attribute from context " + name + "=" + value);            	
-          }
-          it = context.environmentAttributes();
-          while (it.hasNext()) {
-          	String name = (String) it.next();
-          	String value = context.getEnvironmentValue(name);
-            System.err.println("another environment attribute from context " + name + "=" + value);            	
-          }                    
-      }
-      if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: about to do final authZ check");
-      Authorization authorization = (Authorization)s_server.getModule("fedora.server.security.Authorization");
-      authorization.enforceResolveDatastream(context, keyTimestamp);
-      if (fedora.server.Debug.DEBUG) System.err.println("DatastreamResolverServlet: final authZ check suceeded.....");
+	private static String fedoraServerRedirectPort;
 
-      if (dsControlGroupType.equalsIgnoreCase("E"))
-      {
-        // testing to see what's in request header that might be of interest
-      	if (fedora.server.Debug.DEBUG) {
-      	  for (Enumeration e= request.getHeaderNames(); e.hasMoreElements();) {
-      	  	String name = (String)e.nextElement();
-      	  	Enumeration headerValues =  request.getHeaders(name);
-      	  	StringBuffer sb = new StringBuffer();
-      	  	while (headerValues.hasMoreElements()) {
-      	  	  sb.append((String) headerValues.nextElement());
-      	  	}
-      	  	String value = sb.toString();
-      	  	System.err.println("DATASTREAMRESOLVERSERVLET REQUEST HEADER CONTAINED: "+name+" : "+value); 		
-      	  }
-      	}
+	/**
+	 * <p>
+	 * Initialize servlet.
+	 * </p>
+	 * 
+	 * @throws ServletException
+	 *             If the servet cannot be initialized.
+	 */
+	public void init() throws ServletException {
+		try {
+			s_server = Server.getInstance(new File(System
+					.getProperty("fedora.home")));
+			fedoraServerPort = s_server.getParameter("fedoraServerPort");
+			fedoraServerRedirectPort = s_server
+					.getParameter("fedoraRedirectPort");
+			fedoraServerHost = s_server.getParameter("fedoraServerHost");
+			logger = new Logger();
+			m_manager = (DOManager) s_server
+					.getModule("fedora.server.storage.DOManager");
+			String expireLimit = s_server
+					.getParameter("datastreamMediationLimit");
+			if (expireLimit == null || expireLimit.equalsIgnoreCase("")) {
+				logger
+						.logWarning("DatastreamResolverServlet was unable to "
+								+ "resolve the datastream expiration limit from the configuration "
+								+ "file.  The expiration limit has been set to 5000 milliseconds.  ");
+				datastreamMediationLimit = 5000;
+			} else {
+				datastreamMediationLimit = new Integer(expireLimit).intValue();
+				logger.logFinest("datastreamMediationLimit: "
+						+ datastreamMediationLimit);
+			}
+		} catch (InitializationException ie) {
+			throw new ServletException(
+					"Unable to get an instance of Fedora server " + "-- "
+							+ ie.getMessage());
+		} catch (Throwable th) {
+			String message = "Unable to init DatastreamResolverServlet.  The "
+					+ "underlying error was a " + th.getClass().getName()
+					+ "  The message " + "was \"" + th.getMessage() + "\"  ";
+			th.printStackTrace();
+			logger.logWarning(message);
+		}
+	}
 
-        // Datastream is ReferencedExternalContent so dsLocation is a URL string
-        ExternalContentManager externalContentManager =
-            (ExternalContentManager)s_server.getModule(
-            "fedora.server.storage.ExternalContentManager");
-        mimeTypedStream =
-            externalContentManager.getExternalContent(dsPhysicalLocation, context);
-            //had substituted context:  ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request));
-      	/*mimeTypedStream = ds.getDisseminationContent(dsPhysicalLocation,
-      	        ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request),
-      	        user,
-      	        pass);
-      	        */
-        outStream = response.getOutputStream();
-        response.setContentType(mimeTypedStream.MIMEType);
-        Property[] headerArray = mimeTypedStream.header;
-        if(headerArray != null) {
-          for(int i=0; i<headerArray.length; i++) {
-              if(headerArray[i].name != null && !(headerArray[i].name.equalsIgnoreCase("content-type"))) {
-                  response.addHeader(headerArray[i].name, headerArray[i].value);
-                  if (fedora.server.Debug.DEBUG) System.err.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "+headerArray[i].name+" : "+headerArray[i].value);
-              }              
-          }
-        }
-        int byteStream = 0;
-        byte[] buffer = new byte[255];
-        while ( (byteStream = mimeTypedStream.getStream().read(buffer)) != -1)
-        {
-          outStream.write(buffer, 0, byteStream);
-        }
-        buffer = null;
-        outStream.flush();
-      } else if (dsControlGroupType.equalsIgnoreCase("M") ||
-                 dsControlGroupType.equalsIgnoreCase("X"))
-      {
-        // Datastream is either XMLMetadata or ManagedContent so dsLocation
-        // is in the form of an internal Fedora ID using the syntax:
-        // PID+DSID+DSVersID; parse the ID and get the datastream content.
-        String PID = null;
-        String dsVersionID = null;
-        String dsID = null;
-        String[] s = dsPhysicalLocation.split("\\+");
-        if (s.length != 3)
-        {
-          String message = "[DatastreamResolverServlet]  The "
-              + "internal Fedora datastream id:  \"" + dsPhysicalLocation
-              + "\"  is invalid.";
-          logger.logWarning(message);
-          throw new ServletException(message);
-        }
-        PID = s[0];
-        dsID = s[1];
-        dsVersionID = s[2];
-        logger.logFinest("[DatastreamResolverServlet] PID: " + PID
-            + " -- dsID: " + dsID + " -- dsVersionID: " + dsVersionID);
+	private static final boolean contains(String[] array, String item) {
+		boolean contains = false;
+		for (int i = 0; i < array.length; i++) {
+			if (array[i].equals(item)) {
+				contains = true;
+				break;
+			}
+		}
+		return contains;
+	}
 
-        DOReader doReader =  m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, PID);
-        Datastream d =
-            (Datastream) doReader.getDatastream(dsID, dsVersionID);
-        logger.logFinest("[DatastreamResolverServlet] Got datastream: "
-            + d.DatastreamID);
-        InputStream is = d.getContentStream();
-        int bytestream = 0;
-        response.setContentType(d.DSMIME);
-        outStream = response.getOutputStream();
-        byte[] buffer = new byte[255];
-        while ((bytestream = is.read(buffer)) != -1)
-        {
-          outStream.write(buffer, 0, bytestream);
-        }
-        buffer = null;
-        is.close();
-      } else
-      {
-        out = response.getWriter();
-        response.setContentType(HTML_CONTENT_TYPE);
-        out.println("<br>[DatastreamResolverServlet] Unknown "
-            + "dsControlGroupType: " + dsControlGroupType + "</br>");
-        logger.logWarning("[DatastreamResolverServlet] Unknown "
-            + "dsControlGroupType: " + dsControlGroupType);
-      }
-	} catch (AuthzException ae) {   
-    	logger.logWarning("[FedoraAccessServlet] AuthzException: "
-        	    + ae.getMessage() + " Request: " + requestURI + " actionLabel: " 
-        	    + ACTION_LABEL);
-    	ae.printStackTrace();
-        throw RootException.getServletException (ae, request, ACTION_LABEL, new String[0]);	     
-    } catch (Throwable th)
-    {
-      String message = "[DatastreamResolverServlet] returned an error. The "
-          + "underlying error was a  \"" + th.getClass().getName()
-          + "  The message was  \"" + th.getMessage() + "\".  ";
-      th.printStackTrace();
-      logger.logWarning(message);
-      throw new ServletException(message);
-    } finally {
-      if (out != null) out.close();
-      if (outStream != null) outStream.close();
-	    dsRegistry.remove(id);
-    }
-  }
-    
+	public static final String ACTION_LABEL = "Resolve Datastream";
 
-  //Clean up resources
-  public void destroy()
-  {}
+	/**
+	 * <p>
+	 * Processes the servlet request and resolves the physical location of the
+	 * specified datastream.
+	 * </p>
+	 * 
+	 * @param request
+	 *            The servlet request.
+	 * @param response
+	 *            servlet The servlet response.
+	 * @throws ServletException
+	 *             If an error occurs that effects the servlet's basic
+	 *             operation.
+	 * @throws IOException
+	 *             If an error occurrs with an input or output operation.
+	 */
+	public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String id = null;
+		String dsPhysicalLocation = null;
+		String dsControlGroupType = null;
+		String user = null;
+		String pass = null;
+		MIMETypedStream mimeTypedStream = null;
+		DisseminationService ds = null;
+		Timestamp keyTimestamp = null;
+		Timestamp currentTimestamp = null;
+		PrintWriter out = null;
+		ServletOutputStream outStream = null;
+		String requestURI = request.getRequestURL().toString() + "?"
+				+ request.getQueryString();
+
+		id = request.getParameter("id").replaceAll("T", " ");
+		logger
+				.logFinest("[DatastreamResolverServlet] datastream tempID: "
+						+ id);
+
+		try {
+			// Check for required id parameter.
+			if (id == null || id.equalsIgnoreCase("")) {
+				String message = "[DatastreamResolverServlet] No datastream ID "
+						+ "specified in servlet request:  "
+						+ request.getRequestURI() + "  .  ";
+				logger.logWarning(message);
+				response
+						.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				response.sendError(
+						HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message);
+				return;
+			}
+			id = id.replaceAll("T", " ").replaceAll("/", "").trim();
+
+			// Get in-memory hashtable of mappings from Fedora server.
+			ds = new DisseminationService();
+			dsRegistry = DisseminationService.dsRegistry;
+			DatastreamMediation dm = (DatastreamMediation) dsRegistry.get(id);
+			if (dm == null) {
+				StringBuffer entries = new StringBuffer();
+				Iterator eIter = dsRegistry.keySet().iterator();
+				while (eIter.hasNext()) {
+					entries.append("'" + (String) eIter.next() + "' ");
+				}
+				throw new IOException(
+						"Cannot find datastream in temp registry by key: " + id
+								+ "\n" + "Reg entries: " + entries.toString());
+			}
+			dsPhysicalLocation = dm.dsLocation;
+			dsControlGroupType = dm.dsControlGroupType;
+			user = dm.callUsername;
+			pass = dm.callPassword;
+			if (fedora.server.Debug.DEBUG) {
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.dsLocation: "
+								+ dm.dsLocation);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.dsControlGroupType: "
+								+ dm.dsControlGroupType);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callUsername: "
+								+ dm.callUsername);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.Password: "
+								+ dm.callPassword);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callbackRole: "
+								+ dm.callbackRole);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callbackBasicAuth: "
+								+ dm.callbackBasicAuth);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callBasicAuth: "
+								+ dm.callBasicAuth);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callbackSSl: "
+								+ dm.callbackSSL);
+				System.err
+						.println("**************************** DatastreamResolverServlet dm.callSSl: "
+								+ dm.callSSL);
+				System.err
+						.println("**************************** DatastreamResolverServlet non ssl port: "
+								+ fedoraServerPort);
+				System.err
+						.println("**************************** DatastreamResolverServlet ssl port: "
+								+ fedoraServerRedirectPort);
+			}
+
+			// DatastreamResolverServlet maps to two distinct servlet mappings
+			// in fedora web.xml.
+			// getDS - is used when the backend service is incapable of
+			// basicAuth or SSL
+			// getDSAuthenticated - is used when the backend service has
+			// basicAuth and SSL enabled
+			// Since both the getDS and getDSAuthenticated servlet targets map
+			// to the same servlet
+			// code and the Context used to initialize policy enforcement is
+			// based on the incoming
+			// HTTPRequest, the code must provide special handling for requests
+			// using the getDS
+			// target. When the incoming URL to DatastreamResolverServlet
+			// contains the getDS target,
+			// there are several conditions that must be checked to insure that
+			// the correct role is
+			// assigned to the request before policy enforcement occurs.
+			// 1) if the mapped dsPhysicalLocation of the request is actually a
+			// callback to the
+			// Fedora server itself, then assign the role as
+			// BACKEND_SERVICE_CALL_UNSECURE so
+			// the basicAuth and SSL constraints will match those of the getDS
+			// target.
+			// 2) if the mapped dsPhysicalLocation of the request is actually a
+			// Managed Content
+			// or Inline XML Content datastream, then assign the role as
+			// BACKEND_SERVICE_CALL_UNSECURE so
+			// the basicAuth and SSL constraints will match the getDS target.
+			// 3) Otherwise, leave the targetrole unchanged.
+			if (request.getRequestURI().endsWith("getDS")
+					&& (ServerUtility.isURLFedoraServer(dsPhysicalLocation)
+							|| dsControlGroupType.equals("M") || dsControlGroupType
+							.equals("X"))) {
+				if (fedora.server.Debug.DEBUG)
+					System.err
+							.println("*********************** Changed role from: "
+									+ dm.callbackRole
+									+ "  to: "
+									+ BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE);
+				dm.callbackRole = BackendPolicies.BACKEND_SERVICE_CALL_UNSECURE;
+			}
+
+			// If callback is to fedora server itself and callback is over SSL,
+			// adjust the protocol and port
+			// on the URL to match settings of Fedora server. This is necessary
+			// since the SSL settings for the
+			// backend service may have specified basicAuth=false, but contained
+			// datastreams that are callbacks
+			// to the local Fedora server which requires SSL. The version of
+			// HttpClient currently in use does
+			// not handle autoredirecting from http to https so it is necessary
+			// to set the protocol and port
+			// to the appropriate secure port.
+			if (dm.callbackRole.equals(BackendPolicies.FEDORA_INTERNAL_CALL)) {
+				if (dm.callbackSSL) {
+					dsPhysicalLocation = dsPhysicalLocation.replaceFirst(
+							"http:", "https:");
+					dsPhysicalLocation = dsPhysicalLocation.replaceFirst(
+							fedoraServerPort, fedoraServerRedirectPort);
+					if (fedora.server.Debug.DEBUG)
+						System.err
+								.println("*********************** DatastreamResolverServlet -- Was Fedora-to-Fedora call -- modified dsPhysicalLocation: "
+										+ dsPhysicalLocation);
+				}
+			}
+			keyTimestamp = Timestamp.valueOf(ds.extractTimestamp(id));
+			currentTimestamp = new Timestamp(new Date().getTime());
+			logger.logFinest("[DatastreamResolverServlet] dsPhysicalLocation: "
+					+ dsPhysicalLocation);
+			logger.logFinest("[DatastreamResolverServlet] dsControlGroupType: "
+					+ dsControlGroupType);
+
+			// Deny mechanism requests that fall outside the specified time
+			// interval.
+			// The expiration limit can be adjusted using the Fedora config
+			// parameter
+			// named "datastreamMediationLimit" which is in milliseconds.
+			logger
+					.logFiner("[DatastreamResolverServlet] TimeStamp differential "
+							+ "for Mechanism's response: "
+							+ ((long) currentTimestamp.getTime() - (long) keyTimestamp
+									.getTime()) + " milliseconds");
+			if (currentTimestamp.getTime() - keyTimestamp.getTime() > (long) datastreamMediationLimit) {
+				out = response.getWriter();
+				response.setContentType(HTML_CONTENT_TYPE);
+				out
+						.println("<br><b>[DatastreamResolverServlet] Error:</b>"
+								+ "<font color=\"red\"> Mechanism has failed to respond "
+								+ "to the DatastreamResolverServlet within the specified "
+								+ "time limit of \""
+								+ datastreamMediationLimit
+								+ "\""
+								+ "milliseconds. Datastream access denied.");
+				logger
+						.logWarning("[DatastreamResolverServlet] Error: "
+								+ "Mechanism has failed to respond "
+								+ "to the DatastreamResolverServlet within the specified "
+								+ "time limit of  \""
+								+ datastreamMediationLimit + "\""
+								+ "  milliseconds. Datastream access denied.");
+				out.close();
+				return;
+			}
+
+			if (dm.callbackRole == null) {
+				throw new AuthzOperationalException(
+						"no callbackRole for this ticket");
+			}
+			String targetRole = Authorization.FEDORA_ROLE_KEY + "="
+					+ dm.callbackRole; // restrict access to role of this
+										// ticket
+			String[] targetRoles = { targetRole };
+			Context context = ReadOnlyContext.getContext(
+					Constants.HTTP_REQUEST.REST.uri, request, targetRoles);
+			if (request.getRemoteUser() == null) {
+				// non-authn: must accept target role of ticket
+				if (fedora.server.Debug.DEBUG)
+					System.err
+							.println("DatastreamResolverServlet: unAuthenticated request");
+			} else {
+				// authn: check user roles for target role of ticket
+				if (fedora.server.Debug.DEBUG)
+					System.err
+							.println("DatastreamResolverServlet: Authenticated request getting user");
+				String[] roles = null;
+				Principal principal = request.getUserPrincipal();
+				if (principal == null) {
+					// no principal to grok roles from!!
+				} else {
+					try {
+						roles = ReadOnlyContext.getRoles(principal);
+					} catch (Throwable t) {
+					}
+				}
+				if (roles == null) {
+					roles = new String[0];
+				}
+				if (contains(roles, targetRole)) {
+					// user has target role
+				} else {
+					if (fedora.server.Debug.DEBUG)
+						System.err
+								.println("DatastreamResolverServlet: authZ exception in validating user");
+					throw new AuthzDeniedException("wrong user for this ticket");
+				}
+			}
+
+			if (fedora.server.Debug.DEBUG) {
+				System.err.println("debugging backendService role");
+				System.err.println("targetRole=" + targetRole);
+				int targetRolesLength = targetRoles.length;
+				System.err.println("targetRolesLength=" + targetRolesLength);
+				if (targetRolesLength > 0) {
+					System.err.println("targetRoles[0]=" + targetRoles[0]);
+				}
+				int nSubjectValues = context.nSubjectValues(targetRole);
+				System.err.println("nSubjectValues=" + nSubjectValues);
+				if (nSubjectValues > 0) {
+					System.err.println("context.getSubjectValue(targetRole)="
+							+ context.getSubjectValue(targetRole));
+				}
+				Iterator it = context.subjectAttributes();
+				while (it.hasNext()) {
+					String name = (String) it.next();
+					String value = context.getSubjectValue(name);
+					System.err
+							.println("another subject attribute from context "
+									+ name + "=" + value);
+				}
+				it = context.environmentAttributes();
+				while (it.hasNext()) {
+					String name = (String) it.next();
+					String value = context.getEnvironmentValue(name);
+					System.err
+							.println("another environment attribute from context "
+									+ name + "=" + value);
+				}
+			}
+			if (fedora.server.Debug.DEBUG)
+				System.err
+						.println("DatastreamResolverServlet: about to do final authZ check");
+			Authorization authorization = (Authorization) s_server
+					.getModule("fedora.server.security.Authorization");
+			authorization.enforceResolveDatastream(context, keyTimestamp);
+			if (fedora.server.Debug.DEBUG)
+				System.err
+						.println("DatastreamResolverServlet: final authZ check suceeded.....");
+
+			if (dsControlGroupType.equalsIgnoreCase("E")) {
+				// testing to see what's in request header that might be of
+				// interest
+				if (fedora.server.Debug.DEBUG) {
+					for (Enumeration e = request.getHeaderNames(); e
+							.hasMoreElements();) {
+						String name = (String) e.nextElement();
+						Enumeration headerValues = request.getHeaders(name);
+						StringBuffer sb = new StringBuffer();
+						while (headerValues.hasMoreElements()) {
+							sb.append((String) headerValues.nextElement());
+						}
+						String value = sb.toString();
+						System.err
+								.println("DATASTREAMRESOLVERSERVLET REQUEST HEADER CONTAINED: "
+										+ name + " : " + value);
+					}
+				}
+
+				// Datastream is ReferencedExternalContent so dsLocation is a
+				// URL string
+				ExternalContentManager externalContentManager = (ExternalContentManager) s_server
+						.getModule("fedora.server.storage.ExternalContentManager");
+				mimeTypedStream = externalContentManager.getExternalContent(
+						dsPhysicalLocation, context);
+				// had substituted context:
+				// ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
+				// request));
+				/*
+				 * mimeTypedStream =
+				 * ds.getDisseminationContent(dsPhysicalLocation,
+				 * ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri,
+				 * request), user, pass);
+				 */
+				outStream = response.getOutputStream();
+				response.setContentType(mimeTypedStream.MIMEType);
+				Property[] headerArray = mimeTypedStream.header;
+				if (headerArray != null) {
+					for (int i = 0; i < headerArray.length; i++) {
+						if (headerArray[i].name != null
+								&& !(headerArray[i].name
+										.equalsIgnoreCase("content-type"))) {
+							response.addHeader(headerArray[i].name,
+									headerArray[i].value);
+							if (fedora.server.Debug.DEBUG)
+								System.err
+										.println("THIS WAS ADDED TO DATASTREAMRESOLVERSERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
+												+ headerArray[i].name
+												+ " : "
+												+ headerArray[i].value);
+						}
+					}
+				}
+				int byteStream = 0;
+				byte[] buffer = new byte[255];
+				while ((byteStream = mimeTypedStream.getStream().read(buffer)) != -1) {
+					outStream.write(buffer, 0, byteStream);
+				}
+				buffer = null;
+				outStream.flush();
+			} else if (dsControlGroupType.equalsIgnoreCase("M")
+					|| dsControlGroupType.equalsIgnoreCase("X")) {
+				// Datastream is either XMLMetadata or ManagedContent so
+				// dsLocation
+				// is in the form of an internal Fedora ID using the syntax:
+				// PID+DSID+DSVersID; parse the ID and get the datastream
+				// content.
+				String PID = null;
+				String dsVersionID = null;
+				String dsID = null;
+				String[] s = dsPhysicalLocation.split("\\+");
+				if (s.length != 3) {
+					String message = "[DatastreamResolverServlet]  The "
+							+ "internal Fedora datastream id:  \""
+							+ dsPhysicalLocation + "\"  is invalid.";
+					logger.logWarning(message);
+					throw new ServletException(message);
+				}
+				PID = s[0];
+				dsID = s[1];
+				dsVersionID = s[2];
+				logger.logFinest("[DatastreamResolverServlet] PID: " + PID
+						+ " -- dsID: " + dsID + " -- dsVersionID: "
+						+ dsVersionID);
+
+				DOReader doReader = m_manager.getReader(
+						Server.USE_DEFINITIVE_STORE, context, PID);
+				Datastream d = (Datastream) doReader.getDatastream(dsID,
+						dsVersionID);
+				logger.logFinest("[DatastreamResolverServlet] Got datastream: "
+						+ d.DatastreamID);
+				InputStream is = d.getContentStream();
+				int bytestream = 0;
+				response.setContentType(d.DSMIME);
+				outStream = response.getOutputStream();
+				byte[] buffer = new byte[255];
+				while ((bytestream = is.read(buffer)) != -1) {
+					outStream.write(buffer, 0, bytestream);
+				}
+				buffer = null;
+				is.close();
+			} else {
+				out = response.getWriter();
+				response.setContentType(HTML_CONTENT_TYPE);
+				out
+						.println("<br>[DatastreamResolverServlet] Unknown "
+								+ "dsControlGroupType: " + dsControlGroupType
+								+ "</br>");
+				logger.logWarning("[DatastreamResolverServlet] Unknown "
+						+ "dsControlGroupType: " + dsControlGroupType);
+			}
+		} catch (AuthzException ae) {
+			logger.logWarning("[FedoraAccessServlet] AuthzException: "
+					+ ae.getMessage() + " Request: " + requestURI
+					+ " actionLabel: " + ACTION_LABEL);
+			ae.printStackTrace();
+			throw RootException.getServletException(ae, request, ACTION_LABEL,
+					new String[0]);
+		} catch (Throwable th) {
+			String message = "[DatastreamResolverServlet] returned an error. The "
+					+ "underlying error was a  \""
+					+ th.getClass().getName()
+					+ "  The message was  \"" + th.getMessage() + "\".  ";
+			th.printStackTrace();
+			logger.logWarning(message);
+			throw new ServletException(message);
+		} finally {
+			if (out != null)
+				out.close();
+			if (outStream != null)
+				outStream.close();
+			dsRegistry.remove(id);
+		}
+	}
+
+	// Clean up resources
+	public void destroy() {
+	}
 
 }

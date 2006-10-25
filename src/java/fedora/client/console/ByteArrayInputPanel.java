@@ -27,6 +27,8 @@ import fedora.server.utilities.StreamUtility;
 public class ByteArrayInputPanel
         extends InputPanel
         implements ActionListener {
+	
+	private static final long serialVersionUID = 1L;
 
     private JTextField m_textField;
     private JTextField m_fileField;

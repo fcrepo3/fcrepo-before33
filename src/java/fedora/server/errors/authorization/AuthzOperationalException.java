@@ -12,6 +12,7 @@ package fedora.server.errors.authorization;
  */
 public class AuthzOperationalException
         extends AuthzDeniedException {
+	private static final long serialVersionUID = 1L;
 	
 	public static final String BRIEF_DESC = "Authorized Failed";
 

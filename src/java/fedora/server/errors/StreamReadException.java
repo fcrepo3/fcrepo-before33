@@ -12,6 +12,7 @@ package fedora.server.errors;
 public class StreamReadException
         extends StreamIOException {
 
+	private static final long serialVersionUID = 1L;
     /**
      * Creates a StreamReadException.
      *

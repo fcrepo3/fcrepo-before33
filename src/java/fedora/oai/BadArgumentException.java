@@ -14,7 +14,9 @@ package fedora.oai;
  */
 public class BadArgumentException
         extends OAIException {
-
+	
+	private static final long serialVersionUID = 1L;
+	
     public BadArgumentException() {
         super("badArgument", null);
     }

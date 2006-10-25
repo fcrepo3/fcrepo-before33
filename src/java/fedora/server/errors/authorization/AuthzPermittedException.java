@@ -13,6 +13,8 @@ package fedora.server.errors.authorization;
 public class AuthzPermittedException
         extends AuthzException {
 	
+	private static final long serialVersionUID = 1L;
+	
 	public static final String BRIEF_DESC = "Authorized Permitted";
 
     public AuthzPermittedException(String message) {

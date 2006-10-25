@@ -9,6 +9,8 @@ import javax.swing.*;
  */
 public class ItemListModel extends DefaultListModel {
 
+	private static final long serialVersionUID = 1L;
+	
     public ItemListModel(List items) {
         for (int i = 0; i < items.size(); i++) {
             addElement(items.get(i));

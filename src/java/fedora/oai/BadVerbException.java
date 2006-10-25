@@ -12,6 +12,8 @@ package fedora.oai;
  */
 public class BadVerbException
         extends OAIException {
+	
+	private static final long serialVersionUID = 1L;
 
     public BadVerbException() {
         super("badVerb", null);

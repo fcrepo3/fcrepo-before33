@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 public class StringInputPanel
         extends InputPanel {
 
+	private static final long serialVersionUID = 1L;
     private JRadioButton m_nullRadioButton;
     private JTextField m_textField;
 

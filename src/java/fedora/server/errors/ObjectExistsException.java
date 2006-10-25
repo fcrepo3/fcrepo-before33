@@ -12,6 +12,8 @@ package fedora.server.errors;
 public class ObjectExistsException
         extends StorageException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates an ObjectExistsException.
      *

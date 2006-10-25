@@ -41,6 +41,8 @@ public class FieldSearchServlet
         extends HttpServlet
         implements Logging {
 
+	private static final long serialVersionUID = 1L;
+	
     /** Instance of the Server */
     private static Server s_server=null;
 

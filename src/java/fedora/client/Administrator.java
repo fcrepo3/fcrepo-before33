@@ -42,6 +42,7 @@ import fedora.server.management.FedoraAPIM;
  * @version $Id$
  */
 public class Administrator extends JFrame {
+	private static final long serialVersionUID = 1L;
 
     private static MDIDesktopPane s_desktop;
     private static int s_maxButtonHeight;

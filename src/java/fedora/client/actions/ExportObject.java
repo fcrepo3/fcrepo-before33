@@ -27,6 +27,7 @@ import fedora.client.export.ExportOptionsDialog;
 public class ExportObject
         extends AbstractAction {
 
+	private static final long serialVersionUID = 1L;
     private Set m_pids;
     private boolean m_prompt;
 

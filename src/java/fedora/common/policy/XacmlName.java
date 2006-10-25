@@ -9,7 +9,7 @@ import org.jrdf.graph.*;
  *
  */
 public class XacmlName implements URIReference {
-
+	private static final long serialVersionUID = 1L;
     public XacmlNamespace parent;
     public String localName;
     public String datatype;

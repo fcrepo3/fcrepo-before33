@@ -13,6 +13,7 @@ import javax.swing.JCheckBox;
 public class BooleanInputPanel
         extends InputPanel {
 
+	private static final long serialVersionUID = 1L;
     private JCheckBox m_checkBox;
 
     public BooleanInputPanel(boolean primitive) {

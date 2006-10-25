@@ -10,6 +10,7 @@ import org.jrdf.graph.*;
  */
 public class RDFName implements URIReference {
 
+	private static final long serialVersionUID = 1L;
     public RDFNamespace namespace;
     public String localName;
     public String uri;

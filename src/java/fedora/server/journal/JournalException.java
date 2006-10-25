@@ -15,6 +15,8 @@ package fedora.server.journal;
  */
 public class JournalException extends Exception {
 
+	private static final long serialVersionUID = 1L;
+	
     public JournalException() {
         super();
     }

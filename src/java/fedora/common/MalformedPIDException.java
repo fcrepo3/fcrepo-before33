@@ -10,6 +10,8 @@ package fedora.common;
 public class MalformedPIDException
         extends Exception {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Construct a MalformedPIDException with the given reason.
      */

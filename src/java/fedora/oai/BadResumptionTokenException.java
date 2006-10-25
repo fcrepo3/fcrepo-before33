@@ -15,6 +15,8 @@ package fedora.oai;
 public class BadResumptionTokenException
         extends OAIException {
 
+	private static final long serialVersionUID = 1L;
+	
     public BadResumptionTokenException() {
         super("badResumptionToken", null);
     }

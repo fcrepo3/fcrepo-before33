@@ -9,7 +9,9 @@ package fedora.server.errors;
  * @version $Id$
  */
 public class DisseminationException extends ServerException {
-
+	
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates a DisseminationException.
      *

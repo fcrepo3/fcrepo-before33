@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 public class ConsoleCommandInvoker
         extends JPanel {
 
+	private static final long serialVersionUID = 1L;
     private ConsoleCommand m_command;
     private Console m_console;
     private InputPanel[] m_inputPanels;

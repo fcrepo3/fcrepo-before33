@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 public class Continue100Exception
         extends RootException {
 
+	private static final long serialVersionUID = 1L;
+	
     public Continue100Exception(HttpServletRequest request, String action, String detail, String[] details) {
         super(request, action, detail, details);
     }

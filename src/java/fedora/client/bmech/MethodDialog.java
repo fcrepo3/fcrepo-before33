@@ -24,6 +24,7 @@ import fedora.client.Administrator;
  */
 public class MethodDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
     private JTextField methodName;
     private JTextField methodDescription;
     private MethodsPane parent;

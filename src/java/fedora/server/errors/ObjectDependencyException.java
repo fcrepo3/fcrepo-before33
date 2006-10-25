@@ -15,6 +15,8 @@ package fedora.server.errors;
 public class ObjectDependencyException
         extends StorageException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates an ObjectDependencyException.
      *

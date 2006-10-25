@@ -14,6 +14,8 @@ package fedora.oai;
 public class NoRecordsMatchException
         extends OAIException {
 
+	private static final long serialVersionUID = 1L;
+	
     public NoRecordsMatchException() {
         super("noRecordsMatch", null);
     }

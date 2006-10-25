@@ -18,7 +18,8 @@ import fedora.server.types.gen.DatastreamBinding;
  */
 public class MechanismInputPanel
         extends JPanel {
-
+	
+	private static final long serialVersionUID = 1L;
     private Map m_loadedPanels;
     private JComponent m_containerToValidate;
     private Dimension m_preferredLabelSize;
@@ -212,6 +213,7 @@ public class MechanismInputPanel
     class BindingPanel
             extends JPanel {
 
+    	private static final long serialVersionUID = 1L;
         private Map m_loadedPanels;
         private Map m_datastreamBindingPanes;
 

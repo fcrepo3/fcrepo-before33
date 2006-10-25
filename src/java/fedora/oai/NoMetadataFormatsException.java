@@ -14,6 +14,8 @@ package fedora.oai;
 public class NoMetadataFormatsException
         extends OAIException {
 
+	private static final long serialVersionUID = 1L;
+	
     public NoMetadataFormatsException() {
         super("noMetadataFormats", null);
     }

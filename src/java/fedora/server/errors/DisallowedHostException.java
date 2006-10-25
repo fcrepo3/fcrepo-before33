@@ -12,6 +12,8 @@ package fedora.server.errors;
 public class DisallowedHostException
         extends ServerException {
 
+	private static final long serialVersionUID = 1L;
+	
     /**
      * Creates a DisallowedHostException.
      *

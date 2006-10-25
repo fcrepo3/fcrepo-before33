@@ -9,6 +9,7 @@ package org.xmlpull.v1;
  * @author <a href="http://www.extreme.indiana.edu/~aslom/">Aleksander Slominski</a>
  */
 public class XmlPullParserException extends Exception {
+	private static final long serialVersionUID = 1L;
     protected Throwable detail;
     protected int row = -1;
     protected int column = -1;

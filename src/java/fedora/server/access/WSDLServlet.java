@@ -26,6 +26,7 @@ import fedora.server.utilities.RuntimeWSDL;
  * @author cwilper@cs.cornell.edu
  */
 public class WSDLServlet extends HttpServlet {
+	private static final long serialVersionUID = 1L;
 
     /** 
      * This servlet's path, relative to the root of the webapp. 

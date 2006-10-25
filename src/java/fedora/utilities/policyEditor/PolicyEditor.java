@@ -45,6 +45,7 @@ import javax.swing.filechooser.FileFilter;
 
 public class PolicyEditor extends JFrame implements ActionListener, WindowListener
 {
+	private static final long serialVersionUID = 1L;
     public static PolicyEditor mainWin = null;
     JMenuBar jJMenuBar = null;
     JMenuItem cut = null;

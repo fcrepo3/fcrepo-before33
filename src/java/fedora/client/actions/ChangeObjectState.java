@@ -18,6 +18,7 @@ import fedora.client.Administrator;
 public class ChangeObjectState
         extends AbstractAction {
 
+	private static final long serialVersionUID = 1L;
     private Set m_pids;
     private String m_newState;
 

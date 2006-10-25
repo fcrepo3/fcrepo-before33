@@ -27,6 +27,7 @@ public class DatastreamPane
         extends EditingPane 
         implements ChangeListener {
 
+	private static final long serialVersionUID = 1L;
     private String m_pid;
     private Datastream m_mostRecent;
 
@@ -345,6 +346,7 @@ public class DatastreamPane
             extends JPanel
             implements PotentiallyDirty {
 
+    	private static final long serialVersionUID = 1L;
         private Datastream m_ds;
         private JTextField m_locationTextField;
         private JTextField m_labelTextField;
@@ -882,6 +884,7 @@ public class DatastreamPane
     public class PriorVersionPane
             extends JPanel {
 
+    	private static final long serialVersionUID = 1L;
         private boolean X;
         private boolean M;
         private boolean E;
@@ -1114,6 +1117,7 @@ public class DatastreamPane
 
     public class PurgeDataStreamDialog extends JDialog implements ActionListener
     {
+    	private static final long serialVersionUID = 1L;
         Object startDate, endDate;
         boolean canceled;
         private JList list;

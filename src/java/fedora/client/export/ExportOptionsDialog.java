@@ -18,6 +18,7 @@ import fedora.client.Administrator;
 public class ExportOptionsDialog
         extends JDialog {
         
+	private static final long serialVersionUID = 1L;
     private String selections;
     
     private JRadioButton foxmlButton;
@@ -53,6 +54,7 @@ public class ExportOptionsDialog
         
         // Set up the OK and Cancel buttons panel
         JButton okButton=new JButton(new AbstractAction() {
+        	private static final long serialVersionUID = 1L;
             public void actionPerformed(ActionEvent evt) { 
                 dispose();
             }
@@ -60,6 +62,7 @@ public class ExportOptionsDialog
         okButton.setText("OK");
         
 		JButton cancelButton=new JButton(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent evt) {
 				fmt_chosen=null;
 				dispose();
@@ -68,6 +71,7 @@ public class ExportOptionsDialog
 		cancelButton.setText("Cancel"); 
 		
 		JButton helpButton=new JButton(new AbstractAction() {
+			private static final long serialVersionUID = 1L;
 			public void actionPerformed(ActionEvent evt) {
 				showHelp();
 			}

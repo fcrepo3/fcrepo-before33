@@ -42,6 +42,8 @@ public class DisseminatorsPane
         extends JPanel
         implements PotentiallyDirty, TabDrawer {
 
+	private static final long serialVersionUID = 1L;
+	
     static ImageIcon newIcon=new ImageIcon(Administrator.cl.getResource("images/standard/general/New16.gif"));
 
     private String m_pid;
@@ -211,6 +213,7 @@ public class DisseminatorsPane
             extends JPanel 
             implements ValidityListener {
 
+    	private static final long serialVersionUID = 1L;
         private JComboBox m_stateComboBox;
         private String m_initialState;
         private JTextField m_labelTextField;

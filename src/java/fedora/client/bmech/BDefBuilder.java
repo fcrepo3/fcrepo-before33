@@ -36,7 +36,7 @@ import fedora.client.Administrator;
 
 public class BDefBuilder extends JInternalFrame
 {
-
+	private static final long serialVersionUID = 1L;
     private JTabbedPane tabpane;
     protected BObjTemplate newBDef;
     private int selectedTabPane;

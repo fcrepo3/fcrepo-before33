@@ -11,6 +11,7 @@ package fedora.server.errors;
 public class DatastreamNotFoundException
         extends StorageException {
 
+	private static final long serialVersionUID = 1L;
     /**
      * Creates a DatastreamNotFoundException.
      *

@@ -14,6 +14,8 @@ package fedora.server.errors;
  */
 public final class GeneralException
         extends ServerException {
+	
+	private static final long serialVersionUID = 1L;
 
     /**
      * Creates a GeneralException.

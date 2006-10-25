@@ -24,6 +24,7 @@ import fedora.client.Administrator;
  */
 public class DCElementDialog extends JDialog {
 
+	private static final long serialVersionUID = 1L;
     private JTextField dcName;
     private JTextField dcValue;
     private GeneralPane parent;

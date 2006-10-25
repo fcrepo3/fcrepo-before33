@@ -31,7 +31,8 @@ import fedora.server.utilities.DateUtility;
  */
 public class DateTimeInputPanel
         extends InputPanel {
-
+	
+	private static final long serialVersionUID = 1L;
     private JRadioButton m_nullRadioButton;
     private JTextField m_textField;
 

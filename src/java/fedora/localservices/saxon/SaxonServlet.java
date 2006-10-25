@@ -36,6 +36,8 @@ import org.apache.commons.httpclient.methods.*;
  */
 public class SaxonServlet extends HttpServlet {
 
+	private static final long serialVersionUID = 1L;
+	
     /** time to wait for getting data via http before giving up */
     public final int TIMEOUT_SECONDS = 10;
 

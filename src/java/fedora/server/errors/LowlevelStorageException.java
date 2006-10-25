@@ -9,6 +9,8 @@ package fedora.server.errors;
  * @version $Id$
  */
 public class LowlevelStorageException extends StorageException {
+	private static final long serialVersionUID = 1L;
+	
 	public LowlevelStorageException(boolean serverCaused, String bundleName, String code, String[] values,
 			String[] details, Throwable cause) {
 		super(null, code, null, null, cause);

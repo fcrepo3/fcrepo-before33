@@ -37,6 +37,7 @@ import fedora.swing.mdi.MDIDesktopPane;
 public class BatchIngestGUI
         extends JInternalFrame {
 
+	private static final long serialVersionUID = 1L;
         //private static File s_lastDir;
 	private JTextField m_objectsField=new JTextField("", 10);
 	private JTextField m_pidsField=new JTextField("", 10);

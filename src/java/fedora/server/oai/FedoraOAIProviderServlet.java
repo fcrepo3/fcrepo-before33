@@ -19,6 +19,8 @@ import fedora.server.Server;
 public class FedoraOAIProviderServlet
         extends OAIProviderServlet {
 
+	private static final long serialVersionUID = 1L;
+	
     OAIResponder m_responder;
 
     public OAIResponder getResponder()
