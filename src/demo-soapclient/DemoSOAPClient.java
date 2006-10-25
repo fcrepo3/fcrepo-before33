@@ -23,7 +23,13 @@ import org.apache.xml.serialize.XMLSerializer;
 import fedora.client.FedoraClient;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.access.FedoraAPIA;
+import fedora.server.types.gen.DatastreamDef;
+import fedora.server.types.gen.MethodParmDef;
+import fedora.server.types.gen.MIMETypedStream;
+import fedora.server.types.gen.ObjectMethodsDef;
+import fedora.server.types.gen.ObjectProfile;
 import fedora.server.types.gen.RepositoryInfo;
+import fedora.server.types.gen.Property;
 
 /**
  *
@@ -52,8 +58,8 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 public class DemoSOAPClient {
 
-    private FedoraAPIM APIM;
-	private FedoraAPIA APIA;
+    private static FedoraAPIM APIM;
+	private static FedoraAPIA APIA;
     private static HashMap s_repoInfo=new HashMap();
 
     public DemoSOAPClient(String protocol, String host, int port, String user, String pass)
@@ -70,6 +76,7 @@ public class DemoSOAPClient {
     }
     
 
+    
 	public RepositoryInfo describeRepository() 
 		throws RemoteException {
 			
@@ -122,27 +129,27 @@ public class DemoSOAPClient {
 		}
 		
 	public String modifyDatastreamByReference(String pid, String dsID, String[] altIDs, String dsLabel, 
-		boolean versionable, String dsMIME, String formatURI, String dsLocation, String dsState,
+		String dsMIME, String formatURI, String dsLocation,
 		String logMessage, boolean force)
 		throws RemoteException {
 
 			// make the SOAP call on API-M using the connection stub
 			String datastreamID = APIM.modifyDatastreamByReference(
-				pid, dsID, altIDs, dsLabel, versionable, dsMIME,
-				formatURI, dsLocation, dsState, logMessage, force);			
+				pid, dsID, altIDs, dsLabel, dsMIME,
+				formatURI, dsLocation, logMessage, force);			
 				
 			System.out.println("SOAP Request: modifyDatastreamByReference...");
 			System.out.println("SOAP Response: datastreamID = " + datastreamID);				
 			return datastreamID;
 		}
 		
-	public String[] purgeDatastream(String pid, String dsID, String endVersionDateTime, 
+	public String[] purgeDatastream(String pid, String dsID, String startDate, String endDate, 
 		String logMessage, boolean force)
 		throws RemoteException {
 
 			// make the SOAP call on API-M using the connection stub
 			String[] dateTimeStamps = APIM.purgeDatastream(
-				pid, dsID, endVersionDateTime, logMessage, force);			
+				pid, dsID, startDate, endDate, logMessage, force);			
 				
 			System.out.println("SOAP Request: purgeDatastream...");				
 			return dateTimeStamps;
@@ -253,7 +260,7 @@ public class DemoSOAPClient {
 				//**************************************************************								
 				//******** STEP 1 : get info about the repository
 				//**************************************************************	
-				System.out.println("Test describeRepository...");
+				System.out.println("\nTest describeRepository..........................................");
 				RepositoryInfo repoinfo = caller.describeRepository();
 				
 				//**************************************************************						
@@ -292,7 +299,7 @@ public class DemoSOAPClient {
 				FileInputStream inStream=null;
 				String ingestPID=null;
 				
-				System.out.println("Test ingest...");
+				System.out.println("\nTest ingest......................................................");
 				File ingestFile=new File("TestIngestFiles/bdef_test_27.xml");		
 				try {
 					inStream=new FileInputStream(ingestFile);
@@ -303,7 +310,7 @@ public class DemoSOAPClient {
 				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test bdef");
 				System.out.println("Finished test ingest of bdef object: " + ingestPID);
 				
-				System.out.println("Test ingest...");
+				System.out.println("\nTest ingest......................................................");
 				ingestFile=new File("TestIngestFiles/bmech_test_28.xml");		
 				inStream=null;
 				try {
@@ -315,7 +322,7 @@ public class DemoSOAPClient {
 				ingestPID = caller.ingest(inStream, "foxml1.0", "ingest of test bmech");
 				System.out.println("Finished test ingest of bmech object: " + ingestPID);
 				
-				System.out.println("Test ingest...");
+				System.out.println("\nTest ingest......................................................");
 				ingestFile=new File("TestIngestFiles/obj_test_100.xml");		
 				inStream=null;
 				try {
@@ -330,7 +337,7 @@ public class DemoSOAPClient {
 				//**************************************************************					
 				//******** STEP 4: add a datastream to the object
 				//**************************************************************	
-				System.out.println("Test add datastream...");
+				System.out.println("\nTest add datastream..............................................");
 				String[] altIDs = new String[] {"id1", "id2", "id3"};
 				String datastreamID = caller.addDatastream(
 					ingestPID, // the object pid
@@ -350,17 +357,15 @@ public class DemoSOAPClient {
 				//******** STEP 5: modify a datastream 
 				//**************************************************************						
 				// modify the datastream using null to indicate which attributes should stay the same.
-				System.out.println("First test of modify datastream ...");
+				System.out.println("\nFirst test of modify datastream .................................");
 				String modDSID = caller.modifyDatastreamByReference(
 					ingestPID, // the object pid
 					"MY-DS",   // user-assigned datastream name or id
 					null, // altIDs (no change)
 					"modify-1 of my test datastream",  // new user-assigned label
-					true, // versionable
 					null, // MIME type (no change)
 					null, // new formatURI (no change)
 					null, // new URL for content (no change)
-					null, // ds state (no change)
 					"first modify to change label only", // an optional log message about the change
 					 false);  // do not force changes that break ref integrity
 
@@ -369,27 +374,26 @@ public class DemoSOAPClient {
 				//**************************************************************		
 				// again, modify the datastream and test setting attributes to empty strings.
 				// NOTE:  attempt to set system required attribute to empty will default to no change.
-				System.out.println("Second test of modify datastream...");
+				System.out.println("\nSecond test of modify datastream.................................");
 				modDSID = caller.modifyDatastreamByReference(
 					ingestPID, // the object pid
 					"MY-DS",   // user-assigned datastream name or id
 					new String[0], // altIDs (empty array)
 					"",  // new user-assigned label
-					true, // versionable
 					"", // MIME type (empty)
 					"", // new formatURI (empty)
 					"", // new URL for content (no change since required field cannot be emptied)
-					"", // ds state (no change since required field cannot be emptied)
 					"second modify to empty all non-required fields", // an optional log message about the change
 					 false);  // do not force changes that break ref integrity
 				
 				//**************************************************************				
 				//******** STEP 7: purge a datastream 
 				//**************************************************************	
-				System.out.println("Test of purge datastream...");
+				System.out.println("\nTest of purge datastream.........................................");
 				String[] dateTimeStamps = caller.purgeDatastream(
 					ingestPID, // the object pid
 					"MY-DS",   // user-assigned datastream name or id
+					"",
 					"",  // end date to purge versions before (null/empty to purge all versions)
 					"purge datastream", // an optional log message about the change
 					 false);  // do not force changes that break ref integrity
@@ -397,6 +401,7 @@ public class DemoSOAPClient {
 				//**************************************************************				
 				//******** STEP 8: export the demo object
 				//**************************************************************	
+				System.out.println("\nTest of export object............................................");
 				File exportFile = new File("demo-export.xml");
 				FileOutputStream outStream = null;
 				try {
@@ -406,10 +411,51 @@ public class DemoSOAPClient {
 						ioe.printStackTrace();
 				}		
 				byte[] objectXML = caller.export(ingestPID, "foxml1.0", null, outStream);
-		      
+				
+				//**************************************************************
+				//******** NOW TEST API-A METHODS 
+				//**************************************************************
+				
+				//**************************************************************				
+				//******** STEP 9: listDatastreams for demo object demo:11
+				//**************************************************************
+				System.out.println("\nTest of listDatastream...........................................");
+				listDatastreams();
+				
+				//**************************************************************				
+				//******** STEP 10: listMethods for demo object demo:11
+				//**************************************************************
+				System.out.println("\nTest of listMethods..............................................");
+				listMethods();
+				
+				//**************************************************************				
+				//******** STEP 11: get the object profile for demo object demo:11
+				//**************************************************************
+				System.out.println("\nTest of getObjectProfile.........................................");
+				getObjectProfile();
+				
+				//**************************************************************				
+				//******** STEP 12: get several datastreams from various demo objects
+				//**************************************************************
+				System.out.println("\nTest of getDatastreamDissemination...............................");
+				getDatastreamDissemination();
+				
+				//**************************************************************				
+				//******** STEP 13: get several disseminations from various demo objects
+				//**************************************************************
+				System.out.println("\nTest of getDissemination.........................................");
+				getDissemination();
+				
+				//**************************************************************				
+				//******** STEP 14: get object history the demo object demo:11
+				//**************************************************************
+				System.out.println("\nTest of getObjectHistory.........................................");
+				getObjectHistory();
+						      
 		  	} else {
 		      	System.out.println("Number of arguments must be equal to 5.");
 		      	System.out.println("Usage: run-demo-soapclient protocol host port username password");
+		      	System.out.println("Demo soapclient requires that demo objects are already ingested in repository \n");
 		  	}
 		} catch (Exception e) {
 		    System.out.println("Exception in main: " +  e.getMessage());
@@ -417,5 +463,168 @@ public class DemoSOAPClient {
 		}		  
 	}
 	
+	public static void listDatastreams() throws Exception {
+		
+		DatastreamDef[] dsDefs = APIA.listDatastreams("demo:11", null);
+		System.out.println("SOAP Request: listDatastreams...");
+		System.out.println("SOAP Response: see results below.");			
+		verifyDatastreamDefs(dsDefs, "SOAP Response: listDatastream: ");
+	}	
+	
+	public static void listMethods() throws Exception {
+		
+		ObjectMethodsDef[] methodDefs = APIA.listMethods("demo:11", null);
+		System.out.println("SOAP Request: listMethods...");
+		System.out.println("SOAP Response: see results below.");
+		verifyObjectMethods(methodDefs, "SOAP Response: listMethods: ");
+	}	
+	
+	public static void getDatastreamDissemination() throws Exception {
+		
+		// test for DC datastream
+		MIMETypedStream ds = null;
+		ds = APIA.getDatastreamDissemination("demo:11", "DC", null);
+		System.out.println("SOAP Request: getDatastreamDissemination for DC datastream of demo object demo:11...");		
+		String dsXML = new String(ds.getStream(), "UTF-8");
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:11 Datastream:DC succeeded.");
+		System.out.println("SOAP Response: DC datastream contents: \n"+dsXML);
+		
+		// test for type X datastream 		
+		ds = APIA.getDatastreamDissemination("demo:11", "TECH1", null);
+		System.out.println("\nSOAP Request: getDatastreamDissemination for TECH1 datastream of demo object demo:11...");		
+		dsXML = new String(ds.getStream(), "UTF-8");
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:11 Datastream:TECH1 succeeded.");
+		System.out.println("SOAP Response: TECH1 datastream contents: \n"+dsXML);		
 
+		// test for type E datastream 			
+		ds = APIA.getDatastreamDissemination("demo:11", "DS1", null);	
+		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:11...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:11 Datastream:DS1 succeeded.");
+		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		
+		// test for type R datastream 			
+		ds = APIA.getDatastreamDissemination("demo:30", "DS1", null);
+		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:30...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:30 Datastream:DS1 succeeded.");
+		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		
+		// test for type M datastream 			
+		ds = APIA.getDatastreamDissemination("demo:5", "DS1", null);
+		System.out.println("\nSOAP Request: getDatastreamDissemination for DS1 datastream of demo object demo:5...");			
+		System.out.println("SOAP Response: GetDatastreamDissemination Object:demo:5 Datastream:DS1 succeeded.");
+		System.out.println("SOAP Response: DS1 datastream contents: BINARY DATA "+ds);
+		
+	}	
+	
+
+	public static void getObjectProfile() throws Exception {
+		ObjectProfile profile = APIA.getObjectProfile("demo:11", null);
+		System.out.println("SOAP Request: getObjectProfile for demo object demo:11...");			
+		System.out.println("SOAP Response: PID: "+profile.getPid());
+		System.out.println("SOAP Response: ObjectType: "+profile.getObjType());
+		System.out.println("SOAP Response: ObjectLabel: "+profile.getObjLabel());
+		System.out.println("SOAP Response: CreateDate: "+profile.getObjCreateDate());
+		System.out.println("SOAP Response: LastModDate: "+profile.getObjLastModDate());
+		System.out.println("SOAP Response: ContentModel: "+profile.getObjContentModel());
+		System.out.println("SOAP Response: DissIndexViewURL: "+profile.getObjDissIndexViewURL());
+		System.out.println("SOAP Response: ItemIndexViewURL: "+profile.getObjItemIndexViewURL());
+
+	}
+
+	public static void getObjectHistory() throws Exception {
+		String[] timestamps = APIA.getObjectHistory("demo:11");
+		System.out.println("SOAP Request: getObjectHistory for demo object demo:11...");
+		for (int i=0; i<timestamps.length; i++) {
+			System.out.println("SOAP Response: object:demo:11 changeDate["+i+"]: "+timestamps[i]);
+		}
+	}
+
+	public static void getDissemination() throws Exception {
+	
+	// test dissemination of the Default Disseminator
+	MIMETypedStream diss = null;
+	diss = APIA.getDissemination("demo:5", "fedora-system:3", "viewDublinCore", new Property[0], null);
+	System.out.println("SOAP Request: getDissemination for method viewDublinCore of demo object demo:11...");	
+	String dsXML = new String(diss.getStream(), "UTF-8");
+	System.out.println("SOAP Response: GetDissemination Object:demo:11 Method:viewDublinCore succeeded.");
+	System.out.println("SOAP Response: Dissemination results: \n"+dsXML);	
+	
+	// test dissemination of getThumb method with no parameters
+    diss = APIA.getDissemination("demo:5", "demo:1", "getThumbnail", new Property[0], null);
+	System.out.println("\nSOAP Request: getDissemination for method getThumbnail of demo object demo:5...");		    
+	System.out.println("SOAP Response: GetDissemination Object:demo:5 Method:getThumbnail succeeded.");
+	System.out.println("SOAP Response: Dissemination results: BINARY DATA "+diss);    
+	
+	// test dissemination using resizeImage method with parameters		
+	Property[] parms = new Property[4];
+	Property p = new Property();
+	p.setName("width");
+	p.setValue("100");
+	parms[0] = p;
+	Property p2 = new Property();
+	p2.setName("height");
+	p2.setValue("100");
+	parms[1] = p2;
+	Property p3 = new Property();
+	p3.setName("x");
+	p3.setValue("100");
+	parms[2] = p3;
+	Property p4 = new Property();
+	p4.setName("y");
+	p4.setValue("100");
+	parms[3] = p4;	
+	diss = APIA.getDissemination("demo:29", "demo:27", "cropImage", parms, null);
+	System.out.println("\nSOAP Request: getDissemination for method cropImage of demo object demo:29...");		
+	System.out.println("SOAP Response: GetDissemination Object:demo:29 Method:cropImage succeeded.");
+	System.out.println("SOAP Response: Dissemination results: BINARY DATA "+diss);
+
+	}	
+	
+	public static void verifyDatastreamDefs(DatastreamDef[] dsDefArray, String msg) throws Exception {
+		
+		String dsID = null;
+		String label = null;
+		String mimeType = null;
+		DatastreamDef dsDef = null;
+	        
+		for (int i=0; i<dsDefArray.length; i++) {
+			dsDef = dsDefArray[i];
+			dsID = dsDef.getID();
+			label = dsDef.getLabel();
+			mimeType = dsDef.getMIMEType();
+			System.out.println(msg + " datastreamDef["+i+"] "
+				 + "dsID: "+dsID);
+			System.out.println(msg + " datastreamDef["+i+"] "
+				 + "label: '"+label+"'");
+			System.out.println(msg + " datastreamDef["+i+"] "
+				 + "mimeType: "+mimeType);
+		}
+	        
+	}
+
+	public static void verifyObjectMethods(ObjectMethodsDef[] methodDefsArray, String msg) throws Exception {
+	
+		String bDefPID = null;
+		String methodName = null;
+		MethodParmDef[] parms = null;
+		ObjectMethodsDef methodDef = null;
+	        
+		for (int i=0; i<methodDefsArray.length; i++) {
+			methodDef = methodDefsArray[i];
+			bDefPID = methodDef.getBDefPID();
+			methodName = methodDef.getMethodName();
+			parms = methodDef.getMethodParmDefs();
+			System.out.println(msg + " methodDef["+i+"] "
+				 + "bDefPID: "+bDefPID);
+			System.out.println(msg + " methodDef["+i+"] "
+				 + "methodName: '"+methodName+"'");
+			for (int j=0; j<parms.length; j++) {
+				MethodParmDef p = parms[j];	
+				System.out.println(msg + " methodDef["+i+"] "
+				 	+ "parmName["+j+"] "+p.getParmName());
+			}
+		}
+	        
+	}
+	
 }
