@@ -716,7 +716,7 @@
 	<target name="junit" depends="compile-junit">
 		<property name="fedora.home" value="${env.FEDORA_HOME}"/>
 		<property name="javax.net.ssl.trustStore" value="inc/keystore"/>
-		<property name="test" value="fedora.test.AllAPITests"/>
+		<property name="test" value="fedora.test.api.AllAPITests"/>
 		
 		<copy todir="${junit.build.dir}" includeEmptyDirs="false">
 	        <fileset dir="${junit.src.dir}">
