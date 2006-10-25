@@ -56,7 +56,7 @@ public abstract class Tomcat extends Container {
 		String database = getOptions().getValue(InstallOptions.DATABASE);
         InputStream is;
         File driver = null;
-        boolean success = false;
+        boolean success = true;
         try {
 	        if (database.equals(InstallOptions.BUNDLED_MCKOI)) {
 	        	is = getDist().get(Distribution.JDBC_MCKOI);
