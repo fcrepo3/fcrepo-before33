@@ -232,7 +232,7 @@ public class ReadOnlyContext implements Context {
 			slog(here + ": cando getpassword");
 			Method getPasswordMethod = null;
 			try {
-				getPasswordMethod = principalClass.getDeclaredMethod(getPasswordMethodName, null);
+				getPasswordMethod = principalClass.getDeclaredMethod(getPasswordMethodName, (Class[])null);
 			} catch (NoSuchMethodException nsme) {
 				String msg = here + ": Principal-implementing class has no get-password method";
 				slog(msg);
@@ -245,7 +245,7 @@ public class ReadOnlyContext implements Context {
 				throw new Exception();		
 			}
 			try {
-				password = (String) getPasswordMethod.invoke(principal, null);
+				password = (String) getPasswordMethod.invoke(principal, (Object[])null);
 			} catch (Throwable t) {
 				String msg = here + ": get-password method failed";
 				slog(msg);
@@ -279,7 +279,7 @@ public class ReadOnlyContext implements Context {
 			slog(here + ": cando getroles");
 			Method getRolesMethod = null;
 			try {
-				getRolesMethod = principalClass.getDeclaredMethod(getRolesMethodName, null);
+				getRolesMethod = principalClass.getDeclaredMethod(getRolesMethodName, (Class[])null);
 			} catch (NoSuchMethodException nsme) {
 				String msg = here + ": Principal-implementing class has no get-roles method";
 				slog(msg);
@@ -317,7 +317,7 @@ public class ReadOnlyContext implements Context {
 			
 			try {
 				slog(here + ": about to get roles");
-				roles = (String[]) getRolesMethod.invoke(principal, null);
+				roles = (String[]) getRolesMethod.invoke(principal, (Object[])null);
 				slog(here + ": get-roles method succeeded"); //, roles==" + roles);
 			} catch (Throwable t) {
 				String msg = here + ": get-roles method failed";
