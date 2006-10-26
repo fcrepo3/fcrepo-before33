@@ -125,7 +125,7 @@ public class ReducedPolicyEnforcementPoint {
 		destroy();
 
 		AttributeFinder attrFinder = new AttributeFinder();
-		List attrModules = new ArrayList();
+		List<ContextAttributeFinderModule> attrModules = new ArrayList<ContextAttributeFinderModule>();
 log("about to set contextAttributeFinder xxx");
 try {
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
@@ -149,7 +149,7 @@ log("just set contextAttributeFinder=" + contextAttributeFinder);
 log("before building policy finder");
 		PolicyFinder policyFinder = new PolicyFinder();
 		log("just constructed policy finder");
-		Set policyModules = new HashSet();
+		Set<ReducedPolicyFinderModule> policyModules = new HashSet<ReducedPolicyFinderModule>();
 		log("just constructed policy module hashset"); 
 		ReducedPolicyFinderModule reducedPolicyModule = null;
 		//try {
@@ -221,7 +221,7 @@ log("***debugging CombinedPolicyModule");
 		StringAttribute stringAttribute = new StringAttribute("");
 		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
 		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
-		Set subjectAttributes = new HashSet();
+		Set<Attribute> subjectAttributes = new HashSet<Attribute>();
 		subjectAttributes.add(subjectAttribute);
 		if ((subjectLoginId != null) && "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
@@ -266,14 +266,14 @@ log("***debugging CombinedPolicyModule");
 		}
 */
 		Subject singleSubject = new Subject(subjectAttributes);
-		Set subjects = new HashSet();
+		Set<Subject> subjects = new HashSet<Subject>();
 		subjects.add(singleSubject);
 		return subjects;
 	}
 
 	
 	private final Set wrapActions(String actionId, String actionApi, String contextIndex) {
-		Set actions = new HashSet();
+		Set<Attribute> actions = new HashSet<Attribute>();
 		Attribute action = new Attribute(XACML_ACTION_ID_URI, null, null, new StringAttribute(""));
 		actions.add(action);
 		action = new Attribute(ACTION_ID_URI, null, null, new StringAttribute(actionId));
@@ -287,7 +287,7 @@ log("***debugging CombinedPolicyModule");
 	
 	
 	private final Set wrapResources(String pid, String namespace) throws Exception {
-		Set resources = new HashSet();
+		Set<Attribute> resources = new HashSet<Attribute>();
 		Attribute attribute = null;
 		attribute = new Attribute(XACML_RESOURCE_ID_URI, null, null, new StringAttribute(""));
 		resources.add(attribute);
@@ -422,7 +422,7 @@ log("about to ref contextAttributeFinder=" + contextAttributeFinder);
 		int nIndeterminates = 0; //for targets matched, no rules matched
 		int nWrongs = 0; //none of the above, i.e., unreported failure, should not happen
 		Iterator it = set.iterator();
-		int which = 0;
+
 		while (it.hasNext()) {
 			Result result = (Result) it.next();
 			int decision = result.getDecision();

@@ -17,9 +17,9 @@ public class ServerConfigurationParser
     private InputStream m_xmlStream;
 
     private String m_serverClassName;
-    private List m_serverParameters;
-    private List m_moduleConfigurations;
-    private List m_datastoreConfigurations;
+    private List<Parameter> m_serverParameters;
+    private List<ModuleConfiguration> m_moduleConfigurations;
+    private List<DatastoreConfiguration> m_datastoreConfigurations;
 
     private Parameter m_lastParam;
     private String m_moduleOrDatastoreComment;
@@ -32,9 +32,9 @@ public class ServerConfigurationParser
     private String m_paramValue;
     private String m_paramComment;
     private boolean m_paramIsFilePath;
-    private Map m_profileValues;
+    private Map<String, String> m_profileValues;
 
-    private List m_moduleOrDatastoreParameters;  // module/datastore
+    private List<Parameter> m_moduleOrDatastoreParameters;  // module/datastore
     private StringBuffer m_commentBuffer;
     private boolean m_inParam;
     private boolean m_inModuleOrDatastore;
@@ -52,9 +52,9 @@ public class ServerConfigurationParser
     }
 
     public ServerConfiguration parse() throws IOException {
-        m_serverParameters = new ArrayList();
-        m_moduleConfigurations = new ArrayList();
-        m_datastoreConfigurations = new ArrayList();
+        m_serverParameters = new ArrayList<Parameter>();
+        m_moduleConfigurations = new ArrayList<ModuleConfiguration>();
+        m_datastoreConfigurations = new ArrayList<DatastoreConfiguration>();
         try {
             m_parser.parse(m_xmlStream, this);
             return new ServerConfiguration(m_serverClassName,
@@ -75,12 +75,12 @@ public class ServerConfigurationParser
             m_serverClassName = a.getValue("class");
         } else if (localName.equals("module")) {
             m_inModuleOrDatastore = true;
-            m_moduleOrDatastoreParameters = new ArrayList();
+            m_moduleOrDatastoreParameters = new ArrayList<Parameter>();
             m_role = a.getValue("role");
             m_class = a.getValue("class");
         } else if (localName.equals("datastore")) {
             m_inModuleOrDatastore = true;
-            m_moduleOrDatastoreParameters = new ArrayList();
+            m_moduleOrDatastoreParameters = new ArrayList<Parameter>();
             m_id = a.getValue("id");
         } else if (localName.equals("comment")) {
             m_commentBuffer = new StringBuffer();
@@ -91,7 +91,7 @@ public class ServerConfigurationParser
             String isFilePath = a.getValue("isFilePath");
             m_paramIsFilePath = isFilePath != null && isFilePath.equalsIgnoreCase("true");
             m_paramComment = null;
-            m_profileValues = new HashMap();
+            m_profileValues = new HashMap<String, String>();
             for (int i = 0; i < a.getLength(); i++) {
                 String name = a.getLocalName(i);
                 if (name.length() > 5 && name.endsWith("value")) {

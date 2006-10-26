@@ -14,12 +14,12 @@ import org.dom4j.Document;
  *
  */
 public class DefaultSecurityConstraint extends SecurityConstraint {
-	private static final Set urlPatterns;
-	private static final Set httpMethods;
+	private static final Set<String> urlPatterns;
+	private static final Set<String> httpMethods;
 	
 	static {
-		urlPatterns = new HashSet(Arrays.asList(new String[] {"/"}));
-		httpMethods = new HashSet(Arrays.asList(new String[] {"GET", 
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"/"}));
+		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", 
 				"POST", "PUT", "DELETE", "HEAD", "OPTIONS", "TRACE"}));
 	}
 	

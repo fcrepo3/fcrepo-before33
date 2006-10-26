@@ -13,12 +13,12 @@ import org.dom4j.Document;
  *
  */
 public class MControlSecurityConstraint extends SecurityConstraint {
-	private static final Set urlPatterns;
-	private static final Set httpMethods;
+	private static final Set<String> urlPatterns;
+	private static final Set<String> httpMethods;
 	
 	static {
-		urlPatterns = new HashSet(Arrays.asList(new String[] {"/management/control"}));
-		httpMethods = new HashSet(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"/management/control"}));
+		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
 	}
 	
 	public MControlSecurityConstraint(Document document, WebXMLOptions options) {

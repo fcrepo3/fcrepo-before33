@@ -13,12 +13,12 @@ import org.dom4j.Document;
  *
  */
 public class JSPSecurityConstraint extends SecurityConstraint {
-	private static final Set urlPatterns;
-	private static final Set httpMethods;
+	private static final Set<String> urlPatterns;
+	private static final Set<String> httpMethods;
 	
 	static {
-		urlPatterns = new HashSet(Arrays.asList(new String[] {"*.jsp"}));
-		httpMethods = new HashSet(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
+		urlPatterns = new HashSet<String>(Arrays.asList(new String[] {"*.jsp"}));
+		httpMethods = new HashSet<String>(Arrays.asList(new String[] {"GET", "HEAD", "POST"}));
 	}
 	
 	public JSPSecurityConstraint(Document document, WebXMLOptions options) {
