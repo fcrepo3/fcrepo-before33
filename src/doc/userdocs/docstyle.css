@@ -181,3 +181,9 @@ p {
 	font-size: 12pt;
 }
 
+#relnotes ol li ol li {
+	margin-top: 2px;
+	margin-left: 40px;	
+	color: #000000;
+	font-size: 12pt;
+}

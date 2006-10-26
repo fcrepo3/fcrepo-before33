@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
 	<title>Fedora 2.2 Release Notes</title>
-	<link rel="stylesheet" type="text/css" href="file:///C|/fedora-2.1.1-src/dist/userdocs/docstyle.css" />
+	<link rel="stylesheet" type="text/css" href="../docstyle.css" />
 </head>
 
 <body>
@@ -14,7 +14,7 @@
 	<a href="file:///C|/fedora-2.1.1-src/dist/userdocs/index.html" id="logo"></a>
 	<div id="title">
 		<h1>Fedora 2.2 Release Notes</h1>
-		<h2>November XX, 2006</h2>
+		<h2>January XX, 2007</h2>
 	</div>
 </div>
 
@@ -45,7 +45,7 @@
 </div>
 
 <div id="relnotes">
-	<ol type="A">
+	<ol type="1">
 		<!--<li><a id="features" name="features">New Features</a></li>-->
 		<li><a name="fedora22">Fedora 2.1 Release</a>
 			<p>Fedora 2.2 represents a significant release of Fedora because it includes a complete repackaging 
@@ -59,7 +59,7 @@
 			to facilitate replication, and refactoring of the JUnit tests.</p>
 			
 			<p>New Features</p>
-			<ol>
+			<ol type="a">
 				<li>Fedora WAR file - Fedora 2.2 represents a complete repackaging of the binary and source 
 				distribution that now enables fedora to be built and installed as a standalone webapp. The 
 				new distribution and installer enable three modes of installation: 1) bundledTomcat 2) 
@@ -175,7 +175,7 @@ throws ServerException
 				<li>WSDL servlet - In response to requests from the Fedora community, an alternative method of 
 				exporting the Fedora WSDL has been implemented. The live WSDL for any Fedora repository is now 
 				available via HTTP GET at the path:
-					<p>/fedora/wsdl</p>
+					<pre>      /fedora/wsdl</pre>
 					<p>The WSDL provided under this path is publicly available, whereas the service endpoints themselves 
 					may or may not be protected.  This is a change from previous versions, where the live WSDL was 
 					available at the service endpoint URL, by appending "?wsdl" to the URL.  The change was made due to 
@@ -203,13 +203,13 @@ throws ServerException
 					<p>Here are the old and new signature for the method:</p>
 					<div class="code">
 						<pre>
-						</pre>
 public Date setDatastreamVersionable(Context context,   
 						String pid,     
 						String datastreamID,    
 						boolean versionable,    
 						String logMessage)
-throws ServerException			
+throws ServerException	
+						</pre>		
 					</div>
 				</li>
 				
@@ -217,8 +217,8 @@ throws ServerException
 				the method named purgeDatastream has been changed. The new signature and underlying changes to the method 
 				enable the purging of a specific datastream version or purging of a range of datastream versions. Here are 
 				the old and new signatures:
-					<p><b>Old</b></p>
 					<div class="code">
+						<p><b>Old</b></p>
 						<pre>
 public Date[ ] purgeDatastream(Context context,
 						String pid,
@@ -343,15 +343,9 @@ throws ServerException
 			default.&nbsp; To turn it on, modify the Fedora Configuration file (fedora.fcfg) 
 			so that the Resource Index module is configured to level 1 or 2.&nbsp; 
 			(Default is level 0). </p>
-			<p>&nbsp;</p>
-			<p>&nbsp;</p></li>
-		<li><a name="history">Historic Release Notes</a></li>
-		
+		</li>
+		<li><a name="history">Historic Release Notes</a></li>		
 	</ol>
-
-
-  
- 
 </div>
   
 <div>
