@@ -23,8 +23,8 @@
     <h2>Table of Contents</h2>
     <div class="tocbox">
         <ol>
-            <li><a href="#INTRO">Introduction</a>                                 
-            <li><a href="#USERATTRIBUTES">Injecting Arbitrary User Attributes</a>
+            <li><a href="#INTRO">Introduction</a></li>                              
+            <li><a href="#USERATTRIBUTES">Injecting Arbitrary User Attributes</a></li>
 		</ol>
     </div>
 </div>
@@ -48,7 +48,7 @@ The Fedora code looks for a request attribute whose name equals the string const
 A request attribute found under that name is taken as a Map, mapping names to values, and so giving additional user subject attributes. 
 Currently, name must be a String and this is unlikely to change. Value must also be a String, and later this might be relaxed to include String[], 
 to allow attributes with multiple values. Other types of value are not serviced. 
-The effect within Fedora of having a key => value pair "a" => "b" in the Map is the same as having a Tomcat role "a=b" provided by a realm or login module, 
+The effect within Fedora of having a key &#61;&gt; value pair "a" &#61;&gt; "b" in the Map is the same as having a Tomcat role "a=b" provided by a realm or login module, 
 with the exception that the effect of having the same attribute key defined both places is undefined. (That is, don't do it. :)
 </p><p>
         So, e.g., a servlet filter need only create the map and populate it, and put it into the http servlet request as attribute named fedora.server.Context.FEDORA_AUX_SUBJECT_ATTRIBUTES. 

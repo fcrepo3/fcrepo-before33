@@ -57,8 +57,9 @@
     of the subject.  The target Fedora object is the related object.  Thus, a 
     valid relationship assertion as an English-language sentence might be:</p>
     <div class="code">&lt;MyCatVideo&gt; &lt;is a member of the collection&gt;  &lt;GreatCatVideos&gt;.<br/></div>
+      <br/> <br/>
 </div>
-  <br/> <br/>
+
   
 <div class="sec1">
     <h2><a name="WHY">2.  Why are Fedora Digital Object Relationships Important?</a></h2>
@@ -68,15 +69,16 @@
     relationship metadata include: </p>
       <div class="sec3">
         <ul>
-        	<li>Organize objects into collections to support management, OAI harvesting, and user search/browse</li><br/><br/>
-        	<li>Define bibliographic relationships among objects such as those defined in <a href="http://www.ifla.org/VII/s13/frbr/frbr.pdf">Functional Requirements for Bibliographic Reecords</a></li><br/><br/>
-          	<li>Define semantic relationships among resources to record how objects relate to some external taxonomy or set of standards</li><br/><br/>
-          	<li>Model a network overlay where resources are linked together based on contextual information (for example citation links or collaborative annotations)</li><br/><br/>
-          	<li>Encode natural hierarchies of objects </li><br/><br/>
+        	<li>Organize objects into collections to support management, OAI harvesting, and user search/browse<br/><br/></li>
+        	<li>Define bibliographic relationships among objects such as those defined in <a href="http://www.ifla.org/VII/s13/frbr/frbr.pdf">Functional Requirements for Bibliographic Reecords</a><br/><br/></li>
+          	<li>Define semantic relationships among resources to record how objects relate to some external taxonomy or set of standards<br/><br/></li>
+          	<li>Model a network overlay where resources are linked together based on contextual information (for example citation links or collaborative annotations)<br/><br/></li>
+          	<li>Encode natural hierarchies of objects <br/><br/></li>
           	<li>Make cross-collection linkages among objects (for example show that a particular document in one collection can also be considered part another collection)</li>
         </ul>
+          <br/> <br/>
 </div>
-  <br/> <br/>
+
   
 <div class="sec1">
     <h2><a name="WHERE">3.  Where is Digital Object Relationship Metadata Stored?</a> </h2>
@@ -132,15 +134,16 @@
       literal, not a URI.</p>
 <p>To ensure the integrity of relationship metadata so that it can be properly indexed by Fedora, the Fedora repository service validates all RELS-EXT datatreams and enforces the following constraints on the RDF:</p>
 <ol>
-	<li> The subject must be encoded as an &lt;rdf:Description&gt; element, with an &quot;rdf:about&quot; attribute containing the URI of the digital object in which the RELS-EXT datastream resides.  Thus, relationships are asserted about this object only.  Relationship directionality is from this object to other objects.</li><br/><br/>
-	<li>The relationship assertions must be RDF properties associated with the &lt;rdf:Description&gt;.  Relationship assertions can be properties defined in the default <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a>, or properties from other namespaces.</li><br/><br/>
-    <li>Prior to 2.1, the objects of relationships were restricted to other Fedora digital object URIs. This has since been relaxed so that a relationship property may reference any URI or literal, with the following exception:  a relationship may not be self-referential, rdf:resource attribute must not point to the URI of the digital object that is the subject of the relationship.</li><br/><br/>
-	<li>There must be only one &lt;rdf:Description&gt; in the RELS-EXT datastream.  One description can have as many relationship property assertions as necessary.</li><br/><br/>
-	<li>There must be no nesting of assertions.  Specifically, there cannot be an &lt;rdf:Description&gt; within an &lt;rdf:Description&gt;.  In terms of XML &quot;depth,&quot; the RDF root is considered at the depth of zero.  The must be one &lt;rdf:Description&gt; element that must exist at the depth of one.  The relationship assertions are RDF properties of the &lt;rdf:Description&gt; that exist at a depth of two. </li><br/><br/>
+	<li> The subject must be encoded as an &lt;rdf:Description&gt; element, with an &quot;rdf:about&quot; attribute containing the URI of the digital object in which the RELS-EXT datastream resides.  Thus, relationships are asserted about this object only.  Relationship directionality is from this object to other objects.<br/><br/></li>
+	<li>The relationship assertions must be RDF properties associated with the &lt;rdf:Description&gt;.  Relationship assertions can be properties defined in the default <a href="http://www.fedora.info/definitions/1/0/fedora-relsext-ontology.rdfs">Fedora relationship ontology</a>, or properties from other namespaces.<br/><br/></li>
+    <li>Prior to 2.1, the objects of relationships were restricted to other Fedora digital object URIs. This has since been relaxed so that a relationship property may reference any URI or literal, with the following exception:  a relationship may not be self-referential, rdf:resource attribute must not point to the URI of the digital object that is the subject of the relationship.<br/><br/></li>
+	<li>There must be only one &lt;rdf:Description&gt; in the RELS-EXT datastream.  One description can have as many relationship property assertions as necessary.<br/><br/></li>
+	<li>There must be no nesting of assertions.  Specifically, there cannot be an &lt;rdf:Description&gt; within an &lt;rdf:Description&gt;.  In terms of XML &quot;depth,&quot; the RDF root is considered at the depth of zero.  The must be one &lt;rdf:Description&gt; element that must exist at the depth of one.  The relationship assertions are RDF properties of the &lt;rdf:Description&gt; that exist at a depth of two. <br/><br/></li>
 	<li>Assertions of properties from certain namespaces for forbidden in RELS-EXT.  There must NOT be any assertion of properties from the Dublin Core namespace or from the FOXML namespace. This is because these assertions exist elsewhere in Fedora objects and may conflict if asserted in two places. The RELS-EXT datasream is intended to be dedicated to solely object-to-object relationships and not used to make general descriptive assertions about objects.</li>
         </ol>
+          <br/> <br/>
  </div>
-  <br/> <br/>
+
  <div class="sec1">
      <h2><a name="INDEXED">5.  Is the Digital Object Relationship Metadata Indexed in Fedora?</a></h2>
     	<p>Yes!  The Fedora repository service automatically indexes the RELS-EXT datastreams for all objects as part of the RDF-based Resource Index.   This provides a unified &quot;graph&quot; of all the objects in the repository and their relationships to each other.  The Resource Index graph can be queried using RDQL or ITQL which are SQL-like query languages for RDF.  The Fedora repository service exposes an web service interface to search the Resource Index.  Please refer to the Resource Index documentation for details.</p>

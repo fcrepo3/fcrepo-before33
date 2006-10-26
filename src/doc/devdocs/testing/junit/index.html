@@ -13,7 +13,7 @@
           <a href="../../index.html" id="logo"></a>
           <div id="title">
               <h1>JUnit Testing in Fedora</h1>
-              <h2>Fedora Release 2.1</h2>
+              <h2>Fedora Release 2.1.1</h2>
           </div>
       </div>
       
@@ -86,7 +86,7 @@
               <code>FedoraServerTestCase</code> start and stop a Fedora Server, 
               so be sure to call super() if you override setUp or tearDown.</p>
               
-              <p>The following TestCase class will:
+              <p>The following TestCase class will:</p>
               <ol>
                   <li>start a Fedora Server</li>
                   <li>run <code>testExample1</code></li>
@@ -95,7 +95,6 @@
                   <li>run <code>testExample2</code></li>
                   <li>stop the Fedora Server</li>
               </ol>
-              </p>
               <div class="code"><pre>
 package fedora.test.integration;
 
@@ -105,7 +104,7 @@ public class TestExampleA extends FedoraServerTestCase {
     }
     
     public void testExample2() throws Exception {
-        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        String xml = "&lt;galaxy&gt;&lt;planet name='Earth'/&gt;&lt;/galaxy&gt;";
         assertXpathExists("//planet[@name='Earth']", xml);
     }
 
@@ -159,7 +158,7 @@ public class TestExampleB extends FedoraServerTestCase {
     }
     
     public void testExample2() throws Exception {
-        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        String xml = "&lt;galaxy&gt;&lt;planet name='Earth'/&gt;&lt;/galaxy&gt;";
         assertXpathExists("//planet[@name='Earth']", xml);
     }
     
@@ -208,7 +207,7 @@ public class TestExampleC extends FedoraServerTestCase {
     }
     
     public void testExample2() throws Exception {
-        String xml = "<galaxy><planet name='Earth'/></galaxy>";
+        String xml = "&lt;galaxy&gt;&lt;planet name='Earth'/&gt;&lt;/galaxy&gt;";
         assertXpathExists("//planet[@name='Earth']", xml);
     }
     
@@ -273,7 +272,7 @@ module.fedora.server.storage.ConnectionPoolManager.defaultPoolName = localMcKoiP
               Ensuring junit.jar is in ANT_HOME/lib should do the trick.</p>
               <p>As of Fedora 2.1, it's necessary to run <code>fedora-setup</code> 
               and to start and stop the server before running the tests so that 
-              the required configuration files are in play. 
+              the required configuration files are in play. </p>
               <div class="code"><pre>
 $ ant server
 $ fedora-setup
@@ -286,7 +285,7 @@ $ ant junit</pre></div>
           
           <div class="subsect">
               <h3><a name="running.eclipse">B. Running Tests in Eclipse</a></h3>
-              <p>You should have the following source directories configured: 
+              <p>You should have the following source directories configured:</p>
               <ul>
                   <li>src/java</li>
                   <li>src/properties/client</li>
@@ -294,7 +293,6 @@ $ ant junit</pre></div>
                   <li>src/test/junit</li>
                   <li>temp/generatedCode</li>
               </ul>                                
-              </p>
           </div>
       </div>
       

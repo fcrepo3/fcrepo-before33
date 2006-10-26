@@ -62,7 +62,7 @@
     <h2>Table of Contents</h2>
     <div id="tocbox">
         <ol>
-            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#intro">Introduction</a>
                 <ol>
                     <li><a href="#intro.goals">Goals</a></li>
                     <li><a href="#intro.equiv">Repository equivalence</a></li>
@@ -70,7 +70,7 @@
                     <li><a href="#intro.status">Status</a></li>
                 </ol>
             </li>
-            <li><a href="#design">Design</a></li>
+            <li><a href="#design">Design</a>
                 <ol>
                     <li><a href="#design.decorator">A decorator on the Management module</a></li>
                     <li><a href="#design.modes">Modes of operation</a></li>
@@ -80,7 +80,7 @@
                     <li><a href="#design.extend">Extensibility</a></li>
                 </ol>
             </li>
-            <li><a href="#options">Options</a></li>
+            <li><a href="#options">Options</a>
                 <ol>
                     <li><a href="#options.general">General options</a></li>
                     <li><a href="#options.single">Options for single-file operation</a></li>
@@ -88,7 +88,7 @@
                     <li><a href="#options.log">Options for recovery log</a></li>
                 </ol>
             </li>
-            <li><a href="#impl">Implementation</a></li>
+            <li><a href="#impl">Implementation</a>
                 <ol>
                     <li><a href="#impl.fcfg">Configurations in fedora.fcfg</a></li>
                     <li><a href="#impl.journal">Journal content example</a></li>
@@ -185,7 +185,7 @@
 		configured (without Journalling).</p>
 		<p class="caption">Class diagram for Management module </p>
 		<img src="./images/ClassDiagramManagement.png" 
-			alt="Class diagram for Management module">
+			alt="Class diagram for Management module"/>
 		<p class="caption">Configuring the Management module within fedora.fcfg:</p>
 		<div class="code"><pre>&lt;module role="fedora.server.management.Management"
     class="fedora.server.management.DefaultManagement"&gt;
@@ -194,10 +194,10 @@
 		followed by another excerpt from fedora.fcfg with both Journaller and 
 		Management modules. Notice how the Journaller class implements the 
 		Management module interface, while the 
-		DefaultManagement class has moved to implement ManagementDelegate.
+		DefaultManagement class has moved to implement ManagementDelegate.</p>
 		<p class="caption">Class diagram for the Journaller and Management modules</p>
 		<img src="./images/ClassDiagramJournalManagement.png" 
-			alt="Class diagram for the Journaller and Management modules">
+			alt="Class diagram for the Journaller and Management modules"/>
 		<p class="caption">Configuring the Journaller and Management modules within fedora.fcfg:</p>
 		<div class="code"><pre>&lt;module role="fedora.server.management.Management"
     class="fedora.server.journal.Journaller"&gt;
@@ -293,7 +293,7 @@ for examples of how the options are used in fedora.fcfg</p>
 <div class="subsect">
 <h3><a name="options.general">A. General options</a></h3>
 <p>These options are recognized by the Journaller module, and can be used 
-with any configurable components.
+with any configurable components.</p>
 <div class="boxed">
 <ul class="parameter">
     <li>journalMode
@@ -730,12 +730,12 @@ components.</p>
 		<p class="caption">Creating the journal (click on image to enlarge).</p>
 		<a href="./images/CreatingtheJournal.png">
 			<img src="./images/CreatingtheJournalReduced.png" 
-				alt="Sequence diagram for creating the Journal">
+				alt="Sequence diagram for creating the Journal"/>
 		</a>
 		<p class="caption">Consuming the journal (click on image to enlarge).</p>
 		<a href="./images/ConsumingtheJournal.png">
 			<img src="./images/ConsumingtheJournalReduced.png" 
-				alt="Sequence diagram for consuming the Journal">
+				alt="Sequence diagram for consuming the Journal"/>
 		</a>
 
 	</div>
@@ -756,6 +756,6 @@ components.</p>
         </script>
     </div>
 </div>
-    
+ </div>   
 </body>
 </html>

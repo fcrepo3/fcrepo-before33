@@ -4,17 +4,17 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-	<title>Fedora 2.1.1 Release Notes</title>
-	<link rel="stylesheet" type="text/css" href="../docstyle.css" />
+	<title>Fedora 2.2 Release Notes</title>
+	<link rel="stylesheet" type="text/css" href="file:///C|/fedora-2.1.1-src/dist/userdocs/docstyle.css" />
 </head>
 
 <body>
 
 <div id="header">
-	<a href="../index.html" id="logo"></a>
+	<a href="file:///C|/fedora-2.1.1-src/dist/userdocs/index.html" id="logo"></a>
 	<div id="title">
-		<h1>Fedora 2.1.1 Release Notes</h1>
-		<h2>April 10, 2006</h2>
+		<h1>Fedora 2.2 Release Notes</h1>
+		<h2>November XX, 2006</h2>
 	</div>
 </div>
 
@@ -24,7 +24,7 @@
 	<div id="tocbox">
 		<ol>
 			<!--<li><a href="#features">New Features</a></li>-->
-			<li><a href="#fedora21">Fedora 2.1 Release</a></li>
+			<li><a href="#fedora22">Fedora 2.1 Release</a></li>
 			<li><a href="#tune">Performance Tuning</a></li>
 			<li><a href="#bugs">Bug Fixes</a></li>
 			<li><a href="#issues">Known Issues</a></li>
@@ -35,151 +35,340 @@
 </div>
 
 <div id="introduction">
-	<p>The <a href="http://www.fedora.info">Fedora Project</a> 
-	is proud to announce the release of version 2.1.1 of the Fedora open-source 
-	digital repository system. Fedora 2.1.1 is a maintenance release that provides a
-	<b><i>significant performance boost</i></b> for Fedora 2.1. It also resolves 
-	a number of reported bugs.</p>
+	<p>&nbsp;</p>
+	<p class="MsoNormal">The <a href="http://www.fedora.info">Fedora Project</a> 
+	is proud to announce the release of version 2.2 of the Fedora open-source 
+	digital repository system.&nbsp; Fedora 2.2 is a maintenance release that provides a
+	<b><i>significant 
+	performance boost</i></b>&nbsp; for Fedora 2.1.&nbsp;&nbsp; It also resolves 
+	a number of reported bugs.&nbsp;</p>
 </div>
 
 <div id="relnotes">
-	<ol>
+	<ol type="A">
 		<!--<li><a id="features" name="features">New Features</a></li>-->
-		
-		<li><a name="fedora21">Fedora 2.1 Release</a>
-		<p>If you are not already familiar with Fedora 2.1, please consult the 
-		<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">Fedora 2.1 Release Notes</a> 
-		before installing the new Fedora 2.1.1 maintenance release.</p>
-		<p>Since Fedora 2.1.1 is a maintenance release, it contains all of the 
-		same features as Fedora 2.1. Please refer to the
-		<a href="http://www.fedora.info/download/2.1/userdocs/">Fedora 2.1 documentation</a> 
-		for a complete description of Fedora 2.1 and 2.1.1 functionality.Fedora 
-		2.1 contains all of the standard Fedora features built around web 
-		services, XML, and RDF, as well as many new features such as the new 
-		Fedora security architecture, XACML-based policy enforcement, the Fedora 
-		Service Framework, the new OAI Provider service, the Repository 
-		Rebuilder, and many other new features and enhancements. Now, Fedora 
-		provides an even more powerful, flexible, and secure foundation for a 
-		wide variety information management applications, including 
-		institutional repositories, digital libraries, e-research, 
-		e-scholarship, records management, digital archives, and educational 
-		software.</p>
+		<li><a name="fedora22">Fedora 2.1 Release</a>
+			<p>Fedora 2.2 represents a significant release of Fedora because it includes a complete repackaging 
+			of the Fedora source and binary distribution so that Fedora can now be installed as a standalone 
+			webapp in any servlet container. In addition to the war file repackaging, the Fedora 2.2 release 
+			includes several feature enhancements including new Fedora installer application, enhancements to 
+			the WSDL for the Management and Access APIs, new Journaling feature useful for replicating repositories, 
+			modification of several API-M methods to enhance functionality, enhancements to the Resource Index  
+			enabling selection of an alternate triplestore database engine, integration of Gert Pedersen's 
+			FedoraGSearch generic search application into the Fedora Services Framework, new Journaling system 
+			to facilitate replication, and refactoring of the JUnit tests.</p>
+			
+			<p>New Features</p>
+			<ol>
+				<li>Fedora WAR file - Fedora 2.2 represents a complete repackaging of the binary and source 
+				distribution that now enables fedora to be built and installed as a standalone webapp. The 
+				new distribution and installer enable three modes of installation: 1) bundledTomcat 2) 
+				existingTomcat, and 3) other. The bundledTomcat mode installs Fedora with an embedded 
+				tomcat 5.0.28 servlet container similar to previous versions of Fedora.  The existingTomcat 
+				mode installs Fedora into an existing external tomcat installation. The last mode can be used 
+				when installing Fedora into a servlet container other than tomcat.</li>
+				
+				<li>Fedora installer - Fedora 2.2 includes a new installer that can either be run 
+				interactively to configure the installation or run using an install.properties file to 
+				configure the installation of Fedora. In addition to configuring the type of servlet container 
+				where Fedora is to be installed, the installer also configures location of FEDORA_HOME, 
+				XACML policy configuration, and configuration of the Fedora security configuration.</li>
+				
+				<li>Changes to "modifyDatastreamByReference" method in API-M - As part of the refactoring to 
+				fully implement the VERSIONABLE attribute on datastreams, the signature for the method 
+				modifyDatastreamByReference has changed. The changes include removal of the "versionable" 
+				and "dsState "arguments. Changes to the state or versionable status of a datastream should be 
+				handled using the setDatastreamState and setDatastreamVersionable methods, respectively.
+					<p>Here are the old and new signature for the method:</p>
+					<div class="code">
+						<p><b>Old</b></p>
+						<pre>
+public Date modifyDatastreamByReference(Context context, 
+			 		 	String pid,
+						String datastreamId, 
+						String[] altIDs,
+						String dsLabel, 
+						boolean versionable,
+						String mimeType,
+						String formatURI,
+						String dsLocation, 
+						String dsState,
+						String logMessage,
+					  	boolean force)
+throws ServerException
+						</pre>
+						<p><b>New</b></p>
+						<pre>
+public Date modifyDatastreamByReference(Context context, 
+						String pid,
+						String datastreamId, 
+						String[] altIDs,
+						String dsLabel, 
+						String mimeType,
+						String formatURI,
+						String dsLocation, 
+						String logMessage,
+			  			boolean force)
+throws ServerException
+						</pre>
+					</div>
+				</li>
+				
+				<li>Changes to "modifyDatastreamByValue" method in API-M - As part of the refactoring to fully implement 
+				the VERSIONABLE attribute on datastreams, the signature for the method modifyDatastreamByValue has changed. 
+				The changes include removal of the "versionable" and "dsState " arguments. Changes to the state or 
+				versionable status of a datastream should be handled using the setDatastreamState and setDatastreamVersionable 
+				methods, respectively.
+					<p>Here are the old and new signature for the method:</p>
+					<div class="code">
+						<p><b>Old</b></p>
+						<pre>
+public Date modifyDatastreamByValue(Context context, 
+						String pid,
+						String datastreamId, 
+						String[] altIDs,
+						String dsLabel, 
+						boolean versionable,
+						String mimeType,
+						String formatURI,
+						InputStream dsContent,
+						String dsState,
+						String logMessage,
+						boolean force)
+throws ServerException			
+						</pre>
+						<p><b>New</b></p>
+						<pre>
+public Date modifyDatastreamByValue(Context context, 
+						String pid,
+						String datastreamId, 
+						String[] altIDs,
+						String dsLabel, 
+						String mimeType,
+						String formatURI,
+						InputStream dsContent,
+						String logMessage,
+						boolean force)
+throws ServerException			
+						</pre>
+					</div>
+				</li>
+				
+				<li>Journaling - Fedora 2.2 includes a new Journaling feature that keeps a full log of all object 
+				modifications to a Fedora repository.  These logs can be used in a live leader/follower configuration 
+				to support automatic replication to an identical Fedora repository, as well as for diagnostic or 
+				auditing purposes.
+				</li>
+				
+				<li>Resource Index Enhancements - In Fedora 2.2 an alternate (RDBMS-based, more stable, less feature-rich) 
+				triplestore database can now be plugged in as Fedora's Resource Index.  In addition, we are currently 
+				working on the messaging components necessary to support an optional, external Resource Index.
+				</li>
+				
+				<li>WSDL changes - In response to requests from the Fedora community, the WSDL encoding for API-A and 
+				API-M have been changed from the former "rpc-encoded" encoding to the more widely supported 
+				"document/literal" encoding, using the "wrapped" convention. The "document/literal" encoding reflects 
+				current best practice  and simplifies how Fedora API calls are represented over the network and 
+				increases interoperability with other WSDL-aware tools.
+				</li>
+				
+				<li>WSDL servlet - In response to requests from the Fedora community, an alternative method of 
+				exporting the Fedora WSDL has been implemented. The live WSDL for any Fedora repository is now 
+				available via HTTP GET at the path:
+					<p>/fedora/wsdl</p>
+					<p>The WSDL provided under this path is publicly available, whereas the service endpoints themselves 
+					may or may not be protected.  This is a change from previous versions, where the live WSDL was 
+					available at the service endpoint URL, by appending "?wsdl" to the URL.  The change was made due to 
+					problems encountered with Apache Axis' live wsdl functionality. The new alternative should greatly 
+						improve interoperability between Fedora and other WSDL-aware software.</p> 
+				</li>
+				
+				<li>Moved Fedora gSearch into service framework - The Fedora gSearch application developed by Gert 
+				Schmeltz Pedersen as part of the Fedora Search Working group has now been integrated into the Fedora 
+				services framework. Fedora gSearch represents a great example of how contributed work from the Fedora 
+				community can be migrated from the user community into the Fedora framework and then made available 
+				to the entire Fedora community. Fedora gSearch represents an extensible generic search service that 
+				can be plugged into the Fedora Services Framework. It current supports both Lucene and Zebra as 
+				backend search engines.  When the messaging components are finalized in a future release, it will 
+				be possible to further decouple the gSearch service from Fedora and treat it as a "message reciever" 
+				in the service framework.
+				</li>
+				
+				<li>VERSIONABLE attribute on datastreams fully implemented - Fedora 2.2 fully implements the VERSIONABLE 
+				attribute on datastreams and adds a new method named setDatastreamVersionable to API-M to enable changing 
+				the versionable state of a datastream. This functionality enables repository managers to selectively turn 
+				versioning on or off for selected datastreams. This new feature can also be controlled used XACML policies 
+				by restricting access to the setDatastreamVersionable method in API-M which allows repository managers to 
+				decide if they want to enable this feature or not. The signature for the new method is as follows:
+					<p>Here are the old and new signature for the method:</p>
+					<div class="code">
+						<pre>
+						</pre>
+public Date setDatastreamVersionable(Context context,   
+						String pid,     
+						String datastreamID,    
+						boolean versionable,    
+						String logMessage)
+throws ServerException			
+					</div>
+				</li>
+				
+				<li>Change to "purgeDatastream" method in API-M - In response to the Fedora community, the signature for 
+				the method named purgeDatastream has been changed. The new signature and underlying changes to the method 
+				enable the purging of a specific datastream version or purging of a range of datastream versions. Here are 
+				the old and new signatures:
+					<p><b>Old</b></p>
+					<div class="code">
+						<pre>
+public Date[ ] purgeDatastream(Context context,
+						String pid,
+						String datastreamID, 
+						Date endDT,
+						String logMessage,
+						boolean force)
+throws ServerException				
+						</pre>
+						<p><b>New</b></p>
+						<pre>
+public Date[ ] purgeDatastream(Context context, 
+						String pid,
+						String datastreamID, 
+						Date startDT,
+						Date endDT,
+						String logMessage,
+						boolean force)
+throws ServerException			
+						</pre>			
+					</div>
+					<p>Changes supporting this new functionality have also been made in the Fedora administrative client.</p>		
+				</li>
+				
+				<li>METS schema changes - Prior to Fedora 2.2, there were some attributes available in the foxml1.0 
+				schema that were not available in the metslikefedora1 schema. Fedora 2.2 updated the metslikefedora1 
+				schema to bring it in compliance with the set of attributes available in the foxml1.0 schema. In particular, 
+				the metslikefedora1 schema now supports the attributes for VERSIONABLE, FORMAT_URI, and ALT_IDS on 
+				datastreams. (see: www.fedora.info/definitions/1/0/api/mets-fedora-ext.xsd for details)
+				</li>
+				
+				<li>Export Context Of "Archive" Implemented - Fedora 2.2 enhances the functionality of the API-M export 
+				method by implementing the "archive" context. When exporting objects using the "archive" context, all 
+				Managed Content and External Referenced Content datastreams will be embedded as base64-encoded binary 
+				blobs in the exported object xml. This enables the ability to completely export an object and all of its 
+				content in a single package that can easily be transported to a different repository with no dependencies 
+				on the originating repository.
+				</li>
+				
+				<li>JUnit Refactoring - The refactoring of the codebase necessary to make Fedora a standalone webapp 
+				also required extensive refactoring of the JUnit tests. Fedora 2.2 includes streamlining and simplification 
+				of the the JUnit tests that will make future code testing much easier.
+				</li>	
+			</ol>
 		</li>
 		
-		<li><a name="tune">Performance Tuning</a>	
-		<p>With the addition of the Fedora 2.1.1 maintenance release, a Fedora 
-		repository will now <i><b>perform each management operation within 
-		milliseconds</b></i> per API-M SOAP request.</p>
-		<p>In response to user feedback, a complete analysis of 
-		Fedora API-M performance was conducted which revealed bottlenecks on 
-		several operations, most notably modifyDatastreamByValue, 
-		purgeDisseminator, and purgeObject. The Fedora server 
-		has been significantly tuned so that these bottlenecks are eliminated. 
-		Please consult the
-		<a href="../reports/apim-performance/index.html">
-		final report</a> which contains before/after performance 
-		measurements for every API-M operation.</p>
-		<p><img src="images/newstar.jpg" alt="new item image" width="48" height="43" border="0"/>
-		<a href="../reports/apim-performance/index.html">Fedora API-M Performance Report</a></p>
-		</li>
-
 		<li><a id="bugs" name="bugs">Bug Fixes</a>
 		<p>Refer to Fedora's <a href="http://www.fedora.info/bugzilla/">Bugzilla</a> 
 		for full descriptions of the resolved bugs.</p>
-		<ul>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=145">Bug #145</a>: 
-				FedoraClient's HTTP header date parsing fails in non-english locales</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=146">Bug #146</a>: 
-				ResourceIndex Rebuilder error with relative path for triplestore</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=147">Bug #147</a>: 
-				SQL database left in corrupted state after ingest of object with label exceeding 255 characters</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=148">Bug #148</a>: 
-				Admin client bDef/bMech builders fail when specifying system generated PID</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=149">Bug #149</a>: 
-				Adding sample policy results in NullPointerException</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=151">Bug #151</a>: 
-				Surrogate policies generate errors in console log</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=152">Bug #152</a>: 
-				Performance issue: modifyDatastreamByValue delay when Resource 
-			Index is ON</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=154">Bug #154</a>: 
-				Resource Index datastore parameter, poolMaxGrowth, doesn't behave as documented</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=155">
-			Bug #155</a>: DirIngest not following redirect to SSL</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=156">Bug #156</a>: 
-				Modifying a disseminator's bmech breaks disseminations for other objects</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=157">Bug #157</a>: 
-				Deleting digital object leaves behind triples in Resource Index</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=158">Bug #158</a>: 
-				Performance issue: purgeObject and purgeDisseminator take unreasonably long in large repositories</li>
-			<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=159">
-			Bug #159</a>: Error in sample policy (deny-objects-by-pids-to-tomcat-role.xml)</li>
-		</ul>
+			<ul>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=30">Bug #030</a>: 
+					Admin GUI--if datastreams entered first, can't bind disseminators</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=124">Bug #124</a>: 
+					API-A Lite search does not correctly handle international characters</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug #160</a>: 
+					fedora-reload-policies.sh gives Usage error if run with no arguments</li>				
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=162">Bug #162</a>: 
+					Problems running MacOS X with Java 1.4</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=177">Bug #177</a>: 
+					fedora-start.bat script: sleep is not a command</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=179">Bug #179</a>: 
+					PID namespace syntax: conflicting definitions</li>				
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=180">Bug #180</a>: 
+					Too Many Open Files error message</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=182">Bug #182</a>: 
+					bMech Builder does not properly serialize multiple mimetypes in DSInputSpec</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=183">Bug #183</a>: 
+					Datastream ID beginning with a alphanumeric allowed by admin client</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=184">Bug #184</a>: 
+					Problem exporting objects as METS that were originally ingested in METS format</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=185">Bug #185</a>: 
+					Concurrent modification of same object can cause deletion</li>				
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=186">Bug #186</a>: 
+					Double URL encoding for PIDs that contain escape characters</li>
+				<li><a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=191">Bug #191</a>: 
+					MIMETYPE not properly xml-escaped in FOXML and METS serializations</li>
+			</ul>
+			<br/>					
 		</li>
 		
 		<li><a id="issues" name="issues">Known Issues</a>
-		<ul>
-			<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
-				codes returned after a period of normal server use. This problem 
-				is difficult to replicate, and the cause is unknown. A 
-				workaround to this problem is to instruct Tomcat to use a 
-				MemoryRealm instead of a JAASRealm. See 
+			<ul>
+				<li>An early adopter of Fedora 2.1 reported anomalous 401 status 
+					codes returned after a period of normal server use. This problem 
+					is difficult to replicate, and the cause is unknown. A 
+					workaround to this problem is to instruct Tomcat to use a 
+					MemoryRealm instead of a JAASRealm. See
 				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=144">Bug 144</a> 
-				for detailed instructions on applying this workaround.</li>
-			<li>Ingest validation error when namespace for in-line XML 
-				datastreams is in root element. Reported as 
+					for detailed instructions on applying this workaround.</li>
+				<li>Ingest validation error when namespace for in-line XML 
+					datastreams is in root element. Reported as
 				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=153">Bug 153</a>.</li>
-			<li>fedora-reload-policies.sh gives usage error if run with no 
-				arguments. Reported as 
-				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a>.</li>
-			<li>MacOS X users must upgrade to Java 5. Reported as 
-				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=162">Bug 162</a>.</li>
-		</ul>
+				<li>fedora-reload-policies.sh gives usage error if run with no 
+					arguments. Reported as
+				<a href="http://www.fedora.info/bugzilla/show_bug.cgi?id=160">Bug 160</a></li>
+			</ul>
 		</li>
 		
 		<li><a id="install" name="features">Installation</a>
-		<p>For instructions on installing and upgrading Fedora, please consult the 
-		<a href="installation.html">Installation Guide</a>  and the 
-		<a href="migration.html">Upgrade and Migrate Guide</a>.</p>
-		<p><b><i>NOTE</i></b>: In Fedora 2.1.1, the repository persistent 
-		storage layer (i.e., LowLevelStorage) has been refactored into a 
-		configurable module. This is to make it consistent with the 
-		overall Fedora repository design where each piece of functionality 
-		exists as a module in the Fedora server. Modules can easily 
-		be replaced with alternative implementations of the core functionality. 
-		For example, in the next release of Fedora will will ship two different 
-		LowLevelStore implementations: the existing file system implementation, 
-		and a Storage Resource Broker (SRB) implementation. If you are upgrading 
-		from a previous version of Fedora, you should note that all 
-		storage-related server configuration parameters now exist in the 
-		LowLevelStorage module section of the Fedora Configuration file 
-		(fedora.fcfg). Previously, these parameters were stand-alone parameters 
-		in the Fedora Configuration file. These parameters are: 
-		<tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
-		<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, 
-		and <tt>backslash_is_escape</tt>.</p>
-		<p><b><i>NOTE</i></b>: In Fedora 2.1.1, the Resource Index is OFF by 
-		default. To turn it on, modify the Fedora Configuration file (fedora.fcfg) 
-		so that the Resource Index module is configured to level 1 or 2. 
-		(Default is level 0).</p>
-		</li>
+			<p>For instructions on installing and upgrading Fedora, please consult the 
+			<a href="file:///C|/fedora-2.1.1-src/dist/userdocs/distribution/installation.html">Installation Guide</a>  and the 
+			<a href="file:///C|/fedora-2.1.1-src/dist/userdocs/distribution/migration.html">Upgrade and Migrate Guide</a>.<br/>
+			<br/>
+			<i><b>NOTE</b></i>:&nbsp; In Fedora 2.2, the repository persistent 
+			storage layer (i.e., LowLevelStorage) has been refactored into a 
+			configurable module.&nbsp;&nbsp; This is to make it consistent with the 
+			overall Fedora repository design where each piece of functionality 
+			exists as a module in the Fedora server.&nbsp;&nbsp; Modules can easily 
+			be replaced with alternative implementations of the core functionality.&nbsp;&nbsp; 
+			For example, in the next release of Fedora will will ship two different 
+			LowLevelStore implementations:&nbsp; the existing file system 
+			implementation, and a Storage Resource Broker (SRB) implementation.&nbsp; If you are upgrading from a previous version of Fedora, you should 
+		note that&nbsp; all storage-related server configuration parameters now 
+			exist in the LowLevelStorage module section of the Fedora Configuration 
+			file (fedora.fcfg).&nbsp;&nbsp; Previously, these parameters were 
+			stand-alone parameters in the Fedora Configuration file.&nbsp; These 
+			parameters are:&nbsp; <tt>object_store_base</tt>, <tt>datastream_store_base</tt>, 
+		<tt>path_registry</tt>, <tt>path_algorithm</tt>, <tt>file_system</tt>, and 
+		<tt>backslash_is_escape</tt>. </p>
+			<p>
+			<i><b>NOTE</b></i>:&nbsp; In Fedora 2.2, the Resource Index is OFF by 
+			default.&nbsp; To turn it on, modify the Fedora Configuration file (fedora.fcfg) 
+			so that the Resource Index module is configured to level 1 or 2.&nbsp; 
+			(Default is level 0). </p>
+			<p>&nbsp;</p>
+			<p>&nbsp;</p></li>
+		<li><a name="history">Historic Release Notes</a></li>
 		
-		<li><a name="history">Historic Release Notes</a>
-		<p>Release notes for previous versions of Fedora:
-		[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
-		[<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 
-		[<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>], 
-		[<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>], 
-		[<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>], 
-		[<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>], 
-		[<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>], 
-		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>], 
-		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>], 
-		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>], 
-		[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>]</p>
-		</li>
 	</ol>
 
+
+  
+ 
+</div>
+  
+<div>
+&nbsp;&nbsp;&nbsp;&nbsp; Release notes for previous versions of Fedora:  
+	[<a href="http://fedora.info/download/2.1.1/userdocs/distribution/release-notes.html">2.1.1</a>], 
+	[<a href="http://fedora.info/download/2.1/userdocs/distribution/release-notes.html">2.1</a>], 
+	[<a href="http://fedora.info/download/2.1b/userdocs/distribution/release-notes.html">2.1b</a>], 
+	[<a href="http://fedora.info/download/2.0/userdocs/distribution/release-notes.html">2.0</a>], 
+[<a href="http://fedora.info/download/1.2.1/userdocs/distribution/release-notes.html">1.2.1</a>], 
+	[<a href="http://fedora.info/download/1.2/userdocs/distribution/release-notes.html">1.2</a>], 
+	[<a href="http://fedora.info/download/1.1.1/userdocs/distribution/release-notes.html">1.1.1</a>], 
+	[<a href="http://fedora.info/download/1.1/userdocs/distribution/release-notes.html">1.1</a>], 
+	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html">1.0</a>], 
+	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e102">0.9</a>], 
+	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e197">Beta 1</a>], 
+	[<a href="http://fedora.info/download/1.0/userdocs/distribution/release-notes.html#d0e279">Alpha 1</a>]
+	
 </div>
 
 <div id="footer">

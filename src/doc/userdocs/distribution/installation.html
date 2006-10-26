@@ -334,7 +334,7 @@
             $FEDORA_DEV/res/apache-ant-1.6.2/bin/*</em></span></p>
           </li>
         </ul>
-      	<hr>
+      	<hr/>
       </div>
     </div>
   </div>
@@ -463,7 +463,7 @@
               is the location where MySQL is installed. In Unix,
               this might be /usr/local/mysql. In Windows, it might
               be C:\mysql.&nbsp;&nbsp; <i><b>In Windows, use double quotes if 
-				the path<br>
+				the path<br/>
 				contains spaces</b></i>, e.g. &quot;C:\Program Files\MySQL\MySQL 
 				server 4.1&quot;)</p>
             </li>
@@ -647,7 +647,7 @@
         versions of Fedora (where the db schema will likely change)
         much easier for you if you plan on using that database
         later.</p>
-		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p><hr/>
       </div>
     </div>
 
@@ -1120,7 +1120,7 @@
         
       <p>There are many other parameters you can configure with Fedora. See the 
         Fedora Server Configuration File itself (fedora.fcfg) for internal documentation on all the parameters.</p>
-		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p><hr/>
       </div>
     </div>
   
@@ -1210,7 +1210,7 @@
 
       <p>Other databases will have their own shutdown scripts or
       commands.</p>
-		<p>&nbsp;</p><hr>
+		<p>&nbsp;</p><hr/>
     </div>
   </div>
 
@@ -1251,21 +1251,21 @@
       
     <ol>
 		<li>
-		<b>Stop</b> the Fedora server if it is already running. <br>
+		<b>Stop</b> the Fedora server if it is already running. <br/>
 &nbsp;</li>
 		<li><i><b>Required</b></i>: Change the values of 
 		<span class=
           "emphasis"><em>fedoraServerHost</em></span> and <span class="emphasis">
 		<em>fedoraServerPort</em></span>&nbsp; in the Fedora server 
-		configuration file ($FEDORA_HOME/dist/server/config/fedora.fcfg).<br>
+		configuration file ($FEDORA_HOME/dist/server/config/fedora.fcfg).<br/>
 &nbsp;</li>
 		<li><i>Optional</i> <i><b>(only if XACML</b> </i><b><i>Policy 
 		enforcement is enabled)</i></b>:&nbsp; If Fedora's Authorization module 
 		is enabled (i.e., ENFORCE_MODE=&quot;enforce-policies&quot;) AND&nbsp; you have 
 		created custom 
 		disseminators on digital objects, you must enter the fixed IP address of 
-		your server in two places:<br>
-		<br>
+		your server in two places:<br/>
+		<br/>
 		a.&nbsp; <i>Fedora's Backend Services Security Configuration</i>:&nbsp;&nbsp; 
 		Since custom disseminators typically use an external services to 
 		transform digital object content,&nbsp; these &quot;backend&quot; services must be 
@@ -1281,8 +1281,8 @@
 		these service entries are pre-configured with the loopback IP address of 127.0.0.1 
 		and your job is to simply add the fixed IP address of your server for 
 		each backend service entry that already contains the loopback IP 
-		address.&nbsp;&nbsp; <br>
-		<br>
+		address.&nbsp;&nbsp; <br/>
+		<br/>
 		b.&nbsp; <i>Default XACML Policies:</i>&nbsp;&nbsp; It is also essential 
 		that you add your server's fixed IP address to the default XACML 
 		policies that ship with Fedora.&nbsp; Defaul policies are found in the 
@@ -1296,7 +1296,7 @@
 		this with your fixed IP address.&nbsp;&nbsp; For more information on 
 		these policies, see&nbsp;
 		<a href="../server/security/AuthorizationXACML.htm">Fedora 
-			Authorization with XACML</a>. <br>
+			Authorization with XACML</a>. <br/>
 &nbsp;</li>
 		<li><b>Start</b> the Fedora server.</li>
 	</ol>
@@ -1323,7 +1323,7 @@
           "../client/cmd-line/index.html" target=
           "_top">Command-line Utilities documentation</a> for additional details 
           on running the demo object converter.</p>
-	<p>&nbsp;</p><hr>
+	<p>&nbsp;</p><hr/>
   </div>
 
   <div class="section">
@@ -1339,7 +1339,7 @@
     in a simple XML format. You can use these logs to get more
     extensive information about what the server is doing or to
     diagnose problems.</p>
-	<p>&nbsp;</p><hr>
+	<p>&nbsp;</p><hr/>
   </div>
 
   <div class="section">

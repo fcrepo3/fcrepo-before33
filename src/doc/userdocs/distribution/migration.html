@@ -78,36 +78,36 @@
       authentication, open API-A) select the &quot;no-ssl-authenticate-apim&quot; 
       option as demonstrated below.&nbsp; You can easily change to more secure 
       configurations at any time by rerunning the Fedora Setup Utility.&nbsp; 
-      <br>
+      <br/>
       &nbsp; 
       <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-setup no-ssl-authenticate-apim</b></pre></div>
       <p>&nbsp;</p>
     </li>
     <li><b>Configure Object Storage Location: </b>&nbsp;in the Fedora 2.1.1 server 
       configuration file (fedora.fcfg) set the object storage location to point 
-      to that of of the Fedora 2.1.1 repository, for example:<br>
+      to that of of the Fedora 2.1.1 repository, for example:<br/>
       &nbsp; 
       <div class="code"><pre>&lt;param name=&quot;object_store_base&quot; value=&quot;<b>C:\fedora2_1_objects</b>&quot; isFilePath=&quot;true&quot;/&gt;</pre></div>
-      <p>&nbsp; 
+      <p>&nbsp;</p> 
     </li>
     <li><b>Configure Datastream Storage Location:</b> in the Fedora 2.1.1 server 
       configuration file (fedora.fcfg) set the datastream storage location to 
-      point to that of of the Fedora 2.1 repository, for example:<br>
+      point to that of of the Fedora 2.1 repository, for example:<br/>
       &nbsp; 
       <div class="code"><pre>&lt;param name=&quot;datastream_store_base&quot; value=&quot;<b>C:\fedora2_1_datastreams</b>&quot; isFilePath=&quot;true&quot;/&gt;</pre></div>
-      <p>&nbsp; 
+      <p>&nbsp; </p>
     </li>
     <li><b>Configure the Resource Index Storage Location:</b> in the Fedora 2.1.1 
       server configuration file (fedora.fcfg) set the resource index storage location 
-      to point to that of of the Fedora 2.1 repository, for example:<br>
+      to point to that of of the Fedora 2.1 repository, for example:<br/>
       &nbsp; 
-      <div class="code"><pre>&lt;datastore id=&quot;localKowariTriplestore&quot;&gt;<br>  &lt;comment&gt;local Kowari Triplestore used by the Resource Index&lt;/comment&gt;<br>  &lt;param name=&quot;connectorClassName&quot; value=&quot;org.trippi.impl.kowari.KowariConnector&quot;/&gt;<br>  &lt;param name=&quot;remote&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;path&quot; value=&quot;C:\fedora2_1_resourceIndex&quot;/&gt;<br>  &lt;param name=&quot;serverName&quot; value=&quot;fedora&quot;/&gt;<br>  &lt;param name=&quot;modelName&quot; value=&quot;ri&quot;/&gt;<br>  &lt;param name=&quot;poolInitialSize&quot; value=&quot;3&quot;/&gt;<br>  &lt;param name=&quot;poolMaxGrowth&quot; value=&quot;-1&quot;/&gt;<br>  &lt;param name=&quot;readOnly&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;autoCreate&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoTextIndex&quot; value=&quot;false&quot;/&gt;<br>  &lt;param name=&quot;memoryBuffer&quot; value=&quot;true&quot;/&gt;<br>  &lt;param name=&quot;autoFlushDormantSeconds&quot; value=&quot;5&quot;/&gt;<br>  &lt;param name=&quot;autoFlushBufferSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferFlushBatchSize&quot; value=&quot;20000&quot;/&gt;<br>  &lt;param name=&quot;bufferSafeCapacity&quot; value=&quot;40000&quot;/&gt;<br>&lt;/datastore&gt;</pre></div>
-      <p>&nbsp; 
+      <div class="code"><pre>&lt;datastore id=&quot;localKowariTriplestore&quot;&gt;<br/>  &lt;comment&gt;local Kowari Triplestore used by the Resource Index&lt;/comment&gt;<br/>  &lt;param name=&quot;connectorClassName&quot; value=&quot;org.trippi.impl.kowari.KowariConnector&quot;/&gt;<br/>  &lt;param name=&quot;remote&quot; value=&quot;false&quot;/&gt;<br/>  &lt;param name=&quot;path&quot; value=&quot;C:\fedora2_1_resourceIndex&quot;/&gt;<br/>  &lt;param name=&quot;serverName&quot; value=&quot;fedora&quot;/&gt;<br/>  &lt;param name=&quot;modelName&quot; value=&quot;ri&quot;/&gt;<br/>  &lt;param name=&quot;poolInitialSize&quot; value=&quot;3&quot;/&gt;<br/>  &lt;param name=&quot;poolMaxGrowth&quot; value=&quot;-1&quot;/&gt;<br/>  &lt;param name=&quot;readOnly&quot; value=&quot;false&quot;/&gt;<br/>  &lt;param name=&quot;autoCreate&quot; value=&quot;true&quot;/&gt;<br/>  &lt;param name=&quot;autoTextIndex&quot; value=&quot;false&quot;/&gt;<br/>  &lt;param name=&quot;memoryBuffer&quot; value=&quot;true&quot;/&gt;<br/>  &lt;param name=&quot;autoFlushDormantSeconds&quot; value=&quot;5&quot;/&gt;<br/>  &lt;param name=&quot;autoFlushBufferSize&quot; value=&quot;20000&quot;/&gt;<br/>  &lt;param name=&quot;bufferFlushBatchSize&quot; value=&quot;20000&quot;/&gt;<br/>  &lt;param name=&quot;bufferSafeCapacity&quot; value=&quot;40000&quot;/&gt;<br/>&lt;/datastore&gt;</pre></div>
+      <p>&nbsp; </p>
     </li>	
     <li><b>Configure the SQL Database Location:</b>&nbsp; in the Fedora 2.1.1 server 
       configuration file (fedora.fcfg) set the relational database location topoint 
       to the pre-existing database (used by the Fedora 2.1 repository), for example 
-      (if using MySQL):<br>
+      (if using MySQL):<br/>
       &nbsp; 
       <div class="code"><pre>&lt;datastore id=&quot;localMySQLPool&quot;&gt;
   &lt;param name=&quot;dbUsername&quot; value=&quot;fedoraAdmin&quot;/&gt;
@@ -128,18 +128,18 @@
   &lt;param name=&quot;whenExhaustedAction&quot; value=&quot;1&quot;/&gt;
 &lt;/datastore&gt;</pre></div>
       <p>&nbsp;If you are using Oracle or mckoi as your database, update the appropriate 
-        datastore configuration.<br>
-        &nbsp;
+        datastore configuration.<br/>
+        &nbsp;</p>
     </li>
     <li><b>Configure the fedoraServerHost and fedoraServerPort:</b> in the Fedora 
       2.1.1 server configuration file (fedora.fcfg) set the values for fedoraServerHost 
       and fedoraServerPort to match those of your Fedora 2.1 server configuration, 
-      for example:<br>
+      for example:<br/>
       &nbsp; 
-      <div class="code"><pre>&lt;param name=&quot;fedoraServerPort&quot; value=&quot;8080&quot;&gt;<br>  &lt;comment&gt;Defines the port number on which the Fedora server runs;<br>           default is 8080.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraShutdownPort&quot; value=&quot;8005&quot;&gt;<br>  &lt;comment&gt;Defines the port number used to shutdown the Fedora sever;<br>           default is 8005.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraRedirectPort&quot; value=&quot;8443&quot;&gt;<br>  &lt;comment&gt;Defines the redirect port of the Fedora sever; default is<br>           8443.&lt;/comment&gt;<br>&lt;/param&gt;<br>&lt;param name=&quot;fedoraServerHost&quot; value=&quot;localhost&quot;&gt;<br>  &lt;comment&gt;Defines the host name for the Fedora server, as seen from the<br>           outside world.&lt;/comment&gt;<br>&lt;/param&gt;</pre></div>
-      <p>&nbsp; 
+      <div class="code"><pre>&lt;param name=&quot;fedoraServerPort&quot; value=&quot;8080&quot;&gt;<br/>  &lt;comment&gt;Defines the port number on which the Fedora server runs;<br/>           default is 8080.&lt;/comment&gt;<br/>&lt;/param&gt;<br/>&lt;param name=&quot;fedoraShutdownPort&quot; value=&quot;8005&quot;&gt;<br/>  &lt;comment&gt;Defines the port number used to shutdown the Fedora sever;<br/>           default is 8005.&lt;/comment&gt;<br/>&lt;/param&gt;<br/>&lt;param name=&quot;fedoraRedirectPort&quot; value=&quot;8443&quot;&gt;<br/>  &lt;comment&gt;Defines the redirect port of the Fedora sever; default is<br/>           8443.&lt;/comment&gt;<br/>&lt;/param&gt;<br/>&lt;param name=&quot;fedoraServerHost&quot; value=&quot;localhost&quot;&gt;<br/>  &lt;comment&gt;Defines the host name for the Fedora server, as seen from the<br/>           outside world.&lt;/comment&gt;<br/>&lt;/param&gt;</pre></div>
+      <p>&nbsp; </p>
     </li>
-    <li>Start the Fedora 2.1.1 server <br>
+    <li>Start the Fedora 2.1.1 server <br/>
       &nbsp; 
       <div class="code"><pre>C:\fedora-2.1.1&gt;<b> fedora-start</b>
 Starting the Fedora server...
@@ -185,7 +185,6 @@ C:\fedora-2.1.1&gt;</b></pre></div>
 	<h2><a name="migratepre20" id="migrate0">3. Upgrading from versions prior to 2.0</a></h2>
     <p>To upgrade from a Fedora version prior to 2.0, you must first
        <a href="http://fedora.info/download/2.0/userdocs/distribution/migration.html">migrate to version 2.0</a>, then follow the appropriate upgrade steps above.</p>
-    </p> 
 </div>
 
 <div id="footer">

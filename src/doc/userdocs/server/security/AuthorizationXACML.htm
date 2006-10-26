@@ -23,7 +23,7 @@
         <ol>
             <li><a href="#INTRO">Introduction</a>
             
-            <li><a href="#CONFIG">Configuring the XACML Authorization Module</a></li>
+            <li><a href="#CONFIG">Configuring the XACML Authorization Module</a>
                  <ul>
 					<li><a href="#CONFIG-ENABLE">2.1 Enabling/Disabling XACML Policy Enforcement</a></li>
 					<li><a href="#CONFIG-STORE">2.2 Configuring the Storage 
@@ -32,8 +32,9 @@
 					Repository-Wide Policies</a></li>
 					<li><a href="#CONFIG-VALIDATE">2.4 Enabling/Disabling Policy Validation</a></li>
 					<li><a href="#CONFIG-SURROG">2.5 Configuring “Surrogate” Policies (and what are they?)</a></li>
-			</ul>
-			<li><a href="#IMPL">Implementation of the Fedora Policy Enforcement Module</a></li>
+				</ul>
+			</li>
+			<li><a href="#IMPL">Implementation of the Fedora Policy Enforcement Module</a>
                 <ul>
 					<li><a href="#IMPL-PDP-PEP">3.1 Policy Determination Point (PDP) and Policy Enforcement Point (PEP)</a></li>
 					<li><a href="#IMPL-ALGORITHM">3.2 Understanding the XACML Policy Combining Algorithm</a></li>
@@ -41,13 +42,15 @@
 					of the Authorization Decision</a></li>
 					<li><a href="#IMPL-PDP">3.4 PDP Implementation Details</a></li>
 					<li><a href="#IMPL-PEP">3.5 PEP Implementation Details</a></li>
-			</ul></li>
+				</ul>
+			</li>
 			<li><a href="#ATTR">How to Bind User Attributes into the Fedora Policy Enforcement Module</a>
-			<ul>
-				<li><a href="#ATTR1">4.1  Tomcat-users attributes</a></li>
-				<li><a href="#ATTR2">4.2  LDAP attributes</a></li>
-				<li><a href="#ATTR3">4.3  Shibboleth attributes via an HTTP Servlet Filter</a></li>
-			</ul>
+				<ul>
+					<li><a href="#ATTR1">4.1  Tomcat-users attributes</a></li>
+					<li><a href="#ATTR2">4.2  LDAP attributes</a></li>
+					<li><a href="#ATTR3">4.3  Shibboleth attributes via an HTTP Servlet Filter</a></li>
+				</ul>
+			</li>
 			<li><a href="#DEFAULT">Default Repository Policies for Fedora</a>
 			<li><a href="#CUSTOM">Sample Policies for Typical Fedora Use</a>
            </ol>
@@ -485,13 +488,12 @@ policies will be validated by the repository when they are loaded.  It is up to 
 	location.&nbsp; Use the
 	<a href="../cmd-line/index.html#validate">validate-policy</a> command line 
 	utility to validate an XACML policy file.  A policy failing validation would result in the following
-	situation, according to the stated case.
+	situation, according to the stated case.</p>
 	<ul>
 	<li>repository policy:  authorization module failure at server startup time, server not properly started</li>
 	<li>object policy:  authorization enforcement failure at request time, authorization denied</li>
 	<li>surrogate policy:  authorization enforcement failure at request time, authorization denied</li>
 	</ul>
-	</p>
 	
 <p style='text-autospace:none'>
 Object policies are not set to validate by default because they are loaded dynamically at each use,
@@ -1255,8 +1257,7 @@ directory:&nbsp;&nbsp;&nbsp;
 font-family:"Courier New"'>&nbsp;</span></p>
 	<p>&nbsp;</p>
 	<p><b><span style='font-size:14.0pt'>&nbsp;</span></b></p>
-	<p>&nbsp;</p></li>
-</ol>
+	<p>&nbsp;</p>
 
 </body>
 

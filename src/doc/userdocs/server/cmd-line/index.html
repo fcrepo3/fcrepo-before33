@@ -73,8 +73,8 @@
     <span class="GramE">Unix</span>, they resolve to shell scripts
     (.sh).</p>
   </div>
-&nbsp;<h2>
-<br><a name="setup"></a>fedora-setup</h2>
+<h2>
+<br/><a name="setup"></a>fedora-setup</h2>
 	<p>Before the Fedora server is started you must run the Fedora setup utility 
 	to put a security configuration in place.&nbsp; See the guide for Securing 
 	Your Fedora Repository for a full discussion of the four configuration 
@@ -122,7 +122,7 @@
 	<p><b>beSecurity.xml</b> - Fedora backend services configuration file; 
 	controls security for services calling back to Fedora (see <i>
 	<a href="../security/beSecurityConfig.html">beSecurity Configuration</a></i> document for details)</p>
-	<p><br><br>
+	<p><br/><br/>
   </p>
   <div class="sec1">
     <h2><a name="start" id="start"></a>fedora-start</h2>
@@ -139,10 +139,10 @@
 
     <ul>
       
-    <li>when run <u>without</u> a parameter the fedora server is started using 
+    <li>when run <b>without</b> a parameter the fedora server is started using 
       the database that has been specified as the default (MySQL) in the configuration 
       file (fedora.fcfg) </li>
-    <li>when run <u>with</u> a parameter the fedora server is started using the 
+    <li>when run <b>with</b> a parameter the fedora server is started using the 
       database specified by the parameter</li>
     </ul>Example:
 
@@ -153,10 +153,11 @@
       need to be made pertaining to the overall setup of the fedora-server need 
       to be made, (see the <a href="../../distribution/installation.html">Fedora Installation and Configuration Guide</a>) and the 
       database that is to be used in conjunction with the Fedora server (either 
-      MySql or McKoi or some other custom solution) needs to be started and initialized. 
+      MySql or McKoi or some other custom solution) needs to be started and initialized. </p>
   </blockquote>
+  <br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="stop" id="export">fedora-stop</a></h2>
 
@@ -168,8 +169,9 @@
 	done when the configuration of the server is changed or to prevent all access to 
 	the repository while certain systems administration tasks are performed, or to 
 	run the program <a href="#rebuild">fedora-rebuild</a> listed below.</p>
+	<br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="rebuild" id="rebuild"></a>fedora-rebuild</h2>
 
@@ -228,7 +230,7 @@
     used by the main portion of the Fedora server.&nbsp; Then a second time as a 
 	Resource Index rebuild to recreate the triplestore and repopulate the SQL tables used by the 
 	Resource Index.</p>
-  <br>
+  <br/>
   	When you run the Fedora Rebuild utility, a text menu appears, allowing you to specify whether you need to rebuild 
 	the SQL database or rebuild the resource index files.  See below for step-by-step descriptions of 
 	how to use the rebuild tool in the various instances when it might be needed:
@@ -240,16 +242,16 @@
 	tables used by the Fedora server with the correct information (<b>select 
 	menu option '2'</b>)</li>
 	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
-	</ol></p><br>
+	</ol><br/>
 	<p><b>Resource Index Rebuild</b>: If the Resource Index level is changed, or if the 
 	Resource Index is corrupted:</p>
 	<ol>
 	<li>Stop the Fedora server (if it is running) using <a href="#stop">fedora-stop</a>.</li>
 	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-construct the Resource Index files and the 
 	Resource Index tables in the SQL database (<b>select menu option '1'</b>)</li>
-	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)<br>
+	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)<br/>
 &nbsp;</li>
-	</ol></p>
+	</ol>
 	<p><b>Both</b>: If SQL database becomes severely corrupted such that database is completely unusable, or if a different SQL database program or version is to be used.</p>
 	<ol>
 	<li>Stop the Fedora server (if it is running) using <a href="#stop">fedora-stop</a>.</li>
@@ -258,13 +260,14 @@
 	<li>Run <a href="#rebuild">fedora-rebuild</a> to re-populate SQL database 
 	tables used by the Fedora server with the correct information (<b>select 
 	menu option '2'</b>)</li>
-	<li>Run <a href="#rebuild">fedora-rebuild</a> <u>again</u> to re-construct the 
+	<li>Run <a href="#rebuild">fedora-rebuild</a> <b>again</b> to re-construct the 
 	Resource Index files and the Resource Index tables in the SQL database (<b>select 
 	menu option '1'</b>)</li>
 	<li>Restart the Fedora server. (using <a href="#start">fedora-start</a>)</li>
-	</ol></p>
+	</ol>
+	<br/><br/><br/>
   </div>
-<br><br><hr><br>
+
   <div class="sec1">
     <h2><a name="reload" id="reload"></a>fedora-reload-policies</h2>
 
@@ -279,9 +282,10 @@
 	These "repository-wide" XACML policies are only loaded at the time the Fedora server is started.  
 	If the Fedora server administrator needs to change one or more of these repository-wide policies, this command
 	can be used to tell the running Fedora server to reload all of the repository-wide policies.  
-	The alternative to using this command is to stop the Fedora server, and restart it.
+	The alternative to using this command is to stop the Fedora server, and restart it.</p>
+	<br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="validate" id="validate"></a>validate-policy</h2>
 
@@ -301,9 +305,9 @@
 	If the Fedora server administrator creates a new XACML policy to broaden the existing access policies or 
 	to more tightly restrict access, the newly created policy <b>should</b> be run through this program to ensure 
 	that the XACML policy is well-formed before attempting to install it in the Fedora server. </p>
-
+<br/><br/><hr/><br/>
   </div>
-<br><br><hr><br>
+
   <div class="sec1">
     <h2><a name="mckoiinit" id="mckoiinit"></a>mckoi-init</h2>
 
@@ -330,8 +334,9 @@
     <p>Initializes the McKoi database so that it can be used by the Fedora server.  After it is initialized
        (which generally only needs to be done once) you will need to start the McKoi database with the 
 	 <a href="#mckoistart">mckoi-start</a> command listed below.</p>
+	 <br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="mckoistart" id="mckoistart"></a>mckoi-start</h2>
 
@@ -343,8 +348,9 @@
 	via the <a href="#mckoiinit">mckoi-init</a> command.  Note that if you are using the McKoi database
 	this command must be performed <b>before</b> the Fedora server is started.  Also note that if you 
 	choose to use the MySQL database, or any other database system, this command is not needed.</p>
+	<br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="mckoistop" id="mckoistop"></a>mckoi-stop</h2>
 
@@ -368,8 +374,9 @@
 	via the <a href="#mckoistart">mckoi-start</a> command.  Note that if you are using the McKoi database
 	this command must be performed <b>after</b> the Fedora server is stopped.  Also note that if you 
 	choose to use the MySQL database, or any other database system, this command is not needed.</p>
+	<br/><br/><hr/><br/>
   </div>
-<br><br><hr><br>
+
   <div class="sec1">
     <h2><a name="mysqlconfig" id="mysqlconfig"></a>mysql-config</h2>
 
@@ -383,32 +390,33 @@
       <li><b>[installDir]</b> - Is the location where MySQL is installed. In Unix, this might be /usr/local/mysql. In Windows, it might be C:\mysql</li>
 
       <li><b>[dbaUser]</b> - Is the name of the MySQL user with dba privileges. In a default MySQL installation, this will be root.
-	<br>Please note that dbaUser is case sensitive.</li>
+	<br/>Please note that dbaUser is case sensitive.</li>
 
       <li><b>[dbaPass]</b> - Is the password of the MySQL user with dba privileges. In a default MySQL installation, 
        if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.
-	<br>Please note that dbaPass is case sensitive.</li>
+	<br/>Please note that dbaPass is case sensitive.</li>
 
       <li><b>[fedoraDBUser]</b> - Is the username you'd like to use for the Fedora software's database access. (e.g., fedoraAdmin) </li>
 
       <li><b>[fedoraDBPass]</b> - Is the password you'd like to use for the above user. (e.g., fedoraAdmin) </li>
 
-      <li><b>[dbName]</b> - Is the name you'd like to use for the Fedora database. (e.g., fedora21) <br>Please note that this datbase name is case sensitive.</li>
+      <li><b>[dbName]</b> - Is the name you'd like to use for the Fedora database. (e.g., fedora21) <br/>Please note that this datbase name is case sensitive.</li>
 
       <li><b>[mysql41_flag]</b> - Is an optional paramter that is only used if you are running MySQL 4.1.x. 
 	If using MySQL 4.1.x Fedora requires that you set the default character set to "utf8" 
 	and the default collation to "utf8_bin" for the Fedora database. Any value may be used 
 	for this parameter. If present, the script will automatically set the default character 
 	set to "utf8" and the default collation to "utf8_bin" for the Fedora SQL database. 
-	<br>Note: If you are running versions of MySQL prior to 4.1, OMIT THIS PARAMETER.</li>
+	<br/>Note: If you are running versions of MySQL prior to 4.1, OMIT THIS PARAMETER.</li>
     </ul>
 
     
   <p>The mysql-config command line builds all of the necessary tables within the 
     MySQL database so that the Fedora server can be run using MySQL as its backing 
     store. If you plan to use the McKoi database, this command is not necessary.</p>
+    <br/><br/><br/>
   </div>
-<br><br><br>
+
   <div class="sec1">
     <h2><a name="mysqldropdb" id="mysqldropdb"></a>mysql-drop-db</h2>
 
@@ -422,11 +430,11 @@
       <li><b>[installDir]</b> - Is the location where MySQL is installed. In Unix, this might be /usr/local/mysql. In Windows, it might be C:\mysql</li>
 
       <li><b>[dbaUser]</b> - Is the name of the MySQL user with dba privileges. In a default MySQL installation, this will be root.
-	<br>Please note that dbaUser is case sensitive.</li>
+	<br/>Please note that dbaUser is case sensitive.</li>
 
       <li><b>[dbaPass]</b> - Is the password of the MySQL user with dba privileges. In a default MySQL installation, 
        if you're running MySQL on the same machine as Fedora, you can usually pass "" for this argument.
-	<br>Please note that dbaPass is case sensitive.</li>
+	<br/>Please note that dbaPass is case sensitive.</li>
 
       <li><b>[dbName]</b> - Is the name you'd like to use for the Fedora database. (e.g., fedora21)</li>
 
@@ -435,8 +443,9 @@
     <p><a name="rebuildsteps" id="rebuildsteps"></a>This command can be used to delete all of the database tables used by the Fedora server.  It might be needed if the 
 	database gets corrupted, as described above for the command <a href="#rebuild">fedora-rebuild</a>.  
 	</p>
+	<br/>
   </div>
-<br>
+
   <div id="footer">
     <div id="copyright">
       Copyright &#xA9; 2006 Fedora Project
