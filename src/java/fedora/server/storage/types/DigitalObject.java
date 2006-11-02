@@ -189,7 +189,6 @@ public interface DigitalObject {
      *
      * @param ds The datastream to add.
      * @param addNewVersion Controls whether to add a new version, or replace existing version.
-     * @return The list, possibly of zero size but never null.
      */
     public void addDatastreamVersion(Datastream ds, boolean addNewVersion);
     
