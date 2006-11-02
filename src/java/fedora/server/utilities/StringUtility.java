@@ -100,6 +100,31 @@ public class StringUtility
 
   }
 
+  public static String byteArraytoHexString(byte[] array)
+  {
+      final String hexByte = "0123456789abcdef";
+      StringBuffer buf = new StringBuffer();
+      for (int i = 0; i < array.length; i++)
+      {
+          int val = array[i];
+          int v1 = (val >>> 4) & 0x0f;
+          int v2 = val & 0x0f;
+          buf.append(hexByte.substring(v1, v1+1)).append(hexByte.substring(v2, v2+1));
+      }
+      return(buf.toString());
+  }
+  
+  public static byte[] hexStringtoByteArray(String str)
+  {
+      if ((str.length() & 0x01) != 0)  throw new NumberFormatException();
+      byte ret[]= new byte[str.length()/2];
+      for (int i = 0; i < str.length()/2; i++)
+      {
+          ret[i] = (byte)Integer.parseInt(str.substring(i*2, i*2+2), 16);
+      }
+      return(ret);
+  }
+  
   public static void main(String[] args)
   {
     StringUtility su = new StringUtility();
@@ -112,5 +137,13 @@ public class StringUtility
                     + "\" to obtain a list of dependent objects.";
     System.out.println("123456789+123456789+123456789+123456789+123456789+123456789+123456789+123456789+");
     System.out.println(StringUtility.prettyPrint(in, 70, null));
+    byte test[] = {0x04, 0x5a, -0x69/*0x97*/, -0x44 /*0xbc*/, -0x10/*0xf0*/, -0x7e/*0x82*/, -0x12/*0xee*/, -0x2f/*0xd1*/, 0x63};
+    String testStr = byteArraytoHexString(test);
+    System.out.println(testStr);
+    byte result[] = hexStringtoByteArray(testStr);
+    for(int i = 0; i < result.length; i++)
+    {
+        System.out.println(result[i]);
+    }
   }
 }
