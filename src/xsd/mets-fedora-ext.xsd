@@ -453,7 +453,9 @@
 							13. FORMAT_URI: a string that defines a user-assigned URI used to identify the media 
 							type of the bytestream referred to by the LOCATION attribute on the FLocat element 
 							that is more specific than MIME type. (FEDORA EXTENSION) 
-						
+							14. CHECKSUMTYPE: an optional attribute specifying the checksum algorithm used to produce 
+							the value contained in the CHECKSUM attribute. CHECKSUMTYPE must contain one of the following values:
+							HAVAL, MD5, SHA-1, SHA-256, SHA-384, SHA-512, TIGER, WHIRLPOOL, DISABLED
 						</xsd:documentation>
 				</xsd:annotation>
 				<xsd:complexType>
@@ -518,8 +520,23 @@
 					<xsd:attribute name="STATUS" type="xsd:string" use="optional"/>
 					<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 					<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
+					<xsd:attribute name="CHECKSUMTYPE" use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="HAVAL"/>
+								<xsd:enumeration value="MD5"/>
+								<xsd:enumeration value="SHA-1"/>
+								<xsd:enumeration value="SHA-256"/>
+								<xsd:enumeration value="SHA-384"/>
+								<xsd:enumeration value="SHA-512"/>
+								<xsd:enumeration value="TIGER"/>
+								<xsd:enumeration value="WHIRLPOOL"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>					
 					<!-- FEDORA EXTENSION:  additional attributes DMDID and STATUS on file -->
 					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on file (8-16-2006) -->
+					<!-- FEDORA EXTENSION:  add new attribute CHECKSUMTYPE on file (11-02-2006) -->					
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:choice>
@@ -937,7 +954,11 @@
 						for the datastream,	with the identifiers separated by spaces (FEDORA EXTENSION)
 						7. FORMAT_URI: a string that defines a user-assigned URI used to identify the media 
 						type of the bytestream referred to by the LOCATION attribute on the FLocat element 
-						that is more specific than MIME type. (FEDORA EXTENSION) 						
+						that is more specific than MIME type. (FEDORA EXTENSION) 	
+						8. CHECKSUM: an MD5 digest value for the included file.
+						9. CHECKSUMTYPE: an optional attribute specifying the checksum algorithm used to produce 
+						the value contained in the CHECKSUM attribute. CHECKSUMTYPE must contain one of the following values:
+						HAVAL, MD5, SHA-1, SHA-256, SHA-384, SHA-512, TIGER, WHIRLPOOL, DISABLED						
 					</xsd:documentation>
 				</xsd:annotation>
 				<xsd:complexType>
@@ -961,7 +982,24 @@
 					<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
 					<xsd:attribute name="ALT_IDS" type="uriListType" use="optional"/>
 					<xsd:attribute name="FORMAT_URI" type="xsd:anyURI" use="optional"/>
+					<xsd:attribute name="CHECKSUM" type="xsd:string" use="optional"/>	
+					<xsd:attribute name="CHECKSUMTYPE" use="optional">
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+								<xsd:enumeration value="HAVAL"/>
+								<xsd:enumeration value="MD5"/>
+								<xsd:enumeration value="SHA-1"/>
+								<xsd:enumeration value="SHA-256"/>
+								<xsd:enumeration value="SHA-384"/>
+								<xsd:enumeration value="SHA-512"/>
+								<xsd:enumeration value="TIGER"/>
+								<xsd:enumeration value="WHIRLPOOL"/>
+								<xsd:enumeration value="DISABLED"/>
+							</xsd:restriction>
+						</xsd:simpleType>
+					</xsd:attribute>						
 					<!-- FEDORA EXTENSION:  add new attributes ALT_IDS FORMAT_URI on mdWrap (8-16-2006) -->
+					<!-- FEDORA EXTENSION:  add new attributes CHECKSUM and CHECKSUMTYPE on mdWrap (11-02-2006) -->						
 				</xsd:complexType>
 			</xsd:element>
 		</xsd:all>
