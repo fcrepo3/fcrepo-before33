@@ -51,12 +51,12 @@
 	</xsd:complexType>
 	<xsd:complexType name="datastreamVersionType">
 		<xsd:sequence>
+			<xsd:element name="contentDigest" type="contentDigestType" minOccurs="0"/>
 			<xsd:choice>
 				<xsd:element name="xmlContent" type="xmlContentType"/>
 				<xsd:element name="contentLocation" type="contentLocationType"/>
 				<xsd:element name="binaryContent" type="xsd:base64Binary"/>
 			</xsd:choice>
-			<xsd:element name="contentDigest" type="contentDigestType" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="ID" type="idType" use="required"/>
 		<xsd:attribute name="LABEL" type="xsd:string" use="optional"/>
@@ -78,6 +78,7 @@
 					<xsd:enumeration value="HAVAL"/>
 					<xsd:enumeration value="TIGER"/>
 					<xsd:enumeration value="WHIRLPOOL"/>
+					<xsd:enumeration value="DISABLED"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
