@@ -21,6 +21,11 @@ public class MethodDefOperationBind extends MethodDef
 
     public String[] dsBindingKeys = new String[0];
 
+    /**
+     * Possible response MIME types.
+     */
+    public String[] outputMIMETypes = new String[0];
+
     public MethodDefOperationBind()
     {
     }

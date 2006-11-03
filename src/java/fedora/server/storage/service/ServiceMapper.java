@@ -248,6 +248,20 @@ public class ServiceMapper
           }
         }
         fedoraMethodDefBindings[i].dsBindingKeys = (String[])tmp_dsInputKeys.toArray(new String[0]);
+
+        // Set the outputMIMETypes from the operation's output binding, if any
+        HTTPOperationInOut oBind = 
+            ((HTTPBinding)binding).operations[i].outputBinding;
+        if (oBind != null) {
+          Vector tmp_outputMIMETypes = new Vector();
+          for (int j = 0; j < oBind.ioMIMEContent.length; j++)
+          {
+              tmp_outputMIMETypes.add(oBind.ioMIMEContent[j].mimeType);
+          }
+          fedoraMethodDefBindings[i].outputMIMETypes = 
+              (String[]) tmp_outputMIMETypes.toArray(new String[0]);
+        }
+
       }
     }
     else if (binding.getClass().getName().equalsIgnoreCase("fedora.server.storage.service.SOAPBinding"))
