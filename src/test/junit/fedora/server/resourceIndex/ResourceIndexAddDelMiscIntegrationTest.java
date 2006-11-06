@@ -26,6 +26,8 @@ public class ResourceIndexAddDelMiscIntegrationTest
 
     /**
      * Add, then delete an object with the RI at level 0.
+     *
+     * This test ensures that adds and deletes at level 0 don't do anything.
      */
     public void testAddDelObjLv0()
             throws Exception {
@@ -57,7 +59,7 @@ public class ResourceIndexAddDelMiscIntegrationTest
      */
     public void testAddDelMultiObjOneDS()
             throws Exception {
-        Set<DigitalObject> objects = getTestObjects(10, 1);
+        Set<DigitalObject> objects = getTestObjects(5, 1);
         doAddDelTest(1, objects);
     }
 
@@ -66,7 +68,7 @@ public class ResourceIndexAddDelMiscIntegrationTest
      */
     public void testAddDelMultiObjMultiDS()
             throws Exception {
-        Set<DigitalObject> objects = getTestObjects(10, 10);
+        Set<DigitalObject> objects = getTestObjects(5, 5);
         doAddDelTest(1, objects);
     }
 

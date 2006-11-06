@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -39,6 +40,8 @@ import fedora.server.storage.MockRepositoryReader;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
+import fedora.server.storage.types.DatastreamXMLMetadata;
+import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
 
@@ -242,6 +245,13 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
 
     // do test methods
 
+    protected void doAddDelTest(int riLevel, DigitalObject obj) 
+            throws Exception {
+        Set<DigitalObject> set = new HashSet<DigitalObject>();
+        set.add(obj);
+        doAddDelTest(riLevel, set);
+    }
+
     protected void doAddDelTest(int riLevel,
                                 Set<DigitalObject> objects)
             throws Exception {
@@ -396,28 +406,61 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         for (int i = 0; i < num; i++) {
             DigitalObject obj = getTestObject(TEST_PID + i, TEST_LABEL + i);
             for (int j = 0; j < datastreamsPerObject; j++) {
-                String dsId = "DS" + j;
-                obj.datastreams(dsId).add(getEDatastream(dsId));
+                addEDatastream(obj, "DS" + j);
             }
             set.add(obj);
         }
         return set;
     }
 
-    private static Datastream getEDatastream(String id) {
+    protected static void addEDatastream(DigitalObject obj, String id) {
         DatastreamReferencedContent ds = new DatastreamReferencedContent();
-        ds.DatastreamID = id;
-        ds.DSMIME = "text/plain";
         ds.DSControlGrp = "E";
+        ds.DSMIME = "text/plain";
+        ds.DSLocation = "http://www.example.org/e.txt";
+        ds.DSLocationType = "URL";
+        ds.DSSize = 1;
+        addDatastream(obj, id, ds);
+    }
+
+    protected static void addRDatastream(DigitalObject obj, String id) {
+        DatastreamReferencedContent ds = new DatastreamReferencedContent();
+        ds.DSControlGrp = "R";
+        ds.DSMIME = "text/plain";
+        ds.DSLocation = "http://www.example.org/r.txt";
+        ds.DSLocationType = "URL";
+        ds.DSSize = 2;
+        addDatastream(obj, id, ds);
+    }
+
+    protected static void addXDatastream(DigitalObject obj, String id, String xml) {
+        DatastreamXMLMetadata ds = new DatastreamXMLMetadata();
+        ds.DSControlGrp = "X";
+        ds.DSMIME = "text/xml";
+        ds.DSSize = xml.length();
+        try { ds.xmlContent = xml.getBytes("UTF-8"); } catch (Exception e) { }
+        addDatastream(obj, id, ds);
+    }
+
+    protected static void addMDatastream(DigitalObject obj, String id) {
+        DatastreamManagedContent ds = new DatastreamManagedContent();
+        ds.DSControlGrp = "M";
+        ds.DSMIME = "image/jpeg";
+        ds.DSLocation = "bogusLocation";
+        ds.DSLocationType = "INTERNAL";
+        ds.DSSize = 4;
+        addDatastream(obj, id, ds);
+    }
+
+    private static void addDatastream(DigitalObject obj, String id, Datastream ds) {
+        List versions = obj.datastreams(id);
+        ds.DatastreamID = id;
         ds.DSState = "A";
         ds.DSVersionable = true;
-        ds.DSVersionID = id + ".0";
+        ds.DSVersionID = id + "." + versions.size();
         ds.DSLabel = "ds label";
         ds.DSCreateDT = new Date();
-        ds.DSSize = 100;
-        ds.DSLocation = "http://www.nowhere.com/hi.txt";
-        ds.DSLocationType = "URL";
-        return ds;
+        versions.add(ds);
     }
 
     protected static DigitalObject getTestObject(String pid,
