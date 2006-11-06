@@ -3,6 +3,8 @@ package fedora.server.resourceIndex;
 import java.util.Collections;
 import java.util.Set;
 
+import org.jrdf.graph.Triple;
+
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -40,14 +42,14 @@ public class ResourceIndexAddDelMiscIntegrationTest
         // add at level 1
         initRI(1);
         addAll(objects, true);
-        Set expected = getExpectedTriples(1, objects);
+        Set<Triple> expected = getExpectedTriples(1, objects);
 
         // delete at level 0
         initRI(0);
         deleteAll(objects, true);
-        assertEquals("Did not get expected triples after delete",
-                     expected,
-                     getActualTriples());
+
+        assertTrue("Did not get expected triples after delete",
+                   sameTriples(expected, getActualTriples(), true));
     }
 
     /**

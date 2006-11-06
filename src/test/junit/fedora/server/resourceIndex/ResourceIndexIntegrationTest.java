@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.TestCase;
 
@@ -30,7 +31,11 @@ import org.trippi.TriplestoreConnector;
 
 import fedora.server.TestLogging;
 
+import fedora.server.storage.BDefReader;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.DOReader;
+import fedora.server.storage.MockRepositoryReader;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -244,14 +249,14 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         initRI(riLevel);
 
         addAll(objects, true);
-        assertEquals("Did not get expected triples after add",
-                     getExpectedTriples(riLevel, objects),
-                     getActualTriples());
+        assertTrue("Did not get expected triples after add",
+                   sameTriples(getExpectedTriples(riLevel, objects), 
+                           getActualTriples(), true));
 
         deleteAll(objects, true);
-        assertEquals("Did not get expected triples after delete",
-                     Collections.EMPTY_SET,
-                     getActualTriples());
+        assertEquals("Some triples remained after delete",
+                     0,
+                     getActualTriples().size());
     }
 
     // Utility methods for tests
@@ -279,8 +284,92 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
     protected Set<Triple> getExpectedTriples(int riLevel,
                                              Set<DigitalObject> objects)
             throws Exception {
-        // make all tests pass for now :)
-        return getActualTriples(null, null, null);
+
+        // we can return early in this case
+        if (riLevel == 0) {
+            return new HashSet<Triple>();
+        }
+        
+        // add all to a mock repository reader
+        MockRepositoryReader repo = new MockRepositoryReader();
+        for (DigitalObject obj : objects) {
+            repo.putObject(obj);
+        }
+
+        // prepare appropriate MethodInfoStore and TripleGenerator
+        MethodInfoStore methodInfo = new MockMethodInfoStore(riLevel == 2);
+        TripleGenerator generator = new MethodAwareTripleGenerator(methodInfo);
+
+        Set<Triple> expected = new HashSet<Triple>();
+
+        // get triples for all bdefs
+        for (DigitalObject obj : objects) {
+            if (obj.getFedoraObjectType() == 
+                    DigitalObject.FEDORA_BDEF_OBJECT) {
+                BDefReader reader = repo.getBDefReader(false, null, 
+                        obj.getPid());
+                methodInfo.putBDefInfo(reader);
+                expected.addAll(generator.getTriplesForBDef(reader));
+            }
+        }
+
+        // get triples for all bmechs
+        for (DigitalObject obj : objects) {
+            if (obj.getFedoraObjectType() == 
+                    DigitalObject.FEDORA_BMECH_OBJECT) {
+                BMechReader reader = repo.getBMechReader(false, null, 
+                        obj.getPid());
+                methodInfo.putBMechInfo(reader);
+                expected.addAll(generator.getTriplesForBMech(reader));
+            }
+        }
+
+        // get triples for all data objects
+        for (DigitalObject obj : objects) {
+            if (obj.getFedoraObjectType() == DigitalObject.FEDORA_OBJECT) {
+                DOReader reader = repo.getReader(false, null, obj.getPid());
+                expected.addAll(generator.getTriplesForDataObject(reader));
+            }
+        }
+
+        return expected;
+
+    }
+
+    protected boolean sameTriples(Set<Triple> expected,
+                                  Set<Triple> actual,
+                                  boolean logDiffs) {
+        TreeSet<String> eStrings = new TreeSet<String>();
+        for (Triple triple : expected) {
+            eStrings.add(RDFUtil.toString(triple));
+        }
+
+        TreeSet<String> aStrings = new TreeSet<String>();
+        for (Triple triple : actual) {
+            aStrings.add(RDFUtil.toString(triple));
+        }
+
+        if (eStrings.equals(aStrings)) {
+            return true;
+        } else {
+            if (logDiffs) {
+                StringBuffer out = new StringBuffer();
+                out.append("Triple sets differ.\n");
+                out.append("Expected set has " + expected.size() + " triples.\n");
+                out.append("Actual set has " + actual.size() + " triples.\n\n");
+                out.append("Expected triples:\n");
+                for (String t : eStrings) {
+                    out.append("  " + t + "\n");
+                }
+                out.append("\nActual triples:\n");
+                for (String t : aStrings) {
+                    out.append("  " + t + "\n");
+                }
+                LOG.warn(out.toString());
+            }
+            return false;
+        }
+
     }
 
     protected Set<Triple> getActualTriples()
@@ -357,17 +446,6 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         obj.setCreateDate(createDate);
         obj.setLastModDate(lastModDate);
         return obj;
-    }
-
-    protected void logTriples(String testName) throws Exception {
-        
-        StringBuffer triples = new StringBuffer();
-        Iterator<Triple> iter = getActualTriples().iterator();
-        while (iter.hasNext()) {
-            triples.append("\n" + RDFUtil.toString(iter.next()));
-        }
-         
-        LOG.info("For " + testName + ", the triples are:" + triples.toString());
     }
 
     // Inner classes for tests

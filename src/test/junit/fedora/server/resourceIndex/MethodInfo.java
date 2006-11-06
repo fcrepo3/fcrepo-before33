@@ -18,9 +18,9 @@ public class MethodInfo {
     private Set<String> _permutations;
 
     public MethodInfo(String name,
-                           Set<String> bindingKeys,
-                           Set<String> returnTypes,
-                           Set<String> permutations) {
+                      Set<String> bindingKeys,
+                      Set<String> returnTypes,
+                      Set<String> permutations) {
         _name = name;
         _bindingKeys = bindingKeys;
         _returnTypes = returnTypes;
