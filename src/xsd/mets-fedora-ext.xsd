@@ -531,6 +531,7 @@
 								<xsd:enumeration value="SHA-512"/>
 								<xsd:enumeration value="TIGER"/>
 								<xsd:enumeration value="WHIRLPOOL"/>
+								<xsd:enumeration value="DISABLED"/>
 							</xsd:restriction>
 						</xsd:simpleType>
 					</xsd:attribute>					
