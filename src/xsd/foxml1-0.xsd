@@ -67,7 +67,7 @@
 		<xsd:attribute name="SIZE" type="xsd:long" use="optional" default="0"/>
 	</xsd:complexType>
 	<xsd:complexType name="contentDigestType">
-		<xsd:attribute name="TYPE" use="required">
+		<xsd:attribute name="TYPE" use="optional">
 			<xsd:simpleType>
 				<xsd:restriction base="xsd:string">
 					<xsd:enumeration value="MD5"/>
@@ -82,7 +82,7 @@
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
-		<xsd:attribute name="DIGEST" type="xsd:string" use="required"/>
+		<xsd:attribute name="DIGEST" type="xsd:string" use="optional"/>
 	</xsd:complexType>
 	<xsd:complexType name="xmlContentType">
 		<xsd:sequence>
@@ -168,6 +168,7 @@
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#createdDate"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/view#lastModifiedDate"/>
 					<xsd:enumeration value="info:fedora/fedora-system:def/model#contentModel"/>
+					<xsd:enumeration value="info:fedora/fedora-system:def/model#ownerId"/>
 				</xsd:restriction>
 			</xsd:simpleType>
 		</xsd:attribute>
