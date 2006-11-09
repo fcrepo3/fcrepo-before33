@@ -49,6 +49,9 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DatastreamManagedContent;
 import fedora.server.storage.types.DatastreamReferencedContent;
 import fedora.server.storage.types.DigitalObject;
+import fedora.server.storage.types.Disseminator;
+import fedora.server.storage.types.DSBindingMap;
+import fedora.server.storage.types.DSBinding;
 
 /**
  * Superclass for <code>ResourceIndex</code> integration tests.
@@ -282,19 +285,56 @@ public abstract class ResourceIndexIntegrationTest {
     protected void addAll(Set<DigitalObject> objects,
                           boolean flush)
             throws Exception {
-        Iterator<DigitalObject> iter = objects.iterator();
-        while (iter.hasNext()) {
-            _ri.addDigitalObject(iter.next());
-        }
-        if (flush) _ri.flushBuffer();
+        addOrDelAll(objects, flush, true);
     }
 
     protected void deleteAll(Set<DigitalObject> objects,
                              boolean flush)
             throws Exception {
-        Iterator<DigitalObject> iter = objects.iterator();
-        while (iter.hasNext()) {
-            _ri.deleteDigitalObject(iter.next());
+        addOrDelAll(objects, flush, false);
+    }
+
+    private void addOrDelAll(Set<DigitalObject> objects,
+            boolean flush, boolean add) throws Exception {
+        for (DigitalObject obj : objects) {
+            if (add) {
+                if (obj.getFedoraObjectType() == 
+                        DigitalObject.FEDORA_BDEF_OBJECT) {
+                    _ri.addDigitalObject(obj);
+                    _ri.flushBuffer();
+                }
+            } else {
+                if (obj.getFedoraObjectType() == 
+                        DigitalObject.FEDORA_OBJECT) {
+                    _ri.deleteDigitalObject(obj);
+                }
+            }
+        }
+        for (DigitalObject obj : objects) {
+            if (obj.getFedoraObjectType() == 
+                    DigitalObject.FEDORA_BMECH_OBJECT) {
+                if (add) {
+                    _ri.addDigitalObject(obj);
+                    _ri.flushBuffer();
+                } else {
+                    _ri.deleteDigitalObject(obj);
+                    _ri.flushBuffer();
+                }
+            }
+        }
+        for (DigitalObject obj : objects) {
+            if (add) {
+                if (obj.getFedoraObjectType() == 
+                        DigitalObject.FEDORA_OBJECT) {
+                    _ri.addDigitalObject(obj);
+                }
+            } else {
+                if (obj.getFedoraObjectType() == 
+                        DigitalObject.FEDORA_BDEF_OBJECT) {
+                    _ri.deleteDigitalObject(obj);
+                    _ri.flushBuffer();
+                }
+            }
         }
         if (flush) _ri.flushBuffer();
     }
@@ -516,19 +556,21 @@ public abstract class ResourceIndexIntegrationTest {
 
         xml.append("  <types>\n");
         xml.append("    <xsd:schema targetNamespace=\"MyService\">\n");
-        // one type def per distinct user param name
+        Set<String> addedTypes = new HashSet<String>();
         for (ParamDomainMap methodDef : methodDefs) {
-            Set<String> paramNames = new HashSet<String>();
+            // one type def per distinct user param name
             for (String name : methodDef.keySet()) {
-                paramNames.add(name);
+                if (addedTypes.add(name + "Type")) {
+                    addXSDType(name + "Type", xml);
+                }
             }
-            for (String name : paramNames) {
-                addXSDType(name + "Type", xml);
+
+            // one type def per distinct ds input key
+            for (String key : inputKeys.get(methodDef.getMethodName())) {
+                if (addedTypes.add(key + "Type")) {
+                    addXSDType(key + "Type", xml);
+                }
             }
-        }
-        // one type def per ds input key
-        for (String key : inputKeys.keySet()) {
-            addXSDType(key + "Type", xml);
         }
         xml.append("    </xsd:schema>\n");
         xml.append("  </types>\n");
@@ -543,12 +585,12 @@ public abstract class ResourceIndexIntegrationTest {
             xml.append("  <message name=\"" + method + "Request\">\n");
             // one part per user param
             for (String name : methodDef.keySet()) {
-                xml.append("    <part name=\"" + name + "\" type=\"" + name
+                xml.append("    <part name=\"" + name + "\" type=\"this:" + name
                         + "Type\"/>\n");
             }
             // one part per ds input key
             for (String key : inputKeys.get(method)) {
-                xml.append("    <part name=\"" + key + "\" type=\"" + key
+                xml.append("    <part name=\"" + key + "\" type=\"this:" + key
                         + "Type\"/>\n");
             }
             xml.append("  </message>\n");
@@ -578,7 +620,7 @@ public abstract class ResourceIndexIntegrationTest {
         xml.append("  <service name=\"MyService\">\n");
         xml.append("    <port binding=\"this:MyService_http\" "
                 + "name=\"MyService_port\">\n");
-        xml.append("      <http:address location=\"http://example.org/\"/>\n");
+        xml.append("      <http:address location=\"http://example.org/MyService/\"/>\n");
         xml.append("    </port>\n");
         xml.append("  </service>\n");
 
@@ -593,7 +635,7 @@ public abstract class ResourceIndexIntegrationTest {
 
             // location = ..?userParm1=(userParm1)&key1=KEY1..etc
             StringBuffer location = new StringBuffer();
-            location.append("MyService?");
+            location.append(method + "?");
             boolean first = true;
             for (String name : methodDef.keySet()) {
                 if (!first) {
@@ -642,6 +684,36 @@ public abstract class ResourceIndexIntegrationTest {
             set.add(obj);
         }
         return set;
+    }
+
+    protected static void addDisseminator(DigitalObject obj, String id,
+            String bDefPID, String bMechPID, Map<String, String> bindings) {
+        List dissems = obj.disseminators(id);
+        Disseminator diss = new Disseminator();
+        diss.bDefID = bDefPID;
+        diss.bMechID = bMechPID;
+        diss.dissCreateDT = new Date();
+        diss.dissID = id;
+        diss.dissLabel = "disseminator";
+        diss.dissState = "A";
+        diss.dissVersionID = id + "." + dissems.size();
+        DSBindingMap bindMap = new DSBindingMap();
+        bindMap.dsBindMapLabel = "bindmap";
+        bindMap.dsBindMechanismPID = bMechPID;
+        DSBinding[] dsBindings = new DSBinding[bindings.size()];
+        int i = 0;
+        for (String key : bindings.keySet()) {
+            String dsID = bindings.get(key);
+            dsBindings[i] = new DSBinding();
+            dsBindings[i].bindKeyName = key;
+            dsBindings[i].bindLabel = "bindlabel";
+            dsBindings[i].datastreamID = dsID;
+            dsBindings[i].seqNo = "1";
+            i++;
+        }
+        bindMap.dsBindings = dsBindings;
+        diss.dsBindMap = bindMap; 
+        dissems.add(diss);
     }
 
     protected static void addEDatastream(DigitalObject obj, String id) {
@@ -720,21 +792,19 @@ public abstract class ResourceIndexIntegrationTest {
             Map<String, Set<String>> inputKeys, 
             Map<String, Set<String>> inputTypes,
             Map<String, Set<String>> outputTypes) {
+
         Date now = new Date();
         DigitalObject obj = getTestObject(pid, 
                 DigitalObject.FEDORA_BMECH_OBJECT, "A",
                 "someOwnerId", label, "someContentModelId", now, now);
 
         String methodMapXML = getMethodMap(methodDefs, inputKeys, true);
-        System.out.println("\nMETHODMAP:\n" + methodMapXML);
         addXDatastream(obj, "METHODMAP", methodMapXML);
 
         String inputSpecXML = getInputSpec(bDefPID, inputTypes);
-        System.out.println("\nDSINPUTSPEC:\n" + inputSpecXML);
         addXDatastream(obj, "DSINPUTSPEC", inputSpecXML);
 
         String wsdlXML = getWSDL(methodDefs, inputKeys, outputTypes);
-        System.out.println("\nWSDL:\n" + wsdlXML);
         addXDatastream(obj, "WSDL", wsdlXML);
 
         return obj;

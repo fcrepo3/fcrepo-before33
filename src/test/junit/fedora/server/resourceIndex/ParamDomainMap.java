@@ -131,4 +131,13 @@ public class ParamDomainMap extends TreeMap<String, ParamDomain> {
         return values;
     }
 
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            ParamDomainMap m = (ParamDomainMap) obj;
+            return _methodName.equals(m.getMethodName());
+        } else {
+            return false;
+        }
+    }
+
 }

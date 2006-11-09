@@ -190,15 +190,15 @@ public class MockMethodInfoStore implements MethodInfoStore {
                     new HashSet<MethodInfo>(methods.size());
             for (String method : methods) {
                 String bDefPID = _bMechBDef.get(bMechPID);
-                Set<String> perms = _bDefMethodPermutations.get(bDefPID); 
+                Set<String> perms = _bDefMethodPermutations.get(bDefPID + "/" + method); 
                 if (perms == null) {
                     throw new ResourceIndexException("BDef (" + bDefPID + ") "
                             + "for BMech (" + bMechPID + ") is missing; "
                             + "cannot determine method permutations");
                 }
                 MethodInfo info = new MethodInfo(method,
-                        _bMechMethodBindingKeys.get(bMechPID),
-                        _bMechMethodReturnTypes.get(bMechPID),
+                        _bMechMethodBindingKeys.get(bMechPID + "/" + method),
+                        _bMechMethodReturnTypes.get(bMechPID + "/" + method),
                         perms);
                 methodInfo.add(info);
             }

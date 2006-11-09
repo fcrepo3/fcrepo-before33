@@ -63,4 +63,14 @@ public class ParamDomain extends TreeSet<String> {
         return _isRequired;
     }
 
+    public boolean equals(Object obj) {
+        if (super.equals(obj)) {
+            ParamDomain p = (ParamDomain) obj;
+            return _parameterName.equals(p.getParameterName())
+                    && _isRequired == p.isRequired();
+        } else {
+            return false;
+        }
+    }
+
 }

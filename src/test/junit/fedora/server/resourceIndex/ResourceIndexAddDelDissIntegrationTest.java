@@ -58,7 +58,7 @@ public class ResourceIndexAddDelDissIntegrationTest
         return getTestBDef("test:bdef2", "bdef2", methodDefs);
     }
 
-    // bdef:2b has two required one-parameter method with two possible values
+    // bdef:2b has two required one-parameter methods with two possible values
     private static DigitalObject getBDefTwoB() {
         Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
         ParamDomainMap methodOne = new ParamDomainMap("methodOne");
@@ -113,46 +113,188 @@ public class ResourceIndexAddDelDissIntegrationTest
         return getTestBDef("test:bdef4", "bdef4", methodDefs);
     }
 
-    /*
-String pid, 
-            String label,
-            String bDefPID, 
-            Set<ParamDomainMap> methodDefs,
-            Map<String, Set<String>> inputKeys, 
-            Map<String, Set<String>> inputTypes,
-            Map<String, Set<String>> outputTypes) 
-*/
+    private static Map<String, Set<String>> getMap(String key1,
+                                                   String[] values1,
+                                                   String key2,
+                                                   String[] values2) {
+        Set<String> valueSet1 = new HashSet<String>();
+        for (String value : values1) {
+            valueSet1.add(value);
+        }
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        map.put(key1, valueSet1);
+        if (key2 != null) {
+            Set<String> valueSet2 = new HashSet<String>();
+            for (String value : values2) {
+                valueSet2.add(value);
+            }
+            map.put(key2, valueSet2);
+        }
+        return map;
+    }
 
+    // bmech:1 implements bdef:1 and takes one datastream
     private static DigitalObject getBMechOne() {
         Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
         ParamDomainMap methodOne = new ParamDomainMap("methodOne");
         methodDefs.add(methodOne);
 
-        Set<String> methodOneKeys = new HashSet<String>();
-        methodOneKeys.add("KEY1");
-        Map<String, Set<String>> inputKeys = new HashMap<String, Set<String>>();
-        inputKeys.put("methodOne", methodOneKeys);
+        return getTestBMech("test:bmech1", "bmech1", "test:bdef1", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
 
-        Set<String> methodOneInputs = new HashSet<String>();
-        methodOneInputs.add("text/xml");
-        Map<String, Set<String>> inputTypes = new HashMap<String, Set<String>>();
-        inputTypes.put("methodOne", methodOneInputs);
+    // bmech:1b implements bdef:1b and takes one datastream
+    private static DigitalObject getBMechOneB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodDefs.add(methodTwo);
 
-        Set<String> methodOneOutputs = new HashSet<String>();
-        methodOneOutputs.add("text/xml");
-        Map<String, Set<String>> outputTypes = new HashMap<String, Set<String>>();
-        outputTypes.put("methodOne", methodOneOutputs);
+        return getTestBMech("test:bmech1b", "bmech1b", "test:bdef1b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
 
-        return getTestBMech("test:bmech1", "bmech1", "test:bdef1", methodDefs, 
-                inputKeys, inputTypes, outputTypes);
+    // bmech:1c implements bdef:1c and takes one datastream
+    private static DigitalObject getBMechOneC() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
 
+        return getTestBMech("test:bmech1c", "bmech1c", "test:bdef1c", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:1d implements bdef:1 and takes TWO datastreams
+    private static DigitalObject getBMechOneD() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech1d", "bmech1d", "test:bdef1", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1", "KEY2"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:2 implements bdef:2 and takes one datastream
+    private static DigitalObject getBMechTwo() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech2", "bmech2", "test:bdef2", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:2b implements bdef:2b and takes one datastream
+    private static DigitalObject getBMechTwoB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech2b", "bmech2b", "test:bdef2b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // bmech:3 implements bdef:3 and takes one datastream
+    private static DigitalObject getBMechThree() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech3", "bmech3", "test:bdef3", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:3b implements bdef:3b and takes one datastream
+    private static DigitalObject getBMechThreeB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech3b", "bmech3b", "test:bdef3b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // bmech:4 implements bdef:4 and takes one datastream
+    private static DigitalObject getBMechFour() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        argOneDomain = new ParamDomain("argOne", false);
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech4", "bmech4", "test:bdef4", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
     }
 
     /**
-     * Add, then delete our test BDef objects.
+     * Add, then delete our test BDef and BMech objects.
      */
-    @Test
-    public void testAddDelBDefs()
+//    @Test
+    public void testAddDelBDefsBMechs()
             throws Exception {
         Set<DigitalObject> objects = new HashSet<DigitalObject>();
 
@@ -166,11 +308,19 @@ String pid,
         objects.add(getBDefFour());
 
         objects.add(getBMechOne());
+        objects.add(getBMechOneB());
+        objects.add(getBMechOneC());
+        objects.add(getBMechOneD());
+        objects.add(getBMechTwo());
+        objects.add(getBMechTwoB());
+        objects.add(getBMechThree());
+        objects.add(getBMechThreeB());
+        objects.add(getBMechFour());
 
         doAddDelTest(1, objects);
     }
 
-    // bdef1
+    // bdef1(bmech1)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -179,6 +329,7 @@ String pid,
     @Test
     public void testAddDelObjOneDSOneDissOneMethodNoParms()
             throws Exception {
+        doAddDelObjOneDSOneDissOneMethodNoParms(1);
     }
 
     /**
@@ -189,9 +340,27 @@ String pid,
     @Test
     public void testAddDelObjOneDSOneDissOneMethodNoParmsLv2()
             throws Exception {
+        doAddDelObjOneDSOneDissOneMethodNoParms(2);
     }
 
-    // bdef2
+    private void doAddDelObjOneDSOneDissOneMethodNoParms(int riLevel)
+            throws Exception {
+        Set<DigitalObject> objects = new HashSet<DigitalObject>();
+
+        objects.add(getBDefOne());
+        objects.add(getBMechOne());
+        
+        DigitalObject obj = getTestObject("test:1", "test");
+        addEDatastream(obj, "DS1");
+        Map<String, String> bindings = new HashMap<String, String>();
+        bindings.put("KEY1", "DS1");
+        addDisseminator(obj, "DISS1", "test:bdef1", "test:bmech1", bindings);
+
+        objects.add(obj);
+        doAddDelTest(riLevel, objects);
+    }
+
+    // bdef2(bmech2)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -212,7 +381,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef3
+    // bdef3(bmech3)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -233,7 +402,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef1b
+    // bdef1b(bmech1b)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -254,7 +423,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef2b
+    // bdef2b(bmech2b)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -275,7 +444,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef3b
+    // bdef3b(bmech3b)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -296,7 +465,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef4
+    // bdef4(bmech4)
 
     /**
      * Add, then delete an object with one datastream used by one disseminator
@@ -319,7 +488,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef1,bdef1c
+    // bdef1(bmech1),bdef1c(bmech1c)
 
     /**
      * Add, then delete an object with one datastream used by two 
@@ -340,7 +509,7 @@ String pid,
             throws Exception {
     }
 
-    // bdef1
+    // bdef1(bmech1d)
 
     /**
      * Add, then delete an object with two datastreams used by one
