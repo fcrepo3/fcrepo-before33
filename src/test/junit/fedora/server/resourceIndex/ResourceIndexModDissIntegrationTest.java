@@ -1,5 +1,7 @@
 package fedora.server.resourceIndex;
 
+import org.junit.Test;
+
 /**
  * Tests modifying objects in the RI, with respect to their disseminators.
  *
@@ -11,15 +13,9 @@ public class ResourceIndexModDissIntegrationTest
         extends ResourceIndexIntegrationTest {
 
     /**
-     * Construct the test.
-     */
-    public ResourceIndexModDissIntegrationTest(String name) {
-        super(name);
-    }
-
-    /**
      * Add a one-method, no-param disseminator to an existing object.
      */
+    @Test
     public void testModObjOnceAddDissOneMethodNoParms()
             throws Exception {
     }
@@ -27,6 +23,7 @@ public class ResourceIndexModDissIntegrationTest
     /**
      * Delete a one-method, no-param disseminator from an existing object.
      */
+    @Test
     public void testModObjOnceDelDissOneMethodNoParms()
             throws Exception {
     }
@@ -35,6 +32,7 @@ public class ResourceIndexModDissIntegrationTest
      * Add a one-method, no-param disseminator to an existing object
      * (RI level 2).
      */
+    @Test
     public void testModObjOnceAddDissOneMethodNoParmsLv2()
             throws Exception {
     }
@@ -43,6 +41,7 @@ public class ResourceIndexModDissIntegrationTest
      * Delete a one-method, no-param disseminator from an existing object
      * (RI level 2)
      */
+    @Test
     public void testModObjOnceDelDissOneMethodNoParmsLv2()
             throws Exception {
     }
@@ -50,6 +49,7 @@ public class ResourceIndexModDissIntegrationTest
     /**
      * Add a one-method, fixed-param disseminator to an existing object.
      */
+    @Test
     public void testModObjOnceAddDissOneMethodFixedParm()
             throws Exception {
     }
@@ -57,6 +57,7 @@ public class ResourceIndexModDissIntegrationTest
     /**
      * Delete a one-method, fixed-param disseminator from an existing object.
      */
+    @Test
     public void testModObjOnceDelDissOneMethodFixedParm()
             throws Exception {
     }
@@ -65,6 +66,7 @@ public class ResourceIndexModDissIntegrationTest
      * Add a one-method, fixed-param disseminator to an existing object
      * (RI level 2).
      */
+    @Test
     public void testModObjOnceAddDissOneMethodFixedParmLv2()
             throws Exception {
     }
@@ -73,6 +75,7 @@ public class ResourceIndexModDissIntegrationTest
      * Delete a one-method, fixed-param disseminator from an existing object
      * (RI level 2).
      */
+    @Test
     public void testModObjOnceDelDissOneMethodFixedParmLv2()
             throws Exception {
     }
@@ -80,6 +83,7 @@ public class ResourceIndexModDissIntegrationTest
     /**
      * Add a one-method, unfixed-param disseminator to an existing object.
      */
+    @Test
     public void testModObjOnceAddDissOneMethodUnfixedParm()
             throws Exception {
     }
@@ -87,6 +91,7 @@ public class ResourceIndexModDissIntegrationTest
     /**
      * Delete a one-method, unfixed-param disseminator from an existing object.
      */
+    @Test
     public void testModObjOnceDelDissOneMethodUnfixedParm() 
             throws Exception {
     }
@@ -95,6 +100,7 @@ public class ResourceIndexModDissIntegrationTest
      * Add a one-method, unfixed-param disseminator to an existing object
      * (RI level 2).
      */
+    @Test
     public void testModObjOnceAddDissOneMethodUnfixedParmLv2()
             throws Exception {
     }
@@ -103,8 +109,15 @@ public class ResourceIndexModDissIntegrationTest
      * Delete a one-method, unfixed-param disseminator from an existing object
      * (RI level 2).
      */
+    @Test
     public void testModObjOnceDelDissOneMethodUnfixedParmLv2()
             throws Exception {
     }
 
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(
+                ResourceIndexModDissIntegrationTest.class);
+    }
+    
 }

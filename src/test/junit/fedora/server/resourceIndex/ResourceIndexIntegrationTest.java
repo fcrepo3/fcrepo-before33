@@ -13,10 +13,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.log4j.Logger;
 
@@ -50,7 +55,7 @@ import fedora.server.storage.types.DigitalObject;
  *
  * @author cwilper@cs.cornell.edu
  */
-public abstract class ResourceIndexIntegrationTest extends TestCase {
+public abstract class ResourceIndexIntegrationTest {
 
     private static final Logger LOG = 
             Logger.getLogger(ResourceIndexIntegrationTest.class.getName());
@@ -80,12 +85,7 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
     /**
      * Where to get DB connections from.
      */
-    private ConnectionPool _dbPool;
-
-    protected ResourceIndexIntegrationTest(String name) { 
-        super (name); 
-        System.setProperty("derby.system.home", TEST_DIR + "/derby");
-    }
+    private static ConnectionPool _dbPool;
 
     // Test setUp
 
@@ -95,7 +95,10 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
      *
      * @throws Exception if setup fails for any reason.
      */
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+
+        System.setProperty("derby.system.home", TEST_DIR + "/derby");
 
         // set up the db pool
         _dbPool = new ConnectionPool(DB_DRIVER, DB_URL, DB_USERNAME, 
@@ -155,7 +158,7 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
      */
     protected void initRI(int indexLevel) throws Exception {
         if (_ri != null) {
-            _ri.close();
+            try { _ri.close(); } catch (Exception e) { }
         }
         _ri = new ResourceIndexImpl(indexLevel, 
                                     getConnector(),
@@ -193,14 +196,19 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
     }
 
     // Test tearDown
-           
+
+    @After
+    public void tearDownTest() throws Exception {
+        if (_ri != null) tearDownTriplestore();
+    }
+
     /**
      * Clean up so the next test can run with fresh data.
      *
      * @throws Exception if tearDown fails for any reason.
      */
-    public void tearDown() throws Exception {
-        if (_ri != null) tearDownTriplestore();
+    @AfterClass
+    public static void tearDownClass() throws Exception {
         if (_dbPool != null) tearDownDB();
     }
 
@@ -229,7 +237,7 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         _ri.close();
     }
 
-    private void tearDownDB() throws Exception {
+    private static void tearDownDB() throws Exception {
 
         // destroy the Fedora-related RI tables
         Connection conn = _dbPool.getConnection();
@@ -400,6 +408,229 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         return set;
     }
 
+    /**
+     * Get the METHODMAP xml for a bDef.
+     */
+    protected static String getMethodMap(Set<ParamDomainMap> methodDefs) {
+        return getMethodMap(methodDefs, null, false);
+    }
+
+    /**
+     * Get the METHODMAP xml for a bDef or bMech.
+     */
+    protected static String getMethodMap(Set<ParamDomainMap> methodDefs,
+                                         Map<String, Set<String>> inputKeys,
+                                         boolean forBMech) {
+        StringBuffer xml = new StringBuffer();
+        xml.append("<MethodMap name=\"MethodMap\" xmlns=\"http://fed"
+                + "ora.comm.nsdlib.org/service/methodmap\">\n");
+        for (ParamDomainMap methodDef : methodDefs) {
+            String method = methodDef.getMethodName();
+            xml.append("  <Method operationName=\"" + method + "\"");
+            if (forBMech) {
+                xml.append(" wsdlMsgName=\"" + method + "Request\"");
+                xml.append(" wsdlMsgOutput=\"dissemResponse\"");
+            }
+            xml.append(">\n");
+            for (String paramName : methodDef.keySet()) {
+                ParamDomain domain = methodDef.get(paramName);
+                xml.append("    <UserInputParm parmName=\"" + paramName
+                        + "\" passBy=\"VALUE\" defaultValue=\"\" required=\""
+                        + domain.isRequired() + "\">\n");
+                if (domain.size() > 0) {
+                    xml.append("      <ValidParmValues>\n");
+                    for (String value : domain) {
+                        xml.append("        <ValidParm value=\"" + value 
+                                + "\"/>\n");
+                    }
+                    xml.append("      </ValidParmValues>\n");
+                }
+                xml.append("    </UserInputParm>\n");
+                if (forBMech) {
+                    Set<String> keys = inputKeys.get(method);
+                    if (keys != null) {
+                        for (String key : keys) {
+                            xml.append("    <DatastreamInputParm parmName=\""
+                                    + key + "\" passBy=\"URL_REF\"/>\n");
+                        }
+                    }
+
+                    xml.append("    <MethodReturnType wsdlMsgName=\""
+                            + "dissemResponse\" wsdlMsgTOMIME=\""
+                            + "application/octet-stream\"/>\n");
+                }
+            }
+            xml.append("  </Method>\n");
+        }
+        xml.append("</MethodMap>");
+        return xml.toString();
+    }
+
+    /**
+     * Get the DSINPUTSPEC xml for a BMech.
+     */
+    protected static String getInputSpec(String bDefPID,
+                                         Map<String, Set<String>> inputTypes) {
+        StringBuffer xml = new StringBuffer();
+        xml.append("<DSInputSpec xmlns=\"http://fedora.comm.nsdlib.org/"
+                + "service/bindspec\" bDefPID=\"" + bDefPID 
+                + "\" label=\"InputSpec\">\n");
+        for (String key : inputTypes.keySet()) {
+            xml.append("  <DSInput DSMin=\"1\" DSMax=\"1\" DSOrdinality=\""
+                    + "false\" wsdlMsgPartName=\"" + key + "\">\n");
+            xml.append("    <DSInputLabel>label</DSInputLabel>\n");
+            for (String mimeType : inputTypes.get(key)) {
+                xml.append("    <DSMIME>" + mimeType + "</DSMIME>\n");
+            }
+            xml.append("    <DSInputInstruction>inst</DSInputInstruction>\n");
+            xml.append("  </DSInput>\n");
+        }
+        xml.append("</DSInputSpec>\n");
+        return xml.toString();
+    }
+
+    private static void addXSDType(String name, StringBuffer xml) {
+        xml.append("      <xsd:simpleType name=\"" + name + "\">\n");
+        xml.append("        <xsd:restriction base=\"xsd:string\"/>\n");
+        xml.append("      </xsd:simpleType>\n");
+    }
+
+    /**
+     * Get the WSDL xml for a BMech.
+     */
+    protected static String getWSDL(Set<ParamDomainMap> methodDefs,
+                                    Map<String, Set<String>> inputKeys,
+                                    Map<String, Set<String>> outputTypes) {
+        StringBuffer xml = new StringBuffer();
+
+        xml.append("<definitions xmlns=\"http://schemas.xmlsoap.org/wsdl/\""
+                + " xmlns:http=\"http://schemas.xmlsoap.org/wsdl/http/\""
+                + " xmlns:mime=\"http://schemas.xmlsoap.org/wsdl/mime/\""
+                + " xmlns:this=\"MyService\""
+                + " xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\""
+                + " name=\"Name\" targetNamespace=\"MyService\">\n");
+
+        //
+        // xsd type definitions
+        //
+
+        xml.append("  <types>\n");
+        xml.append("    <xsd:schema targetNamespace=\"MyService\">\n");
+        // one type def per distinct user param name
+        for (ParamDomainMap methodDef : methodDefs) {
+            Set<String> paramNames = new HashSet<String>();
+            for (String name : methodDef.keySet()) {
+                paramNames.add(name);
+            }
+            for (String name : paramNames) {
+                addXSDType(name + "Type", xml);
+            }
+        }
+        // one type def per ds input key
+        for (String key : inputKeys.keySet()) {
+            addXSDType(key + "Type", xml);
+        }
+        xml.append("    </xsd:schema>\n");
+        xml.append("  </types>\n");
+
+        //
+        // message definitions
+        //
+
+        // one request message per method
+        for (ParamDomainMap methodDef : methodDefs) {
+            String method = methodDef.getMethodName();
+            xml.append("  <message name=\"" + method + "Request\">\n");
+            // one part per user param
+            for (String name : methodDef.keySet()) {
+                xml.append("    <part name=\"" + name + "\" type=\"" + name
+                        + "Type\"/>\n");
+            }
+            // one part per ds input key
+            for (String key : inputKeys.get(method)) {
+                xml.append("    <part name=\"" + key + "\" type=\"" + key
+                        + "Type\"/>\n");
+            }
+            xml.append("  </message>\n");
+        }
+        // one dissemResponse output message
+        xml.append("  <message name=\"dissemResponse\">\n");
+        xml.append("    <part name=\"response\" type=\"xsd:base64Binary\"/>\n");
+        xml.append("  </message>\n");
+
+        //
+        // port type (per-method input/output messages)
+        //
+        xml.append("  <portType name=\"MyServicePortType\">\n");
+        for (ParamDomainMap methodDef : methodDefs) {
+            String method = methodDef.getMethodName();
+            xml.append("    <operation name=\"" + method + "\">\n");
+            xml.append("      <input message=\"this:" + method 
+                    + "Request\"/>\n");
+            xml.append("      <output message=\"this:dissemResponse\"/>\n");
+            xml.append("    </operation>\n");
+        }
+        xml.append("  </portType>\n");
+
+        //
+        // service location
+        // 
+        xml.append("  <service name=\"MyService\">\n");
+        xml.append("    <port binding=\"this:MyService_http\" "
+                + "name=\"MyService_port\">\n");
+        xml.append("      <http:address location=\"http://example.org/\"/>\n");
+        xml.append("    </port>\n");
+        xml.append("  </service>\n");
+
+        //
+        // operation locations and input/output bindings
+        //
+        xml.append("  <binding name=\"MyService_http\" type=\"this:MyServicePortType\">\n");
+        xml.append("    <http:binding verb=\"GET\"/>\n");
+        for (ParamDomainMap methodDef : methodDefs) {
+            String method = methodDef.getMethodName();
+            xml.append("    <operation name=\"" + method + "\">\n");
+
+            // location = ..?userParm1=(userParm1)&key1=KEY1..etc
+            StringBuffer location = new StringBuffer();
+            location.append("MyService?");
+            boolean first = true;
+            for (String name : methodDef.keySet()) {
+                if (!first) {
+                    location.append("&amp;");
+                }
+                location.append(name + "=(" + name + ")");
+                first = false;
+            }
+            for (String key : inputKeys.get(method)) {
+                if (!first) {
+                    location.append("&amp;");
+                }
+                location.append(key.toLowerCase() + "=(" + key + ")");
+                first = false;
+            }
+            xml.append("      <http:operation location=\"" 
+                    + location.toString() + "\"/>\n");
+
+            // input is always urlReplacement
+            xml.append("      <input><http:urlReplacement/></input>\n");
+
+            // output lists all possible output mime types
+            xml.append("      <output>\n");
+            for (String mimeType : outputTypes.get(method)) {
+                xml.append("        <mime:content type=\"" + mimeType
+                        + "\"/>\n");
+            }
+            xml.append("      </output>\n");
+
+            xml.append("    </operation>\n");
+        }
+        xml.append("  </binding>\n");
+
+        xml.append("</definitions>\n");
+        return xml.toString();
+    }
+
     protected static Set<DigitalObject> getTestObjects(int num,
                                                        int datastreamsPerObject) {
         Set<DigitalObject> set = new HashSet<DigitalObject>(num);
@@ -469,6 +700,44 @@ public abstract class ResourceIndexIntegrationTest extends TestCase {
         return getTestObject(pid, DigitalObject.FEDORA_OBJECT, "A",
                 "someOwnerId", label, "someContentModelId",
                 now, now);
+    }
+
+    protected static DigitalObject getTestBDef(String pid,
+                                               String label,
+                                               Set<ParamDomainMap> methodDefs) {
+        Date now = new Date();
+        DigitalObject obj = getTestObject(pid, 
+                DigitalObject.FEDORA_BDEF_OBJECT, "A",
+                "someOwnerId", label, "someContentModelId", now, now);
+        addXDatastream(obj, "METHODMAP", getMethodMap(methodDefs));
+        return obj;
+    }
+
+    protected static DigitalObject getTestBMech(String pid, 
+            String label,
+            String bDefPID, 
+            Set<ParamDomainMap> methodDefs,
+            Map<String, Set<String>> inputKeys, 
+            Map<String, Set<String>> inputTypes,
+            Map<String, Set<String>> outputTypes) {
+        Date now = new Date();
+        DigitalObject obj = getTestObject(pid, 
+                DigitalObject.FEDORA_BMECH_OBJECT, "A",
+                "someOwnerId", label, "someContentModelId", now, now);
+
+        String methodMapXML = getMethodMap(methodDefs, inputKeys, true);
+        System.out.println("\nMETHODMAP:\n" + methodMapXML);
+        addXDatastream(obj, "METHODMAP", methodMapXML);
+
+        String inputSpecXML = getInputSpec(bDefPID, inputTypes);
+        System.out.println("\nDSINPUTSPEC:\n" + inputSpecXML);
+        addXDatastream(obj, "DSINPUTSPEC", inputSpecXML);
+
+        String wsdlXML = getWSDL(methodDefs, inputKeys, outputTypes);
+        System.out.println("\nWSDL:\n" + wsdlXML);
+        addXDatastream(obj, "WSDL", wsdlXML);
+
+        return obj;
     }
 
     protected static DigitalObject getTestObject(String pid,

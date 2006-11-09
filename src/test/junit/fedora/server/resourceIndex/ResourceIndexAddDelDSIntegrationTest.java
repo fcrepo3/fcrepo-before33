@@ -2,6 +2,8 @@ package fedora.server.resourceIndex;
 
 import java.util.Set;
 
+import org.junit.Test;
+
 import fedora.server.storage.types.DigitalObject;
 
 /**
@@ -16,15 +18,9 @@ public class ResourceIndexAddDelDSIntegrationTest
         extends ResourceIndexIntegrationTest {
 
     /**
-     * Construct the test.
-     */
-    public ResourceIndexAddDelDSIntegrationTest(String name) {
-        super(name);
-    }
-
-    /**
      * Add, then delete an object with no datastreams.
      */
+    @Test
     public void testAddDelObjNoDatastreams()
             throws Exception {
         Set<DigitalObject> objects = getTestObjects(1, 0);
@@ -34,6 +30,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with an "E" datastream.
      */
+    @Test
     public void testAddDelObjExternalDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -44,6 +41,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with an "M" datastream.
      */
+    @Test
     public void testAddDelObjManagedDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -54,6 +52,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with an "R" datastream.
      */
+    @Test
     public void testAddDelObjRedirectDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -64,6 +63,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with an "X" datastream.
      */
+    @Test
     public void testAddDelObjInlineXMLDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -74,6 +74,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with a "DC" datastream.
      */
+    @Test
     public void testAddDelObjDCDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -89,6 +90,7 @@ public class ResourceIndexAddDelDSIntegrationTest
     /**
      * Add, then delete an object with a "RELS-EXT" datastream.
      */
+    @Test
     public void testAddDelObjRELSEXTDS()
             throws Exception {
         DigitalObject obj = getTestObject("test:1", "test");
@@ -101,6 +103,12 @@ public class ResourceIndexAddDelDSIntegrationTest
         x.append("</rdf:RDF>");
         addXDatastream(obj, "RELS-EXT", x.toString());
         doAddDelTest(1, obj);
+    }
+
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(
+                ResourceIndexAddDelDSIntegrationTest.class);
     }
 
 }

@@ -1,5 +1,7 @@
 package fedora.server.resourceIndex;
 
+import org.junit.Test;
+
 /**
  * Tests modifying objects in the RI, with respect to their datastreams.
  *
@@ -11,15 +13,9 @@ public class ResourceIndexModDSIntegrationTest
         extends ResourceIndexIntegrationTest {
 
     /**
-     * Construct the test.
-     */
-    public ResourceIndexModDSIntegrationTest(String name) {
-        super(name);
-    }
-
-    /**
      * Add a datastream to an existing object.
      */
+    @Test
     public void testModObjOnceAddDS()
             throws Exception {
     }
@@ -27,6 +23,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Delete a datastream from an existing object.
      */
+    @Test
     public void testModObjOnceDelDS()
             throws Exception {
     }
@@ -34,6 +31,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Add a datastream and delete another from an existing object.
      */
+    @Test
     public void testModObjOnceAddOneDSDelAnother()
             throws Exception {
     }
@@ -41,6 +39,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Add a Dublin Core field to the DC datastream of an existing object.
      */
+    @Test
     public void testModObjOnceAddOneDCField()
             throws Exception {
     }
@@ -48,6 +47,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Delete a Dublin Core field from the DC datastream of an existing object.
      */
+    @Test
     public void testModObjOnceDelOneDCField()
             throws Exception {
     }
@@ -56,6 +56,7 @@ public class ResourceIndexModDSIntegrationTest
      * Add a Dublin Core field and delete another from the DC datastream of
      * an existing object.
      */
+    @Test
     public void testModObjOnceAddOneDCFieldDelAnother()
             throws Exception {
     }
@@ -63,6 +64,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Add a relation to the RELS-EXT datastream of an existing object.
      */
+    @Test
     public void testModObjOnceAddOneRELSEXTField()
             throws Exception {
     }
@@ -70,6 +72,7 @@ public class ResourceIndexModDSIntegrationTest
     /**
      * Delete a relation from the RELS-EXT datastream of an existing object.
      */
+    @Test
     public void testModObjOnceDelOneRELSEXTField()
             throws Exception {
     }
@@ -78,8 +81,15 @@ public class ResourceIndexModDSIntegrationTest
      * Add a relation and delete another from the RELS-EXT datastream of an
      * existing object.
      */
+    @Test
     public void testModObjOnceAddOneRELSEXTFieldDelAnother()
             throws Exception {
+    }
+
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(
+                ResourceIndexModDSIntegrationTest.class);
     }
 
 }

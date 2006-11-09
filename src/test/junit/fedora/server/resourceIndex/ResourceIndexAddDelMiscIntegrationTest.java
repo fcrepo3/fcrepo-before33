@@ -3,6 +3,10 @@ package fedora.server.resourceIndex;
 import java.util.Collections;
 import java.util.Set;
 
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.jrdf.graph.Triple;
 
 import fedora.server.storage.types.DigitalObject;
@@ -18,17 +22,11 @@ public class ResourceIndexAddDelMiscIntegrationTest
         extends ResourceIndexIntegrationTest {
 
     /**
-     * Construct the test.
-     */
-    public ResourceIndexAddDelMiscIntegrationTest(String name) {
-        super(name);
-    }
-
-    /**
      * Add, then delete an object with the RI at level 0.
      *
      * This test ensures that adds and deletes at level 0 don't do anything.
      */
+    @Test
     public void testAddDelObjLv0()
             throws Exception {
         Set<DigitalObject> objects = getTestObjects(1, 0);
@@ -57,6 +55,7 @@ public class ResourceIndexAddDelMiscIntegrationTest
     /**
      * Add, then delete several objects, each with one datastream.
      */
+    @Test
     public void testAddDelMultiObjOneDS()
             throws Exception {
         Set<DigitalObject> objects = getTestObjects(5, 1);
@@ -66,10 +65,17 @@ public class ResourceIndexAddDelMiscIntegrationTest
     /**
      * Add, then delete several objects, each with several datastreams.
      */
+    @Test
     public void testAddDelMultiObjMultiDS()
             throws Exception {
         Set<DigitalObject> objects = getTestObjects(5, 5);
         doAddDelTest(1, objects);
+    }
+
+    // Supports legacy test runners
+    public static junit.framework.Test suite() {
+        return new junit.framework.JUnit4TestAdapter(
+                ResourceIndexAddDelMiscIntegrationTest.class);
     }
 
 }
