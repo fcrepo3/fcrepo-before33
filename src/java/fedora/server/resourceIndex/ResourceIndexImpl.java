@@ -1110,7 +1110,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         try {
             return serviceMapper.getDSInputSpec(new InputSource(new ByteArrayInputStream(dsInSpecDS.xmlContent)));
         } catch (Throwable t) {
-            throw new ResourceIndexException(t.getMessage());
+            throw new ResourceIndexException(t.getMessage(), t);
         }
     }
 
