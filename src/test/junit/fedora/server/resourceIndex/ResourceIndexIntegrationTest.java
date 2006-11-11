@@ -1,10 +1,13 @@
 package fedora.server.resourceIndex;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.Statement;
 
 import java.util.Collections;
@@ -42,6 +45,10 @@ import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.MockRepositoryReader;
+
+import fedora.server.storage.translation.DOTranslationUtility;
+import fedora.server.storage.translation.FOXMLDOSerializer;
+import fedora.server.storage.translation.FOXMLDODeserializer;
 
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -84,6 +91,11 @@ public abstract class ResourceIndexIntegrationTest {
      * The <code>ResourceIndexImpl</code> instance we'll be using.
      */
     private ResourceIndex _ri;
+
+    /**
+     * The flusher instance we'll use.
+     */
+    private Flusher _flusher;
 
     /**
      * Where to get DB connections from.
@@ -151,6 +163,39 @@ public abstract class ResourceIndexIntegrationTest {
         st.close();
         _dbPool.free(conn);
 
+    }
+
+    protected void logDBState() throws Exception {
+        StringBuffer out = new StringBuffer();
+        out.append("CURRENT TABLE STATE\n\n");
+        addTableStateInfo("riMethod", false, out);
+        addTableStateInfo("riMethodImpl", false, out);
+        addTableStateInfo("riMethodImplBinding", true, out);
+        addTableStateInfo("riMethodPermutation", true, out);
+        addTableStateInfo("riMethodMimeType", true, out);
+        LOG.warn(out.toString());
+    }
+
+    private void addTableStateInfo(String table, boolean firstInt, StringBuffer out) throws Exception {
+        out.append(table);
+        out.append("\n---------------------\n");
+        Connection conn = _dbPool.getConnection();
+        Statement st = conn.createStatement();
+        ResultSet r = st.executeQuery("SELECT * FROM " + table);
+        int cols = r.getMetaData().getColumnCount();
+        while (r.next()) {
+            for (int i = 0; i < cols; i++) {
+                if (i == 0 && firstInt) {
+                    out.append(r.getInt(i+1));
+                } else {
+                    out.append("\t" + r.getString(i+1));
+                }
+            }
+        }
+        out.append("\n\n");
+        r.close();
+        st.close();
+        _dbPool.free(conn);
     }
 
     /**
@@ -280,7 +325,88 @@ public abstract class ResourceIndexIntegrationTest {
                      getActualTriples().size());
     }
 
+    protected void doModifyTest(int riLevel,
+                                DigitalObject origObject,
+                                DigitalObject modifiedObject)
+            throws Exception {
+        Set<DigitalObject> origObjects = new HashSet<DigitalObject>();
+        origObjects.add(origObject);
+        doModifyTest(riLevel, origObjects, modifiedObject);
+    }
+
+    // if riLevel is -1, assume original objects have already been added
+    // and we don't need to change the ri level
+    protected void doModifyTest(int riLevel,
+                                Set<DigitalObject> origObjects,
+                                DigitalObject modifiedObject)
+            throws Exception {
+
+        if (riLevel > -1) {
+            initRI(riLevel);
+            addAll(origObjects, true);
+        }
+
+        DigitalObject origObject = null;
+
+        // get a set with the modified object in place of its old version
+        Set<DigitalObject> newObjects = new HashSet<DigitalObject>();
+        for (DigitalObject orig : origObjects) {
+            if (orig.getPid().equals(modifiedObject.getPid())) {
+                origObject = orig;
+            } else {
+                newObjects.add(orig);
+            }
+        }
+        newObjects.add(modifiedObject);
+
+        modify(origObject, modifiedObject, true);
+
+        assertTrue("Did not get expected triples after modify",
+                   sameTriples(getExpectedTriples(riLevel, newObjects),
+                           getActualTriples(), true));
+    }
+
     // Utility methods for tests
+
+    /**
+     * Make a deep copy of the given digital object.
+     */
+    protected DigitalObject deepCopy(DigitalObject obj) throws Exception {
+
+        // make sure DOTranslationUtility doesn't die
+        if (System.getProperty("fedoraServerHost") == null
+                || System.getProperty("fedoraServerPort") == null) {
+            System.setProperty("fedoraServerHost", "localhost");
+            System.setProperty("fedoraServerPort", "8080");
+        }
+
+        Map<String, String> nsMap = new HashMap<String, String>();
+        nsMap.put(FOXMLDOSerializer.XSI_NS, "xsi");
+        obj.setNamespaceMapping(nsMap);
+        String charEncoding = "UTF-8";
+        int transContext = DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FOXMLDOSerializer ser = new FOXMLDOSerializer();
+        ser.serialize(obj, out, charEncoding, transContext);
+
+        FOXMLDODeserializer deser = new FOXMLDODeserializer(charEncoding);
+        ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
+        DigitalObject objCopy = new BasicDigitalObject();
+        deser.deserialize(in, objCopy, charEncoding, transContext);
+
+        // make sure dates of any to-be-added new components differ
+        try { Thread.sleep(100); } catch (Exception e) { }
+
+        return objCopy;
+    }
+
+    protected void modify(DigitalObject origObject, 
+                          DigitalObject modifiedObject,
+                          boolean flush) throws Exception {
+        _ri.modifyDigitalObject(modifiedObject);
+        if (flush) _ri.flushBuffer();
+    }
 
     protected void addAll(Set<DigitalObject> objects,
                           boolean flush)
@@ -449,6 +575,32 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     /**
+     * Get the DC xml for an object.
+     */
+    protected String getDC(String content) {
+        StringBuffer x = new StringBuffer();
+        x.append("<oai_dc:dc xmlns:dc=\"http://purl.org/dc/elements/1.1/\"");
+        x.append(" xmlns:oai_dc=\"http://www.openarchives.org/OAI/2.0/oai_dc/\">\n");
+        x.append(content + "\n");
+        x.append("</oai_dc:dc>");
+        return x.toString();
+    }
+
+    /**
+     * Get the RELS-EXT xml for an object.
+     */
+    protected String getRELSEXT(String content) {
+        StringBuffer x = new StringBuffer();
+        x.append("<rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\"");
+        x.append(" xmlns:foo=\"http://example.org/foo#\">\n");
+        x.append("<rdf:Description rdf:about=\"info:fedora/test:1\">\n");
+        x.append(content + "\n");
+        x.append("</rdf:Description>\n");
+        x.append("</rdf:RDF>");
+        return x.toString();
+    }
+
+    /**
      * Get the METHODMAP xml for a bDef.
      */
     protected static String getMethodMap(Set<ParamDomainMap> methodDefs) {
@@ -486,19 +638,19 @@ public abstract class ResourceIndexIntegrationTest {
                     xml.append("      </ValidParmValues>\n");
                 }
                 xml.append("    </UserInputParm>\n");
-                if (forBMech) {
-                    Set<String> keys = inputKeys.get(method);
-                    if (keys != null) {
-                        for (String key : keys) {
-                            xml.append("    <DatastreamInputParm parmName=\""
-                                    + key + "\" passBy=\"URL_REF\"/>\n");
-                        }
+            }
+            if (forBMech) {
+                Set<String> keys = inputKeys.get(method);
+                if (keys != null) {
+                    for (String key : keys) {
+                        xml.append("    <DatastreamInputParm parmName=\""
+                                + key + "\" passBy=\"URL_REF\"/>\n");
                     }
-
-                    xml.append("    <MethodReturnType wsdlMsgName=\""
-                            + "dissemResponse\" wsdlMsgTOMIME=\""
-                            + "application/octet-stream\"/>\n");
                 }
+
+                xml.append("    <MethodReturnType wsdlMsgName=\""
+                        + "dissemResponse\" wsdlMsgTOMIME=\""
+                        + "application/octet-stream\"/>\n");
             }
             xml.append("  </Method>\n");
         }
@@ -828,6 +980,329 @@ public abstract class ResourceIndexIntegrationTest {
         obj.setCreateDate(createDate);
         obj.setLastModDate(lastModDate);
         return obj;
+    }
+
+    // bdef:1 has one no-parameter method
+    protected static DigitalObject getBDefOne() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+        return getTestBDef("test:bdef1", "bdef1", methodDefs);
+    }
+
+    // bdef:1b has two no-parameter methods
+    protected static DigitalObject getBDefOneB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodDefs.add(methodTwo);
+        return getTestBDef("test:bdef1b", "bdef1b", methodDefs);
+    }
+
+
+    // bdef:1c has one no-parameter method (same as bdef:1)
+    protected static DigitalObject getBDefOneC() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+        return getTestBDef("test:bdef1c", "bdef1c", methodDefs);
+    }
+
+    // bdef:2 has one required one-parameter method with two possible values
+    protected static DigitalObject getBDefTwo() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        return getTestBDef("test:bdef2", "bdef2", methodDefs);
+    }
+
+    // bdef:2b has two required one-parameter methods with two possible values
+    protected static DigitalObject getBDefTwoB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+        return getTestBDef("test:bdef2b", "bdef2b", methodDefs);
+    }
+
+    // bdef:3 has one optional one-parameter method with any possible value
+    protected static DigitalObject getBDefThree() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        return getTestBDef("test:bdef3", "bdef3", methodDefs);
+    }
+
+    // bdef:3b has two optional one-parameter methods with any possible value
+    protected static DigitalObject getBDefThreeB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+        return getTestBDef("test:bdef3b", "bdef3b", methodDefs);
+    }
+
+    // bdef:4 has two one-parameter methods, one required with two possible 
+    //        values and the other optional with any possible value
+    protected static DigitalObject getBDefFour() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        argOneDomain = new ParamDomain("argOne", false);
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+        return getTestBDef("test:bdef4", "bdef4", methodDefs);
+    }
+
+    // construct a map representing key-to-ds bindings with 1 or 2 keys
+    protected static Map<String, Set<String>> getMap(String key1,
+                                                   String[] values1,
+                                                   String key2,
+                                                   String[] values2) {
+        Set<String> valueSet1 = new HashSet<String>();
+        for (String value : values1) {
+            valueSet1.add(value);
+        }
+        Map<String, Set<String>> map = new HashMap<String, Set<String>>();
+        map.put(key1, valueSet1);
+        if (key2 != null) {
+            Set<String> valueSet2 = new HashSet<String>();
+            for (String value : values2) {
+                valueSet2.add(value);
+            }
+            map.put(key2, valueSet2);
+        }
+        return map;
+    }
+
+    // bmech:1 implements bdef:1 and takes one datastream
+    protected static DigitalObject getBMechOne() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech1", "bmech1", "test:bdef1", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:1b implements bdef:1b and takes one datastream
+    protected static DigitalObject getBMechOneB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech1b", "bmech1b", "test:bdef1b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // bmech:1c implements bdef:1c and takes one datastream
+    protected static DigitalObject getBMechOneC() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech1c", "bmech1c", "test:bdef1c", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:1d implements bdef:1 and takes TWO datastreams
+    protected static DigitalObject getBMechOneD() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech1d", "bmech1d", "test:bdef1", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1", "KEY2"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:2 implements bdef:2 and takes one datastream
+    protected static DigitalObject getBMechTwo() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech2", "bmech2", "test:bdef2", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:2b implements bdef:2b and takes one datastream
+    protected static DigitalObject getBMechTwoB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech2b", "bmech2b", "test:bdef2b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // bmech:3 implements bdef:3 and takes one datastream
+    protected static DigitalObject getBMechThree() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+
+        return getTestBMech("test:bmech3", "bmech3", "test:bdef3", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, null, null),
+                getMap("KEY1", new String[] {"text/xml"}, null, null),
+                getMap("methodOne", new String[] {"text/xml"}, null, null));
+    }
+
+    // bmech:3b implements bdef:3b and takes one datastream
+    protected static DigitalObject getBMechThreeB() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", false);
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech3b", "bmech3b", "test:bdef3b", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // bmech:4 implements bdef:4 and takes one datastream
+    protected static DigitalObject getBMechFour() {
+        Set<ParamDomainMap> methodDefs = new HashSet<ParamDomainMap>();
+        ParamDomainMap methodOne = new ParamDomainMap("methodOne");
+        ParamDomain argOneDomain = new ParamDomain("argOne", true);
+        argOneDomain.add("val1");
+        argOneDomain.add("val2");
+        methodOne.put("argOne", argOneDomain);
+        methodDefs.add(methodOne);
+        ParamDomainMap methodTwo = new ParamDomainMap("methodTwo");
+        argOneDomain = new ParamDomain("argOne", false);
+        methodTwo.put("argOne", argOneDomain);
+        methodDefs.add(methodTwo);
+
+        return getTestBMech("test:bmech4", "bmech4", "test:bdef4", 
+                methodDefs, 
+                getMap("methodOne", new String[] {"KEY1"}, 
+                       "methodTwo", new String[] {"KEY2"}),
+                getMap("KEY1", new String[] {"text/xml"}, 
+                       "KEY2", new String[] {"text/xml"}),
+                getMap("methodOne", new String[] {"text/xml"},
+                       "methodTwo", new String[] {"text/xml"}));
+    }
+
+    // get an object named test:1 with one datastream (DS1) and one 
+    // disseminator that has any number of keys (KEY1, etc) pointing to the ds.
+    protected DigitalObject getObjectWithDissem(String bDefPID,
+                                              String bMechPID,
+                                              int numKeys) throws Exception {
+        DigitalObject obj = getTestObject("test:1", "test");
+        addEDatastream(obj, "DS1");
+        addDisseminator(obj, "DISS1", bDefPID, bMechPID, getBindings(numKeys));
+        return obj;
+    }
+
+    protected Map<String, String> getBindings(int numKeys) {
+        Map<String, String> bindings = new HashMap<String, String>();
+        for (int i = 1; i <= numKeys; i++) {
+            bindings.put("KEY" + i, "DS1");
+        }
+        return bindings;
+    }
+
+    // get a set containing three digital objects
+    protected Set<DigitalObject> getObjectSet(DigitalObject o1,
+                                              DigitalObject o2,
+                                              DigitalObject o3) {
+        Set<DigitalObject> set = new HashSet<DigitalObject>();
+        set.add(o1);
+        set.add(o2);
+        set.add(o3);
+        return set;
+    }
+
+    public void startFlushing(int sleepMS) throws Exception {
+        if (_flusher != null) { 
+            try {
+                finishFlushing();
+            } catch (Exception e) {
+                System.err.println("Error stopping old flusher!!");
+                e.printStackTrace();
+            }
+            throw new Exception("Flusher was already running!");
+        }
+        _flusher = new Flusher(_ri, sleepMS);
+        _flusher.start();
+    }
+
+    // finish async flushing and do a final flush
+    public void finishFlushing() throws Exception {
+        _flusher.finish();
+        _ri.flushBuffer();
+        _flusher = null;
     }
 
     // Inner classes for tests

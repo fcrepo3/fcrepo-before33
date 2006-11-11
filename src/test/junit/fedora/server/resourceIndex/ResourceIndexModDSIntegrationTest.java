@@ -2,6 +2,8 @@ package fedora.server.resourceIndex;
 
 import org.junit.Test;
 
+import fedora.server.storage.types.DigitalObject;
+
 /**
  * Tests modifying objects in the RI, with respect to their datastreams.
  *
@@ -18,22 +20,47 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceAddDS()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+
+        DigitalObject modified = deepCopy(original);
+        addEDatastream(modified, "DS1");
+
+        doModifyTest(1, original, modified);
     }
+
+// TODO: Uncomment the following after bug 195 is addressed.
 
     /**
      * Delete a datastream from an existing object.
      */
-    @Test
+//    @Test
     public void testModObjOnceDelDS()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+        addEDatastream(original, "DS1");
+
+        DigitalObject modified = deepCopy(original);
+        modified.datastreams("DS1").clear();
+
+        doModifyTest(1, original, modified);
     }
+
+// TODO: Uncomment the following after bug 195 is addressed.
 
     /**
      * Add a datastream and delete another from an existing object.
      */
-    @Test
+//    @Test
     public void testModObjOnceAddOneDSDelAnother()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+        addEDatastream(original, "DS1");
+
+        DigitalObject modified = deepCopy(original);
+        addEDatastream(modified, "DS2");
+        modified.datastreams("DS1").clear();
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -42,6 +69,14 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceAddOneDCField()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>\n"
+                                           + "<dc:identifier>id</dc:identifier>"));
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -50,6 +85,14 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceDelOneDCField()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>\n"
+                                           + "<dc:identifier>id</dc:identifier>"));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "DC", getDC("<dc:title>test</dc:title>"));
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -59,6 +102,13 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceAddOneDCFieldDelAnother()
             throws Exception {
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "DC", getDC("<dc:title>test</dc:title>"));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "DC", getDC("<dc:identifier>id</dc:identifier>"));
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -67,6 +117,16 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceAddOneRELSEXTField()
             throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel1 + "\n" + rel2));
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -75,6 +135,16 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceDelOneRELSEXTField()
             throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1 + "\n" + rel2));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel1));
+
+        doModifyTest(1, original, modified);
     }
 
     /**
@@ -84,6 +154,16 @@ public class ResourceIndexModDSIntegrationTest
     @Test
     public void testModObjOnceAddOneRELSEXTFieldDelAnother()
             throws Exception {
+        String rel1 = "<foo:bar rdf:resource=\"http://example.org/baz\"/>";
+        String rel2 = "<foo:bar rdf:resource=\"http://example.org/quux\"/>";
+
+        DigitalObject original = getTestObject("test:1", "test1");
+        addXDatastream(original, "RELS-EXT", getRELSEXT(rel1));
+
+        DigitalObject modified = deepCopy(original);
+        addXDatastream(modified, "RELS-EXT", getRELSEXT(rel2));
+
+        doModifyTest(1, original, modified);
     }
 
     // Supports legacy test runners

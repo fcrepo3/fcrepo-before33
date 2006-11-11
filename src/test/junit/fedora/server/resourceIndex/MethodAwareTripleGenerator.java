@@ -26,6 +26,7 @@ import fedora.server.storage.types.Disseminator;
  *
  * For all methods:
  * <ul>
+ *   <li> object usesBMech bMech</li>
  *   <li> object disseminates method</li>
  *   <li> method dependsOn datastream (for each input datastream)</li>
  *   <li> method lastModifiedDate (latest of dependent datastreams, 
@@ -90,7 +91,7 @@ public class MethodAwareTripleGenerator extends BaseTripleGenerator {
 
     /**
      * For each disseminator of the object, add all per-method
-     * "dissemination" triples.
+     * "dissemination" triples and a usesBMech triple.
      */
     private void addDisseminationTriples(DOReader reader,
                                          Set<Triple> set) 
@@ -104,6 +105,12 @@ public class MethodAwareTripleGenerator extends BaseTripleGenerator {
             for (int i = 0; i < disseminators.length; i++) {
 
                 String bMech = disseminators[i].bMechID;
+
+                URIReference objURI = createResource(
+                        PID.toURI(reader.GetObjectPID()));
+                URIReference bMechURI = createResource(PID.toURI(bMech));
+                add(objURI, MODEL.USES_BMECH, bMechURI, set);
+
                 DSBinding[] bindings = disseminators[i].dsBindMap.dsBindings;
 
                 for (MethodInfo method : _provider.getMethodInfo(bMech)) {

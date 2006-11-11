@@ -270,7 +270,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
 	    if (m_indexLevel == INDEX_LEVEL_OFF) {
             return;
         }
-        
+
         Disseminator diss = getLatestDisseminator(digitalObject.disseminators(disseminatorID));
 	    String doIdentifier = getDOURI(digitalObject);
         String bMechPID = diss.bMechID;
@@ -710,7 +710,7 @@ public class ResourceIndexImpl extends StdoutLogging implements ResourceIndex {
         if (digitalObject.getFedoraObjectType() != DigitalObject.FEDORA_BDEF_OBJECT) {
             return;
         }
-        
+
         //String doURI = getDOURI(digitalObject);
         String bDefPid = digitalObject.getPid();
         MethodDef[] mdef = getMethodDefs(bDefPid, ds);

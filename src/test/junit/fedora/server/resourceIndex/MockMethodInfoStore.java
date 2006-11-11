@@ -56,7 +56,7 @@ public class MockMethodInfoStore implements MethodInfoStore {
      * Get an empty instance.
      */
     public MockMethodInfoStore(boolean storePermutations) {
-        _storePermutations = false;
+        _storePermutations = storePermutations;
 
         _bDefMethods = new HashMap<String, Set<String>>();
         _bDefMethodPermutations = new HashMap<String, Set<String>>();
