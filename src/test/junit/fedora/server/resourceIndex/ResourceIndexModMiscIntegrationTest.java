@@ -82,13 +82,11 @@ public class ResourceIndexModMiscIntegrationTest
 
     }
 
-// TODO: Uncomment the following when bug 193 is addressed
-
     /**
      * Modify an object's label multiple times while flushing the buffer
      * many times from a separate thread.
      */
-//    @Test
+    @Test
     public void testModObjMultiLabelAsyncFlush()
             throws Exception {
 

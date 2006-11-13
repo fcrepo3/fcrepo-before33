@@ -48,24 +48,20 @@ public class ResourceIndexModDissIntegrationTest
         doModifyTest(riLevel, getObjectSet(bMech, bDef, original), modified);
     }
 
-// TODO: Uncomment the following when bug 195 is addressed
-
     /**
      * Delete a one-method, no-param disseminator from an existing object.
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodNoParms()
             throws Exception {
         doModObjDelDissTest(1, getBDefOne(), getBMechOne());
     }
 
-// TODO: Uncomment the following when bug 195 is addressed
-
     /**
      * Delete a one-method, no-param disseminator from an existing object
      * (RI level 2)
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodNoParmsLv2()
             throws Exception {
         doModObjDelDissTest(2, getBDefOne(), getBMechOne());
@@ -96,36 +92,30 @@ public class ResourceIndexModDissIntegrationTest
         doModObjAddDissTest(1, getBDefTwo(), getBMechTwo());
     }
 
-// TODO: Uncomment the following when bug 196 is addressed
-
     /**
      * Add a one-method, fixed-param disseminator to an existing object
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testModObjOnceAddDissOneMethodFixedParmLv2()
             throws Exception {
         doModObjAddDissTest(2, getBDefTwo(), getBMechTwo());
     }
 
-// TODO: Uncomment the following when bug 195 is addressed
-
     /**
      * Delete a one-method, fixed-param disseminator from an existing object.
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodFixedParm()
             throws Exception {
         doModObjDelDissTest(1, getBDefTwo(), getBMechTwo());
     }
 
-// TODO: Uncomment the following when bug 195 is addressed
-
     /**
      * Delete a one-method, fixed-param disseminator from an existing object
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodFixedParmLv2()
             throws Exception {
         doModObjDelDissTest(2, getBDefTwo(), getBMechTwo());
@@ -140,36 +130,30 @@ public class ResourceIndexModDissIntegrationTest
         doModObjAddDissTest(1, getBDefThree(), getBMechThree());
     }
 
-// TODO: Uncomment the following when bug 194 is addressed
-
     /**
      * Add a one-method, unfixed-param disseminator to an existing object
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testModObjOnceAddDissOneMethodUnfixedParmLv2()
             throws Exception {
         doModObjAddDissTest(2, getBDefThree(), getBMechThree());
     }
 
-// TODO: Uncomment the following when bug 195 is addressed
-
     /**
      * Delete a one-method, unfixed-param disseminator from an existing object.
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodUnfixedParm() 
             throws Exception {
         doModObjDelDissTest(1, getBDefThree(), getBMechThree());
     }
 
-// TODO: Uncomment the following when bugs 194-196 are addressed
-
     /**
      * Delete a one-method, unfixed-param disseminator from an existing object
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDissOneMethodUnfixedParmLv2()
             throws Exception {
         doModObjDelDissTest(2, getBDefThree(), getBMechThree());

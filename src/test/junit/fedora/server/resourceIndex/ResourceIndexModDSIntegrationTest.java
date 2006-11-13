@@ -28,12 +28,10 @@ public class ResourceIndexModDSIntegrationTest
         doModifyTest(1, original, modified);
     }
 
-// TODO: Uncomment the following after bug 195 is addressed.
-
     /**
      * Delete a datastream from an existing object.
      */
-//    @Test
+    @Test
     public void testModObjOnceDelDS()
             throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");
@@ -45,12 +43,10 @@ public class ResourceIndexModDSIntegrationTest
         doModifyTest(1, original, modified);
     }
 
-// TODO: Uncomment the following after bug 195 is addressed.
-
     /**
      * Add a datastream and delete another from an existing object.
      */
-//    @Test
+    @Test
     public void testModObjOnceAddOneDSDelAnother()
             throws Exception {
         DigitalObject original = getTestObject("test:1", "test1");

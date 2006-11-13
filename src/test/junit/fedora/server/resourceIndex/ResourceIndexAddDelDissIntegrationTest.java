@@ -87,14 +87,12 @@ public class ResourceIndexAddDelDissIntegrationTest
                                                          "test:bmech3", 1)));
     }
 
-// TODO: Uncomment when bug 194 is fixed
-
     /**
      * Add, then delete an object with one datastream used by one disseminator
      * with an optional one-parameter method with any possible value
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testAddDelObjOneDSOneDissOneMethodUnfixedParmLv2()
             throws Exception {
         doAddDelTest(2, getObjectSet(getBDefThree(),
@@ -170,14 +168,12 @@ public class ResourceIndexAddDelDissIntegrationTest
                                                          "test:bmech3b", 2)));
     }
 
-// TODO: Uncomment when bug 194 is fixed
-
     /**
      * Add, then delete an object with one datastream used by one disseminator
      * with two one-parameter methods with any possible value.
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testAddDelObjOneDSOneDissTwoMethodsBothUnfixedParmsLv2()
             throws Exception {
         doAddDelTest(2, getObjectSet(getBDefThreeB(),
@@ -200,15 +196,13 @@ public class ResourceIndexAddDelDissIntegrationTest
                                                          "test:bmech4", 2)));
     }
 
-// TODO: Uncomment when bug 194 is fixed
-
     /**
      * Add, then delete an object with one datastream used by one disseminator
      * with two one-parameter methods, the first taking two possible values
      * and the second taking any possible value
      * (RI level 2).
      */
-//    @Test
+    @Test
     public void testAddDelObjOneDSOneDissTwoMethodsOneFixedOneUnfixedParmLv2()
             throws Exception {
         doAddDelTest(2, getObjectSet(getBDefFour(),
