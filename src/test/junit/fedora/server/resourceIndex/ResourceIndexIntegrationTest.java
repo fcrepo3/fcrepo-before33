@@ -38,13 +38,14 @@ import org.trippi.RDFUtil;
 import org.trippi.TripleIterator;
 import org.trippi.TriplestoreConnector;
 
-import fedora.server.TestLogging;
-
 import fedora.server.storage.BDefReader;
 import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.MockRepositoryReader;
+import fedora.server.storage.SimpleBDefReader;
+import fedora.server.storage.SimpleBMechReader;
+import fedora.server.storage.SimpleDOReader;
 
 import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.FOXMLDOSerializer;
@@ -70,13 +71,6 @@ public abstract class ResourceIndexIntegrationTest {
     private static final Logger LOG = 
             Logger.getLogger(ResourceIndexIntegrationTest.class.getName());
 
-    public static final String TEST_PID   = "test:pid";
-    public static final String TEST_LABEL = "test label";
-
-    private static final int BASE_TRIPLES_PER_OBJECT = 6;
-    
-    private static final int TRIPLES_PER_DATASTREAM = 7;
-
     private static final String TEST_DIR    = "build/junit";
 
     private static final String DB_DRIVER   = "org.apache.derby.jdbc.EmbeddedDriver";
@@ -90,7 +84,7 @@ public abstract class ResourceIndexIntegrationTest {
     /**
      * The <code>ResourceIndexImpl</code> instance we'll be using.
      */
-    private ResourceIndex _ri;
+    private NewResourceIndex _ri;
 
     /**
      * The flusher instance we'll use.
@@ -208,11 +202,16 @@ public abstract class ResourceIndexIntegrationTest {
         if (_ri != null) {
             try { _ri.close(); } catch (Exception e) { }
         }
-        _ri = new ResourceIndexImpl(indexLevel, 
-                                    getConnector(),
-                                    _dbPool,
-                                    new HashMap(),
-                                    new TestLogging());
+        MethodInfoStore methodInfoStore = 
+                new DatabaseMethodInfoStore(_dbPool, indexLevel == 2);
+        TripleGenerator generator =
+                new MethodAwareTripleGenerator(methodInfoStore);
+        
+        _ri = new NewResourceIndexImpl(getConnector(),
+                                       methodInfoStore,
+                                       generator,
+                                       indexLevel,
+                                       false);
     }
 
     /**
@@ -404,8 +403,31 @@ public abstract class ResourceIndexIntegrationTest {
     protected void modify(DigitalObject origObject, 
                           DigitalObject modifiedObject,
                           boolean flush) throws Exception {
-        _ri.modifyDigitalObject(modifiedObject);
+        if (origObject.getFedoraObjectType() ==
+                    DigitalObject.FEDORA_BDEF_OBJECT) {
+            _ri.modifyBDefObject(getBDefReader(origObject),
+                                 getBDefReader(modifiedObject));
+        } else if (origObject.getFedoraObjectType() ==
+                    DigitalObject.FEDORA_BMECH_OBJECT) {
+            _ri.modifyBMechObject(getBMechReader(origObject),
+                                  getBMechReader(modifiedObject));
+        } else {
+            _ri.modifyDataObject(getDOReader(origObject),
+                                 getDOReader(modifiedObject));
+        }
         if (flush) _ri.flushBuffer();
+    }
+
+    protected BDefReader getBDefReader(DigitalObject obj) throws Exception {
+        return new SimpleBDefReader(null, null, null, null, null, obj, null);
+    }
+
+    protected BMechReader getBMechReader(DigitalObject obj) throws Exception {
+        return new SimpleBMechReader(null, null, null, null, null, obj, null);
+    }
+
+    protected DOReader getDOReader(DigitalObject obj) throws Exception {
+        return new SimpleDOReader(null, null, null, null, null, obj, null);
     }
 
     protected void addAll(Set<DigitalObject> objects,
@@ -426,13 +448,13 @@ public abstract class ResourceIndexIntegrationTest {
             if (add) {
                 if (obj.getFedoraObjectType() == 
                         DigitalObject.FEDORA_BDEF_OBJECT) {
-                    _ri.addDigitalObject(obj);
+                    _ri.addBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
             } else {
                 if (obj.getFedoraObjectType() == 
                         DigitalObject.FEDORA_OBJECT) {
-                    _ri.deleteDigitalObject(obj);
+                    _ri.deleteDataObject(getDOReader(obj));
                 }
             }
         }
@@ -440,10 +462,10 @@ public abstract class ResourceIndexIntegrationTest {
             if (obj.getFedoraObjectType() == 
                     DigitalObject.FEDORA_BMECH_OBJECT) {
                 if (add) {
-                    _ri.addDigitalObject(obj);
+                    _ri.addBMechObject(getBMechReader(obj));
                     _ri.flushBuffer();
                 } else {
-                    _ri.deleteDigitalObject(obj);
+                    _ri.deleteBMechObject(getBMechReader(obj));
                     _ri.flushBuffer();
                 }
             }
@@ -452,12 +474,12 @@ public abstract class ResourceIndexIntegrationTest {
             if (add) {
                 if (obj.getFedoraObjectType() == 
                         DigitalObject.FEDORA_OBJECT) {
-                    _ri.addDigitalObject(obj);
+                    _ri.addDataObject(getDOReader(obj));
                 }
             } else {
                 if (obj.getFedoraObjectType() == 
                         DigitalObject.FEDORA_BDEF_OBJECT) {
-                    _ri.deleteDigitalObject(obj);
+                    _ri.deleteBDefObject(getBDefReader(obj));
                     _ri.flushBuffer();
                 }
             }
@@ -829,7 +851,7 @@ public abstract class ResourceIndexIntegrationTest {
                                                        int datastreamsPerObject) {
         Set<DigitalObject> set = new HashSet<DigitalObject>(num);
         for (int i = 0; i < num; i++) {
-            DigitalObject obj = getTestObject(TEST_PID + i, TEST_LABEL + i);
+            DigitalObject obj = getTestObject("test:" + i, "label" + i);
             for (int j = 0; j < datastreamsPerObject; j++) {
                 addEDatastream(obj, "DS" + j);
             }
@@ -1312,7 +1334,7 @@ public abstract class ResourceIndexIntegrationTest {
      */
     public class Flusher extends Thread {
 
-        private ResourceIndex _ri;
+        private NewResourceIndex _ri;
         private int _sleepMS;
         private boolean _shouldFinish = false;
         private Exception _error;
@@ -1324,7 +1346,7 @@ public abstract class ResourceIndexIntegrationTest {
          * @param sleepMS milliseconds to sleep.  Will simply yield between
          *                flush attempts if less than 1.
          */
-        public Flusher(ResourceIndex ri, int sleepMS) {
+        public Flusher(NewResourceIndex ri, int sleepMS) {
             _ri = ri;
             _sleepMS = sleepMS;
         }

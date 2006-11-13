@@ -15,6 +15,7 @@ import org.jrdf.graph.Triple;
 
 import org.trippi.FlushErrorHandler;
 import org.trippi.RDFFormat;
+import org.trippi.TriplestoreConnector;
 import org.trippi.TriplestoreWriter;
 import org.trippi.TripleIterator;
 import org.trippi.TrippiException;
@@ -34,7 +35,10 @@ import fedora.server.storage.DOReader;
 public class NewResourceIndexImpl implements NewResourceIndex {
 
     /** Interface to the underlying triplestore. */
-    private TriplestoreWriter _trippi;
+    private TriplestoreConnector _connector;
+
+    /** Writer for the underlying triplestore. */
+    private TriplestoreWriter _writer;
 
     /** The MethodInfoStore this instance will use. */
     private MethodInfoStore _methodInfoStore;
@@ -55,12 +59,13 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     // Initialization //
     ////////////////////
 
-    public NewResourceIndexImpl(TriplestoreWriter trippi,
+    public NewResourceIndexImpl(TriplestoreConnector connector,
                                 MethodInfoStore methodInfoStore,
                                 TripleGenerator generator,
                                 int indexLevel,
                                 boolean syncUpdates) {
-        _trippi = trippi;
+        _connector = connector;
+        _writer = _connector.getWriter();
         _methodInfoStore = methodInfoStore;
         _generator = generator;
         _indexLevel = indexLevel;
@@ -84,8 +89,10 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addBDefObject(BDefReader reader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForBDef(reader), false);
-        _methodInfoStore.putBDefInfo(reader);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForBDef(reader), false);
+            _methodInfoStore.putBDefInfo(reader);
+        }
     }
 
     /**
@@ -93,8 +100,10 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addBMechObject(BMechReader reader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForBMech(reader), false);
-        _methodInfoStore.putBMechInfo(reader);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForBMech(reader), false);
+            _methodInfoStore.putBMechInfo(reader);
+        }
     }
 
     /**
@@ -102,7 +111,9 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addDataObject(DOReader reader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForDataObject(reader), false);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForDataObject(reader), false);
+        }
     }
 
     /**
@@ -110,9 +121,11 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
             throws ResourceIndexException {
-        updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
-                    _generator.getTriplesForBDef(newReader));
-        _methodInfoStore.putBDefInfo(newReader);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
+                        _generator.getTriplesForBDef(newReader));
+            _methodInfoStore.putBDefInfo(newReader);
+        }
     }
 
     /**
@@ -120,9 +133,11 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
             throws ResourceIndexException {
-        updateTripleDiffs(_generator.getTriplesForBMech(oldReader),
-                    _generator.getTriplesForBMech(newReader));
-        _methodInfoStore.putBMechInfo(newReader);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTripleDiffs(_generator.getTriplesForBMech(oldReader),
+                        _generator.getTriplesForBMech(newReader));
+            _methodInfoStore.putBMechInfo(newReader);
+        }
     }
 
     /**
@@ -130,8 +145,10 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyDataObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
-        updateTripleDiffs(_generator.getTriplesForDataObject(oldReader),
-                    _generator.getTriplesForDataObject(newReader));
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTripleDiffs(_generator.getTriplesForDataObject(oldReader),
+                        _generator.getTriplesForDataObject(newReader));
+        }
     }
 
     /**
@@ -139,8 +156,10 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteBDefObject(BDefReader oldReader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForBDef(oldReader), true);
-        _methodInfoStore.deleteBDefInfo(getPID(oldReader));
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForBDef(oldReader), true);
+            _methodInfoStore.deleteBDefInfo(getPID(oldReader));
+        }
     }
 
     /**
@@ -148,8 +167,10 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteBMechObject(BMechReader oldReader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForBMech(oldReader), true);
-        _methodInfoStore.deleteBMechInfo(getPID(oldReader));
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForBMech(oldReader), true);
+            _methodInfoStore.deleteBMechInfo(getPID(oldReader));
+        }
     }
 
     /**
@@ -157,7 +178,9 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteDataObject(DOReader oldReader)
             throws ResourceIndexException {
-        updateTriples(_generator.getTriplesForDataObject(oldReader), true);
+        if (_indexLevel > INDEX_LEVEL_OFF) {
+            updateTriples(_generator.getTriplesForDataObject(oldReader), true);
+        }
     }
 	
     /**
@@ -166,8 +189,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
 	public void export(OutputStream out, RDFFormat format)
 	        throws ResourceIndexException {
         try {
-            TripleIterator it = _trippi.findTriples(null, null, null, 0);
-            it.setAliasMap(_trippi.getAliasMap());
+            TripleIterator it = _writer.findTriples(null, null, null, 0);
+            it.setAliasMap(_writer.getAliasMap());
             it.toStream(out, format);
         } catch (TrippiException e) {
             throw new ResourceIndexException("Unable to export RI", e);
@@ -187,9 +210,9 @@ public class NewResourceIndexImpl implements NewResourceIndex {
             throws ResourceIndexException {
         try {
             if (delete) {
-                _trippi.delete(getTripleIterator(set), _syncUpdates);
+                _writer.delete(getTripleIterator(set), _syncUpdates);
             } else {
-                _trippi.add(getTripleIterator(set), _syncUpdates);
+                _writer.add(getTripleIterator(set), _syncUpdates);
             }
         } catch (Exception e) {
             throw new ResourceIndexException("Error updating triples", e);
@@ -246,14 +269,14 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      * {@inheritDoc}
      */
     public void setAliasMap(Map aliasToPrefix) throws TrippiException {
-        _trippi.setAliasMap(aliasToPrefix);
+        _writer.setAliasMap(aliasToPrefix);
     }
 
     /**
      * {@inheritDoc}
      */
     public Map getAliasMap() throws TrippiException {
-        return _trippi.getAliasMap();
+        return _writer.getAliasMap();
     }
 
     /**
@@ -262,7 +285,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public TupleIterator findTuples(String queryLang, String tupleQuery,
             int limit, boolean distinct)
             throws TrippiException {
-        return _trippi.findTuples(queryLang, tupleQuery, limit, distinct);
+        return _writer.findTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
@@ -271,7 +294,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public int countTuples(String queryLang, String tupleQuery, int limit,
             boolean distinct)
             throws TrippiException {
-        return _trippi.countTuples(queryLang, tupleQuery, limit, distinct);
+        return _writer.countTuples(queryLang, tupleQuery, limit, distinct);
     }
 
     /**
@@ -280,7 +303,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public TripleIterator findTriples(String queryLang, String tripleQuery,
             int limit, boolean distinct)
             throws TrippiException {
-        return _trippi.findTriples(queryLang, tripleQuery, limit, distinct);
+        return _writer.findTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
@@ -289,7 +312,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public int countTriples(String queryLang, String tripleQuery, int limit,
             boolean distinct)
             throws TrippiException {
-        return _trippi.countTriples(queryLang, tripleQuery, limit, distinct);
+        return _writer.countTriples(queryLang, tripleQuery, limit, distinct);
     }
 
     /**
@@ -298,7 +321,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public TripleIterator findTriples(SubjectNode subject, 
             PredicateNode predicate, ObjectNode object, int limit)
             throws TrippiException {
-        return _trippi.findTriples(subject, predicate, object, limit);
+        return _writer.findTriples(subject, predicate, object, limit);
     }
 
     /**
@@ -307,7 +330,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public int countTriples(SubjectNode subject, PredicateNode predicate,
             ObjectNode object, int limit)
             throws TrippiException {
-        return _trippi.countTriples(subject, predicate, object, limit);
+        return _writer.countTriples(subject, predicate, object, limit);
     }
 
     /**
@@ -316,7 +339,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public TripleIterator findTriples(String queryLang, String tupleQuery, 
             String tripleTemplate, int limit, boolean distinct)
             throws TrippiException {
-        return _trippi.findTriples(queryLang, tupleQuery, tripleTemplate,
+        return _writer.findTriples(queryLang, tupleQuery, tripleTemplate,
                 limit, distinct);
     }
 
@@ -326,7 +349,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     public int countTriples(String queryLang, String tupleQuery, 
             String tripleTemplate, int limit, boolean distinct)
             throws TrippiException {
-        return _trippi.countTriples(queryLang, tupleQuery, tripleTemplate,
+        return _writer.countTriples(queryLang, tupleQuery, tripleTemplate,
                 limit, distinct);
     }
 
@@ -334,21 +357,21 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      * {@inheritDoc}
      */
     public String[] listTupleLanguages() {
-        return _trippi.listTupleLanguages();
+        return _writer.listTupleLanguages();
     }
 
     /**
      * {@inheritDoc}
      */
     public String[] listTripleLanguages() {
-        return _trippi.listTripleLanguages();
+        return _writer.listTripleLanguages();
     }
 
     /**
      * {@inheritDoc}
      */
     public void close() throws TrippiException {
-        _trippi.close();
+        _connector.close();
     }
 
 
@@ -361,7 +384,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void add(List triples, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.add(triples, flush);
+        _writer.add(triples, flush);
 	}
 
     /**
@@ -369,7 +392,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void add(TripleIterator triples, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.add(triples, flush);
+        _writer.add(triples, flush);
 	}
 
     /**
@@ -377,7 +400,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void add(Triple triple, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.add(triple, flush);
+        _writer.add(triple, flush);
 	}
 
     /**
@@ -385,7 +408,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void delete(List triples, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.delete(triples, flush);
+        _writer.delete(triples, flush);
 	}
 
     /**
@@ -393,7 +416,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void delete(TripleIterator triples, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.delete(triples, flush);
+        _writer.delete(triples, flush);
 	}
 
     /**
@@ -401,7 +424,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void delete(Triple triple, boolean flush)
 	        throws IOException, TrippiException {
-        _trippi.delete(triple, flush);
+        _writer.delete(triple, flush);
 	}
 
     /**
@@ -409,21 +432,21 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void flushBuffer()
 	        throws IOException, TrippiException {
-        _trippi.flushBuffer();
+        _writer.flushBuffer();
 	}
 
     /**
      * {@inheritDoc}
      */
 	public void setFlushErrorHandler(FlushErrorHandler h) {
-		_trippi.setFlushErrorHandler(h);
+		_writer.setFlushErrorHandler(h);
 	}
 
     /**
      * {@inheritDoc}
      */
 	public int getBufferSize() {
-		return _trippi.getBufferSize();
+		return _writer.getBufferSize();
 	}
 
     /**
@@ -431,7 +454,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public List findBufferedUpdates(SubjectNode subject, 
 	        PredicateNode predicate, ObjectNode object, int updateType) {
-		return _trippi.findBufferedUpdates(subject, predicate, object, 
+		return _writer.findBufferedUpdates(subject, predicate, object, 
 		        updateType);
 	}
 	
