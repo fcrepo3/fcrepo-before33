@@ -5,18 +5,24 @@ import java.io.OutputStream;
 import org.trippi.RDFFormat;
 import org.trippi.TriplestoreWriter;
 
-import fedora.common.Constants;
 import fedora.server.errors.ResourceIndexException;
-import fedora.server.storage.types.DigitalObject;
+
+import fedora.server.storage.BDefReader;
+import fedora.server.storage.BMechReader;
+import fedora.server.storage.DOReader;
 
 /**
- * ResourceIndex is the interface to the Fedora Resource Index. The Fedora Resource
- * Index contains and mediates access to information about Fedora objects that other 
- * services may require.
+ * The main interface to the Fedora Resource Index.
+ *
+ * The Resource Index (RI) provides read/write access to an RDF representation
+ * of all objects in the Fedora repository.  The information stored in the RI 
+ * is derived solely from information stored within the digital objects.
  *
  * @author Edwin Shin
+ * @author cwilper@cs.cornell.edu
  */
-public interface ResourceIndex extends Constants, TriplestoreWriter {
+public interface ResourceIndex extends TriplestoreWriter {
+
     /**
      * At this level, the ResourceIndex will not index anything.
      */
@@ -26,18 +32,18 @@ public interface ResourceIndex extends Constants, TriplestoreWriter {
      * At this level the ResourceIndex will index:
      *  object properties
      *  datastreams
-     *  disseminators
      *  intra-object dependencies
      */
     public static final int INDEX_LEVEL_ON              = 1;
     
     /**
-     * Equivalent to INDEX_LEVEL_ON plus the indexing of the various permutations
-     * of a representation (i.e. dissemination) given by a fixed parameter list.
+     * Equivalent to INDEX_LEVEL_ON plus the indexing of the various 
+     * permutations of a representation (i.e. dissemination) given by a fixed
+     * parameter list.
      * 
-     * For example, consider the method, getImage, which requires two parameters,
-     * border and format. The range of border's values is on or off; and the 
-     * range of format's values is jpg or png.
+     * For example, consider the method, getImage, which requires two 
+     * parameters, border and format. The range of border's values is on or 
+     * off; and the range of format's values is jpg or png.
      * 
      * There are four possible permutations:
      *  1) getImage?border=on&format=jpg
@@ -45,68 +51,112 @@ public interface ResourceIndex extends Constants, TriplestoreWriter {
      *  3) getImage?border=off&format=jpg
      *  4) getImage?border=off&format=png
      * 
-     * At INDEX_LEVEL_ON, only the method name, getImage, would be indexed, and
-     * none of the permutations.
+     * At INDEX_LEVEL_ON, only the method name, getImage, would be indexed,
+     * and none of the permutations.
      */
     public static final int INDEX_LEVEL_PERMUTATIONS    = 2;
     
     /**
-     * Returns the index level of the ResourceIndex.
-     * Possible index levels are:
-     *  0 = off
-     *  1 = on (default)
-     *  2 = on plus indexing of permutations of disseminations that have
-     *      fixed parameters.
-     * @return Current index level of the ResourceIndex
+     * Gets the index level of the ResourceIndex.
+     *
+     * @return the current index level of the RI, which is either 
+     *         INDEX_LEVEL_OFF, INDEX_LEVEL_ON, or INDEX_LEVEL_PERMUTATIONS.
      */
-	public int getIndexLevel();
+	int getIndexLevel();
+
+    /**
+     * Adds a behavior definition object.
+     *
+     * @param reader the behavior definition to add.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void addBDefObject(BDefReader reader)
+            throws ResourceIndexException;
+
+    /**
+     * Adds a behavior mechanism object.
+     *
+     * @param reader the behavior definition to add.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void addBMechObject(BMechReader reader)
+            throws ResourceIndexException;
+
+    /**
+     * Adds a data object.
+     *
+     * @param reader the data object to add.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void addDataObject(DOReader reader)
+            throws ResourceIndexException;
+
+    /**
+     * Modifies a behavior definition object.
+     *
+     * @param oldReader the original behavior definition.
+     * @param newReader the modified behavior definition.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
+            throws ResourceIndexException;
+
+    /**
+     * Modifies a behavior mechanism object.
+     *
+     * @param oldReader the original behavior mechanism.
+     * @param newReader the modified behavior mechanism.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
+            throws ResourceIndexException;
+
+    /**
+     * Modifies a data object.
+     *
+     * @param oldReader the original data object.
+     * @param newReader the modified data object.
+     * @throws ResourceIndexException if the operation fails for any reason.
+     */
+    void modifyDataObject(DOReader oldReader, DOReader newReader)
+            throws ResourceIndexException;
+
+    /**
+     * Deletes a behavior definition object.
+     *
+     * @param oldReader the original behavior definition.
+     */
+    void deleteBDefObject(BDefReader oldReader)
+            throws ResourceIndexException;
+
+    /**
+     * Deletes a behavior definition object.
+     *
+     * @param oldReader the original behavior mechanism.
+     */
+    void deleteBMechObject(BMechReader oldReader)
+            throws ResourceIndexException;
+
+    /**
+     * Deletes a behavior definition object.
+     *
+     * @param oldReader the original data object.
+     */
+    void deleteDataObject(DOReader oldReader)
+            throws ResourceIndexException;
 	
     /**
-     * Adds a Fedora digital object to the ResourceIndex.
-     * @param digitalObject The Fedora digital object to add to the ResourceIndex
-     * @throws ResourceIndexException
+     * Exports all triples in the RI.
+     *
+     * @param out the output stream to which the RDF should be written.
+     *        The caller is responsible for eventually closing this stream.
+     * @param format the output format (RDF_XML, TURTLE, N_TRIPLESs, etc).
+     * @throws ResourceIndexException if triples in the RI cannot be
+     *         serialized for any reason.
      */
-	public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
-	
-    /**
-     * Modifies a Fedora digital object in the ResourceIndex
-     * @param digitalObject The Fedora digital object to modify in the ResourceIndex
-     * @throws ResourceIndexException
-     */
-	public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
-	
-    /**
-     * Removes a Fedora digital object from the ResourceIndex.
-     * @param digitalObject The Fedora digital object to remove from the ResourceIndex
-     * @throws ResourceIndexException
-     */
-	public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException;
-	
-    /**
-     * Forces the ResourceIndex to write any buffered changes.
-     * This method does not need to be used in normal usage, as the ResourceIndex
-     * will write out its buffer periodically.
-     * @throws ResourceIndexException
-     */
-    public void commit() throws ResourceIndexException;
+	void export(OutputStream out, RDFFormat format)
+	        throws ResourceIndexException;
     
-    /**
-     * Write a serialized representation of the ResourceIndex in the specified 
-     * format.
-     * @param out The output stream to which the RDF is written
-     * @param format Desired format of the output (e.g. RDF_XML, TURTLE, N_TRIPLESs, etc.)
-     * @throws ResourceIndexException
-     */
-	public void export(OutputStream out, RDFFormat format) throws ResourceIndexException;
-    
-    /*
-	public void addDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	public void addDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
-	public void modifyDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	public void modifyDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
-	public void deleteDatastream(DigitalObject digitalObject, String datastreamID) throws ResourceIndexException;
-	public void deleteDisseminator(DigitalObject digitalObject, String disseminatorID) throws ResourceIndexException;
-	*/
 }
 
 

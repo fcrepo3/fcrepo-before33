@@ -23,6 +23,9 @@ import fedora.server.config.ServerConfiguration;
 import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.errors.ResourceIndexException;
 import fedora.server.storage.ConnectionPool;
+import fedora.server.storage.SimpleBDefReader;
+import fedora.server.storage.SimpleBMechReader;
+import fedora.server.storage.SimpleDOReader;
 import fedora.server.storage.types.DigitalObject;
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.SQLUtility;
@@ -78,7 +81,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
      */
     public void start(Map options) throws ResourceIndexException {
         // validate options
-        
+
         // do startup tasks
         ModuleConfiguration riMC = m_serverConfig.getModuleConfiguration("fedora.server.resourceIndex.ResourceIndex");      
         int riLevel = Integer.parseInt(riMC.getParameter("level").getValue());
@@ -151,7 +154,12 @@ public class ResourceIndexRebuilder implements Rebuilder {
         System.out.println("Initializing triplestore interface..."); 
         try {
             m_conn = TriplestoreConnector.init(tsConnector, tsTC);
-            m_ri = new ResourceIndexImpl(riLevel, m_conn, m_cPool, aliasMap, null);
+            MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
+                    m_cPool, riLevel == 2);
+            m_ri = new ResourceIndexImpl(m_conn, methodInfoStore,
+                    new MethodAwareTripleGenerator(methodInfoStore), 
+                    riLevel, false); 
+            m_ri.setAliasMap(aliasMap);
         } catch (Exception e) {
             throw new ResourceIndexException("Failed to initialize new Resource Index", e);
         }
@@ -161,8 +169,22 @@ public class ResourceIndexRebuilder implements Rebuilder {
      * Add the data of interest for the given object.
      * @throws ResourceIndexException
      */
-    public void addObject(DigitalObject object) throws ResourceIndexException {
-        m_ri.addDigitalObject(object);
+    public void addObject(DigitalObject obj) throws ResourceIndexException {
+        if (obj.getFedoraObjectType() ==
+                DigitalObject.FEDORA_BDEF_OBJECT) {
+            m_ri.addBDefObject(
+                    new SimpleBDefReader(null, null, null, null,
+                    null, obj, null));
+        } else if (obj.getFedoraObjectType() ==
+                DigitalObject.FEDORA_BMECH_OBJECT) {
+            m_ri.addBMechObject(
+                    new SimpleBMechReader(null, null, null, null,
+                    null, obj, null));
+        } else {
+            m_ri.addDataObject(
+                    new SimpleDOReader(null, null, null, null,
+                    null, obj, null));
+        }
     }
 
     /**

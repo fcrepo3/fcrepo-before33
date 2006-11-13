@@ -936,7 +936,21 @@ public class DefaultDOManager
             if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                 try {
                     logInfo("COMMIT: Deleting from ResourceIndex...");
-                    m_resourceIndex.deleteDigitalObject(obj);
+                    if (obj.getFedoraObjectType() == 
+                            DigitalObject.FEDORA_BDEF_OBJECT) {
+                        m_resourceIndex.deleteBDefObject(
+                                new SimpleBDefReader(null, null, null, null, 
+                                null, obj, null));
+                    } else if (obj.getFedoraObjectType() == 
+                            DigitalObject.FEDORA_BMECH_OBJECT) {
+                        m_resourceIndex.deleteBMechObject(
+                                new SimpleBMechReader(null, null, null, null, 
+                                null, obj, null));
+                    } else {
+                        m_resourceIndex.deleteDataObject(
+                                new SimpleDOReader(null, null, null, null, 
+                                null, obj, null));
+                    }
                     logInfo("COMMIT: Finished deleting from ResourceIndex...");
                 } catch (ServerException se) {
                     logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
@@ -1066,9 +1080,40 @@ public class DefaultDOManager
                 if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                     logFinest("COMMIT: Adding to ResourceIndex...");
                     if (obj.isNew()) {
-                        m_resourceIndex.addDigitalObject(obj);
+                        if (obj.getFedoraObjectType() ==
+                                DigitalObject.FEDORA_BDEF_OBJECT) {
+                            m_resourceIndex.addBDefObject(
+                                    new SimpleBDefReader(null, null, null, null,
+                                    null, obj, null));
+                        } else if (obj.getFedoraObjectType() ==
+                                DigitalObject.FEDORA_BMECH_OBJECT) {
+                            m_resourceIndex.addBMechObject(
+                                    new SimpleBMechReader(null, null, null, null,
+                                    null, obj, null));
+                        } else {
+                            m_resourceIndex.addDataObject(
+                                    new SimpleDOReader(null, null, null, null,
+                                    null, obj, null));
+                        }
                     } else {
-                        m_resourceIndex.modifyDigitalObject(obj);
+                        if (obj.getFedoraObjectType() ==
+                                DigitalObject.FEDORA_BDEF_OBJECT) {
+                            m_resourceIndex.modifyBDefObject(
+                                    getBDefReader(false, null, obj.getPid()),
+                                    new SimpleBDefReader(null, null, null, null,
+                                    null, obj, null));
+                        } else if (obj.getFedoraObjectType() ==
+                                DigitalObject.FEDORA_BMECH_OBJECT) {
+                            m_resourceIndex.modifyBMechObject(
+                                    getBMechReader(false, null, obj.getPid()),
+                                    new SimpleBMechReader(null, null, null, null,
+                                    null, obj, null));
+                        } else {
+                            m_resourceIndex.modifyDataObject(
+                                    getReader(false, null, obj.getPid()),
+                                    new SimpleDOReader(null, null, null, null,
+                                    null, obj, null));
+                        }
                     }
                     logFinest("COMMIT: Finished adding to ResourceIndex.");
                 }

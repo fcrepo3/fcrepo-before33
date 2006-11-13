@@ -1,351 +1,529 @@
 package fedora.server.resourceIndex;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
-import org.trippi.*;
-import org.trippi.impl.multi.*;
-import org.jrdf.graph.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import fedora.server.*;
-import fedora.server.errors.*;
+import org.jrdf.graph.ObjectNode;
+import org.jrdf.graph.PredicateNode;
+import org.jrdf.graph.SubjectNode;
+import org.jrdf.graph.Triple;
+
+import org.trippi.FlushErrorHandler;
+import org.trippi.RDFFormat;
+import org.trippi.TriplestoreConnector;
+import org.trippi.TripleIterator;
+import org.trippi.TrippiException;
+import org.trippi.TupleIterator;
+
+import fedora.common.Constants;
+
+import fedora.server.errors.ModuleInitializationException;
+import fedora.server.errors.ModuleShutdownException;
+import fedora.server.errors.ResourceIndexException;
+
+import fedora.server.Module;
+import fedora.server.Parameterized;
+import fedora.server.Server;
+import fedora.server.storage.BDefReader;
+import fedora.server.storage.BMechReader;
 import fedora.server.storage.ConnectionPool;
 import fedora.server.storage.ConnectionPoolManager;
-import fedora.server.storage.types.*;
+import fedora.server.storage.DOReader;
 import fedora.server.utilities.status.ServerState;
 
-public class ResourceIndexModule extends Module 
-                                implements ResourceIndex {
+/**
+ * Fedora's <code>ResourceIndex</code> as a configurable module.
+ *
+ * @author cwilper@cs.cornell.edu
+ */
+public class ResourceIndexModule extends Module implements ResourceIndex {
 
-    private int m_level;
-    private TriplestoreConnector m_conn;
-    private ResourceIndex m_resourceIndex;
+    /**
+     * The instance this module wraps.
+     */
+    private ResourceIndex _ri;
 
-	public ResourceIndexModule(Map moduleParameters, Server server, String role) 
-	throws ModuleInitializationException {
-		super(moduleParameters, server, role);
-	}
+    /////////////////////////////////////
+    // Initialization & Module Methods //
+    /////////////////////////////////////
 
-	public void postInitModule() throws ModuleInitializationException {
-		logConfig("ResourceIndexModule: loading...");
-		// Parameter validation
-		if (getParameter("level")==null) {
-			throw new ModuleInitializationException(
-                    "level parameter must be specified.", getRole());
-        } else {
-        	try {
-                m_level = Integer.parseInt(getParameter("level"));
-                if (m_level < 0 || m_level > 2) {
-                	throw new NumberFormatException();
-                }
-    		} catch (NumberFormatException nfe) {
-    			throw new ModuleInitializationException(
-                        "level parameter must have value 0, 1, or 2", getRole());
-    		}
-            // If level == 0, we don't want to proceed further.
-            if (m_level == 0) {
-                return;
-            }
-        }
-        
-        //
-        // get connectionPool from ConnectionPoolManager
-        //
-        ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
-                getModule("fedora.server.storage.ConnectionPoolManager");
-        if (cpm==null) {
-            throw new ModuleInitializationException(
-                "ConnectionPoolManager module was required, but apparently has "
-                + "not been loaded.", getRole());
-        }
-        String cPoolName=getParameter("connectionPool");
-        ConnectionPool cPool=null;
+    /**
+     * Instantiate the module.
+     */
+    public ResourceIndexModule(Map parameters, Server server, String role)
+            throws ModuleInitializationException {
+        super(parameters, server, role);
+    }
+
+    /**
+     * Perform post-initialization of this module.
+     *
+     * ResourceIndexModule takes the following parameters:
+     * <ul>
+     *   <li> level (required, integer between 0 and 2)<br/>
+     *        The level of indexing that should be performed.
+     *        Values correspond to <code>INDEX_LEVEL_OFF</code>,
+     *        <code>INDEX_LEVEL_ON</code>, and 
+     *        <code>INDEX_LEVEL_PERMUTATIONS</code>.
+     *   </li>
+     *   <li> datastore (required)<br/>
+     *        The name of the datastore element that contains
+     *        the Trippi Connector configuration.
+     *   <li> connectionPool (optional, default is 
+     *        ConnectionPoolManager's default)<br/>
+     *        Which connection pool to use for updating
+     *        the database of method information.
+     *   </li>
+     *   <li> syncUpdates (optional, default is false)<br/>
+     *        Whether to flush the triple buffer before
+     *        returning from object modification operations.
+     *        Specifying this as true will ensure that
+     *        RI queries always reflect the latest triples.
+     *   </li>
+     *   <li> alias:xyz (optional, uri)<br/>
+     *        Any parameter starting with "alias:" will be
+     *        put into Trippi's alias map, and can be used
+     *        for queries.  For example, alias:xyz with a
+     *        value of urn:example:long:uri:x:y:z: will make
+     *        it possible to use "xyz:a" to mean 
+     *        "urn:example:long:uri:x:y:z:a" in queries.
+     *   </li>
+     * </ul>
+     */
+    public void postInitModule()
+            throws ModuleInitializationException {
+        int level = getRequiredInt("level", 0, 2);
+        if (level == 0) return;
+        boolean syncUpdates = getBoolean("syncUpdates", false);
         try {
-            if (cPoolName==null) {
-                logConfig("connectionPool unspecified; using default from "
-                        + "ConnectionPoolManager.");
-                cPool=cpm.getPool();
-            } else {
-                logConfig("connectionPool specified: " + cPoolName);
-                cPool=cpm.getPool(cPoolName);
-            }
-        } catch (ConnectionPoolNotFoundException cpnfe) {
-            throw new ModuleInitializationException("Could not find requested "
-                    + "connectionPool.", getRole());
+            TriplestoreConnector connector = getConnector(
+                    getServer().getDatastoreConfig(getRequired("datastore")));
+            MethodInfoStore methodInfoStore = new DatabaseMethodInfoStore(
+                    getConnectionPool(), level == 2);
+            _ri = new ResourceIndexImpl(connector, methodInfoStore, 
+                    new MethodAwareTripleGenerator(methodInfoStore),
+                    level, syncUpdates);
+            setAliasMap(getAliases());
+        } catch (Exception e) {
+            throw new ModuleInitializationException("Error initializing RI",
+                    getRole(), e);
         }
+    } 
 
-        // Get anything starting with alias: and put the following name
-        // and its value in the alias map.
-        //
-        HashMap aliasMap = new HashMap();
-        Iterator iter = parameterNames();
+    private ConnectionPool getConnectionPool() throws Exception {
+        ConnectionPoolManager cpm = (ConnectionPoolManager) getServer().
+                getModule("fedora.server.storage.ConnectionPoolManager");
+        if (cpm == null) {
+            throw new ResourceIndexException("ResourceIndexModule "
+                    + "requires ConnectionPoolManager module to be loaded");
+        }
+        String poolName = getParameter("connectionPool");
+        if (poolName == null) {
+            return cpm.getPool(poolName);
+        } else {
+            return cpm.getPool();
+        }
+    }
+
+    private TriplestoreConnector getConnector(Parameterized datastore)
+            throws Exception {
+        if (datastore == null) {
+            throw new ModuleInitializationException("Specifed datastore "
+                    + "does not exist in fedora.fcfg", getRole());
+        }
+        Map<String, String> config = datastore.getParameters();
+        // make sure path, if specified and relative, is translated
+        // to an absolute path based on the value of FEDORA_HOME
+        String path = config.get("path");
+        if (path != null) {
+            config.put("path", datastore.getParameter("path", true));
+        }
+        String className = config.get("connectorClassName");
+        if (className == null) {
+            throw new ResourceIndexException("Required datastore parameter "
+                    + "is missing: connectorClassName");
+        }
+        getServer().getStatusFile().append(ServerState.STARTING,
+                                           "Initializing Triplestore");
+        return TriplestoreConnector.init(className, config);
+    }
+
+    private Map<String, String> getAliases() {
+        HashMap<String, String> map = new HashMap<String, String>();
+        Iterator<String> iter = parameterNames();
         while (iter.hasNext()) {
-            String pName = (String) iter.next();
+            String pName = iter.next();
             String[] parts = pName.split(":");
             if ((parts.length == 2) && (parts[0].equals("alias"))) {
-                aliasMap.put(parts[1], getParameter(pName));
+                map.put(parts[1], getParameter(pName));
             }
         }
-        
-        String datastore = getParameter("datastore");
-        if (datastore == null || datastore.equals("")) {
-            throw new ModuleInitializationException(
-                      "datastore parameter must be specified.", getRole());
-        }
-        Parameterized conf = getServer().getDatastoreConfig(datastore);
-        if (conf == null) {
-            throw new ModuleInitializationException(
-                      "No such datastore: " + datastore, getRole());
-        }
-        Map map = conf.getParameters();
-        String connectorClassName = (String) map.get("connectorClassName");
-        // make sure the "path" parameter if not absolute, is relative to 
-        // FEDORA_HOME
-        map.put("path", conf.getParameter("path", true));
-        if (connectorClassName == null || connectorClassName.equals("")) {
-            throw new ModuleInitializationException(
-                      "Datastore \"" + datastore + "\" must specify a "
-                      + "connectorClassName", getRole());
-        }
-        // params ok, let's init the triplestore
-        try {
-            getServer().getStatusFile().append(ServerState.STARTING,
-                                               "Initializing Triplestore");
-            m_conn = TriplestoreConnector.init(connectorClassName, map);
+        map.put("fedora", Constants.FEDORA.uri);
+        map.put("dc", Constants.DC.uri);
+        map.put("fedora-model", Constants.MODEL.uri);
+        map.put("fedora-rels-ext", Constants.RELS_EXT.uri);
+        map.put("fedora-view", Constants.VIEW.uri);
+        map.put("rdf", Constants.RDF.uri);
+        map.put("tucana", Constants.TUCANA.uri);
+        map.put("xml-schema", Constants.XSD.uri);
+        return map;
+    }
 
-            // Make a MultiConnector if any mirrors are specified
-            String mirrors = getParameter("mirrors");
-            if (mirrors != null) {
-                mirrors = mirrors.trim();
-                if (mirrors.length() > 0) {
-                    String[] mirrorList = mirrors.replaceAll(" +", ",").split(",");
-                    // make sure they exist first
-                    for (int i = 0; i < mirrorList.length; i++) {
-                        Parameterized mConf = getServer().getDatastoreConfig(mirrorList[i]);
-                        if (mConf == null) {
-                            throw new ModuleInitializationException("No such datastore: " + mirrorList[i], getRole());
-                        }
-                    }
-                    // then put them into the array
-                    TriplestoreConnector[] connectors = new TriplestoreConnector[mirrors.length() + 1];
-                    connectors[0] = m_conn;
-                    for (int i = 0; i < mirrorList.length; i++) {
-                        Map mMap = getServer().getDatastoreConfig(mirrorList[i]).getParameters();
-                        String mClass = (String) mMap.get("connectorClassName");
-                        connectors[i+1] = TriplestoreConnector.init(mClass, mMap);
-                    }
-                    m_conn = new MultiConnector(connectors);
-                }
+    private int getRequiredInt(String name, int min, int max)
+            throws ModuleInitializationException {
+        try {
+            int value = Integer.parseInt(getRequired(name));
+            if (value >= min && value <= max) {
+                throw new ModuleInitializationException(name 
+                        + " parameter is out of range, expected [" 
+                        + min + "-" + max + "]", getRole());
             }
-            try {
-                m_resourceIndex = new ResourceIndexImpl(m_level, m_conn, cPool, aliasMap, this);
-            } catch (ResourceIndexException e) {
-                throw new ModuleInitializationException("Error initializing "
-                       + "connection pool.", getRole(), e);
-            } 
-        } catch (ClassNotFoundException e) {
-            throw new ModuleInitializationException("Connector class \"" 
-                    + connectorClassName + "\" not in classpath.", getRole(), e);
-        } catch (Exception e) {
-            throw new ModuleInitializationException("Error initializing ResourceIndexModule", 
-                                                    getRole(), e);
+            return value;
+        } catch (NumberFormatException e) {
+            throw new ModuleInitializationException(name + " parameter must be "
+                    + "an integer", getRole());
         }
     }
 
-    public void shutdownModule() throws ModuleShutdownException {
-        try {
-            if (m_conn != null) m_conn.close();
-        } catch (TrippiException e) {
-            throw new ModuleShutdownException("Error closing triplestore "
-                    + "connector", getRole(), e);
-        }
-    }
-    
-    /* from ResourceIndex interface */
-    public int getIndexLevel() {
-        // if m_level is 0, we never instantiated the ResourceIndex in the first place
-        if (m_level == 0) {
-            return m_level;
+    private boolean getBoolean(String name, boolean defaultValue)
+            throws ModuleInitializationException {
+        String value = getParameter(name);
+        if (value == null) return defaultValue;
+        value = value.toLowerCase();
+        if (value.equals("true") || value.equals("yes") || value.equals("on")) {
+            return true;
+        } else if (value.equals("false") || value.equals("no") || value.equals("off")) {
+            return false;
         } else {
-            return m_resourceIndex.getIndexLevel();
+            throw new ModuleInitializationException(name + " parameter, if "
+                    + "specified, must be a boolean (true or false)", 
+                    getRole());
         }
     }
-    
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#addDigitalObject(fedora.server.storage.types.DigitalObject)
-     */
-    public void addDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.addDigitalObject(digitalObject);
+
+    private String getRequired(String name)
+            throws ModuleInitializationException {
+        String value = getParameter(name);
+        if (value != null) {
+            return value;
+        } else {
+            throw new ModuleInitializationException(name + " parameter "
+                    + "is required", getRole());
+        }
     }
 
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#modifyDigitalObject(fedora.server.storage.types.DigitalObject)
+    /**
+     * Shutdown the RI module by closing the wrapped ResourceIndex.
+     *
+     * @throws ModuleShutdownException if any error occurs while closing.
      */
-    public void modifyDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.modifyDigitalObject(digitalObject);
+    public void shutdownModule() throws ModuleShutdownException {
+        if (_ri != null) {
+            try {
+                _ri.close();
+            } catch (TrippiException e) {
+                throw new ModuleShutdownException("Error closing RI",
+                        getRole(), e);
+            }
+        }
     }
 
-    /* (non-Javadoc)
-     * @see fedora.server.resourceIndex.ResourceIndex#deleteDigitalObject(java.lang.String)
+    ///////////////////////////
+    // ResourceIndex Methods //
+    ///////////////////////////
+
+    /**
+     * {@inheritDoc}
      */
-    public void deleteDigitalObject(DigitalObject digitalObject) throws ResourceIndexException {
-        m_resourceIndex.deleteDigitalObject(digitalObject);
-    }
-    
-    public void commit() throws ResourceIndexException {
-        m_resourceIndex.commit();
-    }
-    
-    public void export(OutputStream out, RDFFormat format) throws ResourceIndexException {
-        m_resourceIndex.export(out, format);
+	public int getIndexLevel() {
+        if (_ri == null) {
+            return 0;
+        } else {
+            return _ri.getIndexLevel();
+        }
     }
 
-    /* from TriplestoreReader interface */
+    /**
+     * {@inheritDoc}
+     */
+    public void addBDefObject(BDefReader reader)
+            throws ResourceIndexException {
+        _ri.addBDefObject(reader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addBMechObject(BMechReader reader)
+            throws ResourceIndexException {
+        _ri.addBMechObject(reader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void addDataObject(DOReader reader)
+            throws ResourceIndexException {
+        _ri.addDataObject(reader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
+            throws ResourceIndexException {
+        _ri.modifyBDefObject(oldReader, newReader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
+            throws ResourceIndexException {
+        _ri.modifyBMechObject(oldReader, newReader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void modifyDataObject(DOReader oldReader, DOReader newReader)
+            throws ResourceIndexException {
+        _ri.modifyDataObject(oldReader, newReader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteBDefObject(BDefReader oldReader)
+            throws ResourceIndexException {
+        _ri.deleteBDefObject(oldReader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteBMechObject(BMechReader oldReader)
+            throws ResourceIndexException {
+        _ri.deleteBMechObject(oldReader);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void deleteDataObject(DOReader oldReader)
+            throws ResourceIndexException {
+        _ri.deleteDataObject(oldReader);
+    }
+	
+    /**
+     * {@inheritDoc}
+     */
+	public void export(OutputStream out, RDFFormat format)
+	        throws ResourceIndexException {
+        _ri.export(out, format);
+    }
+
+
+    ///////////////////////////////
+    // TriplestoreReader methods //
+    ///////////////////////////////
+
+    /**
+     * {@inheritDoc}
+     */
     public void setAliasMap(Map aliasToPrefix) throws TrippiException {
-        m_resourceIndex.setAliasMap(aliasToPrefix);
+        _ri.setAliasMap(aliasToPrefix);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public Map getAliasMap() throws TrippiException {
-        return m_resourceIndex.getAliasMap();
+        return _ri.getAliasMap();
     }
 
-    public TupleIterator findTuples(String queryLang,
-                                    String tupleQuery,
-                                    int limit,
-                                    boolean distinct) throws TrippiException {
-        return m_resourceIndex.findTuples(queryLang, tupleQuery, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public TupleIterator findTuples(String queryLang, String tupleQuery,
+            int limit, boolean distinct)
+            throws TrippiException {
+        return _ri.findTuples(queryLang, tupleQuery, limit, distinct);
     }
 
-    public int countTuples(String queryLang,
-                           String tupleQuery,
-                           int limit,
-                           boolean distinct) throws TrippiException {
-        return m_resourceIndex.countTuples(queryLang, tupleQuery, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public int countTuples(String queryLang, String tupleQuery, int limit,
+            boolean distinct)
+            throws TrippiException {
+        return _ri.countTuples(queryLang, tupleQuery, limit, distinct);
     }
 
-    public TripleIterator findTriples(String queryLang,
-                                      String tupleQuery,
-                                      int limit,
-                                      boolean distinct) throws TrippiException {
-        return m_resourceIndex.findTriples(queryLang, tupleQuery, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public TripleIterator findTriples(String queryLang, String tripleQuery,
+            int limit, boolean distinct)
+            throws TrippiException {
+        return _ri.findTriples(queryLang, tripleQuery, limit, distinct);
     }
 
-    public int countTriples(String queryLang,
-                            String tupleQuery,
-                            int limit,
-                            boolean distinct) throws TrippiException {
-        return m_resourceIndex.countTriples(queryLang, tupleQuery, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public int countTriples(String queryLang, String tripleQuery, int limit,
+            boolean distinct)
+            throws TrippiException {
+        return _ri.countTriples(queryLang, tripleQuery, limit, distinct);
     }
 
-    public TripleIterator findTriples(SubjectNode subject,
-                                      PredicateNode predicate,
-                                      ObjectNode object,
-                                      int limit) throws TrippiException {
-        return m_resourceIndex.findTriples(subject, predicate, object, limit);
+    /**
+     * {@inheritDoc}
+     */
+    public TripleIterator findTriples(SubjectNode subject, 
+            PredicateNode predicate, ObjectNode object, int limit)
+            throws TrippiException {
+        return _ri.findTriples(subject, predicate, object, limit);
     }
 
-    public int countTriples(SubjectNode subject,
-                            PredicateNode predicate,
-                            ObjectNode object,
-                            int limit) throws TrippiException {
-        return m_resourceIndex.countTriples(subject, predicate, object, limit);
+    /**
+     * {@inheritDoc}
+     */
+    public int countTriples(SubjectNode subject, PredicateNode predicate,
+            ObjectNode object, int limit)
+            throws TrippiException {
+        return _ri.countTriples(subject, predicate, object, limit);
     }
 
-    public TripleIterator findTriples(String queryLang,
-                                      String tupleQuery,
-                                      String tripleTemplate,
-                                      int limit,
-                                      boolean distinct) throws TrippiException {
-        return m_resourceIndex.findTriples(queryLang, tupleQuery, tripleTemplate, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public TripleIterator findTriples(String queryLang, String tupleQuery, 
+            String tripleTemplate, int limit, boolean distinct)
+            throws TrippiException {
+        return _ri.findTriples(queryLang, tupleQuery, tripleTemplate,
+                limit, distinct);
     }
 
-    public int countTriples(String queryLang,
-                            String tupleQuery,
-                            String tripleTemplate,
-                            int limit,
-                            boolean distinct) throws TrippiException {
-        return m_resourceIndex.countTriples(queryLang, tupleQuery, tripleTemplate, limit, distinct);
+    /**
+     * {@inheritDoc}
+     */
+    public int countTriples(String queryLang, String tupleQuery, 
+            String tripleTemplate, int limit, boolean distinct)
+            throws TrippiException {
+        return _ri.countTriples(queryLang, tupleQuery, tripleTemplate,
+                limit, distinct);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] listTupleLanguages() {
-        return m_resourceIndex.listTupleLanguages();
+        return _ri.listTupleLanguages();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String[] listTripleLanguages() {
-        return m_resourceIndex.listTripleLanguages();
+        return _ri.listTripleLanguages();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void close() throws TrippiException {
-        // nope
+        // no-op; closing must be done via Module.shutdownModule
     }
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#add(java.util.List, boolean)
-	 */
-	public void add(List triples, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.add(triples, flush);
+
+    ///////////////////////////////
+    // TriplestoreWriter methods //
+    ///////////////////////////////
+   
+    /**
+     * {@inheritDoc}
+     */
+	public void add(List triples, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.add(triples, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#add(org.trippi.TripleIterator, boolean)
-	 */
-	public void add(TripleIterator iter, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.add(iter, flush);
+    /**
+     * {@inheritDoc}
+     */
+	public void add(TripleIterator triples, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.add(triples, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#add(org.jrdf.graph.Triple, boolean)
-	 */
-	public void add(Triple triple, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.add(triple, flush);
+    /**
+     * {@inheritDoc}
+     */
+	public void add(Triple triple, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.add(triple, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#delete(java.util.List, boolean)
-	 */
-	public void delete(List triples, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.delete(triples, flush);
+    /**
+     * {@inheritDoc}
+     */
+	public void delete(List triples, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.delete(triples, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#delete(org.trippi.TripleIterator, boolean)
-	 */
-	public void delete(TripleIterator iter, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.delete(iter, flush);
+    /**
+     * {@inheritDoc}
+     */
+	public void delete(TripleIterator triples, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.delete(triples, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#delete(org.jrdf.graph.Triple, boolean)
-	 */
-	public void delete(Triple triple, boolean flush) throws IOException, TrippiException {
-		m_resourceIndex.delete(triple, flush);
+    /**
+     * {@inheritDoc}
+     */
+	public void delete(Triple triple, boolean flush)
+	        throws IOException, TrippiException {
+        _ri.delete(triple, flush);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#flushBuffer()
-	 */
-	public void flushBuffer() throws IOException, TrippiException {
-		m_resourceIndex.flushBuffer();
+    /**
+     * {@inheritDoc}
+     */
+	public void flushBuffer()
+	        throws IOException, TrippiException {
+        _ri.flushBuffer();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#setFlushErrorHandler(org.trippi.FlushErrorHandler)
-	 */
+    /**
+     * {@inheritDoc}
+     */
 	public void setFlushErrorHandler(FlushErrorHandler h) {
-		m_resourceIndex.setFlushErrorHandler(h);
+		_ri.setFlushErrorHandler(h);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.trippi.TriplestoreWriter#getBufferSize()
-	 */
+    /**
+     * {@inheritDoc}
+     */
 	public int getBufferSize() {
-		return m_resourceIndex.getBufferSize();
+		return _ri.getBufferSize();
 	}
 
+    /**
+     * {@inheritDoc}
+     */
 	public List findBufferedUpdates(SubjectNode subject, 
-									PredicateNode predicate, 
-									ObjectNode object, 
-									int updateType) {
-		return m_resourceIndex.findBufferedUpdates(subject, predicate, object, updateType);
+	        PredicateNode predicate, ObjectNode object, int updateType) {
+		return _ri.findBufferedUpdates(subject, predicate, object, 
+		        updateType);
 	}
+	
 }
