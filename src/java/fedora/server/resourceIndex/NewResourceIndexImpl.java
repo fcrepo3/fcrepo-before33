@@ -3,8 +3,10 @@ package fedora.server.resourceIndex;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jrdf.graph.ObjectNode;
 import org.jrdf.graph.PredicateNode;
@@ -31,18 +33,21 @@ import fedora.server.storage.DOReader;
  */
 public class NewResourceIndexImpl implements NewResourceIndex {
 
-    /**
-     * Interface to the underlying triplestore.
-     */
+    /** Interface to the underlying triplestore. */
     private TriplestoreWriter _trippi;
 
-    /**
-     * The current index level.
-     */
+    /** The MethodInfoStore this instance will use. */
+    private MethodInfoStore _methodInfoStore;
+
+    /** The TripleGenerator this instance will use. */
+    private TripleGenerator _generator;
+
+    /** The current index level. */
     private int _indexLevel;
 
     /**
-     * Whether triples should be flushed to storage before returning.
+     * Whether triples should be flushed to storage before returning from
+     * each object modification method.
      */
     private boolean _syncUpdates;
 
@@ -51,9 +56,13 @@ public class NewResourceIndexImpl implements NewResourceIndex {
     ////////////////////
 
     public NewResourceIndexImpl(TriplestoreWriter trippi,
+                                MethodInfoStore methodInfoStore,
+                                TripleGenerator generator,
                                 int indexLevel,
                                 boolean syncUpdates) {
         _trippi = trippi;
+        _methodInfoStore = methodInfoStore;
+        _generator = generator;
         _indexLevel = indexLevel;
         _syncUpdates = syncUpdates;
     }
@@ -75,6 +84,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addBDefObject(BDefReader reader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForBDef(reader), false);
+        _methodInfoStore.putBDefInfo(reader);
     }
 
     /**
@@ -82,6 +93,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addBMechObject(BMechReader reader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForBMech(reader), false);
+        _methodInfoStore.putBMechInfo(reader);
     }
 
     /**
@@ -89,6 +102,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void addDataObject(DOReader reader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForDataObject(reader), false);
     }
 
     /**
@@ -96,6 +110,9 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyBDefObject(BDefReader oldReader, BDefReader newReader)
             throws ResourceIndexException {
+        updateTripleDiffs(_generator.getTriplesForBDef(oldReader),
+                    _generator.getTriplesForBDef(newReader));
+        _methodInfoStore.putBDefInfo(newReader);
     }
 
     /**
@@ -103,6 +120,9 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyBMechObject(BMechReader oldReader, BMechReader newReader)
             throws ResourceIndexException {
+        updateTripleDiffs(_generator.getTriplesForBMech(oldReader),
+                    _generator.getTriplesForBMech(newReader));
+        _methodInfoStore.putBMechInfo(newReader);
     }
 
     /**
@@ -110,6 +130,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void modifyDataObject(DOReader oldReader, DOReader newReader)
             throws ResourceIndexException {
+        updateTripleDiffs(_generator.getTriplesForDataObject(oldReader),
+                    _generator.getTriplesForDataObject(newReader));
     }
 
     /**
@@ -117,6 +139,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteBDefObject(BDefReader oldReader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForBDef(oldReader), true);
+        _methodInfoStore.deleteBDefInfo(getPID(oldReader));
     }
 
     /**
@@ -124,6 +148,8 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteBMechObject(BMechReader oldReader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForBMech(oldReader), true);
+        _methodInfoStore.deleteBMechInfo(getPID(oldReader));
     }
 
     /**
@@ -131,6 +157,7 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
     public void deleteDataObject(DOReader oldReader)
             throws ResourceIndexException {
+        updateTriples(_generator.getTriplesForDataObject(oldReader), true);
     }
 	
     /**
@@ -138,8 +165,78 @@ public class NewResourceIndexImpl implements NewResourceIndex {
      */
 	public void export(OutputStream out, RDFFormat format)
 	        throws ResourceIndexException {
+        try {
+            TripleIterator it = _trippi.findTriples(null, null, null, 0);
+            it.setAliasMap(_trippi.getAliasMap());
+            it.toStream(out, format);
+        } catch (TrippiException e) {
+            throw new ResourceIndexException("Unable to export RI", e);
+        }
     }
-   
+
+
+    /////////////////////
+    // Private Methods //
+    /////////////////////
+
+    /**
+     * Applies the given adds or deletes to the triplestore.
+     * If _syncUpdates is true, changes will be flushed before returning.
+     */
+    private void updateTriples(Set<Triple> set, boolean delete)
+            throws ResourceIndexException {
+        try {
+            if (delete) {
+                _trippi.delete(getTripleIterator(set), _syncUpdates);
+            } else {
+                _trippi.add(getTripleIterator(set), _syncUpdates);
+            }
+        } catch (Exception e) {
+            throw new ResourceIndexException("Error updating triples", e);
+        }
+    }
+
+    /**
+     * Computes the difference between the given sets and applies
+     * the appropriate deletes and adds to the triplestore.
+     * If _syncUpdates is true, changes will be flushed before returning.
+     */
+    private void updateTripleDiffs(Set<Triple> existing, Set<Triple> desired)
+            throws ResourceIndexException {
+
+        // delete all in existing but not desired
+        existing.removeAll(desired);
+        updateTriples(existing, true);
+
+        // add all in desired but not existing
+        desired.removeAll(existing);
+        updateTriples(desired, false);
+    }
+
+    /**
+     * Gets a Trippi TripleIterator for the given set.
+     */
+    private static TripleIterator getTripleIterator(final Set<Triple> set) {
+        return new TripleIterator() {
+            private Iterator<Triple> _iter = set.iterator();
+            public boolean hasNext() { return _iter.hasNext(); }
+            public Triple next() { return _iter.next(); }
+            public void close() { }
+        };
+    }
+
+    /**
+     * Gets the PID for a given object.  If there's an error, the
+     * original exception is wrapped in a ResourceIndeException.
+     */
+    private static String getPID(DOReader reader) throws ResourceIndexException {
+        try {
+            return reader.GetObjectPID();
+        } catch (Exception e) {
+            throw new ResourceIndexException("Unable to get PID", e);
+        }
+    }
+
 
     ///////////////////////////////
     // TriplestoreReader methods //
