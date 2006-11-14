@@ -43,6 +43,8 @@ public class BasicDigitalObject
         m_disseminators=new HashMap<String, ArrayList<Disseminator>>();
         m_extProperties=new HashMap<String, String>();
 		setNew(false);
+        setContentModelId("");
+        setOwnerId("fedoraAdmin");
     }
 
     public boolean isNew() {
