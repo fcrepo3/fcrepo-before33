@@ -895,6 +895,26 @@ public class DefaultDOManager
                 }
               }
             }
+            // RESOURCE INDEX:
+            // Keep a copy of the original DigitalObject in memory so we
+            // can delete the proper triples later, if necessary.
+            DigitalObject origObj = null;
+            if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
+                InputStream origStream = null;
+                try {
+                    origStream = m_permanentStore.retrieveObject(obj.getPid());
+                    origObj = new BasicDigitalObject();
+                    m_translator.deserialize(origStream, origObj, 
+                            m_defaultStorageFormat, 
+                            m_storageCharacterEncoding, 
+                            DOTranslationUtility.DESERIALIZE_INSTANCE);
+                } finally {
+                    if (origStream != null) {
+                        try { origStream.close(); } catch (Exception e) { }
+                    }
+                }
+            }
+
             // STORAGE:
             // remove digital object from persistent storage
             try {
@@ -940,16 +960,16 @@ public class DefaultDOManager
                             DigitalObject.FEDORA_BDEF_OBJECT) {
                         m_resourceIndex.deleteBDefObject(
                                 new SimpleBDefReader(null, null, null, null, 
-                                null, obj, null));
+                                null, origObj, null));
                     } else if (obj.getFedoraObjectType() == 
                             DigitalObject.FEDORA_BMECH_OBJECT) {
                         m_resourceIndex.deleteBMechObject(
                                 new SimpleBMechReader(null, null, null, null, 
-                                null, obj, null));
+                                null, origObj, null));
                     } else {
                         m_resourceIndex.deleteDataObject(
                                 new SimpleDOReader(null, null, null, null, 
-                                null, obj, null));
+                                null, origObj, null));
                     }
                     logInfo("COMMIT: Finished deleting from ResourceIndex...");
                 } catch (ServerException se) {
