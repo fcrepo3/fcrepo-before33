@@ -124,9 +124,9 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
         }
         String poolName = getParameter("connectionPool");
         if (poolName == null) {
-            return cpm.getPool(poolName);
-        } else {
             return cpm.getPool();
+        } else {
+            return cpm.getPool(poolName);
         }
     }
 
@@ -178,7 +178,7 @@ public class ResourceIndexModule extends Module implements ResourceIndex {
             throws ModuleInitializationException {
         try {
             int value = Integer.parseInt(getRequired(name));
-            if (value >= min && value <= max) {
+            if (value < min || value > max) {
                 throw new ModuleInitializationException(name 
                         + " parameter is out of range, expected [" 
                         + min + "-" + max + "]", getRole());
