@@ -215,7 +215,7 @@ public class ServiceProfilePane
 			sw.swVersion = (String)dependencyTable.getValueAt(i,1);
 			sw.swType = (String)dependencyTable.getValueAt(i,2);
 			sw.swLicenceType = (String)dependencyTable.getValueAt(i,3);
-			sw.isOpenSource = Boolean.getBoolean((String)dependencyTable.getValueAt(i,4));
+			sw.isOpenSource = Boolean.parseBoolean((String)dependencyTable.getValueAt(i,4));
 			elements.add(sw);
 		}
 	  }

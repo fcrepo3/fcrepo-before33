@@ -263,9 +263,9 @@ public class ResourceIndexRebuilder implements Rebuilder {
         long cpMinEvictableIdleTimeMillis = Long.parseLong(cpDC.getParameter("minEvictableIdleTimeMillis").getValue());
         int cpNumTestsPerEvictionRun = Integer.parseInt(cpDC.getParameter("numTestsPerEvictionRun").getValue());
         long cpTimeBetweenEvictionRunsMillis = Long.parseLong(cpDC.getParameter("timeBetweenEvictionRunsMillis").getValue());
-        boolean cpTestOnBorrow = Boolean.getBoolean(cpDC.getParameter("testOnBorrow").getValue());
-        boolean cpTestOnReturn = Boolean.getBoolean(cpDC.getParameter("testOnReturn").getValue());
-        boolean cpTestWhileIdle = Boolean.getBoolean(cpDC.getParameter("testWhileIdle").getValue());
+        boolean cpTestOnBorrow = Boolean.parseBoolean(cpDC.getParameter("testOnBorrow").getValue());
+        boolean cpTestOnReturn = Boolean.parseBoolean(cpDC.getParameter("testOnReturn").getValue());
+        boolean cpTestWhileIdle = Boolean.parseBoolean(cpDC.getParameter("testWhileIdle").getValue());
         byte cpWhenExhaustedAction = Byte.parseByte(cpDC.getParameter("whenExhaustedAction").getValue());
         
         DDLConverter ddlConverter = null;

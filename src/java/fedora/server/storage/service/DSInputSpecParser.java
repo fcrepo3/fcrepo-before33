@@ -170,7 +170,7 @@ public class DSInputSpecParser extends DefaultHandler
       dsInputRule.bindingKeyName = attrs.getValue("wsdlMsgPartName");
       dsInputRule.maxNumBindings = new Integer(attrs.getValue("DSMax")).intValue();
       dsInputRule.minNumBindings = new Integer(attrs.getValue("DSMin")).intValue();
-      dsInputRule.ordinality = Boolean.getBoolean(attrs.getValue("DSOrdinality"));
+      dsInputRule.ordinality = Boolean.parseBoolean(attrs.getValue("DSOrdinality"));
     }
     else if (namespaceURI.equalsIgnoreCase(FBS) && localName.equalsIgnoreCase("DSInputLabel"))
     {

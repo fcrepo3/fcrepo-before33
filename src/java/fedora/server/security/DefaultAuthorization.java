@@ -153,21 +153,21 @@ public class DefaultAuthorization extends Module implements Authorization {
     */
     if (moduleParameters.containsKey(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY)) {
     	try {
-    		validateObjectPoliciesFromDatastream = booleanValue((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY));
+    		validateObjectPoliciesFromDatastream = Boolean.parseBoolean((String) moduleParameters.get(VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY));
     	} catch (Exception e) {
     		throw new ModuleInitializationException("bad init parm boolean value for " + VALIDATE_OBJECT_POLICIES_FROM_DATASTREAM_KEY, role, e);
     	}
     }
     if (moduleParameters.containsKey(VALIDATE_SURROGATE_POLICIES_KEY)) {
     	try {
-    		validateSurrogatePolicies = booleanValue((String) moduleParameters.get(VALIDATE_SURROGATE_POLICIES_KEY));
+    		validateSurrogatePolicies = Boolean.parseBoolean((String) moduleParameters.get(VALIDATE_SURROGATE_POLICIES_KEY));
     	} catch (Exception e) {
     		throw new ModuleInitializationException("bad init parm boolean value for " + VALIDATE_SURROGATE_POLICIES_KEY, role, e);
     	}
     }    
     if (moduleParameters.containsKey(ALLOW_SURROGATE_POLICIES_KEY)) {
     	try {
-    		allowSurrogatePolicies = booleanValue((String) moduleParameters.get(ALLOW_SURROGATE_POLICIES_KEY));
+    		allowSurrogatePolicies = Boolean.parseBoolean((String) moduleParameters.get(ALLOW_SURROGATE_POLICIES_KEY));
     	} catch (Exception e) {
     		throw new ModuleInitializationException("bad init parm boolean value for " + ALLOW_SURROGATE_POLICIES_KEY, role, e);
     	}
@@ -1419,14 +1419,4 @@ public class DefaultAuthorization extends Module implements Authorization {
 	  	log(msg);
 	  	return msg;
 	  }
-	  
-		public static final boolean booleanValue(String string) throws Exception {
-			if (Boolean.TRUE.toString().equalsIgnoreCase(string) || Boolean.FALSE.toString().equalsIgnoreCase(string)) {
-				return (new Boolean(string)).booleanValue();
-			} else {
-				throw new Exception("does not represent a boolean");
-			}
-		}
-
-	
 }
