@@ -7,19 +7,19 @@ import java.util.*;
  */
 public abstract class Configuration {
 
-    private List m_parameters;
+    private List<Parameter> m_parameters;
 
-    protected Configuration(List parameters) {
+    protected Configuration(List<Parameter> parameters) {
         m_parameters = parameters;
     }
 
-    public List getParameters() {
+    public List<Parameter> getParameters() {
         return m_parameters;
     }
 
     public Parameter getParameter(String name) {
         for (int i = 0; i < m_parameters.size(); i++) {
-            Parameter param = (Parameter) m_parameters.get(i);
+            Parameter param = m_parameters.get(i);
             if (param.getName().equals(name)) return param;
         }
         return null;
@@ -33,5 +33,4 @@ public abstract class Configuration {
             param.setValue(value);
         }
     }
-
 }

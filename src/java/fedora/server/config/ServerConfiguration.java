@@ -1,7 +1,16 @@
 package fedora.server.config;
 
-import java.io.*;
-import java.util.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -14,7 +23,7 @@ public class ServerConfiguration
     private List<DatastoreConfiguration> m_datastoreConfigurations;
 
     public ServerConfiguration(String className,
-                               List parameters,
+                               List<Parameter> parameters,
                                List<ModuleConfiguration> moduleConfigurations,
                                List<DatastoreConfiguration> datastoreConfigurations) {
         super(parameters);
@@ -56,7 +65,7 @@ public class ServerConfiguration
                     String role = fullName.substring(7, fullName.lastIndexOf("."));
                     ModuleConfiguration module = getModuleConfiguration(role);
                     if (module == null) {
-                        module = new ModuleConfiguration(new ArrayList(), role, null, null);
+                        module = new ModuleConfiguration(new ArrayList<Parameter>(), role, null, null);
                         m_moduleConfigurations.add(module);
                     }
                     if (name.equals("class")) {
@@ -68,7 +77,7 @@ public class ServerConfiguration
                     String id = fullName.substring(10, fullName.lastIndexOf("."));
                     DatastoreConfiguration datastore = getDatastoreConfiguration(id);
                     if (datastore == null) {
-                        datastore = new DatastoreConfiguration(new ArrayList(), id, null);
+                        datastore = new DatastoreConfiguration(new ArrayList<Parameter>(), id, null);
                         m_datastoreConfigurations.add(datastore);
                     }
                     datastore.setParameterValue(name, value, true);

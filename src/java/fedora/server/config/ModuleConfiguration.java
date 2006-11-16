@@ -12,7 +12,7 @@ public class ModuleConfiguration
     private String m_className;
     private String m_comment;
 
-    public ModuleConfiguration(List parameters,
+    public ModuleConfiguration(List<Parameter> parameters,
                                String roleName,
                                String className,
                                String comment) {

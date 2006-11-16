@@ -11,7 +11,7 @@ public class DatastoreConfiguration
     private String m_id;
     private String m_comment;
 
-    public DatastoreConfiguration(List parameters,
+    public DatastoreConfiguration(List<Parameter> parameters,
                                   String id,
                                   String comment) {
         super(parameters);
