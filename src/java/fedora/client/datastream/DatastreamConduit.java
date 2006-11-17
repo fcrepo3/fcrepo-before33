@@ -62,7 +62,9 @@ public class DatastreamConduit {
                                                    String dsLabel, 
                                                    String mimeType, 
                                                    String formatURI,
-                                                   String location, 
+                                                   String location,
+                                                   String checksumType,
+                                                   String checksum,
                                                    String logMessage,
                                                    boolean force)
             throws RemoteException {
@@ -72,7 +74,9 @@ public class DatastreamConduit {
                                              dsLabel, 
                                              mimeType,
                                              formatURI,
-                                             location, 
+                                             location,
+                                             checksumType,
+                                             checksum,
                                              logMessage,
                                              force);
     }
@@ -84,6 +88,8 @@ public class DatastreamConduit {
                                             String mimeType, 
                                             String formatURI,
                                             String location, 
+                                            String checksumType,
+                                            String checksum,
                                             String logMessage,
                                             boolean force)
             throws RemoteException {
@@ -95,6 +101,8 @@ public class DatastreamConduit {
                                     mimeType,
                                     formatURI,
                                     location, 
+                                    checksumType,
+                                    checksum,
                                     logMessage,
                                     force);
     }
@@ -107,6 +115,8 @@ public class DatastreamConduit {
                                                String mimeType,
                                                String formatURI,
                                                byte[] content, 
+                                               String checksumType,
+                                               String checksum,
                                                String logMessage,
                                                boolean force)
             throws RemoteException {
@@ -117,6 +127,8 @@ public class DatastreamConduit {
                                          mimeType,
                                          formatURI,
                                          content, 
+                                         checksumType,
+                                         checksum,
                                          logMessage,
                                          force);
     }
@@ -130,6 +142,8 @@ public class DatastreamConduit {
                                         String formatURI,
                                         byte[] content, 
                                         String state,
+                                        String checksumType,
+                                        String checksum,
                                         String logMessage,
                                         boolean force)
             throws RemoteException {
@@ -141,6 +155,8 @@ public class DatastreamConduit {
                                  mimeType,
                                 formatURI,
                                 content, 
+                                checksumType,
+                                checksum,
                                 logMessage,
                                 force);
     }

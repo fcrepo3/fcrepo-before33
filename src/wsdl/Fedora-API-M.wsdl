@@ -119,6 +119,20 @@
     <part name="parameters" element="fedora-types:setDatastreamVersionableResponse"/>
   </message>
 
+  <message name="setDatastreamChecksumRequest">
+    <part name="parameters" element="fedora-types:setDatastreamChecksum"/>
+  </message>
+  <message name="setDatastreamChecksumResponse">
+    <part name="parameters" element="fedora-types:setDatastreamChecksumResponse"/>
+  </message>
+
+  <message name="compareDatastreamChecksumRequest">
+    <part name="parameters" element="fedora-types:compareDatastreamChecksum"/>
+  </message>
+  <message name="compareDatastreamChecksumResponse">
+    <part name="parameters" element="fedora-types:compareDatastreamChecksumResponse"/>
+  </message>
+
   <message name="setDisseminatorStateRequest">
     <part name="parameters" element="fedora-types:setDisseminatorState"/>
   </message>
@@ -248,6 +262,14 @@
     <operation name="setDatastreamVersionable">
       <input message="fedora-api:setDatastreamVersionableRequest"/>
       <output message="fedora-api:setDatastreamVersionableResponse"/>
+    </operation>
+    <operation name="setDatastreamChecksum">
+      <input message="fedora-api:setDatastreamChecksumRequest"/>
+      <output message="fedora-api:setDatastreamChecksumResponse"/>
+    </operation>
+    <operation name="compareDatastreamChecksum">
+      <input message="fedora-api:compareDatastreamChecksumRequest"/>
+      <output message="fedora-api:compareDatastreamChecksumResponse"/>
     </operation>
     <operation name="setDisseminatorState">
       <input message="fedora-api:setDisseminatorStateRequest"/>
@@ -421,6 +443,24 @@
     </operation>
     <operation name="setDatastreamVersionable">
       <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamVersionable"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="setDatastreamChecksum">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#setDatastreamChecksum"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+    <operation name="compareDatastreamChecksum">
+      <soap:operation style="document" soapAction="http://www.fedora.info/definitions/1/0/api/#compareDatastreamChecksum"/>
       <input>
         <soap:body use="literal"/>
       </input>

@@ -250,7 +250,10 @@ public class DatastreamsPane
         JPanel m_erPane;
         JButton m_erViewButton;
         ContentViewer m_erViewer;
-
+        JPanel m_checksumPanel;
+        JComboBox m_checksumTypeComboBox;
+        JTextField m_checksumValue;
+        
         String m_controlGroup;
         String m_lastSelectedMimeType;
         File m_managedFile;
@@ -290,7 +293,8 @@ public class DatastreamsPane
                                                  new JLabel("MIME Type"),
                                                  new JLabel("Label"),
                                                  new JLabel("Format URI"),
-                                                 new JLabel("Alternate IDs") };
+                                                 new JLabel("Alternate IDs"),
+                                                 new JLabel("Checksum")};
 
             m_stateComboBox=new JComboBox(new String[] {"Active",
                                                         "Inactive",
@@ -356,7 +360,45 @@ public class DatastreamsPane
             m_controlGroupTextArea.setBackground(controlGroupOuterPanel.getBackground());
 
             controlGroupOuterPanel.add(m_controlGroupTextArea, BorderLayout.CENTER);
-
+            m_checksumPanel = new JPanel();
+            m_checksumPanel.setLayout(new BorderLayout());
+            m_checksumTypeComboBox = new JComboBox(new String[] {"Default",
+                                                                 "DISABLED",
+                                                                 "MD5",
+                                                                 "SHA-1",
+                                                                 "SHA-256",
+                                                                 "SHA-384",
+                                                                 "SHA-512"});
+            
+            m_checksumValue = null;
+            m_checksumPanel.add(m_checksumTypeComboBox, BorderLayout.WEST);
+            m_checksumTypeComboBox.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) 
+                {
+                    String csType = m_checksumTypeComboBox.getSelectedItem().toString();
+                    if (csType.equals("Default") || csType.equals("DISABLED")) 
+                    {
+                        if (m_checksumValue != null)
+                        {
+                            m_checksumPanel.remove(m_checksumValue);
+                            m_checksumValue = null;
+                            m_checksumPanel.validate();
+                            m_checksumPanel.repaint();
+                        }
+                    } 
+                    else 
+                    {
+                        if (m_checksumValue != null)
+                        {
+                            m_checksumPanel.remove(m_checksumValue);
+                        }
+                        m_checksumValue = new JTextField("");
+                        m_checksumPanel.add(m_checksumValue, BorderLayout.CENTER);            
+                        m_checksumPanel.validate();
+                    } 
+                }
+            });
+            
             JComponent[] right=new JComponent[] { m_idTextField, 
                                                   controlGroupOuterPanel,
                                                   m_stateComboBox, 
@@ -364,7 +406,8 @@ public class DatastreamsPane
                                                   m_mimeComboBox, 
                                                   m_labelTextField, 
                                                   m_formatURITextField,
-                                                  m_altIDsTextField };
+                                                  m_altIDsTextField, 
+                                                  m_checksumPanel};
 
             JPanel commonPane=new JPanel();
             GridBagLayout grid=new GridBagLayout();
@@ -620,6 +663,11 @@ public class DatastreamsPane
                     } else { // must be E/R
                         location=m_referenceTextField.getText();
                     }
+                    String csType = m_checksumTypeComboBox.getSelectedItem().toString();
+                    String checksum = null;
+                    if (csType.equals("Default"))  csType = null;
+                    else if (csType.equals("DISABLED"))  checksum = null;
+                    else checksum = m_checksumValue.getText();
                     boolean versionable = m_versionableComboBox.getSelectedIndex() == NEW_VERSION_ON_UPDATE ? true : false;
                     String newID = Administrator.APIM.addDatastream(
                                        pid, 
@@ -632,6 +680,7 @@ public class DatastreamsPane
                                        location, 
                                        m_controlGroup, 
                                        m_initialState,
+                                       csType, checksum, // checksum type and checksum
                                        "DatastreamsPane generated this logMessage."); // DEFAULT_LOGMESSAGE
                     addDatastreamTab(newID);
                 } catch (Exception e) {

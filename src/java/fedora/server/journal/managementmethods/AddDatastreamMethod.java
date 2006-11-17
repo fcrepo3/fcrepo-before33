@@ -36,6 +36,8 @@ public class AddDatastreamMethod extends ManagementMethod {
                 .getStringArgument(ARGUMENT_NAME_LOCATION), parent
                 .getStringArgument(ARGUMENT_NAME_CONTROL_GROUP), parent
                 .getStringArgument(ARGUMENT_NAME_DS_STATE), parent
+                .getStringArgument(ARGUMENT_NAME_CHECKSUM_TYPE), parent
+                .getStringArgument(ARGUMENT_NAME_CHECKSUM), parent
                 .getStringArgument(ARGUMENT_NAME_LOG_MESSAGE));
 
         // Store the Datastream ID for writing to the journal.

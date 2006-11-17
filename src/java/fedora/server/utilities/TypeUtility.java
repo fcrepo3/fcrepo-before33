@@ -40,6 +40,8 @@ public abstract class TypeUtility
         out.setSize(in.DSSize);
         out.setState(in.DSState);
         out.setVersionID(in.DSVersionID);
+        out.setChecksum(in.DSChecksum);
+        out.setChecksumType(in.DSChecksumType);
         return out;
     }
 

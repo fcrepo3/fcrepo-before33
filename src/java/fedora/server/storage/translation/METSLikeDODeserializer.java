@@ -116,6 +116,8 @@ public class METSLikeDODeserializer
     private boolean m_dsVersionable;
     private String m_dsFormatURI;
     private String[] m_dsAltIDs;
+    private String m_dsChecksum;
+    private String m_dsChecksumType;
 
     private StringBuffer m_dsXMLBuffer;
 
@@ -342,12 +344,6 @@ public class METSLikeDODeserializer
                     || localName.equals("rightsMD")
                     || localName.equals("digiprovMD")) {
                 m_dsVersId=grab(a, M, "ID");
-                /*String dsVersionable = grab(a, M, "VERSIONABLE");
-                if (dsVersionable!=null) {
-                	m_dsVersionable=new Boolean(grab(a, M, "VERSIONABLE")).booleanValue();
-                } else {
-                	m_dsVersionable = true;
-                }*/
                 if (localName.equals("techMD")) {
                     m_dsMDClass=DatastreamXMLMetadata.TECHNICAL;
                 }
@@ -373,16 +369,15 @@ public class METSLikeDODeserializer
 				m_dsOtherInfoType=grab(a, M, "OTHERMDTYPE");
                 m_dsLabel=grab(a, M, "LABEL");
                 m_dsMimeType=grab(a, M, "MIMETYPE");
-                String formatURI=grab(a, M, "FORMAT_URI");
-                if (formatURI!=null && !formatURI.equals("")) {
-                	m_dsFormatURI=formatURI;
-                }
-				String altIDs = grab(a, M, "ALT_IDS");
+                m_dsFormatURI=grab(a, M, "FORMAT_URI");
+                String altIDs= grab(a, M, "ALT_IDS");
 				if (altIDs.length() == 0) {
 					m_dsAltIDs = new String[0];
 				} else {
 					m_dsAltIDs = altIDs.split(" ");
 				}               
+                m_dsChecksum = grab(a, M, "CHECKSUM");
+                m_dsChecksumType = grab(a, M, "CHECKSUMTYPE");
             } else if (localName.equals("xmlData")) {
                 m_dsXMLBuffer=new StringBuffer();
                 m_xmlDataLevel=0;
@@ -404,6 +399,8 @@ public class METSLikeDODeserializer
                 m_dsAltIDs=new String[0];
                 m_dsState=grab(a,M,"STATUS");
                 m_dsSize=-1;
+                m_dsChecksum="";
+                m_dsChecksumType="";
             } else if (localName.equals("file")) {
                 m_dsVersId=grab(a, M, "ID");
 				String dateString=grab(a, M, "CREATED");
@@ -457,7 +454,9 @@ public class METSLikeDODeserializer
 					m_dsAltIDs = new String[0];
 				} else {
 					m_dsAltIDs = altIDs.split(" ");
-				}                 
+				}  
+				m_dsChecksum = grab(a, M, "CHECKSUM");
+				m_dsChecksumType = grab(a, M, "CHECKSUMTYPE");
                 // inside a "file" element, it's either going to be
                 // FLocat (a reference) or FContent (inline)
             } else if (localName.equals("FLocat")) {
@@ -806,6 +805,28 @@ public class METSLikeDODeserializer
 		ds.DSLocation=m_dsLocation;
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=m_dsInfoType;
+
+		ds.DSChecksumType=m_dsChecksumType;
+        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+                "checksumType = "+ m_dsChecksumType +
+                "checksum = "+ m_dsChecksum);
+        if (m_obj.isNew()) 
+        {
+            if (m_dsChecksum != null && !m_dsChecksum.equals("") && !m_dsChecksum.equals("none"))
+            {
+                String tmpChecksum = ds.getChecksum();
+                System.out.println("checksum = "+ tmpChecksum);
+                if (!m_dsChecksum.equals(tmpChecksum))
+                {
+                    throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
+                }
+            }
+            ds.DSChecksumType=ds.getChecksumType();
+        }
+        else
+        {
+            ds.DSChecksum = m_dsChecksum;
+        }
 		
 		// Normalize the dsLocation for the deserialization context
 		ds.DSLocation=
@@ -832,10 +853,11 @@ public class METSLikeDODeserializer
 		  }
 		}
 		// FINALLY! add the datastream to the digital object instantiation
-		m_obj.datastreams(m_dsId).add(ds);	
+		m_obj.addDatastreamVersion(ds, true);	
 	}
 
-	private void instantiateXMLDatastream(DatastreamXMLMetadata ds) {
+	private void instantiateXMLDatastream(DatastreamXMLMetadata ds) throws SAXException 
+    {
 		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
@@ -857,6 +879,7 @@ public class METSLikeDODeserializer
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=m_dsInfoType; // METS only
 		ds.DSMDClass=m_dsMDClass;   // METS only
+		ds.DSChecksumType=m_dsChecksumType;
 		
 		// now set the xml content stream itself...
 		try {
@@ -880,8 +903,29 @@ public class METSLikeDODeserializer
 			System.out.println("Error processing inline xml content in SAX parse: " 
 				+ uee.getMessage());
 		}				
+        
+        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+                "checksumType = "+ m_dsChecksumType +
+                "checksum = "+ m_dsChecksum);
+        if (m_obj.isNew()) 
+        {
+            if (m_dsChecksum != null && !m_dsChecksum.equals("") && !m_dsChecksum.equals("none"))
+            {
+                String tmpChecksum = ds.getChecksum();
+                System.out.println("checksum = "+ tmpChecksum);
+                if (!m_dsChecksum.equals(tmpChecksum))
+                {
+                    throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
+                }
+            }
+            ds.DSChecksumType=ds.getChecksumType();
+        }
+        else
+        {
+            ds.DSChecksum = m_dsChecksum;
+        }
 		// FINALLY! add the xml datastream to the digitalObject
-		m_obj.datastreams(m_dsId).add(ds);  	
+		m_obj.addDatastreamVersion(ds, true);  	
 	}
 
 
@@ -1147,6 +1191,8 @@ public class METSLikeDODeserializer
 		m_dsXMLBuffer=null;
 		m_dsADMIDs=new HashMap();
 		m_dsDMDIDs=new HashMap();
+		m_dsChecksum="";
+		m_dsChecksumType="";
 		
 		// temporary variables for processing disseminators
 		m_diss=null;

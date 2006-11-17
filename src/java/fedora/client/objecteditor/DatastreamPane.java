@@ -277,6 +277,14 @@ public class DatastreamPane
             return "External Reference";
         }
     }
+    
+    public static String getFormattedChecksumTypeAndChecksum(Datastream m_ds)
+    {
+        if (m_ds.getChecksumType() == null || m_ds.getChecksumType().equals("") || m_ds.getChecksumType().equals("none")) return("");
+        if (m_ds.getChecksumType().equals("DISABLED")) return("DISABLED");
+        return(m_ds.getChecksumType() + ": " + m_ds.getChecksum());
+    }
+    
 
     public void saveChanges(String logMessage) throws Exception 
     {
@@ -473,6 +481,8 @@ public class DatastreamPane
 			altIDsLabel.setPreferredSize(m_labelDims);
             JLabel urlLabel=new JLabel("Fedora URL");
             urlLabel.setPreferredSize(m_labelDims);
+            JLabel checksumLabel=new JLabel("Checksum");
+            checksumLabel.setPreferredSize(m_labelDims);
             JLabel[] labels;
             if (R || E) {
                 JLabel locationLabel=new JLabel("Location");
@@ -483,7 +493,8 @@ public class DatastreamPane
                     					 formatURILabel,
 										 altIDsLabel, 
                     					 locationLabel, 
-                    					 urlLabel};
+                    					 urlLabel,
+                                         checksumLabel};
                 } else {
                     labels=new JLabel[] {new JLabel("Created"), 
                     					 labelLabel,
@@ -491,7 +502,8 @@ public class DatastreamPane
                     					 formatURILabel,
                     					 altIDsLabel, 
                     					 locationLabel, 
-                    					 urlLabel};
+                    					 urlLabel,
+                                         checksumLabel};
                 }
             } else {
                 if (m_versionSlider!=null) {
@@ -499,14 +511,16 @@ public class DatastreamPane
 										 MIMELabel,
 										 formatURILabel,
                     					 altIDsLabel, 
-                    					 urlLabel};
+                    					 urlLabel,
+                                         checksumLabel};
                 } else {
                     labels=new JLabel[] {new JLabel("Created"), 
                     					 labelLabel,
                     					 MIMELabel, 
                     					 formatURILabel,
                     					 altIDsLabel, 
-                    					 urlLabel};
+                    					 urlLabel,
+                                         checksumLabel};
                 }
             }
             // set up text fields for ds attributes at version level
@@ -540,6 +554,9 @@ public class DatastreamPane
             // Fedora URL text field
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, false));
             urlTextField.setEditable(false);  // so they can copy, but not modify
+            // Datastream checksum field
+            JTextField checksumTextField=new JTextField(getFormattedChecksumTypeAndChecksum(m_ds));
+            checksumTextField.setEditable(false);  // so they can copy, but not modify
 			// ds location URL text field (R and E datastreams only)
             if (R || E) {
                 m_locationTextField=new JTextField(m_ds.getLocation());
@@ -554,7 +571,8 @@ public class DatastreamPane
                     						 m_formatURITextField,
                     						 m_altIDsTextField, 
                                              m_locationTextField, 
-                                             urlTextField};
+                                             urlTextField,
+                                             checksumTextField};
                                              
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
@@ -566,7 +584,8 @@ public class DatastreamPane
                                              m_formatURITextField,
 											 m_altIDsTextField,  
                                              m_locationTextField, 
-                                             urlTextField};
+                                             urlTextField,
+                                             checksumTextField};
                 }
             } else {
                 if (m_versionSlider!=null) {
@@ -574,7 +593,8 @@ public class DatastreamPane
 											 m_MIMETextField,
                     						 m_formatURITextField,
 											 m_altIDsTextField, 
-                                             urlTextField};
+                                             urlTextField,
+                                             checksumTextField};
                 } else {
                     JTextArea cDateTextArea=new JTextArea(m_ds.getCreateDate());
                     cDateTextArea.setBackground(Administrator.BACKGROUND_COLOR);
@@ -584,7 +604,8 @@ public class DatastreamPane
 											 m_MIMETextField,
                                              m_formatURITextField,
 											 m_altIDsTextField,  
-                                             urlTextField};
+                                             urlTextField,
+                                             checksumTextField};
                 }
             }
 
@@ -811,6 +832,7 @@ public class DatastreamPane
 	                                                       mimeType,
 	                                                       formatURI,
 			                                               content, 
+                                                           null, null, // checksum type and checksum
 			                                               logMessage, 
 	                                                       force);
 			} else if (M) {
@@ -830,6 +852,7 @@ public class DatastreamPane
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           loc, 
+                                                               null, null, // checksum type and checksum
 	                                                           logMessage, 
 	                                                           force);
 	        } else {
@@ -841,7 +864,8 @@ public class DatastreamPane
 	                                                           mimeType,
 	                                                           formatURI,
 	                                                           m_locationTextField.getText(), 
-	                                                           logMessage, 
+                                                               null, null, // checksum type and checksum
+                                                               logMessage, 
 	                                                           force);
 			}
 	    }
@@ -989,18 +1013,23 @@ public class DatastreamPane
             urlLabel.setPreferredSize(m_labelDims);
             JTextField urlTextField=new JTextField(getFedoraURL(m_ds, true));
             urlTextField.setEditable(false);  // so they can copy, but not modify
+            // Datastream checksum field
+            JLabel checksumLabel=new JLabel("Checksum");
+            checksumLabel.setPreferredSize(m_labelDims);
+            JTextField checksumTextField=new JTextField(getFormattedChecksumTypeAndChecksum(m_ds));
+            checksumTextField.setEditable(false);  // so they can copy, but not modify
 
             JLabel[] labels;
             JComponent[] values;
             if (E || R) {
-                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, new JLabel("Location"), urlLabel};
+                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, new JLabel("Location"), urlLabel, checksumLabel};
                 JTextField refValue=new JTextField();
                 refValue.setText(ds.getLocation());
                 refValue.setEditable(false);
-                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, refValue, urlTextField};
+                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, refValue, urlTextField, checksumTextField};
             } else {
-                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, urlLabel};
-                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, urlTextField};
+                labels=new JLabel[] {labelLabel, MIMELabel, formatURILabel, altIDsLabel, urlLabel, checksumLabel};
+                values=new JComponent[] {labelValue, MIMEValue, formatURIValue, altIDsValue, urlTextField, checksumTextField};
             }
 
             JPanel fieldPanel=new JPanel();

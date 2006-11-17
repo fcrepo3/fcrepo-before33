@@ -291,6 +291,8 @@
         <element name="dsLocation" type="xsd:string"/>
         <element name="controlGroup" type="xsd:string"/>
         <element name="dsState" type="xsd:string"/>
+        <element name="checksumType" type="xsd:string"/>
+        <element name="checksum" type="xsd:string"/>
         <element name="logMessage" type="xsd:string"/>
       </sequence>
     </complexType>
@@ -349,6 +351,8 @@
         <element name="MIMEType" type="xsd:string"/>
         <element name="formatURI" type="xsd:string"/>
         <element name="dsLocation" type="xsd:string"/>
+        <element name="checksumType" type="xsd:string"/>
+        <element name="checksum" type="xsd:string"/>
         <element name="logMessage" type="xsd:string"/>
         <element name="force" type="xsd:boolean"/>
       </sequence>
@@ -372,6 +376,8 @@
         <element name="MIMEType" type="xsd:string"/>
         <element name="formatURI" type="xsd:string"/>
         <element name="dsContent" type="xsd:base64Binary"/>
+        <element name="checksumType" type="xsd:string"/>
+        <element name="checksum" type="xsd:string"/>
         <element name="logMessage" type="xsd:string"/>
         <element name="force" type="xsd:boolean"/>
       </sequence>
@@ -439,6 +445,40 @@
     <complexType>
       <sequence>
         <element name="modifiedDate" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  
+  <element name="setDatastreamChecksum">
+    <complexType>
+      <sequence>
+        <element name="pid" type="xsd:string"/>
+        <element name="dsID" type="xsd:string"/>
+        <element name="checksumType" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="setDatastreamChecksumResponse">
+    <complexType>
+      <sequence>
+        <element name="checksum" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  
+  <element name="compareDatastreamChecksum">
+    <complexType>
+      <sequence>
+        <element name="pid" type="xsd:string"/>
+        <element name="dsID" type="xsd:string"/>
+        <element name="versionDate" nillable="true" type="xsd:string"/>
+      </sequence>
+    </complexType>
+  </element>
+  <element name="compareDatastreamChecksumResponse">
+    <complexType>
+      <sequence>
+        <element name="checksum" type="xsd:string"/>
       </sequence>
     </complexType>
   </element>
@@ -666,6 +706,8 @@
       <element name="size" type="xsd:long"/>
       <element name="state" type="xsd:string"/>
       <element name="location" nillable="true" type="xsd:string"/>
+      <element name="checksumType" nillable="true" type="xsd:string"/>
+      <element name="checksum" nillable="true" type="xsd:string"/>
     </sequence>
   </complexType>
 

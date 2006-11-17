@@ -148,7 +148,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public String addDatastream(Context context, String pid, String dsID,
             String[] altIDs, String dsLabel, boolean versionable,
             String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String logMessage)
+            String controlGroup, String dsState, String checksumType,
+            String checksum, String logMessage)
             throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
@@ -163,8 +164,10 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_LOCATION, location);
             cje.addArgument(ARGUMENT_NAME_CONTROL_GROUP, controlGroup);
             cje.addArgument(ARGUMENT_NAME_DS_STATE, dsState);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, checksumType);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
-            return (String) cje.invokeMethod(delegate, writer);
+                 return (String) cje.invokeMethod(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }
@@ -175,7 +178,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
      */
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            String mimeType, String formatURI, InputStream dsContent, 
+            String mimeType, String formatURI, InputStream dsContent,
+            String checksumType, String checksum, 
             String logMessage, boolean force) throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
@@ -187,6 +191,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_MIME_TYPE, mimeType);
             cje.addArgument(ARGUMENT_NAME_FORMAT_URI, formatURI);
             cje.addArgument(ARGUMENT_NAME_DS_CONTENT, dsContent);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, checksumType);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
             return (Date) cje.invokeMethod(delegate, writer);
@@ -201,6 +207,7 @@ public class JournalCreator implements JournalWorker, JournalConstants {
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
             String mimeType, String formatURI, String dsLocation, 
+            String checksumType, String checksum, 
             String logMessage, boolean force) throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(
@@ -212,6 +219,8 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_MIME_TYPE, mimeType);
             cje.addArgument(ARGUMENT_NAME_FORMAT_URI, formatURI);
             cje.addArgument(ARGUMENT_NAME_DS_LOCATION, dsLocation);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, checksumType);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM, checksum);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             cje.addArgument(ARGUMENT_NAME_FORCE, force);
             return (Date) cje.invokeMethod(delegate, writer);
@@ -252,6 +261,40 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             cje.addArgument(ARGUMENT_NAME_VERSIONABLE, versionable);
             cje.addArgument(ARGUMENT_NAME_LOG_MESSAGE, logMessage);
             return (Date) cje.invokeMethod(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+    }
+    /**
+     * Create a journal entry, add the arguments, and invoke the method.
+     */
+    public String setDatastreamChecksum(Context context, String pid, 
+            String dsID, String algorithm) 
+            throws ServerException {
+        try {
+            CreatorJournalEntry cje = new CreatorJournalEntry(
+                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
+            cje.addArgument(ARGUMENT_NAME_PID, pid);
+            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
+            cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, algorithm);
+            return (String) cje.invokeMethod(delegate, writer);
+        } catch (JournalException e) {
+            throw new GeneralException("Problem creating the Journal", e);
+        }
+    }
+    /**
+     * Create a journal entry, add the arguments, and invoke the method.
+     */
+    public String compareDatastreamChecksum(Context context, String pid, 
+            String dsID, String versionDate) 
+            throws ServerException {
+        try {
+            CreatorJournalEntry cje = new CreatorJournalEntry(
+                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
+            cje.addArgument(ARGUMENT_NAME_PID, pid);
+            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
+            cje.addArgument(ARGUMENT_NAME_VERSION_DATE, versionDate);
+            return (String) cje.invokeMethod(delegate, writer);
         } catch (JournalException e) {
             throw new GeneralException("Problem creating the Journal", e);
         }

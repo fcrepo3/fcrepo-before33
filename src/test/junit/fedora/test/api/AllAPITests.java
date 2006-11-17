@@ -1,5 +1,6 @@
 package fedora.test.api;
 
+import fedora.test.integration.TestCommandLineUtilities;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -20,6 +21,7 @@ public class AllAPITests {
         suite.addTest(TestAPIM.suite());
         suite.addTest(TestAPIMLite.suite());
         suite.addTest(TestXACMLPolicies.suite());
+        suite.addTest(TestCommandLineUtilities.suite());
         return suite;
     }
 }

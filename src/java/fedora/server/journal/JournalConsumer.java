@@ -143,7 +143,8 @@ public class JournalConsumer implements JournalWorker {
     public String addDatastream(Context context, String pid, String dsID,
             String[] altIDs, String dsLabel, boolean versionable,
             String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String logMessage)
+            String controlGroup, String dsState, String checksumType, 
+            String checksum, String logMessage)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
@@ -154,7 +155,8 @@ public class JournalConsumer implements JournalWorker {
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
             String mimeType, String formatURI, String dsLocation, 
-            String logMessage, boolean force)
+            String checksumType, String checksum, String logMessage, 
+            boolean force)
             throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
@@ -165,7 +167,9 @@ public class JournalConsumer implements JournalWorker {
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
             String mimeType, String formatURI, InputStream dsContent, 
-            String logMessage, boolean force) throws ServerException {
+            String checksumType, String checksum, String logMessage, 
+            boolean force)
+            throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }
 
@@ -283,6 +287,24 @@ public class JournalConsumer implements JournalWorker {
      */
     public Date setDatastreamVersionable(Context context, String pid, 
             String dsID, boolean versionable, String logMessage) 
+        throws ServerException {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+
+    /**
+     * Reject API calls from outside while we are in recovery mode.
+     */
+    public String setDatastreamChecksum(Context context, String pid, 
+            String dsID, String algorithm) 
+        throws ServerException {
+        throw rejectCallsFromOutsideWhileInRecoveryMode();
+    }
+
+    /**
+     * Reject API calls from outside while we are in recovery mode.
+     */
+    public String compareDatastreamChecksum(Context context, String pid, 
+            String dsID, String versionDate) 
         throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }

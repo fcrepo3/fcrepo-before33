@@ -230,6 +230,15 @@ public class FOXMLDOSerializer
 					+ formatURIAttr
 					+ " SIZE=\"" + vds.DSSize +  "\">\n");
 			
+                // FIXME: In future release, add digest of datastream content.
+                // First we need to decide how the digest is managed.  Is it
+                // automatically calculated by DefaultManagement during API-M
+                // operations?  What purposes will it serve?  This is part of
+                // Fedora Phase II. 
+                
+                buf.append("            <" + FOXML_PREFIX + ":contentDigest TYPE=\""+ vds.getChecksumType() +"\""
+                    + " DIGEST=\"" + vds.getChecksum() + "\"/>\n");
+                
 				// if E or R insert ds content location as URL
 				if (vds.DSControlGrp.equalsIgnoreCase("E") ||
 					vds.DSControlGrp.equalsIgnoreCase("R") ) {
@@ -264,15 +273,6 @@ public class FOXMLDOSerializer
 					appendInlineXML(obj.getFedoraObjectType(), 
 						(DatastreamXMLMetadata)vds, buf, encoding);
 				}					
-				// FIXME: In future release, add digest of datastream content.
-				// First we need to decide how the digest is managed.  Is it
-				// automatically calculated by DefaultManagement during API-M
-				// operations?  What purposes will it serve?  This is part of
-				// Fedora Phase II. 
-				/*
-				buf.append("            <" + FOXML_PREFIX + ":contentDigest TYPE=\"MD5\""
-					+ " DIGEST=\"future: hash of content goes here\"/>\n");
-				*/
 					 
 				buf.append("        </" + FOXML_PREFIX + ":datastreamVersion>\n");
 				// if it's the last version, wrap-up with closing datastream element.	

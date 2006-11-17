@@ -320,6 +320,8 @@ public class DefaultManagement
                                 String dsLocation,
                                 String controlGroup,
                                 String dsState,
+                                String checksumType,
+                                String checksum,
                                 String logMessage) throws ServerException {
 
         // empty MIME types are allowed.  assume they meant "" if they provide it as null.
@@ -432,6 +434,19 @@ public class DefaultManagement
 			ds.DSFormatURI=formatURI;
 			ds.DatastreamAltIDs = altIDs;
 			ds.DSMIME=MIMEType;
+            ds.DSChecksumType = checksumType;
+            if (checksumType == null)
+            {
+                ds.DSChecksumType = Datastream.getDefaultChecksumType();
+            }
+            if (checksum != null && checksumType != null)
+            {
+                String check = ds.getChecksum();
+                if (!checksum.equals(check))
+                {
+                    throw new ValidationException("Checksum Mismatch: " + check);
+                }
+            }
 			Date nowUTC = Server.getCurrentDate(context);
 			ds.DSCreateDT=nowUTC;
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
@@ -535,6 +550,8 @@ public class DefaultManagement
                                             String mimeType,
                                             String formatURI,
                                             String dsLocation, 
+                                            String checksumType,
+                                            String checksum, 
                                             String logMessage,
                                             boolean force)
             throws ServerException {
@@ -638,6 +655,19 @@ public class DefaultManagement
                 ValidationUtility.validateURL(dsLocation, false);
             }
 			newds.DSLocation=dsLocation;
+            newds.DSChecksumType = checksumType;
+            if (checksumType == null)
+            {
+                newds.DSChecksumType = Datastream.getDefaultChecksumType();
+            }
+            if (checksum != null && checksumType != null)
+            {
+                String check = newds.getChecksum();
+                if (!checksum.equals(check))
+                {
+                    throw new ValidationException("Checksum Mismatch: " + check);
+                }
+            }
 			
 			// next, add the datastream via the object writer
 			w.addDatastream(newds, orig.DSVersionable);
@@ -679,6 +709,8 @@ public class DefaultManagement
                                         String mimeType,
                                         String formatURI,
                                         InputStream dsContent,
+                                        String checksumType,
+                                        String checksum, 
                                         String logMessage,
                                         boolean force)
             throws ServerException {
@@ -780,6 +812,19 @@ public class DefaultManagement
 			Date nowUTC = Server.getCurrentDate(context);
 			newds.DSCreateDT=nowUTC;
 			
+            newds.DSChecksumType = checksumType;
+            if (checksumType == null)
+            {
+                newds.DSChecksumType = Datastream.getDefaultChecksumType();
+            }
+            if (checksum != null && checksumType != null)
+            {
+                String check = newds.getChecksum();
+                if (!checksum.equals(check))
+                {
+                    throw new ValidationException("Checksum Mismatch: " + check);
+                }
+            }
             // next, add the datastream via the object writer
             w.addDatastream(newds, orig.DSVersionable);
 						
@@ -1446,47 +1491,129 @@ public class DefaultManagement
     }
 
     public Date setDatastreamVersionable(Context context,   
-             String pid,     
-             String datastreamID,    
-             boolean versionable,    
-             String logMessage)      
-             throws ServerException      
+            String pid,     
+            String datastreamID,    
+            boolean versionable,    
+            String logMessage)      
+            throws ServerException      
     {   
-        DOWriter w=null;    
-        try {   
-            getServer().logFinest("Entered DefaultManagement.setDatastreamVersionable");      
-    
-            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context, pid, datastreamID, versionable);   
-    
-            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
-            fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
-            w.setDatastreamVersionable(datastreamID, versionable);      
-    
-            // add the audit record     
-            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
-            audit.id=w.newAuditRecordID();      
-            audit.processType="Fedora API-M";   
-            audit.action="setDatastreamVersionable";    
-            audit.componentID=datastreamID;     
-            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
-            Date nowUTC=new Date();     
-            audit.date=nowUTC;      
-            audit.justification=logMessage;     
-            w.getAuditRecords().add(audit);     
-    
-            // if all went ok, commit   
-            w.commit(logMessage);   
-            return nowUTC;      
-        }   
-        finally     
-        {   
-            if (w!=null)    
-             {   
-                m_manager.releaseWriter(w);     
-            }   
-            getServer().logFinest("Exiting DefaultManagement.setDatastreamVersionable");    
-        }   
+       DOWriter w=null;    
+       try {   
+           getServer().logFinest("Entered DefaultManagement.setDatastreamVersionable");      
+   
+           m_fedoraXACMLModule.enforceSetDatastreamVersionable(context, pid, datastreamID, versionable);   
+   
+           w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
+           fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
+           w.setDatastreamVersionable(datastreamID, versionable);      
+   
+           // add the audit record     
+           fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
+           audit.id=w.newAuditRecordID();      
+           audit.processType="Fedora API-M";   
+           audit.action="setDatastreamVersionable";    
+           audit.componentID=datastreamID;     
+           audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
+           Date nowUTC=new Date();     
+           audit.date=nowUTC;      
+           audit.justification=logMessage;     
+           w.getAuditRecords().add(audit);     
+   
+           // if all went ok, commit   
+           w.commit(logMessage);   
+           return nowUTC;      
+       }   
+       finally     
+       {   
+           if (w!=null)    
+            {   
+               m_manager.releaseWriter(w);     
+           }   
+           getServer().logFinest("Exiting DefaultManagement.setDatastreamVersionable");    
+       }   
     }
+    
+    public String setDatastreamChecksum(Context context,   
+                                        String pid,     
+                                        String datastreamID,    
+                                        String algorithm)      
+                                        throws ServerException      
+    {   
+       DOWriter w=null;    
+       try {   
+           getServer().logFinest("Entered DefaultManagement.setDatastreamChecksum");      
+   
+ //          m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
+   
+           w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
+           fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
+           String checksum = ds.setChecksum(algorithm);
+   
+           // add the audit record     
+           fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
+           audit.id=w.newAuditRecordID();      
+           audit.processType="Fedora API-M";   
+           audit.action="setDatastreamChecksum";    
+           audit.componentID=datastreamID;     
+           audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
+           Date nowUTC=new Date();     
+           audit.date=nowUTC;      
+           w.getAuditRecords().add(audit);     
+   
+           // if all went ok, commit   
+           w.commit("Setting Checksum");   
+           return checksum;      
+       }   
+       finally     
+       {   
+           if (w!=null)    
+            {   
+               m_manager.releaseWriter(w);     
+           }   
+           getServer().logFinest("Exiting DefaultManagement.setDatastreamChecksum");    
+       }   
+    }
+    
+    public String compareDatastreamChecksum(Context context,   
+            String pid,     
+            String datastreamID,    
+            String versionDateStr)      
+            throws ServerException      
+    {   
+       DOReader r = null;    
+       try {   
+           getServer().logFinest("Entered DefaultManagement.compareDatastreamChecksum");      
+   
+//           m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionable);   
+   
+           DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+           Date versionDate = null;
+           if (versionDateStr != null)
+           {
+               try
+               {
+                   versionDate = fmt.parse(versionDateStr);
+               }
+               catch (ParseException e)
+               {
+                    // ignore, just use null;
+               }
+           }
+           System.out.println("Getting Reader");
+           r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);   
+           System.out.println("Getting datastream:" + datastreamID + "date: "+ versionDate);
+           Datastream ds = r.GetDatastream(datastreamID, versionDate);      
+           System.out.println("Got Datastream, comparing checksum");
+           boolean check = ds.compareChecksum();      
+           System.out.println("compared checksum = " + check);
+      
+           return check ? ds.getChecksum() : "Checksum validation error";      
+       }   
+       finally     
+       {   
+           getServer().logFinest("Exiting DefaultManagement.compareDatastreamChecksum");    
+       }   
+   }
 
     public Date setDisseminatorState(Context context, 
                                      String pid, 

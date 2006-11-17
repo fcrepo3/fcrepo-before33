@@ -192,11 +192,12 @@ public class Journaller extends Module implements Management, JournalConstants {
     public String addDatastream(Context context, String pid, String dsID,
             String[] altIDs, String dsLabel, boolean versionable,
             String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String logMessage)
+            String controlGroup, String dsState, String checksumType,
+            String checksum, String logMessage)
             throws ServerException {
         return worker.addDatastream(context, pid, dsID, altIDs, dsLabel,
                 versionable, MIMEType, formatURI, location, controlGroup,
-                dsState, logMessage);
+                dsState, checksumType, checksum, logMessage);
     }
 
     /**
@@ -205,10 +206,11 @@ public class Journaller extends Module implements Management, JournalConstants {
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
             String mimeType, String formatURI, String dsLocation, 
+            String checksumType, String checksum, 
             String logMessage, boolean force) throws ServerException {
         return worker.modifyDatastreamByReference(context, pid, datastreamID,
-                altIDs, dsLabel, mimeType, formatURI, dsLocation, logMessage, 
-                force);
+                altIDs, dsLabel, mimeType, formatURI, dsLocation, checksumType,
+                checksum, logMessage, force);
     }
 
     /**
@@ -217,10 +219,11 @@ public class Journaller extends Module implements Management, JournalConstants {
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
             String mimeType, String formatURI, InputStream dsContent, 
+            String checksumType, String checksum, 
             String logMessage, boolean force) throws ServerException {
         return worker.modifyDatastreamByValue(context, pid, datastreamID,
-                altIDs, dsLabel, mimeType, formatURI, dsContent, logMessage, 
-                force);
+                altIDs, dsLabel, mimeType, formatURI, dsContent, checksumType,
+                checksum, logMessage, force);
     }
 
     /**
@@ -346,6 +349,26 @@ public class Journaller extends Module implements Management, JournalConstants {
             throws ServerException {
         return worker.setDatastreamVersionable(context, pid, dsID,
                 versionable, logMessage);
+    }
+    
+    /**
+     * Delegate to the JournalWorker.
+     */
+    public String setDatastreamChecksum(Context context, String pid, 
+            String dsID, String algorithm) 
+            throws ServerException {
+        return worker.setDatastreamChecksum(context, pid, dsID,
+                algorithm);
+    }
+    
+    /**
+     * Delegate to the JournalWorker.
+     */
+    public String compareDatastreamChecksum(Context context, String pid, 
+            String dsID, String versionDate) 
+            throws ServerException {
+        return worker.compareDatastreamChecksum(context, pid, dsID,
+                versionDate);
     }
 
     /**

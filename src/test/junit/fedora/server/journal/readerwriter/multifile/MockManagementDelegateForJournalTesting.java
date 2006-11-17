@@ -88,7 +88,8 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
     public String addDatastream(Context context, String pid, String dsID,
             String[] altIDs, String dsLabel, boolean versionable,
             String MIMEType, String formatURI, String location,
-            String controlGroup, String dsState, String logMessage)
+            String controlGroup, String dsState, String checksumType,
+            String checksum, String logMessage)
             throws ServerException {
         throw new RuntimeException(
                 "MockManagementDelegateForJournalTesting.addDatastream not implemented"); // KLUGE
@@ -97,8 +98,9 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 
     public Date modifyDatastreamByReference(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            String dsLocation, String dsState, String logMessage, boolean force)
+            String mimeType, String formatURI, String dsLocation, 
+            String checksumType, String checksum, String logMessage,
+            boolean force)
             throws ServerException {
         throw new RuntimeException(
                 "MockManagementDelegateForJournalTesting.modifyDatastreamByReference not implemented"); // KLUGE
@@ -107,9 +109,10 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 
     public Date modifyDatastreamByValue(Context context, String pid,
             String datastreamID, String[] altIDs, String dsLabel,
-            boolean versionable, String mimeType, String formatURI,
-            InputStream dsContent, String dsState, String logMessage,
-            boolean force) throws ServerException {
+            String mimeType, String formatURI,InputStream dsContent,
+            String checksumType, String checksum, String logMessage,
+            boolean force) 
+            throws ServerException {
         throw new RuntimeException(
                 "MockManagementDelegateForJournalTesting.modifyDatastreamByValue not implemented"); // KLUGE
 
@@ -249,5 +252,15 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 		// TODO Auto-generated method stub
 		return null;
 	}
+    
+    public String setDatastreamChecksum(Context context, String pid, String dsID, String algorithm) throws ServerException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+    
+    public String compareDatastreamChecksum(Context context, String pid, String dsID, String versionDate) throws ServerException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }

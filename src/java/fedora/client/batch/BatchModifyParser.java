@@ -1008,6 +1008,8 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsLocation, 
                                 m_ds.dsControlGrp, 
                                 m_ds.dsState, 
+                                null, 
+                                null, 
                                 m_ds.logMessage);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
                             	 m_ds.dsControlGrp.equalsIgnoreCase("M") ||
@@ -1021,7 +1023,9 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.formatURI,
                                 m_ds.dsLocation, 
                                 m_ds.dsControlGrp, 
-                                m_ds.dsState, 
+                                m_ds.dsState,
+                                null,
+                                null,
                                 m_ds.logMessage);
                     }
                     if (datastreamID!=null) {
@@ -1093,7 +1097,9 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.altIDs, m_ds.dsLabel,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
-                                m_ds.xmlContent, 
+                                m_ds.xmlContent,
+                                null, 
+                                null,
                                 m_ds.logMessage, 
                                 m_ds.force);
                     } else if (m_ds.dsControlGrp.equalsIgnoreCase("E") ||
@@ -1104,7 +1110,9 @@ public class BatchModifyParser extends DefaultHandler
                                 m_ds.dsLabel,
                                 m_ds.dsMIME,
                                 m_ds.formatURI,
-                                m_ds.dsLocation, 
+                                m_ds.dsLocation,
+                                null,
+                                null,
                                 m_ds.logMessage,
                                 m_ds.force);
                     }

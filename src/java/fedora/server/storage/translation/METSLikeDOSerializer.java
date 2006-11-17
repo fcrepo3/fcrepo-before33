@@ -244,12 +244,24 @@ public class METSLikeDOSerializer
 			if (altIds!=null && !altIds.equals("")) {
 				altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
 			}
+			// CHECKSUM attribute is optional so check in non-empty
+            String checksumAttr = "";
+            if(ds.DSChecksum!=null && !ds.DSChecksum.equals("")) {
+            	checksumAttr=" CHECKSUM=\"" + StreamUtility.enc(ds.DSChecksum) + "\"";
+            }
+			// CHECKSUMTYPE attribute is optional so check in non-empty
+            String checksumTypeAttr = "";
+            if(ds.DSChecksumType!=null && !ds.DSChecksumType.equals("")) {
+            	checksumTypeAttr=" CHECKSUMTYPE=\"" + StreamUtility.enc(ds.DSChecksumType) + "\"";
+            }			            
             buf.append("      <" + METS_PREFIX + ":mdWrap MIMETYPE=\"" + StreamUtility.enc(ds.DSMIME) + "\""
                     + " MDTYPE=\"" + mdType + "\"" 
                     + otherAttr
                     + labelAttr
                     + formatURIAttr
                     + altIdsAttr
+                    + checksumAttr
+                    + checksumTypeAttr
                     + ">\n");
             buf.append("        <" + METS_PREFIX + ":xmlData>\n");
             
@@ -439,12 +451,24 @@ public class METSLikeDOSerializer
     				if (altIds!=null && !altIds.equals("")) {
     					altIdsAttr=" ALT_IDS=\"" + StreamUtility.enc(altIds) + "\"";
     				}
+    				// CHECKSUM attribute is optional so check in non-empty
+    	            String checksumAttr = "";
+    	            if(ds.DSChecksum!=null && !ds.DSChecksum.equals("")) {
+    	            	checksumAttr=" CHECKSUM=\"" + StreamUtility.enc(ds.DSChecksum) + "\"";
+    	            }
+    				// CHECKSUMTYPE attribute is optional so check in non-empty
+    	            String checksumTypeAttr = "";
+    	            if(ds.DSChecksumType!=null && !ds.DSChecksumType.equals("")) {
+    	            	checksumTypeAttr=" CHECKSUMTYPE=\"" + StreamUtility.enc(ds.DSChecksumType) + "\"";
+    	            }    				
                     buf.append("        <" + METS_PREFIX + ":file ID=\"" + dsc.DSVersionID + "\"" 
                     		+ dateAttr
                             + " MIMETYPE=\"" + StreamUtility.enc(dsc.DSMIME) + "\"" 
                             + sizeAttr
                             + formatURIAttr
                             + altIdsAttr
+                            + checksumAttr
+                            + checksumTypeAttr
                             + " OWNERID=\"" + dsc.DSControlGrp 
                             + "\">\n");
 				    if (m_transContext==DOTranslationUtility.SERIALIZE_EXPORT_ARCHIVE &&

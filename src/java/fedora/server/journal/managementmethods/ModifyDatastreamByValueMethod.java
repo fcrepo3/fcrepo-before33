@@ -34,6 +34,8 @@ public class ModifyDatastreamByValueMethod extends ManagementMethod {
                 .getStringArgument(ARGUMENT_NAME_MIME_TYPE), parent
                 .getStringArgument(ARGUMENT_NAME_FORMAT_URI), parent
                 .getStreamArgument(ARGUMENT_NAME_DS_CONTENT), parent
+                .getStringArgument(ARGUMENT_NAME_CHECKSUM_TYPE), parent
+                .getStringArgument(ARGUMENT_NAME_CHECKSUM), parent
                 .getStringArgument(ARGUMENT_NAME_LOG_MESSAGE), parent
                 .getBooleanArgument(ARGUMENT_NAME_FORCE));
     }

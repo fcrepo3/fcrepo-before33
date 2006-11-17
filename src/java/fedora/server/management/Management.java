@@ -63,6 +63,8 @@ public interface Management {
                                    String location,
                                    String controlGroup,
                                    String dsState,
+                                   String checksumType,
+                                   String checksum,
                                    String logMessage) throws ServerException;
 
     public Date modifyDatastreamByReference(Context context, 
@@ -73,6 +75,8 @@ public interface Management {
                                             String mimeType,
                                             String formatURI,
                                             String dsLocation, 
+                                            String checksumType,
+                                            String checksum,
                                             String logMessage, 
                                             boolean force) throws ServerException;
 
@@ -84,6 +88,8 @@ public interface Management {
                                         String mimeType,
                                         String formatURI,
                                         InputStream dsContent, 
+                                        String checksumType,
+                                        String checksum,
                                         String logMessage,
                                         boolean force) throws ServerException;
 
@@ -163,6 +169,16 @@ public interface Management {
                                         String dsID, 
                                         boolean versionable, 
                                         String logMessage) throws ServerException;
+
+    public String setDatastreamChecksum(Context context, 
+                                        String pid, 
+                                        String dsID, 
+                                        String algorithm) throws ServerException;
+
+    public String compareDatastreamChecksum(Context context, 
+                                            String pid, 
+                                            String dsID, 
+                                            String versionDate) throws ServerException;
 
     public Date setDisseminatorState(Context context,
                                      String pid, 

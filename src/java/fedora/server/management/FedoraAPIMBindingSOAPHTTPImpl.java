@@ -301,6 +301,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                 String location,
                                 String controlGroup,
                                 String dsState,
+                                String checksumType,
+                                String checksum,
                                 String logMessage) throws RemoteException {
     	logger.debug("start: addDatastream, " + pid + ", " + dsID);
         assertInitialized();
@@ -316,6 +318,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                  location,
                                                  controlGroup,
                                                  dsState,
+                                                 checksumType,
+                                                 checksum,
                                                  logMessage);
         } catch (AuthzException a) {
             throw AxisUtility.getFault(a); 
@@ -337,6 +341,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                               String mimeType,
                                               String formatURI,
                                               String dsLocation, 
+                                              String checksumType,
+                                              String checksum,
                                               String logMessage, 
                                               boolean force)
             throws java.rmi.RemoteException {
@@ -353,6 +359,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             mimeType,
                             formatURI,
                             dsLocation, 
+                            checksumType,
+                            checksum,
                             logMessage, 
                             force));
         } catch (AuthzException a) {
@@ -375,6 +383,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                           String mimeType,
                                           String formatURI,
                                           byte[] dsContent, 
+                                          String checksumType,
+                                          String checksum,
                                           String logMessage, 
                                           boolean force) 
                 throws java.rmi.RemoteException {
@@ -394,6 +404,8 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                          mimeType,
                                                          formatURI,
                                                          byteStream, 
+                                                         checksumType,
+                                                         checksum,
                                                          logMessage, 
                                                          force));
         } catch (AuthzException a) {
@@ -455,6 +467,49 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             throw AxisUtility.getFault(th);
         }
     }
+    
+    public String setDatastreamChecksum(String PID, 
+                                        String datastreamID, 
+                                        String algorithm) throws java.rmi.RemoteException 
+    {
+        assertInitialized();
+        try {
+            return s_management.setDatastreamChecksum(ReadOnlyContext.getSoapContext(), 
+                                                       PID,
+                                                       datastreamID, 
+                                                       algorithm);
+        } catch (AuthzException a) {
+            throw AxisUtility.getFault(a); 
+        } catch (ServerException se) {
+            logStackTrace(se);
+        throw AxisUtility.getFault(se);
+        } catch (Throwable th) {
+            logStackTrace(th);
+        throw AxisUtility.getFault(th);
+        }
+    }
+
+    public String compareDatastreamChecksum(String PID, 
+                                            String datastreamID, 
+                                            String versionDate) throws java.rmi.RemoteException 
+    {
+        assertInitialized();
+        try {
+            return s_management.compareDatastreamChecksum(ReadOnlyContext.getSoapContext(), 
+                                                           PID,
+                                                           datastreamID, 
+                                                           versionDate);
+        } catch (AuthzException a) {
+            throw AxisUtility.getFault(a); 
+        } catch (ServerException se) {
+        logStackTrace(se);
+            throw AxisUtility.getFault(se);
+        } catch (Throwable th) {
+        logStackTrace(th);
+            throw AxisUtility.getFault(th);
+        }
+    }
+
 
     public String setDisseminatorState(String PID, 
                                        String disseminatorID, 

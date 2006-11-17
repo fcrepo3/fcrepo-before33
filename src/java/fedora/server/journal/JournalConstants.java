@@ -107,6 +107,8 @@ public interface JournalConstants {
     String ARGUMENT_NAME_BDEF_PID = "bDefPID";
     String ARGUMENT_NAME_BINDING_MAP = "bindingMap";
     String ARGUMENT_NAME_BMECH_PID = "bMechPid";
+    String ARGUMENT_NAME_CHECKSUM = "checksum";
+    String ARGUMENT_NAME_CHECKSUM_TYPE = "checksumType";
     String ARGUMENT_NAME_CONTEXT = "context";
     String ARGUMENT_NAME_CONTROL_GROUP = "controlGroup";
     String ARGUMENT_NAME_DISSEMINATOR_ID = "disseminatorID";
@@ -135,6 +137,7 @@ public interface JournalConstants {
     String ARGUMENT_NAME_SERIALIZATION = "serialization";
     String ARGUMENT_NAME_STATE = "state";
     String ARGUMENT_NAME_VERSIONABLE = "versionable";
+    String ARGUMENT_NAME_VERSION_DATE = "versionDate";
 
     // Names of maps in the Context object, as written to the Journal
     String CONTEXT_MAPNAME_ACTION = "action";

@@ -113,8 +113,10 @@ public class FOXMLDODeserializer
 	private Pattern metsPattern=Pattern.compile("info:fedora/fedora-system:format/xml.mets.");
 	private HashMap m_dsAdmIds; // key=dsId, value=List of datastream ids (strings)
 	private String[] m_dsDmdIds; // key=dsId, value=List of datastream ids (strings)
+    private String m_dsChecksumType;    
+    private String m_dsChecksum;
 
-	// temporary variables for processing disseminators
+    // temporary variables for processing disseminators
 	private Disseminator m_diss;
 	private String m_dissID;
 	private String m_bDefID;
@@ -340,7 +342,7 @@ public class FOXMLDODeserializer
 				checkMETSFormat(m_dsFormatURI);
 				m_dsMimeType=grab(a, F, "MIMETYPE");
 				String sizeString=grab(a, F, "SIZE");
-				if (sizeString!=null && !sizeString.equals("")) {
+                if (sizeString!=null && !sizeString.equals("")) {
 					try {
 						m_dsSize=Long.parseLong(sizeString);
 					} catch (NumberFormatException nfe) {
@@ -353,12 +355,20 @@ public class FOXMLDODeserializer
 				if (m_dsVersId.equals("AUDIT.0")) {
 					m_gotAudit=true;
 				}
+                m_dsChecksumType = "none";
+                m_dsChecksum = "none";
+            }
+            else if (localName.equals("contentDigest"))
+            {
+                m_dsChecksumType = grab(a, F, "TYPE");
+                m_dsChecksum = grab(a, F, "DIGEST");
+            }
 			//======================
 			// DATASTREAM CONTENT...
 			//======================
 			// inside a datastreamVersion element, it's either going to be
 			// xmlContent (inline xml), contentLocation (a reference) or binaryContent
-			} else if (localName.equals("xmlContent")) {
+			else if (localName.equals("xmlContent")) {
 				m_dsXMLBuffer=new StringBuffer();
 				m_xmlDataLevel=0;
 				m_inXMLMetadata=true;
@@ -713,7 +723,39 @@ public class FOXMLDODeserializer
 		ds.DSLocation=m_dsLocation;
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=""; // METS legacy
-		
+		ds.DSChecksumType=m_dsChecksumType;
+        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+                           "checksumType = "+ m_dsChecksumType +
+                           "checksum = "+ m_dsChecksum);
+        if (m_obj.isNew()) 
+        {
+            System.out.println("New Object: checking supplied checksum");
+            if (m_dsChecksum != null && !m_dsChecksum.equals("")&& !m_dsChecksum.equals("none"))
+            {
+                String tmpChecksum = ds.getChecksum();
+                System.out.println("checksum = "+ tmpChecksum);
+                if (!m_dsChecksum.equals(tmpChecksum))
+                {
+                    {
+                        throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
+                    }
+//                    try
+//                    {
+//                        Datastream.LogChecksumMismatch(m_obj, ds, m_dsChecksum);
+//                    }
+//                    catch (ValidationException e)
+//                    {
+//                        throw new SAXException(e);
+//                    }                    
+                }
+            }
+            ds.DSChecksumType=ds.getChecksumType();
+        }
+        else
+        {
+            ds.DSChecksum = m_dsChecksum;
+        }
+        
 		// Normalize the dsLocation for the deserialization context
 		ds.DSLocation=
 			(DOTranslationUtility.normalizeDSLocationURLs(
@@ -747,11 +789,11 @@ public class FOXMLDODeserializer
 		*/
 		
 		// FINALLLY! add the datastream to the digital object instantiation
-		m_obj.datastreams(m_dsId).add(ds);
+		m_obj.addDatastreamVersion(ds, true);
  	
     }
     
-	private void instantiateXMLDatastream(DatastreamXMLMetadata ds) {
+    private void instantiateXMLDatastream(DatastreamXMLMetadata ds) throws SAXException {
 		
 		// set the attrs common to all datastream versions
 		ds.DatastreamID=m_dsId;
@@ -773,6 +815,7 @@ public class FOXMLDODeserializer
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=m_dsInfoType; // METS legacy
 		ds.DSMDClass=m_dsMDClass;   // METS legacy
+
 		
 		// now set the xml content stream itself...
 		try {
@@ -796,8 +839,29 @@ public class FOXMLDODeserializer
 			System.out.println("Error processing inline xml content in SAX parse: " 
 				+ uee.getMessage());
 		}				
+        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+                "checksumType = "+ m_dsChecksumType +
+                "checksum = "+ m_dsChecksum);
+        ds.DSChecksumType = m_dsChecksumType;
+        if (m_obj.isNew())  
+        {
+            if (m_dsChecksum != null && !m_dsChecksum.equals("")&& !m_dsChecksum.equals("none"))
+            {
+                 String tmpChecksum = ds.getChecksum();
+                 System.out.println("checksum = "+ tmpChecksum);
+                 if (!m_dsChecksum.equals(tmpChecksum))
+                 {
+                     throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
+                 }
+            }
+            ds.DSChecksumType=ds.getChecksumType();
+        }
+        else
+        {
+         ds.DSChecksum = m_dsChecksum;
+        }
 		// FINALLY! add the xml datastream to the digitalObject
-		m_obj.datastreams(m_dsId).add(ds);  	
+        m_obj.addDatastreamVersion(ds, true);
 	}	
 	
 	private void checkMETSFormat(String formatURI) {
