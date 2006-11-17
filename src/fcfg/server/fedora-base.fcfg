@@ -96,6 +96,24 @@
              Note this value must be less than the limit specified for the
              datastreamExpirationLimit.</comment>
   </param>
+  <param name="autoChecksum" 		value="true">
+  	<comment>Controls whether a checksum is automatically computed for every
+  			 datastream as the datastream is added to the repository.  This will
+  			 allow the integrity of datastream contents to be periodically checked
+  			 to insure the object is not corrupted.</comment>
+  </param>
+  <param name="checksumAlgorithm"	value="MD5">
+    <comment>Specifies which checksumming algorithm is to be used when automatically 
+             computing checksums as specified by the above parameter. 
+             Valid values are: MD5  SHA-1  SHA-256  SHA-384  SHA-512 </comment>
+  </param>
+  <param name="checksumMismatchAction"	value="EXCEPTION">
+    <comment>Specifies what shoud be done when the user-supplied checksum in a object being
+    		 ingested, or as a parameter in a addDatastream call doesn't match the checksum
+    		 that is computed for that datastream.  
+    		 The possible values are either: EXCEPTION  or  LOG_TO:[filename]</comment>
+  </param>
+  <param name="checksumScope"		value="contentOnly"/>
   <module role="fedora.server.storage.lowlevel.ILowlevelStorage" class="fedora.server.storage.lowlevel.DefaultLowlevelStorageModule">
   	<comment>Description: 
   		Parameters:
