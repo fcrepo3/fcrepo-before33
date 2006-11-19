@@ -9,6 +9,7 @@ import org.junit.runners.Suite;
  
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+  ResourceIndexDatePrecisionIntegrationTest.class,
   ResourceIndexAddDelDissIntegrationTest.class,
   ResourceIndexAddDelDSIntegrationTest.class,
   ResourceIndexAddDelMiscIntegrationTest.class,
@@ -16,12 +17,14 @@ import org.junit.runners.Suite;
   ResourceIndexModDSIntegrationTest.class,
   ResourceIndexModMiscIntegrationTest.class
 })
-public class ResourceIndexIntegrationTestSuite extends TestCase {
+public class AllIntegrationTests extends TestCase {
 
     public static Test suite() throws Exception {
 
         TestSuite suite = new TestSuite(
-                ResourceIndexIntegrationTestSuite.class.getName());
+                AllIntegrationTests.class.getName());
+   
+        suite.addTest(ResourceIndexDatePrecisionIntegrationTest.suite());
    
         suite.addTest(ResourceIndexAddDelDissIntegrationTest.suite());
         suite.addTest(ResourceIndexAddDelDSIntegrationTest.suite());

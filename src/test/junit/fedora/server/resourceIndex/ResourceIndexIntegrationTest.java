@@ -84,7 +84,7 @@ public abstract class ResourceIndexIntegrationTest {
     /**
      * The <code>ResourceIndexImpl</code> instance we'll be using.
      */
-    private NewResourceIndex _ri;
+    private ResourceIndex _ri;
 
     /**
      * The flusher instance we'll use.
@@ -207,7 +207,7 @@ public abstract class ResourceIndexIntegrationTest {
         TripleGenerator generator =
                 new MethodAwareTripleGenerator(methodInfoStore);
         
-        _ri = new NewResourceIndexImpl(getConnector(),
+        _ri = new ResourceIndexImpl(getConnector(),
                                        methodInfoStore,
                                        generator,
                                        indexLevel,
@@ -428,6 +428,13 @@ public abstract class ResourceIndexIntegrationTest {
 
     protected DOReader getDOReader(DigitalObject obj) throws Exception {
         return new SimpleDOReader(null, null, null, null, null, obj, null);
+    }
+
+    protected void addObj(DigitalObject obj, boolean flush)
+            throws Exception {
+        Set<DigitalObject> set = new HashSet<DigitalObject>();
+        set.add(obj);
+        addAll(set, flush);
     }
 
     protected void addAll(Set<DigitalObject> objects,
@@ -858,6 +865,10 @@ public abstract class ResourceIndexIntegrationTest {
             set.add(obj);
         }
         return set;
+    }
+
+    protected TripleIterator spo(String query) throws Exception {
+        return _ri.findTriples("spo", query, -1, false);
     }
 
     protected static void addDisseminator(DigitalObject obj, String id,
@@ -1334,7 +1345,7 @@ public abstract class ResourceIndexIntegrationTest {
      */
     public class Flusher extends Thread {
 
-        private NewResourceIndex _ri;
+        private ResourceIndex _ri;
         private int _sleepMS;
         private boolean _shouldFinish = false;
         private Exception _error;
@@ -1346,7 +1357,7 @@ public abstract class ResourceIndexIntegrationTest {
          * @param sleepMS milliseconds to sleep.  Will simply yield between
          *                flush attempts if less than 1.
          */
-        public Flusher(NewResourceIndex ri, int sleepMS) {
+        public Flusher(ResourceIndex ri, int sleepMS) {
             _ri = ri;
             _sleepMS = sleepMS;
         }
