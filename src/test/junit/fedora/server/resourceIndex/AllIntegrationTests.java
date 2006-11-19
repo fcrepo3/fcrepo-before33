@@ -1,9 +1,5 @@
 package fedora.server.resourceIndex;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
  
@@ -17,12 +13,13 @@ import org.junit.runners.Suite;
   ResourceIndexModDSIntegrationTest.class,
   ResourceIndexModMiscIntegrationTest.class
 })
-public class AllIntegrationTests extends TestCase {
+public class AllIntegrationTests {
 
-    public static Test suite() throws Exception {
+    // Supports legacy test runners
+    public static junit.framework.Test suite() throws Exception {
 
-        TestSuite suite = new TestSuite(
-                AllIntegrationTests.class.getName());
+        junit.framework.TestSuite suite = 
+                new junit.framework.TestSuite(AllIntegrationTests.class.getName());
    
         suite.addTest(ResourceIndexDatePrecisionIntegrationTest.suite());
    
