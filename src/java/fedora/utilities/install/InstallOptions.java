@@ -63,14 +63,6 @@ public class InstallOptions {
         System.out.println("  Fedora Installation ");
         System.out.println("**********************");
         System.out.println();
-        String distKind;
-        if (bundled) {
-            distKind = "BUNDLED";
-        } else {
-            distKind = "NON-BUNDLED";
-        }
-        System.out.println("This is the " + distKind + " distribution.");
-        System.out.println();
         System.out.println("Please answer the following questions to install Fedora.");
         System.out.println("You can enter CANCEL at any time to abort installation.");
         System.out.println();

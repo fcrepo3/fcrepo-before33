@@ -20,6 +20,7 @@ import fedora.utilities.ExecUtility;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.container.Container;
+import fedora.utilities.install.contextxml.ContextXML;
 import fedora.utilities.install.webxml.WebXML;
 
 public class Installer {
@@ -113,6 +114,25 @@ public class Installer {
 	        webXML.setFedoraHome();
 	        webXML.setSecurityConstraints();	        
 	        webXML.write(distWebXML.getAbsolutePath());
+
+            // modify context.xml
+            System.out.println("Processing context.xml");
+            File distContextXML = new File(warStage, "META-INF/context.xml");
+            ContextXML contextXML = new ContextXML(distContextXML);
+            String className = "org.apache.catalina.realm.MemoryRealm";
+            String realm = _opts.getValue(InstallOptions.TOMCAT_REALM);
+            if (realm != null) {
+                if (realm.equals("jaas")) {
+                    className = "org.apache.catalina.realm.JAASRealm";
+                } else if (!realm.equals("memory")) {
+                    throw new InstallationFailedException("Unrecognized value "
+                            + "for " + InstallOptions.TOMCAT_REALM 
+                            + ": " + realm);
+                }
+            }
+            contextXML.setRealmClassName(className);
+            contextXML.write(distContextXML.getAbsolutePath());
+
 	        File fedoraWar = new File(installDir, Distribution.FEDORA_WAR);
 	        Zip.zip(fedoraWar, warStage.listFiles());
 	        return fedoraWar;
