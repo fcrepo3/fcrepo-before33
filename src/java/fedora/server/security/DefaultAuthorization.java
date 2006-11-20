@@ -1032,7 +1032,7 @@ public class DefaultAuthorization extends Module implements Authorization {
     public final void enforceSetDatastreamVersionable(Context context, String pid, String datastreamId, boolean datastreamNewVersionable) 
     throws AuthzException {
     try {
-        LOG.debug("Entered enforceSetDatastreamState");     
+        LOG.debug("Entered enforceSetDatastreamVersionable");     
         String target = Constants.ACTION.SET_DATASTREAM_VERSIONABLE.uri;
         log("enforcing " + target);
         context.setActionAttributes(null);
@@ -1040,7 +1040,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         String name = "";
         try {
             name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
-            name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_VERSIONABLE.uri, datastreamNewVersionable);    
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_VERSIONABLE.uri, new Boolean(datastreamNewVersionable).toString());    
         } catch (Exception e) {
             context.setResourceAttributes(null);        
             throw new AuthzOperationalException(target + " couldn't set " + name, e);   
