@@ -113,15 +113,16 @@ public class DemoSOAPClient {
 		System.out.println("SOAP Response: pid = " + pid);
 		return pid;
 	}
-	public String addDatastream(String pid,String dsID, String[] altIDs, String dsLabel, 
+	public String addDatastream(String pid, String dsID, String[] altIDs, String dsLabel, 
 		boolean versionable, String dsMIME, String formatURI, 
-		String dsLocation, String dsControlGroup, String dsState, String logMessage)
+		String dsLocation, String dsControlGroup, String dsState, 
+		String checksumType, String checksum, String logMessage)
 		throws RemoteException {
 
 			// make the SOAP call on API-M using the connection stub			
 			String datastreamID = APIM.addDatastream(
 				pid, dsID, altIDs, dsLabel, versionable, dsMIME, formatURI,
-				dsLocation, dsControlGroup, dsState, logMessage);
+				dsLocation, dsControlGroup, dsState, checksumType, checksum, logMessage);
 				
 			System.out.println("SOAP Request: addDatastream...");
 			System.out.println("SOAP Response: datastreamID = " + datastreamID);				
@@ -130,13 +131,14 @@ public class DemoSOAPClient {
 		
 	public String modifyDatastreamByReference(String pid, String dsID, String[] altIDs, String dsLabel, 
 		String dsMIME, String formatURI, String dsLocation,
+		String checksumType, String checksum,
 		String logMessage, boolean force)
 		throws RemoteException {
 
 			// make the SOAP call on API-M using the connection stub
 			String datastreamID = APIM.modifyDatastreamByReference(
 				pid, dsID, altIDs, dsLabel, dsMIME,
-				formatURI, dsLocation, logMessage, force);			
+				formatURI, dsLocation, checksumType, checksum, logMessage, force);			
 				
 			System.out.println("SOAP Request: modifyDatastreamByReference...");
 			System.out.println("SOAP Response: datastreamID = " + datastreamID);				
@@ -350,6 +352,8 @@ public class DemoSOAPClient {
 					"http://www.cs.cornell.edu/payette/images/sjcomp.gif", // URL for content
 					"E",  // type E for External Referenced Datastream
 					"A",  // datastream state is A for Active
+					null,  // datastream checksumType
+					null, // datastream checksum
 					"added new datastream MY-DS");  // log message
 					
 					
@@ -366,6 +370,8 @@ public class DemoSOAPClient {
 					null, // MIME type (no change)
 					null, // new formatURI (no change)
 					null, // new URL for content (no change)
+					null, // new checksumType
+					null, // new checksum
 					"first modify to change label only", // an optional log message about the change
 					 false);  // do not force changes that break ref integrity
 
@@ -383,6 +389,8 @@ public class DemoSOAPClient {
 					"", // MIME type (empty)
 					"", // new formatURI (empty)
 					"", // new URL for content (no change since required field cannot be emptied)
+					null, // new checksumType
+					null, // new checksum
 					"second modify to empty all non-required fields", // an optional log message about the change
 					 false);  // do not force changes that break ref integrity
 				
