@@ -3,6 +3,7 @@ package fedora.server.resourceIndex;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -227,13 +228,17 @@ public class ResourceIndexImpl implements ResourceIndex {
     private void updateTripleDiffs(Set<Triple> existing, Set<Triple> desired)
             throws ResourceIndexException {
 
-        // delete all in existing but not desired
-        existing.removeAll(desired);
-        updateTriples(existing, true);
+        // Delete any existing triples that are no longer desired,
+        // leaving the ones we want in place
+        HashSet<Triple> obsoleteTriples = new HashSet<Triple>(existing);
+        obsoleteTriples.removeAll(desired);
+        updateTriples(obsoleteTriples, true);
 
-        // add all in desired but not existing
-        desired.removeAll(existing);
-        updateTriples(desired, false);
+        // Add only new desired triples
+        HashSet<Triple> newTriples = new HashSet<Triple>(desired);
+        newTriples.removeAll(existing);
+        updateTriples(newTriples, false);
+
     }
 
     /**
