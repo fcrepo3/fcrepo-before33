@@ -363,7 +363,7 @@ public class DefaultManagement
         DOWriter w=null;
         try {
             m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
-                    formatURI, dsLocation, controlGroup, dsState);
+                    formatURI, dsLocation, controlGroup, dsState, checksumType, checksum);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -579,7 +579,7 @@ public class DefaultManagement
             // FIXME: enforceModifyDatastreamByReference expects a parameter 
             //        of dsState, we no longer have. I'm passing in a value 
             //        of "" but this could cause a problem.
-            m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, "");
+            m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, checksumType, checksum);
 
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -736,7 +736,7 @@ public class DefaultManagement
             // FIXME: enforceModifyDatastreamByReference expects a parameter 
             //        of dsState, we no longer have. I'm passing in a value 
             //        of "" but this could cause a problem.
-            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, "");
+            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, checksumType, checksum);
 
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1511,7 +1511,7 @@ public class DefaultManagement
         try {
             LOG.info("Entered setDatastreamChecksum");
    
-//            m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
+            m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
    
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
             fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
@@ -1543,7 +1543,7 @@ public class DefaultManagement
         try {   
             LOG.info("Entered compareDatastreamChecksum");      
    
-//            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionable);   
+            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionDateStr);   
    
             DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
             Date versionDate = null;

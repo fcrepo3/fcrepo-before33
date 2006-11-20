@@ -4,6 +4,7 @@ import com.sun.xacml.attr.AnyURIAttribute;
 import com.sun.xacml.attr.DateTimeAttribute;
 import com.sun.xacml.attr.IntegerAttribute;
 import com.sun.xacml.attr.StringAttribute;
+import com.sun.xacml.attr.BooleanAttribute;
 
 public class DatastreamNamespace extends XacmlNamespace {
 
@@ -23,7 +24,14 @@ public class DatastreamNamespace extends XacmlNamespace {
 	public final XacmlName NEW_LOCATION;			
 	public final XacmlName NEW_CONTROL_GROUP;	
 	public final XacmlName NEW_FORMAT_URI;		
-	public final XacmlName NEW_MIME_TYPE;		
+	public final XacmlName NEW_MIME_TYPE;
+	public final XacmlName NEW_VERSIONABLE;
+	public final XacmlName CHECKSUM;
+	public final XacmlName NEW_CHECKSUM;
+	public final XacmlName CHECKSUM_TYPE;
+	public final XacmlName NEW_CHECKSUM_TYPE;
+	public final XacmlName ALT_IDS;
+	public final XacmlName NEW_ALT_IDS;
 
 	// Values
 	
@@ -44,7 +52,14 @@ public class DatastreamNamespace extends XacmlNamespace {
     	MIME_TYPE = addName(new XacmlName(this, "mimeType", StringAttribute.identifier));    	
     	NEW_MIME_TYPE = addName(new XacmlName(this, "newMimeType", StringAttribute.identifier));    	    	
     	STATE = addName(new XacmlName(this, "state", StringAttribute.identifier)); 
-    	NEW_STATE = addName(new XacmlName(this, "newState", StringAttribute.identifier));     	
+    	NEW_STATE = addName(new XacmlName(this, "newState", StringAttribute.identifier));
+    	NEW_VERSIONABLE = addName(new XacmlName(this, "newVersionable", BooleanAttribute.identifier));
+    	CHECKSUM = addName(new XacmlName(this, "checksum", StringAttribute.identifier));
+    	NEW_CHECKSUM = addName(new XacmlName(this, "newChecksum", StringAttribute.identifier));
+    	CHECKSUM_TYPE = addName(new XacmlName(this, "checksumType", StringAttribute.identifier));
+    	NEW_CHECKSUM_TYPE = addName(new XacmlName(this, "newChecksumType", StringAttribute.identifier));
+    	ALT_IDS = addName(new XacmlName(this, "altIds", StringAttribute.identifier));
+    	NEW_ALT_IDS = addName(new XacmlName(this, "newAltIds", StringAttribute.identifier));
     }
 
 	public static DatastreamNamespace onlyInstance = new DatastreamNamespace(ResourceNamespace.getInstance(), "datastream");

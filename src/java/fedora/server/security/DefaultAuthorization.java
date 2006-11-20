@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -483,8 +486,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 	 * @see #enforceMethods common attributes available on any fedora interface call
 	 */
 	public final void enforceAddDatastream(Context context, String pid, String dsId, 
-			String[] altIDs, //how to handle altIDs?
-			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState)
+			String[] altIDs,
+			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState,
+			String checksumType, String checksum)
 	throws AuthzException {
 	try {
         LOG.debug("Entered enforceAddDatastream");
@@ -500,6 +504,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, dsId);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.LOCATION.uri, dsLocation);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.CONTROL_GROUP.uri, controlGroup);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.ALT_IDS.uri, altIDs);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.CHECKSUM_TYPE.uri, checksumType);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.CHECKSUM.uri, checksum);			
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -831,8 +838,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 
 	public final void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, 
-			String[] altIDs, // how to handle? 
-			String datastreamNewMimeType, String datastreamNewFormatURI, String datastreamNewLocation, String datastreamNewState) //x
+			String[] datastreamNewAltIDs,
+			String datastreamNewMimeType, String datastreamNewFormatURI, String datastreamNewLocation,
+			String datastreamNewChecksumType, String datastreamNewChecksum)
 	throws AuthzException {
 	try {
         LOG.debug("Entered enforceModifyDatastreamByReference");		
@@ -845,8 +853,10 @@ public class DefaultAuthorization extends Module implements Authorization {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_MIME_TYPE.uri, datastreamNewMimeType);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_FORMAT_URI.uri, datastreamNewFormatURI);			
-			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_LOCATION.uri, datastreamNewLocation);			
-			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_STATE.uri, datastreamNewState);	
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_LOCATION.uri, datastreamNewLocation);				
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_ALT_IDS.uri, datastreamNewAltIDs);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.uri, datastreamNewChecksumType);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_CHECKSUM.uri, datastreamNewChecksum);
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -859,8 +869,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	
 	public final void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, 
-			String[] altIDs, // how to handle?
-			String newDatastreamMimeType, String newDatastreamFormatURI, String newDatastreamState)
+			String[] newDatastreamAltIDs,
+			String newDatastreamMimeType, String newDatastreamFormatURI,
+			String newDatastreamChecksumType, String newDatastreamChecksum)
 	throws AuthzException { 
 	try {
         LOG.debug("Entered enforceModifyDatastreamByValue");		
@@ -873,7 +884,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_MIME_TYPE.uri, newDatastreamMimeType);
 			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_FORMAT_URI.uri, newDatastreamFormatURI);
-			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_STATE.uri, newDatastreamState);			
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_ALT_IDS.uri, newDatastreamAltIDs);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_CHECKSUM_TYPE.uri, newDatastreamChecksumType);
+			name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_CHECKSUM.uri, newDatastreamChecksum);			
 		} catch (Exception e) {
 			context.setResourceAttributes(null);		
 			throw new AuthzOperationalException(target + " couldn't set " + name, e);	
@@ -1020,14 +1033,14 @@ public class DefaultAuthorization extends Module implements Authorization {
     throws AuthzException {
     try {
         LOG.debug("Entered enforceSetDatastreamState");     
-        String target = Constants.ACTION.SET_DATASTREAM_STATE.uri;
+        String target = Constants.ACTION.SET_DATASTREAM_VERSIONABLE.uri;
         log("enforcing " + target);
         context.setActionAttributes(null);
         MultiValueMap resourceAttributes = new MultiValueMap();
         String name = "";
         try {
             name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
-//            name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_STATE.uri, datastreamNewVersionable);    
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.NEW_VERSIONABLE.uri, datastreamNewVersionable);    
         } catch (Exception e) {
             context.setResourceAttributes(null);        
             throw new AuthzOperationalException(target + " couldn't set " + name, e);   
@@ -1062,6 +1075,66 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 	
+    public final void enforceSetDatastreamChecksum(Context context, String pid, String datastreamId, String checksumType) 
+    throws AuthzException {
+    try {
+        LOG.debug("Entered enforceSetDatastreamChecksum");     
+        String target = Constants.ACTION.SET_DATASTREAM_CHECKSUM.uri;
+        log("enforcing " + target);
+        context.setActionAttributes(null);
+        MultiValueMap resourceAttributes = new MultiValueMap();
+        String name = "";
+        try {
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.CHECKSUM_TYPE.uri, checksumType);    
+        } catch (Exception e) {
+            context.setResourceAttributes(null);        
+            throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+        }
+        context.setResourceAttributes(resourceAttributes);  
+        xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+    } finally {
+        LOG.debug("Exiting enforceSetDatastreamChecksum");
+    }
+    }	
+
+    public final void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, String versionDateStr) 
+    throws AuthzException {
+    try {
+        LOG.debug("Entered enforceSetDatastreamChecksum");     
+        String target = Constants.ACTION.SET_DATASTREAM_CHECKSUM.uri;
+        log("enforcing " + target);
+        context.setActionAttributes(null);
+        MultiValueMap resourceAttributes = new MultiValueMap();
+        String name = "";
+        
+        // FIX ME
+        // Should versionDate argument in compareDatstreamChecksum be of type Date vs String?
+        // If so, then following conversion would not be necessary.
+        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Date versionDate = null;
+        if (versionDateStr != null) {
+            try {
+                versionDate = fmt.parse(versionDateStr);
+            } catch (ParseException e) {
+                // ignore, just use null;
+            }
+        } 
+        
+        try {
+            name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
+            name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(versionDate, context));    
+        } catch (Exception e) {
+            context.setResourceAttributes(null);        
+            throw new AuthzOperationalException(target + " couldn't set " + name, e);   
+        }
+        context.setResourceAttributes(resourceAttributes);  
+        xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
+    } finally {
+        LOG.debug("Exiting enforceCompareDatastreamChecksum");
+    }
+    }	    
+    
 	public void enforceDescribeRepository(Context context) 
 	throws AuthzException {
 	try {

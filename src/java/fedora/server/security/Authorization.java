@@ -32,7 +32,7 @@ public interface Authorization {
 	public void reloadPolicies(Context context)	throws Exception;
 	
 	public void enforceAddDatastream(Context context, String pid, String dsId, String[] altIDs, 
-			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState) 
+			String MIMEType, String formatURI, String dsLocation, String controlGroup, String dsState, String checksumType, String checksum) 
 	throws AuthzException;
 	
 	public void enforceAddDisseminator(Context context, String pid, String bDefPid, String bMechPid, String dissState) 
@@ -78,11 +78,11 @@ public interface Authorization {
 	throws AuthzException;
 
 	public void enforceModifyDatastreamByReference(Context context, String pid, String datastreamId, String[] altIDs, 
-			String mimeType, String formatURI, String datastreamNewLocation, String datastreamNewState)
+			String mimeType, String formatURI, String datastreamNewLocation, String checksumType, String checksum)
 	throws AuthzException;
 
 	public void enforceModifyDatastreamByValue(Context context, String pid, String datastreamId, String[] altIDs, 
-			String mimeType, String formatURI, String newDatastreamState)
+			String mimeType, String formatURI, String checksumType, String checksum)
 	throws AuthzException;
 	
 	public void enforceModifyDisseminator(Context context, String pid, String disseminatorId, String mechanismPid, String disseminatorState) 
@@ -105,6 +105,12 @@ public interface Authorization {
     
     public void enforceSetDatastreamVersionable(Context context, String pid, String datastreamId, boolean versionableNewState) 
     throws AuthzException;
+    
+    public void enforceSetDatastreamChecksum(Context context, String pid, String datastreamId, String checksumType) 
+    throws AuthzException;
+    
+    public void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, String versionDateStr) 
+    throws AuthzException;    
 
 	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 
 	throws AuthzException;

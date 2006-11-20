@@ -56,6 +56,9 @@ public class ActionNamespace extends XacmlNamespace {
 	public final XacmlName INTERNAL_DSSTATE;
 	public final XacmlName RESOLVE_DATASTREAM;
 	public final XacmlName RELOAD_POLICIES;	
+	public final XacmlName SET_DATASTREAM_VERSIONABLE;
+	public final XacmlName SET_DATASTREAM_CHECKSUM;
+	public final XacmlName COMPARE_DATASTREAM_CHECKSUM;
 
     private ActionNamespace(XacmlNamespace parent, String localName) {
     	super(parent, localName);
@@ -88,6 +91,9 @@ public class ActionNamespace extends XacmlNamespace {
     	PURGE_DISSEMINATOR               = addName(new XacmlName(this, "id-purgeDisseminator"));	
     	SET_DATASTREAM_STATE               = addName(new XacmlName(this, "id-setDatastreamState"));	
     	SET_DISSEMINATOR_STATE               = addName(new XacmlName(this, "id-setDisseminatorState"));	
+    	SET_DATASTREAM_VERSIONABLE               = addName(new XacmlName(this, "id-setDatastreamVersionable"));
+    	SET_DATASTREAM_CHECKSUM               = addName(new XacmlName(this, "id-setDatastreamChecksum"));
+    	COMPARE_DATASTREAM_CHECKSUM               = addName(new XacmlName(this, "id-compareDatastreamChecksum"));
     	DESCRIBE_REPOSITORY               = addName(new XacmlName(this, "id-describeRepository"));	
     	FIND_OBJECTS               = addName(new XacmlName(this, "id-findObjects"));	
     	RI_FIND_OBJECTS               = addName(new XacmlName(this, "id-riFindObjects"));	
