@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.ServletContext;
+
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeValue;
 import com.sun.xacml.attr.BagAttribute;
@@ -18,12 +19,17 @@ import com.sun.xacml.attr.TimeAttribute;
 import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author wdn5e@virginia.edu
  */
+abstract class AttributeFinderModule extends com.sun.xacml.finder.AttributeFinderModule {
 
-/*package*/ abstract class AttributeFinderModule extends com.sun.xacml.finder.AttributeFinderModule {
-	
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            AttributeFinderModule.class.getName());
+
 	private ServletContext servletContext = null;
 	
 	protected void setServletContext(ServletContext servletContext) {
@@ -48,14 +54,14 @@ import com.sun.xacml.ctx.Status;
 	
 	private Boolean instantiatedOk = null;
 	protected final void setInstantiatedOk(boolean value) {
-		log("setInstantiatedOk() " + value);
+		LOG.debug("setInstantiatedOk() " + value);
 		if (instantiatedOk == null) {
 			instantiatedOk = new Boolean(value);
 		}
 	}
 	
 	public boolean isDesignatorSupported() {
-		log("isDesignatorSupported() will return " + iAm() + " " + ((instantiatedOk != null) && instantiatedOk.booleanValue()));
+		LOG.debug("isDesignatorSupported() will return " + iAm() + " " + ((instantiatedOk != null) && instantiatedOk.booleanValue()));
 		return (instantiatedOk != null) && instantiatedOk.booleanValue();
 	}
 
@@ -63,36 +69,36 @@ import com.sun.xacml.ctx.Status;
 			URI attributeType,
 			URI attributeId,
 			int designatorType) {
-		log("in parmsOk "  + iAm());
+		LOG.debug("in parmsOk "  + iAm());
 		if (! getSupportedDesignatorTypes().contains(new Integer(designatorType))) {
-			log("AttributeFinder:parmsOk" + iAm() + " exit on " + "target not supported");
+			LOG.debug("AttributeFinder:parmsOk" + iAm() + " exit on " + "target not supported");
 			return false;
 		}
 
 		if (attributeType == null) {
-			log("AttributeFinder:parmsOk" + iAm() + " exit on " + "null attributeType");
+			LOG.debug("AttributeFinder:parmsOk" + iAm() + " exit on " + "null attributeType");
 			return false;
 		}
 
 		if (attributeId == null) {
-			log("AttributeFinder:parmsOk" + iAm() + " exit on " + "null attributeId");
+			LOG.debug("AttributeFinder:parmsOk" + iAm() + " exit on " + "null attributeId");
 			return false;		}
 
-		log("AttributeFinder:parmsOk" + iAm() + " looking for " + attributeId.toString());
+		LOG.debug("AttributeFinder:parmsOk" + iAm() + " looking for " + attributeId.toString());
 		showRegisteredAttributes();
 		
 		if (hasAttribute(attributeId.toString())) {
 			if (! (getAttributeType(attributeId.toString()).equals(attributeType.toString()))) {
-				log("AttributeFinder:parmsOk" + iAm() + " exit on " + "attributeType incorrect for attributeId");
+				LOG.debug("AttributeFinder:parmsOk" + iAm() + " exit on " + "attributeType incorrect for attributeId");
 				return false;
 			}
 		} else {
 			if (! (StringAttribute.identifier).equals(attributeType.toString())) {
-				log("AttributeFinder:parmsOk" + iAm() + " exit on " + "attributeType incorrect for attributeId");
+				LOG.debug("AttributeFinder:parmsOk" + iAm() + " exit on " + "attributeType incorrect for attributeId");
 				return false;
 			}			
 		}
-		log("exiting parmsOk normally " + iAm());
+		LOG.debug("exiting parmsOk normally " + iAm());
 		return true;
 	}
 	
@@ -102,24 +108,24 @@ import com.sun.xacml.ctx.Status;
 	
 	protected final Object getAttributeFromEvaluationResult(EvaluationResult attribute /*URI type, URI id, URI category, EvaluationCtx context*/) {
 		if (attribute.indeterminate()) {
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "indeterminate");
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "indeterminate");
 			return null;			
 		}
 
 		if ((attribute.getStatus() != null) && ! Status.STATUS_OK.equals(attribute.getStatus())) { 
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "bad status");
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "bad status");
 			return null;
 		} // (resourceAttribute.getStatus() == null) == everything is ok
 
 		AttributeValue attributeValue = attribute.getAttributeValue();
 		if (! (attributeValue instanceof BagAttribute)) {
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "no bag");
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "no bag");
 			return null;
 		}
 
 		BagAttribute bag = (BagAttribute) attributeValue;
 		if (1 != bag.size()) {
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "wrong bag n=" + bag.size());
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "wrong bag n=" + bag.size());
 			return null;
 		} 
 			
@@ -127,20 +133,20 @@ import com.sun.xacml.ctx.Status;
 		Object element = it.next();
 		
 		if (element == null) {
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "null returned");
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "null returned");
 			return null;
 		}
 		
 		if (it.hasNext()) {
-			log("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "too many returned");
-			log(element.toString());
+			LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx" + iAm() + " exit on " + "couldn't get resource attribute from xacml request " + "too many returned");
+			LOG.debug(element.toString());
 			while(it.hasNext()) {
-				log((it.next()).toString());									
+				LOG.debug((it.next()).toString());									
 			}
 			return null;
 		}
 		
-		log("AttributeFinder:getAttributeFromEvaluationCtx " + iAm() + " returning " + element.toString());
+		LOG.debug("AttributeFinder:getAttributeFromEvaluationCtx " + iAm() + " returning " + element.toString());
 		return element;
 	}
 		
@@ -150,7 +156,7 @@ import com.sun.xacml.ctx.Status;
 	private final Hashtable<String, String> attributeTypes = new Hashtable<String, String>();
 	private final Hashtable<String, URI> attributeTypeUris = new Hashtable<String, URI>();
 	protected final void registerAttribute(String id, String type) throws URISyntaxException {
-		log("registering attribute " + iAm() + " " +  id);
+		LOG.debug("registering attribute " + iAm() + " " +  id);
 		attributeIdUris.put(id, new URI(id));
 		attributeTypeUris.put(id, new URI(type));
 		attributeTypes.put(id, type);			
@@ -168,7 +174,7 @@ import com.sun.xacml.ctx.Status;
 		Iterator it = attributeIdUris.keySet().iterator();
 		while (it.hasNext()) {
 			String key = (String) it.next();
-			log("another registered attribute  = " + iAm() + " "  + key);
+			LOG.debug("another registered attribute  = " + iAm() + " "  + key);
 		}
 	}
 
@@ -184,16 +190,16 @@ import com.sun.xacml.ctx.Status;
 	private static final Set NULLSET = new HashSet();
 	private final Set<Integer> supportedDesignatorTypes = new HashSet<Integer>();
 	protected final void registerSupportedDesignatorType(int designatorType) {
-		log("registerSupportedDesignatorType() "  + iAm());
+		LOG.debug("registerSupportedDesignatorType() "  + iAm());
 		supportedDesignatorTypes.add(designatorType);
 	}
 	
 	public Set getSupportedDesignatorTypes() {
 		if ((instantiatedOk != null) && instantiatedOk.booleanValue()) {
-			log("getSupportedDesignatorTypes() will return "+ iAm() +" set of elements, n=" + supportedDesignatorTypes.size());
+			LOG.debug("getSupportedDesignatorTypes() will return "+ iAm() +" set of elements, n=" + supportedDesignatorTypes.size());
 			return supportedDesignatorTypes;			
 		}
-		log("getSupportedDesignatorTypes() will return "  + iAm() +  "NULLSET");
+		LOG.debug("getSupportedDesignatorTypes() will return "  + iAm() +  "NULLSET");
 		return NULLSET;
 	}
 
@@ -202,18 +208,18 @@ import com.sun.xacml.ctx.Status;
 	private final boolean willService(URI attributeId) {
 		String temp = attributeId.toString();
 		if (hasAttribute(temp)) {
-			log("willService() " + iAm() + " accept this known serviced attribute " + attributeId.toString());
+			LOG.debug("willService() " + iAm() + " accept this known serviced attribute " + attributeId.toString());
 			return true;
 		}
 		if (! canHandleAdhoc()) {
-			log("willService() " + iAm() + " deny any adhoc attribute " + attributeId.toString());
+			LOG.debug("willService() " + iAm() + " deny any adhoc attribute " + attributeId.toString());
 			return false;								
 		}
 		if (attributesDenied.contains(temp)) {
-			log("willService() " + iAm() + " deny this known adhoc attribute " + attributeId.toString());
+			LOG.debug("willService() " + iAm() + " deny this known adhoc attribute " + attributeId.toString());
 			return false;					
 		}
-		log("willService() " + iAm() + " allow this unknown adhoc attribute " + attributeId.toString());
+		LOG.debug("willService() " + iAm() + " allow this unknown adhoc attribute " + attributeId.toString());
 		return true;
 	}
 	
@@ -224,11 +230,11 @@ import com.sun.xacml.ctx.Status;
 		URI category,
 		EvaluationCtx context,
 		int designatorType) {
-		log("AttributeFinder:findAttribute " + iAm());
-		log("attributeType=[" + attributeType + "], attributeId=[" + attributeId + "]" + iAm());
+		LOG.debug("AttributeFinder:findAttribute " + iAm());
+		LOG.debug("attributeType=[" + attributeType + "], attributeId=[" + attributeId + "]" + iAm());
 
 		if (! parmsOk(attributeType, attributeId, designatorType)) {
-			log("AttributeFinder:findAttribute" + " exit on " + "parms not ok" + iAm());
+			LOG.debug("AttributeFinder:findAttribute" + " exit on " + "parms not ok" + iAm());
 			if (attributeType == null) {
 				try {
 					attributeType = new URI(StringAttribute.identifier);
@@ -240,28 +246,28 @@ import com.sun.xacml.ctx.Status;
 		}
 		
 		if (! willService(attributeId)) {
-			log("AttributeFinder:willService() " + iAm() + " returns false" + iAm());
+			LOG.debug("AttributeFinder:willService() " + iAm() + " returns false" + iAm());
 			return new EvaluationResult(BagAttribute.createEmptyBag(attributeType));			
 		}
 
 		if (category != null) {
-			log("++++++++++ AttributeFinder:findAttribute " + iAm() + " category=" + category.toString());
+			LOG.debug("++++++++++ AttributeFinder:findAttribute " + iAm() + " category=" + category.toString());
 		}
-		log("++++++++++ AttributeFinder:findAttribute " + iAm() + " designatorType="  + designatorType);
+		LOG.debug("++++++++++ AttributeFinder:findAttribute " + iAm() + " designatorType="  + designatorType);
 
 		
-		log("about to get temp " + iAm());
+		LOG.debug("about to get temp " + iAm());
 		Object temp = getAttributeLocally(designatorType, attributeId.toASCIIString(), category, context);
-		log(iAm() + " got temp=" + temp);
+		LOG.debug(iAm() + " got temp=" + temp);
 
 		if (temp == null) {
-			log("AttributeFinder:findAttribute" + " exit on " + "attribute value not found" + iAm());
+			LOG.debug("AttributeFinder:findAttribute" + " exit on " + "attribute value not found" + iAm());
 			return new EvaluationResult(BagAttribute.createEmptyBag(attributeType));			
 		}
 
 		Set<AttributeValue> set = new HashSet<AttributeValue>();
 		if (temp instanceof String) {
-			log("AttributeFinder:findAttribute" + " will return a " + "String " + iAm());
+			LOG.debug("AttributeFinder:findAttribute" + " will return a " + "String " + iAm());
 			if (attributeType.toString().equals(StringAttribute.identifier)) {
 				set.add(new StringAttribute((String)temp));				
 			} else if (attributeType.toString().equals(DateTimeAttribute.identifier)) {
@@ -295,7 +301,7 @@ import com.sun.xacml.ctx.Status;
 			}  //xacml fixup
 			//was set.add(new StringAttribute((String)temp));			
 		} else if (temp instanceof String[]) {
-			log("AttributeFinder:findAttribute" + " will return a " + "String[] " + iAm());
+			LOG.debug("AttributeFinder:findAttribute" + " will return a " + "String[] " + iAm());
 			for (int i = 0; i < ((String[])temp).length; i++) {
 				if (((String[])temp)[i] == null) {
 					continue;
@@ -303,7 +309,7 @@ import com.sun.xacml.ctx.Status;
 				if (attributeType.toString().equals(StringAttribute.identifier)) {
 					set.add(new StringAttribute(((String[])temp)[i]));				
 				} else if (attributeType.toString().equals(DateTimeAttribute.identifier)) {
-log("USING AS DATETIME:" + ((String[])temp)[i]);
+                    LOG.debug("USING AS DATETIME:" + ((String[])temp)[i]);
 					DateTimeAttribute tempDateTimeAttribute;
 					try {
 						tempDateTimeAttribute = DateTimeAttribute.getInstance(((String[])temp)[i]);
@@ -311,7 +317,7 @@ log("USING AS DATETIME:" + ((String[])temp)[i]);
 					} catch (Throwable t) {
 					}
 				} else if (attributeType.toString().equals(DateAttribute.identifier)) {
-					log("USING AS DATE:" + ((String[])temp)[i]);
+					LOG.debug("USING AS DATE:" + ((String[])temp)[i]);
 					DateAttribute tempDateAttribute;
 					try {
 						tempDateAttribute = DateAttribute.getInstance(((String[])temp)[i]);
@@ -319,7 +325,7 @@ log("USING AS DATETIME:" + ((String[])temp)[i]);
 					} catch (Throwable t) {
 					}
 				} else if (attributeType.toString().equals(TimeAttribute.identifier)) {
-					log("USING AS TIME:" + ((String[])temp)[i]);
+					LOG.debug("USING AS TIME:" + ((String[])temp)[i]);
 					TimeAttribute tempTimeAttribute;
 					try {
 						tempTimeAttribute = TimeAttribute.getInstance(((String[])temp)[i]);
@@ -327,15 +333,14 @@ log("USING AS DATETIME:" + ((String[])temp)[i]);
 					} catch (Throwable t) {
 					}
 				} else if (attributeType.toString().equals(IntegerAttribute.identifier)) {
-					log("USING AS INTEGER:" + ((String[])temp)[i]);
+					LOG.debug("USING AS INTEGER:" + ((String[])temp)[i]);
 					IntegerAttribute tempIntegerAttribute;
 					try {
 						tempIntegerAttribute = IntegerAttribute.getInstance(((String[])temp)[i]);
 						set.add(tempIntegerAttribute); 
 					} catch (Throwable t) {
 					}					
-				}  //xacml fixup				
-//was set.add(new StringAttribute(((String[])temp)[i]));			
+				}
 			}
 		} 
 		return new EvaluationResult(new BagAttribute(attributeType, set));				
@@ -345,16 +350,5 @@ log("USING AS DATETIME:" + ((String[])temp)[i]);
 	
 	abstract protected Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context);
 	
-	public static boolean log = false; 
-	
-	protected final void log(String msg) {
-		if (! log) return;
-		msg = this.getClass().getName() + ": " + msg;
-		if (servletContext != null) {
-			servletContext.log(msg);
-		} else {
-			System.err.println(msg);			
-		}
-	}
 }
 

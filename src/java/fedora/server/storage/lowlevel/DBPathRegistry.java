@@ -8,6 +8,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
@@ -15,14 +17,15 @@ import fedora.server.storage.ConnectionPool;
 import fedora.server.utilities.SQLUtility;
 
 /**
- *
- * <p><b>Title:</b> DBPathRegistry.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
 public class DBPathRegistry extends PathRegistry {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DBPathRegistry.class.getName());
+
 	private ConnectionPool connectionPool = null;
 	private boolean backslashIsEscape;
 
@@ -128,7 +131,7 @@ public class DBPathRegistry extends PathRegistry {
        }
 	}
 
-	public void remove (String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
+	public void remove(String pid) throws ObjectNotInLowlevelStorageException, LowlevelStorageInconsistencyException, LowlevelStorageException {
 		try {
 			executeSql("DELETE FROM " + getRegistryName() + " WHERE " + getRegistryName() + ".token='" + pid + "'");
 		} catch (ObjectNotInLowlevelStorageException e1) {
@@ -138,7 +141,7 @@ public class DBPathRegistry extends PathRegistry {
 		}
 	}
 	
-	public void rebuild () throws LowlevelStorageException {
+	public void rebuild() throws LowlevelStorageException {
 		int report = FULL_REPORT;
 		try {
 			executeSql("DELETE FROM " + getRegistryName());
@@ -146,21 +149,21 @@ public class DBPathRegistry extends PathRegistry {
 		} catch (LowlevelStorageInconsistencyException e2) {
 		}
 		try {
-			System.err.println("\nbegin rebuilding registry from files");
+			LOG.info("begin rebuilding registry from files");
 			traverseFiles(storeBases, REBUILD, false, report); // continues, ignoring bad files
-			System.err.println("end rebuilding registry from files (ending normally)");
+			LOG.info("end rebuilding registry from files (ending normally)");
 		} catch (Exception e) {
 			if (report != NO_REPORT) {
-				System.err.println("ending rebuild unsuccessfully: " + e.getMessage());
+				LOG.error("ending rebuild unsuccessfully", e);
 			}
 			throw new LowlevelStorageException(true, "ending rebuild unsuccessfully", e); //<<====
 		}
 	}
 
-	public void auditFiles () throws LowlevelStorageException {
-		System.err.println("\nbegin audit:  files-against-registry");
+	public void auditFiles() throws LowlevelStorageException {
+		LOG.info("begin audit: files-against-registry");
 		traverseFiles(storeBases, AUDIT_FILES, false, FULL_REPORT);
-		System.err.println("end audit:  files-against-registry (ending normally)");
+		LOG.info("end audit: files-against-registry (ending normally)");
 	}
 
 	protected Enumeration keys() throws LowlevelStorageException, LowlevelStorageInconsistencyException {

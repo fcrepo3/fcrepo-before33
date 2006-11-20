@@ -221,41 +221,6 @@ public class RebuildServer extends Server
     }
 
     protected void initServer() throws ServerInitializationException {
-        setLogger(getLogger());
     }
-
-    private static Logger getLogger() throws ServerInitializationException {
-
-        Logger logger=Logger.getAnonymousLogger();
-        logger.setUseParentHandlers(false);
-        logger.setLevel(Level.FINEST);
-
-        DatingFileHandler fh = null;
-
-        File logDir;
-        String fedoraHome = System.getProperty("fedora.home");
-        if (fedoraHome == null) {
-            System.out.println("fedora.home not set, writing log to /tmp");
-            logDir = new File("/tmp"); 
-        } else {
-            logDir = new File(new File(fedoraHome), "server/logs");
-        }
-        try {
-            logDir.mkdirs();
-            fh = new DatingFileHandler(logDir, 
-                                       50 * 1024 * 1024, 
-                                       7,
-                                       0,
-                                       ".rebuild-log.xml",
-                    new SimpleXMLFormatter(true, "UTF-8"), 10);
-            fh.setLevel(Level.FINEST);
-        } catch (IOException ioe) {
-            throw new ServerInitializationException("Could not initialize "
-                    + "logger due to I/O error: " + ioe.getMessage());
-        }
-        logger.addHandler(fh);
-        return logger;
-    }
-
 
 }

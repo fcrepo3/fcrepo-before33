@@ -1,8 +1,5 @@
 /*
  * Created on Aug 12, 2004
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package fedora.server.security;
 
@@ -13,15 +10,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.servlet.ServletContext;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Element;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
+
 import com.sun.xacml.AbstractPolicy;
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.ParsingException;
@@ -31,8 +26,12 @@ import com.sun.xacml.combine.PolicyCombiningAlgorithm;
 import com.sun.xacml.ctx.Status;
 import com.sun.xacml.finder.PolicyFinder;
 import com.sun.xacml.finder.PolicyFinderResult;
-//import fedora.server.ReadOnlyContext;
 
+import org.apache.log4j.Logger;
+
+import org.w3c.dom.Element;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
 
 /**
  * @author wdn5e@virginia.edu
@@ -41,7 +40,11 @@ import com.sun.xacml.finder.PolicyFinderResult;
  * @see "http://sourceforge.net/mailarchive/message.php?msg_id=6068981"
  */
 public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule {
-	private static final Logger logger = Logger.getLogger(ReducedPolicyFinderModule.class.getName());	
+
+    /** Logger for this class. */
+	private static final Logger LOG = Logger.getLogger(
+	        ReducedPolicyFinderModule.class.getName());
+
 	private String combiningAlgorithm = null;
 	private PolicyFinder finder;
 	private List repositoryPolicies = null;
@@ -63,10 +66,10 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 			}
 		}
 		List filelist = new ArrayList();
-		System.err.println("before building file list");
+        LOG.debug("before building file list");
 		buildRepositoryPolicyFileList(surrogatePolicyDirectory,  filelist);
-		System.err.println("after building file list");
-		System.err.println("before getting repo policies");
+		LOG.debug("after building file list");
+		LOG.debug("before getting repo policies");
 		repositoryPolicies = getRepositoryPolicies(filelist);		
 	}
 
@@ -110,12 +113,12 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 				abstractPolicy = PolicySet.getInstance(rootElement);
 			} else {
 				String msg = "bad root node for repo-wide policy in " + errorLabel;
-				logger.log(Level.INFO, msg);
+				LOG.error(msg);
 				throw new Exception(msg);
 			}
 		} catch (ParsingException e) {
 			String msg = "couldn't parse repo-wide policy in " + errorLabel;
-			logger.log(Level.INFO, msg);
+			LOG.error(msg, e);
 			throw new Exception(msg);
 		}
 		return abstractPolicy;
@@ -127,9 +130,9 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 	}
 
 	private final int logNgo(int errors, String msg, String detail) {
-        log(msg);
+        LOG.debug(msg);
         if (detail != null) { 
-        	log("\t" + detail);
+        	LOG.debug("\t" + detail);
         }
         return errors + 1;
 	}
@@ -140,7 +143,7 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 		int methodErrors = 0;
 		while (it.hasNext()) {
 			String filepath = (String) it.next();
-			System.err.println("filepath=" + filepath);
+			LOG.debug("filepath=" + filepath);
             File file = new File(filepath);
             if (!file.exists()) {
             	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, "file not found");
@@ -151,35 +154,34 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
     				DocumentBuilder builder = getDocumentBuilder(null, validateSurrogatePolicies);
     				rootElement = builder.parse(file).getDocumentElement();
     			} catch (ParserConfigurationException e) {
-    				System.err.println("parser failure at " + filepath);
+    				LOG.error("parser failure at " + filepath, e);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (SAXException e) {
-    				System.err.println("policy breaks schema at " + filepath);
+    				LOG.error("policy breaks schema at " + filepath, e);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			} catch (IOException e) {
-    				System.err.println("policy can't be read at " + filepath);
+    				LOG.error("policy can't be read at " + filepath, e);
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
     			}
             }
-			System.err.println("methodErrors=" + methodErrors);
+			LOG.debug("methodErrors=" + methodErrors);
             if (methodErrors == 0) {
                 AbstractPolicy abstractPolicy;
 				try {
-					System.err.println("before getting abstract policy from dom, at " + filepath);
+					LOG.debug("before getting abstract policy from dom, at " + filepath);
 					abstractPolicy = getAbstractPolicyFromDOM(rootElement, filepath);
-					System.err.println("after getting abstract policy from dom");
+					LOG.debug("after getting abstract policy from dom");
 					repositoryPolicies.add(abstractPolicy);  
 				} catch (Exception e) {
                 	methodErrors = logNgo(methodErrors, "error loading repository-wide policy at " + filepath, e.getMessage());
-					e.printStackTrace();                	
+					LOG.warn("error loading repository-wide policy", e);
 				} catch (Throwable other) {
-					System.err.println("other exception is" + other.getMessage() + " " + other);
-					other.printStackTrace(); 
+                    LOG.warn("other exception", other);
 				}
             }
 		}
 		classErrors += methodErrors;
-		System.err.println("classErrors=" + classErrors);
+		LOG.debug("classErrors=" + classErrors);
 		if (classErrors != 0) {
 			repositoryPolicies.clear();
 			throw new Exception("problems loading repo-wide policies");			
@@ -243,18 +245,4 @@ public class ReducedPolicyFinderModule extends com.sun.xacml.finder.PolicyFinder
 
     ServletContext servletContext = null;
     
-    private static final boolean log = false;
-	private final void log(String msg) {
-		if (log) {
-			if (servletContext != null) {
-				servletContext.log(msg);
-			} else {
-				System.err.println(msg);			
-			}
-		}
-	}
-
-    
-	public static void main(String[] args) {
-	}
 }

@@ -11,6 +11,8 @@ import java.util.Date;
 
 import org.apache.axis.types.NonNegativeInteger;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -34,9 +36,10 @@ import fedora.server.utilities.TypeUtility;
  */
 public class FedoraAPIMBindingSOAPHTTPImpl
         implements FedoraAPIM {
-	
-	private static final org.apache.log4j.Logger logger = 
-    	org.apache.log4j.Logger.getLogger(FedoraAPIM.class);
+
+    /** Logger for this class. */
+	private static final Logger LOG = Logger.getLogger(
+	        FedoraAPIMBindingSOAPHTTPImpl.class);
 	
     /** The Fedora Server instance */
     private static Server s_server;
@@ -64,35 +67,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                 s_management=(Management) s_server.getModule("fedora.server.management.Management");
             }
         } catch (InitializationException ie) {
-            System.err.println(ie.getMessage());
+            LOG.error("Error getting server", ie);
             s_initialized=false;
             s_initException=ie;
-        }
-    }
-
-    private static void logStackTrace(Throwable e) {
-        StringBuffer out = new StringBuffer();
-        addException(e, out);
-        e = e.getCause();
-        while (e != null) {
-            out.append("Caused by: ");
-            addException(e, out);
-            e = e.getCause();
-        }
-        s_server.logWarning("Error carried up to API-M level:\n" + out.toString());
-    }
-
-    private static void addException(Throwable e, StringBuffer out) {
-        out.append(e.getClass().getName());
-        String message = e.getMessage();
-        if (message == null) message = "(no detail provided)";
-        out.append(": " + message + "\n");
-        StackTraceElement[] el = e.getStackTrace();
-        boolean skip = false;
-        for (int i = 0; i < el.length; i++) {
-            String line = el[i].toString();
-            if (line.indexOf("FedoraAPIMBindingSOAPHTTPSkeleton") != -1) return;
-            out.append("        at " + line + "\n");
         }
     }
 
@@ -108,45 +85,35 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     }
     
 	public String ingest(byte[] XML, String format, String logMessage) throws java.rmi.RemoteException {
-		logger.debug("start: ingest");
+		LOG.debug("start: ingest");
 		assertInitialized();
 		try {
 		  // always gens pid, unless pid in stream starts with "test:" "demo:"
 		  // or other prefix that is configured in the retainPIDs parameter of fedora.fcfg
 			return s_management.ingestObject(ReadOnlyContext.getSoapContext(),
 					new ByteArrayInputStream(XML), logMessage, format, "UTF-8", true);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 			
-		} catch (ServerException se) {
-			logStackTrace(se);
-			throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error ingesting", th);
+            throw AxisUtility.getFault(th); 			
 		} finally {
-			logger.debug("end: ingest");
+			LOG.debug("end: ingest");
 		}
 	}
 
     public String modifyObject(String PID, String state, String label,
             String logMessage)
             throws RemoteException {
-    	logger.debug("start: modifyObject, " + PID);
+    	LOG.debug("start: modifyObject, " + PID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
                     s_management.modifyObject(
                             ReadOnlyContext.getSoapContext(), PID, state, label, logMessage));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error modifying object", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: modifyObject, " + PID);
+        	LOG.debug("end: modifyObject, " + PID);
         }
     }
 
@@ -158,16 +125,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 					s_management.getObjectProperties(
 							ReadOnlyContext.getSoapContext(), PID);
 			return TypeUtility.convertPropertyArrayToGenPropertyArray(properties);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 			
-		} catch (ServerException se) {
-			logStackTrace(se);
-			throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
-		}
-				
+        } catch (Throwable th) {
+            LOG.error("Error getting object properties", th);
+            throw AxisUtility.getFault(th); 			
+        }
 	}
 
     public fedora.server.types.gen.UserInfo describeUser(String id)
@@ -175,14 +136,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     	Context context = ReadOnlyContext.getSoapContext();
     	try {
 			s_management.adminPing(context);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 			
-		} catch (ServerException e) {
-            throw AxisUtility.getFault(new GeneralException("Unrecognized user: " + id));			
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
-		}
+        } catch (Throwable th) {
+            LOG.error("Error getting user info", th);
+            throw AxisUtility.getFault(th); 			
+        }
         fedora.server.types.gen.UserInfo inf=new fedora.server.types.gen.UserInfo();
         inf.setId(id);
         //so, for the purposes of this method, an administrator is whoever is permitted action "adminPing"
@@ -200,13 +157,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);     
-        } catch (ServerException se) {
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting object XML", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -218,13 +171,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             ByteArrayOutputStream out=new ByteArrayOutputStream();
             pipeStream(in, out);
             return out.toByteArray();
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error exporting object", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
     
@@ -236,14 +185,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
 			ByteArrayOutputStream out=new ByteArrayOutputStream();
 			pipeStream(in, out);
 			return out.toByteArray();
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 			
-		} catch (ServerException se) {
-			throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
-		}
+        } catch (Throwable th) {
+            LOG.error("Error exporting object", th);
+            throw AxisUtility.getFault(th); 			
+        }
 	}
 
     // temporarily here
@@ -270,7 +215,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
     public String purgeObject(String PID, 
                               String logMessage,
                               boolean force) throws java.rmi.RemoteException {
-    	logger.debug("start: purgeObject, " + PID);
+    	LOG.debug("start: purgeObject, " + PID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
@@ -278,16 +223,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                              PID, 
                                              logMessage,
                                              force));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error purging object", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: purgeObject, " + PID);
+        	LOG.debug("end: purgeObject, " + PID);
         }
     }
 
@@ -304,7 +244,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                 String checksumType,
                                 String checksum,
                                 String logMessage) throws RemoteException {
-    	logger.debug("start: addDatastream, " + pid + ", " + dsID);
+    	LOG.debug("start: addDatastream, " + pid + ", " + dsID);
         assertInitialized();
         try {
             return s_management.addDatastream(ReadOnlyContext.getSoapContext(), 
@@ -321,16 +261,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                  checksumType,
                                                  checksum,
                                                  logMessage);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error adding datastream", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: addDatastream, " + pid + ", " + dsID);
+        	LOG.debug("end: addDatastream, " + pid + ", " + dsID);
         }
     }
 
@@ -346,7 +281,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                               String logMessage, 
                                               boolean force)
             throws java.rmi.RemoteException {
-    	logger.debug("start: modifyDatastreamByReference, " + PID + ", " + datastreamID);
+    	LOG.debug("start: modifyDatastreamByReference, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             return DateUtility.convertDateToString(
@@ -363,16 +298,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             checksum,
                             logMessage, 
                             force));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error modifying datastream by reference", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: modifyDatastreamByReference, " + PID + ", " + datastreamID);
+        	LOG.debug("end: modifyDatastreamByReference, " + PID + ", " + datastreamID);
         }
     }
 
@@ -388,7 +318,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                           String logMessage, 
                                           boolean force) 
                 throws java.rmi.RemoteException {
-    	logger.debug("start: modifyDatastreamByValue, " + PID + ", " + datastreamID);
+    	LOG.debug("start: modifyDatastreamByValue, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             ByteArrayInputStream byteStream = null;
@@ -408,16 +338,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                          checksum,
                                                          logMessage, 
                                                          force));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error modifying datastream by value", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: modifyDatastreamByValue, " + PID + ", " + datastreamID);
+        	LOG.debug("end: modifyDatastreamByValue, " + PID + ", " + datastreamID);
         }
     }
 
@@ -433,14 +358,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                     datastreamID, 
                                                     dsState, 
                                                     logMessage));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error setting datastream state", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -457,14 +377,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                    datastreamID, 
                                                    versionable, 
                                                    logMessage));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
         } catch (Throwable th) {
-            logStackTrace(th);
-            throw AxisUtility.getFault(th);
+            LOG.error("Error setting datastream versionable", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
     
@@ -478,14 +393,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                        PID,
                                                        datastreamID, 
                                                        algorithm);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 
-        } catch (ServerException se) {
-            logStackTrace(se);
-        throw AxisUtility.getFault(se);
         } catch (Throwable th) {
-            logStackTrace(th);
-        throw AxisUtility.getFault(th);
+            LOG.error("Error setting datastream checksum", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -499,14 +409,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                            PID,
                                                            datastreamID, 
                                                            versionDate);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 
-        } catch (ServerException se) {
-        logStackTrace(se);
-            throw AxisUtility.getFault(se);
         } catch (Throwable th) {
-        logStackTrace(th);
-            throw AxisUtility.getFault(th);
+            LOG.error("Error comparing datastream checksum", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -523,14 +428,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                                       disseminatorID, 
                                                       dissState, 
                                                       logMessage));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error setting disseminator state", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -541,7 +441,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                                     String logMessage,
                                     boolean force) 
             throws java.rmi.RemoteException {
-    	logger.debug("start: purgeDatastream, " + PID + ", " + datastreamID);
+    	LOG.debug("start: purgeDatastream, " + PID + ", " + datastreamID);
         assertInitialized();
         try {
             return toStringArray(
@@ -553,17 +453,11 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(endDT),
                             logMessage,
                             force));
-        } catch (AuthzException a) {
-            logStackTrace(a);
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error purging datastream", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: purgeDatastream, " + PID + ", " + datastreamID);
+        	LOG.debug("end: purgeDatastream, " + PID + ", " + datastreamID);
         }
     }
 
@@ -588,14 +482,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             datastreamID, 
                             DateUtility.convertStringToDate(asOfDateTime));
             return TypeUtility.convertDatastreamToGenDatastream(ds);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting datastream", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -612,14 +501,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(asOfDateTime),
                             state);
             return getGenDatastreams(intDatastreams);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting datastreams", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -655,14 +539,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             PID,
                             datastreamID);
             return getGenDatastreams(intDatastreams);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting datastream history", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -685,15 +564,10 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                     TypeUtility.convertGenDatastreamBindingMapToDSBindingMap(bindingMap), 
                     dissState,
                     logMessage);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a); 			
-		} catch (ServerException se) {
-			logStackTrace(se);
-			throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
-        } 
+        } catch (Throwable th) {
+            LOG.error("Error adding disseminator", th);
+            throw AxisUtility.getFault(th); 			
+        }
     }
 
     public String[] purgeDisseminator(String PID,
@@ -710,14 +584,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             disseminatorID, 
                             DateUtility.convertStringToDate(endDT),
                             logMessage));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error purging disseminator", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -732,14 +601,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                           PID,
                           disseminatorID);
           return getGenDisseminators(intDisseminators);
-      } catch (AuthzException a) {
-          throw AxisUtility.getFault(a);           
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
       } catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+          LOG.error("Error getting disseminator history", th);
+          throw AxisUtility.getFault(th); 			
       }
    }
 
@@ -756,14 +620,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             disseminatorID, 
                             DateUtility.convertStringToDate(asOfDateTime));
             return TypeUtility.convertDisseminatorToGenDisseminator(diss);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting disseminator", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -780,14 +639,9 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             DateUtility.convertStringToDate(asOfDateTime),
                             dissState);
             return getGenDisseminators(intDisseminators);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting disseminators", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
@@ -813,35 +667,25 @@ public class FedoraAPIMBindingSOAPHTTPImpl
                             dissState,
                             logMessage,
                             force));
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error modifying disseminator", th);
+            throw AxisUtility.getFault(th); 			
         }
     }
 
     public java.lang.String[] getNextPID(NonNegativeInteger numPIDs,
             String namespace)
             throws java.rmi.RemoteException {
-    	logger.debug("start: getNextPID");
+    	LOG.debug("start: getNextPID");
         assertInitialized();
         try {
             if(numPIDs==null) numPIDs=new NonNegativeInteger("1");
             return s_management.getNextPID(ReadOnlyContext.getSoapContext(), numPIDs.intValue(), namespace);
-        } catch (AuthzException a) {
-            throw AxisUtility.getFault(a);             
-        } catch (ServerException se) {
-            logStackTrace(se);
-            throw AxisUtility.getFault(se);
-		} catch (Throwable th) {
-			logStackTrace(th);
-			throw AxisUtility.getFault(th);
+        } catch (Throwable th) {
+            LOG.error("Error getting next PID", th);
+            throw AxisUtility.getFault(th); 			
         } finally {
-        	logger.debug("end: getNextPID");
+        	LOG.debug("end: getNextPID");
         }
     }
 

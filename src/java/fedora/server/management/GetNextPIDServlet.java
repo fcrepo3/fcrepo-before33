@@ -19,6 +19,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Logging;
@@ -74,6 +76,11 @@ import fedora.server.utilities.StreamUtility;
  * @version $Id$
  */
 public class GetNextPIDServlet extends HttpServlet implements Logging {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            GetNextPIDServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** Content type for html. */
@@ -156,8 +163,7 @@ public class GetNextPIDServlet extends HttpServlet implements Logging {
 					+ th.getClass().getName() + " \". Reason: "
 					+ th.getMessage() + "  Input Request was: \""
 					+ request.getRequestURL().toString();
-			logWarning(message);
-			th.printStackTrace();
+            LOG.error(message);
 		}
 	}
 
@@ -236,14 +242,13 @@ public class GetNextPIDServlet extends HttpServlet implements Logging {
 			} else {
 				// GetNextPID request returned no PIDs.
 				String message = "[GetNextPIDServlet] No PIDs returned.";
-				logInfo(message);
+                LOG.error(message);
 			}
 		} catch (Throwable th) {
 			String message = "[GetNextPIDServlet] An error has occured. "
 					+ " The error was a \" " + th.getClass().getName()
 					+ " \". Reason: " + th.getMessage();
-			logWarning(message);
-			th.printStackTrace();
+            LOG.error(message);
 			throw new GeneralException(message);
 		} finally {
 			try {
@@ -328,15 +333,13 @@ public class GetNextPIDServlet extends HttpServlet implements Logging {
 					pw.flush();
 					pw.close();
 				} catch (IOException ioe) {
-					System.err.println("WriteThread IOException: "
-							+ ioe.getMessage());
+                    LOG.error("WriteThread error", ioe);
 				} finally {
 					try {
 						if (pw != null)
 							pw.close();
 					} catch (IOException ioe) {
-						System.err.println("WriteThread IOException: "
-								+ ioe.getMessage());
+                        LOG.warn("WriteThread error", ioe);
 					}
 				}
 			}

@@ -1,11 +1,16 @@
 package fedora.server.security;
-import java.util.Date;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import java.util.Date;
+
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
+
+import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.server.ReadOnlyContext;
@@ -19,30 +24,18 @@ import fedora.server.utilities.DateUtility;
 /**
  * @author wdn5e@virginia.edu
  */
+class ResourceAttributeFinderModule extends AttributeFinderModule {
 
-/*package*/ class ResourceAttributeFinderModule extends AttributeFinderModule {
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ResourceAttributeFinderModule.class.getName());
 	
 	protected boolean canHandleAdhoc() {
 		return false;
 	}
 
-	//protected boolean adhoc() { return false; }
-
 	static private final ResourceAttributeFinderModule singleton = new ResourceAttributeFinderModule();
 
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static Server fedoraServer;
-
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static void setServer() {
-        try {
-            fedoraServer = Server.getInstance(new java.io.File(System.getProperty("fedora.home")), false);
-        } catch (Throwable th) {
-            System.out.println("Server instance not found... will not log times.");
-            // no biggie, just won't logFinest
-        }
-    }
- 
 	private ResourceAttributeFinderModule() {
 		super();
 		try {
@@ -101,24 +94,24 @@ import fedora.server.utilities.DateUtility;
 
 		Object element = getAttributeFromEvaluationResult(attribute);
 		if (element == null) {
-			log("ResourceAttributeFinder:findAttribute" + " exit on " + "can't get resource-id on request callback");
+			LOG.debug("ResourceAttributeFinder:findAttribute" + " exit on " + "can't get resource-id on request callback");
 			return null;
 		}
 
 		if (! (element instanceof StringAttribute)) {
-			log("ResourceAttributeFinder:findAttribute" + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
+			LOG.debug("ResourceAttributeFinder:findAttribute" + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
 			return null;			
 		}
  
 		String resourceId = ((StringAttribute) element).getValue();			
 		
 		if (resourceId == null) {
-			log("ResourceAttributeFinder:findAttribute" + " exit on " + "null resource-id");
+			LOG.debug("ResourceAttributeFinder:findAttribute" + " exit on " + "null resource-id");
 			return null;			
 		}
 
 		if (! validResourceId(resourceId)) {
-			log("ResourceAttributeFinder:findAttribute" + " exit on " + "invalid resource-id");
+			LOG.debug("ResourceAttributeFinder:findAttribute" + " exit on " + "invalid resource-id");
 			return null;			
 		}
 		
@@ -146,24 +139,24 @@ import fedora.server.utilities.DateUtility;
 
 		Object element = getAttributeFromEvaluationResult(attribute);
 		if (element == null) {
-			log("getDatastreamId: " + " exit on " + "can't get resource-id on request callback");
+			LOG.debug("getDatastreamId: " + " exit on " + "can't get resource-id on request callback");
 			return null;
 		}
 
 		if (! (element instanceof StringAttribute)) {
-			log("getDatastreamId: " + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
+			LOG.debug("getDatastreamId: " + " exit on " + "couldn't get resource-id from xacml request " + "non-string returned");
 			return null;			
 		}
  
 		String datastreamId = ((StringAttribute) element).getValue();			
 		
 		if (datastreamId == null) {
-			log("getDatastreamId: " + " exit on " + "null resource-id");
+			LOG.debug("getDatastreamId: " + " exit on " + "null resource-id");
 			return null;			
 		}
 
 		if (! validDatastreamId(datastreamId)) {
-			log("getDatastreamId: " + " exit on " + "invalid resource-id");
+			LOG.debug("getDatastreamId: " + " exit on " + "invalid resource-id");
 			return null;			
 		}
 		
@@ -182,22 +175,21 @@ import fedora.server.utilities.DateUtility;
 	
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx context) {
 
-        setServer();
         long getAttributeStartTime = System.currentTimeMillis();
 
         try {
 		String pid = getPid(context);		
 		if ("".equals(pid)) {
-			log("no pid");
+			LOG.debug("no pid");
 			return null;
 		}
-		log("getResourceAttribute, pid=" + pid);
+		LOG.debug("getResourceAttribute, pid=" + pid);
 		DOReader reader = null;
 		try {
-			log("pid="+pid);			
+			LOG.debug("pid="+pid);			
 			reader = doManager.getReader(Server.USE_CACHE, ReadOnlyContext.EMPTY, pid);
 		} catch (ServerException e) {
-			log("couldn't get object reader");
+			LOG.debug("couldn't get object reader");
 			return null;
 		}
 		String[] values = null;
@@ -205,54 +197,54 @@ import fedora.server.utilities.DateUtility;
 			try {
 				values = new String[1];
 				values[0] = reader.GetObjectState();
-				log("got " + Constants.OBJECT.STATE.uri + "=" + values[0]);
+				LOG.debug("got " + Constants.OBJECT.STATE.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("failed getting " + Constants.OBJECT.STATE.uri);
+				LOG.debug("failed getting " + Constants.OBJECT.STATE.uri);
 				return null;					
 			}
 		} else if (Constants.OBJECT.OBJECT_TYPE.uri.equals(attributeId)) { 
 			try {
 				values = new String[1];
 				values[0] = reader.getOwnerId();
-				log("got " + Constants.OBJECT.OBJECT_TYPE.uri + "=" + values[0]);
+				LOG.debug("got " + Constants.OBJECT.OBJECT_TYPE.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("failed getting " + Constants.OBJECT.OBJECT_TYPE.uri);
+				LOG.debug("failed getting " + Constants.OBJECT.OBJECT_TYPE.uri);
 				return null;					
 			}			
 		} else if (Constants.OBJECT.OWNER.uri.equals(attributeId)) { 
 				try {
 					values = new String[1];
 					values[0] = reader.getOwnerId();
-					log("got " + Constants.OBJECT.OWNER.uri + "=" + values[0]);
+					LOG.debug("got " + Constants.OBJECT.OWNER.uri + "=" + values[0]);
 				} catch (ServerException e) {
-					log("failed getting " + Constants.OBJECT.OWNER.uri);
+					LOG.debug("failed getting " + Constants.OBJECT.OWNER.uri);
 					return null;					
 				}
 		} else if (Constants.OBJECT.CONTENT_MODEL.uri.equals(attributeId)) { 
 			try {
 				values = new String[1];
 				values[0] = reader.getContentModelId();
-				log("got " + Constants.OBJECT.CONTENT_MODEL.uri + "=" + values[0]);
+				LOG.debug("got " + Constants.OBJECT.CONTENT_MODEL.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("failed getting " + Constants.OBJECT.CONTENT_MODEL.uri);
+				LOG.debug("failed getting " + Constants.OBJECT.CONTENT_MODEL.uri);
 				return null;					
 			}			
 		} else if (Constants.OBJECT.CREATED_DATETIME.uri.equals(attributeId)) { 
 			try {
 				values = new String[1];
 				values[0] = DateUtility.convertDateToString(reader.getCreateDate());
-				log("got " + Constants.OBJECT.CREATED_DATETIME.uri + "=" + values[0]);
+				LOG.debug("got " + Constants.OBJECT.CREATED_DATETIME.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("failed getting " + Constants.OBJECT.CREATED_DATETIME.uri);
+				LOG.debug("failed getting " + Constants.OBJECT.CREATED_DATETIME.uri);
 				return null;					
 			}		
 		} else if (Constants.OBJECT.LAST_MODIFIED_DATETIME.uri.equals(attributeId)) { 
 			try {
 				values = new String[1];
 				values[0] = DateUtility.convertDateToString(reader.getLastModDate());
-				log("got " + Constants.OBJECT.LAST_MODIFIED_DATETIME.uri + "=" + values[0]);
+				LOG.debug("got " + Constants.OBJECT.LAST_MODIFIED_DATETIME.uri + "=" + values[0]);
 			} catch (ServerException e) {
-				log("failed getting " + Constants.OBJECT.LAST_MODIFIED_DATETIME.uri);
+				LOG.debug("failed getting " + Constants.OBJECT.LAST_MODIFIED_DATETIME.uri);
 				return null;					
 			}			
 		} else if ((Constants.DATASTREAM.STATE.uri.equals(attributeId))
@@ -266,19 +258,19 @@ import fedora.server.utilities.DateUtility;
 		       ||  (Constants.DATASTREAM.CONTENT_LENGTH.uri.equals(attributeId)) ) {			
 			String datastreamId = getDatastreamId(context);
 			if ("".equals(datastreamId)) {
-				log("no datastreamId");
+				LOG.debug("no datastreamId");
 				return null;
 			}
-			log("datastreamId=" + datastreamId);
+			LOG.debug("datastreamId=" + datastreamId);
 			Datastream datastream;
 			try {
 				datastream = reader.GetDatastream(datastreamId, new Date()); //right import (above)?
 			} catch (ServerException e) {
-				log("couldn't get datastream");
+				LOG.debug("couldn't get datastream");
 				return null;					
 			}
 			if (datastream == null) {
-				log("got null datastream");
+				LOG.debug("got null datastream");
 				return null;
 			}
 			
@@ -310,17 +302,15 @@ import fedora.server.utilities.DateUtility;
 				values = new String[1];
 				values[0] = Long.toString(datastream.DSSize);
 			} else {
-				log("looking for unknown resource attribute=" + attributeId);							
+				LOG.debug("looking for unknown resource attribute=" + attributeId);							
 			}
 		} else {
-			log("looking for unknown resource attribute=" + attributeId);			
+			LOG.debug("looking for unknown resource attribute=" + attributeId);			
 		}
 		return values;
         } finally {
-            if (fedoraServer != null) {
-                long dur = System.currentTimeMillis() - getAttributeStartTime;
-                fedoraServer.logFinest("Locally getting the '" + attributeId + "' attribute for this resource took " + dur + "ms.");
-            }
+            long dur = System.currentTimeMillis() - getAttributeStartTime;
+            LOG.debug("Locally getting the '" + attributeId + "' attribute for this resource took " + dur + "ms.");
         }
 	}
 
@@ -329,41 +319,31 @@ import fedora.server.utilities.DateUtility;
 		URI resourceIdId = null;
 		try {
 			resourceIdType = new URI(StringAttribute.identifier);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			resourceIdId = new URI(Constants.OBJECT.PID.uri);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            LOG.error("Bad URI syntax", e);
 		}
 		EvaluationResult attribute = context.getResourceAttribute(resourceIdType, resourceIdId, null);    
 		Object element = getAttributeFromEvaluationResult(attribute);
 		if (element == null) {
-			log("PolicyFinderModule:getPid" + " exit on " + "can't get contextId on request callback");
+			LOG.debug("PolicyFinderModule:getPid" + " exit on " + "can't get contextId on request callback");
 			return null;
 		}
 
 		if (! (element instanceof StringAttribute)) {
-			log("PolicyFinderModule:getPid" + " exit on " + "couldn't get contextId from xacml request " + "non-string returned");
+			LOG.debug("PolicyFinderModule:getPid" + " exit on " + "couldn't get contextId from xacml request " + "non-string returned");
 			return null;			
 		}
  
 		String pid = ((StringAttribute) element).getValue();			
 		
 		if (pid == null) {
-			log("PolicyFinderModule:getPid" + " exit on " + "null contextId");
+			LOG.debug("PolicyFinderModule:getPid" + " exit on " + "null contextId");
 			return null;			
 		}
 
 		return pid;				
     }
     
-	static {
-		AttributeFinderModule.log = false;
-	}
-	
 }
 

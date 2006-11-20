@@ -1,5 +1,32 @@
 package fedora.server.storage.translation;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import java.net.URL;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
@@ -17,37 +44,13 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 /**
- *
- * <p><b>Title:</b> METSLikeDODeserializer.java</p>
- * <p><b>Description:</b> 
- *       Deserializes XML digital object encoded in accordance 
- * 		 with the Fedora extension of the METS schema defined at: 
- *       http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
+ * Deserializes XML digital object encoded in accordance 
+ * with the Fedora extension of the METS schema defined at: 
+ * http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
  * 
- *       The METS XML is parsed using SAX and is instantiated into a Fedora
- *       digital object in memory (see fedora.server.types.DigitalObject). </p>
+ * The METS XML is parsed using SAX and is instantiated into a Fedora
+ * digital object in memory (see fedora.server.types.DigitalObject).
  *
  * @author cwilper@cs.cornell.edu
  * @author payette@cs.cornell.edu
@@ -56,6 +59,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class METSLikeDODeserializer
         extends DefaultHandler
         implements DODeserializer {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            METSLikeDODeserializer.class.getName());
 
     /** The namespace for METS */
     private final static String M="http://www.loc.gov/METS/";
@@ -245,7 +252,7 @@ public class METSLikeDODeserializer
 
     public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
-		if (fedora.server.Debug.DEBUG) System.out.println("Deserializing METS (Fedora extension)...");
+		LOG.debug("Deserializing METS (Fedora extension)...");
         m_obj=obj;
 		m_transContext=transContext;
 		initialize();       
@@ -807,7 +814,7 @@ public class METSLikeDODeserializer
 		ds.DSInfoType=m_dsInfoType;
 
 		ds.DSChecksumType=m_dsChecksumType;
-        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+        LOG.debug("instantiate datastream: dsid = "+ m_dsId + 
                 "checksumType = "+ m_dsChecksumType +
                 "checksum = "+ m_dsChecksum);
         if (m_obj.isNew()) 
@@ -815,7 +822,7 @@ public class METSLikeDODeserializer
             if (m_dsChecksum != null && !m_dsChecksum.equals("") && !m_dsChecksum.equals("none"))
             {
                 String tmpChecksum = ds.getChecksum();
-                System.out.println("checksum = "+ tmpChecksum);
+                LOG.debug("checksum = "+ tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum))
                 {
                     throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
@@ -900,11 +907,11 @@ public class METSLikeDODeserializer
 			//LOOK! this sets bytes, not characters.  Do we want to set this?
 			ds.DSSize=ds.xmlContent.length;
 		} catch (Exception uee) {
-			System.out.println("Error processing inline xml content in SAX parse: " 
+			LOG.debug("Error processing inline xml content in SAX parse: " 
 				+ uee.getMessage());
 		}				
         
-        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+        LOG.debug("instantiate datastream: dsid = "+ m_dsId + 
                 "checksumType = "+ m_dsChecksumType +
                 "checksum = "+ m_dsChecksum);
         if (m_obj.isNew()) 
@@ -912,7 +919,7 @@ public class METSLikeDODeserializer
             if (m_dsChecksum != null && !m_dsChecksum.equals("") && !m_dsChecksum.equals("none"))
             {
                 String tmpChecksum = ds.getChecksum();
-                System.out.println("checksum = "+ tmpChecksum);
+                LOG.debug("checksum = "+ tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum))
                 {
                     throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));
@@ -1107,8 +1114,7 @@ public class METSLikeDODeserializer
 			ds.xmlContent=buf.toString().getBytes(m_characterEncoding);
 			ds.DSSize=ds.xmlContent.length;
 		} catch (UnsupportedEncodingException uee) {
-			System.out.println("Encoding error when creating RELS-INT datastream." 
-				+ uee.getMessage());
+            LOG.error("Encoding error when creating RELS-INT datastream", uee);
 		}				
 		// FINALLY! add the RDF and an inline xml datastream in the digital object
 		m_obj.datastreams(ds.DatastreamID).add(ds);  	

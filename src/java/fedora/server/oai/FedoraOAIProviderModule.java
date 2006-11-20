@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import fedora.oai.*;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -24,6 +26,10 @@ import fedora.server.search.FieldSearch;
 public class FedoraOAIProviderModule
         extends Module
         implements OAIProvider {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FedoraOAIProviderModule.class.getName());
 
     private FedoraOAIProvider m_wrappedOAIProvider;
 
@@ -107,22 +113,12 @@ public class FedoraOAIProviderModule
         long maxSets=100; // unused for now, but passed in the constructor anyway
         long maxRecords=maxResults;
         long maxHeaders=maxResults;
-/* unused for now
-        String maxSetsString=getParameter("maxSets");
-        if (maxSetsString!=null) {
-            try {
-                maxSets=Long.parseLong(maxSetsString);
-            } catch (NumberFormatException nfe) {
-                throw new ModuleInitializationException("maxSets value is invalid.", getRole());
-            }
-        }
-*/
         String maxRecordsString=getParameter("maxRecords");
         if (maxRecordsString!=null) {
             try {
                 maxRecords=Long.parseLong(maxRecordsString);
                 if (maxRecords>maxResults) {
-                    logWarning("maxRecords was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
+                    LOG.warn("maxRecords was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
                     maxRecords=maxResults;
                 }
             } catch (NumberFormatException nfe) {
@@ -134,7 +130,7 @@ public class FedoraOAIProviderModule
             try {
                 maxHeaders=Long.parseLong(maxHeadersString);
                 if (maxHeaders>maxResults) {
-                    logWarning("maxHeaders was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
+                    LOG.warn("maxHeaders was over the limit given by the FieldSearch module, using highest possible value: " + maxResults);
                     maxHeaders=maxResults;
                 }
             } catch (NumberFormatException nfe) {

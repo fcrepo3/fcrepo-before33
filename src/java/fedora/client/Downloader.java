@@ -66,60 +66,12 @@ public class Downloader {
         return get(buf.toString());
     }
 
-    /*public void getDissemination(String pid, String bDef, String method, 
-            Map parms, String asOfDateTime, OutputStream out) 
-            throws IOException {
-        InputStream in=getDissemination(pid, bDef, method, parms, asOfDateTime);
-        StreamUtility.pipeStream(in, out, 4096);
-    }*/
-
-    
     public void getDatastreamDissemination(String pid, String dsId, 
             String asOfDateTime, OutputStream out) 
             throws IOException {
         InputStream in=getDatastreamDissemination(pid, dsId, asOfDateTime);
         StreamUtility.pipeStream(in, out, 4096);
     }    
-    
-    /*public InputStream getDissemination(String pid, String bDef, String method, 
-            Map parms, String asOfDateTime) 
-            throws IOException {
-        StringBuffer buf=new StringBuffer();
-        buf.append(m_fedoraUrlStart);
-        buf.append(pid);
-        buf.append('/');
-        buf.append(bDef);
-        buf.append('/');
-        buf.append(method);
-        if (asOfDateTime!=null) {
-            buf.append('/');
-            buf.append(asOfDateTime);
-        }
-        if (parms!=null) {
-            Iterator iter=parms.keySet().iterator();
-            int i=0;
-            while (iter.hasNext()) {
-                String name=(String) iter.next();
-                String value=(String) parms.get(name);
-                if (i==0) {
-                    buf.append("?");
-                } else {
-                    buf.append("&");
-                }
-                try {
-                    buf.append(URLEncoder.encode(name, "UTF-8"));
-                    buf.append('=');
-                    buf.append(URLEncoder.encode(value, "UTF-8"));
-                } catch (UnsupportedEncodingException e) {
-                    // won't happen
-                }
-                i++;
-            }
-        }
-        System.err.println("URL: "+buf.toString());
-        return get(buf.toString());
-    }*/
-
     
     public InputStream getDatastreamDissemination(String pid, String dsId, 
             String asOfDateTime) 
@@ -133,7 +85,6 @@ public class Downloader {
             buf.append('/');
             buf.append(asOfDateTime);
         }
-        if (fedora.server.Debug.DEBUG) System.err.println("URL: "+buf.toString());
         return get(buf.toString());
     }    
     

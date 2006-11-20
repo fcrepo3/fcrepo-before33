@@ -1,9 +1,13 @@
 package fedora.server.access;
 
 import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ModuleInitializationException;
@@ -18,8 +22,6 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.Property;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * <p><b>Title: </b>DynamicAccessModule.java</p>
@@ -45,6 +47,11 @@ import java.net.UnknownHostException;
  */
 public class DynamicAccessModule extends Module implements Access
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DynamicAccessModule.class.getName());
+
   /**
    * An instance of the core implementation class for DynamicAccess.
    * The DynamicAccessModule acts as a wrapper to this class.
@@ -82,20 +89,6 @@ public class DynamicAccessModule extends Module implements Access
   public void postInitModule()
       throws ModuleInitializationException
   {
-    // FIXIT! NOT DOING IP restriction in DynamicAccess because it is done
-    // already by DefaultAccess.  Consider possible cases where we
-    // may want to do it here.
-    /*
-    String allowHosts=getParameter("allowHosts");
-    String denyHosts=getParameter("denyHosts");
-    try {
-        m_ipRestriction = new IPRestriction(allowHosts, denyHosts);
-    } catch (ServerException se) {
-        throw new ModuleInitializationException("Error setting IP restriction "
-                + "for DynamicAccess " + se.getClass().getName() + ": "
-                + se.getMessage(), getRole());
-    }
-    */
       m_manager = (DOManager)
           getServer().getModule("fedora.server.storage.DOManager");
       if (m_manager == null)
@@ -117,11 +110,7 @@ public class DynamicAccessModule extends Module implements Access
         hostIP = InetAddress.getLocalHost();
       } catch (UnknownHostException uhe)
       {
-        System.err.println("[DynamicAccessModule] was unable to "
-            + "resolve the IP address of the Fedora Server: "
-            + " The underlying error was a "
-            + uhe.getClass().getName() + "The message "
-            + "was \"" + uhe.getMessage() + "\"");
+        LOG.error("Unable to resolve Fedora host", uhe);
       }
       String fedoraServerHost = getServer().getParameter("fedoraServerHost");
       if (fedoraServerHost==null || fedoraServerHost.equals("")) {

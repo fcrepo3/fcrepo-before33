@@ -240,17 +240,4 @@ public class Condition {
         return m_value;
     }
 
-    public static void main(String[] args) {
-        try {
-            List l=Condition.getConditions(args[0]);
-            for (int i=0; i<l.size(); i++) {
-                Condition c=(Condition) l.get(i);
-                System.out.println("<" + c.getOperator().getAbbreviation()
-                        + " prop=\"" + c.getProperty() + "\" val=\"" + c.getValue() + "\" />");
-            }
-        } catch (QueryParseException qpe) {
-            System.out.println("PARSE ERROR: " + qpe);
-        }
-    }
-
 }

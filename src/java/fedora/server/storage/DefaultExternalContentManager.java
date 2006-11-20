@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.commons.httpclient.Header;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.http.HttpInputStream;
 import fedora.common.http.WebClient;
 import fedora.server.Context;
@@ -32,6 +34,10 @@ import fedora.server.utilities.ServerUtility;
 public class DefaultExternalContentManager extends Module
     implements ExternalContentManager
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DefaultExternalContentManager.class.getName());
 
   private String m_userAgent;
   private String fedoraServerHost;
@@ -70,7 +76,7 @@ public class DefaultExternalContentManager extends Module
     try
     {
       Server s_server = this.getServer();
-      s_server.logInfo("DefaultExternalContentManager initialized");
+      LOG.info("DefaultExternalContentManager initialized");
       m_userAgent=getParameter("userAgent");
       if (m_userAgent==null) {
         m_userAgent="Fedora";
@@ -102,7 +108,7 @@ public class DefaultExternalContentManager extends Module
     private MIMETypedStream get(String url,
                                 String user,
                                 String pass) throws GeneralException {
-        getServer().logFinest("DefaultExternalContentManager.get(" + url + ")");
+        LOG.debug("DefaultExternalContentManager.get(" + url + ")");
         try {
             HttpInputStream response = m_http.get(url, true, user, pass);
             String mimeType = response.getResponseHeaderValue("Content-Type",
@@ -141,7 +147,7 @@ public class DefaultExternalContentManager extends Module
    */
   public MIMETypedStream getExternalContent(String url, Context context)
       throws GeneralException, HttpServiceNotFoundException {
-  	log("in getExternalContent(), url=" + url);
+  	LOG.debug("in getExternalContent(), url=" + url);
   	try {
   		String backendUsername = "";
   		String backendPassword = "";
@@ -166,9 +172,9 @@ public class DefaultExternalContentManager extends Module
 		    	modURL = modURL.replaceFirst(":"+fedoraServerPort+"/", ":"+fedoraServerRedirectPort+"/");
 		    }    
 		}
-		if (fedora.server.Debug.DEBUG) {
-		   	System.out.println("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
-		   	System.out.println("************************* doAuthnGetURL: "+modURL);
+		if (LOG.isDebugEnabled()) {
+		   	LOG.debug("************************* backendUsername: "+backendUsername+ "     backendPassword: "+backendPassword+"     backendSSL: "+backendSSL);
+		   	LOG.debug("************************* doAuthnGetURL: "+modURL);
 		}
 
         return get(modURL, backendUsername, backendPassword);
@@ -184,13 +190,5 @@ public class DefaultExternalContentManager extends Module
 			+ "was  \"" + th.getMessage() + "\"  .  ");
   	}
   } 
-  
-  private boolean log = false;
-  
-  private final void log(String msg) {
-  	if (log) {
-	  	System.err.println(msg);	  		
-  	}
-  }
   
 }

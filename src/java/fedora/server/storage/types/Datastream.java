@@ -1,5 +1,20 @@
 package fedora.server.storage.types;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import java.util.Date;
+
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
@@ -10,30 +25,19 @@ import fedora.server.storage.DOManager;
 import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Date;
-
-import org.xml.sax.SAXException;
-
-
 /**
- *
- * <p><b>Title:</b> Datastream.java</p>
- * <p><b>Description:</b> </p>
+ * A Fedora datastream.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class Datastream
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        Datastream.class.getName());
+
   public final static String CHECKSUMTYPE_DISABLED = "DISABLED";
   public final static String CHECKSUM_IOEXCEPTION = "ExceptionReadingStream";
   
@@ -115,11 +119,11 @@ public class Datastream
       defaultChecksumType = "DISABLED";
       try 
       {
-          System.out.println("Getting Server");
+          LOG.debug("Getting Server");
           Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-          System.out.println("Got Server");
+          LOG.debug("Got Server");
           String auto = server.getParameter("autoChecksum");
-          System.out.println("Got Parameter: autoChecksum = "+ auto);
+          LOG.debug("Got Parameter: autoChecksum = " + auto);
           if (auto.equalsIgnoreCase("true"))
           {
               defaultChecksumType = server.getParameter("checksumAlgorithm");
@@ -131,8 +135,7 @@ public class Datastream
       }
       catch (Exception e)
       {
-          System.out.println("Exception in getting default checksum type");
-          e.printStackTrace();
+          LOG.warn("Exception in getting default checksum type", e);
           // IGNORE  
       }
       return(defaultChecksumType);
@@ -144,11 +147,11 @@ public class Datastream
       {
           try 
           {
-              System.out.println("Getting Server");
+              LOG.debug("Getting Server");
               Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-              System.out.println("Got Server");
+              LOG.debug("Got Server");
               String action = server.getParameter("checksumMismatchAction");
-              System.out.println("Got Parameter: checksumMismatchAction = "+ action);
+              LOG.debug("Got Parameter: checksumMismatchAction = "+ action);
               if (action.equalsIgnoreCase("EXCEPTION"))
               {
                   checksumErrorAction = action;
@@ -166,9 +169,8 @@ public class Datastream
           }
           catch (Exception e)
           {
-              System.out.println("Exception in getting checksum mismatch action");
+              LOG.warn("Exception in getting checksum mismatch action", e);
               checksumErrorAction = "EXCEPTION";
-              e.printStackTrace();
               // IGNORE  
           }
       }
@@ -208,14 +210,14 @@ public class Datastream
       {
           DSChecksum = computeChecksum(getChecksumType());          
       }
-      System.out.println("Checksum = " + DSChecksum);
+      LOG.debug("Checksum = " + DSChecksum);
       return(DSChecksum);
   }
   
   public String setChecksum(String csType)
   {
       if (csType != null)  DSChecksumType = csType;
-      System.out.println("setting ChecksumType to "+ DSChecksumType);
+      LOG.debug("setting ChecksumType to "+ DSChecksumType);
       DSChecksum = computeChecksum(DSChecksumType);
       return(DSChecksum);
   }
@@ -246,19 +248,19 @@ public class Datastream
       try
       {
           MessageDigest md = MessageDigest.getInstance(csType);
-          System.out.println("Classname = " + this.getClass().getName());
-          System.out.println("location = " + this.DSLocation);
+          LOG.debug("Classname = " + this.getClass().getName());
+          LOG.debug("location = " + this.DSLocation);
           InputStream is = getContentStream();          
           if (is != null)
           {
               byte buffer[] = new byte[5000];
               int numread;
-              System.out.println("Reading content...");
+              LOG.debug("Reading content...");
               while ((numread = is.read(buffer, 0, 5000)) > 0)
               {
                   md.update(buffer, 0, numread);
               }  
-              System.out.println("...Done reading content");
+              LOG.debug("...Done reading content");
               //checksum = StreamUtility.encodeBase64(md.digest());
               checksum = StringUtility.byteArraytoHexString(md.digest());
           }

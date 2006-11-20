@@ -4,6 +4,7 @@
 
 //check existing low-level in file model, cp w/ properties
 package fedora.server.storage.lowlevel;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -12,24 +13,22 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.LowlevelStorageException;
 
 /**
- *
- * <p><b>Title:</b> GenericFileSystem.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
 public class GenericFileSystem extends FileSystem {
+
+    /** Logger for this class. */
+    private static Logger LOG = Logger.getLogger(
+            GenericFileSystem.class.getName());
     
 	public GenericFileSystem(Map configuration) {
 		super(configuration);
-	}
-
-	void log(String string) {
-		System.err.println(string);
 	}
 
 	private final File wrappedNewFile(File file, String suffix) throws LowlevelStorageException {
@@ -125,13 +124,13 @@ public class GenericFileSystem extends FileSystem {
                 try {
                     out.close();
                 } catch (IOException e) {
-                    log("WARN: Could not close file for writing " + file.getPath());
+                    LOG.warn("Could not close file for writing " + file.getPath(), e);
                 }
             }
             try {
                 content.close();
             } catch (IOException e) {
-                log("WARN: Could not close content stream for reading");
+                LOG.warn("Could not close content stream for reading", e);
             }
         }
 
@@ -144,7 +143,7 @@ public class GenericFileSystem extends FileSystem {
             throw new LowlevelStorageException(true, err);
         } else {
             if (!backupFile.delete()) {
-                log("WARN: Could not delete backup file " + backupFile.getPath());
+                LOG.warn("Could not delete backup file " + backupFile.getPath());
             }
         }
 

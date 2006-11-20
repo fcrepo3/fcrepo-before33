@@ -12,6 +12,8 @@ import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.Part;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Logging;
@@ -41,6 +43,9 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
  */
 public class UploadServlet 
         extends HttpServlet implements Logging {
+
+    private static final Logger LOG = Logger.getLogger(
+            UploadServlet.class.getName());
 
 	private static final long serialVersionUID = 1L;
 	
@@ -103,18 +108,16 @@ public class UploadServlet
             HttpServletResponse response) {
         try {
             if (status==HttpServletResponse.SC_CREATED) {
-                logFine("Successful upload, id=" + message);
+                LOG.info("Successful upload, id=" + message);
             } else {
-                logWarning("Failed upload: " + message);
+                LOG.error("Failed upload: " + message);
             }
             response.setStatus(status);
             response.setContentType(CONTENT_TYPE_TEXT);
             PrintWriter w=response.getWriter();
             w.println(message);
         } catch (Exception e) {
-            logSevere("Could not send a response: " + e.getClass().getName()
-                    + ": " + e.getMessage());
-            e.printStackTrace();
+            LOG.error("Unable to send response", e);
         }
     }
 

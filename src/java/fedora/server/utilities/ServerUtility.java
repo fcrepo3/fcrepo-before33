@@ -1,26 +1,29 @@
 package fedora.server.utilities;
 
 import java.io.File;
-import java.util.Properties;
 import java.net.HttpURLConnection;
+import java.util.Properties;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.log4j.Logger;
+
 import org.apache.commons.httpclient.methods.GetMethod;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
+
 import fedora.common.HttpClient;
 import fedora.server.errors.GeneralException;
 
 public class ServerUtility {
-    public static final String FINE = "fine";
-    public static final String FINER = "finer";
-    public static final String FINEST = "finest";
-    public static final String INFO = "info";
-    public static final String WARNING = "warning";
-    public static final String SEVERE = "severe";
-    
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ServerUtility.class.getName());
+
     public static final String FEDORA_SERVER_HOST = "fedoraServerHost";
     public static final String FEDORA_SERVER_PORT = "fedoraServerPort";
     public static final String FEDORA_REDIRECT_PORT = "fedoraRedirectPort";
@@ -88,7 +91,7 @@ public class ServerUtility {
     	try {
 			serverProperties = readServerProperties(false, false);
 		} catch (Exception e) {
-	        slog(FINEST, "problem during static read of server properties, "+e.getMessage());
+            LOG.warn("problem during static read of server properties", e);
 		}
     }
 
@@ -98,25 +101,23 @@ public class ServerUtility {
     public static final String getPort(String protocol) throws GeneralException {
     	String port = null;
     	if (! HTTP.equals(protocol) && ! HTTPS.equals(protocol)) {
-        	slog(FINEST, "bad protocol parm = "+protocol);
-    		throw new GeneralException("bad protocol parm");    	
+    		throw new GeneralException("bad protocol parm = " + protocol);    	
     	}
-    	slog(FINEST, "serverProperties = "+serverProperties);
-    	slog(FINEST, "HTTP.equals(protocol) = "+HTTP.equals(protocol));    	
-    	slog(FINEST, "HTTPS.equals(protocol) = "+HTTPS.equals(protocol));    	
-    	slog(FINEST, "FEDORA_SERVER_PORT = "+FEDORA_SERVER_PORT);    	
-    	slog(FINEST, "FEDORA_REDIRECT_PORT = "+FEDORA_REDIRECT_PORT); 
-    	slog(FINEST, "serverProperties.containsKey(FEDORA_SERVER_PORT) = "+serverProperties.containsKey(FEDORA_SERVER_PORT));    	
-    	slog(FINEST, "serverProperties.containsKey(FEDORA_REDIRECT_PORT) = "+serverProperties.containsKey(FEDORA_REDIRECT_PORT));    	
+    	LOG.debug("serverProperties = "+serverProperties);
+    	LOG.debug("HTTP.equals(protocol) = "+HTTP.equals(protocol));    	
+    	LOG.debug("HTTPS.equals(protocol) = "+HTTPS.equals(protocol));    	
+    	LOG.debug("FEDORA_SERVER_PORT = "+FEDORA_SERVER_PORT);    	
+    	LOG.debug("FEDORA_REDIRECT_PORT = "+FEDORA_REDIRECT_PORT); 
+    	LOG.debug("serverProperties.containsKey(FEDORA_SERVER_PORT) = "+serverProperties.containsKey(FEDORA_SERVER_PORT));    	
+    	LOG.debug("serverProperties.containsKey(FEDORA_REDIRECT_PORT) = "+serverProperties.containsKey(FEDORA_REDIRECT_PORT));    	
     	if (HTTP.equals(protocol) && serverProperties.containsKey(FEDORA_SERVER_PORT)) {	
     		port = (String) serverProperties.get(FEDORA_SERVER_PORT);
     	} else if (HTTPS.equals(protocol) && serverProperties.containsKey(FEDORA_REDIRECT_PORT)) {	
     		port = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
     	} else {
-        	slog(FINEST, "specified port not configured");
     		throw new GeneralException("specified port not configured");    		
     	}
-    	slog(FINEST, protocol+"=>"+port);
+    	LOG.debug(protocol+"=>"+port);
     	return port;
     }
     
@@ -131,7 +132,7 @@ public class ServerUtility {
         		protocol = fallbackProtocol;
         	}
     	}    	
-    	slog(FINEST, "protocol="+protocol+"port="+port);
+    	LOG.debug("protocol="+protocol+"port="+port);
     	return new ProtocolPort(protocol, port);
     }
     
@@ -139,22 +140,22 @@ public class ServerUtility {
         boolean pingsOk = false;
         HttpClient client = null;
         try {
-        	slog(FINEST, "getServerProperties()="+getServerProperties());
+        	LOG.debug("getServerProperties()="+getServerProperties());
         	ProtocolPort protocolPort = getProtocolPort(HTTP, HTTPS);
-    		slog(FINEST, "protocolPort="+protocolPort);
-    		slog(FINEST, "protocolPort.getProtocol()="+protocolPort.getProtocol());
-    		slog(FINEST, "protocolPort.getPort()="+protocolPort.getPort());
-    		slog(FINEST, "serverProperties.get(FEDORA_SERVER_HOST)="+serverProperties.get(FEDORA_SERVER_HOST));
-    		slog(FINEST, "path="+path);    		
+    		LOG.debug("protocolPort="+protocolPort);
+    		LOG.debug("protocolPort.getProtocol()="+protocolPort.getProtocol());
+    		LOG.debug("protocolPort.getPort()="+protocolPort.getPort());
+    		LOG.debug("serverProperties.get(FEDORA_SERVER_HOST)="+serverProperties.get(FEDORA_SERVER_HOST));
+    		LOG.debug("path="+path);    		
         	client = new HttpClient(protocolPort.getProtocol(), (String) getServerProperties().get(FEDORA_SERVER_HOST), protocolPort.getPort(), path);
-    		slog(FINEST, "client="+client);
+    		LOG.debug("client="+client);
         	GetMethod getMethod = client.doNoAuthnGet(1000 * secondsTimeout, 25, maxConnectionAttemptsPerUrl);
-    		slog(FINEST, "getMethod="+getMethod);
-    		slog(FINEST, "getMethod.getStatusCode()="+getMethod.getStatusCode());    		
+    		LOG.debug("getMethod="+getMethod);
+    		LOG.debug("getMethod.getStatusCode()="+getMethod.getStatusCode());    		
         	pingsOk = (getMethod.getStatusCode() == java.net.HttpURLConnection.HTTP_OK);
-    		slog(FINEST, "pingsOk="+pingsOk);
+    		LOG.debug("pingsOk="+pingsOk);
         } catch (Exception e) {			
-        	throw new GeneralException(slog(FINEST, "op failure pinging fedora server"), e);
+        	throw new GeneralException("op failure pinging fedora server", e);
 		} finally {
 			HttpClient.thisUseFinished();
 		}
@@ -182,21 +183,21 @@ public class ServerUtility {
     	HttpClient client = null;
     	int statusCode = -1;
     	try {
-	   		slog(FINEST, "SC:call HttpClient()...");
+	   		LOG.debug("SC:call HttpClient()...");
 	  		client = new HttpClient(protocol, 
 	  				ServerUtility.getServerProperties().getProperty(ServerUtility.FEDORA_SERVER_HOST), 
 	  				ServerUtility.getServerProperties().getProperty( "http".equals(protocol) ? ServerUtility.FEDORA_SERVER_PORT : ServerUtility.FEDORA_REDIRECT_PORT),
 	  				"/fedora/management/control?action=" + action
 	  				);
-	   		slog(FINEST, "...SC:call HttpClient()"); 
-	   		slog(FINEST, "SC:call HttpClient.doAuthnGet()...");        		
+	   		LOG.debug("...SC:call HttpClient()"); 
+	   		LOG.debug("SC:call HttpClient.doAuthnGet()...");        		
 	  		GetMethod getMethod = client.doAuthnGet(20000, 25,
 	  			(optionalUsername == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_USERNAME_KEY) : optionalUsername,
 	  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
 	  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
 	  		);
-	   		slog(FINEST, "...SC:call HttpClient.doAuthnGet()");		      		
-	   		slog(FINEST, "SC:call HttpClient.getLineResponse()...");
+	   		LOG.debug("...SC:call HttpClient.doAuthnGet()");		      		
+	   		LOG.debug("SC:call HttpClient.getLineResponse()...");
    			statusCode = getMethod.getStatusCode();
     	} finally {
 			HttpClient.thisUseFinished();
@@ -209,41 +210,6 @@ public class ServerUtility {
     private static final String STATUS = "status";
     private static final String RELOAD_POLICIES = "reloadPolicies";
     
-    /*
-    public static final void startup(String protocol) throws Exception {
-    	startup(protocol, null, null);
-    }
-
-    public static final void shutdown(String protocol) throws Exception {
-    	shutdown(protocol, null, null);
-    }
-    
-    public static final void status(String protocol) throws Exception {
-    	status(protocol, null, null);
-      }
-    
-    public static final int startup(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	return serverAction (STARTUP, protocol, optionalUsername, optionalPassword);    	
-    }
-
-    public static final int shutdown(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	int code = serverAction (SHUTDOWN, protocol, optionalUsername, optionalPassword);    	
-    	String line = "ERROR";
-    	if (code == HttpURLConnection.HTTP_OK) {
-    		line = "OK";
-    	}
-    	System.out.println(line);
-    }
-
-    public static final int status(String protocol, String optionalUsername, String optionalPassword) throws Exception {
-    	int code = serverAction (STATUS, protocol, optionalUsername, optionalPassword);    	
-      	String line = "STOPPED";
-    	if (code == HttpURLConnection.HTTP_OK) {
-    		line = "RUNNING";
-    	}
-    	System.out.println(line);    	
-    }    
-    */
     private static final String USAGE = "USAGE for ServerController.main(): startup|shutdown|status [http|https] [username] [passwd]";
 
     public static final int CONTINUE = 100;
@@ -341,20 +307,7 @@ public class ServerUtility {
         	throw new Exception(USAGE);            	
         }
     }    
-    
-    public static final String msg2(String majorMessage, String minorMessage) {
-    	return majorMessage + "<br><br/>" + minorMessage;
-    }
-    
-    private static boolean slog = false;
-
-    public static final String slog(String level, String msg) {
-    	if (slog) {
-    		System.err.println(level + ": " + msg);
-    	}
-		return msg;
-    }
-    
+   
     public static boolean isURLFedoraServer(String url) {
         boolean isFedoraLocalService = false;
         String fedoraServerHost = (String) serverProperties.get(FEDORA_SERVER_HOST);
@@ -362,14 +315,14 @@ public class ServerUtility {
         String fedoraServerRedirectPort = (String) serverProperties.get(FEDORA_REDIRECT_PORT);
         
         // Check for URLs that are callbacks to the Fedora server
-        if ( url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora/") ||
-             url.startsWith("http://"+fedoraServerHost+"/fedora/") ||   
-             url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora/") ||
-             url.startsWith("https://"+fedoraServerHost+"/fedora/") ) {
-            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Fedora-to-Fedora callback: "+url);
+        if (url.startsWith("http://"+fedoraServerHost+":"+fedoraServerPort+"/fedora/") ||
+            url.startsWith("http://"+fedoraServerHost+"/fedora/") ||   
+            url.startsWith("https://"+fedoraServerHost+":"+fedoraServerRedirectPort+"/fedora/") ||
+            url.startsWith("https://"+fedoraServerHost+"/fedora/") ) {
+            LOG.debug("******************URL was Fedora-to-Fedora callback: "+url);
             return true;
         } else {
-            if (fedora.server.Debug.DEBUG) System.out.println("******************URL was Non-Fedora callback: "+url);
+            LOG.debug("******************URL was Non-Fedora callback: "+url);
             return false;
         }
             

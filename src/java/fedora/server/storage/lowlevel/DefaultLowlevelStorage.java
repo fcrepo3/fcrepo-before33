@@ -1,23 +1,26 @@
 package fedora.server.storage.lowlevel;
+
 import java.io.File;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.ObjectAlreadyInLowlevelStorageException;
 import fedora.server.errors.ObjectNotInLowlevelStorageException;
 
 /**
- *
- * <p><b>Title:</b> FileSystemLowlevelStorage.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
 public class DefaultLowlevelStorage implements ILowlevelStorage {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DefaultLowlevelStorage.class.getName());
 
 	public static final String REGISTRY_NAME = "registryName";
 	public static final String OBJECT_REGISTRY_TABLE = "objectPaths";
@@ -133,9 +136,8 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				constructor = cclass.getConstructor(parameterTypes);
 				this.pathRegistry = (PathRegistry) constructor.newInstance(parameters);
 			} catch(Exception e) {
-				e.printStackTrace();
 				LowlevelStorageException wrapper = new LowlevelStorageException(true, "couldn't set up " + failureReason + " for " + registryName, e);
-				log(wrapper);
+				LOG.error("Error setting up", wrapper);
 				throw wrapper;
 			}
 		}
@@ -158,7 +160,7 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 			try { //check that object is not already in store
 				filePath = pathRegistry.get(pid);
 				ObjectAlreadyInLowlevelStorageException already = new ObjectAlreadyInLowlevelStorageException("" + pid);
-				log(already);
+				LOG.error("Already in llstore", already);
 				throw already;
 			} catch (ObjectNotInLowlevelStorageException not) {
 				// OK:  keep going
@@ -166,7 +168,7 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 			filePath = pathAlgorithm.get(pid);
 			if (filePath == null || filePath.equals("")) { //guard against algorithm implementation
 				LowlevelStorageException nullPath = new LowlevelStorageException(true, "null path from algorithm for pid " + pid);
-				log(nullPath);
+				LOG.error("File path null", nullPath);
 				throw nullPath;
 			}
 
@@ -174,7 +176,7 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				file = new File(filePath);
 			} catch (Exception eFile) { //purposefully general catch-all
 				LowlevelStorageException newFile = new LowlevelStorageException(true,"couldn't make File for " + filePath, eFile);
-				log(newFile);
+				LOG.error("Couldn't make file", newFile);
 				throw newFile;
 			}
 			fileSystem.write(file,content);
@@ -189,12 +191,12 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				filePath = pathRegistry.get(pid);
 			} catch (ObjectNotInLowlevelStorageException ffff) {
 				LowlevelStorageException noPath = new LowlevelStorageException(false, "pid " + pid + " not in registry", ffff);
-				log(noPath);
+				LOG.error("Not in registry", noPath);
 				throw noPath;
 			}
 			if (filePath == null || filePath.equals("")) { //guard against registry implementation
 				LowlevelStorageException nullPath = new LowlevelStorageException(true, "pid " + pid + " not in registry");
-				log(nullPath);
+				LOG.error("Not in registry", nullPath);
 				throw nullPath;
 			}
 
@@ -202,7 +204,7 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				file = new File(filePath);
 			} catch (Exception eFile) { //purposefully general catch-all
 				LowlevelStorageException newFile = new LowlevelStorageException(true, "couldn't make new File for " + filePath, eFile);
-				log(newFile);
+				LOG.error("Couldn't make file", newFile);
 				throw newFile;
 			}
 			fileSystem.rewrite(file,content);
@@ -216,13 +218,13 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 			try {
 				filePath = pathRegistry.get(pid);
 			} catch (ObjectNotInLowlevelStorageException eReg) {
-				log(eReg);
+				LOG.error("Not in llstore", eReg);
 				throw eReg;
 			}
 
 			if (filePath == null || filePath.equals("")) { //guard against registry implementation
 				LowlevelStorageException nullPath = new LowlevelStorageException(true, "null path from registry for pid " + pid);
-				log(nullPath);
+				LOG.error("Null path", nullPath);
 				throw nullPath;
 			}
 
@@ -230,7 +232,7 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				file = new File(filePath);
 			} catch (Exception eFile) { //purposefully general catch-all
 				LowlevelStorageException newFile = new LowlevelStorageException(true, "couldn't make File for " + filePath, eFile);
-				log(newFile);
+                LOG.error("Couldn't make file", newFile);
 				throw newFile;
 			}
 
@@ -245,12 +247,12 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 			try {
 				filePath = pathRegistry.get(pid);
 			} catch (ObjectNotInLowlevelStorageException eReg) {
-				log(eReg);
+				LOG.error("Not in storage", eReg);
 				throw eReg;
 			}
 			if (filePath == null || filePath.equals("")) { //guard against registry implementation
 				LowlevelStorageException nullPath = new LowlevelStorageException(true, "null path from registry for pid " + pid);
-				log(nullPath);
+				LOG.error("Null path from reg", nullPath);
 				throw nullPath;
 			}
 
@@ -258,15 +260,12 @@ public class DefaultLowlevelStorage implements ILowlevelStorage {
 				file = new File(filePath);
 			} catch (Exception eFile) { //purposefully general catch-all
 				LowlevelStorageException newFile = new LowlevelStorageException(true, "couldn't make File for " + filePath, eFile);
-				log(newFile);
+				LOG.error("Couldn't make file", newFile);
 				throw newFile;
 			}
 			pathRegistry.remove(pid);
 			fileSystem.delete(file);
 		}
 
-		private void log(Exception exception) {
-			System.err.println(exception.getMessage());
-		}
 	}
 }

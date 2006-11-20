@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -23,18 +26,16 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
 /**
- *
- * <p><b>Title:</b> METSLikeDOSerializer.java</p>
- * <p><b>Description: Creates an XML serialization of a Fedora digital object 
- *       in accordance with the Fedora extension of the METS XML Schema 
- *       defined at: http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
+ * Creates an XML serialization of a Fedora digital object 
+ * in accordance with the Fedora extension of the METS XML Schema 
+ * defined at: http://www.fedora.info/definitions/1/0/mets-fedora-ext.xsd.
  * 
- *       The serializer uses the currently instantiated digital object
- *       as input (see fedora.server.storage.types.DigitalObject). 
+ * The serializer uses the currently instantiated digital object
+ * as input (see fedora.server.storage.types.DigitalObject). 
  * 
- *       The serializer will adapt its output to a specific translation contexts.
- *       See the static definitions of different translation contexts in 
- *       fedora.server.storage.translation.DOTranslationUtility. </b></p>
+ * The serializer will adapt its output to a specific translation contexts.
+ * See the static definitions of different translation contexts in 
+ * fedora.server.storage.translation.DOTranslationUtility.
  *
  * @author cwilper@cs.cornell.edu
  * @author payette@cs.cornell.edu
@@ -42,6 +43,10 @@ import fedora.server.utilities.StringUtility;
  */
 public class METSLikeDOSerializer
         implements DOSerializer {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            METSLikeDOSerializer.class.getName());
 
     public static final String FEDORA_AUDIT_NS="info:fedora/fedora-system:def/audit#";
     public static final String METS_PREFIX="METS";
@@ -67,7 +72,7 @@ public class METSLikeDOSerializer
     public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		if (fedora.server.Debug.DEBUG) System.out.println("Serializing METS (Fedora extension)...");
+		LOG.debug("Serializing METS (Fedora extension)...");
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();    
         

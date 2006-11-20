@@ -3,6 +3,9 @@ package fedora.server.security;
 import java.util.Set;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.BackendSecurityParserException;
@@ -11,14 +14,16 @@ import fedora.server.security.BackendSecurityDeserializer;
 import fedora.server.security.BackendSecuritySpec;
 
 /**
-*
-* <p><b>Title:</b> DefaultBackendSecurity.java</p>
-* <p><b>Description:</b> A Module for accessing backend service security configuration information.</p>
-*
-* @author rlw@virginia.edu
-* @version $Id$
-*/
+ * A Module for accessing backend service security configuration information.
+ *
+ * @author rlw@virginia.edu
+ * @version $Id$
+ */
 public class DefaultBackendSecurity extends Module implements BackendSecurity{
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DefaultBackendSecurity.class.getName());
 
     public static BackendSecuritySpec beSS = null;
     private boolean m_validate = false;
@@ -53,7 +58,7 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
         
         try {
 	          Server s_server = this.getServer();
-	          s_server.logInfo("DefaultBackendSecurity initialized");
+	          LOG.info("DefaultBackendSecurity initialized");
 	          String fedoraHome = System.getProperty("fedora.home");
 	          if (fedoraHome == null) {
 	              throw new ModuleInitializationException(
@@ -61,13 +66,13 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
 	                  + "'fedora.home' system property was not set.", getRole());
 	          } else {
 	              m_beSecurityPath = fedoraHome + "/server/config/beSecurity.xml";
-        		}	
-	          s_server.logInfo("[DefaultBackendSecurity] m_beSecurityPath: "+m_beSecurityPath);
+              }	
+	          LOG.info("m_beSecurityPath: " + m_beSecurityPath);
 	          
 	          String validate = getParameter("beSecurity_validation");
 	          if (validate!=null) {
 	              if (!validate.equals("true") && !validate.equals("false")) {
-	  	              s_server.logWarning("[DefaultBackendSecurity] Validation setting for backend "
+	  	              LOG.warn("Validation setting for backend "
 	  	                      + "security configuration file must be either \"true\" or \"false\". "
 	  	                      + "Value specified was: \"" + validate + "\". Validation is defaulted to "
 	  	                      + "\"false\".");
@@ -75,29 +80,29 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
 	                  m_validate = new Boolean(validate).booleanValue();
 	              }
 	          } else {
-	              s_server.logWarning("[DefaultBackendSecurity] Validation setting for backend "
+                  LOG.warn("Validation setting for backend "
 	                      + "security configuration file was not specified. Validation is defaulted to "
 	                      + "\"false\".");	              
 	          }
-	          s_server.logInfo("[DefaultbackendSecurity] beSecurity_validate: "+m_validate);
+	          LOG.info("beSecurity_validate: " + m_validate);
 	          
 	          m_encoding = getParameter("beSecurity_char_encoding");
 	          if (m_encoding==null) {
 	              m_encoding = "utf-8";
-	              s_server.logWarning("[DefaultBackendSecurity] Character encoding for backend "
+	              LOG.warn("Character encoding for backend "
 	                      + "security configuration file was not specified. Encoding defaulted to "
 	                      + "\"utf-8\".");	          
 	          }
-	          s_server.logInfo("[DefaultbackendSecurity] beSecurity_char_encoding: "+m_encoding);
+	          LOG.info("beSecurity_char_encoding: " + m_encoding);
 	          
 	          // initialize static BackendSecuritySpec instance
             setBackendSecuritySpec();
-            if (fedora.server.Debug.DEBUG) {
+            if (LOG.isDebugEnabled()) {
                 Set roleList = (Set) beSS.listRoleKeys();
-		            Iterator iter = roleList.iterator();
-		            while (iter.hasNext()) {
-		                System.out.println("beSecurity ROLE: "+iter.next());
-		            }
+		        Iterator iter = roleList.iterator();
+		        while (iter.hasNext()) {
+		            LOG.debug("beSecurity ROLE: "+iter.next());
+		        }
             }
 	          
 	      } catch (Throwable th) {

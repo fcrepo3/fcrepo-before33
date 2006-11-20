@@ -11,6 +11,8 @@ import java.util.Map;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.CreatorJournalEntry;
@@ -38,6 +40,11 @@ import fedora.server.storage.types.DSBindingMap;
  */
 
 public abstract class JournalWriter extends AbstractXmlWriter {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            JournalWriter.class.getName());
+
     /**
      * Create an instance of the proper JournalWriter child class, as determined
      * by the server parameters.
@@ -50,7 +57,7 @@ public abstract class JournalWriter extends AbstractXmlWriter {
                         new Class[] { Map.class, String.class,
                                 ServerInterface.class }, new Object[] {
                                 parameters, role, server }, parameters);
-        server.logInfo("JournalWriter is " + journalWriter.toString());
+        LOG.info("JournalWriter is " + journalWriter.toString());
         return (JournalWriter) journalWriter;
     }
 

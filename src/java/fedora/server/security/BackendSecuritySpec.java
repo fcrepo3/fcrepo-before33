@@ -1,18 +1,23 @@
 package fedora.server.security;
 
-import fedora.server.errors.GeneralException;
 import java.util.Set;
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
+
+import fedora.server.errors.GeneralException;
 
 /**
+ * Class that instantiates information parsed from the beSecurity.xml file. 
+ * Methods are provided to set and get backend security properties by role id.
  * 
  * @author payette
- *
- * Class that instantiates information parsed from the beSecurity.xml file. 
- * Methods are provides to set and get backend security properties by role id.
  */
 public class BackendSecuritySpec {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            BackendSecuritySpec.class.getName());
 
 	/**
 	 * The Hashtable is as follows:
@@ -57,12 +62,10 @@ public class BackendSecuritySpec {
 	public void setSecuritySpec(String serviceRoleID, String methodName, Hashtable<String, String> properties) 
 		throws GeneralException {
 			
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println(">>>>>> setSecuritySpec: "
+		LOG.debug(">>>>>> setSecuritySpec: "
 				+ " serviceRoleID=" + serviceRoleID
 				+ " methodName=" + methodName
 				+ " property count=" + properties.size());			
-		}			
 		if (serviceRoleID == null || serviceRoleID.equals("")) {
 			throw new GeneralException("serviceRoleID is missing.");
 		}

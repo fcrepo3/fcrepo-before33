@@ -15,17 +15,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletContext;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Element;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException;
 
 import com.sun.xacml.AbstractPolicy;
 import com.sun.xacml.EvaluationCtx;
@@ -40,6 +34,12 @@ import com.sun.xacml.cond.EvaluationResult;
 import com.sun.xacml.ctx.Status;
 import com.sun.xacml.finder.PolicyFinder;
 import com.sun.xacml.finder.PolicyFinderResult;
+
+import org.apache.log4j.Logger;
+
+import org.w3c.dom.Element;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
 
 import fedora.common.Constants;
 import fedora.server.ReadOnlyContext;
@@ -58,36 +58,17 @@ import fedora.server.storage.types.Datastream;
  * @see "http://sourceforge.net/mailarchive/message.php?msg_id=6068981"
  */
 public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule {
-	private static final Logger logger = Logger.getLogger(PolicyFinderModule.class.getName());	
+
+    /** Logger for this class. */
+	private static final Logger LOG = Logger.getLogger(
+	        PolicyFinderModule.class.getName());	
+
 	private String combiningAlgorithm = null;
 	private PolicyFinder finder;
 	private List repositoryPolicies = null;
-	// SDP: removed since object policies directory is obsolete in Fedora 2.1
-	//private File objectPolicyDirectory = null;
 	private File schemaFile = null;
 	private DOManager doManager;
 
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static Server fedoraServer;
-
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static void setServer() {
-        try {
-            fedoraServer = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-        } catch (Throwable th) {
-            System.out.println("Server instance not found... will not log times.");
-            // no biggie, just won't logFinest
-        }
-    }
-
-	// SDP: removed constructor args related to object policies directory (obsoleted in 2.1)
-	/*
-	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, String objectPolicyDirectoryPath, DOManager doManager,
-		boolean validateRepositoryPolicies,
-		boolean validateObjectPoliciesFromFile,
-		boolean validateObjectPoliciesFromDatastream, 
-		String policySchemaPath
-	*/
 	public PolicyFinderModule(String combiningAlgorithm, String repositoryPolicyDirectoryPath, String repositoryBackendPolicyDirectoryPath, String repositoryPolicyGuiToolDirectoryPath, DOManager doManager,
 		boolean validateRepositoryPolicies,
 		boolean validateObjectPoliciesFromDatastream, 
@@ -113,13 +94,9 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		log("XXpolicySchemaPath="+policySchemaPath);
 		if (policySchemaPath == null) {
 			this.validateRepositoryPolicies = false;
-			// SDP: removed since object policies directory is obsolete in Fedora 2.1
-			//this.validateObjectPoliciesFromFile = false;
 			this.validateObjectPoliciesFromDatastream = false;
 		} else {
 			this.validateRepositoryPolicies = validateRepositoryPolicies;
-			// SDP: removed since object policies directory is obsolete in Fedora 2.1
-			//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 			this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 			//if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromFile || this.validateObjectPoliciesFromDatastream) {			
 			if (this.validateRepositoryPolicies || this.validateObjectPoliciesFromDatastream) {
@@ -135,18 +112,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		
 		repositoryPolicies = getRepositoryPolicies(filelist);
 
-		// SDP: removed since object policies directory is obsolete in Fedora 2.1
-		/*		
-		File objectPolicyDirectory = new File(objectPolicyDirectoryPath);
-		log("objectPolicyDirectory="+objectPolicyDirectory);
-		if (objectPolicyDirectory.isDirectory()) {
-			log("is a directory");			
-			this.objectPolicyDirectory = objectPolicyDirectory;
-		} else {
-			log("is NOT a directory");
-		}
-		*/
-		
 		this.doManager = doManager;
 
 
@@ -196,14 +161,12 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 				abstractPolicy = PolicySet.getInstance(rootElement);
 			} else {
 				String msg = "bad root node for repo-wide policy in " + errorLabel;
-				logger.log(Level.INFO, msg);
+				LOG.info(msg);
 				throw new GeneralException(msg);
 			}
 		} catch (ParsingException e) {
 			String msg = "couldn't parse repo-wide policy in " + errorLabel;
-			logger.log(Level.INFO, msg);
-			slog("HOW IT HAPPEN:");
-			e.printStackTrace();
+			LOG.error(msg, e);
 			throw new GeneralException(msg);
 		}
 		return abstractPolicy;
@@ -286,7 +249,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		} catch (ObjectNotInLowlevelStorageException ee) {
 			// nonexistent object is not an error (action is to create the object)			
 		} catch (Throwable e) {
-			logger.log(Level.INFO, "error reading policy from xml for object " + pid);
+			LOG.error("error reading policy from xml for object " + pid, e);
 			throw e;
 		}
 		if (reader != null) {
@@ -313,7 +276,7 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
     				log("policy can't be read at " + pid);
 					throw e;
 				} catch (Throwable e) {
-					logger.log(Level.INFO, "error reading policy from xml for object " + pid);
+					LOG.error("error reading policy from xml for object " + pid, e);
 					throw e;
 				}
 			}			
@@ -321,44 +284,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		return objectPolicyFromObject;
 	}
 
-	// SDP: removed since object policies directory is obsolete in Fedora 2.1
-	/*
-    private AbstractPolicy getPolicyFromFile(String filepath) throws Exception {
-		AbstractPolicy objectPolicyFromObject = null;		
-		//String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
-		log(">>>>>>>>filepath=" + filepath);
-		File file = new File(filepath);
-		if (file.exists()) {
-			if (!file.canRead()) {
-				String msg = "error reading policy from xml at " + filepath; 
-				logger.log(Level.INFO, msg);
-				throw new GeneralException(msg);			
-			}
-			try {
-				log("GETTING A OBJECT POLICY FROM " + filepath);
-				DocumentBuilder builder = getDocumentBuilder(null, validateObjectPoliciesFromFile);
-				Element rootElement = builder.parse(file).getDocumentElement();
-				objectPolicyFromObject = getAbstractPolicyFromDOM(rootElement, "policy file from xml at " + filepath);
-			} catch (ParserConfigurationException e) {
-				log("parser failure at " + filepath);
-				throw e;
-			} catch (SAXException e) {
-				log("policy breaks schema at " + filepath);
-				throw e;
-			} catch (IOException e) {
-				log("policy can't be read at " + filepath);
-				throw e;
-			} catch (Throwable e) {
-				String msg = "error reading policy from xml from xml at " + filepath; 
-				logger.log(Level.INFO, msg);
-				throw new GeneralException(msg);
-			}			
-		}
-		return objectPolicyFromObject;
-	}
-	*/
-
-	
 	private static final void buildRepositoryPolicyFileList(File directory,  List filelist) {
 		String[] files = directory.list();
 		for (int i = 0; i < files.length; i++) {
@@ -376,9 +301,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 
 	private boolean validateRepositoryPolicies = false;
 	private boolean validateObjectPoliciesFromDatastream = false;
-	// SDP: removed since object policies directory is obsolete in Fedora 2.1
-	//private boolean validateObjectPoliciesFromFile = false;
-
 	
 	/**
 	 * pass along an init() call to the various multiplexed PolicyFinderModules
@@ -443,15 +365,9 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		URI resourceIdId = null;
 		try {
 			resourceIdType = new URI(StringAttribute.identifier);
-		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			resourceIdId = new URI(Constants.OBJECT.PID.uri);
 		} catch (URISyntaxException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            LOG.error("Bad URI syntax", e);
 		}
 		EvaluationResult attribute = context.getResourceAttribute(resourceIdType, resourceIdId, null);    
 		Object element = getAttributeFromEvaluationResult(attribute);
@@ -479,7 +395,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
      */
     public PolicyFinderResult findPolicy(EvaluationCtx context) {
 
-        setServer();
         long findStartTime = System.currentTimeMillis();
 
 		PolicyFinderResult policyFinderResult = null;
@@ -491,14 +406,6 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 		    	if (objectPolicyFromObject != null) {
 		    		policies.add(objectPolicyFromObject);
 		    	}
-				// SDP: removed since object policies directory is obsolete in Fedora 2.1
-				/*
-				String filepath = objectPolicyDirectory.getPath() + File.separator + pid.replaceAll(":", "-") + ".xml";
-		    	AbstractPolicy objectPolicyFromFile = getPolicyFromFile(filepath);
-		    	if (objectPolicyFromFile != null) {
-		    		policies.add(objectPolicyFromFile);
-		    	} 
-		    	*/
 			}
 			PolicyCombiningAlgorithm policyCombiningAlgorithm = (PolicyCombiningAlgorithm) Class.forName(combiningAlgorithm).newInstance();
 				//new OrderedDenyOverridesPolicyAlg();
@@ -509,34 +416,23 @@ public class PolicyFinderModule extends com.sun.xacml.finder.PolicyFinderModule 
 			e.printStackTrace();
 			policyFinderResult = new PolicyFinderResult(new Status(ERROR_CODE_LIST, e.getMessage()));
 		} finally {
-            if (fedoraServer != null) {
-                long dur = System.currentTimeMillis() - findStartTime;
-                fedoraServer.logFinest("Finding the policy for this evaluation context took " + dur + "ms.");
-            }
+            long dur = System.currentTimeMillis() - findStartTime;
+            LOG.debug("Finding the policy for this evaluation context took " + dur + "ms.");
         }
 		return policyFinderResult;
     }
 
-    ServletContext servletContext = null;
-    
     private static final boolean log = false;
 	private final void log(String msg) {
 		if (log) {
-			if (servletContext != null) {
-				servletContext.log(msg);
-			} else {
-				System.err.println(msg);			
-			}
+            LOG.debug(msg);
 		}
 	}
     private static final boolean slog = false;
 	private static final void slog(String msg) {
 		if (slog) {
-			System.err.println(msg);			
+            LOG.debug(msg);
 		}
 	}
-
     
-	public static void main(String[] args) {
-	}
 }

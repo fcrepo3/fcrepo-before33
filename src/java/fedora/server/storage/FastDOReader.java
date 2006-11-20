@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -79,6 +81,10 @@ import fedora.server.utilities.SQLUtility;
 public class FastDOReader implements DOReader
 {
 
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        FastDOReader.class.getName());
+
   /** Database ConnectionPool instance */
   protected static ConnectionPool connectionPool = null;
 
@@ -125,13 +131,13 @@ public class FastDOReader implements DOReader
           "fedora.server.storage.DOManager");
     } catch (InitializationException ie)
     {
-      System.err.println(ie.getMessage());
+      LOG.error("Error getting server instance", ie);
     }
   }
   
   private final void loadDefinitiveReaderIfRequired(DOManager manager, Context context, String PID) throws ServerException {
   	if (definitiveDOReader == null) {
-  		definitiveDOReader = manager.getReader(false, context, PID); //this factors out useCachedObject==false, formerly in context  	
+  		definitiveDOReader = manager.getReader(false, context, PID);
   	}
   }
   
@@ -168,7 +174,7 @@ public class FastDOReader implements DOReader
       throw se;
     } catch (Throwable th)
     {
-      s_server.logWarning("[FastDOReader] Unable to construct FastDOReader");
+      LOG.warn("Unable to construct FastDOReader", th);
       throw new GeneralException("[FastDOReader] An error has occurred. The "
           + "error was a  \"" + th.getClass().getName() + "\"  . Reason:  \""
           + th.getMessage() + "\"  .");
@@ -262,7 +268,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("[FastDOReader] GetBehaviorDefsQuery: " + query);
+      LOG.debug("GetBehaviorDefsQuery: " + query);
       String results = null;
       try
       {
@@ -375,11 +381,10 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID='" + bDefPID + "' AND "
           + "method.methodName='"  + methodName + "'";
 
-      s_server.logFinest("GetBMechMethodParmQuery=" + query);
+      LOG.debug("GetBMechMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        //s_server.logFinest("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -406,15 +411,15 @@ public class FastDOReader implements DOReader
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
           methodParm.parmType = results[5];
-            s_server.logFinest("methodParms: " + methodParm.parmName
-                + "label: " + methodParm.parmLabel
-                + "default: " + methodParm.parmDefaultValue
-                + "required: " + methodParm.parmRequired
-                + "type: " + methodParm.parmType);
-            for (int j=0; j<methodParm.parmDomainValues.length; j++)
-            {
-              s_server.logFinest("domain: " + methodParm.parmDomainValues[j]);
-            }
+          LOG.debug("methodParms: " + methodParm.parmName
+              + "label: " + methodParm.parmLabel
+              + "default: " + methodParm.parmDefaultValue
+              + "required: " + methodParm.parmRequired
+              + "type: " + methodParm.parmType);
+          for (int j=0; j<methodParm.parmDomainValues.length; j++)
+          {
+            LOG.debug("domain: " + methodParm.parmDomainValues[j]);
+          }
           queryResults.addElement(methodParm);
         }
         methodParms = new MethodParmDef[queryResults.size()];
@@ -525,7 +530,7 @@ public class FastDOReader implements DOReader
           + "bDef.bDefPID = \'" + bDefPID + "\' AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("getObjectMethodsQuery: " + query);
+      LOG.debug("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -643,7 +648,7 @@ public class FastDOReader implements DOReader
           + "dsBind.dsID=\'" + datastreamID +"\' AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("GetDatastreamQuery: " + query);
+      LOG.debug("GetDatastreamQuery: " + query);
       String[] results = null;
       try
       {
@@ -760,7 +765,7 @@ public class FastDOReader implements DOReader
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("GetDatastreamsQuery: " + query);
+      LOG.debug("GetDatastreamsQuery: " + query);
       String[] results = null;
       try
       {
@@ -943,14 +948,12 @@ public class FastDOReader implements DOReader
           + " method.methodName=\'"  + methodName + "\' "
           + " ORDER BY dsBindSpec.dsBindSpecName";
 
-      s_server.logFinest("GetDisseminationQuery=" + query);
+      LOG.debug("GetDisseminationQuery=" + query);
 
       try
       {
         // execute database query and retrieve results
         connection = connectionPool.getConnection();
-        //s_server.logFinest("DisseminationConnectionPool: "+
-        //                             connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -1090,7 +1093,7 @@ public class FastDOReader implements DOReader
           + "diss.dissID=\'" + disseminatorID + "\' AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("GetDisseminatorQuery: " + query);
+      LOG.debug("GetDisseminatorQuery: " + query);
       String[] results = null;
       try
       {
@@ -1202,7 +1205,7 @@ public class FastDOReader implements DOReader
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("GetDisseminatorsQuery: " + query);
+      LOG.debug("GetDisseminatorsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1305,7 +1308,7 @@ public class FastDOReader implements DOReader
    */
   public String GetObjectLabel() throws GeneralException
   {
-    s_server.logFinest("GetObjectLabel = " + doLabel);
+    LOG.debug("GetObjectLabel = " + doLabel);
     return doLabel;
   }
 
@@ -1359,7 +1362,7 @@ public class FastDOReader implements DOReader
           + "do.doPID=\'" + GetObjectPID() + "\' "
           + "ORDER BY bDef.bDefPID, method.methodName";
 
-      s_server.logFinest("getObjectMethodsQuery: " + query);
+      LOG.debug("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1441,7 +1444,7 @@ public class FastDOReader implements DOReader
    */
   public String GetObjectPID() throws GeneralException
   {
-    s_server.logFinest("GetObjectPID = " + PID);
+    LOG.debug("GetObjectPID = " + PID);
     return this.PID;
   }
 
@@ -1572,7 +1575,7 @@ public class FastDOReader implements DOReader
           + "do.doDbID = dsBind.doDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("ListDatastreamIDsQuery: " + query);
+      LOG.debug("ListDatastreamIDsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1683,7 +1686,7 @@ public class FastDOReader implements DOReader
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "do.doPID=\'" + PID + "\'";
 
-      s_server.logFinest("ListDisseminatorIDsQuery: " + query);
+      LOG.debug("ListDisseminatorIDsQuery: " + query);
       String[] results = null;
       try
       {
@@ -1779,12 +1782,10 @@ public class FastDOReader implements DOReader
         + "do "
         + "WHERE "
         + "do.doPID=\'" + PID + "\'";
-    //s_server.logFinest("LocatPIDQuery: " + query);
 
     try
     {
       connection = connectionPool.getConnection();
-      //s_server.logFinest("LocatePIDConnectionPool: " + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
@@ -1824,13 +1825,12 @@ public class FastDOReader implements DOReader
         loadDefinitiveReaderIfRequired(m_manager, m_context, PID);
         doLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        //s_server.logFinest("OBJECT FOUND IN DEFINITIVE STORE: " + PID);
       } catch (ServerException se)
       {
         throw se;
       } catch (Throwable th)
       {
-        s_server.logWarning("OBJECT NOT FOUND IN DEFINITIVE STORE: " + PID);
+        LOG.error("OBJECT NOT FOUND IN DEFINITIVE STORE: " + PID, th);
         throw new GeneralException("[FastDOReader] Definitive doReader returned "
             + "error. The underlying error was a  \"" + th.getClass().getName()
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
@@ -1838,7 +1838,6 @@ public class FastDOReader implements DOReader
     } else
     {
       isFoundInFastStore = true;
-      //s_server.logFinest("OBJECT FOUND IN FAST STORE: " + PID);
     }
     return doLabel;
   }

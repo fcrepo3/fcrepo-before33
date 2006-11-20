@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
@@ -65,18 +67,19 @@ import fedora.server.validation.DOValidatorImpl;
 import fedora.server.validation.RelsExtValidator;
 
 /**
- *
- * <p><b>Title:</b> DefaultDOManager.java</p>
- * <p><b>Description:</b> Manages the reading and writing of digital objects
- * by instantiating an appropriate object reader or writer.  Also, manages the
- * object ingest process and the object replication process.
- * </p>
+ * Manages the reading and writing of digital objects by instantiating an 
+ * appropriate object reader or writer.  Also, manages the object ingest 
+ * process and the object replication process.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class DefaultDOManager
         extends Module implements DOManager {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DefaultDOManager.class.getName());
 
     private String m_pidNamespace;
     protected String m_storagePool;
@@ -173,7 +176,7 @@ public class DefaultDOManager
                 + "default pool.");
         }
         // internal storage format (required)		
-        if (fedora.server.Debug.DEBUG) System.out.println("Server property format.storage= " + Server.STORAGE_FORMAT);
+        LOG.debug("Server property format.storage= " + Server.STORAGE_FORMAT);
 		m_defaultStorageFormat = Server.STORAGE_FORMAT;
         if (m_defaultStorageFormat==null) {
             throw new ModuleInitializationException("System property format.storage "
@@ -294,7 +297,7 @@ public class DefaultDOManager
         m_resourceIndex=(ResourceIndex) getServer().
         		getModule("fedora.server.resourceIndex.ResourceIndex");
         if (m_resourceIndex==null) {
-            logFinest("ResourceIndex not loaded");
+            LOG.error("ResourceIndex not loaded");
             throw new ModuleInitializationException(
                     "ResourceIndex not loaded", getRole());
         }
@@ -324,7 +327,7 @@ public class DefaultDOManager
                 throw new IOException("Cannot find required "
                     + "resource: " + dbSpec);
             }
-            SQLUtility.createNonExistingTables(m_connectionPool, specIn, this);
+            SQLUtility.createNonExistingTables(m_connectionPool, specIn);
         } catch (Exception e) {
             throw new ModuleInitializationException("Error while attempting to "
                     + "check for and create non-existing table(s): "
@@ -335,7 +338,7 @@ public class DefaultDOManager
         m_permanentStore=(ILowlevelStorage) getServer().
         		getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
         if (m_permanentStore==null) {
-            logFinest("LowlevelStorage not loaded");
+            LOG.error("LowlevelStorage not loaded");
             throw new ModuleInitializationException(
                     "LowlevelStorage not loaded", getRole());
         }
@@ -357,9 +360,9 @@ public class DefaultDOManager
                 unregisterObject(writer.GetObjectPID());
             } catch (Exception e) {
                 try {
-                    logWarning("Error unregistering object: " + writer.GetObjectPID());
+                    LOG.warn("Error unregistering object: " + writer.GetObjectPID());
                 } catch (Exception e2) {
-                    logWarning("Error unregistering object; Unable to obtain pid from writer.");
+                    LOG.warn("Error unregistering object; Unable to obtain PID from writer.");
                 }
             }
         }
@@ -369,7 +372,7 @@ public class DefaultDOManager
         try {
             releaseWriteLock(writer.GetObjectPID());
         } catch (ServerException e) {
-            logWarning("Error releasing object lock; Unable to obtain pid from writer.");
+            LOG.warn("Error releasing object lock; Unable to obtain pid from writer.");
         }       
     }   
         
@@ -432,20 +435,6 @@ public class DefaultDOManager
         return m_translator;
     }
 
-    /**
-     * Tells whether the context indicates that cached objects are required.
-     */
-    /*
-    private static boolean cachedObjectRequired(Context context) {
-        String c=context.get("useCachedObject");
-        if (c!=null && c.equalsIgnoreCase("true")) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    */
-
 	/**
 	 * Gets a reader on an an existing digital object.
 	 */
@@ -481,9 +470,9 @@ public class DefaultDOManager
                 return reader;
             }
         } finally {
-            if (loggingFinest()) {
+            if (LOG.isDebugEnabled()) {
                 long dur = System.currentTimeMillis() - getReaderStartTime;
-                logFinest("Got DOReader (source=" + source + ") for " + pid + " in " + dur + "ms.");
+                LOG.debug("Got DOReader (source=" + source + ") for " + pid + " in " + dur + "ms.");
             }
         }
     }
@@ -494,7 +483,6 @@ public class DefaultDOManager
             throws ServerException {
         if (cachedObjectRequired) {
             return new FastBmechReader(context, pid);
-            //throw new InvalidContextException("A BMechReader is unavailable in a cached context.");
         } else {
             return new SimpleBMechReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
@@ -510,7 +498,6 @@ public class DefaultDOManager
             throws ServerException {
         if (cachedObjectRequired) {
             return new FastBdefReader(context, pid);
-            //throw new InvalidContextException("A BDefReader is unavailable in a cached context.");
         } else {
             return new SimpleBDefReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
@@ -557,7 +544,7 @@ public class DefaultDOManager
 	public synchronized DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format, 
 		String encoding, boolean newPid)
 			throws ServerException {
-		getServer().logFinest("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
+		LOG.debug("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
 
         DOWriter w = null;
         BasicDigitalObject obj = null;
@@ -575,12 +562,12 @@ public class DefaultDOManager
 				// TEMP STORAGE:
 				// write ingest input stream to a temporary file
 				tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
-				logFinest("INGEST: Creating temporary file for ingest: " + tempFile.toString());
+				LOG.debug("INGEST: Creating temporary file for ingest: " + tempFile.toString());
 				StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
 
 				// VALIDATION: 
 				// perform initial validation of the ingest submission file
-				logFinest("INGEST: Validation (ingest phase)...");
+				LOG.debug("INGEST: Validation (ingest phase)...");
 				m_validator.validate(tempFile, format, DOValidatorImpl.VALIDATE_ALL, "ingest");
 
 				// DESERIALIZE:
@@ -589,13 +576,13 @@ public class DefaultDOManager
 				// FIXME: just setting ownerId manually for now...
 				obj.setOwnerId("fedoraAdmin");
 				obj.setNew(true);
-				if (fedora.server.Debug.DEBUG) System.out.println("Deserializing from format: " + format);
-				logFinest("INGEST: Deserializing from format: " + format);
+				LOG.debug("Deserializing from format: " + format);
+				LOG.debug("INGEST: Deserializing from format: " + format);
 				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
                 	
 				// SET OBJECT PROPERTIES:
-				logFinest("INGEST: Setting object/component states and create dates if unset...");
+				LOG.debug("INGEST: Setting object/component states and create dates if unset...");
 				// set object state to "A" (Active) if not already set
 				if (obj.getState()==null || obj.getState().equals("")) {
 					obj.setState("A");
@@ -654,7 +641,7 @@ public class DefaultDOManager
 								|| ( m_retainPIDs.contains(obj.getPid().split(":")[0]) )
 								)
 						) {
-					getServer().logFinest("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
+					LOG.debug("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
 					try {
 						m_pidGenerator.neverGeneratePID(obj.getPid());
 					} catch (IOException e) {
@@ -662,7 +649,7 @@ public class DefaultDOManager
 					}
 				} else {
 					if (newPid) {
-						getServer().logFinest("INGEST: client wants a new PID.");
+						LOG.debug("INGEST: client wants a new PID.");
 						// yes... so do that, then set it in the obj.
 						String p=null;
 						try {
@@ -675,17 +662,17 @@ public class DefaultDOManager
                             if (p == null) {
                                 p=m_pidGenerator.generatePID(m_pidNamespace).toString();
                             } else {
-                                getServer().logFinest("INGEST: Using new PID from recovery context");
+                                LOG.debug("INGEST: Using new PID from recovery context");
                                 m_pidGenerator.neverGeneratePID(p);
                             }
 						} catch (Exception e) {
 							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
 									+ e.getClass().getName() + ") - " + e.getMessage());
 						}
-						getServer().logFiner("INGEST: Generated new PID: " + p);
+						LOG.info("INGEST: Generated new PID: " + p);
 						obj.setPid(p);
 					} else {
-						getServer().logFinest("INGEST: client wants to use existing PID.");
+						LOG.debug("INGEST: client wants to use existing PID.");
 					}
 				}
                 
@@ -697,8 +684,8 @@ public class DefaultDOManager
 
 				// GET DIGITAL OBJECT WRITER:
 				// get an object writer configured with the DEFAULT export format
-				if (fedora.server.Debug.DEBUG) System.out.println("Getting new writer with default export format: " + m_defaultExportFormat);
-				logFinest("INGEST: Instantiating a SimpleDOWriter...");
+				LOG.debug("Getting new writer with default export format: " + m_defaultExportFormat);
+				LOG.debug("INGEST: Instantiating a SimpleDOWriter...");
 				w=new SimpleDOWriter(context, this, m_translator,
 						m_defaultExportFormat,
 						m_storageCharacterEncoding, obj, this);
@@ -708,7 +695,7 @@ public class DefaultDOManager
                 getWriteLock(obj.getPid());
                 
 				// DEFAULT DUBLIN CORE DATASTREAM:
-				logFinest("INGEST: Adding/Checking default DC record...");
+				LOG.debug("INGEST: Adding/Checking default DC record...");
 				// DC System Reserved Datastream...
 				// if there's no DC datastream, add one using PID for identifier
 				// and Label for dc:title
@@ -761,10 +748,10 @@ public class DefaultDOManager
 				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
 				if (relsext!=null) {
 					InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
-					logFinest("INGEST: Validating RELS-EXT datastream...");
+					LOG.info("INGEST: Validating RELS-EXT datastream...");
 					deser.deserialize(in2, "info:fedora/" + obj.getPid());
-					if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
-					logFinest("INGEST: RELS-EXT datastream passed validation.");
+					LOG.debug("Done validating RELS-EXT.");
+					LOG.info("INGEST: RELS-EXT datastream passed validation.");
 				}
 
 				// REGISTRY:
@@ -799,7 +786,7 @@ public class DefaultDOManager
 				throw new GeneralException("Ingest failed: " + message);
 			} finally {
 				if (tempFile != null) {
-					logFinest("Finally, removing temp file...");
+					LOG.debug("Finally, removing temp file...");
 					try {
 						tempFile.delete();
 					} catch (Exception e) {
@@ -825,15 +812,15 @@ public class DefaultDOManager
             throws ServerException {
         // Request a full gc if gcOnCommit is true OR free heap is below 1/3 of total
         if (GC_ON_COMMIT || Runtime.getRuntime().freeMemory() < THIRD_HEAPSIZE) {
-            logFiner("Requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
+            LOG.debug("Requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
             System.gc();
-            logFiner("Done requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
+            LOG.debug("Done requesting full GC.  Free bytes = " + Runtime.getRuntime().freeMemory());
         }
 
         // OBJECT REMOVAL...
         if (remove) {
 
-            logFinest("COMMIT: Entered doCommit (remove)");
+            LOG.info("COMMIT: Entered doCommit (remove)");
 
             // REFERENTIAL INTEGRITY:
             // Before removing an object, verify that there are no other objects
@@ -886,11 +873,12 @@ public class DefaultDOManager
                       (Datastream) dsIter.next();
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                       + dmc.DSVersionID;
-                  logInfo("COMMIT: Deleting ManagedContent datastream. " + "id: " + id);
+                  LOG.info("COMMIT: Deleting ManagedContent datastream. " + "id: " + id);
                   try {
                 	  m_permanentStore.removeDatastream(id);
                   } catch (LowlevelStorageException llse) {
-                    logWarning("COMMIT: While attempting removal of managed content datastream: " + llse.getClass().getName() + ": " + llse.getMessage());
+                    LOG.warn("COMMIT: While attempting removal of managed "
+                            + "content datastream: ", llse);
                   }
                 }
               }
@@ -920,7 +908,8 @@ public class DefaultDOManager
             try {
             	m_permanentStore.removeObject(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
-                logWarning("COMMIT: Object wasn't found in permanent low level store, but that might be ok...continuing with purge.");
+                LOG.warn("COMMIT: Object wasn't found in permanent low level "
+                        + "store, but that might be ok...continuing with purge.");
             }
             // REGISTRY:
             // Remove digital object from the registry
@@ -929,7 +918,7 @@ public class DefaultDOManager
                 unregisterObject(obj.getPid());
                 wasInRegistry=true;
             } catch (ServerException se) {
-                logWarning("COMMIT: Object couldn't be removed from registry, but that might be ok...continuing with purge.");
+                LOG.warn("COMMIT: Object couldn't be removed from registry, but that might be ok...continuing with purge.");
             }
             if (wasInRegistry) {
                 try {
@@ -939,23 +928,23 @@ public class DefaultDOManager
                     m_replicator.delete(obj.getPid());
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    logWarning("COMMIT: Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
+                    LOG.warn("COMMIT: Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
                 }
             }
 			// FIELD SEARCH INDEX:
 			// remove digital object from the default search index
             try {
-                logInfo("COMMIT: Deleting from FieldSearch indexes...");
+                LOG.info("COMMIT: Deleting from FieldSearch indexes...");
                 m_fieldSearch.delete(obj.getPid());
             } catch (ServerException se) {
-                logWarning("COMMIT: Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                LOG.warn("COMMIT: Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
             
             // RESOURCE INDEX:
             // remove digital object from the resourceIndex
             if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                 try {
-                    logInfo("COMMIT: Deleting from ResourceIndex...");
+                    LOG.info("COMMIT: Deleting from ResourceIndex...");
                     if (obj.getFedoraObjectType() == 
                             DigitalObject.FEDORA_BDEF_OBJECT) {
                         m_resourceIndex.deleteBDefObject(
@@ -971,7 +960,7 @@ public class DefaultDOManager
                                 new SimpleDOReader(null, null, null, null, 
                                 null, origObj, null));
                     }
-                    logInfo("COMMIT: Finished deleting from ResourceIndex...");
+                    LOG.info("COMMIT: Finished deleting from ResourceIndex...");
                 } catch (ServerException se) {
                     logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
                 }
@@ -979,7 +968,7 @@ public class DefaultDOManager
             
 		// OBJECT INGEST (ADD) OR MODIFY...
         } else {
-            logFinest("COMMIT: Entered doCommit (add/modify)");
+            LOG.info("COMMIT: Entered doCommit (add/modify)");
             try {
 
                 // DATASTREAM STORAGE:
@@ -1006,7 +995,7 @@ public class DefaultDOManager
                         MIMETypedStream mimeTypedStream;
 						if (dmc.DSLocation.startsWith("uploaded://")) {
 						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation), null);
-                            logInfo("COMMIT: Retrieving ManagedContent datastream from internal uploaded "
+                            LOG.info("COMMIT: Retrieving ManagedContent datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
 						} else if (dmc.DSLocation.startsWith("copy://"))  {
                             // make a copy of the pre-existing content
@@ -1015,20 +1004,20 @@ public class DefaultDOManager
                                             dmc.DSLocation.substring(7)), null);
 						} else if (dmc.DSLocation.startsWith("temp://"))  {
 							File file = new File(dmc.DSLocation.substring(7));
-				            logFinest("COMMIT: Retrieving base64 decoded datastream spooled from archive.");
+				            LOG.info("COMMIT: Retrieving base64 decoded datastream spooled from archive.");
 							try {
 								InputStream str = new FileInputStream(file);
 	                            mimeTypedStream = new MIMETypedStream(dmc.DSMIME, str, null);
 							}
 							catch (FileNotFoundException fnfe)
 							{
-			                    logWarning("COMMIT: Unable to read temp file created for datastream from archive.");
+			                    LOG.warn("COMMIT: Unable to read temp file created for datastream from archive.", fnfe);
 								throw new StreamIOException("Error reading from temporary file created for binary content");				 
 							}
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString(), context);
-                            logInfo("COMMIT: Retrieving ManagedContent datastream from remote "
+                            LOG.info("COMMIT: Retrieving ManagedContent datastream from remote "
                                 + "location: " + dmc.DSLocation);
 						}
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
@@ -1052,7 +1041,7 @@ public class DefaultDOManager
 						}
                         // Reset dsLocation in object to new internal location.
 						dmc.DSLocation = id;
-                        logInfo("COMMIT: Replacing ManagedContent datastream with "
+                        LOG.info("COMMIT: Replacing ManagedContent datastream with "
                             + "internal id: " + id);
                         //bais = null;
                       }
@@ -1079,7 +1068,7 @@ public class DefaultDOManager
 
 				// FINAL XML SERIALIZATION:
 				// serialize the object in its final form for persistent storage                                      
-                logFinest("COMMIT: Serializing digital object for persistent storage...");
+                LOG.debug("COMMIT: Serializing digital object for persistent storage...");
                 m_translator.serialize(obj, out, m_defaultStorageFormat, 
                 	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
 
@@ -1089,16 +1078,16 @@ public class DefaultDOManager
 				// is a large amount of the overhead of ingest.  Instead of a second run
 				// of the validation module, we depend on the integrity of our code to 
 				// create valid XML files for persistent storage of digital objects.
-				if (fedora.server.Debug.DEBUG) {
+				if (LOG.isDebugEnabled()) {
 					ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-					logFinest("COMMIT: Final Validation (storage phase)...");
+					LOG.debug("COMMIT: Final Validation (storage phase)...");
 					m_validator.validate(inV, m_defaultStorageFormat,
 						DOValidatorImpl.VALIDATE_ALL, "store");
 				}                     	
                     
                 // RESOURCE INDEX:
                 if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
-                    logFinest("COMMIT: Adding to ResourceIndex...");
+                    LOG.info("COMMIT: Adding to ResourceIndex...");
                     if (obj.isNew()) {
                         if (obj.getFedoraObjectType() ==
                                 DigitalObject.FEDORA_BDEF_OBJECT) {
@@ -1135,12 +1124,12 @@ public class DefaultDOManager
                                     null, obj, null));
                         }
                     }
-                    logFinest("COMMIT: Finished adding to ResourceIndex.");
+                    LOG.info("COMMIT: Finished adding to ResourceIndex.");
                 }
                 
                 // STORAGE: 
                 // write XML serialization of object to persistent storage
-                logFinest("COMMIT: Storing digital object...");
+                LOG.debug("COMMIT: Storing digital object...");
                 if (obj.isNew()) {
                 	m_permanentStore.addObject(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 } else {
@@ -1156,7 +1145,7 @@ public class DefaultDOManager
 
                 // REGISTRY:
 				// update systemVersion in doRegistry (add one)
-                logFinest("COMMIT: Updating registry...");
+                LOG.debug("COMMIT: Updating registry...");
                 Connection conn=null;
                 Statement s = null;
                 ResultSet results=null;
@@ -1194,38 +1183,36 @@ public class DefaultDOManager
 
                 // REPLICATE:
                 // add to replication jobs table and do replication to db
-                logFinest("COMMIT: Adding replication job...");
+                LOG.debug("COMMIT: Adding replication job...");
                 addReplicationJob(obj.getPid(), false);
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
-                        logInfo("COMMIT: Attempting replication as bdef object: " + obj.getPid());
+                        LOG.info("COMMIT: Attempting replication as bdef object: " + obj.getPid());
                         BDefReader reader=getBDefReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
-                        logInfo("COMMIT: Attempting replication as bmech object: " + obj.getPid());
+                        LOG.info("COMMIT: Attempting replication as bmech object: " + obj.getPid());
                         BMechReader reader=getBMechReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     } else {
-                        logInfo("COMMIT: Attempting replication as normal object: " + obj.getPid());
+                        LOG.info("COMMIT: Attempting replication as normal object: " + obj.getPid());
                         DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        logInfo("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("COMMIT: Updating FieldSearch indexes...");
                         m_fieldSearch.update(reader);
                     }
                     // FIXME: also remove from temp storage if this is successful
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                  System.out.println("Error while replicating: " + se.getClass().getName() + ": " + se.getMessage());
-                  se.printStackTrace();
+                    LOG.error("Error while replicating", se);
                     throw se;
                 } catch (Throwable th) {
-                  System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
-                  logStackTrace(th);
-                    throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
+                    LOG.error("Error while replicating", th);
+                    throw new GeneralException("Error while replicating", th);
                 }
             } catch (ServerException se) {
                 if (obj.isNew()) {
@@ -1269,15 +1256,13 @@ public class DefaultDOManager
                                     reader.GetDatastream(dsID, dt).DSVersionID;
                             try {
                             	m_permanentStore.removeDatastream(token);
-                                logInfo("Removed purged datastream version "
+                                LOG.info("Removed purged datastream version "
                                     + "from low level storage (token = " 
                                     + token + ")"); 
                             } catch (Exception e) {
-                                logWarning("Error removing purged datastream "
+                                LOG.warn("Error removing purged datastream "
                                         + "version from low level storage "
-                                        + "(token = " + token + ").  Stack "
-                                        + "trace follows.");
-                                logStackTrace(e);
+                                        + "(token = " + token + ")", e);
                             }
                         }
                     }
@@ -1286,21 +1271,10 @@ public class DefaultDOManager
                 }
             }
         } catch (ServerException e) {
-            logWarning("Error reading " + obj.getPid() + "; if any"
-                    + " managed datastreams were purged, they were not removed "
-                    + " from low level storage.  Stack trace follows.");
-            logStackTrace(e);
+            LOG.warn("Error reading " + obj.getPid() + "; if any"
+                   + " managed datastreams were purged, they were not removed "
+                   + " from low level storage.", e);
         }
-    }
-
-    private void logStackTrace(Throwable th) {
-        StackTraceElement[] els=th.getStackTrace();
-        StringBuffer lines=new StringBuffer();
-        for (int i=0; i<els.length; i++) {
-            lines.append(els[i].toString());
-            lines.append("\n");
-        }
-        logWarning("Stack trace: " + th.getClass().getName() + "\n" + lines.toString());
     }
 
     /**
@@ -1371,7 +1345,7 @@ public class DefaultDOManager
      */
     public boolean objectExists(String pid)
             throws StorageDeviceException {
-        logFinest("Checking if " + pid + " already exists...");
+        LOG.debug("Checking if " + pid + " already exists...");
         Connection conn=null;
         Statement s = null;
         ResultSet results=null;
@@ -1397,7 +1371,7 @@ public class DefaultDOManager
           } finally {
               results=null;
               s=null;
-              logFinest("Finished checking if " + pid + " already exists...");
+              LOG.debug("Finished checking if " + pid + " already exists...");
           }
         }
     }
@@ -1644,7 +1618,7 @@ public class DefaultDOManager
             StringBuffer query=new StringBuffer();
             query.append("SELECT doPID FROM doRegistry ");
             query.append(whereClause);
-            logFinest("Executing db query: " + query.toString());
+            LOG.debug("Executing db query: " + query.toString());
             results=s.executeQuery(query.toString());
             while (results.next()) {
                 pidList.add(results.getString("doPID"));

@@ -1,8 +1,23 @@
 package fedora.server.storage;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+
+import java.text.SimpleDateFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
+
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
+
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.DisseminatorNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
@@ -10,6 +25,7 @@ import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.UnsupportedTranslationException;
+
 import fedora.server.storage.translation.DOTranslator;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.Datastream;
@@ -24,22 +40,11 @@ import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.translation.DOTranslationUtility;
+
 import fedora.server.utilities.DateUtility;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-
 /**
- *
- * <p><b>Title:</b> SimpleDOReader.java</p>
- * <p><b>Description:</b> A DOReader backed by a DigitalObject.</p>
+ * A DOReader backed by a DigitalObject.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -47,6 +52,10 @@ import java.text.SimpleDateFormat;
 public class SimpleDOReader
         extends StdoutLogging
         implements DOReader {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            SimpleDOReader.class.getName());
 
     protected DigitalObject m_obj;
     private Context m_context;
@@ -161,8 +170,7 @@ public class SimpleDOReader
         ByteArrayOutputStream bytes=new ByteArrayOutputStream();
 		int transContext;        
 		// first, set the translation context...
-		if (fedora.server.Debug.DEBUG) 
-			System.out.println("SimpleDOReader.ExportObject export context: " + exportContext);
+		LOG.debug("ExportObject export context: " + exportContext);
 
 		if (exportContext==null || exportContext.equals("") || 
 		    exportContext.equalsIgnoreCase("default")) {
@@ -180,13 +188,11 @@ public class SimpleDOReader
         }
         // now serialize for export in the proper XML format...			        
 		if (format==null || format.equals("") || format.equalsIgnoreCase("default")) {
-			if (fedora.server.Debug.DEBUG) 
-				System.out.println("SimpleDOReader.ExportObject in default format: " + m_exportFormat);
+			LOG.debug("ExportObject in default format: " + m_exportFormat);
 			m_translator.serialize(m_obj, bytes, m_exportFormat, "UTF-8", transContext);
 		}
 		else {
-			if (fedora.server.Debug.DEBUG) 
-				System.out.println("SimpleDOReader.ExportObject in format: " + format);
+			LOG.debug("ExportObject in format: " + format);
 			m_translator.serialize(m_obj, bytes, format, "UTF-8", transContext);
 		}
 

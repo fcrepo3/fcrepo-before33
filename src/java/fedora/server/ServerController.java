@@ -41,68 +41,13 @@ public class ServerController
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	log("Z1");
         String actionLabel = "server control";    	
         String action=request.getParameter("action");
         String requestInfo="Got controller '" + action + "' request from " + request.getRemoteAddr();
-    	log("Z2 action=" + action);
-        if (fedora.server.Debug.DEBUG) System.out.println(requestInfo);
         if (action==null) {
             throw new BadRequest400Exception(request, actionLabel, "no action", new String[0]);	
         } 
 
-/*
-        if (action.equals("startup")) {
-        	actionLabel = "starting server";
-        	boolean serverHasInstance = false;
-        	log("Z3");
-            try {
-                serverHasInstance = Server.hasInstance(new File(System.getProperty("fedora.home")));
-            	log("Z4");
-            } catch (Throwable t) {
-            	log("A " + t.getMessage() + " " + ((t.getCause() == null) ? "" : t.getCause().getMessage()));
-                throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
-            }          
-        	log("Z5");
-            if (serverHasInstance) {
-            	log("B");
-                throw new InternalError500Exception(request, actionLabel, "server already started", new String[0]);	
-            }	
-        	log("Z6");
-            try {
-				s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-			} catch (ServerInitializationException e) {
-            	log("C " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));
-                throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
-			} catch (ModuleInitializationException e) {
-            	log("D " + e.getMessage() + " " + ((e.getCause() == null) ? "" : e.getCause().getMessage()));				
-                throw new InternalError500Exception(request, actionLabel, "error starting server", new String[0]);	
-			}
-        	log("Z7");
-            throw new Ok200Exception(request, actionLabel,"server started successfully", new String[0]);    
-        }
-        if (action.equals("shutdown")) {
-        	actionLabel = "shutting server down";
-            if (! Server.hasInstance(new File(System.getProperty("fedora.home")))) {
-                throw new InternalError500Exception(request, actionLabel, "server already shut down", new String[0]);	
-            }
-            try {
-                s_server=Server.getInstance(new File(System.getProperty("fedora.home")));
-                s_server.logInfo(requestInfo);
-            	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
-                s_server.shutdown(context);
-    		} catch (AuthzOperationalException aoe) {
-                throw new Forbidden403Exception(request, actionLabel, "authorization failed", new String[0]);                
-            } catch (AuthzDeniedException ade) {
-                throw new Forbidden403Exception(request, actionLabel, "authorization denied", new String[0]);
-			} catch (AuthzPermittedException ape) {
-                throw new Continue100Exception(request, actionLabel, "authorization permitted", new String[0]);	    			
-            } catch (Throwable t) {
-                throw new InternalError500Exception(request, actionLabel, "error shutting down server", new String[0]);	
-            }
-            throw new Ok200Exception(request, actionLabel, "server shut down successfully", new String[0]);	            
-        }
-*/
         if (action.equals("status")) {
         	actionLabel = "getting server status";
         	Context context = ReadOnlyContext.getContext(Constants.HTTP_REQUEST.REST.uri, request);
@@ -179,12 +124,11 @@ public class ServerController
         	fedoraHome = System.getProperty("fedora.home");
         	if (fedoraHome == null) {
 	            String msg = "FATAL ERROR: System property fedora.home is undefined";
-	            System.out.println(msg);
 	            throw new ServletException(msg);
         	}
-        } else {
-        	System.setProperty("fedora.home", fedoraHome);
         }
+        System.setProperty("fedora.home", fedoraHome);
+
         File fedoraHomeDir = new File(fedoraHome);
 
         // get file for writing startup status
@@ -212,9 +156,7 @@ public class ServerController
 
     public void destroy() {
 
-        if (s_server == null) {
-            System.out.println("Fedora Server not initialized; skipping shutdown");
-        } else {
+        if (s_server != null) {
             try {
                 _status.append(ServerState.STOPPING, "Shutting down Fedora Server and modules");
                 s_server.shutdown(null);
@@ -227,19 +169,5 @@ public class ServerController
             s_server = null;
         }
     }
-    
-	public static boolean log = false; 
-	
-	public final void log(String msg) {
-		if (! log) return;
-		System.err.println(msg);
-	}
-	
-	public static boolean slog = false; 
-	
-	protected static final void slog(String msg) {
-		if (! slog) return;
-		System.err.println(msg);
-	}
     
 }

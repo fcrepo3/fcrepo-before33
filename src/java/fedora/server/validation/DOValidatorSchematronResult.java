@@ -12,6 +12,8 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 
+import org.apache.log4j.Logger;
+
 // TrAX classes
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMResult;
@@ -21,10 +23,7 @@ import javax.xml.transform.*;
 import javax.xml.parsers.ParserConfigurationException;
 
 /**
- *
- * <p><b>Title:</b> DOValidatorSchematronResult.java</p>
- * <p><b>Description:</b> Schematron validation with FedoraRules schema as
- * default.</p>
+ * Schematron validation with FedoraRules schema as default.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
@@ -32,11 +31,9 @@ import javax.xml.parsers.ParserConfigurationException;
 public class DOValidatorSchematronResult
 {
 
-  /**
-   * Configuration variables for Schematron Validation
-   * (These will ultimately be available via Server configuration)
-   *
-   */
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DOValidatorSchematronResult.class.getName());
 
   private StringBuffer string = new StringBuffer();
   private Element rootElement;
@@ -166,7 +163,7 @@ public class DOValidatorSchematronResult
     }
     catch ( Exception e )
     {
-      System.err.println( e.toString() );
+      LOG.error("Error serializing node", e);
     }
     return(string.toString());
   }

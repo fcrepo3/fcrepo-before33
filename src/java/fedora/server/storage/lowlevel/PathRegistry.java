@@ -1,21 +1,24 @@
 package fedora.server.storage.lowlevel;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.LowlevelStorageException;
 import fedora.server.errors.LowlevelStorageInconsistencyException;
 
 /**
- *
- * <p><b>Title:</b> PathRegistry.java</p>
- * <p><b>Description:</b> </p>
- *
  * @author wdn5e@virginia.edu
  * @version $Id$
  */
 public abstract class PathRegistry {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            PathRegistry.class.getName());
 
 	protected static final int NO_REPORT = 0; //<=========????????
 	protected static final int ERROR_REPORT = 1;
@@ -33,14 +36,14 @@ public abstract class PathRegistry {
 		this.storeBases = (String[])configuration.get("storeBases");
 	}
 	
-	public abstract String get (String pid)  throws LowlevelStorageException;
-	public abstract void put (String pid, String path)  throws LowlevelStorageException;
-	public abstract void remove (String pid)  throws LowlevelStorageException;
-	public abstract void rebuild () throws LowlevelStorageException;
-	public abstract void auditFiles () throws LowlevelStorageException;
+	public abstract String get(String pid)  throws LowlevelStorageException;
+	public abstract void put(String pid, String path)  throws LowlevelStorageException;
+	public abstract void remove(String pid)  throws LowlevelStorageException;
+	public abstract void rebuild() throws LowlevelStorageException;
+	public abstract void auditFiles() throws LowlevelStorageException;
 	
-	public void auditRegistry () throws LowlevelStorageException {
-		System.err.println("\nbegin audit:  registry-against-files");
+	public void auditRegistry() throws LowlevelStorageException {
+		LOG.info("begin audit:  registry-against-files");
 		Enumeration keys = keys();
 		while (keys.hasMoreElements()) {
 			String pid = (String) keys.nextElement();
@@ -48,15 +51,15 @@ public abstract class PathRegistry {
 				String path = get(pid);
 				File file = new File(path);
 				boolean fileExists = file.exists();
-				System.err.println((fileExists ? "" : "ERROR: ") +
+				LOG.info((fileExists ? "" : "ERROR: ") +
 					"registry has [" + pid + "] => [" + path + "] " +
 					(fileExists ? "and" : "BUT") +
 					" file does " + (fileExists ? "" : "NOT") + "exist");
 			} catch (LowlevelStorageException e) {
-				System.err.println("ERROR: registry has [" + pid + "] => []");
+				LOG.error("ERROR: registry has [" + pid + "] => []", e);
 			}
 	 	}
-		System.err.println("end audit:  registry-against-files (ending normally)");
+        LOG.info("end audit:  registry-against-files (ending normally)");
 	}
 
 
@@ -80,24 +83,17 @@ public abstract class PathRegistry {
 					path = files[i].getCanonicalPath();
 				} catch (IOException e) {
 					if (report != NO_REPORT) {
-						System.err.println("couldn't get File path: " + e.getMessage());
+						LOG.error("couldn't get File path", e);
 					}
 					if (stopOnError) {
 						throw new LowlevelStorageException(true, "couldn't get File path", e);
 					}
 				}
 				if (path != null) {
-					/* drop .xml file suffix; code was:
-					int j = filename.lastIndexOf(".xml");
-					String pid = null;
-					if (j >= 0) {
-						pid = PathAlgorithm.decode(filename.substring(0,j));
-					}
-					*/
 					String pid = PathAlgorithm.decode(filename);
 					if (pid == null) {
 						if (report != NO_REPORT) {
-							System.err.println("unexpected file at [" + path + "]");
+                            LOG.error("unexpected file at [" + path + "]");
 						}
 						if (stopOnError) {
 							throw new LowlevelStorageException(true,"unexpected file traversing object store at [" + path + "]");
@@ -106,14 +102,14 @@ public abstract class PathRegistry {
 						switch (operation) {
 							case REPORT_FILES: {
 								if (report == FULL_REPORT) {
-									System.err.println("file [" + path + "] would have pid [" + pid + "]");
+									LOG.info("file [" + path + "] would have pid [" + pid + "]");
 								}
 								break;
 							}
 							case REBUILD: {
 								put(pid,path);
 								if (report == FULL_REPORT) {
-									System.err.println("added to registry: [" + pid + "] ==> [" + path + "]");
+									LOG.info("added to registry: [" + pid + "] ==> [" + path + "]");
 								}
 								break;
 							}
@@ -125,7 +121,7 @@ public abstract class PathRegistry {
 								}
 								boolean matches = (rpath.equals(path));
 								if ((report == FULL_REPORT) || ! matches) {
-									System.err.println((matches ? "" : "ERROR: ") +
+									LOG.info((matches ? "" : "ERROR: ") +
 									"[" + path + "] " + (matches ? "" : "NOT ") +
 									"in registry" +
 									(matches ? "" :
@@ -142,7 +138,9 @@ public abstract class PathRegistry {
 		}
 	}
 
-	public void traverseFiles (String[] storeBases, int operation, boolean stopOnError, int report) throws LowlevelStorageException {
+	public void traverseFiles(String[] storeBases, int operation, 
+	        boolean stopOnError, int report) 
+	        throws LowlevelStorageException {
 		File files[];
 		try {
 			files = new File[storeBases.length];
@@ -150,7 +148,8 @@ public abstract class PathRegistry {
 				files[i] = new File(storeBases[i]);
 			}
 		} catch (Exception e) {
-			throw new LowlevelStorageException(true,"couldn't rebuild VolatilePathRegistry", e);
+			throw new LowlevelStorageException(true,
+			        "couldn't rebuild VolatilePathRegistry", e);
 		}
 		traverseFiles(files, operation, stopOnError, report);
 	}

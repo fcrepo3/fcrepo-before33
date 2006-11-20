@@ -10,19 +10,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ObjectValidityException;
 import fedora.server.errors.GeneralException;
 
 /**
- *
- * <p><b>Title:</b> DOValidatorXMLSchema.java</p>
- * <p><b>Description:</b> XML Schema validation for Digital Objects</p>
+ * XML Schema validation for Digital Objects.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class DOValidatorXMLSchema implements EntityResolver
 {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DOValidatorXMLSchema.class.getName());
+
     /** Constants used for JAXP 1.2 */
     private static final String JAXP_SCHEMA_LANGUAGE =
         "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
@@ -41,8 +46,7 @@ public class DOValidatorXMLSchema implements EntityResolver
       }
       catch (Exception e)
       {
-        System.err.println("DOValidatorXMLSchema caught ERROR in Constructor: "
-          + e.getMessage());
+        LOG.error("Error constructing validator", e);
         throw new GeneralException(e.getMessage());
       }
     }

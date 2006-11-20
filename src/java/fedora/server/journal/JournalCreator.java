@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ModuleInitializationException;
@@ -38,6 +40,11 @@ import fedora.server.storage.types.Property;
  */
 
 public class JournalCreator implements JournalWorker, JournalConstants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            JournalCreator.class.getName());
+
     private final JournalWriter writer;
     private final String role;
 
@@ -53,9 +60,9 @@ public class JournalCreator implements JournalWorker, JournalConstants {
         try {
             this.writer = JournalWriter.getInstance(parameters, role, server);
         } catch (JournalException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
-            throw new ModuleInitializationException(
-                    "Problem creating the JournalWriter", role, e);
+            String msg = "Problem creating the JournalWriter";
+            LOG.error(msg, e);
+            throw new ModuleInitializationException(msg, role, e);
         }
     }
 

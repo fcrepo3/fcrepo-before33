@@ -7,16 +7,19 @@ import java.io.OutputStream;
 
 import org.apache.axis.encoding.Base64;
 
+import org.apache.log4j.Logger;
+
 /**
- *
- * <p><b>Title:</b> StreamUtility.java</p>
- * <p><b>Description:</b> Static utility methods useful when working with
- * character-based or raw sequences of data.</p>
+ * Utility methods for working with character-based or raw sequences of data.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public abstract class StreamUtility {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            StreamUtility.class.getName());
 
     /**
      * Returns an XML-appropriate encoding of the given String.
@@ -108,7 +111,7 @@ public abstract class StreamUtility {
                 in.close();
                 out.close();
             } catch (IOException e) {
-                System.err.println("WARNING: Could not close stream.");
+                LOG.warn("Unable to close stream", e);
             }
         }
     }
@@ -129,7 +132,7 @@ public abstract class StreamUtility {
    		}
    		catch (IOException ioe)
    		{
-            System.err.println("Error: Could not read stream.");   		
+            LOG.warn("Unable to encode stream", ioe);
    		}
         return Base64.encode(os.toByteArray());
     }

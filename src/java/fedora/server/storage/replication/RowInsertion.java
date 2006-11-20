@@ -300,8 +300,6 @@ public class RowInsertion {
 
                     statement = connection.createStatement();
 
-                    // Debug statement
-                    //System.out.println("insertGen: insertionStatement = " + insertionStatement);
                     rowCount = statement.executeUpdate(insertionStatement);
                 } catch (SQLException sqle) {
                     throw sqle;

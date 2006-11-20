@@ -12,6 +12,8 @@ import java.sql.Statement;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.MalformedPIDException;
 import fedora.common.PID;
 import fedora.server.storage.ConnectionPool;
@@ -26,6 +28,10 @@ import fedora.server.utilities.SQLUtility;
  */
 public class DBPIDGenerator
         implements PIDGenerator {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DBPIDGenerator.class.getName());
 
     private HashMap m_highestID;
     private PID m_lastPID;
@@ -67,8 +73,8 @@ public class DBPIDGenerator
                 if (s!= null) s.close();
                 if (conn!=null) m_connectionPool.free(conn);
             } catch (SQLException sqle2) {
-                System.err.println("WARNING: Error trying to free db "
-                        + "resources in DBPIDGenerator: " + sqle2.getMessage());
+                LOG.warn("Error trying to free db "
+                        + "resources in DBPIDGenerator", sqle2);
             } finally {
                 results=null;
                 s=null;
@@ -176,8 +182,7 @@ public class DBPIDGenerator
                                    new String[] {"namespace", "highestID"},
                                    new String[] {namespace, "" + id},
                                    "namespace",
-                                   new boolean[] {false, true},
-                                   null);
+                                   new boolean[] {false, true});
         } catch (SQLException sqle) {
             throw new IOException("Error setting highest id for "
                     + "namespace in db: " + sqle.getMessage());

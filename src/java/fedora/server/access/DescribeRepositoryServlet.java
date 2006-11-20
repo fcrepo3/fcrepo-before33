@@ -19,6 +19,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -30,7 +32,6 @@ import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.InternalError500Exception;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.utilities.Logger;
 
 /**
  * <p>
@@ -65,6 +66,11 @@ import fedora.server.utilities.Logger;
  *          Exp $
  */
 public class DescribeRepositoryServlet extends HttpServlet {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DescribeRepositoryServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** Content type for html. */
@@ -81,9 +87,6 @@ public class DescribeRepositoryServlet extends HttpServlet {
 
 	/** Instance of URLDecoder */
 	private URLDecoder decoder = new URLDecoder();
-
-	/** Instance of Logger to log servlet events in Fedora server log */
-	private static Logger logger = null;
 
 	/** HTTP protocol * */
 	private static String HTTP = "http";
@@ -116,10 +119,7 @@ public class DescribeRepositoryServlet extends HttpServlet {
 			throws ServletException, IOException {
 		boolean xml = false;
 
-		logger
-				.logFinest("[DescribeRepositoryServlet] Describe Repository Syntax "
-						+ "Encountered: "
-						+ request.getRequestURL().toString()
+        LOG.debug("Got request: " + request.getRequestURL().toString()
 						+ "?" + request.getQueryString());
 
 		// Check for xml parameter.
@@ -196,18 +196,14 @@ public class DescribeRepositoryServlet extends HttpServlet {
 
 			} else {
 				// Describe request returned nothing.
-				String message = "[DescribeRepositoryServlet] No Repository Info returned.";
-				logger.logInfo(message);
+                LOG.error("No repository info returned");
 			}
 		} catch (AuthzException ae) {
 			throw ae;
 		} catch (Throwable th) {
-			String message = "[DescribeRepositoryServlet] An error has occured. "
-					+ " The error was a \" "
-					+ th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
-			logger.logWarning(message);
-			throw new GeneralException(message);
+            String msg = "Error describing repository";
+            LOG.error(msg, th);
+			throw new GeneralException(msg, th);
 		} finally {
 			try {
 				if (pr != null)
@@ -329,15 +325,13 @@ public class DescribeRepositoryServlet extends HttpServlet {
 					pw.flush();
 					pw.close();
 				} catch (IOException ioe) {
-					System.err.println("WriteThread IOException: "
-							+ ioe.getMessage());
+                    LOG.error("WriteThread IOException", ioe);
 				} finally {
 					try {
 						if (pw != null)
 							pw.close();
 					} catch (IOException ioe) {
-						System.err.println("WriteThread IOException: "
-								+ ioe.getMessage());
+                        LOG.error("WriteThread IOException", ioe);
 					}
 				}
 			}
@@ -378,7 +372,6 @@ public class DescribeRepositoryServlet extends HttpServlet {
 			s_access = (Access) s_server
 					.getModule("fedora.server.access.Access");
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
-			logger = new Logger();
 		} catch (InitializationException ie) {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());

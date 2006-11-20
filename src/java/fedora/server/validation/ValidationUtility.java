@@ -4,7 +4,6 @@ import java.net.*;
 
 import fedora.server.errors.*;
 
-
 /**
  * Misc validation-related functions.
  *
@@ -19,9 +18,6 @@ public abstract class ValidationUtility {
             URL goodURL = new URL(url);
         } catch (MalformedURLException murle) {
             if (url.startsWith("copy://") || url.startsWith("uploaded://") || url.startsWith("temp://")) return;
-			if (fedora.server.Debug.DEBUG) {
-				System.out.println("ValidationUtility.validateURL: malformed URL " + url);
-			}
             throw new ValidationException("Malformed URL: " + url, murle);
         }
     }

@@ -5,19 +5,23 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
+import org.apache.log4j.Logger;
+
 /**
- *
- * <p><b>Title:</b> TypeUtility.java</p>
- * <p><b>Description:</b> A utility class for converting back and forth from the
+ * A utility class for converting back and forth from the
  * internal Fedora type classes in fedora.server.storage.types and the
  * generated type classes produced by the wsdl2java emitter in
- * fedora.server.types.gen.</p>
+ * fedora.server.types.gen.
  *
  * @author rlw@virginia.edu
  * @version $Id$
  */
 public abstract class TypeUtility
 {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            TypeUtility.class.getName());
 
     public static fedora.server.types.gen.Datastream
             convertDatastreamToGenDatastream(
@@ -480,7 +484,7 @@ public abstract class TypeUtility
       }
       } catch (IOException ioe)
       {
-        System.out.println(ioe.getMessage());
+        LOG.error("Error converting types", ioe);
       }
       genMIMETypedStream.setStream(baos.toByteArray());
       mimeTypedStream.setStream(new ByteArrayInputStream(baos.toByteArray()));
@@ -1176,55 +1180,6 @@ public abstract class TypeUtility
       System.out.println("Prop[" + i + "] = " + "\nname = "
       + properties[i].name+"\nvalue = " + properties[i].value);
     }
-
-/*    System.out.println("\n----- Converting MethodDefArray to "
-                       + "GenMethodDefArray");
-    fedora.server.types.gen.MethodDef[] genMethodDef =
-        TypeUtility.convertMethodDefArrayToGenMethodDefArray(methodDef);
-    for (int i=0; i<genMethodDef.length; i++)
-    {
-      System.out.println("name: "+genMethodDef[i].getMethodName()+
-      "\nlabel: "+genMethodDef[i].getMethodLabel()+
-      "\nparms:\n");
-      fedora.server.types.gen.MethodParmDef[] methodParmDef = null;
-      methodParmDef = genMethodDef[i].getMethodParms();
-      if (methodParmDef != null)
-      {
-        methodParmDef = genMethodDef[i].getMethodParms();
-        for (int j=0; j<methodParmDef.length; j++)
-        {
-          System.out.println("parmname: "+methodParmDef[j].getParmName()+
-          "\nparmLabel: "+methodParmDef[j].getParmLabel()+
-          "\nparmDefault: "+methodParmDef[j].getParmDefaultValue()+
-          "\nparmrequired: "+methodParmDef[j].isParmRequired());
-        }
-      }
-    }
-    methodDef = null;
-
-    System.out.println("\n----- Converting GenMethodDefArray to "
-                       + "MethodDefArray");
-    methodDef =
-        TypeUtility.convertGenMethodDefArrayToMethodDefArray(genMethodDef);
-    for (int i=0; i<methodDef.length; i++)
-    {
-      System.out.println("name: "+methodDef[i].methodName+
-      "\nlabel: "+methodDef[i].methodLabel+
-      "\nparms:\n");
-      fedora.server.storage.types.MethodParmDef[] methodParmDef = null;
-      methodParmDef = methodDef[i].methodParms;
-      if (methodParmDef != null)
-      {
-        methodParmDef = methodDef[i].methodParms;
-        for (int j=0; j<methodParmDef.length; j++)
-        {
-          System.out.println("parmname: "+methodParmDef[j].parmName+
-          "\nparmLabel: "+methodParmDef[j].parmLabel+
-          "\nparmDefault: "+methodParmDef[j].parmDefaultValue+
-          "\nparmrequired: "+methodParmDef[j].parmRequired);
-        }
-      }
-    }*/
 
     System.out.println("\n----- Starting with MIMETypedStream of:");
     String text = "this is some text for the bytestream";

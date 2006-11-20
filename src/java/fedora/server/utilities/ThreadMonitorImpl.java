@@ -1,5 +1,7 @@
 package fedora.server.utilities;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 
@@ -14,6 +16,10 @@ import fedora.server.StdoutLogging;
 public class ThreadMonitorImpl
         extends StdoutLogging
         implements ThreadMonitor {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ThreadMonitorImpl.class.getName());
 
     private boolean m_stopRequested;
     private boolean m_onlyMemory;
@@ -36,9 +42,9 @@ public class ThreadMonitorImpl
             try {
                 Thread.sleep(m_pollInterval);
             } catch (InterruptedException ie) { }
-            logFiner("Available Memory: " + Runtime.getRuntime().freeMemory());
+            LOG.info("Available Memory: " + Runtime.getRuntime().freeMemory());
             if (!m_onlyMemory) {
-                logFiner(getThreadTree());
+                LOG.info(getThreadTree());
             }
         }
     }

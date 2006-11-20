@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.StreamIOException;
@@ -24,18 +26,16 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
 /**
+ * Creates an XML serialization of a Fedora digital object in
+ * accordance with the Fedora Object XML (FOXML) XML Schema defined at:
+ * http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
+ * 
+ * The serializer uses the currently instantiated digital object
+ * as input (see fedora.server.storage.types.DigitalObject). 
  *
- * <p><b>Title:</b> FOXMLDOSerializer.java</p>
- * <p><b>Description: Creates an XML serialization of a Fedora digital object 
- *       in accordance with the Fedora Object XML (FOXML) XML Schema defined at:
- *       http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
- * 
- *       The serializer uses the currently instantiated digital object
- *       as input (see fedora.server.storage.types.DigitalObject). 
- * 
- *       The serializer will adapt its output to a specific translation contexts.
- *       See the static definitions of different translation contexts in 
- *       fedora.server.storage.translation.DOTranslationUtility. </b></p>
+ * The serializer will adapt its output to a specific translation contexts.
+ * See the static definitions of different translation contexts in 
+ * fedora.server.storage.translation.DOTranslationUtility. </b></p>
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
@@ -43,6 +43,10 @@ import fedora.server.utilities.StringUtility;
 public class FOXMLDOSerializer
         implements DOSerializer,
                    Constants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FOXMLDOSerializer.class.getName());
 
 	public static final String FOXML_NS="info:fedora/fedora-system:def/foxml#";
     public static final String FEDORA_AUDIT_NS="info:fedora/fedora-system:def/audit#";
@@ -65,7 +69,7 @@ public class FOXMLDOSerializer
 	public void serialize(DigitalObject obj, OutputStream out, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedEncodingException {
-		if (fedora.server.Debug.DEBUG) System.out.println("Serializing FOXML for transContext: " + transContext);
+		LOG.debug("Serializing FOXML for transContext: " + transContext);
 		m_transContext=transContext;
         StringBuffer buf=new StringBuffer();
         appendXMLDeclaration(obj, encoding, buf);

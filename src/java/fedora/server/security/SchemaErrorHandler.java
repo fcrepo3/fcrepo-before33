@@ -1,10 +1,9 @@
 /*
  * Created on Apr 26, 2005
- *
- * To change the template for this generated file go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 package fedora.server.security;
+
+import org.apache.log4j.Logger;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
@@ -12,24 +11,24 @@ import org.xml.sax.SAXParseException;
 
 /**
  * @author wdn5e@virginia.edu
- *
- * To change the template for this generated type comment go to
- * Window&gt;Preferences&gt;Java&gt;Code Generation&gt;Code and Comments
  */
 public class SchemaErrorHandler implements ErrorHandler {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            SchemaErrorHandler.class.getName());
+
 	public void error(SAXParseException exception) throws SAXException {
-		System.err.println("schema error " + exception.getMessage());
+		LOG.error("Schema error", exception);
 		throw exception;
 	}
 	public void fatalError(SAXParseException exception) throws SAXException {
-		System.err.println("schema fatalError " + exception.getMessage());		
+		LOG.error("Schema fatalError", exception);
 		throw exception;		
 	}
 	public void warning(SAXParseException exception) throws SAXException {
-		System.err.println("schema warning " + exception.getMessage());
+		LOG.error("Schema warning", exception);
 		throw exception;		
 	}
 	
-	public static void main(String[] args) {
-	}
 }

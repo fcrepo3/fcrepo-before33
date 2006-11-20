@@ -25,6 +25,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
@@ -44,15 +46,12 @@ import fedora.server.utilities.StreamUtility;
 import fedora.server.validation.ValidationUtility;
 
 /**
+ * Deserializes XML digital object encoded in accordance with 
+ * the Fedora Object XML (FOXML) schema defined at: 
+ * http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
  *
- * <p><b>Title:</b> FOXMLDODeserializer.java</p>
- * <p><b>Description:</b> 
- *       Deserializes XML digital object encoded in accordance with 
- * 		 the Fedora Object XML (FOXML) schema defined at: 
- * 		 http://www.fedora.info/definitions/1/0/foxml1-0.xsd.
- * 
- *       The FOXML XML is parsed using SAX and is instantiated into a Fedora
- *       digital object in memory (see fedora.server.types.DigitalObject). </p>
+ * The FOXML XML is parsed using SAX and is instantiated into a Fedora
+ * digital object in memory (see fedora.server.types.DigitalObject). </p>
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
@@ -61,6 +60,10 @@ public class FOXMLDODeserializer
         extends DefaultHandler
         implements DODeserializer,
                    Constants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FOXMLDODeserializer.class.getName());
 
     /** The namespace for FOXML */
     private final static String F="info:fedora/fedora-system:def/foxml#";
@@ -213,7 +216,7 @@ public class FOXMLDODeserializer
     public void deserialize(InputStream in, DigitalObject obj, String encoding, int transContext)
             throws ObjectIntegrityException, StreamIOException, UnsupportedEncodingException {
             	
-        if (fedora.server.Debug.DEBUG) System.out.println("Deserializing FOXML for transContext: " + transContext);
+        LOG.debug("Deserializing FOXML for transContext: " + transContext);
         m_obj=obj;
         m_transContext=transContext;
         initialize();
@@ -225,7 +228,7 @@ public class FOXMLDODeserializer
         } catch (SAXException se) {
             throw new ObjectIntegrityException("FOXML IO stream was bad : " + se.getMessage());
         }
-        if (fedora.server.Debug.DEBUG) System.out.println("Just finished parse.");
+        LOG.debug("Just finished parse.");
 
         if (!m_rootElementFound) {
             throw new ObjectIntegrityException("FOXMLDODeserializer: Input stream is not valid FOXML." +
@@ -724,16 +727,16 @@ public class FOXMLDODeserializer
 		ds.DSLocationType=m_dsLocationType;
 		ds.DSInfoType=""; // METS legacy
 		ds.DSChecksumType=m_dsChecksumType;
-        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+        LOG.debug("instantiate datastream: dsid = "+ m_dsId + 
                            "checksumType = "+ m_dsChecksumType +
                            "checksum = "+ m_dsChecksum);
         if (m_obj.isNew()) 
         {
-            System.out.println("New Object: checking supplied checksum");
+            LOG.debug("New Object: checking supplied checksum");
             if (m_dsChecksum != null && !m_dsChecksum.equals("")&& !m_dsChecksum.equals("none"))
             {
                 String tmpChecksum = ds.getChecksum();
-                System.out.println("checksum = "+ tmpChecksum);
+                LOG.debug("checksum = "+ tmpChecksum);
                 if (!m_dsChecksum.equals(tmpChecksum))
                 {
                     {
@@ -836,10 +839,9 @@ public class FOXMLDODeserializer
 			//LOOK! this sets bytes, not characters.  Do we want to set this?
 			ds.DSSize=ds.xmlContent.length;
 		} catch (Exception uee) {
-			System.out.println("Error processing inline xml content in SAX parse: " 
-				+ uee.getMessage());
+			LOG.error("Error processing inline xml content in SAX parse" , uee);
 		}				
-        System.out.println("instantiate datastream: dsid = "+ m_dsId + 
+        LOG.debug("instantiate datastream: dsid = "+ m_dsId + 
                 "checksumType = "+ m_dsChecksumType +
                 "checksum = "+ m_dsChecksum);
         ds.DSChecksumType = m_dsChecksumType;
@@ -848,7 +850,7 @@ public class FOXMLDODeserializer
             if (m_dsChecksum != null && !m_dsChecksum.equals("")&& !m_dsChecksum.equals("none"))
             {
                  String tmpChecksum = ds.getChecksum();
-                 System.out.println("checksum = "+ tmpChecksum);
+                 LOG.debug("checksum = "+ tmpChecksum);
                  if (!m_dsChecksum.equals(tmpChecksum))
                  {
                      throw new SAXException(new ValidationException("Checksum Mismatch: " + tmpChecksum));

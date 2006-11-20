@@ -9,19 +9,24 @@ import org.apache.commons.dbcp.PoolableConnectionFactory;
 import org.apache.commons.dbcp.PoolingDataSource;
 import org.apache.commons.pool.impl.GenericObjectPool;
 
-import fedora.server.Debug;
+import org.apache.log4j.Logger;
+
 import fedora.server.utilities.DDLConverter;
 import fedora.server.utilities.TableCreatingConnection;
 
 /**
- * <p>Title: ConnectionPool.java</p>
- * <p>Description: Provides a dispenser for database Connection Pools.</p>
+ * Provides a dispenser for database Connection Pools.
  *
  * @author rlw@virginia.edu, cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class ConnectionPool
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        ConnectionPool.class.getName());
+
   private String driver;
   private String url;
   private String username;
@@ -105,21 +110,21 @@ public class ConnectionPool
     this.whenExhaustedAction = whenExhaustedAction;
         
     connectionPool = new GenericObjectPool(null);
-    if (Debug.DEBUG) {
-        System.out.println("default_max_active: "+GenericObjectPool.DEFAULT_MAX_ACTIVE);
-        System.out.println("default_max_idle: "+GenericObjectPool.DEFAULT_MAX_IDLE);
-        System.out.println("default_max_wait_time: "+GenericObjectPool.DEFAULT_MAX_WAIT);
-        System.out.println("default_min_evict_idle_time: "+GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
-        System.out.println("default_min_idle: "+GenericObjectPool.DEFAULT_MIN_IDLE);
-        System.out.println("default_num_tests_per_evict_run: "+GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
-        System.out.println("default_time_between_evict_runs: "+GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
-        System.out.println("default_when_exhausted_action: "+GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION);
-        System.out.println("default_when_exhausted_block: "+GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-        System.out.println("default_when_exhausted_fail: "+GenericObjectPool.WHEN_EXHAUSTED_FAIL);
-        System.out.println("default_when_exhausted_grow: "+GenericObjectPool.WHEN_EXHAUSTED_GROW);
-        System.out.println("default_test_on_borrow: "+GenericObjectPool.DEFAULT_TEST_ON_BORROW);
-        System.out.println("default_test_on_return: "+GenericObjectPool.DEFAULT_TEST_ON_RETURN);
-        System.out.println("default_test_while_idle: "+GenericObjectPool.DEFAULT_TEST_WHILE_IDLE);
+    if (LOG.isDebugEnabled()) {
+        LOG.debug("default_max_active: "+GenericObjectPool.DEFAULT_MAX_ACTIVE);
+        LOG.debug("default_max_idle: "+GenericObjectPool.DEFAULT_MAX_IDLE);
+        LOG.debug("default_max_wait_time: "+GenericObjectPool.DEFAULT_MAX_WAIT);
+        LOG.debug("default_min_evict_idle_time: "+GenericObjectPool.DEFAULT_MIN_EVICTABLE_IDLE_TIME_MILLIS);
+        LOG.debug("default_min_idle: "+GenericObjectPool.DEFAULT_MIN_IDLE);
+        LOG.debug("default_num_tests_per_evict_run: "+GenericObjectPool.DEFAULT_NUM_TESTS_PER_EVICTION_RUN);
+        LOG.debug("default_time_between_evict_runs: "+GenericObjectPool.DEFAULT_TIME_BETWEEN_EVICTION_RUNS_MILLIS);
+        LOG.debug("default_when_exhausted_action: "+GenericObjectPool.DEFAULT_WHEN_EXHAUSTED_ACTION);
+        LOG.debug("default_when_exhausted_block: "+GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
+        LOG.debug("default_when_exhausted_fail: "+GenericObjectPool.WHEN_EXHAUSTED_FAIL);
+        LOG.debug("default_when_exhausted_grow: "+GenericObjectPool.WHEN_EXHAUSTED_GROW);
+        LOG.debug("default_test_on_borrow: "+GenericObjectPool.DEFAULT_TEST_ON_BORROW);
+        LOG.debug("default_test_on_return: "+GenericObjectPool.DEFAULT_TEST_ON_RETURN);
+        LOG.debug("default_test_while_idle: "+GenericObjectPool.DEFAULT_TEST_WHILE_IDLE);
     }
         
     connectionPool.setMaxActive(maxActive);
@@ -133,20 +138,20 @@ public class ConnectionPool
     connectionPool.setTestWhileIdle(testWhileIdle);
     connectionPool.setTimeBetweenEvictionRunsMillis(timeBetweenEvictionRunsMillis);
     connectionPool.setWhenExhaustedAction(whenExhaustedAction);
-    if (Debug.DEBUG) {
-        System.out.println("set_max_active: "+connectionPool.getMaxActive());
-        System.out.println("set_max_idle: "+connectionPool.getMaxIdle());
-        System.out.println("set_max_wait_time: "+connectionPool.getMaxWait());
-        System.out.println("set_min_evict_idle_time: "+connectionPool.getMinEvictableIdleTimeMillis());
-        System.out.println("set_min_idle: "+connectionPool.getMinIdle());
-        System.out.println("set_num_tests_per_evict_run: "+connectionPool.getNumTestsPerEvictionRun());
-        System.out.println("set_time_between_evict_runs: "+connectionPool.getTimeBetweenEvictionRunsMillis());
-        System.out.println("set_num_active: "+connectionPool.getNumActive());
-        System.out.println("set_num_idle: "+connectionPool.getNumIdle());
-        System.out.println("set_test_on_borrow: "+connectionPool.getTestOnBorrow());
-        System.out.println("set_test_on_return: "+connectionPool.getTestOnReturn());
-        System.out.println("set_test_while_idle: "+connectionPool.getTestWhileIdle());
-        System.out.println("set_when_exhausted_action: "+connectionPool.getWhenExhaustedAction());
+    if (LOG.isDebugEnabled()) {
+        LOG.debug("set_max_active: "+connectionPool.getMaxActive());
+        LOG.debug("set_max_idle: "+connectionPool.getMaxIdle());
+        LOG.debug("set_max_wait_time: "+connectionPool.getMaxWait());
+        LOG.debug("set_min_evict_idle_time: "+connectionPool.getMinEvictableIdleTimeMillis());
+        LOG.debug("set_min_idle: "+connectionPool.getMinIdle());
+        LOG.debug("set_num_tests_per_evict_run: "+connectionPool.getNumTestsPerEvictionRun());
+        LOG.debug("set_time_between_evict_runs: "+connectionPool.getTimeBetweenEvictionRunsMillis());
+        LOG.debug("set_num_active: "+connectionPool.getNumActive());
+        LOG.debug("set_num_idle: "+connectionPool.getNumIdle());
+        LOG.debug("set_test_on_borrow: "+connectionPool.getTestOnBorrow());
+        LOG.debug("set_test_on_return: "+connectionPool.getTestOnReturn());
+        LOG.debug("set_test_while_idle: "+connectionPool.getTestWhileIdle());
+        LOG.debug("set_when_exhausted_action: "+connectionPool.getWhenExhaustedAction());
     }
     
     // Load class for jdbc driver
@@ -266,8 +271,7 @@ public class ConnectionPool
   public Connection getConnection()
       throws SQLException
   {
-      if (Debug.DEBUG) 
-          System.out.println("connectionPool: "+this.toString());
+      LOG.debug("connectionPool: "+this.toString());
       return dataSource.getConnection();
   }
 
@@ -281,8 +285,7 @@ public class ConnectionPool
     try {
         connection.close();
     } catch (SQLException sqle) {
-        System.out.println("Unable to close connection");
-        sqle.printStackTrace();
+        LOG.warn("Unable to close connection", sqle);
     }
   }
 

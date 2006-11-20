@@ -178,16 +178,4 @@ public abstract class DateUtility {
         }
     }
 
-    public static void main(String[] args) {
-        String dateTimeString = "2002-08-22T13:58:06";
-        Date date = convertStringToDate(dateTimeString);
-        System.out.println("\nDateString: " + dateTimeString
-                + "\nConvertDateToString: " + convertDateToString(date));
-        System.out.println("\nDate: " + convertDateToString(date)
-                + "\nConvertDateToString: " + convertDateToString(date));
-        System.out.println("\nDate: " + convertDateToDateString(date)
-                + "\nConvertDateToDateString: " + convertDateToDateString(date));
-        System.out.println("\nDate: " + convertDateToTimeString(date)
-                + "\nConvertDateToTimeString: " + convertDateToTimeString(date));        
-    }
 }

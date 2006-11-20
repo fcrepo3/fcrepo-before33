@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.helpers.JournalHelper;
@@ -30,6 +32,11 @@ import fedora.server.journal.helpers.JournalHelper;
  */
 
 public class BufferedJournalRecoveryLog extends JournalRecoveryLog {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            BufferedJournalRecoveryLog.class.getName());
+
     private final File logFile;
     private final StringWriter buffer;
 
@@ -79,7 +86,7 @@ public class BufferedJournalRecoveryLog extends JournalRecoveryLog {
                 logWriter.close();
             }
         } catch (IOException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
+            LOG.error("Error shutting down", e);
         }
     }
 

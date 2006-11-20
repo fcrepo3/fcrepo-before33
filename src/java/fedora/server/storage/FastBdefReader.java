@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -65,6 +67,10 @@ import fedora.server.storage.types.MethodDef;
 public class FastBdefReader extends FastDOReader implements BDefReader
 {
 
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        FastBdefReader.class.getName());
+
   /** Instance of BDefReader */
   private BDefReader bDefReader = null;
 
@@ -102,7 +108,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
       throw se;
     } catch (Throwable th)
     {
-      s_server.logWarning("[FastBdefReader] Unable to construct FastBdefReader");
+      LOG.error("Unable to construct FastBDefReader", th);
       throw new GeneralException("[FastBdefReader] An error has occurred. "
           + "The error was a \"" + th.getClass().getName() + "\"  .  "
           + "Reason: \""  + th.getMessage() + "\"  .");
@@ -142,7 +148,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           + "method.bDefDbID = bDef.bDefDbID AND "
           + "bDef.bDefPID = \'" + bDefPID + "\'";
 
-      s_server.logFinest("[FastBdefReader] getAbstractMethodsQuery: " + query);
+      LOG.debug("getAbstractMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -298,11 +304,11 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           + "bDef.bDefPID='" + bDefPID + "' AND "
           + "method.methodName='"  + methodName + "'";
 
-      s_server.logFinest("GetBdefMethodParmQuery=" + query);
+      LOG.debug("GetBdefMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        s_server.logFinest("connectionPool = " + connectionPool);
+        LOG.debug("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -324,16 +330,14 @@ public class FastBdefReader extends FastDOReader implements BDefReader
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
           methodParm.parmType = results[5];
-            s_server.logFinest("[FastBdefReader] "
-                + "methodParms: " + methodParm.parmName
+          LOG.debug("methodParms: " + methodParm.parmName
                 + "label: " + methodParm.parmLabel
                 + "default: " + methodParm.parmDefaultValue
                 + "required: " + methodParm.parmRequired
                 + "type: " + methodParm.parmType);
             for (int j=0; j<methodParm.parmDomainValues.length; j++)
             {
-              s_server.logFinest("[FastBdefReader] domainValues: "
-                  + methodParm.parmDomainValues[j]);
+              LOG.debug("domainValue: " + methodParm.parmDomainValues[j]);
             }
           queryResults.addElement(methodParm);
         }
@@ -414,13 +418,12 @@ public class FastBdefReader extends FastDOReader implements BDefReader
         + "bDef "
         + "WHERE "
         + "bDef.bDefPID=\'" + bDefPID + "\'";
-    s_server.logFinest("LocatBdefPIDQuery: " + query);
+    LOG.debug("LocatBdefPIDQuery: " + query);
 
     try
     {
       connection = connectionPool.getConnection();
-      s_server.logFinest("[FastBdefReader] LocateBdefPIDConnectionPool: "
-          + connectionPool);
+      LOG.debug("LocateBdefPIDConnectionPool: " + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
@@ -429,6 +432,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
       }
     } catch (Throwable th)
     {
+      LOG.error("Error locating BDef PID", th);
       throw new GeneralException("[FastBdefReader] An error has occurred. The "
           + "underlying error was a  \"" + th.getClass().getName()
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
@@ -463,15 +467,13 @@ public class FastBdefReader extends FastDOReader implements BDefReader
         }
         bDefLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        s_server.logFinest("[FastBdefReader] BDEF OBJECT FOUND IN DEFINITIVE "
-            + "STORE: " + bDefPID);
+        LOG.debug("BDef found in definitive store: " + bDefPID);
       } catch (ServerException se)
       {
         throw se;
       } catch (Throwable th)
       {
-        s_server.logWarning("[FastBdefReader] BDEF OBJECT NOT FOUND IN "
-            + "DEFINITIVE STORE: " + bDefPID);
+        LOG.error("BDef not found in definitive store: " + bDefPID, th);
         throw new GeneralException("[FastBdefReader] Definitive doReader "
             + "returned error. The underlying error was a  \""
             + th.getClass().getName() + "\"  . The message "
@@ -480,8 +482,7 @@ public class FastBdefReader extends FastDOReader implements BDefReader
     } else
     {
       isFoundInFastStore = true;
-      s_server.logFinest("[FastBdefReader] BDEF OBJECT FOUND IN FAST STORE: "
-          + bDefPID);
+      LOG.debug("BDef found in fast store: " + bDefPID);
     }
     return bDefLabel;
   }

@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
@@ -48,6 +50,11 @@ import fedora.server.utilities.SQLUtility;
 public class DefaultDOReplicator
         extends Module
         implements DOReplicator {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DefaultDOReplicator.class.getName());
+
     private ConnectionPool m_pool;
     private RowInsertion m_ri;
 
@@ -128,15 +135,15 @@ public class DefaultDOReplicator
             // sdp: insert new
             hostIP = null;
             fedoraServerPort = getServer().getParameter("fedoraServerPort");
-            getServer().logFinest("fedoraServerPort: " + fedoraServerPort);
+            LOG.debug("fedoraServerPort: " + fedoraServerPort);
             fedoraServerPortSSL = getServer().getParameter("fedoraRedirectPort");
-            getServer().logFinest("fedoraServerPortSSL: " + fedoraServerPortSSL);            
+            LOG.debug("fedoraServerPortSSL: " + fedoraServerPortSSL);            
             hostIP = InetAddress.getLocalHost();
             fedoraServerHost = getServer().getParameter("fedoraServerHost");
             if (fedoraServerHost==null || fedoraServerHost.equals("")) {
                 fedoraServerHost=hostIP.getHostName();
             }
-            getServer().logFinest("fedoraServerHost: " + fedoraServerHost);
+            LOG.debug("fedoraServerHost: " + fedoraServerHost);
             
   					if (fedoraServerPort.equals("80")) {
   							m_serverOnPort80=true;
@@ -198,7 +205,7 @@ public class DefaultDOReplicator
         ResultSet results=null;
         boolean triedUpdate=false;
         boolean failed=false;
-        logFinest("DefaultDOReplicator.updateComponents: Entering ------");
+        LOG.debug("Entering updateComponents");
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
@@ -207,7 +214,7 @@ public class DefaultDOReplicator
             results=logAndExecuteQuery(st, "SELECT doDbID,doState,doLabel FROM do WHERE "
                     + "doPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
-                logFinest("DefaultDOReplication.updateComponents: Object is "
+                LOG.debug("Object is "
                         + "new; components dont need updating.");
                 return false;
             }
@@ -271,8 +278,7 @@ public class DefaultDOReplicator
                 }
                 connection.commit();
             } else {
-                logFinest("DefaultDOReplication.updateComponents: "
-                          + "No datastream labels or locations changed.");
+                LOG.debug("No datastream labels or locations changed.");
             }
 
             // check if any mods to disseminators for this object...
@@ -285,7 +291,7 @@ public class DefaultDOReplicator
             }
 
             if (dissDbIDs.size()==0 || reader.GetDisseminators(null, null).length!=dissDbIDs.size()) {
-                logFinest("DefaultDOReplication.updateComponents: Object "
+                LOG.debug("Object "
                         + "either has no disseminators or a new disseminator"
                         + "has been added; components dont need updating.");
                 return false;
@@ -325,17 +331,17 @@ public class DefaultDOReplicator
                 if (diss == null) {
                     // XML object has no disseminators
                     // so this must be a purgeComponents or a new object.
-                    logFinest("DefaultDOReplicator.updateComponents: XML object has no disseminators");
+                    LOG.debug("XML object has no disseminators");
                     return false;
                 }
                 if (!diss.dissLabel.equals(dissLabel)
                         || !diss.bMechID.equals(bMechPID)
                         || !diss.dissState.equals(dissState)) {
                     if (!diss.dissLabel.equals(dissLabel))
-                        logFinest("DefaultDOReplicator.updateComponents: dissLabel changed from '" + dissLabel + "' to '"
+                        LOG.debug("dissLabel changed from '" + dissLabel + "' to '"
                             + diss.dissLabel + "'");
                     if (!diss.dissState.equals(dissState))
-                        logFinest("DefaultDOReplicator.updateComponents: dissState changed from '" + dissState + "' to '"
+                        LOG.debug("dissState changed from '" + dissState + "' to '"
                             + diss.dissState + "'");
 
                     // We might need to set the bMechDbID to the id for the new one,
@@ -344,7 +350,7 @@ public class DefaultDOReplicator
                     if (diss.bMechID.equals(bMechPID)) {
                         newBMechDbID=bMechDbID;
                     } else {
-                        logFinest("DefaultDOReplicator.updateComponents: bMechPID changed from '" + bMechPID + "' to '"
+                        LOG.debug("bMechPID changed from '" + bMechPID + "' to '"
                                   + diss.bMechID + "'");
                         results=logAndExecuteQuery(st, "SELECT bMechDbID "
                                 + "FROM bMech "
@@ -409,7 +415,7 @@ public class DefaultDOReplicator
                 results.close();
                 results=null;
                 String newDSBindMapID=diss.dsBindMapID;
-                logFinest("DefaultDOReplicator.updateComponents: newDSBindMapID: "
+                LOG.debug("newDSBindMapID: "
                           + newDSBindMapID + " origDSBindMapID: " + origDSBindMapID);
 
                 // Is this a new bindingMap?
@@ -426,8 +432,7 @@ public class DefaultDOReplicator
                     dsBindMapDBID = lookupDataStreamBindingMapDBID(connection, (new Integer(bMechDbID)).toString(), origDSBindMapID);
                     int rowCount = logAndExecuteUpdate(st,"DELETE FROM dsBind WHERE doDbID=" + doDbID
                             + " AND dsBindMapDbID="+dsBindMapDBID);
-                    logFinest("DefaultDOReplicator.updateComponents: deleted "
-                              + rowCount + " rows from dsBind");
+                    LOG.debug("Deleted " + rowCount + " rows from dsBind");
 
                     // Now add back new datastreams and dsBindMap associated with this disseminator
                     // using current info in xml object.
@@ -442,13 +447,12 @@ public class DefaultDOReplicator
                     //String doLabel;
                     String dsBindingKeyDBID;
                     allBindingMaps = reader.GetDSBindingMaps(null);
-                    logFinest("DefaultDOReplicator.updateComponents: Bindings found: "+allBindingMaps.length);
+                    LOG.debug("Bindings found: "+allBindingMaps.length);
                     for (int i=0; i<allBindingMaps.length; ++i) {
 
                         // Only update bindingMap that was modified.
                         if (allBindingMaps[i].dsBindMapID.equals(newDSBindMapID)) {
-                            logFinest("DefaultDOReplicator.updateComponents: "
-                            + "Adding back datastreams and ds binding map. New dsBindMapID: "
+                            LOG.debug("Adding back datastreams and ds binding map. New dsBindMapID: "
                             + newDSBindMapID);
                             bMechDBID = lookupBehaviorMechanismDBID(connection,
                                     allBindingMaps[i].dsBindMechanismPID);
@@ -462,7 +466,7 @@ public class DefaultDOReplicator
                             bindingMapDBID = lookupDataStreamBindingMapDBID(connection,
                                     bMechDBID, allBindingMaps[i].dsBindMapID);
                             if (bindingMapDBID == null) {
-                                logFinest("DefaultDOReplicator.updateComponents: ADDing dsBindMap row");
+                                LOG.debug("ADDing dsBindMap row");
 
                                 // DataStreamBinding row doesn't exist, add it.
                                 insertDataStreamBindingMapRow(connection, bMechDBID,
@@ -480,7 +484,7 @@ public class DefaultDOReplicator
                             }
 
                             // Now add back datastream bindings removed earlier.
-                            logFinest("DefaultDOReplicator.updateComponents: Bindings found: "
+                            LOG.debug("Bindings found: "
                                       + allBindingMaps[i].dsBindingsAugmented.length);
                             for (int j=0; j<allBindingMaps[i].dsBindingsAugmented.length; ++j) {
                                 dsBindingKeyDBID = lookupDataStreamBindingSpecDBID(
@@ -496,7 +500,7 @@ public class DefaultDOReplicator
                                 }
 
                                 // Insert DataStreamBinding row
-                                logFinest("DefaultDOReplicator.updateComponents: Adding back dsBind row for: "
+                                LOG.debug("Adding back dsBind row for: "
                                         +allBindingMaps[i].dsBindingsAugmented[j].datastreamID);
                                 Datastream ds = reader.getDatastream(allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
                                         allBindingMaps[i].dsBindingsAugmented[j].DSVersionID);
@@ -536,8 +540,7 @@ public class DefaultDOReplicator
                 try {
                     if (triedUpdate && failed) connection.rollback();
                 } catch (Throwable th) {
-                    logWarning("While rolling back: " +  th.getClass().getName()
-                            + ": " + th.getMessage());
+                    LOG.warn("Error while rolling back", th);
                 } finally {
                     try {
                         if (results != null) results.close();
@@ -545,8 +548,7 @@ public class DefaultDOReplicator
                         connection.setAutoCommit(true);
                         if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
-                        logWarning("While cleaning up: " +  sqle.getClass().getName()
-                            + ": " + sqle.getMessage());
+                        LOG.warn("Error while cleaning up", sqle);
                     } finally {
                         results=null;
                         st=null;
@@ -554,7 +556,7 @@ public class DefaultDOReplicator
                 }
             }
         }
-        logFinest("DefaultDOReplicator.updateComponents: Exiting ------");
+        LOG.debug("Exiting updateComponents");
         return true;
     }
 
@@ -591,7 +593,7 @@ public class DefaultDOReplicator
         Statement st=null;
         ResultSet results=null;
         boolean failed=false;
-        logFinest("DefaultDOReplicator.addNewComponents: Entering ------");
+        LOG.debug("Entering addNewComponents");
         try {
 
             String doPID = reader.GetObjectPID();
@@ -603,7 +605,7 @@ public class DefaultDOReplicator
             results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
                                        + "doPID='" + doPID + "'");
             if (!results.next()) {
-                logFinest("DefaultDOReplication.addNewComponents: Object is "
+                LOG.debug("Object is "
                           + "new; components will be added as part of new object replication.");
                 return false;
             }
@@ -614,7 +616,7 @@ public class DefaultDOReplicator
             Disseminator[] dissArray = reader.GetDisseminators(null, null);
             HashSet<Disseminator> newDisseminators = new HashSet<Disseminator>();
             int dissDBID = 0;
-            logFinest("DefaultDOReplicator.addNewComponents: Disseminators found: "
+            LOG.debug("Disseminators found: "
                       + dissArray.length);
             for (int j=0; j< dissArray.length; j++)
             {
@@ -631,7 +633,7 @@ public class DefaultDOReplicator
                 if (dissDBID==0) {
                     // the disseminator does NOT exist in the database; it is NEW.
                     newDisseminators.add(dissArray[j]);
-                    logFinest("DefaultDOReplicator.addNewComponents: Added new disseminator dissID: "+dissArray[j].dissID);
+                    LOG.debug("Added new disseminator dissID: "+dissArray[j].dissID);
                 }
             }
             addDisseminators(doPID, (Disseminator[])newDisseminators.toArray(new Disseminator[0]), reader, connection);
@@ -654,8 +656,7 @@ public class DefaultDOReplicator
                 try {
                     if (failed) connection.rollback();
                 } catch (Throwable th) {
-                    logWarning("While rolling back: " +  th.getClass().getName()
-                               + ": " + th.getMessage());
+                    LOG.warn("Error while rolling back", th);
                 } finally {
                     try {
                         if (results != null) results.close();
@@ -663,8 +664,7 @@ public class DefaultDOReplicator
                         connection.setAutoCommit(true);
                         if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
-                        logWarning("While cleaning up: " +  sqle.getClass().getName()
-                                   + ": " + sqle.getMessage());
+                        LOG.warn("Error while cleaning up", sqle);
                     } finally {
                         results=null;
                         st=null;
@@ -672,7 +672,7 @@ public class DefaultDOReplicator
                 }
             }
         }
-        logFinest("DefaultDOReplicator.addNewComponents: Exiting ------");
+        LOG.debug("Exiting addNewComponents");
         return true;
     }
 
@@ -690,7 +690,7 @@ public class DefaultDOReplicator
                 Statement st=null;
                 ResultSet results=null;
                 boolean failed=false;
-                logFinest("DefaultDOReplication.purgeComponents: Entering -----");
+                LOG.debug("Entering purgeComponents");
                 try {
 
                         String doPID = reader.GetObjectPID();
@@ -702,7 +702,7 @@ public class DefaultDOReplicator
                         results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
                                         + "doPID='" + doPID + "'");
                         if (!results.next()) {
-                                logFinest("DefaultDOReplication.purgeComponents: Object is "
+                                LOG.debug("Object is "
                                                 + "new; components will be added as part of new object replication.");
                                 return false;
                         }
@@ -721,8 +721,7 @@ public class DefaultDOReplicator
                         }
                         results.close();
                         results=null;
-                        logFinest("DefaultDOReplicator.purgeComponents: Found "
-                            + dissDbIds.size() + "dissDbId(s). ");
+                        LOG.debug("Found " + dissDbIds.size() + "dissDbId(s). ");
 
                         // Get all binding maps that are in db for this object
                         HashSet<Integer> dsBindMapIds = new HashSet<Integer>();
@@ -733,7 +732,7 @@ public class DefaultDOReplicator
                         }
                         results.close();
                         results=null;
-                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                        LOG.debug("Found "
                             + dsBindMapIds.size() + "dsBindMapDbId(s). ");
 
                         // Now get all existing disseminators that are in xml object for this object
@@ -752,18 +751,18 @@ public class DefaultDOReplicator
                                 if (!results.next()) {
                                   // No disseminator was found in db so it must be new one
                                   // indicating an instance of AddNewComponents rather than purgeComponents
-                                  logFinest("DefaultDOReplicator.purgeComponents: Disseminator not found in db; Assuming this is case of AddNewComponents");
+                                  LOG.debug("Disseminator not found in db; Assuming this is case of AddNewComponents");
                                   return false;
                                 } else {
                                   Integer id = new Integer(results.getInt("dissDbID"));
                                   existingDisseminators.add(id);
-                                  logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                  LOG.debug("Adding "
                                       + " dissDbId: " + id + " to list of Existing dissDbId(s). ");
                                 }
                                 results.close();
                                 results=null;
                         }
-                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                        LOG.debug("Found "
                             + existingDisseminators.size() + " existing dissDbId(s). ");
 
                         // Now get all existing dsbindmapids that are in xml object for this object
@@ -781,18 +780,18 @@ public class DefaultDOReplicator
                                 if (!results.next()) {
                                   // No disseminator was found in db so it must be new one
                                   // indicating an instance of AddNewComponents rather than purgeComponents
-                                  logFinest("DefaultDOReplicator.purgeComponents: Disseminator not found in db; Assuming this is case of AddNewComponents");
+                                  LOG.debug("Disseminator not found in db; Assuming this is case of AddNewComponents");
                                   return false;
                                 } else {
                                   Integer dsBindMapDbId = new Integer(results.getInt("dsBindMapDbID"));
                                   existingDsBindMapIds.add(dsBindMapDbId);
-                                  logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                                  LOG.debug("Adding "
                                       + " dsBindMapDbId: " + dsBindMapDbId + " to list of Existing dsBindMapDbId(s). ");
                                 }
                                 results.close();
                                 results=null;
                         }
-                        logFinest("DefaultDOReplicator.purgeComponents: Found "
+                        LOG.debug("Found "
                             + existingDsBindMapIds.size() + " existing dsBindMapDbId(s). ");
 
                         // Compare what's in db with what's in xml object
@@ -807,15 +806,14 @@ public class DefaultDOReplicator
                             // database disseminator does not exist in xml object
                             // so remove it from database
                             purgedDisseminators.add(dissDbId);
-                            logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                            LOG.debug("Adding "
                                       + " dissDbId: " + dissDbId + " to list of Purged dissDbId(s). ");
                           }
                         }
                         if (purgedDisseminators.isEmpty()) {
                           // no disseminators were removed so this must be an
                           // an instance of addComponent or updateComponent
-                          logFinest("DefaultDOReplicator.purgeComponents: "
-                              + "No disseminators have been removed from object;"
+                          LOG.debug("No disseminators have been removed from object;"
                               + " Assuming this a case of UpdateComponents");
                           return false;
                         }
@@ -832,15 +830,14 @@ public class DefaultDOReplicator
                             // database disseminator does not exist in xml object
                             // so remove it from database
                             purgedDsBindMapIds.add(dsBindMapDbId);
-                            logFinest("DefaultDOReplicator.purgeComponents: Adding "
+                            LOG.debug("Adding "
                                       + " dsBindMapDbId: " + dsBindMapDbId + " to list of Purged dsBindMapDbId(s). ");
                           }
                         }
                         if (purgedDsBindMapIds.isEmpty()) {
                           // no disseminators were removed so this must be an
                           // an instance of addComponent or updateComponent
-                          logFinest("DefaultDOReplicator.purgeComponents: "
-                              + "No disseminators have been removed from object;"
+                          LOG.debug("No disseminators have been removed from object;"
                               + " Assuming this a case of UpdateComponents");
                           return false;
                         }
@@ -858,30 +855,28 @@ public class DefaultDOReplicator
                                 + "Replication. The error was \" " + se.getClass().getName()
                                 + " \". The cause was \" " + se.getMessage());
                 } finally {
-                        // TODO: make sure this makes sense here
-                        if (connection!=null) {
-                                try {
-                                        if (failed) connection.rollback();
-                                } catch (Throwable th) {
-                                        logWarning("While rolling back: " +  th.getClass().getName()
-                                                        + ": " + th.getMessage());
-                                } finally {
-                                        try {
-                                                if (results != null) results.close();
-                                                if (st!=null) st.close();
-                                                connection.setAutoCommit(true);
-                                                if (connection!=null) m_pool.free(connection);
-                                        } catch (SQLException sqle) {
-                                                logWarning("While cleaning up: " +  sqle.getClass().getName()
-                                                        + ": " + sqle.getMessage());
-                                        } finally {
-                                                results=null;
-                                                st=null;
-                                        }
-                                }
+                    // TODO: make sure this makes sense here
+                    if (connection!=null) {
+                        try {
+                            if (failed) connection.rollback();
+                        } catch (Throwable th) {
+                            LOG.warn("Error while rolling back", th);
+                        } finally {
+                            try {
+                                if (results != null) results.close();
+                                if (st!=null) st.close();
+                                connection.setAutoCommit(true);
+                                if (connection!=null) m_pool.free(connection);
+                            } catch (SQLException sqle) {
+                                LOG.warn("Error while cleaning up", sqle);
+                            } finally {
+                                results=null;
+                                st=null;
+                            }
                         }
+                    }
                 }
-                logFinest("DefaultDOReplicator.purgeComponents: Exiting ------");
+                LOG.debug("Exiting purgeComponents");
                 return true;
 	}
 
@@ -903,14 +898,14 @@ public class DefaultDOReplicator
         ResultSet results=null;
         boolean triedUpdate=false;
         boolean failed=false;
-        logFinest("DefaultDOReplication.updateComponents: Entering -----");
+        LOG.debug("Entering updateComponents");
         try {
             connection=m_pool.getConnection();
             st=connection.createStatement();
             results=logAndExecuteQuery(st, "SELECT bDefDbID,bDefState FROM bDef WHERE "
                     + "bDefPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
-                logFinest("DefaultDOReplication.updateComponents: Object is "
+                LOG.debug("Object is "
                         + "new; components dont need updating.");
                 return false;
             }
@@ -937,7 +932,7 @@ public class DefaultDOReplicator
                 }
                 connection.commit();
             } else {
-                logFinest("No datastream labels or locations changed.");
+                LOG.debug("No datastream labels or locations changed.");
             }
 
         } catch (SQLException sqle) {
@@ -955,8 +950,7 @@ public class DefaultDOReplicator
                 try {
                     if (triedUpdate && failed) connection.rollback();
                 } catch (Throwable th) {
-                    logWarning("While rolling back: " +  th.getClass().getName()
-                            + ": " + th.getMessage());
+                    LOG.warn("Error rolling back", th);
                 } finally {
                     try {
                         if (results != null) results.close();
@@ -964,8 +958,7 @@ public class DefaultDOReplicator
                         connection.setAutoCommit(true);
                         if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
-                        logWarning("While cleaning up: " +  sqle.getClass().getName()
-                            + ": " + sqle.getMessage());
+                        LOG.warn("Error cleaning up", sqle);
                     } finally {
                         results=null;
                         st=null;
@@ -973,7 +966,7 @@ public class DefaultDOReplicator
                 }
             }
         }
-        logFinest("DefaultDOReplication.updateComponents: Exiting -----");
+        LOG.debug("Exiting updateComponents");
         return true;
     }
 
@@ -1001,7 +994,7 @@ public class DefaultDOReplicator
             results=logAndExecuteQuery(st, "SELECT bMechDbID,bMechState FROM bMech WHERE "
                     + "bMechPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
-                logFinest("DefaultDOReplication.updateComponents: Object is "
+                LOG.debug("Object is "
                         + "new; components dont need updating.");
                 return false;
             }
@@ -1027,7 +1020,7 @@ public class DefaultDOReplicator
                 }
                 connection.commit();
             } else {
-                logFinest("DefaultDOReplicator.updateComponents(bMech): No datastream labels or locations changed.");
+                LOG.debug("No datastream labels or locations changed.");
             }
 
         } catch (SQLException sqle) {
@@ -1045,8 +1038,7 @@ public class DefaultDOReplicator
                 try {
                     if (triedUpdate && failed) connection.rollback();
                 } catch (Throwable th) {
-                    logWarning("While rolling back: " +  th.getClass().getName()
-                            + ": " + th.getMessage());
+                    LOG.warn("Error rolling back", th);
                 } finally {
                     try {
                         if (results != null) results.close();
@@ -1054,8 +1046,7 @@ public class DefaultDOReplicator
                         connection.setAutoCommit(true);
                         if (connection!=null) m_pool.free(connection);
                     } catch (SQLException sqle) {
-                        logWarning("While cleaning up: " +  sqle.getClass().getName()
-                            + ": " + sqle.getMessage());
+                        LOG.warn("Error cleaning up", sqle);
                     } finally {
                         results=null;
                         st=null;
@@ -1155,7 +1146,7 @@ public class DefaultDOReplicator
                     try {
                         connection.rollback();
                     } catch (Throwable th) {
-                        logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                        LOG.warn("Error rolling back", th);
                     } finally {
                         connection.setAutoCommit(true);
                         m_pool.free(connection);
@@ -1359,7 +1350,7 @@ public class DefaultDOReplicator
                     try {
                         connection.rollback();
                     } catch (Throwable th) {
-                        logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                        LOG.warn("Error rolling back");
                     } finally {
                         connection.setAutoCommit(true);
                         m_pool.free(connection);
@@ -1383,23 +1374,22 @@ public class DefaultDOReplicator
         boolean componentsUpdated=false;
         boolean componentsAdded=false;
         boolean componentsPurged=purgeComponents(doReader);
-        logFinest("DefaultDOReplicator.replicate: ----- componentsPurged: "+componentsPurged);
+        LOG.debug("Entering replicate, componentsPurged=" + componentsPurged);
 
         // Update operations are mutually exclusive
         if (!componentsPurged) {
           componentsUpdated=updateComponents(doReader);
-                  logFinest("DefaultDOReplicator.replicate: ----- componentsUpdated: "+componentsUpdated);
+                  LOG.debug("componentsUpdated=" + componentsUpdated);
           if (!componentsUpdated) {
             // and do adds if the object already existed
             componentsAdded=addNewComponents(doReader);
-            logFinest("DefaultDOReplicator.replicate: ----- newComponentsAdded: "+componentsAdded);
+            LOG.debug("newComponentsAdded=" + componentsAdded);
           }
         }
         if ( !componentsUpdated && !componentsAdded && !componentsPurged ) {
 
-            // Object is New
             Connection connection=null;
-            logFinest("DefaultDOReplicator.replicate: ----- New Object");
+            LOG.debug("Object is new");
             try
             {
                 DSBindingMapAugmented[] allBindingMaps;
@@ -1448,7 +1438,7 @@ public class DefaultDOReplicator
                         try {
                             connection.rollback();
                         } catch (Throwable th) {
-                            logWarning("While rolling back: " +  th.getClass().getName() + ": " + th.getMessage());
+                            LOG.warn("Error rolling back");
                         } finally {
                             connection.setAutoCommit(true);
                             m_pool.free(connection);
@@ -1460,13 +1450,13 @@ public class DefaultDOReplicator
 
     private ResultSet logAndExecuteQuery(Statement statement, String sql)
             throws SQLException {
-        logFinest("Executing query: " + sql);
+        LOG.debug("Executing query: " + sql);
         return statement.executeQuery(sql);
     }
 
     private int logAndExecuteUpdate(Statement statement, String sql)
             throws SQLException {
-        logFinest("Executing update: " + sql);
+        LOG.debug("Executing update: " + sql);
         return statement.executeUpdate(sql);
     }
 
@@ -1521,7 +1511,7 @@ public class DefaultDOReplicator
      */
     private void deleteBehaviorDefinition(Connection connection, String pid)
             throws SQLException {
-        logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Entering -----");
+        LOG.debug("Entered deleteBehaviorDefinition");
         Statement st=null;
         ResultSet results=null;
         try {
@@ -1529,35 +1519,35 @@ public class DefaultDOReplicator
             //
             // READ
             //
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Checking BehaviorDefinition table for " + pid + "...");
+            LOG.debug("Checking BehaviorDefinition table for " + pid + "...");
             results=logAndExecuteQuery(st, "SELECT bDefDbID FROM "
                     + "bDef WHERE bDefPID='" + pid + "'");
             if (!results.next()) {
                  // must not be a bdef...exit early
-                 logFinest("DefaultDOReplicator.deleteBehaviorDefinition: " + pid + " wasn't found in BehaviorDefinition table..."
+                 LOG.debug(pid + " wasn't found in BehaviorDefinition table..."
                          + "skipping deletion as such.");
                  return;
             }
             int dbid=results.getInt("bDefDbID");
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: " + pid + " was found in BehaviorDefinition table (DBID="
+            LOG.debug(pid + " was found in BehaviorDefinition table (DBID="
                     + dbid + ")");
             //
             // WRITE
             //
             int rowCount;
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Attempting row deletion from BehaviorDefinition "
+            LOG.debug("Attempting row deletion from BehaviorDefinition "
                     + "table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM bDef "
                     + "WHERE bDefDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Deleted " + rowCount + " row(s).");
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Attempting row deletion from method table...");
+            LOG.debug("Deleted " + rowCount + " row(s).");
+            LOG.debug("Attempting row deletion from method table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM method WHERE "
                     + "bDefDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Deleted " + rowCount + " row(s).");
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Attempting row deletion from parm table...");
+            LOG.debug("Deleted " + rowCount + " row(s).");
+            LOG.debug("Attempting row deletion from parm table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM parm WHERE "
                     + "bDefDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
         } finally {
             try {
                 if (results != null) results.close();
@@ -1566,7 +1556,7 @@ public class DefaultDOReplicator
             } finally {
                 results=null;
                 st=null;
-                logFinest("DefaultDOReplicator.deleteBehaviorDefinition: Exiting -----");
+                LOG.debug("Exiting deleteBehaviorDefinition");
             }
         }
     }
@@ -1593,7 +1583,7 @@ public class DefaultDOReplicator
      */
     private void deleteBehaviorMechanism(Connection connection, String pid)
             throws SQLException {
-        logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Entering -----");
+        LOG.debug("Entering deleteBehaviorMechanism");
         Statement st=null;
         ResultSet results=null;
         try {
@@ -1601,13 +1591,13 @@ public class DefaultDOReplicator
             //
             // READ
             //
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Checking bMech table for " + pid + "...");
+            LOG.debug("Checking bMech table for " + pid + "...");
             //results=logAndExecuteQuery(st, "SELECT bMechDbID, SMType_DBID "
             results=logAndExecuteQuery(st, "SELECT bMechDbID "
                     + "FROM bMech WHERE bMechPID='" + pid + "'");
             if (!results.next()) {
                  // must not be a bmech...exit early
-                 logFinest("DefaultDOReplicator.deleteBehaviorMechanism: " + pid + " wasn't found in bMech table..."
+                 LOG.debug(pid + " wasn't found in bMech table..."
                          + "skipping deletion as such.");
                  return;
             }
@@ -1615,10 +1605,10 @@ public class DefaultDOReplicator
             //int smtype_dbid=results.getInt("bMechDbID");
             results.close();
             results=null;
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism:" + pid + " was found in bMech table (DBID="
+            LOG.debug(pid + " was found in bMech table (DBID="
             //        + dbid + ", SMTYPE_DBID=" + smtype_dbid + ")");
                     + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Getting dsBindKeyDbID(s) from dsBindSpec "
+            LOG.debug("Getting dsBindKeyDbID(s) from dsBindSpec "
                     + "table...");
             HashSet<Integer> dsBindingKeyIds=new HashSet<Integer>();
             results=logAndExecuteQuery(st, "SELECT dsBindKeyDbID from "
@@ -1628,49 +1618,49 @@ public class DefaultDOReplicator
             }
             results.close();
             results=null;
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Found " + dsBindingKeyIds.size()
+            LOG.debug("Found " + dsBindingKeyIds.size()
                     + " dsBindKeyDbID(s).");
             //
             // WRITE
             //
             int rowCount;
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from bMech table..");
+            LOG.debug("Attempting row deletion from bMech table..");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM bMech "
                     + "WHERE bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindSpec "
+            LOG.debug("Deleted " + rowCount + " row(s).");
+            LOG.debug("Attempting row deletion from dsBindSpec "
                     + "table...");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindSpec table..");
+            LOG.debug("Attempting row deletion from dsBindSpec table..");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                     + "dsBindSpec WHERE bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsMIME table...");
+            LOG.debug("Attempting row deletion from dsMIME table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsMIME WHERE "
                     + inIntegerSetWhereConditionString("dsBindKeyDbID",
                     dsBindingKeyIds));
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from dsBindMap table...");
+            LOG.debug("Attempting row deletion from dsBindMap table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBindMap WHERE "
                     + "bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from diss table...");
+            LOG.debug("Attempting row deletion from diss table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM diss WHERE "
                     + "bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from mechImpl table...");
+            LOG.debug("Attempting row deletion from mechImpl table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM mechImpl WHERE "
                     + "bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Attempting row deletion from mechDefParm table...");
+            LOG.debug("Attempting row deletion from mechDefParm table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM mechDefParm "
                 + "WHERE bMechDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Deleted " + rowCount + " row(s).");
+            LOG.debug("Deleted " + rowCount + " row(s).");
 
         } finally {
             try {
@@ -1680,7 +1670,7 @@ public class DefaultDOReplicator
             } finally {
                 results=null;
                 st=null;
-                logFinest("DefaultDOReplicator.deleteBehaviorMechanism: Exiting -----");
+                LOG.debug("Exiting deleteBehaviorMechanism");
             }
         }
     }
@@ -1709,7 +1699,7 @@ public class DefaultDOReplicator
      */
     private void deleteDigitalObject(Connection connection, String pid)
             throws SQLException {
-        logFinest("DefaultDOReplicator.deleteDigitalObject: Entering -----");
+        LOG.debug("Entering deleteDigitalObject");
         Statement st=null;
         Statement st2=null;
         Statement st3=null;
@@ -1719,38 +1709,37 @@ public class DefaultDOReplicator
             //
             // READ
             //
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Checking do table for " + pid + "...");
+            LOG.debug("Checking do table for " + pid + "...");
             results=logAndExecuteQuery(st, "SELECT doDbID FROM "
                     + "do WHERE doPID='" + pid + "'");
             if (!results.next()) {
                  // must not be a digitalobject...exit early
-                 logFinest("DefaultDOReplicator.deleteDigitalObject: " + pid + " wasn't found in do table..."
+                 LOG.debug(pid + " wasn't found in do table..."
                          + "skipping deletion as such.");
                  return;
             }
             int dbid=results.getInt("doDbID");
             results.close();
             results=null;
-            logFinest("DefaultDOReplicator.deleteDigitalObject: " + pid + " was found in do table (DBID="
-                    + dbid + ")");
+            LOG.debug(pid + " was found in do table (DBID=" + dbid + ")");
 
             //
             // WRITE
             //
             int rowCount;
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from do table...");
+            LOG.debug("Attempting row deletion from do table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM do "
                     + "WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from do.");
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from doDissAssoc "
+            LOG.debug("Deleted " + rowCount + " row(s) from do.");
+            LOG.debug("Attempting row deletion from doDissAssoc "
                     + "table...");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                     + "doDissAssoc WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from doDissAssoc.");
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Attempting row deletion from dsBind table..");
+            LOG.debug("Deleted " + rowCount + " row(s) from doDissAssoc.");
+            LOG.debug("Attempting row deletion from dsBind table..");
             rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                     + "WHERE doDbID=" + dbid);
-            logFinest("DefaultDOReplicator.deleteDigitalObject: Deleted " + rowCount + " row(s) from dsBind.");
+            LOG.debug("Deleted " + rowCount + " row(s) from dsBind.");
 
             // Leave any orphaned diss rows -- they'll be cleaned up if the bMech is removed
             // Leave any orphaned dsBindMap rows -- they'll be cleaned up if the bMech is removed
@@ -1765,7 +1754,7 @@ public class DefaultDOReplicator
                 results=null;
                 st=null;
                 st2=null;
-                logFinest("DefaultDOReplicator.deleteDigitalObject: Exiting -----");
+                LOG.debug("Exiting deleteDigitalObject");
             }
         }
     }
@@ -1791,7 +1780,7 @@ public class DefaultDOReplicator
      */
     public void delete(String pid)
             throws ReplicationException {
-        logFinest("DefaultDOReplicator.delete: Entering -----");
+        LOG.debug("Entering delete(" + pid + ")");
         Connection connection=null;
         try {
             connection = m_pool.getConnection();
@@ -1811,7 +1800,7 @@ public class DefaultDOReplicator
                     m_pool.free(connection);
                 } catch (SQLException sqle) {}
             }
-            logFinest("DefaultDOReplicator.delete: Exiting -----");
+            LOG.debug("Exiting delete");
         }
     }
 
@@ -2105,7 +2094,7 @@ public class DefaultDOReplicator
 
 		statement = connection.createStatement();
 
-		logFinest("Doing DB Insert: " + insertionStatement);
+		LOG.debug("Doing DB Insert: " + insertionStatement);
 		rowCount = statement.executeUpdate(insertionStatement);
 		statement.close();
                 statement=null;
@@ -2229,7 +2218,7 @@ public class DefaultDOReplicator
 		query += "bMechDbID = " + bMechDBID + " AND ";
 		query += "dissID = '" + dissID + "'";
 
-		logFinest("Doing Query: " + query);
+		LOG.debug("Doing Query: " + query);
 
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query);
@@ -2303,7 +2292,7 @@ public class DefaultDOReplicator
     		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		    query += lookupColumnName + " = '" + lookupColumnValue + "'";
 
-                    logFinest("Doing Query: " + query);
+                    LOG.debug("Doing Query: " + query);
 
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
@@ -2364,7 +2353,7 @@ public class DefaultDOReplicator
                     query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
                     query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
 
-                    logFinest("Doing Query: " + query);
+                    LOG.debug("Doing Query: " + query);
 
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
@@ -2421,7 +2410,7 @@ public class DefaultDOReplicator
                     query += lookupColumnName6 + " ='" + lookupColumnValue6 + "' AND ";
                     query += lookupColumnName7 + " ='" + lookupColumnValue7 + "'";
 
-                    logFinest("Doing Query: " + query);
+                    LOG.debug("Doing Query: " + query);
 
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
@@ -2465,7 +2454,7 @@ public class DefaultDOReplicator
                     query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";
                     query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
 
-                    logFinest("Doing Query: " + query);
+                    LOG.debug("Doing Query: " + query);
 
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
@@ -2521,10 +2510,7 @@ public class DefaultDOReplicator
       		
       		// Make absolute URLs out of all instances of the Fedora local URL syntax ...
       		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
-      		if (fedora.server.Debug.DEBUG) {
-      			System.out.println("makeAbsoluteURLs:  input=" + input);
-      			System.out.println("makeAbsoluteURLs: output=" + output + "\n");
-      		}
+            LOG.debug("makeAbsoluteURLs:  input=" + input + ", output=" + output);
       		return output;
       	}        
 
@@ -2590,10 +2576,7 @@ public class DefaultDOReplicator
       			output=s_localhostSSL.matcher(output).replaceAll(
       				s_fedoraLocalPattern.pattern());
       		}
-      		if (fedora.server.Debug.DEBUG) {
-      			System.out.println("makeFedoraLocalURLs: input=" + input);
-      			System.out.println("makeFedoraLocalURLs: output=" + output + "\n");
-      		}
+            LOG.debug("makeFedoraLocalURLs: input=" + input + ", output=" + output);
       		return output;
       	}
       	
@@ -2609,7 +2592,7 @@ public class DefaultDOReplicator
 			String doLabel;
 			String dsBindingKeyDBID;
 			int rc;
-                        logFinest("DefaultDOReplicator.addDisseminators: Entering ------");
+            LOG.debug("Entering addDisseminators");
 
 			doDBID = lookupDigitalObjectDBID(connection, doPID);
 			for (int i=0; i<disseminators.length; ++i) {
@@ -2693,25 +2676,25 @@ public class DefaultDOReplicator
 					}
 
 					// Insert DataStreamBinding row
-                                        Datastream ds = doReader.getDatastream(allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
-                                            allBindingMaps[i].dsBindingsAugmented[j].DSVersionID);
+                    Datastream ds = doReader.getDatastream(allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
+                        allBindingMaps[i].dsBindingsAugmented[j].DSVersionID);
 
-                                        // Add binding only if it does not exist.
-                                        logFinest("DefaultDOReplicator.addDisseminators: ----- adding dsBind row: "
-                                                +allBindingMaps[i].dsBindingsAugmented[j].datastreamID);
-                                        insertDataStreamBindingRow(connection, doDBID,
-                                                dsBindingKeyDBID,
-                                                bindingMapDBID,
-                                                allBindingMaps[i].dsBindingsAugmented[j].seqNo,
-                                                allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
-                                                allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
-                                                allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
-                                                // sdp - local.fedora.server conversion
-                                                makeFedoraLocalURLs(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
-                                                allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
-                                                allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
-                                                "1",
-                                                ds.DSState);
+                    // Add binding only if it does not exist.
+                    LOG.debug("Adding dsBind row: "
+                            +allBindingMaps[i].dsBindingsAugmented[j].datastreamID);
+                    insertDataStreamBindingRow(connection, doDBID,
+                            dsBindingKeyDBID,
+                            bindingMapDBID,
+                            allBindingMaps[i].dsBindingsAugmented[j].seqNo,
+                            allBindingMaps[i].dsBindingsAugmented[j].datastreamID,
+                            allBindingMaps[i].dsBindingsAugmented[j].DSLabel,
+                            allBindingMaps[i].dsBindingsAugmented[j].DSMIME,
+                            // sdp - local.fedora.server conversion
+                            makeFedoraLocalURLs(allBindingMaps[i].dsBindingsAugmented[j].DSLocation),
+                            allBindingMaps[i].dsBindingsAugmented[j].DSControlGrp,
+                            allBindingMaps[i].dsBindingsAugmented[j].DSVersionID,
+                            "1",
+                            ds.DSState);
 				}
 			}
 			return;
@@ -2739,7 +2722,7 @@ public class DefaultDOReplicator
             throws SQLException
         {
 
-          logFinest("DefaultDOReplicator.purgeDisseminators: Entering ------");
+          LOG.debug("Entering purgeDisseminators");
           Statement st=null;
           Statement st2=null;
           ResultSet results=null;
@@ -2748,19 +2731,19 @@ public class DefaultDOReplicator
               //
               // READ
               //
-              logFinest("DefaultDOReplicator.purgeDisseminators: Checking do table for " + pid + "...");
+              LOG.debug("Checking do table for " + pid + "...");
               results=logAndExecuteQuery(st, "SELECT doDbID FROM "
                       + "do WHERE doPID='" + pid + "'");
               if (!results.next()) {
                    // must not be a digitalobject...exit early
-                   logFinest("DefaultDOReplicator.purgeDisseminators: " + pid + " wasn't found in do table..."
+                   LOG.debug(pid + " wasn't found in do table..."
                            + "skipping deletion as such.");
                    return;
               }
               int dbid=results.getInt("doDbID");
               results.close();
               results=null;
-              logFinest("DefaultDOReplicator.purgeDisseminators: " + pid + " was found in do table (DBID="
+              LOG.debug(pid + " was found in do table (DBID="
                       + dbid + ")");
 
               //
@@ -2770,20 +2753,20 @@ public class DefaultDOReplicator
 
               // In doDissAssoc table, we are removing rows specific to the
               // doDbId, so remove all dissDbIds (both shared and nonShared).
-              logFinest("DefaultDOReplicator.purgeDisseminators: Attempting row deletion from doDissAssoc "
+              LOG.debug("Attempting row deletion from doDissAssoc "
                       + "table...");
               rowCount=logAndExecuteUpdate(st, "DELETE FROM "
                       + "doDissAssoc WHERE doDbID=" + dbid
                       + " AND ( " + inIntegerSetWhereConditionString("dissDbID", dissIds) + " )");
-              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s). from doDissAssoc");
+              LOG.debug("Deleted " + rowCount + " row(s). from doDissAssoc");
 
               // In dsBind table, we are removing rows specific to the doDbID,
               // so remove all dsBindMapIds (both shared and nonShared).
-              logFinest("DefaultDOReplicator.purgeDisseminators: Attempting row deletion from dsBind table..");
+              LOG.debug("Attempting row deletion from dsBind table..");
               rowCount=logAndExecuteUpdate(st, "DELETE FROM dsBind "
                       + "WHERE doDbID=" + dbid
                       + " AND ( " + inIntegerSetWhereConditionString("dsBindMapDbID", bmapIds) + " )");
-              logFinest("DefaultDOReplicator.purgeDisseminators: Deleted " + rowCount + " row(s) from dsBind.");
+              LOG.debug("Deleted " + rowCount + " row(s) from dsBind.");
 
               // Leave any orphaned diss rows -- they'll be cleaned up if the bMech is removed
               // Leave any orphaned dsBindMap rows -- they'll be cleaned up if the bMech is removed
@@ -2798,7 +2781,7 @@ public class DefaultDOReplicator
                   results=null;
                   st=null;
                   st2=null;
-                  logFinest("DefaultDOReplicator.purgeDisseminators: Exiting ------");
+                  LOG.debug("Exiting purgeDisseminators");
               }
         }
       }

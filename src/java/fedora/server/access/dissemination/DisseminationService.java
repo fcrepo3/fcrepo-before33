@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.httpclient.Header;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.http.WebClient;
 import fedora.common.http.HttpInputStream;
 import fedora.server.Context;
@@ -50,6 +52,10 @@ import fedora.server.utilities.ServerUtility;
  */
 public class DisseminationService
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DisseminationService.class.getName());
 
   /** The Fedora Server instance */
   private static Server s_server;
@@ -115,23 +121,19 @@ public class DisseminationService
         String expireLimit = s_server.getParameter("datastreamExpirationLimit");
         if (expireLimit == null || expireLimit.equalsIgnoreCase(""))
         {
-          s_server.logWarning("[DisseminationService] Unable to resolve "
-              + "the datastream expiration limit from the configuration"
-              + "file. The expiration limit has been set to 300 seconds.");
+          LOG.info("datastreamExpirationLimit unspecified; defaulting to "
+                + "300 seconds");
           datastreamExpirationLimit = 300;
         } else
         {
           datastreamExpirationLimit = new Integer(expireLimit).intValue();
-          s_server.logFinest("[DisseminationService] datastreamExpirationLimit: "
-              + datastreamExpirationLimit);
+          LOG.info("datastreamExpirationLimit=" + datastreamExpirationLimit);
         }
         String dsMediation =
             s_server.getModule("fedora.server.access.Access").getParameter("doMediateDatastreams");
         if (dsMediation == null || dsMediation.equalsIgnoreCase(""))
         {
-          s_server.logWarning("[DisseminationService] Unable to resolve "
-              + "doDatastreamMediation parameter from the configuration "
-              + "file. ");
+          LOG.info("doMediateDatastreams unspecified; defaulting to false");
         } else
         {
           doDatastreamMediation = new Boolean(dsMediation).booleanValue();
@@ -143,7 +145,7 @@ public class DisseminationService
 
     } catch (InitializationException ie)
     {
-        System.err.println(ie.getMessage());
+        LOG.error("Initialization error", ie);
     }
   }
 
@@ -206,15 +208,16 @@ public class DisseminationService
       throws ServerException
   {
 
+    LOG.debug("Started assembling dissemination");
+
     String dissURL = null;
     String protocolType = null;
     DisseminationBindingInfo dissBindInfo = null;
     MIMETypedStream dissemination = null;
     long initStartTime = new Date().getTime();
-    long startTime = new Date().getTime();
     boolean isRedirect = false;
     
-    if (fedora.server.Debug.DEBUG) {
+    if (LOG.isDebugEnabled()) {
         printBindingInfo(dissBindInfoArray);
     }    
 
@@ -338,13 +341,13 @@ public class DisseminationService
             dsMediatedCallbackHost = "http://"+fedoraServerHost+":"+fedoraServerPort;
         }
         String datastreamResolverServletURL = dsMediatedCallbackHost + dsMediatedServletPath;        
-        if (fedora.server.Debug.DEBUG) {
-            System.err.println("******************Checking backend service dsLocation: "+dissBindInfo.dsLocation);
-            System.err.println("******************Checking backend service dsControlGroupType: "+dissBindInfo.dsControlGroupType);
-            System.err.println("******************Checking backend service callbackBasicAuth: "+callbackBasicAuth);
-            System.err.println("******************Checking backend service callbackSSL: "+callbackSSL);
-            System.err.println("******************Checking backend service callbackRole: "+callbackRole);
-            System.err.println("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);            
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("******************Checking backend service dsLocation: "+dissBindInfo.dsLocation);
+            LOG.debug("******************Checking backend service dsControlGroupType: "+dissBindInfo.dsControlGroupType);
+            LOG.debug("******************Checking backend service callbackBasicAuth: "+callbackBasicAuth);
+            LOG.debug("******************Checking backend service callbackSSL: "+callbackSSL);
+            LOG.debug("******************Checking backend service callbackRole: "+callbackRole);
+            LOG.debug("******************DatastreamResolverServletURL: "+datastreamResolverServletURL);            
         }           		                    
         
         String currentKey = dissBindInfo.DSBindKey;
@@ -355,10 +358,7 @@ public class DisseminationService
           // to compare with the value of the current binding key.
           nextKey = dissBindInfoArray[i+1].DSBindKey;
         }
-        s_server.logFinest("[DisseminationService] currentKey: '"
-            + currentKey + "'");
-        s_server.logFinest("[DisseminationService] nextKey: '"
-            + nextKey + "'");
+        LOG.debug("currentKey: '" + currentKey + "', nextKey: '" + nextKey + "'");
         // In most cases, there is only a single datastream that matches a
         // given DSBindingKey so the substitution process is to just replace
         // the occurence of (BINDING_KEY) with the value of the datastream
@@ -471,12 +471,11 @@ public class DisseminationService
           String message = "[DisseminationService] An error occured. The error "
               + "was \"" + uee.getClass().getName() + "\"  . The Reason was \""
               + uee.getMessage() + "\"  . String value: " + replaceString + "  . ";
-          s_server.logFinest(message);
+          LOG.error(message);
           throw new GeneralException(message);
         }
-        s_server.logFinest("[DisseminationService] replaced dissURL: "
-                           + dissURL.toString()
-                           + " DissBindingInfo index: " + i);
+        LOG.debug("Replaced dissURL: " + dissURL.toString() 
+                + " DissBindingInfo index: " + i);
       }
 
       // Substitute method parameter values in dissemination URL
@@ -495,13 +494,12 @@ public class DisseminationService
               + "was \"" + uee.getClass().getName() + "\"  . The Reason was \""
               + uee.getMessage() + "\"  . Parameter name: " + name + "  . "
               + "Parameter value: " + value + "  .";
-          s_server.logFinest(message);
+          LOG.error(message);
           throw new GeneralException(message);
         }
         String pattern = "\\(" + name + "\\)";
         dissURL = substituteString(dissURL, pattern, value);
-        s_server.logFinest("[DisseminationService] User parm substituted in "
-            + "URL: " + dissURL);
+        LOG.debug("User parm substituted in URL: " + dissURL);
       }
 
       // FIXME Need a more elegant means of handling optional userInputParm
@@ -518,12 +516,12 @@ public class DisseminationService
       if (dissURL.indexOf("(") != -1)
       {
           dissURL = stripParms(dissURL);
-          s_server.logFinest("[DisseminationService] Non-supplied optional "
-              + "userInputParm values removed from URL: " + dissURL);
+          LOG.debug("Non-supplied optional userInputParm values removed "
+                  + "from URL: " + dissURL);
       }
 
       // Resolve content referenced by dissemination result.
-      s_server.logFinest("[DisseminationService] ProtocolType: "+protocolType);
+      LOG.debug("ProtocolType: " + protocolType);
       if (protocolType.equalsIgnoreCase("http"))
       {
 
@@ -549,13 +547,10 @@ public class DisseminationService
                 + "The error was a \"" + uee.getClass().getName() + "\"  . The "
                 + "Reason was \"" + uee.getMessage() + "\"  . String value: "
                 + dissURL + "  . ";
-            s_server.logFinest(message);
+            LOG.error(message);
             throw new GeneralException(message);
           }
-          long stopTime = new Date().getTime();
-          long interval = stopTime - startTime;
-          s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
-              + interval + " milliseconds.");
+          LOG.debug("Finished assembling dissemination");
           dissemination = new MIMETypedStream("application/fedora-redirect",is, null);
         } else
         {
@@ -563,11 +558,8 @@ public class DisseminationService
           // the MIMETypedStream resulting from the dissemination request.
           //ExternalContentManager externalContentManager = (ExternalContentManager)
           //    s_server.getModule("fedora.server.storage.ExternalContentManager");
-          long stopTime = new Date().getTime();
-          long interval = stopTime - startTime;
-          s_server.logFiner("[DisseminationService] Roundtrip assembleDissemination: "
-              + interval + " milliseconds.");
-          if (fedora.server.Debug.DEBUG) System.err.println("URL: "+dissURL);
+          LOG.debug("Finished assembling dissemination");
+          LOG.debug("URL: "+dissURL);
 	        
           // See if backend service reference is to fedora server itself or an external location.
           // We must examine URL to see if this is referencing a remote backend service or is
@@ -625,13 +617,13 @@ public class DisseminationService
 		    } 
 		    */
         
-	        if (fedora.server.Debug.DEBUG) {
-	            System.err.println("******************getDisseminationContent beServiceRole: "+beServiceRole);
-	            System.err.println("******************getDisseminationContent beServiceCallBasicAuth: "+beServiceCallBasicAuth);
-	            System.err.println("******************getDisseminationContent beServiceCallSSL: "+beServiceCallSSL);
-	            System.err.println("******************getDisseminationContent beServiceCallUsername: "+beServiceCallUsername);
-	            System.err.println("******************getDisseminationContent beServiceCallPassword: "+beServiceCallPassword);
-	            System.err.println("******************getDisseminationContent dissURL: "+dissURL);	            
+	        if (LOG.isDebugEnabled()) {
+	            LOG.debug("******************getDisseminationContent beServiceRole: "+beServiceRole);
+	            LOG.debug("******************getDisseminationContent beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+	            LOG.debug("******************getDisseminationContent beServiceCallSSL: "+beServiceCallSSL);
+	            LOG.debug("******************getDisseminationContent beServiceCallUsername: "+beServiceCallUsername);
+	            LOG.debug("******************getDisseminationContent beServiceCallPassword: "+beServiceCallPassword);
+	            LOG.debug("******************getDisseminationContent dissURL: "+dissURL);	            
 	        }    	        
 	        
 	        // Dispatch backend service URL request authenticating as necessary based on beSecurity configuration
@@ -643,14 +635,14 @@ public class DisseminationService
         // FIXME!! future handling of soap bindings.
         String message = "[DisseminationService] Protocol type: "
             + protocolType + "NOT yet implemented";
-        s_server.logWarning(message);
+        LOG.error(message);
         throw new DisseminationException(message);
 
       } else
       {
         String message = "[DisseminationService] Protocol type: "
             + protocolType + "NOT supported.";
-        s_server.logWarning(message);
+        LOG.error(message);
         throw new DisseminationException(message);
       }
 
@@ -660,7 +652,7 @@ public class DisseminationService
       // provided to construct a dissemination.
       String message = "[DisseminationService] Dissemination Binding "+
                          "Info contained no data";
-      s_server.logWarning(message);
+      LOG.error(message);
       throw new DisseminationBindingInfoNotFoundException(message);
     }
     return dissemination;
@@ -727,8 +719,7 @@ public class DisseminationService
         if (expireLimit > timeStamp.getTime())
         {
           dsRegistry.remove(key);
-          s_server.logFinest("[DisseminationService] DatastreamMediationKey "
-              + "removed from Hash: " + key);
+          LOG.debug("DatastreamMediationKey removed from Hash: " + key);
         }
       }
       
@@ -767,16 +758,16 @@ public class DisseminationService
         boolean beServiceCallSSL = new Boolean((String) beHash.get("callSSL")).booleanValue();
         String beServiceCallUsername = (String) beHash.get("callUsername");
         String beServiceCallPassword = (String) beHash.get("callPassword");
-        if (fedora.server.Debug.DEBUG) {
-            System.err.println("******************Registering datastream dsLocation: "+dsLocation);
-            System.err.println("******************Registering datastream dsControlGroupType: "+dsControlGroupType);
-            System.err.println("******************Registering datastream beServiceRole: "+beServiceRole);
-            System.err.println("******************Registering datastream beServiceCallbackBasicAuth: "+beServiceCallbackBasicAuth);
-            System.err.println("******************Registering datastream beServiceCallBasicAuth: "+beServiceCallBasicAuth);
-            System.err.println("******************Registering datastream beServiceCallbackSSL: "+beServiceCallbackSSL);
-            System.err.println("******************Registering datastream beServiceCallSSL: "+beServiceCallSSL);
-            System.err.println("******************Registering datastream beServiceCallUsername: "+beServiceCallUsername);
-            System.err.println("******************Registering datastream beServiceCallPassword: "+beServiceCallPassword);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("******************Registering datastream dsLocation: "+dsLocation);
+            LOG.debug("******************Registering datastream dsControlGroupType: "+dsControlGroupType);
+            LOG.debug("******************Registering datastream beServiceRole: "+beServiceRole);
+            LOG.debug("******************Registering datastream beServiceCallbackBasicAuth: "+beServiceCallbackBasicAuth);
+            LOG.debug("******************Registering datastream beServiceCallBasicAuth: "+beServiceCallBasicAuth);
+            LOG.debug("******************Registering datastream beServiceCallbackSSL: "+beServiceCallbackSSL);
+            LOG.debug("******************Registering datastream beServiceCallSSL: "+beServiceCallSSL);
+            LOG.debug("******************Registering datastream beServiceCallUsername: "+beServiceCallUsername);
+            LOG.debug("******************Registering datastream beServiceCallPassword: "+beServiceCallPassword);
         }           		                
         dm.callbackRole = beServiceRole;
         dm.callUsername = beServiceCallUsername;
@@ -786,8 +777,7 @@ public class DisseminationService
         dm.callbackSSL = beServiceCallbackSSL;
         dm.callSSL = beServiceCallSSL;
         dsRegistry.put(tempID, dm);
-        s_server.logFinest("[DisseminationService] DatastreammediationKey "
-            + "added to Hash: " + tempID);
+        LOG.debug("DatastreammediationKey added to Hash: " + tempID);
       }
 
     } catch(Throwable th)
@@ -909,35 +899,35 @@ public class DisseminationService
             + "The internal dsLocation: \"" + internalDSLocation + "\" is "
             + "not in the required format of: "
             + "\"doPID+DSID+DSVERSIONID\" .";
-        s_server.logFinest(message);
-            throw new GeneralException(message);
+        LOG.error(message);
+        throw new GeneralException(message);
       }
-      if (fedora.server.Debug.DEBUG) System.err.println("********** Resolving Internal Datastream dsLocation: "+dsLocation);
+      LOG.debug("********** Resolving Internal Datastream dsLocation: "+dsLocation);
       return dsLocation;
   }
 
   public static void printBindingInfo(DisseminationBindingInfo[] info) {
     for (int i = 0; i < info.length; i++) {
-      System.err.println("DisseminationBindingInfo[" + i + "]:");
-      System.err.println("  DSBindKey          : " + info[i].DSBindKey);
-      System.err.println("  dsLocation         : " + info[i].dsLocation);
-      System.err.println("  dsControlGroupType : " + info[i].dsControlGroupType);
-      System.err.println("  dsID               : " + info[i].dsID);
-      System.err.println("  dsVersionID        : " + info[i].dsVersionID);
-      System.err.println("  AddressLocation    : " + info[i].AddressLocation);
-      System.err.println("  OperationLocation  : " + info[i].OperationLocation);
-      System.err.println("  ProtocolType       : " + info[i].ProtocolType);
-      System.err.println("  dsState            : " + info[i].dsState);
+      LOG.debug("DisseminationBindingInfo[" + i + "]:");
+      LOG.debug("  DSBindKey          : " + info[i].DSBindKey);
+      LOG.debug("  dsLocation         : " + info[i].dsLocation);
+      LOG.debug("  dsControlGroupType : " + info[i].dsControlGroupType);
+      LOG.debug("  dsID               : " + info[i].dsID);
+      LOG.debug("  dsVersionID        : " + info[i].dsVersionID);
+      LOG.debug("  AddressLocation    : " + info[i].AddressLocation);
+      LOG.debug("  OperationLocation  : " + info[i].OperationLocation);
+      LOG.debug("  ProtocolType       : " + info[i].ProtocolType);
+      LOG.debug("  dsState            : " + info[i].dsState);
       for (int j = 0; j < info[i].methodParms.length; j++) {
         MethodParmDef def = info[i].methodParms[j];
-        System.err.println("  MethodParamDef[" + j + "]:");
-        System.err.println("    parmName         : " + def.parmName);
-        System.err.println("    parmDefaultValue : " + def.parmDefaultValue);
-        System.err.println("    parmRequired     : " + def.parmRequired);
-        System.err.println("    parmLabel        : " + def.parmLabel);
-        System.err.println("    parmPassBy       : " + def.parmPassBy);
+        LOG.debug("  MethodParamDef[" + j + "]:");
+        LOG.debug("    parmName         : " + def.parmName);
+        LOG.debug("    parmDefaultValue : " + def.parmDefaultValue);
+        LOG.debug("    parmRequired     : " + def.parmRequired);
+        LOG.debug("    parmLabel        : " + def.parmLabel);
+        LOG.debug("    parmPassBy       : " + def.parmPassBy);
         for (int k = 0; k < def.parmDomainValues.length; k++) {
-          System.err.println("    parmDomainValue  : " + def.parmDomainValues[k]);
+          LOG.debug("    parmDomainValue  : " + def.parmDomainValues[k]);
         }
       }
     }
@@ -952,7 +942,7 @@ public class DisseminationService
     private static MIMETypedStream get(String url,
                                        String user,
                                        String pass) throws GeneralException {
-        s_server.logFinest("DisseminationService.get(" + url + ")");
+        LOG.debug("DisseminationService.get(" + url + ")");
         try {
             HttpInputStream response = s_http.get(url, true, user, pass);
             String mimeType = response.getResponseHeaderValue("Content-Type",
@@ -992,12 +982,6 @@ public class DisseminationService
   public MIMETypedStream getDisseminationContent(String url, Context context, String user, String pass)
       throws GeneralException, HttpServiceNotFoundException {
     return get(url, user, pass);
-  }  
-  
-  private final void log(String msg) {
-  	if (fedora.server.Debug.DEBUG) {
-	  	System.err.println(msg);	  		
-  	}
   }  
   
 }

@@ -25,6 +25,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -40,7 +42,6 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.types.MIMETypedStream;
 import fedora.server.storage.types.Property;
 import fedora.server.utilities.DateUtility;
-import fedora.server.utilities.Logger;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -130,6 +131,10 @@ import fedora.server.utilities.StreamUtility;
  */
 public class FedoraAccessServlet extends HttpServlet {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FedoraAccessServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** Content type for html. */
@@ -158,9 +163,6 @@ public class FedoraAccessServlet extends HttpServlet {
 
 	/** Instance of URLDecoder */
 	private URLDecoder decoder = new URLDecoder();
-
-	/** Instance of Logger to log servlet events in Fedora server log */
-	public Logger logger = null;
 
 	/** Fedora server protocl * */
 	private String fedoraServerProtocol = null;
@@ -200,7 +202,6 @@ public class FedoraAccessServlet extends HttpServlet {
 		Date versDateTime = null;
 		String action = null;
 		Property[] userParms = null;
-		long servletStartTime = new Date().getTime();
 		boolean isGetObjectProfileRequest = false;
 		boolean isGetDisseminationRequest = false;
 		boolean isGetDatastreamDisseminationRequest = false;
@@ -262,7 +263,7 @@ public class FedoraAccessServlet extends HttpServlet {
 								+ "/PID[/dateTime] \"  ."
 								+ " <br></br> Submitted request was: \""
 								+ requestURI + "\"  .  ";
-						logger.logWarning(message);
+						LOG.warn(message);
 						throw new ServletException("from FedoraAccessServlet"
 								+ message);
 						/*
@@ -310,7 +311,7 @@ public class FedoraAccessServlet extends HttpServlet {
 								+ "/PID/dsID[/dateTime] \"  "
 								+ " <br></br> Submitted request was: \""
 								+ requestURI + "\"  .  ";
-						logger.logWarning(message);
+						LOG.warn(message);
 						throw new ServletException("from FedoraAccessServlet"
 								+ message);
 						/*
@@ -346,7 +347,7 @@ public class FedoraAccessServlet extends HttpServlet {
 							+ "/PID/bDefPID/methodName[/dateTime][?ParmArray] \"  "
 							+ " <br></br> Submitted request was: \""
 							+ requestURI + "\"  .  ";
-					logger.logWarning(message);
+					LOG.warn(message);
 					throw new ServletException("from FedoraAccessServlet"
 							+ message);
 					/*
@@ -373,7 +374,7 @@ public class FedoraAccessServlet extends HttpServlet {
 						+ " <br></br> Submitted request was: \""
 						+ requestURI
 						+ "\"  .  ";
-				logger.logWarning(message);
+				LOG.warn(message);
 				throw new ServletException("from FedoraAccessServlet" + message);
 				/*
 				 * commented out for exception.jsp test
@@ -419,64 +420,47 @@ public class FedoraAccessServlet extends HttpServlet {
 
 		try {
 			if (isGetObjectProfileRequest) {
-				logger
-						.logFinest("[FedoraAccessServlet] GetObjectProfile Syntax "
-								+ "Encountered: " + requestURI);
-				logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
+                LOG.debug("Servicing getObjectProfile request "
+                        + "(PID=" + PID + ", asOfDate=" + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
 						Constants.HTTP_REQUEST.REST.uri, request);
 				getObjectProfile(context, PID, asOfDateTime, xml, request,
 						response);
 
-				long stopTime = new Date().getTime();
-				long interval = stopTime - servletStartTime;
-				logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-						+ "GetObjectProfile: " + interval + " milliseconds.");
+                LOG.debug("Finished servicing getObjectProfile request");
 			} else if (isGetDisseminationRequest) {
 				bDefPID = URIArray[6];
-				logger.logFinest("[FedoraAccessServlet] Dissemination Syntax "
-						+ "Encountered");
-				logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
-						+ " methodName: " + methodName + " asOfDate: "
-						+ versDateTime);
+                LOG.debug("Servicing getDissemination request (PID=" + PID
+                        + ", bDefPID=" + bDefPID + ", methodName=" 
+                        + methodName + ", asOfDate=" + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
 						Constants.HTTP_REQUEST.REST.uri, request);
 				getDissemination(context, PID, bDefPID, methodName, userParms,
 						asOfDateTime, response, request);
 
-				long stopTime = new Date().getTime();
-				long interval = stopTime - servletStartTime;
-				logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-						+ "GetDissemination: " + interval + " milliseconds.");
+                LOG.debug("Finished servicing getDissemination request");
 			} else if (isGetDatastreamDisseminationRequest) {
-				logger
-						.logFinest("[FedoraAccessServlet] GetDatastreamDissemination Syntax "
-								+ "Encountered: " + requestURI);
-				logger.logFinest("PID: " + PID + " dsID: " + dsID
-						+ " asOfDate: " + versDateTime);
+                LOG.debug("Servicing getDatastreamDissemination request "
+                        + "(PID=" + PID + ", dsID=" + dsID + ", asOfDate="
+                        + versDateTime + ")");
 
 				Context context = ReadOnlyContext.getContext(
 						Constants.HTTP_REQUEST.REST.uri, request);
 				getDatastreamDissemination(context, PID, dsID, asOfDateTime,
 						response, request);
 
-				long stopTime = new Date().getTime();
-				long interval = stopTime - servletStartTime;
-				logger.logFiner("[FedoraAccessServlet] Servlet Roundtrip "
-						+ "GetDatastreamDissemination: " + interval
-						+ " milliseconds.");
+                LOG.debug("Finished servicing getDatastreamDissemination "
+                        + "request");
 			}
 		} catch (AuthzException ae) {
-			logger.logWarning("[FedoraAccessServlet] AuthzException: "
-					+ ae.getMessage() + " Request: " + requestURI
-					+ " actionLabel: " + actionLabel);
-			ae.printStackTrace();
+            LOG.error("Authorization failed for request: " + requestURI
+                    + " (actionLabel=" + actionLabel + ")", ae);
 			throw RootException.getServletException(ae, request, actionLabel,
 					new String[0]);
 		} catch (Throwable th) {
-			th.printStackTrace();
+            LOG.error("Unexpected error servicing API-A request", th);
 			throw new InternalError500Exception("", th, request, actionLabel,
 					"", new String[0]);
 		}
@@ -537,20 +521,17 @@ public class FedoraAccessServlet extends HttpServlet {
 
 			} else {
 				// Object Profile Definition request returned nothing.
-				String message = "[FedoraAccessServlet] No Object Profile returned.";
-				logger.logInfo(message);
+				String message = "No object profile returned";
+                LOG.error(message);
 				showURLParms(PID, "", "", asOfDateTime, new Property[0],
 						response, message);
 			}
 		} catch (AuthzException ae) {
 			throw ae;
 		} catch (Throwable th) {
-			String message = "[FedoraAccessServlet] An error has occured. "
-					+ " The error was a \" " + th.getClass().getName()
-					+ " \". Reason: " + th.getMessage();
-			logger.logWarning(message);
-			th.printStackTrace();
-			throw new GeneralException(message);
+            String message = "Error getting object profile";
+            LOG.error(message, th);
+			throw new GeneralException(message, th);
 		} finally {
 			try {
 				if (pr != null)
@@ -558,9 +539,8 @@ public class FedoraAccessServlet extends HttpServlet {
 				if (out != null)
 					out.close();
 			} catch (Throwable th) {
-				String message = "[FedoraAccessServlet] An error has occured. "
-						+ " The error was a \" " + th.getClass().getName()
-						+ " \". Reason: " + th.getMessage();
+                String message = "Error closing output";
+                LOG.error(message, th);
 				throw new StreamIOException(message);
 			}
 		}
@@ -576,7 +556,7 @@ public class FedoraAccessServlet extends HttpServlet {
 		if (dissemination != null) {
 
 			// testing to see what's in request header that might be of interest
-			if (fedora.server.Debug.DEBUG) {
+			if (LOG.isDebugEnabled()) {
 				for (Enumeration e = request.getHeaderNames(); e
 						.hasMoreElements();) {
 					String name = (String) e.nextElement();
@@ -586,8 +566,7 @@ public class FedoraAccessServlet extends HttpServlet {
 						sb.append((String) headerValues.nextElement());
 					}
 					String value = sb.toString();
-					System.out
-							.println("FEDORASERVLET REQUEST HEADER CONTAINED: "
+					LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
 									+ name + " : " + value);
 				}
 			}
@@ -634,42 +613,32 @@ public class FedoraAccessServlet extends HttpServlet {
 										.equalsIgnoreCase("content-type"))) {
 							response.addHeader(headerArray[i].name,
 									headerArray[i].value);
-							if (fedora.server.Debug.DEBUG)
-								System.out
-										.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-												+ headerArray[i].name
-												+ " : "
-												+ headerArray[i].value);
+							LOG.debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
+										+ headerArray[i].name
+										+ " : "
+										+ headerArray[i].value);
 						}
 					}
 				}
-				long startTime = new Date().getTime();
 				out = response.getOutputStream();
 				int byteStream = 0;
+                LOG.debug("Started reading dissemination stream");
 				InputStream dissemResult = dissemination.getStream();
 				byte[] buffer = new byte[255];
 				while ((byteStream = dissemResult.read(buffer)) != -1) {
 					out.write(buffer, 0, byteStream);
-					if (fedora.server.Debug.DEBUG)
-						System.out.println("***** Read " + byteStream
-								+ " bytes");
 				}
 				buffer = null;
 				dissemResult.close();
 				dissemResult = null;
 				out.flush();
 				out.close();
-				long stopTime = new Date().getTime();
-				long interval = stopTime - startTime;
-				logger.logFiner("[FedoraAccessServlet] Read InputStream "
-						+ interval + " milliseconds.");
+                LOG.debug("Finished reading dissemination stream");
 			}
 
 		} else {
 			// Dissemination request failed; echo back request parameter.
-			String message = "[FedoraAccessServlet] No Datastream Dissemination Result "
-					+ " was returned.";
-			logger.logInfo(message);
+            LOG.error("No datastream dissemination result was returned");
 		}
 	}
 
@@ -712,7 +681,7 @@ public class FedoraAccessServlet extends HttpServlet {
 		if (dissemination != null) {
 
 			// testing to see what's in request header that might be of interest
-			if (fedora.server.Debug.DEBUG) {
+			if (LOG.isDebugEnabled()) {
 				for (Enumeration e = request.getHeaderNames(); e
 						.hasMoreElements();) {
 					String name = (String) e.nextElement();
@@ -722,8 +691,7 @@ public class FedoraAccessServlet extends HttpServlet {
 						sb.append((String) headerValues.nextElement());
 					}
 					String value = sb.toString();
-					System.out
-							.println("FEDORASERVLET REQUEST HEADER CONTAINED: "
+					LOG.debug("FEDORASERVLET REQUEST HEADER CONTAINED: "
 									+ name + " : " + value);
 				}
 			}
@@ -770,42 +738,33 @@ public class FedoraAccessServlet extends HttpServlet {
 										.equalsIgnoreCase("content-type"))) {
 							response.addHeader(headerArray[i].name,
 									headerArray[i].value);
-							if (fedora.server.Debug.DEBUG)
-								System.out
-										.println("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
-												+ headerArray[i].name
-												+ " : "
-												+ headerArray[i].value);
+    						LOG.debug("THIS WAS ADDED TO FEDORASERVLET RESPONSE HEADER FROM ORIGINATING PROVIDER "
+										+ headerArray[i].name
+										+ " : "
+										+ headerArray[i].value);
 						}
 					}
 				}
-				long startTime = new Date().getTime();
 				int byteStream = 0;
+                LOG.debug("Started reading dissemination stream");
 				InputStream dissemResult = dissemination.getStream();
 				byte[] buffer = new byte[255];
 				while ((byteStream = dissemResult.read(buffer)) != -1) {
 					out.write(buffer, 0, byteStream);
-					if (fedora.server.Debug.DEBUG)
-						System.out.println("***** Read " + byteStream
-								+ " bytes");
 				}
 				buffer = null;
 				dissemResult.close();
 				dissemResult = null;
 				out.flush();
 				out.close();
-				long stopTime = new Date().getTime();
-				long interval = stopTime - startTime;
-				logger.logFiner("[FedoraAccessServlet] Read InputStream "
-						+ interval + " milliseconds.");
+                LOG.debug("Finished reading dissemination stream");
 			}
 		} else {
 			// Dissemination request failed; echo back request parameter.
-			String message = "[FedoraAccessServlet] No Dissemination Result "
-					+ " was returned.";
+            String message = "No dissemination result was returned";
+            LOG.error(message);
 			showURLParms(PID, bDefPID, methodName, asOfDateTime, userParms,
 					response, message);
-			logger.logInfo(message);
 		}
 	}
 
@@ -939,15 +898,13 @@ public class FedoraAccessServlet extends HttpServlet {
 					pw.flush();
 					pw.close();
 				} catch (IOException ioe) {
-					System.err.println("WriteThread IOException: "
-							+ ioe.getMessage());
+                    LOG.error("WriteThread IOException", ioe);
 				} finally {
 					try {
 						if (pw != null)
 							pw.close();
 					} catch (IOException ioe) {
-						System.err.println("WriteThread IOException: "
-								+ ioe.getMessage());
+                        LOG.error("WriteThread IOException", ioe);
 					}
 				}
 			}
@@ -990,7 +947,6 @@ public class FedoraAccessServlet extends HttpServlet {
 					.getModule("fedora.server.storage.DOManager");
 			s_access = (Access) s_server
 					.getModule("fedora.server.access.Access");
-			logger = new Logger();
 		} catch (InitializationException ie) {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());
@@ -1094,19 +1050,15 @@ public class FedoraAccessServlet extends HttpServlet {
 		html.append("</body></html>");
 		out.println(html.toString());
 
-		logger.logFinest("PID: " + PID + " bDefPID: " + bDefPID
-				+ " methodName: " + methodName);
+        LOG.debug("PID=" + PID + ", bDefPID=" + bDefPID + ", methodName="
+                + methodName);
 		if (userParms != null) {
 			for (int i = 0; i < userParms.length; i++) {
-				logger.logFinest("userParm: " + userParms[i].name
-						+ " userValue: " + userParms[i].value);
+                LOG.debug("userParm=" + userParms[i].name + ", userValue="
+                        + userParms[i].value);
 			}
 		}
 		html = null;
-	}
-
-	private Server getServer() {
-		return s_server;
 	}
 
 }

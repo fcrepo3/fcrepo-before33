@@ -2,6 +2,8 @@ package fedora.server.journal;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.journal.entry.ConsumerJournalEntry;
 import fedora.server.journal.helpers.JournalHelper;
 import fedora.server.journal.recoverylog.JournalRecoveryLog;
@@ -21,6 +23,11 @@ import fedora.server.management.ManagementDelegate;
  * @version $Id$
  */
 public class JournalConsumerThread extends Thread {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            JournalConsumerThread.class.getName());
+
     private final Map parameters;
     private final String role;
     private final ServerInterface server;
@@ -87,8 +94,8 @@ public class JournalConsumerThread extends Thread {
              * we catch an OutOfMemoryError or a VirtualMachineError, all bets
              * are off.
              */
+            LOG.fatal("Error during Journal recovery", e);
             String stackTrace = JournalHelper.captureStackTrace(e);
-            server.logSevere("Error during Journal recovery. " + stackTrace);
             recoveryLog.log("PROBLEM: " + stackTrace);
             recoveryLog.log("Recovery terminated prematurely.");
         } finally {
@@ -109,10 +116,10 @@ public class JournalConsumerThread extends Thread {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                server.logSevere("Thread was interrupted");
+                LOG.warn("Thread was interrupted");
             }
         }
-        server.logSevere("Can't recover from the Journal - "
+        LOG.fatal("Can't recover from the Journal - "
                 + "the server hasn't initialized after " + i + " seconds.");
         shutdown = true;
     }

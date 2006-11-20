@@ -15,7 +15,6 @@ import java.util.Map;
 
 import org.trippi.TriplestoreConnector;
 
-import fedora.server.DummyLogging;
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.Parameter;
@@ -297,7 +296,7 @@ public class ResourceIndexRebuilder implements Rebuilder {
                 throw new IOException("Cannot find required resource in classpath: " + DB_SPEC);
             }
     
-            SQLUtility.createNonExistingTables(m_cPool, specIn, new DummyLogging());
+            SQLUtility.createNonExistingTables(m_cPool, specIn);
         } catch (SQLException s) {
             s.printStackTrace();
         } catch (FileNotFoundException e) {

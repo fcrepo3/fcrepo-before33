@@ -1,6 +1,45 @@
 package fedora.server;
 
-import fedora.common.*;  // PID, MalformedPIDException
+import java.io.IOException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+
+import java.text.MessageFormat;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Properties;
+import java.util.ResourceBundle;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
+import org.xml.sax.SAXException;
+
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import fedora.common.Constants;
+import fedora.common.PID;
+import fedora.common.MalformedPIDException;
 import fedora.server.Context;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.MalformedPidException;
@@ -13,35 +52,6 @@ import fedora.server.security.Authorization;
 import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
-
-import java.io.IOException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.ResourceBundle;
-import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.LogRecord;
-import java.util.logging.SimpleFormatter;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import org.xml.sax.SAXException;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 /**
  * <p><b>Title: </b>Server.java</p>
@@ -72,7 +82,7 @@ import org.w3c.dom.Node;
  *                     Server.HOME_PROPERTY));
  *             s.shutdown();
  *         } catch (Exception e) {
- *             System.out.println("Error: " + e.getMessage());
+ *             doSomething();
  *         }
  *     }
  * }
@@ -163,7 +173,13 @@ public abstract class Server
 	public static final boolean USE_CACHE = true;
 	public static final boolean USE_DEFINITIVE_STORE = false;
 	public static final boolean GLOBAL_CHOICE = false;	
-	
+
+    /** Logger for this class. */
+    private static Logger LOG;
+
+   	private static final String LOG4J_PROPS = "fedora.server.resources.log4j";
+    private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
+
     /**
      * The ResourceBundle that provides access to constants from
      * fedora/server/resources/Server.properties.
@@ -519,11 +535,6 @@ public abstract class Server
     private ArrayList m_startupLogRecords;
 
     /**
-     * The <code>Logger</code> where messages go.
-     */
-    private Logger m_logger;
-
-    /**
      * Is the server running?
      */
     private boolean m_initialized;
@@ -573,18 +584,18 @@ public abstract class Server
             }
             File configFile=new File(m_homeDir + File.separator + CONFIG_DIR
                     + File.separator + CONFIG_FILE);
-            logConfig("Server home is " + m_homeDir.toString());
+            LOG.info("Server home is " + m_homeDir.toString());
             if (s_serverProfile==null) {
-                logConfig("fedora.serverProfile property not set... will always "
+                LOG.info("fedora.serverProfile property not set... will always "
                         + "use param 'value' attributes from configuration for param values.");
             } else {
-                logConfig("fedora.serverProfile property was '"
+                LOG.info("fedora.serverProfile property was '"
                         + s_serverProfile + "'... will use param '"
                         + s_serverProfile + "value' attributes from "
                         + "configuration for param values, falling back to "
                         + "'value' attributes where unspecified.");
             }
-            logConfig("Loading and validating configuration file \""
+            LOG.info("Loading and validating configuration file \""
                     + configFile + "\"");
 
             // do the parsing and validation of configuration
@@ -611,10 +622,10 @@ public abstract class Server
             }
 
             // initialize the server
-            logConfig("started initting server...");
+            LOG.info("started initting server...");
             m_statusFile.append(ServerState.STARTING, "Initializing Server");
             initServer();
-            logConfig("finished initting server...");
+            LOG.info("finished initting server...");
 
             // create the datastore configs and set the instance variable
             // so they can be seen with getDatastoreConfig(...)
@@ -632,13 +643,12 @@ public abstract class Server
             while (mRoles.hasNext()) {
                 String role=(String) mRoles.next();
                 String className=(String) moduleClassNames.get(role);
-                logConfig("started initting module...");
                 try {
                     Class moduleClass=Class.forName(className);
                     Class param1Class=Class.forName(MODULE_CONSTRUCTOR_PARAM1_CLASS);
                     Class param2Class=Class.forName(MODULE_CONSTRUCTOR_PARAM2_CLASS);
                     Class param3Class=Class.forName(MODULE_CONSTRUCTOR_PARAM3_CLASS);
-                    logFinest("Getting constructor " + className + "("
+                    LOG.debug("Getting constructor " + className + "("
                             + MODULE_CONSTRUCTOR_PARAM1_CLASS + ","
                             + MODULE_CONSTRUCTOR_PARAM2_CLASS + ","
                             + MODULE_CONSTRUCTOR_PARAM3_CLASS + ")");
@@ -689,7 +699,6 @@ public abstract class Server
                     }
                 }
 
-                logConfig("finished initting module...");
             }
 
             // Do postInitModule for all Modules, verifying beforehand that
@@ -701,7 +710,7 @@ public abstract class Server
                 String r=(String) mRoles.next();
                 Module m=getModule(r);
                 reqRoles=m.getRequiredModuleRoles();
-                logConfig("verifying dependencies have been loaded...");
+                LOG.info("verifying dependencies have been loaded...");
                 for (int i=0; i<reqRoles.length; i++) {
                     if (getModule(reqRoles[i])==null) {
                         throw new ModuleInitializationException(
@@ -710,48 +719,47 @@ public abstract class Server
                                 {reqRoles[i]}), r);
                     }
                 }
-                logConfig(reqRoles.length + " dependencies, all loaded, ok.");
-                logConfig("started post-initting module with role=" + r);
+                LOG.info(reqRoles.length + " dependencies, all loaded, ok.");
                 m.postInitModule();
-                logConfig("finished post-initting module with role=" + r);
             }
 
             // Do postInitServer for the Server instance
-            logConfig("started post-initting server...");
+            LOG.info("started post-initting server...");
             postInitServer();
-            logConfig("finished post-initting server...");
+            LOG.info("finished post-initting server...");
 
             // flag that we're done initting
-            logConfig("finished initializing server and modules...");
+            LOG.info("finished initializing server and modules...");
             m_initialized=true;
         } catch (ServerInitializationException sie) {
             // these are caught and rethrown for two reasons:
             // 1) so they can be logged in the startup log, and
             // 2) so an attempt can be made to free resources tied up thus far
             //    via shutdown()
-            logSevere(sie.getMessage() + "\n" + getStackTrace(sie));
+            LOG.fatal("Server failed to initialize", sie);
             try {
                 shutdown(null);
             } catch (Throwable th) {
-                logSevere("Error shutting down server after failed startup: " + th.getMessage());
+                LOG.warn("Error shutting down server after failed startup", th);
             }
             throw sie;
         } catch (ModuleInitializationException mie) {
-            logSevere(mie.getRole() + ": " + mie.getMessage() + "\n" + getStackTrace(mie));
+            LOG.fatal("Module (" + mie.getRole() + ") failed to initialize", mie);
             try {
                 shutdown(null);
             } catch (Throwable th) {
-                logSevere("Error shutting down server after failed startup: " + th.getMessage());
+                LOG.warn("Error shutting down server after failed startup", th);
             }
             throw mie;
         } catch (Throwable th) {
-            logSevere(th.getMessage() + "\n" + getStackTrace(th));
+            String msg = "Fatal error while starting server";
+            LOG.fatal(msg, th);
             try {
                 shutdown(null);
             } catch (Throwable oth) {
-                logSevere("Error shutting down server after failed startup: " + oth.getMessage());
+                LOG.warn("Error shutting down server after failed startup", oth);
             }
-            throw new RuntimeException("Fatal error starting server", th);
+            throw new RuntimeException(msg, th);
         }
     }
 
@@ -772,6 +780,36 @@ public abstract class Server
     protected String overrideModuleClass(String moduleClass)
     {
         return(null);
+    }
+
+    /**
+     * Configures Log4J using a properties file.
+     */
+    private static void configureLog4J() {
+
+        File fedoraHome = new File(System.getProperty("fedora.home"));
+        File homeDir = new File(fedoraHome, "server");
+    	File logDir = new File(homeDir, LOG_DIR);
+        logDir.mkdirs();
+    	Pattern pattern = Pattern.compile(LOG4J_PATTERN);
+		Properties props = new Properties();
+		ResourceBundle res =
+            ResourceBundle.getBundle(LOG4J_PROPS);
+		Enumeration keys = res.getKeys();
+		while(keys.hasMoreElements()) {
+			String key = (String)keys.nextElement();
+			String value = res.getString(key);
+			Matcher matcher = pattern.matcher(key);
+			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
+			if (matcher.matches() && (value == null || value.equals(""))) {
+				value = new File(logDir, matcher.group(1).toLowerCase() + ".log").getAbsolutePath();
+			}
+			props.put(key, value);
+		}
+		PropertyConfigurator.configure(props);
+
+        LOG = Logger.getLogger(Server.class.getName());
+        LOG.info("Logging initialized");
     }
     
     /**
@@ -806,7 +844,7 @@ public abstract class Server
             moduleAndDatastreamInfo.add(new HashMap());
             params.put(null, moduleAndDatastreamInfo);
         }
-        logConfig(MessageFormat.format(INIT_CONFIG_CONFIG_EXAMININGELEMENT,
+        LOG.info(MessageFormat.format(INIT_CONFIG_CONFIG_EXAMININGELEMENT,
                 new Object[] {element.getLocalName(), dAttribute}));
         for (int i=0; i<element.getChildNodes().getLength(); i++) {
             Node n=element.getChildNodes().item(i);
@@ -855,7 +893,7 @@ public abstract class Server
                     }
                     params.put(nameNode.getNodeValue(),
                             valueNode.getNodeValue());
-                    logConfig(MessageFormat.format(
+                    LOG.info(MessageFormat.format(
                             INIT_CONFIG_CONFIG_PARAMETERIS, new Object[] {
                             nameNode.getNodeValue(),valueNode.getNodeValue()}));
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
@@ -986,15 +1024,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logSevere(String message) {
-        log(new LogRecord(Level.SEVERE, message));
+        LOG.fatal(message);
     }
 
     public final boolean loggingSevere() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.SEVERE);
-        }
+        return true;
     }
 
     /**
@@ -1004,15 +1038,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logWarning(String message) {
-        log(new LogRecord(Level.WARNING, message));
+        LOG.warn(message);
     }
 
     public final boolean loggingWarning() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.WARNING);
-        }
+        return true;
     }
 
     /**
@@ -1023,15 +1053,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logInfo(String message) {
-        log(new LogRecord(Level.INFO, message));
+        LOG.info(message);
     }
 
     public final boolean loggingInfo() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.INFO);
-        }
+        return LOG.isInfoEnabled();
     }
 
     /**
@@ -1041,15 +1067,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logConfig(String message) {
-        log(new LogRecord(Level.CONFIG, message));
+        LOG.info(message);
     }
 
     public final boolean loggingConfig() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.CONFIG);
-        }
+        return LOG.isInfoEnabled();
     }
 
     /**
@@ -1059,15 +1081,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logFine(String message) {
-        log(new LogRecord(Level.FINE, message));
+        LOG.debug(message);
     }
 
     public final boolean loggingFine() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.FINE);
-        }
+        return LOG.isDebugEnabled();
     }
 
     /**
@@ -1078,15 +1096,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logFiner(String message) {
-        log(new LogRecord(Level.FINER, message));
+        LOG.debug(message);
     }
 
     public final boolean loggingFiner() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.FINER);
-        }
+        return LOG.isDebugEnabled();
     }
 
     /**
@@ -1096,118 +1110,11 @@ public abstract class Server
      * @param message The message.
      */
     public final void logFinest(String message) {
-        log(new LogRecord(Level.FINEST, message));
+        LOG.debug(message);
     }
 
     public final boolean loggingFinest() {
-        if (m_logger==null) {
-            return true;
-        } else {
-            return m_logger.isLoggable(Level.FINEST);
-        }
-    }
-
-    /**
-     * Sends a <code>LogRecord</code> to the appropriate place.
-     * <p></p>
-     * If we have a <code>Logger</code> defined, send it to that.  Otherwise,
-     * save it in the in-memory queue for later flushing.
-     *
-     * @param record The message.
-     */
-    private final void log(LogRecord record) {
-        record.setLoggerName("");
-        if (m_logger==null) {
-            m_startupLogRecords.add(record);
-        } else {
-            m_logger.log(record);
-        }
-    }
-
-    /**
-     * Sets the <code>Logger</code> to which log messages are sent.
-     * <p></p>
-     * This method flushes and closes the <code>Handler</code>s for the
-     * previously used <code>Logger</code>.  If there was no prior
-     * <code>Logger</code>, the <code>LogRecord</code> buffer is flushed to
-     * the new <code>Logger</code> <i>and</i> to disk at
-     * LOG_DIR/LOG_STARTUP_FILE.
-     * <p></p>
-     * This method is intended for use by subclasses of <code>Server</code>,
-     * during initialization.
-     *
-     * @param newLogger The <code>Logger</code> to use for messages.
-     */
-    protected final void setLogger(Logger newLogger) {
-        if (m_logger==null) {
-            Iterator recs=m_startupLogRecords.iterator();
-            while (recs.hasNext()) {
-                newLogger.log((LogRecord) recs.next());
-            }
-            flushLogger();  // send the queue to disk and empty it
-        } else {
-            closeLogger();  // flush + close the old Logger
-        }
-        m_logger=newLogger; // start using the new Logger
-    }
-
-    /**
-     * Flushes any buffered log messages in the <code>Logger</code>'s
-     * <code>Handler</code>(s).
-     * <p></p>
-     * If no <code>Logger</code> has been set, this method flushes the
-     * <code>LogRecord</code> queue to LOG_DIR/LOG_STARTUP_FILE, and if
-     * that can't be written to, flushes it to stderr.
-     */
-    public final void flushLogger() {
-        if (m_logger==null) {
-            // send to disk, then empty queue
-            PrintStream p=null;
-            File logDir=new File(m_homeDir, LOG_DIR);
-            File startupLogFile=new File(logDir, LOG_STARTUP_FILE);
-            try {
-                p=new PrintStream(new FileOutputStream(startupLogFile));
-            } catch (Exception e) {
-                if (p!=null) {
-                    p.close();
-                }
-                p=System.err;
-                p.println(MessageFormat.format(
-                        INIT_LOG_WARNING_CANTWRITESTARTUPLOG, new Object[]
-                        {startupLogFile, e.getMessage()}));
-            }
-            SimpleFormatter sf=new SimpleFormatter();
-            Iterator recs=m_startupLogRecords.iterator();
-            while (recs.hasNext()) {
-                p.println(sf.format((LogRecord) recs.next()));
-            }
-
-            m_startupLogRecords.clear();
-        } else {
-            Handler[] h=m_logger.getHandlers();
-            for (int i=0; i<h.length; i++) {
-                h[i].flush();
-            }
-        }
-    }
-
-    /**
-     * Flushes, then closes any resources tied up by the <code>Handler</code>(s)
-     * associated with the <code>Logger</code> and sets the logger to null.
-     * If there is no
-     * <code>Logger</code>, the <code>LogRecord</code> queue is flushed to
-     * LOG_DIR/LOG_STARTUP_FILE, and if that can't be written to, flushes
-     * it to stderr.
-     */
-    public final void closeLogger() {
-        if (m_logger==null) {
-            flushLogger();
-        } else {
-            Handler[] h=m_logger.getHandlers();
-            for (int i=0; i<h.length; i++) {
-                h[i].close();
-            }
-        }
+        return LOG.isDebugEnabled();
     }
 
     public final static boolean hasInstance(File homeDir) {
@@ -1255,6 +1162,9 @@ public abstract class Server
         if (instance!=null) {
             return instance;
         }
+
+        configureLog4J();
+
         // else instantiate a new one given the class provided in the
         // root element in the config file and return it
         File configFile=null;
@@ -1466,24 +1376,23 @@ public abstract class Server
     public final void shutdown(Context context)
             throws ServerShutdownException, ModuleShutdownException, AuthzException {
         Iterator roleIterator=loadedModuleRoles();
-        logInfo("Server shutdown requested.");
+        LOG.info("Server shutdown requested");
         ModuleShutdownException mse = null;
         while (roleIterator.hasNext()) {
             Module m=getModule((String) roleIterator.next());
-            logFinest("Started shutting down module for role \"" + m.getRole()
+            LOG.info("Started shutting down module for role \"" + m.getRole()
                     + "\"");
             try {
                 m.shutdownModule();
             } catch (ModuleShutdownException e) {
-                logWarning("Error shutting down module for role \"" + m.getRole()
-                        + "\": " + e.getMessage());
+                LOG.warn("Error shutting down module (" + m.getRole() + ")", e);
                 mse = e; 
             } finally {
-                logFinest("Finished shutting down module for role \"" + m.getRole()
+                LOG.info("Finished shutting down module for role \"" + m.getRole()
                         + "\"");
             }
         }
-        logFinest("Shutting down server instance.");
+        LOG.info("Shutting down server instance.");
         shutdownServer();
         s_instances.remove(getHomeDir());
         if (mse != null) throw mse;
@@ -1491,11 +1400,7 @@ public abstract class Server
 
     /**
      * Performs shutdown tasks for the server itself.
-     * <p></p>
-     * The default implementation simply calls closeLogger() - it should be
-     * overridden in <code>Server</code> implementations that tie up
-     * additional system resources.
-     * <p></p>
+     * 
      * This should be written so that system resources are always freed,
      * regardless of whether there is an error.  If an error occurs,
      * it should be thrown as a <code>ServerShutdownException</code> after
@@ -1506,8 +1411,6 @@ public abstract class Server
      */
     protected void shutdownServer()
             throws ServerShutdownException {
-        logInfo("Closing logger.");
-        closeLogger();
         if (1==2)
             throw new ServerShutdownException(null);
     }

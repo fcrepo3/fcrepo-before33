@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
@@ -14,9 +16,7 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- *
- * <p><b>Title:</b> DOTranslatorImpl.java</p>
- * <p><b>Description:</b> </p>
+ * DOTranslation implementation.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -24,6 +24,10 @@ import fedora.server.storage.types.DigitalObject;
 public class DOTranslatorImpl
         extends StdoutLogging
         implements DOTranslator {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DOTranslatorImpl.class.getName());
 
     private Map m_serializers;
     private Map m_deserializers;
@@ -36,11 +40,10 @@ public class DOTranslatorImpl
 
     public void deserialize(InputStream in, DigitalObject out,
 			String format, String encoding, int transContext)
-            //String format, String encoding)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
-        	if (fedora.server.Debug.DEBUG) System.out.println("Grabbing deserializer for: " + format);
+        	LOG.debug("Grabbing deserializer for: " + format);
             DODeserializer des=(DODeserializer) m_deserializers.get(format);
             if (des==null) {
                 throw new UnsupportedTranslationException("No deserializer exists "
@@ -59,7 +62,7 @@ public class DOTranslatorImpl
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         try {
-			if (fedora.server.Debug.DEBUG) System.out.println("Grabbing serializer for: " + format);
+			LOG.debug("Grabbing serializer for: " + format);
             DOSerializer ser=(DOSerializer) m_serializers.get(format);
             if (ser==null) {
                 throw new UnsupportedTranslationException(

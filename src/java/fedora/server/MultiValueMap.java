@@ -1,10 +1,16 @@
 package fedora.server;
 
+import org.apache.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class MultiValueMap {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            MultiValueMap.class.getName());
 	
 	private boolean locked = false;
 
@@ -27,12 +33,12 @@ public class MultiValueMap {
     public void set(String name, Object value) throws Exception {
     	if (name == null) {
     		String msg = here + ": set() has null name, value=" + value;
-    		log(msg);
+    		LOG.debug(msg);
     		throw new Exception(msg);
     	}
     	if (locked) {
     		String msg = here + ": set() has object locked";
-    		log(msg);
+    		LOG.debug(msg);
     		throw new Exception(msg);    		
     	}
     	if (value instanceof String) {
@@ -44,7 +50,7 @@ public class MultiValueMap {
         		value = "";
     	} else {
     		String msg = here + ": set() has unhandled type";
-    		log(msg);
+    		LOG.debug(msg);
     		throw new Exception(msg);    		
     	}
     	attributes.put(name, value);    	
@@ -96,12 +102,5 @@ public class MultiValueMap {
 	static {
     	here = "MultiValueMap";
     }
-    
-	public static boolean log = false; 
-	
-	protected static final void log(String msg) {
-		if (! log) return;
-		System.err.println(here + msg);
-	}
 
 }

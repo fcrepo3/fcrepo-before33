@@ -7,6 +7,8 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectValidityException;
 
+import org.apache.log4j.Logger;
+
 // Java imports
 import java.io.File;
 import java.io.InputStream;
@@ -14,7 +16,6 @@ import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
-
 
 /**
  * <p><b>Title: DOValidatorImpl.java </b></p>
@@ -46,9 +47,13 @@ import java.util.Map;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-
 public class DOValidatorImpl extends StdoutLogging implements DOValidator
 {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DOValidatorImpl.class.getName());
+
     protected static boolean debug = true;
     
 	public static final int VALIDATE_ALL=0;
@@ -122,7 +127,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 			throws ServerException {
 				
 		super(logTarget);
-		logFinest("VALIDATE: Initializing object validation...");
+		LOG.debug("VALIDATE: Initializing object validation...");
 		m_xmlSchemaMap=xmlSchemaMap;
 		m_ruleSchemaMap=ruleSchemaMap;
 		if (tempDir==null) {
@@ -200,8 +205,8 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
     	int validationType, String phase)
       	throws ObjectValidityException, GeneralException {
 		
-	  if (fedora.server.Debug.DEBUG) System.out.println("Validation phase=" + phase + " format=" + format);		
-      logFinest("VALIDATE: Initiating validation: " 
+	  LOG.debug("Validation phase=" + phase + " format=" + format);		
+      LOG.debug("VALIDATE: Initiating validation: " 
       		+ " phase=" + phase	+ " format=" + format);
       
       if (validationType==VALIDATE_ALL) {
@@ -215,7 +220,7 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 				schematronPreprocessorPath, phase);
       } else {
 			String msg = "VALIDATE: ERROR - missing or invalid validationType";
-			logFiner(msg);
+			LOG.error(msg);
 			cleanUp(objectAsFile);
 			throw new GeneralException("[DOValidatorImpl] " + msg + ":" + validationType);
       }
@@ -235,16 +240,16 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
 	    DOValidatorXMLSchema xsv = new DOValidatorXMLSchema(xmlSchemaPath);
 	    xsv.validate(objectAsFile);
 	  } catch (ObjectValidityException e){
-		    logFiner("VALIDATE: ERROR - failed XML Schema validation.");
+		    LOG.error("VALIDATE: ERROR - failed XML Schema validation.", e);
 		    cleanUp(objectAsFile);
 		    throw e;
 	  } catch (Exception e){
-			logFiner("VALIDATE: ERROR - failed XML Schema validation.");
+		    LOG.error("VALIDATE: ERROR - failed XML Schema validation.", e);
 		    cleanUp(objectAsFile);
 			throw new ObjectValidityException("[DOValidatorImpl]: validateXMLSchema. " 
 				+ e.getMessage());
 	  }
-	  logFinest("VALIDATE: SUCCESS - passed XML Schema validation.");
+	  LOG.debug("VALIDATE: SUCCESS - passed XML Schema validation.");
 	}
 
     /**
@@ -269,18 +274,17 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
           new DOValidatorSchematron(ruleSchemaPath, preprocessorPath, phase);
 		schtron.validate(objectAsFile);
       } catch (ObjectValidityException e){
-			logFiner("VALIDATE: ERROR - failed Schematron rules validation.");
+            LOG.error("VALIDATE: ERROR - failed Schematron rules validation.", e);
 	        cleanUp(objectAsFile);
 	        throw e;
 	  } catch (Exception e){
-			logFiner("VALIDATE: ERROR - failed Schematron fules validation.");
+            LOG.error("VALIDATE: ERROR - failed Schematron rules validation.", e);
 			cleanUp(objectAsFile);
-			e.printStackTrace();
 			throw new ObjectValidityException("[DOValidatorImpl]: "
 				+ "failed Schematron rules validation. " 
 				+ e.getMessage());
       }
-	  logFiner("VALIDATE: SUCCESS - passed Schematron rules validation.");
+	  LOG.debug("VALIDATE: SUCCESS - passed Schematron rules validation.");
     }
 
     private void streamCopy(InputStream in, OutputStream out)

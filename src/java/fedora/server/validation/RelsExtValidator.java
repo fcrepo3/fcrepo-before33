@@ -1,26 +1,29 @@
 package fedora.server.validation;
 
+import java.io.InputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
+import java.net.URI;
+
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.StreamIOException;
 
-import java.io.InputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
-
 /**
- *
- * <p><b>Title:</b> RelsExtValidator.java</p>
- * <p><b>Description: This class will validate relationship metadata that
+ * This class will validate relationship metadata that
  * may exist in a digital object.  The validator will SAX parse the content 
  * of the RELS-EXT datastream which must be an RDF stream that asserts 
  * relationships for a digital object.  The validator will
@@ -73,6 +76,10 @@ import org.xml.sax.helpers.DefaultHandler;
 public class RelsExtValidator
         extends DefaultHandler {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            RelsExtValidator.class.getName());
+
 	// Namespace URIs
     private final static String F="info:fedora/fedora-system:def/foxml#";
 	private final static String OAIDC="http://www.openarchives.org/OAI/2.0/oai_dc/";
@@ -122,7 +129,7 @@ public class RelsExtValidator
     public void deserialize(InputStream relsDS, String doURI)
             throws ObjectIntegrityException, StreamIOException, SAXException {
             	
-        if (fedora.server.Debug.DEBUG) System.out.println("Deserializing RELS-EXT...");
+        LOG.debug("Deserializing RELS-EXT...");
 		m_rootRDFFound=false;
 		m_descriptionFound=false;
 		m_depth=0;
@@ -137,7 +144,7 @@ public class RelsExtValidator
 			throw new SAXException(se.getMessage());
 			//throw new ObjectIntegrityException(se.getMessage());
         }
-        if (fedora.server.Debug.DEBUG) System.out.println("Just finished parse.");      
+        LOG.debug("Just finished parse.");      
     }
 
     public void startElement(String nsURI, String localName, String qName,

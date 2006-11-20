@@ -3,6 +3,8 @@ package fedora.server.storage.translation;
 import java.io.File;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -12,35 +14,36 @@ import fedora.server.storage.types.Disseminator;
 import fedora.server.utilities.DateUtility;
 
 /**
+ * Utility methods for usage by digital object serializers and
+ * deserializers.  This class provides methods for detecting various
+ * forms of relative repository URLs, which are URLs that point to
+ * the hostname and port of the local repository.  Methods will detect
+ * these kinds of URLS in datastream location fields and in special
+ * cases of inline XML.  Methods are available to convert these URLS
+ * back and forth from relative URL syntax, to Fedora's internal local
+ * URL syntax, and to absolute URL sytnax.  This utility class defines
+ * different "translation contexts" and the format of these relative URLs
+ * will be set appropriately to the context.  Currently defined translation
+ * contexts are:
+ * 0=Deserialize XML into java object appropriate for in-memory usage
+ * 1=Serialize java object to XML appropriate for "public" export (absolute URLs)
+ * 2=Serialize java object to XML appropriate for move/migrate to another repository
+ * 3=Serialize java object to XML appropriate for internal storage</b> </p>
+ * 
+ * The public "normalize*" methods in this class should be called to make the
+ * right decisions about what conversions should occur for what contexts.
  *
- * <p><b>Title:</b> DOTranslationUtility.java</p>
- * <p><b>Description:
- *       Utility methods for usage by digital object serializers and
- *       deserializers.  This class provides methods for detecting various
- *       forms of relative repository URLs, which are URLs that point to
- *       the hostname and port of the local repository.  Methods will detect
- *       these kinds of URLS in datastream location fields and in special
- *       cases of inline XML.  Methods are available to convert these URLS
- *       back and forth from relative URL syntax, to Fedora's internal local
- *       URL syntax, and to absolute URL sytnax.  This utility class defines
- *       different "translation contexts" and the format of these relative URLs
- *       will be set appropriately to the context.  Currently defined translation
- *       contexts are:
- *       0=Deserialize XML into java object appropriate for in-memory usage
- *       1=Serialize java object to XML appropriate for "public" export (absolute URLs)
- *       2=Serialize java object to XML appropriate for move/migrate to another repository
- *       3=Serialize java object to XML appropriate for internal storage</b> </p>
- *
- *       The public "normalize*" methods in this class should be called to make the
- *       right decisions about what conversions should occur for what contexts.
- *
- *       Other utility methods set default values for datastreams and
- *       disseminators.
+ * Other utility methods set default values for datastreams and
+ * disseminators.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public abstract class DOTranslationUtility {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DOTranslationUtility.class.getName());
 
  	/**
  	 *
@@ -219,7 +222,7 @@ public abstract class DOTranslationUtility {
 				} catch (InitializationException ie) {
 					// can only possibly happen during failed testing, in which
 					// case it's ok to do a System.exit
-					System.err.println("STARTUP ERROR: " + ie.getMessage());
+                    LOG.error("STARTUP ERROR", ie);
 					System.exit(1);
 				}
 			}
@@ -276,10 +279,7 @@ public abstract class DOTranslationUtility {
 		
 		// Make absolute URLs out of all instances of the Fedora local URL syntax ...
 		output=s_fedoraLocalPattern.matcher(output).replaceAll(s_hostInfo);
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println("makeAbsoluteURLs: input=" + input);
-			System.out.println("makeAbsoluteURLs: output=" + output + "\n");
-		}
+		LOG.debug("makeAbsoluteURLs: input=" + input + ", output=" + output);
 		return output;
 	}
 
@@ -348,10 +348,7 @@ public abstract class DOTranslationUtility {
 			output=s_localhostSSL.matcher(output).replaceAll(
 				s_fedoraLocalPattern.pattern());
 		}
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println("makeFedoraLocalURLs: input=" + input);
-			System.out.println("makeFedoraLocalURLs: output=" + output + "\n");
-		}
+        LOG.debug("makeFedoraLocalURLs: input=" + input + ", output=" + output);
 		return output;
 	}
 
@@ -370,10 +367,7 @@ public abstract class DOTranslationUtility {
 		// (i.e., getItem), and replace with new API-A-LITE syntax.
 		
 		output=s_getItemPattern.matcher(input).replaceAll("/");
-		if (fedora.server.Debug.DEBUG) {
-			System.out.println("convertGetItemURLs: input=" + input);
-			System.out.println("convertGetItemURLs: output=" + output + "\n");
-		}
+    	LOG.debug("convertGetItemURLs: input=" + input + ", output=" + output);
 		return output;
 	}
 

@@ -118,9 +118,6 @@ public class DBIDLookup {
 		query += "bMechDbID = " + bMechDBID + " AND ";
 		query += "dissID = '" + dissID + "'";
 
-		// Debug statement
-		// System.out.println("lookupDisseminator, query = " + query);
-
 		statement = connection.createStatement();
 		rs = statement.executeQuery(query);
 
@@ -191,9 +188,6 @@ public class DBIDLookup {
     		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
 		    query += lookupColumnName + " = '" + lookupColumnValue + "'";
 
-                    // Debug statement
-                    // System.out.println("lookupDBID1, query = " + query);
-
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
 
@@ -251,9 +245,6 @@ public class DBIDLookup {
                     query += lookupColumnName1 + " = '" + lookupColumnValue1 + "' AND ";
                     query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
 
-                    // Debug statement
-                    // System.out.println("lookupDBID2, query = " + query);
-
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);
 
@@ -293,9 +284,6 @@ public class DBIDLookup {
 		    query = "SELECT " + DBIDName + " FROM " + tableName + " WHERE ";
                     query += lookupColumnName1 + " =" + lookupColumnValue1 + " AND ";
                     query += lookupColumnName2 + " = '" + lookupColumnValue2 + "'";
-
-                    // Debug statement
-                    //System.out.println("lookupDBID2FirstNum, query = " + query);
 
                     statement = connection.createStatement();
                     rs = statement.executeQuery(query);

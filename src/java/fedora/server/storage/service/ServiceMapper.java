@@ -1,22 +1,21 @@
 package fedora.server.storage.service;
 
-import fedora.server.storage.types.*;
-import fedora.server.errors.*;
-
 import java.util.Vector;
 import java.io.File;
 import java.io.FileInputStream;
 
 import javax.xml.parsers.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+
+import fedora.server.storage.types.*;
+import fedora.server.errors.*;
+
 /**
- *
- * <p><b>Title:</b> ServiceMapper.java</p>
- * <p><b>Description:</b> Controller class for parsing the various kinds of
+ * Controller class for parsing the various kinds of
  * inline metadata datastreams found in behavior objects.  The intent of this
  * class is to initiate parsing of these datastreams so that information about
  * a behavior service can be instantiated in Fedora.</p>
@@ -51,18 +50,10 @@ public class ServiceMapper
       MethodDef[] methods = mapper.getMethodDefs(mmap);
       MethodDefOperationBind[] methodBindings = mapper.getMethodDefBindings(wsdl, mmap);
       BMechDSBindSpec dsInputSpec = mapper.getDSInputSpec(dsSpec);
-      System.out.println("END TEST VIA MAIN()");
     }
-    catch (ServerException e)
+    catch (Exception e)
     {
-      System.out.println("ServiceMapper caught ServerException.");
-      System.out.println("Suppressing message since not attached to Server.");
-    }
-    catch (Throwable th)
-    {
-      System.out.println("ServiceMapper returned error in main(). "
-                + "The underlying error was a " + th.getClass().getName() + ".  "
-                + "The message was "  + "\"" + th.getMessage() + "\"");
+      e.printStackTrace();
     }
     System.exit(1);
 

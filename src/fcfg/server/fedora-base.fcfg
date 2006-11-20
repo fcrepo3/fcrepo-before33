@@ -32,56 +32,6 @@
     <comment>Defines the host name for the Fedora server, as seen from the
              outside world.</comment>
   </param>
-  <param name="log_max_size" value="20000000">
-    <comment>Defines the threshold at which a new log file is generated
-             based on the size of the current log file in bytes; default is
-             20000000 bytes.</comment>
-  </param>
-  <param name="log_max_days" value="7">
-    <comment>Defines the threshold at which a new log file is generated
-             based on number of days since the server was started in days;
-             default is 7 days.</comment>
-  </param>
-  <param name="log_dir" value="logs">
-    <comment>Defines the directory in which the Fedora logs will be written;
-             default is logs.</comment>
-  </param>
-  <param name="log_level" value="warning">
-    <comment>Defines the level of logging desired;default is finest;
-             possible levels include:
-                - config 
-                      denotes logging indicating what occurred during 
-                      the server&apos;s (or a module&apos;s) configuration phase.
-                - fine 
-                      denotes logging indicating basic information about a 
-                      request to the server (like hostname, operation name, and 
-                      success or failure).
-                - finer 
-                      denotes logging indicating detailed information about 
-                      a request to the server (like the full request, full response, 
-                      and timing information).
-                - finest 
-                      (default) denotes logging indicating method entry/exit 
-                      or extremely verbose information intended to aid in debugging.
-                - info 
-                      denotes logging indicating that something relatively 
-                      uncommon and interesting happened, like server or module 
-                      startup or shutdown, or a periodic job.
-                - warning 
-                      denotes logging indicating that an undesired (but
-                      non-fatal) condition occured.
-                - severe 
-                      denotes logging indicating that the server is 
-                      inoperable or unable to start.</comment>
-  </param>
-  <param name="log_flush_threshold" value="1">
-    <comment>Defines the flush threshold for logging in number of records;
-             default is one log record.</comment>
-  </param>
-  <param name="debug" value="false">
-    <comment>A boolean toggle used to turn off/on internal debugging in the
-             code.</comment>
-  </param>
   <param name="datastreamExpirationLimit" value="300">
     <comment>Controls the size of the datastream mediation hash by removing
              entries outside the specified threshold. The value is specified in

@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Logging;
 import fedora.server.StdoutLogging;
@@ -19,10 +21,8 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.translation.DOTranslator;
 
 /**
- *
- * <p><b>Title:</b> DirectoryBasedRepositoryReader.java</p>
- * <p><b>Description:</b> A RepositoryReader that uses a directory of serialized
- * objects as its working repository.</p>
+ * A RepositoryReader that uses a directory of serialized
+ * objects as its working repository.
  *
  * <p>All files in the directory must be digital object serializations,
  * and none may have the same PID.  This is verified upon construction.</p>
@@ -38,6 +38,10 @@ import fedora.server.storage.translation.DOTranslator;
 public class DirectoryBasedRepositoryReader
         extends StdoutLogging
         implements RepositoryReader {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DirectoryBasedRepositoryReader.class.getName());
 
     private File m_directory;
     private DOTranslator m_translator;
@@ -86,16 +90,16 @@ public class DirectoryBasedRepositoryReader
                             in, this);
                     String pid=reader.GetObjectPID();
                     if (reader.GetObjectPID().length()==0) {
-                        logWarning("File " + files[i] + " has no pid...skipping");
+                        LOG.warn("File " + files[i] + " has no pid...skipping");
                     } else {
                         m_files.put(pid, files[i]);
                     }
                 } catch (NullPointerException npe) {
-                    System.out.println("Error in " + thisFile.getName() + "...skipping");
+                    LOG.warn("Error in " + thisFile.getName() + "...skipping");
                 }
             }
         } catch (FileNotFoundException fnfe) {
-            // naw
+            // impossible
         }
     }
 

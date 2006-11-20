@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.MultiValueMap;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.JournalConstants;
@@ -28,6 +30,11 @@ import fedora.server.journal.helpers.JournalHelper;
  * @version $Id$
  */
 public abstract class JournalRecoveryLog implements JournalConstants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            JournalRecoveryLog.class.getName());
+
     private static final int LEVEL_LOW = 0;
 
     private static final int LEVEL_MEDIUM = 1;
@@ -52,7 +59,7 @@ public abstract class JournalRecoveryLog implements JournalConstants {
                             new Class[] { Map.class, String.class,
                                     ServerInterface.class }, new Object[] {
                                     parameters, role, server }, parameters);
-            server.logInfo("JournalRecoveryLog is " + recoveryLog.toString());
+            LOG.info("JournalRecoveryLog is " + recoveryLog.toString());
             return (JournalRecoveryLog) recoveryLog;
         } catch (JournalException e) {
             throw new ModuleInitializationException(
@@ -214,7 +221,7 @@ public abstract class JournalRecoveryLog implements JournalConstants {
             writer.write(JournalHelper.formatDate(new Date()) + ": " + message
                     + "\n");
         } catch (IOException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
+            LOG.error("Error writing journal log entry", e);
         }
     }
 

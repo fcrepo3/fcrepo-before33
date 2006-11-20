@@ -5,6 +5,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.journal.ServerInterface;
 import fedora.server.journal.helpers.JournalHelper;
@@ -25,6 +27,11 @@ import fedora.server.journal.helpers.JournalHelper;
  */
 
 public class UnbufferedJournalRecoveryLog extends JournalRecoveryLog {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            UnbufferedJournalRecoveryLog.class.getName());
+
     private final File logFile;
 
     private final FileWriter writer;
@@ -68,7 +75,7 @@ public class UnbufferedJournalRecoveryLog extends JournalRecoveryLog {
                 writer.flush();
             }
         } catch (IOException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
+            LOG.error("Error writing journal log entry", e);
         }
     }
 
@@ -83,7 +90,7 @@ public class UnbufferedJournalRecoveryLog extends JournalRecoveryLog {
                 writer.close();
             }
         } catch (IOException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
+            LOG.error("Error shutting down journal log", e);
         }
     }
 

@@ -13,6 +13,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerException;
 import fedora.server.journal.entry.ConsumerJournalEntry;
@@ -42,6 +44,11 @@ import fedora.server.journal.xmlhelpers.ContextXmlReader;
 
 public abstract class JournalReader extends AbstractXmlReader implements
         JournalConstants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            JournalReader.class.getName());
+
     protected final Map parameters;
 
     protected final String role;
@@ -69,12 +76,12 @@ public abstract class JournalReader extends AbstractXmlReader implements
                                     ServerInterface.class }, new Object[] {
                                     parameters, role, recoveryLog, server },
                             parameters);
-            server.logInfo("JournalReader is " + journalReader.toString());
+            LOG.info("JournalReader is " + journalReader.toString());
             return (JournalReader) journalReader;
         } catch (JournalException e) {
-            server.logSevere(JournalHelper.captureStackTrace(e));
-            throw new ModuleInitializationException(
-                    "Can't create JournalReader", role, e);
+            String msg = "Can't create JournalReader";
+            LOG.error(msg, e);
+            throw new ModuleInitializationException(msg, role, e);
         }
     }
 

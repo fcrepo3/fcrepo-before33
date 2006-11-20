@@ -22,6 +22,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -35,7 +37,6 @@ import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.storage.types.ObjectMethodsDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.utilities.DateUtility;
-import fedora.server.utilities.Logger;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -79,6 +80,11 @@ import fedora.server.utilities.StreamUtility;
  * @version $Id$
  */
 public class ListMethodsServlet extends HttpServlet {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ListMethodsServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** Content type for html. */
@@ -98,9 +104,6 @@ public class ListMethodsServlet extends HttpServlet {
 
 	/** Instance of URLDecoder */
 	private URLDecoder decoder = new URLDecoder();
-
-	/** Instance of Logger to log servlet events in Fedora server log */
-	private static Logger logger = null;
 
 	/** HTTP protocol * */
 	private static String HTTP = "http";
@@ -135,7 +138,6 @@ public class ListMethodsServlet extends HttpServlet {
 		String dsID = null;
 		Date asOfDateTime = null;
 		Date versDateTime = null;
-		long servletStartTime = new Date().getTime();
 		boolean isListMethodsRequest = false;
 		boolean xml = false;
 		requestURI = request.getRequestURL().toString() + "?"
@@ -149,6 +151,7 @@ public class ListMethodsServlet extends HttpServlet {
 				PID = Server.getPID(URIArray[5]).toString(); // normalize the
 																// PID
 			} catch (Throwable th) {
+                LOG.error("Error listing methods", th);
 				String message = "[FedoraAccessServlet] An error has occured in "
 						+ "accessing the Fedora Access Subsystem. The error was \" "
 						+ th.getClass().getName()
@@ -156,7 +159,6 @@ public class ListMethodsServlet extends HttpServlet {
 						+ th.getMessage()
 						+ "  Input Request was: \""
 						+ request.getRequestURL().toString();
-				logger.logWarning(message);
 				response.setContentType(CONTENT_TYPE_HTML);
 				ServletOutputStream out = response.getOutputStream();
 				out.println("<html><body><h3>" + message
@@ -186,7 +188,7 @@ public class ListMethodsServlet extends HttpServlet {
 							+ " ----- Submitted request was: \""
 							+ requestURI
 							+ "\"  .  ";
-					logger.logWarning(message);
+					LOG.error(message);
 					response
 							.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 					response.sendError(
@@ -197,9 +199,8 @@ public class ListMethodsServlet extends HttpServlet {
 					asOfDateTime = versDateTime;
 				}
 			}
-			logger.logFinest("[ListMethodsServlet] ListMethods Syntax "
-					+ "Encountered: " + requestURI);
-			logger.logFinest("PID: " + PID + " asOfDate: " + versDateTime);
+            LOG.debug("Listing methods (PID=" + PID + ", asOfDate="
+                    + versDateTime + ")");
 			isListMethodsRequest = true;
 		} else {
 			// Bad syntax; redirect to syntax documentation page.
@@ -223,31 +224,27 @@ public class ListMethodsServlet extends HttpServlet {
 
 		try {
 			if (isListMethodsRequest) {
-				System.out.println("before setting context");
+				LOG.debug("before setting context");
 				Context context = ReadOnlyContext.getContext(
 						Constants.HTTP_REQUEST.REST.uri, request);
-				System.out.println("after setting context");
+			    LOG.debug("after setting context");
 
 				listMethods(context, PID, asOfDateTime, xml, request, response);
-				System.out.println("after doing listMethods");
+				LOG.debug("after doing listMethods");
 
-				long stopTime = new Date().getTime();
-				long interval = stopTime - servletStartTime;
-				logger.logFiner("[ListMethodsServlet] Servlet Roundtrip "
-						+ "listMethods: " + interval + " milliseconds.");
+                LOG.debug("Finished listing methods");
 			}
 		} catch (AuthzException ae) {
+            LOG.error("Authorization error listing methods", ae);
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
+            LOG.error("Error listing methods", th);
 			String message = "[ListMethodsServlet] An error has occured in "
 					+ "accessing the Fedora Access Subsystem. The error was \" "
 					+ th.getClass().getName() + " \". Reason: "
 					+ th.getMessage() + "  Input Request was: \""
 					+ request.getRequestURL().toString();
-			System.out.println(message);
-			logger.logWarning(message);
-			th.printStackTrace();
 		}
 	}
 
@@ -305,11 +302,10 @@ public class ListMethodsServlet extends HttpServlet {
 		} catch (AuthzException ae) {
 			throw ae;
 		} catch (Throwable th) {
+            LOG.error("Error listing methods", th);
 			String message = "[ListMethodsServlet] An error has occured. "
 					+ " The error was a \" " + th.getClass().getName()
 					+ " \". Reason: " + th.getMessage();
-			logger.logWarning(message);
-			th.printStackTrace();
 			throw new GeneralException(message);
 		} finally {
 			try {
@@ -494,15 +490,13 @@ public class ListMethodsServlet extends HttpServlet {
 					pw.flush();
 					pw.close();
 				} catch (IOException ioe) {
-					System.err.println("WriteThread IOException: "
-							+ ioe.getMessage());
+                    LOG.error("WriteThread error", ioe);
 				} finally {
 					try {
 						if (pw != null)
 							pw.close();
 					} catch (IOException ioe) {
-						System.err.println("WriteThread IOException: "
-								+ ioe.getMessage());
+                        LOG.error("WriteThread error", ioe);
 					}
 				}
 			}
@@ -543,7 +537,6 @@ public class ListMethodsServlet extends HttpServlet {
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_access = (Access) s_server
 					.getModule("fedora.server.access.Access");
-			logger = new Logger();
 		} catch (InitializationException ie) {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());

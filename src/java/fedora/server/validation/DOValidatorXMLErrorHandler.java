@@ -2,19 +2,20 @@ package fedora.server.validation;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;;
+import org.xml.sax.SAXParseException;
 
+import org.apache.log4j.Logger;
 
 /**
- *
- * <p><b>Title:</b> ValidatorXMLErrorHandler.java</p>
- * <p><b>Description:</b> </p>
- * 
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class DOValidatorXMLErrorHandler implements ErrorHandler
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DOValidatorXMLErrorHandler.class.getName());
 
   public DOValidatorXMLErrorHandler()
   {
@@ -22,59 +23,19 @@ public class DOValidatorXMLErrorHandler implements ErrorHandler
 
   public void warning(SAXParseException e) throws SAXException
   {
-    System.err.print("ValidationErrorHandler says SAX WARNING: ");
-    printPubID(e);
-    printMsg(e);
+    LOG.warn("SAX WARNING (publicId=" + e.getPublicId() + ")", e);
   }
 
   public void error(SAXParseException e) throws SAXException
   {
-    System.err.print("ValidationErrorHandler says SAX ERROR found.  Re-throwing SAXException.");
-    e.printStackTrace();
-    //printPubID(e);
-    //printMsg(e);
-    //printStack(e);
+    LOG.error("SAX ERROR (publicId=" + e.getPublicId() + ")", e);
     throw new SAXException(formatParseExceptionMsg(e));
   }
 
   public void fatalError(SAXParseException e) throws SAXException
   {
-    System.err.print("ValidationErrorHandler says SAX FATAL ERROR found.  Re-throwing SAXException.");
-    //printPubID(e);
-    //printMsg(e);
-    //printStack(e);
+    LOG.error("SAX FATAL ERROR (publicId=" + e.getPublicId() + ")", e);
     throw new SAXException(formatParseExceptionMsg(e));
-  }
-
-  private void printPubID(SAXParseException e)
-  {
-    if (e.getPublicId() != null)
-    {
-      System.err.print(e.getPublicId() + " ");
-    }
-    if (e.getLineNumber() != -1)
-    {
-      System.err.print("line: " + e.getLineNumber() + " ");
-    }
-  }
-
-  private void printMsg(SAXParseException e)
-  {
-    if (e.getMessage() != null)
-    {
-      System.err.println(e.getMessage());
-    }
-  }
-
-  private void printStack(SAXParseException e)
-  {
-    Exception exception = e;
-    while (exception != null)
-    {
-      exception.printStackTrace();
-      if (exception instanceof SAXException)
-        exception = ((SAXException) exception).getException();
-    }
   }
 
   private String formatParseExceptionMsg(SAXParseException spe)

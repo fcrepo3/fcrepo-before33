@@ -6,6 +6,8 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.Module;
 import fedora.server.Server;
 
+import org.apache.log4j.Logger;
+
 // Java imports
 import java.util.Map;
 import java.io.InputStream;
@@ -14,15 +16,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 /**
- *
- * <p><b>Title:</b> DOValidatorModule.java</p>
- * <p><b>Description:</b> Module Wrapper for DOValidatorImpl.java.</p>
+ * Module Wrapper for DOValidatorImpl.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class DOValidatorModule extends Module implements DOValidator
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DOValidatorModule.class.getName());
 
   /**
    * An instance of the core implementation class for DOValidator.
@@ -63,13 +67,14 @@ public class DOValidatorModule extends Module implements DOValidator
 					String xmlSchemaPath = new File(getServer().getHomeDir(),
 						getParameter(paramName)).getPath();
 					xmlSchemaMap.put(xmlSchemaName, xmlSchemaPath);
-					logFiner("[DOValidatorModule] initialized XML Schema "
+					LOG.debug("Initialized XML Schema "
 							+ "location: " + xmlSchemaPath);
 				} catch (Exception e) {
-					throw new ModuleInitializationException(
-							"Problem configuring XML Schema for format="
-							+ xmlSchemaName + " : " +
-							e.getClass().getName() + ": " + e.getMessage(),
+					String msg = "Problem configuring XML Schema for format="
+							+ xmlSchemaName;
+                    LOG.error(msg, e);
+					throw new ModuleInitializationException(msg + ": "
+							+ e.getClass().getName() + ": " + e.getMessage(),
 							getRole());
 				}
 			} else if (paramName.startsWith("rules_")) {
@@ -78,24 +83,24 @@ public class DOValidatorModule extends Module implements DOValidator
 					String ruleSchemaPath = new File(getServer().getHomeDir(),
 						getParameter(paramName)).getPath();
 					ruleSchemaMap.put(ruleSchemaName, ruleSchemaPath);
-					logFiner("[DOValidatorModule] initialized Schematron schema "
+					LOG.debug("Initialized Schematron schema "
 							+ "location: "  + ruleSchemaPath);
 				} catch (Exception e) {
-					throw new ModuleInitializationException(
-							"Problem configuring Schematron Schema for format="
-							+ ruleSchemaName + " : " +
-							e.getClass().getName() + ": " + e.getMessage(),
+					String msg = "Problem configuring Schematron Schema for format="
+							+ ruleSchemaName;
+                    LOG.error(msg, e);
+					throw new ModuleInitializationException(msg + ": "
+							+ e.getClass().getName() + ": " + e.getMessage(),
 							getRole());
 				}
 			} else if (paramName.equals("tempDir")){
 				tempDir = new File(getServer().getHomeDir(),
 					getParameter(paramName)).getPath();
-				logFiner("[DOValidatorModule] tempDir set to: "
-						+ tempDir);
+				LOG.debug("tempDir set to: " + tempDir);
 			} else if (paramName.equals("schtron_preprocessor")){
 				schematronPreprocessorPath = new File(getServer().getHomeDir(),
 					getParameter(paramName)).getPath();
-				logFiner("[DOValidatorModule] initialized Schematron "
+				LOG.debug("Initialized Schematron "
 						+ "preprocessor location: " + schematronPreprocessorPath);
 			}
 		} 

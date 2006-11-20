@@ -16,6 +16,8 @@ import org.w3c.dom.*;
 import org.apache.xml.serialize.*;
 import org.apache.commons.betwixt.XMLUtils;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.*;
 import fedora.server.errors.*;
 import fedora.server.errors.authorization.AuthzException;
@@ -34,6 +36,10 @@ import fedora.common.Constants;
  */
 public class DefaultManagement
         extends Module implements Management, ManagementDelegate {
+
+    /** Logger for this class. */
+    private static Logger LOG = 
+            Logger.getLogger(DefaultManagement.class.getName());
 
     private DOManager m_manager;
     //private String m_fedoraServerHost; 2005.3.31 not used, so why have?
@@ -69,46 +75,46 @@ public class DefaultManagement
             throws ModuleInitializationException {
 
         // how many minutes should we hold on to uploaded files? default=5
-		String min=getParameter("uploadStorageMinutes");
-		if (min==null) min="5";
-		try {
-		    m_uploadStorageMinutes=Integer.parseInt(min);
-			if (m_uploadStorageMinutes<1) {
-			    throw new ModuleInitializationException("uploadStorageMinutes "
-				        + "must be 1 or more, if specified.", getRole());
-			}
-		} catch (NumberFormatException nfe) {
-		    throw new ModuleInitializationException("uploadStorageMinutes must "
-			        + "be an integer, if specified.", getRole());
-		}
-		// initialize storage area by 1) ensuring the directory is there
-		// and 2) reading in the existing files, if any, and setting their
-		// startTime to the current time.
-		try {
+        String min=getParameter("uploadStorageMinutes");
+        if (min==null) min="5";
+        try {
+            m_uploadStorageMinutes=Integer.parseInt(min);
+            if (m_uploadStorageMinutes<1) {
+                throw new ModuleInitializationException("uploadStorageMinutes "
+                        + "must be 1 or more, if specified.", getRole());
+            }
+        } catch (NumberFormatException nfe) {
+            throw new ModuleInitializationException("uploadStorageMinutes must "
+                    + "be an integer, if specified.", getRole());
+        }
+        // initialize storage area by 1) ensuring the directory is there
+        // and 2) reading in the existing files, if any, and setting their
+        // startTime to the current time.
+        try {
             m_tempDir=new File(getServer().getHomeDir(), "management/upload");
-    		if (!m_tempDir.isDirectory()) {
-    		    m_tempDir.mkdirs();
-    		}
-			// put leftovers in hash, while saving highest id as m_lastId
-			m_uploadStartTime=new Hashtable<String, Long>();
-			String[] fNames=m_tempDir.list();
-			Long leftoverStartTime=new Long(System.currentTimeMillis());
+            if (!m_tempDir.isDirectory()) {
+                m_tempDir.mkdirs();
+            }
+            // put leftovers in hash, while saving highest id as m_lastId
+            m_uploadStartTime=new Hashtable<String, Long>();
+            String[] fNames=m_tempDir.list();
+            Long leftoverStartTime=new Long(System.currentTimeMillis());
             m_lastId=0;
-			for (int i=0; i<fNames.length; i++) {
+            for (int i=0; i<fNames.length; i++) {
                 try {
-				    int id=Integer.parseInt(fNames[i]);
-					if (id>m_lastId) m_lastId=id;
-			        m_uploadStartTime.put(fNames[i], leftoverStartTime);
-				} catch (NumberFormatException nfe) {
-				    // skip files that aren't named numerically
-				}
-			}
-		} catch (Exception e) {
-		    e.printStackTrace();
-		    throw new ModuleInitializationException("Error while initializing "
-			        + "temporary storage area: " + e.getClass().getName() + ": "
-					+ e.getMessage(), getRole());
-		}
+                    int id=Integer.parseInt(fNames[i]);
+                    if (id>m_lastId) m_lastId=id;
+                    m_uploadStartTime.put(fNames[i], leftoverStartTime);
+                } catch (NumberFormatException nfe) {
+                    // skip files that aren't named numerically
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ModuleInitializationException("Error while initializing "
+                    + "temporary storage area: " + e.getClass().getName() + ": "
+                    + e.getMessage(), getRole());
+        }
     }
 
     public void postInitModule()
@@ -144,7 +150,7 @@ public class DefaultManagement
             throws ServerException {
         DOWriter w = null;
         try {
-            getServer().logFinest("Entered DefaultManagement.ingestObject");
+            LOG.info("Entered ingestObject");
             w=m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE, context, serialization, format, encoding, newPid);
             String pid=w.GetObjectPID();
             
@@ -153,12 +159,20 @@ public class DefaultManagement
             w.commit(logMessage);
             return pid;
         } finally {
-            if (w != null) {
-                m_manager.releaseWriter(w);
-            }
+            finishModification(w, "ingestObject");
+        }
+    }
+
+    private void finishModification(DOWriter w, String method)
+            throws ServerException {
+        LOG.info("Exiting " + method);
+        if (w != null) {
+            m_manager.releaseWriter(w);
+        }
+        if (LOG.isDebugEnabled()) {
             Runtime r=Runtime.getRuntime();
-            getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
-            getServer().logFinest("Exiting DefaultManagement.ingestObject");
+            LOG.debug("Memory: " + r.freeMemory() + " bytes free of " 
+                    + r.totalMemory() + " available.");
         }
     }
 
@@ -170,7 +184,7 @@ public class DefaultManagement
             throws ServerException {
         DOWriter w = null;
         try {
-            logFinest("Entered DefaultManagement.modifyObject");
+            LOG.info("Entered modifyObject");
 
             m_fedoraXACMLModule.enforceModifyObject(context, pid, state); 
 
@@ -186,74 +200,69 @@ public class DefaultManagement
                 w.setState(state);
             }
             //if (label!=null && !label.equals(""))
-			if (label!=null) {
+            if (label!=null) {
                 w.setLabel(label);
             }
             w.commit(logMessage);
             return w.getLastModDate();
         } finally {
-            if (w != null) {
-                m_manager.releaseWriter(w);
-            }
-            Runtime r=Runtime.getRuntime();
-            getServer().logFinest("Memory: " + r.freeMemory() + " bytes free of " + r.totalMemory() + " available.");
-            getServer().logFinest("Exiting DefaultManagement.modifyObject");
+            finishModification(w, "modifyObject");
         }
     }
 
-	public Property[] getObjectProperties(Context context, String pid)
-		throws ServerException {		
-		try {
-			logFinest("Entered DefaultManagement.getObjectProperties");
+    public Property[] getObjectProperties(Context context, String pid)
+        throws ServerException {        
+        try {
+            LOG.info("Entered getObjectProperties");
 
             m_fedoraXACMLModule.enforceGetObjectProperties(context, pid);
             
-			ArrayList<Property> props = new ArrayList<Property>();
-			DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
-			
-			props.add(new Property(
-						"info:fedora/fedora-system:def/fType",
-						reader.getFedoraObjectType()));
-			
+            ArrayList<Property> props = new ArrayList<Property>();
+            DOReader reader=m_manager.getReader(Server.USE_CACHE, context, pid);
+            
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/fType",
+                        reader.getFedoraObjectType()));
+            
 
-			props.add(new Property(
-						"info:fedora/fedora-system:def/cModel",
-						reader.getContentModelId()));
-						
-			props.add(new Property(
-						"info:fedora/fedora-system:def/label",
-						reader.GetObjectLabel()));
-						
-			props.add(new Property(
-						"info:fedora/fedora-system:def/state",
-						reader.GetObjectState()));
-						
-			props.add(new Property(
-						"info:fedora/fedora-system:def/owner",
-						reader.getOwnerId()));
-						
-			props.add(new Property(
-						"info:fedora/fedora-system:def/cDate",
-						DateUtility.convertDateToString(reader.getCreateDate())));
-						
-			props.add(new Property(
-						"info:fedora/fedora-system:def/mDate",
-						DateUtility.convertDateToString(reader.getLastModDate())));
-			
-			//Property[] extProps=reader.getExtProperties();
-			
-			return (Property[])props.toArray(new Property[0]);
-		} finally {
-			logFinest("Exiting DefaultManagement.getObjectProperties");
-		}
-	}
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/cModel",
+                        reader.getContentModelId()));
+                        
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/label",
+                        reader.GetObjectLabel()));
+                        
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/state",
+                        reader.GetObjectState()));
+                        
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/owner",
+                        reader.getOwnerId()));
+                        
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/cDate",
+                        DateUtility.convertDateToString(reader.getCreateDate())));
+                        
+            props.add(new Property(
+                        "info:fedora/fedora-system:def/mDate",
+                        DateUtility.convertDateToString(reader.getLastModDate())));
+            
+            //Property[] extProps=reader.getExtProperties();
+            
+            return (Property[])props.toArray(new Property[0]);
+        } finally {
+            LOG.info("Exiting getObjectProperties");
+        }
+    }
 
     public InputStream getObjectXML(Context context, 
                                     String pid, 
                                     String encoding) 
-    		throws ServerException {
+            throws ServerException {
         try {
-            logFinest("Entered DefaultManagement.getObjectXML");
+            LOG.info("Entered getObjectXML");
             
             m_fedoraXACMLModule.enforceGetObjectXML(context, pid, encoding);
 
@@ -261,7 +270,7 @@ public class DefaultManagement
             InputStream instream=reader.GetObjectXML();
             return instream;
         } finally {
-            logFinest("Exiting DefaultManagement.getObjectXML");
+            LOG.info("Exiting getObjectXML");
         }
     }
 
@@ -270,9 +279,9 @@ public class DefaultManagement
                                     String format,
                                     String exportContext, 
                                     String encoding) 
-    		throws ServerException {
+            throws ServerException {
         try {
-            logFinest("Entered DefaultManagement.exportObject");
+            LOG.info("Entered exportObject");
             
             m_fedoraXACMLModule.enforceExportObject(context, pid, format, exportContext, encoding);
                         
@@ -280,7 +289,7 @@ public class DefaultManagement
             InputStream instream=reader.ExportObject(format,exportContext);
             return instream;
         } finally {
-            logFinest("Exiting DefaultManagement.exportObject");
+            LOG.info("Exiting exportObject");
         }
     }
 
@@ -295,7 +304,7 @@ public class DefaultManagement
         }
         DOWriter w = null;
         try {
-            logFinest("Entered DefaultManagement.purgeObject");
+            LOG.info("Entered purgeObject");
 
             m_fedoraXACMLModule.enforcePurgeObject(context, pid);
             
@@ -304,8 +313,7 @@ public class DefaultManagement
             w.commit(logMessage);
             return Server.getCurrentDate(context);
         } finally {
-            if (w != null) m_manager.releaseWriter(w);
-            logFinest("Exiting DefaultManagement.purgeObject");
+            finishModification(w, "purgeObject");
         }
     }
 
@@ -324,6 +332,8 @@ public class DefaultManagement
                                 String checksum,
                                 String logMessage) throws ServerException {
 
+        LOG.info("Entered addDatastream");
+
         // empty MIME types are allowed.  assume they meant "" if they provide it as null.
         if (MIMEType == null) MIMEType = "";
 
@@ -333,7 +343,7 @@ public class DefaultManagement
             RecoveryContext rContext = (RecoveryContext) context;
             dsID = rContext.getRecoveryValue(Constants.RECOVERY.DATASTREAM_ID.uri);
             if (dsID != null) {
-                getServer().logFinest("Using new dsID from recovery context");
+                LOG.debug("Using new dsID from recovery context");
             }
         }
 
@@ -345,17 +355,15 @@ public class DefaultManagement
                         + "not a valid XML Name");
             }
         }
-                                   	
+                                       
         if ( dsID!=null && (dsID.equals("AUDIT") || dsID.equals("FEDORA-AUDITTRAIL"))) {
-			throw new GeneralException("Creation of a datastream with an"
-				+ " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
+            throw new GeneralException("Creation of a datastream with an"
+                + " identifier of 'AUDIT' or 'FEDORA-AUDITTRAIL' is not permitted.");
         }
         DOWriter w=null;
         try {
-            getServer().logFinest("Entered DefaultManagement.addDatastream");
-
-			m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
-					formatURI, dsLocation, controlGroup, dsState);
+            m_fedoraXACMLModule.enforceAddDatastream(context, pid, dsID,  altIDs, MIMEType,
+                    formatURI, dsLocation, controlGroup, dsState);
 
             checkDatastreamID(dsID);
             checkDatastreamLabel(dsLabel);
@@ -375,8 +383,8 @@ public class DefaultManagement
                     ((DatastreamXMLMetadata) ds).xmlContent = getEmbeddableXML(in);
                     // If it's a RELS-EXT datastream, do validation
                     if (dsID!=null && dsID.equals("RELS-EXT")){
-                    	validateRelsExt(pid, new ByteArrayInputStream(
-                    		((DatastreamXMLMetadata) ds).xmlContent));
+                        validateRelsExt(pid, new ByteArrayInputStream(
+                            ((DatastreamXMLMetadata) ds).xmlContent));
                     }
                 } catch (Exception e) {
                     String extraInfo;
@@ -397,14 +405,14 @@ public class DefaultManagement
             }
             ds.isNew=true;
             ds.DSControlGrp=controlGroup;
-			ds.DSVersionable=versionable;
+            ds.DSVersionable=versionable;
             if (!dsState.equals("A") && !dsState.equals("D") && !dsState.equals("I")) {
                 throw new InvalidStateException("The datastream state of \"" + dsState
                         + "\" is invalid. The allowed values for state are: "
                         + " A (active), D (deleted), and I (inactive).");
             }            
             ds.DSState= dsState;
-			// set new datastream id if not provided...
+            // set new datastream id if not provided...
             if (dsID==null || dsID.length()==0) {
                 ds.DatastreamID=w.newDatastreamID();
             } else {
@@ -423,17 +431,17 @@ public class DefaultManagement
                     ds.DatastreamID=dsID;
                 }
             }
-			// add version level attributes and
-			// create new ds version id ...
+            // add version level attributes and
+            // create new ds version id ...
             ds.DSVersionID=ds.DatastreamID + ".0";
-			ds.DSLabel=dsLabel;
-			ds.DSLocation=dsLocation;
+            ds.DSLabel=dsLabel;
+            ds.DSLocation=dsLocation;
             if (dsLocation != null) {
                 ValidationUtility.validateURL(dsLocation, false);
             }
-			ds.DSFormatURI=formatURI;
-			ds.DatastreamAltIDs = altIDs;
-			ds.DSMIME=MIMEType;
+            ds.DSFormatURI=formatURI;
+            ds.DatastreamAltIDs = altIDs;
+            ds.DSMIME=MIMEType;
             ds.DSChecksumType = checksumType;
             if (checksumType == null)
             {
@@ -447,8 +455,8 @@ public class DefaultManagement
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
-			Date nowUTC = Server.getCurrentDate(context);
-			ds.DSCreateDT=nowUTC;
+            Date nowUTC = Server.getCurrentDate(context);
+            ds.DSCreateDT=nowUTC;
             AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
             audit.processType="Fedora API-M";
@@ -462,85 +470,79 @@ public class DefaultManagement
             w.commit("Added a new datastream");
             return ds.DatastreamID;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.addDatastream");
+            finishModification(w, "addDatastream");
         }
     }
 
-	public String addDisseminator(Context context,
-									String pid, String bDefPid, String bMechPid,
-									String dissLabel,
-									DSBindingMap bindingMap,
-									String dissState,
-									String logMessage) throws ServerException {
+    public String addDisseminator(Context context,
+                                    String pid, String bDefPid, String bMechPid,
+                                    String dissLabel,
+                                    DSBindingMap bindingMap,
+                                    String dissState,
+                                    String logMessage) throws ServerException {
 
-			DOWriter w=null;
-			try {
-                getServer().logFinest("Entered DefaultManagement.addDisseminator");
-    			
-    			m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
-    					bDefPid, bMechPid, dissState);
+        DOWriter w=null;
+        try {
+            LOG.info("Entered addDisseminator");
+                
+            m_fedoraXACMLModule.enforceAddDisseminator(context, pid, 
+                    bDefPid, bMechPid, dissState);
 
-                checkDisseminatorLabel(dissLabel);
+            checkDisseminatorLabel(dissLabel);
 
-				w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
-				Disseminator diss = new Disseminator();
-				diss.isNew=true;
-				diss.parentPID = pid;
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
+            Disseminator diss = new Disseminator();
+            diss.isNew=true;
+            diss.parentPID = pid;
 
-        if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
-            throw new InvalidStateException("The disseminator state of \"" + dissState
-                    + "\" is invalid. The allowed values for state are: "
-                    + " A (active), D (deleted), and I (inactive).");
-        }				
-        diss.dissState= dissState;
-        diss.dissLabel = dissLabel;
-        diss.bMechID = bMechPid;
-        diss.bDefID = bDefPid;
-        Date nowUTC = Server.getCurrentDate(context);
-        diss.dissCreateDT = nowUTC;
+            if (!dissState.equals("A") && !dissState.equals("D") && !dissState.equals("I")) {
+                throw new InvalidStateException("The disseminator state of \"" + dissState
+                        + "\" is invalid. The allowed values for state are: "
+                        + " A (active), D (deleted), and I (inactive).");
+            }
+            diss.dissState= dissState;
+            diss.dissLabel = dissLabel;
+            diss.bMechID = bMechPid;
+            diss.bDefID = bDefPid;
+            Date nowUTC = Server.getCurrentDate(context);
+            diss.dissCreateDT = nowUTC;
 
-        // See if we can get the new disseminator ID from the RecoveryContext
-        String dissID = null;
-        if (context instanceof RecoveryContext) {
-            RecoveryContext rContext = (RecoveryContext) context;
-            dissID = rContext.getRecoveryValue(Constants.RECOVERY.DISSEMINATOR_ID.uri);
+            // See if we can get the new disseminator ID from the RecoveryContext
+            String dissID = null;
+            if (context instanceof RecoveryContext) {
+                RecoveryContext rContext = (RecoveryContext) context;
+                dissID = rContext.getRecoveryValue(Constants.RECOVERY.DISSEMINATOR_ID.uri);
+            }
+            if (dissID == null) {
+                diss.dissID = w.newDisseminatorID();
+            } else {
+                diss.dissID = dissID;
+                LOG.debug("Using new dissID from recovery context");
+            }
+
+            diss.dissVersionID = diss.dissID + ".0";
+            // Generate the binding map ID here - ignore the value passed in
+            // and set the field on both the disseminator and the binding map,
+            // then set the disseminator's binding map to the one passed in.
+            diss.dsBindMapID=w.newDatastreamBindingMapID();
+                            bindingMap.dsBindMapID=diss.dsBindMapID;
+            diss.dsBindMap=bindingMap;
+            AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="addDisseminator";
+            audit.componentID=diss.dissID;
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            w.getAuditRecords().add(audit);
+            w.addDisseminator(diss);
+            w.commit("Added a new disseminator");
+            return diss.dissID;
+        } finally {
+            finishModification(w, "addDisseminator");
         }
-        if (dissID == null) {
-            diss.dissID = w.newDisseminatorID();
-        } else {
-            diss.dissID = dissID;
-            getServer().logFinest("Using new dissID from recovery context");
-        }
-
-				diss.dissVersionID = diss.dissID + ".0";
-				// Generate the binding map ID here - ignore the value passed in
-                                // and set the field on both the disseminator and the binding map,
-                                // then set the disseminator's binding map to the one passed in.
-				diss.dsBindMapID=w.newDatastreamBindingMapID();
-                                bindingMap.dsBindMapID=diss.dsBindMapID;
-				diss.dsBindMap=bindingMap;
-				AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-				audit.id=w.newAuditRecordID();
-				audit.processType="Fedora API-M";
-				audit.action="addDisseminator";
-				audit.componentID=diss.dissID;
-				audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-				audit.date=nowUTC;
-				audit.justification=logMessage;
-				w.getAuditRecords().add(audit);
-				w.addDisseminator(diss);
-				w.commit("Added a new disseminator");
-				return diss.dissID;
-			} finally {
-				if (w!=null) {
-					m_manager.releaseWriter(w);
-				}
-                getServer().logFinest("Exiting DefaultManagement.addDisseminator");
-			}
-		}
+    }
 
     public Date modifyDatastreamByReference(Context context, 
                                             String pid,
@@ -565,51 +567,52 @@ public class DefaultManagement
              }   
          }
 
-		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
-			throw new GeneralException("Modification of the system-controlled AUDIT"
-				+ " datastream is not permitted.");
-		}
+        if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
+            throw new GeneralException("Modification of the system-controlled AUDIT"
+                + " datastream is not permitted.");
+        }
 
         DOWriter w = null;
         try {
-            getServer().logFinest("Entered DefaultManagement.modifyDatastreamByReference");
+            LOG.info("Entered modifyDatastreamByReference");
 
-            // Warning: enforceModifyDatastreamByReference expects a parameter of dsState, we no longer have on.
-            
-            // I'm passing in a value of "" but this could cause a problem.
-			m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, "");
+            // FIXME: enforceModifyDatastreamByReference expects a parameter 
+            //        of dsState, we no longer have. I'm passing in a value 
+            //        of "" but this could cause a problem.
+            m_fedoraXACMLModule.enforceModifyDatastreamByReference(context, pid, datastreamId, altIDs, mimeType, formatURI, dsLocation, "");
+
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
-			Date nowUTC; // variable for ds modified date
+            Date nowUTC; // variable for ds modified date
 
-			// some forbidden scenarios...
-			if (orig.DSControlGrp.equals("X")) {
-				throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
-			}
-			if (orig.DSState.equals("D")) {
-				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
-			}
-			
+            // some forbidden scenarios...
+            if (orig.DSControlGrp.equals("X")) {
+                throw new GeneralException("Inline XML datastreams must be modified by value, not by reference.");
+            }
+            if (orig.DSState.equals("D")) {
+                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
+            }
+            
             // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
             // if input parms are null, the ds attribute should not be changed,
             // so set the parm values to the existing values in the datastream.
-			if (dsLabel == null) dsLabel = orig.DSLabel;
-			if (mimeType == null) mimeType = orig.DSMIME;
-			if (formatURI == null) formatURI = orig.DSFormatURI;
-			if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-			
-			// In cases where an empty attribute value is not allowed, then
-			// NULL or EMPTY PARM means no change to ds attribute...
-			if (dsLocation==null || dsLocation.equals("")) {
-				if (orig.DSControlGrp.equals("M")) {
-					// if managed content location is unspecified, 
-					// cause a copy of the prior content to be made at commit-time
-					dsLocation="copy://" + orig.DSLocation;
-				} else {
-					dsLocation=orig.DSLocation;
-				}
-			} else {
+            if (dsLabel == null) dsLabel = orig.DSLabel;
+            if (mimeType == null) mimeType = orig.DSMIME;
+            if (formatURI == null) formatURI = orig.DSFormatURI;
+            if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+            
+            // In cases where an empty attribute value is not allowed, then
+            // NULL or EMPTY PARM means no change to ds attribute...
+            if (dsLocation==null || dsLocation.equals("")) {
+                if (orig.DSControlGrp.equals("M")) {
+                    // if managed content location is unspecified, 
+                    // cause a copy of the prior content to be made at commit-time
+                    dsLocation="copy://" + orig.DSLocation;
+                } else {
+                    dsLocation=orig.DSLocation;
+                }
+            } else {
                 ValidationUtility.validateURL(dsLocation, false);
             }
             
@@ -624,37 +627,37 @@ public class DefaultManagement
                                            context, w, datastreamId);
             }
 
-			// instantiate the right class of datastream
-			// (inline xml "X" datastreams have already been rejected)
-			Datastream newds;
-			if (orig.DSControlGrp.equals("M")) {
-				newds=new DatastreamManagedContent();
-			} else {
-				newds=new DatastreamReferencedContent();
-			}
-			// update ds attributes that are common to all versions...
-			// first, those that cannot be changed by client...
-			newds.DatastreamID=orig.DatastreamID;
-			newds.DSControlGrp=orig.DSControlGrp;
-			newds.DSInfoType=orig.DSInfoType;
-			// next, those that can be changed by client...
-			newds.DSState = orig.DSState;
-			newds.DSVersionable=orig.DSVersionable;
+            // instantiate the right class of datastream
+            // (inline xml "X" datastreams have already been rejected)
+            Datastream newds;
+            if (orig.DSControlGrp.equals("M")) {
+                newds=new DatastreamManagedContent();
+            } else {
+                newds=new DatastreamReferencedContent();
+            }
+            // update ds attributes that are common to all versions...
+            // first, those that cannot be changed by client...
+            newds.DatastreamID=orig.DatastreamID;
+            newds.DSControlGrp=orig.DSControlGrp;
+            newds.DSInfoType=orig.DSInfoType;
+            // next, those that can be changed by client...
+            newds.DSState = orig.DSState;
+            newds.DSVersionable=orig.DSVersionable;
                      
-			// update ds version-level attributes, and
-			// make sure ds gets a new version id
-			newds.DSVersionID=w.newDatastreamID(datastreamId);
-			newds.DSLabel=dsLabel;
-			newds.DSMIME = mimeType;
-			newds.DSFormatURI=formatURI;
-			newds.DatastreamAltIDs = altIDs;
-			nowUTC = Server.getCurrentDate(context);
-			newds.DSCreateDT=nowUTC;
-			//newds.DSSize will be computed later
+            // update ds version-level attributes, and
+            // make sure ds gets a new version id
+            newds.DSVersionID=w.newDatastreamID(datastreamId);
+            newds.DSLabel=dsLabel;
+            newds.DSMIME = mimeType;
+            newds.DSFormatURI=formatURI;
+            newds.DatastreamAltIDs = altIDs;
+            nowUTC = Server.getCurrentDate(context);
+            newds.DSCreateDT=nowUTC;
+            //newds.DSSize will be computed later
             if (dsLocation != null) {
                 ValidationUtility.validateURL(dsLocation, false);
             }
-			newds.DSLocation=dsLocation;
+            newds.DSLocation=dsLocation;
             newds.DSChecksumType = checksumType;
             if (checksumType == null)
             {
@@ -668,20 +671,20 @@ public class DefaultManagement
                     throw new ValidationException("Checksum Mismatch: " + check);
                 }
             }
-			
-			// next, add the datastream via the object writer
-			w.addDatastream(newds, orig.DSVersionable);
+            
+            // next, add the datastream via the object writer
+            w.addDatastream(newds, orig.DSVersionable);
 
-			// add the audit record
-			fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
-			audit.id=w.newAuditRecordID();
-			audit.processType="Fedora API-M";
-			audit.action="modifyDatastreamByReference";
-			audit.componentID=newds.DatastreamID;
-			audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
-			audit.date=nowUTC;
-			audit.justification=logMessage;
-			w.getAuditRecords().add(audit);						
+            // add the audit record
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
+            audit.id=w.newAuditRecordID();
+            audit.processType="Fedora API-M";
+            audit.action="modifyDatastreamByReference";
+            audit.componentID=newds.DatastreamID;
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);
+            audit.date=nowUTC;
+            audit.justification=logMessage;
+            w.getAuditRecords().add(audit);                        
             
             // if all went ok, check if we need to validate, then commit.
             if (oldValidationReports != null) { // mime changed and force=false
@@ -694,10 +697,7 @@ public class DefaultManagement
             w.commit(logMessage);
             return nowUTC;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.modifyDatastreamByReference");
+            finishModification(w, "modifyDatastreamByReference");
         }
     }
 
@@ -724,47 +724,47 @@ public class DefaultManagement
              }      
          }
 
-		if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
-			throw new GeneralException("Modification of the system-controlled AUDIT"
-				+ " datastream is not permitted.");
-		}
+        if (datastreamId.equals("AUDIT") || datastreamId.equals("FEDORA-AUDITTRAIL")) {
+            throw new GeneralException("Modification of the system-controlled AUDIT"
+                + " datastream is not permitted.");
+        }
         DOWriter w=null;
         boolean mimeChanged = false;
         try {
-            getServer().logFinest("Entered DefaultManagement.modifyDatastreamByValue");
+            LOG.info("Entered modifyDatastreamByValue");
             
-            // Warning: enforceModifyDatastreamByReference expects a parameter of dsState, we no longer have on.
-            
-            // I'm passing in a value of "" but this could cause a problem.
-			m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, "");
+            // FIXME: enforceModifyDatastreamByReference expects a parameter 
+            //        of dsState, we no longer have. I'm passing in a value 
+            //        of "" but this could cause a problem.
+            m_fedoraXACMLModule.enforceModifyDatastreamByValue(context, pid, datastreamId, altIDs, mimeType, formatURI, "");
 
             checkDatastreamLabel(dsLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             fedora.server.storage.types.Datastream orig=w.GetDatastream(datastreamId, null);
             
             // some forbidden scenarios...
-			if (orig.DSState.equals("D")) {
-				throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
-			}
-			if (!orig.DSControlGrp.equals("X")) {
-				throw new GeneralException("Only content of inline XML datastreams may"
-					+ " be modified by value.\n"
-					+ "Use modifyDatastreamByReference instead.");
-			}
-			if (orig.DatastreamID.equals("METHODMAP")
-					|| orig.DatastreamID.equals("DSINPUTSPEC")
-					|| orig.DatastreamID.equals("WSDL")) {
-				throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
-			}
+            if (orig.DSState.equals("D")) {
+                throw new GeneralException("Changing attributes on deleted datastreams is forbidden.");
+            }
+            if (!orig.DSControlGrp.equals("X")) {
+                throw new GeneralException("Only content of inline XML datastreams may"
+                    + " be modified by value.\n"
+                    + "Use modifyDatastreamByReference instead.");
+            }
+            if (orig.DatastreamID.equals("METHODMAP")
+                    || orig.DatastreamID.equals("DSINPUTSPEC")
+                    || orig.DatastreamID.equals("WSDL")) {
+                throw new GeneralException("METHODMAP, DSINPUTSPEC, and WSDL datastreams cannot be modified.");
+            }
 
-			// A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
-			// if input parms are null, the ds attribute should not be changed,
-			// so set the parm values to the existing values in the datastream.
-			if (dsLabel == null) dsLabel = orig.DSLabel;
-			if (mimeType == null) mimeType = orig.DSMIME;
-			if (formatURI == null) formatURI = orig.DSFormatURI;
-			if (altIDs == null) altIDs = orig.DatastreamAltIDs;
-			
+            // A NULL INPUT PARM MEANS NO CHANGE TO DS ATTRIBUTE...
+            // if input parms are null, the ds attribute should not be changed,
+            // so set the parm values to the existing values in the datastream.
+            if (dsLabel == null) dsLabel = orig.DSLabel;
+            if (mimeType == null) mimeType = orig.DSMIME;
+            if (formatURI == null) formatURI = orig.DSFormatURI;
+            if (altIDs == null) altIDs = orig.DatastreamAltIDs;
+            
             // If "force" is false and the mime type changed, validate the
             // original datastream with respect to any disseminators it is
             // involved in, and keep a record of that information for later
@@ -786,32 +786,32 @@ public class DefaultManagement
             } else {
                 // If it's not null, use it
                 newds.xmlContent = getEmbeddableXML(dsContent);
-				// If it's a RELS-EXT datastream, do validation
-				if (orig.DatastreamID.equals("RELS-EXT")){
-					validateRelsExt(pid, new ByteArrayInputStream(
-						((DatastreamXMLMetadata) newds).xmlContent));
-				}
+                // If it's a RELS-EXT datastream, do validation
+                if (orig.DatastreamID.equals("RELS-EXT")){
+                    validateRelsExt(pid, new ByteArrayInputStream(
+                        ((DatastreamXMLMetadata) newds).xmlContent));
+                }
             }
 
-			// update ds attributes that are common to all versions...
-			// first, those that cannot be changed by client...
+            // update ds attributes that are common to all versions...
+            // first, those that cannot be changed by client...
             newds.DatastreamID=orig.DatastreamID;
             newds.DSControlGrp=orig.DSControlGrp;
             newds.DSInfoType=orig.DSInfoType;
-			// next, those that can be changed by client...
-			newds.DSState = orig.DSState;
-			newds.DSVersionable = orig.DSVersionable;
+            // next, those that can be changed by client...
+            newds.DSState = orig.DSState;
+            newds.DSVersionable = orig.DSVersionable;
             
-			// update ds version level attributes, and
-			// make sure ds gets a new version id
-			newds.DSVersionID=w.newDatastreamID(datastreamId);
-			newds.DSLabel=dsLabel;
-			newds.DatastreamAltIDs=altIDs;
-			newds.DSMIME=mimeType;
-			newds.DSFormatURI=formatURI;
-			Date nowUTC = Server.getCurrentDate(context);
-			newds.DSCreateDT=nowUTC;
-			
+            // update ds version level attributes, and
+            // make sure ds gets a new version id
+            newds.DSVersionID=w.newDatastreamID(datastreamId);
+            newds.DSLabel=dsLabel;
+            newds.DatastreamAltIDs=altIDs;
+            newds.DSMIME=mimeType;
+            newds.DSFormatURI=formatURI;
+            Date nowUTC = Server.getCurrentDate(context);
+            newds.DSCreateDT=nowUTC;
+            
             newds.DSChecksumType = checksumType;
             if (checksumType == null)
             {
@@ -827,7 +827,7 @@ public class DefaultManagement
             }
             // next, add the datastream via the object writer
             w.addDatastream(newds, orig.DSVersionable);
-						
+                        
             // add the audit record
             fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();
             audit.id=w.newAuditRecordID();
@@ -850,10 +850,7 @@ public class DefaultManagement
             w.commit(logMessage);
             return nowUTC;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.modifyDatastreamByValue");
+            finishModification(w, "modifyDatastreamByValue");
         }
     }
 
@@ -870,8 +867,8 @@ public class DefaultManagement
         DOWriter w=null;
         DOReader r=null;
         try {
-            getServer().logFinest("Entered DefaultManagement.modifyDisseminator");
-			m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
+            LOG.info("Entered modifyDisseminator");
+            m_fedoraXACMLModule.enforceModifyDisseminator(context, pid, disseminatorId, bMechPid, dissState);
 
             checkDisseminatorLabel(dissLabel);
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -890,14 +887,14 @@ public class DefaultManagement
             Disseminator newdiss=new Disseminator();
             // use original diss values for attributes that can't be changed by client
             newdiss.dissID=orig.dissID;
-			newdiss.bDefID=orig.bDefID;
-			newdiss.parentPID=orig.parentPID;
-			
+            newdiss.bDefID=orig.bDefID;
+            newdiss.parentPID=orig.parentPID;
+            
             // make sure disseminator has a new version id
             newdiss.dissVersionID=w.newDisseminatorID(disseminatorId);
-			// make sure disseminator has a new version date
-			Date nowUTC = Server.getCurrentDate(context);
-			newdiss.dissCreateDT=nowUTC;
+            // make sure disseminator has a new version date
+            Date nowUTC = Server.getCurrentDate(context);
+            newdiss.dissCreateDT=nowUTC;
            
             // for testing; null indicates a new (uninitialized) instance
             // of dsBindingMap was passed in which is what you get if
@@ -940,7 +937,7 @@ public class DefaultManagement
                   throw new InvalidStateException("The disseminator state of \"" + dissState
                           + "\" is invalid. The allowed values for state are: "
                           + " A (active), D (deleted), and I (inactive).");
-              }	        	        
+              }                        
               newdiss.dissState=dissState;
             }
             
@@ -971,10 +968,7 @@ public class DefaultManagement
             w.commit(logMessage);
             return nowUTC;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.modifyDisseminator");
+            finishModification(w, "modifyDisseminator");
         }
     }
 
@@ -993,9 +987,9 @@ public class DefaultManagement
         }
         DOWriter w=null;
         try {
-            getServer().logFinest("Entered DefaultManagement.purgeDatastream");
+            LOG.info("Entered purgeDatastream");
             
-			m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID, endDT);
+            m_fedoraXACMLModule.enforcePurgeDatastream(context, pid, datastreamID, endDT);
 
             w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
             Date[] deletedDates=w.removeDatastream(datastreamID, startDT, endDT);
@@ -1070,10 +1064,7 @@ public class DefaultManagement
             // ... then give the response
             return deletedDates;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.purgeDatastream");
+            finishModification(w, "purgeDatastream");
         }
     }
 
@@ -1120,15 +1111,14 @@ public class DefaultManagement
                                     Date asOfDateTime)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDatastream");
+            LOG.info("Entered getDatastream");
             
-			m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID, asOfDateTime);
-
+            m_fedoraXACMLModule.enforceGetDatastream(context, pid, datastreamID, asOfDateTime);
             
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-    		return r.GetDatastream(datastreamID, asOfDateTime);
+            return r.GetDatastream(datastreamID, asOfDateTime);
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDatastream");
+            LOG.info("Exiting getDatastream");
         }
     }
 
@@ -1138,16 +1128,14 @@ public class DefaultManagement
                                        String state)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDatastreams");
+            LOG.info("Entered getDatastreams");
 
-            if (fedora.server.Debug.DEBUG) System.err.println("in getDatastreams, before call to enforce");
-			m_fedoraXACMLModule.enforceGetDatastreams(context, pid, asOfDateTime, state);
-            if (fedora.server.Debug.DEBUG) System.err.println("in getDatastreams, after call to enforce");
+            m_fedoraXACMLModule.enforceGetDatastreams(context, pid, asOfDateTime, state);
            
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
-    		return r.GetDatastreams(asOfDateTime, state);
+            return r.GetDatastreams(asOfDateTime, state);
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDatastream");
+            LOG.info("Exiting getDatastreams");
         }
     }
 
@@ -1156,9 +1144,9 @@ public class DefaultManagement
                                              String datastreamID)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDatastreamHistory");
+            LOG.info("Entered getDatastreamHistory");
             
-			m_fedoraXACMLModule.enforceGetDatastreamHistory(context, pid, datastreamID);
+            m_fedoraXACMLModule.enforceGetDatastreamHistory(context, pid, datastreamID);
 
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             Date[] versionDates=r.getDatastreamVersions(datastreamID);
@@ -1175,7 +1163,7 @@ public class DefaultManagement
             }
             return out;
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDatastreamHistory");
+            LOG.info("Exiting getDatastreamHistory");
         }
     }
 
@@ -1199,9 +1187,9 @@ public class DefaultManagement
             throws ServerException {
         DOWriter w=null;
         try {
-            getServer().logFinest("Entered DefaultManagement.purgeDisseminator");
+            LOG.info("Entered purgeDisseminator");
             
-			m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID, endDT);
+            m_fedoraXACMLModule.enforcePurgeDisseminator(context, pid, disseminatorID, endDT);
             
             w=m_manager.getWriter(Server.GLOBAL_CHOICE, context, pid);
             Date start=null;
@@ -1236,10 +1224,7 @@ public class DefaultManagement
             w.commit(logMessage);
             return deletedDates;
         } finally {
-            if (w!=null) {
-                m_manager.releaseWriter(w);
-            }
-            getServer().logFinest("Exiting DefaultManagement.purgeDisseminator");
+            finishModification(w, "purgeDisseminator");
         }
     }
 
@@ -1249,14 +1234,14 @@ public class DefaultManagement
                                         Date asOfDateTime)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDisseminator");
+            LOG.info("Entered getDisseminator");
             
-			m_fedoraXACMLModule.enforceGetDisseminator(context, pid, disseminatorId, asOfDateTime);
+            m_fedoraXACMLModule.enforceGetDisseminator(context, pid, disseminatorId, asOfDateTime);
             
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDisseminator(disseminatorId, asOfDateTime);
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDisseminator");
+            LOG.info("Exiting getDisseminator");
         }
     }
 
@@ -1266,14 +1251,12 @@ public class DefaultManagement
                                            String dissState)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getDisseminators");
-            if (fedora.server.Debug.DEBUG) System.err.println("in getDisseminators, before call to enforce");            
-			m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
-            if (fedora.server.Debug.DEBUG) System.err.println("in getDisseminators, after call to enforce");            
+            LOG.info("Entered getDisseminators");
+            m_fedoraXACMLModule.enforceGetDisseminators(context, pid, asOfDateTime, dissState);
             DOReader r=m_manager.getReader(Server.GLOBAL_CHOICE, context, pid);
             return r.GetDisseminators(asOfDateTime, dissState);
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDisseminators");
+            LOG.info("Exiting getDisseminators");
         }
     }
 
@@ -1282,9 +1265,10 @@ public class DefaultManagement
                                                  String disseminatorID)
             throws ServerException {
         try {
-            
-			m_fedoraXACMLModule.enforceGetDisseminatorHistory(context, 
-					pid, disseminatorID); 
+            LOG.info("Entered getDisseminatorHistory");
+
+            m_fedoraXACMLModule.enforceGetDisseminatorHistory(context, 
+                    pid, disseminatorID); 
 
             DOReader r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);
             Date[] versionDates=r.getDisseminatorVersions(disseminatorID);
@@ -1301,7 +1285,7 @@ public class DefaultManagement
             }
             return out;
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getDisseminatorHistory");
+            LOG.info("Exiting getDisseminatorHistory");
         }
     }
 
@@ -1310,7 +1294,7 @@ public class DefaultManagement
                                String namespace)
             throws ServerException {
         try {
-            getServer().logFinest("Entered DefaultManagement.getNextPID");           
+            LOG.info("Entered getNextPID");           
             m_fedoraXACMLModule.enforceGetNextPid(context, namespace, numPIDs);
 
             String[] pidList = null;
@@ -1321,7 +1305,7 @@ public class DefaultManagement
                 RecoveryContext rContext = (RecoveryContext) context;
                 pidList = rContext.getRecoveryValues(Constants.RECOVERY.PID_LIST.uri);
                 if (pidList != null && pidList.length > 0) {
-                    getServer().logFinest("Reserving and returning PID_LIST "
+                    LOG.debug("Reserving and returning PID_LIST "
                             + "from recovery context");
                     m_manager.reservePIDs(pidList);
                 }
@@ -1334,7 +1318,7 @@ public class DefaultManagement
             return pidList;
 
         } finally {
-            getServer().logFinest("Exiting DefaultManagement.getNextPID");
+            LOG.info("Exiting getNextPID");
         }
     }
 
@@ -1352,52 +1336,52 @@ public class DefaultManagement
     }
 
     public String putTempStream(Context context, InputStream in)
-    	    throws StreamWriteException, AuthzException {
-    	m_fedoraXACMLModule.enforceUpload(context);
-		// first clean up after old stuff
-		long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
+            throws StreamWriteException, AuthzException {
+        m_fedoraXACMLModule.enforceUpload(context);
+        // first clean up after old stuff
+        long minStartTime=System.currentTimeMillis()-(60*1000*m_uploadStorageMinutes);
                 ArrayList<String> removeList=new ArrayList<String>();
-		Iterator iter=m_uploadStartTime.keySet().iterator();
+        Iterator iter=m_uploadStartTime.keySet().iterator();
         while (iter.hasNext()) {
-		    String id=(String) iter.next();
-		    Long startTime=(Long) m_uploadStartTime.get(id);
-			if (startTime.longValue()<minStartTime) {
-			    // remove from filesystem and hash
-				File f=new File(m_tempDir, id);
-				if (f.delete()) {
-				    logInfo("Removed uploaded file '" + id + "' because it expired.");
-				} else {
-				    logWarning("Could not remove expired uploaded file '" + id
-				            + "'.  Check existence/permissions in management/upload/ directory.");
-				}
+            String id=(String) iter.next();
+            Long startTime=(Long) m_uploadStartTime.get(id);
+            if (startTime.longValue()<minStartTime) {
+                // remove from filesystem and hash
+                File f=new File(m_tempDir, id);
+                if (f.delete()) {
+                    LOG.info("Removed uploaded file '" + id + "' because it expired.");
+                } else {
+                    LOG.warn("Could not remove expired uploaded file '" + id
+                            + "'.  Check existence/permissions in management/upload/ directory.");
+                }
                                 removeList.add(id);
-			}
-		}
+            }
+        }
                 for (int i=0; i<removeList.size(); i++) {
                     String id=(String) removeList.get(i);
                     m_uploadStartTime.remove(id);
                 }
         // then generate an id
-		int id=getNextTempId(context);
-		// and attempt to save the stream
+        int id=getNextTempId(context);
+        // and attempt to save the stream
         File outFile = new File(m_tempDir, "" + id);
         FileOutputStream out = null;
-	    try {
+        try {
             out = new FileOutputStream(outFile);
-		    StreamUtility.pipeStream(in, out, 32768);
-		} catch (Exception e) {
+            StreamUtility.pipeStream(in, out, 32768);
+        } catch (Exception e) {
             if (out != null) {
                 try { out.close(); } catch (Exception ex) { }
                 outFile.delete();
             }
-		    throw new StreamWriteException(e.getMessage());
-		}
-		// if we got this far w/o an exception, add to hash with current time
-		// and return the identifier-that-looks-like-a-url
-		long now=System.currentTimeMillis();
-	    m_uploadStartTime.put("" + id, new Long(now));
-		return "uploaded://" + id;
-	}
+            throw new StreamWriteException(e.getMessage());
+        }
+        // if we got this far w/o an exception, add to hash with current time
+        // and return the identifier-that-looks-like-a-url
+        long now=System.currentTimeMillis();
+        m_uploadStartTime.put("" + id, new Long(now));
+        return "uploaded://" + id;
+    }
 
     private synchronized int getNextTempId(Context context) {
 
@@ -1419,32 +1403,32 @@ public class DefaultManagement
             }
         }
         if (recoveryId == -1) {
-	        m_lastId++;
+            m_lastId++;
         } else {
             m_lastId = recoveryId;
         }
-		return m_lastId;
-	}
+        return m_lastId;
+    }
 
     public InputStream getTempStream(String id)
-    	    throws StreamReadException {
-		// it should come in starting with "uploaded://"
-		if (id.startsWith("uploaded://") || id.length()<12) {
-		    String internalId=id.substring(11);
-			if (m_uploadStartTime.get(internalId)!=null) {
-			    // found... return inputstream
-				try {
-			        return new FileInputStream(new File(m_tempDir, internalId));
-				} catch (Exception e) {
-				    throw new StreamReadException(e.getMessage());
-				}
-			} else {
-		        throw new StreamReadException("Id specified, '" + id + "', does not match an existing file.");
-			}
-		} else {
-		    throw new StreamReadException("Invalid id syntax '" + id + "'.");
-		}
-	}
+            throws StreamReadException {
+        // it should come in starting with "uploaded://"
+        if (id.startsWith("uploaded://") || id.length()<12) {
+            String internalId=id.substring(11);
+            if (m_uploadStartTime.get(internalId)!=null) {
+                // found... return inputstream
+                try {
+                    return new FileInputStream(new File(m_tempDir, internalId));
+                } catch (Exception e) {
+                    throw new StreamReadException(e.getMessage());
+                }
+            } else {
+                throw new StreamReadException("Id specified, '" + id + "', does not match an existing file.");
+            }
+        } else {
+            throw new StreamReadException("Invalid id syntax '" + id + "'.");
+        }
+    }
 
     public Date setDatastreamState(Context context, 
                                    String pid, 
@@ -1454,7 +1438,7 @@ public class DefaultManagement
             throws ServerException {
       DOWriter w=null;
       try {
-          getServer().logFinest("Entered DefaultManagement.setDatastreamState");
+          LOG.info("Entered setDatastreamState");
           
           m_fedoraXACMLModule.enforceSetDatastreamState(context, pid, datastreamID, dsState); 
           
@@ -1483,23 +1467,16 @@ public class DefaultManagement
           w.commit(logMessage);
           return nowUTC;
       } finally {
-          if (w!=null) {
-              m_manager.releaseWriter(w);
-          }
-          getServer().logFinest("Exiting DefaultManagement.setDatastreamState");
+          finishModification(w, "setDatastreamState");
         }
     }
 
-    public Date setDatastreamVersionable(Context context,   
-            String pid,     
-            String datastreamID,    
-            boolean versionable,    
-            String logMessage)      
-            throws ServerException      
-    {   
+    public Date setDatastreamVersionable(Context context, String pid,     
+            String datastreamID, boolean versionable, String logMessage)      
+            throws ServerException {
        DOWriter w=null;    
        try {   
-           getServer().logFinest("Entered DefaultManagement.setDatastreamVersionable");      
+           LOG.info("Entered setDatastreamVersionable");      
    
            m_fedoraXACMLModule.enforceSetDatastreamVersionable(context, pid, datastreamID, versionable);   
    
@@ -1522,108 +1499,81 @@ public class DefaultManagement
            // if all went ok, commit   
            w.commit(logMessage);   
            return nowUTC;      
-       }   
-       finally     
-       {   
-           if (w!=null)    
-            {   
-               m_manager.releaseWriter(w);     
-           }   
-           getServer().logFinest("Exiting DefaultManagement.setDatastreamVersionable");    
+       } finally {   
+           finishModification(w, "setDatastreamVersionable"); 
        }   
     }
     
-    public String setDatastreamChecksum(Context context,   
-                                        String pid,     
-                                        String datastreamID,    
-                                        String algorithm)      
-                                        throws ServerException      
-    {   
-       DOWriter w=null;    
-       try {   
-           getServer().logFinest("Entered DefaultManagement.setDatastreamChecksum");      
+    public String setDatastreamChecksum(Context context, String pid, 
+            String datastreamID, String algorithm)      
+            throws ServerException {   
+        DOWriter w=null;    
+        try {
+            LOG.info("Entered setDatastreamChecksum");
    
- //          m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
+//            m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
    
-           w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
-           fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
-           String checksum = ds.setChecksum(algorithm);
+            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
+            fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
+            String checksum = ds.setChecksum(algorithm);
    
-           // add the audit record     
-           fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
-           audit.id=w.newAuditRecordID();      
-           audit.processType="Fedora API-M";   
-           audit.action="setDatastreamChecksum";    
-           audit.componentID=datastreamID;     
-           audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
-           Date nowUTC=new Date();     
-           audit.date=nowUTC;      
-           w.getAuditRecords().add(audit);     
+            // add the audit record     
+            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
+            audit.id=w.newAuditRecordID();      
+            audit.processType="Fedora API-M";   
+            audit.action="setDatastreamChecksum";    
+            audit.componentID=datastreamID;     
+            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
+            Date nowUTC=new Date();     
+            audit.date=nowUTC;      
+            w.getAuditRecords().add(audit);     
    
-           // if all went ok, commit   
-           w.commit("Setting Checksum");   
-           return checksum;      
-       }   
-       finally     
-       {   
-           if (w!=null)    
-            {   
-               m_manager.releaseWriter(w);     
-           }   
-           getServer().logFinest("Exiting DefaultManagement.setDatastreamChecksum");    
+            // if all went ok, commit   
+            w.commit("Setting Checksum");   
+            return checksum;      
+        } finally {   
+            finishModification(w, "setDatastreamChecksum");
        }   
     }
     
-    public String compareDatastreamChecksum(Context context,   
-            String pid,     
-            String datastreamID,    
-            String versionDateStr)      
-            throws ServerException      
-    {   
-       DOReader r = null;    
-       try {   
-           getServer().logFinest("Entered DefaultManagement.compareDatastreamChecksum");      
+    public String compareDatastreamChecksum(Context context, String pid,     
+            String datastreamID, String versionDateStr)      
+            throws ServerException {   
+        DOReader r = null;    
+        try {   
+            LOG.info("Entered compareDatastreamChecksum");      
    
-//           m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionable);   
+//            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionable);   
    
-           DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-           Date versionDate = null;
-           if (versionDateStr != null)
-           {
-               try
-               {
-                   versionDate = fmt.parse(versionDateStr);
-               }
-               catch (ParseException e)
-               {
+            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+            Date versionDate = null;
+            if (versionDateStr != null) {
+                try {
+                    versionDate = fmt.parse(versionDateStr);
+                } catch (ParseException e) {
                     // ignore, just use null;
-               }
-           }
-           System.out.println("Getting Reader");
-           r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);   
-           System.out.println("Getting datastream:" + datastreamID + "date: "+ versionDate);
-           Datastream ds = r.GetDatastream(datastreamID, versionDate);      
-           System.out.println("Got Datastream, comparing checksum");
-           boolean check = ds.compareChecksum();      
-           System.out.println("compared checksum = " + check);
-      
-           return check ? ds.getChecksum() : "Checksum validation error";      
-       }   
-       finally     
-       {   
-           getServer().logFinest("Exiting DefaultManagement.compareDatastreamChecksum");    
-       }   
-   }
+                }
+            }
+            LOG.debug("Getting Reader");
+            r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);   
+            LOG.debug("Getting datastream:" + datastreamID + "date: "+ versionDate);
+            Datastream ds = r.GetDatastream(datastreamID, versionDate);      
+            LOG.debug("Got Datastream, comparing checksum");
+            boolean check = ds.compareChecksum();      
+            LOG.debug("compared checksum = " + check);
+       
+            return check ? ds.getChecksum() : "Checksum validation error";      
+        } finally {   
+            LOG.info("Exiting compareDatastreamChecksum");      
+        }   
+    }
 
-    public Date setDisseminatorState(Context context, 
-                                     String pid, 
-                                     String disseminatorID, 
-                                     String dissState, 
-                                     String logMessage)
+    public Date setDisseminatorState(Context context, String pid, 
+            String disseminatorID, String dissState, String logMessage)
             throws ServerException {
       DOWriter w=null;
       try {
-          getServer().logFinest("Entered DefaultManagement.setDisseminatorState");
+          LOG.info("Entered setDisseminatorState");
           m_fedoraXACMLModule.enforceSetDisseminatorState(context, pid, disseminatorID, dissState);  
 
           w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);
@@ -1651,10 +1601,7 @@ public class DefaultManagement
           w.commit(logMessage);
           return nowUTC;
       } finally {
-          if (w!=null) {
-              m_manager.releaseWriter(w);
-          }
-          getServer().logFinest("Exiting DefaultManagement.setDisseminatorState");
+          finishModification(w, "setDisseminatorState");
       }
    }
 
@@ -1808,21 +1755,21 @@ public class DefaultManagement
     }
     
     private void validateRelsExt(String pid, InputStream relsext)
-		throws ServerException {			
-		// RELATIONSHIP METADATA VALIDATION:
-		try {
-			RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
-			if (relsext!=null) {
-				logFinest("API-M: Validating RELS-EXT datastream...");
-				deser.deserialize(relsext, "info:fedora/" + pid);
-				if (fedora.server.Debug.DEBUG) System.out.println("Done validating RELS-EXT.");
-				logFinest("API-M: RELS-EXT datastream passed validation.");
-			}
-		} catch (Exception e) {
-			String message = e.getMessage();
-			if (message == null) message = e.getClass().getName();
-			throw new GeneralException("RELS-EXT validation failed: " + message);
-		}
+        throws ServerException {            
+        // RELATIONSHIP METADATA VALIDATION:
+        try {
+            RelsExtValidator deser=new RelsExtValidator("UTF-8", false);
+            if (relsext!=null) {
+                LOG.debug("API-M: Validating RELS-EXT datastream...");
+                deser.deserialize(relsext, "info:fedora/" + pid);
+                LOG.debug("API-M: RELS-EXT datastream passed validation.");
+            }
+        } catch (Exception e) {
+
+            String message = e.getMessage();
+            if (message == null) message = e.getClass().getName();
+            throw new GeneralException("RELS-EXT validation failed: " + message);
+        }
     }
 
     private void checkDatastreamID(String id) throws ValidationException {
@@ -1874,7 +1821,7 @@ public class DefaultManagement
     }
 
     public boolean adminPing(Context context)
-		throws ServerException {	
+        throws ServerException {    
         m_fedoraXACMLModule.enforceAdminPing(context);  
         return true;
     }

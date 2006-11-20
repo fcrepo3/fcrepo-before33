@@ -561,39 +561,4 @@ public class BESecurityConfig {
         }
     }
 
-
-    /**
-     * Simple command-line test entry point.
-     *
-     * Takes two args, inputFile and outputFile.
-     * Will deserialize from inputFile and serialize to outputFile.
-     */
-    public static void main(String[] args) throws Exception {
-        if (args.length == 1) {
-            BESecurityConfig config = BESecurityConfig.fromStream(
-                    new FileInputStream(new File(args[0])));
-            List<String> methodNames = new ArrayList<String>();
-            methodNames.add("methodOne");
-            methodNames.add("methodTwo");
-            Map<String, List> pidToMethodList = new HashMap<String, List>();
-            pidToMethodList.put("demo:bMechOne", methodNames);
-            methodNames = new ArrayList<String>();
-            methodNames.add("getFriday");
-            pidToMethodList.put("demo:13", methodNames);
-            config.addEmptyConfigs(pidToMethodList);
-            PrintWriter writer = new PrintWriter(System.out, true);
-            writer.println("------------");
-            writer.println("Abbreviated:");
-            writer.println("------------");
-            config.write(true, false, writer);
-            writer.println();
-            writer.println("---------");
-            writer.println("Complete:");
-            writer.println("---------");
-            config.write(false, false, writer);
-        } else {
-            System.err.println("Expected 1 arg: inputFile");
-        }
-    }
-
 }

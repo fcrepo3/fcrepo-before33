@@ -2,7 +2,11 @@ package fedora.server.access;
 
 import java.io.File;
 import java.rmi.RemoteException;
+
 import org.apache.axis.types.NonNegativeInteger;
+
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.ReadOnlyContext;
@@ -17,8 +21,7 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.TypeUtility;
 
 /**
- * <p><b>Title: </b>FedoraAPIABindingSOAPHTTPImpl.java</p>
- * <p><b>Description: </b>Implements the Fedora Access SOAP service.</p>
+ * Implements the Fedora Access SOAP service.
  *
  * @author rlw@virginia.edu
  * @version $Id$
@@ -26,6 +29,11 @@ import fedora.server.utilities.TypeUtility;
 public class FedoraAPIABindingSOAPHTTPImpl implements
     fedora.server.access.FedoraAPIA
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        FedoraAPIABindingSOAPHTTPImpl.class.getName());
+
   /** The Fedora Server instance. */
   private static Server s_server;
 
@@ -62,11 +70,9 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
               (Access) s_server.getModule("fedora.server.access.Access");
           Boolean B1 = new Boolean(s_server.getParameter("debug"));
           debug = B1.booleanValue();
-          s_server.logFinest("got server instance: " +
-                             "s_init: "+s_initialized);
       }
     } catch (InitializationException ie) {
-        System.err.println(ie.getMessage());
+        LOG.warn("Server initialization failed", ie);
         s_initialized = false;
         s_initException = ie;
     }
@@ -87,25 +93,14 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       {
         for (int i=0; i<bDefs.length; i++)
         {
-          s_server.logFinest("bDef["+i+"] = "+bDefs[i]);
+          LOG.debug("bDef["+i+"] = "+bDefs[i]);
         }
       }
       return bDefs;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      s_server.logFinest("ServerException: " + se.getMessage());
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      s_server.logFinest("Exception: " + e.getMessage());
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error getting object history", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   /**
@@ -129,6 +124,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
       fedora.server.storage.types.Property[] properties =
@@ -144,19 +140,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error getting dissemination", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   public fedora.server.types.gen.MIMETypedStream getDatastreamDissemination(
@@ -166,6 +153,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
 
@@ -178,19 +166,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertMIMETypedStreamToGenMIMETypedStream(
           mimeTypedStream);
       return genMIMETypedStream;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error getting datastream dissemination", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   public FieldSearchResult findObjects(String[] resultFields,
@@ -204,32 +183,11 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
                   TypeUtility.convertGenFieldSearchQueryToFieldSearchQuery(
                   query));
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
-      } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);          
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
-      } catch (Exception e) {
-          logStackTrace(e);
-          throw AxisUtility.getFault(e);
+      } catch (Throwable th) {
+        LOG.error("Error finding objects", th);
+        throw AxisUtility.getFault(th);
       }
   }
-
-/*
-  public ObjectFields[] advancedFieldSearch(
-          String[] resultFields, Condition[] conditions)
-          List searchConditionList=TypeUtility.
-                  convertGenConditionArrayToSearchConditionList(conditions);
-          List objectFields=s_access.search(context, resultFields, searchConditionList);
-          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
-                  objectFields);
-
-  public ObjectFields[] simpleFieldSearch(
-          String[] resultFields, String terms)
-          List objectFields=s_access.search(context, resultFields, terms);
-          return TypeUtility.convertSearchObjectFieldsListToGenObjectFieldsArray(
-                  objectFields);
-*/
 
   public FieldSearchResult resumeFindObjects(String sessionToken)
           throws java.rmi.RemoteException {
@@ -239,61 +197,18 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           fedora.server.search.FieldSearchResult result=s_access.
                   resumeFindObjects(context, sessionToken);
           return TypeUtility.convertFieldSearchResultToGenFieldSearchResult(result);
-      } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);          
-      } catch (ServerException se) {
-          logStackTrace(se);
-          throw AxisUtility.getFault(se);
-      } catch (Exception e) {
-          logStackTrace(e);
-          throw AxisUtility.getFault(e);
+      } catch (Throwable th) {
+        LOG.error("Error resuming finding objects", th);
+        throw AxisUtility.getFault(th);
       }
   }
-
-  /**
-   * <p>Gets a list of all method definitions for the specified object.</p>
-   *
-   * @param PID The persistent identifier for the digital object.
-   * @param asOfDateTime The versioning datetime stamp.
-   * @return An array of object method definitions.
-   * @throws java.rmi.RemoteException
-   */
-  /*
-  public fedora.server.types.gen.ObjectMethodsDef[] getObjectMethods(String PID,
-                                                                     String asOfDateTime)
-      throws java.rmi.RemoteException
-  {
-    Context context=getSoapContext();
-    try
-    {
-      fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
-          s_access.getObjectMethods(context,
-                                    PID,
-                                    DateUtility.convertStringToDate(asOfDateTime));
-      fedora.server.types.gen.ObjectMethodsDef[] genObjectMethodDefs =
-          TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
-          objectMethodDefs);
-      return genObjectMethodDefs;
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
-    }
-    return null;
-  }
-  */
-
 
   public fedora.server.types.gen.ObjectMethodsDef[] listMethods(String PID,
                                                                      String asOfDateTime)
       throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
       fedora.server.storage.types.ObjectMethodsDef[] objectMethodDefs =
@@ -304,25 +219,17 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectMethodsDefArrayToGenObjectMethodsDefArray(
           objectMethodDefs);
       return genObjectMethodDefs;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error listing methods", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   public fedora.server.types.gen.DatastreamDef[] listDatastreams(String PID, String asOfDateTime)
       throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
       fedora.server.storage.types.DatastreamDef[] datastreamDefs =
@@ -333,19 +240,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertDatastreamDefArrayToGenDatastreamDefArray(
           datastreamDefs);
       return genDatastreamDefs;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error listing datastreams", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   /**
@@ -362,6 +260,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
       fedora.server.access.ObjectProfile objectProfile =
@@ -372,19 +271,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
           TypeUtility.convertObjectProfileToGenObjectProfile(
           objectProfile);
       return genObjectProfile;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error getting object profile", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
   }
 
   /**
@@ -397,6 +287,7 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       describeRepository() throws java.rmi.RemoteException
   {
     Context context=ReadOnlyContext.getSoapContext();
+    assertInitialized();
     try
     {
       fedora.server.access.RepositoryInfo repositoryInfo =
@@ -404,40 +295,10 @@ public class FedoraAPIABindingSOAPHTTPImpl implements
       fedora.server.types.gen.RepositoryInfo genRepositoryInfo =
           TypeUtility.convertReposInfoToGenReposInfo(repositoryInfo);
       return genRepositoryInfo;
-    } catch (AuthzException a) {
-        throw AxisUtility.getFault(a);      
-    } catch (ServerException se)
-    {
-      logStackTrace(se);
-      AxisUtility.throwFault(se);
-    } catch (Exception e) {
-      logStackTrace(e);
-      AxisUtility.throwFault(
-          new ServerInitializationException(e.getClass().getName() + ": "
-          + e.getMessage()));
+    } catch (Throwable th) {
+      LOG.error("Error describing repository", th);
+      throw AxisUtility.getFault(th);
     }
-    return null;
-  }
-
-  private void logStackTrace(Exception e)
-  {
-    StackTraceElement[] ste = e.getStackTrace();
-    StringBuffer lines = new StringBuffer();
-    boolean skip = false;
-    for (int i = 0; i < ste.length; i++)
-    {
-      if (ste[i].toString().indexOf("FedoraAPIABindingSOAPHTTPSkeleton") != -1)
-      {
-        skip=true;
-      }
-      if (!skip)
-      {
-        lines.append(ste[i].toString());
-        lines.append("\n");
-      }
-    }
-    s_server.logWarning("Error carried up to API-A level: "
-                      + e.getClass().getName() + "\n" + lines.toString());
   }
 
   private void assertInitialized() throws java.rmi.RemoteException

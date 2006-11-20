@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import fedora.server.Logging;
+import org.apache.log4j.Logger;
+
 import fedora.server.config.DatastoreConfiguration;
 import fedora.server.config.ModuleConfiguration;
 import fedora.server.config.ServerConfiguration;
@@ -21,14 +22,17 @@ import fedora.server.errors.InconsistentTableSpecException;
 import fedora.server.storage.ConnectionPool;
 
 /**
- *
- * <p><b>Title:</b> SQLUtility.java</p>
- * <p><b>Description:</b> </p>
+ * SQL-related utility methods.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public abstract class SQLUtility {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            SQLUtility.class.getName());
+
     public static ConnectionPool getConnectionPool(ServerConfiguration fcfg) throws SQLException {
         ModuleConfiguration mcfg = fcfg.getModuleConfiguration("fedora.server.storage.ConnectionPoolManager");
         String defaultPool = mcfg.getParameter("defaultPoolName").getValue();
@@ -76,12 +80,12 @@ public abstract class SQLUtility {
     public static void replaceInto(Connection conn, String tableName,
             String[] columns, String[] values, String uniqueColumn)
             throws SQLException {
-        replaceInto(conn, tableName, columns, values, uniqueColumn, null, null);
+        replaceInto(conn, tableName, columns, values, uniqueColumn, null);
     }
 
     public static void replaceInto(Connection conn, String tableName,
             String[] columns, String[] values, String uniqueColumn,
-            boolean[] isNumeric, Logging log)
+            boolean[] isNumeric)
             throws SQLException {
         // figure out if we need to escape an apostrophe
         for (int i=0; i<values.length; i++) {
@@ -143,9 +147,7 @@ public abstract class SQLUtility {
         Statement st=null;
         try {
             st=conn.createStatement();
-            if (log!=null) {
-                log.logFiner("SQLUtility.executeUpdate, trying: " + u.toString());
-            }
+            LOG.debug("executeUpdate, trying: " + u.toString());
             if (st.executeUpdate(u.toString())==0) {
                 StringBuffer i=new StringBuffer(); // insert statement
                 i.append("INSERT INTO ");
@@ -176,9 +178,7 @@ public abstract class SQLUtility {
                     }
                 }
                 i.append(")");
-                if (log!=null) {
-                    log.logFiner("SQLUtility.executeUpdate, now trying: " + i.toString());
-                }
+                LOG.debug("executeUpdate, now trying: " + i.toString());
                 st.executeUpdate(i.toString());
             }
         } catch (SQLException sqle) {
@@ -229,7 +229,7 @@ public abstract class SQLUtility {
     }
 
     public static void createNonExistingTables(ConnectionPool cPool,
-            InputStream dbSpec, Logging log)
+            InputStream dbSpec)
             throws IOException, InconsistentTableSpecException, SQLException {
         List nonExisting=null;
         Connection conn=null;
@@ -252,7 +252,7 @@ public abstract class SQLUtility {
                         + "statement(s) because there is no DDLConverter "
                         + "registered for this connection type.");
                 }
-                SQLUtility.createTables(tcConn, nonExisting, log);
+                SQLUtility.createTables(tcConn, nonExisting);
             } finally {
                 if (tcConn!=null) {
                     cPool.free(tcConn);
@@ -301,13 +301,12 @@ public abstract class SQLUtility {
       return nonExisting;
     }
 
-    public static void createTables(TableCreatingConnection tcConn, List tSpecs,
-            Logging log)
+    public static void createTables(TableCreatingConnection tcConn, List tSpecs)
             throws SQLException {
         Iterator nii=tSpecs.iterator();
         while (nii.hasNext()) {
             TableSpec spec=(TableSpec) nii.next();
-            if (log.loggingConfig()) {
+            if (LOG.isDebugEnabled()) {
                 StringBuffer sqlCmds=new StringBuffer();
                 Iterator iter=tcConn.getDDLConverter().getDDL(spec).iterator();
                 while (iter.hasNext()) {
@@ -315,7 +314,7 @@ public abstract class SQLUtility {
                     sqlCmds.append((String) iter.next());
                     sqlCmds.append(";");
                 }
-                log.logConfig("Attempting to create nonexisting "
+                LOG.debug("Attempting to create nonexisting "
                         + "table '" + spec.getName() + "' with command(s): "
                         + sqlCmds.toString());
             }

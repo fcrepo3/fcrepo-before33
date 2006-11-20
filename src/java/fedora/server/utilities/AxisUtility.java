@@ -42,19 +42,7 @@ public abstract class AxisUtility {
 
     public static void throwFault(ServerException se)
             throws AxisFault {
-    	AxisFault fault =  AxisFault.makeFault(se);
-    	String[] details=se.getDetails();
-    	
-    	if (details.length > 0) {
-	        StringBuffer buf = new StringBuffer();
-	        for (int i = 0; i < details.length; i++) {
-	            buf.append("<detail>");
-	            buf.append(details[i]);
-	            buf.append("</detail>\n");
-	        }
-	    	fault.setFaultDetailString(buf.toString());
-    	}
-        throw fault;
+        throw getFault(se);
     }
 
     public static AxisFault getFault(ServerException se) {    	
@@ -88,7 +76,16 @@ public abstract class AxisUtility {
     }
 
     public static AxisFault getFault(Throwable th) {
-    	return AxisFault.makeFault(new Exception("Uncaught exception from Fedora Server", th));
+        if (th instanceof ServerException) {
+            if (th instanceof AuthzException) {
+                return getFault((AuthzException) th);
+            } else {
+                return getFault((ServerException) th);
+            }
+        } else {
+    	    return AxisFault.makeFault(
+    	            new Exception("Uncaught exception from Fedora Server", th));
+        }
     }
 
 }

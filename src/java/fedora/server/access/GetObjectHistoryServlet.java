@@ -21,6 +21,8 @@ import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
@@ -31,7 +33,6 @@ import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
 import fedora.server.errors.authorization.AuthzException;
 import fedora.server.errors.servletExceptionExtensions.RootException;
-import fedora.server.utilities.Logger;
 import fedora.server.utilities.StreamUtility;
 
 /**
@@ -67,6 +68,11 @@ import fedora.server.utilities.StreamUtility;
  * @version $Id$
  */
 public class GetObjectHistoryServlet extends HttpServlet {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            GetObjectHistoryServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** Content type for html. */
@@ -83,9 +89,6 @@ public class GetObjectHistoryServlet extends HttpServlet {
 
 	/** Instance of URLDecoder */
 	private URLDecoder decoder = new URLDecoder();
-
-	/** Instance of Logger to log servlet events in Fedora server log */
-	private static Logger logger = null;
 
 	/** HTTP protocol * */
 	private static String HTTP = "http";
@@ -129,9 +132,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 		}
 
 		PID = URIArray[5];
-		logger.logFinest("[GetObjectHistoryServlet] getObjectHistory Syntax "
-				+ "Encountered: " + request.getRequestURL().toString() + "?"
-				+ request.getQueryString());
+        LOG.debug("Servicing getObjectHistory request (PID=" + PID + ")");
 
 		// Check for xml encoding parameter; ignore any other parameters
 		Hashtable h_userParms = new Hashtable();
@@ -153,6 +154,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 			throw RootException.getServletException(ae, request, ACTION_LABEL,
 					new String[0]);
 		} catch (Throwable th) {
+            LOG.error("Error getting object history", th);
 			String message = "[GetObjectHistoryServlet] An error has occured in "
 					+ "accessing the Fedora Access Subsystem. The error was \" "
 					+ th.getClass().getName()
@@ -161,7 +163,6 @@ public class GetObjectHistoryServlet extends HttpServlet {
 					+ "  Input Request was: \""
 					+ request.getRequestURL().toString();
 			displayURLParms(PID, h_userParms, response, message);
-			logger.logWarning(message);
 		}
 	}
 
@@ -218,14 +219,13 @@ public class GetObjectHistoryServlet extends HttpServlet {
 
 			} else {
 				// getObjectHistory request returned nothing.
-				String message = "[GetObjectHistoryServlet] No object history returned.";
-				logger.logInfo(message);
+				LOG.error("No object history returned");
 			}
 		} catch (Throwable th) {
 			String message = "[GetObjectHistoryServlet] An error has occured. "
 					+ " The error was a \" " + th.getClass().getName()
 					+ " \". Reason: " + th.getMessage();
-			logger.logWarning(message);
+            LOG.error("Error getting object history", th);
 			throw new GeneralException(message);
 		} finally {
 			try {
@@ -318,15 +318,13 @@ public class GetObjectHistoryServlet extends HttpServlet {
 					pw.flush();
 					pw.close();
 				} catch (IOException ioe) {
-					System.err.println("WriteThread IOException: "
-							+ ioe.getMessage());
+					LOG.error("WriteThread error", ioe);
 				} finally {
 					try {
 						if (pw != null)
 							pw.close();
 					} catch (IOException ioe) {
-						System.err.println("WriteThread IOException: "
-								+ ioe.getMessage());
+					    LOG.error("WriteThread error", ioe);
 					}
 				}
 			}
@@ -367,7 +365,6 @@ public class GetObjectHistoryServlet extends HttpServlet {
 			fedoraServerHost = s_server.getParameter("fedoraServerHost");
 			s_access = (Access) s_server
 					.getModule("fedora.server.access.Access");
-			logger = new Logger();
 		} catch (InitializationException ie) {
 			throw new ServletException("Unable to get Fedora Server instance."
 					+ ie.getMessage());
@@ -443,8 +440,7 @@ public class GetObjectHistoryServlet extends HttpServlet {
 				html.append("<td> = </td>");
 				html.append("<td>" + parmValue + "</td>");
 				html.append("</tr>");
-				logger.logFinest("parmName: " + parmName + " parmValue: "
-						+ parmValue);
+                LOG.debug("parmName=" + parmName + ", parmValue=" + parmValue);
 			}
 		}
 		html.append("</table></center></font>");

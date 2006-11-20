@@ -10,9 +10,10 @@ import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Server;
 import fedora.server.errors.InitializationException;
-import fedora.server.utilities.Logger;
 
 /**
  * <p>
@@ -34,6 +35,10 @@ import fedora.server.utilities.Logger;
  */
 public class MethodParameterResolverServlet extends HttpServlet {
 
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            MethodParameterResolverServlet.class.getName());
+
 	private static final long serialVersionUID = 1L;
 
 	/** A string constant for the html MIME type */
@@ -45,14 +50,10 @@ public class MethodParameterResolverServlet extends HttpServlet {
 	/** An instance of the Fedora server. */
 	private static Server s_server = null;
 
-	/** Instance of Logger to log servlet events in Fedora server log */
-	private static Logger logger = null;
-
 	public void init() throws ServletException {
 		try {
 			s_server = Server.getInstance(new File(System
 					.getProperty("fedora.home")), false);
-			logger = new Logger();
 		} catch (InitializationException ie) {
 			throw new ServletException(
 					"Unable to get Fedora Server instance. -- "
@@ -141,7 +142,7 @@ public class MethodParameterResolverServlet extends HttpServlet {
 					+ " -- bDefPID: " + bDefPID + " -- methodName: "
 					+ methodName + " -- methodParms: " + methodParms.toString()
 					+ "\".  ";
-			logger.logWarning(message);
+            LOG.error(message);
 			response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
 					message);

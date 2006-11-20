@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.errors.ConnectionPoolNotFoundException;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.Module;
@@ -25,6 +27,10 @@ import fedora.server.utilities.DDLConverter;
 public class ConnectionPoolManagerImpl extends Module
     implements ConnectionPoolManager
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+          ConnectionPoolManagerImpl.class.getName());
 
   private static Hashtable h_ConnectionPools = new Hashtable();
   private static String defaultPoolName = null;
@@ -81,7 +87,7 @@ public class ConnectionPoolManagerImpl extends Module
         throw new ModuleInitializationException("Default Connection Pool "
             + "Name Not Specified", getRole());
       }
-      s_server.logInfo("DefaultPoolName: "+defaultPoolName);
+      LOG.info("DefaultPoolName: "+defaultPoolName);
       String poolList = this.getParameter("poolNames");
 
       // Pool names should be comma delimited
@@ -90,71 +96,71 @@ public class ConnectionPoolManagerImpl extends Module
       // Initialize each connection pool
       for (int i=0; i<poolNames.length; i++)
       {
-        s_server.logInfo("poolName["+i+"] = "+poolNames[i]);
+        LOG.info("poolName["+i+"] = "+poolNames[i]);
         jdbcDriverClass = s_server.getDatastoreConfig(poolNames[i]).
                  getParameter("jdbcDriverClass");
-        s_server.logInfo("JDBC driver: "+jdbcDriverClass);
+        LOG.info("JDBC driver: "+jdbcDriverClass);
         dbUsername = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbUsername");
-        s_server.logInfo("Database username: "+dbUsername);
+        LOG.info("Database username: "+dbUsername);
         dbPassword = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbPassword");
-        s_server.logInfo("Database password: "+dbPassword);
+        LOG.info("Database password: "+dbPassword);
         jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("jdbcURL");
-        s_server.logInfo("JDBC connection URL: "+jdbcURL);
+        LOG.info("JDBC connection URL: "+jdbcURL);
         Integer i3 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxActive"));
         maxActive = i3.intValue();
-        s_server.logInfo("Maximum active connections: "+maxActive);        
+        LOG.info("Maximum active connections: "+maxActive);        
         Integer i4 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxIdle"));
         maxIdle = i4.intValue();
-        s_server.logInfo("Maximum idle connections: "+maxActive);
+        LOG.info("Maximum idle connections: "+maxActive);
         Integer i5 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxWait"));
         maxWait = i5.intValue();
-        s_server.logInfo("Maximum wait time: "+maxWait);
+        LOG.info("Maximum wait time: "+maxWait);
         Integer i6 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("minIdle"));
         minIdle = i6.intValue();
-        s_server.logInfo("Minimum idle time: "+minIdle);
+        LOG.info("Minimum idle time: "+minIdle);
         Integer i7 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("numTestsPerEvictionRun"));
         numTestsPerEvictionRun = i7.intValue();
-        s_server.logInfo("Number of tests per eviction run: "+numTestsPerEvictionRun);        
+        LOG.info("Number of tests per eviction run: "+numTestsPerEvictionRun);        
         Long l1 = new Long(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("minEvictableIdleTimeMillis"));
         minEvictableIdleTimeMillis = l1.longValue();
-        s_server.logInfo("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
+        LOG.info("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
         Long l2 = new Long(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("timeBetweenEvictionRunsMillis"));
         timeBetweenEvictionRunsMillis = l2.longValue();
-        s_server.logInfo("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
+        LOG.info("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
         Boolean b1 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testOnBorrow"));
         testOnBorrow = b1.booleanValue();
-        s_server.logInfo("Test on borrow: "+testOnBorrow);        
+        LOG.info("Test on borrow: "+testOnBorrow);        
         Boolean b2 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testOnReturn"));
         testOnReturn = b2.booleanValue();
-        s_server.logInfo("Test on return: "+testOnReturn);
+        LOG.info("Test on return: "+testOnReturn);
         Boolean b3 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testWhileIdle"));
         testWhileIdle = b3.booleanValue();
-        s_server.logInfo("Test while idle: "+testWhileIdle);
+        LOG.info("Test while idle: "+testWhileIdle);
         Byte b4 = new Byte(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("whenExhaustedAction"));
         whenExhaustedAction = b4.byteValue();
         if (whenExhaustedAction != 0 && whenExhaustedAction != 1 && whenExhaustedAction != 2) {
-          s_server.logInfo("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
+          LOG.info("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
           throw new ModuleInitializationException("A connection pool could "
                   + "not be instantiated. The underlying error was an "
                   + "invalid value for the whenExhaustedAction parameter."
                   + "Valid values are 0 - (fail), 1 - (block), or 2 - (grow). Value specified"
                   + "was \"" + whenExhaustedAction + "\".", getRole());          
         }
-        s_server.logInfo("whenExhaustedAction: "+whenExhaustedAction);        
+        LOG.info("whenExhaustedAction: "+whenExhaustedAction);        
         
 
         // If a ddlConverter has been specified for the pool,
@@ -202,12 +208,12 @@ public class ConnectionPoolManagerImpl extends Module
               testOnReturn,
               testWhileIdle,
               whenExhaustedAction);
-          s_server.logInfo("Initialized Pool: "+connectionPool);
+          LOG.info("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
-          s_server.logInfo("putPoolInHash: "+h_ConnectionPools.size());
+          LOG.info("putPoolInHash: "+h_ConnectionPools.size());
         } catch (SQLException sqle)
         {
-          s_server.logWarning("Unable to initialize connection pool: "
+          LOG.error("Unable to initialize connection pool: "
                               + poolNames[i] + ": " + sqle.getMessage());
         }
       }
@@ -240,7 +246,6 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(poolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(poolName);
-        //this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: pool was never initialized or name could not be found
@@ -275,7 +280,6 @@ public class ConnectionPoolManagerImpl extends Module
       if (h_ConnectionPools.containsKey(defaultPoolName))
       {
         connectionPool = (ConnectionPool)h_ConnectionPools.get(defaultPoolName);
-        //this.getServer().logInfo("PoolFound: "+connectionPool);
       } else
       {
         // Error: default pool was never initialized or could not be found

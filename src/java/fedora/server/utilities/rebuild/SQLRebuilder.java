@@ -16,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -50,6 +52,10 @@ import fedora.server.utilities.TableSpec;
  * @@version $Id$
  */
 public class SQLRebuilder implements Rebuilder {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            Rebuilder.class.getName());
 
     private File m_serverDir;
     private ServerConfiguration m_serverConfig;
@@ -92,7 +98,7 @@ public class SQLRebuilder implements Rebuilder {
     /**
      * Validate the provided options and perform any necessary startup tasks.
      */
-    public void start(Map options) throws NumberFormatException 
+    public void start(Map options) throws Exception 
     {
         long startupDelay = 0;
 
@@ -137,18 +143,8 @@ public class SQLRebuilder implements Rebuilder {
         } 
         catch (InitializationException ie)
         {
-            System.err.println(ie.getMessage());
-            System.err.flush();
-        }
-        catch (ConnectionPoolNotFoundException ie)
-        {
-            System.err.println(ie.getMessage());
-            System.err.flush();
-        }        
-        catch (Exception e)
-        {
-            System.err.println(e.getMessage());
-            System.err.flush();
+            LOG.error("Error initializing", ie);
+            throw ie;
         }              
     }
     
@@ -312,7 +308,7 @@ public class SQLRebuilder implements Rebuilder {
         PIDGenerator pidGenerator=(PIDGenerator) s_server.getModule("fedora.server.management.PIDGenerator");
        
         // SET OBJECT PROPERTIES:
-        s_server.logFinest("Rebuild: Setting object/component states and create dates if unset...");
+        LOG.debug("Rebuild: Setting object/component states and create dates if unset...");
         // set object state to "A" (Active) if not already set
         if (obj.getState()==null || obj.getState().equals("")) {
             obj.setState("A");
@@ -325,7 +321,7 @@ public class SQLRebuilder implements Rebuilder {
         obj.setLastModDate(nowUTC);
         
         // SET OBJECT PROPERTIES:
-        s_server.logFinest("Rebuild: Setting object/component states and create dates if unset...");
+        LOG.debug("Rebuild: Setting object/component states and create dates if unset...");
         // set object state to "A" (Active) if not already set
         if (obj.getState()==null || obj.getState().equals("")) {
             obj.setState("A");
@@ -372,7 +368,7 @@ public class SQLRebuilder implements Rebuilder {
         
         // GET DIGITAL OBJECT WRITER:
         // get an object writer configured with the DEFAULT export format
-        s_server.logFinest("INGEST: Instantiating a SimpleDOWriter...");
+        LOG.debug("INGEST: Instantiating a SimpleDOWriter...");
         try {
             DOWriter w = manager.getWriter(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
         }
@@ -382,7 +378,7 @@ public class SQLRebuilder implements Rebuilder {
 
         // PID GENERATION:
         // have the system generate a PID if one was not provided
-        s_server.logFinest("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
+        LOG.debug("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
         try {
             pidGenerator.neverGeneratePID(obj.getPid());
         } 
@@ -405,7 +401,7 @@ public class SQLRebuilder implements Rebuilder {
         
         // REPLICATE:
         // add to replication jobs table and do replication to db
-        s_server.logFinest("COMMIT: Adding replication job...");
+        LOG.debug("COMMIT: Adding replication job...");
         try {
             addReplicationJob(obj.getPid(), false);
         }
@@ -416,26 +412,26 @@ public class SQLRebuilder implements Rebuilder {
         try {
             if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) 
             {
-                s_server.logInfo("COMMIT: Attempting replication as bdef object: " + obj.getPid());
+                LOG.info("COMMIT: Attempting replication as bdef object: " + obj.getPid());
                 BDefReader reader = manager.getBDefReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
-                s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
+                LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             } 
             else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) 
             {
-                s_server.logInfo("COMMIT: Attempting replication as bmech object: " + obj.getPid());
+                LOG.info("COMMIT: Attempting replication as bmech object: " + obj.getPid());
                 BMechReader reader = manager.getBMechReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
-                s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
+                LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             } 
             else 
             {
-                s_server.logInfo("COMMIT: Attempting replication as normal object: " + obj.getPid());
+                LOG.info("COMMIT: Attempting replication as normal object: " + obj.getPid());
                 DOReader reader = manager.getReader(Server.USE_DEFINITIVE_STORE, m_context, obj.getPid());
                 replicator.replicate(reader);
-                s_server.logInfo("COMMIT: Updating FieldSearch indexes...");
+                LOG.info("COMMIT: Updating FieldSearch indexes...");
                 fieldSearch.update(reader);
             }
             // FIXME: also remove from temp storage if this is successful
@@ -445,13 +441,11 @@ public class SQLRebuilder implements Rebuilder {
         {
           System.out.println("Error while replicating: " + se.getClass().getName() + ": " + se.getMessage());
           se.printStackTrace();
-    //        throw se;
         } 
         catch (Throwable th) 
         {
           System.out.println("Error while replicating: " + th.getClass().getName() + ": " + th.getMessage());
           th.printStackTrace();
-    //        throw new GeneralException("Replicator returned error: (" + th.getClass().getName() + ") - " + th.getMessage());
         }
         System.out.println(m_echoString + ": " + obj.getPid());
     }
@@ -575,7 +569,7 @@ public class SQLRebuilder implements Rebuilder {
         try {
             // REGISTRY:
             // update systemVersion in doRegistry (add one)
-            s_server.logFinest("COMMIT: Updating registry...");
+            LOG.debug("COMMIT: Updating registry...");
     //                conn=m_connectionPool.getConnection();
             String query="SELECT systemVersion "
                            + "FROM doRegistry "

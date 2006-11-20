@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.HashMap;
 
+import org.apache.log4j.Logger;
 
 // TrAX classes
 import javax.xml.transform.stream.StreamSource;
@@ -17,23 +18,24 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.*;
 
-
 /**
- *
- * <p><b>Title:</b> DOValidatorSchematron.java</p>
- * <p><b>Description:</b> Schematron validation for fedora objects encoded in
+ * Schematron validation for fedora objects encoded in
  * schematron schema for Fedora.  The schematron schema (metsExtRules1-0.xml)
  * expresses a set of rules using XPATH that enable us to check for things
  * that are either not expressed in the METS XML schema, or that cannot be
  * expressed with XML Schema language.  Generally we will look for things
  * that are requirements of Fedora objects, which are not requirements for
- * METS objects in general.</p>
+ * METS objects in general.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
 public class DOValidatorSchematron
 {
+
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        DOValidatorSchematron.class.getName());
 
   private StreamSource rulesSource;
   private StreamSource preprocessorSource;
@@ -102,14 +104,8 @@ public class DOValidatorSchematron
       vtransformer.transform(objectSource, validationResult);
       result = new DOValidatorSchematronResult(validationResult);
     }
-    catch(TransformerException e)
-    {
-       System.err.println("Schematron validation: " + e.getMessage()) ;
-       throw new ObjectValidityException(e.getMessage());
-    }
-    catch(Exception e)
-    {
-       System.err.println("Schematron validation: " + e.getMessage()) ;
+    catch (Exception e) {
+       LOG.error("Schematron validation failed", e);
        throw new ObjectValidityException(e.getMessage());
     }
 
@@ -119,12 +115,10 @@ public class DOValidatorSchematron
       try
       {
         msg = result.getXMLResult();
-        System.err.println(msg);
       }
       catch(Exception e)
       {
-         System.err.println("Schematron validation: " + e.getMessage()) ;
-         throw new ObjectValidityException(e.getMessage());
+         LOG.warn("Error getting XML result of schematron validation failure", e);
       }
       throw new ObjectValidityException(msg);
     }
@@ -138,7 +132,7 @@ public class DOValidatorSchematron
    * @param fedoraschemaPath the URL of the Schematron schema
    * @param phase the phase in the fedora object lifecycle to which
    *                      validation should pertain.  (Currently options are
-   *                      "ingest" and "store"
+   *                      "ingest" and "store")
    * @return StreamSource
    * @throws ObjectValidityException
    */
@@ -190,7 +184,7 @@ public class DOValidatorSchematron
     }
     catch(TransformerException e)
     {
-       System.err.println("Schematron validation: " + e.getMessage()) ;
+       LOG.error("Schematron validation failed", e);
        throw new ObjectValidityException(e.getMessage());
     }
     return out;

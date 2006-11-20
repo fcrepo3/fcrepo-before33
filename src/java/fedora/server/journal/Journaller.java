@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -33,6 +35,11 @@ import fedora.server.storage.types.Property;
  */
 
 public class Journaller extends Module implements Management, JournalConstants {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            Journaller.class.getName());
+
     private JournalWorker worker;
 
     private boolean inRecoveryMode;
@@ -62,7 +69,7 @@ public class Journaller extends Module implements Management, JournalConstants {
             worker = new JournalCreator(parameters, getRole(),
                     this.serverInterface);
         }
-        logInfo("Journal worker module is: " + worker.toString());
+        LOG.info("Journal worker module is: " + worker.toString());
     }
 
     /**
@@ -110,7 +117,7 @@ public class Journaller extends Module implements Management, JournalConstants {
      */
     private void parseParameters(Map parameters)
             throws ModuleInitializationException {
-        logInfo("Parameters: " + parameters);
+        LOG.info("Parameters: " + parameters);
 
         String mode = (String) parameters.get(PARAMETER_JOURNAL_MODE);
         if (mode == null) {

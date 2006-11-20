@@ -311,7 +311,6 @@ public class Rebuild implements Constants {
 			if (c == 0) {
 				throw new IOException("Unrecognized server-profile: " + profile);
 			}
-			// System.out.println("Set " + c + " profile-specific values.");
 		}
 		return serverConfig;
 	}
@@ -324,8 +323,6 @@ public class Rebuild implements Constants {
 			String profileValue = (String) param.getProfileValues()
 					.get(profile);
 			if (profileValue != null) {
-				// System.out.println(param.getName() + " was '" +
-				// param.getValue() + "', now '" + profileValue + "'.");
 				param.setValue(profileValue);
 				c++;
 			}

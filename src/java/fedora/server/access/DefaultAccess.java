@@ -16,6 +16,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.URLDecoder;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.Constants;
 import fedora.server.Context;
 import fedora.server.Module;
@@ -60,6 +62,10 @@ import fedora.server.utilities.DateUtility;
  */
 public class DefaultAccess extends Module implements Access
 {
+
+  /** Logger for this class. */
+  private final static Logger LOG = Logger.getLogger(
+        Access.class.getName());
 
   /** Current DOManager of the Fedora server. */
   private DOManager m_manager;
@@ -150,33 +156,6 @@ public class DefaultAccess extends Module implements Access
 
   }
 
-  /*
-  public void checkState(Context context, String objectType, String state, String PID)
-      throws ServerException
-  {
-    PID = Server.getPID(PID).toString();
-    // Check Object State
-    if ( state.equalsIgnoreCase("D")  &&
-         ( context.get("canUseDeletedObject")==null
-           || (!context.get("canUseDeletedObject").equals("true")) )
-      )
-    {
-      throw new GeneralException("The requested "+objectType+" object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged for DELETION "
-          + "by the repository administrator. ");
-
-    } else if ( state.equalsIgnoreCase("I")  &&
-                ( context.get("canUseInactiveObject")==null
-                  || (!context.get("canUseInactiveObject").equals("true")) )
-              )
-    {
-      throw new GeneralException("The requested "+objectType+" object \""+PID+"\" is no "
-          + "longer available for dissemination. It has been flagged as INACTIVE "
-          + "by the repository administrator. ");
-    }
-  }
-*/
-  
   private static final Hashtable accessActionAttributes = new Hashtable();
   static {
   	accessActionAttributes.put("api","apia");
@@ -219,8 +198,7 @@ public class DefaultAccess extends Module implements Access
     }
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip DynamicDisseminator: "
-        + interval + " milliseconds.");
+    LOG.debug("Roundtrip DynamicDisseminator: " + interval + " milliseconds.");
 
     String authzAux_objState = reader.GetObjectState();
     
@@ -259,8 +237,7 @@ public class DefaultAccess extends Module implements Access
     }
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip Looping Diss: "
-              + interval + " milliseconds.");
+    LOG.debug("Roundtrip Looping Diss: " + interval + " milliseconds.");
 
     // Check bmech object state
     String authzAux_bmechState = bmechreader.GetObjectState();
@@ -290,8 +267,7 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip Get/Validate User Parms: "
-        + interval + " milliseconds.");
+    LOG.debug("Roundtrip Get/Validate User Parms: " + interval + " milliseconds.");
 
     startTime = new Date().getTime();
     // SDP: GET INFO FROM BMECH READER:
@@ -302,7 +278,7 @@ public class DefaultAccess extends Module implements Access
     {
       if (!defaultMethodParms[i].parmType.equals(MethodParmDef.DATASTREAM_INPUT)) {
           if (!h_userParms.containsKey(defaultMethodParms[i].parmName)) {
-            this.getServer().logFinest("addedDefaultName: "+defaultMethodParms[i].parmName);
+            LOG.debug("addedDefaultName: "+defaultMethodParms[i].parmName);
             String pdv=defaultMethodParms[i].parmDefaultValue;
             try {
                 // here we make sure the PID is decoded so that encoding
@@ -313,7 +289,7 @@ public class DefaultAccess extends Module implements Access
                     pdv="info:fedora/" + URLDecoder.decode(PID, "UTF-8");
                 }
             } catch (UnsupportedEncodingException uee) { }
-            this.getServer().logFinest("addedDefaultValue: "+pdv);
+            LOG.debug("addedDefaultValue: "+pdv);
             h_userParms.put(defaultMethodParms[i].parmName, pdv);
           }
       }
@@ -321,8 +297,7 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip Get BMech Parms: "
-        + interval + " milliseconds.");
+    LOG.debug("Roundtrip Get BMech Parms: " + interval + " milliseconds.");
 
     startTime = new Date().getTime();
     // Get dissemination binding info.
@@ -341,13 +316,11 @@ public class DefaultAccess extends Module implements Access
 
     stopTime = new Date().getTime();
     interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip Assemble Dissemination: "
-        + interval + " milliseconds.");
+    LOG.debug("Roundtrip Assemble Dissemination: " + interval + " milliseconds.");
 
     stopTime = new Date().getTime();
     interval = stopTime - initStartTime;
-    logFiner("[DefaultAccess] Roundtrip GetDissemination: "
-              + interval + " milliseconds.");
+    LOG.debug("Roundtrip GetDissemination: " + interval + " milliseconds.");
     return dissemination;
   }
 
@@ -364,8 +337,7 @@ public class DefaultAccess extends Module implements Access
         reader.listMethods(asOfDateTime);
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip listMethods: "
-              + interval + " milliseconds.");
+    LOG.debug("Roundtrip listMethods: " + interval + " milliseconds.");
 
     // DYNAMIC!! Grab any dynamic method definitions and merge them with
     // the statically bound method definitions
@@ -405,8 +377,7 @@ public class DefaultAccess extends Module implements Access
     
     long stopTime = new Date().getTime();
     long interval = stopTime - startTime;
-    logFiner("[DefaultAccess] Roundtrip listDatastreams: "
-            + interval + " milliseconds.");
+    LOG.debug("Roundtrip listDatastreams: " + interval + " milliseconds.");
     return dsDefs;
   }
 
@@ -614,7 +585,7 @@ public class DefaultAccess extends Module implements Access
       {
         methodParm = methodParms[i];
         h_validParms.put(methodParm.parmName,methodParm);
-        this.getServer().logFinest("methodParms[" + i + "]: "
+        LOG.debug("methodParms[" + i + "]: "
             + methodParms[i].parmName
             + "\nlabel: " + methodParms[i].parmLabel
             + "\ndefault: " + methodParms[i].parmDefaultValue
@@ -622,8 +593,7 @@ public class DefaultAccess extends Module implements Access
             + "\ntype: " + methodParms[i].parmType);
         for (int j=0; j<methodParms[i].parmDomainValues.length; j++)
         {
-          this.getServer().logFinest("domainValues: "
-              + methodParms[i].parmDomainValues[j]);
+          LOG.debug("domainValue: " + methodParms[i].parmDomainValues[j]);
         }
       }
     }
@@ -673,7 +643,7 @@ public class DefaultAccess extends Module implements Access
               // for this parameter and the user has supplied no value for
               // the parameter. The value of the empty string will be used
               // as the value of the parameter.
-              this.getServer().logWarning("The method parameter \""
+              LOG.warn("The method parameter \""
                   + methodParm.parmName
                   + "\" has no default value and no "
                   + "value was specified by the user.  "
@@ -809,24 +779,13 @@ public class DefaultAccess extends Module implements Access
       hostIP = InetAddress.getLocalHost();
     } catch (UnknownHostException uhe)
     {
-      System.err.println("[DefaultAccess] was unable to "
-          + "resolve the IP address of the Fedora Server: "
-          + " The underlying error was a "
-          + uhe.getClass().getName() + "The message "
-          + "was \"" + uhe.getMessage() + "\"");
+      LOG.error("Unable to resolve host of Fedora server", uhe);
     }
-    
-    // SDP: Comment out configured port.  
-    // Now obtained from context object of incoming request.
-    // String fedoraServerPort = getServer().getParameter("fedoraServerPort");
     
     String fedoraServerHost = getServer().getParameter("fedoraServerHost");
     if (fedoraServerHost==null || fedoraServerHost.equals("")) {
         fedoraServerHost=hostIP.getHostName();
     }
-    // SDP: repository base URL now constructed using protocol and port
-    // from context object for incoming request.
-    // reposBaseURL = "http://" + fedoraServerHost + ":" + fedoraServerPort;
 	reposBaseURL = protocol + "://" + fedoraServerHost + ":" + port;
     return reposBaseURL;
   }
@@ -880,14 +839,13 @@ public class DefaultAccess extends Module implements Access
                 + "The error was a \"" + uee.getClass().getName() + "\"  . The "
                 + "Reason was \"" + uee.getMessage() + "\"  . String value: "
                 + drc.DSLocation + "  . ";
-            logFinest(message);
+            LOG.error(message);
             throw new GeneralException(message);
           }          
       }
       long stopTime = new Date().getTime();
       long interval = stopTime - startTime;
-      logFiner("[DefaultAccess] Roundtrip getDatastreamDissemination: "
-              + interval + " milliseconds.");      
+      LOG.debug("Roundtrip getDatastreamDissemination: " + interval + " milliseconds.");      
       return mimeTypedStream;
   }
 }

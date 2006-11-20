@@ -20,19 +20,13 @@ import fedora.server.utilities.SQLUtility;
 import fedora.server.validation.DOValidator;
 
 /**
- *
- * <p><b>Title:</b> DefaultDOManager.java</p>
- * <p><b>Description:</b> Manages the reading and writing of digital objects
- * by instantiating an appropriate object reader or writer.  Also, manages the
- * object ingest process and the object replication process.
- * </p>
+ * DefaultDOManager subclass for the rebuilder.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class RebuildDOManager  extends DefaultDOManager 
 {
-    
     
     /**
      * @param moduleParameters
@@ -92,15 +86,9 @@ public class RebuildDOManager  extends DefaultDOManager
             throw new ModuleInitializationException(
                     "DOValidator not loaded.", getRole());
         }
-        // get ref to ResourceIndex
+        // get ref to ResourceIndex (ok if it's not loaded)
         m_resourceIndex=(ResourceIndex) getServer().
                 getModule("fedora.server.resourceIndex.ResourceIndex");
-        if (m_resourceIndex==null) 
-        {
-        //    logFinest("ResourceIndex not loaded");
-        //    throw new ModuleInitializationException(
-        //            "ResourceIndex not loaded", getRole());
-        }
 
         // now get the connectionpool
         ConnectionPoolManager cpm=(ConnectionPoolManager) getServer().
@@ -127,7 +115,7 @@ public class RebuildDOManager  extends DefaultDOManager
                 throw new IOException("Cannot find required "
                     + "resource: " + dbSpec);
             }
-            SQLUtility.createNonExistingTables(m_connectionPool, specIn, this);
+            SQLUtility.createNonExistingTables(m_connectionPool, specIn);
         } catch (Exception e) {
             throw new ModuleInitializationException("Error while attempting to "
                     + "check for and create non-existing table(s): "
@@ -138,7 +126,6 @@ public class RebuildDOManager  extends DefaultDOManager
         m_permanentStore=(ILowlevelStorage) getServer().
         		getModule("fedora.server.storage.lowlevel.ILowlevelStorage");
         if (m_permanentStore==null) {
-            logFinest("LowlevelStorage not loaded");
             throw new ModuleInitializationException(
                     "LowlevelStorage not loaded", getRole());
         }

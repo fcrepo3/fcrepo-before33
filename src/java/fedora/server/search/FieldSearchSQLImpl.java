@@ -6,6 +6,8 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
@@ -28,10 +30,8 @@ import fedora.server.utilities.SQLUtility;
 import fedora.server.utilities.DCFields;
 
 /**
- *
- * <p><b>Title:</b> FieldSearchSQLImpl.java</p>
- * <p><b>Description:</b> A FieldSearch implementation that uses a relational
- * database as a backend.</p>
+ * A FieldSearch implementation that uses a relational
+ * database as a backend.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -39,6 +39,10 @@ import fedora.server.utilities.DCFields;
 public class FieldSearchSQLImpl
         extends StdoutLogging
         implements FieldSearch {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FieldSearchSQLImpl.class.getName());
 
     private ConnectionPool m_cPool;
     private RepositoryReader m_repoReader;
@@ -72,17 +76,17 @@ public class FieldSearchSQLImpl
     public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader,
             int maxResults, int maxSecondsPerSession, Logging logTarget) {
         super(logTarget);
-        logFinest("Entering constructor");
+        LOG.debug("Entering constructor");
         m_cPool=cPool;
         m_repoReader=repoReader;
         m_maxResults=maxResults;
         m_maxSecondsPerSession=maxSecondsPerSession;
-        logFinest("Exiting constructor");
+        LOG.debug("Exiting constructor");
     }
 
     public void update(DOReader reader)
             throws ServerException {
-        logFinest("Entering update(DOReader)");
+        LOG.debug("Entering update(DOReader)");
         String pid=reader.GetObjectPID();
         Connection conn=null;
         Statement st=null;
@@ -140,9 +144,9 @@ public class FieldSearchSQLImpl
                         + " has a DC datastream, but it's not inline XML.");
             }
             if (dcmd==null) {
-                logFine("Did not have DC Metadata datastream for this object.");
+                LOG.debug("Did not have DC Metadata datastream for this object.");
             } else {
-                logFine("Had DC Metadata datastream for this object.");
+                LOG.debug("Had DC Metadata datastream for this object.");
                 InputStream in=dcmd.getContentStream();
                 DCFields dc=new DCFields(in);
                 dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
@@ -187,9 +191,9 @@ public class FieldSearchSQLImpl
                 dbRowValues[24]=getDbValue(dc.coverages());
                 dbRowValues[25]=getDbValue(dc.rights());
             }
-            logFine("Formulating SQL and inserting/updating...");
+            LOG.debug("Formulating SQL and inserting/updating...");
             SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
-                    dbRowValues, "pid", s_dbColumnNumeric, this);
+                    dbRowValues, "pid", s_dbColumnNumeric);
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of "
                     + "object with pid '" + pid + ": " + sqle.getMessage());
@@ -202,14 +206,14 @@ public class FieldSearchSQLImpl
                         + "while attempting update of object" + sqle2.getMessage());
             } finally {
                 st=null;
-                logFinest("Exiting update(DOReader)");
+                LOG.debug("Exiting update(DOReader)");
             }
         }
     }
 
     public boolean delete(String pid)
             throws ServerException {
-        logFinest("Entering delete(String)");
+        LOG.debug("Entering delete(String)");
         Connection conn=null;
         Statement st=null;
         try {
@@ -231,7 +235,7 @@ public class FieldSearchSQLImpl
                         + "while attempting update of object" + sqle2.getMessage());
             } finally {
                 st=null;
-                logFinest("Exiting delete(String)");
+                LOG.debug("Exiting delete(String)");
             }
         }
     }
@@ -288,7 +292,7 @@ public class FieldSearchSQLImpl
         while (iter.hasNext()) {
             FieldSearchResultSQLImpl r=(FieldSearchResultSQLImpl) iter.next();
             if (r.isExpired()) {
-                logFine("listSession " + r.getToken() + " expired; will forget it.");
+                LOG.debug("listSession " + r.getToken() + " expired; will forget it.");
                 toRemove.add(r.getToken());
             }
         }

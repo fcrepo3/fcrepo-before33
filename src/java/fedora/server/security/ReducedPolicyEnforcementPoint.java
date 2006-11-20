@@ -1,16 +1,19 @@
 package fedora.server.security;
-import java.util.Iterator;
+
 import java.io.File;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Set;
-import javax.servlet.ServletContext;
-import com.sun.xacml.attr.StringAttribute;
+
 import java.util.ArrayList; 
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
+
+import javax.servlet.ServletContext;
+
+import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.finder.AttributeFinder;
 import com.sun.xacml.PDP;
 import com.sun.xacml.PDPConfig;
@@ -21,22 +24,19 @@ import com.sun.xacml.ctx.Result;
 import com.sun.xacml.ctx.Subject;
 import com.sun.xacml.finder.PolicyFinder;
 
-
+import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.server.Context;
-/*
-import fedora.server.errors.AuthzOperationalException;
-import fedora.server.errors.NotAuthorizedException;
-import fedora.server.errors.GeneralException;
-import fedora.server.storage.DOManager;
-*/
 
 /**
  * @author wdn5e@virginia.edu
  */
-
 public class ReducedPolicyEnforcementPoint {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ReducedPolicyEnforcementPoint.class.getName());
 	
 	public static final String SUBACTION_SEPARATOR = "//"; 
 	public static final String SUBRESOURCE_SEPARATOR = "//";
@@ -81,9 +81,9 @@ public class ReducedPolicyEnforcementPoint {
 			contextUri = new URI(Constants.ACTION.CONTEXT_ID.uri);
 			pidUri = new URI(Constants.OBJECT.PID.uri);
 			namespaceUri = new URI(Constants.OBJECT.NAMESPACE.uri);
-			log("all uris set, no throws");
+			LOG.debug("all uris set, no throws");
 		} catch (URISyntaxException e) {
-			log("***throw in XACMLPep constructor");
+            LOG.error("Bad URI syntax", e);
 		} finally {
 			XACML_SUBJECT_ID_URI = xacmlSubjectIdUri;
 			XACML_ACTION_ID_URI = xacmlActionIdUri;
@@ -102,7 +102,7 @@ public class ReducedPolicyEnforcementPoint {
 			singleton = new ReducedPolicyEnforcementPoint();
 		}
 		count++;
-		slog ("***another use (" + count + ") of XACMLPep singleton");
+		LOG.debug("***another use (" + count + ") of XACMLPep singleton");
 		return singleton;
 	}
 
@@ -120,25 +120,20 @@ public class ReducedPolicyEnforcementPoint {
 	
 	public void initPep(String combiningAlgorithm, File surrogatePolicyDirectory, boolean validateSurrogatePolicies, String schemaPath) 
 	throws Exception {
-		log ("***initReducedPep()");
+		LOG.debug("***initReducedPep()");
 		
 		destroy();
 
 		AttributeFinder attrFinder = new AttributeFinder();
 		List<ContextAttributeFinderModule> attrModules = new ArrayList<ContextAttributeFinderModule>();
-log("about to set contextAttributeFinder xxx");
-try {
+        LOG.debug("about to set contextAttributeFinder xxx");
+        try {
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
-		log("about to set contextAttributeFinder after");
-} catch(Throwable t) {
-	log ("***caught throwable in r initPep");	
-	log(t.getMessage());
-	if (t.getCause() != null) {
-		log(t.getCause().getMessage());		
-	}
-	log ("***that was it");	
-}
-log("just set contextAttributeFinder=" + contextAttributeFinder);
+		LOG.debug("about to set contextAttributeFinder after");
+        } catch(Throwable t) {
+        	LOG.error("***caught throwable in r initPep", t);
+        }
+        LOG.debug("just set contextAttributeFinder=" + contextAttributeFinder);
 		contextAttributeFinder.setServletContext(servletContext);
 		attrModules.add(contextAttributeFinder);		
 	
@@ -146,54 +141,45 @@ log("just set contextAttributeFinder=" + contextAttributeFinder);
 		//==>>attrModules.add(resourceAttributeModule);
 
 		attrFinder.setModules(attrModules);		
-log("before building policy finder");
+        LOG.debug("before building policy finder");
 		PolicyFinder policyFinder = new PolicyFinder();
-		log("just constructed policy finder");
+		LOG.debug("just constructed policy finder");
 		Set<ReducedPolicyFinderModule> policyModules = new HashSet<ReducedPolicyFinderModule>();
-		log("just constructed policy module hashset"); 
+		LOG.debug("just constructed policy module hashset"); 
 		ReducedPolicyFinderModule reducedPolicyModule = null;
-		//try {
-			log("***before constucting fedora policy finder module");
-			reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory, validateSurrogatePolicies, schemaPath);
-			log("after constucting fedora policy finder module");
-			/*
-		} catch (Exception e) {
-log("***debugging CombinedPolicyModule");
-			e.printStackTrace();
-		}*/
-		log("before adding fedora policy finder module to policy finder hashset");
+    	LOG.debug("***before constucting fedora policy finder module");
+		reducedPolicyModule = new ReducedPolicyFinderModule(combiningAlgorithm, surrogatePolicyDirectory, validateSurrogatePolicies, schemaPath);
+		LOG.debug("after constucting fedora policy finder module");
+		LOG.debug("before adding fedora policy finder module to policy finder hashset");
 		policyModules.add(reducedPolicyModule);
-		log("after adding fedora policy finder module to policy finder hashset");
-		log("r before setting policy finder hashset into policy finder");
+		LOG.debug("after adding fedora policy finder module to policy finder hashset");
+		LOG.debug("r before setting policy finder hashset into policy finder");
 		policyFinder.setModules(policyModules);
-		log("r after setting policy finder hashset into policy finder");
+		LOG.debug("r after setting policy finder hashset into policy finder");
 		
 		PDP pdp = null;
-		log("r before getClassErrors");		
+		LOG.debug("r before getClassErrors");		
 		try {
-			log(ReducedPolicyFinderModule.getClassErrors() + "class errors");
+			LOG.debug(ReducedPolicyFinderModule.getClassErrors() + "class errors");
 		} catch (Throwable t) {
-			log("grr: " + t.getMessage());
-			if (t.getCause() != null) {
-				log("grr: " + t.getCause().getMessage());				
-			}
+            LOG.error("grr: ", t);
 		}
 		
-		log("r after getClassErrors");
+		LOG.debug("r after getClassErrors");
 		if (ReducedPolicyFinderModule.getClassErrors() == 0) {
-			log("0 class errors");
+			LOG.debug("0 class errors");
 			pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
-			log("after newing PDPConfig");		
+			LOG.debug("after newing PDPConfig");		
 		}
 		if (pdp == null) {
-			log("null pdp");
+			LOG.debug("null pdp");
 			Exception se = new Exception("Xaclmpep.init() failed:  no pdp");
 			servletContext.log(se.getMessage());
 			throw se;
 		}
-		log("before assigning pdp");
+		LOG.debug("before assigning pdp");
 		this.pdp = pdp;
-		log ("***ending initPep()");
+		LOG.debug("***ending initPep()");
 	}
 
 	public void inactivate() {
@@ -205,28 +191,17 @@ log("***debugging CombinedPolicyModule");
 		pdp = null;
 	}
 
-
-
-	
-	/*
-	 * 			//there was some failure to initialize
-			if ("shutdown".equals(actionId)) {
-				authz = true;
-			}
-
-	 */
-	
 	private final Set wrapSubjects(String subjectLoginId) {
-		log("wrapSubjectIdAsSubjects(): " + subjectLoginId);
+		LOG.debug("wrapSubjectIdAsSubjects(): " + subjectLoginId);
 		StringAttribute stringAttribute = new StringAttribute("");
 		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
-		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
+		LOG.debug("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
 		Set<Attribute> subjectAttributes = new HashSet<Attribute>();
 		subjectAttributes.add(subjectAttribute);
 		if ((subjectLoginId != null) && "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
 			subjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
-			log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
+			LOG.debug("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
 		}
 		subjectAttributes.add(subjectAttribute);		
 		/*
@@ -355,7 +330,7 @@ log("***debugging CombinedPolicyModule");
 		String contextIndex = null;
 		try {
 			contextIndex = (new Integer(next())).toString();
-			log("context index set=" + contextIndex);
+			LOG.debug("context index set=" + contextIndex);
 			Set subjects = wrapSubjects(subjectId);
 			Set actions = wrapActions(action, api, contextIndex);
 			Set resources = wrapResources(pid, namespace);
@@ -365,7 +340,7 @@ log("***debugging CombinedPolicyModule");
 			Iterator tempit = tempset.iterator();
 			while (tempit.hasNext()) {
 				Attribute tempobj = (Attribute) tempit.next();
-				log("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
+				LOG.debug("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
 			}
 			/*
 			Set testSubjects = request.getSubjects();
@@ -396,20 +371,19 @@ log("***debugging CombinedPolicyModule");
 				log("test env attributeValue.toString()=" + testAttributeValue.toString());
 			}
 			*/
-			Logger logger = Logger.getLogger("com.sun.xacml");
-				logger.setLevel(Level.ALL);
-log("about to ref contextAttributeFinder=" + contextAttributeFinder);
+			java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.sun.xacml");
+			logger.setLevel(java.util.logging.Level.ALL);
+            LOG.debug("about to ref contextAttributeFinder=" + contextAttributeFinder);
 			contextAttributeFinder.registerContext(contextIndex, context);
 			response = pdp.evaluate(request);
-			log("in pep, after evaluate() called");
+			LOG.debug("in pep, after evaluate() called");
 		} catch (Throwable t) {
-			log("got me throwable:");			
-			t.printStackTrace();			
+			LOG.debug("got me throwable", t);			
 			throw new Exception("");
 		} finally {
 			contextAttributeFinder.unregisterContext(contextIndex);
 		}
-		log("in pep, before denyBiasedAuthz() called");
+		LOG.debug("in pep, before denyBiasedAuthz() called");
 		if (! denyBiasedAuthz(response.getResults())) {
 			throw new Exception("");
 		}			
@@ -443,33 +417,11 @@ log("about to ref contextAttributeFinder=" + contextAttributeFinder);
 					nWrongs++;
 					break;
 			}
-			//log("AUTHZ:  which=" + which + " resource=" + result.getResource() + " toString()=" + result.toString());			
 		}
-		System.err.println("AUTHZ:  permits=" + nPermits + " denies=" + nDenies + " indeterminates=" + nIndeterminates + " notApplicables=" + nNotApplicables + " unexpecteds=" + nWrongs);			
+        LOG.debug("AUTHZ:  permits=" + nPermits + " denies=" + nDenies + " indeterminates=" + nIndeterminates + " notApplicables=" + nNotApplicables + " unexpecteds=" + nWrongs);			
 		return (nPermits >= 1) && (nDenies == 0) && (nIndeterminates == 0) && (nWrongs == 0); // don't care about NotApplicables
 	}
 
-    private static final boolean log = false;
-	private final String log(String msg) {
-		if (log) {
-			if (servletContext != null) {
-				servletContext.log(msg);
-			} else {
-				System.err.println(msg);			
-			}
-		}
-		return msg;
-	}
-	
-    private static final boolean slog = false;
-	private static final String slog(String msg) {
-		if (slog) {
-			System.err.println(msg);			
-		}
-		return msg;
-	}	
-
-	
 }
 
 

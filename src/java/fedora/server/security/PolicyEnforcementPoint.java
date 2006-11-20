@@ -1,17 +1,21 @@
 package fedora.server.security;
 
 import java.io.File;
-import java.util.Iterator;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.util.HashSet;
-import java.util.Set;
-import javax.servlet.ServletContext;
-import com.sun.xacml.attr.StringAttribute;
 import java.util.ArrayList; 
+import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
+
+import javax.servlet.ServletContext;
+
+import org.apache.log4j.Logger;
+
+import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.finder.AttributeFinder;
 import com.sun.xacml.PDP;
 import com.sun.xacml.PDPConfig;
@@ -34,8 +38,11 @@ import fedora.server.storage.DOManager;
 /**
  * @author wdn5e@virginia.edu
  */
-
 public class PolicyEnforcementPoint {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            PolicyEnforcementPoint.class.getName());
 	
 	public static final String SUBACTION_SEPARATOR = "//"; 
 	public static final String SUBRESOURCE_SEPARATOR = "//";
@@ -63,19 +70,6 @@ public class PolicyEnforcementPoint {
 	private final URI RESOURCE_ID_URI;
 	private final URI RESOURCE_NAMESPACE_URI;
 
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static Server fedoraServer;
-
-    // FIXME: This is only used for logging... when changing to log4j, remove it
-    private static void setServer() {
-        try {
-            fedoraServer = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-        } catch (Throwable th) {
-            System.out.println("Server instance not found... will not log times.");
-            // no biggie, just won't logFinest
-        }
-    }
-	
 	private PolicyEnforcementPoint() {
 
 		URI xacmlSubjectIdUri = null;
@@ -98,9 +92,8 @@ public class PolicyEnforcementPoint {
 			contextUri = new URI(Constants.ACTION.CONTEXT_ID.uri);
 			pidUri = new URI(Constants.OBJECT.PID.uri);
 			namespaceUri = new URI(Constants.OBJECT.NAMESPACE.uri);
-			log("all uris set, no throws");
 		} catch (URISyntaxException e) {
-			log("***throw in XACMLPep constructor");
+            LOG.fatal("Bad URI syntax", e);
 		} finally {
 			XACML_SUBJECT_ID_URI = xacmlSubjectIdUri;
 			XACML_ACTION_ID_URI = xacmlActionIdUri;
@@ -119,7 +112,7 @@ public class PolicyEnforcementPoint {
 			singleton = new PolicyEnforcementPoint();
 		}
 		count++;
-		slog ("***another use (" + count + ") of XACMLPep singleton");
+		LOG.debug ("***another use (" + count + ") of XACMLPep singleton");
 		return singleton;
 	}
 
@@ -148,23 +141,18 @@ public class PolicyEnforcementPoint {
 		resourceAttributeFinder.setDOManager(manager);
 		attrModules.add(resourceAttributeFinder);		
 		try {
-log("about to set contextAttributeFinder in original");
+        LOG.debug("about to set contextAttributeFinder in original");
 		contextAttributeFinder = ContextAttributeFinderModule.getInstance();
 	} catch(Throwable t) {
 		this.enforceMode = ENFORCE_MODE_DENY_ALL_REQUESTS;
-		log ("***caught throwable in initPep");	
-		log(t.getMessage());
-		if (t.getCause() != null) {
-			log(t.getCause().getMessage());		
-		}
-		log ("***that was it");
+        LOG.error("Error in newPdp", t);
 		if (t instanceof Exception) {
 			throw (Exception) t;
 		}
 		throw new Exception("wrapped",t);
 	}
 
-log("just set contextAttributeFinder=" + contextAttributeFinder);
+        LOG.debug("just set contextAttributeFinder=" + contextAttributeFinder);
 		contextAttributeFinder.setServletContext(servletContext);
 		attrModules.add(contextAttributeFinder);		
 
@@ -174,44 +162,34 @@ log("just set contextAttributeFinder=" + contextAttributeFinder);
 		//==>>attrModules.add(resourceAttributeModule);
 
 		attrFinder.setModules(attrModules);		
-log("before building policy finder");
+        LOG.debug("before building policy finder");
 
 		PolicyFinder policyFinder = new PolicyFinder();
 		
-		log("just constructed policy finder");
+		LOG.debug("just constructed policy finder");
 		Set<PolicyFinderModule> policyModules = new HashSet<PolicyFinderModule>();
-		log("just constructed policy module hashset");
+		LOG.debug("just constructed policy module hashset");
 		PolicyFinderModule combinedPolicyModule = null;
-		//try {
-			log("***before constucting fedora policy finder module, policySchemaPath = " + policySchemaPath);
-			// SDP: removed method args related to object policies directory (obsoleted in 2.1)
-			//combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, localPolicyConfig, manager,
-			//validateRepositoryPolicies, validateObjectPoliciesFromFile, validateObjectPoliciesFromDatastream, policySchemaPath);
-			combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, manager,
-				validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
-			log("after constucting fedora policy finder module");
-			/*
-		} catch (GeneralException e) {
-log("***debugging CombinedPolicyModule");
-			e.printStackTrace();
-		} */
-		log("before adding fedora policy finder module to policy finder hashset");
+		LOG.debug("***before constucting fedora policy finder module, policySchemaPath = " + policySchemaPath);
+		combinedPolicyModule = new PolicyFinderModule(combiningAlgorithm, globalPolicyConfig, globalBackendPolicyConfig, globalPolicyGuiToolConfig, manager,
+			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
+		LOG.debug("after constucting fedora policy finder module");
+		LOG.debug("before adding fedora policy finder module to policy finder hashset");
 		policyModules.add(combinedPolicyModule);
-		log("after adding fedora policy finder module to policy finder hashset");
-		log("o before setting policy finder hashset into policy finder");
+		LOG.debug("after adding fedora policy finder module to policy finder hashset");
+		LOG.debug("o before setting policy finder hashset into policy finder");
 		policyFinder.setModules(policyModules);
-		log("o after setting policy finder hashset into policy finder");
+		LOG.debug("o after setting policy finder hashset into policy finder");
 		
 		PDP pdp = null;
-		log(PolicyFinderModule.getClassErrors() + "class errors");
+		LOG.debug(PolicyFinderModule.getClassErrors() + "class errors");
 		if (PolicyFinderModule.getClassErrors() == 0) {
-			log("0 class errors");
+			LOG.debug("0 class errors");
 			pdp = new PDP(new PDPConfig(attrFinder, policyFinder, null));
 		}	
 		if (pdp == null) {
-			log("null pdp");
+			LOG.debug("null pdp");
 			Exception se = new Exception("Xaclmpep.init() failed:  no pdp");
-			servletContext.log(se.getMessage());
 			throw se;
 		}
 		synchronized (this) {
@@ -228,21 +206,7 @@ log("***debugging CombinedPolicyModule");
 	boolean validateRepositoryPolicies = false;
 	boolean validateObjectPoliciesFromDatastream = false; 
 	String policySchemaPath = null;
-	// SDP: removed since object policies directory is obsolete in Fedora 2.1
-	//boolean validateObjectPoliciesFromFile = false; 
-	//String localPolicyConfig = null; 
 
-	// SDP: modified initPep method to remove arguments pertaining to object policies dir
-	// (which is obsoleted in 2.1)
-	/*
-	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
-			String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, String localPolicyConfig, 
-		DOManager manager,
-		boolean validateRepositoryPolicies,
-		boolean validateObjectPoliciesFromFile,
-		boolean validateObjectPoliciesFromDatastream, 
-		String policySchemaPath	
-	*/
 	public void initPep(String enforceMode, String combiningAlgorithm, String globalPolicyConfig, 
 		String globalBackendPolicyConfig, String globalPolicyGuiToolConfig, 
 		DOManager manager,
@@ -250,7 +214,7 @@ log("***debugging CombinedPolicyModule");
 		boolean validateObjectPoliciesFromDatastream, 
 		String policySchemaPath
 	) throws Exception {
-		log ("in initPep()");
+		LOG.debug("in initPep()");
 		destroy();
 
 		this.enforceMode = enforceMode;
@@ -258,7 +222,7 @@ log("***debugging CombinedPolicyModule");
 		} else if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
 		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
 		} else {
-			throw new AuthzOperationalException(log("invalid enforceMode from config"));
+			throw new AuthzOperationalException("invalid enforceMode from config");
 		}
 		this.combiningAlgorithm = combiningAlgorithm;
 		this.globalPolicyConfig = globalPolicyConfig; 
@@ -272,9 +236,9 @@ log("***debugging CombinedPolicyModule");
 		//this.validateObjectPoliciesFromFile = validateObjectPoliciesFromFile;
 		this.validateObjectPoliciesFromDatastream = validateObjectPoliciesFromDatastream;
 		this.policySchemaPath = policySchemaPath;
-		log ("***in initPep(), before calling newPdp()");	
+		LOG.debug("***in initPep(), before calling newPdp()");	
 		newPdp();
-		log ("***exiting initPep()");
+		LOG.debug("***exiting initPep()");
 	}
 
 	public void inactivate() {
@@ -286,28 +250,17 @@ log("***debugging CombinedPolicyModule");
 		pdp = null;
 	}
 
-
-
-	
-	/*
-	 * 			//there was some failure to initialize
-			if ("shutdown".equals(actionId)) {
-				authz = true;
-			}
-
-	 */
-	
 	private final Set wrapSubjects(String subjectLoginId) {
-		log("wrapSubjectIdAsSubjects(): " + subjectLoginId);
+		LOG.debug("wrapSubjectIdAsSubjects(): " + subjectLoginId);
 		StringAttribute stringAttribute = new StringAttribute("");
 		Attribute subjectAttribute = new Attribute(XACML_SUBJECT_ID_URI, null, null, stringAttribute);
-		log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
+		LOG.debug("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());
 		Set<Attribute> subjectAttributes = new HashSet<Attribute>();
 		subjectAttributes.add(subjectAttribute);
 		if ((subjectLoginId != null) && ! "".equals(subjectLoginId)) {
 			stringAttribute = new StringAttribute(subjectLoginId);
 			subjectAttribute = new Attribute(SUBJECT_ID_URI, null, null, stringAttribute);
-			log("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
+			LOG.debug("wrapSubjectIdAsSubjects(): subjectAttribute, id=" + subjectAttribute.getId() + ", type=" + subjectAttribute.getType() + ", value=" + subjectAttribute.getValue());		
 		}
 		subjectAttributes.add(subjectAttribute);		
 		/*
@@ -433,26 +386,25 @@ log("***debugging CombinedPolicyModule");
 
 	public final void enforce(String subjectId, String action, String api, String pid, String namespace, Context context) throws AuthzException {
 
-        setServer();
         long enforceStartTime = System.currentTimeMillis();
         try {
     		synchronized (this) {
     			//wait, if pdp update is in progress
     		}
     		if (ENFORCE_MODE_PERMIT_ALL_REQUESTS.equals(enforceMode)) {
-    			log("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
+    			LOG.debug("permitting request because enforceMode==ENFORCE_MODE_PERMIT_ALL_REQUESTS");
     		} else if (ENFORCE_MODE_DENY_ALL_REQUESTS.equals(enforceMode)) {
-    			log("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
+    			LOG.debug("denying request because enforceMode==ENFORCE_MODE_DENY_ALL_REQUESTS");
     			throw new AuthzDeniedException("all requests are currently denied");	
     		} else if (! ENFORCE_MODE_ENFORCE_POLICIES.equals(enforceMode)) {
-    			log("denying request because enforceMode is invalid");
+    			LOG.debug("denying request because enforceMode is invalid");
     			throw new AuthzOperationalException("invalid enforceMode from config");	
     		} else {
     			ResponseCtx response = null;
     			String contextIndex = null;
     			try {
     				contextIndex = (new Integer(next())).toString();
-    				log("context index set=" + contextIndex);
+    				LOG.debug("context index set=" + contextIndex);
     				Set subjects = wrapSubjects(subjectId);
     				Set actions = wrapActions(action, api, contextIndex);
     				Set resources = wrapResources(pid, namespace);
@@ -462,7 +414,7 @@ log("***debugging CombinedPolicyModule");
     				Iterator tempit = tempset.iterator();
     				while (tempit.hasNext()) {
     					Attribute tempobj = (Attribute) tempit.next();
-    					log("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
+    					LOG.debug("request action has " + tempobj.getId() + "=" + tempobj.getValue().toString());
     				}
 				/*
 				Set testSubjects = request.getSubjects();
@@ -493,30 +445,27 @@ log("***debugging CombinedPolicyModule");
 					log("test env attributeValue.toString()=" + testAttributeValue.toString());
 				}
 				*/
-    				Logger logger = Logger.getLogger("com.sun.xacml");
-    				logger.setLevel(Level.ALL);
-                    log("about to ref contextAttributeFinder=" + contextAttributeFinder);
+    				java.util.logging.Logger logger = java.util.logging.Logger.getLogger("com.sun.xacml");
+    				logger.setLevel(java.util.logging.Level.ALL);
+                    LOG.debug("about to ref contextAttributeFinder=" + contextAttributeFinder);
     				contextAttributeFinder.registerContext(contextIndex, context);
 
                     long st = System.currentTimeMillis();
                     try {
                         response = pdp.evaluate(request);
                     } finally {
-                        if (fedoraServer != null) {
-                            long dur = System.currentTimeMillis() - st;
-                            fedoraServer.logFinest("Policy evaluation took " + dur + "ms.");
-                        }
+                        long dur = System.currentTimeMillis() - st;
+                        LOG.debug("Policy evaluation took " + dur + "ms.");
                     }
 
-    				log("in pep, after evaluate() called");
+    				LOG.debug("in pep, after evaluate() called");
     			} catch (Throwable t) {
-    				log("got me throwable:");			
-    				t.printStackTrace();			
+                    LOG.error("Error evaluating policy", t);
     				throw new AuthzOperationalException("");
     			} finally {
     				contextAttributeFinder.unregisterContext(contextIndex);
     			}
-    			log("in pep, before denyBiasedAuthz() called");
+    			LOG.debug("in pep, before denyBiasedAuthz() called");
     			if (! denyBiasedAuthz(response.getResults())) {
     				throw new AuthzDeniedException("");
     			}			
@@ -525,10 +474,8 @@ log("***debugging CombinedPolicyModule");
     			throw new AuthzPermittedException("noOp");
     		}		
         } finally {
-            if (fedoraServer != null) {
-                long dur = System.currentTimeMillis() - enforceStartTime;
-                fedoraServer.logFinest("Policy enforcement took " + dur + "ms.");
-            }
+            long dur = System.currentTimeMillis() - enforceStartTime;
+            LOG.debug("Policy enforcement took " + dur + "ms.");
         }
 	}
 	
@@ -560,35 +507,9 @@ log("***debugging CombinedPolicyModule");
 					nWrongs++;
 					break;
 			}
-			//log("AUTHZ:  which=" + which + " resource=" + result.getResource() + " toString()=" + result.toString());			
 		}
-		slog("AUTHZ:  permits=" + nPermits + " denies=" + nDenies + " indeterminates=" + nIndeterminates + " notApplicables=" + nNotApplicables + " unexpecteds=" + nWrongs);			
+		LOG.debug("AUTHZ:  permits=" + nPermits + " denies=" + nDenies + " indeterminates=" + nIndeterminates + " notApplicables=" + nNotApplicables + " unexpecteds=" + nWrongs);			
 		return (nPermits >= 1) && (nDenies == 0) && (nIndeterminates == 0) && (nWrongs == 0); // don't care about NotApplicables
 	}
-	private static final boolean log = false;
-	private final String log(String msg) {
-		if (log) {
-			if (servletContext != null) {
-				servletContext.log(msg);
-			} else {
-				System.err.println(msg);			
-			}
-		}
-		return msg;
-	}
-	private static final boolean slog = false;
-	private static final String slog(String msg) {
-		if (slog) {
-			System.err.println(msg);			
-		}
-		return msg;
-	}
-	
-	
-
 	
 }
-
-
-
-

@@ -3,10 +3,13 @@ package fedora.server.security;
 import java.util.Hashtable;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import com.sun.xacml.EvaluationCtx;
 import com.sun.xacml.attr.AttributeDesignator;
 import com.sun.xacml.attr.StringAttribute;
 import com.sun.xacml.cond.EvaluationResult;
+
+import org.apache.log4j.Logger;
 
 import fedora.common.Constants;
 import fedora.server.Context;
@@ -14,14 +17,15 @@ import fedora.server.Context;
 /**
  * @author wdn5e@virginia.edu
  */
+class ContextAttributeFinderModule extends AttributeFinderModule {
 
-/*package*/ class ContextAttributeFinderModule extends AttributeFinderModule {
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ContextAttributeFinderModule.class.getName());
 	
 	protected boolean canHandleAdhoc() {
 		return true;
 	}
-	
-	//protected boolean adhoc() { return true; }
 	
 	static private final ContextAttributeFinderModule singleton = new ContextAttributeFinderModule();
 	
@@ -78,36 +82,36 @@ import fedora.server.Context;
 		try {
 			contextIdType = new URI(StringAttribute.identifier);
 		} catch (URISyntaxException e) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId type");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId type");
 		}
 		try {
 			contextIdId = new URI(Constants.ACTION.CONTEXT_ID.uri);
 		} catch (URISyntaxException e) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId itself");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "couldn't make URI for contextId itself");
 		}
-		log("ContextAttributeFinder:findAttribute" + " about to call getAttributeFromEvaluationCtx");
+		LOG.debug("ContextAttributeFinder:findAttribute" + " about to call getAttributeFromEvaluationCtx");
 
 		EvaluationResult attribute = context.getActionAttribute(contextIdType, contextIdId, null);
 		Object element = getAttributeFromEvaluationResult(attribute);
 		if (element == null) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "can't get contextId on request callback");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "can't get contextId on request callback");
 			return null;
 		}
 
 		if (! (element instanceof StringAttribute)) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "couldn't get contextId from xacml request " + "non-string returned");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "couldn't get contextId from xacml request " + "non-string returned");
 			return null;			
 		}
  
 		String contextId = ((StringAttribute) element).getValue();			
 		
 		if (contextId == null) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "null contextId");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "null contextId");
 			return null;			
 		}
 
 		if (! validContextId(contextId)) {
-			log("ContextAttributeFinder:getContextId" + " exit on " + "invalid context-id");
+			LOG.debug("ContextAttributeFinder:getContextId" + " exit on " + "invalid context-id");
 			return null;			
 		}
 		
@@ -126,19 +130,19 @@ import fedora.server.Context;
 	}
 
 	protected final Object getAttributeLocally(int designatorType, String attributeId, URI resourceCategory, EvaluationCtx ctx) {
-		log("getAttributeLocally context");
+		LOG.debug("getAttributeLocally context");
 		String contextId = getContextId(ctx);		
-		log("contextId=" + contextId + " attributeId=" + attributeId);
+		LOG.debug("contextId=" + contextId + " attributeId=" + attributeId);
 		Context context = (Context) contexts.get(contextId);
-		log("got context");
+		LOG.debug("got context");
 		Object values = null;			
-		log("designatorType" + designatorType);
+		LOG.debug("designatorType" + designatorType);
 		switch (designatorType) {
 			case AttributeDesignator.SUBJECT_TARGET:
 				if (0 > context.nSubjectValues(attributeId)) {
 					values = null;
 				} else {
-		    		log("getting n values for " + attributeId + "=" + context.nSubjectValues(attributeId));
+		    		LOG.debug("getting n values for " + attributeId + "=" + context.nSubjectValues(attributeId));
 					switch(context.nSubjectValues(attributeId)) {
 						case 0: 
 							values = null;
@@ -213,7 +217,6 @@ import fedora.server.Context;
 						case 1: 
 							values = new String[1];
 							((String[])values)[0] = context.getEnvironmentValue(attributeId); 
-//make conditional > 2.1b System.err.println("RETURNING " + context.getEnvironmentValue(attributeId) + " for " + attributeId);							
 							break;
 						default:
 							values = context.getEnvironmentValues(attributeId);
@@ -223,29 +226,25 @@ import fedora.server.Context;
 			default:
 		}
 		if (values instanceof String) {
-			log("getAttributeLocally string value=" + ((String)values));			
+			LOG.debug("getAttributeLocally string value=" + ((String)values));			
 		} else if (values instanceof String[]) {
-			log("getAttributeLocally string values=" + values);
+			LOG.debug("getAttributeLocally string values=" + values);
 			for (int i=0; i<((String[])values).length; i++) {
-				log("another string value=" + ((String[])values)[i]);	
+				LOG.debug("another string value=" + ((String[])values)[i]);	
 			}
 		} else {
-			log("getAttributeLocally object value=" + values);			
+			LOG.debug("getAttributeLocally object value=" + values);			
 		}
 		return values;
 	}
 	
-	static {
-		AttributeFinderModule.log = false;
-	}
-	
 	/*package*/ final void registerContext(Object key, Context value) {
-		log("registering " + key);
+		LOG.debug("registering " + key);
 		contexts.put(key, value);
 	}
 	
 	/*package*/ final void unregisterContext(Object key) {
-		log("unregistering " + key);
+		LOG.debug("unregistering " + key);
 		contexts.remove(key);
 	}
 

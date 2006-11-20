@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Context;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
@@ -67,6 +69,10 @@ import fedora.server.storage.types.MethodParmDef;
 public class FastBmechReader extends FastDOReader implements BMechReader
 {
 
+  /** Logger for this class. */
+  private static final Logger LOG = Logger.getLogger(
+        FastBmechReader.class.getName());
+
   /** Instance of BMechReader */
   private BMechReader bMechReader = null;
 
@@ -104,7 +110,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       throw se;
     } catch (Throwable th)
     {
-      s_server.logWarning("[FastBmechReader] Unable to construct FastBmechReader");
+      LOG.error("Unable to construct FastBmechReader", th);
       throw new GeneralException("[FastBmechReader] An error has occurred. "
           + "The error was a \"" + th.getClass().getName() + "\"  .  "
           + "Reason: \""  + th.getMessage() + "\"  .");
@@ -160,11 +166,11 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "bMech.bMechPID='" + bMechPID + "' AND "
           + "method.methodName='"  + methodName + "'";
 
-      s_server.logFinest("[FastBmechReader] GetBmechDefaultMethodParmQuery=" + query);
+      LOG.debug("GetBmechDefaultMethodParmQuery=" + query);
       try
       {
         connection = connectionPool.getConnection();
-        s_server.logFinest("[FastBmechReader] connectionPool = " + connectionPool);
+        LOG.debug("connectionPool = " + connectionPool);
         statement = connection.createStatement();
         rs = statement.executeQuery(query);
         ResultSetMetaData rsMeta = rs.getMetaData();
@@ -186,15 +192,14 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           methodParm.parmRequired = B.booleanValue();
           methodParm.parmLabel = results[4];
           methodParm.parmType = results[5];
-          s_server.logFinest("[FastBmechReader] "
-              + "methodParms: " + methodParm.parmName
+          LOG.debug("methodParms: " + methodParm.parmName
               + "\nlabel: " + methodParm.parmLabel
               + "\ndefault: " + methodParm.parmDefaultValue
               + "\nrequired: " + methodParm.parmRequired
               + "\ntype: " + methodParm.parmType);
           for (int j=0; j<methodParm.parmDomainValues.length; j++)
           {
-            s_server.logFinest("FastBmechReader:domainValues: "
+            LOG.debug("domainValue: "
                 + methodParm.parmDomainValues[j]);
           }
           queryResults.addElement(methodParm);
@@ -299,7 +304,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
           + "method.bDefDbID = bDef.bDefDbID AND "
           + "bMech.bMechPID = \'" + bMechPID + "\'";
 
-      s_server.logFinest("getObjectMethodsQuery: " + query);
+      LOG.debug("getObjectMethodsQuery: " + query);
       String[] results = null;
       try
       {
@@ -489,13 +494,12 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         + "bMech "
         + "WHERE "
         + "bMech.bMechPID=\'" + bMechPID + "\'";
-    s_server.logFinest("LocateBmechPIDQuery: " + query);
+    LOG.debug("LocateBmechPIDQuery: " + query);
 
     try
     {
       connection = connectionPool.getConnection();
-      s_server.logFinest("[FastBmechReader] LocateBmechPIDConnectionPool: "
-          + connectionPool);
+      LOG.debug("LocateBmechPIDConnectionPool: " + connectionPool);
       statement = connection.createStatement();
       rs = statement.executeQuery(query);
       while (rs.next())
@@ -504,6 +508,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
       }
     } catch (Throwable th)
     {
+      LOG.error("Error locating BMech PID", th);
       throw new GeneralException("[FastBmechReader] An error has occurred. The "
           + "underlying error was a  \"" + th.getClass().getName()
           + "\"  . The message was  \"" + th.getMessage() + "\"  .");
@@ -539,15 +544,13 @@ public class FastBmechReader extends FastDOReader implements BMechReader
         }
         bMechLabel = definitiveDOReader.GetObjectLabel();
         isFoundInDefinitiveStore = true;
-        s_server.logFinest("[FastBmechReader] BMECH OBJECT FOUND IN DEFINITIVE "
-            + "STORE: " + bMechPID);
+        LOG.debug("BMech found in definitive store: " + bMechPID);
       } catch (ServerException se)
       {
         throw se;
       } catch (Throwable th)
       {
-        s_server.logWarning("[FastBmechReader] BMECH OBJECT NOT FOUND IN "
-            + "DEFINITIVE STORE: " + bMechPID);
+        LOG.error("BMech found in definitive store: " + bMechPID, th);
         throw new GeneralException("[FastBmechReader] Definitive doReader "
             + "returned error. The underlying error was a  \""
             + th.getClass().getName() + "\"  . The message "
@@ -556,8 +559,7 @@ public class FastBmechReader extends FastDOReader implements BMechReader
     } else
     {
       isFoundInFastStore = true;
-      s_server.logFinest("[FastBmechReader] BMECH OBJECT FOUND IN FAST STORE: "
-          + bMechPID);
+      LOG.debug("BMech found in fast store: " + bMechPID);
     }
     return bMechLabel;
   }
