@@ -173,16 +173,16 @@ public class ResourceIndexRebuilder implements Rebuilder {
                 DigitalObject.FEDORA_BDEF_OBJECT) {
             m_ri.addBDefObject(
                     new SimpleBDefReader(null, null, null, null,
-                    null, obj, null));
+                    null, obj));
         } else if (obj.getFedoraObjectType() ==
                 DigitalObject.FEDORA_BMECH_OBJECT) {
             m_ri.addBMechObject(
                     new SimpleBMechReader(null, null, null, null,
-                    null, obj, null));
+                    null, obj));
         } else {
             m_ri.addDataObject(
                     new SimpleDOReader(null, null, null, null,
-                    null, obj, null));
+                    null, obj));
         }
     }
 

@@ -16,9 +16,7 @@ import fedora.server.errors.UnsupportedTranslationException;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- *
- * <p><b>Title:</b> DOTranslatorModule.java</p>
- * <p><b>Description:</b> </p>
+ * DOTranslatorImpl as a Module.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -69,7 +67,7 @@ public class DOTranslatorModule
                 }
             }
         }
-        m_wrappedTranslator=new DOTranslatorImpl(serMap, deserMap, this);
+        m_wrappedTranslator=new DOTranslatorImpl(serMap, deserMap);
     }
 
     public void deserialize(InputStream in, DigitalObject out,

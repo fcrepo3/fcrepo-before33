@@ -2,14 +2,14 @@ package fedora.server.utilities;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 
 /**
- *
- * <p><b>Title:</b> ThreadMonitorModule.java</p>
- * <p><b>Description:</b> </p>
+ * Module wrapper for ThreadMonitorImpl.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -17,6 +17,10 @@ import fedora.server.errors.ModuleInitializationException;
 public class ThreadMonitorModule
         extends Module
         implements ThreadMonitor {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            ThreadMonitorModule.class.getName());
 
     private ThreadMonitorImpl m_wrappedMonitor;
     private boolean m_active=false;
@@ -34,7 +38,7 @@ public class ThreadMonitorModule
         if (active!=null && (active.toLowerCase().equals("yes") || active.toLowerCase().equals("true"))) {
             m_active=true;
             if (pollInterval==null) {
-                logConfig("pollInterval unspecified, defaulting to 10,000 milliseconds.");
+                LOG.info("pollInterval unspecified, defaulting to 10,000 milliseconds.");
                 pollInterval="10000";
             }
             try {
@@ -46,7 +50,7 @@ public class ThreadMonitorModule
                 if (onlyMemory.equalsIgnoreCase("yes") || onlyMemory.equalsIgnoreCase("true")) {
                     onlyMem=true;
                 }
-                m_wrappedMonitor=new ThreadMonitorImpl(pi, onlyMem, this);
+                m_wrappedMonitor=new ThreadMonitorImpl(pi, onlyMem);
             } catch (NumberFormatException nfe) {
                 throw new ModuleInitializationException("Badly formed parameter: pollInterval: must be a nonnegative integer.", getRole());
             }

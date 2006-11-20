@@ -4,7 +4,6 @@ import java.util.Date;
 import java.io.InputStream;
 
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
@@ -17,9 +16,7 @@ import fedora.server.storage.types.DatastreamXMLMetadata;
 import fedora.server.storage.types.DigitalObject;
 
 /**
- *
- * <p><b>Title:</b> SimpleServiceAwareReader.java</p>
- * <p><b>Description:</b> </p>
+ * DOReader that knows about WSDL, method maps, and DS input specs.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -31,13 +28,12 @@ public class SimpleServiceAwareReader
             DOTranslator translator,
             String exportFormat, String storageFormat,
             String encoding,
-            InputStream serializedObject, Logging logTarget)
+            InputStream serializedObject)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
         super(context, repoReader, translator,
                 exportFormat, storageFormat, 
-                encoding,
-                serializedObject, logTarget);
+                encoding, serializedObject);
     }
 
     /**
@@ -49,10 +45,9 @@ public class SimpleServiceAwareReader
                                     DOTranslator translator,
                                     String exportFormat,
                                     String encoding,
-                                    DigitalObject obj,
-                                    Logging logTarget) {
+                                    DigitalObject obj) {
         super(context, repoReader, translator, exportFormat,
-                encoding, obj, logTarget);
+                encoding, obj);
     }
 
     protected DatastreamXMLMetadata getWSDLDatastream(Date versDateTime)

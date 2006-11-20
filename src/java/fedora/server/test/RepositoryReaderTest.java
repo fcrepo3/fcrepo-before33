@@ -40,11 +40,9 @@ public class RepositoryReaderTest
             sers.put(mets, new METSLikeDOSerializer());
             HashMap desers=new HashMap();
             desers.put(mets, new METSLikeDODeserializer());
-            DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers, null);
-            m_repoReader=
-            	new DirectoryBasedRepositoryReader(m_repoDir, translator,
-                    mets, mets, 
-					"UTF-8", null);
+            DOTranslatorImpl translator=new DOTranslatorImpl(sers, desers);
+            m_repoReader= new DirectoryBasedRepositoryReader(m_repoDir, 
+                    translator, mets, mets, "UTF-8");
         } catch (Exception e) {
             System.out.println("ERROR: " + e.getClass().getName() + ": " + e.getMessage());
         }

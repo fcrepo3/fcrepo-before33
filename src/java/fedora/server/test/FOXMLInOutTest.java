@@ -15,10 +15,8 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- *
- * <p><b>Title:</b> FOXMLInOutTest.java</p>
- * <p><b>Description:</b> Tests the FOXML deserializer and serializer by parsing
- * a FOXML input file and re-serializing it in the storage context.</p>
+ * Tests the FOXML deserializer and serializer by parsing
+ * a FOXML input file and re-serializing it in the storage context.
  *
  * @author payette@cs.cornell.edu
  * @version $Id$
@@ -51,7 +49,7 @@ public class FOXMLInOutTest
 			HashMap desermap=new HashMap();
 			HashMap sermap=new HashMap();
 			desermap.put("foxml1.0", deser);
-			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap, null);
+			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap);
 			obj=new BasicDigitalObject();
 			
 			// deserialize input XML
@@ -63,16 +61,10 @@ public class FOXMLInOutTest
 			System.out.println("Re-serializing...");
 			System.out.println("Writing file to... " + outFile.getPath());
 			FileOutputStream out = new FileOutputStream(outFile);
-			//ByteArrayOutputStream out=new ByteArrayOutputStream();
-			
 			// re-serialize (either for the EXPORT or STORAGE context)
-			//int m_transContext = DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL;
-			//int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_PUBLIC;
 			int m_transContext = DOTranslationUtility.SERIALIZE_EXPORT_MIGRATE;
 			trans.serialize(obj, out, "foxml1.0", "UTF-8", m_transContext);
 			System.out.println("Done. Serialized for context: " + m_transContext);
-			//System.out.println("Here it is:");
-			//System.out.println(out.toString("UTF-8"));
 		} catch (SAXException e) {
 			e.printStackTrace();
 			System.out.println("SAXException: (" + e.getClass().getName() + "):" + e.getMessage());

@@ -4,8 +4,9 @@ import java.util.Date;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
 
+import org.xml.sax.InputSource;
+
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.MethodNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -22,12 +23,9 @@ import fedora.server.storage.types.MethodDef;
 import fedora.server.storage.types.MethodParmDef;
 import fedora.server.storage.types.MethodDefOperationBind;
 import fedora.server.storage.service.ServiceMapper;
-import org.xml.sax.InputSource;
 
 /**
- *
- * <p><b>Title:</b> SimpleBMechReader.java</p>
- * <p><b>Description:</b> </p>
+ * A BMechReader based on a DigitalObject.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -42,13 +40,11 @@ public class SimpleBMechReader
             DOTranslator translator,
             String exportFormat, String storageFormat,
             String encoding,
-            InputStream serializedObject, Logging logTarget)
+            InputStream serializedObject)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        super(context, repoReader, translator,
-                exportFormat, storageFormat, 
-                encoding,
-                serializedObject, logTarget);
+        super(context, repoReader, translator, exportFormat, storageFormat, 
+                encoding, serializedObject);
         serviceMapper = new ServiceMapper(GetObjectPID());
     }
 
@@ -56,15 +52,11 @@ public class SimpleBMechReader
      * Alternate constructor for when a DigitalObject is already
      * available for some reason.
      */
-    public SimpleBMechReader(Context context,
-                             RepositoryReader repoReader,
-                             DOTranslator translator,
-                             String exportFormat,
-                             String encoding,
-                             DigitalObject obj,
-                             Logging logTarget) {
+    public SimpleBMechReader(Context context, RepositoryReader repoReader,
+            DOTranslator translator, String exportFormat, String encoding,
+            DigitalObject obj) {
         super(context, repoReader, translator, exportFormat,
-                encoding, obj, logTarget);
+                encoding, obj);
         serviceMapper = new ServiceMapper(GetObjectPID());
     }
 

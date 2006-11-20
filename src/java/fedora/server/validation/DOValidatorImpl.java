@@ -1,21 +1,17 @@
 package fedora.server.validation;
 
-// Fedora imports
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
-import fedora.server.errors.ServerException;
-import fedora.server.errors.GeneralException;
-import fedora.server.errors.ObjectValidityException;
-
-import org.apache.log4j.Logger;
-
-// Java imports
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
+
+import fedora.server.errors.ServerException;
+import fedora.server.errors.GeneralException;
+import fedora.server.errors.ObjectValidityException;
 
 /**
  * <p><b>Title: DOValidatorImpl.java </b></p>
@@ -47,8 +43,8 @@ import java.util.Map;
  * @author payette@cs.cornell.edu
  * @version $Id$
  */
-public class DOValidatorImpl extends StdoutLogging implements DOValidator
-{
+public class DOValidatorImpl
+        implements DOValidator {
 
     /** Logger for this class. */
     private static final Logger LOG = Logger.getLogger(
@@ -118,15 +114,11 @@ public class DOValidatorImpl extends StdoutLogging implements DOValidator
    *        configured with Fedora (see Fedora.fcfg).  Current 
    * 	    options are <i>schematron/foxmlRules1-0.xml</i>
    *        for FOXML or <i>schematron/metsExtRules1-0.xml</i> for METS
-   * @param logTarget Logging target
    * @throws ServerException If construction fails for any reason.
    */
 	public DOValidatorImpl(String tempDir, Map xmlSchemaMap, 
-			String schematronPreprocessorPath, Map ruleSchemaMap, 
-			Logging logTarget)
+			String schematronPreprocessorPath, Map ruleSchemaMap)
 			throws ServerException {
-				
-		super(logTarget);
 		LOG.debug("VALIDATE: Initializing object validation...");
 		m_xmlSchemaMap=xmlSchemaMap;
 		m_ruleSchemaMap=ruleSchemaMap;

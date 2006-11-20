@@ -2,19 +2,13 @@ package fedora.server.utilities;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
-
 /**
- *
- * <p><b>Title:</b> ThreadMonitorImpl.java</p>
- * <p><b>Description:</b> </p>
+ * Implementation of ThreadMonitor.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class ThreadMonitorImpl
-        extends StdoutLogging
         implements ThreadMonitor {
 
     /** Logger for this class. */
@@ -26,9 +20,7 @@ public class ThreadMonitorImpl
     private int m_pollInterval;
 
     public ThreadMonitorImpl(int pollInterval, 
-                             boolean onlyMemory, 
-                             Logging logTarget) {
-        super(logTarget);
+                             boolean onlyMemory) {
         m_onlyMemory=onlyMemory;
         if (pollInterval>=0) {
             m_pollInterval=pollInterval;
@@ -90,15 +82,6 @@ public class ThreadMonitorImpl
                 "  Priority: " + t.getPriority() +
                 (t.isDaemon()?" DAEMON":"") +
                 (t.isAlive()?"":" NOT ALIVE") + "\n");
-    }
-
-    public static void main(String[] args) {
-        ThreadMonitorImpl tm=new ThreadMonitorImpl(2000, false, null);
-        try {
-            Thread.sleep(10000);
-        } catch (InterruptedException ie) {
-        }
-        tm.requestStop();
     }
 
 }

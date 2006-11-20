@@ -1,9 +1,3 @@
-/*
- * Created on Mar 8, 2005
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 package fedora.server.utilities.rebuild;
 
 import java.io.File;
@@ -22,17 +16,12 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import fedora.logging.DatingFileHandler;
-import fedora.logging.SimpleXMLFormatter;
 import fedora.server.Server;
 import fedora.server.errors.ModuleInitializationException;
 import fedora.server.errors.ServerInitializationException;
 
 /**
  * @author diglib
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
  */
 public class RebuildServer extends Server
 {

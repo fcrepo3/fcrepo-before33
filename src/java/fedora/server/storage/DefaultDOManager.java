@@ -171,7 +171,7 @@ public class DefaultDOManager
         // storagePool (optional, default=ConnectionPoolManager's default pool)
         m_storagePool=getParameter("storagePool");
         if (m_storagePool==null) {
-            getServer().logConfig("Parameter storagePool "
+            LOG.info("Parameter storagePool "
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
@@ -191,7 +191,7 @@ public class DefaultDOManager
         // storageCharacterEncoding (optional, default=UTF-8)
         m_storageCharacterEncoding=getParameter("storageCharacterEncoding");
         if (m_storageCharacterEncoding==null) {
-            getServer().logConfig("Parameter storage_character_encoding "
+            LOG.info("Parameter storage_character_encoding "
                 + "not given, using UTF-8");
             m_storageCharacterEncoding="UTF-8";
         }
@@ -201,7 +201,7 @@ public class DefaultDOManager
         // readerCacheSize and readerCacheSeconds (optional, defaults = 20, 5)
         String rcSize = getParameter("readerCacheSize");
         if (rcSize == null) {
-            getServer().logConfig("Parameter readerCacheSize not given, using 20");
+            LOG.info("Parameter readerCacheSize not given, using 20");
             rcSize = "20";
         }
         int readerCacheSize;
@@ -214,7 +214,7 @@ public class DefaultDOManager
 
         String rcSeconds = getParameter("readerCacheSeconds");
         if (rcSeconds == null) {
-            getServer().logConfig("Parameter readerCacheSeconds not given, using 5");
+            LOG.info("Parameter readerCacheSeconds not given, using 5");
             rcSeconds = "5";
         }
         int readerCacheSeconds;
@@ -452,14 +452,10 @@ public class DefaultDOManager
                     reader = m_readerCache.get(pid);
                 }
                 if (reader == null) {
-                    reader = new SimpleDOReader(context, 
-                                                this, 
-                                                m_translator,
-                                                m_defaultExportFormat, 
-                                                m_defaultStorageFormat,
-                                                m_storageCharacterEncoding,
-                                                m_permanentStore.retrieveObject(pid), 
-                                                this);
+                    reader = new SimpleDOReader(context, this, m_translator,
+                            m_defaultExportFormat, m_defaultStorageFormat,
+                            m_storageCharacterEncoding, 
+                            m_permanentStore.retrieveObject(pid));
                     source = "filesystem";
                     if (m_readerCache != null) {
                         m_readerCache.put(reader);
@@ -487,7 +483,7 @@ public class DefaultDOManager
             return new SimpleBMechReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
-                    m_permanentStore.retrieveObject(pid), this);
+                    m_permanentStore.retrieveObject(pid));
         }
     }
 
@@ -502,7 +498,7 @@ public class DefaultDOManager
             return new SimpleBDefReader(context, this, m_translator,
                     m_defaultExportFormat, m_defaultStorageFormat,
                     m_storageCharacterEncoding,
-                    m_permanentStore.retrieveObject(pid), this);
+                    m_permanentStore.retrieveObject(pid));
         }
     }
     
@@ -519,8 +515,7 @@ public class DefaultDOManager
 					m_defaultStorageFormat, m_storageCharacterEncoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
 			DOWriter w=new SimpleDOWriter(context, this, m_translator,
-					m_defaultStorageFormat,
-					m_storageCharacterEncoding, obj, this);
+					m_defaultStorageFormat, m_storageCharacterEncoding, obj);
             getWriteLock(obj.getPid());
 			return w;
 		}
@@ -687,8 +682,7 @@ public class DefaultDOManager
 				LOG.debug("Getting new writer with default export format: " + m_defaultExportFormat);
 				LOG.debug("INGEST: Instantiating a SimpleDOWriter...");
 				w=new SimpleDOWriter(context, this, m_translator,
-						m_defaultExportFormat,
-						m_storageCharacterEncoding, obj, this);
+						m_defaultExportFormat, m_storageCharacterEncoding, obj);
 
                 // WRITE LOCK:
                 // ensure no one else can modify the object now
@@ -949,20 +943,20 @@ public class DefaultDOManager
                             DigitalObject.FEDORA_BDEF_OBJECT) {
                         m_resourceIndex.deleteBDefObject(
                                 new SimpleBDefReader(null, null, null, null, 
-                                null, origObj, null));
+                                null, origObj));
                     } else if (obj.getFedoraObjectType() == 
                             DigitalObject.FEDORA_BMECH_OBJECT) {
                         m_resourceIndex.deleteBMechObject(
                                 new SimpleBMechReader(null, null, null, null, 
-                                null, origObj, null));
+                                null, origObj));
                     } else {
                         m_resourceIndex.deleteDataObject(
                                 new SimpleDOReader(null, null, null, null, 
-                                null, origObj, null));
+                                null, origObj));
                     }
                     LOG.info("COMMIT: Finished deleting from ResourceIndex...");
                 } catch (ServerException se) {
-                    logWarning("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                    LOG.warn("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
                 }
             }
             
@@ -1093,16 +1087,16 @@ public class DefaultDOManager
                                 DigitalObject.FEDORA_BDEF_OBJECT) {
                             m_resourceIndex.addBDefObject(
                                     new SimpleBDefReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         } else if (obj.getFedoraObjectType() ==
                                 DigitalObject.FEDORA_BMECH_OBJECT) {
                             m_resourceIndex.addBMechObject(
                                     new SimpleBMechReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         } else {
                             m_resourceIndex.addDataObject(
                                     new SimpleDOReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         }
                     } else {
                         if (obj.getFedoraObjectType() ==
@@ -1110,18 +1104,18 @@ public class DefaultDOManager
                             m_resourceIndex.modifyBDefObject(
                                     getBDefReader(false, null, obj.getPid()),
                                     new SimpleBDefReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         } else if (obj.getFedoraObjectType() ==
                                 DigitalObject.FEDORA_BMECH_OBJECT) {
                             m_resourceIndex.modifyBMechObject(
                                     getBMechReader(false, null, obj.getPid()),
                                     new SimpleBMechReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         } else {
                             m_resourceIndex.modifyDataObject(
                                     getReader(false, null, obj.getPid()),
                                     new SimpleDOReader(null, null, null, null,
-                                    null, obj, null));
+                                    null, obj));
                         }
                     }
                     LOG.info("COMMIT: Finished adding to ResourceIndex.");

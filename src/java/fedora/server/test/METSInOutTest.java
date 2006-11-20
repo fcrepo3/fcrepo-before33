@@ -16,9 +16,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- *
- * <p><b>Title:</b> METSInOutTest.java</p>
- * <p><b>Description:</b> Tests the METS deserializer and serializer by opening
+ * Tests the METS deserializer and serializer by opening
  * a METS file (supplied at command-line), deserializing it, re-serializing it,
  * and sending it to STDOUT.</p>
  *
@@ -50,7 +48,7 @@ public class METSInOutTest {
             HashMap sers=new HashMap();
             desers.put("metslikefedora1", deser);
             sers.put("metslikefedora1", ser);
-            DOTranslatorImpl trans=new DOTranslatorImpl(sers, desers, null);
+            DOTranslatorImpl trans=new DOTranslatorImpl(sers, desers);
             DigitalObject obj=new BasicDigitalObject();
             System.out.println("Deserializing...");
             trans.deserialize(in, obj, "metslikefedora1", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);
@@ -67,10 +65,9 @@ public class METSInOutTest {
                 xmlSchemaMap.put("metslikefedora1", "dist/server/xsd/mets-fedora-ext.xsd");
 				HashMap ruleSchemaMap = new HashMap();
 				ruleSchemaMap.put("metslikefedora1", "dist/server/schematron/metsExtRules1-0.xml");
-                DOValidatorImpl v=new DOValidatorImpl(
-                        null, xmlSchemaMap,
+                DOValidatorImpl v=new DOValidatorImpl(null, xmlSchemaMap,
                         "dist/server/schematron/preprocessor.xslt",
-                        ruleSchemaMap, null);
+                        ruleSchemaMap);
                 if (args[1].equals("1")) {
                     v.validate(newIn, "metslikefedora1", 
                     	DOValidatorImpl.VALIDATE_XML_SCHEMA, "ingest");

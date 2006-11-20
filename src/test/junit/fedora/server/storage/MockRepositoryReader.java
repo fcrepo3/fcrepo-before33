@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import fedora.server.Context;
-import fedora.server.TestLogging;
 
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.ObjectNotFoundException;
@@ -77,8 +76,7 @@ public class MockRepositoryReader implements RepositoryReader {
         if (obj.getFedoraObjectType() != DigitalObject.FEDORA_OBJECT) {
             throw new GeneralException("Not a data object: " + pid);
         } else {
-            return new SimpleDOReader(null, this, null, null, null, obj, 
-                    new TestLogging());
+            return new SimpleDOReader(null, this, null, null, null, obj);
         }
     }
 
@@ -93,8 +91,7 @@ public class MockRepositoryReader implements RepositoryReader {
         if (obj.getFedoraObjectType() != DigitalObject.FEDORA_BMECH_OBJECT) {
             throw new GeneralException("Not a bmech object: " + pid);
         } else {
-            return new SimpleBMechReader(null, this, null, null, null, obj, 
-                    new TestLogging());
+            return new SimpleBMechReader(null, this, null, null, null, obj);
         }
     }
 
@@ -109,8 +106,7 @@ public class MockRepositoryReader implements RepositoryReader {
         if (obj.getFedoraObjectType() != DigitalObject.FEDORA_BDEF_OBJECT) {
             throw new GeneralException("Not a bdef object: " + pid);
         } else {
-            return new SimpleBDefReader(null, this, null, null, null, obj, 
-                    new TestLogging());
+            return new SimpleBDefReader(null, this, null, null, null, obj);
         }
     }
 

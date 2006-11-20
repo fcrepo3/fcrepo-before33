@@ -6,21 +6,24 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.errors.GeneralException;
 import fedora.server.errors.InitializationException;
@@ -33,14 +36,11 @@ import fedora.server.search.ObjectFields;
 import fedora.server.utilities.StreamUtility;
 
 /**
- *
- * <p><b>Title:</b> Report.java</p>
- * <p><b>Description:</b> </p>
+ * Implements reporting functionality.
  *
  * @author wdn5e@virginia.edu
  */
-public class Report
-        implements Logging {
+public class Report {
 
     /** Instance of the Server */
     private static Server s_server=null;
@@ -712,134 +712,5 @@ public class Report
 			super.close();
 		}
 	}
-
-
-    /**
-     * Logs a SEVERE message, indicating that the server is inoperable or
-     * unable to start.
-     *
-     * @param message The message.
-     */
-    public final void logSevere(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logSevere(m.toString());
-    }
-
-    public final boolean loggingSevere() {
-        return getServer().loggingSevere();
-    }
-
-    /**
-     * Logs a WARNING message, indicating that an undesired (but non-fatal)
-     * condition occured.
-     *
-     * @param message The message.
-     */
-    public final void logWarning(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logWarning(m.toString());
-    }
-
-    public final boolean loggingWarning() {
-        return getServer().loggingWarning();
-    }
-
-    /**
-     * Logs an INFO message, indicating that something relatively uncommon and
-     * interesting happened, like server or module startup or shutdown, or
-     * a periodic job.
-     *
-     * @param message The message.
-     */
-    public final void logInfo(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logInfo(m.toString());
-    }
-
-    public final boolean loggingInfo() {
-        return getServer().loggingInfo();
-    }
-
-    /**
-     * Logs a CONFIG message, indicating what occurred during the server's
-     * (or a module's) configuration phase.
-     *
-     * @param message The message.
-     */
-    public final void logConfig(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logConfig(m.toString());
-    }
-
-    public final boolean loggingConfig() {
-        return getServer().loggingConfig();
-    }
-
-    /**
-     * Logs a FINE message, indicating basic information about a request to
-     * the server (like hostname, operation name, and success or failure).
-     *
-     * @param message The message.
-     */
-    public final void logFine(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logFine(m.toString());
-    }
-
-    public final boolean loggingFine() {
-        return getServer().loggingFine();
-    }
-
-    /**
-     * Logs a FINER message, indicating detailed information about a request
-     * to the server (like the full request, full response, and timing
-     * information).
-     *
-     * @param message The message.
-     */
-    public final void logFiner(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logFiner(m.toString());
-    }
-
-    public final boolean loggingFiner() {
-        return getServer().loggingFiner();
-    }
-
-    /**
-     * Logs a FINEST message, indicating method entry/exit or extremely
-     * verbose information intended to aid in debugging.
-     *
-     * @param message The message.
-     */
-    public final void logFinest(String message) {
-        StringBuffer m=new StringBuffer();
-        m.append(getClass().getName());
-        m.append(": ");
-        m.append(message);
-        getServer().logFinest(m.toString());
-    }
-
-    public final boolean loggingFinest() {
-        return getServer().loggingFinest();
-    }
 
 }

@@ -419,15 +419,15 @@ public abstract class ResourceIndexIntegrationTest {
     }
 
     protected BDefReader getBDefReader(DigitalObject obj) throws Exception {
-        return new SimpleBDefReader(null, null, null, null, null, obj, null);
+        return new SimpleBDefReader(null, null, null, null, null, obj);
     }
 
     protected BMechReader getBMechReader(DigitalObject obj) throws Exception {
-        return new SimpleBMechReader(null, null, null, null, null, obj, null);
+        return new SimpleBMechReader(null, null, null, null, null, obj);
     }
 
     protected DOReader getDOReader(DigitalObject obj) throws Exception {
-        return new SimpleDOReader(null, null, null, null, null, obj, null);
+        return new SimpleDOReader(null, null, null, null, null, obj);
     }
 
     protected void addObj(DigitalObject obj, boolean flush)

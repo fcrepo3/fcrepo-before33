@@ -10,8 +10,6 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 
 import fedora.server.Context;
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectNotFoundException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
@@ -36,7 +34,6 @@ import fedora.server.storage.translation.DOTranslator;
  * @version $Id$
  */
 public class DirectoryBasedRepositoryReader
-        extends StdoutLogging
         implements RepositoryReader {
 
     /** Logger for this class. */
@@ -63,12 +60,10 @@ public class DirectoryBasedRepositoryReader
      */
     public DirectoryBasedRepositoryReader(File directory, DOTranslator translator,
             String exportFormat, String storageFormat,
-            String encoding,
-            Logging logTarget)
+            String encoding)
             throws StorageDeviceException, ObjectIntegrityException,
             StreamIOException, UnsupportedTranslationException,
             ServerException {
-        super(logTarget);
         m_directory=directory;
         m_translator=translator;
         m_exportFormat=exportFormat;
@@ -85,9 +80,7 @@ public class DirectoryBasedRepositoryReader
                     FileInputStream in=new FileInputStream(thisFile);
                     SimpleDOReader reader=
                     	new SimpleDOReader(null, this, m_translator,
-							m_exportFormat, m_storageFormat,
-                            m_encoding,
-                            in, this);
+							m_exportFormat, m_storageFormat, m_encoding, in);
                     String pid=reader.GetObjectPID();
                     if (reader.GetObjectPID().length()==0) {
                         LOG.warn("File " + files[i] + " has no pid...skipping");
@@ -119,7 +112,7 @@ public class DirectoryBasedRepositoryReader
         return new SimpleDOReader(null, this, m_translator,
                 m_exportFormat, m_storageFormat,
                 m_encoding,
-                getStoredObjectInputStream(pid), this);
+                getStoredObjectInputStream(pid));
     }
 
     public BMechReader getBMechReader(boolean UseCachedObject, Context context, String pid)
@@ -128,16 +121,15 @@ public class DirectoryBasedRepositoryReader
         return new SimpleBMechReader(null, this, m_translator,
                 m_exportFormat, m_storageFormat,
                 m_encoding,
-                getStoredObjectInputStream(pid), this);
+                getStoredObjectInputStream(pid));
     }
 
     public BDefReader getBDefReader(boolean UseCachedObject, Context context, String pid)
             throws ObjectIntegrityException, ObjectNotFoundException,
             StreamIOException, UnsupportedTranslationException, ServerException {
         return new SimpleBDefReader(null, this, m_translator,
-                m_exportFormat, m_storageFormat,
-                m_encoding,
-                getStoredObjectInputStream(pid), this);
+                m_exportFormat, m_storageFormat, m_encoding,
+                getStoredObjectInputStream(pid));
     }
 
     public String[] listObjectPIDs(Context context) {

@@ -2,6 +2,8 @@ package fedora.server.search;
 
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.Module;
 import fedora.server.Server;
 import fedora.server.errors.ConnectionPoolNotFoundException;
@@ -13,9 +15,7 @@ import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 
 /**
- *
- * <p><b>Title:</b> FieldSearchSQLModule.java</p>
- * <p><b>Description:</b> </p>
+ * Module that wraps FieldSearchSQLImpl.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -23,6 +23,10 @@ import fedora.server.storage.DOReader;
 public class FieldSearchSQLModule
         extends Module
         implements FieldSearch {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FieldSearchSQLModule.class.getName());
 
     private FieldSearchSQLImpl m_wrappedFieldSearch;
 
@@ -81,11 +85,11 @@ public class FieldSearchSQLModule
         ConnectionPool cPool=null;
         try {
             if (cPoolName==null) {
-                logConfig("connectionPool unspecified; using default from "
+                LOG.info("connectionPool unspecified; using default from "
                         + "ConnectionPoolManager.");
                 cPool=cpm.getPool();
             } else {
-                logConfig("connectionPool specified: " + cPoolName);
+                LOG.info("connectionPool specified: " + cPoolName);
                 cPool=cpm.getPool(cPoolName);
             }
         } catch (ConnectionPoolNotFoundException cpnfe) {
@@ -106,7 +110,7 @@ public class FieldSearchSQLModule
         // things look ok...get the wrapped instance
         //
         m_wrappedFieldSearch=new FieldSearchSQLImpl(cPool, doManager,
-                maxResults, maxSecondsPerSession, this);
+                maxResults, maxSecondsPerSession);
     }
 
     public String[] getRequiredModuleRoles() {

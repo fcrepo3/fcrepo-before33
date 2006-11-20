@@ -15,9 +15,7 @@ import fedora.server.errors.ModuleInitializationException;
 import fedora.server.search.FieldSearch;
 
 /**
- *
- * <p><b>Title:</b> FedoraOAIProviderModule.java</p>
- * <p><b>Description:</b> An OAIProvider that acts as a server module and wraps
+ * An OAIProvider that acts as a server module and wraps
  * FedoraOAIProvider.</p>
  *
  * @author cwilper@cs.cornell.edu
@@ -140,7 +138,7 @@ public class FedoraOAIProviderModule
         m_wrappedOAIProvider=new FedoraOAIProvider(repositoryName, 
                 repositoryDomainName, host, "/fedora/oai", 
 		   		adminEmails, friends, pidNamespace, maxSets, 
-                maxRecords, maxHeaders, fieldSearch, this);
+                maxRecords, maxHeaders, fieldSearch);
     }
 
     public String getRepositoryName() {

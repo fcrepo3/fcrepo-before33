@@ -15,8 +15,6 @@ import java.util.TreeSet;
 import org.apache.log4j.Logger;
 
 import fedora.server.Context;
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
 
 import fedora.server.errors.DatastreamNotFoundException;
 import fedora.server.errors.DisseminatorNotFoundException;
@@ -50,7 +48,6 @@ import fedora.server.utilities.DateUtility;
  * @version $Id$
  */
 public class SimpleDOReader
-        extends StdoutLogging
         implements DOReader {
 
     /** Logger for this class. */
@@ -72,10 +69,9 @@ public class SimpleDOReader
             DOTranslator translator,
             String exportFormat, String storageFormat,
             String encoding,
-            InputStream serializedObject, Logging logTarget)
+            InputStream serializedObject)
             throws ObjectIntegrityException, StreamIOException,
             UnsupportedTranslationException, ServerException {
-        super(logTarget);
         m_context=context;
         m_repoReader=repoReader;
         m_translator=translator;
@@ -92,11 +88,8 @@ public class SimpleDOReader
      * for some reason.
      */
     public SimpleDOReader(Context context, RepositoryReader repoReader,
-            DOTranslator translator,
-            String exportFormat,
-            String encoding, DigitalObject obj,
-            Logging logTarget) {
-        super(logTarget);
+            DOTranslator translator, String exportFormat, String encoding, 
+            DigitalObject obj) {
         m_context=context;
         m_repoReader=repoReader;
         m_translator=translator;

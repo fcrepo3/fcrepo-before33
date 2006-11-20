@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 import fedora.oai.*;
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.UnknownSessionTokenException;
 import fedora.server.utilities.DCFields;
@@ -22,15 +20,12 @@ import fedora.server.search.FieldSearchResult;
 import fedora.server.utilities.StreamUtility;
 
 /**
- *
- * <p><b>Title:</b> FedoraOAIProvider.java</p>
- * <p><b>Description:</b> </p>
+ * Simple FieldSearch-based OAI provider.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public class FedoraOAIProvider
-        extends StdoutLogging
         implements OAIProvider {
 
     private String m_repositoryName;
@@ -56,8 +51,7 @@ public class FedoraOAIProvider
     public FedoraOAIProvider(String repositoryName, String repositoryDomainName,
             String localname, String relpath, Set adminEmails, Set friendBaseURLs, 
             String namespaceID, long maxSets, long maxRecords, long maxHeaders,
-            FieldSearch fieldSearch, Logging logTarget) {
-        super(logTarget);
+            FieldSearch fieldSearch) {
         m_repositoryName=repositoryName;
         m_repositoryDomainName=repositoryDomainName;
         m_localname=localname;

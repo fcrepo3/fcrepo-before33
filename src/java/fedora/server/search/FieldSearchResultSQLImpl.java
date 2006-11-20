@@ -8,10 +8,10 @@ import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import fedora.server.Logging;
+import org.apache.log4j.Logger;
+
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.UnrecognizedFieldException;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.QueryParseException;
@@ -29,10 +29,8 @@ import fedora.server.utilities.DateUtility;
 import fedora.server.utilities.MD5Utility;
 
 /**
- *
- * <p><b>Title:</b> FieldSearchResultSQLImpl.java</p>
- * <p><b>Description:</b> A FieldSearchResults object returned as the result of
- * a FieldSearchSQLImpl search.</p>
+ * A FieldSearchResults object returned as the result of
+ * a FieldSearchSQLImpl search.
  *
  * <p>A FieldSearchResultSQLImpl is intended to be re-used in cases where
  * the results of a query require more than one call to the server.</p>
@@ -41,8 +39,11 @@ import fedora.server.utilities.MD5Utility;
  * @version $Id$
  */
 public class FieldSearchResultSQLImpl
-        extends StdoutLogging
         implements FieldSearchResult {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            FieldSearchResultSQLImpl.class.getName());
 
     /* fields supporting public accessors */
     private ArrayList m_objectFields;
@@ -85,14 +86,11 @@ public class FieldSearchResultSQLImpl
      *        should be the smaller of a) the FieldSearchImpl's limit [the server
      *        limit] and b) the requested limit [the client limit]
      * @param query the end-user query
-     * @param logTarget where to send log messages
      */
     protected FieldSearchResultSQLImpl(ConnectionPool cPool,
             RepositoryReader repoReader, String[] resultFields, int maxResults,
-            int maxSeconds, FieldSearchQuery query,
-            Logging logTarget)
+            int maxSeconds, FieldSearchQuery query)
             throws SQLException, QueryParseException {
-        super(logTarget);
         m_cPool=cPool;
         m_repoReader=repoReader;
         m_resultFields=resultFields;
@@ -144,7 +142,7 @@ public class FieldSearchResultSQLImpl
 
         }
         String qt=queryText.toString();
-        logFinest(qt);
+        LOG.debug(qt);
         return qt;
     }
 

@@ -13,9 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 /**
- *
- * <p><b>Title:</b> METSToFOXMLTest.java</p>
- * <p><b>Description:</b> Tests the METS deserializer and FOXML serializer 
+ * Tests the METS deserializer and FOXML serializer 
  * by opening a METS file, deserializing it, re-serializing it as FOXML, 
  * and sending it to STDOUT.</p>
  *
@@ -50,7 +48,7 @@ public class METSToFOXMLTest
 			HashMap desermap=new HashMap();
 			HashMap sermap=new HashMap();
 			desermap.put("metslikefedora1", deser);
-			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap, null);
+			DOTranslatorImpl trans=new DOTranslatorImpl(sermap, desermap);
 			obj=new BasicDigitalObject();
 			System.out.println("Deserializing METS input...");
 			trans.deserialize(in, obj, "metslikefedora1", "UTF-8", DOTranslationUtility.DESERIALIZE_INSTANCE);

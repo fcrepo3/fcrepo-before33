@@ -7,8 +7,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.Logging;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.StreamIOException;
@@ -22,7 +20,6 @@ import fedora.server.storage.types.DigitalObject;
  * @version $Id$
  */
 public class DOTranslatorImpl
-        extends StdoutLogging
         implements DOTranslator {
 
     /** Logger for this class. */
@@ -32,8 +29,7 @@ public class DOTranslatorImpl
     private Map m_serializers;
     private Map m_deserializers;
 
-    public DOTranslatorImpl(Map serializers, Map deserializers, Logging logTarget) {
-        super(logTarget);
+    public DOTranslatorImpl(Map serializers, Map deserializers) {
         m_serializers=serializers;
         m_deserializers=deserializers;
     }

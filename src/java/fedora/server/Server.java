@@ -54,121 +54,16 @@ import fedora.server.utilities.status.ServerState;
 import fedora.server.utilities.status.ServerStatusFile;
 
 /**
- * <p><b>Title: </b>Server.java</p>
- * <p><b>Description: </b></p>
- * The starting point for working with a Fedora repository.This class
+ * The starting point for working with a Fedora repository.  This class
  * handles loading, starting, and stopping modules (the module
  * lifecycle), and provides access to core constants.
- * <p></p>
- * The <code>Server</code> class itself is abstract - it may not be
- * instantiated.  Instead, it provides an instance of the <code>Server</code>
- * subclass specified in the configuration file.
- * (see <code>CONFIG_DIR</code> and <code>CONFIG_FILE</code>)
- * <p></p>
- * <h3>Example Use</h3>
- * <p></p>
- * The following program illustrates use of the <code>Server</code> class.
- * <pre>
- * import fedora.server.Server;
- *
- * /**
- *  * Starts, then shuts down the server.
- *  *&#47;
- * public class ServerTest {
- *
- *     public static void main(String[] args) {
- *         try {
- *             Server s=Server.getInstance(System.getProperty(
- *                     Server.HOME_PROPERTY));
- *             s.shutdown();
- *         } catch (Exception e) {
- *             doSomething();
- *         }
- *     }
- * }
- * </pre>
- * <p></p>
- * <h3>Core Constants</h3>
- * <p></p>
- * All constants for the core Fedora classes are set within the
- * <code>fedora/server/resources/Server.properties</code> file*, and are
- * available as static fields of this class.  Non-core and extension classes
- * may use an entirely different scheme for their own constants, and must at
- * least use a different file.
- * <p></p>
- * There are two types of core constants:
- * <ul>
- *   <li> <b>Non-Localizable</b><br>
- *        The values of these constants remain the same regardless of the
- *        locale, and may be referred to directly in server documentation where
- *        needed.
- *   </li>
- *   <li> <b>Localizable</b> (Messages)<br>
- *        These constants' values will likely be different across locales.
- *        Locale-specific values are automatically made available to the server
- *        when an appropriate file of the form:
- *        <code>fedora/server/resources/Server.properties_language[_country[_variant]]</code>
- *        exists and the appropriate "locale.language", and (optionally)
- *        "locale.country", and (optionally) "locale.variant" property values
- *        are set.
- *   </li>
- * </ul>
- * <p></p>
- * * Or a locale-specific version thereof.  Note that only localizable constants
- *   (messages) may change across locales.
- * <p></p>
- * Messages are named using the following convention:
- * <p></p>
- * <code>execpoint.messagetype.errname</code>
- * <p></p>
- * where <code>execpoint</code> is composed of
- * <code>phase[subphase.[subphase.(...)]]</code>
- * <p></p>
- * Phase is a short string intended to show
- * at which point in the server's execution the condition described
- * by the message occurs. Subphase is a sub-categorization of a phase.
- * For example, <code>init.config</code> and <code>init.server</code> are
- * subphases of the init phase.
- * <p></p>
- * <pre>
- * Phase/Subphase       Description
- * --------------       -----------
- * init                 Server initialization
- * init.xmlparser       XML parser initialization
- * init.config          Reading and validating configuration file
- * init.server          Initializing the server implementation
- * init.module          Initializing a module
- * storage              In the storage subsystem
- * api                  Server front-end
- * shutdown.server      Shutting down the server
- * shutdown.module      Shutting down a module
- * </pre>
- * There are several possible message types, described below.  These coincide
- * with jdk1.4's new
- * <a href="http://java.sun.com/j2se/1.4/docs/api/java/util/logging/package-summary.html">java.util.logging</a>
- * package's log levels.
- * <pre>
- * MessageType          Description
- * -----------          -----------
- * severe               Errors that render the server inoperable or prevent
- *                      it from starting up in the first place.
- * warning              Errors that signal an undesired condition, but may be
- *                      recovered from.
- * info                 Interesting events that don't occur often, such as
- *                      Server and Module startup and shutdown.
- * config               Significant Server or Module configuration steps.
- * fine                 Request hosts and operations, success or fail.
- * finer                Full request, response, and timing information.
- * finest               Method entry and exit, and extremely verbose messages,
- *                      for debugging.
- * </pre>
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
 public abstract class Server
         extends Pluggable
-        implements Logging {
+{
 
 	public static final boolean USE_CACHE = true;
 	public static final boolean USE_DEFINITIVE_STORE = false;
@@ -1015,106 +910,6 @@ public abstract class Server
      */
     public ServerStatusFile getStatusFile() {
         return m_statusFile;
-    }
-
-    /**
-     * Logs a SEVERE message, indicating that the server is inoperable or
-     * unable to start.
-     *
-     * @param message The message.
-     */
-    public final void logSevere(String message) {
-        LOG.fatal(message);
-    }
-
-    public final boolean loggingSevere() {
-        return true;
-    }
-
-    /**
-     * Logs a WARNING message, indicating that an undesired (but non-fatal)
-     * condition occured.
-     *
-     * @param message The message.
-     */
-    public final void logWarning(String message) {
-        LOG.warn(message);
-    }
-
-    public final boolean loggingWarning() {
-        return true;
-    }
-
-    /**
-     * Logs an INFO message, indicating that something relatively uncommon and
-     * interesting happened, like server or module startup or shutdown, or
-     * a periodic job.
-     *
-     * @param message The message.
-     */
-    public final void logInfo(String message) {
-        LOG.info(message);
-    }
-
-    public final boolean loggingInfo() {
-        return LOG.isInfoEnabled();
-    }
-
-    /**
-     * Logs a CONFIG message, indicating what occurred during the server's
-     * (or a module's) configuration phase.
-     *
-     * @param message The message.
-     */
-    public final void logConfig(String message) {
-        LOG.info(message);
-    }
-
-    public final boolean loggingConfig() {
-        return LOG.isInfoEnabled();
-    }
-
-    /**
-     * Logs a FINE message, indicating basic information about a request to
-     * the server (like hostname, operation name, and success or failure).
-     *
-     * @param message The message.
-     */
-    public final void logFine(String message) {
-        LOG.debug(message);
-    }
-
-    public final boolean loggingFine() {
-        return LOG.isDebugEnabled();
-    }
-
-    /**
-     * Logs a FINER message, indicating detailed information about a request
-     * to the server (like the full request, full response, and timing
-     * information).
-     *
-     * @param message The message.
-     */
-    public final void logFiner(String message) {
-        LOG.debug(message);
-    }
-
-    public final boolean loggingFiner() {
-        return LOG.isDebugEnabled();
-    }
-
-    /**
-     * Logs a FINEST message, indicating method entry/exit or extremely
-     * verbose information intended to aid in debugging.
-     *
-     * @param message The message.
-     */
-    public final void logFinest(String message) {
-        LOG.debug(message);
-    }
-
-    public final boolean loggingFinest() {
-        return LOG.isDebugEnabled();
     }
 
     public final static boolean hasInstance(File homeDir) {

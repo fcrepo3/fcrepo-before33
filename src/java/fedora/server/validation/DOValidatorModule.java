@@ -107,8 +107,7 @@ public class DOValidatorModule extends Module implements DOValidator
 			        
       	// FINALLY, instantiate the validation module implementation class
       	dov = new DOValidatorImpl(tempDir, xmlSchemaMap, 
-      			schematronPreprocessorPath,
-				ruleSchemaMap, this);
+      	        schematronPreprocessorPath, ruleSchemaMap);
     }
     catch(Exception e)
     {

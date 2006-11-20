@@ -1,11 +1,10 @@
-/**
- * 
- */
 package fedora.server.storage.lowlevel;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.log4j.Logger;
 
 import fedora.server.Module;
 import fedora.server.Server;
@@ -18,9 +17,14 @@ import fedora.server.storage.ConnectionPoolManager;
 /**
  * @author Edwin Shin
  * @version $Id$
- *
  */
-public class DefaultLowlevelStorageModule extends Module implements ILowlevelStorage {	
+public class DefaultLowlevelStorageModule
+        extends Module implements ILowlevelStorage {	
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            DefaultLowlevelStorageModule.class.getName());
+
 	private ILowlevelStorage m_llstore;
 	
 	public DefaultLowlevelStorageModule(Map moduleParameters, Server server, String role) throws ModuleInitializationException {
@@ -28,7 +32,7 @@ public class DefaultLowlevelStorageModule extends Module implements ILowlevelSto
 	}
 	
 	public void postInitModule() throws ModuleInitializationException {
-		logConfig("LowlevelStorageModule: loading...");
+		LOG.info("LowlevelStorageModule: loading...");
 		
 		try {
 			m_llstore = new DefaultLowlevelStorage(getModuleParameters());

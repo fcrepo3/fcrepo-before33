@@ -8,10 +8,8 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.Logging;
 import fedora.server.ReadOnlyContext;
 import fedora.server.Server;
-import fedora.server.StdoutLogging;
 import fedora.server.errors.ObjectIntegrityException;
 import fedora.server.errors.RepositoryConfigurationException;
 import fedora.server.errors.ServerException;
@@ -37,7 +35,6 @@ import fedora.server.utilities.DCFields;
  * @version $Id$
  */
 public class FieldSearchSQLImpl
-        extends StdoutLogging
         implements FieldSearch {
 
     /** Logger for this class. */
@@ -71,11 +68,9 @@ public class FieldSearchSQLImpl
      *        values of the fields
      * @param maxResults the maximum number of results to return at a time,
      *        regardless of what the user might request
-     * @param logTarget where to send log messages
      */
     public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader,
-            int maxResults, int maxSecondsPerSession, Logging logTarget) {
-        super(logTarget);
+            int maxResults, int maxSecondsPerSession) {
         LOG.debug("Entering constructor");
         m_cPool=cPool;
         m_repoReader=repoReader;
@@ -253,7 +248,7 @@ public class FieldSearchSQLImpl
         try {
             return stepAndRemember(new FieldSearchResultSQLImpl(
                     m_cPool, m_repoReader, resultFields, actualMax,
-                    m_maxSecondsPerSession, query, this));
+                    m_maxSecondsPerSession, query));
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error querying sql db: "
                     + sqle.getMessage());

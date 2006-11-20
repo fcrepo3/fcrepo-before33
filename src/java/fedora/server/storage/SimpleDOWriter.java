@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import fedora.server.Context;
-import fedora.server.Logging;
 import fedora.server.Server;
 import fedora.server.errors.ServerException;
 import fedora.server.errors.ObjectIntegrityException;
@@ -18,10 +17,7 @@ import fedora.server.storage.types.DigitalObject;
 import fedora.server.storage.types.Disseminator;
 
 /**
- *
- * <p><b>Title:</b> SimpleDOWriter.java</p>
- * <p><b>Description:</b> A <code>DOWriter</code> that uses a DigitalObject
- * under the hood.</p>
+ * A DigitalObject-backed DOWriter.
  *
  * <p>This interface supports transaction behavior with the commit(String) and
  * rollBack() methods.  When a DOWriter is instantiated, there is an implicit
@@ -62,9 +58,8 @@ public class SimpleDOWriter
     public SimpleDOWriter(Context context, DefaultDOManager mgr,
             DOTranslator translator,
             String exportFormat, 
-            String encoding, DigitalObject obj, Logging logTarget) {
-        super(context, mgr, translator, exportFormat,
-                encoding, obj, logTarget);
+            String encoding, DigitalObject obj) {
+        super(context, mgr, translator, exportFormat, encoding, obj);
         m_context=context;
         m_obj=obj;
         m_mgr=mgr;
