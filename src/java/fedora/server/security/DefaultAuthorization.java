@@ -481,6 +481,9 @@ public class DefaultAuthorization extends Module implements Authorization {
 	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:id</li>
 	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:location</li>
 	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:controlGroup</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:altIds</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:checksumType</li>
+	 * <li>urn:fedora:names:fedora:2.1:resource:datastream:checksum</li>
 	 * </ul>
 	 * </p> 
 	 * @see #enforceMethods common attributes available on any fedora interface call
