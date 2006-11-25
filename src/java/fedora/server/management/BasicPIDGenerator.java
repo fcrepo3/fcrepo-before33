@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 import fedora.common.PID;
 import fedora.server.Module;
 import fedora.server.Server;
@@ -20,7 +22,10 @@ import fedora.server.storage.ConnectionPoolManager;
 public class BasicPIDGenerator
         extends Module implements PIDGenerator {
 
-    private ConnectionPoolManager m_mgr;
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            BasicPIDGenerator.class.getName());
+
     private DBPIDGenerator m_pidGenerator;
     private File m_oldPidGenDir;
 
@@ -61,40 +66,33 @@ public class BasicPIDGenerator
      */
     public void postInitModule() 
             throws ModuleInitializationException {
-        m_mgr=(ConnectionPoolManager) getServer()
+        ConnectionPoolManager mgr = (ConnectionPoolManager) getServer()
                 .getModule("fedora.server.storage.ConnectionPoolManager");
-		if (m_mgr==null) {
+		if (mgr==null) {
             throw new ModuleInitializationException(
                     "ConnectionPoolManager module not loaded.", getRole());
 		}
-    }
-
-    private void initializeIfNeeded() 
-            throws IOException {
         try {
-            if (m_pidGenerator==null) {
-                m_pidGenerator=new DBPIDGenerator(m_mgr.getPool(), m_oldPidGenDir);
-            }
-        } catch (ConnectionPoolNotFoundException e) {
-            throw new IOException("Can't get default connection pool!");
+            m_pidGenerator=new DBPIDGenerator(mgr.getPool(), m_oldPidGenDir);
+        } catch (Exception e) {
+            String msg = "Can't get default connection pool";
+            LOG.fatal(msg, e);
+            throw new ModuleInitializationException(msg, getRole());
         }
     }
 
     public PID generatePID(String namespaceID)
             throws IOException {
-        initializeIfNeeded();
         return m_pidGenerator.generatePID(namespaceID);
     }
 
     public PID getLastPID()
             throws IOException {
-        initializeIfNeeded();
         return m_pidGenerator.getLastPID();
     }
 
     public void neverGeneratePID(String pid) 
             throws IOException {
-        initializeIfNeeded();
         m_pidGenerator.neverGeneratePID(pid);
     }
 
