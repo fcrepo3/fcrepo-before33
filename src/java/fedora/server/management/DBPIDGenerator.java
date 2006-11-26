@@ -66,7 +66,8 @@ public class DBPIDGenerator
                                  new Integer(results.getInt("highestID")));
             }
         } catch (SQLException sqle) {
-            throw new IOException("Error reading pidGen table from db: " + sqle.getMessage());
+            LOG.warn("Unable to read pidGen table; assuming it "
+                    + "will be created shortly");
         } finally {
             try {
                 if (results!=null) results.close();
