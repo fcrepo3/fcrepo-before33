@@ -1,55 +1,34 @@
 @echo off
 
 goto checkEnv
+
 :envOk
-
-set TOMCAT_DIR=@tomcat.basename@
-set TC=%FEDORA_HOME%\server\%TOMCAT_DIR%
-set OLD_JAVA_HOME=%JAVA_HOME%
-set JAVA_HOME=%THIS_JAVA_HOME%
-
-"%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp %TC%\webapps\fedora\WEB-INF\classes -Dfedora.home=%FEDORA_HOME% -Dfedora.serverProfile=%1 -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Djava.endorsed.dirs=%TC%\common\endorsed;%TC%\webapps\fedora\WEB-INF\lib;%TC%\common\lib -Djava.io.tmpdir=%TC%\temp fedora.server.utilities.rebuild.Rebuild %1
-set JAVA_HOME=%OLD_JAVA_HOME%
+set _CP=%CATALINA_HOME%\webapps\fedora\WEB-INF\classes
+set _ED=%CATALINA_HOME%\webapps\fedora\WEB-INF\lib;%CATALINA_HOME%\common\endorsed;%CATALINA_HOME%\common\lib
+"%JAVA_HOME%\bin\java" -server -Xmn64m -Xms256m -Xmx256m -cp "%_CP%" -Djava.endorsed.dirs="%_ED%" -Dfedora.home="%FEDORA_HOME%" -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dfedora.serverProfile=%1 fedora.server.utilities.rebuild.Rebuild %1
+if errorlevel 1 goto endWithError
+set _CP=
+set _ED=
 goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist %FEDORA_HOME%\server\config\fedora.fcfg goto configNotFound
-if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
-set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
-
-:checkJava
-if not exist "%THIS_JAVA_HOME%\bin\java.exe" goto noJavaBin
-if not exist "%THIS_JAVA_HOME%\bin\orbd.exe" goto badJavaVersion
+if "%CATALINA_HOME%" == "" goto noCatalinaHome
 goto envOk
 
-:tryJavaHome
-if "%JAVA_HOME%" == "" goto noJavaHome
-set THIS_JAVA_HOME=%JAVA_HOME%
-goto checkJava
+:noJavaHome
+echo ERROR: Environment variable, JAVA_HOME must be set.
+goto endWithError
 
 :noFedoraHome
 echo ERROR: Environment variable, FEDORA_HOME must be set.
-goto end
+goto endWithError
 
-:configNotFound
-echo ERROR: FEDORA_HOME does not appear correctly set.
-echo Configuration cannot be found at %FEDORA_HOME%\server\config\fedora.fcfg
-goto end
+:noCatalinaHome
+echo ERROR: Environment variable, CATALINA_HOME must be set.
+goto endWithError
 
-:noJavaHome
-echo ERROR: FEDORA_JAVA_HOME was not defined, nor was (the fallback) JAVA_HOME.
-goto end
-
-:noJavaBin
-echo ERROR: java.exe was not found in %THIS_JAVA_HOME%
-echo Make sure FEDORA_JAVA_HOME or JAVA_HOME is set correctly.
-goto end
-
-:badJavaVersion
-echo ERROR: java was found in %THIS_JAVA_HOME%, but it was not version 1.4
-echo Make sure FEDORA_JAVA_HOME or JAVA_HOME points to a 1.4JRE/JDK base.
-goto end
+:endWithError
+exit /B 1
 
 :end
-

@@ -36,7 +36,6 @@ public class RebuildServer extends Server
             throws ServerInitializationException, ModuleInitializationException
     {
         super(rootConfigElement, homeDir);
-        // TODO Auto-generated constructor stub
     }
     
     protected boolean overrideModuleRole(String moduleRole)
@@ -77,6 +76,7 @@ public class RebuildServer extends Server
             throws ServerInitializationException,
                    ModuleInitializationException 
     {
+        configureLog4J("-rebuild.log");
         // instantiate a new special purpose server for rebuilding 
         // SQL databases given the class provided in the root element
         // in the config file and return it
@@ -170,7 +170,7 @@ public class RebuildServer extends Server
                     // a runtime error..shouldn't happen, but if it does...
                     StringBuffer s=new StringBuffer();
                     s.append(t.getClass().getName());
-                    s.append(": ");
+                    s.append(":[z] ");
                     for (int i=0; i<t.getStackTrace().length; i++) 
                     {
                         s.append(t.getStackTrace()[i] + "\n");

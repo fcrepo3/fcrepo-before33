@@ -680,7 +680,7 @@ public abstract class Server
     /**
      * Configures Log4J using a properties file.
      */
-    private static void configureLog4J() {
+    protected static void configureLog4J(String extension) {
 
         File fedoraHome = new File(System.getProperty("fedora.home"));
         File homeDir = new File(fedoraHome, "server");
@@ -697,7 +697,7 @@ public abstract class Server
 			Matcher matcher = pattern.matcher(key);
 			// set a default location (e.g. in $FEDORA_HOME/logs/) if File appender location is empty
 			if (matcher.matches() && (value == null || value.equals(""))) {
-				value = new File(logDir, matcher.group(1).toLowerCase() + ".log").getAbsolutePath();
+				value = new File(logDir, matcher.group(1).toLowerCase() + extension).getAbsolutePath();
 			}
 			props.put(key, value);
 		}
@@ -958,7 +958,7 @@ public abstract class Server
             return instance;
         }
 
-        configureLog4J();
+        configureLog4J(".log");
 
         // else instantiate a new one given the class provided in the
         // root element in the config file and return it

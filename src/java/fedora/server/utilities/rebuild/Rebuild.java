@@ -67,11 +67,8 @@ public class Rebuild implements Constants {
 				.println("         Make sure your server is stopped before continuing.");
 		System.err.println();
 		System.err.println("Server directory is " + serverDir.toString());
-		System.err.print("Server profile is ");
-		if (profile == null) {
-			System.err.println("unspecified");
-		} else {
-			System.err.println(profile);
+		if (profile != null) {
+		    System.err.print("Server profile is " + profile);
 		}
 		System.err.println();
 		System.err
