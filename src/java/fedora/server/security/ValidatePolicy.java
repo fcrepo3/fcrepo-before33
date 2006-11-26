@@ -86,8 +86,10 @@ public class ValidatePolicy extends PolicyFinderModule {
 		File file = new File(filepath);
 		if (!file.exists()) {
 			LOG.error(filepath + " does not exist");
+            System.exit(1);
 		} else if (! file.canRead()) {
 			LOG.error("cannot read " + filepath);
+            System.exit(1);
 		} else {
 			ValidatePolicy policyChecker = new ValidatePolicy();
 			String name = "";
@@ -99,6 +101,7 @@ public class ValidatePolicy extends PolicyFinderModule {
 				name = rootElement.getTagName();
 			} catch (Throwable e) {
 				LOG.error("couldn't parse repo-wide policy", e);
+                System.exit(1);
 			}
 	        AbstractPolicy abstractPolicy = null;
 			try {
@@ -113,31 +116,32 @@ public class ValidatePolicy extends PolicyFinderModule {
 				}
 			} catch (ParsingException e) {
 				LOG.error("couldn't parse repo-wide policy", e);
+                System.exit(1);
 			}
 		}
 	}
 	
 	class MyErrorHandler implements ErrorHandler {
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.ErrorHandler#error(org.xml.sax.SAXParseException)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void error(SAXParseException exception) throws SAXException {
-            LOG.error("error via handler", exception);
+            throw exception;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.ErrorHandler#fatalError(org.xml.sax.SAXParseException)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void fatalError(SAXParseException exception) throws SAXException {
-            LOG.error("fatal error via handler", exception);
+            throw exception;
 		}
 
-		/* (non-Javadoc)
-		 * @see org.xml.sax.ErrorHandler#warning(org.xml.sax.SAXParseException)
+		/**
+		 * {@inheritDoc}
 		 */
 		public void warning(SAXParseException exception) throws SAXException {
-            LOG.warn("warning via handler", exception);
+            LOG.warn("Sax warning while parsing", exception);
 		}
 		
 	}
