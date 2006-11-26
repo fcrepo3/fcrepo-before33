@@ -162,7 +162,7 @@ public class ServerUtility {
         return pingsOk;    	
     }
     
-	public static final int MAX_CONNECTION_ATTEMPTS_PER_URL = 15;   
+	public static final int MAX_CONNECTION_ATTEMPTS_PER_URL = 5;   
     public static boolean pingServletContainerStartup(String path, int secondsTimeout) throws GeneralException {
     	return pingServletContainer(path, secondsTimeout, MAX_CONNECTION_ATTEMPTS_PER_URL);
     }
@@ -196,6 +196,9 @@ public class ServerUtility {
 	  			(optionalPassword == null) ? ServerUtility.getServerProperties().getProperty(ServerUtility.ADMIN_PASSWORD_KEY) : optionalPassword, 
 	  			ServerUtility.MAX_CONNECTION_ATTEMPTS_PER_URL
 	  		);
+            if (getMethod == null) {
+                throw new Exception("Server is either not running or unreachable");
+            }
 	   		LOG.debug("...SC:call HttpClient.doAuthnGet()");		      		
 	   		LOG.debug("SC:call HttpClient.getLineResponse()...");
    			statusCode = getMethod.getStatusCode();
@@ -278,6 +281,11 @@ public class ServerUtility {
 	}
 	
     public static void main(String[] args) throws Exception {
+        // tell commons-logging to use Log4J
+		System.setProperty("org.apache.commons.logging.LogFactory",
+				"org.apache.commons.logging.impl.Log4jFactory");
+		System.setProperty("org.apache.commons.logging.Log",
+				"org.apache.commons.logging.impl.Log4JLogger");
         if (args.length < 1) {
         	throw new Exception(USAGE);
         }
