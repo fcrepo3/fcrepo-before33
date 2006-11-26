@@ -12,6 +12,7 @@ set _ED=
 goto end
 
 :checkEnv
+if "%JAVA_HOME%" == "" goto noJavaHome
 if "%FEDORA_HOME%" == "" goto noFedoraHome
 if "%CATALINA_HOME%" == "" goto noCatalinaHome
 goto envOk
