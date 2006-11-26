@@ -1,39 +1,27 @@
 #!/bin/sh
-# ----------------------------------------------------------------------
-# Fedora Rebuild script
-# ----------------------------------------------------------------------
 
-# ----------------------------------------------------------------------
-# Environment setup
+if [ -z "$JAVA_HOME" ]; then
+    echo "ERROR: Environment variable, JAVA_HOME must be set."
+    exit 1
+fi
 
-# Cannot proceed if FEDORA_HOME is not set
 if [ -z "$FEDORA_HOME" ]; then
-	echo "ERROR: The FEDORA_HOME environment variable is not defined."
-	exit 1
+    echo "ERROR: Environment variable, FEDORA_HOME must be set."
+    exit 1
 fi
 
-if [ -r "$FEDORA_HOME"/server/bin/set-env.sh ]; then
-  	. "$FEDORA_HOME"/server/bin/set-env.sh
-else
-	echo "ERROR: $FEDORA_HOME/server/bin/set-env.sh was not found."
-	exit 1
+if [ -z "$CATALINA_HOME" ]; then
+    echo "ERROR: Environment variable, CATALINA_HOME must be set."
+    exit 1
 fi
 
-TC_BASENAME="@tomcat.basename@"
-TC="$FEDORA_HOME"/server/"$TC_BASENAME"
-TC_COMMON="$TC"/common/lib
-TC_ENDORSED="$TC"/common/endorsed
-AXIS_UTILITY_LIBS=@AxisUtility.unix.libs@
-SERVER_CONTROLLER_LIBS=@ServerController.unix.libs@
+_CP=$CATALINA_HOME/webapps/fedora/WEB-INF/classes
+_ED=$CATALINA_HOME/webapps/fedora/WEB-INF/lib:$CATALINA_HOME/common/endorsed:$CATALINA_HOME/common/lib
 
-SERVER_PROFILE="$1"
-(exec "$JAVA" -server -Xmn64m -Xms256m -Xmx256m \
-	    	  -cp "$TC/webapps/fedora/WEB-INF/classes" \
-  			  -Dfedora.home="$FEDORA_HOME" \
-          -Dfedora.serverProfile=$SERVER_PROFILE \
-  			  -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
-  			  -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
-			  -Djava.endorsed.dirs="$TC_COMMON:$TC/webapps/fedora/WEB-INF/lib" \
-			  -Djava.io.tmpdir="$TC/temp" \
-              fedora.server.utilities.rebuild.Rebuild $SERVER_PROFILE)
-restoreJavaHome
+(exec "$JAVA_HOME/bin/java" -server -Xmn64m -Xms256m -Xmx256m \
+    -cp "$_CP" -Djava.endorsed.dirs="$_ED" -Dfedora.home="$FEDORA_HOME" \
+    -Djavax.xml.parsers.DocumentBuilderFactory=org.apache.xerces.jaxp.DocumentBuilderFactoryImpl \
+    -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
+    -Dfedora.serverProfile=$1 fedora.server.utilities.rebuild.Rebuild $1)
+
+exit $?
