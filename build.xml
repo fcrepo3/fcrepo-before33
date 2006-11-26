@@ -98,6 +98,7 @@
             <pathelement location="${lib.kowari-driver}"/>
             <pathelement location="${lib.log4j}"/>
             <pathelement location="${lib.lucene}"/>
+            <pathelement location="${lib.mptstore}"/>
             <pathelement location="${lib.md5}"/>
             <pathelement location="${lib.openrdf-util}"/>
             <pathelement location="${lib.openrdf-model}"/>

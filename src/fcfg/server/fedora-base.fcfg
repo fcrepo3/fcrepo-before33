@@ -615,4 +615,39 @@
     <param name="bufferFlushBatchSize" value="20000"/>
     <param name="bufferSafeCapacity" value="40000"/>
   </datastore>
+  <datastore id="localPostgresMPTTriplestore">
+    <comment>
+      Example local MPTStore backed by Postgres.
+      To use this triplestore for the Resource Index:
+      1) In fedora.fcfg, change the "datastore" parameter of the
+         ResourceIndex module to localPostgresMPTTriplestore.
+      2) Login to your Postgres server as an administrative user and
+         run the following commands:
+           CREATE ROLE "fedoraAdmin" LOGIN PASSWORD 'fedoraAdmin'
+             NOINHERIT CREATEDB
+             VALID UNTIL 'infinity';
+           CREATE DATABASE "riTriples"
+             WITH ENCODING='SQL_ASCII'
+             OWNER="fedoraAdmin";
+      3) Make sure you can login to your Postgres server as fedoraAdmin.
+      4) Download the appropriate Postgres JDBC 3 driver from 
+         http://jdbc.postgresql.org/download.html
+         and make sure it's accessible to your servlet container.
+         If you're running Tomcat, putting it in common/lib/ will work.
+    </comment>
+    <param name="connectorClassName" value="org.trippi.impl.mpt.MPTConnector"/>
+    <param name="ddlGenerator" value="org.nsdl.mptstore.impl.postgres.PostgresDDLGenerator"/>
+    <param name="jdbcDriver" value="org.postgresql.Driver"/>
+    <param name="jdbcURL" value="jdbc:postgresql://localhost/riTriples"/>
+    <param name="username" value="fedoraAdmin"/>
+    <param name="password" value="fedoraAdmin"/>
+    <param name="poolInitialSize" value="3"/>
+    <param name="poolMaxSize" value="10"/>
+    <param name="backslashIsEscape" value="true"/>
+    <param name="fetchSize" value="1000"/>
+    <param name="autoFlushDormantSeconds" value="5"/>
+    <param name="autoFlushBufferSize" value="1000"/>
+    <param name="bufferFlushBatchSize" value="1000"/>
+    <param name="bufferSafeCapacity" value="2000"/>
+  </datastore>
 </server>
