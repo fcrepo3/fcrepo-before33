@@ -11,6 +11,7 @@ import org.dom4j.DocumentException;
 import fedora.utilities.FileUtils;
 import fedora.utilities.Zip;
 import fedora.utilities.install.Distribution;
+import fedora.utilities.install.Installer;
 import fedora.utilities.install.InstallOptions;
 import fedora.utilities.install.InstallationFailedException;
 
@@ -31,6 +32,7 @@ public class BundledTomcat extends Tomcat {
 			throw new InstallationFailedException("Move to " + 
 					getTomcatHome().getAbsolutePath() + " failed.");
 		}
+        Installer.setScriptsExecutable(new File(getTomcatHome(), "bin"));
 	}
 	
 	protected void installServerXML() throws InstallationFailedException {

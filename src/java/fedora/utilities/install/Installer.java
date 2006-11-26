@@ -81,16 +81,8 @@ public class Installer {
 		System.out.println("Preparing FEDORA_HOME...");
 		try {
 			Zip.unzip(_dist.get(Distribution.FEDORA_HOME), fedoraHome);
-			
-			// Make scripts executable on *nix systems
-			String os = System.getProperty("os.name");
-			if (os != null && !os.startsWith("Windows")) {
-				FileFilter scripts = FileUtils.getSuffixFileFilter(".sh");
-				File clientBin = new File(fedoraHome, "/client/bin/");
-				File serverBin = new File(fedoraHome, "/server/bin/");
-				setExecutable(clientBin, scripts);
-				setExecutable(serverBin, scripts);
-			}
+            setScriptsExecutable(new File(fedoraHome, "client/bin"));
+            setScriptsExecutable(new File(fedoraHome, "server/bin"));
 		} catch (IOException e) {
 			throw new InstallationFailedException(e.getMessage(), e);
 		}
@@ -270,8 +262,19 @@ public class Installer {
     	props.put("module.fedora.server.storage.ConnectionPoolManager.poolNames", poolName);
     	props.put("module.fedora.server.storage.ConnectionPoolManager.defaultPoolName", poolName);
     }
+
+	/**
+     * Make scripts (ending with .sh) executable on *nix systems.
+     */
+    public static void setScriptsExecutable(File dir) {
+		String os = System.getProperty("os.name");
+		if (os != null && !os.startsWith("Windows")) {
+			FileFilter filter = FileUtils.getSuffixFileFilter(".sh");
+			setExecutable(dir, filter);
+		}
+    }
     
-    private void setExecutable(File dir, FileFilter filter) {
+    private static void setExecutable(File dir, FileFilter filter) {
     	File[] files;
     	if (filter != null) {
     		files = dir.listFiles(filter);
