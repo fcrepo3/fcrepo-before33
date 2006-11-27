@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
- * <p><b>Title:</b> MySQLDDLConverter.java</p>
- * <p><b>Description:</b> </p>
+ * A DDLConverter that works with MySQL.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -28,12 +26,6 @@ public class MySQLDDLConverter
         return "DROP TABLE " + tableName;
     }
     
-    public String getDeleteDDL(String command) {
-        String[] parts = command.split(" ");
-        String tableName = parts[2];
-        return "DELETE FROM " + tableName;        
-    }
-
     public List getDDL(TableSpec spec) {
         StringBuffer out=new StringBuffer();
         StringBuffer end=new StringBuffer();

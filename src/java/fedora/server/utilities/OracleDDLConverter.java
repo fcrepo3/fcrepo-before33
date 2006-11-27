@@ -5,9 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- *
- * <p><b>Title:</b> OracleDDLConverter.java</p>
- * <p><b>Description:</b> </p>
+ * A DDLConverter that works with Oracle.
  *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
@@ -29,12 +27,6 @@ public class OracleDDLConverter
         return "DROP " + objectType + " " + objectName;
     }
 
-    public String getDeleteDDL(String command) {
-        String[] parts = command.split(" ");
-        String tableName = parts[2];
-        return "DELETE FROM " + tableName;        
-    }
-    
     public List getDDL(TableSpec spec) {
         ArrayList l=new ArrayList();
         StringBuffer out=new StringBuffer();

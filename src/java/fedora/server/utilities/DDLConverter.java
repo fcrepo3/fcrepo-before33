@@ -3,10 +3,8 @@ package fedora.server.utilities;
 import java.util.List;
 
 /**
- *
- * <p><b>Title:</b> DDLConverter.java</p>
- * <p><b>Description:</b> Interface for a converter of TableSpec objects to
- * RDBMS-specific DDL code.</p>
+ * Interface for a converter of TableSpec objects to
+ * RDBMS-specific DDL code.
  *
  * <p>Implementations of this class must be thread-safe.  That is, one
  * instance can be used simultanously without problems.  This typically
@@ -25,7 +23,5 @@ public interface DDLConverter {
 
     public String getDropDDL(String command);
     
-    public String getDeleteDDL(String command);
-
 }
 
