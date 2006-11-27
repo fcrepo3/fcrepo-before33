@@ -260,13 +260,13 @@ public class FastDOReader implements DOReader
           + "FROM "
           + "bDef,"
           + "diss,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc "
           + "WHERE "
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("GetBehaviorDefsQuery: " + query);
       String results = null;
@@ -514,12 +514,12 @@ public class FastDOReader implements DOReader
           + "bDef,"
           + "diss,"
           + "method,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc,"
           + "bMech,"
           + "mechImpl "
           + "WHERE "
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "bMech.bMechDbID = diss.bMechDbID AND "
@@ -528,7 +528,7 @@ public class FastDOReader implements DOReader
           + "method.methodDbID = mechImpl.methodDbID AND "
           + "method.bDefDbID = bDef.bDefDbID AND "
           + "bDef.bDefPID = \'" + bDefPID + "\' AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("getObjectMethodsQuery: " + query);
       String[] results = null;
@@ -641,12 +641,12 @@ public class FastDOReader implements DOReader
           + "dsBind.dsControlGroupType, "
           + "dsBind.dsCurrentVersionID "
           + "FROM "
-          + "do,"
+          + "dobj,"
           + "dsBind "
           + "WHERE "
-          + "do.doDbID = dsBind.doDbID AND "
+          + "dobj.doDbID = dsBind.doDbID AND "
           + "dsBind.dsID=\'" + datastreamID +"\' AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("GetDatastreamQuery: " + query);
       String[] results = null;
@@ -758,12 +758,12 @@ public class FastDOReader implements DOReader
           + "dsBind.dsControlGroupType, "
           + "dsBind.dsCurrentVersionID "
           + "FROM "
-          + "do,"
+          + "dobj,"
           + "dsBind "
           + "WHERE "
           + statePart
-          + "do.doDbID = dsBind.doDbID AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doDbID = dsBind.doDbID AND "
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("GetDatastreamsQuery: " + query);
       String[] results = null;
@@ -909,7 +909,7 @@ public class FastDOReader implements DOReader
       // query relational database
       String query =
           "SELECT "
-          + "do.doPID,"
+          + "dobj.doPID,"
           + "bDef.bDefPID,"
           + "method.methodName,"
           + "mechImpl.addressLocation,"
@@ -922,7 +922,7 @@ public class FastDOReader implements DOReader
           + "dsBindSpec.dsBindSpecName, "
           + "dsBind.dsState "
           + " FROM "
-          + "do,"
+          + "dobj,"
           + "bDef,"
           + "bMech,"
           + "dsBind,"
@@ -932,18 +932,18 @@ public class FastDOReader implements DOReader
           + "method,"
           + "dsBindSpec "
           + " WHERE "
-          + "do.doDbID=doDissAssoc.doDbID AND "
+          + "dobj.doDbID=doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID=diss.dissDbID AND "
           + "diss.bDefDbID = bDef.bDefDbID AND "
           + "diss.bMechDbID = bMech.bMechDbID AND "
-          + "dsBind.doDbID = do.doDbID AND "
+          + "dsBind.doDbID = dobj.doDbID AND "
           + "bMech.bMechDbID = mechImpl.bMechDbID AND "
           + "mechImpl.dsBindKeyDbID = "
           + "dsBind.dsBindKeyDbID AND "
           + "dsBindSpec.dsBindKeyDbID = "
           + "mechImpl.dsBindKeyDbID AND "
           + "mechImpl.methodDbID = method.methodDbID AND "
-          + "do.doPID='" + GetObjectPID() + "' AND "
+          + "dobj.doPID='" + GetObjectPID() + "' AND "
           + " bDef.bDefPID=\'" + bDefPID + "\' AND "
           + " method.methodName=\'"  + methodName + "\' "
           + " ORDER BY dsBindSpec.dsBindSpecName";
@@ -1081,17 +1081,17 @@ public class FastDOReader implements DOReader
           + "bDef,"
           + "diss,"
           + "dsBindMap,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc,"
           + "bMech "
           + "WHERE "
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "bMech.bMechDbID = diss.bMechDbID AND "
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
           + "diss.dissID=\'" + disseminatorID + "\' AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("GetDisseminatorQuery: " + query);
       String[] results = null;
@@ -1193,17 +1193,17 @@ public class FastDOReader implements DOReader
           + "bDef,"
           + "diss,"
           + "dsBindMap,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc,"
           + "bMech "
           + "WHERE "
           + statePart
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "bMech.bMechDbID = diss.bMechDbID AND "
           + "dsBindMap.bMechDbID=bMech.bMechDbID AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("GetDisseminatorsQuery: " + query);
       String[] results = null;
@@ -1340,26 +1340,26 @@ public class FastDOReader implements DOReader
       // query relational database
       String  query =
           "SELECT DISTINCT "
-          + "do.doPID,"
+          + "dobj.doPID,"
           + "bDef.bDefPID,"
           + "method.methodName "
           + "FROM "
           + "bDef,"
           + "diss,"
           + "method,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc,"
           + "bMech,"
           + "mechImpl "
           + "WHERE "
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
           + "bDef.bDefDbID = diss.bDefDbID AND "
           + "bMech.bMechDbID = diss.bMechDbID AND "
           + "bMech.bMechDbID = mechImpl.bMechDbID AND "
           + "bDef.bDefDbID = mechImpl.bDefDbID AND "
           + "method.methodDbID = mechImpl.methodDbID AND "
-          + "do.doPID=\'" + GetObjectPID() + "\' "
+          + "dobj.doPID=\'" + GetObjectPID() + "\' "
           + "ORDER BY bDef.bDefPID, method.methodName";
 
       LOG.debug("getObjectMethodsQuery: " + query);
@@ -1568,12 +1568,12 @@ public class FastDOReader implements DOReader
           + "dsBind.dsID, "
           + "dsBind.dsState "
           + "FROM "
-          + "do,"
+          + "dobj,"
           + "dsBind "
           + "WHERE "
           + statePart
-          + "do.doDbID = dsBind.doDbID AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doDbID = dsBind.doDbID AND "
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("ListDatastreamIDsQuery: " + query);
       String[] results = null;
@@ -1678,13 +1678,13 @@ public class FastDOReader implements DOReader
           + "diss.dissState "
           + "FROM "
           + "diss,"
-          + "do,"
+          + "dobj,"
           + "doDissAssoc "
           + "WHERE "
           + statePart
-          + "do.doDbID = doDissAssoc.doDbID AND "
+          + "dobj.doDbID = doDissAssoc.doDbID AND "
           + "doDissAssoc.dissDbID = diss.dissDbID AND "
-          + "do.doPID=\'" + PID + "\'";
+          + "dobj.doPID=\'" + PID + "\'";
 
       LOG.debug("ListDisseminatorIDsQuery: " + query);
       String[] results = null;
@@ -1777,11 +1777,11 @@ public class FastDOReader implements DOReader
     ResultSet rs = null;
     String  query =
         "SELECT "
-        + "do.doLabel "
+        + "dobj.doLabel "
         + "FROM "
-        + "do "
+        + "dobj "
         + "WHERE "
-        + "do.doPID=\'" + PID + "\'";
+        + "dobj.doPID=\'" + PID + "\'";
 
     try
     {

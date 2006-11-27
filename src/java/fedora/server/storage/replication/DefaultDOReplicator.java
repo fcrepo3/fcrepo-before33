@@ -185,7 +185,7 @@ public class DefaultDOReplicator
      * If the object has already been replicated, update the components
      * and return true.  Otherwise, return false.
      *
-     * @ids=select doDbID from do where doPID='demo:5'
+     * @ids=select doDbID from dobj where doPID='demo:5'
      * if @ids.size=0, return false
      * else:
      *     foreach $id in @ids
@@ -211,7 +211,7 @@ public class DefaultDOReplicator
             st=connection.createStatement();
 
             // Get db ID for the digital object
-            results=logAndExecuteQuery(st, "SELECT doDbID,doState,doLabel FROM do WHERE "
+            results=logAndExecuteQuery(st, "SELECT doDbID,doState,doLabel FROM dobj WHERE "
                     + "doPID='" + reader.GetObjectPID() + "'");
             if (!results.next()) {
                 LOG.debug("Object is "
@@ -228,14 +228,14 @@ public class DefaultDOReplicator
             // Check if state has changed for the digital object.
             String objState = reader.GetObjectState();
             if (!doState.equalsIgnoreCase(objState)) {
-                updates.add("UPDATE do SET doState='" + objState + "' WHERE doDbID=" + doDbID);
+                updates.add("UPDATE dobj SET doState='" + objState + "' WHERE doDbID=" + doDbID);
                 updates.add("UPDATE doRegistry SET objectState='" + objState + "' WHERE doPID='" + reader.GetObjectPID() + "'");
             }
 
             // Check if label has changed for the digital object.
             String objLabel = reader.GetObjectLabel();
             if (!doLabel.equalsIgnoreCase(objLabel)) {
-                updates.add("UPDATE do SET doLabel='" + SQLUtility.aposEscape(objLabel) + "' WHERE doDbID=" + doDbID);
+                updates.add("UPDATE dobj SET doLabel='" + SQLUtility.aposEscape(objLabel) + "' WHERE doDbID=" + doDbID);
                 updates.add("UPDATE doRegistry SET label='" + SQLUtility.aposEscape(objLabel) + "' WHERE doPID='" + reader.GetObjectPID() + "'");
             }
 
@@ -602,7 +602,7 @@ public class DefaultDOReplicator
             st=connection.createStatement();
 
             // get db ID for the digital object
-            results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
+            results=logAndExecuteQuery(st, "SELECT doDbID FROM dobj WHERE "
                                        + "doPID='" + doPID + "'");
             if (!results.next()) {
                 LOG.debug("Object is "
@@ -699,7 +699,7 @@ public class DefaultDOReplicator
                         st=connection.createStatement();
 
                         // get db ID for the digital object
-                        results=logAndExecuteQuery(st, "SELECT doDbID FROM do WHERE "
+                        results=logAndExecuteQuery(st, "SELECT doDbID FROM dobj WHERE "
                                         + "doPID='" + doPID + "'");
                         if (!results.next()) {
                                 LOG.debug("Object is "
@@ -1416,7 +1416,7 @@ public class DefaultDOReplicator
 
                 doDBID = lookupDigitalObjectDBID(connection, doPID);
                 if (doDBID == null) {
-                    throw new ReplicationException("do row doesn't "
+                    throw new ReplicationException("dobj row doesn't "
                             + "exist for PID: " + doPID);
                 }
 				// add disseminator components (which include associated datastream components)
@@ -1681,7 +1681,7 @@ public class DefaultDOReplicator
      * <p></p>
      * Pseudocode:
      * <ul><pre>
-     * $doDbID=SELECT doDbID FROM do where doPID=$PID
+     * $doDbID=SELECT doDbID FROM dobj where doPID=$PID
      * @DISSIDS=SELECT dissDbID
      * FROM doDissAssoc WHERE doDbID=$doDbID
      * @BMAPIDS=SELECT dsBindMapDbID
@@ -1709,26 +1709,26 @@ public class DefaultDOReplicator
             //
             // READ
             //
-            LOG.debug("Checking do table for " + pid + "...");
+            LOG.debug("Checking dobj table for " + pid + "...");
             results=logAndExecuteQuery(st, "SELECT doDbID FROM "
-                    + "do WHERE doPID='" + pid + "'");
+                    + "dobj WHERE doPID='" + pid + "'");
             if (!results.next()) {
                  // must not be a digitalobject...exit early
-                 LOG.debug(pid + " wasn't found in do table..."
+                 LOG.debug(pid + " wasn't found in dobj table..."
                          + "skipping deletion as such.");
                  return;
             }
             int dbid=results.getInt("doDbID");
             results.close();
             results=null;
-            LOG.debug(pid + " was found in do table (DBID=" + dbid + ")");
+            LOG.debug(pid + " was found in dobj table (DBID=" + dbid + ")");
 
             //
             // WRITE
             //
             int rowCount;
-            LOG.debug("Attempting row deletion from do table...");
-            rowCount=logAndExecuteUpdate(st, "DELETE FROM do "
+            LOG.debug("Attempting row deletion from dobj table...");
+            rowCount=logAndExecuteUpdate(st, "DELETE FROM dobj "
                     + "WHERE doDbID=" + dbid);
             LOG.debug("Deleted " + rowCount + " row(s) from do.");
             LOG.debug("Attempting row deletion from doDissAssoc "
@@ -1935,7 +1935,7 @@ public class DefaultDOReplicator
         */
 	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel, String doState) throws SQLException {
 
-		String insertionStatement = "INSERT INTO do (doPID, doLabel, doState) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "', '" + doState + "')";
+		String insertionStatement = "INSERT INTO dobj (doPID, doLabel, doState) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "', '" + doState + "')";
 
 		insertGen(connection, insertionStatement);
 	}
@@ -2190,7 +2190,7 @@ public class DefaultDOReplicator
         * @throws StorageDeviceException if db lookup fails for any reason.
         */
 	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws StorageDeviceException {
-		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
+		return lookupDBID1(connection, "doDbID", "dobj", "doPID", doPID);
 	}
 
         /**
@@ -2731,19 +2731,19 @@ public class DefaultDOReplicator
               //
               // READ
               //
-              LOG.debug("Checking do table for " + pid + "...");
+              LOG.debug("Checking dobj table for " + pid + "...");
               results=logAndExecuteQuery(st, "SELECT doDbID FROM "
-                      + "do WHERE doPID='" + pid + "'");
+                      + "dobj WHERE doPID='" + pid + "'");
               if (!results.next()) {
                    // must not be a digitalobject...exit early
-                   LOG.debug(pid + " wasn't found in do table..."
+                   LOG.debug(pid + " wasn't found in dobj table..."
                            + "skipping deletion as such.");
                    return;
               }
               int dbid=results.getInt("doDbID");
               results.close();
               results=null;
-              LOG.debug(pid + " was found in do table (DBID="
+              LOG.debug(pid + " was found in dobj table (DBID="
                       + dbid + ")");
 
               //

@@ -141,7 +141,7 @@ public class RowInsertion {
         */
 	public void insertDigitalObjectRow(Connection connection, String doPID, String doLabel) throws SQLException {
 
-		String insertionStatement = "INSERT INTO do (doPID, doLabel) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "')";
+		String insertionStatement = "INSERT INTO dobj (doPID, doLabel) VALUES ('" + doPID + "', '" +  SQLUtility.aposEscape(doLabel) + "')";
 
 		insertGen(connection, insertionStatement);
 	}

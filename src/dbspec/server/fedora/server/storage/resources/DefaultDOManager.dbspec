@@ -45,7 +45,7 @@
 		<column name="dsBindKeyDbID" type="int(11)" notNull="true" default="0" index="dsBindKeyDbID"/>
 		<column name="dsMIMEName" type="varchar(64)" notNull="false" default="" index="dsMIMEName"/>
 	</table>
-	<table name="do" primaryKey="doDbID">
+	<table name="dobj" primaryKey="doDbID">
 		<column name="doDbID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="doPID" type="varchar(64)" notNull="true" default="" binary="true" unique="true"/>
 		<column name="doLabel" type="varchar(255)" notNull="false" default=""/>

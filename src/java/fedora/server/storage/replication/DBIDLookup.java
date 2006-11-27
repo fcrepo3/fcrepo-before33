@@ -90,7 +90,7 @@ public class DBIDLookup {
         * @exception SQLException JDBC, SQL error
         */
 	public String lookupDigitalObjectDBID(Connection connection, String doPID) throws StorageDeviceException {
-		return lookupDBID1(connection, "doDbID", "do", "doPID", doPID);
+		return lookupDBID1(connection, "doDbID", "dobj", "doPID", doPID);
 	}
 
         /**
