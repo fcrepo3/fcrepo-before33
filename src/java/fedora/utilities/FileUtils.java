@@ -39,7 +39,7 @@ public class FileUtils {
     }
 	
 	/**
-	 * Copy a File.
+	 * Copy a file or directory.
 	 * 
 	 * @param source
 	 * @param destination
@@ -48,10 +48,12 @@ public class FileUtils {
 	 */
 	public static boolean copy(File source, File destination) {
 		boolean result = true;
-		if (!destination.exists() && destination.isDirectory()) {
-			result = result && destination.mkdirs();
-		}
 		if (source.isDirectory()) {
+            if (destination.exists()) {
+                result = result && destination.isDirectory();
+            } else {
+                result = result && destination.mkdirs();
+            }
 			File[] children = source.listFiles();
 			for (int i = 0; i < children.length; i++) {
 				result = result && copy(new File(source, children[i].getName()), 
@@ -111,7 +113,7 @@ public class FileUtils {
     }
 	
 	/**
-	 * Move a File.
+	 * Move a file or directory.
 	 * Initally attempts to move the File using java.io.File.renameTo(). 
 	 * However, should this operation fail (e.g. when source and destination 
 	 * are across different filesystems), will attempt to copy and then delete 
@@ -180,4 +182,5 @@ public class FileUtils {
             return filename.endsWith(this.filenameSuffix);
         }
     }
+
 }
