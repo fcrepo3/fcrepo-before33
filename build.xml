@@ -13,6 +13,7 @@
     
     <property name="build.dir"                 location="build"/>
     <property name="client.build.dir"          location="${build.dir}/client"/>
+	<property name="docs.build.dir"            location="${build.dir}/docs"/>
 	<property name="fedora.home.build.dir"     location="${build.dir}/home"/>
 	<property name="install.build.dir"		   location="${build.dir}/install"/>
 	<property name="junit.build.dir"		   location="${build.dir}/junit"/>
@@ -29,6 +30,7 @@
     <property name="lib.dir"                   location="lib"/>
     
     <property name="src.dir"                   location="src"/>
+	<property name="docs.src.dir"              location="${src.dir}/doc"/>
     <property name="java.src.dir"              location="${src.dir}/java"/>
 	<property name="junit.src.dir"             location="${src.dir}/test/junit"/>
     <property name="properties.src.dir"        location="${src.dir}/properties"/>
@@ -112,13 +114,19 @@
             <pathelement location="${lib.xmlpull}"/>
             <pathelement location="${lib.xpp3}"/>
             
+        	<pathelement location="${lib.commons-beanutils}"/>
+        	<pathelement location="${lib.commons-betwixt}"/>
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.saxon}"/>
-            <pathelement location="${lib.commons-betwixt}"/>
 
             <pathelement location="${lib.staxapi}"/>
             <pathelement location="${lib.sjsxp}"/>
             <pathelement location="${lib.staxutil}"/>
+        	
+        	<pathelement location="${lib.jsf-api}"/>
+        	<pathelement location="${lib.jsf-impl}"/>
+        	<pathelement location="${lib.jstl}"/>
+        	<pathelement location="${lib.jstl-standard}"/>
             
             <!-- prev in common/lib -->
             <pathelement location="${lib.axis}"/>
@@ -305,6 +313,9 @@
         <copy todir="${server.build.dir}/classes">
             <fileset dir="${src.dir}/properties/server"/>
             <fileset dir="${src.dir}/dbspec/server"/>
+        	<fileset dir="${java.src.dir}">
+        		<include name="**/*.betwixt"/>
+            </fileset>
         	<filterset>
                 <filter token="buildNumber" value="${build.tstamp}"/>
             </filterset>
@@ -669,9 +680,38 @@
         </copy>
     </target>
     
-    <target name="doc" depends="init"
-        description="">
-        <!-- placeholder -->
+    <target name="docs" depends="init, wsdl2java"
+        description="Generate documentation">
+    	
+    	<!-- Build javadocs -->
+    	<mkdir dir="${docs.build.dir}/javadocs" />
+    	<javadoc packagenames="fedora.*" 
+    		sourcepath="${java.src.dir};${wsdl.build.dir}" 
+    		classpathref="compile.classpath" 
+    		destdir="${docs.build.dir}/javadocs" 
+    		author="true" 
+    		version="true" 
+    		use="true" />
+    	
+    	<mkdir dir="${docs.build.dir}/userdocs"/>
+		<copy todir="${docs.build.dir}/userdocs">
+			<fileset dir="${docs.src.dir}/userdocs"/>
+		</copy>
+    	<!-- generate the Fedora xacml vocabulary listing -->
+		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies"/>
+		<java classname="fedora.common.policy.Release2_1Namespace" 
+			classpath="${tomcat.server.dir}/classes;${lib.jrdf}" 
+			output="${docs.build.dir}/userdocs/server/security/xacml-policies/vocabulary.txt"/>
+		<!-- copy the default repository-wide policies for linking to documentation -->
+		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide"/>
+		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/default/repository-wide">
+			<fileset dir="src/xml/xacml-policies/default/default-repository-policies-approximating-2.0"/>
+		</copy>
+		<!-- copy the sample policy collection for linking to documentation -->
+		<mkdir dir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples"/>
+		<copy todir="${docs.build.dir}/userdocs/server/security/xacml-policies/examples">
+			<fileset dir="src/xml/xacml-policies/examples"/>
+		</copy>
     </target>
     
 	<target name="compile-installer" depends="">
