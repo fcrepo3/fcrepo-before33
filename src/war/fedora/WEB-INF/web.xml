@@ -145,6 +145,12 @@
             fedora.server.access.WSDLServlet
         </servlet-class>
     </servlet>
+    <servlet>
+		<servlet-name>FacesServlet</servlet-name>
+		<servlet-class>
+		javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
 <!--
 	<servlet>
 		<display-name>Fedora Manager</display-name>
@@ -254,6 +260,53 @@
 		<servlet-name>WSDLServlet</servlet-name>
 		<url-pattern>/wsdl</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+		<servlet-name>FacesServlet</servlet-name>
+		<url-pattern>*.faces</url-pattern>
+	</servlet-mapping>
+	
+	<filter>
+		<filter-name>ContainerFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.AuthFilter</filter-class>
+	</filter>
+	
+	<filter>
+		<filter-name>TomcatUsersFilter</filter-name>
+		<filter-class>fedora.server.security.servletfilters.tomcatusers.AuthFilter4TomcatUsers</filter-class>
+			<init-param>
+				<param-name>authenticate</param-name>
+				<param-value>true</param-value>
+			</init-param>
+			<init-param>
+				<param-name>surrogate-role</param-name>
+				<param-value>webfrontend</param-value>
+			</init-param>
+			<init-param>
+				<param-name>contribute-authenticated-user-attributes-for-authenticating-filters</param-name>
+				<param-value>TomcatUsersFilter</param-value>
+			</init-param>
+			<init-param>
+				<param-name>contribute-sponsored-user-attributes-for-authenticating-filters</param-name>
+				<param-value>TomcatUsersFilter</param-value>
+			</init-param>
+			<init-param>
+				<param-name>filepath</param-name>
+				<param-value>/tomcat-users.xml</param-value>
+			</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>ContainerFilter</filter-name> 
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>TomcatUsersFilter</filter-name> 
+		<url-pattern>/*</url-pattern> 
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>FinalFilter</filter-name> 
+		<url-pattern>/*</url-pattern> 
+	</filter-mapping>
 
 	<security-constraint>
 		<web-resource-collection>
@@ -281,6 +334,7 @@
 			<description>
 				Fedora-generated security-constraint
 			</description>
+			<url-pattern>*.faces</url-pattern>
 			<url-pattern>*.jsp</url-pattern>
 			<http-method>POST</http-method>
 			<http-method>HEAD</http-method>
@@ -340,9 +394,6 @@
 		<auth-constraint>
 			<role-name>*</role-name>
 		</auth-constraint>
-		<user-data-constraint>
-			<transport-guarantee>CONFIDENTIAL</transport-guarantee>
-		</user-data-constraint>
 	</security-constraint>
 	<security-constraint>
 		<web-resource-collection>
