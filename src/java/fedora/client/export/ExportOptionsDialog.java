@@ -12,7 +12,6 @@ import fedora.client.Administrator;
  * Valid options as of Fedora 2.0 are "foxml1.0" and "metslikefedora1".
  *
  * @author payette@cs.cornell.edu
- * @version 
  */
 
 public class ExportOptionsDialog

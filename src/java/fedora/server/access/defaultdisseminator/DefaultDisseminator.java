@@ -21,7 +21,7 @@ public interface DefaultDisseminator
    * Index and Item Index.  The data is returned as HTML in a
    * presentation-oriented format.  This is accomplished by doing an XSLT
    * transform on the XML that is obtained from getObjectProfile in API-A.</p>
-   * @return
+   * @return a MIMETypedStream that is an HTML rendering of the object profile.
    * @throws ServerException
    */
   public MIMETypedStream viewObjectProfile() throws ServerException;
@@ -33,7 +33,7 @@ public interface DefaultDisseminator
    * is returned as HTML in a presentation-oriented format.  This is
    * accomplished by doing an XSLT transform on the XML that is
    * obtained from listMethods in API-A.</p>
-   * @return
+   * @return a MIMETypedStream that is an HTML rendering of the Dissemination Index for the object.
    * @throws ServerException
    */
   public MIMETypedStream viewMethodIndex() throws ServerException;
@@ -44,7 +44,7 @@ public interface DefaultDisseminator
    * can be data or metadata.  The Item Index is returned as HTML in a
    * presentation-oriented format.  This is accomplished by doing an XSLT
    * transform on the XML that is obtained from listDatastreams in API-A.</p>
-   * @return
+   * @return a MIMETypedStream that is an HTML rendering of the Item Index for the object.
    * @throws ServerException
    */
   public MIMETypedStream viewItemIndex() throws ServerException;
@@ -52,7 +52,7 @@ public interface DefaultDisseminator
   /**
    * <p>Returns the Dublin Core record for the object, if one exists.
    * The record is returned as HTML in a presentation-oriented format.</p>
-   * @return
+   * @return a MIMETypedStream that is an HTML rendering of the Dublin Core record for the object.
    * @throws ServerException
    */
   public MIMETypedStream viewDublinCore() throws ServerException;

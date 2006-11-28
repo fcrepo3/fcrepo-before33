@@ -28,10 +28,9 @@ public abstract class APIMStubFactory {
 	 * @param protocol
 	 * @param host
 	 * @param port
-	 * @param path
 	 * @param username
 	 * @param password
-	 * @return
+	 * @return FedoraAPIM SOAP stub
 	 * @throws MalformedURLException
 	 * @throws ServiceException
 	 */
@@ -78,7 +77,7 @@ public abstract class APIMStubFactory {
 	 * @param path
 	 * @param username
 	 * @param password
-	 * @return
+	 * @return FedoraAPIM SOAP stub
 	 * @throws MalformedURLException
 	 * @throws ServiceException
 	 */	

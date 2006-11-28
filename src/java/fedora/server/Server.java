@@ -1152,7 +1152,7 @@ public abstract class Server
      * After having used a <code>Server</code> instance,
      * if you know your program is the only client of the <code>Server</code>
      * in the VM instance, you should make an explicit call to this method
-     * so that you can catch and handle it's exceptions properly.
+     * so that you can catch and handle its exceptions properly.
      * If you are usure or know that there may be at least one other client
      * of the <code>Server</code> in the VM instance, you should call
      * <code>System.runFinalization()</code> after ensuring you no longer

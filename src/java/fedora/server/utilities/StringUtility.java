@@ -64,9 +64,9 @@ public class StringUtility
    * of undifferentiated text such as base 64 encoded binary data</p>
    *
    *
-   * @param in The input string to be split into lines.
+   * @param str The input string to be split into lines.
    * @param indent The number of spaces to insert at the start of each line.
-   * @param lineLength The maximum length of each line (not counting the indent spaces).
+   * @param numChars The maximum length of each line (not counting the indent spaces).
    *
    * @return A string split into multiple indented lines whose length is less than the
    *         specified length + indent amount. 
