@@ -11,6 +11,7 @@ import java.util.TreeSet;
  * @author cwilper@cs.cornell.edu
  */
 public class ParamDomain extends TreeSet<String> {
+	private static final long serialVersionUID = 1L;
 
     /**
      * The parameter whose domain is being described.

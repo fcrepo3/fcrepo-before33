@@ -1,7 +1,6 @@
 package fedora.server.resourceIndex;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -17,7 +16,8 @@ import fedora.server.storage.types.MethodParmDef;
  * @author cwilper@cs.cornell.edu
  */
 public class ParamDomainMap extends TreeMap<String, ParamDomain> {
-
+	private static final long serialVersionUID = 1L;
+	
     /**
      * The name of the method this map describes.
      */
