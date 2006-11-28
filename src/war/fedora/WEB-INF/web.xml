@@ -265,6 +265,7 @@
 		<url-pattern>*.faces</url-pattern>
 	</servlet-mapping>
 	
+	<!--
 	<filter>
 		<filter-name>ContainerFilter</filter-name>
 		<filter-class>fedora.server.security.servletfilters.AuthFilter</filter-class>
@@ -307,6 +308,8 @@
 		<filter-name>FinalFilter</filter-name> 
 		<url-pattern>/*</url-pattern> 
 	</filter-mapping>
+	
+	-->
 
 	<security-constraint>
 		<web-resource-collection>
