@@ -623,9 +623,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
     {
         return dirty;
     }
-    /**
-     * @param dirty The dirty to set.
-     */
+
     public void setDirty()
     {
         if (!isDirty())
@@ -638,9 +636,7 @@ public class PolicyEditor extends JFrame implements ActionListener, WindowListen
         this.dirty = true;
         
     }
-    /**
-     * @param dirty The dirty to set.
-     */
+
     public void clearDirty()
     {
         if (isDirty())

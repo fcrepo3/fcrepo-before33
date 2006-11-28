@@ -9,12 +9,6 @@ import java.util.Vector;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 
-/**
- * @author diglib
- *
- * TODO To change the template for this generated type comment go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
 public class GroupRuleInfo
 {
     String name;
@@ -652,9 +646,9 @@ public class GroupRuleInfo
     }
     
     /**
-     * @param parms The parms to set.
+     * @param parmArray The parms to set.
      */
-    public void setParms(String parmArray[])
+    public void setParms(String[] parmArray)
     {
         for (int i = 0; i < parmArray.length; i++)
         {

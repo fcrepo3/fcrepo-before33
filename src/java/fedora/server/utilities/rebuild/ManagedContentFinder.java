@@ -7,7 +7,7 @@ public interface ManagedContentFinder {
     /**
      * Find the indicated managed datastream.
      *
-     * @returns an InputStream or null if not found.
+     * @return an InputStream or null if not found.
      */
     public InputStream find(String pid,
                             String dsID,
