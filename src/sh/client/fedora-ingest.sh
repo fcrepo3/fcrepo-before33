@@ -24,7 +24,7 @@ fi
 
 echo "Starting Fedora Ingester..."
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar \
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
               -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \

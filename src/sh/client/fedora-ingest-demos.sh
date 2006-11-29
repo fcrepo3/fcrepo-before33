@@ -30,7 +30,7 @@ echo "Ingesting Demonstration Objects..."
 
 DO_FORMAT=foxml1.0
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar \
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
               -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \
@@ -38,7 +38,7 @@ DO_FORMAT=foxml1.0
               -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl \
               fedora.client.utility.ingest.Ingest d $FEDORA_HOME/client/demo/foxml/local-server-demos $DO_FORMAT DMO $1:$2 $3 $4 $5 "")
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar \
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
               -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \

@@ -5,7 +5,7 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/client/client.jar" ]; then
+if [ ! -f "$FEDORA_HOME/client/fedora-client.jar" ]; then
   echo "ERROR: FEDORA_HOME does not appear correctly set."
   echo "Client directory cannot be found at $FEDORA_HOME/client"
   exit 1
@@ -41,7 +41,7 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-(exec $JAVA_HOME/bin/java -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar fedora.client.demo.DemoObjectConverter $1 $2 $3 $4 $5 $6 $7)
+(exec $JAVA_HOME/bin/java -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar fedora.client.demo.DemoObjectConverter $1 $2 $3 $4 $5 $6 $7)
 
 echo ""
 echo "Finished Converting Demo Objects"

@@ -10,7 +10,7 @@ set JAVA_HOME=%THIS_JAVA_HOME%
 
 
 :runMinimized
-"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\client.jar fedora.client.demo.DemoObjectConverter %1 %2 %3 %4 %5 %6 %7
+"%JAVA_HOME%\bin\java" -cp %FEDORA_HOME%\client;%FEDORA_HOME%\client\fedora-client.jar fedora.client.demo.DemoObjectConverter %1 %2 %3 %4 %5 %6 %7
 
 set JAVA_HOME=%OLD_JAVA_HOME%
 
@@ -18,7 +18,7 @@ goto end
 
 :checkEnv
 if "%FEDORA_HOME%" == "" goto noFedoraHome
-if not exist "%FEDORA_HOME%\client\client.jar" goto clientNotFound
+if not exist "%FEDORA_HOME%\client\fedora-client.jar" goto clientNotFound
 if "%FEDORA_JAVA_HOME%" == "" goto tryJavaHome
 set THIS_JAVA_HOME=%FEDORA_JAVA_HOME%
 :checkJava

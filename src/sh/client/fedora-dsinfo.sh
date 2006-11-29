@@ -5,9 +5,9 @@ if [ "$FEDORA_HOME" = "" ]; then
   exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/client/client.jar" ]; then
+if [ ! -f "$FEDORA_HOME/client/fedora-client.jar" ]; then
   echo "ERROR: FEDORA_HOME does not appear correctly set."
-  echo "Client cannot be found at $FEDORA_HOME/client/client.jar"
+  echo "Client cannot be found at $FEDORA_HOME/client/fedora-client.jar"
   exit 1
 fi
 
@@ -40,7 +40,7 @@ OLD_JAVA_HOME=$JAVA_HOME
 JAVA_HOME=$THIS_JAVA_HOME
 export JAVA_HOME
 
-(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/client.jar \
+(exec $JAVA_HOME/bin/java -Xms64m -Xmx96m -cp $FEDORA_HOME/client:$FEDORA_HOME/client/fedora-client.jar \
               -Djavax.net.ssl.trustStore=$FEDORA_HOME/client/truststore \
               -Djavax.net.ssl.trustStorePassword=tomcat \
               -Dfedora.home=$FEDORA_HOME \

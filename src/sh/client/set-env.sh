@@ -10,7 +10,7 @@ if [ -z "$FEDORA_HOME" ]; then
 	exit 1
 fi
 
-if [ ! -f "$FEDORA_HOME/client/client.jar" ]; then
+if [ ! -f "$FEDORA_HOME/client/fedora-client.jar" ]; then
 	echo "ERROR: FEDORA_HOME does not appear to be set correctly."
 	echo "Client directory not found at $FEDORA_HOME/client"
 	exit 1
