@@ -26,7 +26,6 @@ import fedora.server.storage.translation.DOTranslationUtility;
 import fedora.server.storage.translation.FOXMLDODeserializer;
 import fedora.server.storage.types.BasicDigitalObject;
 import fedora.server.storage.types.DigitalObject;
-import fedora.server.utilities.ProtocolPort;
 import fedora.server.utilities.ServerUtility;
 import fedora.utilities.FileComparator;
 
@@ -87,14 +86,8 @@ public class Rebuild implements Constants {
 			} catch (Exception e) {
 			}
 			if (serverIsRunning && rebuilder.shouldStopServer()) {
-				ProtocolPort protocolPort = ServerUtility.getProtocolPort(
-						ServerUtility.HTTP, ServerUtility.HTTPS);
-				String username = ServerUtility.getServerProperties()
-						.getProperty(ServerUtility.ADMIN_USERNAME_KEY);
-				String password = ServerUtility.getServerProperties()
-						.getProperty(ServerUtility.ADMIN_PASSWORD_KEY);
-				ServerUtility.shutdown(protocolPort.getProtocol(), username,
-						password);
+                throw new Exception("The Fedora server appears to be running."
+                        + "  It must be stopped before the rebuilder can run.");
 			}
 			if (options != null) {
 				System.err.println();
