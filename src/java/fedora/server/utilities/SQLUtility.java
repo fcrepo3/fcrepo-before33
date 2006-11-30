@@ -2,12 +2,15 @@ package fedora.server.utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -74,7 +77,8 @@ public abstract class SQLUtility {
                 cpPassword, ddlConverter, cpMaxActive, cpMaxIdle, 
                 cpMaxWait, cpMinIdle, cpMinEvictableIdleTimeMillis, 
                 cpNumTestsPerEvictionRun, cpTimeBetweenEvictionRunsMillis, 
-                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, cpWhenExhaustedAction);
+                cpTestOnBorrow, cpTestOnReturn, cpTestWhileIdle, 
+                cpWhenExhaustedAction);
     }
     
     public static void replaceInto(Connection conn, String tableName,
@@ -83,114 +87,185 @@ public abstract class SQLUtility {
         replaceInto(conn, tableName, columns, values, uniqueColumn, null);
     }
 
-    public static void replaceInto(Connection conn, String tableName,
+    /**
+     * Adds or replaces a row in the given table.
+     *
+     * @param conn the connection to use
+     * @param table the name of the table
+     * @param columns the names of the columns whose values we're setting.
+     * @param values associated values
+     * @param uniqueColumn which column name is unique?  The value of this
+     *        column will be used in the where clause.  It must be
+     *        a column which is not numeric.
+     * @param numeric for each associated column, is it numeric?
+     *        if null, all columns are assumed to be strings.
+     */
+    public static void replaceInto(Connection conn, String table,
             String[] columns, String[] values, String uniqueColumn,
-            boolean[] isNumeric)
+            boolean[] numeric)
             throws SQLException {
-        // figure out if we need to escape an apostrophe
-        for (int i=0; i<values.length; i++) {
-            String val=values[i];
-            if (val!=null) {
-                StringBuffer newVal=new StringBuffer();
-                boolean apos=false;
-                for (int x=0; x<val.length(); x++) {
-                    char c=val.charAt(x);
-                    if (c=='\'') {
-                        newVal.append("''");
-                        apos=true;
-                    } else {
-                        newVal.append(c);
-                    }
+        if (!updateRow(conn, table, columns, values, uniqueColumn, numeric)) {
+            addRow(conn, table, columns, values, numeric);
+        }
+    }
+
+    /**
+     * Updates an existing row.
+     *
+     * @return false if the row did not previously exist and therefore was
+     *         not updated.
+     */
+    public static boolean updateRow(Connection conn, String table,
+            String[] columns, String[] values, String uniqueColumn,
+            boolean[] numeric)
+            throws SQLException {
+
+        // prepare update statement
+        StringBuffer sql = new StringBuffer();
+        sql.append("UPDATE " + table + " SET ");
+        boolean needComma = false;
+        for (int i = 0; i < columns.length; i++) {
+            if (!columns[i].equals(uniqueColumn)) {
+                if (needComma) {
+                    sql.append(", ");
+                } else {
+                    needComma = true;
                 }
-                if (apos) {
-                    values[i]=newVal.toString();
+                sql.append(columns[i] + " = ");
+                if (values[i] == null) {
+                    sql.append("NULL");
+                } else {
+                    sql.append("?");
                 }
             }
         }
-        StringBuffer s=new StringBuffer(); // set clause
-        s.append("SET ");
-        String uVal=null;
-        for (int i=0; i<columns.length; i++) {
-            if (columns[i].equals(uniqueColumn)) {
-                uVal=values[i];
-            }
-            if (i>0) {
-                s.append(", ");
-            }
-            s.append(columns[i]);
-            s.append(" = ");
-            if (values[i]==null) {
-                s.append("NULL");
-            } else {
-                if (isNumeric==null || !isNumeric[i]) {
-                    s.append("'");
-                }
-                s.append(slashEscaped(values[i]));
-                if (isNumeric==null || !isNumeric[i]) {
-                    s.append("'");
-                }
-            }
-        }
-        StringBuffer w=new StringBuffer(); // where clause
-        w.append("WHERE ");
-        w.append(uniqueColumn);
-        w.append(" = '");
-        w.append(uVal);
-        w.append("'");
-        StringBuffer u=new StringBuffer(); // update statement
-        u.append("UPDATE ");
-        u.append(tableName);
-        u.append("\n");
-        u.append(s.toString());
-        u.append("\n");
-        u.append(w.toString());
-        Statement st=null;
+        sql.append(" WHERE " + uniqueColumn + " = ?");
+        LOG.info("About to execute: " + sql.toString());
+        PreparedStatement stmt = conn.prepareStatement(sql.toString());
+
         try {
-            st=conn.createStatement();
-            LOG.debug("executeUpdate, trying: " + u.toString());
-            if (st.executeUpdate(u.toString())==0) {
-                StringBuffer i=new StringBuffer(); // insert statement
-                i.append("INSERT INTO ");
-                i.append(tableName);
-                i.append("\n");
-                i.append("(");
-                for (int x=0; x<columns.length; x++) {
-                    if (x>0) {
-                        i.append(", ");
-                    }
-                    i.append(columns[x]);
-                }
-                i.append(") VALUES (");
-                for (int x=0; x<values.length; x++) {
-                    if (x>0) {
-                        i.append(", ");
-                    }
-                    if (values[x]==null) {
-                        i.append("NULL");
+            // populate values
+            int varIndex = 0;
+            for (int i = 0; i < values.length; i++) {
+                if (!columns[i].equals(uniqueColumn) && values[i] != null) {
+                    varIndex++;
+                    if (numeric != null && numeric[i]) {
+                        setNumeric(stmt, varIndex, columns[i], values[i]);
                     } else {
-                        if (isNumeric==null || !isNumeric[x]) {
-                            i.append("'");
-                        }
-                        i.append(slashEscaped(values[x]));
-                        if (isNumeric==null || !isNumeric[x]) {
-                            i.append("'");
-                        }
+                        stmt.setString(varIndex, values[i]);
                     }
                 }
-                i.append(")");
-                LOG.debug("executeUpdate, now trying: " + i.toString());
-                st.executeUpdate(i.toString());
             }
-        } catch (SQLException sqle) {
-            throw sqle;
+            stmt.setString(columns.length,
+                           getSelector(columns, values, uniqueColumn));
+
+            // execute and return true if existing row was updated
+            return stmt.executeUpdate() > 0;
+
         } finally {
-            try {
-                if (st!=null) st.close();
-            } catch (SQLException sqle2) {
-                throw sqle2;
-            } finally {
-                st=null;
+            closeStatement(stmt);
+        }
+    }
+
+    /**
+     * Adds a new row.
+     *
+     * @throws SQLException if the row could not be added.
+     */
+    public static void addRow(Connection conn, String table,
+            String[] columns, String[] values, boolean[] numeric)
+            throws SQLException {
+
+        // prepare insert statement
+        StringBuffer sql = new StringBuffer();
+        sql.append("INSERT INTO " + table + " (");
+        for (int i = 0; i < columns.length; i++) {
+            if (i > 0) {
+                sql.append(", ");
             }
+            sql.append(columns[i]);
+        }
+        sql.append(") VALUES (");
+        for (int i = 0; i < columns.length; i++) {
+            if (i > 0) {
+                sql.append(", ");
+            }
+            if (values[i] == null) {
+                sql.append("NULL");
+            } else {
+                sql.append("?");
+            }
+        }
+        sql.append(")");
+        LOG.debug("About to execute: " + sql.toString());
+        PreparedStatement stmt = conn.prepareStatement(sql.toString());
+
+        try {
+            // populate values
+            int varIndex = 0;
+            for (int i = 0; i < values.length; i++) {
+                if (values[i] != null) {
+                    varIndex++;
+                    if (numeric != null && numeric[i]) {
+                        setNumeric(stmt, varIndex, columns[i], values[i]);
+                    } else {
+                        stmt.setString(varIndex, values[i]);
+                    }
+                }
+            }
+
+            // execute
+            stmt.executeUpdate();
+
+        } finally {
+            closeStatement(stmt);
+        }
+
+    }
+
+    /**
+     * Sets a numeric value in the prepared statement.
+     *
+     * Parsing the string is attempted as an int, then
+     * a long, and if that fails, a SQLException is thrown.
+     */
+    private static void setNumeric(PreparedStatement stmt,
+            int varIndex, String columnName, String value)
+            throws SQLException {
+        try {
+            stmt.setInt(varIndex, Integer.parseInt(value));
+        } catch (NumberFormatException e) {
+            try {
+                stmt.setLong(varIndex, Long.parseLong(value));
+            } catch (NumberFormatException e2) {
+                throw new SQLException("Value specified for "
+                        + columnName + ", '" + value + "' was"
+                        + " specified as numeric, but is not");
+            }
+        }
+    }
+
+    /** 
+     * Gets the value in the given array whose associated column name
+     * matches the given uniqueColumn name.
+     *
+     * @throws SQLException if the uniqueColumn doesn't exist in the given
+     *         column array.
+     */
+    private static String getSelector(String[] columns, String[] values,
+            String uniqueColumn)
+            throws SQLException {
+        String selector = null;
+        for (int i = 0; i < columns.length; i++) {
+            if (columns[i].equals(uniqueColumn)) {
+                selector = values[i];
+            }
+        }
+        if (selector != null) {
+            return selector;
+        } else {
+            throw new SQLException("Unique column does not exist in given "
+                    + "column array");
         }
     }
 
@@ -348,6 +423,16 @@ public abstract class SQLUtility {
             out.append(c);
         }
         return out.toString();
+    }
+
+    public static void closeStatement(Statement stmt) {
+        if (stmt != null) {
+            try {
+                stmt.close();
+            } catch (SQLException e) {
+                LOG.warn("Unable to close statement", e);
+            }
+        }
     }
 
 }
