@@ -344,15 +344,17 @@ public class ReadOnlyContext implements Context {
     				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
      			}
       		}
-      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
-      		while (auxSubjectRoleKeys.hasNext()) {
-      			Object name = (String) auxSubjectRoleKeys.next();
-      			if (name instanceof String) {
-          			Object value = auxSubjectRoles.get(name);
-          			if ((value instanceof String) || (value instanceof String[])) {
-        				subjectMap.set((String) name, value);
-          			}      				
-      			}
+      		if (auxSubjectRoles != null) {
+	      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
+	      		while (auxSubjectRoleKeys.hasNext()) {
+	      			Object name = (String) auxSubjectRoleKeys.next();
+	      			if (name instanceof String) {
+	          			Object value = auxSubjectRoles.get(name);
+	          			if ((value instanceof String) || (value instanceof String[])) {
+	        				subjectMap.set((String) name, value);
+	          			}      				
+	      			}
+	      		}
       		}
       	} catch (Exception e) {	
       		LOG.error("caught exception building subjectMap " + e.getMessage(), e);
