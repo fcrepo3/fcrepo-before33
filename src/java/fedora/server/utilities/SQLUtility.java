@@ -140,7 +140,7 @@ public abstract class SQLUtility {
             }
         }
         sql.append(" WHERE " + uniqueColumn + " = ?");
-        LOG.info("About to execute: " + sql.toString());
+        LOG.debug("About to execute: " + sql.toString());
         PreparedStatement stmt = conn.prepareStatement(sql.toString());
 
         try {
