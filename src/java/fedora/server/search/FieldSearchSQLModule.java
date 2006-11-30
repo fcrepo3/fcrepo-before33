@@ -37,6 +37,7 @@ public class FieldSearchSQLModule
 
     public void postInitModule()
             throws ModuleInitializationException {
+
         //
         // get and validate maxResults
         //
@@ -54,6 +55,7 @@ public class FieldSearchSQLModule
             throw new ModuleInitializationException(
                 "maxResults must be a positive integer.", getRole());
         }
+
         //
         // get and validate maxSecondsPerSession
         //
@@ -71,6 +73,22 @@ public class FieldSearchSQLModule
             throw new ModuleInitializationException(
                 "maxSecondsPerSession must be a positive integer.", getRole());
         }
+
+        //
+        // get indexDCFields parameter (default to true if unspecified)
+        //
+        boolean indexDCFields = true;
+        String indexDCFieldsValue = getParameter("indexDCFields");
+        if (indexDCFieldsValue != null) {
+            String val = indexDCFieldsValue.trim().toLowerCase();
+            if (val.equals("false") || val.equals("no")) {
+                indexDCFields = false;
+            } else if (!val.equals("true") && !val.equals("yes")) {
+                throw new ModuleInitializationException("indexDCFields param "
+                        + "was not a boolean", getRole());
+            }
+        }
+
         //
         // get connectionPool from ConnectionPoolManager
         //
@@ -110,7 +128,7 @@ public class FieldSearchSQLModule
         // things look ok...get the wrapped instance
         //
         m_wrappedFieldSearch=new FieldSearchSQLImpl(cPool, doManager,
-                maxResults, maxSecondsPerSession);
+                maxResults, maxSecondsPerSession, indexDCFields);
     }
 
     public String[] getRequiredModuleRoles() {

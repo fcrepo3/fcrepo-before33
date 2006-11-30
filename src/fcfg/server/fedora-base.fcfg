@@ -283,10 +283,24 @@
                        maxSecondsPerSession fairly low, but still reasonable for an
                        automated program or user to serially get a long list of results,
                        and make sure you have a connectionPool large enough to accomodate
-                       your users.</comment>
+                       your users.
+                 - indexDCFields (optional, default is true)
+                       Whether the content of the DC datastream should be
+                       examined and the contents indexed, for each object.
+                       You may wish to save time and space by disabling DC
+                       field indexing, particularly if you have an
+                       external search service (such as Fedora Generic Search)
+                       that already fulfills this need.
+                       Note: If you change this value on a Fedora repository
+                       that has been running for some time, you will need to
+                       perform a SQL rebuild using the Fedora Rebuilder tool
+                       if you want to change objects that have already been
+                       ingested.
+    </comment>
     <param name="maxResults" value="100"/>
     <param name="maxSecondsPerSession" value="500"/>
     <param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="indexDCFields" value="true"/>
   </module>
   <module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
     <comment>Description: Supports the ResourceIndex. 

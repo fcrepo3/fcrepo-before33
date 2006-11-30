@@ -41,6 +41,9 @@ public class FieldSearchSQLImpl
     private static final Logger LOG = Logger.getLogger(
             FieldSearchSQLImpl.class.getName());
 
+    /** Whether DC fields are being indexed or not. */
+    private boolean m_indexDCFields = true;
+
     private ConnectionPool m_cPool;
     private RepositoryReader m_repoReader;
     private int m_maxResults;
@@ -51,16 +54,22 @@ public class FieldSearchSQLImpl
             "dcPublisher", "dcContributor", "dcDate", "dcType", "dcFormat",
             "dcIdentifier", "dcSource", "dcLanguage", "dcRelation", "dcCoverage", "dcRights"};
     private static boolean[] s_dbColumnNumeric=new boolean[] {false, false,
-            false, false, false, false, true, true, true, false, false,
-            false, false, false, false, false,
-            false, false, false, false, false,
-            false, false, false, false, false};
+            false, false, false, false, true, true, true, 
+            false, false, false, false, false, false, 
+            false, false, false, false, false, 
+            false, false, false, false, false, false};
+    public static String[] DB_COLUMN_NAMES_NODC=new String[] {"pid", "label",
+            "fType", "cModel", "state", "ownerId", "cDate", "mDate", "dcmDate",
+            "bDef", "bMech"};
+    private static boolean[] s_dbColumnNumericNoDC=new boolean[] {false, false,
+            false, false, false, false, true, true, true, 
+            false, false};
 
     // a hash of token-keyed FieldSearchResultSQLImpls
     private HashMap m_currentResults=new HashMap();
 
     /**
-     * Construct a FieldSearchSQLImpl.
+     * Construct a FieldSearchSQLImpl that indexes DC fields.
      *
      * @param cPool the ConnectionPool with connections to the db containing
      *        the fields
@@ -68,14 +77,37 @@ public class FieldSearchSQLImpl
      *        values of the fields
      * @param maxResults the maximum number of results to return at a time,
      *        regardless of what the user might request
+     * @param maxSecondsPerSession maximum number of seconds per session.
      */
-    public FieldSearchSQLImpl(ConnectionPool cPool, RepositoryReader repoReader,
-            int maxResults, int maxSecondsPerSession) {
+    public FieldSearchSQLImpl(ConnectionPool cPool,
+            RepositoryReader repoReader, int maxResults, 
+            int maxSecondsPerSession) {
+        this(cPool, repoReader, maxResults, maxSecondsPerSession, true);
+    }
+
+    /**
+     * Construct a FieldSearchSQLImpl that indexes DC fields only if specified.
+     *
+     * @param cPool the ConnectionPool with connections to the db containing
+     *        the fields
+     * @param repoReader the RepositoryReader to use when getting the original
+     *        values of the fields
+     * @param maxResults the maximum number of results to return at a time,
+     *        regardless of what the user might request
+     * @param maxSecondsPerSession maximum number of seconds per session.
+     * @param indexDCFields whether DC field values should be examined and
+     *        updated in the database.  If false, queries will behave as
+     *        if no values had been specified for the DC fields.
+     */
+    public FieldSearchSQLImpl(ConnectionPool cPool, 
+            RepositoryReader repoReader, int maxResults, 
+            int maxSecondsPerSession, boolean indexDCFields) {
         LOG.debug("Entering constructor");
         m_cPool=cPool;
         m_repoReader=repoReader;
         m_maxResults=maxResults;
         m_maxSecondsPerSession=maxSecondsPerSession;
+        m_indexDCFields = indexDCFields;
         LOG.debug("Exiting constructor");
     }
 
@@ -87,7 +119,12 @@ public class FieldSearchSQLImpl
         Statement st=null;
         try {
             conn=m_cPool.getConnection();
-            String[] dbRowValues=new String[26];
+            String[] dbRowValues;
+            if (m_indexDCFields) {
+                dbRowValues = new String[DB_COLUMN_NAMES.length];
+            } else {
+                dbRowValues = new String[DB_COLUMN_NAMES_NODC.length];
+            }
             dbRowValues[0]=reader.GetObjectPID();
             String v;
             v=reader.GetObjectLabel();
@@ -142,53 +179,61 @@ public class FieldSearchSQLImpl
                 LOG.debug("Did not have DC Metadata datastream for this object.");
             } else {
                 LOG.debug("Had DC Metadata datastream for this object.");
-                InputStream in=dcmd.getContentStream();
-                DCFields dc=new DCFields(in);
                 dbRowValues[8]="" + dcmd.DSCreateDT.getTime();
-                dbRowValues[11]=getDbValue(dc.titles());
-                dbRowValues[12]=getDbValue(dc.creators());
-                dbRowValues[13]=getDbValue(dc.subjects());
-                dbRowValues[14]=getDbValue(dc.descriptions());
-                dbRowValues[15]=getDbValue(dc.publishers());
-                dbRowValues[16]=getDbValue(dc.contributors());
-                dbRowValues[17]=getDbValue(dc.dates());
-                // get any dc.dates strings that are formed such that they
-                // can be treated as a timestamp
-                List wellFormedDates=null;
-                for (int i=0; i<dc.dates().size(); i++) {
-                    if (i==0) {
-                        wellFormedDates=new ArrayList();
+
+                if (m_indexDCFields) {
+                    InputStream in=dcmd.getContentStream();
+                    DCFields dc=new DCFields(in);
+    
+                    dbRowValues[11]=getDbValue(dc.titles());
+                    dbRowValues[12]=getDbValue(dc.creators());
+                    dbRowValues[13]=getDbValue(dc.subjects());
+                    dbRowValues[14]=getDbValue(dc.descriptions());
+                    dbRowValues[15]=getDbValue(dc.publishers());
+                    dbRowValues[16]=getDbValue(dc.contributors());
+                    dbRowValues[17]=getDbValue(dc.dates());
+                    // get any dc.dates strings that are formed such that they
+                    // can be treated as a timestamp
+                    List wellFormedDates=null;
+                    for (int i=0; i<dc.dates().size(); i++) {
+                        if (i==0) {
+                            wellFormedDates=new ArrayList();
+                        }
+                        Date p=DateUtility.parseDateAsUTC((String) dc.dates().get(i));
+                        if (p!=null) {
+                            wellFormedDates.add(p);
+                        }
                     }
-                    Date p=DateUtility.parseDateAsUTC((String) dc.dates().get(i));
-                    if (p!=null) {
-                        wellFormedDates.add(p);
+                    if (wellFormedDates!=null && wellFormedDates.size()>0) {
+                        // found at least one... so delete the existing dates
+                        // in that table for this pid, then add these.
+                        st=conn.createStatement();
+                        st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
+                                + "'");
+                        for (int i=0; i<wellFormedDates.size(); i++) {
+                            Date dt=(Date) wellFormedDates.get(i);
+                            st.executeUpdate("INSERT INTO dcDates (pid, dcDate) "
+                                    + "values ('" + pid + "', "
+                                    + dt.getTime() + ")");
+                        }
                     }
+                    dbRowValues[18]=getDbValue(dc.types());
+                    dbRowValues[19]=getDbValue(dc.formats());
+                    dbRowValues[20]=getDbValue(dc.identifiers());
+                    dbRowValues[21]=getDbValue(dc.sources());
+                    dbRowValues[22]=getDbValue(dc.languages());
+                    dbRowValues[23]=getDbValue(dc.relations());
+                    dbRowValues[24]=getDbValue(dc.coverages());
+                    dbRowValues[25]=getDbValue(dc.rights());
+                    LOG.debug("Formulating SQL and inserting/updating WITH DC...");
+                    SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
+                            dbRowValues, "pid", s_dbColumnNumeric);
+                } else {
+                    LOG.debug("Formulating SQL and inserting/updating WITHOUT DC...");
+                    SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES_NODC,
+                            dbRowValues, "pid", s_dbColumnNumericNoDC);
                 }
-                if (wellFormedDates!=null && wellFormedDates.size()>0) {
-                    // found at least one... so delete the existing dates
-                    // in that table for this pid, then add these.
-                    st=conn.createStatement();
-                    st.executeUpdate("DELETE FROM dcDates WHERE pid='" + pid
-                            + "'");
-                    for (int i=0; i<wellFormedDates.size(); i++) {
-                        Date dt=(Date) wellFormedDates.get(i);
-                        st.executeUpdate("INSERT INTO dcDates (pid, dcDate) "
-                                + "values ('" + pid + "', "
-                                + dt.getTime() + ")");
-                    }
-                }
-                dbRowValues[18]=getDbValue(dc.types());
-                dbRowValues[19]=getDbValue(dc.formats());
-                dbRowValues[20]=getDbValue(dc.identifiers());
-                dbRowValues[21]=getDbValue(dc.sources());
-                dbRowValues[22]=getDbValue(dc.languages());
-                dbRowValues[23]=getDbValue(dc.relations());
-                dbRowValues[24]=getDbValue(dc.coverages());
-                dbRowValues[25]=getDbValue(dc.rights());
             }
-            LOG.debug("Formulating SQL and inserting/updating...");
-            SQLUtility.replaceInto(conn, "doFields", DB_COLUMN_NAMES,
-                    dbRowValues, "pid", s_dbColumnNumeric);
         } catch (SQLException sqle) {
             throw new StorageDeviceException("Error attempting update of "
                     + "object with pid '" + pid + ": " + sqle.getMessage());
