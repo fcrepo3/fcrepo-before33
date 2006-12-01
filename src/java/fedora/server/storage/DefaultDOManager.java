@@ -317,7 +317,7 @@ public class DefaultDOManager
             }
         } catch (ConnectionPoolNotFoundException cpnfe) {
             throw new ModuleInitializationException("Couldn't get required "
-                    + "connection pool...wasn't found", getRole());
+                    + "connection pool; wasn't found", getRole());
         }
         try {
             String dbSpec="fedora/server/storage/resources/DefaultDOManager.dbspec";
@@ -539,7 +539,7 @@ public class DefaultDOManager
 	public synchronized DOWriter getIngestWriter(boolean cachedObjectRequired, Context context, InputStream in, String format, 
 		String encoding, boolean newPid)
 			throws ServerException {
-		LOG.debug("INGEST: start ingest via DefaultDOManager.getIngestWriter.");
+		LOG.debug("Entered getIngestWriter");
 
         DOWriter w = null;
         BasicDigitalObject obj = null;
@@ -557,12 +557,12 @@ public class DefaultDOManager
 				// TEMP STORAGE:
 				// write ingest input stream to a temporary file
 				tempFile = File.createTempFile("fedora-ingest-temp", ".xml");
-				LOG.debug("INGEST: Creating temporary file for ingest: " + tempFile.toString());
+				LOG.debug("Creating temporary file for ingest: " + tempFile.toString());
 				StreamUtility.pipeStream(in, new FileOutputStream(tempFile), 4096);
 
 				// VALIDATION: 
 				// perform initial validation of the ingest submission file
-				LOG.debug("INGEST: Validation (ingest phase)...");
+				LOG.debug("Validation (ingest phase)");
 				m_validator.validate(tempFile, format, DOValidatorImpl.VALIDATE_ALL, "ingest");
 
 				// DESERIALIZE:
@@ -572,12 +572,12 @@ public class DefaultDOManager
 				obj.setOwnerId("fedoraAdmin");
 				obj.setNew(true);
 				LOG.debug("Deserializing from format: " + format);
-				LOG.debug("INGEST: Deserializing from format: " + format);
+				LOG.debug("Deserializing from format: " + format);
 				m_translator.deserialize(new FileInputStream(tempFile), obj, format, encoding, 
 					DOTranslationUtility.DESERIALIZE_INSTANCE);
                 	
 				// SET OBJECT PROPERTIES:
-				LOG.debug("INGEST: Setting object/component states and create dates if unset...");
+				LOG.debug("Setting object/component states and create dates if unset");
 				// set object state to "A" (Active) if not already set
 				if (obj.getState()==null || obj.getState().equals("")) {
 					obj.setState("A");
@@ -636,7 +636,7 @@ public class DefaultDOManager
 								|| ( m_retainPIDs.contains(obj.getPid().split(":")[0]) )
 								)
 						) {
-					LOG.debug("INGEST: Stream contained PID with retainable namespace-id... will use PID from stream.");
+					LOG.debug("Stream contained PID with retainable namespace-id; will use PID from stream");
 					try {
 						m_pidGenerator.neverGeneratePID(obj.getPid());
 					} catch (IOException e) {
@@ -644,7 +644,7 @@ public class DefaultDOManager
 					}
 				} else {
 					if (newPid) {
-						LOG.debug("INGEST: client wants a new PID.");
+						LOG.debug("Client wants a new PID");
 						// yes... so do that, then set it in the obj.
 						String p=null;
 						try {
@@ -657,30 +657,32 @@ public class DefaultDOManager
                             if (p == null) {
                                 p=m_pidGenerator.generatePID(m_pidNamespace).toString();
                             } else {
-                                LOG.debug("INGEST: Using new PID from recovery context");
+                                LOG.debug("Using new PID from recovery context");
                                 m_pidGenerator.neverGeneratePID(p);
                             }
 						} catch (Exception e) {
 							throw new GeneralException("Error generating PID, PIDGenerator returned unexpected error: ("
 									+ e.getClass().getName() + ") - " + e.getMessage());
 						}
-						LOG.info("INGEST: Generated new PID: " + p);
+						LOG.info("Generated new PID: " + p);
 						obj.setPid(p);
 					} else {
-						LOG.debug("INGEST: client wants to use existing PID.");
+						LOG.debug("Client wants to use existing PID.");
 					}
 				}
+
+                LOG.info("New object PID is " + obj.getPid());
                 
 				// CHECK REGISTRY:
 				// ensure the object doesn't already exist
 				if (objectExists(obj.getPid())) {
-					throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry... the object can't be re-created.");
+					throw new ObjectExistsException("The PID '" + obj.getPid() + "' already exists in the registry; the object can't be re-created.");
 				}
 
 				// GET DIGITAL OBJECT WRITER:
 				// get an object writer configured with the DEFAULT export format
 				LOG.debug("Getting new writer with default export format: " + m_defaultExportFormat);
-				LOG.debug("INGEST: Instantiating a SimpleDOWriter...");
+				LOG.debug("Instantiating a SimpleDOWriter");
 				w=new SimpleDOWriter(context, this, m_translator,
 						m_defaultExportFormat, m_storageCharacterEncoding, obj);
 
@@ -689,7 +691,7 @@ public class DefaultDOManager
                 getWriteLock(obj.getPid());
                 
 				// DEFAULT DUBLIN CORE DATASTREAM:
-				LOG.debug("INGEST: Adding/Checking default DC record...");
+				LOG.debug("Adding/Checking default DC record");
 				// DC System Reserved Datastream...
 				// if there's no DC datastream, add one using PID for identifier
 				// and Label for dc:title
@@ -742,10 +744,9 @@ public class DefaultDOManager
 				DatastreamXMLMetadata relsext=(DatastreamXMLMetadata) w.GetDatastream("RELS-EXT", null);
 				if (relsext!=null) {
 					InputStream in2 = new ByteArrayInputStream(relsext.xmlContent);
-					LOG.info("INGEST: Validating RELS-EXT datastream...");
+					LOG.debug("Validating RELS-EXT datastream");
 					deser.deserialize(in2, "info:fedora/" + obj.getPid());
-					LOG.debug("Done validating RELS-EXT.");
-					LOG.info("INGEST: RELS-EXT datastream passed validation.");
+					LOG.debug("RELS-EXT datastream passed validation");
 				}
 
 				// REGISTRY:
@@ -780,7 +781,7 @@ public class DefaultDOManager
 				throw new GeneralException("Ingest failed: " + message);
 			} finally {
 				if (tempFile != null) {
-					LOG.debug("Finally, removing temp file...");
+					LOG.debug("Finally, removing temp file");
 					try {
 						tempFile.delete();
 					} catch (Exception e) {
@@ -903,7 +904,7 @@ public class DefaultDOManager
             	m_permanentStore.removeObject(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
                 LOG.warn("Object wasn't found in permanent low level "
-                        + "store, but that might be ok...continuing with purge.");
+                        + "store, but that might be ok; continuing with purge");
             }
             // REGISTRY:
             // Remove digital object from the registry
@@ -912,7 +913,7 @@ public class DefaultDOManager
                 unregisterObject(obj.getPid());
                 wasInRegistry=true;
             } catch (ServerException se) {
-                LOG.warn("Object couldn't be removed from registry, but that might be ok...continuing with purge.");
+                LOG.warn("Object couldn't be removed from registry, but that might be ok; continuing with purge");
             }
             if (wasInRegistry) {
                 LOG.info("Deleting from dissemination index");
@@ -923,7 +924,7 @@ public class DefaultDOManager
                     m_replicator.delete(obj.getPid());
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
+                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + "); leaving replication job unfinished");
                 }
             }
 			// FIELD SEARCH INDEX:
@@ -932,7 +933,7 @@ public class DefaultDOManager
                 LOG.info("Deleting from FieldSearch index");
                 m_fieldSearch.delete(obj.getPid());
             } catch (ServerException se) {
-                LOG.warn("Object couldn't be removed from FieldSearch index (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                LOG.warn("Object couldn't be removed from FieldSearch index (" + se.getMessage() + "), but that might be ok; continuing with purge");
             }
             
             // RESOURCE INDEX:
@@ -957,7 +958,7 @@ public class DefaultDOManager
                     }
                     LOG.debug("Finished deleting from ResourceIndex");
                 } catch (ServerException se) {
-                    LOG.warn("Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                    LOG.warn("Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok; continuing with purge");
                 }
             }
             
