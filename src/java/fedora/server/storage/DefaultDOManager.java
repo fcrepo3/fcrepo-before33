@@ -1184,31 +1184,36 @@ public class DefaultDOManager
                 // add to replication jobs table and do replication to db
                 LOG.info("Updating dissemination index");
                 addReplicationJob(obj.getPid(), false);
+                String whichIndex = "dissemination";
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
                         BDefReader reader=getBDefReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
+                        whichIndex = "FieldSearch";
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
                         BMechReader reader=getBMechReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
+                        whichIndex = "FieldSearch";
                         m_fieldSearch.update(reader);
                     } else {
                         DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
                         LOG.info("Updating FieldSearch index");
+                        whichIndex = "FieldSearch";
                         m_fieldSearch.update(reader);
                     }
                     // FIXME: also remove from temp storage if this is successful
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    LOG.error("Error updating dissemination index", se);
+                    LOG.error("Error updating " + whichIndex + " index", se);
                     throw se;
                 } catch (Throwable th) {
-                    LOG.error("Error updating dissemination index", th);
-                    throw new GeneralException("Error updating dissemination index", th);
+                    String msg = "Error updating " + whichIndex + " index";
+                    LOG.error(msg, th);
+                    throw new GeneralException(msg, th);
                 }
             } catch (ServerException se) {
                 if (obj.isNew()) {
