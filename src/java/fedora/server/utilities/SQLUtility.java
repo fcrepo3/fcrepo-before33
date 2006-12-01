@@ -156,7 +156,8 @@ public abstract class SQLUtility {
                     }
                 }
             }
-            stmt.setString(columns.length,
+            varIndex++;
+            stmt.setString(varIndex,
                            getSelector(columns, values, uniqueColumn));
 
             // execute and return true if existing row was updated
