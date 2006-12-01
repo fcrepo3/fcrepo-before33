@@ -1,12 +1,7 @@
 package fedora.server.storage.types;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintWriter;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,14 +10,7 @@ import java.util.Date;
 
 import org.apache.log4j.Logger;
 
-import fedora.server.Module;
-import fedora.server.Server;
-import fedora.server.errors.ModuleInitializationException;
-import fedora.server.errors.ServerInitializationException;
 import fedora.server.errors.StreamIOException;
-import fedora.server.errors.ValidationException;
-import fedora.server.storage.DOManager;
-import fedora.server.utilities.StreamUtility;
 import fedora.server.utilities.StringUtility;
 
 /**
