@@ -21,6 +21,10 @@ public abstract class StorageException
         super(null, message, null, null, null);
     }
 
+    public StorageException(String message, Throwable cause) {
+        super(null, message, null, null, cause);
+    }
+
     public StorageException(String bundleName, String code, String[] values,
             String[] details, Throwable cause) {
         super(bundleName, code, values, details, cause);

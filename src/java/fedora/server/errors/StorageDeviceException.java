@@ -24,4 +24,8 @@ public class StorageDeviceException
         super(message);
     }
 
+    public StorageDeviceException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
 }
