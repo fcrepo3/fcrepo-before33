@@ -396,7 +396,6 @@ public class ExtendedHttpServletRequestWrapper
     	}
     	return all;
     }
-
     
 	public static final String BASIC = "Basic";
     private final String[] parseUsernamePassword(String header) throws Exception {
@@ -477,7 +476,17 @@ public class ExtendedHttpServletRequestWrapper
 		}
 		log.fatal(msg + SUCCEEDED);
 		
-		usernamePassword = decoded.split(":");
+		String DELIMITER = ":";
+		if ((decoded == null) || (decoded.indexOf(DELIMITER) < 0) || (decoded.startsWith(DELIMITER)) ) {
+			usernamePassword = new String[0];
+		} else if (decoded.endsWith(DELIMITER)) { // no password, e.g., user == "guest"
+			usernamePassword = new String[2];
+			usernamePassword[0] = decoded.substring(0,decoded.length()-1);
+			usernamePassword[1] = "";			
+		} else {
+			usernamePassword = decoded.split(DELIMITER);	
+		}
+		
 		msg = here + "user/password split";
 		if (usernamePassword.length != 2) {
 			String exceptionMsg = msg + FAILED;
