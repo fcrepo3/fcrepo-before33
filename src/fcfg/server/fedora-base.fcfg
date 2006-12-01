@@ -314,6 +314,15 @@
                  - datastore (required) 
                        Name of the triplestore to use. WARNING: changing the 
                        triplestore running the Resource Index Rebuilder.
+                 - syncUpdates (optional, default is false)
+                       Whether to flush the triple buffer before
+                       returning from object modification operations.
+                       Specifying this as true will ensure that RI queries 
+                       immediately reflect the latest triples.
+                       Specifying false will not provide this guarantee,
+                       but can significantly reduce roundtrip time for
+                       API-M operations (depending on the triplestore 
+                       implementation).
                  - aliases (optional) 
                        Aliases that can be used for queries. The param name of an alias starts with
                        the string "alias:" and is followed by the name of the alias
@@ -322,6 +331,7 @@
                       query to use test:apple instead of http://example.org/terms#apple</comment>
     <param name="level" value="0"/>
     <param name="datastore" value="localKowariTriplestore"/>
+    <param name="syncUpdates" value="false"/>
     <param name="alias:test" value="http://example.org/terms#"/>
   </module>
   <module role="fedora.oai.OAIProvider" class="fedora.server.oai.FedoraOAIProviderModule">
