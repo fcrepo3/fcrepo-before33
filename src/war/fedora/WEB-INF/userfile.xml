@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tomcat-users>
+  <role rolename="webfrontend" /> 
+
+  <user name="guest" password="" />
+
+  <user name="fedoraAdmin" password="fedoraAdmin"> 
+  	<attribute name="fedoraRole">
+  		<value>administrator</value>
+  	</attribute>
+  </user> 
+
+  <user name="testuser1" password="testuser1"> 
+  	<attribute name="fedoraRole">
+  		<value>professor</value>
+  	</attribute>
+  </user> 
+
+  <user name="testuser2" password="testuser2"> 
+  	<attribute name="fedoraRole">
+  		<value>researcher</value>
+  	</attribute>
+  </user> 
+
+  <user name="testuser3" password="testuser3"> 
+  	<attribute name="fedoraRole">
+  		<value>student</value>
+  	</attribute>
+  </user> 
+
+  <user name="testuser4" password="testuser4"> 
+  	<attribute name="fedoraRole">
+  		<value>visitor</value>
+  	</attribute>
+  </user> 
+
+  <user name="fedoraIntCallUser" password="changeme"> 
+  	<attribute name="fedoraRole">
+  		<value>fedoraInternalCall-1</value>
+  	</attribute>
+  </user> 
+
+  <user name="surrogate64" password="surrogate64" roles="webfrontend" /> 
+
+</tomcat-users>

@@ -4,8 +4,10 @@ import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.security.Principal;
 import javax.servlet.http.HttpServletRequest;
+import fedora.server.security.servletfilters.ExtendedHttpServletRequest;
 
 import org.apache.axis.MessageContext;
 import org.apache.axis.transport.http.HTTPConstants;
@@ -344,15 +346,36 @@ public class ReadOnlyContext implements Context {
     				subjectMap.set(parts[0],parts[1]); //todo:  handle multiple values (ldap)
      			}
       		}
-      		if (auxSubjectRoles != null) {
+      		if (auxSubjectRoles == null) {
+      			System.err.println("IN CONTEXT auxSubjectRoles == null");
+      		} else {
+      			System.err.println("IN CONTEXT processing auxSubjectRoles");
 	      		Iterator auxSubjectRoleKeys = auxSubjectRoles.keySet().iterator();
 	      		while (auxSubjectRoleKeys.hasNext()) {
 	      			Object name = (String) auxSubjectRoleKeys.next();
+	      			System.err.println("IN CONTEXT name==" + name);
 	      			if (name instanceof String) {
+		      			System.err.println("IN CONTEXT name is string==" + name);
 	          			Object value = auxSubjectRoles.get(name);
 	          			if ((value instanceof String) || (value instanceof String[])) {
+			      			System.err.println("IN CONTEXT value is string([])");
+			      			if (value instanceof String) {
+				      			System.err.println("IN CONTEXT value is string==" + (String) value);			      				
+			      			}
+			      			if (value instanceof String[]) {
+				      			System.err.println("IN CONTEXT value is string[]");
+				      			for (int z=0; z<((String[])value).length; z++) {
+					      			System.err.println("IN CONTEXT this value==" + ((String[])value)[z]);				      				
+				      			}
+			      			}
 	        				subjectMap.set((String) name, value);
-	          			}      				
+	          			} else if (value instanceof Set) {
+	          				for (Iterator setIterator = ((Set)value).iterator(); setIterator.hasNext(); ) {
+	          					String singleValue = (String) setIterator.next();
+				      			System.err.println("IN CONTEXT singleValue is string==" + (String) singleValue);			      				
+	          					subjectMap.set((String) name, singleValue);
+	          				}
+	          			}
 	      			}
 	      		}
       		}
@@ -437,7 +460,15 @@ public class ReadOnlyContext implements Context {
 	  	
   	  	String subjectId = request.getRemoteUser();
   	  	String password = null;
-	  	Principal principal = request.getUserPrincipal();
+
+  	  	try {
+  	  		password = ((ExtendedHttpServletRequest)request).getPassword();
+  	  	} catch (Throwable th) {
+  	  		LOG.error("in context, can't grok password from extended request " + th.getMessage());				  	  		
+  	  	}
+  	  	
+  	  	/*
+  	  	Principal principal = request.getUserPrincipal();
   	  	if (principal == null) {
   	  		LOG.debug("in context, no principal to grok password from!!");				
   	  	} else {
@@ -446,6 +477,9 @@ public class ReadOnlyContext implements Context {
 	  	  	} catch (Throwable t) {
 	  	  	}
   	  	}
+  	  	*/
+  	  	
+  	  	
   	  	if (subjectId == null) {
   	  		subjectId = "";
   	  	}

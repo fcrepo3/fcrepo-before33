@@ -376,10 +376,6 @@ public class DefaultAuthorization extends Module implements Authorization {
 		xacmlPep.initPep(enforceMode, combiningAlgorithm, repositoryPoliciesActiveDirectory, fedoraHome + File.separator + BACKEND_POLICIES_ACTIVE_DIRECTORY, repositoryPolicyGuitoolDirectory, m_manager, 
 			validateRepositoryPolicies, validateObjectPoliciesFromDatastream, policySchemaPath);
       	log("in DefaultAuthorization.postInitModule() 7");
-        Transom.getInstance().setAllowSurrogate(allowSurrogatePolicies);
-        Transom.getInstance().setSurrogatePolicyDirectory(surrogatePoliciesActiveDirectory);
-        Transom.getInstance().setValidateSurrogatePolicies(validateSurrogatePolicies);
-        Transom.getInstance().setPolicySchemaPath(policySchemaPath);      	
     } catch (Throwable e1) {
       	log("in DefaultAuthorization.postInitModule() 8");
     	ModuleInitializationException e2 = new ModuleInitializationException(e1.getMessage(), getRole(), e1);

@@ -30,6 +30,7 @@ import fedora.server.errors.authorization.AuthzOperationalException;
 import fedora.server.errors.servletExceptionExtensions.RootException;
 import fedora.server.security.Authorization;
 import fedora.server.security.BackendPolicies;
+import fedora.server.security.servletfilters.ExtendedHttpServletRequest;
 import fedora.server.storage.DOManager;
 import fedora.server.storage.DOReader;
 import fedora.server.storage.ExternalContentManager;
@@ -357,7 +358,8 @@ public class DatastreamResolverServlet extends HttpServlet {
 				if (roles == null) {
 					roles = new String[0];
 				}
-				if (contains(roles, targetRole)) {
+				//XXXXXXXXXXXXXXXXXXXXXXxif (contains(roles, targetRole)) {
+				if (((ExtendedHttpServletRequest)request).isUserInRole(targetRole)) {
 					// user has target role
 				} else {
 					LOG.debug("DatastreamResolverServlet: authZ exception in validating user");
