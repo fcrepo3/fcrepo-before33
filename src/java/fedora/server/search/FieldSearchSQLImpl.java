@@ -235,8 +235,8 @@ public class FieldSearchSQLImpl
                 }
             }
         } catch (SQLException sqle) {
-            throw new StorageDeviceException("Error attempting update of "
-                    + "object with pid '" + pid + ": " + sqle.getMessage());
+            throw new StorageDeviceException("Error attempting FieldSearch "
+                    + "update of " + pid, sqle);
         } finally {
             try {
                 if (st!=null) st.close();
