@@ -21,7 +21,7 @@
 		<column name="dsID" type="varchar(64)" notNull="true" default="" index="dsID"/>
 		<column name="dsLabel" type="varchar(255)" notNull="false" default=""/>
 		<column name="dsMIME" type="varchar(64)" notNull="true" default=""/>
-		<column name="dsLocation" type="text" notNull="false" default=""/>
+		<column name="dsLocation" type="text" notNull="false"/>
 		<column name="dsControlGroupType" type="varchar(1)" notNull="true"/>
 		<column name="dsCurrentVersionID" type="varchar(69)" notNull="true"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
@@ -71,7 +71,7 @@
 		<column name="protocolType" type="varchar(64)" notNull="false" default=""/>
 		<column name="returnType" type="varchar(64)" notNull="false" default=""/>
 		<column name="addressLocation" type="varchar(255)" notNull="false" default=""/>
-		<column name="operationLocation" type="text" notNull="false" default=""/>
+		<column name="operationLocation" type="text" notNull="false"/>
 		<column name="policyDbID" type="int(11)" notNull="true" default="0" index="policyID"/>
 	</table>
 	<table name="method" primaryKey="methodDbID,bDefDbID">
@@ -112,7 +112,7 @@
 	<table name="policy" primaryKey="policyID">
 		<column name="policyID" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="policyName" type="varchar(64)" notNull="false" default="" index="policyName"/>
-		<column name="policyRule" type="text" notNull="false" default=""/>
+		<column name="policyRule" type="text" notNull="false"/>
 		<column name="policyLabel" type="varchar(255)" notNull="false" default="0"/>
 	</table>
 	<table name="doRegistry" primaryKey="doPID">
@@ -306,7 +306,7 @@
 		</comment>
 		<column name="permutationId" type="int(11)" notNull="true" autoIncrement="true"/>
 		<column name="methodId" type="varchar(255)" notNull="true" default="" index="methodID"/>
-		<column name="permutation" type="text" notNull="true" default=""/>
+		<column name="permutation" type="text" notNull="true"/>
 	</table>
 	<table name="riMethodMimeType" primaryKey="mimeTypeId">
 		<comment>
