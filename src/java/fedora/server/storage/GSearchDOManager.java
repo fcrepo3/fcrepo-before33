@@ -100,7 +100,7 @@ public class GSearchDOManager extends DefaultDOManager {
         } else {
             try {
                 new URL(_gSearchRESTURL);
-                LOG.info("Configured GSearch REST URL: " + _gSearchRESTURL);
+                LOG.debug("Configured GSearch REST URL: " + _gSearchRESTURL);
             } catch (MalformedURLException e) {
                 throw new ModuleInitializationException("Malformed URL given "
                         + "for " + GSEARCH_REST_URL + " parameter: "
@@ -112,7 +112,7 @@ public class GSearchDOManager extends DefaultDOManager {
         // should also be.
         String user = getParameter(GSEARCH_USERNAME);
         if (user != null) {
-            LOG.info("Will authenticate to GSearch service as user: " + user);
+            LOG.debug("Will authenticate to GSearch service as user: " + user);
             String pass = getParameter(GSEARCH_PASSWORD);
             if (pass != null) {
                 _gSearchCredentials = new UsernamePasswordCredentials(user,
@@ -123,7 +123,7 @@ public class GSearchDOManager extends DefaultDOManager {
                         + " was specified", getRole());
             }
         } else {
-            LOG.info(GSEARCH_USERNAME + " unspecified; will not attempt "
+            LOG.debug(GSEARCH_USERNAME + " unspecified; will not attempt "
                     + "to authenticate to GSearch service");
         }
 

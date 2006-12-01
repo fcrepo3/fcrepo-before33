@@ -103,11 +103,11 @@ public class FieldSearchSQLModule
         ConnectionPool cPool=null;
         try {
             if (cPoolName==null) {
-                LOG.info("connectionPool unspecified; using default from "
+                LOG.debug("connectionPool unspecified; using default from "
                         + "ConnectionPoolManager.");
                 cPool=cpm.getPool();
             } else {
-                LOG.info("connectionPool specified: " + cPoolName);
+                LOG.debug("connectionPool specified: " + cPoolName);
                 cPool=cpm.getPool(cPoolName);
             }
         } catch (ConnectionPoolNotFoundException cpnfe) {

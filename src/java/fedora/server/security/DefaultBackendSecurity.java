@@ -58,7 +58,7 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
         
         try {
 	          Server s_server = this.getServer();
-	          LOG.info("DefaultBackendSecurity initialized");
+	          LOG.debug("DefaultBackendSecurity initialized");
 	          String fedoraHome = System.getProperty("fedora.home");
 	          if (fedoraHome == null) {
 	              throw new ModuleInitializationException(
@@ -67,7 +67,7 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
 	          } else {
 	              m_beSecurityPath = fedoraHome + "/server/config/beSecurity.xml";
               }	
-	          LOG.info("m_beSecurityPath: " + m_beSecurityPath);
+	          LOG.debug("m_beSecurityPath: " + m_beSecurityPath);
 	          
 	          String validate = getParameter("beSecurity_validation");
 	          if (validate!=null) {
@@ -84,7 +84,7 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
 	                      + "security configuration file was not specified. Validation is defaulted to "
 	                      + "\"false\".");	              
 	          }
-	          LOG.info("beSecurity_validate: " + m_validate);
+	          LOG.debug("beSecurity_validate: " + m_validate);
 	          
 	          m_encoding = getParameter("beSecurity_char_encoding");
 	          if (m_encoding==null) {
@@ -93,7 +93,7 @@ public class DefaultBackendSecurity extends Module implements BackendSecurity{
 	                      + "security configuration file was not specified. Encoding defaulted to "
 	                      + "\"utf-8\".");	          
 	          }
-	          LOG.info("beSecurity_char_encoding: " + m_encoding);
+	          LOG.debug("beSecurity_char_encoding: " + m_encoding);
 	          
 	          // initialize static BackendSecuritySpec instance
             setBackendSecuritySpec();

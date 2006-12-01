@@ -481,16 +481,16 @@ public abstract class Server
                     + File.separator + CONFIG_FILE);
             LOG.info("Server home is " + m_homeDir.toString());
             if (s_serverProfile==null) {
-                LOG.info("fedora.serverProfile property not set... will always "
+                LOG.debug("fedora.serverProfile property not set... will always "
                         + "use param 'value' attributes from configuration for param values.");
             } else {
-                LOG.info("fedora.serverProfile property was '"
+                LOG.debug("fedora.serverProfile property was '"
                         + s_serverProfile + "'... will use param '"
                         + s_serverProfile + "value' attributes from "
                         + "configuration for param values, falling back to "
                         + "'value' attributes where unspecified.");
             }
-            LOG.info("Loading and validating configuration file \""
+            LOG.debug("Loading and validating configuration file \""
                     + configFile + "\"");
 
             // do the parsing and validation of configuration
@@ -517,10 +517,8 @@ public abstract class Server
             }
 
             // initialize the server
-            LOG.info("started initting server...");
             m_statusFile.append(ServerState.STARTING, "Initializing Server");
             initServer();
-            LOG.info("finished initting server...");
 
             // create the datastore configs and set the instance variable
             // so they can be seen with getDatastoreConfig(...)
@@ -538,6 +536,7 @@ public abstract class Server
             while (mRoles.hasNext()) {
                 String role=(String) mRoles.next();
                 String className=(String) moduleClassNames.get(role);
+                LOG.info("Initializing " + className);
                 try {
                     Class moduleClass=Class.forName(className);
                     Class param1Class=Class.forName(MODULE_CONSTRUCTOR_PARAM1_CLASS);
@@ -604,8 +603,9 @@ public abstract class Server
             while (mRoles.hasNext()) {
                 String r=(String) mRoles.next();
                 Module m=getModule(r);
+                LOG.info("Post-Initializing " + m.getClass().getName());
                 reqRoles=m.getRequiredModuleRoles();
-                LOG.info("verifying dependencies have been loaded...");
+                LOG.debug("verifying dependencies have been loaded...");
                 for (int i=0; i<reqRoles.length; i++) {
                     if (getModule(reqRoles[i])==null) {
                         throw new ModuleInitializationException(
@@ -614,17 +614,16 @@ public abstract class Server
                                 {reqRoles[i]}), r);
                     }
                 }
-                LOG.info(reqRoles.length + " dependencies, all loaded, ok.");
+                LOG.debug(reqRoles.length + " dependencies, all loaded, ok.");
                 m.postInitModule();
             }
 
             // Do postInitServer for the Server instance
-            LOG.info("started post-initting server...");
+            LOG.debug("Post-initializing server");
             postInitServer();
-            LOG.info("finished post-initting server...");
 
             // flag that we're done initting
-            LOG.info("finished initializing server and modules...");
+            LOG.info("Server startup complete");
             m_initialized=true;
         } catch (ServerInitializationException sie) {
             // these are caught and rethrown for two reasons:
@@ -704,7 +703,6 @@ public abstract class Server
 		PropertyConfigurator.configure(props);
 
         LOG = Logger.getLogger(Server.class.getName());
-        LOG.info("Logging initialized");
     }
     
     /**
@@ -739,7 +737,7 @@ public abstract class Server
             moduleAndDatastreamInfo.add(new HashMap());
             params.put(null, moduleAndDatastreamInfo);
         }
-        LOG.info(MessageFormat.format(INIT_CONFIG_CONFIG_EXAMININGELEMENT,
+        LOG.debug(MessageFormat.format(INIT_CONFIG_CONFIG_EXAMININGELEMENT,
                 new Object[] {element.getLocalName(), dAttribute}));
         for (int i=0; i<element.getChildNodes().getLength(); i++) {
             Node n=element.getChildNodes().item(i);
@@ -788,7 +786,7 @@ public abstract class Server
                     }
                     params.put(nameNode.getNodeValue(),
                             valueNode.getNodeValue());
-                    LOG.info(MessageFormat.format(
+                    LOG.debug(MessageFormat.format(
                             INIT_CONFIG_CONFIG_PARAMETERIS, new Object[] {
                             nameNode.getNodeValue(),valueNode.getNodeValue()}));
                 } else if (!n.getLocalName().equals(CONFIG_ELEMENT_COMMENT)) {
@@ -959,6 +957,7 @@ public abstract class Server
         }
 
         configureLog4J(".log");
+        LOG.info("Starting up server");
 
         // else instantiate a new one given the class provided in the
         // root element in the config file and return it
@@ -1171,24 +1170,21 @@ public abstract class Server
     public final void shutdown(Context context)
             throws ServerShutdownException, ModuleShutdownException, AuthzException {
         Iterator roleIterator=loadedModuleRoles();
-        LOG.info("Server shutdown requested");
+        LOG.info("Shutting down server");
         ModuleShutdownException mse = null;
         while (roleIterator.hasNext()) {
             Module m=getModule((String) roleIterator.next());
-            LOG.info("Started shutting down module for role \"" + m.getRole()
-                    + "\"");
+            String mName = m.getClass().getName();
             try {
+                LOG.info("Shutting down " + mName);
                 m.shutdownModule();
             } catch (ModuleShutdownException e) {
-                LOG.warn("Error shutting down module (" + m.getRole() + ")", e);
+                LOG.warn("Error shutting down module " + mName, e);
                 mse = e; 
-            } finally {
-                LOG.info("Finished shutting down module for role \"" + m.getRole()
-                        + "\"");
             }
         }
-        LOG.info("Shutting down server instance.");
         shutdownServer();
+        LOG.info("Server shutdown complete");
         s_instances.remove(getHomeDir());
         if (mse != null) throw mse;
     }

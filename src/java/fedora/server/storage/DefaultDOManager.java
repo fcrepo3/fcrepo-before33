@@ -171,7 +171,7 @@ public class DefaultDOManager
         // storagePool (optional, default=ConnectionPoolManager's default pool)
         m_storagePool=getParameter("storagePool");
         if (m_storagePool==null) {
-            LOG.info("Parameter storagePool "
+            LOG.debug("Parameter storagePool "
                 + "not given, will defer to ConnectionPoolManager's "
                 + "default pool.");
         }
@@ -191,7 +191,7 @@ public class DefaultDOManager
         // storageCharacterEncoding (optional, default=UTF-8)
         m_storageCharacterEncoding=getParameter("storageCharacterEncoding");
         if (m_storageCharacterEncoding==null) {
-            LOG.info("Parameter storage_character_encoding "
+            LOG.debug("Parameter storage_character_encoding "
                 + "not given, using UTF-8");
             m_storageCharacterEncoding="UTF-8";
         }
@@ -201,7 +201,7 @@ public class DefaultDOManager
         // readerCacheSize and readerCacheSeconds (optional, defaults = 20, 5)
         String rcSize = getParameter("readerCacheSize");
         if (rcSize == null) {
-            LOG.info("Parameter readerCacheSize not given, using 20");
+            LOG.debug("Parameter readerCacheSize not given, using 20");
             rcSize = "20";
         }
         int readerCacheSize;
@@ -214,7 +214,7 @@ public class DefaultDOManager
 
         String rcSeconds = getParameter("readerCacheSeconds");
         if (rcSeconds == null) {
-            LOG.info("Parameter readerCacheSeconds not given, using 5");
+            LOG.debug("Parameter readerCacheSeconds not given, using 5");
             rcSeconds = "5";
         }
         int readerCacheSeconds;
@@ -814,7 +814,7 @@ public class DefaultDOManager
         // OBJECT REMOVAL...
         if (remove) {
 
-            LOG.info("COMMIT: Entered doCommit (remove)");
+            LOG.info("Committing removal of " + obj.getPid());
 
             // REFERENTIAL INTEGRITY:
             // Before removing an object, verify that there are no other objects
@@ -867,11 +867,11 @@ public class DefaultDOManager
                       (Datastream) dsIter.next();
                   String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
                       + dmc.DSVersionID;
-                  LOG.info("COMMIT: Deleting ManagedContent datastream. " + "id: " + id);
+                  LOG.info("Deleting managed datastream: " + id);
                   try {
                 	  m_permanentStore.removeDatastream(id);
                   } catch (LowlevelStorageException llse) {
-                    LOG.warn("COMMIT: While attempting removal of managed "
+                    LOG.warn("Error attempting removal of managed "
                             + "content datastream: ", llse);
                   }
                 }
@@ -902,7 +902,7 @@ public class DefaultDOManager
             try {
             	m_permanentStore.removeObject(obj.getPid());
             } catch (ObjectNotInLowlevelStorageException onilse) {
-                LOG.warn("COMMIT: Object wasn't found in permanent low level "
+                LOG.warn("Object wasn't found in permanent low level "
                         + "store, but that might be ok...continuing with purge.");
             }
             // REGISTRY:
@@ -912,9 +912,10 @@ public class DefaultDOManager
                 unregisterObject(obj.getPid());
                 wasInRegistry=true;
             } catch (ServerException se) {
-                LOG.warn("COMMIT: Object couldn't be removed from registry, but that might be ok...continuing with purge.");
+                LOG.warn("Object couldn't be removed from registry, but that might be ok...continuing with purge.");
             }
             if (wasInRegistry) {
+                LOG.info("Deleting from dissemination index");
                 try {
                     // Set entry for this object to "D" in the replication jobs table
                     addReplicationJob(obj.getPid(), true);
@@ -922,23 +923,23 @@ public class DefaultDOManager
                     m_replicator.delete(obj.getPid());
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    LOG.warn("COMMIT: Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
+                    LOG.warn("Object couldn't be deleted from the cached copy (" + se.getMessage() + ") ... leaving replication job unfinished.");
                 }
             }
 			// FIELD SEARCH INDEX:
 			// remove digital object from the default search index
             try {
-                LOG.info("COMMIT: Deleting from FieldSearch indexes...");
+                LOG.info("Deleting from FieldSearch index");
                 m_fieldSearch.delete(obj.getPid());
             } catch (ServerException se) {
-                LOG.warn("COMMIT: Object couldn't be removed from fieldsearch indexes (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                LOG.warn("Object couldn't be removed from FieldSearch index (" + se.getMessage() + "), but that might be ok...continuing with purge.");
             }
             
             // RESOURCE INDEX:
             // remove digital object from the resourceIndex
             if (m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
                 try {
-                    LOG.info("COMMIT: Deleting from ResourceIndex...");
+                    LOG.info("Deleting from ResourceIndex");
                     if (obj.getFedoraObjectType() == 
                             DigitalObject.FEDORA_BDEF_OBJECT) {
                         m_resourceIndex.deleteBDefObject(
@@ -954,15 +955,19 @@ public class DefaultDOManager
                                 new SimpleDOReader(null, null, null, null, 
                                 null, origObj));
                     }
-                    LOG.info("COMMIT: Finished deleting from ResourceIndex...");
+                    LOG.debug("Finished deleting from ResourceIndex");
                 } catch (ServerException se) {
-                    LOG.warn("COMMIT: Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
+                    LOG.warn("Object couldn't be removed from ResourceIndex (" + se.getMessage() + "), but that might be ok...continuing with purge.");
                 }
             }
             
 		// OBJECT INGEST (ADD) OR MODIFY...
         } else {
-            LOG.info("COMMIT: Entered doCommit (add/modify)");
+            if (obj.isNew()) {
+                LOG.info("Committing addition of " + obj.getPid());
+            } else {
+                LOG.info("Committing modification of " + obj.getPid());
+            }
             try {
 
                 // DATASTREAM STORAGE:
@@ -989,7 +994,7 @@ public class DefaultDOManager
                         MIMETypedStream mimeTypedStream;
 						if (dmc.DSLocation.startsWith("uploaded://")) {
 						    mimeTypedStream=new MIMETypedStream(null, m_management.getTempStream(dmc.DSLocation), null);
-                            LOG.info("COMMIT: Retrieving ManagedContent datastream from internal uploaded "
+                            LOG.info("Getting managed datastream from internal uploaded "
                                 + "location: " + dmc.DSLocation);
 						} else if (dmc.DSLocation.startsWith("copy://"))  {
                             // make a copy of the pre-existing content
@@ -998,20 +1003,20 @@ public class DefaultDOManager
                                             dmc.DSLocation.substring(7)), null);
 						} else if (dmc.DSLocation.startsWith("temp://"))  {
 							File file = new File(dmc.DSLocation.substring(7));
-				            LOG.info("COMMIT: Retrieving base64 decoded datastream spooled from archive.");
+				            LOG.info("Getting base64 decoded datastream spooled from archive");
 							try {
 								InputStream str = new FileInputStream(file);
 	                            mimeTypedStream = new MIMETypedStream(dmc.DSMIME, str, null);
 							}
 							catch (FileNotFoundException fnfe)
 							{
-			                    LOG.warn("COMMIT: Unable to read temp file created for datastream from archive.", fnfe);
-								throw new StreamIOException("Error reading from temporary file created for binary content");				 
+			                    LOG.warn("Unable to read temp file created for datastream from archive", fnfe);
+								throw new StreamIOException("Error reading from temporary file created for binary content");
 							}
 						} else {
                             mimeTypedStream = m_contentManager.
                                 getExternalContent(dmc.DSLocation.toString(), context);
-                            LOG.info("COMMIT: Retrieving ManagedContent datastream from remote "
+                            LOG.info("Getting managed datastream from remote "
                                 + "location: " + dmc.DSLocation);
 						}
                         String id = obj.getPid() + "+" + dmc.DatastreamID + "+"
@@ -1035,9 +1040,8 @@ public class DefaultDOManager
 						}
                         // Reset dsLocation in object to new internal location.
 						dmc.DSLocation = id;
-                        LOG.info("COMMIT: Replacing ManagedContent datastream with "
+                        LOG.info("Replaced managed datastream location with "
                             + "internal id: " + id);
-                        //bais = null;
                       }
                     }
                   }
@@ -1062,7 +1066,7 @@ public class DefaultDOManager
 
 				// FINAL XML SERIALIZATION:
 				// serialize the object in its final form for persistent storage                                      
-                LOG.debug("COMMIT: Serializing digital object for persistent storage...");
+                LOG.debug("Serializing digital object for persistent storage");
                 m_translator.serialize(obj, out, m_defaultStorageFormat, 
                 	m_storageCharacterEncoding, DOTranslationUtility.SERIALIZE_STORAGE_INTERNAL);
 
@@ -1074,14 +1078,14 @@ public class DefaultDOManager
 				// create valid XML files for persistent storage of digital objects.
 				if (LOG.isDebugEnabled()) {
 					ByteArrayInputStream inV = new ByteArrayInputStream(out.toByteArray());
-					LOG.debug("COMMIT: Final Validation (storage phase)...");
+					LOG.debug("Final Validation (storage phase)");
 					m_validator.validate(inV, m_defaultStorageFormat,
 						DOValidatorImpl.VALIDATE_ALL, "store");
 				}                     	
                     
                 // RESOURCE INDEX:
                 if (m_resourceIndex != null && m_resourceIndex.getIndexLevel() != ResourceIndex.INDEX_LEVEL_OFF) {
-                    LOG.info("COMMIT: Adding to ResourceIndex...");
+                    LOG.info("Adding to ResourceIndex");
                     if (obj.isNew()) {
                         if (obj.getFedoraObjectType() ==
                                 DigitalObject.FEDORA_BDEF_OBJECT) {
@@ -1118,12 +1122,12 @@ public class DefaultDOManager
                                     null, obj));
                         }
                     }
-                    LOG.info("COMMIT: Finished adding to ResourceIndex.");
+                    LOG.debug("Finished adding to ResourceIndex.");
                 }
                 
                 // STORAGE: 
                 // write XML serialization of object to persistent storage
-                LOG.debug("COMMIT: Storing digital object...");
+                LOG.debug("Storing digital object");
                 if (obj.isNew()) {
                 	m_permanentStore.addObject(obj.getPid(), new ByteArrayInputStream(out.toByteArray()));
                 } else {
@@ -1139,7 +1143,7 @@ public class DefaultDOManager
 
                 // REGISTRY:
 				// update systemVersion in doRegistry (add one)
-                LOG.debug("COMMIT: Updating registry...");
+                LOG.debug("Updating registry");
                 Connection conn=null;
                 Statement s = null;
                 ResultSet results=null;
@@ -1177,36 +1181,33 @@ public class DefaultDOManager
 
                 // REPLICATE:
                 // add to replication jobs table and do replication to db
-                LOG.debug("COMMIT: Adding replication job...");
+                LOG.info("Updating dissemination index");
                 addReplicationJob(obj.getPid(), false);
                 try {
                     if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BDEF_OBJECT) {
-                        LOG.info("COMMIT: Attempting replication as bdef object: " + obj.getPid());
                         BDefReader reader=getBDefReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        LOG.info("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("Updating FieldSearch index");
                         m_fieldSearch.update(reader);
                     } else if (obj.getFedoraObjectType()==DigitalObject.FEDORA_BMECH_OBJECT) {
-                        LOG.info("COMMIT: Attempting replication as bmech object: " + obj.getPid());
                         BMechReader reader=getBMechReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        LOG.info("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("Updating FieldSearch index");
                         m_fieldSearch.update(reader);
                     } else {
-                        LOG.info("COMMIT: Attempting replication as normal object: " + obj.getPid());
                         DOReader reader=getReader(cachedObjectRequired, context, obj.getPid());
                         m_replicator.replicate(reader);
-                        LOG.info("COMMIT: Updating FieldSearch indexes...");
+                        LOG.info("Updating FieldSearch index");
                         m_fieldSearch.update(reader);
                     }
                     // FIXME: also remove from temp storage if this is successful
                     removeReplicationJob(obj.getPid());
                 } catch (ServerException se) {
-                    LOG.error("Error while replicating", se);
+                    LOG.error("Error updating dissemination index", se);
                     throw se;
                 } catch (Throwable th) {
-                    LOG.error("Error while replicating", th);
-                    throw new GeneralException("Error while replicating", th);
+                    LOG.error("Error updating dissemination index", th);
+                    throw new GeneralException("Error updating dissemination index", th);
                 }
             } catch (ServerException se) {
                 if (obj.isNew()) {
@@ -1339,7 +1340,7 @@ public class DefaultDOManager
      */
     public boolean objectExists(String pid)
             throws StorageDeviceException {
-        LOG.debug("Checking if " + pid + " already exists...");
+        LOG.debug("Checking if " + pid + " already exists");
         Connection conn=null;
         Statement s = null;
         ResultSet results=null;
@@ -1365,7 +1366,6 @@ public class DefaultDOManager
           } finally {
               results=null;
               s=null;
-              LOG.debug("Finished checking if " + pid + " already exists...");
           }
         }
     }

@@ -76,7 +76,6 @@ public class DefaultExternalContentManager extends Module
     try
     {
       Server s_server = this.getServer();
-      LOG.info("DefaultExternalContentManager initialized");
       m_userAgent=getParameter("userAgent");
       if (m_userAgent==null) {
         m_userAgent="Fedora";

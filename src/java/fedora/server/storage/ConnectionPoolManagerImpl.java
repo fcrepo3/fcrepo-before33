@@ -87,7 +87,7 @@ public class ConnectionPoolManagerImpl extends Module
         throw new ModuleInitializationException("Default Connection Pool "
             + "Name Not Specified", getRole());
       }
-      LOG.info("DefaultPoolName: "+defaultPoolName);
+      LOG.debug("DefaultPoolName: "+defaultPoolName);
       String poolList = this.getParameter("poolNames");
 
       // Pool names should be comma delimited
@@ -96,71 +96,71 @@ public class ConnectionPoolManagerImpl extends Module
       // Initialize each connection pool
       for (int i=0; i<poolNames.length; i++)
       {
-        LOG.info("poolName["+i+"] = "+poolNames[i]);
+        LOG.debug("poolName["+i+"] = "+poolNames[i]);
         jdbcDriverClass = s_server.getDatastoreConfig(poolNames[i]).
                  getParameter("jdbcDriverClass");
-        LOG.info("JDBC driver: "+jdbcDriverClass);
+        LOG.debug("JDBC driver: "+jdbcDriverClass);
         dbUsername = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbUsername");
-        LOG.info("Database username: "+dbUsername);
+        LOG.debug("Database username: "+dbUsername);
         dbPassword = s_server.getDatastoreConfig(poolNames[i]).
                    getParameter("dbPassword");
-        LOG.info("Database password: "+dbPassword);
+        LOG.debug("Database password: "+dbPassword);
         jdbcURL = s_server.getDatastoreConfig(poolNames[i]).
                   getParameter("jdbcURL");
-        LOG.info("JDBC connection URL: "+jdbcURL);
+        LOG.debug("JDBC connection URL: "+jdbcURL);
         Integer i3 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxActive"));
         maxActive = i3.intValue();
-        LOG.info("Maximum active connections: "+maxActive);        
+        LOG.debug("Maximum active connections: "+maxActive);        
         Integer i4 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxIdle"));
         maxIdle = i4.intValue();
-        LOG.info("Maximum idle connections: "+maxActive);
+        LOG.debug("Maximum idle connections: "+maxActive);
         Integer i5 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("maxWait"));
         maxWait = i5.intValue();
-        LOG.info("Maximum wait time: "+maxWait);
+        LOG.debug("Maximum wait time: "+maxWait);
         Integer i6 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("minIdle"));
         minIdle = i6.intValue();
-        LOG.info("Minimum idle time: "+minIdle);
+        LOG.debug("Minimum idle time: "+minIdle);
         Integer i7 = new Integer(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("numTestsPerEvictionRun"));
         numTestsPerEvictionRun = i7.intValue();
-        LOG.info("Number of tests per eviction run: "+numTestsPerEvictionRun);        
+        LOG.debug("Number of tests per eviction run: "+numTestsPerEvictionRun);        
         Long l1 = new Long(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("minEvictableIdleTimeMillis"));
         minEvictableIdleTimeMillis = l1.longValue();
-        LOG.info("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
+        LOG.debug("Minimum Evictable Idle time: "+minEvictableIdleTimeMillis);  
         Long l2 = new Long(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("timeBetweenEvictionRunsMillis"));
         timeBetweenEvictionRunsMillis = l2.longValue();
-        LOG.info("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
+        LOG.debug("Minimum Evictable Idle time: "+timeBetweenEvictionRunsMillis);
         Boolean b1 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testOnBorrow"));
         testOnBorrow = b1.booleanValue();
-        LOG.info("Test on borrow: "+testOnBorrow);        
+        LOG.debug("Test on borrow: "+testOnBorrow);        
         Boolean b2 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testOnReturn"));
         testOnReturn = b2.booleanValue();
-        LOG.info("Test on return: "+testOnReturn);
+        LOG.debug("Test on return: "+testOnReturn);
         Boolean b3 = new Boolean(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("testWhileIdle"));
         testWhileIdle = b3.booleanValue();
-        LOG.info("Test while idle: "+testWhileIdle);
+        LOG.debug("Test while idle: "+testWhileIdle);
         Byte b4 = new Byte(s_server.getDatastoreConfig(poolNames[i]).
                 getParameter("whenExhaustedAction"));
         whenExhaustedAction = b4.byteValue();
         if (whenExhaustedAction != 0 && whenExhaustedAction != 1 && whenExhaustedAction != 2) {
-          LOG.info("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
+          LOG.debug("Valid values for whenExhaustedAction are: 0 - (fail), 1 - (block), or 2 - (grow)");
           throw new ModuleInitializationException("A connection pool could "
                   + "not be instantiated. The underlying error was an "
                   + "invalid value for the whenExhaustedAction parameter."
                   + "Valid values are 0 - (fail), 1 - (block), or 2 - (grow). Value specified"
                   + "was \"" + whenExhaustedAction + "\".", getRole());          
         }
-        LOG.info("whenExhaustedAction: "+whenExhaustedAction);        
+        LOG.debug("whenExhaustedAction: "+whenExhaustedAction);        
         
 
         // If a ddlConverter has been specified for the pool,
@@ -208,9 +208,9 @@ public class ConnectionPoolManagerImpl extends Module
               testOnReturn,
               testWhileIdle,
               whenExhaustedAction);
-          LOG.info("Initialized Pool: "+connectionPool);
+          LOG.debug("Initialized Pool: "+connectionPool);
           h_ConnectionPools.put(poolNames[i],connectionPool);
-          LOG.info("putPoolInHash: "+h_ConnectionPools.size());
+          LOG.debug("putPoolInHash: "+h_ConnectionPools.size());
         } catch (SQLException sqle)
         {
           LOG.error("Unable to initialize connection pool: "

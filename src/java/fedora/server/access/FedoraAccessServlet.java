@@ -209,6 +209,7 @@ public class FedoraAccessServlet extends HttpServlet {
 
 		requestURI = request.getRequestURL().toString() + "?"
 				+ request.getQueryString();
+        LOG.info("Got request: " + requestURI);
 		fedoraServerProtocol = requestURI.substring(0, requestURI.indexOf(":"));
 
 		// Parse servlet URL.

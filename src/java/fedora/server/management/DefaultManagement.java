@@ -153,6 +153,7 @@ public class DefaultManagement
             LOG.info("Entered ingestObject");
             w=m_manager.getIngestWriter(Server.USE_DEFINITIVE_STORE, context, serialization, format, encoding, newPid);
             String pid=w.GetObjectPID();
+            LOG.info("New object PID is " + pid);
             
             m_fedoraXACMLModule.enforceIngestObject(context, pid, format, encoding);
 

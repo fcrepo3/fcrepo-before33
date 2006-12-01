@@ -32,8 +32,6 @@ public class DefaultLowlevelStorageModule
 	}
 	
 	public void postInitModule() throws ModuleInitializationException {
-		LOG.info("LowlevelStorageModule: loading...");
-		
 		try {
 			m_llstore = new DefaultLowlevelStorage(getModuleParameters());
 		} catch (LowlevelStorageException e) {
