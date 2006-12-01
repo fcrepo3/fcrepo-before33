@@ -91,33 +91,6 @@ public class Uploader {
     }
 
     /**
-     * Get a file's size, in bytes.  Return -1 if size can't be determined.
-     */
-    private long getFileSize(File f) {
-        long size=0;
-        InputStream in=null;
-        try {
-            in=new FileInputStream(f);
-            byte[] buf = new byte[8192];
-            int len;
-            while ( ( len = in.read( buf ) ) > 0 ) {
-                size+=len;
-            }
-        } catch (IOException e) {
-        } finally {
-            size=-1;
-            try {
-                if (in!=null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                System.err.println("WARNING: Could not close stream.");
-            }
-        }
-        return size;
-    }
-
-    /**
      * Send a file to the server, getting back the identifier.
      */
     public String upload(File in) throws IOException {
@@ -176,13 +149,8 @@ public class Uploader {
             if (Administrator.INSTANCE!=null) {
                 // do the work in a separate thread
                 // construct the message
-                long size=getFileSize(in); 
                 StringBuffer msg=new StringBuffer();
-                msg.append("Uploading ");
-                if (size!=-1) {
-                    msg.append(size);
-                    msg.append(" bytes ");
-                }
+                msg.append("Uploading " + in.length() + " bytes ");
                 msg.append("to " + m_uploadURL);
                 // paint it to the progress bar
                 Dimension d=null;
