@@ -296,7 +296,7 @@ public class DatastreamPane
            state="I";
         if (i==2)
            state="D";
-        if (state != m_mostRecent.getState()) 
+        if (!state.equals(m_mostRecent.getState())) 
         {
             Administrator.APIM.setDatastreamState(m_pid, m_mostRecent.getID(),
                     state, logMessage);
