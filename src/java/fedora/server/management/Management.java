@@ -170,15 +170,10 @@ public interface Management {
                                         boolean versionable, 
                                         String logMessage) throws ServerException;
 
-    public String setDatastreamChecksum(Context context, 
-                                        String pid, 
-                                        String dsID, 
-                                        String algorithm) throws ServerException;
-
     public String compareDatastreamChecksum(Context context, 
                                             String pid, 
                                             String dsID, 
-                                            String versionDate) throws ServerException;
+                                            Date asOfDateTime) throws ServerException;
 
     public Date setDisseminatorState(Context context,
                                      String pid, 

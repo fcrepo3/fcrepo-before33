@@ -448,24 +448,7 @@
       </sequence>
     </complexType>
   </element>
-  
-  <element name="setDatastreamChecksum">
-    <complexType>
-      <sequence>
-        <element name="pid" type="xsd:string"/>
-        <element name="dsID" type="xsd:string"/>
-        <element name="checksumType" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  <element name="setDatastreamChecksumResponse">
-    <complexType>
-      <sequence>
-        <element name="checksum" type="xsd:string"/>
-      </sequence>
-    </complexType>
-  </element>
-  
+   
   <element name="compareDatastreamChecksum">
     <complexType>
       <sequence>

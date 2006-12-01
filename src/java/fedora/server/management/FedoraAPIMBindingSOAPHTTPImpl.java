@@ -383,22 +383,6 @@ public class FedoraAPIMBindingSOAPHTTPImpl
         }
     }
     
-    public String setDatastreamChecksum(String PID, 
-                                        String datastreamID, 
-                                        String algorithm) throws java.rmi.RemoteException 
-    {
-        assertInitialized();
-        try {
-            return s_management.setDatastreamChecksum(ReadOnlyContext.getSoapContext(), 
-                                                       PID,
-                                                       datastreamID, 
-                                                       algorithm);
-        } catch (Throwable th) {
-            LOG.error("Error setting datastream checksum", th);
-            throw AxisUtility.getFault(th); 			
-        }
-    }
-
     public String compareDatastreamChecksum(String PID, 
                                             String datastreamID, 
                                             String versionDate) throws java.rmi.RemoteException 
@@ -408,7 +392,7 @@ public class FedoraAPIMBindingSOAPHTTPImpl
             return s_management.compareDatastreamChecksum(ReadOnlyContext.getSoapContext(), 
                                                            PID,
                                                            datastreamID, 
-                                                           versionDate);
+                                                           DateUtility.convertStringToDate(versionDate));
         } catch (Throwable th) {
             LOG.error("Error comparing datastream checksum", th);
             throw AxisUtility.getFault(th); 			

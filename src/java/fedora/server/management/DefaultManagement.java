@@ -115,6 +115,35 @@ public class DefaultManagement
                     + "temporary storage area: " + e.getClass().getName() + ": "
                     + e.getMessage(), getRole());
         }
+        
+        // initialize variables pertaining to checksumming datastreams.
+        if (Datastream.defaultChecksumType == null)
+        {
+            Datastream.defaultChecksumType = "DISABLED";
+            try 
+            {
+                String auto =getParameter("autoChecksum");
+                LOG.debug("Got Parameter: autoChecksum = " + auto);
+                if (auto.equalsIgnoreCase("true"))
+                {
+                    Datastream.autoChecksum = true;
+                    Datastream.defaultChecksumType = getParameter("checksumAlgorithm");
+                }
+                else
+                {
+                    Datastream.autoChecksum = false;
+                    Datastream.defaultChecksumType = "DISABLED";
+                }
+                LOG.info("autoChecksum is "+ auto);
+                LOG.info("defaultChecksumType is "+ Datastream.defaultChecksumType);
+            }
+            catch (Exception e)
+            {
+                LOG.warn("Exception in getting default checksum type", e);
+                // IGNORE  
+            }
+        }
+
     }
 
     public void postInitModule()
@@ -1503,57 +1532,16 @@ public class DefaultManagement
            finishModification(w, "setDatastreamVersionable"); 
        }   
     }
-    
-    public String setDatastreamChecksum(Context context, String pid, 
-            String datastreamID, String algorithm)      
-            throws ServerException {   
-        DOWriter w=null;    
-        try {
-            LOG.info("Entered setDatastreamChecksum");
-   
-            m_fedoraXACMLModule.enforceSetDatastreamChecksum(context, pid, datastreamID, algorithm);   
-   
-            w=m_manager.getWriter(Server.USE_DEFINITIVE_STORE, context, pid);   
-            fedora.server.storage.types.Datastream ds=w.GetDatastream(datastreamID, null);      
-            String checksum = ds.setChecksum(algorithm);
-   
-            // add the audit record     
-            fedora.server.storage.types.AuditRecord audit=new fedora.server.storage.types.AuditRecord();    
-            audit.id=w.newAuditRecordID();      
-            audit.processType="Fedora API-M";   
-            audit.action="setDatastreamChecksum";    
-            audit.componentID=datastreamID;     
-            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
-            Date nowUTC=new Date();     
-            audit.date=nowUTC;      
-            w.getAuditRecords().add(audit);     
-   
-            // if all went ok, commit   
-            w.commit("Setting Checksum");   
-            return checksum;      
-        } finally {   
-            finishModification(w, "setDatastreamChecksum");
-       }   
-    }
-    
+        
     public String compareDatastreamChecksum(Context context, String pid,     
-            String datastreamID, String versionDateStr)      
+            String datastreamID, Date versionDate)      
             throws ServerException {   
         DOReader r = null;    
         try {   
             LOG.info("Entered compareDatastreamChecksum");      
    
-            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionDateStr);   
+            m_fedoraXACMLModule.enforceCompareDatastreamChecksum(context, pid, datastreamID, versionDate);   
    
-            DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-            Date versionDate = null;
-            if (versionDateStr != null) {
-                try {
-                    versionDate = fmt.parse(versionDateStr);
-                } catch (ParseException e) {
-                    // ignore, just use null;
-                }
-            }
             LOG.debug("Getting Reader");
             r=m_manager.getReader(Server.USE_DEFINITIVE_STORE, context, pid);   
             LOG.debug("Getting datastream:" + datastreamID + "date: "+ versionDate);

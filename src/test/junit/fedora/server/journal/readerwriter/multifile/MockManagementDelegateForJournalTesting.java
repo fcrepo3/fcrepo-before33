@@ -252,13 +252,8 @@ class MockManagementDelegateForJournalTesting implements ManagementDelegate {
 		// TODO Auto-generated method stub
 		return null;
 	}
-    
-    public String setDatastreamChecksum(Context context, String pid, String dsID, String algorithm) throws ServerException {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
-    public String compareDatastreamChecksum(Context context, String pid, String dsID, String versionDate) throws ServerException {
+       
+    public String compareDatastreamChecksum(Context context, String pid, String dsID, Date versionDate) throws ServerException {
         // TODO Auto-generated method stub
         return null;
     }

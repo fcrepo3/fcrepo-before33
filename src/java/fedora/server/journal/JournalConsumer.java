@@ -294,17 +294,8 @@ public class JournalConsumer implements JournalWorker {
     /**
      * Reject API calls from outside while we are in recovery mode.
      */
-    public String setDatastreamChecksum(Context context, String pid, 
-            String dsID, String algorithm) 
-        throws ServerException {
-        throw rejectCallsFromOutsideWhileInRecoveryMode();
-    }
-
-    /**
-     * Reject API calls from outside while we are in recovery mode.
-     */
     public String compareDatastreamChecksum(Context context, String pid, 
-            String dsID, String versionDate) 
+            String dsID, Date versionDate) 
         throws ServerException {
         throw rejectCallsFromOutsideWhileInRecoveryMode();
     }

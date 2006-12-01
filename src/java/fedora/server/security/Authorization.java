@@ -106,10 +106,7 @@ public interface Authorization {
     public void enforceSetDatastreamVersionable(Context context, String pid, String datastreamId, boolean versionableNewState) 
     throws AuthzException;
     
-    public void enforceSetDatastreamChecksum(Context context, String pid, String datastreamId, String checksumType) 
-    throws AuthzException;
-    
-    public void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, String versionDateStr) 
+    public void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException;    
 
 	public void enforceSetDisseminatorState(Context context, String pid, String disseminatorId, String disseminatorNewState) 

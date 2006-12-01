@@ -1078,7 +1078,7 @@ public class DefaultAuthorization extends Module implements Authorization {
 	}
 	}
 	
-    public final void enforceSetDatastreamChecksum(Context context, String pid, String datastreamId, String checksumType) 
+    public final void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, Date versionDate) 
     throws AuthzException {
     try {
         LOG.debug("Entered enforceSetDatastreamChecksum");     
@@ -1087,43 +1087,7 @@ public class DefaultAuthorization extends Module implements Authorization {
         context.setActionAttributes(null);
         MultiValueMap resourceAttributes = new MultiValueMap();
         String name = "";
-        try {
-            name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
-            name = resourceAttributes.setReturn(Constants.DATASTREAM.CHECKSUM_TYPE.uri, checksumType);    
-        } catch (Exception e) {
-            context.setResourceAttributes(null);        
-            throw new AuthzOperationalException(target + " couldn't set " + name, e);   
-        }
-        context.setResourceAttributes(resourceAttributes);  
-        xacmlPep.enforce(context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri), target, Constants.ACTION.APIM.uri, pid, extractNamespace(pid), context);
-    } finally {
-        LOG.debug("Exiting enforceSetDatastreamChecksum");
-    }
-    }	
-
-    public final void enforceCompareDatastreamChecksum(Context context, String pid, String datastreamId, String versionDateStr) 
-    throws AuthzException {
-    try {
-        LOG.debug("Entered enforceSetDatastreamChecksum");     
-        String target = Constants.ACTION.SET_DATASTREAM_CHECKSUM.uri;
-        log("enforcing " + target);
-        context.setActionAttributes(null);
-        MultiValueMap resourceAttributes = new MultiValueMap();
-        String name = "";
-        
-        // FIX ME
-        // Should versionDate argument in compareDatstreamChecksum be of type Date vs String?
-        // If so, then following conversion would not be necessary.
-        DateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        Date versionDate = null;
-        if (versionDateStr != null) {
-            try {
-                versionDate = fmt.parse(versionDateStr);
-            } catch (ParseException e) {
-                // ignore, just use null;
-            }
-        } 
-        
+                
         try {
             name = resourceAttributes.setReturn(Constants.DATASTREAM.ID.uri, datastreamId); 
             name = resourceAttributes.setReturn(Constants.RESOURCE.AS_OF_DATETIME.uri, ensureDate(versionDate, context));    

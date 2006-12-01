@@ -272,28 +272,12 @@ public class JournalCreator implements JournalWorker, JournalConstants {
             throw new GeneralException("Problem creating the Journal", e);
         }
     }
-    /**
-     * Create a journal entry, add the arguments, and invoke the method.
-     */
-    public String setDatastreamChecksum(Context context, String pid, 
-            String dsID, String algorithm) 
-            throws ServerException {
-        try {
-            CreatorJournalEntry cje = new CreatorJournalEntry(
-                    METHOD_SET_DATASTREAM_VERSIONABLE, context);
-            cje.addArgument(ARGUMENT_NAME_PID, pid);
-            cje.addArgument(ARGUMENT_NAME_DS_ID, dsID);
-            cje.addArgument(ARGUMENT_NAME_CHECKSUM_TYPE, algorithm);
-            return (String) cje.invokeMethod(delegate, writer);
-        } catch (JournalException e) {
-            throw new GeneralException("Problem creating the Journal", e);
-        }
-    }
+
     /**
      * Create a journal entry, add the arguments, and invoke the method.
      */
     public String compareDatastreamChecksum(Context context, String pid, 
-            String dsID, String versionDate) 
+            String dsID, Date versionDate) 
             throws ServerException {
         try {
             CreatorJournalEntry cje = new CreatorJournalEntry(

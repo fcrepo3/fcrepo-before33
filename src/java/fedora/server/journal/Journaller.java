@@ -361,18 +361,8 @@ public class Journaller extends Module implements Management, JournalConstants {
     /**
      * Delegate to the JournalWorker.
      */
-    public String setDatastreamChecksum(Context context, String pid, 
-            String dsID, String algorithm) 
-            throws ServerException {
-        return worker.setDatastreamChecksum(context, pid, dsID,
-                algorithm);
-    }
-    
-    /**
-     * Delegate to the JournalWorker.
-     */
     public String compareDatastreamChecksum(Context context, String pid, 
-            String dsID, String versionDate) 
+            String dsID, Date versionDate) 
             throws ServerException {
         return worker.compareDatastreamChecksum(context, pid, dsID,
                 versionDate);

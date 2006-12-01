@@ -100,9 +100,8 @@ public class Datastream
   public String DSLocationType;
   public String DSChecksumType;
   public String DSChecksum;
+  public static boolean autoChecksum = false;
   public static String defaultChecksumType = null;
-  public static String checksumErrorAction = null;
-  public static File checksumErrorFile = null;
 
   public Datastream() {
   } 
@@ -113,86 +112,12 @@ public class Datastream
       return null;
   }
   
+  // Note the static variable defaultChecksumType is initialized in the module initialization
+  // code for the DefaultManagement module.
+  
   public static String getDefaultChecksumType()
   {
-      if (defaultChecksumType != null) return(defaultChecksumType);
-      defaultChecksumType = "DISABLED";
-      try 
-      {
-          LOG.debug("Getting Server");
-          Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-          LOG.debug("Got Server");
-          String auto = server.getParameter("autoChecksum");
-          LOG.debug("Got Parameter: autoChecksum = " + auto);
-          if (auto.equalsIgnoreCase("true"))
-          {
-              defaultChecksumType = server.getParameter("checksumAlgorithm");
-          }
-          else
-          {
-              defaultChecksumType = "DISABLED";
-          }
-      }
-      catch (Exception e)
-      {
-          LOG.warn("Exception in getting default checksum type", e);
-          // IGNORE  
-      }
       return(defaultChecksumType);
-  }
-  
-  public static void LogChecksumMismatch(DigitalObject obj, Datastream ds, String checksumSupplied) throws ValidationException
-  {
-      if (checksumErrorAction == null)
-      {
-          try 
-          {
-              LOG.debug("Getting Server");
-              Server server = Server.getInstance(new File(System.getProperty("fedora.home")), false);
-              LOG.debug("Got Server");
-              String action = server.getParameter("checksumMismatchAction");
-              LOG.debug("Got Parameter: checksumMismatchAction = "+ action);
-              if (action.equalsIgnoreCase("EXCEPTION"))
-              {
-                  checksumErrorAction = action;
-              }
-              else if (action.startsWith("LOG_TO:"))
-              {
-                  checksumErrorAction = action.substring(7);
-                  checksumErrorFile = new File(checksumErrorAction);
-                  if (!checksumErrorFile.canWrite())
-                  {
-                      checksumErrorAction = "EXCEPTION";
-                      checksumErrorFile = null;
-                  }
-              }
-          }
-          catch (Exception e)
-          {
-              LOG.warn("Exception in getting checksum mismatch action", e);
-              checksumErrorAction = "EXCEPTION";
-              // IGNORE  
-          }
-      }
-      if (checksumErrorAction.equals("EXCEPTION"))
-      {
-          throw new ValidationException("Checksum Mismatch: " + checksumSupplied + " != " + ds.DSChecksum);
-      }
-      else
-      {
-        try
-        {
-            OutputStream os = new FileOutputStream(checksumErrorFile, true);
-            PrintWriter out = new PrintWriter(os);
-            out.println("Checksum Mismatch on datastream: " +ds.DatastreamID + " of object " + obj.getPid() +
-                        "  " + checksumSupplied + " != " + ds.DSChecksum);
-            out.close();
-        }
-        catch (FileNotFoundException e)
-        {
-            throw new ValidationException("Checksum Mismatch: " + checksumSupplied + " != " + ds.DSChecksum);
-        }      
-      }
   }
   
   public String getChecksumType()
@@ -200,6 +125,7 @@ public class Datastream
       if (DSChecksumType == null || DSChecksumType.equals("") || DSChecksumType.equals("none"))
       {
           DSChecksumType = getDefaultChecksumType(); 
+          if (DSChecksumType == null) LOG.warn("checksumType is null");
       }
       return(DSChecksumType);     
   }
@@ -239,7 +165,9 @@ public class Datastream
   
   private String computeChecksum(String csType)
   {
+      LOG.debug("checksumType is "+csType);
       String checksum = "none";
+      if (csType == null) LOG.warn("checksumType is null");
       if (csType.equals(CHECKSUMTYPE_DISABLED))
       {
           checksum = "none";
@@ -273,13 +201,13 @@ public class Datastream
       {
           // TODO Auto-generated catch block
           checksum = CHECKSUM_IOEXCEPTION;
-          e.printStackTrace();
+          LOG.warn("IOException reading datastream to generate checksum");
       }
       catch (IOException e)
       {
           // TODO Auto-generated catch block
           checksum = CHECKSUM_IOEXCEPTION;
-          e.printStackTrace();
+          LOG.warn("IOException reading datastream to generate checksum");
       }
       return(checksum);      
   }
