@@ -768,21 +768,26 @@ public class Administrator extends JFrame {
             APIMStubFactory.SOCKET_TIMEOUT_SECONDS = socketTimeoutSeconds;
             System.out.println("Socket timeout is now set to " + socketTimeoutSeconds + " seconds.");
         }
+        /*
         WatchPrintStream watchOut=new WatchPrintStream(new ByteArrayOutputStream());
         PrintStream sysOut=System.out;
         PrintStream sysErr=System.err;
-        //try {
+        */
         String protocol=null;
         String host=null;
         int port=0;
         String user=null;
         String pass=null;
+        /*
         System.setOut(watchOut);
         System.setErr(watchOut);
+        */
         Administrator administrator=new Administrator(protocol, host, port, user, pass);
         System.out.println("Started Fedora Administrator.");
+        /*
         System.setOut(sysOut);
         System.setErr(sysErr);
+        */
     }
 
 
