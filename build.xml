@@ -97,6 +97,7 @@
             <pathelement location="${lib.jai_core}"/>
         	<pathelement location="${lib.jaxen}"/>
             <pathelement location="${lib.jena}"/>
+            <pathelement location="${lib.jtidy}"/>
             <pathelement location="${lib.kowari-driver}"/>
             <pathelement location="${lib.log4j}"/>
             <pathelement location="${lib.lucene}"/>

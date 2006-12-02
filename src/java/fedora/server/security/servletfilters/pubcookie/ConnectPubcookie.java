@@ -22,7 +22,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory; 
-import org.apache.commons.httpclient.contrib.ssl.EasySSLProtocolSocketFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -210,14 +209,14 @@ public class ConnectPubcookie {
 		if (statusCode == 200) { // this is either the original, non-302, status code or the status code after redirect
 			log.fatal(this.getClass().getName() + ".connect() " + "status code 200");
 			String content = null;
-			//try {
-			log.fatal(this.getClass().getName() + ".connect() " + "b4 gRBAS()");
+			try {
+			    log.fatal(this.getClass().getName() + ".connect() " + "b4 gRBAS()");
 				content = method.getResponseBodyAsString();
 				log.fatal(this.getClass().getName() + ".connect() " + "after gRBAS() content==" + content);
-			//} catch (IOException e) {
-			//	log.error(this.getClass().getName() + ".connect() " + "couldn't get content");
-			//	return;
-			//}
+			} catch (IOException e) {
+				log.error(this.getClass().getName() + ".connect() " + "couldn't get content");
+				return;
+			}
 			if (content == null) {
 				log.fatal(this.getClass().getName() + ".connect() content==null");
 				return;
