@@ -55,10 +55,7 @@ public class ServerUtility {
             String pass) {
         String url = null;
         try {
-            url = protocol + "://"
-                    + CONFIG.getParameter(FEDORA_SERVER_HOST).getValue() + ":"
-                    + CONFIG.getParameter(FEDORA_SERVER_PORT).getValue()
-                    + "/fedora/describe";
+            url = getBaseURL(protocol) + "/describe";
             UsernamePasswordCredentials creds = 
                     new UsernamePasswordCredentials(user, pass);
             new WebClient().getResponseAsString(url, true, creds);
@@ -69,6 +66,18 @@ public class ServerUtility {
                     + "request to " + url + " failed", e);
             return false;
         }
+    }
+
+    /**
+     * Get the baseURL of the Fedora server from the host and port configured.
+     *
+     * It will look like http://localhost:8080/fedora
+     */
+    public static String getBaseURL(String protocol) {
+        return protocol + "://"
+                + CONFIG.getParameter(FEDORA_SERVER_HOST).getValue() + ":"
+                + CONFIG.getParameter(FEDORA_SERVER_PORT).getValue()
+                + "/fedora";
     }
 
     /**

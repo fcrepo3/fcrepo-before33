@@ -510,7 +510,10 @@ public class TestXACMLPolicies extends FedoraServerTestCase {
         System.out.println("Reloading Policies...");
         try
         {
-            ServerUtility.reloadPolicies (getProtocol(), getUsername(), getPassword());
+            FedoraClient client = new FedoraClient(
+                    ServerUtility.getBaseURL(getProtocol()), getUsername(),
+                            getPassword());
+            client.reloadPolicies();
             System.out.println("  Done Reloading Policies");
         }
         catch (Exception e)
