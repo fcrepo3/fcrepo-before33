@@ -79,12 +79,7 @@ public class Rebuild implements Constants {
 			System.err.println(rebuilder.getAction());
 			System.err.println();
 			Map options = getOptions(rebuilder.init(serverDir, serverConfig));
-			boolean serverIsRunning = false;
-			try {
-				serverIsRunning = ServerUtility.pingServletContainerRunning(
-						"/fedora/describe", 20);
-			} catch (Exception e) {
-			}
+			boolean serverIsRunning = ServerUtility.pingServer("http", null, null);
 			if (serverIsRunning && rebuilder.shouldStopServer()) {
                 throw new Exception("The Fedora server appears to be running."
                         + "  It must be stopped before the rebuilder can run.");
