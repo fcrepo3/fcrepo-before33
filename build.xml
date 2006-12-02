@@ -613,6 +613,7 @@
         <md-localservice service="fop" libs.path="fop-libs.path"/>
         
         <path id="imagemanip-libs.path">
+            <pathelement location="${lib.commons-codec}"/>
             <pathelement location="${lib.commons-httpclient}"/>
             <pathelement location="${lib.ij}"/>
             <pathelement location="${lib.jai_codec}"/>
@@ -621,8 +622,9 @@
         <md-localservice service="imagemanip" libs.path="imagemanip-libs.path"/>
         
         <path id="saxon-libs.path">
-            <pathelement location="${lib.saxon}"/>
+            <pathelement location="${lib.commons-codec}"/>
             <pathelement location="${lib.commons-httpclient}"/>
+            <pathelement location="${lib.saxon}"/>
         </path>
         <md-localservice service="saxon" libs.path="saxon-libs.path"/>
     </target>
