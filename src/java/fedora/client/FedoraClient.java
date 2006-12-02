@@ -6,11 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+
 import java.text.SimpleDateFormat;
 import java.text.ParseException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
@@ -25,6 +28,7 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
@@ -32,14 +36,18 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+
 import org.jrdf.graph.Literal;
+
 import org.trippi.RDFFormat;
 import org.trippi.TrippiException;
 import org.trippi.TupleIterator;
 
 import fedora.common.Constants;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.utilities.DateUtility;
@@ -102,7 +110,7 @@ public class FedoraClient implements Constants {
     private String m_user;
     private String m_pass;
 
-    private String m_host;
+    private AuthScope m_authScope;
     private UsernamePasswordCredentials m_creds;
 
     private MultiThreadedHttpConnectionManager m_cManager;
@@ -116,7 +124,7 @@ public class FedoraClient implements Constants {
         m_pass = pass;
         if (!baseURL.endsWith("/")) m_baseURL += "/";
         URL url = new URL(m_baseURL);
-        m_host = url.getHost();
+        m_authScope = new AuthScope(url.getHost(), url.getPort(), AuthScope.ANY_REALM);
         m_creds = new UsernamePasswordCredentials(user, pass);
         m_cManager = new MultiThreadedHttpConnectionManager();       
     }
@@ -127,8 +135,8 @@ public class FedoraClient implements Constants {
 		HttpClient client = new HttpClient(m_cManager);
 		client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
 		client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
-		client.getState().setCredentials(null, m_host, m_creds);
-		client.getState().setAuthenticationPreemptive(true);
+		client.getState().setCredentials(m_authScope, m_creds);
+		client.getParams().setAuthenticationPreemptive(true);
 		return client;
 	}
 

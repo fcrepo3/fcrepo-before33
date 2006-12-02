@@ -9,10 +9,12 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,6 +34,8 @@ import javax.swing.JPasswordField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import org.apache.log4j.Logger;
+
 import fedora.server.access.FedoraAPIA;
 import fedora.server.management.FedoraAPIM;
 import fedora.server.types.gen.UserInfo;
@@ -39,13 +43,15 @@ import fedora.server.types.gen.UserInfo;
 /**
  * Launch a dialog for logging into a Fedora repository.
  *
- *
  * @author cwilper@cs.cornell.edu
  * @version $Id$
  */
-
 public class LoginDialog
         extends JDialog {
+
+    /** Logger for this class. */
+    private static final Logger LOG = Logger.getLogger(
+            LoginDialog.class.getName());
 
 	private static final long serialVersionUID = 1L;
     private JComboBox m_serverComboBox;
@@ -270,7 +276,7 @@ public class LoginDialog
                 throws Exception {
                 	
 			try {
-
+LOG.info("Logging in...");
                 // get a FedoraClient
 				String baseURL = protocol + "://" + host + ":" + port + "/fedora";
 				FedoraClient fc = new FedoraClient(baseURL, user, pass);
@@ -408,7 +414,7 @@ public class LoginDialog
                         throw new IOException("No username provided.");
                     }
                     String pass = new String(m_passwordField.getPassword());
-                    
+
                     tryLogin(protocol, host, port, username, pass);
                     // all looks ok...just save stuff and exit now
                     m_lastServer=host + ":" + port;

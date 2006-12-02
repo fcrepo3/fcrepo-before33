@@ -1,13 +1,17 @@
 package fedora.client;
 
 import java.awt.Dimension;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import java.util.HashMap;
+
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -31,7 +35,7 @@ public class Downloader {
             new MultiThreadedHttpConnectionManager();
 
     private String m_fedoraUrlStart;
-    private String m_host;
+    private AuthScope m_authScope;
     private UsernamePasswordCredentials m_creds;
 
     /**
@@ -40,7 +44,7 @@ public class Downloader {
     public Downloader(String host, int port, String user, String pass)
             throws IOException {
         m_fedoraUrlStart=Administrator.getProtocol() + "://" + host + ":" + port + "/fedora/get/";
-        m_host=host;
+        m_authScope = new AuthScope(host, port, AuthScope.ANY_REALM);
         m_creds=new UsernamePasswordCredentials(user, pass);
     }
 
@@ -109,8 +113,8 @@ public class Downloader {
         try {
             HttpClient client=new HttpClient(m_cManager);
             client.setConnectionTimeout(20000); // wait 20 seconds max
-            client.getState().setCredentials(null, m_host, m_creds);
-            client.getState().setAuthenticationPreemptive(true); // don't bother with challenges
+            client.getState().setCredentials(m_authScope, m_creds);
+            client.getParams().setAuthenticationPreemptive(true); // don't bother with challenges
             int redirectCount=0; // how many redirects did we follow
             int resultCode=300; // not really, but enter the loop that way
             Dimension d=null;

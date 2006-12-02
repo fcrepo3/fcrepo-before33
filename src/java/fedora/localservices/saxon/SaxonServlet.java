@@ -10,6 +10,7 @@ import javax.xml.transform.stream.*;
 
 import com.icl.saxon.expr.StringValue;
 import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.*;
 
 /**
@@ -209,8 +210,8 @@ public class SaxonServlet extends HttpServlet {
         client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
         UsernamePasswordCredentials creds = getCreds(url);
         if (creds != null) {
-            client.getState().setCredentials(null, null, creds);
-            client.getState().setAuthenticationPreemptive(true);
+            client.getState().setCredentials(AuthScope.ANY, creds);
+            client.getParams().setAuthenticationPreemptive(true);
             getMethod.setDoAuthentication(true);
         }
         getMethod.setFollowRedirects(true);

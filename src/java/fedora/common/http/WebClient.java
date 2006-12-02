@@ -4,8 +4,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import java.net.URL;
 
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
@@ -18,7 +20,6 @@ import org.apache.commons.httpclient.methods.GetMethod;
  * 
  * Provides option for client to handle HTTP redirects
  */
-
 public class WebClient {
 
     /** Seconds to wait before a connection is established. */
@@ -78,8 +79,8 @@ public class WebClient {
 		client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
 		client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
         if (host != null && creds != null) {
-            client.getState().setCredentials(null, host, creds);
-		    client.getState().setAuthenticationPreemptive(true);
+            client.getState().setCredentials(new AuthScope(host, AuthScope.ANY_PORT), creds);
+		    client.getParams().setAuthenticationPreemptive(true);
         }
 		return client;
 	}

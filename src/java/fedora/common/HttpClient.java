@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+
 import java.net.HttpURLConnection;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -13,6 +15,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.DefaultMethodRetryHandler;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -257,8 +260,8 @@ public class HttpClient {
 			  			throw new Exception("unexpected username password mix");
 			  		}
 		  			log("doAuthnGet(), do authenticate " + username + " " + password);		  		
-			  		apacheCommonsClient.getState().setCredentials(null, null, new UsernamePasswordCredentials(username, password));
-			  		apacheCommonsClient.getState().setAuthenticationPreemptive(true);
+			  		apacheCommonsClient.getState().setCredentials(AuthScope.ANY, new UsernamePasswordCredentials(username, password));
+			  		apacheCommonsClient.getParams().setAuthenticationPreemptive(true);
 		  			log("doAuthnGet(), apacheCommonsClient=" + apacheCommonsClient);
 			  		authenticate = true;
 		  		}
