@@ -36,6 +36,10 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -69,6 +73,7 @@ import fedora.server.types.gen.RepositoryInfo;
  */
 
 public class FedoraClient implements Constants {
+
 	private static final String LOG4J_PROPS = "fedora.client.resources.log4j";
     private static final String LOG4J_PATTERN = "log4j\\.appender\\.(\\w+)\\.File";
     public static final String FEDORA_URI_PREFIX = "info:fedora/";
@@ -117,6 +122,12 @@ public class FedoraClient implements Constants {
 
     private String m_serverVersion;
 
+    /** 
+     * Location of Fedora's upload interface, set on first call to
+     * getUploadURL().
+     */
+    private String m_uploadURL;
+
     public FedoraClient(String baseURL, String user, String pass) throws MalformedURLException {
         if (FORCE_LOG4J_CONFIGURATION) initLogger();
     	m_baseURL = baseURL;
@@ -139,6 +150,76 @@ public class FedoraClient implements Constants {
 		client.getParams().setAuthenticationPreemptive(true);
 		return client;
 	}
+
+    /**
+     * Upload the given file to Fedora's upload interface via HTTP POST.
+     *
+     * @return the temporary id which can then be passed to API-M requests
+     *         as a URL.  It will look like uploaded://123
+     */
+    public String uploadFile(File file)
+            throws IOException {
+        PostMethod post = null;
+        try {
+            // prepare the post method
+            post = new PostMethod(getUploadURL());
+            post.setDoAuthentication(true);
+            post.getParams().setParameter("Connection","Keep-Alive");
+//post.setContentChunked();
+
+            // add the file part
+            Part[] parts = { new FilePart("file", file) };
+            post.setRequestEntity(new MultipartRequestEntity(parts, 
+                    post.getParams()));
+
+            // execute and get the response
+            int responseCode = getHttpClient().executeMethod(post);
+            String body = null;
+            try { 
+                body = post.getResponseBodyAsString();
+            } catch (Exception e) {
+                logger.warn("Error reading response body", e); 
+            }
+            if (body == null) {
+                body = "[empty response body]";
+            }
+            body = body.trim();
+            if (responseCode != HttpStatus.SC_CREATED) {
+                throw new IOException("Upload failed: " 
+                        + HttpStatus.getStatusText(responseCode)
+                        + ": " + replaceNewlines(body, " "));
+            } else {
+                return replaceNewlines(body, "");
+            }
+        } finally {
+            if (post != null) {
+                post.releaseConnection();
+            }
+        }
+    }
+
+    /**
+     * Replace newlines with the given string.
+     */
+    private static String replaceNewlines(String in, String replaceWith) {
+        return in.replaceAll("\r", replaceWith).replaceAll("\n", replaceWith);
+    }
+
+    public synchronized String getUploadURL()
+            throws IOException {
+        if (m_uploadURL != null) {
+            return m_uploadURL;
+        } else {
+            m_uploadURL = m_baseURL + "management/upload";
+            if (m_uploadURL.startsWith("http:")) {
+                URL redirectURL = getRedirectURL(m_uploadURL);
+                if (redirectURL != null) {
+                    m_uploadURL = redirectURL.toString();
+                }
+            }
+            return m_uploadURL;
+        }
+    }
 
 	/**
 	 * Get an HTTP resource with the response as an InputStream, given a resource
@@ -598,6 +679,27 @@ public class FedoraClient implements Constants {
 		PropertyConfigurator.configure(props);
     }
     
+        /**
+         * Ping the given endpoint to see if an HTTP 302 status code is returned.  
+         *
+         * If so, return the location given in the HTTP response header.
+         * If not, return null.
+         */    
+        private URL getRedirectURL(String location) throws IOException {
+            HttpInputStream in = get(location, false, false);
+            try {
+                if (in.getStatusCode() == 302) {
+                    Header h = in.getResponseHeader("location");
+                    if (h != null) {
+                        return new URL(h.getValue());
+                    }
+                }
+                return null;
+            } finally {
+                try { in.close(); } catch (Exception e) { }
+            }
+        }
+
 	// for quick testing
 	public static void main(String[] args) {
 		try {
@@ -680,7 +782,7 @@ public class FedoraClient implements Constants {
                     m_url = new URL(m_baseURL + m_name + "/soap");
                 } else {
                     if (m_baseURL.startsWith("http:")) {
-                        m_url = getRedirectURL("/services/" + m_name);                        
+                        m_url = getRedirectURL("/services/" + m_name);
                     }
                     if (m_url == null) {
                         m_url = new URL(m_baseURL + "services/" + m_name);
@@ -690,26 +792,6 @@ public class FedoraClient implements Constants {
             return m_url;
         }
 
-        /**
-         * Ping the given endpoint to see if an HTTP 302 status code is returned.  
-         *
-         * If so, return the location given in the HTTP response header.
-         * If not, return null.
-         */    
-        private URL getRedirectURL(String location) throws IOException {
-            HttpInputStream in = get(location, false, false);
-            try {
-                if (in.getStatusCode() == 302) {
-                    Header h = in.getResponseHeader("location");
-                    if (h != null) {
-                        return new URL(h.getValue());
-                    }
-                }
-                return null;
-            } finally {
-                try { in.close(); } catch (Exception e) { }
-            }
-        }
     }
 
 }

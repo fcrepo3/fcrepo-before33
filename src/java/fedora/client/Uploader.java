@@ -97,134 +97,63 @@ public class Uploader {
     /**
      * Send a file to the server, getting back the identifier.
      */
-    public String upload(File in) throws IOException {
-        PostMethod post=null;
-        
-        try {
-            // Ping m_uploadURL using HTTP GET to see if any redirects
-            // If it is a redirect, use the redirectLocation as uploadURL to perform POST;
-            // otherwise, just use m_uploadURL.
-            //
-            // Note: It would save some coding to just use FedoraClient.get(URL, boolean, boolean),
-            // but can't use FedoraClient.get(m_updateURL, true, true) here because this method
-            // attempts to evaluate the redirected URL which in this case is /management/upload. This
-            // URL is handled by UploadServlet which only accepts POSTS and returns SC_BAD_REQUEST(400)
-            // for GET requests so FedoraClient.get(m_updateURL, true, true) will return IOException
-            // because of the 400 error.
-            HttpClient client = fc.getHttpClient();
-            String redirectURL = m_uploadURL;
-            
-            // Only look for redirect if protocol is http.
-            if (m_uploadURL.startsWith("http:")) {
-        		GetMethod getMethod = new GetMethod(m_uploadURL);
-        		getMethod.setDoAuthentication(true);
-        		getMethod.setFollowRedirects(true);
-        		HttpInputStream his = new HttpInputStream(client, getMethod, m_uploadURL);
-        		int status = his.getStatusCode();
-      			if (status != 200) {
-					if (300 <= status && status <= 399) {
-						// Handle the redirect here !
-						logger.debug("Uploader is handling redirect for HTTP STATUS=" + status);      					    
-						Header hLoc = his.getResponseHeader("location");
-						if (hLoc != null) {
-							redirectURL = hLoc.getValue();
-							logger.debug("Uploader is trying redirect location: " + hLoc.getValue());      							
-						} else {
-							try { 
-								throw new IOException("Request failed [" + status + " " + his.getStatusText() + "]");
-							} finally {
-								try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-							}
-						}
-					} else {
-						try { 
-							throw new IOException("Request failed [" + his.getStatusCode() + " " + his.getStatusText() + "]");
-						} finally {
-							try { his.close(); } catch (Exception e) {logger.error("Can't close InputStream: " + e.getMessage());}
-						}
-					}
-				}        		
-            }
-            client=fc.getHttpClient();
-            post=new PostMethod(redirectURL);
-            post.setDoAuthentication(true);
-            post.getParams().setParameter("Connection","Keep-Alive");
-// post.setContentChunked(true);
+    public String upload(File file) throws IOException {
+        if (Administrator.INSTANCE == null) {
+            return fc.uploadFile(file);
+        } else {
+            // paint initial status to the progress bar
+            String msg = "Uploading " + file.length() + " bytes to "
+                    + fc.getUploadURL();
+            Dimension d = Administrator.PROGRESS.getSize();
+            Administrator.PROGRESS.setString(msg);
+            Administrator.PROGRESS.setValue(100);
+            Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
 
-            Part[] parts = { new FilePart("file", in) };
-            post.setRequestEntity(new MultipartRequestEntity(parts, 
-                    post.getParams()));
-
-            int resultCode=0;
-            if (Administrator.INSTANCE!=null) {
-                // do the work in a separate thread
-                // construct the message
-                StringBuffer msg=new StringBuffer();
-                msg.append("Uploading " + in.length() + " bytes ");
-                msg.append("to " + m_uploadURL);
-                // paint it to the progress bar
-                Dimension d=null;
-                d=Administrator.PROGRESS.getSize();
-                Administrator.PROGRESS.setString(msg.toString());
-                Administrator.PROGRESS.setValue(100);
-                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
-                // then start the thread, passing parms in
-                HashMap PARMS=new HashMap();
-                PARMS.put("client", client);
-                PARMS.put("post", post);
-                SwingWorker worker=new SwingWorker(PARMS) {
-                    public Object construct() {
-                        try {
-                            return new Integer(((HttpClient) parms.get("client")).executeMethod((PostMethod) parms.get("post")));
-                        } catch (Exception e) {
-                            thrownException=e;
-                            return "";
-                        }
-                    }
-                };
-                worker.start();
-                // The following code will run in the (safe) 
-                // Swing event dispatcher thread.
-                int ms=200;
-                while (!worker.done) {
+            // then start the thread, passing parms in
+            HashMap PARMS=new HashMap();
+            PARMS.put("fc", fc);
+            PARMS.put("file", file);
+            SwingWorker worker=new SwingWorker(PARMS) {
+                public Object construct() {
                     try {
-                        Administrator.PROGRESS.setValue(ms);
-                        Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
-                        Thread.sleep(100);
-                        ms=ms+100;
-                        if (ms>=2000) ms=200;
-                    } catch (InterruptedException ie) { }
+                        FedoraClient fc = (FedoraClient) parms.get("fc");
+                        File file = (File) parms.get("file");
+                        return fc.uploadFile(file);
+                    } catch (IOException e) {
+                        thrownException = e;
+                        return "";
+                    }
                 }
-                if (worker.thrownException!=null)
-                    throw worker.thrownException;
-                Administrator.PROGRESS.setValue(2000);
-                Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+            };
+            worker.start();
+
+            // keep updating status till the worker's finished
+            int ms=200;
+            while (!worker.done) {
                 try {
+                    Administrator.PROGRESS.setValue(ms);
+                    Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
                     Thread.sleep(100);
+                    ms=ms+100;
+                    if (ms>=2000) ms=200;
                 } catch (InterruptedException ie) { }
-                resultCode=((Integer) worker.getValue()).intValue();
+            }
+
+            // reset the status bar to normal
+            Administrator.PROGRESS.setValue(2000);
+            Administrator.PROGRESS.paintImmediately(0, 0, (int) d.getWidth()-1, (int) d.getHeight()-1);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ie) { }
+
+            // report if there was an error; otherwise return the response
+            if (worker.thrownException != null) {
+                throw (IOException) worker.thrownException;
             } else {
-                resultCode=client.executeMethod(post);
+                return (String) worker.getValue();
             }
-            if (resultCode!=201) {
-                throw new IOException(HttpStatus.getStatusText(resultCode)
-                        + ": " 
-                        + replaceNewlines(post.getResponseBodyAsString(), " "));
-            }
-            return replaceNewlines(post.getResponseBodyAsString(), "");
-        } catch (Exception e) {
-            throw new IOException(e.getMessage());
-        } finally {
-            if (post!=null) post.releaseConnection();
+
         }
-
-    }
-
-    /**
-     * Replace newlines with the given string.
-     */
-    private static String replaceNewlines(String in, String replaceWith) {
-        return in.replaceAll("\r", replaceWith).replaceAll("\n", replaceWith);
     }
 
     /**
