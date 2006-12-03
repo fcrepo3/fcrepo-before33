@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequestWrapper;
 /** 
  *  @author Bill Niebel (niebel@virginia.edu)
  */
-//@SuppressWarnings("deprecation")
 public class ExtendedHttpServletRequestWrapper 
 	extends HttpServletRequestWrapper implements ExtendedHttpServletRequest {
 	
