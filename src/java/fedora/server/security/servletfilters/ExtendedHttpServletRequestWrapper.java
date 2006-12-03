@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 /** 
  *  @author Bill Niebel (niebel@virginia.edu)
  */
+//@SuppressWarnings("deprecation")
 public class ExtendedHttpServletRequestWrapper 
 	extends HttpServletRequestWrapper implements ExtendedHttpServletRequest {
 	
@@ -567,6 +568,23 @@ public class ExtendedHttpServletRequestWrapper
     public ExtendedHttpServletRequestWrapper(HttpServletRequest wrappedRequest) throws Exception {
     	super(wrappedRequest);
     }
-    
+
+    /**
+     * @deprecated As of Version 2.1 of the Java Servlet API, use 
+     *             {@link ServletContext#getRealPath(java.lang.String)}.
+     */
+    @Deprecated
+    public String getRealPath(String path) {
+        return super.getRealPath(path);
+    }
+
+    /**
+     * @deprecated As of Version 2.1 of the Java Servlet API, use 
+     *             {@link #isRequestedSessionIdFromURL()}.
+     */
+    @Deprecated
+    public boolean isRequestedSessionIdFromUrl() {
+        return isRequestedSessionIdFromURL();
+    }
     
 }
