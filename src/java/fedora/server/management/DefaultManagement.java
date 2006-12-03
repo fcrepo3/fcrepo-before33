@@ -1520,7 +1520,7 @@ public class DefaultManagement
            audit.action="setDatastreamVersionable";    
            audit.componentID=datastreamID;     
            audit.responsibility=context.getSubjectValue(Constants.SUBJECT.LOGIN_ID.uri);   
-           Date nowUTC=new Date();     
+           Date nowUTC = Server.getCurrentDate(context);
            audit.date=nowUTC;      
            audit.justification=logMessage;     
            w.getAuditRecords().add(audit);     
