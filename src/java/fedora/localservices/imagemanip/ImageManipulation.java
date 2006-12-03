@@ -206,8 +206,8 @@ public class ImageManipulation extends HttpServlet {
             throws Exception {
         GetMethod get=null;
         try {
+            cManager.getParams().setConnectionTimeout(20000);
             HttpClient client=new HttpClient(cManager);
-            client.setConnectionTimeout(20000); // wait 20 seconds max
             get=new GetMethod(url);
             get.setFollowRedirects(true);
             int resultCode=client.executeMethod(get);

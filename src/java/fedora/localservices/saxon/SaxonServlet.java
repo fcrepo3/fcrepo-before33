@@ -63,6 +63,7 @@ public class SaxonServlet extends HttpServlet {
         m_cache = new HashMap();
         m_creds = new HashMap();
         m_cManager = new MultiThreadedHttpConnectionManager();
+        m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
 
         Enumeration enm = config.getInitParameterNames();
         while (enm.hasMoreElements()) {
@@ -207,7 +208,6 @@ public class SaxonServlet extends HttpServlet {
     private InputStream getInputStream(String url) throws Exception {
         GetMethod getMethod = new GetMethod(url);
         HttpClient client = new HttpClient(m_cManager);
-        client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
         UsernamePasswordCredentials creds = getCreds(url);
         if (creds != null) {
             client.getState().setCredentials(AuthScope.ANY, creds);
