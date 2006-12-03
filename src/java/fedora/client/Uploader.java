@@ -14,7 +14,11 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.httpclient.methods.MultipartPostMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+
 import org.apache.log4j.Logger;
 
 import fedora.client.FedoraClient;
@@ -94,7 +98,7 @@ public class Uploader {
      * Send a file to the server, getting back the identifier.
      */
     public String upload(File in) throws IOException {
-        MultipartPostMethod post=null;
+        PostMethod post=null;
         
         try {
             // Ping m_uploadURL using HTTP GET to see if any redirects
@@ -142,9 +146,15 @@ public class Uploader {
 				}        		
             }
             client=fc.getHttpClient();
-            post=new MultipartPostMethod(redirectURL);
+            post=new PostMethod(redirectURL);
             post.setDoAuthentication(true);
-            post.addParameter("file", in);
+            post.getParams().setParameter("Connection","Keep-Alive");
+// post.setContentChunked(true);
+
+            Part[] parts = { new FilePart("file", in) };
+            post.setRequestEntity(new MultipartRequestEntity(parts, 
+                    post.getParams()));
+
             int resultCode=0;
             if (Administrator.INSTANCE!=null) {
                 // do the work in a separate thread
@@ -165,7 +175,7 @@ public class Uploader {
                 SwingWorker worker=new SwingWorker(PARMS) {
                     public Object construct() {
                         try {
-                            return new Integer(((HttpClient) parms.get("client")).executeMethod((MultipartPostMethod) parms.get("post")));
+                            return new Integer(((HttpClient) parms.get("client")).executeMethod((PostMethod) parms.get("post")));
                         } catch (Exception e) {
                             thrownException=e;
                             return "";
