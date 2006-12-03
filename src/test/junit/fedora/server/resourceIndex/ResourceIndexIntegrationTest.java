@@ -81,6 +81,11 @@ public abstract class ResourceIndexIntegrationTest {
 
     private static final String DB_PASSWORD = "test";
 
+    // needs to be set in order for object serializers/deserializers to work
+    static {
+        Datastream.defaultChecksumType = "DISABLED";
+    }
+
     /**
      * The <code>ResourceIndexImpl</code> instance we'll be using.
      */
