@@ -165,7 +165,10 @@ public class FedoraClient implements Constants {
             post = new PostMethod(getUploadURL());
             post.setDoAuthentication(true);
             post.getParams().setParameter("Connection","Keep-Alive");
-//post.setContentChunked();
+
+            // chunked encoding is not required by the Fedora server,
+            // but makes uploading very large files possible
+            post.setContentChunked(true);
 
             // add the file part
             Part[] parts = { new FilePart("file", file) };
