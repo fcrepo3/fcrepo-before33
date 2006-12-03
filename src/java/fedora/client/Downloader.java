@@ -111,8 +111,8 @@ public class Downloader {
         GetMethod get=null;
         boolean ok=false;
         try {
+            m_cManager.getParams().setConnectionTimeout(20000);
             HttpClient client=new HttpClient(m_cManager);
-            client.setConnectionTimeout(20000); // wait 20 seconds max
             client.getState().setCredentials(m_authScope, m_creds);
             client.getParams().setAuthenticationPreemptive(true); // don't bother with challenges
             int redirectCount=0; // how many redirects did we follow

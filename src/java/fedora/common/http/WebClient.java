@@ -73,11 +73,11 @@ public class WebClient {
             }
         }
 
-		m_cManager.setMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
-		m_cManager.setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+		m_cManager.getParams().setDefaultMaxConnectionsPerHost(MAX_CONNECTIONS_PER_HOST);
+		m_cManager.getParams().setMaxTotalConnections(MAX_TOTAL_CONNECTIONS);
+		m_cManager.getParams().setConnectionTimeout(TIMEOUT_SECONDS * 1000);
+		m_cManager.getParams().setSoTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
 		HttpClient client = new HttpClient(m_cManager);
-		client.setConnectionTimeout(TIMEOUT_SECONDS * 1000);
-		client.setTimeout(SOCKET_TIMEOUT_SECONDS * 1000);
         if (host != null && creds != null) {
             client.getState().setCredentials(new AuthScope(host, AuthScope.ANY_PORT), creds);
 		    client.getParams().setAuthenticationPreemptive(true);
