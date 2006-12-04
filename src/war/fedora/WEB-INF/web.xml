@@ -287,6 +287,103 @@
       <!--param-value>/tomcat/webapps/fedora/WEB-INF/userfile.xml</param-value-->
     </init-param>     
   </filter>  
+  
+  <!-- authentication-only from pubcookie.  (client to pubcookie is programmatic from filter code.) -->
+  <!--filter>
+    <filter-name>PubcookieFilter</filter-name>
+    <filter-class>fedora.server.security.servletfilters.pubcookie.FilterPubcookie</filter-class>
+    <init-param>
+      <param-name>pubcookie-name</param-name>
+      <param-value>pubcookie_l</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pubcookie-loginpage-url</param-name>
+      <param-value>https://netbadge.virginia.edu/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pubcookie-loginpage-form-name</param-name>
+      <param-value>query</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pubcookie-loginpage-input-name-userid</param-name>
+      <param-value>user</param-value>
+    </init-param>
+    <init-param>
+      <param-name>pubcookie-loginpage-input-name-password</param-name>
+      <param-value>pass</param-value>
+    </init-param>
+    <init-param>
+      <param-name>javax.net.ssl.trustStore</param-name>
+      <param-value>/eclipse-3.1.x-workspace/2.1/dist/server/jakarta-tomcat-5.0.28/conf/truststore</param-value>
+    </init-param>
+    <init-param>
+      <param-name>javax.net.ssl.trustStorePassword</param-name>
+      <param-value>tomcat</param-value>
+    </init-param>
+  </filter-->
+  
+  <!-- supports attributes through jndi.  roles, groups, and authentication to be added. -->
+  <!--filter>
+    <filter-name>LdapFilter</filter-name>
+    <filter-class>fedora.server.security.servletfilters.ldap.FilterLdap</filter-class>   
+    <init-param>
+      <param-name>associated-filters</param-name>
+      <param-value>PubcookieFilter</param-value>
+    </init-param>
+    <init-param>
+      <param-name>surrogate-associated-filters</param-name>
+      <param-value>TomcatUsersFilter</param-value>
+    </init-param>
+    <init-param>
+      <param-name>url4attributes</param-name>
+      <param-value>ldap://ldapvs.itc.virginia.edu:389/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>base4attributes</param-name>
+      <param-value>o=University of Virginia,c=US</param-value>
+    </init-param>   
+    <init-param>
+      <param-name>userid4attributes</param-name>
+      <param-value>uid</param-value>
+    </init-param>
+    <init-param>
+      <param-name>filter4attributes</param-name>
+      <param-value>(uid={0})</param-value>
+    </init-param>
+    <init-param>
+      <param-name>roles2return4attributes</param-name>
+      <param-value>eduPersonAffiliation</param-value>
+    </init-param>
+    <init-param>
+      <param-name>attributes2return4attributes</param-name>
+      <param-value>mailAlternateAddress,eduPersonAffiliation</param-value>
+    </init-param>
+    <init-param>
+      <param-name>password4attributes</param-name>
+      <param-value>UnixUid</param-value>
+    </init-param>
+    <init-param>
+      <param-name>url4groups</param-name>
+      <param-value>ldap://ldapvs.itc.virginia.edu:389/</param-value>
+    </init-param>
+    <init-param>
+      <param-name>base4groups</param-name>
+      <param-value>ou-Groups,o=University of Virginia,c=US</param-value>
+    </init-param>   
+   <init-param>
+      <param-name>userid4groups</param-name>
+      <param-value>uid</param-value>
+    </init-param>
+    <init-param>
+      <param-name>filter4groups</param-name>
+      <param-value>(uid={0})</param-value>
+    </init-param>
+    <init-param>
+      <param-name>groups2return4groups</param-name>
+      <param-value>UnixUid</param-value>
+    </init-param>
+  </filter-->
+  
 
   <filter> 
     <filter-name>EnforceAuthnFilter</filter-name>  
@@ -309,7 +406,17 @@
   <filter-mapping> 
     <filter-name>XmlUserfileFilter</filter-name>  
     <url-pattern>/*</url-pattern> 
-  </filter-mapping>  
+  </filter-mapping>
+  
+  <!--filter-mapping> 
+    <filter-name>PubcookieFilter</filter-name>  
+    <url-pattern>/*</url-pattern> 
+  </filter-mapping-->  
+  
+  <!--filter-mapping> 
+    <filter-name>LdapFilter</filter-name>  
+    <url-pattern>/*</url-pattern> 
+  </filter-mapping-->        
 
 
   <!-- servlet specs 2.3 and 2.4 allow filter-mappings with either a single url-pattern or a single servlet-name (but not both).  
