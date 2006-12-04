@@ -51,7 +51,7 @@ public class DatastreamReferencedContent
 
       	HttpInputStream contentStream = null;
       	try {
-            contentStream = s_http.get(DSLocation, true, null, null);
+            contentStream = s_http.get(DSLocation, true);
             DSSize = new Long(contentStream.getResponseHeaderValue("content-length","0")).longValue();
       	} catch (Throwable th) {
       		th.printStackTrace();
