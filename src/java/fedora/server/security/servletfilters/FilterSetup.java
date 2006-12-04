@@ -44,12 +44,6 @@ public class FilterSetup extends Base implements Filter {
     	return this.getClass().getName();
     }
     */
-    
-
-
-    public static final String FILTER_REQUIRES_INCOMING_SSL_KEY = "require-incoming-ssl";
-    private boolean FILTER_REQUIRES_INCOMING_SSL_DEFAULT = false;
-    protected boolean FILTER_REQUIRES_INCOMING_SSL = FILTER_REQUIRES_INCOMING_SSL_DEFAULT;
 
     
     protected static final String NOT_SET = "NOT SET";
@@ -88,22 +82,7 @@ public class FilterSetup extends Base implements Filter {
     protected void initThisSubclass(String key, String value) {
     	System.err.println("AF.iTS");
     	String method = "initThisSubclass() "; if (log.isDebugEnabled()) log.debug(enter(method));
-		boolean setLocally = false;
-    	if (FILTER_REQUIRES_INCOMING_SSL_KEY.equals(key)) {
-    		try {
-    			FILTER_REQUIRES_INCOMING_SSL = booleanValue(value);
-    		} catch (Exception e) {
-    			if (log.isErrorEnabled()) log.error(format(method, "known parameter, bad value", key, value));					
-    			initErrors = true;
-    		}
-        	setLocally = true;
-    	} else {
-        	if (log.isDebugEnabled()) log.debug(format(method, "deferring to super"));
-    		super.initThisSubclass(key, value);
-    	} 
-		if (setLocally) {
-			if (log.isInfoEnabled()) log.info(format(method, "known parameter", key, value));		
-		}
+   		super.initThisSubclass(key, value);
 		if (log.isDebugEnabled()) log.debug(exit(method)); 
 	}
     
@@ -130,14 +109,6 @@ public class FilterSetup extends Base implements Filter {
 		
 		test = "HttpServletRequest";
 		if (! (extendedHttpServletRequest instanceof HttpServletRequest) ) {
-			String msg = fail(method,test);
-			if (log.isErrorEnabled()) log.error(msg);
-			throw new Exception(msg);
-		}
-		if (log.isDebugEnabled()) log.debug(pass(method,test));								
-
-		test = "filter ssl requirement";
-		if (FILTER_REQUIRES_INCOMING_SSL && ! extendedHttpServletRequest.isSecure()) {
 			String msg = fail(method,test);
 			if (log.isErrorEnabled()) log.error(msg);
 			throw new Exception(msg);
