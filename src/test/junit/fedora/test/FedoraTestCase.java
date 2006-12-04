@@ -85,11 +85,11 @@ public abstract class FedoraTestCase extends XMLTestCase implements FedoraTestCo
     }
     
     public static String getUsername() {
-        return getServerConfiguration().getParameter("adminUsername").getValue();
+        return FEDORA_USERNAME;
     }
     
     public static String getPassword() {
-        return getServerConfiguration().getParameter("adminPassword").getValue();
+        return FEDORA_PASSWORD;
     }
     
     public static FedoraClient getFedoraClient() throws Exception {

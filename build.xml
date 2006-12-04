@@ -763,6 +763,8 @@
 	
 	<target name="junit" depends="compile-junit">
 		<property name="fedora.home" value="${env.FEDORA_HOME}"/>
+		<property name="fedora.username" value="fedoraAdmin" />
+		<property name="fedora.password" value="fedoraAdmin" />
 		<property name="javax.net.ssl.trustStore" value="inc/keystore"/>
 		<property name="test" value="fedora.test.api.AllAPITests"/>
 		

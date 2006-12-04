@@ -21,6 +21,8 @@ public interface FedoraTestConstants extends Constants {
     public static final String NS_FEDORA_TYPES_PREFIX = "fedora-types";
     public static final String NS_FEDORA_TYPES = "http://www.fedora.info/definitions/1/0/types/";
     
-    
+    /* Property supplied by the build file */
+    public static final String FEDORA_USERNAME = System.getProperty("fedora.username");
+    public static final String FEDORA_PASSWORD = System.getProperty("fedora.password");
     
 }
