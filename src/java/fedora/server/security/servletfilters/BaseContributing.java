@@ -76,12 +76,14 @@ public abstract class BaseContributing extends FilterSetup {
     	String method = "init() "; if (log.isDebugEnabled()) log.debug(enter(method));
     	super.init(filterConfig);
     	if (! initErrors) {
-    		FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES = new Vector(1);
-    		if ((FILTER_NAME == null) || "".equals(FILTER_NAME)) {
-    			initErrors = true;
-				if (log.isErrorEnabled()) log.error(format(method, "FILTER_NAME not set"));    			
-    		} else {
-    			FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES.add(FILTER_NAME);
+    		if (FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES.isEmpty()) {
+        		if ((FILTER_NAME == null) || "".equals(FILTER_NAME)) {
+        			initErrors = true;
+    				if (log.isErrorEnabled()) log.error(format(method, "FILTER_NAME not set"));    			
+        		} else {
+            		FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES = new Vector(1);        			
+        			FILTERS_CONTRIBUTING_AUTHENTICATED_ATTRIBUTES.add(FILTER_NAME);
+        		}    			
     		}
     	}
     	if (initErrors) {
