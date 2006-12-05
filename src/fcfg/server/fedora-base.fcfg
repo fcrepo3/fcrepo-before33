@@ -8,14 +8,6 @@
     <comment>Defines one or more email addresses for server administrators;
              list is space delimited.</comment>
   </param>
-  <param name="adminUsername" value="fedoraAdmin">
-    <comment>Defines the username for the Fedora server; default is
-             fedoraAdmin.</comment>
-  </param>
-  <param name="adminPassword" value="fedoraAdmin">
-    <comment>Defines the password for the Fedora server; default is
-             fedoraAdmin.</comment>
-  </param>
   <param name="fedoraServerPort" value="8080">
     <comment>Defines the port number on which the Fedora server runs;
              default is 8080.</comment>
@@ -145,7 +137,7 @@
                        encoding that should be used.</comment>
     <param name="pidNamespace" value="changeme"/>
     <param name="retainPIDs" value="demo test changeme fedora-bdef             fedora-bmech       tutorial"/>
-    <param name="storagePool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="storagePool" value="localMySQLPool"/>
     <param name="storageCharacterEncoding" value="UTF-8"/>
     <param name="defaultExportFormat" value="foxml1.0"/>
   </module>
@@ -292,7 +284,7 @@
     </comment>
     <param name="maxResults" value="100"/>
     <param name="maxSecondsPerSession" value="500"/>
-    <param name="connectionPool" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="connectionPool" value="localMySQLPool"/>
     <param name="indexDCFields" value="true"/>
   </module>
   <module role="fedora.server.resourceIndex.ResourceIndex" class="fedora.server.resourceIndex.ResourceIndexModule">
@@ -356,8 +348,8 @@
   </module>
   <module role="fedora.server.storage.ConnectionPoolManager" class="fedora.server.storage.ConnectionPoolManagerImpl">
     <comment>This module facilitates obtaining ConnectionPools</comment>
-    <param name="defaultPoolName" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
-    <param name="poolNames" value="localMySQLPool" mysqlvalue="localMySQLPool" oraclevalue="localOracle9iPool" mckoivalue="localMcKoiPool"/>
+    <param name="defaultPoolName" value="localMySQLPool" />
+    <param name="poolNames" value="localMySQLPool" />
   </module>
   <module role="fedora.server.validation.DOValidator" class="fedora.server.validation.DOValidatorModule">
     <comment>Description: Supports validation of digital objects, including
@@ -465,7 +457,7 @@
                            2 (grow i.e., increase the size of the pool).</comment>
     <param name="dbUsername" value="fedoraAdmin"/>
     <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora21?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
+    <param name="jdbcURL" value="jdbc:mysql://localhost/fedora22?useUnicode=true&amp;characterEncoding=UTF-8&amp;autoReconnect=true"/>
     <param name="jdbcDriverClass" value="com.mysql.jdbc.Driver"/>
     <param name="ddlConverter" value="fedora.server.utilities.MySQLDDLConverter"/>
     <param name="maxActive" value="100"/>
@@ -530,7 +522,8 @@
                        reached maximum number of active objects. Valid values are:
                            0 (fail i.e., throw Exception) 
                            1 (block i.e., wait until pool resources are freed) 
-                           2 (grow i.e., increase the size of the pool).</comment>    <param name="dbUsername" value="fedoraAdmin"/>
+                           2 (grow i.e., increase the size of the pool).</comment>    
+    <param name="dbUsername" value="fedoraAdmin"/>
     <param name="dbPassword" value="fedoraAdmin"/>
     <param name="jdbcURL" value="jdbc:mckoi://localhost:9157/"/>
     <param name="jdbcDriverClass" value="com.mckoi.JDBCDriver"/>
@@ -547,8 +540,8 @@
     <param name="testWhileIdle" value="true"/>
     <param name="whenExhaustedAction" value="1"/>
   </datastore>
-  <datastore id="localOracle9iPool">
-    <comment>Oracle9i database on localhost with SID=fedora21 Each
+  <datastore id="localOraclePool">
+    <comment>Oracle database on localhost with SID=fedora22 Each
             connection pool instance has several configuration parameter that
             can be used to tune the options for the connection pool. It is
             recommended that you not change the default values unless you are
@@ -599,7 +592,7 @@
                            1 (block i.e., wait until pool resources are freed) 
                            2 (grow i.e., increase the size of the pool).</comment>    <param name="dbUsername" value="fedoraAdmin"/>
     <param name="dbPassword" value="fedoraAdmin"/>
-    <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora21"/>
+    <param name="jdbcURL" value="jdbc:oracle:thin:@localhost:1521:fedora22"/>
     <param name="jdbcDriverClass" value="oracle.jdbc.driver.OracleDriver"/>
     <param name="ddlConverter" value="fedora.server.utilities.OracleDDLConverter"/>
     <param name="maxActive" value="100"/>
